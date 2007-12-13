@@ -1,0 +1,25 @@
+### title JAIN SLEE 1.1 testsuite Exclude List
+### version 1.1 
+
+##################################################################
+# This file specifies the tests which are to be 
+# excluded from the test suite, and the reasons
+# why they are excluded.
+#
+# Syntax: 
+# Test_URL 			BugID 	Keywords 	Reason
+#
+# Test_URL: the url of the test description, relative to the test suite
+# BugID: matches the ID of the corresponding bug in the TCK bug list
+# Keywords: not used - specify "n/a"
+# Reason: free text explaining the reason why the test is excluded
+#
+# Note: see the JAIN SLEE TCK 1.0 bug list for more details about excluded tests.
+# The bug list is available at the JAIN SLEE TCK 1.0 download site 
+# (http://www.opencloud.com/sleetck/download.html)
+#
+##################################################################
+
+# Teh following is an example copied from TCK 1.0.
+# Challanged and accepted by the maintenance spec lead.
+# tests/activities/activitycontext/Test561Test.xml         1      n/a     This test was challenged, found to be invalid, and removed on 12 Nov 2004. (Seebug number 1 in the TCK bug list)

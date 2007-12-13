@@ -1,0 +1,6 @@
+# working test suite file for JAIN SLEE 1.1 feature coverage
+name=tentative JAIN SLEE TCK 1.1 
+id=tentative JAIN SLEE TCK 1.1 
+testsuite=com.opencloud.sleetck.lib.infra.SleeTCKTestSuite
+tests=tests
+classpath=../../../jain-slee-1.0-tck/jars/sleetck.jar
