@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="SMPPResourceAdaptor" default="build-and-deploy-ra">
+
+	<property name="mobicents.home" value="../.." />	
+	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<property name="ra.name" value="smpp" />
+	<property name="ra.entity" value="SmppRA" />
+	<property name="ra.id" value="${ant.project.name}#org.mobicents#3.4" />	
+	
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.smppra.classpath" />
+	</path>
+
+	<fileset id="ra.libs.ratype" dir="lib">
+		<include name="smppapi.jar" />
+	</fileset>
+	
+</project>
+
