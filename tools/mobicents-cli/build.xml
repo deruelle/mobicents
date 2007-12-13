@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<project name="mobicents-cli" default="build-mobicents-cli" basedir=".">
+	
+	<import file="./slee-management.xml"/>
+	
+	<!-- PATHS -->
+	<property environment="system"/>
+    <property name="jboss.home" value="${system.JBOSS_HOME}" />
+	
+   	<property name="classes.tasks" value="classes"/>
+   	<property name="jars" value="jars"/>
+	
+   	<!-- CUSTOM TASKS -->
+	<target name="build-mobicents-cli">
+		<subant target="make">
+			<fileset dir="../../" includes="build.xml"/>     
+		</subant>
+	</target>
+	
+   	<!-- CLEANERS -->
+   	<target name="clean-all-classes">
+    	<delete dir="${classes.tasks}" quiet="true"/>
+   	</target>
+
+   	<target name="clean-jars">
+    	<delete dir="${jars}" quiet="true"/>
+	</target>
+
+   	<target name="clean" depends="clean-all-classes,clean-jars"/>
+	
+	<!-- BUILD JAR -->
+	<target name="mobicents-cli.jar">
+	   	<mkdir dir="${classes.tasks}"/>
+	    <mkdir dir="${jars}"/>
+	   	 
+	   	<javac srcdir="src" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/**/*.java">
+	       	<classpath>
+	           	<path refid="cli.class.path"/>
+	       		<pathelement location="../../jain-slee-1.0-tck/lib/ant.jar"/>
+	       	</classpath>
+	   	</javac>
+	   	
+	   	<jar destfile="${jars}/mobicents-cli.jar" basedir="${classes.tasks}">
+	       	<manifest>
+	       		<attribute name="Main-Class" value="org.mobicents.slee.cli.MobicentsCLI"/>
+	       		<attribute name="Class-Path" value="file:///${jboss.home}/server/all/deploy/mobicents.sar//
+	       			file:///${jboss.home}/server/all/deploy/mobicents.sar/slee_1_1.jar
+	       			file:///${jboss.home}/lib/jboss-jmx.jar
+	       			file:///${jboss.home}/client/jbossall-client.jar"/>
+	   		</manifest>
+		</jar>
+	</target>
+
+</project>
