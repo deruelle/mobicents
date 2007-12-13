@@ -1,0 +1,800 @@
+<!--
+   The Mobicents build script
+
+   Authors: Emil Ivov, Ranga, Ivelin -->
+<project basedir="." default="make" name="mobicents.jpx">
+	
+	<property name="mobicents.home" value="." />
+	<import file="xml/ant/mobicents-ant-common-properties.xml"/>
+	
+	<!-- Use the -Doption=optval on the ant command line for these. -->
+	<property name="cachemode" value="local" description="Controls the cache mode. Values are typically local or cluster" />
+	<property name="debug" value="normal" description="Controls the debug level. Values are typically debug or normal" />
+	<property name="deploydir" value="deploy" />
+	<!-- Node is the configuration. cachemode is either local or cluster -->
+	<!-- debug controls the logging. set it at either debug or normal -->
+	<!-- deploydir controls where you deploy it. Either ha-singleton or deploy -->
+	<dirname property="project.home.dir" file="${mobicents}" />
+	<property name="dest" value="classes" />
+	<property name="build" value="./build" />
+	<property name="junit.reports" value="junit-reports" />
+	<property name="libs.home" value="lib" />
+	<property name="slee.tck.home" value="jain-slee-1.0-tck" />
+	<property name="classpath.prefix" value="org.mobicents" />
+	<property name="dirpath.prefix" value="org/mobicents" />
+
+	<!-- Set up your system JBOSS_HOME variable and not as follows -->
+	<!-- property name="jboss.home" value="/devtools/jboss-3.2.6" / -->
+
+	<!-- COMPILATION TIME -->
+	<property name="src.level" value="1.5" />
+	<property name="compile.level" value="1.5" />
+
+	<!-- Deploy files can go to a separate deploy node as needed to support -->
+	<!-- jboss running on a different host -->
+
+	<property name="deploy.home" value="${jboss.home}" />
+
+	<property name="deployables" value="./deployable-unit" />
+
+	<property name="mobicents.sar" value="${jboss.deploy}/mobicents.sar" />
+
+	<property name="jboss.server.dir" value="${deploy.home}/server" />
+
+	<property name="jboss.tmp.deploy.dir" value="${jboss.deploy}/../tmp/deploy" />
+
+	<property name="jboss.conf.dir" value="${jboss.deploy}/../conf" />
+
+	<property name="jboss.readme.dir" value="${deploy.home}" />
+
+	<property name="jboss.bin.dir" value="${deploy.home}/bin" />
+
+	<property name="jboss.licenses.dir" value="${deploy.home}/docs/licenses" />
+
+
+	<!-- ANT HOME FOR LIBS -->
+	<property name="ant.home" value="${system.ANT_HOME}" />
+	<!-- by default the test pattern covers all tests -->
+	<property name="tests" value="tests" />
+	<property name="slee-tck-tests-pattern" value="${tests}" />
+
+	<property name="src" value="src" />
+	<property file="${node}.port.properties" />
+
+	<!-- JUNIT TEST RESULT XML FILE NAME -->
+	<property name="junit.test.result" value="junit-test.xml" />
+	<property name="agregatingClass.name" value="org.mobicents.slee.test.junit.AllTestsAgregator" />
+	<property name="junit.result" value="TEST-${agregatingClass.name}.xml" />
+
+	<path id="project.class.path">
+		<pathelement location="${dest}" />
+		<pathelement location="${libs.home}/ant-junit.jar" />
+		<pathelement location="${asteriskra}/lib/asterisk-java.jar" />
+		<pathelement location="${libs.home}/commons-collections-3.1.jar" />
+		<pathelement location="${libs.home}/commons-collections-testframework-3.1.jar" />
+		<pathelement location="${jboss.home}/client/commons-logging.jar" />
+		<pathelement location="${libs.home}/commons-pool-1.2.jar" />
+		<pathelement location="${libs.home}/commons-jxpath-1.1.jar" />
+		<pathelement location="${jboss.home}/client/concurrent.jar" />
+		<pathelement location="${libs.home}/dom4j.jar" />
+		<pathelement location="${libs.home}/dtd" />
+		<pathelement location="${jboss.home}/server/${node}/lib/ejb3-persistence.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/hibernate3.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/hibernate-annotations.jar" />
+		<pathelement location="${jboss.home}/client/javassist.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss.jar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/ejb3.deployer/jboss-annotations-ejb3.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-aop.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-serialization.jar" />
+		<pathelement location="${jboss.home}/client/jbossall-client.jar" />
+		<pathelement location="${jboss.home}/client/jboss-aop-jdk50-client.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-cache-jdk50.jar" />
+		<pathelement location="${jboss.home}/client/jbossx-client.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-common.jar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/ejb3.deployer/jboss-ejb3.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-ejb3x.jar" />
+		<pathelement location="${jboss.home}/client/jboss-j2ee.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-jmx.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-remoting.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-system.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jboss-transaction.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jbossha.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jgroups.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jmx-adaptor-plugin.jar" />
+		<pathelement location="${jboss.home}/client/jnp-client.jar" />
+		<pathelement location="${jboss.home}/server/${node}/lib/jnpserver.jar" />
+		<pathelement location="${libs.home}/jta.jar" />
+		<pathelement location="${libs.home}/junit.jar" />
+		<pathelement location="${jboss.home}/client/log4j.jar" />
+		<pathelement location="${libs.home}/sipunit.jar" />
+		<pathelement location="${libs.home}/slee_1_1.jar" />
+		<pathelement location="${slee.tck.home}/jars/sleetck.jar" />
+		<pathelement location="${slee.tck.home}/jars/sleetck-ra-common.jar" />
+		
+	</path>
+
+	<path id="run.class.path">
+		<!-- Stuff necessary to launch jboss -->
+		<pathelement location="${jboss.home}/bin/run.jar" />
+		<pathelement location="${java.home}/lib/tools.jar" />
+		<!-- pathelement location="${mobicents.home}/classes"/ -->
+	</path>
+
+	<!-- SLEE EJBPROXY TO SLEECONNECTION -->
+	<property name="ejb" value="SleeConnectionProxy" />
+
+
+	<!-- COMPILE CORE CLASSES -->
+	<target name="javacompile" depends="init" description="Java compiles all java source files.">
+		<javac classpathref="project.class.path" debug="false" deprecation="false" destdir="${dest}" nowarn="true" target="${compile.level}" source="${src.level}">
+			<src path="${src}" />
+		</javac>
+	</target>
+
+	<target name="rmicompile" depends="init" description="Compiles rmi classes.">
+		<rmic classpathref="project.class.path" classname="${classpath.prefix}.slee.test.suite.RMINotificationListenerImpl" base="${dest}" />
+	</target>
+
+	<target name="resource" description="Copys resource files to the ${dest} folder">
+		<copy todir="${dest}">
+			<fileset dir="${src}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		<!-- copy version.properties to Version.class package -->
+		<copy todir="${dest}/${dirpath.prefix}/slee/container" file="${ant.file.mobicents.jpx}/../version.properties"/>
+	</target>
+
+	<target name="javadoc">
+		<!--
+        <javadoc destdir="docs" package="true">
+            <fileset dir="${src}"/>
+            <tag description="To Do:" name="todo" scope="all"/>
+        </javadoc>
+        -->
+	</target>
+
+	<!-- The following are here just in case they'll be needed one day-->
+	<target name="precompile" description="Not Implemented." />
+
+
+	<target name="postcompile" description="Updates build number.">
+		<buildnumber file="build.number" />
+	</target>
+
+	<!-- <target name="compile" depends="javacompile,rmicompile,sipra" description="A javacompile alias"/>-->
+	<target name="compile" depends="javacompile,rmicompile" description="A javacompile alias" />
+
+	<target name="package" depends="javadoc,resource" description="Creates javadocs and copys resource files to the ${dest} folder" />
+
+	<target name="make" depends="build-ant-tasks,init,copylibs,precompile,compile,postcompile,package,deploy,deploy-rar,build-mobicents-cli,deploy-connection-proxy" description="Successively calls precompile, compile, postcompile, package, deploy." />
+
+	<target name="hotcode" depends="rmicompile,package,deploy" description="Does the same as rebuild except no compile. Eclipse compiled classes are used so hot code replacement is available." />
+
+	<target name="all" depends="make" description="An alias for make." />
+
+	<!-- These targets compile and run the forwarder for failover testing -->
+	<target name="compileforwarder">
+		<javac classpathref="project.class.path" debug="true" deprecation="true" destdir="${dest}" nowarn="false" target="${compile.level}" source="${src.level}">
+			<src path="${sip.services.home}/src/util" />
+		</javac>
+		<rmic classpathref="project.class.path" classname="util.MyRouter" base="${dest}" />
+	</target>
+	<target name="runforwarder" depends="compileforwarder" description="Start the SIP forwarder service. It listens on 5060 and forwards messages to an available back-end SLEE server.">
+		<delete failonerror="false" file="forwarderdebug.txt" />
+		<delete failonerror="false" file="forwarderlog.txt" />
+		<java classpathref="project.class.path" fork="true" classname="util.UdpForwarderImpl">
+			<arg value="127.0.0.1" />
+			<arg value="5065" />
+			<arg value="5060" />
+		</java>
+	</target>
+
+	<!-- clean rebuild and reinstall the targets everything -->
+	<target name="rebuild" depends="clean,make" description="Clean and make." />
+
+	<target name="clean" depends="clean-ra,undeploy-connection-proxy,clean-project">
+		<delete file="mobicents.sar" />
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${mobicents.sar}" />
+		</delete>
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset file="${jboss.home}/server/${node}/deploy/connector-test-ejb.jar" />
+			<fileset file="${jboss.home}/server/${node}/deploy/ejbref-test-ejb.jar" />
+		</delete>
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${jboss.tmp.deploy.dir}">
+				<include name="tmpDUJars**/*.*" />
+				<include name="tmpDUJars*" />
+			</fileset>
+		</delete>
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${jboss.tmp.deploy.dir}">
+				<include name="slee-ds.xml" />
+				<include name="mobicents.rar" />
+			</fileset>
+		</delete>
+
+
+	</target>
+
+
+	<target name="clean-project" description="Cleans all dirs in project directory -">
+
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${dest}" />
+			<fileset dir="${junit.reports}" />
+		</delete>
+
+		<!-- Now lets clean release,ras, tools,tests,...  : add more here if something comes up  -->
+
+		<ant target="clean" dir="./ra" inheritAll="false"/>
+		<ant target="clean" dir="./tests" inheritAll="false"/>
+		<ant target="clean-release" dir="./scripts" inheritAll="false"/>
+		<!-- release clean will also clean ras, but thats nothing we should worry -->
+		<ant target="clean" dir="./tools/ant-tasks" inheritAll="false"/>
+		<ant target="clean" dir="./tools/mobicents-cli" inheritAll="false"/>
+	</target>
+
+
+	<target name="init" description="Creates target directories (e.g. ${dest}, ${junit.reports} ...)">
+		<fail>
+          JBOSS_HOME environment variable is not set. It should be set to something like C:\tools\jboss-3.2.8.SP1 on Windows or /var/jboss-3.2.8.SP1 on linux/unix.
+          <condition>
+				<not>
+					<isset property="system.JBOSS_HOME" />
+				</not>
+			</condition>
+		</fail>
+		<antcall target="copy-jboss-config" />
+		<mkdir dir="${mobicents.sar}" />
+		<mkdir dir="${dest}" />
+		<mkdir dir="${junit.reports}" />
+		<mkdir dir="${mobicents.deploy}" />
+		<mkdir dir="${mobicents.deploy}/scripts" />
+
+	</target>
+
+	<target name="copy-jboss-config">
+		<echo>Preparing deployment configuration "${node}"</echo>
+		<mkdir dir="${jboss.home}/server/${node}" />
+		<sync todir="${jboss.home}/server/${node}" includeEmptyDirs="true">
+			<fileset file="${jboss.home}/server/all/**" />
+		</sync>
+		<!-- delete this file to make sure that the smart copy of the node specific config will work -->
+		<!--delete file="${jboss.conf.dir}/jboss-service.xml" /-->
+	</target>
+
+
+	<target name="buildsar" description="Creates a jboss sar archive from the ${dest} directory">
+		<jar destfile="mobicents.sar">
+			<metainf file="xml/jboss-service.xml" />
+
+			<fileset dir="${dest}">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+	</target>
+
+
+
+	<!-- Make the ejb-jar files needed for the ejb-ref and jca-connector tests -->
+	<target name="deploy-ejb-jars">
+
+		<echo>dirpath is ${dirpath.prefix}</echo>
+
+		<!-- Build the ejb-jar for the ejb-ref test -->
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset file="${build}/ejbref-test-ejb.jar" />
+			<fileset file="${build}/connector-test-ejb.jar" />
+		</delete>
+		<mkdir dir="${build}" />
+
+		<jar destfile="${build}/ejbref-test-ejb.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/test/env/ejbref/ejb/META-INF/ejb-jar.xml" />
+			<metainf file="${src}/${dirpath.prefix}/slee/test/env/ejbref/ejb/META-INF/jboss.xml" />
+			<fileset dir="${dest}">
+				<include name="${dirpath.prefix}/slee/test/env/ejbref/ejb/**/*.class" />
+			</fileset>
+		</jar>
+		<copy todir="${jboss.deploy}" file="${build}/ejbref-test-ejb.jar" />
+
+		<!-- Build the ejb-jar for the jca connector test -->
+		<jar destfile="${build}/connector-test-ejb.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/test/connector/ejb/META-INF/ejb-jar.xml" />
+			<metainf file="${src}/${dirpath.prefix}/slee/test/connector/ejb/META-INF/jboss.xml" />
+			<fileset dir="${dest}">
+				<include name="${dirpath.prefix}/slee/test/connector/ejb/ConnectorTestHome.class" />
+				<include name="${dirpath.prefix}/slee/test/connector/ejb/**/*.class" />
+				<include name="${dirpath.prefix}/slee/test/connector/TestEvent.class" />
+			</fileset>
+		</jar>
+		<copy todir="${jboss.deploy}" file="${build}/connector-test-ejb.jar" />
+
+
+
+		<!-- delete failonerror="false" includeemptydirs="true">
+            <fileset dir="${build}"/>
+        </delete -->
+	</target>
+
+	<target name="build-test-connector-du">
+		<!-- Build the test event jar -->
+		<jar destfile="${build}/connector-test-event.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/test/connector/META-INF/event-jar.xml" />
+			<fileset dir="${dest}">
+				<include name="${dirpath.prefix}/slee/test/connector/TestEvent.class" />
+			</fileset>
+
+		</jar>
+		<jar destfile="${build}/connector-test-event-du.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/test/connector/META-INF/deployable-unit.xml" />
+			<fileset dir="${build}">
+				<include name="connector-test-event.jar" />
+			</fileset>
+		</jar>
+	</target>
+
+
+	<target name="build-test-sleebeanshellutil-du">
+		<!-- Build the test event jar -->
+		<jar destfile="${build}/slee-bean-shell-util-test-sbb.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/container/management/jmx/test/META-INF/sbb-jar.xml" />
+			<fileset dir="${dest}">
+				<include name="${dirpath.prefix}/slee/container/management/jmx/test/SleeBeanShellUtilSbb.class" />
+			</fileset>
+		</jar>
+		<jar destfile="${build}/slee-bean-shell-util-test-du.jar">
+			<metainf file="${src}/${dirpath.prefix}/slee/container/management/jmx/test/META-INF/deployable-unit.xml" />
+			<fileset dir="${build}">
+				<include name="slee-bean-shell-util-test-sbb.jar" />
+			</fileset>
+			<fileset dir="${src}/${dirpath.prefix}/slee/container/management/jmx/test/META-INF">
+				<include name="SleeBeanShellUtilTest-service.xml" />
+			</fileset>
+		</jar>
+	</target>
+
+
+	<!-- Build the test event jar -->
+	<!-- Run one junit test without starting the container -->
+	<target name="test-connector" depends="junit-init,init-common" description="Runs ejb-connector test">
+
+		<slee-management>
+			<install url="${file_url}${mobicents.home.standard}/build/connector-test-event-du.jar" />
+		</slee-management>
+
+		<junit fork="yes" showoutput="true">
+			<formatter type="xml" />
+			<classpath refid="project.class.path" />
+			<test name="org.mobicents.slee.test.connector.ConnectorTest" todir="${junit.reports}" />
+		</junit>
+	</target>
+
+	<target name="junit-init">
+		<!-- see http://weblogs.java.net/blog/schaefa/archive/2005/11/index.html -->
+		<available file="${ant.home}/lib/junit.jar" property="junit.available" />
+		<antcall target="copy-junit-to-ant" />
+	</target>
+
+	<target name="copy-junit-to-ant" unless="junit.available">
+		<echo>If the junit task failed, run the script once again. It should succeed the second time after junit.jar is copied to Ant's lib.</echo>
+		<copy todir="${ant.home}/lib">
+			<fileset dir="${libs.home}">
+				<include name="ant-junit.jar" />
+				<include name="junit.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- Make and deploy the JCA resource adaptor rar file -->
+	<target name="deploy-rar">
+
+		<mkdir dir="${build}/rar" />
+
+		<!-- Build the ra.jar file -->
+		<jar destfile="${build}/rar/ra.jar">
+			<fileset dir="${dest}">
+				<include name="${dirpath.prefix}/slee/connector/adaptor/**/*.class" />
+			</fileset>
+		</jar>
+
+		<!-- If the calling j2ee app is not deployed in JBoss it will still need jboss-ha.jar 
+        <copy todir="${build}/rar" file="${libs.home}/jbossha.jar" />
+        -->
+
+		<!-- Build the mobicents.rar file -->
+		<jar destfile="${build}/mobicents.rar">
+			<metainf file="${src}/${dirpath.prefix}/slee/connector/adaptor/META-INF/ra.xml" />
+			<fileset dir="build/rar">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+
+		<copy todir="${mobicents.sar}/../" file="${build}/mobicents.rar" />
+		<copy todir="${mobicents.sar}/../" file="${src}/${dirpath.prefix}/slee/test/connector/ejb/slee-ds.xml" />
+
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${build}/rar" />
+		</delete>
+	</target>
+
+	<target name="clean-ra">
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset file="${build}/mobicents.rar" />
+		</delete>
+		<delete failonerror="false" file="${jboss.home}/TCKRA.log" />
+	</target>
+
+	<target name="deploy" description="Assumes that mobicents.sar is already built and just deploys it to a JBoss server.">
+
+		<copy todir="${mobicents.sar}">
+			<fileset dir="classes">
+				<include name="org/mobicents/**/*.*" />
+				<!-- Really we shouldn't be deploying all the test stuff here since -->
+				<exclude name="${dirpath.prefix}/slee/test/connector/**/*.*" />
+				<exclude name="${dirpath.prefix}/slee/test/env/**/*.*" />
+				<exclude name="${dirpath.prefix}/slee/connector/adaptor/**/*.*" />
+				<exclude name="${dirpath.prefix}/slee/resource/sip/**/*.*" />
+				<!-- THIS IS EJBConnectionProxy STUFF IT SHOLUD NOT BE DEPLOYED ALONG? -->
+				<exclude name="${dirpath.prefix}/slee/connector/proxy/**/*.*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${mobicents.sar}/dtd">
+			<fileset dir="dtd">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<copy file="README.txt" todir="${jboss.readme.dir}" />
+
+		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" />
+		<copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" />
+		<copy file="xml/jboss-service.xml" todir="${mobicents.sar}/META-INF" />
+		<copy file="xml/slee-event-jar.xml" todir="${mobicents.sar}/xml" />
+		<copy file="xml/slee-profile-spec-jar.xml" todir="${mobicents.sar}/xml" />
+		<copy file="xml/event-jar.xml" todir="${mobicents.sar}/xml" />
+		<copy file="xml/hsqldb-ds.xml.${node}" tofile="${jboss.deploy}/hsqldb-ds.xml" overwrite="true" />
+
+		<!-- copying config files for clustered services -->
+		<copy file="xml/cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/cluster-service.xml" overwrite="true" />
+		<copy file="xml/jboss-treecache-service.xml.${cachemode}" tofile="${jboss.deploy}/jboss-treecache-service.xml" overwrite="true" />
+		<!--copy file="xml/tc5-cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/tc5-cluster-service.xml" overwrite="true" /-->
+		<copy file="xml/jboss-treecache-deployment-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-deployment-service.xml" overwrite="true" />
+		<copy file="xml/jboss-treecache-profile-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-profile-service.xml" overwrite="true" />
+		<copy file="xml/jboss-treecache-runtime-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-runtime-service.xml" overwrite="true" />
+
+		<copy file="bin/SleeCommandInterface.bat" todir="${jboss.bin.dir}" />
+		<copy file="bin/SleeCommandInterface.sh" todir="${jboss.bin.dir}" />
+		<chmod file="${jboss.bin.dir}/SleeCommandInterface.sh" perm="755">
+		</chmod>
+
+		<!-- override outdated jboss jars -->
+		<copy file="bin/java.policy" todir="${jboss.bin.dir}" />
+		
+		<copy file="docs/pictures/mobicents-logo.gif" tofile="${jboss.deploy}/jmx-console.war/images/logo.gif" />
+		<copy todir="${jboss.server.dir}">
+			<fileset file="xml/server/**" />
+		</copy>
+
+		<copy todir="${jboss.licenses.dir}">
+			<fileset file="LICENSES/*" />
+		</copy>
+
+		<copy overwrite="true" todir="${jboss.bin.dir}">
+			<fileset dir="./bin">
+				<filename name="run.*" />
+			</fileset>
+		</copy>
+
+		<echo>Touching ${mobicents.sar}/META-INF/jboss-service.xml to cause redeploy</echo>
+		<touch>
+			<fileset file="${mobicents.sar}/META-INF/jboss-service.xml" />
+		</touch>
+	</target>
+
+	<!-- Starts the JBoss Container -->
+	<target name="run-jboss" description="Runs the JBoss container">
+		<java spawn="true" fork="true" dir="${jboss.bin.dir}" jar="${jboss.bin.dir}/run.jar" classpathref="run.class.path">
+			<arg value="-c all" />
+			<arg value="-b 127.0.0.1" />
+			<!--<arg value="| tee jboss_console.log"/>-->
+		</java>
+	</target>
+
+	<target name="shutdown-jboss" description="Shuts down the jboss server">
+		<java dir="${jboss.bin.dir}" jar="${jboss.bin.dir}/shutdown.jar" classpathref="run.class.path" fork="true">
+			<arg value="-S" />
+		</java>
+	</target>
+
+	<!-- Run one junit test without starting the container -->
+	<target name="test" depends="junit-init" description="Runs one test specified by the command line parameter test.name (ant ... -Dtest.name=MyTest)">
+		<junit fork="yes" showoutput="true">
+			<formatter type="xml" />
+			<classpath refid="project.class.path" />
+			<test name="${test.name}" todir="${junit.reports}" />
+		</junit>
+	</target>
+
+
+	<!-- Copies all lib files to the sar directory of the local jboss installation -->
+	<target name="copylibs" description="copy project libs not part of jboss into jboss">
+		<copy todir="${mobicents.sar}" flatten="yes">
+			<fileset dir="${libs.home}">
+				<include name="commons-beanutils.jar" />
+				<include name="commons-lang.jar" />
+				<include name="sleeRA.zip" />
+				<include name="commons-beanutils.jar" />
+				<include name="sleetck-minimal.jar" />
+				<include name="sleetck-ra-common.jar" />
+				<include name="commons-pool-1.2.jar" />
+				<include name="slee-tasks.jar" />
+				<include name="tcktools.jar" />
+				<include name="slee_1_1.jar" />
+				<include name="commons-jxpath-1.1.jar" />
+				<include name="jta.jar" />
+			</fileset>
+			<fileset dir="${slee.tck.home}">
+				<include name="jars/sleetck-ra-common.jar" />
+				<include name="jars/slee-tasks.jar" />
+				<include name="jars/tcktools.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${mobicents.sar}/META-INF" file="xml/jboss-service.xml" />
+
+	</target>
+
+	<target name="cc-build-loop" depends="rebuild" />
+
+	<!-- running jmx remote client standalone	-->
+	<target name="jmx" depends="compile">
+		<java fork="true" classpathref="project.class.path" classname="${classpath.prefix}.slee.test.ConnectorClient" />
+	</target>
+
+	
+	<!-- Use 'run-junit-2-xml' to execute junit test instead of 'run-junit-tests' -->
+	<!-- <target name="run-junit-tests" depends="rmicompile, junit-init" description="Runs the full suite of junit tests (not tck format tests). The server has to be running when this target is used.">
+		<junit printsummary="yes" haltonfailure="no">
+			<classpath refid="project.class.path">
+			</classpath>
+
+			<formatter type="xml" />
+
+			<batchtest fork="yes" todir="${junit.reports}">
+				<fileset dir="${src}" excludesfile="exclude_batchtest.list">
+					<include name="org/mobicents/slee/test/suite/tckwrapper/**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<junitreport todir="${junit.reports}">
+			<fileset dir="${junit.reports}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.reports}/html" />
+		</junitreport>
+
+		<echo> Summary Test report can be found at: ${junit.reports}/html/index.html</echo>
+	</target>  -->
+
+	<!-- Build the pinger service and copy over -->
+	<target name="build-pinger-jars">
+		<mkdir dir="${build}" />
+		<javac classpathref="project.class.path" debug="true" deprecation="true" destdir="${dest}" nowarn="false" target="${compile.level}" source="${src.level}">
+			<src path="${sip.services.home}/src" />
+		</javac>
+		<jar destfile="${build}/pinger.jar">
+			<metainf file="${sip.services.home}/src/util/pinger/META-INF/sbb-jar.xml" />
+			<fileset dir="${dest}">
+				<include name="util/**/*.class" />
+			</fileset>
+		</jar>
+		<jar destfile="${build}/event.jar">
+			<metainf file="${sip.services.home}/src/util/pinger/META-INF/event-jar.xml" />
+			<fileset dir="${dest}">
+				<include name="util/Ping.class" />
+			</fileset>
+		</jar>
+		<copy todir="${build}" file="${sip.services.home}/src/util/pinger/service.xml" />
+		<jar destfile="${build}/pingerdu.jar">
+			<metainf file="${sip.services.home}/src/util/pinger/META-INF/deployable-unit.xml" />
+			<fileset dir="${build}">
+				<include name="**/*.*" />
+			</fileset>
+		</jar>
+		<move todir="${sip.services.home}/examples" file="${build}/pingerdu.jar" />
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${build}" />
+		</delete>
+	</target>
+
+	<target name="all-tests" description="Runs all tests including TCK and custom tests">
+		<subant target="" inheritall="yes" failonerror="yes">
+			<property name="build.dir" value="tests" />
+			<fileset dir="tests" includes="build.xml" />
+		</subant>
+		<copy todir="${slee.tck.home}/testsuite/tests">
+			<fileset dir="tests/src" includes="**/*Test.xml" />
+		</copy>
+		<copy todir="${slee.tck.home}/jars/deployable-units">
+			<fileset dir="tests/jars/deployable-units" includes="**/*" />
+		</copy>
+		<antcall target="tests-slee-tck" />
+	</target>
+
+	<target name="tests-slee-tck" description="Invoke this target with a file pattern for TCK test. For example -Dtests=tests/sbb or -Dtests=tests/sbb/abstractclass/Test522Test">
+		<!-- If all tests pass the result of the Java process is 0 otherwise != 0. This is useful for cruisecontrol integrations -->
+		<!-- To debug TCK tests from Eclipse, run the class below with the specified command line and test pattern -->
+		<path id="slee.tck.du.path.id">
+			<pathelement location="${slee.tck.home}/jars/deployable-units" />
+		</path>
+		<path id="slee.tck.testsuite.path.id">
+			<pathelement location="${slee.tck.home}/testsuite" />
+		</path>
+		<path id="slee.tck.reports.path.id">
+			<pathelement location="${slee.tck.home}/reports" />
+		</path>
+		<path id="slee.tck.jtx.file.id">
+			<pathelement location="${slee.tck.home}/testsuite/jain-slee-tck-1_0.jtx" />
+		</path>
+		<property name="classes.sleetests" value="" />
+		<path id="slee.tests.classes.id">
+			<pathelement location="tests/classes/sleetests" />
+		</path>
+		<path id="slee.tests.aux.libs.id">
+			<pathelement location="" />
+			<pathelement location="${jboss.home}/client/jboss-aop-jdk50-client.jar" />
+			<pathelement location="${jboss.home}/client/jboss-aspect-jdk50-client.jar" />
+			<pathelement location="${jboss.home}/client/jbossall-client.jar" />
+		</path>
+		<antcall target="tests-slee-tck-internal" inheritrefs="yes">
+			<reference refid="slee.tck.du.path.id" />
+			<reference refid="slee.tck.reports.path.id" />
+			<reference refid="slee.tck.testsuite.path.id" />
+			<reference refid="slee.tck.jtx.file.id" />
+			<reference refid="slee.tests.classes.id" />
+			<reference refid="slee.tests.aux.libs.id" />
+		</antcall>
+	</target>
+
+	<target name="tests-slee-tck-internal" depends="run-junit-2-xml">
+		<pathconvert targetos="unix" property="slee.tck.du.path" refid="slee.tck.du.path.id" />
+		<pathconvert targetos="unix" property="slee.tck.testsuite.path" refid="slee.tck.testsuite.path.id" />
+		<pathconvert targetos="unix" property="slee.tck.reports.path" refid="slee.tck.reports.path.id" />
+		<pathconvert targetos="unix" property="slee.tck.jtx.file" refid="slee.tck.jtx.file.id" />
+		<pathconvert targetos="unix" property="slee.tests.classes" refid="slee.tests.classes.id" />
+		<pathconvert targetos="unix" property="slee.tests.aux.libs" refid="slee.tests.aux.libs.id" />
+		<echo>slee.tck.testsuite.path=${slee.tck.testsuite.path}</echo>
+		<echo>slee.tests.aux.libs=${slee.tests.aux.libs}</echo>
+		<property name="tck.params" value=" -batch 'testsuite ${slee.tck.testsuite.path};workDirectory -create -overwrite ${slee.tck.home}/tckwork;open ${slee.tck.home}/slee-tck-mobicents.jti;set sleetck.env.connections.tckResourceHostIP 127.0.0.1;set sleetck.env.connections.jmxAgentHostIP 127.0.0.1;set sleetck.tests.needTests Yes; set sleetck.env.connections.componentUrlPrefix file\:${slee.tck.du.path};set sleetck.env.user-options.defaultTimeout 25000; concurrency 1;tests ${slee-tck-tests-pattern}; runtests;writereport ${slee.tck.reports.path};' " />
+		<echo>Starting TCK with params: ${tck.params}</echo>
+		<echo>Excluding tests listed in file: ${slee.tck.jtx.file}</echo>
+		<property name="mobicents.home.path" location="${mobicents.home}"/>
+		<java classname="com.sun.javatest.tool.Main" fork="yes" maxmemory="256m">
+			<sysproperty key="java.security.manager" value="" />
+			<sysproperty key="javatest.security.allowPropertiesAccess" value="true" />
+			<sysproperty key="java.security.policy" value="${slee.tck.home}/config/tck-security.policy" />
+			<sysproperty key="org.xml.sax.driver" value="org.apache.xerces.parsers.SAXParser" />
+			<sysproperty key="MOBICENTS_HOME" value="${mobicents.home.path}" />
+			<jvmarg line="-Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,address=8484,server=y,suspend=n" />
+			<arg line="${tck.params}" />
+			<classpath refid="project.class.path" />
+			<classpath>
+				<pathelement location="${slee.tests.classes}" />
+				<pathelement location="${slee.tck.home}/jars/sleetck.jar" />
+				<pathelement location="${slee.tck.home}/lib/javatest.jar" />
+				<pathelement location="${slee.tck.home}/lib/xerces.jar" />
+				<pathelement location="${slee.tck.home}/lib/sigtest.jar" />
+				<pathelement location="${ant.home}/lib/ant.jar" />
+				<pathelement location="${ant.home}/lib/ant-launcher.jar" />
+				<pathelement path="${slee.tests.aux.libs}" />
+			</classpath>
+		</java>
+		<echo>SLEE TCK report available at ${slee.tck.reports.path}/report.html</echo>
+		<ant target="clean-junit-2-xml" />
+	</target>
+
+
+	<target name="cc-dailytckrun" depends="clean,make" description="Used for daily tck runs executed by Cruisecontrol. You won't need using this target and besides you won't be able to since you're lacking the jboss launch script.">
+
+		<!-- The following script will run jboss-->
+		<exec dir="${jboss.home}" spawn="true" os="SunOS Linux" executable="${jboss.bin.dir}/cc-run.sh" />
+
+		<echo message="Running JBOSS." />
+
+		<!-- Wait for jboss to completely start -->
+		<sleep minutes="5" />
+
+		<!-- run the TCK -->
+		<echo message="Starting the TCK over test dir ${tests}" />
+
+		<exec executable="ant" os="SunOS Linux">
+			<arg value="all-tests" />
+			<arg value="-Dtests=tests" />
+		</exec>
+
+		<echo message="TCK testing done, preparing to shutdown JBOSS" />
+
+		<!-- Kill JBoss -->
+		<exec dir="${jboss.home}" spawn="false" os="SunOS Linux" executable="${jboss.bin.dir}/shutdown.sh">
+			<arg value="--shutdown" />
+		</exec>
+
+	</target>
+
+	<target name="runPMD" description="Runs PMD Report">
+		<ant antfile="runPMD.xml" target="pmd" inheritAll="true" inheritRefs="true" />
+	</target>
+
+	<target name="runPMDOnPackage" description="Runs PMD Report for a package.">
+		<ant antfile="runPMD.xml" target="pmdForPackage" inheritAll="true" inheritRefs="true" />
+	</target>
+
+
+
+	<!-- Mobicents JSLEE Ant Tasks -->
+	<target name="build-ant-tasks">
+		<subant target="build-tasks">
+			<fileset dir="./tools/ant-tasks" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!-- Mobicents CLI -->
+	<target name="build-mobicents-cli" depends="build-ant-tasks">
+		<subant target="mobicents-cli.jar">
+			<fileset dir="./tools/mobicents-cli" includes="build.xml" />
+		</subant>
+	</target>
+	<target name="deploy-connection-proxy" description="Builds ${ejb}.jar with ejb proxying SleeConnection, allowing it to be accessed from outside this container. And deploys it into ${jboss.deploy}">
+
+
+		<jar jarfile="${jboss.deploy}/${ejb}.ejb3">
+			<fileset dir="${mobicents.home.standard}/classes">
+				<include name="org/mobicents/slee/connector/proxy/**.class" />
+			</fileset>
+			<fileset dir="${mobicents.home.standard}/${src}">
+				<include name="**/ejbconnection-proxy.properties" />
+			</fileset>
+		</jar>
+
+	</target>
+	<target name="undeploy-connection-proxy" description="Removes ${ejb}.jar from ${jboss.deploy}.">
+		<delete file="${jboss.deploy}/${ejb}.ejb3" failonerror="false" />
+	</target>
+
+
+
+
+
+	<target name="run-junit-2-xml" depends="compile, junit-init">
+
+		<!-- Prepare the slee-bean-shell-util-test-du.jar for org.mobicents.slee.container.management.jmx.test.ZSleeBeanShellUtilTest to be successful-->
+		<ant target="build-test-sleebeanshellutil-du" />
+
+		<junit showoutput="true" printsummary="true" haltonerror="false" haltonfailure="false">
+			<formatter type="xml" usefile="true" />
+			<classpath refid="project.class.path" />
+
+			<!-- This could be done with batchtest element, however we need one file that can be parsed,-->
+			<!-- this is why this class performs tests lookup -rather than simply pass fileset, like this -->
+			<!--<batchtest fork="yes" todir="./">-->
+			<!--	<fileset dir="${src}" >-->
+			<!--		<include name="org/mobicents//**/Z*Test.java" />-->
+			<!--	</fileset>-->
+			<!--</batchtest>-->
+			<test name="${agregatingClass.name}" />
+			<sysproperty key="MOBICENTS_HOME" value="." />
+		</junit>
+
+		<!-- NOW WE HAVE TO MOVE IT -->
+		<move file="${junit.result}" tofile="${junit.test.result}" />
+
+	</target>
+
+	<target name="clean-junit-2-xml">
+		<delete failonerror="false" file="${junit.test.result}" />
+	</target>
+
+</project>
