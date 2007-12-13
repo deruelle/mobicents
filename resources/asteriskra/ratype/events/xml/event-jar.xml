@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE event-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Event 1.0//EN" "http://java.sun.com/dtd/slee-event-jar_1_0.dtd">
+
+<event-jar>
+
+	<!-- Manager Events -->
+
+  <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AgentCallbackLoginEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AgentCallbackLoginEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AgentCallbackLogoffEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AgentCallbackLogoffEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AgentCalledEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AgentCalledEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AgentLoginEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AgentLoginEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AgentLogoffEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AgentLogoffEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AlarmClearEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AlarmClearEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.AlarmEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.AlarmEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.CdrEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.CdrEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.ChannelEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ChannelEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.HangupEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.HangupEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.NewChannelEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.NewChannelEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.NewStateEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.NewStateEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.ConnectEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ConnectEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.DialEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.DialEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.DisconnectEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.DisconnectEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.ExtensionStatusEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ExtensionStatusEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.HoldedCallEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.HoldedCallEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.LinkageEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.LinkageEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.LinkEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.LinkEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.UnlinkEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.UnlinkEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.MeetMeEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.MeetMeEvent</event-class-name>
+    </event-definition>
+    
+        <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.MeetMeJoinEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.MeetMeJoinEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.MeetMeLeaveEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.MeetMeLeaveEvent</event-class-name>
+    </event-definition>
+    
+        <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.MessageWaitingEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.MessageWaitingEvent</event-class-name>
+    </event-definition>
+    
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.NewCallerIdEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.NewCallerIdEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.NewExtenEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.NewExtenEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.PeerStatusEvent</event-type-name>
+        <event-type-vendor>net.sf.asterisk</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.PeerStatusEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <event-type-name>net.sf.asterisk.manager.event.QueueEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.QueueEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.JoinEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.JoinEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.LeaveEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.LeaveEvent</event-class-name>
+    </event-definition>
+    
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.RegistryEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.RegistryEvent</event-class-name>
+    </event-definition>
+    
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ReloadEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ReloadEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.RenameEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.RenameEvent</event-class-name>
+    </event-definition>
+    
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ResponseEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ResponseEvent</event-class-name>
+    </event-definition>
+   
+   	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.OriginateEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.OriginateEvent</event-class-name>
+    </event-definition>
+   
+   	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.OriginateFailureEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.OriginateFailureEvent</event-class-name>
+    </event-definition>
+   
+   	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.OriginateSuccessEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.OriginateSuccessEvent</event-class-name>
+    </event-definition>
+   
+   	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ParkedCallEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ParkedCallEvent</event-class-name>
+    </event-definition>
+   
+   	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ParkedCallsCompleteEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ParkedCallsCompleteEvent</event-class-name>
+    </event-definition>
+   
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.QueueEntryEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.QueueEntryEvent</event-class-name>
+    </event-definition>
+    
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.QueueMemberEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.QueueMemberEvent</event-class-name>
+    </event-definition>
+    
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.QueueMemberStatusEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.QueueMemberStatusEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.QueueParamsEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.QueueParamsEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.StatusCompleteEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.StatusCompleteEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.StatusEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.StatusEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ZapShowChannelsCompleteEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ZapShowChannelsCompleteEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ZapShowChannelsEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ZapShowChannelsEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.ShutdownEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.ShutdownEvent</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.event.UserEvent</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.event.UserEvent</event-class-name>
+    </event-definition>
+
+	<!-- Manager Responses -->
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.ManagerResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.ManagerResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.ChallengeResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.ChallengeResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.CommandResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.CommandResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.ExtensionStateResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.ExtensionStateResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.MailboxCountResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.MailboxCountResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.MailboxStatusResponse</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.MailboxStatusResponse</event-class-name>
+    </event-definition>
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.response.ManagerError</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.response.ManagerError</event-class-name>
+    </event-definition>
+
+    <!-- Timeouts -->
+
+	<event-definition>
+	    <event-type-name>net.sf.asterisk.manager.TimeoutException</event-type-name>
+    	<event-type-vendor>net.sf.asterisk</event-type-vendor>
+    	<event-type-version>1.0</event-type-version>
+        <event-class-name>net.sf.asterisk.manager.TimeoutException</event-class-name>
+    </event-definition>
+
+    
+</event-jar>
+
+
