@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" sourcepath="lib/jain_slee-1_0-fr-api.zip" kind="lib" path="lib/slee.jar"/>
+	<classpathentry kind="src" path="ra"/>
+	<classpathentry kind="src" path="ratype"/>
+	<classpathentry excluding="ra/|ratype/" kind="src" path=""/>
+	<classpathentry kind="lib" path="lib/jain_slee-1_0-fr-api.zip"/>
+	<classpathentry kind="lib" path="lib/Diameter.jar"/>
+	<classpathentry kind="lib" path="lib/sleeRA.zip"/>
+	<classpathentry kind="lib" path="lib/slee-tasks.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
