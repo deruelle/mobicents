@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Mobicents_Ant_Common_Properties__Paths_and_Targets">
+
+	<property name="mobicents.home" value="${ant.file.Mobicents_Ant_Common_Properties__Paths_and_Targets}/../../.." />
+
+	<!-- RA RELATED -->
+
+	<property name="mobicents.ra" value="${mobicents.home}/ra" />
+
+	<!-- ASTERISK RA RELATED -->
+
+	<property name="mobicents.ra.asteriskra" value="${mobicents.ra}/asteriskra" />
+	<path id="mobicents.ra.asteriskra.classpath">
+		<pathelement location="${mobicents.ra.asteriskra}/ratype/jars/asterisk-ratype.jar" />
+		<pathelement location="${mobicents.ra.asteriskra}/ra/jars/asterisk-ra.jar" />
+		<pathelement location="${mobicents.ra.asteriskra}/lib/asterisk-java.jar" />
+	</path>
+
+	<!-- DIAMETER RA RELATED -->
+
+	<property name="mobicents.ra.diameterra" value="${mobicents.ra}/diameterra" />
+	<path id="mobicents.ra.diameterra.classpath">
+		<pathelement location="${mobicents.ra.diameterra}/ratype/events/jars/diameter-event.jar" />
+		<pathelement location="${mobicents.ra.diameterra}/ratype/jars/diameter-ratype.jar" />
+		<pathelement location="${mobicents.ra.diameterra}/ra/jars/diameter-ra.jar" />
+		<pathelement location="${mobicents.ra.diameterra}/lib/Diameter.jar" />
+	</path>
+
+	<!-- DUMMY RA RELATED -->
+
+	<property name="mobicents.ra.dummyra" value="${mobicents.ra}/dummyra" />
+	<path id="mobicents.ra.dummyra.classpath">
+		<pathelement location="${mobicents.ra.dummyra}/ratype/jars/dummy-ratype.jar" />
+		<pathelement location="${mobicents.ra.dummyra}/ra/jars/dummy-ra.jar" />
+		<pathelement location="${mobicents.ra.dummyra}/lib/sleetck-minimal.jar" />
+	</path>
+
+	<!-- HTTP SERVLET RA RELATED -->
+
+	<property name="mobicents.ra.httpservletra" value="${mobicents.ra}/http-servlet-ra" />
+	<path id="mobicents.ra.httpservletra.classpath">
+		<pathelement location="${mobicents.ra.httpservletra}/ratype/events/jars/httpservlet-event.jar" />
+		<pathelement location="${mobicents.ra.httpservletra}/ratype/jars/httpservlet-ratype.jar" />
+		<pathelement location="${mobicents.ra.httpservletra}/ra/jars/httpservlet-ra.jar" />
+		<pathelement location="${mobicents.ra.httpservletra}/lib/servlet-api.jar" />
+	</path>
+
+
+	<!-- HTTP CLIENT RA RELATED -->
+
+	<property name="mobicents.ra.httpclientra" value="${mobicents.ra}/http-client-ra" />
+	<path id="mobicents.ra.httpclientra.classpath">
+		<pathelement location="${mobicents.ra.httpclientra}/ratype/events/jars/httpclient-event.jar" />
+		<pathelement location="${mobicents.ra.httpclientra}/ratype/jars/httpclient-ratype.jar" />
+		<pathelement location="${mobicents.ra.httpclientra}/ra/jars/httpclient-ra.jar" />
+		<pathelement location="${mobicents.ra.httpclientra}/lib/commons-codec-1.3.jar" />
+		<pathelement location="${mobicents.ra.httpclientra}/lib/commons-httpclient-3.0.1.jar" />
+	</path>
+
+	<!-- LAB RA RELATED -->
+
+	<property name="mobicents.ra.labra" value="${mobicents.ra}/labra" />
+	<path id="mobicents.ra.labra.classpath">
+		<pathelement location="${mobicents.ra.labra}/ratype/events/jars/labra-event.jar" />
+		<pathelement location="${mobicents.ra.labra}/ratype/jars/labra-ratype.jar" />
+		<pathelement location="${mobicents.ra.labra}/ra/jars/labra-ra.jar" />
+	</path>
+
+	<!-- RULES RA RELATED -->
+
+	<property name="mobicents.ra.rulesra" value="${mobicents.ra}/rulesra" />
+	<path id="mobicents.ra.rulesra.classpath">
+		<pathelement location="${mobicents.ra.rulesra}/ratype/events/jars/rules-event.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/ratype/jars/rules-ratype.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/ra/jars/rules-ra.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/antlr-2.7.6.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/antlr-3.0ea8.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/commons-jci-core-1.0-406301.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/commons-jci-eclipse-3.2.0.666.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/core-3.2.0.666.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/drools-compiler-3.0.6.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/drools-core-3.0.6.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/drools-decisiontables-3.0.6.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/jxl-2.4.2.jar" />
+		<pathelement location="${mobicents.ra.rulesra}/lib/stringtemplate-2.3b6.jar" />
+	</path>
+
+
+	<!-- MEDIA RA RELATED -->
+
+	<property name="mobicents.ra.mediara" value="${mobicents.ra}/media-ra" />
+	<path id="mobicents.ra.mediara.classpath">
+		<pathelement location="${mobicents.ra.mediara}/ra/jars/media-ra.jar" />
+		<pathelement location="${mobicents.ra.mediara}/ratype/jars/media-ratype.jar" />
+		<pathelement location="${mobicents.ra.mediara}/ratype/events/jars/media-event.jar" />
+		<pathelement location="${mobicents.ra.mediara}/lib/jmf.jar" />
+		<pathelement location="${mobicents.ra.mediara}/lib/nist-sdp-1.0.jar" />
+		<pathelement location="${mobicents.ra.mediara}/lib/media-rtp.jar" />
+	</path>
+
+	<!-- SIP RA RELATED -->
+
+	<property name="mobicents.ra.sipra" value="${mobicents.home}/../sipra" />
+	<path id="mobicents.ra.sipra.classpath">
+		<pathelement location="${mobicents.ra.sipra}/ra/jars/sip-ra.jar" />
+		<pathelement location="${mobicents.ra.sipra}/ratype/jars/sip-ratype.jar" />
+		<pathelement location="${mobicents.ra.sipra}/ratype/events/jars/sip-event.jar" />
+		<fileset dir="${mobicents.ra.sipra}/lib">
+			<include name="JainSipApi1.2.jar" />
+			<include name="JainSipRi1.2.jar" />
+		</fileset>
+	</path>
+
+	<!-- SMPP RA RELATED -->
+
+	<property name="mobicents.ra.smppra" value="${mobicents.ra}/smppra" />
+	<path id="mobicents.ra.smppra.classpath">
+		<pathelement location="${mobicents.ra.smppra}/ra/jars/smpp-ra.jar" />
+		<pathelement location="${mobicents.ra.smppra}/ratype/jars/smpp-ratype.jar" />
+		<pathelement location="${mobicents.ra.smppra}/ratype/events/jars/smpp-event.jar" />
+		<fileset dir="${mobicents.ra.smppra}/lib">
+			<include name="smppapi.jar" />
+		</fileset>
+	</path>
+
+	<!-- XCAP CLIENT RA RELATED -->
+
+	<property name="mobicents.ra.xcapclientra" value="${mobicents.ra}/xcapclientra" />
+	<path id="mobicents.ra.xcapclientra.classpath">
+		<pathelement location="${mobicents.ra.xcapclientra}/ratype/jars/xcapclient-ratype.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/ra/jars/xcapclient-ra.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/ratype/events/jars/xcapclient-event.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/activation.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/commons-codec-1.3.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/commons-httpclient-3.0.1.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/jaxb-api.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/jaxb-impl.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/jsr173_1.0_api.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/openxdm-xcap-client.jar" />
+		<pathelement location="${mobicents.ra.xcapclientra}/lib/openxdm-xcap-commons.jar" />
+	</path>
+
+	<!-- XMPP RA RELATED -->
+
+	<property name="mobicents.ra.xmppra" value="${mobicents.ra}/xmppra" />
+	<path id="mobicents.ra.xmppra.classpath">
+		<pathelement location="${mobicents.ra.xmppra}/ratype/jars/xmpp-ratype.jar" />
+		<pathelement location="${mobicents.ra.xmppra}/ra/jars/xmpp-ra.jar" />
+		<pathelement location="${mobicents.ra.xmppra}/lib/smack.jar" />
+		<pathelement location="${mobicents.ra.xmppra}/lib/smackx.jar" />
+		<pathelement location="${mobicents.ra.xmppra}/lib/smackx-jingle.jar" />
+	</path>
+
+	<!-- TTS RA RELATED -->
+
+	<property name="mobicents.ra.ttsra" value="${mobicents.ra}/ttsra" />
+	<path id="mobicents.ra.ttsra.classpath">
+		<pathelement location="${mobicents.ra.ttsra}/ratype/jars/tts-ratype.jar" />
+		<pathelement location="${mobicents.ra.ttsra}/ra/jars/tts-ra.jar" />
+		<fileset dir="${mobicents.ra.ttsra}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+
+	<!-- PERSISTENCE RA RELATED -->
+
+	<property name="mobicents.ra.persistencera" value="${mobicents.ra}/persistencera" />
+	<path id="mobicents.ra.persistencera.classpath">
+		<pathelement location="${mobicents.ra.persistencera}/ra/jars/persistence-ra.jar" />
+		<pathelement location="${mobicents.ra.persistencera}/ratype/jars/persistence-ratype.jar" />
+		<pathelement location="${mobicents.ra.persistencera}/ratype/events/jars/persistence-event.jar" />
+		<fileset dir="${mobicents.ra.persistencera}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- SYSTEM RELATED -->
+	<property environment="system" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+	<property name="node" value="all" />
+	<property name="jboss.deploy" value="${jboss.home}/server/${node}/deploy" />
+	<property name="mobicents.deploy" value="${jboss.home}/server/${node}/deploy-mobicents" />
+
+	<!-- CORE RELATED -->
+
+	<path id="mobicents.core.classpath">
+		<pathelement location="${mobicents.home}/lib/slee_1_1.jar" />
+		<pathelement location="${jboss.home}/client/log4j.jar" />
+		<pathelement location="${mobicents.home}/lib/dom4j.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-jmx.jar" />
+		<pathelement location="${jboss.home}/client/jboss-j2ee.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-common.jar" />
+		<pathelement location="${jboss.home}/client/concurrent.jar" />
+		<pathelement location="${mobicents.home}/classes" />
+	</path>
+
+	<path id="deployer.class.path">
+		<pathelement location="${project.home}/jars" />
+		<pathelement location="${mobicents.home}/lib/slee_1_1.jar" />
+		<pathelement location="${jboss.home}/client/client.jar" />
+		<pathelement location="${jboss.home}/client/jbossall-client.jar" />
+		<pathelement location="${jboss.home}/client/getopt.jar" />
+		<pathelement location="${jboss.home}/lib/log4j.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-common.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-jmx.jar" />
+		<pathelement location="${jboss.home}/lib/xml-apis.jar" />
+		<pathelement location="${jboss.home}/lib/xercesImpl.jar" />
+		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar" />
+	</path>
+
+	<!-- Server Connectivity Properties -->
+	<property name="jnpHost" value="127.0.0.1" />
+	<property name="jnpPort" value="1099" />
+
+	<property name="classes.tasks" value="classes" />
+	<property name="tools" value="${mobicents.home}/tools" />
+	<property name="slee-ant-tasks" value="${tools}/ant-tasks/jars/slee-ant-tasks.jar" />
+
+	<condition property="file_url" value="file:/">
+		<os family="windows" />
+	</condition>
+	<!-- Property already set on windows platform -->
+	<property name="file_url" value="file://" />
+
+	<pathconvert targetos="unix" property="jboss.home.standard">
+		<path description="To use te same stile for every url file" path="${jboss.home}" />
+	</pathconvert>
+	<pathconvert targetos="unix" property="mobicents.home.standard">
+		<path description="To use te same stile for every url file" path="${mobicents.home}" />
+	</pathconvert>
+
+	<!-- CLASSPATH -->
+
+	<path id="cli.class.path">
+		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar" />
+		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar/slee_1_1.jar" />
+	</path>
+
+	<target name="init-common">
+		<echo>WARNING!!! Mobicents TOOLS: ant tasks and cli must be compiled prior this target invocation</echo>
+		<taskdef name="sbbjar" classname="org.mobicents.ant.SbbJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="eventjar" classname="org.mobicents.ant.EventJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="profilespecjar" classname="org.mobicents.ant.ProfileSpecJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="deployablejar" classname="org.mobicents.ant.DeployableJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="resourceadaptortypejar" classname="org.mobicents.ant.ResourceAdaptorTypeJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="resourceadaptorjar" classname="org.mobicents.ant.ResourceAdaptorJar" classpath="${slee-ant-tasks}" />
+		<taskdef name="sbbconfigurator" classname="org.mobicents.ant.sbbconfigurator.Task" classpath="${slee-ant-tasks}" />
+
+		<taskdef name="slee-management" classname="org.mobicents.ant.MobicentsManagementAntTask">
+			<classpath>
+				<pathelement path="${tools}/mobicents-cli/jars/mobicents-cli.jar" />
+			</classpath>
+		</taskdef>
+	</target>
+</project>
