@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/slee.jar" sourcepath="lib/jain_slee-1_0-fr-api.zip"/>
+	<classpathentry kind="lib" path="jars/Sbb1-sbb.jar"/>
+	<classpathentry kind="lib" path="jars/Sbb2-sbb.jar"/>
+	<classpathentry kind="lib" path="jars/Sbb3-sbb.jar"/>
+	<classpathentry kind="lib" path="lib/slee_1_1.jar"/>
+	<classpathentry kind="lib" path="lib/sleetck-ra-common.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
