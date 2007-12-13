@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.0
+Created-By: 1.6.0-b105 (Sun Microsystems Inc.)
+Class-Path: ./library/ant-antlr-1.6.5.jar ./library/antlr-2.7.6rc1-2005-12-07.jar ./library/asm-attrs.jar ./library/asm.jar ./library/cglib-2.1.3.jar ./library/commons-collections-2.1.1.jar ./library/commons-logging-1.0.4.jar ./library/concurrent.jar ./library/dom4j-1.6.1.jar ./library/ejb3-persistence.jar ./library/hibernate-annotations.jar ./library/hibernate-entitymanager.jar ./library/hibernate-tools.jar ./library/hibernate3.jar ./library/javassist.jar ./library/jboss-archive-browsing-2005-07-07.jar ./library/jboss-common-2005-02-24.jar ./library/jta.jar ./library/lucene-core-2.0.0.jar ./library/mysql-connector-java-3.1.8-bin-2005-04-14.jar

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Persistence_RA_Project" default="build-and-deploy-ra">
+
+	<!-- SOME NEEDED PROPS -->
+	<property name="ra.name" value="persistence" />
+	<property name="ra.entity" value="PersistenceRA" />
+	<property name="ra.id" value="PersistenceResourceAdaptor#org.mobicents#0.1" />
+
+	<!-- IMPORT COMMON STUFF -->
+	<property name="mobicents.home" value="../.." />
+	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.${ra.name}ra.classpath" />
+	</path>
+
+
+
+	<fileset id="ra.libs.ra" dir="${ant.file.Persistence_RA_Project}/../lib">
+		<exclude name="mobicents_lib.jar" />
+		<!--exclude name="javassist.jar" /-->
+		<!-- IT CONFLICTS WITH javassist.jar from mc -->
+		<include name="*.jar" />
+		<include name="*.par" />
+	</fileset>
+
+
+
+
+
+</project>
