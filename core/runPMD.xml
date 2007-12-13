@@ -1,0 +1,53 @@
+<project name="nist-mini-slee-pmd" default="pmd" basedir=".">
+
+
+<path id="pmd.class.path">
+        <pathelement location="."/>
+	    <fileset dir="./lib/pmd">
+	        <include name="*.jar"/>
+    </fileset>
+ </path>
+
+
+<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.class.path"/>
+
+<target name="pmd">
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.class.path"/>
+    <mkdir dir="./pmd_reports"/>
+    <pmd failuresPropertyName="true" shortFilenames="true">
+    	    <ruleset>rulesets/imports.xml</ruleset>
+    	    <ruleset>rulesets/basic.xml</ruleset>
+    	    <ruleset>rulesets/clone.xml</ruleset>
+    	    <ruleset>rulesets/coupling.xml</ruleset>
+    	    <ruleset>rulesets/design.xml</ruleset>
+    	    <ruleset>rulesets/finalizers.xml</ruleset>
+    	    <ruleset>rulesets/strings.xml</ruleset>
+    	    <ruleset>rulesets/unusedcode.xml</ruleset>
+	    <formatter type="html" toFile="./pmd_reports/pmd_report.html"/>
+	<fileset dir="${src}">
+            <include name="**/*.java"/>
+        </fileset>
+    </pmd>
+</target>
+<target name="pmdForPackage">
+    <fail unless="thePackageName" message="You need to specify the package on which you want to run PMD."/>
+    <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.class.path"/>
+    <mkdir dir="./pmd_reports"/>
+    <pmd failuresPropertyName="true" shortFilenames="true">
+        	    <ruleset>rulesets/imports.xml</ruleset>
+        	    <ruleset>rulesets/basic.xml</ruleset>
+        	    <ruleset>rulesets/clone.xml</ruleset>
+        	    <ruleset>rulesets/coupling.xml</ruleset>
+        	    <ruleset>rulesets/design.xml</ruleset>
+        	    <ruleset>rulesets/finalizers.xml</ruleset>
+        	    <ruleset>rulesets/strings.xml</ruleset>
+        	    <ruleset>rulesets/unusedcode.xml</ruleset>
+
+	    <formatter type="html" toFile="./pmd_reports/pmd_report.html"/>
+	<fileset dir="${src}">
+		<include name="${thePackageName}/**/*.java"/>
+        </fileset>
+    </pmd>
+</target>
+
+</project>
