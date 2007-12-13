@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE event-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Event 1.0//EN"
+"http://java.sun.com/dtd/slee-event-jar_1_0.dtd">
+<event-jar>
+    <event-definition>
+        <description>
+            This event is fired when the end of the media stream is reached.
+        </description>
+        <event-type-name>org.mobicents.slee.media.EndMediaStream</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.events.EndMediaStreamEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when DTMF is received.
+        </description>
+        <event-type-name>org.mobicents.slee.media.DTMF</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.events.DtmfEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired to know whether the creation of a Transmitter,
+            Receiver or Transmitter-Receiver was a success or not.
+        </description>
+        <event-type-name>org.mobicents.slee.media.SessionResult</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.events.SessionResultEvent</event-class-name>
+    </event-definition>
+    
+    <!-- CONNECTION EVENTS -->
+    <event-definition>
+        <description>
+            This event is fired when connection state shifts to CONNECTING.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTING</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.ConnectionEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when connection state shifts to CONNECTED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.ConnectionEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when connection state shifts to DISCONNECTED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_DISCONNECTED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.ConnectionEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when connection state shifts to FAILED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_FAILED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.ConnectionEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when DTMF received.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_DTMF</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.ConnectionEvent</event-class-name>
+    </event-definition>
+    
+    <!-- CONTEXT related events -->
+    <event-definition>
+        <description>
+            This event is fired connection is explicitly added to context.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_ATTACHED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired connection is explicitly subracted from context.
+        </description>
+        <event-type-name>org.mobicents.slee.media.CONNECTION_DETACHED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when adding or subtracting is failed.
+        </description>
+        <event-type-name>org.mobicents.slee.media.ACTION_FAILED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    
+    <!-- player's events -->
+    <event-definition>
+        <description>
+            This event is fired when player is STARTED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.PLAYER_STARTED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when player is STOPPED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.PLAYER_STOPPED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when player is FAILED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.PLAYER_FAILED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+
+    <!-- recorder's events -->
+    <event-definition>
+        <description>
+            This event is fired when recorder is STARTED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.RECORDER_STARTED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when recorder is STOPPED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.RECORDER_STOPPED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    <event-definition>
+        <description>
+            This event is fired when recorder is FAILED.
+        </description>
+        <event-type-name>org.mobicents.slee.media.RECORDER_FAILED</event-type-name>
+        <event-type-vendor>org.mobicents.media</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.resource.media.ratype.MediaContextEvent</event-class-name>
+    </event-definition>
+    
+    
+</event-jar>
