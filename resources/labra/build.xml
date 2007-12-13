@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="LabResourceAdaptor" default="build-and-deploy-ra">
+
+	<property name="mobicents.home" value="../.." />	
+	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<property name="ra.name" value="labra" />
+	<property name="ra.entity" value="LabRA" />
+	<property name="ra.id" value="${ant.project.name}#org.mobicents#1.0" />	
+	
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.labra.classpath" />
+	</path>
+
+	<target name="test-gui"  description="Builds the web application archive">
+		<java classpathref="ra.classpath" fork="true" classname="org.mobicents.slee.resource.lab.test.client.RAFSwingClient">
+		</java>
+	</target>	
+</project>
+
