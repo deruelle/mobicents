@@ -1,0 +1,317 @@
+<html>
+<body>
+<h1>Mobicents Deployment Architecture</h1>
+Author: Jean-Noel GADREAU (<a href="mailto:jngadreau@dev.java.net">jngadreau@dev.java.net</a>)
+
+<h2>The JBoss deployment architecture</h2>
+
+<p>JBoss uses the org.jboss.deployment.MainDeployer to deploy the various elements
+(EAR, JAR, SAR, ...). For each kind of deployed target, a specific deployer is defined.
+This deployer is a subclass of org.jboss.deployment.SubDeployerSupport.
+</p>
+
+<p>The MainDeployer and SubDeployerSupport classes use the org.jboss.deployment.DeploymentInfo
+class to store information about the deployment. It contains information such as:
+<ul>
+  <li>various URLs (local, original, ...)</li>
+  <li>classloaders (a UnifiedClassLoader associated with the deployed target, other classloaders)</li>
+  <li>subdeployments</li>
+  <li>metadata (information about the deployment)</li>
+  <li>...</li>
+</ul>
+</p>
+
+TODO: may add more details here if needed
+
+
+<h2>The current mobicents deployment architecture</h2>
+
+<h3>DeployableMBeanImpl and DeploymentManager</h3>
+
+<p>Every mobicents deployment starts by the DeploymentMBeanImpl. It is called (using JMX) by
+the client to deploy a DeployableUnit (using the "install" method). This will cause a
+DeploymentManager to be created and used to deploy the DeployableUnit (DU). This will
+copy the DU file locally, and then use a DeployableUnitDeployer to perform the actual
+deployment.
+</p>
+
+<h3>DeployableUnitDeployer</h3>
+
+<p>The 'deploy' static method creates a DeployableUnitDeployer, initializes it, and then
+'deployUnitContent'.
+</p>
+
+<p>The 'deployUnitContent' is where the actual deployment starts. First, the
+"deployable-unit.xml" file is parsed. For each JAR file indicated in the deployement
+descriptor, an instance of AbstractComponentDeployer. The actual instance created
+depends on the type of component being deployed.
+</p>
+
+<p>The different types of AbstractComponentDeployer are:
+<ul>
+  <li>SbbComponentDeployer</li>
+  <li>ServiceDeployer</li>
+  <li>EventTypeComponentDeployer</li>
+  <li>ProfileSpecComponentDeployer</li>
+  <li>ResourceAdaptorTypeComponentDeployer</li>
+  <li>ResourceAdaptorComponentDeployer</li>
+</ul>  
+</p>
+
+<p>The deployment of the various elements is done in several steps. First, all the
+EventTypeComponentDeployer are called, and then the others are called. Finally,
+ServiceDeployers are created for all the &lt;service&gt; tags.
+</p>
+
+<p>Each sub-deployer is first initialized (initDeployer) and then deployAndInstall
+is called.
+</p>
+
+<h3>Sub-deployers (AbstractComponentDeployer subclasses)</h3>
+<p>The 'initDeployer' method is in charge of parsing the XML descriptor to create.
+The parsing is performed by a specific parser (XXXXDeploymentDescriptorParser) and
+will create a list of XXXXDescriptorImpl instances.
+</p>
+
+<p>The 'deployAndInstall' method is in charge to extract the JAR contents into
+the classpath. It then takes all the XXXXDescriptorImpl instances and casts them
+as DeployedComponent. Each is then checked (DeployedComponent.checkComponent())
+and then installed using the SleeContainer's install(DeploymentComponent) method.
+</p>
+
+<h3>SleeContainer deployment role</h3>
+
+<pre>
+TODO: explain this
+	- install(DeployedComponent) method
+	- all the DeployableUnit-related methods
+</pre>
+
+<h2>The proposed architecture</h2>
+
+<h3>DeploymentMBeanImpl</h3>
+<p>This class is the implementation of the DeploymentMBean, which is accessed via
+JMX to install a new DeployableUnit (DU). It delegates all the DeployableUnit
+related methods to the DeployableUnitManager class.
+</p>
+
+<h3>DeployableUnitManager</h3>
+<p>The DeployableUnitManager handles everything that relates to DeployableUnits.
+It keeps tracks of all the DeployableUnits. It implements the following methods
+of the DeploymentMBean:
+<ul>
+  <li>DeployableUnitID install(String url)</li>
+  <li>void uninstall(DeployableUnitID deployableUnitID)</li>
+  <li>DeployableUnitID[] getDeployableUnits()</li>
+  <li>DeployableUnitDescriptor getDeployableUnitDescriptor(DeployableUnitID deployableUnitID)</li>
+</ul>
+It also provides the following API:
+<ul>
+  <li>boolean isInstalled(DeployableUnitID deployableUnitID)</li>
+  <li>TODO: Complete this part</li>
+</ul>
+
+</p>
+<p>Note: Part of this API was implemented by SleeContainer before. It is centralized
+in the DeployableUnitManager, which makes the SleeContainer simplier.
+</p>
+<p>To install the DU, the DeployableUnitManager uses the standard JBoss mechanism
+by calling the MainDeployer 'deploy' method.
+</p>
+<p>JNG: For the uninstall, need to define exactly how it is going to be implemented.
+Start with MainDeployer.undeploy
+</p>
+
+<h3>MainDeployer, DeployableUnitDeployer and other deployers</h3>
+<p>The MainDeployer is used as is. The only thing is that new SubDeployers are
+registered to handle all the SLEE deployment features. All those SubDeployers
+inherit from AbstractSleeDeployer.
+</p>
+<p>Those deployers are installed in JBoss via the jboss-service.xml file
+in the jboss-slee.sar. TODO: detail more here
+</p>
+<h4>AbstractSleeDeployer</h4>
+<p>This class (subclass of SubDeployerSupport) provides common features to
+all the deployers:
+<ul>
+  <li>Implementation of the 'void accept(DeploymentInfo di)' method that returns
+  true if and only if the target to deploy ends with ".jar" (either file or
+  directory) and contains the appropriate XML descriptor.
+  </li>
+</ul>
+</p>
+<h4>DeploymentInfo content for Mobicents</h4>
+<p>The org.jboss.deployment.DeploymentInfo is central to JBoss's deployment
+architecture as it holds all the information about a deployment. Here is a
+table rassembling information about each field of DeploymentInfo and how it
+is used in the particular case of Mobicents. When the field is used exactly
+the same way as in JBoss, the indication "Standard JBoss" is used.
+</p>
+
+<table border="1" width="100%">
+  <tr>
+    <td>Field Name</td>
+    <td>Description</td>
+  </tr>
+
+  <tr>
+    <td>url</td>  
+    <td>URL used for the deployment. This is basically the one provided
+    when deploying. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>localUrl</td>  
+    <td>URL of the local copy of the deployed target. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>watch</td>  
+    <td>This contains the URL that will be watched to know if the target
+    has changed and should be redeployed.
+    QUESTION: What is the behavior we want here ? I suppose that at best,
+    only the DeployableUnit.jar should be watched (when expanded directory,
+    watching the META-INF/deployable-unit.xml). However, this may not be
+    a good idea so your input is welcome. For other types of deployers,
+    I think it would be better not to allow redeployment (no watch)</td>
+  </tr>
+  <tr>
+    <td>shortName</td>  
+    <td>Short name of the file containing the deployed target.
+    (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>lastDeployed</td>  
+    <td>TODO: give a little explaination (self explainatory) (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>lastModified</td>  
+    <td>TODO: give a little explaination (self explainatory) (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>status</td>  
+    <td>String indicating the current status of the deployment. This
+    can contain some text description. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>state</td>  
+    <td>Field indicating the current state of the deployment. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>deployer</td>  
+    <td>Deployer that is associated with this deployment. Depending on the type
+    of the component deployed, this will vary. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>ucl</td>  
+    <td>UnifiedClassLoader. TODO: get a better understanding of the UCL for the
+    various components</td>
+  </tr>
+  <tr>
+    <td>localCl</td>  
+    <td>URLClassLoader that is used for metadata loading (the XML files).
+    It is (always ???) based on di.localUrl and is setup by the JBoss standard
+    mechanisms. This is the ClassLoader that needs to be used when parsing
+    the XML files to generate the XXXXDescriptorImpl instances.</td>
+  </tr>
+  <tr>
+    <td>classpath</td>  
+    <td>TODO: explain how it works and how it will be used</td>
+  </tr>
+  <tr>
+    <td>mbeans</td>  
+    <td>TODO: explain how it works and how it will be used</td>
+  </tr>
+  <tr>
+    <td>subdeployments</td>  
+    <td>This contains the subdeployments associated with this deployment.
+    This is only used by the DeployableUnitDeployer to contain the DeploymentInfo
+    for all the components in the DU.
+    <br/>
+    For all the other deployers, this will not contain anything as there are no
+    subdeployments.</td>
+  </tr>
+  <tr>
+    <td>parent</td>  
+    <td>DeploymentInfo of the parent deployment. This is null for the
+    DeployableUnitDeployer (because it is the root deployer). For the other
+    deployers, this is the DeploymentInfo associated with the
+    DeployableUnitDeployer.</td>
+  </tr>
+  <tr>
+    <td>webContext</td>  
+    <td>This is null (no Web context for any SLEE deployment)</td>
+  </tr>
+  <tr>
+    <td>manifest</td>
+    <td>TODO: will probably be needed in order to be able to reference JARs
+    as 'Class-Path:' in the Manifest (see 3.1.9, page 27)</td>
+  </tr>
+  <tr>
+    <td>document</td>
+    <td>DOM Document of the XML file of the deployment.
+    QUESTION: should it be the "official" XML file (standard) or the Mobicents one ?
+    (just like ejb-jar.xml and jboss.xml)</td>
+  </tr>
+  <tr>
+    <td>documentUrl</td>
+    <td>TODO: See how this is used</td>
+  </tr>
+  <tr>
+    <td>metaData</td>
+    <td>This is where JBoss stores all the metadata that was parsed from the XML
+    descriptors. The deployers will put here the XXXXDescriptorImpl instances
+    produced by the XXXXDeploymentDescriptorParser.
+    <p>TODO: see if should be directly the XXXXDescriptorImpl instances or if
+    it should be in a List (if there are several)</p>
+    </td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td>TODO: See how this is used</td>
+  </tr>
+  <tr>
+    <td>isXML</td>
+    <td>Indicates whether the deployed target is an XML file. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>isScript</td>
+    <td>Indicates whether the deployed target is a script (.bsh file).
+    (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>isDirectory</td>
+    <td>Indicates whether the deployed target is a directory. (Standard JBoss)</td>
+  </tr>
+  <tr>
+    <td>deployedObject</td>
+    <td>TODO: See how this is used</td>
+  </tr>
+  <tr>
+    <td>repositoryConfig</td>
+    <td>This is the configuration to define the classes repository used with
+    the UnifiedClassLoader.
+    TODO: See how this is used</td>
+  </tr>
+  <tr>
+    <td>server</td>
+    <td>MBeanServer used for JMX operations. (Standard JBoss)</td>
+  </tr>
+</table>
+
+<h3>Concrete Classes Generation</h3>
+<p>Concrete class generation is done using Javassist API. The implementation
+relies on a ClassPool instance to provide representations of classes (CtClass
+objects).
+</p>
+
+<p>In order for this generation code to work properly, it is important that
+the lifecycle of the ClassPool object is related to the lifecycle of a
+DeployableUnit. When the DU is uninstalled and reinstalled, a new ClassPool
+should be used in order to have the new version of the classes available.
+</p>
+<p>
+TODO: see where to store the ClassPool object (how about in the 'context' field
+of the DeploymentInfo ?)
+</p>
+
+</body>
+</html>
