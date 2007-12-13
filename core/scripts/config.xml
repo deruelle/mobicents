@@ -1,0 +1,41 @@
+<cruisecontrol>
+	<!-- - - - - - - - - -  - - - - - - - - - - - - - - - -  mobicents24 config - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<project name="mobicents-dailytckrun" buildafterfailed="false">
+		<!-- Bootstrappers are run every time the build runs, *before* the modification checks -->
+		<bootstrappers>
+          		<currentbuildstatusbootstrapper file="logs/mobicents24/buildstatus.txt"/>
+		</bootstrappers>
+                <!-- Defines where cruise looks for changes, to decide whether to run the build -->
+                <modificationset quietperiod="60">
+	                <cvs localworkingcopy="checkout/mobicents24" 
+			     cvsroot=":pserver:emcho@cvs.dev.java.net:/cvs"/>
+                </modificationset>
+
+		<!-- Configures the actual build loop, how often and which build file/target -->
+		<schedule interval="7200">
+			<!-- <ant buildfile="build-mobicents24.xml" target="build" uselogger="true" usedebug="false" time="0000" day="every day"/> -->
+			<ant antscript="/usr/java/apache-ant-1.6.1/bin/ant" buildfile="build-mobicents24.xml" target="build" uselogger="true" usedebug="false"/>
+		</schedule>
+		<!-- directory to write build logs to -->
+		<log dir="logs/mobicents24">
+			<merge file="checkout/mobicents24/jain-slee-1.0-tck/reports/report.html"/>
+		</log>
+		<!-- Publishers are run *after* a build completes -->
+		<publishers>
+			<artifactspublisher dir="checkout/mobicents24/jain-slee-1.0-tck/reports" dest="artifacts/mobicents24"/>
+			<currentbuildstatuspublisher file="logs/mobicents24/buildstatus.txt"/>
+			<htmlemail mailhost="localhost" returnaddress="cruisecontrol@proxenet.u-strasbg.fr"
+			    buildresultsurl="http://proxenet.u-strasbg.fr:8080/cruisecontrol/buildresults/mobicents24"
+			    skipusers="true"
+			    spamwhilebroken="true"
+			    css="/home/cruisecontrol/cruisecontrol/reporting/jsp/css/cruisecontrol.css"
+			    xsldir="/home/cruisecontrol/cruisecontrol/reporting/jsp/xsl.mc24"
+			    logdir="logs/mobicents24">
+			    
+			    <always address="mobicents@emcho.com"/>
+			    <always address="cruisecontrol@mobicents.dev.java.net"/>
+			</htmlemail>
+		</publishers>
+	</project>
+
+</cruisecontrol>
