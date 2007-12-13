@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="RulesResourceAdaptor" default="build-and-deploy-ra">
+
+	<property name="compile.as.debug" value="true" />
+
+	<property name="mobicents.home" value="../.." />
+	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<property name="ra.name" value="rules" />
+	<property name="ra.entity" value="RulesRA" />
+	<property name="ra.id" value="${ant.project.name}#org.mobicents#1.0" />
+
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.${ra.name}ra.classpath" />
+	</path>
+
+	<path id="management.classpath">
+		<path refid="ra.classpath" />
+		<fileset dir="${jboss.home}">
+			<include name="lib/jboss-system.jar" />
+			<include name="lib/jboss-jmx.jar" />
+			<include name="lib/jboss-common.jar" />
+			<include name="lib/concurrent.jar" />
+			<include name="client/jbossall-client.jar" />
+		</fileset>
+	</path>
+
+	<fileset id="ra.libs.ra" dir="lib">
+		<include name="*.jar" />
+	</fileset>
+
+
+	<property name="management.dir" value="management" />
+	<property name="management.sar" value="rulesra-management.sar" />
+	<property name="management.deploy.dir" value="${jboss.home}/server/all/deploy" />
+
+	<target name="clean-management">
+		<delete dir="${management.dir}/sar" />		
+	</target>
+
+	<target name="build-management" description="Builds the Management SAR for Rules RA">
+		<mkdir dir="${management.dir}/classes/META-INF" />
+		<javac debug="true" deprecation="true" destdir="${management.dir}/classes" srcdir="${management.dir}/src">
+			<classpath refid="management.classpath" />
+		</javac>
+		<copy todir="${management.dir}/classes">
+			<fileset dir="${management.dir}/src">
+				<exclude name="org/**" />
+			</fileset>
+		</copy>
+		<mkdir dir="${management.dir}/sar/" />
+		<jar destfile="${management.dir}/sar/${management.sar}">
+			<fileset dir="${management.dir}/classes" />
+		</jar>
+		<delete dir="${management.dir}/classes" />
+	</target>
+
+	<target name="deploy-management" depends="build-management">
+		<copy todir="${management.deploy.dir}" file="${management.dir}/sar/${management.sar}" />
+	</target>
+
+	<target name="undeploy-management">
+		<delete file="${management.deploy.dir}/${management.sar}" />
+	</target>
+
+	<target name="ra-deploy" depends="ra-install,ra-activate,deploy-management" />
+
+	<target name="ra-undeploy" depends="undeploy-management, ra-deactivate,ra-uninstall" />
+
+
+	<target name="package-for-release" depends="build-DUs,package-for-release-do-dir,package-for-release-makeprops-with-file,pacakge-for-release-generic-notmain,pacakge-for-release-generic-main,build-management">
+
+		<copy file="${management.dir}/sar/${management.sar}" todir="${stage.dir}" />
+
+
+	</target>
+
+</project>
+

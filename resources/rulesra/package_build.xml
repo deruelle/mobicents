@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="RulesResourceAdaptor" default="">
+
+	<import file="./generic_pbuild.xml"/>
+	
+	<target name="deploy-management" >
+		<copy todir="${deploy.dir}" file="rulesra-management.sar" />
+	</target>
+
+	<target name="undeploy-management" >
+		<delete file="${deploy.dir}/rulesra-management.sar" />
+	</target>
+
+	<target name="ra-deploy" depends="ra-install,ra-activate,deploy-management" />
+
+	<target name="ra-undeploy" depends="undeploy-management, ra-deactivate,ra-uninstall" />
+
+</project>
+
