@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4412Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.profile.ProfileUpdatedEvent.Test4412Test</executeClass>
+ <assertion id="4412"/>
+ <property name="DUPath" value="javax.slee.profile.ProfileUpdatedEvent.Test4412Service-du.jar"/>
+</test-description>

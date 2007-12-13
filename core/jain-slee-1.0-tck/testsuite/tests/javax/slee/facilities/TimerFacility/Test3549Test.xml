@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test3549Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.facilities.TimerFacility.Test3549Test</executeClass>
+ <assertion id="3549"/>
+ <assertion id="3536"/>
+ <property name="DUPath" value="javax.slee.facilities.TimerFacility.Test3549Service-du.jar"/>
+</test-description>

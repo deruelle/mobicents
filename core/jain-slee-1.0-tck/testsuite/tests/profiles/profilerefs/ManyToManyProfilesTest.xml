@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>ManyToManyProfilesTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.profiles.profilerefs.ManyToManyProfilesTest</executeClass>
+ <assertion id="914"/>
+ <assertion id="988"/>
+ <assertion id="1977"/>
+ <assume-assertion id="913"/>
+ <property name="profileSpecDUPath" value="profiles.ManyToManyProfileSpec-du.jar"/>
+
+</test-description>

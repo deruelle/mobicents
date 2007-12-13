@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>SbbExceptionThrownEvent</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.sbb.abstractclass.Fire1Event</executeClass>
+ <assertion id="457"/>
+ <assertion id="462"/>
+ <assertion id="463"/>
+ <property name="serviceDUPath" value="sbb.abstractclass.SbbExceptionThrownEvent-du.jar"/>
+ <property name="activityName" value="SbbExceptionThrownEvent"/>
+</test-description>
+

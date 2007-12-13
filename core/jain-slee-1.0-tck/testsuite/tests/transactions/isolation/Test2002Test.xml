@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>Test2002Test</title>
+ <description>Tests transaction isolation for CMP field access in concurrently executing transactions</description>
+
+ <executeClass>com.opencloud.sleetck.lib.testsuite.transactions.isolation.Test2002Test</executeClass>
+ <assertion id="2002"/>
+    <property name="serviceDUPath" value="transactions.Test2002Service-du.jar"/>
+    <property name="waitPeriodMs" value="3000"/>
+
+</test-description>

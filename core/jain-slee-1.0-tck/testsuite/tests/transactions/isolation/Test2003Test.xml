@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>Test2003Test</title>
+ <description>Tests transactional isolation of ActivityContextInterface fields</description>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.transactions.isolation.Test2003Test</executeClass>
+ <assertion id="2003"/>
+ <property name="service1DUPath" value="transactions.Test2003Service1-du.jar"/>
+ <property name="service2DUPath" value="transactions.Test2003Service2-du.jar"/>
+
+</test-description>

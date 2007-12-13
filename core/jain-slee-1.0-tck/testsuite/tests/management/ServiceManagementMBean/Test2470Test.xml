@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test2470Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.ServiceManagementMBean.Test2470Test</executeClass>
+ <assertion id="2470"/>
+ <assertion id="1616"/>
+ <assertion id="1617"/>
+ <assertion id="1618"/>
+ <property name="DUPath" value="management.ServiceManagementMBean.Test2470Service-du.jar"/>
+</test-description>

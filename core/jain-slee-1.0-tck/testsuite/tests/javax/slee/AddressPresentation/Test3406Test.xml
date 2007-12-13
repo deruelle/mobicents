@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test3406Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.AddressPresentation.Test3406Test</executeClass>
+ <assertion id="3405"/>
+ <assertion id="3406"/>
+ <assertion id="3407"/>
+ <assertion id="3409"/>
+ <assertion id="3410"/>
+ <assertion id="3411"/>
+ <assertion id="3412"/>
+ <assertion id="3413"/>
+ <assertion id="3414"/>
+ <assertion id="3415"/>
+ <assertion id="3416"/>
+ <assertion id="3417"/>
+ <assertion id="3418"/>
+ <assertion id="3419"/>
+ <assertion id="3420"/>
+ <assertion id="3422"/>
+</test-description>

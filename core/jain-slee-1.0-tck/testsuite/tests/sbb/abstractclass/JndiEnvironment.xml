@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>JndiEnvironment</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.sbb.abstractclass.Fire1Event</executeClass>
+ <assertion id="623"/>
+ <assertion id="624"/>
+ <assertion id="1409"/>
+ <assertion id="1410"/>
+ <assertion id="1411"/>
+ <assertion id="1413"/>
+ <assertion id="1414"/>
+ <assertion id="1415"/>
+ <property name="serviceDUPath" value="sbb.abstractclass.JndiEnvironment-du.jar"/>
+ <property name="activityName" value="JndiEnvironment"/>
+</test-description>
+

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test3629Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.facilities.Level.Test3629Test</executeClass>
+ <assertion id="3629"/>
+ <assertion id="3632"/>
+ <assertion id="3634"/>
+ <assertion id="3636"/>
+ <assertion id="3638"/>
+ <assertion id="3640"/>
+ <assertion id="3642"/>
+ <assertion id="3644"/>
+ <assertion id="3646"/>
+ <assertion id="3648"/>
+ <assertion id="3650"/>
+ <assertion id="3653"/>
+ <assertion id="3655"/>
+ <assertion id="3657"/>
+</test-description>

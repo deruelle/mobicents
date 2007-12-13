@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test3507Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.facilities.TimerEvent.Test3507Test</executeClass>
+ <assertion id="3507"/>
+ <assertion id="3509"/>
+ <assertion id="3511"/>
+ <assertion id="3513"/>
+ <assertion id="3517"/>
+ <assertion id="3522"/>
+ <assertion id="3524"/>
+ <property name="DUPath" value="javax.slee.facilities.TimerEvent.Test3507Service-du.jar"/>
+ <property name="TimerExpiryMargin" value="5000"/>
+</test-description>

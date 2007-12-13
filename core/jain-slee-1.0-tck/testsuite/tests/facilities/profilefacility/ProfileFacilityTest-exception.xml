@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>ProfileFacilityTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.facilities.profilefacility.ProfileFacilityTest</executeClass>
+ <assertion id="1389"/>
+ <assertion id="1390"/>
+ <assertion id="1391"/>
+ <assertion id="1392"/>
+ <assertion id="1393"/>
+ <assertion id="4452"/>
+ <assertion id="4453"/>
+ <assertion id="4454"/>
+ <property name="serviceDUPath" value="facilities.profilefacility.ProfileFacilityTestService-du.jar"/>
+ <property name="profileDUPath" value="facilities.profilefacility.ProfileFacilityTestProfile-du.jar"/>
+ <property name="testName" value="exception"/>
+ <keyword>ProfileFacility</keyword>
+
+</test-description>

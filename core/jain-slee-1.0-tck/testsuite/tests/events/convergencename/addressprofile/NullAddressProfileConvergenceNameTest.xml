@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+<test-description>
+    <title>NullAddressProfileConvergenceNameTest</title>
+    <executeClass>com.opencloud.sleetck.lib.testsuite.events.convergencename.addressprofile.NullAddressProfileConvergenceNameTest</executeClass>
+    <assertion id="1972"/>
+    <property name="serviceDUPath" value="events.convergencename.ConvergenceNameTest-AddressProfile-IES-Service-du.jar"/>
+    <!-- A comma separated list of convergence name variables selected by the SBB, from
+      the following list: ActivityContext,AddressProfile,Address,EventType,Event,CustomName -->
+    <property name="selectedVariables" value="ActivityContext,Address,AddressProfile"/>
+    <!-- The main assertion being tested - i.e. the assertion related to the convergence name attribute(s) being tested -->
+    <property name="mainAssertionID" value="1972"/>
+</test-description>

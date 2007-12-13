@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test2077Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.profiles.profileadded.Test2077Test</executeClass>
+ <assertion id="2077"/>
+ <assertion id="2078"/>
+ <property name="DUPath" value="profiles.profileadded.Test2077Service-du.jar"/>
+</test-description>

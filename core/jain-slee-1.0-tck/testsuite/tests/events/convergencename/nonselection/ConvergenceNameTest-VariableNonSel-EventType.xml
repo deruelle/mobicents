@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+    <title>ConvergenceNameTest-AddressProfile-IES</title>
+    <executeClass>com.opencloud.sleetck.lib.testsuite.events.convergencename.nonselection.VariableNonSelectionTest</executeClass>
+       <assertion id="2010"/>
+    <property name="serviceDUPath" value="events.convergencename.ConvergenceNameTest-AddressProfile-IES-Service-du.jar"/>
+    <!-- The convergence name variable to select -->
+    <property name="fixedIESVariable" value="EventType"/>
+    <!-- A comma separated list of non-selected convergence name variables to vary
+      from the following list: ActivityContext,AddressProfile,Address,EventType,Event,CustomName -->
+    <property name="selectedVariables" value="ActivityContext,AddressProfile,Address,Event"/>
+       <!-- The main assertion being tested - i.e. the assertion related to the convergence name attribute(s) being tested -->
+       <property name="mainAssertionID" value="2010"/>
+
+</test-description>

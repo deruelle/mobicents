@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+ <title>ProfileTableNamesTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.ProfileProvisioningMBean.ProfileTableNamesTest</executeClass>
+ <assertion id="2426"/>
+ <property name="profileDUPath" value="profiles.SimpleProfileSpec-du.jar"/>
+</test-description>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4055Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.TraceMBean.Test4055Test</executeClass>
+ <assertion id="4055"/>
+ <assertion id="4062"/>
+ <property name="DUPath" value="javax.slee.management.TraceMBean.Test4055Service-du.jar"/>
+</test-description>

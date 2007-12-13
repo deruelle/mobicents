@@ -1,0 +1,32 @@
+#JavaTest Configuration Interview
+#Thu Jun 09 21:33:11 EDT 2005
+sleetck.env.connections.componentUrlPrefix=file\://d\:/home/eclipse/workspace/mobicents/jain-slee-1.0-tck/jars/deployable-units
+sleetck.priorStatus.needStatus=No
+sleetck.env.user-options.restartBetweenTests=false
+TESTSUITE=D\:\\home\\eclipse\\workspace\\mobicents\\jain-slee-1.0-tck\\testsuite
+sleetck.env.user-options.sbbTraceLevel=Finest
+QUESTION=sleetck.epilog
+sleetck.env.connections.jmxAgentDomain=
+sleetck.env.description=JAIN SLEE TCK configuration
+sleetck.env.connections.jmxAgentHostIP=127.0.0.1
+sleetck.timeout.timeout=1.0
+CHECKSUM=7cdc7f3136efb90b
+sleetck.excludeList.needExcludeList=Yes
+sleetck.keywords.keywords.mode=expr
+sleetck.excludeList.latestAutoCheckInterval=7
+WORKDIR=D\:\\home\\eclipse\\workspace\\mobicents\\jain-slee-1.0-tck\\tckwork
+sleetck.concurrency.concurrency=1
+sleetck.excludeList.latestAutoCheck=No
+sleetck.env.connections.tckResourcePort=4099
+sleetck.env.connections.tckResourceHostIP=127.0.0.1
+sleetck.tests.tests=
+sleetck.keywords.needKeywords=No
+sleetck.env.user-options.debugLevel=FINEST  
+sleetck.excludeList.customFiles=jain-slee-tck-1_0.jtx
+sleetck.priorStatus.status=
+sleetck.env.envName=Untitled
+INTERVIEW=com.opencloud.sleetck.lib.interview.SleeTCKInterview
+sleetck.env.user-options.defaultTimeout=25000
+sleetck.env.connections.jmxAgentPort=4099
+sleetck.tests.needTests=No
+sleetck.excludeList.latestAutoCheckMode=everyXDays

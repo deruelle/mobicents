@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4460Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.ProfileProvisioningMBean.Test4460Test</executeClass>
+ <assertion id="4460"/>
+ <assertion id="4461"/>
+ <property name="DUPath" value="management.ProfileProvisioningMBean.Test4460Service-du.jar"/>
+</test-description>

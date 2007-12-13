@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test2365Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.usage.SbbUsageMBean.Test2365Test</executeClass>
+ <assertion id="2365"/>
+ <property name="serviceDUPath" value="usage.SbbUsageMBean.Test2365Service-du.jar"/>
+</test-description>

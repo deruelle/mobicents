@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>EventsDeliveredWhileStoppingTest</title>
+ <description>Tests that events are delivered on existing activities when the SLEE is in the Stopping state.
+ </description>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.sleestate.EventsDeliveredWhileStoppingTest</executeClass>
+ <assertion id="1982"/>
+ <assertion id="1886"/>
+ <property name="serviceDUPath" value="management.sleestate.EventsDeliveredWhileStoppingTestService-du.jar"/>
+
+</test-description>

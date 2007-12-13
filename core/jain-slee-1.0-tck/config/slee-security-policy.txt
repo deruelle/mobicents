@@ -1,0 +1,55 @@
+
+// Standard extensions get all permissions by default
+
+grant codeBase "file:${java.home}/lib/ext/*" {
+	permission java.security.AllPermission;
+};
+
+// Allow javac and jar full access; actual access is limited by
+// the caller's security context.
+grant codeBase "file:@JAVA_HOME@/lib/tools.jar" {
+	permission java.security.AllPermission;
+};
+
+grant codeBase "file:${jboss.home.dir}/bin/*" {
+	permission java.security.AllPermission;
+};
+
+grant codeBase "file:${jboss.home.dir}/server/all/lib/*" {
+	permission java.security.AllPermission;
+};
+
+grant codeBase "file:${jboss.home.dir}/lib/*" {
+	permission java.security.AllPermission;
+};
+
+grant codeBase "file:${jboss.home.dir}/server/all/deploy/-" {
+	permission java.security.AllPermission;
+};
+
+// Java "standard" properties that can be read by anyone
+grant {
+	permission java.util.PropertyPermission "*", "read";
+	permission java.util.PropertyPermission "java.version", "read";
+	permission java.util.PropertyPermission "java.vendor", "read";
+	permission java.util.PropertyPermission "java.vendor.url", "read";
+	permission java.util.PropertyPermission "java.class.version", "read";
+	permission java.util.PropertyPermission "os.name", "read";
+	permission java.util.PropertyPermission "os.version", "read";
+	permission java.util.PropertyPermission "os.arch", "read";
+	permission java.util.PropertyPermission "file.separator", "read";
+	permission java.util.PropertyPermission "path.separator", "read";
+	permission java.util.PropertyPermission "line.separator", "read";
+
+	permission java.util.PropertyPermission "java.specification.version", "read";
+	permission java.util.PropertyPermission "java.specification.vendor", "read";
+	permission java.util.PropertyPermission "java.specification.name", "read";
+
+	permission java.util.PropertyPermission "java.vm.specification.version", "read";
+	permission java.util.PropertyPermission "java.vm.specification.vendor", "read";
+	permission java.util.PropertyPermission "java.vm.specification.name", "read";
+	permission java.util.PropertyPermission "java.vm.version", "read";
+	permission java.util.PropertyPermission "java.vm.vendor", "read";
+	permission java.util.PropertyPermission "java.vm.name", "read";
+};
+

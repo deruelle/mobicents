@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>MaskOnAttachTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.events.maskonattach.Test</executeClass>
+ <assertion id="717"/>
+ <assertion id="3255"/>
+ <property name="serviceDUPath" value="events.maskonattach.MaskOnAttachService-du.jar"/>
+
+</test-description>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test2194Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.events.servicestarted.Test2194Test</executeClass>
+ <assertion id="2194"/>
+ <property name="DUPath" value="events.servicestarted.Test2194Service-du.jar"/>
+</test-description>

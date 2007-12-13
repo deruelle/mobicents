@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>Test1073Test</title>
+    <executeClass>com.opencloud.sleetck.lib.testsuite.profiles.profilespec.Test1073Test</executeClass>
+    <assertion id="1073"/>
+    <property name="profileSpecDUPath" value="profiles.Test1073ProfileSpec-du.jar"/>
+
+</test-description>

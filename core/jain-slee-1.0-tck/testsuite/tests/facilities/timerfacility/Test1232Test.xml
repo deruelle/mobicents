@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test1232Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.facilities.timerfacility.Test1232Test</executeClass>
+ <assertion id="1232"/>
+ <property name="DUPath" value="facilities.timerfacility.Test1232Service-du.jar"/>
+</test-description>

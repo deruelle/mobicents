@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test3220Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.Sbb.Test3220Test</executeClass>
+ <assertion id="3220"/>
+ <assertion id="3221"/>
+ <property name="DUPath" value="javax.slee.Sbb.Test3220Service-du.jar"/>
+</test-description>

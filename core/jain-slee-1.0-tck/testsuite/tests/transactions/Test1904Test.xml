@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test1904Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.transactions.Test1904Test</executeClass>
+ <assertion id="2019"/>
+ <property name="DUPath" value="transactions.Test1904Service-du.jar"/>
+</test-description>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test1600Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.ManagementMBean.Test1600Test</executeClass>
+ <assertion id="1600"/>
+ <property name="eventDUPath" value="management.ManagementMBean.Test1600EventService-du.jar"/>
+ <property name="sbbDUPath" value="management.ManagementMBean.Test1600SbbService-du.jar"/>
+
+ 
+</test-description>

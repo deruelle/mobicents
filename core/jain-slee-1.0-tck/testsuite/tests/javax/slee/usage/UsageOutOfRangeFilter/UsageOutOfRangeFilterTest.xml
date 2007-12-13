@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>UsageOutOfRangeFilterTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.usage.UsageOutOfRangeFilter.UsageOutOfRangeFilterTest</executeClass>
+ <assertion id="4216"/>
+ <assertion id="4217"/>
+ <assertion id="4218"/>
+ <assertion id="4220"/>
+ <assertion id="4221"/>
+ <property name="serviceDUPath" value="javax.slee.usage.UsageFilterTestsServices-du.jar"/>
+</test-description>

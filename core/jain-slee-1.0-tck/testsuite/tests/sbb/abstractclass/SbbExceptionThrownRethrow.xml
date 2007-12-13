@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>SbbExceptionThrownRethrow</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.sbb.abstractclass.SbbExceptionThrownRethrow</executeClass>
+ <assertion id="459"/>
+ <property name="serviceDUPath" value="sbb.abstractclass.SbbExceptionThrownRethrow-du.jar"/>
+</test-description>
+

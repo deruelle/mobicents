@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test3063Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.ComponentID.Test3063Test</executeClass>
+ <assertion id="3063"/>
+ <property name="serviceDUPath" value="javax.slee.ComponentID.Test3063Service-du.jar"/>
+</test-description>

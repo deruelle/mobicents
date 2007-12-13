@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>AutoDetachAllTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.activities.activitycontext.AutoDetachAllTest</executeClass>
+ <assertion id="540"/>
+ <property name="serviceDUPath" value="activities.activitycontext.AutoDetachAllService-du.jar"/>
+
+</test-description>

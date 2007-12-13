@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+<test-description>
+
+ <title>Test2216Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.usage.types.Test2216Test</executeClass>
+ <assertion id="2323"/>
+ <assertion id="2324"/>
+ <assertion id="2241"/>
+ <property name="serviceDUPath" value="usage.common.GenericUsageService-du.jar"/>
+
+</test-description>

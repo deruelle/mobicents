@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test1584Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.ManagementMBean.Test1584Test</executeClass>
+ <assertion id="1584"/>
+ <property name="profileDUPath" value="management.ManagementMBean.Test1584ProfileService-du.jar"/>
+ <property name="sbbDUPath" value="management.ManagementMBean.Test1584SbbService-du.jar"/>
+
+ 
+</test-description>

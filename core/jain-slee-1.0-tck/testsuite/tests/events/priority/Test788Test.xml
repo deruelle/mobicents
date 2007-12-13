@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test788Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.events.priority.Test788Test</executeClass>
+ <assertion id="788"/>
+ <property name="serviceDUPath" value="events.priority.Test788Service-du.jar"/>
+ <property name="serviceInvalidDUPath" value="events.priority.Test788InvalidService-du.jar"/>
+ 
+</test-description>

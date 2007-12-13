@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ 
+ <title>Test292Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.sbblocal.Test292Test</executeClass>
+ <assertion id="292"/>
+ <property name="serviceDUPath" value="sbblocal.Test292Service-du.jar"/>
+ 
+</test-description>

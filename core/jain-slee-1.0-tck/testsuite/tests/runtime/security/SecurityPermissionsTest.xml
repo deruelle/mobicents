@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>SecurityPermissionsTest</title>
+ <description>Tests an Sbb's security access</description>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.runtime.security.SecurityPermissionsTest</executeClass>
+ <assertion id="1133"/>
+ <assertion id="1134"/>
+ <assertion id="1135"/>
+ <assertion id="1136"/>
+ <assertion id="1137"/>
+ <assertion id="1138"/>
+ <assertion id="1139"/>
+ <assertion id="1140"/>
+ <assertion id="1141"/>
+ <assertion id="1142"/>
+ <property name="serviceDUPath" value="runtime.security.SecurityPermissionsTestService-du.jar"/>
+
+</test-description>

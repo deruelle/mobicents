@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>UnbindRefCountTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.facilities.activitycontextnamingfacility.ActivityContextNamingFacilityTest</executeClass>
+ <assertion id="1365"/>
+ <property name="serviceDUPath" value="facilities.activitycontextnamingfacility.UnbindRefCountService-du.jar"/>
+ <property name="testName" value="unbindRefCount"/>
+ <keyword>ActivityContextNamingFacility</keyword>
+
+</test-description>

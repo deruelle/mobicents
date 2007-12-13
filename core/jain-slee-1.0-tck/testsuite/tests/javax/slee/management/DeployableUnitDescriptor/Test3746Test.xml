@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test3746Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.DeployableUnitDescriptor.Test3746Test</executeClass>
+ <assertion id="3746"/>
+ <assertion id="3748"/>
+ <assertion id="3750"/>
+ <property name="DUPath" value="javax.slee.management.DeployableUnitDescriptor.Test3746Service-du.jar"/>
+ <property name="SecondDUPath" value="javax.slee.management.DeployableUnitDescriptor.Test3746SecondService-du.jar"/>
+</test-description>

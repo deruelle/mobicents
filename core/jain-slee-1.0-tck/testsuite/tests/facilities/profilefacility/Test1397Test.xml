@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test1397Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.facilities.profilefacility.Test1397Test</executeClass>
+ <assertion id="1397"/>
+ <assertion id="1398"/>
+ <property name="DUPath" value="facilities.profilefacility.Test1397Service-du.jar"/>
+</test-description>

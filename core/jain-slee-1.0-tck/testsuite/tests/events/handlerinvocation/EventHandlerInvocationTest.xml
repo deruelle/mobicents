@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>EventHandlerInvocationTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.events.handlerinvocation.EventHandlerInvocationTest</executeClass>
+ <assertion id="635"/>
+ <property name="serviceDUPath" value="events.handlerinvocation.EventHandlerInvocationTestService-du.jar"/>
+
+</test-description>

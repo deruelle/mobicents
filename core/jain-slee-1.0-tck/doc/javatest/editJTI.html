@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- SCCS: @(#)editJTI.html	1.7 02/09/18 -->
+<html>
+  <head>
+    <title>EditJTI: edit the responses in a configuration file</title>
+  </head>
+  
+  <body bgcolor=white>
+    <h1 align=center><i>EditJTI</i>: edit the responses in a configuration file</h1>
+    
+    
+    <dl>
+      <dt><b>NAME</b>
+      <dd><em>EditJTI</em>: a utility to edit the responses in a JavaTest<sup>TM</sup> 
+	configuration file.
+	<p>
+	  
+      <dt><b>SYNOPSIS</b>
+      <dd><code>java -classpath javatest.jar com.sun.javatest.EditJTI</code> <i>options</i> <i>edit-cmds</i> <i>file</i>
+	<p>
+	  
+      <dt><b>AVAILABILITY</b>
+      <dd><em>EditJTI</em> is a Java<sup>TM</sup> program distributed with JavaTest, in the
+	main jar file for JavaTest, <i>javatest.jar</i>.
+	<p>
+	  
+      <dt><b>DESCRIPTION</b>
+      <dd>The EditJTI utility is the batch command equivalent of the JavaTest<sup>TM</sup> Configuration Editor. You can use EditJTI to change one or more values in a JavaTest configuration file (<code>.jti</code>) without starting the JavaTest harness. 
+
+
+        <em>EditJTI</em> loads a configuration (.jti) file, and applies a 
+	series of specified edits. The file can be saved back to the original
+	file, or to another file. An HTML log of the questions and responses
+	can be generated. A quick summary of the questions and responses can
+	also be written to the console. A preview mode is available;
+	in addition, configuration files are normally backed up before being
+	overwritten.
+	<p>
+        The configuration interview is a sequence of questions that builds a path, depending on your test sub-interview, in the configuration file. When you change change an entry, the subsequent questions in your interview path may change. If the change in your interview path does not work as expected, you can use the <code>-path</code> option described below to view the new sequence of questions.
+
+<p>
+While it is possible to use EditJTI to change the order of commands in a configuration file, because of the dependencies between values, it is recommended that major changes in the <code>.jti</code> file be accomplished by using the Configuration Editor.
+</p>
+
+<p>
+To change a value in the configuration file, you must know the <i>tag-name</i> for the question that sets the value. There are two ways to obtain the question <i>tag-name</i>:
+</p>
+
+<ul>
+<li><b>ALT T</b> - Start the JavaTest harness, open the Configuration Editor and load the configuration file containing the value to be changed. Click in the Configuration Editor's question box and then press ALT and T. The Configuration Editor displays the <i>tag-name</i> for the question in the title bar. You can navigate through the interview until you locate the question whose value must be changed.
+</li>	  
+<li><b>Question Log</b> - Start the JavaTest harness and load the configuration file that will be used to run tests. Choose Configure > Show Question Log in the Test Manager menu bar to view the Question Log of the current configuration. The Question Log displays the <i>tag-name</i> for each question in the interview and its value.
+</li>
+</ul>
+
+	  
+      <dt><b>OPTIONS</b>
+      <dd>The various options are as follows:
+	<dl>
+	  <dt><code>-help</code><br>
+	    <code>-usage</code><br>
+	    <code>/?</code>
+	  <dd>Display a summary of the command line options.
+	    
+	  <dt><code>-classpath</code> <i>classpath</i><br>
+	    <code>-cp</code> <i>classpath</i>
+	  <dd>Override the default classpath used to load the classes for
+	    the configuration interview. The default is determined from the
+	    work directory and test suite specified in the configuration file.
+	    The new location will be as specified by this option.
+
+	  <dt><code>-log</code> <i>log-file</i><br>
+	    <code>-l</code> <i>log-file</i>
+	  <dd>Generate an HTML log containing the questions and responses
+	    from the configuration file. The log is generated after any edits
+	    have been applied.
+
+	  <dt><code>-out</code> <i>out-file</i><br>
+	    <code>-o</code> <i>out-file</i>
+	  <dd>Specify where to write the configuration file after the edits
+	    (if any) have been applied. The default is to overwrite the
+	    input file if the interview is edited.
+
+	  <dt><code>-path</code><br>
+	    <code>-p</code>
+	  <dd>Generate a summary to the console output stream 
+	    of the sequence of questions and responses from the
+	    configuration file. The summary is generated after any edits
+	    have been applied.
+
+	  <dt><code>-preview</code><br>
+	    <code>-n</code>
+	  <dd>Do not write out any files, but instead, preview what would
+	    happen if this option were not specified.
+
+	  <dt><code>-testsuite</code> <i>test-suite</i><br>
+	    <code>-ts</code> <i>test-suite</i>
+	  <dd>Override the default location used to load the classes for 
+	    the configuration interview. The default is determined from the 
+	    work directory and test suite specified in the configuration file.
+	    The new location is determined from the specified test suite.
+
+	  <dt><code>-verbose</code><br>
+	    <code>-v</code>
+	  <dd>Verbose mode. As the edit commands are executed, details of the
+	    changes are written to the console output stream.
+	</dl>
+	<p>
+
+      <dt><b>EDIT COMMANDS</b>
+      <dd>Two different types of edit command are supported.
+	<dl>
+	  <dt><i>tag-name</i><code>=</code><i>value</i>
+	  <dd>Set the value for the question whose tag is <i>tag-name</i>
+	    to <i>value</i>. It is an error if no such question is found.
+	    The question must be on the current path of questions being
+	    asked by the interview. To determine the current path, use 
+	    the <code>-path</code> option.
+	    
+	  <dt><code>/</code><i>search-string</i><code>/</code><i>replace-string</i><code>/</code>
+	  <dd>Scan the path of questions being asked by the interview,
+	    looking for responses that match (contain) the search string.
+	    In such answers, replace <i>search-string</i> by <i>replace-string</i>.
+	    Note that changing the response to a question may change the
+	    subsequent questions that are asked. 
+	    It is an error if no such questions are found.
+	    <p>
+	      If you wish to use <code>/</code> in the search string, you
+	      may use some other punctuation character as a delimiter, instead
+	      of <code>/</code>. For example, 
+	      <code>|</code><i>search-string</i><code>|</code><i>replace-string</i><code>|</code><br>
+	      
+	    <p>
+	      <small>Note: regular expressions are not currently supported in
+		<i>search-string</i>, but may be supported in a future release.</small>
+	</dl>
+	<p>
+	  Depending on the shell you are using, you may need to quote 
+	  your edit commands, to protect any characters in them against
+	  interpretation by the shell.
+	<p>
+
+      <dt><b>RETURN CODE</b>
+      <dd>The program will exit with one of the following return codes:
+	<table>
+	  <tr><td>0<td>the operations were successful; 
+	      the configuration file is complete and ready to use.
+	  <tr><td>1<td>the operations were successful, but the
+	      configuration file is incomplete and is not yet ready to use
+	      for a test run.
+	  <tr><td>2<td>there was a problem with the command line arguments
+	  <tr><td>3<td>an error occurred while trying to perform the copy
+	</table>
+	<p>
+
+      <dt><b>SYSTEM PROPERTIES</b>
+      <dd>Two system properties are recognized:
+	<dl>
+	  <dt><code>EditJTI.maxIndent</code>
+	  <dd>Used when generating the output for the <code>-path</code>
+	    option, this property specifies the maximum length of tag name
+	    after which the output will be line-wrapped before writing the
+	    corresponding value. The default value is 32.
+	  <dt><code>EditJTI.numBackups</code>
+	  <dd>Specifies how many levels of backup to keep when overwriting
+	    a .jti file. The default is 2. A value of 0 disables backups.
+	</dl>
+    </dl>
+    
+
+    <dl>
+      <dt><b>Examples of EditJTI Use</b>
+      <dd><em>Example 1:</em> the following example changes the http port used when running tests and overwrites original configuration file (<code>original.jti</code> in this example).
+<p>
+<code>
+java -cp javatest.jar com.sun.javatest.EditJTI httpPort=8081 original.jti
+</code>
+
+<dd><em>Example 2:</em> the following example changes the http port used when running tests and writes the changed configuration to a new configuration file (<code>output.jti</code> in this example). The original configuration file (<code>original.jti</code> in this example) remains unchanged.
+<p>
+
+<code>
+java -cp javatest.jar com.sun.javatest.EditJTI -o output.jti httpPort=8081 original.jti
+</code>
+
+<dd><em>Example 3:</em> the following uses the syntax for doing escapes in a UNIX shell. Changes to the original configuration file (<code>midp.jti</code> in this example) are written to a new  configuration file (<code>midp-assemblage.jti</code> in this example).
+<p>
+<code>
+java -cp javatest.jar com.sun.javatest.EditJTI -o midp-assemblage.jti
+midptck.serialport.midPort=/dev/term/a
+midptck.connection.httpsCert="\"CN=Brian K, OU=JSW, O=Sun, L=SCA22, ST=CA,
+C=US\"" midp.jti
+</code>
+
+</dl>
+
+  </body>
+</html>

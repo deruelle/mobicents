@@ -1,0 +1,8 @@
+------------------------------------------
+README file for the JAIN SLEE TCK 1.0 lib directory
+------------------------------------------
+
+If your implementation uses JMX 1.1, copy jmxri1.1.jar to jmxri.jar.
+Also see the 'Test-Specific Information' chapter in JAIN SLEE TCK 1.0 User's Guide for more information
+on configuration for the 'SleeSignatureTest' test.
+

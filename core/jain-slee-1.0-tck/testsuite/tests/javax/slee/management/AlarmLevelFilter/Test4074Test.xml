@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4074Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.AlarmLevelFilter.Test4074Test</executeClass>
+ <assertion id="4074"/>
+ <assertion id="4076"/>
+ <property name="DUPath" value="javax.slee.management.AlarmLevelFilter.Test4074Service-du.jar"/>
+</test-description>

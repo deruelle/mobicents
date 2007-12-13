@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>IESInitialValuesTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.events.convergencename.iesInitialize.IESInitialValuesTest</executeClass>
+ <assertion id="754"/>
+ <assertion id="1922"/>
+ <assertion id="756"/>
+ <assertion id="757"/>
+ <assertion id="758"/>
+ <assertion id="759"/>
+ <property name="serviceDUPath" value="events.convergencename.iesInitialize.IESInitialValuesTest-Service-du.jar"/>
+
+</test-description>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4185Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.TraceNotification.Test4185Test</executeClass>
+ <assertion id="4185"/>
+ <assertion id="4187"/>
+ <assertion id="4191"/>
+ <assertion id="4193"/>
+ <assertion id="4195"/>
+ <assertion id="4197"/>
+ <property name="DUPath" value="javax.slee.management.TraceNotification.Test4185Service-du.jar"/>
+</test-description>

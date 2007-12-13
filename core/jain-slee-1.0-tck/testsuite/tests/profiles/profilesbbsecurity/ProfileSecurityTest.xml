@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>ProfileSbbSecurityTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.profiles.profilesbbsecurity.ProfileSbbSecurityTest</executeClass>
+ <assertion id="987"/>
+ <property name="serviceDUPath" value="profiles.profilesbbsecurity.ProfileSbbSecurityTestService-du.jar"/>
+ <property name="profileSpecDUPath" value="profiles.SimpleProfileSpec-du.jar"/>
+
+</test-description>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>ServiceUsageMBeanExceptionsTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.ServiceUsageMBean.ServiceUsageMBeanExceptionsTest</executeClass>
+ <assertion id="4559"/>
+ <assertion id="4567"/>
+ <assertion id="4568"/>
+ <assertion id="4569"/>
+ <assertion id="4570"/>
+ <assertion id="4576"/>
+ <assertion id="4577"/>
+ <assertion id="4578"/>
+ <assertion id="4584"/>
+ <assertion id="4585"/>
+ <assertion id="4651"/>
+ <assertion id="4591"/>
+ <assertion id="4654"/>
+ <assertion id="4592"/>
+ <assertion id="4655"/>
+ <assertion id="4622"/>
+ <assertion id="4623"/>
+ <assertion id="4624"/>
+
+ <!-- This is the service which remains installed throughout the test -->
+ <property name="serviceDUPath" value="javax.slee.management.ServiceUsageMBean.ServiceUsageMBeanExceptionsTestServices-du.jar"/>
+ <!-- This is the service/SBB we install then uninstall to access an SbbID of an uninstalled service -->
+ <property name="serviceDUPath-Temp" value="usage.common.GenericUsageService-du.jar"/>
+ </test-description>

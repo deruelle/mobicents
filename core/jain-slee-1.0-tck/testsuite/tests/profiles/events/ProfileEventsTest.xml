@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>ProfileEventsTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.profiles.events.ProfileEventsTest</executeClass>
+ <assertion id="922"/>
+ <assertion id="935"/>
+ <assertion id="2409"/>
+ <assertion id="936"/>
+ <assertion id="938"/>
+ <assertion id="939"/>
+ <assertion id="940"/>
+ <assertion id="946"/>
+ <assertion id="948"/>
+ <assertion id="960"/>
+ <assume-assertion id="4314"/>
+ <assume-assertion id="4321"/>
+ <property name="eventDUPath" value="common.sbbutils.TCKSbbEvent-du.jar"/>
+ <property name="serviceDUPath" value="profiles.ProfileEventsTestService-du.jar"/>
+ <property name="profileSpecDUPath" value="profiles.SimpleProfileSpec-du.jar"/>
+
+</test-description>

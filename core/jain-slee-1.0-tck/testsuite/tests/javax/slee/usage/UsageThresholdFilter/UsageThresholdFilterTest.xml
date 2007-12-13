@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>UsageThresholdFilterTest</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.usage.UsageThresholdFilter.UsageThresholdFilterTest</executeClass>
+ <assertion id="4225"/>
+ <assertion id="4227"/>
+ <assertion id="4228"/>
+ <assertion id="4230"/>
+ <property name="serviceDUPath" value="javax.slee.usage.UsageFilterTestsServices-du.jar"/>
+</test-description>

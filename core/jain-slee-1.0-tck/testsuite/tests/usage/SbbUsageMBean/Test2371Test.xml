@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>Test2371Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.usage.SbbUsageMBean.Test2371Test</executeClass>
+ <assertion id="2371"/>
+ <property name="serviceDUPath" value="usage.common.GenericUsageService-du.jar"/>
+ <!-- 'pauseBetweenSendsMs' is the number of milliseconds to pause between the sending of each update event.
+   Increase to slow down sends, decrease to speed up, or set to 0 to fire all the events at once.  -->
+ <property name="pauseBetweenSendsMs" value="100"/>
+
+</test-description>

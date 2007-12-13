@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+<test-description>
+    <title>ConvergenceNameTest-StickyConvergenceNames</title>
+    <executeClass>com.opencloud.sleetck.lib.testsuite.events.convergencename.StickyConvergenceNameTest</executeClass>
+    <assertion id="2012"/>
+    <property name="serviceDUPath" value="events.convergencename.ConvergenceNameTest-AddressProfile-IES-Service-du.jar"/>
+    <!-- A comma separated list of convergence name variables selected by the SBB, from
+      the following list: ActivityContext,AddressProfile,Address,EventType,Event,CustomName -->
+    <property name="selectedVariables" value="ActivityContext"/>
+    <!-- The main assertion being tested - i.e. the assertion related to the convergence name attribute(s) being tested -->
+    <property name="mainAssertionID" value="2012"/>
+    <!-- The test timeout multiplier - this is a long test -->
+    <property name="timeout-multiplier" value="100"/>
+</test-description>

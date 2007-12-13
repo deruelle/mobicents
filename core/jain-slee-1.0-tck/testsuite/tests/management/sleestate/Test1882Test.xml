@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+
+<test-description>
+
+ <title>Test1882Test</title>
+ <description>Tests that SBB entities are not created while the SLEE is in the STARTING state</description>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.management.sleestate.Test1882Test</executeClass>
+ <assertion id="1882"/>
+    <assume-assertion id="1883"/>
+ <property name="serviceDUPath" value="management.sleestate.Test1882Service-du.jar"/>
+
+</test-description>

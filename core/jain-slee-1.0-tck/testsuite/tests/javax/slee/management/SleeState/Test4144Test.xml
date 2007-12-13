@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+ 
+<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
+ 
+<test-description>
+ <title>Test4144Test</title>
+ <executeClass>com.opencloud.sleetck.lib.testsuite.javax.slee.management.SleeState.Test4144Test</executeClass>
+ <assertion id="4144"/>
+ <assertion id="4146"/>
+ <assertion id="4157"/>
+ <assertion id="4159"/>
+ <assertion id="4161"/>
+ <property name="DUPath" value="javax.slee.management.SleeState.Test4144Slee-du.jar"/>
+</test-description>
