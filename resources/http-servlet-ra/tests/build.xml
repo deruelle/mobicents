@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+
+<!--
+
+ This is an ANT build file for JAIN SLEE TCK 1.0 formatted tests
+
+ To run this file, use Ant 1.5.1 or higher.
+ (Available from http://jakarta.apache.org/ant/)
+ 
+ This file must be run from the root JAIN SLEE TCK directory.
+
+ This build file has the following useful targets:
+
+ "clean"	- Delete all classes and jars created during the build of the JAIN SLEE TCK
+		  Note that configuration files and JAIN SLEE TCK work and report directories
+		  are not deleted.
+		  
+ "build-tests"	- Compile the test classes and build the jars required to
+		  execute them.
+		  
+ "run-tests"	- Runs tests either a subset or all. For example 'ant run-tests -Dtests=org/mobicents'
+
+ "javadoc"	- Build the javadoc for the test classes (excluding the test suite classes).
+	      
+ The default target is "build-tests".
+ 
+ -->
+<project name="JAIN SLEE TCK" default="build-tests" basedir=".">
+	<!-- Definitions -->
+	<property environment="system" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+	<property name="mobicents.src.home" value="${system.MOBICENTS_HOME}" />
+	<property name="node" value="all" />
+	<!-- Ignore any externally set classpath -->
+	<property name="build.sysclasspath" value="ignore" />
+	<!-- PATHS -->
+	<property name="build.dir" value="." />
+	<property name="classes.root" value="${build.dir}/classes" />
+	<property name="classes.sleetests" value="${build.dir}/classes/sleetests" />
+	<property name="javadoc" value="${build.dir}/javadoc" />
+	<property name="jars" value="${build.dir}/jars" />
+	<property name="reports" value="${build.dir}/reports" />
+	<property name="jars.slee-components" value="${build.dir}/jars/slee-components" />
+	<property name="jars.deployable-units" value="${build.dir}/jars/deployable-units" />
+	<property name="tck.source" value="${build.dir}/src" />
+	<property name="slee-ant-tasks.jar" value="${mobicents.src.home}/tools/ant-tasks/jars/slee-ant-tasks.jar" />
+	<!-- CUSTOM TASKS -->
+	<target name="build-tasks" depends="find-libs,ensure-classes-dir,ensure-jars-dir">
+		<ant antfile="build.xml" dir="${mobicents.src.home}/tools/ant-tasks" />
+		<taskdef name="sbbjar" classname="org.mobicents.ant.SbbJar" classpath="${slee-ant-tasks.jar}" />
+		<taskdef name="eventjar" classname="org.mobicents.ant.EventJar" classpath="${slee-ant-tasks.jar}" />
+		<taskdef name="profilespecjar" classname="org.mobicents.ant.ProfileSpecJar" classpath="${slee-ant-tasks.jar}" />
+		<taskdef name="deployablejar" classname="org.mobicents.ant.DeployableJar" classpath="${slee-ant-tasks.jar}" />
+		<taskdef name="resourceadaptortypejar" classname="org.mobicents.ant.ResourceAdaptorTypeJar" classpath="${slee-ant-tasks.jar}" />
+		<taskdef name="resourceadaptorjar" classname="org.mobicents.ant.ResourceAdaptorJar" classpath="${slee-ant-tasks.jar}" />
+	</target>
+	<!-- CLEANERS -->
+	<target name="clean-all-classes">
+		<delete dir="${classes.root}" quiet="true" />
+		<mkdir dir="${classes.root}" />
+	</target>
+	<target name="clean-sleetests-classes">
+		<delete dir="${classes.sleetests}" quiet="true" />
+	</target>
+	<target name="clean-jars">
+		<delete dir="${jars}" quiet="true" />
+	</target>
+	<target name="clean" depends="clean-all-classes,clean-jars" description="clean up build artifacts" />
+	<!-- TASK TO FIND LIBRARY DIRECTORY -->
+	<target name="find-libs">
+		<available file="${mobicents.src.home}/jain-slee-1.0-tck/lib" type="dir" property="tck-libs" value="${mobicents.src.home}/jain-slee-1.0-tck/lib">
+		</available>
+		<!-- CLASSPATH -->
+		<echo>tck-libs=${tck-libs}</echo>
+		<path id="project.class.path">
+			<pathelement location="${classes.sleetests}" />
+			<pathelement location="${jboss.home}/server/all/lib/jboss-j2ee.jar"/>
+			<pathelement location="${mobicents.src.home}/classes" />
+			<pathelement location="lib/commons-httpclient-3.0.1.jar"/>
+			<pathelement location="../lib/servlet-api.jar" />
+			<pathelement location="${mobicents.src.home}/lib/slee_1_1.jar" />
+			<pathelement location="${tck-libs}/javatest.jar" />
+			<pathelement location="${tck-libs}/jmxri.jar" />
+			<pathelement location="${tck-libs}/../jars/sleetck.jar" />
+			<pathelement location="../ra/classes/jar/" />
+			<pathelement location="../ratype/classes/jar/" />
+                        <pathelement location="../ratype/events/jars/httpservlet-event.jar" />
+		</path>
+	</target>
+	<!-- TASKS TO ENSURE BUILD DIRECTORIES -->
+	<target name="ensure-classes-dir">
+		<mkdir dir="${classes.root}" />
+		<mkdir dir="${classes.sleetests}" />
+	</target>
+	<target name="ensure-jars-dir">
+		<mkdir dir="${jars}" />
+		<mkdir dir="${jars.slee-components}" />
+		<mkdir dir="${jars.deployable-units}" />
+	</target>
+	<!-- TCK INFRASTRUCTURE -->
+	<target name="build-infrastructure" depends="build-tasks">
+		<!-- Build HTTP RA -->
+		<ant antfile="build.xml" dir="../" />
+	</target>
+	<!-- TEST SUITE AND SLEE COMPONENTS -->
+	<target name="compile-tests" depends="ensure-classes-dir,find-libs">
+		<echo>Compiling TCK tests. tck.source=${tck.source}, classes.sleetests=${classes.sleetests}</echo>
+		<javac srcdir="${tck.source}" destdir="${classes.sleetests}" debug="on">
+			<classpath>
+				<path refid="project.class.path" />
+			</classpath>
+			<include name="org/mobicents/sleetests/**/*.java" />
+		</javac>
+	</target>
+	<!-- BUILD TEST SUITE -->
+	<target name="build-test-suite" depends="build-infrastructure,compile-tests">
+		<ant antfile="${build.dir}/custom-components.xml" />
+                <ant antfile="build.xml" dir="../" target="deploy-servlet"/>
+	</target>
+	<target name="build-tests" depends="build-infrastructure,build-test-suite" description="build tests" />
+	<!-- RUN TCK TESTS -->
+	<target name="run-tests" description="run tests. For example 'ant run-tests -Dtests=org/mobicents">
+		<echo>--------------------------------------------------------------------------------------------</echo>
+		<echo>  NOTE: The server must be running and the Resource Adaptor deployed before tests are run!  </echo>
+		<echo>--------------------------------------------------------------------------------------------</echo>
+		<path id="slee.tck.du.path.id">
+			<pathelement location="${jars.deployable-units}" />
+		</path>
+		<path id="slee.tck.reports.path.id">
+			<pathelement location="${reports}" />
+		</path>
+		<path id="slee.tck.testsuite.path.id">
+			<pathelement location="${build.dir}/src" />
+		</path>
+		<path id="slee.tck.jtx.file.id">
+			<pathelement location="${build.dir}/testsuite/jain-slee-tck-1_0.jtx" />
+		</path>
+		<path id="slee.tests.classes.id">
+			<pathelement location="${classes.sleetests}" />
+		</path>
+		<path id="slee.tests.aux.libs.id">
+			<pathelement location="lib/commons-httpclient-3.0.1.jar"/>
+			<pathelement location="lib/commons-codec-1.3.jar"/>
+		</path>
+
+		<ant antfile="build.xml" dir="${mobicents.src.home}" target="tests-slee-tck-internal" inheritrefs="yes">
+			<reference refid="slee.tests.classes.id" />
+			<reference refid="slee.tck.du.path.id" />
+			<reference refid="slee.tck.reports.path.id" />
+			<reference refid="slee.tck.testsuite.path.id" />
+			<reference refid="slee.tck.jtx.file.id" />
+			<reference refid="slee.tests.aux.libs.id"/>
+		</ant>
+	</target>
+
+</project>
