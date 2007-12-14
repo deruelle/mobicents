@@ -2,7 +2,7 @@
 
 <project name="Mobicents_Ant_Common_Properties__Paths_and_Targets">
 
-	<property name="mobicents.home" value="${ant.file.Mobicents_Ant_Common_Properties__Paths_and_Targets}/../../.." />
+	<property name="mobicents.home" value="${ant.file.Mobicents_Ant_Common_Properties__Paths_and_Targets}/../../../.." />
 
 	<!-- RA RELATED -->
 
@@ -215,7 +215,7 @@
 	<property name="jnpPort" value="1099" />
 
 	<property name="classes.tasks" value="classes" />
-	<property name="tools" value="${mobicents.home}/tools" />
+	<property name="tools" value="${mobicents.home}/../tools" />
 	<property name="slee-ant-tasks" value="${tools}/ant-tasks/jars/slee-ant-tasks.jar" />
 
 	<condition property="file_url" value="file:/">
