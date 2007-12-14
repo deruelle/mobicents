@@ -48,7 +48,7 @@
 	<target depends="init,build-DummySbbService-DU" name="all">
 
 	</target>
-	<target depends="init" name="clean">
+	<target name="clean">
 		<ant target="clean-Dummy-sbb" />
 		<ant target="clean-DummySbbService-DU" />
 		<ant target="clean-SecondDummy-sbb" />
