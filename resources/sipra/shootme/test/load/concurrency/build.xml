@@ -1,0 +1,33 @@
+<project basedir="." default="shootme">
+	<property name="packageprefix" value="test.load.concurrency" />
+	<property environment="system" />
+	<path id="project.class.path">
+		<pathelement location="../../../../lib/JainSipApi1.2.jar" />
+		<pathelement location="../../../../lib/JainSipRi1.2.jar" />
+		<pathelement location="." />
+				
+		<pathelement location="./junit-3.8.1.jar" />
+		<pathelement location="./log4j-1.2.8.jar" />
+<pathelement location="./concurrent.jar" />
+	</path>
+	
+	<target name="make">
+		<javac debug="false" source="1.5" deprecation="off" debuglevel="off" srcdir="../../.." includes="test/load/concurrency/**/*.java" classpathref="project.class.path" destdir=".">
+		</javac>
+	</target>
+	
+	<target name="shootme" depends="make" description="run the example UAs.">
+		<delete file="shootistdebug.txt" />
+		<delete file="shootistlog.txt" />
+		<java classname="${packageprefix}.Shootme" fork="true" maxmemory="128m" classpathref="project.class.path" />
+	</target>
+	
+	<target name="clean" description="clean the logs">
+		<delete failonerror="0">
+		   <fileset file="*debug.txt" />
+		   <fileset file="*log.txt" />
+		</delete>
+	</target>
+
+
+</project>

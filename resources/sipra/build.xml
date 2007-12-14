@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="JainSipResourceAdaptor" default="build-and-deploy-ra">
+
+	<property name="compile.as.debug" value="true" />
+	<property environment="system" />
+	
+	<property name="ra.name" value="sip" />
+	<property name="ra.entity" value="SipRA" />
+	<property name="ra.id" value="${ant.project.name}#net.java.slee.sip#1.2" />
+
+	<property name="ra.entity.properties.filename" value="sipra.entity.properties" />
+
+	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.sipra.classpath" />
+		<fileset dir="lib">
+			<include name="sleetck.jar" />
+			<include name="jta.jar" />
+		</fileset>
+	</path>
+
+	<fileset id="ra.libs.ratype" dir="lib">
+		<include name="JainSipApi1.2.jar" />
+		<include name="JainSipRi1.2.jar" />
+	</fileset>
+
+	<target name="persistent-deploy" depends="build-DUs">
+		<copy file="${ant.file.JainSipResourceAdaptor}/../ratype/jars/${ra.name}-ratype-DU.jar"  todir="${mobicents.deploy}"  />
+		<copy file="${ant.file.JainSipResourceAdaptor}/../ra/jars/${ra.name}-ra-DU.jar"  todir="${mobicents.deploy}"  />
+		<copy file="${ant.file.JainSipResourceAdaptor}/../scripts/${ra.name}-deploy.bsh"  todir="${mobicents.deploy}/scripts"  />
+	</target>
+	
+	<target name="persistent-undeploy">
+		<delete file="${mobicents.deploy}/${ra.name}-ratype-DU.jar"  />
+		<delete file="${mobicents.deploy}/${ra.name}-ra-DU.jar"  />
+		<delete file="${mobicents.deploy}/scripts/${ra.name}-deploy.bsh"  />
+	</target>
+	
+</project>

@@ -1,0 +1,8 @@
+<profiles>
+	<profile>
+		<id>global</id>
+		<properties>
+			<deployableUnitLocation>${basedir}/../deployable-unit/dist/sip-resource-adaptor-type-du</deployableUnitLocation>						
+		</properties>
+	</profile>
+</profiles>
