@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="mobicents-cli" default="build-mobicents-cli" basedir=".">
+<project name="mobicents-cli" default="mobicents-cli.jar" basedir=".">
 	
 	<import file="./slee-management.xml"/>
 	
@@ -12,12 +12,14 @@
    	<property name="jars" value="jars"/>
 	
    	<!-- CUSTOM TASKS -->
+	
+	<!-- THIS IS NOT NEEDE ?! ?
 	<target name="build-mobicents-cli">
 		<subant target="make">
 			<fileset dir="../../" includes="build.xml"/>     
 		</subant>
 	</target>
-	
+	-->
    	<!-- CLEANERS -->
    	<target name="clean-all-classes">
     	<delete dir="${classes.tasks}" quiet="true"/>
@@ -34,10 +36,10 @@
 	   	<mkdir dir="${classes.tasks}"/>
 	    <mkdir dir="${jars}"/>
 	   	 
-	   	<javac srcdir="src" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/**/*.java">
+	   	<javac srcdir="src/main" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/**/*.java">
 	       	<classpath>
 	           	<path refid="cli.class.path"/>
-	       		<pathelement location="../../jain-slee-1.0-tck/lib/ant.jar"/>
+	       		<pathelement location="${ant.file.mobicents-cli}/../../../core/jain-slee-1.0-tck/lib/ant.jar"/>
 	       	</classpath>
 	   	</javac>
 	   	

@@ -6,7 +6,7 @@
  
  -->
 
-<project name="Mobicents JSLEE Ant Tasks" default="build-tasks" basedir=".">
+<project name="Mobicents_JSLEE_Ant_Tasks" default="build-tasks" basedir=".">
   <!-- Ignore any externally set classpath -->
   <property name="build.sysclasspath" value="ignore"/>
 
@@ -20,7 +20,7 @@
    <!-- CLASSPATH -->
 
    <path id="project.class.path">
-      <pathelement location="../../jain-slee-1.0-tck/lib/ant.jar"/>
+      <pathelement location="${ant.file.Mobicents_JSLEE_Ant_Tasks}/../../../core/jain-slee-1.0-tck/lib/ant.jar"/>
    </path>
 
    <!-- CUSTOM TASKS -->
@@ -28,7 +28,7 @@
    <target name="build-tasks">
      <mkdir dir="${classes.tasks}"/>
      <mkdir dir="${jars}"/>
-     <javac srcdir="src" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/ant/**/*.java">
+     <javac srcdir="src/main" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/ant/**/*.java">
          <classpath>
             <path refid="project.class.path"/>
          </classpath>
