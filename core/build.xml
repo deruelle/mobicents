@@ -3,10 +3,10 @@
 
    Authors: Emil Ivov, Ranga, Ivelin -->
 <project basedir="." default="make" name="mobicents.jpx">
-	
+
 	<property name="mobicents.home" value="." />
-	<import file="xml/ant/mobicents-ant-common-properties.xml"/>
-	
+	<import file="xml/ant/mobicents-ant-common-properties.xml" />
+
 	<!-- Use the -Doption=optval on the ant command line for these. -->
 	<property name="cachemode" value="local" description="Controls the cache mode. Values are typically local or cluster" />
 	<property name="debug" value="normal" description="Controls the debug level. Values are typically debug or normal" />
@@ -58,7 +58,7 @@
 	<property name="tests" value="tests" />
 	<property name="slee-tck-tests-pattern" value="${tests}" />
 
-	<property name="src" value="src" />
+	<property name="src" value="src/main" />
 	<property file="${node}.port.properties" />
 
 	<!-- JUNIT TEST RESULT XML FILE NAME -->
@@ -69,7 +69,7 @@
 	<path id="project.class.path">
 		<pathelement location="${dest}" />
 		<pathelement location="${libs.home}/ant-junit.jar" />
-		<pathelement location="${asteriskra}/lib/asterisk-java.jar" />
+		<!--pathelement location="${asteriskra}/lib/asterisk-java.jar" /-->
 		<pathelement location="${libs.home}/commons-collections-3.1.jar" />
 		<pathelement location="${libs.home}/commons-collections-testframework-3.1.jar" />
 		<pathelement location="${jboss.home}/client/commons-logging.jar" />
@@ -110,7 +110,7 @@
 		<pathelement location="${libs.home}/slee_1_1.jar" />
 		<pathelement location="${slee.tck.home}/jars/sleetck.jar" />
 		<pathelement location="${slee.tck.home}/jars/sleetck-ra-common.jar" />
-		
+
 	</path>
 
 	<path id="run.class.path">
@@ -143,7 +143,7 @@
 			</fileset>
 		</copy>
 		<!-- copy version.properties to Version.class package -->
-		<copy todir="${dest}/${dirpath.prefix}/slee/container" file="${ant.file.mobicents.jpx}/../version.properties"/>
+		<copy todir="${dest}/${dirpath.prefix}/slee/container" file="${ant.file.mobicents.jpx}/../version.properties" />
 	</target>
 
 	<target name="javadoc">
@@ -174,22 +174,7 @@
 
 	<target name="all" depends="make" description="An alias for make." />
 
-	<!-- These targets compile and run the forwarder for failover testing -->
-	<target name="compileforwarder">
-		<javac classpathref="project.class.path" debug="true" deprecation="true" destdir="${dest}" nowarn="false" target="${compile.level}" source="${src.level}">
-			<src path="${sip.services.home}/src/util" />
-		</javac>
-		<rmic classpathref="project.class.path" classname="util.MyRouter" base="${dest}" />
-	</target>
-	<target name="runforwarder" depends="compileforwarder" description="Start the SIP forwarder service. It listens on 5060 and forwards messages to an available back-end SLEE server.">
-		<delete failonerror="false" file="forwarderdebug.txt" />
-		<delete failonerror="false" file="forwarderlog.txt" />
-		<java classpathref="project.class.path" fork="true" classname="util.UdpForwarderImpl">
-			<arg value="127.0.0.1" />
-			<arg value="5065" />
-			<arg value="5060" />
-		</java>
-	</target>
+
 
 	<!-- clean rebuild and reinstall the targets everything -->
 	<target name="rebuild" depends="clean,make" description="Clean and make." />
@@ -229,12 +214,12 @@
 
 		<!-- Now lets clean release,ras, tools,tests,...  : add more here if something comes up  -->
 
-		<ant target="clean" dir="./ra" inheritAll="false"/>
-		<ant target="clean" dir="./tests" inheritAll="false"/>
-		<ant target="clean-release" dir="./scripts" inheritAll="false"/>
+		<ant target="clean" dir="${ant.file.mobicents.jpx}/../../resources" inheritAll="false" />
+		<ant target="clean" dir="${ant.file.mobicents.jpx}/../tests" inheritAll="false" />
+		<ant target="clean-release" dir="${ant.file.mobicents.jpx}/../scripts" inheritAll="false" />
 		<!-- release clean will also clean ras, but thats nothing we should worry -->
-		<ant target="clean" dir="./tools/ant-tasks" inheritAll="false"/>
-		<ant target="clean" dir="./tools/mobicents-cli" inheritAll="false"/>
+		<ant target="clean" dir="${ant.file.mobicents.jpx}/../../tools/ant-tasks" inheritAll="false" />
+		<ant target="clean" dir="${ant.file.mobicents.jpx}/../../tools/mobicents-cli" inheritAll="false" />
 	</target>
 
 
@@ -450,7 +435,7 @@
 
 		<copy file="README.txt" todir="${jboss.readme.dir}" />
 
-		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" />
+		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true"/>
 		<copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" />
 		<copy file="xml/jboss-service.xml" todir="${mobicents.sar}/META-INF" />
 		<copy file="xml/slee-event-jar.xml" todir="${mobicents.sar}/xml" />
@@ -473,7 +458,7 @@
 
 		<!-- override outdated jboss jars -->
 		<copy file="bin/java.policy" todir="${jboss.bin.dir}" />
-		
+
 		<copy file="docs/pictures/mobicents-logo.gif" tofile="${jboss.deploy}/jmx-console.war/images/logo.gif" />
 		<copy todir="${jboss.server.dir}">
 			<fileset file="xml/server/**" />
@@ -554,7 +539,7 @@
 		<java fork="true" classpathref="project.class.path" classname="${classpath.prefix}.slee.test.ConnectorClient" />
 	</target>
 
-	
+
 	<!-- Use 'run-junit-2-xml' to execute junit test instead of 'run-junit-tests' -->
 	<!-- <target name="run-junit-tests" depends="rmicompile, junit-init" description="Runs the full suite of junit tests (not tck format tests). The server has to be running when this target is used.">
 		<junit printsummary="yes" haltonfailure="no">
@@ -671,7 +656,7 @@
 		<property name="tck.params" value=" -batch 'testsuite ${slee.tck.testsuite.path};workDirectory -create -overwrite ${slee.tck.home}/tckwork;open ${slee.tck.home}/slee-tck-mobicents.jti;set sleetck.env.connections.tckResourceHostIP 127.0.0.1;set sleetck.env.connections.jmxAgentHostIP 127.0.0.1;set sleetck.tests.needTests Yes; set sleetck.env.connections.componentUrlPrefix file\:${slee.tck.du.path};set sleetck.env.user-options.defaultTimeout 25000; concurrency 1;tests ${slee-tck-tests-pattern}; runtests;writereport ${slee.tck.reports.path};' " />
 		<echo>Starting TCK with params: ${tck.params}</echo>
 		<echo>Excluding tests listed in file: ${slee.tck.jtx.file}</echo>
-		<property name="mobicents.home.path" location="${mobicents.home}"/>
+		<property name="mobicents.home.path" location="${mobicents.home}" />
 		<java classname="com.sun.javatest.tool.Main" fork="yes" maxmemory="256m">
 			<sysproperty key="java.security.manager" value="" />
 			<sysproperty key="javatest.security.allowPropertiesAccess" value="true" />
@@ -737,14 +722,14 @@
 	<!-- Mobicents JSLEE Ant Tasks -->
 	<target name="build-ant-tasks">
 		<subant target="build-tasks">
-			<fileset dir="./tools/ant-tasks" includes="build.xml" />
+			<fileset dir="${ant.file.mobicents.jpx}/../../tools/ant-tasks" includes="build.xml" />
 		</subant>
 	</target>
 
 	<!-- Mobicents CLI -->
 	<target name="build-mobicents-cli" depends="build-ant-tasks">
 		<subant target="mobicents-cli.jar">
-			<fileset dir="./tools/mobicents-cli" includes="build.xml" />
+			<fileset dir="${ant.file.mobicents.jpx}/../../tools/mobicents-cli" includes="build.xml" />
 		</subant>
 	</target>
 	<target name="deploy-connection-proxy" description="Builds ${ejb}.jar with ejb proxying SleeConnection, allowing it to be accessed from outside this container. And deploys it into ${jboss.deploy}">

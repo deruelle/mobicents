@@ -177,13 +177,13 @@
 
 	<target name="dummy-ra" description="builds dummy ra used for custom tests">
 
-		<ant target="build-DUs" dir="${mobicents.home}/ra/dummyra" inheritall="false">
+		<ant target="build-DUs" dir="${mobicents.home}/../resources/dummyra" inheritall="false">
 		</ant>
 
-		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/ra/dummyra/ratype/jars/dummy-ratype-DU.jar" />
-		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/ra/dummyra/ra/jars/dummy-ra-DU.jar" />
-		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/ra/dummyra/ratype/events/jars/dummy-event.jar" />
-		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/ra/dummyra/dummy-ra.properties" />
+		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/../resources/dummyra/ratype/jars/dummy-ratype-DU.jar" />
+		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/../resources/dummyra/ra/jars/dummy-ra-DU.jar" />
+		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/../resources/dummyra/ratype/events/jars/dummy-event.jar" />
+		<copy todir="${mobicents.home}/tests/lib/container" file="${mobicents.home}/../resources/dummyra/dummy-ra.properties" />
 	</target>
 
 
@@ -202,7 +202,7 @@
 	</target>
 	<target name="clean-deps">
 		<ant target="clean" dir="${mobicents.home}/tests/DummyService" />
-		<ant target="clean" dir="${mobicents.home}/ra/dummyra" />
+		<ant target="clean" dir="${mobicents.home}/../resources/dummyra" />
 		<delete failonerror="false">
 			<fileset dir="lib/container">
 				<include name="*.jar" />

@@ -6,7 +6,7 @@
 
 	<!-- RA RELATED -->
 
-	<property name="mobicents.ra" value="${mobicents.home}/ra" />
+	<property name="mobicents.ra" value="${mobicents.home}/../resources" />
 
 	<!-- ASTERISK RA RELATED -->
 
@@ -179,7 +179,7 @@
 	<!-- SYSTEM RELATED -->
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
-	<property name="node" value="all" />
+	<property name="node" value="default" />
 	<property name="jboss.deploy" value="${jboss.home}/server/${node}/deploy" />
 	<property name="mobicents.deploy" value="${jboss.home}/server/${node}/deploy-mobicents" />
 
