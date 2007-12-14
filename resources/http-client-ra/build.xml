@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="HttpClientResourceAdaptor" default="build-and-deploy-ra">
 
-	<property name="mobicents.home" value="../.." />	
+	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />	
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" />
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
 
