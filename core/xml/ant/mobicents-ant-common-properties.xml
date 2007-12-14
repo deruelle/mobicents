@@ -207,7 +207,7 @@
 		<pathelement location="${jboss.home}/lib/jboss-jmx.jar" />
 		<pathelement location="${jboss.home}/lib/xml-apis.jar" />
 		<pathelement location="${jboss.home}/lib/xercesImpl.jar" />
-		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar" />
 	</path>
 
 	<!-- Server Connectivity Properties -->
@@ -234,8 +234,8 @@
 	<!-- CLASSPATH -->
 
 	<path id="cli.class.path">
-		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar" />
-		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar/slee_1_1.jar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar/slee_1_1.jar" />
 	</path>
 
 	<target name="init-common">
@@ -251,6 +251,7 @@
 		<taskdef name="slee-management" classname="org.mobicents.ant.MobicentsManagementAntTask">
 			<classpath>
 				<pathelement path="${tools}/mobicents-cli/jars/mobicents-cli.jar" />
+				<path refid="cli.class.path"/>
 			</classpath>
 		</taskdef>
 	</target>

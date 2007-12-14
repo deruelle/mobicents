@@ -126,13 +126,14 @@
 
 	<!-- COMPILE CORE CLASSES -->
 	<target name="javacompile" depends="init" description="Java compiles all java source files.">
-		<javac classpathref="project.class.path" debug="false" deprecation="false" destdir="${dest}" nowarn="true" target="${compile.level}" source="${src.level}">
+		<javac classpathref="project.class.path" debug="true" deprecation="false" destdir="${dest}" nowarn="true" target="${compile.level}" source="${src.level}">
 			<src path="${src}" />
 		</javac>
 	</target>
 
 	<target name="rmicompile" depends="init" description="Compiles rmi classes.">
 		<rmic classpathref="project.class.path" classname="${classpath.prefix}.slee.test.suite.RMINotificationListenerImpl" base="${dest}" />
+		<rmic classpathref="project.class.path" classname="${classpath.prefix}.slee.container.rmi.RMIServerImpl" base="${dest}" />
 	</target>
 
 	<target name="resource" description="Copys resource files to the ${dest} folder">
@@ -232,7 +233,9 @@
 				</not>
 			</condition>
 		</fail>
-		<antcall target="copy-jboss-config" />
+
+		<!-- Assuming that config will always be either default or all commenting below line -->
+		<!-- <antcall target="copy-jboss-config" /> -->
 		<mkdir dir="${mobicents.sar}" />
 		<mkdir dir="${dest}" />
 		<mkdir dir="${junit.reports}" />
@@ -435,16 +438,26 @@
 
 		<copy file="README.txt" todir="${jboss.readme.dir}" />
 
-		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true"/>
+		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true" />
 		<copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" />
-		<copy file="xml/jboss-service.xml" todir="${mobicents.sar}/META-INF" />
+		<copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" />
 		<copy file="xml/slee-event-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/slee-profile-spec-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/event-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/hsqldb-ds.xml.${node}" tofile="${jboss.deploy}/hsqldb-ds.xml" overwrite="true" />
 
+
 		<!-- copying config files for clustered services -->
-		<copy file="xml/cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/cluster-service.xml" overwrite="true" />
+		<!-- <if>
+					<equals arg1="${node}" arg2="all" />
+					<then>
+		
+		 		<copy file="xml/cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/cluster-service.xml" overwrite="true" />
+					</then>
+					 <else>   				
+					</else>
+				</if> -->
+
 		<copy file="xml/jboss-treecache-service.xml.${cachemode}" tofile="${jboss.deploy}/jboss-treecache-service.xml" overwrite="true" />
 		<!--copy file="xml/tc5-cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/tc5-cluster-service.xml" overwrite="true" /-->
 		<copy file="xml/jboss-treecache-deployment-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-deployment-service.xml" overwrite="true" />
@@ -527,8 +540,11 @@
 				<include name="jars/slee-tasks.jar" />
 				<include name="jars/tcktools.jar" />
 			</fileset>
+			<fileset dir="${jboss.home}/server/all/lib">
+				<include name="jgroups.jar" />
+			</fileset>
 		</copy>
-		<copy todir="${mobicents.sar}/META-INF" file="xml/jboss-service.xml" />
+		<copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" />
 
 	</target>
 
