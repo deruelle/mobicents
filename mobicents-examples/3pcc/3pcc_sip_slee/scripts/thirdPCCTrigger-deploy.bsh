@@ -1,0 +1,151 @@
+/** 
+ * A BeanShell script service that deploys SLEE services in Mobicents
+ */
+
+import java.io.File;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.slee.management.DeployableUnitID;
+import org.jboss.mx.util.MBeanProxyExt;
+import org.jboss.system.ServiceMBeanSupport;
+import org.jboss.util.StringPropertyReplacer;
+import javax.slee.management.DeploymentMBean;
+import javax.slee.management.ServiceManagementMBean;
+import org.mobicents.slee.container.management.jmx.ResourceAdaptorMBean;
+import org.mobicents.slee.container.management.jmx.SleeManagementMBeanImplMBean;
+import org.mobicents.slee.container.management.ComponentKey;
+import org.mobicents.slee.container.management.ResourceAdaptorIDImpl;
+import org.mobicents.slee.container.management.ServiceIDImpl;
+
+private String sleeManagementMBeanName = "slee:service=SleeManagement";
+
+String thirdPCCTriggerURL = "${jboss.server.home.url}deploy-mobicents/ThirdPCCTrigger-DU.jar";
+ServiceIDImpl serviceId = new ServiceIDImpl("se.jayway.sip.slee.service.ThirdPCCTrigger-service", "Jayway", "0.1");
+
+DeployableUnitID thirdPCCTriggerServiceDUID = null;
+
+/**
+ * Install and activate components in the correct order
+ */
+void start()
+{
+
+  try {
+   
+   ctx.log.info("Starting deployment of CallControl service...");
+
+   thirdPCCTriggerServiceDUID = sleeDeploymentMBean.install(StringPropertyReplacer.replaceProperties(thirdPCCTriggerURL)); 
+
+   ctx.log.info("Starting deployment of CallControl service...#2");
+
+   try {
+	   serviceManagementMBean.activate(serviceId);
+   } catch (Exception e) {
+	   ctx.log.warn("Failed to activate SLEE service ID: " + serviceId + ", because of " + e.getMessage());
+   }
+   
+  } catch (Exception e) {
+    ctx.log.info("Exception while starting deployment of CallControl service!", e);
+  }
+}
+
+/**
+ * Deactivate and uninstall components in the reverse order of start()
+ */
+void stop()
+{
+  try {
+   
+   ctx.log.info("Stopping CallControl service...");
+
+   serviceManagementMBean.deactivate(serviceId);
+   ctx.log.info("Stopping CallControl service... #2");
+
+   sleeDeploymentMBean.uninstall(thirdPCCTriggerServiceDUID); 
+   ctx.log.info("Stopping CallControl service... #3");
+
+   ctx.log.info("Stopped successfully CallControl service!");
+
+  } catch (Exception e) {
+    ctx.log.info("Exception while stopping CallControl service!", e);
+  }
+}
+
+
+
+/*************************************************************
+ * The rest of the script should be rarely modified.
+ *************************************************************/
+
+
+void create()
+{
+     ctx.log.debug("Creating SLEE services deployer...");
+     
+     server = global.ctx.getServer();
+
+     ObjectName sleeMgmt = new ObjectName(sleeManagementMBeanName);
+
+     sleeManagementMBean = (SleeManagementMBeanImplMBean)
+      	MBeanProxyExt.create(SleeManagementMBeanImplMBean.class,
+   	         	sleeMgmt, server);
+
+      sleeDeploymentMBean = (DeploymentMBean)
+      	 MBeanProxyExt.create(DeploymentMBean.class,
+      	         	sleeManagementMBean.getDeploymentMBean(), server);
+      
+      resourceAdaptorMBean  = (ResourceAdaptorMBean)
+         MBeanProxyExt.create(ResourceAdaptorMBean.class,
+                 sleeManagementMBean.getResourceAdaptorMBean(), server);
+
+     ctx.log.debug("Creating SLEE services deployer...- resourceAdaptorMBean " + resourceAdaptorMBean);
+      
+      serviceManagementMBean = (ServiceManagementMBean)
+         MBeanProxyExt.create(ServiceManagementMBean.class,
+                 sleeManagementMBean.getServiceManagementMBean(), server);
+
+     ctx.log.info("Created successfully SLEE services deployer!");
+}
+
+void destroy()
+{
+}
+
+
+   /**
+    * Returns the deployed SLEE jars.
+    *
+    */
+   public Iterator getDeployedApplications()
+   {
+      return deployments.values().iterator();
+   }
+
+void setCtx(ServiceMBeanSupport wrapper)
+{
+   global.ctx = wrapper;
+   System.out.println("setCtx: "+ctx);
+}
+
+
+/**
+ * script variables
+ */
+
+ServiceMBeanSupport ctx = null;
+
+/** reference to the standard SLEE deployment MBean */
+private DeploymentMBean sleeDeploymentMBean;
+
+/** reference to the SLEE Resource Adaptor MBean */
+private ResourceAdaptorMBean  resourceAdaptorMBean;
+
+/** A map of current deployments. */
+private ArrayList deployments = new ArrayList();
+
+/** reference to the Mobicents SLEE Management MBean */
+private SleeManagementMBeanImplMBean sleeManagementMBean;
+
+private ServiceManagementMBean serviceManagementMBean;
+
+MBeanServer server;

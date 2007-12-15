@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="XMPPComponentService" default="deploy">
+
+	<property environment="system" />
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+
+	<path id="duPath">
+		<pathelement location="./jars/XMPPComponent-DU.jar" />
+	</path>
+
+	<property name="duPathValue" refid="duPath" />
+	<property name="serviceID" value="XMPP Component Service#PT Inovacao#1.0" />
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<!--import file="${examples.home}/lib/build.xml" /-->
+
+
+
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+
+
+		<path id="ExternalComponents" refid="examples-libraries">
+
+		</path>
+
+
+	</target>
+	<target name="clean" depends="init">
+		<ant target="clean-XMPPComponent-sbb" />
+		<ant target="clean-XMPPComponent-DU" />
+	</target>
+	<target name="build-XMPPComponent-sbb" depends="init">
+		<mkdir dir="classes/XMPPComponent-sbb" />
+		<mkdir dir="jars/" />
+		<javac destdir="classes/XMPPComponent-sbb" srcdir="src" includes="org/mobicents/slee/service/xmppcomponent/XMPPComponentSbb.java">
+			<classpath>
+				<path refid="slee" />
+				<path refid="ExternalComponents" />
+			</classpath>
+		</javac>
+		<copy file="src/org/mobicents/slee/service/xmppcomponent/XMPPComponent-sbb-jar.xml" tofile="classes/XMPPComponent-sbb/sbb-jar.xml" />
+		<copy file="src/org/mobicents/slee/service/xmppcomponent/component.properties" todir="classes/XMPPComponent-sbb/org/mobicents/slee/service/xmppcomponent" />
+		<copy file="src/org/mobicents/slee/service/xmppcomponent/servicediscovery.properties" todir="classes/XMPPComponent-sbb/org/mobicents/slee/service/xmppcomponent" />
+		<jar jarfile="jars/XMPPComponent-sbb.jar">
+			<metainf dir="classes/XMPPComponent-sbb" includes="sbb-jar.xml" />
+			<fileset dir="classes/XMPPComponent-sbb" includes="org/mobicents/slee/service/xmppcomponent/XMPPComponentSbb.class" />
+			<fileset dir="classes/XMPPComponent-sbb" includes="org/mobicents/slee/service/xmppcomponent/component.properties" />
+			<fileset dir="classes/XMPPComponent-sbb" includes="org/mobicents/slee/service/xmppcomponent/servicediscovery.properties" />
+		</jar>
+	</target>
+	<target name="clean-XMPPComponent-sbb">
+		<delete file="jars/XMPPComponent-sbb.jar" />
+		<delete dir="classes/XMPPComponent-sbb" />
+	</target>
+	<target name="build-XMPPComponent-DU" depends="build-XMPPComponent-sbb">
+		<mkdir dir="classes/XMPPComponent-DU" />
+		<copy file="src/org/mobicents/slee/service/xmppcomponent/XMPPComponent-deployable-unit.xml" tofile="classes/XMPPComponent-DU/deployable-unit.xml" />
+		<jar jarfile="jars/XMPPComponent-DU.jar">
+			<metainf dir="classes/XMPPComponent-DU" includes="deployable-unit.xml" />
+			<fileset includes="jars/XMPPComponent-sbb.jar" dir="" />
+			<fileset includes="src/org/mobicents/slee/service/xmppcomponent/XMPPComponent-service.xml" dir="." />
+		</jar>
+	</target>
+	<target name="clean-XMPPComponent-DU">
+		<delete file="jars/XMPPComponent-DU.jar" />
+		<delete dir="classes/XMPPComponent-DU" />
+	</target>
+	<!-- Deploys to JBOSS. -->
+	<target name="deploy" depends="build-XMPPComponent-DU,management-init">
+
+		<pathconvert targetos="unix" property="duPathValue" refid="duPath" />
+		<echo>Deploying XMPPComponent DU JAR</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${duPathValue}" />
+		</slee-management>
+		<echo>Activate XMPPComponent Service</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+	</target>
+	<target name="undeploy" depends="init">
+		<pathconvert targetos="unix" property="duPathValue" refid="duPath" />
+		<!-- deactivate the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+		</slee-management>
+		<!-- undeploys the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<uninstall url="${file_url}${duPathValue}" />
+		</slee-management>
+	</target>
+
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies, hopefuly!!">
+		<ant dir="${xmppra-home}" target="ra-deploy" inheritall="false" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+		<ant target="undeploy" />
+		<ant dir="${xmppra-home}" target="ra-undeploy" inheritall="false" />
+	</target>
+
+
+</project>

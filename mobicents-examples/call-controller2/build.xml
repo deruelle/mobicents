@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="service-composition-chain">
+	<property name="project.home" value="." />
+	<property environment="system" />
+
+	<path id="duPath">
+		<pathelement location="./jars/CallControl-DU.jar" />
+	</path>
+
+	<property name="duPathValue" refid="duPath" />
+	<property name="serviceID1" value="CallBlockingService#org.mobicents#0.1" />
+	<property name="serviceID2" value="CallForwardingService#org.mobicents#0.1" />
+	<property name="serviceID3" value="VoiceMailService#org.mobicents#0.1" />
+
+	<property name="profileTableName" value="CallControl" />
+	<property name="profileSpecs" value="ProfileSpecificationID[CallControlProfileCMP#org.mobicents#0.1]" />
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<echo>SIP SERVICES HOME[${sip-services-home}]</echo>
+	<target name="init" depends="management-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+		<path id="libs-ref" refid="examples-libraries">
+		</path>
+
+		<ant dir="${sip-services-home}" target="jar-with-invite-not-initial">
+		</ant>
+
+		<path id="path-CallBlocking-sbb">
+			<path refid="libs-ref" />
+		</path>
+		<path id="path-CallForwarding-sbb">
+			<pathelement location="${sip-services-home}/proxysbb.jar" />
+			<pathelement location="${sip-services-home}/registrarsbb.jar" />
+			<path refid="libs-ref" />
+		</path>
+		<path id="path-VoiceMail-sbb">
+			<path refid="libs-ref" />
+			<pathelement location="lib/media-local-ra/media-resource-adaptor.jar" />
+		</path>
+	</target>
+	<!-- COMPILE ALL -->
+	<target depends="init" name="all">
+		<ant target="package-ras" />
+		<ant target="build-CallControl-profile-spec" />
+		<ant target="build-CallBlocking-sbb" />
+		<ant target="build-CallForwarding-sbb" />
+		<ant target="build-VoiceMail-sbb" />
+		<ant target="build-CallControl-DU" />
+	</target>
+	<!-- CLEAN LOCAL ALL -->
+	<target depends="init,clean-test" name="clean" description="clean up after build">
+		<ant target="clean-CallControl-profile-spec" />
+		<ant target="clean-CallBlocking-sbb" />
+		<ant target="clean-CallForwarding-sbb" />
+		<ant target="clean-VoiceMail-sbb" />
+		<ant target="clean-CallControl-DU" />
+		<delete dir="classes" />
+		<delete dir="jars" />
+		<delete dir="tmp" />
+	</target>
+
+	<!-- package RA jars -->
+	<target name="package-ras">
+		<mkdir dir="tmp/DU" />
+		<zip basedir="lib/media-local-ra" destfile="tmp/DU/media-local-ra.jar" />
+		<zip basedir="lib/media-ra-type" destfile="tmp/DU/media-ra-type.jar" />
+		<zip basedir="lib/sip-local-ra" destfile="tmp/DU/sip-local-ra.jar" />
+		<zip basedir="lib/sip-ra-type" destfile="tmp/DU/sip-ra-type.jar" />
+	</target>
+
+	<!-- CALL CONTROL PROFILE -->
+	<target depends="init" name="build-CallControl-profile-spec">
+		<mkdir dir="classes/CallControl-profile-spec" />
+		<mkdir dir="jars/" />
+		<javac debug="on" destdir="classes/CallControl-profile-spec" includes="org/mobicents/slee/examples/callcontrol/profile/CallControlProfileCMP.java,org/mobicents/slee/examples/callcontrol/profile/CallControlProfileManagementImpl.java" srcdir="src">
+			<classpath>
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<profilespecjar classpath="classes/CallControl-profile-spec" destfile="jars/CallControl-profile-spec.jar" profilespecjarxml="src/org/mobicents/slee/examples/callcontrol/profile/CallControl-profile-spec-jar.xml" />
+	</target>
+
+	<target name="clean-CallControl-profile-spec">
+		<delete file="jars/CallControl-profile-spec.jar" />
+		<delete dir="classes/CallControl-profile-spec" />
+	</target>
+	<!-- END CALL CONTROL PROFILE -->
+	<!-- CALL BLOCKING SBB -->
+	<target depends="init" name="build-CallBlocking-sbb">
+		<mkdir dir="classes/CallBlocking-sbb" />
+		<mkdir dir="jars/" />
+		<javac debug="on" destdir="classes/CallBlocking-sbb" includes="org/mobicents/slee/examples/callcontrol/blocking/CallBlockingSbb.java,org/mobicents/slee/examples/callcontrol/blocking/CallBlockingSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
+			<classpath>
+				<path refid="path-CallBlocking-sbb" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<!--  <sbbjar classpath="classes/CallBlocking-sbb" destfile="jars/CallBlocking-sbb.jar" sbbjarxml="src/org/mobicents/slee/examples/callcontrol/blocking/CallBlocking-sbb-jar.xml"/>-->
+		<copy file="src/org/mobicents/slee/examples/callcontrol/blocking/CallBlocking-sbb-jar.xml" tofile="classes/CallBlocking-sbb/META-INF/sbb-jar.xml" />
+		<jar jarfile="jars/CallBlocking-sbb.jar" basedir="classes/CallBlocking-sbb/" />
+	</target>
+
+	<target name="clean-CallBlocking-sbb">
+		<delete file="jars/CallBlocking-sbb.jar" />
+		<delete dir="classes/CallBlocking-sbb" />
+	</target>
+	<!-- END CALL BLOCKING SBB -->
+	<!-- CALL FORWARDING SBB -->
+	<target depends="init" name="build-CallForwarding-sbb">
+		<mkdir dir="classes/CallForwarding-sbb" />
+		<mkdir dir="jars/" />
+		<javac debug="on" destdir="classes/CallForwarding-sbb" includes="org/mobicents/slee/examples/callcontrol/forwarding/CallForwardingSbb.java,org/mobicents/slee/examples/callcontrol/forwarding/CallForwardingSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
+			<classpath>
+				<path refid="path-CallForwarding-sbb" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+
+		<copy file="src/org/mobicents/slee/examples/callcontrol/forwarding/CallForwarding-sbb-jar.xml" tofile="classes/CallForwarding-sbb/META-INF/sbb-jar.xml" />
+		<jar jarfile="jars/CallForwarding-sbb.jar" basedir="classes/CallForwarding-sbb/" />
+	</target>
+
+	<target name="clean-CallForwarding-sbb">
+		<delete file="jars/CallForwarding-sbb.jar" />
+		<delete dir="classes/CallForwarding-sbb" />
+	</target>
+	<!-- END CALL FORWARDING SBB -->
+	<!-- VOICE MAIL SBB -->
+	<target depends="init" name="build-VoiceMail-sbb">
+		<mkdir dir="classes/VoiceMail-sbb" />
+		<mkdir dir="jars/" />
+		<javac debug="on" destdir="classes/VoiceMail-sbb" includes="org/mobicents/slee/examples/callcontrol/voicemail/VoiceMailSbb.java,org/mobicents/slee/examples/callcontrol/voicemail/VoiceMailSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
+			<classpath>
+				<path refid="path-VoiceMail-sbb" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+
+		<copy file="src/org/mobicents/slee/examples/callcontrol/voicemail/VoiceMail-sbb-jar.xml" tofile="classes/VoiceMail-sbb/META-INF/sbb-jar.xml" />
+		<jar jarfile="jars/VoiceMail-sbb.jar" basedir="classes/VoiceMail-sbb/">
+			<fileset dir="src" includes="org/mobicents/slee/examples/callcontrol/voicemail/audiofiles/*.wav" />
+		</jar>
+	</target>
+
+	<target name="clean-VoiceMail-sbb">
+		<delete file="jars/VoiceMail-sbb.jar" />
+		<delete dir="classes/VoiceMail-sbb" />
+	</target>
+	<!-- END VOICE MAIL SBB -->
+	<!-- BUILDS DU -->
+	<target depends="build-CallBlocking-sbb,build-CallControl-profile-spec,build-CallForwarding-sbb,build-VoiceMail-sbb" name="build-CallControl-DU">
+		<mkdir dir="classes/CallControl-DU" />
+		<copy file="src/org/mobicents/slee/examples/callcontrol/DU/CallControl-deployable-unit.xml" tofile="classes/CallControl-DU/deployable-unit.xml" />
+		<jar jarfile="jars/CallControl-DU.jar">
+			<metainf dir="classes/CallControl-DU" includes="deployable-unit.xml" />
+			<fileset dir="" includes="jars/CallBlocking-sbb.jar" />
+			<fileset dir="" includes="jars/CallControl-profile-spec.jar" />
+			<fileset dir="" includes="jars/CallForwarding-sbb.jar" />
+			<fileset dir="" includes="jars/VoiceMail-sbb.jar" />
+			<fileset dir="." includes="src/org/mobicents/slee/examples/callcontrol/services/CallBlockingService-service.xml" />
+			<fileset dir="." includes="src/org/mobicents/slee/examples/callcontrol/services/CallForwarding-service.xml" />
+			<fileset dir="." includes="src/org/mobicents/slee/examples/callcontrol/services/VoiceMail-service.xml" />
+		</jar>
+	</target>
+	<target name="clean-CallControl-DU">
+		<delete file="jars/CallControl-DU.jar" />
+		<delete dir="classes/CallControl-DU" />
+	</target>
+
+	<target name="copy-libs" depends="init" unless="shell-libs-available">
+
+
+		<copy todir="${system.ANT_HOME}/lib">
+
+			<fileset dir="${examples.home}/lib">
+				<include name="bsf.jar" />
+			</fileset>
+
+			<fileset dir="${jboss.home}/lib">
+				<include name="commons-logging.jar" />
+			</fileset>
+
+		</copy>
+
+	</target>
+
+	<target name="init-beanshell-execution">
+
+		<!-- TODO: CHECK BOTH FILES?? -->
+		<available file="${ant.home}/lib/bsf.jar" property="shell-libs-available">
+			<!--
+				<filelist dir="${ant.home}/lib">
+					<file name="bsf.jar" />
+					<file name="commons-logging.jar" />
+				</filelist>
+
+				-->
+		</available>
+		<antcall target="copy-libs" />
+
+	</target>
+
+
+	<target name="deploy" depends="all,init-beanshell-execution" description="Deploys services to a Mobicents server pointed by ${jnpHost} and ${jnpPort}">
+
+
+		<echo>Installing and activating service ${serviceID1},${serviceID2},${serviceID3}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${duPathValue}" />
+			<activateservice serviceid="${serviceID1}" />
+			<activateservice serviceid="${serviceID2}" />
+			<activateservice serviceid="${serviceID3}" />
+
+		</slee-management>
+		<!--
+		<copy todir="${DU.deploy.dir}/scripts/" file="./scripts/zCallControl-profiles.bsh">
+		</copy>
+	-->
+
+		<script language="beanshell" manager="bsf" src="./scripts/profiles.bsh">
+			<classpath>
+				<fileset dir="${jboss.home}/client">
+					<include name="jbossall-client.jar" />
+				</fileset>
+				<fileset dir="${lib-prefix}">
+					<include name="slee_1_1.jar" />
+					<include name="mobicents_lib.jar" />
+					<include name="bsh-2.0b4.jar" />
+				</fileset>
+			</classpath>
+		</script>
+
+	</target>
+
+	<target name="undeploy" depends="init" description="unDeploys services from container described by ${jnpHost} and ${jnpPort}">
+		<echo>Deactivating and uninstalling service ${serviceID1},${serviceID2},${serviceID3}.</echo>
+		<delete file="${DU.deploy.dir}/scripts/zCallControl-profiles.bsh">
+		</delete>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+
+			<!-- TODO: DESTROY PROFILE -->
+			<!-- Remove profiles -->
+			<removeprofile profilename="torosvi" tablename="${profileTableName}" />
+			<removeprofile profilename="mobicents" tablename="${profileTableName}" />
+			<removeprofile profilename="victor" tablename="${profileTableName}" />
+			<removeprofile profilename="vhros2" tablename="${profileTableName}" />
+			<removeprofile profilename="vmail" tablename="${profileTableName}" />
+			<!-- Remove profile table -->
+			<removeprofiletable tablename="${profileTableName}" />
+
+			<deactivateservice serviceid="${serviceID1}" />
+			<deactivateservice serviceid="${serviceID2}" />
+			<deactivateservice serviceid="${serviceID3}" />
+			<uninstall url="${file_url}${duPathValue}" />
+
+		</slee-management>
+
+
+
+	</target>
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies !!">
+
+		<ant dir="${sip-services-home}" target="jar-with-invite-not-initial" inheritall="false" />
+		<!-- THIS WILL ALSO DEPLOY SIP RA-->
+		<ant dir="${sip-services-home}" target="deploy" inheritall="false" />
+		<ant dir="${mediara-home}" target="ra-deploy" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+
+		<ant target="undeploy" />
+		<ant dir="${sip-services-home}" target="undeploy" inheritall="false" />
+		<ant dir="${mediara-home}" target="ra-undeploy" />
+
+
+	</target>
+
+	<!-- DOES REGISTER TEST -->
+	<target name="compile-test" depends="init">
+		<javac destdir="classes" srcdir="src" includes="org/mobicents/test/**.java" debug="true">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<copy todir="classes">
+			<fileset dir="src">
+				<filename name="org/mobicents/test/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="run-deploy-test" depends="compile-test" description="Runs simple class that tries to REGISTER with sip registrar">
+		<java classname="org.mobicents.test.DeployTest">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+				<pathelement location="classes" />
+			</classpath>
+		</java>
+	</target>
+	<target name="clean-test">
+		<delete dir="classes/org">
+
+		</delete>
+	</target>
+
+
+</project>

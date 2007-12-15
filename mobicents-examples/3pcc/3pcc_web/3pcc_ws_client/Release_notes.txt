@@ -1,0 +1,21 @@
+Release notes
+
+Features and known limitations:
+ 
+* Supports sip URIs on the form sip:username@domain:port and sip:username@ipaddress:port 
+(other such as sips URIs has not been tested)
+
+* Implements a ParlayX interface
+
+* Makes use of the following four services:
+
+  makeCall - sets up the call between two SIP parties
+  cancelCallRequest - cancel an ingoing call setup procedure
+  endCall - ends the call between the two SIP parties
+  getCallInformation - get call status during the whole call session; during setup, ongoing call and tear down procedure.
+  	
+* There is a bug in the web server that makes the getCallInformation() executing with errors when 
+executing the web service in standalone mode (by using the se.jayway.sip.callcontrol.client.invoker.ThirdPartyCallInvoker). 
+Therefore, the web service client invoker currently doesn't use this functionality. Instead, the flow contains 
+makeCall(), wait for 10s (simulate talking) and endCall(), i.e no call status is retrieved during the 
+call setup when the web service is used in standalone mode!

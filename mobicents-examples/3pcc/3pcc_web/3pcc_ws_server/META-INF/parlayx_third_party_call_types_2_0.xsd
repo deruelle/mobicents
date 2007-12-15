@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:parlayx_third_party_call_xsd="http://www.csapi.org/schema/parlayx/third_party_call/v2_0" targetNamespace="http://www.csapi.org/schema/parlayx/third_party_call/v2_0">
+
+   <xsd:complexType name="CallInformation">
+      <xsd:sequence>
+         <xsd:element name="callStatus" type="parlayx_third_party_call_xsd:CallStatus"/>
+         <xsd:element name="startTime" type="xsd:dateTime"/>
+         <xsd:element name="duration" type="xsd:int"/>
+         <xsd:element name="terminationCause" type="parlayx_third_party_call_xsd:CallTerminationCause"/>
+      </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:simpleType name="CallStatus">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="CallInitial"/>
+         <xsd:enumeration value="CallConnected"/>
+         <xsd:enumeration value="CallTerminated"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+
+   <xsd:simpleType name="CallTerminationCause">
+      <xsd:restriction base="xsd:string">
+         <xsd:enumeration value="CallingPartyNoAnswer"/>
+         <xsd:enumeration value="CalledPartyNoAnswer"/>
+         <xsd:enumeration value="CallingPartyBusy"/>
+         <xsd:enumeration value="CalledPartyBusy"/>
+         <xsd:enumeration value="CallingPartyNotReachable"/>
+         <xsd:enumeration value="CalledPartyNotReachable"/>
+         <xsd:enumeration value="CallHangUp"/>
+         <xsd:enumeration value="CallAborted"/>
+      </xsd:restriction>
+   </xsd:simpleType>
+</xsd:schema>

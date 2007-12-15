@@ -1,0 +1,294 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+
+<sbb-jar>
+    
+    <sbb id="WelcomeSbb">
+        <description>Example of IVR</description>
+        <sbb-name>WelcomeSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>WelcomeSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>DtmfSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>DtmfSbb</sbb-alias>
+        </sbb-ref>
+        <sbb-ref>
+            <sbb-name>RecorderSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>RecorderSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.examples.media.WelcomeSbb
+                </sbb-abstract-class-name>
+                <get-child-relation-method>
+                    <sbb-alias-ref>DtmfSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getDtmfSbb</get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>
+                    <sbb-alias-ref>RecorderSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getRecorderSbb</get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ConnectionConnected</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>      
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>PlayerStarted</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.PLAYER_STARTED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>PlayerStopped</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.PLAYER_STOPPED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>				        
+    </sbb>  
+    
+    <sbb id="DtmfSbb">
+        <description>Example of IVR</description>
+        <sbb-name>DtmfSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>DtmfSbb</sbb-alias>
+        
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.examples.media.DtmfSbb
+                </sbb-abstract-class-name>
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>DtmfEvent</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_DTMF</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>      
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>PlayerStopped</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.PLAYER_STOPPED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>				        
+    </sbb>  
+
+    <sbb id="RecorderSbb">
+        <description>Example of IVR</description>
+        <sbb-name>RecorderSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>RecorderSbb</sbb-alias>
+        
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.examples.media.RecorderSbb
+                </sbb-abstract-class-name>
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+        
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>RecorderStarted</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.RECORDER_STARTED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>RecorderStopped</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.RECORDER_STOPPED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>				        
+    </sbb>  
+    
+    <sbb id="callsbb">
+        <description>Example of IVR</description>
+        <sbb-name>IVRSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>IVRSbb</sbb-alias>
+        
+        
+        <sbb-ref>
+            <sbb-name>WelcomeSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>WelcomeSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.examples.media.CallSbb
+                </sbb-abstract-class-name>
+                <get-child-relation-method>
+                    <sbb-alias-ref>WelcomeSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getWelcomeSbb</get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <cmp-field>
+                    <cmp-field-name>requestEvent</cmp-field-name>
+                </cmp-field>
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+        
+        <event event-direction="Receive" initial-event="True">
+            <event-name>InviteEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.message.Request.INVITE</event-type-name>
+                <event-type-vendor>javax.sip</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ByeEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.dialog.TerminationRequest</event-type-name>
+                <event-type-vendor>net.java</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ConnectionConnecting</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTING</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ConnectionConnected</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>PlayerFailed</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.PLAYER_FAILED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>RecorderFailed</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.RECORDER_FAILED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>JAIN SIP</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>javax.sip</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.2</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/jainsip/1.2/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/jainsip/1.2/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>SipRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>				
+        
+    </sbb>  
+    
+    
+</sbb-jar>

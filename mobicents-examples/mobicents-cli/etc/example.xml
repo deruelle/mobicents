@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+
+<!--
+
+ This is an ANT example file to use JSLEE Management Ant Tasks
+ 
+ -->
+
+<project name="mobicents-cli-examples" basedir="..">
+	
+	<pathconvert targetos="unix" property="basedir.standard">
+		<path description="To use te same stile for every url file" path="${basedir}"/>
+	</pathconvert>
+	
+ 	<import file="slee-management.xml"/>
+	
+	<!-- PATHS -->
+	<condition property="file_url" value="file:/">
+		<os family="windows"/>
+	</condition>
+	<!-- Property already set on windows platform -->
+	<property name="file_url" value="file:"/>
+	<property name="build-examples" value="${basedir.standard}/etc"/>
+	
+	
+   	<!-- SLEE MANAGEMENT -->	
+	<target name="start-slee" depends="management-init">
+		<slee-management>
+			<changesleestate state="start"/>
+		</slee-management>	
+	</target>
+	
+	<target name="stop-slee" depends="management-init">
+		<slee-management>
+			<changesleestate state="stop"/>
+		</slee-management>	
+	</target>
+	
+	<target name="install-sipra" depends="management-init">		
+		<slee-management>
+			<install url="${file_url}${build-examples}/sip-ra-type.jar"/>
+			<install url="${file_url}${build-examples}/sip-local-ra.jar"/>		
+		</slee-management>
+	</target>
+	
+	<target name="create-sipra" depends="management-init">
+		<slee-management>
+			<createraentity resourceadaptorid="jainsip#NIST#1.1" entityname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="activate-sipra" depends="management-init">
+		<slee-management>
+			<activateraentity entityname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="create-link-sipra" depends="management-init">
+		<slee-management>
+			<bindralinkname linkname="SipRA" entityname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="remove-link-sipra" depends="management-init">
+		<slee-management>
+			<unbindralinkname linkname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="deactivate-sipra" depends="management-init">
+		<slee-management>
+			<deactivateraentity entityname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="remove-sipra" depends="management-init">
+		<slee-management>
+			<removeraentity entityname="SipRA"/>
+		</slee-management>
+	</target>
+	
+	<target name="uninstall-sipra" depends="management-init">		
+		<slee-management>
+			<uninstall url="${file_url}${build-examples}/sip-ra-type.jar"/>
+			<uninstall url="${file_url}${build-examples}/sip-local-ra.jar"/>
+		</slee-management>
+	</target>
+	
+	<target name="deploy-sipra" depends="install-sipra, create-sipra, activate-sipra, create-link-sipra"
+		description="Deploying the Sip Resource Adaptor">
+	</target>
+	
+	<target name="undeploy-sipra" depends="remove-link-sipra, deactivate-sipra, remove-sipra, uninstall-sipra"
+		description="Undeploying the Sip Resource Adaptor">
+	</target>
+	
+	<target name="deploy-sip-proxy" depends="deploy-sipra" 
+		description="Deploying Sip Proxy">
+		<slee-management>
+			<install url="${file_url}${build-examples}/proxyservice.jar"/>
+			<activateservice serviceid="JAIN SIP Proxy Service#NIST#1.0"/>
+		</slee-management>
+	</target>
+	
+	<target name="undeploy-sip-proxy" depends="management-init" 
+		description="Undeploying Sip Proxy">
+		<slee-management>
+			<deactivateservice serviceid="JAIN SIP Proxy Service#NIST#1.0"/>
+			<uninstall url="${file_url}${build-examples}/proxyservice.jar"/>
+		</slee-management>
+	</target>
+	
+	<target name="deploy-controller" depends="deploy-sip-proxy"
+		description="Deploying Call Controller Service">
+		<slee-management>
+			<install url="${file_url}${build-examples}/callcontroller-DU.jar"/>
+			<activateservice serviceid="CallControllerService#org.mobicents#0.1"/>
+		</slee-management>
+	</target>
+	
+	<target name="undeploy-controller" depends="management-init" 
+		description="Undeploying Call Controller Service">
+		<slee-management>
+			<deactivateservice serviceid="CallControllerService#org.mobicents#0.1"/>
+			<uninstall url="${file_url}${build-examples}/callcontroller-DU.jar"/>
+		</slee-management>
+	</target>
+	
+	<target name="create-profile-table-controller" depends="deploy-controller">
+		<slee-management>
+			<createprofiletable profilespec="ControllerProfileCMP#org.mobicents#0.1" tablename="Controller"/>
+		</slee-management>
+	</target>
+		
+	<target name="create-profile-controller" depends="create-profile-table-controller">
+		<slee-management>
+			<createprofile tablename="Controller" profilename="torosvi"/>
+		</slee-management>
+	</target>
+		
+	<target name="remove-profile-controller" depends="management-init">
+		<slee-management>
+			<removeprofile tablename="Controller" profilename="torosvi"/>
+		</slee-management>
+	</target>
+		
+	<target name="remove-profile-table-controller" depends="management-init">
+		<slee-management>
+			<removeprofiletable tablename="Controller"/>
+		</slee-management>
+	</target>
+	
+	<target name="controller-finest" depends="deploy-controller">
+		<slee-management>
+				<settracelevel componentid="CallControllerService#org.mobicents#0.1" type="service" level="FINEST"/>
+		</slee-management>
+	</target>
+	
+	<!-- ***** Example using a remote host and a different jnp port ***** -->
+	<!--
+		 By default:
+		 host="localhost"
+		 jnpport="1099"
+	-->
+	<!--
+	<target name="start-slee" depends="management-init">
+		<slee-management host="<Host_Name or IP_Address>" jnpport="Port_Number">
+			<changesleestate state="start"/>
+		</slee-management>	
+	</target>
+		
+	<target name="stop-slee" depends="management-init">
+		<slee-management host="<Host_Name or IP_Address>" jnpport="Port_Number">
+			<changesleestate state="stop"/>
+		</slee-management>	
+	</target>
+	-->
+	
+</project>

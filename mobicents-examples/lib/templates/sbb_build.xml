@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="_NAME_">
+
+	<property environment="system" />
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+	
+	<path id="duPath">
+		<pathelement location="__RELATIVE_PATH_TO_DU_JAR__"/>
+	</path>
+	
+	<property name="duPathValue" refid="duPath"/>
+	<property name="serviceID" value="__SERVICE_ID__"/> <!-- Wake Up Service#NIST#1.0 -->
+	
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for conveniance] -->
+	<import file="../lib/build.xml" />
+	
+
+
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+
+
+		<path id="ExternalComponents" refid="examples-libraries">
+			
+		</path>
+		
+	</target>
+
+	<target depends="init" name="all">
+	
+		<!--BUILD HERE EVERYTHING -->
+	
+	</target>
+	<target depends="init" name="clean">
+		
+	<!-- CLEAN EVERYTHING -->
+		
+	</target>
+	
+	
+	
+	<!-- ADD MORE SERVICES, etc IF NEEDED -->
+	<target name="deploy" depends="all" description="Deploys service into container described by ${jnpHost} and ${jnpPort}">
+			<echo>Installing and activating service ${serviceID}.</echo>
+			<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+				<install url="${file_url}${duPathValue}" />
+				<activateservice serviceid="${serviceID}"/>
+			</slee-management>
+		</target>
+
+		<target name="undeploy" depends="init" description="unDeploys service from container described by ${jnpHost} and ${jnpPort}">
+			<echo>Deactivating and uninstalling service ${serviceID}.</echo>
+			<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+				<deactivateservice serviceid="${serviceID}"/>
+				<uninstall url="${file_url}${duPathValue}" />
+
+			</slee-management>
+		</target>
+	
+</project>

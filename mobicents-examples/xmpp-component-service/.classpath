@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="lib/slee-src.jar" kind="lib" path="lib/slee.jar"/>
+	<classpathentry kind="lib" path="../../mobicents/ra/xmppra/lib/smack.jar"/>
+	<classpathentry kind="lib" path="../../mobicents/lib/sleeRA.zip"/>
+	<classpathentry kind="lib" path="../../mobicents/ra/xmppra/stage/xmpp-resource-adaptor.jar"/>
+	<classpathentry kind="lib" path="../../mobicents/ra/xmppra/lib/smackx.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

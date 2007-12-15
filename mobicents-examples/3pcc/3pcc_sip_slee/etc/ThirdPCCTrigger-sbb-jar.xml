@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN"
+                         "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+<sbb-jar>
+	<sbb>
+		<description />
+		<sbb-name>se.jayway.sip.slee.sbb.ThirdPCCTriggerSbb</sbb-name>
+		<sbb-vendor>Jayway</sbb-vendor>
+		<sbb-version>0.1</sbb-version>
+
+		<!-- Delegate to this child SBB after the first INVITE has been sent -->
+		<sbb-ref>
+			<sbb-name>se.jayway.sip.slee.sbb.CallControlSbb</sbb-name>
+			<sbb-vendor>Jayway</sbb-vendor>
+			<sbb-version>0.1</sbb-version>
+			<sbb-alias>CallControl</sbb-alias>
+		</sbb-ref>
+		<sbb-classes>
+			<sbb-abstract-class>
+				<sbb-abstract-class-name>se.jayway.sip.slee.sbb.ThirdPCCTriggerSbb</sbb-abstract-class-name>
+				<get-child-relation-method>
+					<sbb-alias-ref>CallControl</sbb-alias-ref>
+					<get-child-relation-method-name>getCallControlSbbChild</get-child-relation-method-name>
+					<default-priority>3</default-priority>
+				</get-child-relation-method>
+			</sbb-abstract-class>
+			<sbb-local-interface>
+				<sbb-local-interface-name>se.jayway.sip.slee.sbb.ThirdPCCTriggerSbbLocalObject</sbb-local-interface-name>
+			</sbb-local-interface>
+			<sbb-activity-context-interface>
+				<sbb-activity-context-interface-name>se.jayway.sip.slee.sbb.ThirdPCCTriggerSbbActivityContextInterface</sbb-activity-context-interface-name>
+			</sbb-activity-context-interface>
+		</sbb-classes>
+		<event event-direction="Receive" initial-event="True">
+			<event-name>ThirdPCCTriggerEvent</event-name>
+			<event-type-ref>
+				<event-type-name>se.jayway.sip.slee.event.ThirdPCCTriggerEvent</event-type-name>
+				<event-type-vendor>Jayway</event-type-vendor>
+				<event-type-version>0.1</event-type-version>
+			</event-type-ref>
+			<initial-event-selector-method-name>initialEventSelect</initial-event-selector-method-name>
+		</event>
+		<event event-direction="Receive" initial-event="True">
+			<event-name>TerminationEvent</event-name>
+			<event-type-ref>
+				<event-type-name>se.jayway.sip.slee.event.TerminationEvent</event-type-name>
+				<event-type-vendor>Jayway</event-type-vendor>
+				<event-type-version>0.1</event-type-version>
+			</event-type-ref>
+			<initial-event-selector-method-name>initialEventSelect</initial-event-selector-method-name>
+		</event>
+		<event event-direction="Receive" initial-event="True">
+			<event-name>CancellationEvent</event-name>
+			<event-type-ref>
+				<event-type-name>se.jayway.sip.slee.event.CancellationEvent</event-type-name>
+				<event-type-vendor>Jayway</event-type-vendor>
+				<event-type-version>0.1</event-type-version>
+			</event-type-ref>
+			<initial-event-selector-method-name>initialEventSelect</initial-event-selector-method-name>
+		</event>
+		<event event-direction="Receive" initial-event="True">
+			<event-name>ByeEvent</event-name>
+			<event-type-ref>
+				<event-type-name>javax.sip.message.Request.BYE</event-type-name>
+				<event-type-vendor>javax.sip</event-type-vendor>
+				<event-type-version>1.1</event-type-version>
+			</event-type-ref>
+			<initial-event-selector-method-name>initialEventSelect</initial-event-selector-method-name>
+		</event>
+		<env-entry>
+			<env-entry-name>callControlSipAddress</env-entry-name>
+			<env-entry-type>java.lang.String</env-entry-type>
+			<env-entry-value>sip:callcontrol@sip.jayway.se</env-entry-value>
+		</env-entry>
+		<resource-adaptor-type-binding>
+			<resource-adaptor-type-ref>
+				<resource-adaptor-type-name>JAIN SIP</resource-adaptor-type-name>
+				<resource-adaptor-type-vendor>javax.sip</resource-adaptor-type-vendor>
+				<resource-adaptor-type-version>1.2</resource-adaptor-type-version>
+			</resource-adaptor-type-ref>
+			<activity-context-interface-factory-name>slee/resources/jainsip/1.1/acifactory</activity-context-interface-factory-name>
+			<resource-adaptor-entity-binding>
+				<resource-adaptor-object-name>slee/resources/jainsip/1.1/provider</resource-adaptor-object-name>
+				<resource-adaptor-entity-link>SipRA</resource-adaptor-entity-link>
+			</resource-adaptor-entity-binding>
+		</resource-adaptor-type-binding>
+	</sbb>
+</sbb-jar>

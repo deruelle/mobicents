@@ -1,0 +1,1 @@
+Please remember to start the xmpp component service first, this test sbb uses that component connection.

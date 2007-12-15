@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="build-all" name="3pcc_sip_slee">
+	<property name="lib" value="lib" />
+	<property name="build" value="build" />
+	<property name="etc" value="etc" />
+	<property name="classes" value="classes" />
+	<property name="jars" value="jars" />
+	<property name="deployable-unit" value="ThirdPCCTrigger-DU.jar" />
+	<!-- 	******************************************
+			Set the system variable JBOSS_HOME to 
+			your jboss installation directory
+		******************************************
+		
+	  -->
+	<property environment="system" />
+	<property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" />
+	<!--  MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for conveniance] 
+	  -->
+	<import file="${examples.home}/lib/build.xml" />
+	<!--  NOW WE CAN SET ALL THAT WE NEED 
+	  -->
+	<property name="jboss.deploy.dir" value="${deploy.dir}" />
+	<property name="jboss.node" value="${node}" />
+	<property name="deploy-mobicents.dir" value="${DU.deploy.dir}" />
+	<path id="duPath">
+		<pathelement location="${jars}/ThirdPCCTrigger-DU.jar" />
+	</path>
+	<property name="duPathValue" refid="duPath" />
+	<property name="serviceID" value="se.jayway.sip.slee.service.ThirdPCCTrigger-service#Jayway#0.1" />
+	<!--  Path for the deploy target (except auto-depoy target) 
+	  -->
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+		<path id="project.class.path">
+			<!--  For the javax.resource.ResourceException 
+	  -->
+			<pathelement location="${jboss.home}/server/all/lib/jboss-j2ee.jar" />
+		</path>
+		<path id="ExternalComponents" refid="examples-libraries" />
+	</target>
+
+	<target depends="init, compile" name="build-all">
+		<ant target="build-ThirdPCCTrigger-event" />
+		<ant target="build-ThirdPCCTrigger-sbb" />
+		<ant target="build-CallControl-sbb" />
+		<ant target="build-ThirdPCCTrigger-DU" />
+	</target>
+	<!-- 
+	*************************************************************
+	Cleans all in classes and the jar files for event, sbb and DU
+	*************************************************************
+	-->
+	<target depends="init,clean-test" name="clean" description="Cleans all in classes and the jar files for event, sbb and DU">
+		<!--delete dir="classes/se"/-->
+
+		<delete file="${jars}/ThirdPCCTrigger-event.jar" />
+		<delete file="${jars}/ThirdPCCTrigger-DU.jar" />
+		<delete file="${jars}/ThirdPCCTrigger-sbb.jar" />
+
+		<delete dir="${build}" />
+
+		<ant target="clean-ThirdPCCTrigger-event" />
+		<ant target="clean-ThirdPCCTrigger-sbb" />
+		<ant target="clean-ThirdPCCTrigger-DU" />
+		<ant target="clean-CallControl-sbb" />
+		<ant target="clean-util" />
+	</target>
+	<!--
+	*************************************************
+			Compiles everything
+	*************************************************
+	-->
+	<target name="compile" depends="clean">
+		<mkdir dir="classes" />
+		<javac destdir="classes" srcdir="src" debug="on">
+			<classpath>
+				<path refid="project.class.path" />
+				<path refid="slee" />
+				<path refid="ExternalComponents" />
+			</classpath>
+		</javac>
+	</target>
+	<!--
+	***********************************************
+		Build sar for jmx test mbean
+	***********************************************
+	-->
+	<target name="build-jmx-sar" depends="compile">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/callcontrol.sar" />
+		<mkdir dir="${build}/callcontrol.sar/META-INF" />
+		<copy file="${etc}/jboss-service.xml" todir="${build}/callcontrol.sar/META-INF" />
+		<copy todir="${build}/callcontrol.sar">
+			<fileset dir="${classes}">
+				<include name="se/jayway/sip/slee/jmx/*.class" />
+				<include name="se/jayway/sip/slee/event/*.class" />
+				<include name="se/jayway/sip/util/*.class" />
+			</fileset>
+		</copy>
+	</target>
+	<!-- 
+	********************************************
+		Deploys the jmx test sar to jboss
+	**********************************************
+	 -->
+	<target name="deploy-jmx-testmbean" depends="build-jmx-sar" description="Copies the callcontrol.sar to jboss.home">
+		<copy todir="${jboss.home}/server/${jboss.node}/deploy/callcontrol.sar">
+			<fileset dir="${build}/callcontrol.sar">
+			</fileset>
+		</copy>
+	</target>
+
+	<!--  
+			***************************************************
+			Deploys and activates the ThirdPCCTrigger-DU
+			***************************************************
+			
+	  -->
+	<!--  Deploys to JBOSS. 
+	  -->
+	<target name="deploy" depends="build-all,management-init">
+		<pathconvert targetos="unix" property="duPathValue" refid="duPath" />
+		<echo>Deploying 3PCC DU JAR</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${duPathValue}" />
+		</slee-management>
+		<echo>Activate 3pcc Service</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+	</target>
+	<!--  
+					***************************************************
+					Undeploys and deactivates the ThirdPCCTrigger-DU
+					Note: You have to provide the ID yourself
+					***************************************************
+				
+	  -->
+	<target name="undeploy" depends="init">
+		<pathconvert targetos="unix" property="duPathValue" refid="duPath" />
+		<!--  deactivate the service 
+	  -->
+		<echo>Deactivating service ${serviceID}</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+		</slee-management>
+		<!--  undeploys the service 
+	  -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<uninstall url="${file_url}${duPathValue}" />
+		</slee-management>
+	</target>
+
+
+	<target depends="init, compile" name="build-ThirdPCCTrigger-event">
+		<mkdir dir="${jars}" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/ThirdPCCTrigger-event" />
+		<copy todir="${build}/ThirdPCCTrigger-event">
+			<fileset dir="${classes}">
+				<!--includes="se/jayway/sip/slee/event/ThirdPCCTriggerEvent.class"-->
+				<include name="se/jayway/sip/slee/event/ThirdPCCTriggerEvent.class" />
+				<include name="se/jayway/sip/slee/event/TerminationEvent.class" />
+				<include name="se/jayway/sip/slee/event/CancellationEvent.class" />
+			</fileset>
+		</copy>
+		<path id="test">
+			<pathelement location="${etc}/ThirdPCCTrigger-event-jar.xml" />
+		</path>
+		<property name="testVal" refid="test" />
+		
+		<eventjar classpath="${build}/ThirdPCCTrigger-event" destfile="${jars}/ThirdPCCTrigger-event.jar" eventjarxml="${testVal}" />
+
+	</target>
+
+	<target name="clean-ThirdPCCTrigger-event">
+		<delete file="${jars}/ThirdPCCTrigger-event.jar" />
+		<delete dir="${build}/ThirdPCCTrigger-event" />
+	</target>
+	<target name="clean-util">
+		<delete dir="${build}/Util" />
+	</target>
+
+	<target depends="init, compile" name="build-ThirdPCCTrigger-sbb">
+		<mkdir dir="${jars}/" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/ThirdPCCTrigger-sbb" />
+		<copy file="${etc}/ThirdPCCTrigger-sbb-jar.xml" tofile="${etc}/sbb-jar.xml" />
+		<jar jarfile="${jars}/ThirdPCCTrigger-sbb.jar">
+			<metainf dir="${etc}" includes="sbb-jar.xml" />
+			<fileset dir="${classes}" includes="se/jayway/sip/**/*.class">
+				<exclude name="se/jayway/sip/slee/sbb/CallControlSbb*.class" />
+			</fileset>
+			<fileset dir="${classes}" includes="se/jayway/sip/slee/sbb/CallControlSbbUsage.class" />
+		</jar>
+		<delete file="${etc}/sbb-jar.xml" />
+	</target>
+
+
+	<target name="clean-ThirdPCCTrigger-sbb">
+		<delete file="${jars}/ThirdPCCTrigger-sbb.jar" />
+		<delete dir="classes/ThirdPCCTrigger-sbb" />
+	</target>
+	<target name="clean-CallControl-sbb">
+		<delete file="${jars}/CallControl-sbb.jar" />
+		<delete dir="classes/CallControl-sbb" />
+	</target>
+	<target name="clean-all-deployment" depends="clean-du-deployment,clean-jmx-deployment" description="Cleans the deployed folders, scripts and jar files in JBoss" />
+	<target name="clean-du-deployment">
+		<delete file="${deploy-mobicents.dir}/scripts/thirdPCCTrigger-deploy.bsh" />
+		<delete file="${deploy-mobicents.dir}/ThirdPCCTrigger-DU.jar" />
+	</target>
+	<target name="clean-jmx-deployment">
+		<delete dir="${jboss.deploy.dir}/callcontrol.sar" />
+	</target>
+	<target depends="init, compile" name="build-CallControl-sbb">
+		<mkdir dir="${jars}/" />
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/CallControl-sbb" />
+		<copy file="${etc}/CallControl-sbb-jar.xml" tofile="${etc}/sbb-jar.xml" />
+		<jar jarfile="${jars}/CallControl-sbb.jar">
+			<metainf dir="${etc}" includes="sbb-jar.xml" />
+			<fileset dir="${classes}" includes="se/jayway/sip/slee/sbb/CallControlSbb*.class, se/jayway/sip/util/*.class">
+			</fileset>
+		</jar>
+		<delete file="${etc}/sbb-jar.xml" />
+	</target>
+
+	<!--
+         **************************************************
+         Deployes a beanshell script and the deployable unit 
+         in JBoss (deploy-mobicents). The service is deployed
+         and activated when JBoss starts up.
+         
+         Use this target to avoid having to deploy the service
+         manually after starting up JBoss.
+         **************************************************
+-->
+	<target name="auto-deploy-ThirdPCCTrigger" description="Deploys a beanshell script and deployable unit in JBoss" depends="build-ThirdPCCTrigger-DU">
+
+		<copy todir="${deploy-mobicents.dir}/scripts">
+			<fileset dir="scripts">
+				<include name="thirdPCCTrigger-deploy.bsh" />
+			</fileset>
+		</copy>
+		<copy todir="${deploy-mobicents.dir}">
+			<fileset dir="${jars}">
+				<include name="ThirdPCCTrigger-DU.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build-ThirdPCCTrigger-DU" depends="clean, build-ThirdPCCTrigger-event,build-ThirdPCCTrigger-sbb, build-CallControl-sbb">
+		<mkdir dir="${build}" />
+		<mkdir dir="${build}/ThirdPCCTrigger-DU" />
+		<copy file="src/se/jayway/sip/slee/du/ThirdPCCTrigger-deployable-unit.xml" tofile="${build}/ThirdPCCTrigger-DU/deployable-unit.xml" />
+		<jar jarfile="${jars}/ThirdPCCTrigger-DU.jar">
+			<metainf dir="${build}/ThirdPCCTrigger-DU" includes="deployable-unit.xml" />
+			<fileset dir="" includes="${jars}/ThirdPCCTrigger-event.jar" />
+			<fileset dir="" includes="${jars}/ThirdPCCTrigger-sbb.jar" />
+			<fileset dir="" includes="${jars}/CallControl-sbb.jar" />
+			<fileset dir="." includes="src/se/jayway/sip/slee/service/ThirdPCCTrigger-service.xml" />
+		</jar>
+	</target>
+	<target name="clean-ThirdPCCTrigger-DU">
+		<delete file="${jars}/ThirdPCCTrigger-DU.jar" />
+		<delete dir="${build}/ThirdPCCTrigger-DU" />
+	</target>
+
+
+
+	<!--  DOES REGISTER TEST 
+	  -->
+	<target name="compile-test" depends="init">
+		<javac destdir="classes" srcdir="src" includes="org/mobicents/test/**.java" debug="true">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<copy todir="classes">
+			<fileset dir="src">
+				<filename name="org/mobicents/test/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="run-deploy-test" depends="compile-test" description="Runs simple class that tries to REGISTER with sip registrar">
+		<java classname="org.mobicents.test.DeployTest">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+				<pathelement location="classes" />
+			</classpath>
+		</java>
+	</target>
+	<target name="clean-test">
+		<delete dir="classes/org" />
+		<delete dir="classes/se" />
+	</target>
+
+
+
+
+</project>

@@ -1,0 +1,268 @@
+<!--
+	All deploy/undeploy targets that are marked with "-(hot)" should be deployed/undeployed
+	when JBoss is running. 
+	All deploy/undeploy targets that are marked with "-(cold)" should be deployed/undeployed
+	when JBoss is NOT running.
+	All deploy/undeploy targets that are NOT marked with "-(hot)" or "-(cold)" can be 
+	deployed/undeployed when JBoss is either running or not running.
+-->
+
+<project basedir="." default="deploy-3pcc_web_app-(hot)" name="3pcc">
+
+	<!-- 
+		Properties 
+	-->
+	<property name="3pcc_sip_slee.dir" value="3pcc_sip_slee" />
+	<property name="3pcc_web_app.dir" value="3pcc_web/3pcc_web_app" />
+	<property name="3pcc_ws_server.dir" value="3pcc_web/3pcc_ws_server" />
+	<property name="3pcc_ws_client.dir" value="3pcc_web/3pcc_ws_client" />
+
+	<!-- 
+		Deploy targets
+		~~~~~~~~~~~~~~
+		Precondition: Mobicents must be deployed and running!		
+	-->
+
+	<!-- <target name="deploy-all-(hot)" depends="deploy-3pcc_sip_slee-all-(hot), deploy-3pcc_ws_server, deploy-3pcc_web_app" description="Deploys all targets. Precondition: Mobicents must be deployed and running!" /> -->
+
+	<!--
+	***************************************************
+		Deploy 3pcc slee module
+	***************************************************
+	-->
+	<target name="deploy-ThirdPCCTrigger-DU-(hot)" description="Hot deploy ThirdPCCTrigger-DU">
+		<subant target="deploy">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	***************************************************
+		Deploy JMX test MBean
+	***************************************************
+	-->
+	<target name="deploy-jmx-testmbean" description="Deploy JMX test MBean">
+		<subant target="deploy-jmx-testmbean">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	***************************************************
+		Deploy 3pcc slee module + JMX test MBean
+	***************************************************
+	-->
+	<target name="deploy-3pcc_sip_slee-all-(hot)" depends="deploy-ThirdPCCTrigger-DU-(hot), deploy-jmx-testmbean" description="Deploy 3pcc_sip_slee (ThirdPCCTrigger-DU and the JMX test MBean" />
+
+	<!--
+	***************************************************************
+		Deploy 3pcc web app 
+		~~~~~~~~~~~~~~~~~~~
+		Use this target when the web server and and the SLEE module 
+		reside on the same machine!
+		
+		Make sure to use the call service named 'Servlet' (in 
+		callservice.properties)!
+	***************************************************************
+	-->
+	<target name="deploy-3pcc_web_app-(hot)" depends="deploy-3pcc_sip_slee-all-(hot)" description="Deploy 3pcc_web when web server and and slee module reside on same machine">
+		<subant target="deploy">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	*********************************************************************
+		Deploy 3pcc web app and web service
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		Use this target when emulating that the web server and the 
+		SLEE module reside on separate machines and communication 
+		in between uses web services (the servlet + WS client is 
+		installed on one machine and the WS server and the SLEE module
+		on the other machine). Since this target installs everything 
+		on the same machine, the WS becomes overhead but it gives you
+		the possibility to use the web service functionality without 
+		having to use two separate machines! If you indeed want to 
+		install the application on two separate machines (as described 
+		above), see the target 'deploy-3pcc_web_app+ws_client-(hot)'!
+		
+		Make sure to use the call service named 'WebService' (in 
+		callservice.properties)!
+		
+		(Note that this target can also use the call service named 
+		 'Servlet', but then the web server and and the SLEE module 
+		 MUST reside on the same machine! In this case, the deployed
+		 web service is not used at all!)
+	*********************************************************************
+	-->
+	<target name="deploy-3pcc_web_app+web_service-(hot)" depends="deploy-3pcc_ws_server-(hot)" description="Deploy 3pcc_web when web server and and slee module reside on different machines (web service communication between the machines)">
+		<!-- Sleep in order for the WS server to be deployed completely 
+		     before accessing it when generating WS classes for the client. -->
+		<sleep seconds="3" />
+		<subant target="deploy+ws_client">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	*********************************************************************
+		Deploy 3pcc web app with integrated web service client
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+		Use this target when the web server and and the SLEE module 
+		reside on separate machines! Communication between the two 
+		machines uses web services. This target installs the servlet 
+		and the WS client on the first machine. Use targets 
+		'deploy-3pcc_ws_server-(hot)' respective 
+		'deploy-3pcc_sip_slee-all-(hot)' to install the WS server 
+		respective the SLEE module on the other machine. 
+		
+		Make sure to use the call service named 'WebService' (in 
+		callservice.properties)!		
+	*********************************************************************
+	-->
+	<target name="deploy-3pcc_web_app+ws_client-(hot)" depends="" description="Deploy 3pcc_web with integrated web service client">
+		<subant target="deploy+ws_client">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	***************************************************
+		Deploy 3pcc web service server
+	***************************************************
+	-->
+	<target name="deploy-3pcc_ws_server-(hot)" depends="deploy-3pcc_sip_slee-all-(hot)" description="Deploy 3pcc_ws_server">
+		<subant target="deploy">
+			<fileset dir="${3pcc_ws_server.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!-- 
+		Undeploy targets
+	-->
+
+	<target name="undeploy-ThirdPCCTrigger-DU-(hot)" description="Hot undeploy 3pcc_sip_slee ThirdPCCTrigger-DU">
+		<subant target="undeploy-ThirdPCCTrigger-DU">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="undeploy-jmx-testmbean" description="Undeploy JMX test MBean (both hot and cold)">
+		<subant target="clean-jmx-deployment">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="undeploy-3pcc_ws_server" description="Undeploy 3pcc_ws_server">
+		<subant target="undeploy">
+			<fileset dir="${3pcc_ws_server.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="undeploy-3pcc_web_app-(cold)" description="Undeploy 3pcc_web">
+		<subant target="undeploy">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!--
+	***************************************************
+		Undeploys all 3pcc services
+		~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		Use this when switching between deployments!
+		A redeploy is also needed when changing call 
+		service (in callservice.properties)!
+	***************************************************
+	-->
+	<target name="undeploy-(all cold)" description="Undeploy all" depends="undeploy-3pcc_web_app-(cold), undeploy-3pcc_ws_server, undeploy-jmx-testmbean" />
+
+	<!-- 
+		Run targets
+	-->
+	<target name="run-3pcc_ws_client" description="Run the web service client">
+		<subant target="run-ws">
+			<fileset dir="${3pcc_ws_client.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!-- 
+		Build targets
+	-->
+	<target name="build-all" depends="build-3pcc_sip_slee-all, build-3pcc_ws_server, build-3pcc_web_app, build-3pcc_ws_client" description="Build all targets" />
+
+	<target name="build-ThirdPCCTrigger-DU" description="Build ThirdPCCTrigger-DU">
+		<subant target="build-ThirdPCCTrigger-DU">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="build-jmx-sar" description="Build JMX test MBean">
+		<subant target="build-jmx-sar">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+
+	<target name="build-3pcc_sip_slee-all" depends="build-ThirdPCCTrigger-DU, build-jmx-sar" description="Build 3pcc_sip_slee (ThirdPCCTrigger-DU and the JMX sar)" />
+
+
+	<target name="build-3pcc_web_app" description="Build 3pcc_web">
+		<subant target="compile">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="build-3pcc_ws_server" description="Build 3pcc_ws_server">
+		<subant target="compile">
+			<fileset dir="${3pcc_ws_server.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="build-3pcc_ws_client" description="Build 3pcc_ws_client">
+		<subant target="compile">
+			<fileset dir="${3pcc_ws_client.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!-- 
+		Clean targets
+	-->
+
+	<target name="clean-all" depends="clean-ThirdPCCTrigger-DU, clean-3pcc_ws_server, clean-3pcc_web_app, clean-3pcc_ws_client" description="Clean all targets" />
+
+	<target name="clean-ThirdPCCTrigger-DU" description="Clean ThirdPCCTrigger-DU">
+		<!--<subant target="clean-ThirdPCCTrigger-DU">-->
+		<subant target="clean">
+			<fileset dir="${3pcc_sip_slee.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<!-- <target name="clean-jmx-sar" description="Clean JMX test MBean" depends="undeploy-jmx-testmbean"/> -->
+
+	<!-- <target name="clean-3pcc_sip_slee-all" depends="clean-ThirdPCCTrigger-DU, clean-jmx-sar" description="Clean 3pcc_sip_slee (ThirdPCCTrigger-DU and the JMX sar)" /> -->
+
+	<target name="clean-3pcc_web_app" description="Clean 3pcc_web">
+		<subant target="clean">
+			<fileset dir="${3pcc_web_app.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="clean-3pcc_ws_server" description="Clean 3pcc_ws_server">
+		<subant target="clean">
+			<fileset dir="${3pcc_ws_server.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="clean-3pcc_ws_client" description="Clean 3pcc_ws_client">
+		<subant target="clean">
+			<fileset dir="${3pcc_ws_client.dir}" includes="build.xml" />
+		</subant>
+	</target>
+
+
+	<target name="run-deploy-test" description="Runs simple class which fakes trigering of 3ppc tirgger sbb">
+		<ant target="run-deploy-test" dir="${3pcc_sip_slee.dir}" antfile="build.xml" />
+	</target>
+
+
+</project>

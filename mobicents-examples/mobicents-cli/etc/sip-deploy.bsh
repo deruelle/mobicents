@@ -1,0 +1,65 @@
+/** 
+ * A BeanShell script service that deploys SIP services in Mobicents
+ */
+
+import org.mobicents.slee.container.management.jmx.SleeBeanShellUtil;
+
+String sipRATypeURL = "${jboss.server.home.url}deploy-mobicents/sip-ra-type.jar";
+String sipRAURL = "${jboss.server.home.url}deploy-mobicents/sip-local-ra.jar";
+String sipProxyURL = "${jboss.server.home.url}deploy-mobicents/proxyservice.jar";
+String sipRAName = "SipRA";
+String serviceID = "ServiceID[JAIN SIP Proxy Service#NIST#1.0]";
+String raID = "ResourceAdaptorID[jainsip#NIST#1.1]";
+
+SleeBeanShellUtil slee = new SleeBeanShellUtil();
+
+/**
+ * Install and activate components in the correct order
+ */
+void start()
+{
+
+  try {
+   
+   slee.log.info("Starting deployment of SIP services...");
+
+   slee.deployRa(sipRATypeURL, sipRAURL, raID, sipRAName, sipRAName, null);	
+   
+   slee.log.info("Deployment of Resource Adaptor: " + raID);
+   slee.log.info("Starting deployment of SIP services...#2");
+   
+   slee.deployService(sipProxyURL, serviceID);
+
+   slee.log.info("Deployment of Service: " + serviceID);
+
+   slee.log.info("Finished successfully deployment of SIP services!");
+   
+   } catch (Exception e) {
+         slee.log.info("Exception while starting deployment of SIP services!", e);
+  }
+}
+
+/**
+ * Deactivate and uninstall components in the reverse order of start()
+ */
+void stop()
+{
+  try {
+   
+   slee.log.info("Stopping SIP services...");
+
+   slee.undeployService(sipProxyURL, serviceID);
+
+   slee.log.info("Undeployment of Service: " + serviceID);
+   slee.log.info("Stopping SIP services... #2");
+
+   slee.undeployRa(sipRATypeURL, sipRAURL, sipRAName, sipRAName);
+
+   slee.log.info("Undeployment of Resource Adaptor: " + raID);
+ 
+   ctx.log.info("Stopped successfully SIP services!");
+
+  } catch (Exception e) {
+        slee.log.info("Exception while starting undeployment of SIP services!", e);
+  }
+}

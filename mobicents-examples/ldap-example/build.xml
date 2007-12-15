@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="LdapExample" default="build-and-deploy-service">
+
+	<property name="mobicents.home" value="../../mobicents" />
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" />
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-service.xml" />
+	
+	<property name="service.name" value="${ant.project.name}" />
+	<property name="service.id" value="${service.name}Service#org.mobicents#1.0"/>
+	<property name="service.src.path" value="org/mobicents/slee/examples/ldap"/>
+	
+	<property name="compile.as.debug" value="true" />
+	
+	<path id="service.classpath">
+		<path refid="mobicents.core.classpath"/>
+	</path>
+
+</project>

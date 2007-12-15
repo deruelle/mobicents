@@ -1,0 +1,58 @@
+Design choices
+
+1.Sbb 
+2. State sharing between slee app and web app
+3. State machine
+
+
+1. Sbb
+There are two Sbb components making up the call control logic. 
+Only one is necessary and the reason for splitting the functionality is that
+one of the components, CallControlSbb, is made reusable because it has no dependencies
+to any custom events used to trigger the callflow or terminate it and there is no
+dependency from CallControlSbb to ThirdPCCTriggerSbb.
+
+Responsibilities of respective component:
+
+ThirdPCCTriggerSbb -- Receive custom events for triggering, terminating and cancelling 
+the callflow.
+
+CallControlSbb -- Manage the core sip callflow and sharing state of the callflow to 
+external components that wish to monitor progress.
+
+The interaction between ThirdPCCTriggerSbb and CallControlSbb is of two types:
+a) ThirdPCCTriggerSbb has a child relation to CallControlSbb and creates a child
+when the callflow is initiated.
+
+b) ThirdPCCTriggerSbb invokes synchronous methods of the local interface of 
+CallControlSbb for termination/cancelling of the callflow.
+
+It is possible to use CallControlSbb in another application that uses these two 
+interaction mechanisms. The CallControlSbb only depends on the event types defined in the sip RA.
+
+2. State sharing between slee application and external components.
+
+This is implemented with a simple Map stored in JNDI and is essentially a hack which will
+be replaced.
+
+A good solution will:
+a) Use standard apis/components available in SLEE/EJB platforms.
+b) Scale - the Map in JNDI has the very severe problem that it does not scale in a multi-JVM scenario.
+c) Support failover/clustering.
+
+Two suggested solutions are:
+* Use JMS to signal state changes from SLEE service to other components.
+* Wrap HttpSession objects or other objects stored in respective HttpSessions
+to be updated synchronously from SLEE service. Will only work in a single-JVM scenario.
+
+
+3. State machine
+
+The state pattern suggests itself in this application.
+The state classes are inner classes of CallControlSbb which is handy.
+However, to make the state machine itself reusable the state classes can be made ordinary, non-inner classes.
+This is probably the right way to go and the next step will be to indentify the interface that CallControlSbb
+must implement to externalize the state classes.
+
+The most interesting purpose with this refactoring is to write new CallControllSbbs that implement
+the different state sharing mechanisms. 

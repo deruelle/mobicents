@@ -1,0 +1,75 @@
+<!-- Example Web Service Descriptor -->
+
+<deployment
+	xmlns="http://xml.apache.org/axis/wsdd/"
+	xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance"
+	xmlns:op="http://org.csapi.www.schema.parlayx.common.v2_0"
+	xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+
+  <service name="ThirdPartyCall" provider="java:RPC">
+   <parameter name="className" value="se.jayway.sip.callcontrol.server.impl.ThirdPartyCallImpl"/>
+    <parameter name="allowedMethods" value="makeCall getCallInformation endCall cancelCallRequest"/>
+  </service>
+  
+<!--  	  <typeMapping -->
+<!--  	 	  xmlns:op="http://www.csapi.org/schema/parlayx/common/v2_0"-->
+<!--	      qname="op:ChargingInformation" -->
+<!--	      type="java:org.csapi.www.schema.parlayx.common.v2_0.ChargingInformation"-->
+<!--	      serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"-->
+<!--	      deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"-->
+<!--	      encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"-->
+<!--      />-->
+
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:CallStatus"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.CallStatus"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:CallTerminationCause"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.CallTerminationCause"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:ServiceException"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.ServiceException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:ChargingInformation"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.ChargingInformation"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:PolicyException"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.PolicyException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://www.csapi.org/schema/parlayx/common/v2_0"
+        qname="ns:CallInformation"
+        type="java:org.csapi.www.schema.parlayx.common.v2_0.CallInformation"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
+</deployment>

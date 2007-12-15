@@ -1,0 +1,48 @@
+/** 
+ * A BeanShell script service that deploys Media RA in Mobicents
+ */
+
+import org.mobicents.slee.container.management.jmx.SleeBeanShellUtil;
+
+String raTypeURL = "${jboss.server.home.url}deploy-mobicents/httpservlet-ratype-DU.jar";
+String raURL = "${jboss.server.home.url}deploy-mobicents/httpservlet-ra-DU.jar";
+String raName = "HttpServletRA";
+String raID = "ResourceAdaptorID[HttpServletResourceAdaptor#org.mobicents#1.0]";
+
+SleeBeanShellUtil slee = new SleeBeanShellUtil();
+
+/**
+ * Install and activate components in the correct order
+ */
+void start()
+{
+  try {   
+    slee.log.info("Starting deployment of RA: " + raName);
+    slee.log.info("...still starting deployment of RA: " + raName);
+    slee.deployRa(raTypeURL, raURL, raID, raName, raName, null);	
+    slee.log.info("...and ... still starting deployment of RA: " + raName);
+    slee.log.info("Deployment of Resource Adaptor: " + raID);
+
+    slee.log.info("Finished successfully deployment of RA: " + raName);
+   
+  } catch (Throwable t) {
+         slee.log.info("Exception while starting deployment of RA: " + raName, t);
+  }
+}
+
+/**
+ * Deactivate and uninstall components in the reverse order of start()
+ */
+void stop()
+{
+  try {
+   
+    slee.log.info("Stopping RA: " +  raName);
+    slee.undeployRa(raTypeURL, raURL, raName, raName);
+
+    slee.log.info("Undeployment of Resource Adaptor: " + raID);
+
+  } catch (Throwable t) {
+        slee.log.info("Exception while starting undeployment of RA: " + raName, t);
+  }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE deployable-unit PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Deployable Unit 1.0//EN"
+                                 "http://java.sun.com/dtd/slee-deployable-unit_1_0.dtd">
+<deployable-unit>
+    <jar>jars/Bye-events.jar</jar>
+    <jar>jars/Bye-sbb.jar</jar>
+    <jar>jars/CallBlock-events.jar</jar>
+    <jar>jars/CallBlock-sbb.jar</jar>
+    <jar>jars/CallForward-events.jar</jar>
+    <jar>jars/CallForward-sbb.jar</jar>
+    <jar>jars/CallForwardBlock-profile-spec.jar</jar>
+    <jar>jars/Controller-sbb.jar</jar>
+    <jar>jars/registrarsbb.jar</jar>
+    <jar>jars/proxysbb.jar</jar>
+    <service-xml>src/org/mobicents/slee/examples/callforwardblock/controller/Controller-service.xml</service-xml>
+</deployable-unit>

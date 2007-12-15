@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" sourcepath="lib/jain_slee-1_0-fr-api.zip" kind="lib" path="lib/slee.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents-examples/googletalk-bot/lib/sleeRA.zip"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents-examples/googletalk-bot/lib/slee-src.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/stage/xmpp-resource-adaptor-type.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/stage/xmpp-events.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/stage/xmpp-ratype-lib.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/stage/xmpp-resource-adaptor.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/lib/component-xmppconnection.jar"/>
+	<classpathentry exported="true" kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/lib/smackx.jar"/>
+	<classpathentry kind="lib" path="E:/JAVA/jboss-3.2.7/server/all/deploy-mobicents/xmpp-ra-type.jar"/>
+	<classpathentry kind="lib" path="E:/JAVA/jboss-3.2.7/server/all/deploy-mobicents/xmpp-local-ra.jar"/>
+	<classpathentry kind="lib" path="E:/JAVA/JPROJECTS/mobicents/ra/xmppra/lib/smack.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

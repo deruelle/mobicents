@@ -1,0 +1,16 @@
+Release notes
+
+Features and known limitations:
+ 
+* Supports sip URIs on the form sip:username@domain:port and sip:username@ipaddress:port 
+(other such as sips URIs has not been tested)
+
+* Graphical status monitoring with animated gif pictures and a string with the name of the state of the call setup.
+
+* Web initiated cancellation has been successfully tested on a setup with Windows and Firefox. 
+However on a setup with Linux, Firefox and using sip express router a blank page has been observed on after cancelling.
+(Not further investigated, please report results)
+
+* Web initiated termination has been successfully tested with 
+1. XLite, Windoxs, Jain Sip Presence Proxy
+2. XLite, Linux, Sip Express Router (Proxy)
