@@ -1,0 +1,155 @@
+/** 
+ * A BeanShell script service that deploys SLEE services in Mobicents
+ */
+
+import java.io.File;
+import javax.management.ObjectName;
+import javax.management.MBeanServer;
+import javax.slee.management.DeployableUnitID;
+import org.jboss.mx.util.MBeanProxyExt;
+import org.jboss.system.ServiceMBeanSupport;
+import org.jboss.util.StringPropertyReplacer;
+import javax.slee.management.DeploymentMBean;
+import javax.slee.management.ServiceManagementMBean;
+import org.mobicents.slee.container.management.jmx.ResourceAdaptorMBean;
+import org.mobicents.slee.container.management.jmx.SleeManagementMBeanImplMBean;
+import org.mobicents.slee.container.management.ComponentKey;
+import org.mobicents.slee.container.management.ResourceAdaptorIDImpl;
+import org.mobicents.slee.container.management.ServiceIDImpl;
+
+private String sleeManagementMBeanName = "slee:service=SleeManagement";
+
+String callBlockingServiceURL = "${jboss.server.home.url}deploy-mobicents/CallBlocking-DU.jar";
+ServiceIDImpl serviceId = new ServiceIDImpl("Parlay Call Blocking", "org.mobicents", "1.0");
+
+DeployableUnitID callBlockingServiceDID = null;
+
+/**
+ * Install and activate components in the correct order
+ */
+void start()
+{
+
+  try {
+   
+   ctx.log.info("Starting deployment of SLEE services...");
+
+   callBlockingServiceDID = sleeDeploymentMBean.install(StringPropertyReplacer.replaceProperties(callBlockingServiceURL)); 
+
+   ctx.log.info("Starting deployment of SLEE services...#2");
+
+   try {
+	   serviceManagementMBean.activate(serviceId);
+   } catch (Exception e) {
+	   ctx.log.warn("Failed to activate SLEE service ID: " + serviceId + ", because of " + e.getMessage());
+   }
+
+   ctx.log.info("Starting deployment of SLEE services...#3");
+
+   ctx.log.info("Finished successfully deployment of SLEE services!");
+   
+  } catch (Exception e) {
+    ctx.log.info("Exception while starting deployment of SLEE services!", e);
+  }
+}
+
+/**
+ * Deactivate and uninstall components in the reverse order of start()
+ */
+void stop()
+{
+  try {
+   
+   ctx.log.info("Stopping SLEE services...");
+
+   serviceManagementMBean.deactivate(serviceId);
+   ctx.log.info("Stopping SLEE services... #2");
+
+   sleeDeploymentMBean.uninstall(callBlockingServiceDID); 
+   ctx.log.info("Stopping SLEE services... #3");
+
+   ctx.log.info("Stopped successfully SLEE services!");
+
+  } catch (Exception e) {
+    ctx.log.info("Exception while stopping SLEE services!", e);
+  }
+}
+
+
+
+/*************************************************************
+ * The rest of the script should be rarely modified.
+ *************************************************************/
+
+
+void create()
+{
+     ctx.log.debug("Creating SLEE services deployer...");
+     
+     server = global.ctx.getServer();
+
+     ObjectName sleeMgmt = new ObjectName(sleeManagementMBeanName);
+
+     sleeManagementMBean = (SleeManagementMBeanImplMBean)
+      	MBeanProxyExt.create(SleeManagementMBeanImplMBean.class,
+   	         	sleeMgmt, server);
+
+      sleeDeploymentMBean = (DeploymentMBean)
+      	 MBeanProxyExt.create(DeploymentMBean.class,
+      	         	sleeManagementMBean.getDeploymentMBean(), server);
+      
+      resourceAdaptorMBean  = (ResourceAdaptorMBean)
+         MBeanProxyExt.create(ResourceAdaptorMBean.class,
+                 sleeManagementMBean.getResourceAdaptorMBean(), server);
+
+     ctx.log.debug("Creating SLEE services deployer...- resourceAdaptorMBean " + resourceAdaptorMBean);
+      
+      serviceManagementMBean = (ServiceManagementMBean)
+         MBeanProxyExt.create(ServiceManagementMBean.class,
+                 sleeManagementMBean.getServiceManagementMBean(), server);
+
+     ctx.log.info("Created successfully SLEE services deployer!");
+}
+
+void destroy()
+{
+}
+
+
+   /**
+    * Returns the deployed SLEE jars.
+    *
+    */
+   public Iterator getDeployedApplications()
+   {
+      return deployments.values().iterator();
+   }
+
+void setCtx(ServiceMBeanSupport wrapper)
+{
+   global.ctx = wrapper;
+   System.out.println("setCtx: "+ctx);
+}
+
+
+/**
+ * script variables
+ */
+
+ServiceMBeanSupport ctx = null;
+
+/** reference to the standard SLEE deployment MBean */
+private DeploymentMBean sleeDeploymentMBean;
+
+/** reference to the SLEE Resource Adaptor MBean */
+private ResourceAdaptorMBean  resourceAdaptorMBean;
+
+/** A map of current deployments. */
+private ArrayList deployments = new ArrayList();
+
+/** reference to the Mobicents SLEE Management MBean */
+private SleeManagementMBeanImplMBean sleeManagementMBean;
+
+private ServiceManagementMBean serviceManagementMBean;
+
+MBeanServer server;
