@@ -1,1 +1,0 @@
-Current copy of smpp ra requiers smpp serer to be bound to 127.0.0.1

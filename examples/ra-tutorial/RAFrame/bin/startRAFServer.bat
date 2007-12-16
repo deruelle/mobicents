@@ -1,3 +1,0 @@
-@echo off
-echo Starting RAFServer ...
-java -cp ..\dist\raframe-1.0.jar;..\lib\log4j-1.2.11.jar com.maretzke.raframe.test.server.RAFServer ..\lib\log4j.properties
