@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="CallDurationControl" default="all">
+    <target name="init">
+        <path id="slee">
+            <pathelement location="lib\slee.jar"/>
+        </path>
+        <taskdef name="sbbjar" classname="com.opencloud.ant.SbbJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="eventjar" classname="com.opencloud.ant.EventJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="profilespecjar"
+            classname="com.opencloud.ant.ProfileSpecJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="deployablejar"
+            classname="com.opencloud.ant.DeployableJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="resourceadaptortypejar"
+            classname="com.opencloud.ant.ResourceAdaptorTypeJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="resourceadaptorjar"
+            classname="com.opencloud.ant.ResourceAdaptorJar" classpath="lib\slee-tasks.jar"/>
+        <path id="path-BaseCallDuration-sbb">
+            <pathelement location="jars\Bye-event.jar"/>
+            <pathelement location="jars\CallEstablished-event.jar"/>
+            <pathelement location="jars\BaseB2B-sbb.jar"/>
+        </path>
+    </target>
+    <target name="all" depends="init">
+        <ant target="build-BaseCallDuration-sbb"/>
+        <ant target="build-Duration-profile-spec"/>
+    	<ant target="build-CallDuration-DU"/>
+    </target>
+    <target name="clean" depends="init">
+        <ant target="clean-BaseCallDuration-sbb"/>
+        <ant target="clean-Duration-profile-spec"/>
+        <ant target="clean-CallDuration-DU"/>    	
+    </target>
+    <target name="build-BaseCallDuration-sbb" depends="init">
+        <mkdir dir="classes/BaseCallDuration-sbb"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/BaseCallDuration-sbb" srcdir="src"
+            includes="com/ptin/xmas/app/BaseCallDurationSbb.java" debug="true">
+            <classpath>
+                <path refid="path-BaseCallDuration-sbb"/>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <sbbjar destfile="jars/BaseCallDuration-sbb.jar"
+            classpath="classes/BaseCallDuration-sbb" sbbjarxml="src/com/ptin/xmas/app/BaseCallDuration-sbb-jar.xml"/>
+    </target>
+    <target name="clean-BaseCallDuration-sbb">
+        <delete file="jars/BaseCallDuration-sbb.jar"/>
+        <delete dir="classes/BaseCallDuration-sbb"/>
+    </target>
+    <target name="build-CallDuration-DU" depends="build-BaseCallDuration-sbb">
+        <mkdir dir="classes/CallDuration-DU"/>
+        <copy
+            file="src/com/ptin/xmas/app/CallDuration-deployable-unit.xml" tofile="classes/CallDuration-DU/deployable-unit.xml"/>
+        <jar jarfile="jars/CallDuration-DU.jar">
+            <metainf dir="classes/CallDuration-DU" includes="deployable-unit.xml"/>
+            <fileset includes="jars/BaseB2B-sbb.jar" dir=""/>
+            <fileset includes="jars/BaseCallDuration-sbb.jar" dir=""/>
+            <fileset includes="jars/Bye-event.jar" dir=""/>
+            <fileset includes="jars/CallEstablished-event.jar" dir=""/>
+        	<fileset includes="jars/Duration-profile-spec.jar" dir=""/>
+            <fileset
+                includes="src/com/ptin/xmas/app/CallDuration-service.xml" dir="."/>
+        </jar>
+    </target>
+    <target name="clean-CallDuration-DU">
+        <delete file="jars/CallDuration-DU.jar"/>
+        <delete dir="classes/CallDuration-DU"/>
+    </target>
+    <target name="service-deploy" depends="clean,all" description="Deploys the Call Duration Service to JAIN SLEE">
+        <echo>Deploy Call Duration Service</echo>
+        <!--
+		<copy todir="${mobicents.sar}/com">
+			<fileset dir="${project.home}/classes/com"/>
+		</copy>
+		-->
+        <exec dir="./jars" spawn="false" vmlauncher="true"
+            os="Windows XP, Windows_NT, Windows 2000" executable="${basedir}/jars/DeployCallDurationService.bat"/>
+        <!--<exec dir="./jars" spawn="false" os="Solaris, SunOS" executable="${basedir}/jars/DeployB2BUserAgentService.sh"/>-->
+    </target>
+    <target name="service-undeploy"
+        description="Undeploys the call Duration Service from JAIN SLEE" depends="clean">
+        <echo>Undeploy Call Duration Service</echo>
+        <exec dir="./jars" spawn="false" vmlauncher="true"
+            os="Windows XP, Windows_NT, Windows 2000" executable="${basedir}/jars/UndeployCallDurationService.bat"/>
+        <!-- There is still no undeployment script for unix environments -->
+    </target>
+    <target name="build-Duration-profile-spec" depends="init">
+        <mkdir dir="classes/Duration-profile-spec"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/Duration-profile-spec" srcdir="src" includes="com/ptin/xmas/app/DurationProfileCMP.java, com/ptin/xmas/app/DurationProfileManagementImpl.java">
+            <classpath>
+                <path refid="slee"/>
+            </classpath>
+        </javac>
+        <profilespecjar destfile="jars/Duration-profile-spec.jar"
+            classpath="classes/Duration-profile-spec" profilespecjarxml="src/com/ptin/xmas/app/Duration-profile-spec-jar.xml"/>
+    </target>
+    <target name="clean-Duration-profile-spec">
+        <delete file="jars/Duration-profile-spec.jar"/>
+        <delete dir="classes/Duration-profile-spec"/>
+    </target>
+</project>

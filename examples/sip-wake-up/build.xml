@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="Wake up Call">
+
+	<property environment="system" />
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+
+	<path id="duPath">
+		<pathelement location="./jars/wakeup-DU.jar" />
+	</path>
+
+	<property name="duPathValue" refid="duPath" />
+	<property name="serviceID" value="Wake Up Service#NIST#1.0" />
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<!--import file="${examples.home}/lib/build.xml" /-->
+
+
+
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+
+
+		<path id="ExternalComponents" refid="examples-libraries">
+
+		</path>
+
+	</target>
+
+	<target depends="init" name="all">
+		<!-- 	<ant target="build-ra" antfile="build.xml" dir="${sipra-home}"/> -->
+		<ant target="build-WakeUp-sbb" />
+		<ant target="build-wakeup-DU" />
+
+	</target>
+	<target depends="init,clean-test" name="clean">
+		<!-- <ant target="clean" antfile="build.xml" dir="${sipra-home}"/> -->
+		<ant target="clean-WakeUp-sbb" />
+		<ant target="clean-wakeup-DU" />
+	</target>
+	<target name="build-WakeUp-sbb" depends="init">
+		<mkdir dir="classes/WakeUp-sbb" />
+		<mkdir dir="jars/" />
+		<javac destdir="classes/WakeUp-sbb" srcdir="src" includes="org/mobicents/slee/examples/wakeup/WakeUpSbb.java,org/mobicents/slee/examples/wakeup/WakeUpSbbActivityContextInterface.java" debug="true">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<sbbjar destfile="jars/WakeUp-sbb.jar" classpath="classes/WakeUp-sbb" sbbjarxml="src/org/mobicents/slee/examples/wakeup/WakeUp-sbb-jar.xml" />
+	</target>
+	<target name="clean-WakeUp-sbb">
+		<delete file="jars/WakeUp-sbb.jar" />
+		<delete dir="classes/WakeUp-sbb" />
+	</target>
+	<target name="build-wakeup-DU" depends="build-WakeUp-sbb">
+		<mkdir dir="classes/wakeup-DU" />
+		<copy file="src/wakeup-deployable-unit.xml" tofile="classes/wakeup-DU/deployable-unit.xml" />
+		<jar jarfile="jars/wakeup-DU.jar">
+			<metainf dir="classes/wakeup-DU" includes="deployable-unit.xml" />
+			<fileset includes="jars/WakeUp-sbb.jar" dir="" />
+			<fileset includes="wakeup-service.xml" dir="./src/org/mobicents/slee/examples/wakeup/" />
+		</jar>
+		<delete file="jars/WakeUp-sbb.jar" />
+	</target>
+	<target name="clean-wakeup-DU">
+		<delete file="jars/wakeup-DU.jar" />
+		<delete dir="classes/wakeup-DU" />
+	</target>
+
+
+
+	<target name="deploy" depends="build-wakeup-DU" description="Deploys ra into container described by ${jnpHost} and ${jnpPort}">
+		<echo>Installing and activating service ${serviceID}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${duPathValue}" />
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+	</target>
+
+	<target name="undeploy" depends="init" description="unDeploys ra from container described by ${jnpHost} and ${jnpPort}">
+		<echo>Deactivating and uninstalling service ${serviceID}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+			<uninstall url="${file_url}${duPathValue}" />
+
+		</slee-management>
+	</target>
+
+
+
+
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies, hopefuly!!">
+
+		<ant dir="${sip-services-home}" target="jar-with-invite-initial" inheritall="false" />
+		<!-- THIS WILL ALSO DEPLOY SIP RA-->
+		<ant dir="${sip-services-home}" target="deploy" inheritall="false" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+
+		<ant target="undeploy" />
+		<ant dir="${sip-services-home}" target="undeploy" inheritall="false" />
+
+	</target>
+
+
+
+
+
+	<!-- DOES REGISTER TEST -->
+	<target name="compile-test" depends="init">
+		<javac destdir="classes" srcdir="src" includes="org/mobicents/test/**.java" debug="true">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<copy todir="classes">
+			<fileset dir="src">
+				<filename name="org/mobicents/test/*.properties" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="run-deploy-test" depends="compile-test" description="Runs simple class that tries to REGISTER with sip registrar">
+		<java classname="org.mobicents.test.DeployTest">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+				<pathelement location="classes" />
+			</classpath>
+		</java>
+	</target>
+	<target name="clean-test">
+		<delete dir="classes/org">
+
+		</delete>
+	</target>
+</project>

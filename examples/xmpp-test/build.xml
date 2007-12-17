@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="XmppTestService" default="deploy">
+    <property name="project.home" value="."/>
+    <property environment="system"/>
+    <property name="jboss.home" value="${system.JBOSS_HOME}"/>
+    <property name="xmppra.home" value="../../mobicents/ra/xmppra"/>
+    <property name="mobicents.sar" value="${jboss.home}/server/all/deploy/mobicents.sar"/>
+	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	    	
+	<!-- SLEE MANAGEMENT -->
+	<import file="${mobicents.home}/tools/mobicents-cli/slee-management.xml"/>
+	
+	<target name="init">
+        <path id="slee">
+            <pathelement location="lib\slee.jar"/>          
+        </path>
+    	<path id="smack">
+    		<pathelement location="${xmppra.home}\lib\smack.jar"/>
+    		<pathelement location="${xmppra.home}\lib\smackx.jar"/>
+   		</path>
+    	<path id="xmpp">
+    		<pathelement location="${xmppra.home}\stage\xmpp-resource-adaptor.jar"/>
+   		</path>	
+    	<path id="deployer.class.path">
+            <pathelement location="lib\slee.jar"/>
+            <pathelement location="${jboss.home}/client/client.jar"/>
+            <pathelement location="${jboss.home}/client/jbossall-client.jar"/>
+            <pathelement location="${jboss.home}/client/getopt.jar"/>
+            <pathelement location="${jboss.home}/lib/log4j.jar"/>
+            <pathelement location="${jboss.home}/lib/jboss-jmx.jar"/>
+            <pathelement location="${jboss.home}/lib/xml-apis.jar"/>
+            <pathelement location="${jboss.home}/lib/xercesImpl.jar"/>
+        	<pathelement location="${jboss.home}/lib/smack.jar"/>        	
+            <pathelement location="${jboss.home}/server/all/deploy/mobicents.sar"/>
+        </path>
+        <taskdef name="sbbjar" classname="com.opencloud.ant.SbbJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="eventjar" classname="com.opencloud.ant.EventJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="profilespecjar"
+            classname="com.opencloud.ant.ProfileSpecJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="deployablejar"
+            classname="com.opencloud.ant.DeployableJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="resourceadaptortypejar"
+            classname="com.opencloud.ant.ResourceAdaptorTypeJar" classpath="lib\slee-tasks.jar"/>
+        <taskdef name="resourceadaptorjar"
+            classname="com.opencloud.ant.ResourceAdaptorJar" classpath="lib\slee-tasks.jar"/>
+    </target>   
+    <target name="clean" depends="init">
+        <ant target="clean-XmppTest-sbb"/>
+        <ant target="clean-xmpptest-DU"/>
+    </target>
+    <target name="build-XmppTest-sbb" depends="init">
+        <mkdir dir="classes/XmppTest-sbb"/>
+        <mkdir dir="jars/"/>
+        <javac destdir="classes/XmppTest-sbb" srcdir="src" includes="com/ptin/xmpp/test/XmppTestSbb.java">
+            <classpath>                
+                <path refid="slee"/>
+            	<path refid="smack"/>
+            	<path refid="xmpp"/>
+            </classpath>
+        </javac>
+        <sbbjar destfile="jars/XmppTest-sbb.jar"
+            classpath="classes/XmppTest-sbb" sbbjarxml="${project.home}/xmpp-test/src/com/ptin/xmpp/test/XmppTest-sbb-jar.xml"/>
+    </target>
+    <target name="clean-XmppTest-sbb">
+        <delete file="jars/XmppTest-sbb.jar"/>
+        <delete dir="classes/XmppTest-sbb"/>
+    </target>
+    <target name="build-xmpptest-DU" depends="build-XmppTest-sbb">
+        <mkdir dir="classes/xmpptest-DU"/>
+        <copy file="src/com/ptin/xmpp/test/xmpptest-deployable-unit.xml" tofile="classes/xmpptest-DU/deployable-unit.xml"/>
+        <jar jarfile="jars/xmpptest-DU.jar">
+            <metainf dir="classes/xmpptest-DU" includes="deployable-unit.xml"/>
+            <fileset includes="jars/XmppTest-sbb.jar" dir=""/>           
+            <fileset includes="classes/com/ptin/xmpp/test/xmpptest-service.xml" dir="."/>
+            <fileset includes="src/com/ptin/xmpp/test/xmpptest-service.xml" dir="."/>
+        </jar>
+    </target>
+    <target name="clean-xmpptest-DU">
+        <delete file="jars/xmpptest-DU.jar"/>
+        <delete dir="classes/xmpptest-DU"/>
+    </target>
+	<!-- Deploys to JBOSS. -->
+    <target name="deploy" depends="build-xmpptest-DU,management-init">
+        <path id="thejar">
+            <pathelement location="jars/xmpptest-DU.jar"/>
+        </path>
+		<pathconvert targetos="unix" property="thejar" refid="thejar"/>
+        <echo>Deploying XmppTestService DU JAR</echo>
+    	<slee-management jnpport="${jnpPort}">
+    		<install url="${file_url}${thejar}"/>
+    	</slee-management>	
+        <echo>Activate XmppTestService Service</echo>
+    	<slee-management jnpport="${jnpPort}">
+    		<activateservice serviceid="XmppTestService#PT Inovacao#1.0"/>
+    	</slee-management>	       
+    </target>   
+	<target name="undeploy" depends="init,management-init">
+		<path id="service-du">
+		    <pathelement location="jars/xmpptest-DU.jar"/>
+		</path>
+		<pathconvert targetos="unix" property="service-du" refid="service-du"/>
+		<!-- deactivate the service -->
+	   	<slee-management jnpport="${jnpPort}">
+    		<deactivateservice serviceid="XmppTestService#PT Inovacao#1.0"/>
+    	</slee-management>	
+		<!-- undeploys the service -->
+	   	<slee-management jnpport="${jnpPort}">
+    		<uninstall url="${file_url}${service-du}"/>
+    	</slee-management>	
+	</target>
+</project>

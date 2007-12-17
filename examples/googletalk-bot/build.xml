@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="GoogleTalkBot" default="build-GoogleTalkBot-DU">
+	<property environment="system" />
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+
+
+	<property name="serviceID" value="GoogleTalkBotService#mobicents#0.1" />
+	<path id="service-du">
+		<pathelement location="jars/GoogleTalkBot-DU.jar" />
+	</path>
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<!--import file="${examples.home}/lib/build.xml" /-->
+
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee" refid="examples-libraries">
+		</path>
+
+
+	</target>
+	<target name="clean" depends="init">
+		<ant target="clean-GoogleTalkBot-sbb" />
+		<ant target="clean-GoogleTalkBot-DU" />
+	</target>
+	<target name="build-GoogleTalkBot-sbb" depends="init">
+		<mkdir dir="classes/GoogleTalkBot-sbb" />
+		<mkdir dir="jars/" />
+		<javac destdir="classes/GoogleTalkBot-sbb" srcdir="src" includes="org/mobicents/examples/googletalk/GoogleTalkBotSbb.java" debug="true">
+			<classpath>
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<sbbjar destfile="jars/GoogleTalkBot-sbb.jar" classpath="classes/GoogleTalkBot-sbb" sbbjarxml="src/org/mobicents/examples/googletalk/GoogleTalkBot-sbb-jar.xml" />
+	</target>
+	<target name="clean-GoogleTalkBot-sbb">
+		<delete file="jars/GoogleTalkBot-sbb.jar" />
+		<delete dir="classes/GoogleTalkBot-sbb" />
+	</target>
+	<target name="build-GoogleTalkBot-DU" depends="build-GoogleTalkBot-sbb">
+		<mkdir dir="classes/GoogleTalkBot-DU" />
+		<copy file="src/org/mobicents/examples/googletalk/GoogleTalkBot-deployable-unit.xml" tofile="classes/GoogleTalkBot-DU/META-INF/deployable-unit.xml" />
+		<jar jarfile="jars/GoogleTalkBot-DU.jar">
+			<metainf dir="classes/GoogleTalkBot-DU/META-INF" includes="deployable-unit.xml" />
+			<fileset includes="jars/GoogleTalkBot-sbb.jar" dir="" />
+			<fileset includes="GoogleTalkBot-service.xml" dir="src/org/mobicents/examples/googletalk/" />
+		</jar>
+	</target>
+	<target name="clean-GoogleTalkBot-DU">
+		<delete file="jars/GoogleTalkBot-DU.jar" />
+		<delete dir="classes/GoogleTalkBot-DU" />
+	</target>
+
+	<!-- Deploys to JBOSS. -->
+	<target name="deploy" depends="build-GoogleTalkBot-DU">
+
+		<pathconvert targetos="unix" property="service-du" refid="service-du" />
+		<echo>Deploying GoogleTalkBot DU JAR</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${service-du}" />
+		</slee-management>
+		<echo>Activate GoogleTalkBot Service</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+	</target>
+
+	<target name="undeploy" depends="init, management-init">
+
+		<pathconvert targetos="unix" property="service-du" refid="service-du" />
+		<!-- deactivate the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+		</slee-management>
+		<!-- undeploys the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<uninstall url="${file_url}${service-du}" />
+		</slee-management>
+	</target>
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys the example along with all dependencies !!">	
+		<ant dir="${xmppra-home}" target="ra-deploy" inheritall="false" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys the example along with all dependencies !!">
+		<ant target="undeploy" />
+		<ant dir="${xmppra-home}" target="ra-undeploy" inheritall="false" />
+	</target>
+	
+</project>

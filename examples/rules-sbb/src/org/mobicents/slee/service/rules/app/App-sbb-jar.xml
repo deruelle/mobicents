@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN"
+                         "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+<sbb-jar>
+	<sbb>
+		<description />
+		<sbb-name>AppSbb</sbb-name>
+		<sbb-vendor>org.mobicents</sbb-vendor>
+		<sbb-version>0.1</sbb-version>
+	
+		<sbb-classes>
+			<sbb-abstract-class>
+				<sbb-abstract-class-name>org.mobicents.slee.service.rules.app.AppSbb</sbb-abstract-class-name>
+				<cmp-field>
+					<cmp-field-name>requestEvent</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>serverTransaction</cmp-field-name>
+				</cmp-field>				
+				<cmp-field>
+					<cmp-field-name>callFact</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>rulesActivity</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>callId</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>timerID</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>callerAddress</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>callerDialog</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>calleeDialog</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>forwardingState</cmp-field-name>
+				</cmp-field>																
+			</sbb-abstract-class>
+		</sbb-classes>
+		
+		<event event-direction="Receive" initial-event="True">
+			<event-name>InviteEvent</event-name>
+			<event-type-ref>
+				<event-type-name>javax.sip.message.Request.INVITE</event-type-name>
+				<event-type-vendor>javax.sip</event-type-vendor>
+				<event-type-version>1.1</event-type-version>
+			</event-type-ref>
+			<initial-event-select variable="ActivityContext"/>
+		</event>
+		<event event-direction="Receive" initial-event="True">
+            <event-name>ByeEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.sip.dialog.TerminationRequest</event-type-name>
+                <event-type-vendor>net.java</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+		</event>
+		
+		<event event-direction="Receive" initial-event="False">
+			<event-name>ConnectionConnecting</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTING</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>ConnectionConnected</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>ContextStarted</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONTEXT_STARTED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>ContextFailed</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONTEXT_FAILED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>ContextStopped</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONTEXT_STOPPED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>DtmfEvent</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.CONNECTION_DTMF</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		<event event-direction="Receive" initial-event="False">
+			<event-name>TimerEvent</event-name>
+			<event-type-ref>
+				<event-type-name>javax.slee.facilities.TimerEvent</event-type-name>
+				<event-type-vendor>javax.slee</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>		
+		<event event-direction="Receive" initial-event="False">
+			<event-name>SuccessRespEvent</event-name>
+			<event-type-ref>
+				<event-type-name>javax.sip.message.Response.SUCCESS</event-type-name>
+				<event-type-vendor>javax.sip</event-type-vendor>
+				<event-type-version>1.1</event-type-version>
+			</event-type-ref>
+		</event>		
+		
+		<env-entry>
+			<description>
+				Maximum time (mili seconds) the Application
+				will wait to receive a DTMF digit
+			</description>
+			<env-entry-name>waitingDTMF</env-entry-name>
+			<env-entry-type>java.lang.Long</env-entry-type>
+			<env-entry-value>5000</env-entry-value>
+		</env-entry>	
+		<env-entry>
+			<description>
+				Path where you want to store the recoreded files				
+			</description>			
+			<env-entry-name>filesRoute</env-entry-name>
+			<env-entry-type>java.lang.String</env-entry-type>
+			<env-entry-value>file://D:/mobicents/mobicents-examples/</env-entry-value>
+		</env-entry>	
+				
+		<resource-adaptor-type-binding>
+			<resource-adaptor-type-ref>
+				<resource-adaptor-type-name>JAIN SIP</resource-adaptor-type-name>
+				<resource-adaptor-type-vendor>javax.sip</resource-adaptor-type-vendor>
+				<resource-adaptor-type-version>1.2</resource-adaptor-type-version>
+			</resource-adaptor-type-ref>
+			<activity-context-interface-factory-name>slee/resources/jainsip/1.2/acifactory</activity-context-interface-factory-name>
+			<resource-adaptor-entity-binding>
+				<resource-adaptor-object-name>slee/resources/jainsip/1.2/provider</resource-adaptor-object-name>
+				<resource-adaptor-entity-link>SipRA</resource-adaptor-entity-link>
+			</resource-adaptor-entity-binding>
+		</resource-adaptor-type-binding>
+		
+		<resource-adaptor-type-binding>
+			<resource-adaptor-type-ref>
+				<resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+				<resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+				<resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+			</resource-adaptor-type-ref>
+			<activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+			<resource-adaptor-entity-binding>
+				<resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+				<resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+			</resource-adaptor-entity-binding>
+		</resource-adaptor-type-binding>	
+		
+		<resource-adaptor-type-binding>
+			<resource-adaptor-type-ref>
+				<resource-adaptor-type-name>rules_ratype</resource-adaptor-type-name>
+				<resource-adaptor-type-vendor>org.mobicents</resource-adaptor-type-vendor>
+				<resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+			</resource-adaptor-type-ref>
+			<activity-context-interface-factory-name>slee/resources/RulesRA/rulesraacif</activity-context-interface-factory-name>
+			<resource-adaptor-entity-binding>
+				<resource-adaptor-object-name>slee/resources/rulesra/1.0/sbb2ra</resource-adaptor-object-name>
+				<resource-adaptor-entity-link>RulesRA</resource-adaptor-entity-link>
+			</resource-adaptor-entity-binding>
+		</resource-adaptor-type-binding>								
+		
+	</sbb>
+</sbb-jar>

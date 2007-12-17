@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+
+<project name="ShoppingDemo" default="deploy" basedir=".">
+
+        <!-- Give user a chance to override without editing this file or typing -D -->        
+
+        <property name="profile" value="dev" />
+        <property file="build-${profile}.properties" />
+
+        <import file="../../lib/build.xml" />
+
+        <!-- set global properties for this build -->
+        <property name="project.name" value="ShoppingDemo"/>
+        <property name="dist.dir" value="dist" />
+        <property name="src.model.dir" value="src/model" />
+        <property name="src.action.dir" value="src/action" />
+        <property name="src.test.dir" value="src/test" />
+        <property name="lib.dir" value="lib" />
+        <property name="ear.dir" value="exploded-archives/${project.name}.ear" />
+        <property name="jar.dir" value="exploded-archives/${project.name}.jar" />
+        <property name="war.dir" value="exploded-archives/${project.name}.war" />
+        <property name="test.dir" value="test-build" />
+        <property name="bootstrap.dir" value="${basedir}/bootstrap" />
+        <property name="deploy.dir" value="${jboss.home}/server/all/deploy" />
+        <property name="ear.deploy.dir" value="${deploy.dir}/${project.name}.ear" />
+        <property name="jar.deploy.dir" value="${ear.deploy.dir}/${project.name}.jar" />
+        <property name="war.deploy.dir" value="${ear.deploy.dir}/${project.name}.war" />
+        <property name="testng.jar" value="${basedir}/lib/testng.jar" />
+        <property name="javac.debug" value="true" />
+        <property name="javac.deprecation" value="false" />
+        <property name="debug" value="false" />
+	
+		<!--Properties for validating configuration files -->
+		<property name="validate.resources.dir" value="${basedir}/exploded-archives" />
+		<property name="schema.dir" value="${basedir}/exploded-archives/schemas" />
+		<property name="src.schema.dir" value="${schema.dir}/org/jboss/seam"/>
+		<property name="schema.version" value="2.0" />
+	
+        <fileset id="lib" dir="${lib.dir}">
+                <include name="*.jar" />
+        </fileset>
+
+        <path id="build.classpath">
+                <fileset refid="lib" />
+		<path refid="cli.class.path" />
+		<pathelement location="${jboss.home}/client/jboss-j2ee.jar" />
+		<pathelement location="../slee/jars/Custom-event.jar" />
+        </path>
+
+        <target name="init" description="Initialize the build">
+                <mkdir dir="${jar.dir}" />
+                <mkdir dir="${ear.dir}" />
+                <mkdir dir="${war.dir}" />
+                <mkdir dir="${dist.dir}" />
+        </target>
+
+        <target name="compile" depends="init" 
+                        description="Compile the Java source code"
+                    unless="eclipse.running">
+                <javac classpathref="build.classpath" 
+                                destdir="${jar.dir}" 
+                                  debug="${javac.debug}" 
+                            deprecation="${javac.deprecation}" 
+                                nowarn="on">
+                        <src path="${src.model.dir}" />
+                        <src path="${src.action.dir}" />
+                </javac>
+        </target>
+
+        <target name="copyclasses" depends="init" 
+                        description="Copy the classes that were compiled by eclipse"
+                    if="eclipse.running">
+                <copy todir="${jar.dir}">
+                        <fileset dir="classes/model">
+                                <include name="**/*.class"/>
+                        </fileset>
+                        <fileset dir="classes/action">
+                                <include name="**/*.class"/>
+                        </fileset>
+                </copy>
+        </target>
+
+        <target name="jar" depends="compile,copyclasses" 
+                        description="Build the distribution .jar file">
+                <copy todir="${jar.dir}">
+                        <fileset dir="${basedir}/resources">
+                                <include name="seam.properties" />
+                        </fileset>
+                </copy>
+                <copy todir="${jar.dir}/META-INF">
+                        <fileset dir="${basedir}/resources/META-INF">
+                                <include name="ejb-jar.xml" />
+                        </fileset>
+                </copy>
+                <copy tofile="${jar.dir}/META-INF/persistence.xml" 
+                            file="${basedir}/resources/META-INF/persistence-${profile}.xml"
+                   overwrite="true"/>
+                <copy tofile="${jar.dir}/import.sql" 
+                            file="${basedir}/resources/import-${profile}.sql"
+                   overwrite="true"/>
+        </target>
+
+        <target name="war" depends="compile" 
+                        description="Build the distribution .war file">
+                <copy todir="${war.dir}">
+                        <fileset dir="${basedir}/view" />
+                </copy>
+                <copy todir="${war.dir}/WEB-INF">
+                        <fileset dir="${basedir}/resources/WEB-INF">
+                                <include name="*.*"/>
+                                <include name="classes/**/*.*"/>
+                                <exclude name="classes/**/*.class"/>
+                        </fileset>
+                        <filterset>
+                            <filter token="debug" value="${debug}" />
+                            <filter token="jndiPattern" value="${project.name}/#{ejbName}/local" />
+                            <filter token="embeddedEjb" value="false" />
+                        </filterset>
+                </copy>         
+                <copy todir="${war.dir}/WEB-INF">
+                        <fileset dir="${basedir}/resources/WEB-INF">
+                                <include name="lib/*.*"/>
+                                <include name="classes/**/*.class"/>
+                        </fileset>
+                </copy>         
+                <copy todir="${war.dir}/WEB-INF/lib">
+                        <fileset dir="${lib.dir}">                                
+                                <include name="commons-beanutils.jar" />
+                                <include name="jsf-facelets.jar" />
+                                <include name="jboss-seam-debug.jar" />
+                                <include name="jboss-seam-ui.jar" />
+                        </fileset>
+                </copy>
+                <copy todir="${war.dir}/WEB-INF/classes">
+                        <fileset dir="${basedir}/resources"> 
+                                <include name="messages*.properties"/>
+                        </fileset>
+                </copy>
+        </target>
+
+        <target name="ear" description="Build the EAR">
+                <copy todir="${ear.dir}">
+                        <fileset dir="${basedir}/resources">
+                                <include name="*jpdl.xml" />
+                                <include name="hibernate.cfg.xml" />
+                                <include name="jbpm.cfg.xml" />
+                                <include name="*.drl" />
+                        </fileset>
+                		<fileset dir="${lib.dir}">
+                				<include name="jboss-seam.jar" />
+                		</fileset>
+                        <fileset dir="${basedir}">
+                                <include name="lib/jbpm*.jar" />
+                                <include name="lib/jboss-el.jar" />
+                        	    <include name="lib/hibernate-commons-annotations.jar" />
+                        	    <include name="lib/hibernate-search.jar" />
+                        	    <include name="lib/lucene-core.jar" />
+                        </fileset>
+                </copy>
+                <copy todir="${ear.dir}/META-INF">
+                        <fileset dir="${basedir}/resources/META-INF">
+                                <include name="application.xml" />
+                                <include name="jboss-app.xml" />
+                        </fileset>
+                </copy>
+        </target>
+        
+        <target name="archive" depends="jar,war,ear" 
+                        description="Package the archives">
+                <jar jarfile="${dist.dir}/${project.name}.jar" basedir="${jar.dir}"/>
+                <jar jarfile="${dist.dir}/${project.name}.war" basedir="${war.dir}"/>
+                <jar jarfile="${dist.dir}/${project.name}.ear">
+                        <fileset dir="${ear.dir}"/>
+                        <fileset dir="${dist.dir}">
+                                <include name="${project.name}.jar"/>
+                                <include name="${project.name}.war"/>
+                        </fileset>
+                </jar>
+        </target>
+        
+        <target name="datasource">
+                <fail unless="jboss.home">jboss.home not set</fail>
+                <copy todir="${deploy.dir}">
+                        <fileset dir="${basedir}/resources">
+                                <include name="${project.name}-${profile}-ds.xml" />
+                        </fileset>
+                </copy>
+        </target>
+        
+        <target name="explode" depends="jar,war,ear,datasource" 
+                        description="Deploy the exploded archive">
+                <fail unless="jboss.home">jboss.home not set</fail>
+                
+                <mkdir dir="${jar.deploy.dir}"/>
+                <mkdir dir="${war.deploy.dir}"/>                
+                
+                <copy todir="${jar.deploy.dir}">
+                        <fileset dir="${jar.dir}"/>
+                </copy>
+                <copy todir="${war.deploy.dir}">
+                        <fileset dir="${war.dir}"/>
+                </copy>
+                <copy todir="${ear.deploy.dir}">
+                        <fileset dir="${ear.dir}"/>
+                </copy>
+        </target>
+
+        <target name="unexplode" description="Undeploy the exploded archive">
+                <delete failonerror="no">
+                        <fileset dir="${ear.deploy.dir}">
+                                <exclude name="**/*.jar"/>
+                        </fileset>
+                </delete>
+                <delete file="${deploy.dir}/${project.name}-${profile}-ds.xml" failonerror="no"/>
+                <delete dir="${ear.deploy.dir}" failonerror="no"/>
+        </target>
+        
+        <target name="restart" depends="explode" description="Restart the exploded archive">
+                <touch file="${ear.deploy.dir}/META-INF/application.xml"/>
+        </target>
+
+        <target name="deploy" depends="archive,datasource" description="Deploy to JBoss AS">
+                <fail unless="jboss.home">jboss.home not set</fail>
+                <copy todir="${deploy.dir}" file="${dist.dir}/${project.name}.ear" />
+        </target>
+
+        <target name="undeploy" description="Undeploy the example from JBoss">
+                <delete file="${deploy.dir}/${project.name}.ear" />
+                <delete file="${deploy.dir}/${project.name}-dev-ds.xml" />
+                <delete file="${deploy.dir}/${project.name}-prod-ds.xml" />
+        </target>
+
+        <target name="clean" description="Cleans up the build directory">
+                <delete dir="${dist.dir}"/>
+                <delete dir="${ear.dir}"/>
+                <delete dir="${war.dir}"/>
+                <delete dir="${jar.dir}"/>
+        		<delete dir="${src.schema.dir}" failonerror="no"/>
+                <delete dir="${basedir}/test-report"/>
+                <delete dir="${basedir}/test-output"/>
+                <delete failonerror="no">
+                        <fileset dir="${test.dir}">
+                                <exclude name="**/*.class" if="eclipse.running"/>
+                        </fileset>
+                </delete>
+        </target>
+
+        <target name="compiletest" unless="eclipse.running" description="Compile the Java source code for the tests">
+        <mkdir dir="${test.dir}"/>
+        <javac classpathref="build.classpath"
+                        destdir="${test.dir}"
+                          debug="${javac.debug}"
+                    deprecation="${javac.deprecation}"
+                        nowarn="on">
+                <src path="${src.action.dir}" />
+                <src path="${src.model.dir}" />
+                <src path="${src.test.dir}" />
+        </javac>
+        </target>
+        
+        <target name="copytestclasses" if="eclipse.running" description="Copy classes compiled by eclipse to the test dir">
+        <mkdir dir="${test.dir}"/>
+                <copy todir="${test.dir}">
+                        <fileset dir="classes/model">
+                                <include name="**/*.class"/>
+                        </fileset>
+                </copy>
+                <copy todir="${test.dir}">
+                        <fileset dir="classes/action">
+                                <include name="**/*.class"/>
+                        </fileset>
+                </copy>
+                <copy todir="${test.dir}">
+                        <fileset dir="classes/test">
+                                <include name="**/*.class"/>
+                        </fileset>
+                </copy>
+        </target>
+        
+        <target name="buildtest" depends="compiletest,copytestclasses" description="Build the tests">
+                <copy todir="${test.dir}">
+                        <fileset dir="${basedir}/resources">
+                                <exclude name="META-INF/persistence*.xml"/>
+                                <exclude name="import*.sql"/>
+                                <exclude name="${project.name}-*-ds.xml"/>
+                        </fileset>
+                </copy>
+                <copy tofile="${test.dir}/META-INF/persistence.xml" 
+                        file="${basedir}/resources/META-INF/persistence-test.xml"
+                   overwrite="true"/>
+                <copy tofile="${test.dir}/import.sql" 
+                        file="${basedir}/resources/import-test.sql"
+                   overwrite="true"/>
+                <copy todir="${test.dir}" flatten="true">
+                        <fileset dir="${src.test.dir}">
+                                <include name="**/*Test.xml" />
+                        </fileset>
+                </copy>
+        </target>
+
+        <target name="test" depends="buildtest" description="Run the tests">            
+                <taskdef resource="testngtasks" classpath="${testng.jar}" />
+        		<path id="test.path">
+        			<path path="${test.dir}" />
+        			<fileset dir="${lib.dir}/test">
+        				<include name="*.jar"/>
+        			</fileset>
+        			<path path="${bootstrap.dir}" />
+        			<path refid="build.classpath" />
+        		</path>
+                <testng outputdir="${basedir}/test-report">
+                    <classpath refid="test.path" />
+                    <xmlfileset dir="${test.dir}" includes="*Test.xml" />
+                </testng>
+        </target>
+	
+	<target name="validateConfiguration" depends="war,ear,jar" description="Validate the xml configuration files">
+		<mkdir dir="${schema.dir}"/>
+		<unjar src="${lib.dir}/jboss-seam.jar" dest="${schema.dir}">
+			<patternset>
+				<include name="org/jboss/seam/*.xsd"/>
+				<include name="org/jboss/seam/*.dtd"/>
+			</patternset>
+		</unjar>
+		<ant antfile="validate.xml" target="validateConfiguration" />
+	</target>
+        
+</project>

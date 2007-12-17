@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="HttpServletResourceAdaptor" default="">
+
+	<import file="./generic_pbuild.xml"/>
+	
+	<target name="deploy-with-servlet" depends="ra-deploy">
+		<copy todir="${deploy.dir}" file="mobicents.war" />
+	</target>
+
+	<target name="undeploy-with-servlet" depends="ra-undeploy">
+		<delete file="${deploy.dir}/mobicents.war" />
+	</target>
+</project>
+

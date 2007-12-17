@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- August 13, 2004 -->
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:parlayx_common_xsd="http://www.csapi.org/schema/parlayx/common/v2_0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="common_faults" targetNamespace="http://www.csapi.org/wsdl/parlayx/common/v2_0/faults">
+
+   <wsdl:types>
+      <xsd:schema elementFormDefault="qualified">
+         <xsd:import namespace="http://www.csapi.org/schema/parlayx/common/v2_0" schemaLocation="parlayx_common_types_2_0.xsd"/>
+      </xsd:schema>
+   </wsdl:types>
+
+   <wsdl:message name="ServiceException">
+      <wsdl:part element="parlayx_common_xsd:ServiceException" name="ServiceException"/>
+   </wsdl:message>
+
+   <wsdl:message name="PolicyException">
+      <wsdl:part element="parlayx_common_xsd:PolicyException" name="PolicyException"/>
+   </wsdl:message>
+</wsdl:definitions>

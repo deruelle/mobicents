@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="all" name="smpp example">
+
+	<property environment="system" />
+
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+
+	<property name="jar.name" value="smpp-sbb-DU.jar" />
+	<path id="duPath">
+		<pathelement location="./jars/${jar.name}" />
+	</path>
+
+	<property name="duPathValue" refid="duPath" />
+	<property name="serviceID" value="MessageGateway#org.mobicents#1.0" />
+	<!-- Wake Up Service#NIST#1.0 -->
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<!--import file="${examples.home}/lib/build.xml" /-->
+
+
+
+	<target name="init" depends="management-init,lib-init">
+		<path id="slee">
+			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
+		</path>
+
+
+		<path id="ExternalComponents" refid="examples-libraries">
+
+		</path>
+
+
+		<property name="classes_dest" value="classes/smpp-sbb" />
+		<property name="jars_dest" value="jars" />
+		<property name="sbb_jar" value="smpp-sbb.jar" />
+		<property name="service-DU" value="${jar.name}" />
+	</target>
+	<!-- COMPILE SBB -->
+	<target name="compile" depends="init" description="Compiles sbb">
+
+		<mkdir dir="${classes_dest}" />
+		<javac destdir="${classes_dest}" srcdir="src" debug="true">
+			<classpath>
+				<path refid="ExternalComponents" />
+				<path refid="slee" />
+			</classpath>
+		</javac>
+
+	</target>
+	<target name="build-sbb-jar" depends="compile" description="builds sbb jar, calls compile before">
+
+		<mkdir dir="${jars_dest}" />
+		<sbbjar destfile="${jars_dest}/${sbb_jar}" classpath="${classes_dest}" sbbjarxml="./descriptors/sbb-jar.xml" />
+	</target>
+
+	<target name="clean-sbb">
+		<delete file="${jars_dest}/${sbb_jar}" />
+		<delete dir="${classes_dest}" />
+	</target>
+
+
+
+	<target name="build-service-DU" depends="build-sbb-jar" description="builds service DU">
+		<jar jarfile="${jars_dest}/${service-DU}">
+			<metainf dir="descriptors" includes="deployable-unit.xml" />
+			<fileset includes="${sbb_jar}" dir="${jars_dest}" />
+			<fileset includes="service.xml" dir="descriptors" />
+		</jar>
+		<delete file="${jars_dest}/${sbb_jar}" />
+	</target>
+	<target name="clean-service-DU">
+		<delete file="${jars_dest}/${service-DU}" />
+	</target>
+
+
+
+
+	<target depends="init,build-service-DU" name="all">
+
+		<!--BUILD HERE EVERYTHING -->
+
+	</target>
+	<target depends="init,clean-sbb,clean-service-DU" name="clean">
+
+		<!-- CLEAN EVERYTHING -->
+
+	</target>
+
+
+
+	<!-- ADD MORE SERVICES, etc IF NEEDED -->
+	<target name="deploy" depends="all" description="Deploys service into container described by ${jnpHost} and ${jnpPort}">
+		<echo>Installing and activating service ${serviceID}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${duPathValue}" />
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+	</target>
+
+	<target name="undeploy" depends="init" description="unDeploys service from container described by ${jnpHost} and ${jnpPort}">
+		<echo>Deactivating and uninstalling service ${serviceID}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+			<uninstall url="${file_url}${duPathValue}" />
+
+		</slee-management>
+	</target>
+
+
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies, hopefuly!!">
+		<ant dir="${xmppra-home}" target="ra-deploy" inheritall="false" />
+		<ant dir="${smppra-home}" target="ra-deploy" inheritall="false" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+		<ant target="undeploy" />
+		<ant dir="${xmppra-home}" target="ra-undeploy" inheritall="false" />
+		<ant dir="${smppra-home}" target="ra-undeploy" inheritall="false" />
+	</target>
+
+</project>

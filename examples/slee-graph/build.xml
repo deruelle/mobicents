@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="SleeGraph" default="make">
+    <property name="project.home" value="."/>
+    <property environment="system"/>
+    <property name="node" value="all" description="Controls the jboss conrfiguration. Values are typically all or node1" />
+    <property name="jboss.home" value="${system.JBOSS_HOME}"/>
+    <property name="mobicents.home" value="../../mobicents" description="The directory where mobicents source is checked out"/>
+    <property name="mobicents.sar" value="${jboss.home}/server/all/deploy/mobicents.sar"/>
+    <property name="DU.deploy.dir" value="${jboss.home}/server/${node}/deploy-mobicents" />
+    
+    <target name="init">
+        <path id="classpath">
+            <fileset includes="lib/*" dir=""/>
+            <pathelement location="${jboss.home}/lib/jboss-jmx.jar"/>
+        </path>
+    </target>
+    <target name="make">
+        <ant target="package"/>
+    </target>
+    <target name="run" depends="make">
+        <java classname="org.mobicents.slee.graph.viewer.ViewerFrame"
+            fork="true" failonerror="true">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement location="build/slee-graph.jar"/>
+            </classpath>
+            <jvmarg line="-Djava.security.manager -Djava.security.policy==security/java.policy"/>
+        </java>        
+    </target>
+    <target name="compile" depends="init">
+        <mkdir dir="build/classes"/>
+        <javac destdir="build/classes" srcdir="src" includes="**/*.java"
+            debug="true">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="package" depends="compile" description="Create deployable archives">
+        <jar jarfile="build/slee-graph.jar">
+            <fileset includes="**/*" dir="build/classes/"/>
+            <fileset dir="src">
+                <exclude name="**/*.java"/>
+                <include name="**/*"/>
+            </fileset>
+        </jar>
+<!--        
+        <signjar alias="mykey" 
+            keystore="security/keystore" storepass="passwd" keypass="passwd">
+            <fileset dir="">
+                <include name="build/slee-graph.jar"/>
+                <include name="lib/*.jar"/>
+            </fileset>
+        </signjar>    
+-->        
+        <mkdir dir="build/slee-graph.war"/>
+        <copy todir="build/slee-graph.war">
+            <fileset includes="**/*" dir="www"/>
+        </copy>
+        <copy todir="build/slee-graph.war/">
+            <fileset includes="*.jar" dir="build"/>
+            <fileset includes="*.jar" dir="lib"/>
+        </copy>
+    </target>
+    <target name="deploy" depends="package" description="feed deployable units to server">
+        <copy todir="${mobicents.sar}/slee-graph.war">
+            <fileset includes="**/*" dir="build/slee-graph.war"/>
+        </copy>
+    </target>
+    <target name="clean" depends="init">
+        <delete dir="${mobicents.sar}/slee-graph.war" includeemptydirs="true" failonerror="false"/>
+        <delete dir="build" includeemptydirs="true" failonerror="false"/>
+    </target>
+</project>

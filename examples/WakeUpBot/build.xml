@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="WakeUpBot" default="deploy">
+	<property name="project.home" value="." />
+	<property environment="system" />
+	<!--property name="examples.home" value="${system.MOBICENTS_EXAMPLES}" /-->
+
+	<property name="serviceID" value="WakeUpBotService#mobicents#0.1" />
+	<path id="service-du">
+		<pathelement location="jars/WakeUpBot-DU.jar" />
+	</path>
+
+	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
+	<import file="../lib/build.xml" />
+	<echo>EXAMPLES HOME[${examples.home}]</echo>
+	<!--import file="${examples.home}/lib/build.xml" /-->
+
+	<target name="init" depends="management-init, lib-init">
+		<path id="slee" refid="examples-libraries">
+
+		</path>
+
+
+	</target>
+	<target name="clean" depends="init">
+		<ant target="clean-WakeUpBot-sbb" />
+		<ant target="clean-WakeUpBot-DU" />
+		<ant target="clean-WakeUpBot-events" />
+		<subant target="clean">
+			<fileset dir="WakeUpBotPage" includes="build.xml" />
+		</subant>
+		<delete dir="classes" />
+	</target>
+
+	<target depends="init" name="build-WakeUpBot-events">
+		<mkdir dir="classes/WakeUpBot-events" />
+		<mkdir dir="jars/" />
+		<javac destdir="classes/WakeUpBot-events" includes="org/mobicents/examples/wakeupbot/events/*.java" srcdir="src">
+			<classpath>
+				<path refid="slee" />
+			</classpath>
+		</javac>
+		<eventjar classpath="classes/WakeUpBot-events" destfile="jars/WakeUpBot-events.jar" eventjarxml="src/org/mobicents/examples/wakeupbot/events/WakeUpBot-events-jar.xml" />
+	</target>
+	<target name="clean-WakeUpBot-events">
+		<delete file="jars/WakeUpBot-events.jar" />
+		<delete dir="classes/WakeUpBot-events" />
+	</target>
+	<target name="build-WakeUpBot-sbb" depends="init,build-WakeUpBot-events">
+
+		<mkdir dir="classes/WakeUpBot-sbb" />
+		<mkdir dir="jars/" />
+		<javac destdir="classes/WakeUpBot-sbb" srcdir="src" includes="org/mobicents/examples/wakeupbot/*.java,org/mobicents/examples/wakeupbot/events/*.java" debug="true">
+			<classpath>
+				<path refid="slee" />
+			</classpath>
+		</javac>
+
+		<copy file="src/org/mobicents/examples/wakeupbot/WakeUpBot-sbb-jar.xml" tofile="classes/WakeUpBot-sbb/META-INF/sbb-jar.xml" />
+		<copy file="src/org/mobicents/examples/wakeupbot/google-wakupbot.properties" tofile="classes/WakeUpBot-sbb/org/mobicents/examples/wakeupbot/google-wakupbot.properties" />
+		<jar jarfile="jars/WakeUpBot-sbb.jar" basedir="classes/WakeUpBot-sbb/">
+		</jar>
+
+	</target>
+	<target name="clean-WakeUpBot-sbb" depends="clean-WakeUpBot-events">
+		<delete file="jars/WakeUpBot-sbb.jar" />
+		<delete dir="classes/WakeUpBot-sbb" />
+	</target>
+	<target name="build-WakeUpBot-DU" depends="build-WakeUpBot-sbb">
+		<mkdir dir="classes/WakeUpBot-DU" />
+		<copy file="src/org/mobicents/examples/wakeupbot/WakeUpBot-deployable-unit.xml" tofile="classes/WakeUpBot-DU/META-INF/deployable-unit.xml" />
+		<jar jarfile="jars/WakeUpBot-DU.jar">
+			<metainf dir="classes/WakeUpBot-DU/META-INF" includes="deployable-unit.xml" />
+			<fileset includes="jars/WakeUpBot-sbb.jar" dir="" />
+			<fileset includes="jars/WakeUpBot-events.jar" dir="" />
+			<fileset includes="WakeUpBot-service.xml" dir="src/org/mobicents/examples/wakeupbot/" />
+		</jar>
+	</target>
+	<target name="clean-WakeUpBot-DU">
+		<delete file="jars/WakeUpBot-DU.jar" />
+		<delete dir="classes/WakeUpBot-DU" />
+	</target>
+
+	<!-- Deploys to JBOSS. -->
+	<target name="deploy" depends="build-WakeUpBot-DU,management-init">
+
+		<pathconvert targetos="unix" property="service-du" refid="service-du" />
+		<echo>Deploying WakeUpBotDU JAR</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${service-du}" />
+		</slee-management>
+		<echo>Activate WakeUpBot Service[${serviceID}]</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<activateservice serviceid="${serviceID}" />
+		</slee-management>
+
+		<!-- SMALL IP CHANGE IN PROPS FILE -->
+		<copy verbose="true" file="lib/slee-connector.properties" tofile="WakeUpBotPage/src/java/org/mobicents/examples/wakeupbot/jsf/sleeconnector/slee-connector.properties" overwrite="true">
+			<filterchain>
+				<replacetokens>
+					<token key="JNP_IP" value="${jnpHost}" />
+				</replacetokens>
+			</filterchain>
+		</copy>
+		<echo>Deploying wakeup bot  page...</echo>
+		<subant target="">
+			<fileset dir="WakeUpBotPage" includes="build.xml" />
+		</subant>
+		<echo>Lets copy WakeUpBotPage.war to ${deploy.dir}</echo>
+		<copy todir="${deploy.dir}" file="WakeUpBotPage/dist/WakeUpBotPage.war" />
+	</target>
+
+
+	<target name="undeploy" depends="init,management-init">
+
+		<echo>Removing wakeupbot page...</echo>
+		<delete failonerror="false" includeemptydirs="true">
+			<fileset dir="${deploy.dir}">
+				<include name="WakeUpBotPage.war" />
+			</fileset>
+		</delete>
+		<echo>Page removed, deactivating and removing service[${serviceID}]...</echo>
+
+		<pathconvert targetos="unix" property="service-du" refid="service-du" />
+		<!-- deactivate the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID}" />
+		</slee-management>
+		<!-- undeploys the service -->
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<uninstall url="${file_url}${service-du}" />
+		</slee-management>
+	</target>
+
+
+	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies, hopefuly!!">
+		<ant dir="${xmppra-home}" target="ra-deploy" inheritall="false" />
+		<ant target="deploy" />
+	</target>
+
+
+	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+		<ant target="undeploy" />
+		<ant dir="${xmppra-home}" target="ra-undeploy" inheritall="false" />
+	</target>
+
+
+
+</project>

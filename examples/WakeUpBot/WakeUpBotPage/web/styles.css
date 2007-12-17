@@ -1,0 +1,99 @@
+/* 
+    Document   : newStyle
+    Created on : 26 grudzieñ 2005, 15:10
+    Author     : Administrator
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+.tablePosition
+{
+vertical-align: top;
+text-align: center;
+}
+.header {
+text-align: center;
+font-style: italic;
+color: black;
+background-color: #000099;
+vertical-align: top;
+
+}
+.headerSecond {
+text-align: center;
+font-style: bold;
+color: black;
+background-color:  #006699;
+vertical-align: top;
+}
+.menu {
+
+text-align: top;
+background: #00C040;
+color black;
+vertical-align: top;
+
+}
+.columnRowEven
+{
+
+text-align: left;
+background-color: #00E020;
+color black;
+vertical-align: top;
+white-space: pre;
+}
+.columnRowOdd
+{
+
+text-align: center;
+background-color: #00C000;
+color black;
+vertical-align: top;
+white-space: pre;
+}
+.additionall
+{
+
+text-align: center;
+background-color: Teal;
+color black;
+vertical-align: top;
+white-space: pre;
+}
+
+BODY
+{
+text-align: left;
+color: black;
+vertical-align: top;
+background-color: #008040;
+}
+.bordered
+{
+border-style: dotted;
+border-width: thin;
+border-color: black;
+}
+.text
+{
+text-align: center;
+color black;
+vertical-align: top;
+white-space: pre;
+}
+.errorStyle
+{
+text-align: center;
+color: red;
+font-style: italic;
+font-weight: bolder;
+}

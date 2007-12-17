@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE deployable-unit PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Deployable Unit 1.0//EN"
+                                 "http://java.sun.com/dtd/slee-deployable-unit_1_0.dtd">
+<deployable-unit>
+    <!--<jar>jars/BaseB2B-sbb.jar</jar>-->
+    <jar>jars/BaseCallDuration-sbb.jar</jar>
+    <!--<jar>jars/Bye-event.jar</jar>-->
+    <!--<jar>jars/CallEstablished-event.jar</jar>-->
+    <jar>jars/Duration-profile-spec.jar</jar>
+    <service-xml>src/com/ptin/xmas/app/CallDuration-service.xml</service-xml>
+</deployable-unit>

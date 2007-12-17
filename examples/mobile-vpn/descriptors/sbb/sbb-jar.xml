@@ -1,0 +1,662 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+
+<sbb-jar>
+    <sbb id="mvpn-sbb">
+        <description>Mobile Virtual Private Network</description>
+        <sbb-name>MvpnSBB</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>MvpnSBB</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>EscCodeSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>EscCodeSbb</sbb-alias>
+        </sbb-ref>        
+        
+        <sbb-ref>
+            <sbb-name>AuthorizationSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>AuthorizationSbb</sbb-alias>
+        </sbb-ref>                
+
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref> 
+                                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.VpnSbb              
+                </sbb-abstract-class-name>
+                                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                
+                                
+                <get-child-relation-method>
+                    <sbb-alias-ref>EscCodeSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getEscCodeSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>AuthorizationSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getAuthorizationSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                
+                
+            </sbb-abstract-class> 
+            
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>JCC</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                    slee/resources/JCC/ActivityContextInterfaceFactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resource/jcc/1.1/emulator</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>JCC</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>        
+                                                          
+        </sbb-classes>
+                
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+    </sbb> 
+
+    <sbb id="esc-code-sbb">
+        <description>Esc code</description>
+        <sbb-name>EscCodeSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>EscCodeSbb</sbb-alias>
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref> 
+                                
+        <sbb-ref>
+            <sbb-name>AuthorizationSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>AuthorizationSbb</sbb-alias>
+        </sbb-ref>                
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.EscCodeSbb              
+                </sbb-abstract-class-name>  
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>AuthorizationSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getAuthorizationSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                                              
+                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+        
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+  </sbb> 
+  
+    <sbb id="authorization-sbb">
+        <description>Authorization Sbb</description>
+        <sbb-name>AuthorizationSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>AuthorizationSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>BlackListSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>BlackListSbb</sbb-alias>
+        </sbb-ref>                        
+        
+        <sbb-ref>
+            <sbb-name>WhiteListSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>WhiteListSbb</sbb-alias>
+        </sbb-ref>                                
+        
+        <profile-spec-ref>
+            <profile-spec-name>VirtualNetworkProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VirtualNetworkProfile</profile-spec-alias>
+        </profile-spec-ref> 
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref>         
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnCosProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnCosProfile</profile-spec-alias>
+        </profile-spec-ref> 
+
+        <profile-spec-ref>
+            <profile-spec-name>VpnPatternProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnPatternProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.AuthorizationSbb              
+                </sbb-abstract-class-name>               
+
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VirtualNetworkProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getVirtualNetworkProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                 
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnCosProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getCosProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnPatternProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getPatternProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>BlackListSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getBlackListSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>                    
+                </get-child-relation-method >              
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>WhiteListSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getWhiteListSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                                                              
+                                                                                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+  </sbb> 
+
+    <sbb id="black-list-sbb">
+        <description>Black list Sbb</description>
+        <sbb-name>BlackListSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>BlackListSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>ScreeningSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>ScreeningSbb</sbb-alias>
+        </sbb-ref>    
+        
+        <profile-spec-ref>
+            <profile-spec-name>VirtualNetworkProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VirtualNetworkProfile</profile-spec-alias>
+        </profile-spec-ref> 
+                
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref>                 
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnPatternProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnPatternProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.BlackListSbb              
+                    
+                </sbb-abstract-class-name>               
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VirtualNetworkProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getVirtualNetworkProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                                 
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnPatternProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getPatternProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>ScreeningSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getScreeningSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                                                                              
+                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <event event-direction="Receive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+  </sbb> 
+  
+    <sbb id="white-list-sbb">
+        <description>White list Sbb</description>
+        <sbb-name>WhiteListSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>WhiteListSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>ScreeningSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>ScreeningSbb</sbb-alias>
+        </sbb-ref>                                                
+        
+        <profile-spec-ref>
+            <profile-spec-name>VirtualNetworkProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VirtualNetworkProfile</profile-spec-alias>
+        </profile-spec-ref> 
+                
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref>                 
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnPatternProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnPatternProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.WhiteListSbb              
+                </sbb-abstract-class-name>               
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VirtualNetworkProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getVirtualNetworkProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                                                 
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnPatternProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getPatternProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>ScreeningSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getScreeningSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                                                                                                                              
+                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+  </sbb> 
+  
+    <sbb id="screening-sbb">
+        <description>Screening Sbb</description>
+        <sbb-name>ScreeningSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>ScreeningSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>RouteSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>RouteSbb</sbb-alias>
+        </sbb-ref>                                                        
+        
+        <profile-spec-ref>
+            <profile-spec-name>VirtualNetworkProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VirtualNetworkProfile</profile-spec-alias>
+        </profile-spec-ref> 
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref>         
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnCosProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnCosProfile</profile-spec-alias>
+        </profile-spec-ref> 
+
+        <profile-spec-ref>
+            <profile-spec-name>VpnPatternProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnPatternProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.ScreeningSbb              
+                </sbb-abstract-class-name>               
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VirtualNetworkProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getVirtualNetworkProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                                                 
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnCosProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getCosProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnPatternProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getPatternProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-child-relation-method>
+                    <sbb-alias-ref>RouteSbb</sbb-alias-ref>
+                    <get-child-relation-method-name>getRouteSbbRelation</get-child-relation-method-name>
+                    <default-priority>12</default-priority>
+                </get-child-relation-method >                                                                                                                                              
+                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+    </sbb> 
+    
+    <sbb id="route-sbb">
+        <description>Router Sbb</description>
+        <sbb-name>RouteSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>RouteSbb</sbb-alias>
+
+        <profile-spec-ref>
+            <profile-spec-name>VirtualNetworkProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VirtualNetworkProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                        
+        <profile-spec-ref>
+            <profile-spec-name>VpnMemberProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnMemberProfile</profile-spec-alias>
+        </profile-spec-ref>         
+        
+        <profile-spec-ref>
+            <profile-spec-name>VpnCosProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnCosProfile</profile-spec-alias>
+        </profile-spec-ref> 
+
+        <profile-spec-ref>
+            <profile-spec-name>VpnPatternProfile</profile-spec-name>
+            <profile-spec-vendor>org.mobicents</profile-spec-vendor>
+            <profile-spec-version>1.0</profile-spec-version>
+            <profile-spec-alias>VpnPatternProfile</profile-spec-alias>
+        </profile-spec-ref>         
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.org.mobicents.slee.vpn.sbb.RouteSbb              
+                </sbb-abstract-class-name>               
+
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VirtualNetworkProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getVirtualNetworkProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                                                                 
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnMemberProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getMemberProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnCosProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getCosProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+                <get-profile-cmp-method>
+                    <profile-spec-alias-ref>VpnPatternProfile</profile-spec-alias-ref>
+                    <get-profile-cmp-method-name>getPatternProfile</get-profile-cmp-method-name>
+                </get-profile-cmp-method>                                
+                
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AuthorizeCallAttempt</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_AUTHORIZE_CALL_ATTEMPT</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <event event-direction="FireAndReceive" initial-event="True">
+            <event-name>AddressAnalyze</event-name>
+            <event-type-ref>
+                <event-type-name>javax.csapi.cc.jcc.JccConnectionEvent.CONNECTION_ADDRESS_ANALYZE</event-type-name>
+                <event-type-vendor>javax.csapi.cc.jcc</event-type-vendor>
+                <event-type-version>1.1</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+            <event-resource-option>block</event-resource-option>
+        </event>        
+                
+        <sbb-activity-context-interface>
+            <description>Vpn activity context</description>
+            <sbb-activity-context-interface-name>org.org.mobicents.slee.sbb.VpnActivityContextInterface</sbb-activity-context-interface-name>
+        </sbb-activity-context-interface>
+    </sbb>                
+</sbb-jar>

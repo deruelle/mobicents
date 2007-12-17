@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+	<ModulePrefs title="WakeUp Module" height="250"  />
+	<Content type="url" href="http://82.210.179.232:8080/WakeUpBotPage/index.jsp"/>
+</Module>
