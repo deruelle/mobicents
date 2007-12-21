@@ -21,6 +21,10 @@ REM Add bin/native to the PATH if present
 if exist "%JBOSS_HOME%\bin\native" set PATH=%JBOSS_HOME%\bin\native;%PATH%
 if exist "%JBOSS_HOME%\bin\native" set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%PATH%"
 
+REM Run section  - here we define node and default ip
+set NODE=default
+set IP=127.0.0.1
+
 rem Read all command line arguments
 
 REM
@@ -43,7 +47,7 @@ set ARGS=""
  if [%1] == [] goto endloop
         if "%1" == "-mc" (
 
-			set ARGS=%ARGS% -c all -b 127.0.0.1
+			set ARGS=%ARGS% -c %NODE% -b %IP%
 		) ELSE (
 			set ARGS=%ARGS% %1
 		)

@@ -10,6 +10,10 @@
 DIRNAME=`dirname $0`
 PROGNAME=`basename $0`
 GREP="grep"
+# Run section, here we define node and default ip
+NODE=default
+IP=127.0.0.1
+
 
 # Use the maximum available, or set MAX_FD != -1 to use that
 MAX_FD="maximum"
@@ -202,7 +206,7 @@ ARGS=""
 if [ "x$SEARCH" = "x" ]; then
 	ARGS="$@"
 else
-	ARGS="$@ -c all -b 127.0.0.1"
+	ARGS="$@ -c $NODE -b $IP"
 fi
 ARGS=`echo $ARGS |  sed 's/-mc//'`
 echo "========================================================================="
