@@ -2,6 +2,8 @@
 
 <project name="Mobicents Ant Management" basedir=".">
 
+	<!-- THIS FILE SHOULD NOT BE USED ANYMORE !!!!  USE core/xml/ant/*common-properties.xml -->
+	
 	<!-- Server Connectivity Properties -->
 	<property name="jnpHost" value="127.0.0.1" />
 	<property name="jnpPort" value="1099" />
