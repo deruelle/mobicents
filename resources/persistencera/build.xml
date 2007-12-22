@@ -8,9 +8,7 @@
 	<property name="ra.id" value="PersistenceResourceAdaptor#org.mobicents#0.1" />
 
 	<!-- IMPORT COMMON STUFF -->
-	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />
-	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+	<import file="$${ant.file.Persistence_RA_Project}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 	<path id="ra.classpath">
 		<path refid="mobicents.core.classpath" />
 		<path refid="mobicents.ra.${ra.name}ra.classpath" />

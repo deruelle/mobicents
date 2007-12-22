@@ -5,13 +5,13 @@
 
 
 	<property name="ras.dirs.list" value="asteriskra,diameterra,dummyra,http-servlet-ra,http-client-ra,media-ra,persistencera,smppra,ttsra,xcapclientra,xmppra" />
-	<property name="mobicents.home.initial" value="${ant.file.Maintanance_build}/../.." />
+	<property name="mobicents.home.initial" value="${ant.file.Maintanance_build}/../../core" />
 
 
 	<path id="tasks.classpath">
 
-		<pathelement location="${mobicents.home.initial}/core/scripts/lib/ant-contrib-1.0b3.jar" />
-		<pathelement location="${mobicents.home.initial}/core/scripts/lib/ant-svn-0.1-SNAPSHOT.jar" />
+		<pathelement location="${mobicents.home.initial}/scripts/lib/ant-contrib-1.0b3.jar" />
+		<pathelement location="${mobicents.home.initial}/scripts/lib/ant-svn-0.1-SNAPSHOT.jar" />
 
 	</path>
 
@@ -28,7 +28,7 @@
 		<for delimiter="," param="dir.name" list="${ras.dirs.list}">
 			<sequential>
 				<echo>Cleaning RA in DIR[${mobicents.home.initial}/resources/@{dir.name}]</echo>
-				<ant dir="${mobicents.home.initial}/resources/@{dir.name}" target="clean" />
+				<ant dir="${mobicents.home.initial}/../resources/@{dir.name}" target="clean" />
 
 			</sequential>
 		</for>

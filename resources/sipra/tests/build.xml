@@ -25,11 +25,11 @@
  The default target is "build-tests".
  
  -->
-<project name="JAIN SLEE TCK" default="build-tests" basedir=".">
+<project name="JAIN_SLEE_TCK_SIPRA" default="build-tests" basedir=".">
 	<!-- Definitions -->
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
-	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	<import file="$${ant.file.JAIN_SLEE_TCK_SIPRA}/../../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="sipra.home" value="../" />
 	<property name="node" value="all" />
@@ -86,9 +86,9 @@
 		<mkdir dir="${classes.root}" />
 	</target>
 	<target name="clean-reports">
-			<delete dir="reports" quiet="true" />
-			<mkdir dir="reports" />
-		</target>
+		<delete dir="reports" quiet="true" />
+		<mkdir dir="reports" />
+	</target>
 	<target name="clean-sleetests-classes">
 		<delete dir="${classes.sleetests}" quiet="true" />
 	</target>

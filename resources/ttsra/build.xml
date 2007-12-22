@@ -2,10 +2,10 @@
 
 <project name="TTSResourceAdaptor" default="build-and-deploy-ra">
 
-	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />
+
 	<property name="compile.as.debug" value="false" />
-	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<import file="$${ant.file.TTSResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="tts" />
 	<property name="ra.entity" value="ttsRA" />

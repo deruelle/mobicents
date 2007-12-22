@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="DiameterResourceAdaptor" default="build-and-deploy-ra">
 
-	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />	
-	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+	
+	<import file="$${ant.file.DiameterResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="diameter" />
 	<property name="ra.entity" value="DiameterRA" />

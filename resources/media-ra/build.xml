@@ -3,9 +3,8 @@
 
 	<property name="compile.as.debug" value="true" />
 
-	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />
-	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<import file="$${ant.file.MediaResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="media" />
 	<property name="ra.entity" value="MediaRA" />
@@ -23,16 +22,16 @@
 	</fileset>
 
 	<target name="persistent-deploy" depends="build-DUs">
-			<copy file="${ant.file.MediaResourceAdaptor}/../ratype/jars/${ra.name}-ratype-DU.jar"  todir="${mobicents.deploy}"  />
-			<copy file="${ant.file.MediaResourceAdaptor}/../ra/jars/${ra.name}-ra-DU.jar"  todir="${mobicents.deploy}"  />
-			<copy file="${ant.file.MediaResourceAdaptor}/../scripts/${ra.name}ra-deploy.bsh"  todir="${mobicents.deploy}/scripts"  />
-		</target>
-		
-		<target name="persistent-undeploy">
-			<delete file="${mobicents.deploy}/${ra.name}-ratype-DU.jar"  />
-			<delete file="${mobicents.deploy}/${ra.name}-ra-DU.jar"  />
-			<delete file="${mobicents.deploy}/scripts/${ra.name}ra-deploy.bsh"  />
-		</target>
-	
+		<copy file="${ant.file.MediaResourceAdaptor}/../ratype/jars/${ra.name}-ratype-DU.jar" todir="${mobicents.deploy}" />
+		<copy file="${ant.file.MediaResourceAdaptor}/../ra/jars/${ra.name}-ra-DU.jar" todir="${mobicents.deploy}" />
+		<copy file="${ant.file.MediaResourceAdaptor}/../scripts/${ra.name}ra-deploy.bsh" todir="${mobicents.deploy}/scripts" />
+	</target>
+
+	<target name="persistent-undeploy">
+		<delete file="${mobicents.deploy}/${ra.name}-ratype-DU.jar" />
+		<delete file="${mobicents.deploy}/${ra.name}-ra-DU.jar" />
+		<delete file="${mobicents.deploy}/scripts/${ra.name}ra-deploy.bsh" />
+	</target>
+
 </project>
 

@@ -10,8 +10,8 @@
 
 	<property name="ra.entity.properties.filename" value="sipra.entity.properties" />
 
-	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+	
+	<import file="$${ant.file.JainSipResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<path id="ra.classpath">
 		<path refid="mobicents.core.classpath" />

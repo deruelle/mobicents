@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="XCAPClientResourceAdaptor" default="build-and-deploy-ra">
 
-	<property name="mobicents.home" value="${ant.file.AsteriskResourceAdaptor}/../../../core" />	
-	<!--import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" /-->
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<import file="$${ant.file.XCAPClientResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="xcapclient" />
 	<property name="ra.entity" value="XCAPClientRA" />
-	<property name="ra.id" value="${ant.project.name}#org.openxdm#1.0" />	
-	
+	<property name="ra.id" value="${ant.project.name}#org.openxdm#1.0" />
+
 	<path id="ra.classpath">
 		<path refid="mobicents.core.classpath" />
 		<path refid="mobicents.ra.xcapclientra.classpath" />
@@ -24,6 +23,6 @@
 		<include name="openxdm-xcap-client.jar" />
 		<include name="openxdm-xcap-commons.jar" />
 	</fileset>
-	
+
 </project>
 
