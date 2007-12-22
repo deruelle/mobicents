@@ -3,8 +3,8 @@
 
 
 	
-	<property name="mobicents.home" value="../.." />
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" />
+	
+	<import file="${ant.file.SharedSbbTest}/../../../xml/ant/mobicents-ant-common-properties.xml" />
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-service.xml" />
 
 

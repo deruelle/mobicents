@@ -4,8 +4,10 @@
    Authors: Emil Ivov, Ranga, Ivelin -->
 <project basedir="." default="make" name="mobicents.jpx">
 
+	<!-- decalred in file below 
 	<property name="mobicents.home" value="." />
-	<import file="xml/ant/mobicents-ant-common-properties.xml" />
+	-->
+	<import file="${ant.file.mobicents.jpx}/../xml/ant/mobicents-ant-common-properties.xml" />
 
 	<!-- Use the -Doption=optval on the ant command line for these. -->
 	<property name="cachemode" value="local" description="Controls the cache mode. Values are typically local or cluster" />

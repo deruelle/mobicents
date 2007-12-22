@@ -2,7 +2,12 @@
 
 <project name="Mobicents_Ant_Common_Properties__Paths_and_Targets">
 
-	<property name="mobicents.home" value="${ant.file.Mobicents_Ant_Common_Properties__Paths_and_Targets}/../../../.." />
+	
+	<!-- THIS VALUE MUST BE USED, IF IT IS OVERRIDEN, SCRIPTS CAN WORK BADLY -->
+	<path id="mc.home.convert">
+		<pathelement location="${ant.file.Mobicents_Ant_Common_Properties__Paths_and_Targets}/../../../../core"/>
+	</path>
+	<property name="mobicents.home" refid="mc.home.convert" />
 
 	<!-- RA RELATED -->
 
@@ -101,7 +106,7 @@
 
 	<!-- SIP RA RELATED -->
 
-	<property name="mobicents.ra.sipra" value="${mobicents.home}/../sipra" />
+	<property name="mobicents.ra.sipra" value="${mobicents.ra}/sipra" />
 	<path id="mobicents.ra.sipra.classpath">
 		<pathelement location="${mobicents.ra.sipra}/ra/jars/sip-ra.jar" />
 		<pathelement location="${mobicents.ra.sipra}/ratype/jars/sip-ratype.jar" />

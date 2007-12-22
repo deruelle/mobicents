@@ -1,4 +1,4 @@
-<project basedir="." name="mobicents subprojects ">
+<project basedir="." name="mobicents_subprojects ">
 
 	<property name="node" value="all" description="Controls the jboss conrfiguration. Value is typically 'all'" />
 	<property name="project.home" value="." />
@@ -20,8 +20,10 @@
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
 	<!-- SLEE MANAGEMENT -->
-	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
-	<import file="${mobicents.home}/tools/mobicents-cli/slee-management.xml" />
+	<!-- decalred in file below 
+			<property name="mobicents.home" value="." />
+			-->
+	<import file="${ant.file.mobicents_subprojects}/../xml/ant/mobicents-ant-common-properties.xml" />
 
 	<!--  SOME MORE PATH VARS -->
 
@@ -43,7 +45,7 @@
 
 	<property name="jboss.readme.dir" value="${deploy.home}" />
 
-<property name="libs.home" value="lib" />
+	<property name="libs.home" value="lib" />
 
 	<!--  THIS SHOULD BE MOVED TO COMMON PART -->
 	<!--  PATH -->
@@ -56,8 +58,8 @@
 		<pathelement location="${asteriskra}/lib/asterisk-java.jar" />
 		<!-- Slee API jar file -->
 		<pathelement location="${libs.home}/slee_1_1.jar" />
-		
-		
+
+
 		<pathelement location="${dest}" />
 		<pathelement location="${libs.home}/commons-pool-1.2.jar" />
 		<pathelement location="${libs.home}/junit.jar" />
@@ -81,7 +83,7 @@
 		<pathelement location="${jboss.home}/server/all/lib/jmx-adaptor-plugin.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jnpserver.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jboss-transaction.jar" />
-		
+
 
 		<!-- JBoss HA for failover -->
 		<pathelement location="${jboss.home}/server/all/lib/jbossha.jar" />
@@ -98,7 +100,7 @@
 		<pathelement location="${libs.home}/sleeRA.zip" />
 		<!-- Required by test usage.types.2216 -->
 		<pathelement location="${libs.home}/dom4j.jar" />
-		
+
 	</path>
 
 
@@ -120,7 +122,8 @@
 
 
 
-	<target name="init" depends="management-init"></target>
+	<target name="init" depends="init-common">
+	</target>
 
 	<target name="sipra" description="Calls default target from ${sipra}/build.xml">
 		<subant target="">
@@ -192,7 +195,8 @@
 
 	<target name="build-sip-proxy-service-jars">
 		<!-- Build the jar file for enventrytest.jar and copy over -->
-		<property name="build.sip.dir" value="${build}/sip"></property>
+		<property name="build.sip.dir" value="${build}/sip">
+		</property>
 		<mkdir dir="${build.sip.dir}" />
 		<javac classpathref="project.class.path" debug="true" deprecation="true" destdir="${dest}" nowarn="false" target="1.4" source="1.4">
 			<src path="${sip.services.home}/src" />
@@ -231,7 +235,7 @@
 	</target>
 
 
-	<target name="proxy-service-deploy" depends="build-sip-proxy-service-jars,management-init" description="Deploys the SIP Proxy Service">
+	<target name="proxy-service-deploy" depends="build-sip-proxy-service-jars,init-common" description="Deploys the SIP Proxy Service">
 		<path id="proxyservice">
 			<pathelement location="./thirdparty/sip-services/examples/proxyservice.jar" />
 		</path>
@@ -301,9 +305,11 @@
 	<target name="asteriskradeploy" depends="asteriskra" description="Deploys the Asterisk RA to JBOSS">
 
 		<echo>${asteriskra}/bin/DeployAsteriskRA.bat</echo>
-		<exec dir="${mobicents.home}\${asteriskra}\bin" spawn="false" vmlauncher="true" os="Windows XP, Windows_NT, Windows 2000" executable="${mobicents.home}\${asteriskra}\bin\DeployAsteriskRA.bat"></exec>
+		<exec dir="${mobicents.home}\${asteriskra}\bin" spawn="false" vmlauncher="true" os="Windows XP, Windows_NT, Windows 2000" executable="${mobicents.home}\${asteriskra}\bin\DeployAsteriskRA.bat">
+		</exec>
 
-		<exec dir="${mobicents.home}/${asteriskra}/bin" spawn="false" os="Solaris, SunOS" executable="${mobicents.home}/${asteriskra}/bin/DeployAsteriskRA.sh"></exec>
+		<exec dir="${mobicents.home}/${asteriskra}/bin" spawn="false" os="Solaris, SunOS" executable="${mobicents.home}/${asteriskra}/bin/DeployAsteriskRA.sh">
+		</exec>
 	</target>
 
 
