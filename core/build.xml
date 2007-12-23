@@ -202,6 +202,10 @@
 				<include name="slee-ds.xml" />
 				<include name="mobicents.rar" />
 			</fileset>
+			<fileset dir="${jboss.deploy}">
+				<include name="slee-ds.xml" />
+				<include name="mobicents.rar" />
+			</fileset>
 		</delete>
 
 
