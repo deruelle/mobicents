@@ -12,6 +12,7 @@
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
 	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	<property name="node" value="default" />
 
 	<property name="classes.tasks" value="classes" />
 	<property name="tools" value="${mobicents.home}/../tools" />

@@ -42,13 +42,19 @@ import java.util.logging.Logger;
 
 import org.mobicents.slee.container.management.jmx.SleeCommandInterface;
 
-public class MobicentsCLI
-{
-    private static Logger logger = Logger.getLogger(org.mobicents.slee.cli.MobicentsCLI.class.getName());
+public class MobicentsCLI {
+	private static Logger logger = Logger
+			.getLogger(org.mobicents.slee.cli.MobicentsCLI.class.getName());
 
-    public static void usage()
-    {
-		System.out.println("Usage: java -jar mobicents-cli.jar -<command> <args>");
+	public static void usage() {
+		System.out
+				.println("Usage: java -jar mobicents-cli.jar [options] <command> <args>");
+		System.out.println("options:");
+		System.out.println("-user");
+		System.out.println("-password");
+		System.out.println("-host");
+		System.out.println("-jnpPort");
+		System.out.println("");
 		System.out.println("Valid commands:");
 		System.out.println("-startSlee");
 		System.out.println("-stopSlee");
@@ -63,82 +69,104 @@ public class MobicentsCLI
 		System.out.println("-getServiceState <Service ID>");
 		System.out.println("-setTraceLevel <Component ID> <level>");
 		System.out.println("-getTraceLevel <Component ID>");
-		System.out.println("-createRaEntity <ResourceAdaptor ID> <entity name> <props>");
+		System.out
+				.println("-createRaEntity <ResourceAdaptor ID> <entity name> <props>");
 		System.out.println("-activateRaEntity <entity name>");
 		System.out.println("-deactivateRaEntity <entity name>");
 		System.out.println("-removeRaEntity <entity name>");
 		System.out.println("-createEntityLink <link name> <entity name>");
 		System.out.println("-removeEntityLink <link name>");
-		System.out.println("-createProfileTable <ProfileSpecification ID> <profile table name>");
+		System.out
+				.println("-createProfileTable <ProfileSpecification ID> <profile table name>");
 		System.out.println("-removeProfileTable <profile table name>");
-		System.out.println("-createProfile <profile table name> <profile name>");
-		System.out.println("-removeProfile <profile table name> <profile name>");
-    }
+		System.out
+				.println("-createProfile <profile table name> <profile name>");
+		System.out
+				.println("-removeProfile <profile table name> <profile name>");
+	}
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-    	String host;
-    	String jnpPort;
+	/**
+	 * @param args
+	 *            the command line arguments
+	 */
+	public static void main(String[] args) {
+		String host;
+		String jnpPort;
 
-    	String data1 = null ;
-    	String data2 = null ;
-    	String data3 = null ;
-    	String command;
-	
-    
-    	if(args.length < 1)
-    	{
-    		usage();
-    		System.exit(1);
-    	}
-	
-    	int k = 0;
-    	
-    	if (args[k].equals("-host")) {
-    		host = args[k+1];
-    		k += 2;
-    	} else {
-    		host = "localhost";
-    	}
-    	
-    	if (args[k].equals("-jnpPort")) {
-    		jnpPort = args[k+1];
-    		k += 2;
-    	} else {
-    		jnpPort = "1099";
-    	}
-    	command = args[k];
+		String user = null;
+		String password = null;
 
-    	if(args.length >= k + 2) 
-    		data1 = args[k+1];
-	
-    	if(args.length >= k + 3) 
-    		data2 = args[2+k];
+		String data1 = null;
+		String data2 = null;
+		String data3 = null;
+		String command;
+
+		if (args.length < 1) {
+			usage();
+			System.exit(1);
+		}
+
+		int k = 0;
+
+		if (args[k].equals("-user")) {
+			user = args[k + 1];
+			k += 2;
+		}
 		
-    	if(args.length >= 4 + k) 
-    		data3 = args[3+k];
-    	
-		try {
-			SleeCommandInterface sleeCommandInterface = new SleeCommandInterface("jnp://" + 
-					host + ":" + jnpPort);
-			
-			Object result = sleeCommandInterface.invokeOperation(command, data1, data2, data3);
-			
-			if (result == null)
-    		{
-    			logger.info("No response");
-    		}
-    		else
-    		{
-    			logger.info(result.toString());
-    		}
-			
-		} catch (Exception ex) {
-			// Log the error
-			logger.log(Level.WARNING, "Bad result: " + ex.getCause().toString());
+		if (args[k].equals("-password")) {
+			password = args[k + 1];
+			k += 2;
+		}		
 
-		} 	
-    }
+		if (args[k].equals("-host")) {
+			host = args[k + 1];
+			k += 2;
+		} else {
+			host = "localhost";
+		}
+
+		if (args[k].equals("-jnpPort")) {
+			jnpPort = args[k + 1];
+			k += 2;
+		} else {
+			jnpPort = "1099";
+		}
+		command = args[k];
+
+		if (args.length >= k + 2)
+			data1 = args[k + 1];
+
+		if (args.length >= k + 3)
+			data2 = args[2 + k];
+
+		if (args.length >= 4 + k)
+			data3 = args[3 + k];
+
+		try {
+			SleeCommandInterface sleeCommandInterface = new SleeCommandInterface(
+					"jnp://" + host + ":" + jnpPort, user, password);
+
+			Object result = sleeCommandInterface.invokeOperation(command,
+					data1, data2, data3);
+
+			if (result == null) {
+				logger.info("No response");
+			} else {
+				logger.info(result.toString());
+			}
+
+		} catch (SecurityException seEx) {
+			seEx.printStackTrace();
+			logger.log(Level.WARNING, "Security Exception: "
+					+ seEx.getMessage() + " Cause = "
+					+ seEx.getCause().toString());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			// Log the error
+			logger
+					.log(Level.WARNING, "Bad result: "
+							+ ex.getCause().toString());
+
+		}
+	}
 }
