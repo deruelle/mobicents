@@ -31,6 +31,8 @@ import javax.slee.management.DeployableUnitID;
 
 import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
 import org.jboss.logging.Logger;
+import org.jboss.security.SecurityAssociation;
+import org.jboss.security.SimplePrincipal;
 import org.mobicents.slee.container.component.ComponentIDImpl;
 import org.mobicents.slee.container.component.ComponentKey;
 import org.mobicents.slee.container.component.DeployableUnitIDImpl;
@@ -67,6 +69,25 @@ public class SleeCommandInterface {
 	 *            JNDI Url (jnp://localhost:1099)
 	 */
 	public SleeCommandInterface(String jndiurl) throws Exception {
+		init(jndiurl, null, null);
+
+	}
+
+	public SleeCommandInterface(String jndiurl, String user, String password)
+			throws Exception {
+		init(jndiurl, user, password);
+
+	}
+
+	private void init(String jndiurl, String user, String password)
+			throws Exception {
+		if (user != null) {
+			// Set a security context using the SecurityAssociation
+			SecurityAssociation.setPrincipal(new SimplePrincipal(user));
+
+			// Set password
+			SecurityAssociation.setCredential(password);
+		}
 		// Set Some JNDI Properties
 		Hashtable env = new Hashtable();
 		env.put(Context.PROVIDER_URL, jndiurl);
@@ -309,7 +330,7 @@ public class SleeCommandInterface {
 				logger
 						.warn("-getServiceState. Bad Result: ServiceID[service]\n");
 				throw new Exception(
-						"-getServiceState. Bad Result: ServiceID[service]\n");				
+						"-getServiceState. Bad Result: ServiceID[service]\n");
 			}
 
 		}

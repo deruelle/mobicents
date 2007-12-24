@@ -114,14 +114,14 @@
 	
 	<target name="install-DU" depends="create-deploy-url,init-common">		
 		<echo>Installing ${service.name} DU in URL ${service.url.to.deploy}</echo>
-		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">
 			<install url="${file_url}${service.url.to.deploy}"/>				
 		</slee-management>
     </target>
 	
 	<target name="deploy-DU" depends="create-deploy-url,init-common">		
 		<echo>Deploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
-		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">
 			<install url="${file_url}${service.url.to.deploy}"/>
 			<activateservice serviceid="${service.id}"/>
 		</slee-management>
@@ -129,14 +129,14 @@
 
 	<target name="uninstall-DU" depends="create-deploy-url,init-common">		
 		<echo>Uninstalling ${service.name} DU in URL ${service.url.to.deploy}</echo>
-		<slee-management host="${jnpHost}" jnpport="${jnpPort}">			
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">			
 			<uninstall url="${file_url}${service.url.to.deploy}"/>
 		</slee-management>
 	</target>
 	
 	<target name="undeploy-DU" depends="create-deploy-url,init-common">		
 		<echo>Undeploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
-		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">
 			<deactivateservice serviceid="${service.id}"/>
 			<uninstall url="${file_url}${service.url.to.deploy}"/>
 		</slee-management>

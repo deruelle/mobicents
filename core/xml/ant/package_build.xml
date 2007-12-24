@@ -40,7 +40,7 @@
 
 	<target name="ra-install" depends="create-deploy-urls">
 		<echo>Installing ${ra.entity}.</echo>
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<install url="${file_url}${ra.url.to.deploy.ratype}" />
 			<install url="${file_url}${ra.url.to.deploy.ra}" />
 		</slee-management>
@@ -62,7 +62,7 @@
 
 		<echo>Activating ${ra.entity} with properties: file=${ra.entity.properties.filename} fileURL=${ra.entity.properties.url}</echo>
 
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<createraentity resourceadaptorid="${ra.id}" entityname="${ra.entity}" properties="${ra.entity.properties.url}" />
 			<activateraentity entityname="${ra.entity}" />
 			<bindralinkname entityname="${ra.entity}" linkname="${ra.entity}" />
@@ -74,7 +74,7 @@
 
 		<echo>Activating ${ra.entity} without properties file.</echo>
 
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<createraentity resourceadaptorid="${ra.id}" entityname="${ra.entity}" />
 			<activateraentity entityname="${ra.entity}" />
 			<bindralinkname entityname="${ra.entity}" linkname="${ra.entity}" />
@@ -86,7 +86,7 @@
 
 	<target name="ra-uninstall" depends="create-deploy-urls">
 		<echo>Uninstalling ${ra.entity}.</echo>
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<uninstall url="${file_url}${ra.url.to.deploy.ra}" />
 			<uninstall url="${file_url}${ra.url.to.deploy.ratype}" />
 		</slee-management>
@@ -94,7 +94,7 @@
 
 	<target name="ra-deactivate" depends="create-deploy-urls">
 		<echo>Deactivating ${ra.entity}.</echo>
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<unbindralinkname linkname="${ra.entity}" />
 			<deactivateraentity entityname="${ra.entity}" />
 			<removeraentity entityname="${ra.entity}" />

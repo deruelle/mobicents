@@ -27,12 +27,20 @@ public class SleeBeanShellUtil {
 					.getName());
 
 	public SleeBeanShellUtil() throws Exception {
+		init(null, null);
 
+	}
+
+	public SleeBeanShellUtil(String user, String password) throws Exception {
+		init(user, password);
+	}
+
+	private void init(String user, String password) throws Exception {
 		try {
 			InetAddress myIpAddress = InetAddress.getByName(System
 					.getProperty("jboss.bind.address"));
 			sci = new SleeCommandInterface("jnp://"
-					+ myIpAddress.getHostAddress() + ":1099");
+					+ myIpAddress.getHostAddress() + ":1099", user, password);
 
 		} catch (Exception e) {
 			// Log the error
@@ -53,6 +61,12 @@ public class SleeBeanShellUtil {
 			if (url != null)
 				obj = sci.invokeOperation("-install", StringPropertyReplacer
 						.replaceProperties(url), null, null);
+		} catch (java.lang.SecurityException seEx) {			
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -72,6 +86,12 @@ public class SleeBeanShellUtil {
 			if (url != null)
 				sci.invokeOperation("-uninstall", StringPropertyReplacer
 						.replaceProperties(url), null, null);
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -96,6 +116,12 @@ public class SleeBeanShellUtil {
 				deployableUnitID = sci.invokeOperation("-getDeploymentId",
 						StringPropertyReplacer.replaceProperties(url), null,
 						null);
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -118,6 +144,12 @@ public class SleeBeanShellUtil {
 			if (deployableUnitID != null)
 				deployableUnitDescriptor = sci.invokeOperation(
 						"-getDescriptor", deployableUnitID, null, null);
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -140,6 +172,12 @@ public class SleeBeanShellUtil {
 			if (serviceId != null)
 				sci.invokeOperation("-activateService", serviceId, null, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -164,6 +202,12 @@ public class SleeBeanShellUtil {
 						.invokeOperation("-deactivateService", serviceId, null,
 								null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -184,13 +228,19 @@ public class SleeBeanShellUtil {
 		Object serviceState = null;
 		try {
 			if (serviceId != null)
-				serviceState = sci.invokeOperation("-getServiceState", serviceId,
-						null, null);
+				serviceState = sci.invokeOperation("-getServiceState",
+						serviceId, null, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
-					+ sci.commandString + "\n" + e.getCause().toString(), e);			
+					+ sci.commandString + "\n" + e.getCause().toString(), e);
 			throw e;
 		}
 		return serviceState;
@@ -215,6 +265,12 @@ public class SleeBeanShellUtil {
 				sci.invokeOperation("-setTraceLevel", componentId, traceLevel,
 						null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -237,6 +293,12 @@ public class SleeBeanShellUtil {
 				level = sci.invokeOperation("-getTraceLevel", componentId,
 						null, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -268,6 +330,12 @@ public class SleeBeanShellUtil {
 				sci.invokeOperation("-createRaEntity", resourceAdaptorID,
 						entityName, properties);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -293,6 +361,12 @@ public class SleeBeanShellUtil {
 						.invokeOperation("-activateRaEntity", entityName, null,
 								null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -320,6 +394,12 @@ public class SleeBeanShellUtil {
 				sci.invokeOperation("-deactivateRaEntity", entityName, null,
 						null);
 			}
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -342,6 +422,12 @@ public class SleeBeanShellUtil {
 			if (entityName != null) {
 				sci.invokeOperation("-removeRaEntity", entityName, null, null);
 			}
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -369,6 +455,12 @@ public class SleeBeanShellUtil {
 						.invokeOperation("-createRaLink", linkName, entityName,
 								null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -389,6 +481,12 @@ public class SleeBeanShellUtil {
 			if (linkName != null)
 				sci.invokeOperation("-removeRaLink", linkName, null, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -469,6 +567,12 @@ public class SleeBeanShellUtil {
 			sci.invokeOperation("-createProfileTable", profileSpecID,
 					profileTableName, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.warn("Bad result: " + sci.commandBean + "." + sci.commandString
@@ -488,6 +592,12 @@ public class SleeBeanShellUtil {
 			sci.invokeOperation("-removeProfileTable", profileTableName, null,
 					null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -511,6 +621,12 @@ public class SleeBeanShellUtil {
 			profileObject = sci.invokeOperation("-createProfile",
 					profileTableName, profileName, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
@@ -535,6 +651,12 @@ public class SleeBeanShellUtil {
 			sci.invokeOperation("-removeProfile", profileTableName,
 					profileName, null);
 
+		} catch (java.lang.SecurityException seEx) {
+			// Log the error
+			log.error("Security Exception: " + sci.commandBean + "."
+					+ sci.commandString + "\n" + seEx.getCause().toString(),
+					seEx);
+			throw seEx;
 		} catch (Exception e) {
 			// Log the error
 			log.error("Bad result: " + sci.commandBean + "."
