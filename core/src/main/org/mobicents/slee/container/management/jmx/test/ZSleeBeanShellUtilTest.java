@@ -44,7 +44,7 @@ public class ZSleeBeanShellUtilTest extends TestCase {
 	String sbbId = null;
 
 	public ZSleeBeanShellUtilTest(String arg0) {
-		super(arg0);		
+		super(arg0);
 	}
 
 	public static Test suite() {
@@ -57,10 +57,12 @@ public class ZSleeBeanShellUtilTest extends TestCase {
 		sleeBeanShellUtil = new SleeBeanShellUtil();
 
 		String mobicents_home = System.getProperty("MOBICENTS_HOME");
-		
-		//mobicents_home can be null if one of test is executed.
-		//If run-junit-2-xml target is called MOBICENTS_HOME is set to current directory i.e., '.'
-		if (mobicents_home == null || (mobicents_home != null && mobicents_home.equals("."))) {			
+
+		// mobicents_home can be null if one of test is executed.
+		// If run-junit-2-xml target is called MOBICENTS_HOME is set to current
+		// directory i.e., '.'
+		if (mobicents_home == null
+				|| (mobicents_home != null && mobicents_home.equals("."))) {
 			try {
 				mobicents_home = new java.io.File(".").getCanonicalPath();
 			} catch (Exception e) {
@@ -70,7 +72,13 @@ public class ZSleeBeanShellUtilTest extends TestCase {
 
 		pathToSBBDuJar = "file:" + mobicents_home + File.separator + "build"
 				+ File.separator + "slee-bean-shell-util-test-du.jar";
-		pathToSBBDuJar = pathToSBBDuJar.replaceAll("\\", "/");
+		int index = pathToSBBDuJar.indexOf("\\");
+		
+		//Hack for Windows OS
+		if (index != -1) {
+			pathToSBBDuJar = pathToSBBDuJar.replaceAll("\\", "/");
+		}
+		
 		serviceId = "ServiceID[SleeBeanShellUtilService#org.mobicents#1.0]";
 		sbbId = "SbbID[SleeBeanShellUtilSbb#org.mobicents#1.0]";
 
@@ -82,7 +90,7 @@ public class ZSleeBeanShellUtilTest extends TestCase {
 
 	public void testService() throws Exception {
 		DeployableUnitID deployableUnitIDOfService = null;
-		
+
 		// Test Install
 		deployableUnitIDOfService = (DeployableUnitID) sleeBeanShellUtil
 				.install(pathToSBBDuJar);
