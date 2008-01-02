@@ -1,6 +1,7 @@
 package org.mobicents.slee.resource.sip.wrappers;
 
 import java.util.TimerTask;
+import java.util.logging.Logger;
 
 import javax.sip.DialogState;
 
@@ -46,5 +47,9 @@ public class DialogTimeoutTimerTask extends TimerTask {
 		dialog = null;
 		sipRA = null;
 		return super.cancel();
+	}
+	public String toString()
+	{
+		return "DialogTimeoutTimerTask["+(super.scheduledExecutionTime()>System.currentTimeMillis())+"]["+dialog+"]";
 	}
 }

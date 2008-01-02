@@ -85,16 +85,7 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 	
 	private SipResourceAdaptor sipResourceAdaptor;
 	
-	/*
-	 * public ServerTransactionWrapper(ServerTransaction ST, Dialog
-	 * wrapperDialog,SleeEndpoint sleeEndpoint, SipProvider proxyProvider) {
-	 * realTransaction=ST; this.wrapperDialog=wrapperDialog; //STORE THIS OBJECT
-	 * IN TX ST.setApplicationData(this); this.sleeEndpoint=sleeEndpoint;
-	 * this.serviceContainer=SleeContainer.lookupFromJndi();
-	 * //this.activityContextFactory=serviceContainer.getActivityContextFactory();
-	 * this.eventLookup=serviceContainer.getEventLookupFacility();
-	 * this.proxyProvider=proxyProvider; }
-	 */
+	
 	public ServerTransactionWrapper(ServerTransaction ST, DialogWrapper dialogWrapper, SipResourceAdaptor sipResourceAdaptor) {
 		realTransaction = ST;
 		this.dialogWrapper = dialogWrapper;
@@ -121,11 +112,7 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 		if (dialogWrapper == null)
 			return;
 
-		// SipActivityHandle SAH = new
-		// SipActivityHandle(wrapperDialog.getDialogId());
-		// SleeActivityHandle SLAH = new SleeActivityHandle("SipRA", SAH,
-		// serviceContainer);
-		// String acID = activityContextFactory.getActivityContextId(SLAH);
+		
 		if (logger.isDebugEnabled()) {
 			logger
 					.debug("\n---------------------------------------\nSENDING RESPONSE:\n"
