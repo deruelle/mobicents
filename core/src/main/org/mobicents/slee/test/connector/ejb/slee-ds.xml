@@ -16,8 +16,18 @@
           <jndi-name>MobicentsConnectionFactory</jndi-name>
           
           <local-transaction/>
-          
+          <!-- For Non Ha use this
+	  @mobicents.clustered.xml.close@	
           <rar-name>mobicents.sar#mobicents.rar</rar-name>
+          @mobicents.clustered.xml.open@
+          -->
+
+          <!-- For Ha use this
+	  @mobicents.single.xml.close@
+          <rar-name>mobicents-ha.sar#mobicents.rar</rar-name>
+          @mobicents.single.xml.open@
+          -->
+
           <connection-definition>javax.slee.connection.SleeConnectionFactory</connection-definition>
 
           <config-property name="SleeJndiName" type="java.lang.String">jnp://${jboss.bind.address}:1099/SleeService</config-property>

@@ -27,6 +27,7 @@
         <!-- <depends optional-attribute-name="ResourceAdaptorMBean">slee:name=ResourceAdaptorMBean</depends>       -->
         <depends optional-attribute-name="ResourceManagementMBean">slee:name=ResourceManagementMBean</depends>       
         <depends optional-attribute-name="SbbEntitiesMBean">slee:name=SbbEntitiesMBean</depends>       
+        <depends optional-attribute-name="RmiServerInterfaceMBean">slee:service=RmiServerInterfaceMBean</depends>            
         <attribute name="ActivityManagementMBean">slee:name=ActivityManagementMBean</attribute>       
         <depends>slee:name=TransactionManagerMBean</depends>       
         <depends>jboss.cache:service=TreeCache</depends>
@@ -36,6 +37,22 @@
         <depends>jboss.cache:service=RuntimeTreeCache</depends>
   </mbean>
 
+       <!-- For Non HA use this MBean
+              @mobicents.clustered.xml.close@	
+              <mbean code="org.mobicents.slee.container.management.jmx.RmiServerInterfaceMBeanImpl"
+              name="slee:service=RmiServerInterfaceMBean">         
+              </mbean>
+              @mobicents.clustered.xml.open@
+       -->
+       
+       <!-- For HA use this MBean
+              @mobicents.single.xml.close@
+              <mbean code="org.mobicents.slee.container.management.jmx.HaRmiServerInterfaceMBeanImpl"
+              name="slee:service=RmiServerInterfaceMBean">         
+              </mbean>
+              @mobicents.single.xml.open@
+       -->
+       
   <mbean code="org.mobicents.slee.container.management.jmx.AlarmMBeanImpl"
          name="slee:name=AlarmMBean">
          <depends>slee:name=TransactionManagerMBean</depends>
@@ -124,7 +141,7 @@
     -->
        <mbean code="org.mobicents.slee.container.management.jmx.SleeAutoDeployer" 
               name="slee:service=SleeAutoDeployer">
-              <depends>jboss:service=DefaultPartition</depends>   
+              <!-- <depends>jboss:service=DefaultPartition</depends> -->   
               <depends>slee:service=SleeManagement</depends>        
               <depends optional-attribute-name="BaseDeployer" proxy-type="org.jboss.deployment.scanner.URLDeploymentScannerMBean">jboss.deployment:type=DeploymentScanner,flavor=URL</depends>
               <attribute name="DeploymentDirectory">${jboss.server.home.url}/deploy-mobicents/scripts/</attribute>

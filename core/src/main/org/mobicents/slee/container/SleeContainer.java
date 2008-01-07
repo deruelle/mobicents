@@ -104,8 +104,6 @@ import org.jboss.mx.loading.UnifiedClassLoader3;
 import org.jboss.mx.util.MBeanProxy;
 import org.jboss.util.naming.NonSerializableFactory;
 import org.jboss.util.naming.Util;
-import org.mobicents.slee.connector.server.RemoteSleeService;
-import org.mobicents.slee.connector.server.RemoteSleeServiceImpl;
 import org.mobicents.slee.container.component.ComponentContainer;
 import org.mobicents.slee.container.component.ComponentIDImpl;
 import org.mobicents.slee.container.component.ComponentKey;
@@ -140,8 +138,7 @@ import org.mobicents.slee.container.management.jmx.TraceMBeanImpl;
 import org.mobicents.slee.container.management.xml.DefaultSleeEntityResolver;
 import org.mobicents.slee.container.profile.ProfileDeployer;
 import org.mobicents.slee.container.profile.ProfileSpecificationIDPropertyEditor;
-import org.mobicents.slee.container.rmi.RMIServer;
-import org.mobicents.slee.container.rmi.RMIServerImpl;
+import org.mobicents.slee.container.rmi.RmiServerInterfaceMBean;
 import org.mobicents.slee.container.service.Service;
 import org.mobicents.slee.container.service.ServiceComponent;
 import org.mobicents.slee.resource.ConfigPropertyDescriptor;
@@ -246,7 +243,7 @@ public class SleeContainer implements ComponentContainer {
 	// slee event queue.
 	private SleeInternalEndpoint sleeEndpoint;
 
-	private RMIServerImpl rmiServer;
+	private RmiServerInterfaceMBean rmiServerInterfaceMBeanImpl;
 
 	// the class that actually posts events to the SBBs.
 	// This should be made into a facility and registered with jmx and jndi
@@ -405,7 +402,8 @@ public class SleeContainer implements ComponentContainer {
 	 * Initialization code.
 	 * 
 	 */
-	public void init(SleeManagementMBean sleeManagementMBean) throws Exception {
+	public void init(SleeManagementMBean sleeManagementMBean,
+			ObjectName rmiServerInterfaceMBean) throws Exception {
 		// loader = new URLClassLoader(new URL[0], Thread.currentThread()
 		// .getContextClassLoader());
 		logger.info("Initializing SLEE container...");
@@ -500,7 +498,7 @@ public class SleeContainer implements ComponentContainer {
 		registerWithJndi();
 
 		startRMIServer(this.nullActivityFactory, this.sleeEndpoint,
-				this.eventLookup);
+				this.eventLookup, rmiServerInterfaceMBean);
 
 		registerPropertyEditors();
 
@@ -555,21 +553,19 @@ public class SleeContainer implements ComponentContainer {
 	 * with the SLEE
 	 */
 	private void startRMIServer(NullActivityFactoryImpl naf,
-			SleeInternalEndpoint endpoint, EventLookup eventLookup) {
+			SleeInternalEndpoint endpoint, EventLookup eventLookup,
+			ObjectName rmiServerInterfaceMBean) {
+
 		try {
-			logger.debug("Starting Slee Service RMI Server");
+			logger.debug("creating RmiServerInterface using MBeanProxy");
 
-			InitialContext ctx = new InitialContext();
+			rmiServerInterfaceMBeanImpl = (RmiServerInterfaceMBean) MBeanProxy
+					.get(RmiServerInterfaceMBean.class,
+							rmiServerInterfaceMBean, mbeanServer);
 
-			rmiServer = new RMIServerImpl("RemoteSleeService",
-					RemoteSleeService.class, new RemoteSleeServiceImpl(naf,
-							eventLookup, activityContextFactory));
-			
-			RemoteSleeService stub = (RemoteSleeService) rmiServer.createStub();
-			
-			ctx.rebind("/SleeService", stub);
+			rmiServerInterfaceMBeanImpl.startRMIServer(naf, endpoint,
+					eventLookup, activityContextFactory);
 
-			logger.debug("Bound SleeService rmi stub in jndi");
 		} catch (Exception e) {
 			logger.error(
 					"Failed to start HA RMI server for Remote slee service", e);
@@ -577,15 +573,11 @@ public class SleeContainer implements ComponentContainer {
 	}
 
 	private void stopRMIServer() {
-		try {
-			logger.debug("Stopping RMI Server for slee service");
-			InitialContext ctx = new InitialContext();
-			Util.unbind(ctx, "/SleeService");
-			rmiServer.destroy();
-		} catch (NamingException e) {
-			logger.error(
-					"Failed to stop HA RMI Server for remote slee service", e);
-		}
+
+		logger.debug("Stopping RMI Server for slee service");
+
+		rmiServerInterfaceMBeanImpl.stopRMIServer();
+
 	}
 
 	/**

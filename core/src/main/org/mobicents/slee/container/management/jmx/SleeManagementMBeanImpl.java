@@ -6,7 +6,7 @@
  *  See terms of license at gnu.org.               *
  *                                                 *
  ***************************************************/
- 
+
 package org.mobicents.slee.container.management.jmx;
 
 import java.util.Collection;
@@ -51,682 +51,737 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadedExecutor;
  * 
  * @author M. Ranganathan
  * @author Ivelin Ivanov
- *  
+ * 
  */
-public class SleeManagementMBeanImpl extends StandardMBean 
-	implements SleeManagementMBeanImplMBean {
+public class SleeManagementMBeanImpl extends StandardMBean implements
+		SleeManagementMBeanImplMBean {
 
-    private MBeanServer mbeanServer;
+	private MBeanServer mbeanServer;
 
-    private ObjectName alarmMBean;
-    
-    private ObjectName activityManagementMBean;
-    
-    private ObjectName sbbEntitiesMBean;
+	private ObjectName alarmMBean;
 
-    private ObjectName traceMBean;
+	private ObjectName activityManagementMBean;
 
-    private static Logger logger;
+	private ObjectName sbbEntitiesMBean;
 
-    private ObjectName objectName;
+	private ObjectName traceMBean;
 
-    private ObjectName deploymentMBean;
+	private static Logger logger;
 
-    private SleeContainer sleeContainer;
+	private ObjectName objectName;
 
-    private ObjectName profileProvisioningMBean;
+	private ObjectName deploymentMBean;
 
-    private ObjectName serviceManagementMBean;
-    
-  
-    
-    private ObjectName resourceManagementMBean;
-    
-    
-    private NotificationBroadcasterSupport notificationBroadcaster = new NotificationBroadcasterSupport();
-      
-    /** counter for the number of slee state change notifications sent out */
-    private long sleeStateChangeSequenceNumber = 1;
+	private SleeContainer sleeContainer;
 
-    
-    /**
-     * The array of MBean notifications that this MBean broadcasts
-     * 
-     */
-    private static final MBeanNotificationInfo[] MBEAN_NOTIFICATIONS;
-    
-    /**
-     * Holds the startup time of the Mobicents SAR.
-     * Assumes that this MBean is instantiated first and started last within the scope of Mobicents.sar
-     */
-    private long startupTime;
+	private ObjectName profileProvisioningMBean;
 
-    private boolean isFullSleeStop = true;
+	private ObjectName serviceManagementMBean;
 
-    /**
-     * List of services, which were active immediately before stop.
-     * They need to be remembered (TODO: persisted!) and resumed on start.
-     */
-    private ServiceID[] activeServicesBeforeStop;
+	private ObjectName rmiServerInterfaceMBean;
 
-    static {
-        MBEAN_NOTIFICATIONS = new MBeanNotificationInfo[] {
-                new MBeanNotificationInfo(
-                        new String [] {SleeStateChangeNotification.class.getName()},
-                        SleeManagementMBean.SLEE_STATE_CHANGE_NOTIFICATION_TYPE,
-                        "SLEE 1.0 Spec, #14.6, Each time the operational state of the SLEE changes, " 
-                        	+ "the SleeManagementMBean object generates a SLEE state change notification."
-                        )
-        };
-        try {
-            logger = Logger.getLogger(SleeManagementMBeanImpl.class);
-        } catch (Exception ex) {
-            System.err.println("error initializing slee management mbean");
-        }
-    }
+	private ObjectName resourceManagementMBean;
 
-    /**
-     * Default constructor
-     * @throws Exception
-     */
-    public SleeManagementMBeanImpl() throws Exception {
-        super(SleeManagementMBeanImplMBean.class);
-        startupTime = System.currentTimeMillis();
-        logger.info("[[[[[[[[[ "+getVersion()+" starting... ]]]]]]]]]");
-    }
+	private NotificationBroadcasterSupport notificationBroadcaster = new NotificationBroadcasterSupport();
 
-    /**
-     * 
-     * @return the ObjectName of the SleeManagementMBean
-     */
-    public ObjectName getObjectName() {
-        return this.objectName;
-    }
+	/** counter for the number of slee state change notifications sent out */
+	private long sleeStateChangeSequenceNumber = 1;
 
-    /**
-     * @return the current state of the SLEE Container
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getState()
-     */
-    public SleeState getState() throws ManagementException {
+	/**
+	 * The array of MBean notifications that this MBean broadcasts
+	 * 
+	 */
+	private static final MBeanNotificationInfo[] MBEAN_NOTIFICATIONS;
 
-        return this.sleeContainer.getSleeState();
-    }
+	/**
+	 * Holds the startup time of the Mobicents SAR. Assumes that this MBean is
+	 * instantiated first and started last within the scope of Mobicents.sar
+	 */
+	private long startupTime;
 
-    /**
-     * Start the SLEE container
-     * 
-     * @see javax.slee.management.SleeManagementMBean#start()
-     */
-    public void start() throws InvalidStateException, ManagementException {
-        if (this.sleeContainer.getSleeState() == SleeState.STARTING
-                || this.sleeContainer.getSleeState() == SleeState.RUNNING 
-                || this.sleeContainer.getSleeState() == SleeState.STOPPING)
-            throw new InvalidStateException("SLEE is already in an active state");
-        try {
-            startSleeContainer();
-        } catch (Exception ex) {
-            throw new ManagementException(ex.getMessage());
-        }
-    }
+	private boolean isFullSleeStop = true;
 
-    /**
-     * Gracefully stop the SLEE. Should do it in a non-blocking manner.
-     * 
-     * @see javax.slee.management.SleeManagementMBean#stop()
-     */
-    public void stop() throws InvalidStateException, ManagementException {
-        try {
-	        if (this.sleeContainer.getSleeState() == SleeState.STOPPING
-	            || this.sleeContainer.getSleeState() == SleeState.STOPPED)
-	        throw new InvalidStateException("SLEE is already stopping or stopped.");
-	        stopSleeContainer();
-        } catch (Exception ex) {
-            if (ex instanceof InvalidStateException) throw (InvalidStateException)ex;
-            else throw new ManagementException("Failed stopping SLEE container", ex);
-        }
-    }
+	/**
+	 * List of services, which were active immediately before stop. They need to
+	 * be remembered (TODO: persisted!) and resumed on start.
+	 */
+	private ServiceID[] activeServicesBeforeStop;
 
-    /**
-     * Shutdown the SLEE processes. The spec requires that System.exit() be
-     * called before this methods returns. We are not convinced this is
-     * necessary yet. A trivial implementation would be to make a call to the
-     * JBoss server shutdown()
-     * 
-     * @see javax.slee.management.SleeManagementMBean#shutdown()
-     */
-    public void shutdown() throws InvalidStateException, ManagementException {
-        if (this.sleeContainer.getSleeState() != SleeState.STOPPED)
-            throw new InvalidStateException("SLEE is not in STOPPED state.");
-        try {
-            // NOP. Because I am not convinced we need to shut JBoss down.
-        } catch (Exception ex) {
-            throw new ManagementException(ex.getMessage());
-        }
-    }
+	static {
+		MBEAN_NOTIFICATIONS = new MBeanNotificationInfo[] { new MBeanNotificationInfo(
+				new String[] { SleeStateChangeNotification.class.getName() },
+				SleeManagementMBean.SLEE_STATE_CHANGE_NOTIFICATION_TYPE,
+				"SLEE 1.0 Spec, #14.6, Each time the operational state of the SLEE changes, "
+						+ "the SleeManagementMBean object generates a SLEE state change notification.") };
+		try {
+			logger = Logger.getLogger(SleeManagementMBeanImpl.class);
+		} catch (Exception ex) {
+			System.err.println("error initializing slee management mbean");
+		}
+	}
 
-    /**
-     * return the ObjectName of the DeploymentMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getDeploymentMBean()
-     */
-    public ObjectName getDeploymentMBean() {
-        return this.deploymentMBean;
-    }
+	/**
+	 * Default constructor
+	 * 
+	 * @throws Exception
+	 */
+	public SleeManagementMBeanImpl() throws Exception {
+		super(SleeManagementMBeanImplMBean.class);
+		startupTime = System.currentTimeMillis();
+		logger.info("[[[[[[[[[ " + getVersion() + " starting... ]]]]]]]]]");
+	}
 
-    /**
-     * set the ObjectName of the DeploymentMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getDeploymentMBean()
-     */
-    public void setDeploymentMBean(ObjectName newDM) {
-        this.deploymentMBean = newDM;
-    }
+	/**
+	 * 
+	 * @return the ObjectName of the SleeManagementMBean
+	 */
+	public ObjectName getObjectName() {
+		return this.objectName;
+	}
 
-    /**
-     * return the ObjectName of the ServiceManagementMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getServiceManagementMBean()
-     */
-    public ObjectName getServiceManagementMBean() {
-        return this.serviceManagementMBean;
-    }
+	/**
+	 * @return the current state of the SLEE Container
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getState()
+	 */
+	public SleeState getState() throws ManagementException {
 
-    /**
-     * set the ObjectName of the ServiceManagementMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#setServiceManagementMBean()
-     */
-    public void setServiceManagementMBean(ObjectName newSMM) {
-        this.serviceManagementMBean = newSMM;
-    }
+		return this.sleeContainer.getSleeState();
+	}
 
-    /*
-     * return the ObjectName of the ProfileProvisioningMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getProfileProvisioningMBean()
-     */
-    public ObjectName getProfileProvisioningMBean() {
-        return this.profileProvisioningMBean;
-    }
+	/**
+	 * Start the SLEE container
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#start()
+	 */
+	public void start() throws InvalidStateException, ManagementException {
+		if (this.sleeContainer.getSleeState() == SleeState.STARTING
+				|| this.sleeContainer.getSleeState() == SleeState.RUNNING
+				|| this.sleeContainer.getSleeState() == SleeState.STOPPING)
+			throw new InvalidStateException(
+					"SLEE is already in an active state");
+		try {
+			startSleeContainer();
+		} catch (Exception ex) {
+			throw new ManagementException(ex.getMessage());
+		}
+	}
 
-    /**
-     * set the ObjectName of the ProfileProvisioningMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#setProfileProvisioningMBean()
-     */
-    public void setProfileProvisioningMBean(ObjectName newPPM) {
-        this.profileProvisioningMBean = newPPM;
-    }
+	/**
+	 * Gracefully stop the SLEE. Should do it in a non-blocking manner.
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#stop()
+	 */
+	public void stop() throws InvalidStateException, ManagementException {
+		try {
+			if (this.sleeContainer.getSleeState() == SleeState.STOPPING
+					|| this.sleeContainer.getSleeState() == SleeState.STOPPED)
+				throw new InvalidStateException(
+						"SLEE is already stopping or stopped.");
+			stopSleeContainer();
+		} catch (Exception ex) {
+			if (ex instanceof InvalidStateException)
+				throw (InvalidStateException) ex;
+			else
+				throw new ManagementException("Failed stopping SLEE container",
+						ex);
+		}
+	}
 
-    /*
-     * return the ObjectName of the TraceMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getTraceMBean()
-     */
-    public ObjectName getTraceMBean() {
-        return this.traceMBean;
-    }
+	/**
+	 * Shutdown the SLEE processes. The spec requires that System.exit() be
+	 * called before this methods returns. We are not convinced this is
+	 * necessary yet. A trivial implementation would be to make a call to the
+	 * JBoss server shutdown()
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#shutdown()
+	 */
+	public void shutdown() throws InvalidStateException, ManagementException {
+		if (this.sleeContainer.getSleeState() != SleeState.STOPPED)
+			throw new InvalidStateException("SLEE is not in STOPPED state.");
+		try {
+			// NOP. Because I am not convinced we need to shut JBoss down.
+		} catch (Exception ex) {
+			throw new ManagementException(ex.getMessage());
+		}
+	}
 
-    /**
-     * set the ObjectName of the TraceMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#setTraceMBean()
-     */
-    public void setTraceMBean(ObjectName newTM) {
-        this.traceMBean = newTM;
-    }
-    
-   // /**
-    // * @param resourceAdaptorMBean The resourceAdaptorMBean to set.
-    // * @deprecated Use setResourceManagementMBean
-    // */
-    //public void setResourceAdaptorMBean(ObjectName resourceAdaptorMBean) {
-    //    this.resourceAdaptorMBean = resourceAdaptorMBean;
-   // }
+	/**
+	 * return the ObjectName of the DeploymentMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getDeploymentMBean()
+	 */
+	public ObjectName getDeploymentMBean() {
+		return this.deploymentMBean;
+	}
 
-    public void setResourceManagementMBean(ObjectName resourceManagementMBean) {
-        this.resourceManagementMBean = resourceManagementMBean;
-    }
-    
-    ///**
-    // * @return Returns the resourceAdaptorMBean.
-    // * @deprecated Use getResourceManagementMBean
-    // */
-    //public ObjectName getResourceAdaptorMBean() {
-    //    return resourceAdaptorMBean;
-    //}
+	/**
+	 * set the ObjectName of the DeploymentMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getDeploymentMBean()
+	 */
+	public void setDeploymentMBean(ObjectName newDM) {
+		this.deploymentMBean = newDM;
+	}
 
-    public ObjectName getResourceManagementMBean() {
-        return resourceManagementMBean;
-    }
-    
-    /**
-     * return the ObjectName of the AlarmMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#getAlarmMBean()
-     */
-    public ObjectName getAlarmMBean() {
-        return this.alarmMBean;
-    }
+	/**
+	 * return the ObjectName of the ServiceManagementMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getServiceManagementMBean()
+	 */
+	public ObjectName getServiceManagementMBean() {
+		return this.serviceManagementMBean;
+	}
 
-    /**
-     * set the ObjectName of the AlarmMBean
-     * 
-     * @see javax.slee.management.SleeManagementMBean#setAlarmMBean()
-     */
-    public void setAlarmMBean(ObjectName newAM) {
-        this.alarmMBean = newAM;
-    }
+	/**
+	 * set the ObjectName of the ServiceManagementMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#setServiceManagementMBean()
+	 */
+	public void setServiceManagementMBean(ObjectName newSMM) {
+		this.serviceManagementMBean = newSMM;
+	}
 
-    public ObjectName preRegister(MBeanServer mbs, ObjectName oname) throws Exception {
-        this.mbeanServer = mbs;
-        this.objectName = oname;
-        this.sleeContainer = new SleeContainer(mbeanServer);
- 
-        return oname;
-    }
+	/*
+	 * return the ObjectName of the ProfileProvisioningMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getProfileProvisioningMBean()
+	 */
+	public ObjectName getProfileProvisioningMBean() {
+		return this.profileProvisioningMBean;
+	}
 
-    /* (non-Javadoc)
-     * @see javax.management.MBeanRegistration#postRegister(java.lang.Boolean)
-     */
-    public void postRegister(Boolean arg0) {
-        
-        
-    }
+	/**
+	 * set the ObjectName of the ProfileProvisioningMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#setProfileProvisioningMBean()
+	 */
+	public void setProfileProvisioningMBean(ObjectName newPPM) {
+		this.profileProvisioningMBean = newPPM;
+	}
 
-    /* (non-Javadoc)
-     * @see javax.management.MBeanRegistration#preDeregister()
-     */
-    public void preDeregister() throws Exception {
-        // TODO Auto-generated method stub
-    }
+	/*
+	 * return the ObjectName of the TraceMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getTraceMBean()
+	 */
+	public ObjectName getTraceMBean() {
+		return this.traceMBean;
+	}
 
-    /* (non-Javadoc)
-     * @see javax.management.MBeanRegistration#postDeregister()
-     */
-    public void postDeregister() {
-        // TODO Auto-generated method stub
-    }
+	/**
+	 * set the ObjectName of the TraceMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#setTraceMBean()
+	 */
+	public void setTraceMBean(ObjectName newTM) {
+		this.traceMBean = newTM;
+	}
 
-    /* (non-Javadoc)
-     * @see javax.management.NotificationBroadcaster#addNotificationListener(javax.management.NotificationListener, javax.management.NotificationFilter, java.lang.Object)
-     */
-    public void addNotificationListener(NotificationListener listener, NotificationFilter filter, Object handback)
-    	throws IllegalArgumentException {
-        notificationBroadcaster.addNotificationListener(listener, filter, handback);
-    }
+	// /**
+	// * @param resourceAdaptorMBean The resourceAdaptorMBean to set.
+	// * @deprecated Use setResourceManagementMBean
+	// */
+	// public void setResourceAdaptorMBean(ObjectName resourceAdaptorMBean) {
+	// this.resourceAdaptorMBean = resourceAdaptorMBean;
+	// }
 
-    /* (non-Javadoc)
-     * @see javax.management.NotificationBroadcaster#removeNotificationListener(javax.management.NotificationListener)
-     */
-    public void removeNotificationListener(NotificationListener listener) throws ListenerNotFoundException {
-        notificationBroadcaster.removeNotificationListener(listener);
-    }
+	public void setResourceManagementMBean(ObjectName resourceManagementMBean) {
+		this.resourceManagementMBean = resourceManagementMBean;
+	}
 
-    /* (non-Javadoc)
-     * @see javax.management.NotificationBroadcaster#getNotificationInfo()
-     */
-    public MBeanNotificationInfo[] getNotificationInfo() {
-        return MBEAN_NOTIFICATIONS;
-    }
+	// /**
+	// * @return Returns the resourceAdaptorMBean.
+	// * @deprecated Use getResourceManagementMBean
+	// */
+	// public ObjectName getResourceAdaptorMBean() {
+	// return resourceAdaptorMBean;
+	// }
 
-    /* (non-Javadoc)
-     * @see org.jboss.system.Service#create()
-     */
-    public void create() throws Exception {
-        // TODO Auto-generated method stub
-        
-    }
+	public ObjectName getResourceManagementMBean() {
+		return resourceManagementMBean;
+	}
 
+	/**
+	 * return the ObjectName of the AlarmMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#getAlarmMBean()
+	 */
+	public ObjectName getAlarmMBean() {
+		return this.alarmMBean;
+	}
 
-    /* (non-Javadoc)
-     * @see org.jboss.system.Service#destroy()
-     */
-    public void destroy() {
-        // TODO Auto-generated method stub
-        
-    }
+	/**
+	 * set the ObjectName of the AlarmMBean
+	 * 
+	 * @see javax.slee.management.SleeManagementMBean#setAlarmMBean()
+	 */
+	public void setAlarmMBean(ObjectName newAM) {
+		this.alarmMBean = newAM;
+	}
 
-    /**
-     * Start the SleeContainer and initialize the necessary resources
-     *  
-     */
-    protected void startSleeContainer() throws Exception {
-        changeSleeState(SleeState.STARTING);
-        try {
-            // (Ivelin) the following check is symmetric to the one is stop(). see the comments in stop() for more detail.
-            if (isFullSleeStop) {
-                sleeContainer.init(this);
-                isFullSleeStop = false;
-            };
+	public ObjectName preRegister(MBeanServer mbs, ObjectName oname)
+			throws Exception {
+		this.mbeanServer = mbs;
+		this.objectName = oname;
+		this.sleeContainer = new SleeContainer(mbeanServer);
 
-            changeSleeState(SleeState.RUNNING);
-            
-            resumeServicesActiveBeforeStop();
-        } catch (Exception ex) {
-            logger.error("Error starting SLEE container", ex);
-            throw ex;
-        } finally {
-            // if startup did not succeed, try to clean up resources
-            if (sleeContainer.getSleeState() != SleeState.RUNNING)
-                stopSleeContainer();
-        }
-    }
-     
-    /**
-     * Activate services, which were active before SLEE stopped
-     * @throws InvalidStateException
-     * @throws UnrecognizedServiceException
-     * 
-     */
-    private void resumeServicesActiveBeforeStop() throws UnrecognizedServiceException, InvalidStateException {
-        if (activeServicesBeforeStop != null) {
-	        for (int i = 0; i < activeServicesBeforeStop.length; i++) {
-	            try {
-	               
-	                sleeContainer.reviveAndStartService(activeServicesBeforeStop[i]);
-	            } catch (UnrecognizedServiceException e) {
-	                logger.info("Service was removed while SLEE was inactive: " + activeServicesBeforeStop[i]);
-	            } catch (Exception e) {
-	                logger.error("Failed starting service " + activeServicesBeforeStop[i], e);
-	            }
-	        }
-        }
-    }
+		return oname;
+	}
 
-    /**
-     * Stop the service container and clean up the resources it used.
-     *  
-     */
-    protected  void stopSleeContainer() throws Exception {
-        changeSleeState(SleeState.STOPPING);
-        
-        // (Ivelin) 
-        //   If the stop() is invoked externally, skip further effort to stop all services
-        //   only if the stop() is invoked as a result of undeployment of mobicents.sar, then stop everything
-        //   the reason we need to do this is because MBean service dependecy is not taken into account
-        //   with external stop(),start() invocation and as a result the start() after stop() is not clean.
-        //
-        //   The value of isFullSleeStop is controlled by SleeLifecycleMonitor
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.MBeanRegistration#postRegister(java.lang.Boolean)
+	 */
+	public void postRegister(Boolean arg0) {
 
-        rememberActiveServicesBeforeStop();
-        
-        rememberActiveResourceAdaptorsBeforeStop();
+	}
 
-        if (isFullSleeStop) {
-            sleeContainer.close();
-            // we do not want STOPPED state, because that is not desired
-            // in a cluster situation and redeployment.
-            // Only when the server is really crashing on all nodes, STOPPED state 
-            // makes sense, but at that point it is not as relevant.
-            // changeSleeState(SleeState.STOPPED);
-            
-            // Still, we want an indication that the container service concluded stopping cycle
-            logger.info("[[[[[[[[[[ MOBICENTS "+getVersion()+" Stopped (HA). ]]]]]]]]]");
-        } else {
-            scheduleStopped();
-        }
-    }
-    
-    /**
-     * Setup a polling process to wait until all ActivityContexts ended. 
-     * Then set the SLEE container in STOPPED state.
-     *
-     */
-    protected void scheduleStopped() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.MBeanRegistration#preDeregister()
+	 */
+	public void preDeregister() throws Exception {
+		// TODO Auto-generated method stub
+	}
 
-    	ThreadedExecutor exec = new ThreadedExecutor();
-    	Runnable acStateChecker = new Runnable() {
-    		
-    		public void run() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.MBeanRegistration#postDeregister()
+	 */
+	public void postDeregister() {
+		// TODO Auto-generated method stub
+	}
 
-    			boolean rb = true;
-    			try {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.NotificationBroadcaster#addNotificationListener(javax.management.NotificationListener,
+	 *      javax.management.NotificationFilter, java.lang.Object)
+	 */
+	public void addNotificationListener(NotificationListener listener,
+			NotificationFilter filter, Object handback)
+			throws IllegalArgumentException {
+		notificationBroadcaster.addNotificationListener(listener, filter,
+				handback);
+	}
 
-    				SleeContainer.getTransactionManager().begin();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.NotificationBroadcaster#removeNotificationListener(javax.management.NotificationListener)
+	 */
+	public void removeNotificationListener(NotificationListener listener)
+			throws ListenerNotFoundException {
+		notificationBroadcaster.removeNotificationListener(listener);
+	}
 
-    				try {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.management.NotificationBroadcaster#getNotificationInfo()
+	 */
+	public MBeanNotificationInfo[] getNotificationInfo() {
+		return MBEAN_NOTIFICATIONS;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jboss.system.Service#create()
+	 */
+	public void create() throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.jboss.system.Service#destroy()
+	 */
+	public void destroy() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * Start the SleeContainer and initialize the necessary resources
+	 * 
+	 */
+	protected void startSleeContainer() throws Exception {
+		changeSleeState(SleeState.STARTING);
+		try {
+			// (Ivelin) the following check is symmetric to the one is stop().
+			// see the comments in stop() for more detail.
+			if (isFullSleeStop) {
+				sleeContainer.init(this, rmiServerInterfaceMBean );
+				isFullSleeStop = false;
+			}
+			;
+
+			changeSleeState(SleeState.RUNNING);
+
+			resumeServicesActiveBeforeStop();
+		} catch (Exception ex) {
+			logger.error("Error starting SLEE container", ex);
+			throw ex;
+		} finally {
+			// if startup did not succeed, try to clean up resources
+			if (sleeContainer.getSleeState() != SleeState.RUNNING)
+				stopSleeContainer();
+		}
+	}
+
+	/**
+	 * Activate services, which were active before SLEE stopped
+	 * 
+	 * @throws InvalidStateException
+	 * @throws UnrecognizedServiceException
+	 * 
+	 */
+	private void resumeServicesActiveBeforeStop()
+			throws UnrecognizedServiceException, InvalidStateException {
+		if (activeServicesBeforeStop != null) {
+			for (int i = 0; i < activeServicesBeforeStop.length; i++) {
+				try {
+
+					sleeContainer
+							.reviveAndStartService(activeServicesBeforeStop[i]);
+				} catch (UnrecognizedServiceException e) {
+					logger.info("Service was removed while SLEE was inactive: "
+							+ activeServicesBeforeStop[i]);
+				} catch (Exception e) {
+					logger.error("Failed starting service "
+							+ activeServicesBeforeStop[i], e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Stop the service container and clean up the resources it used.
+	 * 
+	 */
+	protected void stopSleeContainer() throws Exception {
+		changeSleeState(SleeState.STOPPING);
+
+		// (Ivelin)
+		// If the stop() is invoked externally, skip further effort to stop all
+		// services
+		// only if the stop() is invoked as a result of undeployment of
+		// mobicents.sar, then stop everything
+		// the reason we need to do this is because MBean service dependecy is
+		// not taken into account
+		// with external stop(),start() invocation and as a result the start()
+		// after stop() is not clean.
+		//
+		// The value of isFullSleeStop is controlled by SleeLifecycleMonitor
+
+		rememberActiveServicesBeforeStop();
+
+		rememberActiveResourceAdaptorsBeforeStop();
+
+		if (isFullSleeStop) {
+			sleeContainer.close();
+			// we do not want STOPPED state, because that is not desired
+			// in a cluster situation and redeployment.
+			// Only when the server is really crashing on all nodes, STOPPED
+			// state
+			// makes sense, but at that point it is not as relevant.
+			// changeSleeState(SleeState.STOPPED);
+
+			// Still, we want an indication that the container service concluded
+			// stopping cycle
+			logger.info("[[[[[[[[[[ MOBICENTS " + getVersion()
+					+ " Stopped (HA). ]]]]]]]]]");
+		} else {
+			scheduleStopped();
+		}
+	}
+
+	/**
+	 * Setup a polling process to wait until all ActivityContexts ended. Then
+	 * set the SLEE container in STOPPED state.
+	 * 
+	 */
+	protected void scheduleStopped() {
+
+		ThreadedExecutor exec = new ThreadedExecutor();
+		Runnable acStateChecker = new Runnable() {
+
+			public void run() {
+
+				boolean rb = true;
+				try {
+
+					SleeContainer.getTransactionManager().begin();
+
+					try {
 						// wait a little because test 1479
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {}
-					
-    				stopAllResourceAdaptors();
+					} catch (InterruptedException e) {
+					}
 
-    				stopAllServices();
+					stopAllResourceAdaptors();
 
-    				stopAllProfileTableActivities();
+					stopAllServices();
 
-    				// are there any other possible activities that have not been terminated?
-    				// if so, force termination 
-    				SleeEndpointImpl.allActivitiesEnding();
+					stopAllProfileTableActivities();
 
+					// are there any other possible activities that have not
+					// been terminated?
+					// if so, force termination
+					SleeEndpointImpl.allActivitiesEnding();
 
+					// ...and wait until they all end
 
-    				// ...and wait until they all end
+					// force some delay, because the TCK relies on time to test
+					// behaviour in STOPPING state
+					// see test
+					// tests/management/sleestate/SleeStateMachineTest.xml
+					// 
+					/*
+					 * try { Thread.sleep(2000); } catch (InterruptedException
+					 * e1) { // TODO Auto-generated catch block
+					 * e1.printStackTrace(); }
+					 */
+					rb = false;
+				} catch (Exception e) {
+					logger.error("Exception while stopping SLEE", e);
 
+				} finally {
+					try {
+						if (rb) {
+							SleeContainer.getTransactionManager().rollback();
+						} else {
+							SleeContainer.getTransactionManager().commit();
+							// FIXME we should wait for all activities to end,
+							// do this once all leaks are fixed
+							while (!areAllServicesInvalid()) {
+								logger
+										.info("Waiting on all Activities and Services  to end before setting the SLEE container in STOPPED state...");
+								try {
+									// wait a little before retry
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+								}
+							}
+							changeSleeState(SleeState.STOPPED);
+						}
+					} catch (SystemException e) {
+						logger
+								.error(
+										"Error in tx management while stopping SLEE",
+										e);
+					}
+				}
+			}
 
-    				// force some delay, because the TCK relies on time to test behaviour in STOPPING state
-    				// see test tests/management/sleestate/SleeStateMachineTest.xml
-    				// 
-    				/*                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-    				 */                
-    				rb = false;
-    			}
-    			catch (Exception e) {
-    				logger.error("Exception while stopping SLEE", e);
+		};
 
+		try {
+			exec.execute(acStateChecker);
+		} catch (InterruptedException e) {
+			logger
+					.error("Failed scheduling polling task for STOPPED state. The SLEE Container may remain in STOPPING state.");
+		}
+	}
 
-    			}
-    			finally {
-    				try {
-    					if (rb) {
-    						SleeContainer.getTransactionManager().rollback();
-    					}
-    					else {
-    						SleeContainer.getTransactionManager().commit();
-    						// FIXME we should wait for all activities to end, do this once all leaks are fixed
-    	    				while (!areAllServicesInvalid())
-    	    				{
-    	    					logger.info("Waiting on all Activities and Services  to end before setting the SLEE container in STOPPED state...");
-    	    					try {
-    	    						// wait a little before retry
-    	    						Thread.sleep(1000);
-    	    					} catch (InterruptedException e) {}
-    	    				}
-    	    				changeSleeState(SleeState.STOPPED);
-    					}
-    				} catch (SystemException e) {
-    					logger.error("Error in tx management while stopping SLEE",e);
-    				}
-    			}
-            }
+	/**
+	 * 
+	 */
+	private void stopAllProfileTableActivities() {
+		SleeProfileManager sleeProfileManager = SleeProfileManager
+				.getInstance();
+		HashMap profileTableActivities = sleeProfileManager
+				.getProfileTableActivities();
+		logger.debug("Stopping profile table activities !");
+		Iterator it = profileTableActivities.keySet().iterator();
+		while (it.hasNext()) {
+			String profileTableName = (String) it.next();
+			logger.debug("Stopping following profile table activity : "
+					+ profileTableName);
+			SleeContainer sleeContainer = SleeContainer.lookupFromJndi();
+			int eventID = sleeContainer.getEventLookupFacility().getEventID(
+					new ComponentKey("javax.slee.ActivityEndEvent",
+							"javax.slee", "1.0"));
 
-        };
-        
-        try {
-            exec.execute(acStateChecker);
-        } catch (InterruptedException e) {
-            logger.error("Failed scheduling polling task for STOPPED state. The SLEE Container may remain in STOPPING state.");
-        }
-    }
+			ProfileTableActivityImpl profileTableActivity = (ProfileTableActivityImpl) profileTableActivities
+					.get(profileTableName);
+			sleeContainer.getSleeEndpoint().scheduleActivityEndedEvent(
+					profileTableActivity);
+		}
+	}
 
-    /**
-     * 
-     */
-    private void stopAllProfileTableActivities() {
-        SleeProfileManager sleeProfileManager=SleeProfileManager.getInstance();
-        HashMap profileTableActivities=sleeProfileManager.getProfileTableActivities();
-        logger.debug("Stopping profile table activities !");
-        Iterator it=profileTableActivities.keySet().iterator();
-        while(it.hasNext()){
-            String profileTableName=(String)it.next();
-            logger.debug("Stopping following profile table activity : "+profileTableName);
-	        SleeContainer sleeContainer = SleeContainer.lookupFromJndi();
-	        int eventID = sleeContainer.getEventLookupFacility().getEventID(
-	                new ComponentKey("javax.slee.ActivityEndEvent",
-	                        "javax.slee", "1.0"));
-	
-	        ProfileTableActivityImpl profileTableActivity = 
-	            (ProfileTableActivityImpl)profileTableActivities.get(profileTableName);
-	        sleeContainer.getSleeEndpoint().scheduleActivityEndedEvent(
-	                profileTableActivity);
-        }
-    }
+	/**
+	 * 
+	 * Deactivate all active services in preparation for moving to the STOPPED
+	 * state. See SLEE #14.6.1
+	 * 
+	 */
+	private void stopAllServices() {
+		// stop all services
+		ServiceID[] services = null;
+		try {
+			services = sleeContainer.getServicesByState(ServiceState.ACTIVE);
+		} catch (Exception e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+		for (int i = 0; i < services.length; i++) {
+			try {
+				sleeContainer.stopService(services[i]);
+			} catch (Exception e1) {
+				logger.debug("Failed to schedule SLEE end", e1);
+			}
+		}
+	}
 
-    /**
-     * 
-     * Deactivate all active services in preparation for moving 
-     * to the STOPPED state. See SLEE #14.6.1
-     * 
-     */
-    private void stopAllServices() {
-        // stop all services
-        ServiceID[] services = null;
-        try {
-            services = sleeContainer.getServicesByState(ServiceState.ACTIVE);
-        } catch (Exception e2) {
-            // TODO Auto-generated catch block
-            e2.printStackTrace();
-        }
-        for (int i = 0; i < services.length; i++) {
-            try {
-                sleeContainer.stopService(services[i]);
-            } catch (Exception e1) {
-                logger.debug("Failed to schedule SLEE end", e1);
-            }
-        }
-    }
+	/**
+	 * 
+	 * Deactivate all active resource adaptors in preparation for moving to the
+	 * STOPPED state. See SLEE #14.6.1
+	 * 
+	 */
+	private void stopAllResourceAdaptors() {
+		// TODO Auto-generated method stub
 
+	}
 
-    /**
-     * 
-     * Deactivate all active resource adaptors in preparation for moving 
-     * to the STOPPED state. See SLEE #14.6.1
-     * 
-     */
-    private void stopAllResourceAdaptors() {
-        // TODO Auto-generated method stub
-        
-    }
-    
-    /**
-     * @param activeServices
-     * @return
-     */
-    private boolean areAllServicesInvalid() {
-        boolean b = SleeContainer.getTransactionManager().requireTransaction();
-        boolean rb = true;
-        try {
-            int invalidServices = sleeContainer.getServicesByState(ServiceState.INACTIVE).length;
-            int allServices = sleeContainer.getDeploymentManager().getServiceComponents().size();
-            rb = false;
-            return (invalidServices == allServices);
-        } catch (Exception e) {
-            logger.info("Failed areAllServicesInvalid() " + e.getMessage());
-        } finally {
-            try {
-	            if (rb) SleeContainer.getTransactionManager().setRollbackOnly();
-	            if (b) SleeContainer.getTransactionManager().commit();
-            } catch (SystemException e1) {
-                // TODO Auto-generated catch block
-                logger.info("Failed areAllServicesInvalid() ", e1);
-            }
-        }
-        return false;
-    }
+	/**
+	 * @param activeServices
+	 * @return
+	 */
+	private boolean areAllServicesInvalid() {
+		boolean b = SleeContainer.getTransactionManager().requireTransaction();
+		boolean rb = true;
+		try {
+			int invalidServices = sleeContainer
+					.getServicesByState(ServiceState.INACTIVE).length;
+			int allServices = sleeContainer.getDeploymentManager()
+					.getServiceComponents().size();
+			rb = false;
+			return (invalidServices == allServices);
+		} catch (Exception e) {
+			logger.info("Failed areAllServicesInvalid() " + e.getMessage());
+		} finally {
+			try {
+				if (rb)
+					SleeContainer.getTransactionManager().setRollbackOnly();
+				if (b)
+					SleeContainer.getTransactionManager().commit();
+			} catch (SystemException e1) {
+				// TODO Auto-generated catch block
+				logger.info("Failed areAllServicesInvalid() ", e1);
+			}
+		}
+		return false;
+	}
 
-    /**
-     * 
-     * Remembers in memory active services so that they can be reactivated on start. 
-     * (NOTE: the list should be persisted info according to SLEE spec #2.2.17)
-     * 
-     */
-    private void rememberActiveServicesBeforeStop() throws Exception {
-        activeServicesBeforeStop = sleeContainer.getServicesByState(ServiceState.ACTIVE);
-    }
-    
-    /**
-     * 
-     * Remembers in memory active Resource Adaptors so that they can be reactivated on start. 
-     * (NOTE: the list should be persisted info according to SLEE spec #14.6.1, #2.2.17)
-     * 
-     */
-    private void rememberActiveResourceAdaptorsBeforeStop() throws Exception {
-        /* FIXME: Unfinished method, needed for SLEE shutdwn
-        HashSet activeResourceAdaptorsBeforeStop = new HashSet();
-        activeResourceAdaptorsBeforeStop.clear();
-        activeResourceAdaptorsBeforeStop.addAll( sleeContainer.getResourceAdaptorEntities() );
-    */
-        
-    }
+	/**
+	 * 
+	 * Remembers in memory active services so that they can be reactivated on
+	 * start. (NOTE: the list should be persisted info according to SLEE spec
+	 * #2.2.17)
+	 * 
+	 */
+	private void rememberActiveServicesBeforeStop() throws Exception {
+		activeServicesBeforeStop = sleeContainer
+				.getServicesByState(ServiceState.ACTIVE);
+	}
 
+	/**
+	 * 
+	 * Remembers in memory active Resource Adaptors so that they can be
+	 * reactivated on start. (NOTE: the list should be persisted info according
+	 * to SLEE spec #14.6.1, #2.2.17)
+	 * 
+	 */
+	private void rememberActiveResourceAdaptorsBeforeStop() throws Exception {
+		/*
+		 * FIXME: Unfinished method, needed for SLEE shutdwn HashSet
+		 * activeResourceAdaptorsBeforeStop = new HashSet();
+		 * activeResourceAdaptorsBeforeStop.clear();
+		 * activeResourceAdaptorsBeforeStop.addAll(
+		 * sleeContainer.getResourceAdaptorEntities() );
+		 */
 
-    /**
-     * Changes the SLEE container state and emits JMX notifications
-     * @param newState
-     */
-    protected void changeSleeState(SleeState newState) {
-        SleeState oldState = sleeContainer.getSleeState();
-        sleeContainer.setSleeState(newState);
-        notificationBroadcaster.sendNotification(new SleeStateChangeNotification(this, newState, oldState, sleeStateChangeSequenceNumber++));
+	}
 
-        if (newState.equals(SleeState.RUNNING)) {
-            String timerSt = "";
-            if (isFullSleeStop) {
-	            startupTime = System.currentTimeMillis() - startupTime;
-	            long startupSec = startupTime/1000;
-	            long startupMillis = startupTime % 1000;
-	            timerSt = "in " + startupSec + "s:" + startupMillis + "ms ";
-            }
-            logger.info("[[[[[[[[[ MOBICENTS "+getVersion()+" Started " + timerSt + "]]]]]]]]]");
-            
-        } else if (newState.equals(SleeState.STOPPED)) {
-            logger.info("[[[[[[[[[[ MOBICENTS "+getVersion()+" Stopped ]]]]]]]]]");
-        }
-    }
-    
-    public void setFullSleeStop(boolean b) {
-        isFullSleeStop = b;
-    }
-    
-    /**
-     * Indicates whether Mobicents SLEE is simply marked as STOPPED or all its services actually stopped.
-     * The distinction is important due to the way MBean service dependencies are handled on mobicents.sar undeploy vs. 
-     * externally calling SleeManagementMBean.stop()
-     */
-    public boolean isFullSleeStop() {
-        return isFullSleeStop;
-    }
+	/**
+	 * Changes the SLEE container state and emits JMX notifications
+	 * 
+	 * @param newState
+	 */
+	protected void changeSleeState(SleeState newState) {
+		SleeState oldState = sleeContainer.getSleeState();
+		sleeContainer.setSleeState(newState);
+		notificationBroadcaster
+				.sendNotification(new SleeStateChangeNotification(this,
+						newState, oldState, sleeStateChangeSequenceNumber++));
 
-   public ObjectName getActivityManagementMBean()
-   {
-      return activityManagementMBean;
-   }
+		if (newState.equals(SleeState.RUNNING)) {
+			String timerSt = "";
+			if (isFullSleeStop) {
+				startupTime = System.currentTimeMillis() - startupTime;
+				long startupSec = startupTime / 1000;
+				long startupMillis = startupTime % 1000;
+				timerSt = "in " + startupSec + "s:" + startupMillis + "ms ";
+			}
+			logger.info("[[[[[[[[[ MOBICENTS " + getVersion() + " Started "
+					+ timerSt + "]]]]]]]]]");
 
-   public void setActivityManagementMBean(ObjectName activityManagementMBean)
-   {
-      this.activityManagementMBean = activityManagementMBean;
-   }
+		} else if (newState.equals(SleeState.STOPPED)) {
+			logger.info("[[[[[[[[[[ MOBICENTS " + getVersion()
+					+ " Stopped ]]]]]]]]]");
+		}
+	}
 
-   public ObjectName getSbbEntitiesMBean()
-   {
-      return sbbEntitiesMBean;
-   }
+	public void setFullSleeStop(boolean b) {
+		isFullSleeStop = b;
+	}
 
-   public void setSbbEntitiesMBean(ObjectName sbbEntitiesMBean)
-   {
-      this.sbbEntitiesMBean = sbbEntitiesMBean;
-   }   
-   
-   public String getVersion() {
-   	return Version.instance.toString();
-   }
-   
+	/**
+	 * Indicates whether Mobicents SLEE is simply marked as STOPPED or all its
+	 * services actually stopped. The distinction is important due to the way
+	 * MBean service dependencies are handled on mobicents.sar undeploy vs.
+	 * externally calling SleeManagementMBean.stop()
+	 */
+	public boolean isFullSleeStop() {
+		return isFullSleeStop;
+	}
+
+	public ObjectName getActivityManagementMBean() {
+		return activityManagementMBean;
+	}
+
+	public void setActivityManagementMBean(ObjectName activityManagementMBean) {
+		this.activityManagementMBean = activityManagementMBean;
+	}
+
+	public ObjectName getSbbEntitiesMBean() {
+		return sbbEntitiesMBean;
+	}
+
+	public void setSbbEntitiesMBean(ObjectName sbbEntitiesMBean) {
+		this.sbbEntitiesMBean = sbbEntitiesMBean;
+	}
+
+	public String getVersion() {
+		return Version.instance.toString();
+	}
+
+	public ObjectName getRmiServerInterfaceMBean() {
+		return rmiServerInterfaceMBean;
+	}
+
+	public void setRmiServerInterfaceMBean(
+			ObjectName rmiServerInterfaceMBean) {
+		this.rmiServerInterfaceMBean = rmiServerInterfaceMBean;
+	}
+
 }
-

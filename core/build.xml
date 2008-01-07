@@ -41,6 +41,8 @@
 
 	<property name="mobicents.sar" value="${jboss.deploy}/mobicents.sar" />
 
+	<property name="mobicents-ha.sar" value="${jboss.home}/server/all/deploy/mobicents-ha.sar" />
+
 	<property name="jboss.server.dir" value="${deploy.home}/server" />
 
 	<property name="jboss.tmp.deploy.dir" value="${jboss.deploy}/../tmp/deploy" />
@@ -100,7 +102,7 @@
 		<pathelement location="${jboss.home}/server/${node}/lib/jboss-remoting.jar" />
 		<pathelement location="${jboss.home}/lib/jboss-system.jar" />
 		<pathelement location="${jboss.home}/server/${node}/lib/jboss-transaction.jar" />
-		<pathelement location="${jboss.home}/server/${node}/lib/jbossha.jar" />
+		<pathelement location="${jboss.home}/server/all/lib/jbossha.jar" />
 		<pathelement location="${jboss.home}/server/${node}/lib/jgroups.jar" />
 		<pathelement location="${jboss.home}/server/${node}/lib/jmx-adaptor-plugin.jar" />
 		<pathelement location="${jboss.home}/client/jnp-client.jar" />
@@ -407,8 +409,16 @@
 		</jar>
 
 		<copy todir="${mobicents.sar}" file="${build}/mobicents.rar" />
-		<copy todir="${mobicents.sar}" file="${src}/${dirpath.prefix}/slee/test/connector/ejb/slee-ds.xml" />
-
+	
+		<copy todir="${mobicents.sar}">
+			<filterset>
+				<filtersfile file="build/etc/single.properties"/>			
+			</filterset>
+       		<fileset dir="${src}/${dirpath.prefix}/slee/test/connector/ejb">
+	   			<include name="slee-ds.xml" />
+   	   		</fileset>
+		</copy>
+	
 		<delete failonerror="false" includeemptydirs="true">
 			<fileset dir="${build}/rar" />
 		</delete>
@@ -445,19 +455,15 @@
 		<copy file="README.txt" todir="${jboss.readme.dir}" />
 
 		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true" />
-		<!-- <copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" /> -->
-		<copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" />
-		<copy file="xml/slee-event-jar.xml" todir="${mobicents.sar}/xml" />
-		<copy file="xml/slee-profile-spec-jar.xml" todir="${mobicents.sar}/xml" />
-		<copy file="xml/event-jar.xml" todir="${mobicents.sar}/xml" />
-		<copy file="xml/hsqldb-ds.xml.${node}" tofile="${jboss.deploy}/hsqldb-ds.xml" overwrite="true" />
-
-		<copy file="xml/jboss-treecache-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-service.xml" overwrite="true" />
-		<!--copy file="xml/tc5-cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/tc5-cluster-service.xml" overwrite="true" /-->
-		<copy file="xml/jboss-treecache-deployment-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-deployment-service.xml" overwrite="true" />
-		<copy file="xml/jboss-treecache-profile-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-profile-service.xml" overwrite="true" />
-		<copy file="xml/jboss-treecache-runtime-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-runtime-service.xml" overwrite="true" />
-
+		<copy todir="${mobicents.sar}">
+			<filterset>
+		    	<filtersfile file="build/etc/single.properties"/>			
+		    </filterset>
+			<fileset dir="xml/sar">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>	
+	
 		<copy file="bin/SleeCommandInterface.bat" todir="${jboss.bin.dir}" />
 		<copy file="bin/SleeCommandInterface.sh" todir="${jboss.bin.dir}" />
 		<chmod file="${jboss.bin.dir}/SleeCommandInterface.sh" perm="755">
@@ -486,6 +492,41 @@
 			<fileset file="${mobicents.sar}/META-INF/jboss-service.xml" />
 		</touch>
 	</target>
+
+	<target name="deploy-ha" description="Assumes that mobicents.sar is already built and just deploy mobicents-ha.sar to a JBoss server.">
+		<mkdir dir="${mobicents-ha.sar}/../../deploy-mobicents" />
+		<mkdir dir="${mobicents-ha.sar}/../../deploy-mobicents/scripts" />
+
+		<copy file="xml/jboss-log4j.xml" tofile="${mobicents-ha.sar}../../../conf/jboss-log4j.xml" overwrite="true" verbose="true" />
+
+		<copy todir="${mobicents-ha.sar}">
+			<fileset dir="${mobicents.sar}">				
+				<exclude name="**/*.xml" />
+			</fileset>
+		</copy>		
+		
+	        <copy todir="${mobicents-ha.sar}">
+	           <filterset>
+	              <filtersfile file="build/etc/clustered.properties"/>			
+	           </filterset>
+               <fileset dir="xml/sar">
+			   <include name="**/*.*" />
+		   	   </fileset>
+	  	</copy>
+
+		<copy file="docs/pictures/mobicents-logo.gif" tofile="${mobicents-ha.sar}/../jmx-console.war/images/logo.gif" />
+	
+		<copy todir="${mobicents-ha.sar}">
+			<filterset>
+				<filtersfile file="build/etc/clustered.properties"/>			
+			</filterset>
+	   		<fileset dir="${src}/${dirpath.prefix}/slee/test/connector/ejb">
+	   			<include name="slee-ds.xml" />
+		   		</fileset>
+		</copy>
+		
+	</target>
+
 
 	<!-- Starts the JBoss Container -->
 	<target name="run-jboss" description="Runs the JBoss container">
@@ -538,8 +579,6 @@
 				<include name="jgroups.jar" />
 			</fileset>
 		</copy>
-		<!-- <copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" /> -->
-
 	</target>
 
 	<target name="cc-build-loop" depends="rebuild" />
