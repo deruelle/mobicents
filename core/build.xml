@@ -473,9 +473,9 @@
 		<copy file="bin/java.policy" todir="${jboss.bin.dir}" />
 
 		<copy file="docs/pictures/mobicents-logo.gif" tofile="${jboss.deploy}/jmx-console.war/images/logo.gif" />
-		<copy todir="${jboss.server.dir}">
+		<!-- <copy todir="${jboss.server.dir}">
 			<fileset file="xml/server/**" />
-		</copy>
+		</copy>  -->
 
 		<copy todir="${jboss.licenses.dir}">
 			<fileset file="LICENSES/*" />
