@@ -21,6 +21,8 @@ import javax.slee.connection.SleeConnectionFactory;
 
 import org.apache.log4j.Logger;
 import org.jboss.annotation.ejb.Depends;
+import org.jboss.annotation.ejb.LocalBinding;
+import org.jboss.annotation.ejb.RemoteBinding;
 import org.jboss.annotation.ejb.Service;
 
 /**
@@ -29,6 +31,8 @@ import org.jboss.annotation.ejb.Service;
  */
 
 @Stateless
+@RemoteBinding(jndiBinding="SleeConnectionProxyBean/remote")
+@LocalBinding(jndiBinding="SleeConnectionProxyBean/local")
 @Service
 @Depends ("jboss.ejb:service=EJBTimerService,persistencePolicy=database")
 public class SleeConnectionProxyBean implements java.io.Serializable,
