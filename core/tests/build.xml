@@ -50,7 +50,7 @@
 	<property name="jars.slee-components" value="${build.dir}/jars/slee-components" />
 	<property name="jars.deployable-units" value="${build.dir}/jars/deployable-units" />
 	<property name="tck.source" value="${build.dir}/src" />
-	<property name="slee-ant-tasks.jar" value="${build.dir}/../tools/ant-tasks/jars/slee-ant-tasks.jar" />
+	<property name="slee-ant-tasks.jar" value="${build.dir}/../../tools/ant-tasks/jars/slee-ant-tasks.jar" />
 	<!-- OUTPUT JARS -->
 	<property name="tck.package" value="sleetck.jar" />
 	<property name="tck-ra-type.package" value="sleetck-ra-type-du.jar" />
@@ -67,7 +67,7 @@
 	</path>
 	<!-- CUSTOM TASKS -->
 	<target name="build-tasks" depends="find-libs,ensure-classes-dir,ensure-jars-dir">
-		<ant antfile="build.xml" dir="${build.dir}/../tools/ant-tasks" />
+		<ant antfile="build.xml" dir="${build.dir}/../../tools/ant-tasks" />
 		<taskdef name="sbbjar" classname="org.mobicents.ant.SbbJar" classpath="${slee-ant-tasks.jar}" />
 		<taskdef name="eventjar" classname="org.mobicents.ant.EventJar" classpath="${slee-ant-tasks.jar}" />
 		<taskdef name="profilespecjar" classname="org.mobicents.ant.ProfileSpecJar" classpath="${slee-ant-tasks.jar}" />

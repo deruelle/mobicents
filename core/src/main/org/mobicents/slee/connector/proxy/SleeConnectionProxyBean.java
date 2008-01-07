@@ -3,20 +3,16 @@ package org.mobicents.slee.connector.proxy;
 import java.io.InputStream;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.Calendar;
 import java.util.Properties;
 
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
-import javax.ejb.Remove;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.EJBException;
+import javax.ejb.Remove;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.resource.ResourceException;
@@ -24,11 +20,17 @@ import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
 
 import org.apache.log4j.Logger;
+import org.jboss.annotation.ejb.Depends;
+import org.jboss.annotation.ejb.Service;
 
 /**
- * 
+ * This acts as EJB3 Bean which can be used to fire events from other EJB's
+ * @author amit.bhayani 
  */
+
 @Stateless
+@Service
+@Depends ("jboss.ejb:service=EJBTimerService,persistencePolicy=database")
 public class SleeConnectionProxyBean implements java.io.Serializable,
 		SleeConnectionProxyLocal, SleeConnectionProxyRemote {
 
@@ -49,8 +51,8 @@ public class SleeConnectionProxyBean implements java.io.Serializable,
 			.getLogger(SleeConnectionProxyBean.class);
 
 	public SleeConnectionProxyBean() {
-		componentID = "SleeConnectionProxyEJB:[ " + Math.random() * 10000 + "-"
-				+ Calendar.getInstance().getTimeInMillis() + "]";
+		java.rmi.server.UID uid = new java.rmi.server.UID();
+		componentID = "SleeConnectionProxyEJB:[ " + uid + "]";
 		logger.debug("COMPONENT:[ " + componentID + " ] Created");
 	}
 

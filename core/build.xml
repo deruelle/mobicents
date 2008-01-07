@@ -406,8 +406,8 @@
 			</fileset>
 		</jar>
 
-		<copy todir="${mobicents.sar}/../" file="${build}/mobicents.rar" />
-		<copy todir="${mobicents.sar}/../" file="${src}/${dirpath.prefix}/slee/test/connector/ejb/slee-ds.xml" />
+		<copy todir="${mobicents.sar}" file="${build}/mobicents.rar" />
+		<copy todir="${mobicents.sar}" file="${src}/${dirpath.prefix}/slee/test/connector/ejb/slee-ds.xml" />
 
 		<delete failonerror="false" includeemptydirs="true">
 			<fileset dir="${build}/rar" />
@@ -445,26 +445,14 @@
 		<copy file="README.txt" todir="${jboss.readme.dir}" />
 
 		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true" />
-		<copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" />
+		<!-- <copy file="xml/cache-invalidation-service.xml" todir="${jboss.deploy}" /> -->
 		<copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" />
 		<copy file="xml/slee-event-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/slee-profile-spec-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/event-jar.xml" todir="${mobicents.sar}/xml" />
 		<copy file="xml/hsqldb-ds.xml.${node}" tofile="${jboss.deploy}/hsqldb-ds.xml" overwrite="true" />
 
-
-		<!-- copying config files for clustered services -->
-		<!-- <if>
-					<equals arg1="${node}" arg2="all" />
-					<then>
-		
-		 		<copy file="xml/cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/cluster-service.xml" overwrite="true" />
-					</then>
-					 <else>   				
-					</else>
-				</if> -->
-
-		<copy file="xml/jboss-treecache-service.xml.${cachemode}" tofile="${jboss.deploy}/jboss-treecache-service.xml" overwrite="true" />
+		<copy file="xml/jboss-treecache-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-service.xml" overwrite="true" />
 		<!--copy file="xml/tc5-cluster-service.xml.${cachemode}" tofile="${jboss.deploy}/tc5-cluster-service.xml" overwrite="true" /-->
 		<copy file="xml/jboss-treecache-deployment-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-deployment-service.xml" overwrite="true" />
 		<copy file="xml/jboss-treecache-profile-service.xml.${cachemode}" tofile="${mobicents.sar}/jboss-treecache-profile-service.xml" overwrite="true" />
@@ -526,7 +514,7 @@
 
 	<!-- Copies all lib files to the sar directory of the local jboss installation -->
 	<target name="copylibs" description="copy project libs not part of jboss into jboss">
-		<copy todir="${mobicents.sar}" flatten="yes">
+		<copy todir="${mobicents.sar}/lib" flatten="yes">
 			<fileset dir="${libs.home}">
 				<include name="commons-beanutils.jar" />
 				<include name="commons-lang.jar" />
@@ -550,7 +538,7 @@
 				<include name="jgroups.jar" />
 			</fileset>
 		</copy>
-		<copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" />
+		<!-- <copy file="xml/jboss-service.xml.${node}" tofile="${mobicents.sar}/META-INF/jboss-service.xml" /> -->
 
 	</target>
 
@@ -757,7 +745,7 @@
 	<target name="deploy-connection-proxy" description="Builds ${ejb}.jar with ejb proxying SleeConnection, allowing it to be accessed from outside this container. And deploys it into ${jboss.deploy}">
 
 
-		<jar jarfile="${jboss.deploy}/${ejb}.ejb3">
+		<jar jarfile="${mobicents.sar}/${ejb}.ejb3">
 			<fileset dir="${mobicents.home.standard}/classes">
 				<include name="org/mobicents/slee/connector/proxy/**.class" />
 			</fileset>
