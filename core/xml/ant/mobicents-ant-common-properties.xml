@@ -240,7 +240,7 @@
 
 	<path id="cli.class.path">
 		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar" />
-		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar/slee_1_1.jar" />
+		<pathelement location="${jboss.home}/server/${node}/deploy/mobicents.sar/lib/slee_1_1.jar" />
 	</path>
 
 	<target name="init-common">
