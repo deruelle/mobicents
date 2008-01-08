@@ -73,10 +73,10 @@ public class ZSleeBeanShellUtilTest extends TestCase {
 		pathToSBBDuJar = "file:" + mobicents_home + File.separator + "build"
 				+ File.separator + "slee-bean-shell-util-test-du.jar";
 		int index = pathToSBBDuJar.indexOf("\\");
-		
+			
 		//Hack for Windows OS
 		if (index != -1) {
-			pathToSBBDuJar = pathToSBBDuJar.replaceAll("\\", "/");
+			pathToSBBDuJar = pathToSBBDuJar.replaceAll("\\\\", "/");
 		}
 		
 		serviceId = "ServiceID[SleeBeanShellUtilService#org.mobicents#1.0]";
