@@ -432,6 +432,8 @@
 	</target>
 
 	<target name="deploy" description="Assumes that mobicents.sar is already built and just deploys it to a JBoss server.">
+		
+		<copy file="log4-rs/dist/log4j-rs.sar" todir="${jboss.deploy}"/>
 
 		<copy todir="${mobicents.sar}">
 			<fileset dir="classes">
@@ -453,8 +455,7 @@
 		</copy>
 
 		<copy file="README.txt" todir="${jboss.readme.dir}" />
-
-		<copy file="xml/jboss-log4j.xml" tofile="${jboss.conf.dir}/jboss-log4j.xml" overwrite="true" verbose="true" />
+	
 		<copy todir="${mobicents.sar}">
 			<filterset>
 		    	<filtersfile file="build/etc/single.properties"/>			
@@ -494,24 +495,25 @@
 	</target>
 
 	<target name="deploy-ha" description="Assumes that mobicents.sar is already built and just deploy mobicents-ha.sar to a JBoss server.">
+	
+		<copy file="log4-rs/dist/log4j-rs.sar" todir="${mobicents-ha.sar}/.."/>
+	
 		<mkdir dir="${mobicents-ha.sar}/../../deploy-mobicents" />
 		<mkdir dir="${mobicents-ha.sar}/../../deploy-mobicents/scripts" />
-
-		<copy file="xml/jboss-log4j.xml" tofile="${mobicents-ha.sar}../../../conf/jboss-log4j.xml" overwrite="true" verbose="true" />
-
+	
 		<copy todir="${mobicents-ha.sar}">
 			<fileset dir="${mobicents.sar}">				
 				<exclude name="**/*.xml" />
 			</fileset>
 		</copy>		
 		
-	        <copy todir="${mobicents-ha.sar}">
-	           <filterset>
-	              <filtersfile file="build/etc/clustered.properties"/>			
-	           </filterset>
-               <fileset dir="xml/sar">
-			   <include name="**/*.*" />
-		   	   </fileset>
+	    <copy todir="${mobicents-ha.sar}">
+	    	<filterset>
+	        	<filtersfile file="build/etc/clustered.properties"/>			
+	        </filterset>
+            <fileset dir="xml/sar">
+				<include name="**/*.*" />
+		   	</fileset>
 	  	</copy>
 
 		<copy file="docs/pictures/mobicents-logo.gif" tofile="${mobicents-ha.sar}/../jmx-console.war/images/logo.gif" />
@@ -522,7 +524,7 @@
 			</filterset>
 	   		<fileset dir="${src}/${dirpath.prefix}/slee/test/connector/ejb">
 	   			<include name="slee-ds.xml" />
-		   		</fileset>
+		   	</fileset>
 		</copy>
 		
 	</target>
