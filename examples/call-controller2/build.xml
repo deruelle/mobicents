@@ -18,11 +18,9 @@
 	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
 	<import file="../lib/build.xml" />
 	<echo>EXAMPLES HOME[${examples.home}]</echo>
-	<echo>SIP SERVICES HOME[${sip-services-home}]</echo>
-	<target name="init" depends="management-init">
-		<path id="slee">
-			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
-		</path>
+	
+	<target name="init" depends="lib-init">
+		<echo>SIP SERVICES HOME[${sip-services-home}]</echo>
 		<path id="libs-ref" refid="examples-libraries">
 		</path>
 
@@ -33,18 +31,16 @@
 			<path refid="libs-ref" />
 		</path>
 		<path id="path-CallForwarding-sbb">
-			<pathelement location="${sip-services-home}/proxysbb.jar" />
-			<pathelement location="${sip-services-home}/registrarsbb.jar" />
+			<pathelement location="${sip-services-home}/sipproxy-sbb.jar" />
+			<pathelement location="${sip-services-home}/registrar-sbb.jar" />
 			<path refid="libs-ref" />
 		</path>
 		<path id="path-VoiceMail-sbb">
 			<path refid="libs-ref" />
-			<pathelement location="lib/media-local-ra/media-resource-adaptor.jar" />
 		</path>
 	</target>
 	<!-- COMPILE ALL -->
 	<target depends="init" name="all">
-		<ant target="package-ras" />
 		<ant target="build-CallControl-profile-spec" />
 		<ant target="build-CallBlocking-sbb" />
 		<ant target="build-CallForwarding-sbb" />
@@ -60,16 +56,6 @@
 		<ant target="clean-CallControl-DU" />
 		<delete dir="classes" />
 		<delete dir="jars" />
-		<delete dir="tmp" />
-	</target>
-
-	<!-- package RA jars -->
-	<target name="package-ras">
-		<mkdir dir="tmp/DU" />
-		<zip basedir="lib/media-local-ra" destfile="tmp/DU/media-local-ra.jar" />
-		<zip basedir="lib/media-ra-type" destfile="tmp/DU/media-ra-type.jar" />
-		<zip basedir="lib/sip-local-ra" destfile="tmp/DU/sip-local-ra.jar" />
-		<zip basedir="lib/sip-ra-type" destfile="tmp/DU/sip-ra-type.jar" />
 	</target>
 
 	<!-- CALL CONTROL PROFILE -->
@@ -78,7 +64,7 @@
 		<mkdir dir="jars/" />
 		<javac debug="on" destdir="classes/CallControl-profile-spec" includes="org/mobicents/slee/examples/callcontrol/profile/CallControlProfileCMP.java,org/mobicents/slee/examples/callcontrol/profile/CallControlProfileManagementImpl.java" srcdir="src">
 			<classpath>
-				<path refid="slee" />
+				<path refid="libs-ref" />
 			</classpath>
 		</javac>
 		<profilespecjar classpath="classes/CallControl-profile-spec" destfile="jars/CallControl-profile-spec.jar" profilespecjarxml="src/org/mobicents/slee/examples/callcontrol/profile/CallControl-profile-spec-jar.xml" />
@@ -96,7 +82,6 @@
 		<javac debug="on" destdir="classes/CallBlocking-sbb" includes="org/mobicents/slee/examples/callcontrol/blocking/CallBlockingSbb.java,org/mobicents/slee/examples/callcontrol/blocking/CallBlockingSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
 			<classpath>
 				<path refid="path-CallBlocking-sbb" />
-				<path refid="slee" />
 			</classpath>
 		</javac>
 		<!--  <sbbjar classpath="classes/CallBlocking-sbb" destfile="jars/CallBlocking-sbb.jar" sbbjarxml="src/org/mobicents/slee/examples/callcontrol/blocking/CallBlocking-sbb-jar.xml"/>-->
@@ -116,7 +101,6 @@
 		<javac debug="on" destdir="classes/CallForwarding-sbb" includes="org/mobicents/slee/examples/callcontrol/forwarding/CallForwardingSbb.java,org/mobicents/slee/examples/callcontrol/forwarding/CallForwardingSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
 			<classpath>
 				<path refid="path-CallForwarding-sbb" />
-				<path refid="slee" />
 			</classpath>
 		</javac>
 
@@ -136,7 +120,6 @@
 		<javac debug="on" destdir="classes/VoiceMail-sbb" includes="org/mobicents/slee/examples/callcontrol/voicemail/VoiceMailSbb.java,org/mobicents/slee/examples/callcontrol/voicemail/VoiceMailSbbActivityContextInterface.java,org/mobicents/slee/examples/callcontrol/common/ProfileSbb.java" srcdir="src">
 			<classpath>
 				<path refid="path-VoiceMail-sbb" />
-				<path refid="slee" />
 			</classpath>
 		</javac>
 
@@ -227,10 +210,9 @@
 					<include name="jbossall-client.jar" />
 				</fileset>
 				<fileset dir="${lib-prefix}">
-					<include name="slee_1_1.jar" />
-					<include name="mobicents_lib.jar" />
 					<include name="bsh-2.0b4.jar" />
 				</fileset>
+				<path refid="mobicents.core.classpath"/>
 			</classpath>
 		</script>
 
@@ -263,7 +245,7 @@
 
 	</target>
 
-	<target name="deploy-all" depends="management-init" description="!! Deploys this  example along with all dependencies !!">
+	<target name="deploy-all" depends="lib-init" description="!! Deploys this  example along with all dependencies !!">
 
 		<ant dir="${sip-services-home}" target="jar-with-invite-not-initial" inheritall="false" />
 		<!-- THIS WILL ALSO DEPLOY SIP RA-->
@@ -273,7 +255,7 @@
 	</target>
 
 
-	<target name="undeploy-all" depends="management-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
+	<target name="undeploy-all" depends="lib-init" description="!! unDeploys this  example along with all dependencies, hopefuly!!">
 
 		<ant target="undeploy" />
 		<ant dir="${sip-services-home}" target="undeploy" inheritall="false" />
