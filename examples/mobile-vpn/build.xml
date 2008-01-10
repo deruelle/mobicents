@@ -25,6 +25,7 @@
         <fileset dir="${lib}">
             <include name="*.jar" />
         </fileset>
+    	<path refid="examples-libraries"/>
     </path>
     
     <target name="init" depends="management-init">
