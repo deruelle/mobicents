@@ -4,7 +4,7 @@
 	<!-- This build is meant to keep targets that can be invoked on all RAs  as close as possible -->
 
 
-	<property name="ras.dirs.list" value="asteriskra,diameterra,dummyra,http-servlet-ra,http-client-ra,media-ra,persistencera,smppra,ttsra,xcapclientra,xmppra" />
+	<property name="ras.dirs.list" value="asteriskra,diameterra,dummyra,http-servlet-ra,http-client-ra,media-ra,persistencera,smppra,ttsra,xcapclientra,xmppra,rulesra,labra,sipra" />
 	<property name="mobicents.home.initial" value="${ant.file.Maintanance_build}/../../core" />
 
 
