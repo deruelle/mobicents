@@ -12,6 +12,7 @@
         <path id="classpath">
             <fileset includes="lib/*" dir=""/>
             <pathelement location="${jboss.home}/lib/jboss-jmx.jar"/>
+        	<pathelement location="${jboss.home}/lib/jboss-common.jar" />
         </path>
     </target>
     <target name="make">
