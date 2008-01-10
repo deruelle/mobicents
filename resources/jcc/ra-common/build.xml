@@ -25,10 +25,13 @@
 	<property name="jar.ra-unit" value="jcc-1.1-local-ra.jar" />
 	<property name="jar.ratype-unit" value="jcc-1.1-ra-type.jar" />
 
+	<import file="${ant.file.Project JCC Resource Adaptor 1.1}/../../../../core/xml/ant/mobicents-ant-common-properties.xml"/>
+	
      <path id="path.compile">
 		<fileset dir="${dir.lib}">
 			<include name="*.jar" />
 		</fileset>
+     	<path refid="mobicents.core.classpath"/>
     </path>
   
     <patternset id="src.ratype">
