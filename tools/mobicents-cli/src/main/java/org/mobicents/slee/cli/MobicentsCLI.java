@@ -143,9 +143,9 @@ public class MobicentsCLI {
 			data3 = args[3 + k];
 
 		try {
-			SleeCommandInterface sleeCommandInterface = new SleeCommandInterface(
-					"jnp://" + host + ":" + jnpPort, user, password);
-
+			//SleeCommandInterface sleeCommandInterface = new SleeCommandInterface(
+			//		, user, password);
+			SleeCommandInterface sleeCommandInterface = new SleeCommandInterface("jnp://" + host + ":" + jnpPort);
 			Object result = sleeCommandInterface.invokeOperation(command,
 					data1, data2, data3);
 

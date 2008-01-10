@@ -45,9 +45,9 @@ public class MobicentsManagementAntTask extends Task {
 
 				SleeCommandInterface slee = null;
 
-				slee = new SleeCommandInterface(jndiurl, this.getUser(), this
-						.getPassword());
-
+				//slee = new SleeCommandInterface(jndiurl, this.getUser(), this
+				//		.getPassword());
+				slee = new SleeCommandInterface(jndiurl);
 				for (int i = 0; i < subTasks.size(); i++) {
 					SubTask task = (SubTask) subTasks.elementAt(i);
 
