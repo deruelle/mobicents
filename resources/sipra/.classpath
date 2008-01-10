@@ -4,17 +4,9 @@
 	<classpathentry kind="src" path="tests/src"/>
 	<classpathentry kind="src" path="ratype/src"/>
 	<classpathentry kind="src" path="sip-services/src"/>
-	<classpathentry kind="lib" path="lib/slee_1_1.jar"/>
-	<classpathentry kind="lib" path="lib/mobicents_lib.jar"/>
-	<classpathentry kind="lib" path="lib/concurrent.jar"/>
-	<classpathentry kind="lib" path="lib/jboss-common.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry sourcepath="/jain-sip" kind="lib" path="lib/JainSipApi1.2.jar"/>
 	<classpathentry kind="lib" path="lib/JainSipRi1.2.jar"/>
-	<classpathentry kind="lib" path="lib/slee-tasks.jar"/>
-	<classpathentry kind="lib" path="lib/sleetck.jar"/>
-	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/jta.jar"/>
 	<classpathentry kind="lib" path="tests/lib/SipStackBinder.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<!--classpathentry kind="output" path="classes"/-->
 </classpath>
