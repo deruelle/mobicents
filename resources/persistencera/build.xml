@@ -17,7 +17,6 @@
 
 
 	<fileset id="ra.libs.ra" dir="${ant.file.Persistence_RA_Project}/../lib">
-		<exclude name="mobicents_lib.jar" />
 		<!--exclude name="javassist.jar" /-->
 		<!-- IT CONFLICTS WITH javassist.jar from mc -->
 		<include name="*.jar" />
