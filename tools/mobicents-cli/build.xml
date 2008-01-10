@@ -11,8 +11,7 @@
 	<path id="cli.class.path">
 		<!--pathelement location="${jboss.home}/server/all/deploy/mobicents.sar"/-->
 		<!--pathelement location="${jboss.home}/server/all/deploy/mobicents.sar/slee_1_1.jar" /-->
-		<pathelement location="${mobicents.home}/classes" />
-		<pathelement location="${mobicents.home}/lib/slee_1_1.jar" />
+		<path refid="mobicents.core.classpath"/>
 	</path>
 
 
@@ -44,7 +43,7 @@
 		<mkdir dir="${classes.tasks}" />
 		<mkdir dir="${jars}" />
 
-		<javac srcdir="src/main" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/**/*.java">
+		<javac srcdir="src/main/java" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/**/*.java">
 			<classpath>
 				<path refid="cli.class.path" />
 				<pathelement location="${ant.file.mobicents-cli}/../../../core/jain-slee-1.0-tck/lib/ant.jar" />

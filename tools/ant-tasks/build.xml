@@ -28,7 +28,7 @@
    <target name="build-tasks">
      <mkdir dir="${classes.tasks}"/>
      <mkdir dir="${jars}"/>
-     <javac srcdir="src/main" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/ant/**/*.java">
+     <javac srcdir="src/main/java" destdir="${classes.tasks}" deprecation="on" includes="org/mobicents/ant/**/*.java">
          <classpath>
             <path refid="project.class.path"/>
          </classpath>
@@ -52,6 +52,7 @@
 
    <target name="clean-jars">
       <delete dir="${jars}" quiet="true"/>
+   	  <delete dir="${classes.tasks}"/>
    </target>
 
    <target name="clean" depends="clean-all-classes,clean-jars"/>
