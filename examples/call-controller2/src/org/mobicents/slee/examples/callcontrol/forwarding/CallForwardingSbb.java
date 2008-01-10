@@ -26,10 +26,11 @@ import javax.slee.*;
 
 import org.mobicents.slee.examples.callcontrol.common.SubscriptionProfileSbb;
 import org.mobicents.slee.examples.callcontrol.profile.*;
+import org.mobicents.slee.services.sip.common.LocationServiceException;
+import org.mobicents.slee.services.sip.common.RegistrationBinding;
 import org.mobicents.slee.services.sip.common.SipSendErrorResponseException;
-import org.mobicents.slee.services.sip.registrar.LocationService;
-import org.mobicents.slee.services.sip.registrar.LocationServiceException;
-import org.mobicents.slee.services.sip.registrar.RegistrationBinding;
+import org.mobicents.slee.services.sip.location.cache.LocationService;
+
 
 /**
  * 
