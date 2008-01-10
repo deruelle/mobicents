@@ -7,11 +7,15 @@
         <property name="test.reports" value="./reports" />
 	<property name="test.class.name" value="org.mobicents.sleetests.httpservletra.HttpServletRATest" />
 
+	<import file="${ant.file.HttpServletRAExampleTest}/../../../lib/build.xml"/>
+	
+	
 	<path id="test.classpath">
 	  <pathelement location="${classes}" />
 	  <fileset dir="${lib}">
 	    <include name="**/*.jar"/>
 	  </fileset>
+		<path refid="examples-libraries"/>
 	</path>
 
 	<!-- TASKS TO ENSURE BUILD DIRECTORIES -->
