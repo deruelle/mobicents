@@ -71,19 +71,28 @@
 
 	<target name="clean-events">
 		<delete dir="ratype/events/classes" />
+		<delete dir="ratype/events/jars"/>
+		<!--
 		<delete file="ratype/events/jars/${ra.name}-event.jar" />
+		-->
 	</target>
 
 	<target name="clean-ratype">
 		<delete dir="ratype/classes" />
+		<delete dir="ratype/jars"/>
+		<!--
 		<delete file="ratype/jars/${ra.name}-ratype.jar" />
 		<delete file="ratype/jars/${ra.name}-ratype-DU.jar" />
+		-->
 	</target>
 
 	<target name="clean-ra">
 		<delete dir="ra/classes" />
+		<delete dir="ra/jars"/>
+		<!--
 		<delete file="ra/jars/${ra.name}-ra.jar" />
 		<delete file="ra/jars/${ra.name}-ra-DU.jar" />
+		-->
 	</target>
 
 	<target name="clean-release">

@@ -23,6 +23,8 @@
 			     º service.src.path - the relative path, from project's
 			       home, to the service files;
 			       
+			     º service.inludes.src.path - this is path with all required files to run
+			       
 		    2. The SLEE service descriptors files must be named:
 		       
 		         º sbb jar descriptor - service.name + "-sbb-jar.xml"
@@ -48,7 +50,7 @@
 	-->
 	
 	<property name="compile.as.debug" value="false" />
-	
+	<property name="service.inludes.src.path" value="**/*.java"/>
 	<fileset id="service.other.jars" file="." />
 	
 	<import file="${ant.file.Mobicents Common Ant Targets for SLEE Services}/../mobicents-ant-common-properties.xml"/>
@@ -56,7 +58,7 @@
 	<target name="build-sbb">
 	  	<mkdir dir="classes/${service.name}-sbb"/>		
 		<mkdir dir="jars"/>
-		<javac destdir="classes/${service.name}-sbb" srcdir="src" debug="${compile.as.debug}">
+		<javac destdir="classes/${service.name}-sbb" srcdir="src" debug="${compile.as.debug}" includes="${service.inludes.src.path}">
 		    <classpath>
 		    	<path refid="service.classpath"/>
 		    </classpath>	

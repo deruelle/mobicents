@@ -62,7 +62,7 @@
 	<property name="tests" value="tests" />
 	<property name="slee-tck-tests-pattern" value="${tests}" />
 
-	<property name="src" value="src/main" />
+	<property name="src" value="src/main/java" />
 	<property file="${node}.port.properties" />
 
 	<!-- JUNIT TEST RESULT XML FILE NAME -->
