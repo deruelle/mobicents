@@ -3,7 +3,7 @@
 
 	<property name="compile.as.debug" value="true" />
 
-	
+
 	<import file="$${ant.file.RulesResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="rules" />
@@ -20,10 +20,11 @@
 		<fileset dir="${jboss.home}">
 			<include name="lib/jboss-system.jar" />
 			<include name="lib/jboss-jmx.jar" />
-			<include name="lib/jboss-common.jar" />
 			<include name="lib/concurrent.jar" />
 			<include name="client/jbossall-client.jar" />
+			<include name="lib/jboss-common.jar" />
 		</fileset>
+
 	</path>
 
 	<fileset id="ra.libs.ra" dir="lib">
@@ -36,7 +37,8 @@
 	<property name="management.deploy.dir" value="${jboss.home}/server/all/deploy" />
 
 	<target name="clean-management">
-		<delete dir="${management.dir}/sar" />		
+		<delete dir="${management.dir}/${management.sar}" />
+		<delete dir="${management.dir}/classes" />
 	</target>
 
 	<target name="build-management" description="Builds the Management SAR for Rules RA">
@@ -76,5 +78,6 @@
 
 	</target>
 
+	<target name="clean" depends="clean-events,clean-ratype,clean-ra,clean-management" />
 </project>
 
