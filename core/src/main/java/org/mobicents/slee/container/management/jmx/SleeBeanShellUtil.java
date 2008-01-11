@@ -318,17 +318,17 @@ public class SleeBeanShellUtil {
 	 *            entity should be constructed from.
 	 * @param entityName
 	 *            the name of the resource adaptor entity to create.
-	 * @param properties
-	 *            the configuration properties for the resource adaptor entity.
+	 * @param propertiesURL
+	 *            URL pointing to properties file that must be used to configure RA Entity
 	 */
 	public void createRaEntity(String resourceAdaptorID, String entityName,
-			String properties) throws Exception {
+			String propertiesURL) throws Exception {
 
 		try {
 
 			if (resourceAdaptorID != null & entityName != null)
 				sci.invokeOperation("-createRaEntity", resourceAdaptorID,
-						entityName, properties);
+						entityName, propertiesURL);
 
 		} catch (java.lang.SecurityException seEx) {
 			// Log the error
