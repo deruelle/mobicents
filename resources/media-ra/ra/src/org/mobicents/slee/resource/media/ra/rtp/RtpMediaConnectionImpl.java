@@ -104,6 +104,7 @@ public class RtpMediaConnectionImpl extends BaseMediaConnection
     private Format currentFormat;
     
     private SendStream sendStream;
+    private static final String LOCAL_HOST = "org.mobicents.LOCAL_HOST";
     /**
      * Creates a new instance of RtpMediaConnectionImpl
      *
@@ -122,7 +123,9 @@ public class RtpMediaConnectionImpl extends BaseMediaConnection
         }
         
         try {
-            InetAddress localhost = InetAddress.getLocalHost();
+        	
+            //InetAddress localhost = InetAddress.getLocalHost();
+        	InetAddress localhost = InetAddress.getByName(ra.properties.getProperty(LOCAL_HOST));         	
             localAddress = new SessionAddress(localhost, SessionAddress.ANY_PORT);
             //localAddress = new SessionAddress(localhost, PORT++);
         } catch (UnknownHostException e) {
