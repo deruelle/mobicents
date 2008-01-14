@@ -110,7 +110,17 @@
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/user/UserSbb-sbb-jar.xml" tofile="classes/UserSbb-sbb/sbb-jar.xml" />
+	
+		<copy todir="classes/UserSbb-sbb">
+			<filterset>
+				<filtersfile file="../convergeddemo.properties"/>			
+			</filterset>
+       			<fileset dir="src/org/mobicents/slee/service/user">
+	   			<include name="sbb-jar.xml" />
+   	   		</fileset>
+		</copy>
+
+		<!-- copy file="src/org/mobicents/slee/service/user/UserSbb-sbb-jar.xml" tofile="classes/UserSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/UserSbb-sbb.jar">
 			<metainf dir="classes/UserSbb-sbb" includes="sbb-jar.xml" />
@@ -133,7 +143,17 @@
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-sbb-jar.xml" tofile="classes/OrderDeliverDateSbb-sbb/sbb-jar.xml" />
+
+		<copy todir="classes/OrderDeliverDateSbb-sbb">
+			<filterset>
+				<filtersfile file="../convergeddemo.properties"/>			
+			</filterset>
+       			<fileset dir="src/org/mobicents/slee/service/user/delivery">
+	   			<include name="sbb-jar.xml" />
+   	   		</fileset>
+		</copy>
+
+		<!-- copy file="src/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-sbb-jar.xml" tofile="classes/OrderDeliverDateSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/OrderDeliverDateSbb-sbb.jar">
 			<metainf dir="classes/OrderDeliverDateSbb-sbb" includes="sbb-jar.xml" />
@@ -156,7 +176,17 @@
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/user/ship/OrderShipDateSbb-sbb-jar.xml" tofile="classes/OrderShipDateSbb-sbb/sbb-jar.xml" />
+
+		<copy todir="classes/OrderShipDateSbb-sbb">
+			<filterset>
+				<filtersfile file="../convergeddemo.properties"/>			
+			</filterset>
+       			<fileset dir="src/org/mobicents/slee/service/user/ship">
+	   			<include name="sbb-jar.xml" />
+   	   		</fileset>
+		</copy>
+
+		<!-- copy file="src/org/mobicents/slee/service/user/ship/OrderShipDateSbb-sbb-jar.xml" tofile="classes/OrderShipDateSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/OrderShipDateSbb-sbb.jar">
 			<metainf dir="classes/OrderShipDateSbb-sbb" includes="sbb-jar.xml" />
@@ -183,7 +213,17 @@
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/callcontrol/CallControlSbb-sbb-jar.xml" tofile="classes/CallControlSbb-sbb/sbb-jar.xml" />
+
+		<copy todir="classes/CallControlSbb-sbb">
+			<filterset>
+				<filtersfile file="../convergeddemo.properties"/>			
+			</filterset>
+       			<fileset dir="src/org/mobicents/slee/service/callcontrol">
+	   			<include name="sbb-jar.xml" />
+   	   		</fileset>
+		</copy>
+
+		<!-- copy file="src/org/mobicents/slee/service/callcontrol/CallControlSbb-sbb-jar.xml" tofile="classes/CallControlSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/CallControlSbb-sbb.jar">
 			<metainf dir="classes/CallControlSbb-sbb" includes="sbb-jar.xml" />
@@ -201,7 +241,17 @@
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/admin/AdminSbb-sbb-jar.xml" tofile="classes/AdminSbb-sbb/sbb-jar.xml" />
+
+		<copy todir="classes/AdminSbb-sbb">
+			<filterset>
+				<filtersfile file="../convergeddemo.properties"/>			
+			</filterset>
+       			<fileset dir="src/org/mobicents/slee/service/admin">
+	   			<include name="sbb-jar.xml" />
+   	   		</fileset>
+		</copy>
+
+		<!-- copy file="src/org/mobicents/slee/service/admin/AdminSbb-sbb-jar.xml" tofile="classes/AdminSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/AdminSbb-sbb.jar">
 			<metainf dir="classes/AdminSbb-sbb" includes="sbb-jar.xml" />

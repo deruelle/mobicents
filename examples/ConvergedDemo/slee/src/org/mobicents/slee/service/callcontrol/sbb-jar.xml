@@ -114,12 +114,12 @@
 		<env-entry>
 			<env-entry-name>callControlSipAddress</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
-			<env-entry-value>sip:admin@nist.gov</env-entry-value>
+			<env-entry-value>@caller.sip@</env-entry-value>
 		</env-entry>
 		<env-entry>
 			<env-entry-name>password</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
-			<env-entry-value>password</env-entry-value>
+			<env-entry-value>@caller.password@</env-entry-value>
 		</env-entry>
 		<resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>

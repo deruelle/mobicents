@@ -137,7 +137,7 @@ public abstract class AdminSbb extends CommonSbb {
 		stringBuffer.append(event.getCustomerName());
 		stringBuffer.append(" has placed an order of $");
 		stringBuffer.append(event.getAmmount());
-		stringBuffer.append(". Press 1 to send to Approve and 2 to Reject.");
+		stringBuffer.append(". Press 1 to approve and 2 to reject.");
 
 		ttsSession.textToAudioFile(stringBuffer.toString());
 
