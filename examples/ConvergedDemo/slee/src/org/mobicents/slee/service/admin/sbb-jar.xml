@@ -149,7 +149,7 @@
       <description>Maximum time (min) before a check is made for Order Approval by manager</description>
       <env-entry-name>waitingTiming</env-entry-name>
       <env-entry-type>java.lang.Long</env-entry-type>
-      <env-entry-value>60000</env-entry-value>
+      <env-entry-value>@order.approval.waitingtime@</env-entry-value>
     </env-entry>        
     
     <resource-adaptor-type-binding>
