@@ -61,6 +61,7 @@ import javax.slee.RolledBackContext;
 import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
+import javax.sip.header.Header;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.resource.media.ratype.ConnectionEvent;
@@ -428,8 +429,11 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		String callId = ((CallIdHeader) ct.getRequest().getHeader(
 				CallIdHeader.NAME)).getCallId();
 		SessionAssociation sa = (SessionAssociation) cache.get(callId);
-		Session session = sa.getSession(callId);
-		session.setToBeCancelledClientTransaction(ct);
+		
+		if(sa != null){
+			Session session = sa.getSession(callId);
+			session.setToBeCancelledClientTransaction(ct);
+		}
 	}
 
 	private SimpleCallFlowState getState(String classNameForState) {
@@ -1202,13 +1206,17 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 	 * @param password
 	 */
 
-	private void sendRequestWithAuthorizationHeader(ResponseEvent event) {
-
+	private void sendRequestWithAuthorizationHeader(ResponseEvent event) {		
+		
 		ClientTransaction ct = null;
+		SessionAssociation sa = null;
 		try {
 			Request request = sipUtils.buildRequestWithAuthorizationHeader(
 					event, getPassword());
-			ct = sipProvider.getNewClientTransaction(request);
+			
+			log.debug("sendRequestWithAuthorizationHeader. request with Auth = "+request); 
+			
+			ct = sipProvider.getNewClientTransaction(request);			
 		} catch (TransactionUnavailableException e) {
 			e.printStackTrace();
 		}
@@ -1230,6 +1238,27 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 								"Error getting dialog in sendRequestWithAuthorizationHeader",
 								e);
 			}
+			
+			//Let us remove mapping between SessionAsscoiation and old Call-ID
+			ClientTransaction ctOld = event.getClientTransaction();
+			Header h = ctOld.getRequest().getHeader(CallIdHeader.NAME);
+			String oldCallId = ((CallIdHeader) h).getCallId();
+			
+			System.out.println("oldCallId = "+oldCallId);
+			
+			sa = (SessionAssociation)cache.get(oldCallId);			
+			
+			Header hNew = ct.getRequest().getHeader(CallIdHeader.NAME);
+			String calleeCallIdNew = ((CallIdHeader) hNew).getCallId();	
+			
+			System.out.println("calleeCallIdNew  = "+calleeCallIdNew );
+			
+			Session oldCalleeSession = sa.getSession(oldCallId);
+			oldCalleeSession.setCallId(calleeCallIdNew);
+			
+			cache.put(calleeCallIdNew, sa);
+			
+			
 		}
 
 		final String callId = dialog.getCallId().getCallId();

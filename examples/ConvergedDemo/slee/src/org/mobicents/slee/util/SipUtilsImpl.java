@@ -251,9 +251,13 @@ public class SipUtilsImpl implements SipUtils {
 		ct.sendRequest();
 	}
 
+	public Request buildInvite(Address fromAddress,
+			Address toAddress, byte[] content, int cSeq)throws ParseException, InvalidArgumentException {
+		return buildInvite(fromAddress,toAddress, content, cSeq, null);
+	}
 
 	public Request buildInvite(Address fromAddress,
-			Address toAddress, byte[] content, int cSeq)
+			Address toAddress, byte[] content, int cSeq, String callId)
 			throws ParseException, InvalidArgumentException {
 
 		// From Header:
@@ -289,7 +293,12 @@ public class SipUtilsImpl implements SipUtils {
 		/*
 		 * Create the request
 		 */
-		final CallIdHeader callIdHeader = sipProvider.getNewCallId();
+		CallIdHeader callIdHeader = sipProvider.getNewCallId();
+		
+        if ((callId!=null) && (callId.trim().length()>0)){
+            callIdHeader.setCallId(callId);
+        }
+        
 		// callId = callIdHeader.getCallId();
 		request = messageFactory.createRequest(requestURI, Request.INVITE,
 				callIdHeader, cseqHeader, fromHeader, toHeader, viaHeadersList,
@@ -423,17 +432,34 @@ public class SipUtilsImpl implements SipUtils {
 			// Clone the previous request since we'd like to modify
 			// it with an authentication header and send it back to the
 			// server.
-			Dialog dialog = event.getDialog();
-			Request requestClone = (Request) request.clone();
+			//Dialog dialog = event.getDialog();
+			//Request requestClone = (Request) request.clone();
 			// Get the sequence number from the request clone
-			CSeqHeader cseqHeader = (CSeqHeader) requestClone
-					.getHeader(CSeqHeader.NAME);
-			try {
-				// Increase the sequence number by one
-				cseqHeader
-						.setSequenceNumber(cseqHeader.getSequenceNumber() + 1);
-			} catch (InvalidArgumentException e) {
-				e.printStackTrace();
+			CSeqHeader cseqHeader = (CSeqHeader) request.getHeader(CSeqHeader.NAME);
+//			try {
+//				// Increase the sequence number by one
+//				cseqHeader
+//						.setSequenceNumber(cseqHeader.getSequenceNumber() + 1);
+//			} catch (InvalidArgumentException e) {
+//				log.error("InvalidArgumentException while setting cseqHeader.setSequenceNumber", e);
+//				e.printStackTrace();
+//			}
+			
+			FromHeader fromHeaderReq = (FromHeader)request.getHeader(FromHeader.NAME);
+			Address fromAddressReq = fromHeaderReq.getAddress();
+			
+			ToHeader toHeader = (ToHeader)request.getHeader(ToHeader.NAME);
+			Address toAddress = toHeader.getAddress();
+			Request newRequest = null; 
+			String callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME)).getCallId();
+			try{
+				newRequest = buildInvite(fromAddressReq, toAddress, null, cseqHeader.getSequenceNumber() + 1, callId);
+			}
+			catch(ParseException parseExc){
+				parseExc.printStackTrace();
+			}
+			catch(InvalidArgumentException invaliArgExc){
+				invaliArgExc.printStackTrace();
 			}
 
 			// Now can begin to build the authentication header using a MD5
@@ -482,9 +508,16 @@ public class SipUtilsImpl implements SipUtils {
 			String fromHost = null;
 			String fromUser = null;
 			int fromPort = 0;
+			
+			String toHost = null;
+			String toUser = null;
+			int toPort = 0;
+			
 			SipURI fromSipURI = null;
+			SipURI toSipURI = null;
 			try {
 				fromSipURI = convertAddressToSipURI(address);
+				toSipURI = convertAddressToSipURI(toAddress);
 			} catch (ParseException e2) {
 				// TODO Auto-generated catch block
 				e2.printStackTrace();
@@ -493,6 +526,11 @@ public class SipUtilsImpl implements SipUtils {
 			fromUser = fromSipURI.getUser();
 			fromPort = fromSipURI.getPort();
 
+			toHost = toSipURI.getHost();
+			toUser = toSipURI.getUser();
+			toPort = toSipURI.getPort();
+			
+			
 			// Appened the port to the fromHost if available
 			if (fromPort != -1) {
 				fromHost += ":" + fromPort;
@@ -501,7 +539,8 @@ public class SipUtilsImpl implements SipUtils {
 			// Get the URI to set in the header
 			SipURI uri = null;
 			try {
-				uri = addressFactory.createSipURI(null, fromHost);
+				//uri = request.getRequestURI();
+				uri = addressFactory.createSipURI(toUser, toHost);
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -552,13 +591,13 @@ public class SipUtilsImpl implements SipUtils {
 					ah = headerFactory.createAuthorizationHeader("Digest");
 					ah.setUsername(fromUser);
 					ah.setRealm(realm);
-					ah.setAlgorithm("md5");
+					ah.setAlgorithm("MD5");
 					ah.setURI(uri);
 					ah.setNonce(nonce);
 
 					ah.setResponse(toHexString(mdbytes));
 
-					requestClone.setHeader(ah);
+					newRequest.setHeader(ah);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -570,20 +609,23 @@ public class SipUtilsImpl implements SipUtils {
 							.createProxyAuthorizationHeader("Digest");
 					pah.setUsername(fromUser);
 					pah.setRealm(realm);
-					pah.setAlgorithm("md5");
+					pah.setAlgorithm("MD5");
 					pah.setURI(uri);
 					pah.setNonce(nonce);
 					pah.setResponse(toHexString(mdbytes));
 
-					requestClone.setHeader(pah);
+					newRequest.setHeader(pah);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
+			
+			System.out.println("********* New Request *******************");
+			System.out.println(newRequest);
 
 			// Return the new request with the proper authorization header.
-			return requestClone;
+			return newRequest;
 
 		}
 	}
