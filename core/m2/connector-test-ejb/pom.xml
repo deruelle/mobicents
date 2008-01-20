@@ -1,0 +1,90 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>1.2.0-beta-1</version>
+	</parent>
+
+	<artifactId>connector-test-ejb</artifactId>
+	<packaging>jar</packaging>
+	<name>Mobicents :: connector-test-ejb</name>
+	<url>http://mobicents.dev.java.net</url>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents</groupId>
+			<artifactId>mobicents</artifactId>
+			<version>1.2.0-beta-1</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<sourceDirectory>../../src/main/</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<configuration>
+							<tasks>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								<echo message="================================="/>
+								
+								<copy todir="target/META-INF" flatten="yes">
+									<fileset dir="../../src/main/">
+										<include name="org/mobicents/slee/test/connector/ejb/META-INF/ejb-jar.xml" />
+										<include name="org/mobicents/slee/test/connector/ejb/META-INF/jboss.xml" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+					<includes>
+						<include>org/mobicents/slee/test/connector/ejb/ConnectorTestHome*</include>
+						<include>org/mobicents/slee/test/connector/ejb/**/*</include>
+						<include>org/mobicents/slee/test/connector/TestEvent*</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+		<!-- doesn't work xml are in a dir structure
+		<resources>
+			<resource>
+				<directory>../../src/main/</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+					<include>org/mobicents/slee/test/connector/ejb/META-INF/ejb-jar.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>../../src/main/</directory>
+				<targetPath>META-INF</targetPath>
+				<includes>
+					<include>org/mobicents/slee/test/connector/ejb/META-INF/jboss.xml</include>
+				</includes>
+			</resource>
+		</resources>
+ 		-->
+	</build>
+
+</project>
+

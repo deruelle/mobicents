@@ -1,0 +1,32 @@
+Build Instructions
+------------------
+
+1. You need Apache Maven 2 installed (http://maven.apache.org/)
+2. You need JBoss AS 4.2 (download from http://labs.jboss.com/jbossas/downloads/)
+3. Make environment variable JBOSS_HOME to point the directory where JBoss AS is installed
+	on Linux: export JBOSS_HOME=/path/to/jboss
+	on Windows: set JBOSS_HOME=/path/to/jboss (or right click "My Computer" -> Properties -> Advanced -> Environment Variables)
+4. Execute "mvn install" in the directory where this README file is located
+5. After a successful build the modules are installed in the server at JBOSS_HOME. Individual artifacts are available in the target directory for each module.
+
+java.net Maven Repository Instructions For Commiters
+----------------------------------------------------
+
+To deploy maven 2 artifacts to maven2-repository on java.net
+(Note: you shall request Maven2 Publisher role on this project), 
+do the following
+
+Add the following lines in your settings.xml (between the <servers> and </servers> tags) 
+maven2 file in the conf directory of your maven 2 installation directory : 
+<server>
+  <id>maven2-repository</id>
+  <username>username</username>
+  <password>password</password>
+</server>
+
+Replace username by your java.net id and the passwrod by your java password. 
+ 
+open up a shell and move until your in the m2 directory of this mobicents project and do 
+mvn deploy
+
+The artifacts should be uploaded.

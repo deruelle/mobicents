@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>1.2.0-beta-1</version>
+	</parent>
+
+	<groupId>org.mobicents</groupId>
+	<artifactId>management-console</artifactId>
+	<packaging>war</packaging>
+	<version>1.0-SNAPSHOT</version>
+
+	<name>management-console Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>1.2.22</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- jslee -->
+		<dependency>
+			<groupId>javax.slee</groupId>
+			<artifactId>jain-slee</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!--  -->
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-common</artifactId>
+			<version>4.2.2.GA</version>
+			<scope>provided</scope>
+		</dependency>
+
+	</dependencies>
+	<!--
+		<repositories>
+		<repository>
+		<id>xi8ix-repository</id>
+		<name>xi8ix Maven2 Repository</name>
+		<url>http://maven.xi8ix.org</url>
+		</repository>
+		</repositories>
+	-->
+	<repositories>
+		<repository>
+			<id>gwt-maven</id>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>../../../tools/mmc/src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<webappDirectory>../../../tools/mmc/WebContent</webappDirectory>
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>../../../tools/mmc/GWT/org.mobicents.slee.container.management.console.ManagementConsole/</directory>
+						</resource>
+					</webResources>
+					<warSourceExcludes>**/.svn/**</warSourceExcludes>
+				</configuration>
+			</plugin>
+	    <!--
+            <plugin>
+                <groupId>com.totsp.gwt</groupId>
+                <artifactId>maven-googlewebtoolkit2-plugin</artifactId>
+		<version>1.5.6</version>
+                <configuration>
+                    <logLevel>ALL</logLevel>
+                    <runTarget>com.me.MyModule/MyHostPage.jsp</runTarget>
+                    <compileTarget>com.me.MyModule</compileTarget>
+                    <generatorRootClasses>com.me.server.MyBean</generatorRootClasses>
+                    <generatorDestinationPackage>com.me.client</generatorDestinationPackage>
+                    <generateGettersAndSetters>true</generateGettersAndSetters>
+                </configuration>
+                <executions> 
+                    <execution> 
+                        <goals> 
+                            <goal>mergewebxml</goal> 
+                            <goal>compile</goal> 
+                        </goals> 
+                    </execution> 
+                </executions>
+            </plugin>
+            -->  
+			
+<!-- 
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<id>ant</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo
+									message="=================================" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-antlr</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+-->			
+		</plugins>
+		<finalName>management-console</finalName>
+	</build>
+</project>

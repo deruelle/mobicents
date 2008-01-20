@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents-parent</artifactId>
+		<version>1.2.0-beta-1</version>
+	</parent>
+
+	<artifactId>mobicents-cli</artifactId>
+	<packaging>jar</packaging>
+	<name>Mobicents :: mobicents-cli</name>
+	<url>http://mobicents.dev.java.net</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents</groupId>
+			<artifactId>mobicents</artifactId>
+			<version>1.2.0-beta-1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.6.5</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<sourceDirectory>../../../tools/mobicents-cli/src/main/java/</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+						<index>true</index>
+						
+						<!-- 
+					       	<manifest>
+					       		<attribute name="Main-Class" value="org.mobicents.slee.cli.MobicentsCLI"/>
+					       		<attribute name="Class-Path" value="file:///${jboss.home}/server/all/deploy/mobicents.sar//
+					       			file:///${jboss.home}/server/all/deploy/mobicents.sar/slee_1_1.jar
+					       			file:///${jboss.home}/lib/jboss-jmx.jar
+					       			file:///${jboss.home}/client/jbossall-client.jar"/>
+					   		</manifest>
+
+							<addDefaultSpecificationEntries>
+								true
+							</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>
+								true
+							</addDefaultImplementationEntries>
+						
+						 -->
+						<manifest>
+							<addClasspath>true</addClasspath>
+                            <!--  <classpathPrefix>repository</classpathPrefix>-->
+						</manifest>
+						<manifestEntries>
+							<mode>development</mode>
+							<url>${pom.url}</url>
+							<key>value</key>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+<!-- 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>dependency-maven-plugin</artifactId>
+                <executions>
+                	<execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                        	<goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                        	<outputDirectory>${project.build.directory}/repository</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+ -->			
+		</plugins>
+	</build>
+
+</project>
