@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+/*****************************************************************
+ *                                                               *
+ *  Mobicents Media Gateway                                      *
+ *                                                               *
+ *****************************************************************/
+-->
+
+
+<server>        
+    <!-- mbean code="org.mobicents.media.server.impl.ann.management.AnnEndpointManagement" 
+           name="media.mobicents:name=ann/1"> 
+        <attribute name="JndiName">/media/annnouncement/Endpoint1</attribute>
+        <attribute name="Player">
+            audio.format = ULAW, 8000 Hz, 8-bits, Mono
+            audio.gain = 0.5
+            audio.quality = 0.5
+        </attribute>
+    </mbean -->
+    <!-- mbean code="org.mobicents.media.server.impl.ann.management.AnnEndpointManagement" 
+           name="media.mobicents:name=ann/2"> 
+        <attribute name="JndiName">/media/annnouncement/Endpoint2</attribute>
+        <attribute name="Player">
+            audio.format = ULAW, 8000 Hz, 8-bits, Mono
+            audio.gain = 0.5
+            audio.quality = 0.5
+        </attribute>
+    </mbean -->
+    
+    <!-- mbean code="org.mobicents.media.server.impl.ivr.management.IVREndpointManagement" 
+           name="media.mobicents:endpoint=ivr/1"> 
+        <attribute name="JndiName">/media/IVR/EPN1</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+    </mbean>
+    <mbean code="org.mobicents.media.server.impl.ivr.management.IVREndpointManagement" 
+           name="media.mobicents:endpoint=ivr/2"> 
+        <attribute name="JndiName">/media/IVR/EPN2</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+    </mbean -->
+    
+    <!-- ANNOUNCEMENT -->
+    <mbean code="org.mobicents.media.server.impl.ann.AnnTrunkManagement" 
+           name="media.mobicents:trunk=announcement"> 
+        <attribute name="JndiName">media/trunk/Announcement</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="Channels">10</attribute>
+    </mbean>
+    <!-- PACKET RELAY -->
+    <mbean code="org.mobicents.media.server.impl.packetrelay.PRTrunkManagement" 
+           name="media.mobicents:trunk=packet-relay"> 
+        <attribute name="JndiName">media/trunk/PacketRelay</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="Channels">10</attribute>
+    </mbean>
+    
+</server>
