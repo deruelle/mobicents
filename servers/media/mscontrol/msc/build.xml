@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="Media Server Control API" default="package" basedir=".">
+    <description>Builds, tests, and runs the project Media server.</description>
+    <!-- import file="nbproject/build-impl.xml"/ -->
+    <!-- import file="nbproject/profiler-build-impl.xml"/-->
+
+    <property name="build.classes.dir" value="classes"/> 
+    <property name="dist.dir" value="jars"/> 
+    <property name="src.dir" value="src"/>
+    <property name="src.test.dir" value="test"/>
+    <property name="build.test.dir" value="build/test"/>
+    
+    <property name="jboss.home" value="c:\jboss-4.2.2.GA" />
+    <property name="libs.home" value="lib"/>
+    <property name="xml" value="xml"/>
+    
+    <path id="compile.class.path">
+        <pathelement location="${jboss.home}/client/log4j.jar" />
+        <pathelement location="../../server/dist/media-server.jar" />
+        <pathelement location="../../server/lib/nist-sdp-1.0.jar" />
+    </path>
+    
+    <target name="init"> 
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+    
+    <target name="javacompile" depends="init" description="Compile">
+        <javac debug="true" deprecation="true" destdir="${build.classes.dir}" srcdir="${src.dir}">
+            <classpath refid="compile.class.path"/>
+        </javac>
+    </target>
+    
+    <target name="clean"> 
+        <delete dir="${build.classes.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+    
+    <target name="package" depends="javacompile">
+        <jar destfile="${dist.dir}/mscontrol.jar">
+            <fileset dir="${build.classes.dir}" />
+        </jar>
+    </target>
+        
+</project>
