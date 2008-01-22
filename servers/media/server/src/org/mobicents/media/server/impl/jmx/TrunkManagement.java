@@ -177,12 +177,14 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
             EndpointManagement endpoint = this.initEndpointManagement();
             endpoint.setJndiName(localName);
             endpoint.setBindAddress(this.getBindAddress());
+            endpoint.setPacketizationPeriod(this.getPacketizationPeriod());
+            endpoint.setPortRange(this.getPortRange());
+            endpoint.setJitter(this.getJitter());
             
             //register Endpoint as MBean
             ObjectName objectName = new ObjectName(name);
             mbeanServer.registerMBean(endpoint, objectName);
             mbeanServer.invoke(objectName, "start", new Object[]{}, new String[]{});
-            
         }
         logger.info("Started Trunk MBean " + this.getServiceName());
     }
