@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See commented blocks below for -->
+<!-- some examples of how to customize the build. -->
+<!-- (If you delete it and reopen the project it will be recreated.) -->
+<project name="Media Server" default="default" basedir=".">
+    <description>Builds, tests, and runs the project Media server.</description>
+    <!-- import file="nbproject/build-impl.xml"/ -->
+    <!-- import file="nbproject/profiler-build-impl.xml"/-->
+
+    <property name="build.classes.dir" value="build/classes"/> 
+    <property name="dist.dir" value="dist"/> 
+    <property name="src.dir" value="src"/>
+    <property name="src.test.dir" value="test"/>
+    <property name="build.test.dir" value="build/test"/>
+    
+    <property name="jboss.home" value="c:\jboss-4.2.2.GA" />
+    <property name="libs.home" value="lib"/>
+    <property name="xml" value="xml"/>
+    
+    <path id="compile.class.path">
+        <fileset dir="${libs.home}">
+            <include name="*.jar"/>
+        </fileset>    
+    </path>
+    
+    <path id="test.class.path">
+        <fileset dir="${dist.dir}">
+            <include name="*.jar"/>
+        </fileset>    
+    </path>
+    
+    <target name="init"> 
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+    
+    <target name="javacompile" depends="init" description="Compile">
+        <javac debug="true" deprecation="true" destdir="${build.classes.dir}" srcdir="${src.dir}">
+            <classpath refid="compile.class.path"/>
+        </javac>
+    </target>
+    
+    <target name="clean"> 
+        <delete dir="${build.classes.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+    
+    <target name="mgcp-control-sbb" depends="javacompile">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/sbb-unit"/>
+        <mkdir dir="${dist.dir}/sbb-unit/META-INF"/>
+        
+        <copy todir="${dist.dir}/sbb-unit/">
+            <fileset dir="${build.classes.dir}">
+                <include name="org/mobicents/media/sbb/"/> 
+            </fileset>
+        </copy>
+        
+        <copy todir="${dist.dir}/sbb-unit/META-INF">
+            <fileset dir="xml/control">
+                <include name="sbb-jar.xml"/> 
+            </fileset>
+        </copy>
+        
+        <jar basedir="${dist.dir}/sbb-unit/" compress="true" 
+             jarfile="${dist.dir}/mgcp-sbb.jar">
+        </jar>
+        
+        <delete dir="${dist.dir}/sbb-unit"/>               
+    </target>
+    
+    <target name="mgcp-control-du" depends="mgcp-control-sbb">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/sbb-service"/>
+        <mkdir dir="${dist.dir}/sbb-service/META-INF"/>
+        <mkdir dir="${dist.dir}/sbb-service/library"/>
+        
+        <copy todir="${dist.dir}/sbb-service/" overwrite="true" file="${dist.dir}/mgcp-sbb.jar"/>
+        <copy todir="${dist.dir}/sbb-service/library/" overwrite="true" file="lib/nist-sdp-1.0.jar"/>
+        <copy todir="${dist.dir}/sbb-service/" overwrite="true" file="xml/control/service.xml"/>
+        
+        <copy todir="${dist.dir}/sbb-service/META-INF">
+            <fileset dir="xml/control">
+                <include name="deployable-unit.xml"/> 
+            </fileset>
+        </copy>
+        
+        <jar basedir="${dist.dir}/sbb-service/" compress="true" 
+             jarfile="${dist.dir}/mgcp-controller.jar">
+        </jar>
+        
+        <delete dir="${dist.dir}/sbb-service"/>                
+    </target>
+    
+    <target name="package" depends="javacompile">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/mediaserver"/>
+        
+        <copy todir="${dist.dir}/mediaserver">
+            <fileset dir="${build.classes.dir}">
+                <include name="org/mobicents/media/server/"/> 
+                <include name="org/mobicents/media/spi/"/> 
+                <include name="net/"/> 
+            </fileset>
+        </copy>
+        <jar basedir="${dist.dir}/mediaserver" compress="true" jarfile="${dist.dir}/media-server.jar"/> 
+        <delete dir="${dist.dir}/mediaserver"/>
+    </target>
+    
+    <target name ="deploy-tests" depends="package">
+        <mkdir dir="${build.test.dir}/WEB-INF"/>
+        <mkdir dir="${build.test.dir}/WEB-INF/classes"/>
+        <mkdir dir="${build.test.dir}/WEB-INF/lib"/>
+        <javac debug="true" deprecation="true" destdir="${build.test.dir}/WEB-INF/classes"
+            srcdir="${src.test.dir}">
+            <classpath refid="compile.class.path"/>
+            <classpath refid="test.class.path"/>
+        </javac>
+        <copy todir="${build.test.dir}/WEB-INF" file="${xml}/test/WEB-INF/jboss-web.xml" overwrite="true"/>
+        <copy todir="${build.test.dir}/WEB-INF" file="${xml}/test/WEB-INF/web.xml" overwrite="true"/>
+        <copy todir="${build.test.dir}" file="${xml}/test/WEB-INF/cactus-report.xsl" overwrite="true"/>
+        <copy todir="${build.test.dir}" file="${xml}/test/dadada.wav" overwrite="true"/>
+        
+        <copy todir="${build.test.dir}/WEB-INF/lib" file="${libs.home}/cactus-1.7.2.jar" overwrite="true"/>
+        <copy todir="${build.test.dir}/WEB-INF/lib" file="${libs.home}/aspectjrt-1.2.1.jar" overwrite="true"/>
+        <copy todir="${build.test.dir}/WEB-INF/lib" file="${libs.home}/junit-3.8.1.jar" overwrite="true"/>
+        <copy todir="${build.test.dir}/WEB-INF/lib" file="${libs.home}/commons-httpclient-2.0.2.jar" overwrite="true"/>
+
+        <jar basedir="${build.test.dir}" compress="true" jarfile="${dist.dir}/test.war"/>
+        <copy todir="${jboss.home}/server/all/deploy" file="${dist.dir}/test.war" overwrite="true"/>
+    </target>
+    
+    <target name="deploy-server" depends="package">
+        <mkdir dir="${jboss.home}/server/all/deploy/mediaserver.sar"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${dist.dir}/media-server.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/mgcp-impl.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/jainmgcp.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/jmf.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/nist-sdp-1.0.jar" overwrite="true"/>
+        
+        <mkdir dir="${jboss.home}/server/all/deploy/mediaserver.sar/META-INF"/>
+        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar/META-INF/" file="${xml}/server/jboss-service.xml" overwrite="true"/>
+    </target>
+    
+    <target name="undeploy-server">
+        <delete dir="${jboss.home}/server/all/deploy/mediaserver.sar"/>
+    </target>
+    
+</project>
