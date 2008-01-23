@@ -51,7 +51,6 @@ public class EventTrigger implements NotificationListener {
 
     public void update(NotifyEvent event) {
         if (event.getID() == eventID) {
-            endpoint.removeNotifyListener(this);
             listener.update(event);
             if (!persistent) {
                 endpoint.removeNotifyListener(this);

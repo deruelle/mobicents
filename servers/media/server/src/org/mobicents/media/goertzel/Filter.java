@@ -62,4 +62,6 @@ public class Filter {
         double r = Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
         return r > threshold;
     } 
+    
+    
 }

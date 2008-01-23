@@ -22,5 +22,10 @@ public interface DtmfDetector {
     public final static int RFC2833 = 1;
     public final static int INBOUND = 2;
     
+    //public void start();
+    //public void stop();
+    
     public void setDtmfMask(String regExp);
+    public void addListener(DtmfListener listener);
+    public void removeListener(DtmfListener listener);
 }

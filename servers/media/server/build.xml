@@ -131,15 +131,15 @@
     </target>
     
     <target name="deploy-server" depends="package">
-        <mkdir dir="${jboss.home}/server/all/deploy/mediaserver.sar"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${dist.dir}/media-server.jar" overwrite="true"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/mgcp-impl.jar" overwrite="true"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/jainmgcp.jar" overwrite="true"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/jmf.jar" overwrite="true"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar" file="${libs.home}/nist-sdp-1.0.jar" overwrite="true"/>
+        <mkdir dir="${jboss.home}/server/default/deploy/mediaserver.sar"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${dist.dir}/media-server.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/mgcp-impl.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/jainmgcp.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/jmf.jar" overwrite="true"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/nist-sdp-1.0.jar" overwrite="true"/>
         
-        <mkdir dir="${jboss.home}/server/all/deploy/mediaserver.sar/META-INF"/>
-        <copy todir="${jboss.home}/server/all/deploy/mediaserver.sar/META-INF/" file="${xml}/server/jboss-service.xml" overwrite="true"/>
+        <mkdir dir="${jboss.home}/server/default/deploy/mediaserver.sar/META-INF"/>
+        <copy todir="${jboss.home}/server/default/deploy/mediaserver.sar/META-INF/" file="${xml}/server/jboss-service.xml" overwrite="true"/>
     </target>
     
     <target name="undeploy-server">
