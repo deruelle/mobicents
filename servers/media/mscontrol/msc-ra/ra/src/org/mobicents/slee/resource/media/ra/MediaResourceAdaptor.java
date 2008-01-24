@@ -161,8 +161,9 @@ public class MediaResourceAdaptor implements ResourceAdaptor,
                 throw new ResourceException(e.getMessage());
             }
             
+            this.initializeNamingContext();
             activities = new HashMap();
-        } catch (ResourceException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new javax.slee.resource.ResourceException(
                     "MediaResourceAdaptor.entityActivated(): " +
