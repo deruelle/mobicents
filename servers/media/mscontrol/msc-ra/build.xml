@@ -6,7 +6,7 @@
     <import file="../../../../core/xml/ant/mobicents-ant-common-ra.xml" />
     
     <property name="ra.name" value="media" />
-    <property name="ra.entity" value="MediaRA" />
+    <property name="ra.entity" value="LocalMs" />
     <property name="ra.id" value="${ant.project.name}#org.mobicents#1.0" />
     
     <path id="ra.classpath">
@@ -21,8 +21,8 @@
         <pathelement location="ratype/events/jars/media-event.jar" />
     </path>
     
-    <fileset id="ra.libs.ratype" dir="lib">
-        <include name="../msc/jars/mscontrol.jar" />
+    <fileset id="ra.libs.ratype" dir="../msc/jars">
+        <include name="mscontrol.jar" />
     </fileset>
     
 </project>
