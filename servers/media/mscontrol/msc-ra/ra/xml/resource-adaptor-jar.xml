@@ -5,7 +5,7 @@
 <resource-adaptor-jar>
     <resource-adaptor id="media_1.0_ra">
         <description>Media resource adaptor</description>
-        <resource-adaptor-name>MediaRA</resource-adaptor-name>
+        <resource-adaptor-name>MediaResourceAdaptor</resource-adaptor-name>
         <resource-adaptor-vendor>org.mobicents</resource-adaptor-vendor>
         <resource-adaptor-version>1.0</resource-adaptor-version>
         <resource-adaptor-type-ref>
