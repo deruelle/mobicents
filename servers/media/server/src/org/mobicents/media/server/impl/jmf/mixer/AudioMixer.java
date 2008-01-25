@@ -22,6 +22,7 @@ import java.util.TimerTask;
 import javax.media.format.AudioFormat;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -48,6 +49,7 @@ public class AudioMixer implements Serializable {
     private int packetSize;
     private int packetPeriod;
     
+    private Logger logger = Logger.getLogger(AudioMixer.class);
     
     /** 
      * Creates a new instance of AudioMixer.

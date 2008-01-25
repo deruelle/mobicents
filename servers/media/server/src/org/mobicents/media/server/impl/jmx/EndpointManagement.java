@@ -215,7 +215,11 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         this.endpoint = createEndpoint();
         
         InetAddress address = InetAddress.getByName(bindAddress);
+        
         this.getEndpoint().setBindAddress(address);
+        this.getEndpoint().setPortRange(portRange);
+        this.getEndpoint().setPacketizationPeriod(packetizationPeriod);
+        this.getEndpoint().setJitter(jitter);
         
         rebind();
         logger.info("Started Endpoint MBean " + this.getJndiName());

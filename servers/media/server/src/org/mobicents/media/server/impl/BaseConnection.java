@@ -42,6 +42,7 @@ import org.mobicents.media.server.impl.rtp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.AdaptorListener;
 import org.mobicents.media.server.impl.rtp.RtpSocketAdaptor;
 import org.mobicents.media.server.impl.rtp.RtpSocketAdaptorImpl;
+import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.*;
 
 /**
@@ -481,10 +482,11 @@ public class BaseConnection implements Connection, AdaptorListener {
 
             for (PushBufferStream stream : streams) {
                 try {
-                    rtpSocket.createSendStream(stream);
+                    SendStream sendStream = rtpSocket.createSendStream(stream);
+                    sendStream.start();
                     if (logger.isDebugEnabled()) {
                         logger.debug("Start transmission  " + stream + 
-                                " to local connection remote peer:" + getPeer(remoteSDP));
+                                " to remote peer:" + getPeer(remoteSDP));
                     }
                 } catch (UnsupportedFormatException e) {
                 } catch (SdpException e) {
