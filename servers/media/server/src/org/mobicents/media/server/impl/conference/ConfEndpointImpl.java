@@ -80,10 +80,10 @@ public class ConfEndpointImpl extends BaseEndpoint {
 
     @Override
     public synchronized void addAudioStream(PushBufferStream stream, String connectionID) {
-        logger.info("Adding audio stream");
+        logger.debug("Adding audio stream");
         AudioFormat fmt = (AudioFormat) stream.getFormat();
 
-        logger.info("Append stream to a conference, stream format: " + fmt);
+        logger.debug("Append stream to a conference, stream format: " + fmt);
 
         //create and register splitter
         LocalSplitter splitter = new LocalSplitter(connectionID);
