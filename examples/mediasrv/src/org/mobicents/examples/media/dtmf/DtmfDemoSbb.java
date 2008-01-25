@@ -16,19 +16,19 @@ package org.mobicents.examples.media.dtmf;
 import javax.slee.ActivityContextInterface;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import org.mobicents.examples.media.BaseDialogSbb;
+import org.mobicents.examples.media.BaseWelcomeConversationSbb;
 import org.mobicents.mscontrol.MsNotifyEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class DtmfDemoSbb extends BaseDialogSbb {
+public abstract class DtmfDemoSbb extends BaseWelcomeConversationSbb {
 
     public static final String IVR_ENDPOINT = "";
     
+    @Override
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        join(IVR_ENDPOINT);
     }
 
     public void unsetSbbContext() {

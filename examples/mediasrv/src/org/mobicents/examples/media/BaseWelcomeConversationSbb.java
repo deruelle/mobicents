@@ -16,13 +16,13 @@ package org.mobicents.examples.media;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.slee.ActivityContextInterface;
-import javax.slee.FactoryException;
+import javax.slee.Address;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
+import org.mobicents.examples.media.events.DialogCompletedEvent;
 import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
@@ -36,36 +36,19 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  *
  * @author Oleg Kulikov
  */
-public abstract class BaseDialogSbb implements Sbb {
+public abstract class BaseWelcomeConversationSbb implements Sbb {
 
     public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(BaseDialogSbb.class);
+    private Logger logger = Logger.getLogger(BaseWelcomeConversationSbb.class);
 
-    public void onConnectionCreated(MsConnectionEvent evt, ActivityContextInterface aci) {
-        MsConnection connection = evt.getConnection();
-        setConnection(connection);
-        join(ANNOUNCEMENT_ENDPOINT);
-    }
-
-    public void onAnnouncementLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        MsLink link = evt.getSource();
-        playAnnouncement(link.getEndpoints()[1], getWelcomeMessage());
-    }
-
-    public void onAnnouncementLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
-    //play error tone;
-    }
-
-    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        MsLink link = this.getLink();
-        link.release();
-    }
-
-    public void join(String endpoint) {
-        MsSession session = getConnection().getSession();
+    public void startConversation(String endpointName) {
+        logger.info("Joining " + endpointName + " with " + ANNOUNCEMENT_ENDPOINT);
+        
+        MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
+        MsSession session = connection.getSession();
         MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 
         ActivityContextInterface linkActivity = null;
@@ -75,11 +58,14 @@ public abstract class BaseDialogSbb implements Sbb {
         }
 
         linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(this.getConnection().getEndpoint(), endpoint);
+        link.join(endpointName, ANNOUNCEMENT_ENDPOINT);
     }
-
-    public void playAnnouncement(String endpoint, String url) throws FactoryException {
-        MsSignalGenerator generator = msProvider.getSignalGenerator(endpoint);
+    
+    
+    public void onAnnouncementLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("Play announcement message: url=" + getWelcomeMessage());
+        MsLink link = evt.getSource();
+        MsSignalGenerator generator = msProvider.getSignalGenerator(link.getEndpoints()[1]);
         try {
             ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
             generatorActivity.attach(sbbContext.getSbbLocalObject());
@@ -88,15 +74,23 @@ public abstract class BaseDialogSbb implements Sbb {
         }
     }
 
-    public abstract String getWelcomeMessage();
-
-    public abstract MsConnection getConnection();
-    public abstract void setConnection(MsConnection connection);
-
-    public void playErrorTone(MsConnection connection) {
+    public void onAnnouncementLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.error("Joining error: cause = " + evt.getCause());
     }
 
-    private MsLink getLink() {
+    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+        logger.info("Dialog completed, fire DIALOG_COMPLETE event");
+        MsLink link = this.getLink();
+        link.release();        
+    }
+
+    public abstract void fireDialogCompletedEvent(DialogCompletedEvent evt, 
+            ActivityContextInterface aci, Address address);
+    
+    
+    public abstract String getWelcomeMessage();
+
+    public MsLink getLink() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
         for (int i = 0; i < activities.length; i++) {
             if (activities[i].getActivity() instanceof MsLink) {

@@ -23,25 +23,26 @@ import org.mobicents.mscontrol.MsLink;
  */
 public class DialogCompletedEvent implements Serializable {
     private MsLink link;
+    private String name;
     
-    public DialogCompletedEvent(MsLink link) {
-        this.link = link;
+    public DialogCompletedEvent(String name) {
+        this.name = name;
     }
     
-    public MsLink getLink() {
-        return link;
+    public String getDialogName() {
+        return name;
     }
     
     @Override
     public boolean equals(Object other) {
         return (other instanceof DialogCompletedEvent) &&
-                ((DialogCompletedEvent) other).link.equals(link);
+                ((DialogCompletedEvent) other).name.equals(name);
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 67 * hash + (this.link != null ? this.link.hashCode() : 0);
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 }

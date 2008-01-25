@@ -11,61 +11,186 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.examples.media.loop;
 
 import javax.slee.ActivityContextInterface;
+import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import org.mobicents.examples.media.BaseDialogSbb;
-import org.mobicents.mscontrol.MsLink;
-import org.mobicents.mscontrol.MsNotifyEvent;
-import org.mobicents.mscontrol.MsSession;
+import javax.slee.Sbb;
+import javax.slee.SbbContext;
+import javax.slee.SbbLocalObject;
+import org.apache.log4j.Logger;
+import org.mobicents.examples.media.Conversation;
+import org.mobicents.examples.media.events.DialogCompletedEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class LoopDemoSbb extends BaseDialogSbb {
+public abstract class LoopDemoSbb implements Sbb {
 
-    public final static String LOOP_ENDPOINT = "";
-    @Override
-    public String getWelcomeMessage() {
-        return "file://c:/sounds/welcome.wav";
+    
+    public final static int STATE_NULL = 0;
+    public final static int STATE_PLAY_WELCOME = 1;
+    public final static int STATE_LOOPBACK = 2;
+    public final static int STATE_FAILED = 3;
+    
+    public final static String CONVERSATION_WELCOME = 
+            "org.mobicents.media.loopback.demo.Welcome";
+    public final static String CONVERSATION_LOOPBACK = 
+            "org.mobicents.media.loopback.demo.Loopback";
+    
+    private int state = STATE_NULL;
+    private SbbContext sbbContext;
+    
+    private final static String[] states = new String[] {
+        "NULL", "PLAY_ANNOUNCEMENT", "LOOPBACK", "FAILED"
+    };
+    
+    private Logger logger = Logger.getLogger(LoopDemoSbb.class);
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.examples.media.Demo#startConversation(String, ActivityContextInterface).
+     */
+    public void startDemo(String endpointName) {
+        this.setUserEndpoint(endpointName);
+        setState(STATE_PLAY_WELCOME, sbbContext.getActivities()[0]);
     }
 
-    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        join(LOOP_ENDPOINT);
+    /**
+     * Change current state.
+     */
+    public void setState(int state, ActivityContextInterface activity) {
+        logger.info("Current state=" + states[this.state] + 
+                ", target state=" + states[state]);
+        this.state = state;
+        switch (state) {
+            case STATE_NULL:
+                break;
+            case STATE_PLAY_WELCOME:
+                playWelcomeMessage(activity);
+                break;
+            case STATE_LOOPBACK:
+                startLoopback(activity);
+                break;
+            case STATE_FAILED :
+                break;
+        }
+    }
+
+    /**
+     * Runs welcome dialog.
+     */
+    public void playWelcomeMessage(ActivityContextInterface activity) {
+        try {
+            ChildRelation childRelation = this.getWelcomeConversationSbb();
+            logger.info("Child relation:" + childRelation);
+            
+            SbbLocalObject locObj = childRelation.create();
+            logger.info("SbbLocalObject: " + locObj);
+            
+            Conversation welcome = (Conversation) childRelation.create();
+            logger.info("Starting welcome conversation");
+            activity.attach(welcome);
+            welcome.startConversation(this.getUserEndpoint());
+        } catch (CreateException e) {
+            setState(STATE_FAILED, activity);
+        }
+    }
+
+    /**
+     * Runs loopback
+     */
+    public void startLoopback(ActivityContextInterface activity) {
+        try {
+            ChildRelation childRelation = this.getLoopbackConversationSbb();
+            Conversation loopback = (Conversation) childRelation.create();
+            logger.info("Starting loopback");
+            activity.attach(loopback);
+            loopback.startConversation(this.getUserEndpoint());
+        } catch (CreateException e) {
+            setState(STATE_FAILED, activity);
+        }
     }
     
-    public void unsetSbbContext() {        
+    /**
+     * Conversation callback handler.
+     * 
+     * @param evt the event instance.
+     * @param aci the activity context interface
+     */
+    public void onDialogCompletedEvent(DialogCompletedEvent evt, ActivityContextInterface aci) {
+        logger.info("Conversation completed: " + evt.getDialogName());
+        String dialogName = evt.getDialogName();
+        if (dialogName.equals(CONVERSATION_WELCOME)) {
+            setState(STATE_LOOPBACK, aci);
+        } else if (dialogName.equals(CONVERSATION_LOOPBACK)) {
+            setState(STATE_NULL, aci);
+        }
     }
 
-    public void sbbCreate() throws CreateException {       
+    /**
+     * CMP field accessor
+     *  
+     * @return the name of the user's endpoint. 
+     */
+    public abstract String getUserEndpoint();
+
+    /**
+     * CMP field accessor
+     *  
+     * @param endpoint the name of the user's endpoint. 
+     */
+    public abstract void setUserEndpoint(String endpointName);
+
+    /**
+     * Relation to Welcome dialog
+     * 
+     * @return child relation object.
+     */
+    public abstract ChildRelation getWelcomeConversationSbb();
+
+    /**
+     * Relation with Loop back dialog.
+     * 
+     * @return child relation object.
+     */
+    public abstract ChildRelation getLoopbackConversationSbb();
+
+    
+    public void setSbbContext(SbbContext sbbContext) {
+        this.sbbContext = sbbContext;
+    }
+    
+    public void unsetSbbContext() {
     }
 
-    public void sbbPostCreate() throws CreateException {        
+    public void sbbCreate() throws CreateException {
     }
 
-    public void sbbActivate() {        
+    public void sbbPostCreate() throws CreateException {
     }
 
-    public void sbbPassivate() {        
+    public void sbbActivate() {
     }
 
-    public void sbbLoad() {        
+    public void sbbPassivate() {
     }
 
-    public void sbbStore() {        
+    public void sbbLoad() {
     }
 
-    public void sbbRemove() {        
+    public void sbbStore() {
     }
 
-    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {        
+    public void sbbRemove() {
     }
 
-    public void sbbRolledBack(RolledBackContext arg0) {        
+    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
     }
 
+    public void sbbRolledBack(RolledBackContext arg0) {
+    }
 }
