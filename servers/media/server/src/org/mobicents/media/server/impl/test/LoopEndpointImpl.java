@@ -60,7 +60,6 @@ public class LoopEndpointImpl extends BaseEndpoint {
             mediaProxy.setPeriod(this.getPacketizationPeriod());
             mediaProxy.setInputStream(stream);
         } catch (UnsupportedFormatException e) {
-            e.printStackTrace();
         }
     }
 
