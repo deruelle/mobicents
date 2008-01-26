@@ -9,7 +9,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.test;
 
 import java.util.ArrayList;
@@ -33,13 +32,12 @@ public class LoopEndpointImpl extends BaseEndpoint {
 
     private transient MediaPushProxy mediaProxy;
     private Format fmt = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    
+
     public LoopEndpointImpl(String localName) {
         super(localName);
-        mediaProxy = new MediaPushProxy(fmt);
-        mediaProxy.setPeriod(20);
+        setMaxConnectionsAvailable(2);
     }
-    
+
     /**
      * (Non Java-doc).
      *
@@ -54,10 +52,12 @@ public class LoopEndpointImpl extends BaseEndpoint {
             super.deleteConnection(connectionID);
         }
     }
-    
+
     @Override
     public void addAudioStream(PushBufferStream stream, String connectionID) {
         try {
+            mediaProxy = new MediaPushProxy(stream.getFormat());
+            mediaProxy.setPeriod(this.getPacketizationPeriod());
             mediaProxy.setInputStream(stream);
         } catch (UnsupportedFormatException e) {
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
     }
 
     @Override
-    public Collection <PushBufferStream> getAudioStreams(BaseConnection connection) {
+    public Collection<PushBufferStream> getAudioStreams(BaseConnection connection) {
         List list = new ArrayList();
         list.add(mediaProxy);
         return list;
@@ -74,5 +74,4 @@ public class LoopEndpointImpl extends BaseEndpoint {
     public void play(int signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
 }
