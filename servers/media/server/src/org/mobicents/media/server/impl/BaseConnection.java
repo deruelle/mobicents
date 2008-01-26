@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
@@ -51,6 +52,8 @@ import org.mobicents.media.server.spi.*;
  */
 public class BaseConnection implements Connection, AdaptorListener {
 
+    private final static Random rnd = new Random();
+    
     private String id;
     private int port;
     private int period = 20;
@@ -66,7 +69,6 @@ public class BaseConnection implements Connection, AdaptorListener {
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;
     private static HashMap defaultCodecs = new HashMap();
-
     static {
         defaultCodecs.put(new Integer(0), new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
         defaultCodecs.put(new Integer(8), new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1));
@@ -119,7 +121,7 @@ public class BaseConnection implements Connection, AdaptorListener {
      * @return hex view of the unique integer.
      */
     private String genID() {
-        return Long.toHexString(System.currentTimeMillis() & 0xffffffff).toUpperCase();
+        return Long.toHexString(System.currentTimeMillis() & rnd.nextInt()).toUpperCase();
     }
 
     /**
