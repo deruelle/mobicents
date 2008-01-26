@@ -182,7 +182,6 @@ public class AudioMixer implements Serializable {
                 } 
             }
 
-            int k = 0;
             int l = 0;
 
             for (int i = 0; i < packetSize; i += 2) {

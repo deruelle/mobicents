@@ -57,6 +57,9 @@ public class LocalSplitter {
 
     public void close() {
         splitter.close();
+        if (logger.isDebugEnabled()) {
+            logger.debug("id=" + this.id + " close splitter");
+        }
     }
 
     public String toString() {

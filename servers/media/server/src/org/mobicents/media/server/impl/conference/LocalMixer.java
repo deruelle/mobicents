@@ -64,6 +64,9 @@ public class LocalMixer {
     }
     
     public void stop() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("id=" + this.id + " stop mixer");
+        }
         mixer.stop();
     }
     

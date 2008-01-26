@@ -18,6 +18,7 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Timer;
 
 /**
  * The basic implementation of the endpoint.
@@ -33,6 +34,10 @@ import java.net.InetAddress;
  * @author Oleg Kulikov.
  */
 public interface Endpoint extends Serializable {
+    /**
+     * Timer instance
+     */
+    public final static Timer TIMER = new Timer();
     
     /**
      * Gets the local name attribute.

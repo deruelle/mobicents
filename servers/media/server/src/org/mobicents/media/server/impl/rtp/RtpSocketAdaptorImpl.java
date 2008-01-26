@@ -30,6 +30,7 @@ import javax.media.Format;
 import javax.media.format.AudioFormat;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -51,6 +52,8 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     private int period = 20;
     private int jitter = 60;
 
+    private Logger logger = Logger.getLogger(RtpSocketAdaptorImpl.class);
+    
     /**
      * Creates a new instance of RtpSocketAdaptorImpl
      */
@@ -91,10 +94,10 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             localhost = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
         }
-        
+
         receiverThread = new Thread(this);
         receiverThread.setPriority(Thread.MAX_PRIORITY);
-        
+
         return port;
     }
 
@@ -126,7 +129,6 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     public void close() {
         //terminate main receive loop
         stopped = true;
-        socket.close();
 
         if (receiverThread.isAlive()) {
             receiverThread.interrupt();
@@ -274,9 +276,6 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             try {
                 socket.receive(udpPacket);
             } catch (SocketTimeoutException e) {
-                if (stopped) {
-                    return;
-                }
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -307,6 +306,11 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             } catch (IllegalArgumentException e) {
                 continue;
             }
+        }
+
+        socket.close();
+        if (logger.isDebugEnabled()) {
+            logger.debug("Gracefully close RTP socket");
         }
     }
 

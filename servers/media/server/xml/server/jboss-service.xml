@@ -32,4 +32,13 @@
         <attribute name="PortRange">1024-65535</attribute>
     </mbean>
     
+    <!-- LOOPBACK ENDPOINT -->
+    <mbean code="org.mobicents.media.server.impl.test.LoopEndpointManagement" 
+           name="media.mobicents:trunk=loopback"> 
+        <attribute name="JndiName">media/test/Loopback/1</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="Jitter">60</attribute>
+        <attribute name="PacketizationPeriod">20</attribute>
+        <attribute name="PortRange">1024-65535</attribute>
+    </mbean>
 </server>
