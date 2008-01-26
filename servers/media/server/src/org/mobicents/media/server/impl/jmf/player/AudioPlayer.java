@@ -52,7 +52,6 @@ public class AudioPlayer {
     private PushBufferAudioStream audioStream;
     
     protected int packetPeriod;
-    protected Timer timer;
 
     public AudioPlayer(int packetPeriod) {
         this.packetPeriod = packetPeriod;
@@ -77,27 +76,7 @@ public class AudioPlayer {
     public void setFormat(AudioFormat format) {
         this.format = format;
     }
-    
-    /**
-     * Assign external timer used for packetization and external synhronization.
-     * If not specified that or null then media transmission will be 
-     * synchronized from local timer.
-     * 
-     * @param timer the timer instance.
-     */
-    public void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-    
-    /**
-     * Gets the timer currently used for media transmission.
-     * 
-     * @return the instance of the used timer.
-     */
-    public Timer getTimer() {
-        return timer;
-    }
-    
+        
     /**
      * Adds player state listener.
      * 
@@ -143,10 +122,6 @@ public class AudioPlayer {
         
         PushBufferDataSource enc = (PushBufferDataSource) processor.getDataOutput();
         enc.start();
-        
-        if (timer == null) {
-            timer = new Timer();
-        }
         
         audioStream = new PushBufferAudioStream(this);
         enc.getStreams()[0].setTransferHandler(audioStream);

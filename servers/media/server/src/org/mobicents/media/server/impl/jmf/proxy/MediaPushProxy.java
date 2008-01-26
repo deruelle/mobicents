@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 import javax.media.Buffer;
 import javax.media.Format;
@@ -28,6 +27,7 @@ import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -39,13 +39,12 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     private BufferTransferHandler transferHandler;
     private AudioFormat fmt = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
     private List<Buffer> buffers = Collections.synchronizedList(new ArrayList());
-    private Timer timer;
     private boolean started = false;
-    private boolean active = false;
     private int sizeInBytes;
     private long seq = 0;
     private Codec codec;
-
+    private TimerTask transmission;
+    
     public MediaPushProxy() {
     }
 
@@ -84,19 +83,16 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
 
     public void start() {
         if (transferHandler != null && !started) {
-            System.out.println("Start proxy, period " + period + " ms");
-            timer = new Timer("MediaProxyTimer");
-            timer.scheduleAtFixedRate(new Transmission(this), 0, period);
+            transmission = new Transmission(this);
+            Endpoint.TIMER.scheduleAtFixedRate(transmission, 0, period);
             started = true;
         }
     }
 
     public void stop() {
         if (started) {
-            System.out.println("Stopped timer for " + period);
-            timer.cancel();
-            timer.purge();
-            timer = null;
+            transmission.cancel();
+            Endpoint.TIMER.purge();
             started = false;
         }
     }

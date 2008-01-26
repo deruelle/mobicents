@@ -19,7 +19,6 @@ package org.mobicents.media.server.impl.ann;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Timer;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
@@ -38,8 +37,8 @@ import org.mobicents.media.server.spi.events.Announcement;
  * @author Oleg Kulikov
  */
 public class AnnEndpointImpl extends BaseEndpoint {
-    public final static Timer TIMER = new Timer();
-    public final static int PACKETIZATION_PERIOD = 20;
+    //public final static Timer TIMER = new Timer();
+   // public final static int PACKETIZATION_PERIOD = 20;
     
     protected transient MediaPushProxy mediaProxy;
     protected transient Logger logger;
@@ -69,9 +68,6 @@ public class AnnEndpointImpl extends BaseEndpoint {
             
             //terminate push proxy 
             mediaProxy.setInputStream(null);
-            
-            //clen timer
-            TIMER.purge();
         } catch (UnsupportedFormatException e) {
         } finally {
             super.deleteConnection(connectionID);
@@ -122,7 +118,8 @@ public class AnnEndpointImpl extends BaseEndpoint {
     public Collection <PushBufferStream> getAudioStreams(BaseConnection connection) {
         List list = new ArrayList();
 
-        mediaProxy = new MediaPushProxy(PACKETIZATION_PERIOD, connection.getAudioFormat());
+        mediaProxy = new MediaPushProxy(this.getPacketizationPeriod(), 
+                connection.getAudioFormat());
         mediaProxy.start();
         
         list.add(mediaProxy);

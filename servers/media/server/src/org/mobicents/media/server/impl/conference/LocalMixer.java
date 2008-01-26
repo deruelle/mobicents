@@ -33,9 +33,10 @@ public class LocalMixer {
     
     private Logger logger = Logger.getLogger(LocalMixer.class);
     
-    public LocalMixer(String id, AudioFormat fmt) throws UnsupportedFormatException {
+    public LocalMixer(String id, AudioFormat fmt, 
+            int packetizationPeriod, int jitter) throws UnsupportedFormatException {
         this.id = id;
-        mixer = new AudioMixer(ConfEndpointImpl.PACKET_PERIOD, fmt);
+        mixer = new AudioMixer(packetizationPeriod, jitter, fmt);
     }
     
     public void add(String id, PushBufferStream pushStream) throws UnsupportedFormatException {

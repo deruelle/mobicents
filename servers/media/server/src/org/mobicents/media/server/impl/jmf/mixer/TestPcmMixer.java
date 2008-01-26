@@ -16,7 +16,6 @@
 
 package org.mobicents.media.server.impl.jmf.mixer;
 
-import java.util.Timer;
 import javax.media.Format;
 import javax.media.Manager;
 import javax.media.Player;
@@ -39,7 +38,7 @@ public class TestPcmMixer {
     public static AudioFormat fmt = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
                 AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
                 
-    public static Timer timer = new Timer();
+    //public static Timer timer = new Timer();
     public static int PERIOD = 20;
     
     /** Creates a new instance of TestPcmMixer */
@@ -49,7 +48,7 @@ public class TestPcmMixer {
     private PushBufferStream startSignal(String url) throws Exception {
         AudioPlayer audioPlayer = new AudioPlayer(PERIOD);
         audioPlayer.setFormat(fmt);
-        audioPlayer.setTimer(timer);
+        //audioPlayer.setTimer(timer);
         //audioPlayer.addListener(new TestListener());
         return audioPlayer.start(url);
     }
@@ -70,8 +69,8 @@ public class TestPcmMixer {
     }
     
     public void test() throws Exception {
-        AudioMixer mixer = new AudioMixer(PERIOD, Codec.PCMU);
-        mixer.setTimer(timer);
+        AudioMixer mixer = new AudioMixer(PERIOD, 100, Codec.PCMU);
+        //mixer.setTimer(timer);
         PushBufferStream s1 = startSignal("file:/c:/sounds/welcome-l.wav");
         PushBufferStream s2 = startSignal("file:/c:/sounds/fox-full.wav");
         

@@ -23,6 +23,7 @@ import javax.media.Format;
 import javax.media.protocol.BufferTransferHandler;
 import javax.media.protocol.ContentDescriptor;
 import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -55,7 +56,7 @@ public class PushBufferAudioStream implements PushBufferStream, BufferTransferHa
     protected void start() {
         if (!started) {
             transmittor = new Transmittor(this);
-            audioPlayer.timer.scheduleAtFixedRate(transmittor, 
+            Endpoint.TIMER.scheduleAtFixedRate(transmittor, 
                     audioPlayer.packetPeriod, audioPlayer.packetPeriod);
             started = true;
         }
@@ -64,7 +65,7 @@ public class PushBufferAudioStream implements PushBufferStream, BufferTransferHa
     protected void stop() {
         if (started) {
             transmittor.cancel();
-            audioPlayer.timer.purge();
+            Endpoint.TIMER.purge();
             started = false;
             media.clear();
         }

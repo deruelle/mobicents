@@ -17,12 +17,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 import javax.media.format.AudioFormat;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -34,10 +34,7 @@ public class AudioMixer implements Serializable {
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-    
-    private static int JITTER = 100;
-    
-    private Timer timer;
+        
     private TimerTask mixer;
     
     private MixerOutputStream outputStream;
@@ -48,6 +45,7 @@ public class AudioMixer implements Serializable {
     
     private int packetSize;
     private int packetPeriod;
+    private int jitter;
     
     private Logger logger = Logger.getLogger(AudioMixer.class);
     
@@ -56,8 +54,9 @@ public class AudioMixer implements Serializable {
      * 
      * @param packetPeriod packetization period in milliseconds. 
      */
-    public AudioMixer(int packetPeriod) {
+    public AudioMixer(int packetPeriod, int jitter) {
         this.packetPeriod = packetPeriod;
+        this.jitter = jitter;
         try {
             this.init();
         } catch (UnsupportedFormatException e) {
@@ -70,8 +69,9 @@ public class AudioMixer implements Serializable {
      * @param packetPeriod packetization period in milliseconds. 
      * @param fmt format of the output stream.
      */
-    public AudioMixer(int packetPeriod, AudioFormat fmt) throws UnsupportedFormatException {
+    public AudioMixer(int packetPeriod, int jitter, AudioFormat fmt) throws UnsupportedFormatException {
         this.packetPeriod = packetPeriod;
+        this.jitter = jitter;
         this.fmt = fmt;
         this.init();
     }
@@ -84,14 +84,6 @@ public class AudioMixer implements Serializable {
     private void init() throws UnsupportedFormatException {
         this.packetSize = 16 * packetPeriod;        
         outputStream = new MixerOutputStream(fmt, packetPeriod);
-    }
-    
-    public Timer getTimer() {
-        return timer;
-    }
-    
-    public void setTimer(Timer timer) {
-        this.timer = timer;
     }
     
     /**
@@ -111,7 +103,7 @@ public class AudioMixer implements Serializable {
      * can not be mixed or decoded.
      */
     public synchronized void addInputStream(PushBufferStream stream) throws UnsupportedFormatException {
-        MixerInputStream buffer = new MixerInputStream(stream, JITTER);
+        MixerInputStream buffer = new MixerInputStream(stream, jitter);
         buffers.add(buffer);
     }
 
@@ -150,10 +142,7 @@ public class AudioMixer implements Serializable {
         if (!started) {
             started = true;
             mixer = new Mixer();
-            if (timer == null) {
-                timer = new Timer();
-            }
-            timer.scheduleAtFixedRate(mixer, packetPeriod, packetPeriod);
+            Endpoint.TIMER.scheduleAtFixedRate(mixer, packetPeriod, packetPeriod);
         }
     }
 
@@ -164,7 +153,7 @@ public class AudioMixer implements Serializable {
         if (started) {
             started = false;
             mixer.cancel();
-            timer.purge();
+            Endpoint.TIMER.purge();
         }
     }
     

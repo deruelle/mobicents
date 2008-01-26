@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
 import javax.media.format.AudioFormat;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
@@ -35,13 +34,9 @@ import org.mobicents.media.server.spi.UnknownSignalException;
  * @author Oleg Kulikov
  */
 public class ConfEndpointImpl extends BaseEndpoint {
-
-    protected final static Timer timer = new Timer();
-    protected final static int PACKET_PERIOD = 20;
     
     private transient HashMap mixers = new HashMap();
     private transient HashMap splitters = new HashMap();
-    private AudioFormat linearAudio = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
 
     public ConfEndpointImpl(String localName) {
@@ -112,7 +107,8 @@ public class ConfEndpointImpl extends BaseEndpoint {
         
         LocalMixer mixer = null;
         try {
-            mixer = new LocalMixer(connection.getId(), connection.getAudioFormat());
+            mixer = new LocalMixer(connection.getId(), connection.getAudioFormat(),
+                    this.getPacketizationPeriod(), this.getJitter());
         } catch (UnsupportedFormatException e) {
         }
 

@@ -47,7 +47,7 @@ public class TestProxy {
         
         audioPlayer = new AudioPlayer(20);
         audioPlayer.setFormat(fmt);
-        audioPlayer.setTimer(timer);
+//        audioPlayer.setTimer(timer);
         audioPlayer.addListener(new TestListener());
     }
 
