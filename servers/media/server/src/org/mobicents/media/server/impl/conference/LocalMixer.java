@@ -9,7 +9,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.conference;
 
 import java.util.Collections;
@@ -26,51 +25,54 @@ import org.mobicents.media.server.impl.jmf.mixer.AudioMixer;
  * @author Oleg Kulikov
  */
 public class LocalMixer {
+
     private String id;
-    
     private Map streams = Collections.synchronizedMap(new HashMap());
     private AudioMixer mixer;
-    
     private Logger logger = Logger.getLogger(LocalMixer.class);
-    
-    public LocalMixer(String id, AudioFormat fmt, 
+
+    public LocalMixer(String id, AudioFormat fmt,
             int packetizationPeriod, int jitter) throws UnsupportedFormatException {
         this.id = id;
         mixer = new AudioMixer(packetizationPeriod, jitter, fmt);
     }
-    
+
     public void add(String id, PushBufferStream pushStream) throws UnsupportedFormatException {
         streams.put(id, pushStream);
         mixer.addInputStream(pushStream);
-        logger.info("id=" + this.id  + ", add stream from connection id=" + id +
-                ", total streams=" + mixer.size());
+        if (logger.isDebugEnabled()) {
+            logger.debug("id=" + this.id + ", add stream from connection id=" + id +
+                    ", total streams=" + mixer.size());
+        }
     }
-    
+
     public PushBufferStream remove(String id) {
         PushBufferStream pushStream = (PushBufferStream) streams.remove(id);
         if (pushStream != null) {
             mixer.removeInputStream(pushStream);
-            logger.info("id=" + this.id  + ", removed stream of connection id=" + id +
-                    ", total streams=" + mixer.size());
+            if (logger.isDebugEnabled()) {
+                logger.debug("id=" + this.id + ", removed stream of connection id=" + id +
+                        ", total streams=" + mixer.size());
+            }
         }
         return pushStream;
     }
-    
+
     public PushBufferStream getOutputStream() {
         return mixer.getOutputStream();
     }
-    
+
     public void start() {
         mixer.start();
     }
-    
+
     public void stop() {
         if (logger.isDebugEnabled()) {
             logger.debug("id=" + this.id + " stop mixer");
         }
         mixer.stop();
     }
-    
+
     @Override
     public String toString() {
         return "LocalMixer[" + id + "]";

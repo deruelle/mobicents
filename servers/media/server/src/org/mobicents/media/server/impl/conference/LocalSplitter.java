@@ -40,8 +40,10 @@ public class LocalSplitter {
     public PushBufferStream newBranch(String id) {
         PushBufferStream branch = splitter.newBranch();
         streams.put(id, branch);
-        logger.info("id=" + this.id + ", created new branch for connection id = " +
-                id + ", branches=" + splitter.getSize());
+        if (logger.isDebugEnabled()) {
+            logger.debug("id=" + this.id + ", created new branch for connection id = " +
+                    id + ", branches=" + splitter.getSize());
+        }
         return branch;
     }
 
@@ -49,8 +51,10 @@ public class LocalSplitter {
         PushBufferStream pushStream = (PushBufferStream) streams.remove(id);
         if (pushStream != null) {
             splitter.closeBranch(pushStream);
-            logger.info("id=" + this.id + ", removed branch for connection id = " +
-                    id + ", branches=" + splitter.getSize());
+            if (logger.isDebugEnabled()) {
+                logger.debug("id=" + this.id + ", removed branch for connection id = " +
+                        id + ", branches=" + splitter.getSize());
+            }
         }
         return pushStream;
     }
