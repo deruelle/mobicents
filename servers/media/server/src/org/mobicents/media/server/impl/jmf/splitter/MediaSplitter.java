@@ -93,7 +93,7 @@ public class MediaSplitter implements Serializable, BufferTransferHandler {
     }
 
     public synchronized PushBufferStream newBranch() {
-        SplitterOutputStream s = new SplitterOutputStream(fmt, null,0);
+        SplitterOutputStream s = new SplitterOutputStream(fmt);
         branches.add(s);
         return s;
     }

@@ -38,27 +38,13 @@ public class SplitterOutputStream implements PushBufferStream {
     private Format fmt;
     private BufferTransferHandler transferHandler;
     private List<Buffer> buffers = Collections.synchronizedList(new ArrayList());
-    private boolean started = false;
-    private Thread runThread;
-    private Timer timer;
-    private TimerTask transmittor;
-    private int duration;
 
-    public SplitterOutputStream(Format fmt, Timer timer, int duration) {
+    public SplitterOutputStream(Format fmt) {
         if (fmt != null) {
             this.fmt = fmt;
         } else {
             this.fmt = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
         }
-
-        if (timer != null) {
-            this.timer = timer;
-        } else {
-            this.timer = new Timer();
-        }
-
-        //transmittor = new Transmitor(this);
-        //timer.scheduleAtFixedRate(transmittor, 0, duration);
     }
 
     public Format getFormat() {
@@ -113,21 +99,6 @@ public class SplitterOutputStream implements PushBufferStream {
     }
 
     protected void close() {
-        started = false;
     }
 
-    private class Transmitor extends TimerTask {
-
-        private PushBufferStream stream;
-
-        public Transmitor(PushBufferStream stream) {
-            this.stream = stream;
-        }
-
-        public void run() {
-            if (transferHandler != null && !buffers.isEmpty()) {
-                transferHandler.transferData(stream);
-            }
-        }
-    }
 }
