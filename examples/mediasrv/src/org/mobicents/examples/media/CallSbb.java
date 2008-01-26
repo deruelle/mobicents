@@ -76,6 +76,7 @@ public abstract class CallSbb implements Sbb {
 
     public void onCallCreated(RequestEvent evt, ActivityContextInterface aci) {
         Request request = evt.getRequest();
+        respond(evt, Response.TRYING);
 
         CallIdHeader callID = (CallIdHeader) request.getHeader(CallIdHeader.NAME);
         FromHeader from = (FromHeader) request.getHeader(FromHeader.NAME);
@@ -96,7 +97,6 @@ public abstract class CallSbb implements Sbb {
             return;
         }
 
-        respond(evt, Response.TRYING);
         respond(evt, Response.RINGING);
         
         MsSession session = msProvider.createSession();

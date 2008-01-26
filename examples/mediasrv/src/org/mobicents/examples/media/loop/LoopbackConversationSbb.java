@@ -36,7 +36,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class LoopbackConversationSbb implements Sbb {
 
-    public final static String LOOP_ENDPOINT = "media/trunk/PacketRelay/$";
+    public final static String LOOP_ENDPOINT = "media/test/Loopback/1";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
@@ -48,10 +48,10 @@ public abstract class LoopbackConversationSbb implements Sbb {
      * @param endpointName the user's endpoint.
      * @param aci the user's activity context interface.
      */
-    public void start(String endpointName) {
+    public void startConversation(String endpointName) {
         logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
         
-        MsConnection connection = (MsConnection) sbbContext.getActivities()[0];
+        MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
         MsSession session = connection.getSession();
         MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 

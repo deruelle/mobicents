@@ -89,14 +89,17 @@ public abstract class WelcomeConversationSbb implements Sbb {
     }
 
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Dialog completed, fire DIALOG_COMPLETE event");
+        logger.info("Announcement complete");
         MsLink link = this.getLink();
-        link.release();    
-        
-        DialogCompletedEvent event = new DialogCompletedEvent(LoopDemoSbb.CONVERSATION_WELCOME);
-        this.fireDialogCompletedEvent(event, sbbContext.getActivities()[0], null);
+        link.release();            
     }
 
+    public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("Dialog completed, fire DIALOG_COMPLETE event");
+        DialogCompletedEvent event = new DialogCompletedEvent(LoopDemoSbb.CONVERSATION_WELCOME);
+        this.fireDialogCompletedEvent(event, this.getUserActivity(), null);
+    }
+    
     public abstract void fireDialogCompletedEvent(DialogCompletedEvent evt, 
             ActivityContextInterface aci, Address address);
     
@@ -115,6 +118,16 @@ public abstract class WelcomeConversationSbb implements Sbb {
         return null;
     }
 
+    public ActivityContextInterface getUserActivity() {
+        ActivityContextInterface activities[] = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+        return null;
+    }
+    
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
         try {
