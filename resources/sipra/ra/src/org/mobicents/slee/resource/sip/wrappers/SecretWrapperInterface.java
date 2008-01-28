@@ -1,6 +1,8 @@
 package org.mobicents.slee.resource.sip.wrappers;
 
 import javax.sip.Transaction;
+
+import org.mobicents.slee.resource.sip.SipActivityHandle;
 /**
  * 
  * This is interface which is implemented by TXs wrapper classes. This way we does not ahve
@@ -13,4 +15,5 @@ import javax.sip.Transaction;
 public interface SecretWrapperInterface {
   public Transaction getRealTransaction();
   public void setDialogWrapper(DialogWrapper wrapperDialog);
+  public SipActivityHandle getActivityHandle();
 }

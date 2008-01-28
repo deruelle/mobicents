@@ -99,6 +99,8 @@ public class DialogWrapper implements
 	
 	private DialogTimeoutTimerTask timerTask;
 	
+	private SipActivityHandle activityHandle;
+	
 	public DialogWrapper(Dialog realDialog, SipResourceAdaptor sipResourceAdaptor) {
 		this.realDialog = realDialog;
 		// WE NEED SOME PLACE WHERE WE CAN STORE WRAPPER AND RETRIEVE IT IN
@@ -116,6 +118,7 @@ public class DialogWrapper implements
 		this.dialogTimer.schedule(timerTask, dialogTimeout);
 							
 		this.sipResourceAdaptor = sipResourceAdaptor;
+		this.activityHandle=new SipActivityHandle(this.getDialogId());
 	}
 
 	public Dialog getRealDialog() {
@@ -253,8 +256,8 @@ public class DialogWrapper implements
 	public void delete() {
 		realDialog.delete();
 		// warn the RA
-		sipResourceAdaptor.processDialogTerminated(new DialogTerminatedEventWrapper(
-				sipResourceAdaptor.getSipFactoryProvider(), this));
+		//sipResourceAdaptor.processDialogTerminated(new DialogTerminatedEventWrapper(
+		//		sipResourceAdaptor.getSipFactoryProvider(), this));
 		// cancel timer
 		this.cancel();
 	}
@@ -649,4 +652,25 @@ public class DialogWrapper implements
 		return key;
 
 	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		
+		super.finalize();
+		
+		try{
+			realDialog.setApplicationData(null);
+			realDialog=null;
+			timerTask.cancel();
+		}catch(Exception e)
+		{
+			
+		}
+	}
+	
+	public SipActivityHandle getActivityHandle()
+	{
+		return this.activityHandle;
+	}
+	
 }

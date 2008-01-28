@@ -1,5 +1,7 @@
 package org.mobicents.slee.resource.sip;
 
+import gov.nist.javax.sip.header.CallID;
+
 import java.util.TooManyListenersException;
 
 import javax.sip.ClientTransaction;
@@ -18,9 +20,6 @@ import javax.sip.TransportAlreadySupportedException;
 import javax.sip.header.CallIdHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
-import javax.slee.resource.ActivityAlreadyExistsException;
-import javax.slee.resource.CouldNotStartActivityException;
-import javax.slee.resource.SleeEndpoint;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.RollbackException;
@@ -33,7 +32,6 @@ import org.mobicents.slee.resource.sip.wrappers.ClientTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.DialogWrapper;
 import org.mobicents.slee.resource.sip.wrappers.SecretWrapperInterface;
 import org.mobicents.slee.resource.sip.wrappers.ServerTransactionWrapper;
-import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
 
 /**
  * <p>

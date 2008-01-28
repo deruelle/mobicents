@@ -47,6 +47,7 @@ import javax.sip.message.Response;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.SleeContainer;
+import org.mobicents.slee.resource.sip.SipActivityHandle;
 import org.mobicents.slee.resource.sip.SipResourceAdaptor;
 
 /**
@@ -74,6 +75,9 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 	private CancelWaitTimerTask cancelTimerTask = null;
 	private DialogWrapper dialogWrapper;
 	
+	private SipActivityHandle activityHandle=null;
+	
+	
 	private static long cancelWait = 5000;
 	
 	// Timer which postpones cancel firing into slee
@@ -94,6 +98,7 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 		this.sipResourceAdaptor = sipResourceAdaptor;
 		serviceContainer = SleeContainer.lookupFromJndi();
 		realTransaction.setApplicationData(this);
+		activityHandle=new SipActivityHandle(ST.getBranchId()+"_"+ST.getRequest().getMethod());
 	}
 
 	public Transaction getRealTransaction() {
@@ -295,5 +300,10 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 		// this.cancelTimerTask.run();
 		this.cancelTimerTask = null;
 		this.inviteCANCEL = null;
+	}
+
+	public SipActivityHandle getActivityHandle() {
+		
+		return this.activityHandle;
 	}
 }

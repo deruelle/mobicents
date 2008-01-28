@@ -2,6 +2,7 @@ package org.mobicents.slee.resource.sip.wrappers;
 
 import javax.sip.ClientTransaction;
 import javax.sip.ServerTransaction;
+import javax.sip.Transaction;
 import javax.sip.TransactionTerminatedEvent;
 
 public class TransactionTerminatedEventWrapper extends
@@ -24,5 +25,18 @@ public class TransactionTerminatedEventWrapper extends
 		// TODO Auto-generated constructor stub
 	}
 	
-
+	public String toString() {
+		
+		Transaction tx=null;
+		if(super.getClientTransaction()==null)
+			tx=super.getServerTransaction();
+		else
+			tx=super.getClientTransaction();
+		
+		return "[TransactionTerminatedEventWrapper ISSERVER[" + (super.getServerTransaction()!=null) + "] BRANCHID[" +tx.getBranchId()
+				 + "] STATE["
+				+ tx.getState() + "] METHOD["+tx.getRequest().getMethod()+"] DIALOG{ " + tx.getDialog()
+				+ " } ]";
+	}
+	
 }

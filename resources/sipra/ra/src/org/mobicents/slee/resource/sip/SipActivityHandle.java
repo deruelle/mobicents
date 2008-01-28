@@ -20,7 +20,7 @@ import javax.slee.resource.ActivityHandle;
  * 
  * @author F.Moggia
  */
-public class SipActivityHandle implements ActivityHandle{
+public class SipActivityHandle implements ActivityHandle, Comparable<SipActivityHandle>{
     String transactionId;
     
     public SipActivityHandle(String transactionId){
@@ -40,4 +40,14 @@ public class SipActivityHandle implements ActivityHandle{
     public String toString() {
         return this.transactionId;
     }
+
+	public int compareTo(SipActivityHandle o) {
+		
+		if(o==null)
+			return 1;
+		else
+			return this.transactionId.compareTo(o.transactionId);
+		
+		
+	}
 }
