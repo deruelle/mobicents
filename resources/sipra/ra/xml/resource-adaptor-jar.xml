@@ -23,12 +23,6 @@
                 </resource-adaptor-class-name>
             </resource-adaptor-class>
         </resource-adaptor-classes>
-        <config-property>
-        	<description>Wheather X events should be fired (to expose copy of internal state of ra) X event == jain slee tck event</description>
-            <config-property-name>fireXEvents</config-property-name>
-            <config-property-type>java.lang.Boolean</config-property-type>
-            <config-property-value>false</config-property-value>
-        </config-property>
         
         <config-property>
         	<description>uS after which dialog if it has not received/send any message is considered to be dead and is expunged</description>
