@@ -1,6 +1,4 @@
 /*
- * CallSbb.java
- *
  * The source code contained in this file is in in the public domain.
  * It can be used in any project or product without prior permission,
  * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
@@ -11,41 +9,45 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.examples.media;
+
+package org.mobicents.examples.media.loop;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.slee.ActivityContextInterface;
-import javax.slee.Address;
+import javax.slee.CreateException;
+import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
-import org.mobicents.examples.media.events.DialogCompletedEvent;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
-import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class BaseWelcomeConversationSbb implements Sbb {
+public abstract class LoopbackSbb implements Sbb {
 
-    public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
+    public final static String LOOP_ENDPOINT = "media/test/Loopback/1";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(BaseWelcomeConversationSbb.class);
-
+    private Logger logger = Logger.getLogger(LoopbackSbb.class);
+    
+    /**
+     * Starts dialog.
+     * 
+     * @param endpointName the user's endpoint.
+     * @param aci the user's activity context interface.
+     */
     public void startConversation(String endpointName) {
-        logger.info("Joining " + endpointName + " with " + ANNOUNCEMENT_ENDPOINT);
+        logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
         
         MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
         MsSession session = connection.getSession();
@@ -58,38 +60,24 @@ public abstract class BaseWelcomeConversationSbb implements Sbb {
         }
 
         linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(endpointName, ANNOUNCEMENT_ENDPOINT);
+        link.join(endpointName, LOOP_ENDPOINT);
     }
     
-    
-    public void onAnnouncementLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Play announcement message: url=" + getWelcomeMessage());
-        MsLink link = evt.getSource();
-        MsSignalGenerator generator = msProvider.getSignalGenerator(link.getEndpoints()[1]);
-        try {
-            ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-            generatorActivity.attach(sbbContext.getSbbLocalObject());
-            generator.apply(Announcement.PLAY, new String[]{getWelcomeMessage()});
-        } catch (UnrecognizedActivityException e) {
-        }
+    /**
+     * Terminates conversation
+     */
+    public void stop() {
+        getLink().release();
     }
 
-    public void onAnnouncementLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+    public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("Link created, Endpoint=" + evt.getSource().getEndpoints()[1]);
+    }
+
+    public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.error("Joining error: cause = " + evt.getCause());
     }
-
-    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Dialog completed, fire DIALOG_COMPLETE event");
-        MsLink link = this.getLink();
-        link.release();        
-    }
-
-    public abstract void fireDialogCompletedEvent(DialogCompletedEvent evt, 
-            ActivityContextInterface aci, Address address);
-    
-    
-    public abstract String getWelcomeMessage();
-
+        
     public MsLink getLink() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
         for (int i = 0; i < activities.length; i++) {
@@ -99,7 +87,7 @@ public abstract class BaseWelcomeConversationSbb implements Sbb {
         }
         return null;
     }
-
+    
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
         try {
@@ -110,4 +98,35 @@ public abstract class BaseWelcomeConversationSbb implements Sbb {
             logger.error("Could not set SBB context:", ne);
         }
     }
+
+    public void unsetSbbContext() {
+    }
+
+    public void sbbCreate() throws CreateException {
+    }
+
+    public void sbbPostCreate() throws CreateException {
+    }
+
+    public void sbbActivate() {
+    }
+
+    public void sbbPassivate() {
+    }
+
+    public void sbbLoad() {
+    }
+
+    public void sbbStore() {
+    }
+
+    public void sbbRemove() {
+    }
+
+    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
+    }
+
+    public void sbbRolledBack(RolledBackContext arg0) {
+    }
+    
 }

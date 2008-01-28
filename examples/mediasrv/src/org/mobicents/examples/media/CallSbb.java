@@ -89,6 +89,7 @@ public abstract class CallSbb implements Sbb {
         ActivityContextInterface daci = null;
         try {
             Dialog dialog = sipProvider.getNewDialog(evt.getServerTransaction());
+            dialog.terminateOnBye(true);
             daci = acif.getActivityContextInterface(dialog);
             daci.attach(sbbContext.getSbbLocalObject());
         } catch (Exception e) {

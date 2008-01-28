@@ -11,9 +11,10 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
+package org.mobicents.examples.media;
 
-package org.mobicents.examples.media.loop;
-
+import java.util.List;
+import org.mobicents.examples.media.cnf.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.slee.ActivityContextInterface;
@@ -24,8 +25,6 @@ import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
-import org.mobicents.examples.media.BaseWelcomeConversationSbb;
-import org.mobicents.examples.media.events.DialogCompletedEvent;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
@@ -40,18 +39,25 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  *
  * @author Oleg Kulikov
  */
-public abstract class WelcomeConversationSbb implements Sbb {
-    
+public abstract class AnnouncementSbb implements Sbb {
+
     public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(BaseWelcomeConversationSbb.class);
-    
-    public void startConversation(String endpointName) {
-        logger.info("Joining " + endpointName + " with " + ANNOUNCEMENT_ENDPOINT);
-        
-        MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
+    private Logger logger = Logger.getLogger(AnnouncementSbb.class);
+
+    public void play(String userEndpoint, 
+            List announcements, boolean keepAlive) {
+        //hold announcement sequence in the activity context interface
+        this.setIndex(0);
+        this.setSequence(announcements);
+
+        //join user endpoint with any of the announcement endpoint
+        ActivityContextInterface connectionActivity = sbbContext.getActivities()[0];
+        logger.info("Joining " + userEndpoint + " with " + ANNOUNCEMENT_ENDPOINT);
+
+        MsConnection connection = (MsConnection) connectionActivity.getActivity();
         MsSession session = connection.getSession();
         MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 
@@ -62,52 +68,57 @@ public abstract class WelcomeConversationSbb implements Sbb {
         }
 
         linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(endpointName, ANNOUNCEMENT_ENDPOINT);
+        link.join(userEndpoint, ANNOUNCEMENT_ENDPOINT);
     }
-    
-    /**
-     * Terminates conversation
-     */
-    public void stopConversation() {
-        
-    }
-    
-    public void onAnnouncementLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Play announcement message: url=" + getWelcomeMessage());
+
+    public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
         MsLink link = evt.getSource();
-        MsSignalGenerator generator = msProvider.getSignalGenerator(link.getEndpoints()[1]);
+        String announcementEndpoint = link.getEndpoints()[1];
+
+        logger.info("Announcement endpoint: " + announcementEndpoint);
+        this.setAnnouncementEndpoint(announcementEndpoint);
+
+        playNext();
+    }
+
+    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+        logger.info("Announcement complete: " + (this.getIndex() - 1));        
+        if (this.getIndex() < this.getSequence().size()) {
+            playNext();
+            return;
+        }
+        
+        if (this.getIndex() == this.getSequence().size() && !this.getKeepAlive()) {
+            MsLink link = this.getLink();
+            link.release();
+        } else {
+            this.setIndex(0);
+            playNext();
+        }
+    }
+
+    public void playNext() {
+        String url = (String) this.getSequence().get(this.getIndex());
+        MsSignalGenerator generator = msProvider.getSignalGenerator(getAnnouncementEndpoint());
         try {
             ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
             generatorActivity.attach(sbbContext.getSbbLocalObject());
-            generator.apply(Announcement.PLAY, new String[]{getWelcomeMessage()});
+            generator.apply(Announcement.PLAY, new String[]{url});
+            this.setIndex(getIndex() + 1);
         } catch (UnrecognizedActivityException e) {
         }
     }
 
-    public void onAnnouncementLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.error("Joining error: cause = " + evt.getCause());
-    }
-
-    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Announcement complete");
-        MsLink link = this.getLink();
-        link.release();            
-    }
-
     public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.info("Dialog completed, fire DIALOG_COMPLETE event");
-        DialogCompletedEvent event = new DialogCompletedEvent(LoopDemoSbb.CONVERSATION_WELCOME);
-        this.fireDialogCompletedEvent(event, this.getUserActivity(), null);
-    }
-    
-    public abstract void fireDialogCompletedEvent(DialogCompletedEvent evt, 
-            ActivityContextInterface aci, Address address);
-    
-    
-    public String getWelcomeMessage() {
-        return "file:/c:/sounds/welcome.wav";
+        ActivityContextInterface connectionAci = this.getUserActivity();
+        connectionAci.detach(sbbContext.getSbbLocalObject());
+        this.fireLinkReleased(evt, connectionAci, null);
     }
 
+    public abstract void fireLinkReleased(MsLinkEvent evt, 
+            ActivityContextInterface aci, Address address);
+    
     public MsLink getLink() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
         for (int i = 0; i < activities.length; i++) {
@@ -127,6 +138,18 @@ public abstract class WelcomeConversationSbb implements Sbb {
         }
         return null;
     }
+
+    public abstract String getAnnouncementEndpoint();
+    public abstract void setAnnouncementEndpoint(String endpoint);
+
+    public abstract int getIndex();
+    public abstract void setIndex(int index);
+
+    public abstract List getSequence();
+    public abstract void setSequence(List sequence);
+
+    public abstract boolean getKeepAlive();
+    public abstract void setKeepAlive(boolean keepAlive);
     
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;

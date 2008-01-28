@@ -11,7 +11,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.examples.media.loop;
+package org.mobicents.examples.media.cnf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,14 @@ import org.mobicents.mscontrol.MsLinkEvent;
  *
  * @author Oleg Kulikov
  */
-public abstract class LoopDemoSbb implements Sbb {
-
+public abstract class ConfDemoSbb implements Sbb {
+    
     private final static String WELCOME_MSG =
-            "http://localhost:8080/msdemo/audio/loopinfo.wav";
+            "http://localhost:8080/msdemo/audio/cnfannouncement.wav";
     
     private SbbContext sbbContext;
-    private Logger logger = Logger.getLogger(LoopDemoSbb.class);
-
+    private Logger logger = Logger.getLogger(ConfDemoSbb.class);
+    
     /**
      * (Non Java-doc).
      * 
@@ -49,10 +49,8 @@ public abstract class LoopDemoSbb implements Sbb {
         try {
             Announcement announcement = (Announcement) childRelation.create();
             sbbContext.getActivities()[0].attach(announcement);
-            
             List sequence = new ArrayList();
             sequence.add(WELCOME_MSG);
-            
             announcement.play(endpointName, sequence, false);
         } catch (CreateException e) {
             logger.error("Unexpected error, Caused by", e);
@@ -64,17 +62,19 @@ public abstract class LoopDemoSbb implements Sbb {
 
     public void onAnnouncementComplete(MsLinkEvent evt, ActivityContextInterface aci) {
         try {
-            ChildRelation childRelation = this.getLoopbackSbb();
-            Conversation loopback = (Conversation) childRelation.create();
-            logger.info("Starting loopback");
-            sbbContext.getActivities()[0].attach(loopback);
-            loopback.startConversation(this.getUserEndpoint());
+            ChildRelation childRelation = this.getForestSbb();
+            Forest forest = (Forest) childRelation.create();
+            sbbContext.getActivities()[0].attach(forest);
+            forest.enter(this.getUserEndpoint());
+            logger.info("Going to the forest");
         } catch (CreateException e) {
             MsConnection connection = (MsConnection)
                     sbbContext.getActivities()[0].getActivity();
             connection.release();
         }
     }
+
+    
 
     /**
      * CMP field accessor
@@ -102,13 +102,13 @@ public abstract class LoopDemoSbb implements Sbb {
      * 
      * @return child relation object.
      */
-    public abstract ChildRelation getLoopbackSbb();
-
-
+    public abstract ChildRelation getForestSbb();
+    
+    
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
     }
-
+    
     public void unsetSbbContext() {
     }
 

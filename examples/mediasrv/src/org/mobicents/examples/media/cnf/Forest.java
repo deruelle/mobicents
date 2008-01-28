@@ -10,27 +10,20 @@
  * usefulness of the software.
  */
 
-package org.mobicents.examples.media;
+package org.mobicents.examples.media.cnf;
 
-import javax.slee.ActivityContextInterface;
 import javax.slee.SbbLocalObject;
 
 /**
- * Represnts dialog.
+ * Represents a conference bridge where for forest sounds.
  * 
  * @author Oleg Kulikov
  */
-public interface Conversation extends SbbLocalObject {
+public interface Forest extends SbbLocalObject {
     /**
-     * Starts dialog.
+     * Starts conversation.
      * 
-     * @param endpointName the user's endpoint.
-     * @param aci the user's activity context interface.
+     * @param endpointName the name of the endpoint to wich user is bound.
      */
-    public void startConversation(String endpointName);
-    
-    /**
-     * Terminates conversation
-     */
-    public void stopConversation();
+    public void enter(String endpointName);
 }

@@ -10,19 +10,21 @@
  * usefulness of the software.
  */
 
-package org.mobicents.examples.media.loop;
+package org.mobicents.examples.media.cnf;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.slee.ActivityContextInterface;
-import javax.slee.Address;
+import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
-import org.mobicents.examples.media.events.DialogCompletedEvent;
+import org.mobicents.examples.media.Announcement;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
@@ -34,22 +36,26 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  *
  * @author Oleg Kulikov
  */
-public abstract class LoopbackConversationSbb implements Sbb {
-
-    public final static String LOOP_ENDPOINT = "media/test/Loopback/1";
+public abstract class ForestSbb implements Sbb {
+    
+    public final static String CNF_ENDPOINT = "media/trunk/Cnf/$";
+    
+    public final static String CRICKETS = "http://localhost:8080/audio/crickets.wav";
+    public final static String MOCKING = "http://localhost:8080/audio/mocking.wav";
+    public final static String CUCKOO = "http://localhost:8080/audio/cuckoo.wav";
+    
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(LoopbackConversationSbb.class);
-    
+    private Logger logger = Logger.getLogger(ForestSbb.class);
+        
     /**
      * Starts dialog.
      * 
      * @param endpointName the user's endpoint.
-     * @param aci the user's activity context interface.
      */
-    public void startConversation(String endpointName) {
-        logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
+    public void enter(String endpointName) {
+        logger.info("Joining " + endpointName + " with " + CNF_ENDPOINT);
         
         MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
         MsSession session = connection.getSession();
@@ -62,36 +68,44 @@ public abstract class LoopbackConversationSbb implements Sbb {
         }
 
         linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(endpointName, LOOP_ENDPOINT);
+        link.join(endpointName, CNF_ENDPOINT);
     }
     
-    /**
-     * Terminates conversation
-     */
-    public void stop() {
-        getLink().release();
-    }
+    public void onConfBridgeCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+        MsLink link = evt.getSource();
+        String endpointName = link.getEndpoints()[1];
 
-    public void onAnnouncementLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Link created, Endpoint=" + evt.getSource().getEndpoints()[1]);
+        logger.info("Created conference bridge: " + endpointName);
+        
+        ChildRelation childRelation = this.getParticipantSbb();
+        try {
+            logger.info("Joining crickets: " + CRICKETS);
+            Announcement crickets = (Announcement) childRelation.create();
+            List cricketVoice = new ArrayList();
+            cricketVoice.add(CRICKETS);
+            crickets.play(endpointName, cricketVoice, true);
+            
+            logger.info("Joining mocking: " + MOCKING);
+            List mockingVoice = new ArrayList();
+            mockingVoice.add(MOCKING);
+            Announcement mocking = (Announcement) childRelation.create();
+            mocking.play(endpointName, mockingVoice, true);
+            
+            logger.info("Joining cuckoo: " + CUCKOO);
+            Announcement cuckoo = (Announcement) childRelation.create();
+            List cuckooVoice = new ArrayList();
+            cuckooVoice.add(CUCKOO);
+            cuckoo.play(endpointName, cuckooVoice, true);
+        } catch (CreateException e) {
+            logger.error("Unexpected error", e);
+        }        
     }
-
-    public void onAnnouncementLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+    
+    public void onConfBridgeFailed(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.error("Joining error: cause = " + evt.getCause());
     }
-    
-    public abstract void fireDialogCompletedEvent(DialogCompletedEvent evt, 
-            ActivityContextInterface aci, Address address);
-    
-    public MsLink getLink() {
-        ActivityContextInterface[] activities = sbbContext.getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsLink) {
-                return (MsLink) activities[i].getActivity();
-            }
-        }
-        return null;
-    }
+        
+    public abstract ChildRelation getParticipantSbb();
     
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
@@ -133,5 +147,4 @@ public abstract class LoopbackConversationSbb implements Sbb {
 
     public void sbbRolledBack(RolledBackContext arg0) {
     }
-    
 }
