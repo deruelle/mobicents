@@ -2385,7 +2385,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 			key=(ComponentKey) sipToSleeEvent.get(EVENT_REQUEST_DIALOG_TERMINATION_EVENT_NAME_1_2);
 			if(key==null)
 			{
-				key=new ComponentKey(EVENT_REQUEST_DIALOG_TERMINATION_EVENT_NAME_1_2,key.getVendor(),key.getVersion());
+				key=new ComponentKey(EVENT_REQUEST_DIALOG_TERMINATION_EVENT_NAME_1_2, this.VENDOR_1_2 ,this.VERSION_1_2);
 				sipToSleeEvent.put(EVENT_REQUEST_DIALOG_TERMINATION_EVENT_NAME_1_2, key);
 			}
 		}

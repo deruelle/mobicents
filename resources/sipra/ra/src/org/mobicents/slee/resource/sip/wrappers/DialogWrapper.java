@@ -89,7 +89,7 @@ public class DialogWrapper implements
 	// EVENTS SHOULD BE FIRED
 	private DialogState lastState = null;
 	// LETS DOUBLE FLAG FOR TerminateOnBye - default value is true
-	private boolean termianteOnBye = true;
+	private boolean termianteOnBye = false;
 	
 	private SipResourceAdaptor sipResourceAdaptor;
 	
@@ -119,6 +119,12 @@ public class DialogWrapper implements
 							
 		this.sipResourceAdaptor = sipResourceAdaptor;
 		this.activityHandle=new SipActivityHandle(this.getDialogId());
+		//try {
+		//	this.realDialog.terminateOnBye(this.termianteOnBye);
+		//} catch (SipException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		//}
 	}
 
 	public Dialog getRealDialog() {
