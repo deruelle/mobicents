@@ -41,4 +41,14 @@
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
     </mbean>
+    
+    <!-- CONF ENDPOINT -->
+    <mbean code="org.mobicents.media.server.impl.conference.ConfEndpointManagement" 
+           name="media.mobicents:endpoint=conf"> 
+        <attribute name="JndiName">media/trunk/Cnf/1</attribute>
+        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="Jitter">60</attribute>
+        <attribute name="PacketizationPeriod">20</attribute>
+        <attribute name="PortRange">1024-65535</attribute>
+    </mbean>
 </server>
