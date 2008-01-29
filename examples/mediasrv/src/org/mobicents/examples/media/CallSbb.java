@@ -223,6 +223,8 @@ public abstract class CallSbb implements Sbb {
     public Demo getDemo(String destination) throws CreateException {
         if (destination.indexOf(LOOP_DEMO) > 0) {
             return (Demo) this.getLoopDemoSbb().create();
+        } else if (destination.indexOf(CONF_DEMO) > 0) {
+            return (Demo) this.getConfDemoSbb().create();
         }
         return null;
     }
@@ -232,6 +234,7 @@ public abstract class CallSbb implements Sbb {
     public abstract void setDestination(String destionation);
 
     public abstract ChildRelation getLoopDemoSbb();
+    public abstract ChildRelation getConfDemoSbb();
 
     private ServerTransaction getServerTransaction() {
         ActivityContextInterface[] activities = sbbContext.getActivities();

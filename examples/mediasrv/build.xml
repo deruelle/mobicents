@@ -4,7 +4,7 @@
 <!-- (If you delete it and reopen the project it will be recreated.) -->
 <project name="Media Server Demo" default="" basedir=".">
 	<description>Builds, tests, and runs the project announcement.</description>
-	<!-- import file="nbproject/build-impl.xml"/ -->
+	<!-- import file="nbproject/build-impl.xml"/-->
 
 	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
 	<import file="${ant.file.announcement}/../../lib/build.xml" />
@@ -42,7 +42,36 @@
 		<delete dir="${build.classes.dir}" />
 		<delete dir="${dist.dir}" />
 	</target>
-
+        
+        <target name="deploy-audio">
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}/res" />
+		<mkdir dir="${dist.dir}/res/audio" />
+		<mkdir dir="${dist.dir}/res/WEB-INF" />
+                
+                <copy todir="${dist.dir}/res/audio">
+                    <fileset dir="audio">
+                        <include name="*.wav"/>
+                    </fileset>                        
+                </copy>
+                <copy todir="${dist.dir}/res">
+                    <fileset dir="audio">
+                        <include name="*.html"/>
+                    </fileset>                        
+                </copy>
+                
+		<copy todir="${dist.dir}/res/WEB-INF">
+			<fileset dir="audio/WEB-INF">
+				<include name="*.xml" />
+			</fileset>
+		</copy>
+                
+		<jar basedir="${dist.dir}/res/" compress="true" jarfile="${dist.dir}/msdemo-audio.war"/>
+		<delete dir="${dist.dir}/res"/>
+                
+                <copy todir="${jboss.home}/server/default/deploy" file="${dist.dir}/msdemo-audio.war" overwrite="true"/>
+        </target>
+            
         <target name="custom-events" depends="javacompile">
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${dist.dir}/events" />

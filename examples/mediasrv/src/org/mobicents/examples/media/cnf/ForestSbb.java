@@ -40,9 +40,9 @@ public abstract class ForestSbb implements Sbb {
     
     public final static String CNF_ENDPOINT = "media/trunk/Cnf/$";
     
-    public final static String CRICKETS = "http://localhost:8080/audio/crickets.wav";
-    public final static String MOCKING = "http://localhost:8080/audio/mocking.wav";
-    public final static String CUCKOO = "http://localhost:8080/audio/cuckoo.wav";
+    public final static String CRICKETS = "http://localhost:8080/msdemo/audio/crickets.wav";
+    public final static String MOCKING = "http://localhost:8080/msdemo/audio/mocking.wav";
+    public final static String CUCKOO = "http://localhost:8080/msdemo/audio/cuckoo.wav";
     
     private SbbContext sbbContext;
     private MsProvider msProvider;
@@ -76,11 +76,14 @@ public abstract class ForestSbb implements Sbb {
         String endpointName = link.getEndpoints()[1];
 
         logger.info("Created conference bridge: " + endpointName);
+        ActivityContextInterface connectionActivity = this.getConnectionActivity();
         
         ChildRelation childRelation = this.getParticipantSbb();
         try {
             logger.info("Joining crickets: " + CRICKETS);
             Announcement crickets = (Announcement) childRelation.create();
+            connectionActivity.attach(crickets);
+            
             List cricketVoice = new ArrayList();
             cricketVoice.add(CRICKETS);
             crickets.play(endpointName, cricketVoice, true);
@@ -89,10 +92,14 @@ public abstract class ForestSbb implements Sbb {
             List mockingVoice = new ArrayList();
             mockingVoice.add(MOCKING);
             Announcement mocking = (Announcement) childRelation.create();
+            connectionActivity.attach(mocking);
+            
             mocking.play(endpointName, mockingVoice, true);
             
             logger.info("Joining cuckoo: " + CUCKOO);
             Announcement cuckoo = (Announcement) childRelation.create();
+            connectionActivity.attach(cuckoo);
+            
             List cuckooVoice = new ArrayList();
             cuckooVoice.add(CUCKOO);
             cuckoo.play(endpointName, cuckooVoice, true);
@@ -106,6 +113,17 @@ public abstract class ForestSbb implements Sbb {
     }
         
     public abstract ChildRelation getParticipantSbb();
+    
+    public ActivityContextInterface getConnectionActivity() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+        
+        return null;
+    }
     
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
