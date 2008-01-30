@@ -45,6 +45,7 @@ import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
 import org.mobicents.mscontrol.signal.Announcement;
+import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.ResourceAdaptorEntity;
@@ -507,6 +508,9 @@ public class MediaResourceAdaptor implements ResourceAdaptor,
                 break;
             case Announcement.FAIL :
                 this.fireEvent("org.mobicents.slee.media.announcement.FAIL", handle, event);
+                break;
+            case Basic.DTMF :
+                this.fireEvent("org.mobicents.slee.media.dtmf.DTMF", handle, event);
                 break;
         }
         try {
