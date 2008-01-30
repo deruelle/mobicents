@@ -39,6 +39,7 @@ import org.mobicents.slee.container.profile.SleeProfileManager;
 import org.mobicents.slee.container.service.Service;
 import org.mobicents.slee.container.service.ServiceComponent;
 import org.mobicents.slee.resource.SleeActivityHandle;
+import org.mobicents.slee.runtime.SbbInvocationState;
 import org.mobicents.slee.runtime.facilities.NullActivityContext;
 import org.mobicents.slee.runtime.facilities.NullActivityFactoryImpl;
 import org.mobicents.slee.runtime.facilities.NullActivityImpl;
@@ -830,7 +831,9 @@ public class EventRouterImpl implements EventRouter {
 							Thread.currentThread().setContextClassLoader(
 									invokerClassLoader);
 
-							sbbEntity = highestPrioritySbbEntity;    
+							sbbEntity = highestPrioritySbbEntity;
+							rootSbbEntityId = sbbEntity.getRootSbbId();
+							
 							sbbEntity.setCurrentEvent(eventObject);
 
 							//Assign an sbb from the pool if was not assigned in initial event processing
@@ -880,29 +883,28 @@ public class EventRouterImpl implements EventRouter {
 								highestPrioritySbbEntity.afterACDetach(ac.getActivityContextId());
 							}
 
-							// CHECK IF WE CAN CLAIM THE ROOT SBB ENTITY 
-							if (sbbEntity != null) {
-								if (!sbbEntity.isRootSbbEntity()) {
-									if (SbbEntityFactory.getSbbEntity(sbbEntity.getRootSbbId()).getAttachmentCount() == 0) {
-										// this entity is not the root sbb entity so we will claim it later
-										rootSbbEntityId = sbbEntity.getRootSbbId();
+							// CHECK IF WE CAN CLAIM THE ROOT SBB ENTITY 							
+							if (rootSbbEntityId != null) {
+								if (SbbEntityFactory.getSbbEntity(rootSbbEntityId).getAttachmentCount() != 0) {
+									// the root sbb entity is not be claimed
+									rootSbbEntityId = null;
+								}
+							}
+							else {
+								// it's a root sbb
+								if (!sbbEntity.isRemoved() && sbbEntity.getAttachmentCount() == 0) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Attachment count for sbb entity "
+												+ sbbEntity
+												.getSbbEntityId()
+												+ " is 0, removing it...");
 									}
-								}
-								else {
-									if (sbbEntity.getAttachmentCount() == 0) {
-										if (logger.isDebugEnabled()) {
-											logger.debug("Attachment count for sbb entity "
-													+ sbbEntity
-													.getSbbEntityId()
-													+ " is 0, removing it...");
-										}
-										//If it's the same entity then this is an "Op and
-										// Remove Invocation Sequence"
-										//so we do the remove in the same invocation
-										// sequence as the Op
-										SbbEntityFactory.removeSbbEntity(sbbEntity,true);
-									}   
-								}
+									//If it's the same entity then this is an "Op and
+									// Remove Invocation Sequence"
+									//so we do the remove in the same invocation
+									// sequence as the Op
+									SbbEntityFactory.removeSbbEntity(sbbEntity,true);
+								}   
 							}   
 
 						}          

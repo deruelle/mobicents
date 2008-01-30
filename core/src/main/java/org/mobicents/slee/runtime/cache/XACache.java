@@ -32,8 +32,9 @@
  */
 package org.mobicents.slee.runtime.cache;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.Status;
 import javax.transaction.SystemException;
@@ -41,8 +42,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.mobicents.slee.container.SleeContainer;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 
@@ -69,11 +68,8 @@ public class XACache {
 
 	/**
 	 * pairs of (ongoing transaction, transactional map)
-	 * Its a WeakHashMap because an entry is not needed  
-	 *   beyond the scope of the transaction its used in.
-	 * 
 	 */
-	private WeakHashMap txLocalViews = new WeakHashMap();
+	private ConcurrentHashMap txLocalViews = new ConcurrentHashMap();
 
 	private static TransactionManager transactionManager = null;
 
@@ -110,7 +106,7 @@ public class XACache {
 	 * @see
 	 * 
 	 */
-	synchronized TxLocalMap getTxLocalMap(Object key) {
+	TxLocalMap getTxLocalMap(Object key) {
 		if (key == null) throw new NullPointerException("key cannot be null");
  		
 		Transaction tx = getTransaction();
@@ -204,7 +200,7 @@ public class XACache {
 		if (txLocalView == null) {
 			// first time called within the current tx scope
 			//   a new tx local view needs to be created
-			txLocalView = new ConcurrentHashMap();
+			txLocalView = new HashMap();
 			txLocalViews.put(tx, txLocalView);
 
 			// a tx call back needs to be register to ensure 
