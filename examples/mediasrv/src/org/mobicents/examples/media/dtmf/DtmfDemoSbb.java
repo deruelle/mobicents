@@ -135,10 +135,10 @@ public abstract class DtmfDemoSbb implements Sbb {
     private void initDtmfDetector(MsConnection connection) {
         MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
         try {
-            dtmfDetector.receive(Basic.DTMF, connection, new String[]{});
             ActivityContextInterface dtmfAci = 
                     mediaAcif.getActivityContextInterface(dtmfDetector);
             dtmfAci.attach(sbbContext.getSbbLocalObject());
+            dtmfDetector.receive(Basic.DTMF, connection, new String[]{});
         } catch (UnrecognizedActivityException e) {
         }
     }
