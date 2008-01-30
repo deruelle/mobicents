@@ -24,4 +24,5 @@ import java.io.Serializable;
  */
 public interface MsSignalDetector extends MsResource {
     public void receive(int signalID, boolean persistent);
+    public void receive(int signalID, MsConnection connection, String[] params);
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalDetector;
 
@@ -49,6 +50,10 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     
     public void receive(int signalID, boolean persistent) {
         new Thread(new SubscribeTx(this, signalID, persistent)).start();
+    }
+    
+    public void receive(int signalID, MsConnection connection, String[] params) {
+        new Thread(new SubscribeTx1(this, signalID, connection, params)).start();
     }
     
     public void update(NotifyEvent event) {
@@ -81,4 +86,30 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
             }
         }
     }
+    
+    private class SubscribeTx1 implements Runnable {
+        private int signalID;
+        private boolean persistent;
+        private NotificationListener listener;
+        private String[] params;
+        private MsConnection connection;
+        
+        public SubscribeTx1(NotificationListener listener, int signalID, 
+                MsConnection connection, String params[])  {
+            this.listener = listener;
+            this.signalID = signalID;
+            this.connection = connection;
+            this.params = params;
+        }
+        
+        public void run() {
+            try {
+                MsConnectionImpl con = (MsConnectionImpl) connection;
+                String connectionID = con.connection.getId();
+                endpoint.subscribe(signalID, connectionID, params, listener);
+            } catch (Exception e) {
+            }
+        }
+    }
+    
 }

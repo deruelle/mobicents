@@ -50,7 +50,7 @@ public class MsConnectionImpl implements MsConnection {
     private MsSessionImpl session;
     private String endpointName;
     
-    private Connection connection;
+    protected Connection connection;
     private Endpoint endpoint;
     
     protected ArrayList <MsConnectionListener> listeners = new ArrayList();
