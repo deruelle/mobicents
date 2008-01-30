@@ -225,6 +225,8 @@ public abstract class CallSbb implements Sbb {
             return (Demo) this.getLoopDemoSbb().create();
         } else if (destination.indexOf(CONF_DEMO) > 0) {
             return (Demo) this.getConfDemoSbb().create();
+        }else if (destination.indexOf(DTMF_DEMO) > 0) {
+            return (Demo) this.getDtmfDemoSbb().create();
         }
         return null;
     }
@@ -235,6 +237,7 @@ public abstract class CallSbb implements Sbb {
 
     public abstract ChildRelation getLoopDemoSbb();
     public abstract ChildRelation getConfDemoSbb();
+    public abstract ChildRelation getDtmfDemoSbb();
 
     private ServerTransaction getServerTransaction() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
