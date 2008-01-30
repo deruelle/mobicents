@@ -26,8 +26,11 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
+import org.mobicents.media.server.impl.dtmf.Rfc2833;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
+import org.mobicents.media.server.spi.dtmf.DtmfDetector;
+import org.mobicents.media.server.spi.events.Basic;
 
 /**
  *
@@ -37,6 +40,8 @@ public class ConfEndpointImpl extends BaseEndpoint {
     
     private transient HashMap mixers = new HashMap();
     private transient HashMap splitters = new HashMap();
+    private transient HashMap dtmfDetectors = new HashMap();
+    
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
 
     public ConfEndpointImpl(String localName) {
@@ -75,9 +80,17 @@ public class ConfEndpointImpl extends BaseEndpoint {
 
     @Override
     public synchronized void addAudioStream(PushBufferStream stream, String connectionID) {
-        logger.debug("Adding audio stream");
         AudioFormat fmt = (AudioFormat) stream.getFormat();
 
+        if (fmt.getEncoding().equals("telephone-event")) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Initialize DTMF detector (RFC2833)");
+            }
+            DtmfDetector d = new Rfc2833(stream);
+            dtmfDetectors.put(connectionID, d);
+            return;
+        }
+        
         logger.debug("Append stream to a conference, stream format: " + fmt);
 
         //create and register splitter
@@ -137,4 +150,18 @@ public class ConfEndpointImpl extends BaseEndpoint {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void subscribe(int eventID, String connectionID, String params[], NotificationListener listener) {
+        switch (eventID) {
+            case Basic.DTMF :
+                DtmfDetector detector = (DtmfDetector) dtmfDetectors.get(connectionID);
+                if (params[0] != null) {
+                    detector.setDtmfMask(connectionID);
+                }
+                detector.addListener(listener);
+                detector.start();
+                break;
+        }
+    }
+    
 }

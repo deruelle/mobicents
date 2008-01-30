@@ -429,14 +429,6 @@ public class BaseConnection implements Connection, AdaptorListener {
             return;
         }
 
-        if (fmt.getEncoding().equals("telephone-event")) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(this + " Initialize DTMF detector (RFC2833)");
-            }
-            //start dtmf detector
-            return;
-        }
-
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Strat transmission to the endpoint");
         }

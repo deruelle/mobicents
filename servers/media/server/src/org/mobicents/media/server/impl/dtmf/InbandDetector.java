@@ -26,8 +26,8 @@ import javax.media.protocol.PushBufferStream;
 import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.dtmf.DtmfDetector;
-import org.mobicents.media.server.spi.dtmf.DtmfListener;
 
 /**
  *
@@ -49,12 +49,13 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
     private String mask= "%d";
     
     private StringBuffer digitBuffer = new StringBuffer();
-    private List <DtmfListener> listeners = new ArrayList();
+    private List <NotificationListener> listeners = new ArrayList();
     private Codec codec;
     private byte[] localBuffer = new byte[8000];
     private int offset = 0;
     private Filter filter = new Filter(100);
     private TimerTask cleanTask;
+    private boolean started = false;
     
     public InbandDetector(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);
@@ -66,19 +67,31 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
         }
     }
         
+    public void start() {
+        this.started = true;
+    }
+    
+    public void stop() {
+        this.started = false;
+    }
+    
     public void setDtmfMask(String mask) {
         this.mask = mask;
     }
 
-    public void addListener(DtmfListener listener) {
+    public void addListener(NotificationListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(DtmfListener listener) {
+    public void removeListener(NotificationListener listener) {
         listeners.remove(listener);
     }
 
     public void transferData(PushBufferStream stream) {
+        if (!started) {
+            return;
+        }
+        
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
@@ -140,8 +153,8 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
     }
     
     private void sendEvent(String digits) {
-        for (DtmfListener listener: listeners) {
-            listener.onDTMF(digits);
+        for (NotificationListener listener: listeners) {
+            listener.update(null);
         }
     }
     

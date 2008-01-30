@@ -13,7 +13,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
@@ -34,44 +33,45 @@ import java.util.Timer;
  * @author Oleg Kulikov.
  */
 public interface Endpoint extends Serializable {
+
     /**
      * Timer instance
      */
     public final static Timer TIMER = new Timer();
-    
+
     /**
      * Gets the local name attribute.
      *
      * @return the local name.
      */
     public String getLocalName();
-    
+
     /**
      * Gets the IP address to which endpoint is bound.
      *
      * @return the IP address to which this endpoint is bound.
      */
     public InetAddress getBindAddress();
-    
+
     /**
      * Modify the bind address.
      *
      * @param the IP address object.
      */
     public void setBindAddress(InetAddress bindAddress);
-        
-   /**
-    * Gets packetization period.
-    * 
-    * The packetization period is the period over which encoded voice bits 
-    * are collected for encapsulation in packets.
-    * 
-    * Higher period will reduce VoIP overhead allowing higher channel utilization
-    * 
-    * @return packetion period for media in milliseconds.
-    */
+
+    /**
+     * Gets packetization period.
+     * 
+     * The packetization period is the period over which encoded voice bits 
+     * are collected for encapsulation in packets.
+     * 
+     * Higher period will reduce VoIP overhead allowing higher channel utilization
+     * 
+     * @return packetion period for media in milliseconds.
+     */
     public Integer getPacketizationPeriod();
-    
+
     /**
      * Modify packetization period.
      * 
@@ -83,7 +83,7 @@ public interface Endpoint extends Serializable {
      * @param period the value of the packetization period in milliseconds.
      */
     public void setPacketizationPeriod(Integer period);
-    
+
     /**
      * Gets the size of the jitter buffer in milliseconds.
      * 
@@ -100,7 +100,7 @@ public interface Endpoint extends Serializable {
      * @return the size of the buffer in milliseconds.
      */
     public Integer getJitter();
-    
+
     /**
      * Modify size of the jitter buffer.
      * 
@@ -117,28 +117,28 @@ public interface Endpoint extends Serializable {
      * @param jitter the new buffer's size in milliseconds
      */
     public void setJitter(Integer jitter);
-    
+
     /**
      * Gets the range of the available port used for RTP connections.
      * 
      * @return the range of available port in the follwing format: low-high
      */
     public String getPortRange();
-    
+
     /**
      * Sets the range of the available port used for RTP connections.
      * 
      * @param portRange string indicating range in the follwing format: low-high
      */
     public void setPortRange(String portRange);
-    
+
     /**
      * Creates new connection with specified mode.
      *
      * @param mode the constant which identifies mode of the connection to be created.
      */
-    public Connection createConnection(int mode) 
-    throws TooManyConnectionsException, ResourceUnavailableException;
+    public Connection createConnection(int mode)
+            throws TooManyConnectionsException, ResourceUnavailableException;
 
     /**
      * Deletes specified connection.
@@ -146,11 +146,11 @@ public interface Endpoint extends Serializable {
      * @param connectionID the identifier of the connection to be deleted.
      */
     public void deleteConnection(String connectionID);
-    
+
     /**
      * Deletes all connection associated with this Endpoint.
      */
-    public void deleteAllConnections();   
+    public void deleteAllConnections();
 
     /**
      * Indicates does this endpoint has connections.
@@ -158,6 +158,7 @@ public interface Endpoint extends Serializable {
      * @return true if endpoint has connections.
      */
     public boolean hasConnections();
+
     /**
      * Apples specified signal.
      *
@@ -167,9 +168,9 @@ public interface Endpoint extends Serializable {
      * @param listener the callback interface.
      * @param keepAlive true if keep signal active.
      */
-    public void play(int signalID, String[] params, String connectionID, 
+    public void play(int signalID, String[] params, String connectionID,
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException;
-    
+
     /**
      * Asks the to detect requested event and report. 
      *
@@ -179,7 +180,20 @@ public interface Endpoint extends Serializable {
      * @param eventID the identifier of the event.
      * @param the Call Agent callback interface currently controlling that endpoint.
      * @persistent true if event is always detected on the endpoint.
-     */ 
-    public void subscribe(int eventID, NotificationListener listener, 
+     */
+    public void subscribe(int eventID, NotificationListener listener,
             boolean persistent);
+
+    /**
+     * Asks the endpoint to detect requested event on a specified connection and report. 
+     *
+     * Such events may include, for example, fax tones, continuity tones, or 
+     * on-hook transition. 
+     * 
+     * @param eventID the identifier of the event.
+     * @param connectionID the identifier of the connection.
+     * @param the Call Agent callback interface currently controlling that endpoint.
+     */
+    public void subscribe(int eventID, String connectionID,String params[], 
+            NotificationListener listener);
 }

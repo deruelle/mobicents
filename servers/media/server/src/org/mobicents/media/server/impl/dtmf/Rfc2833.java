@@ -17,11 +17,16 @@ package org.mobicents.media.server.impl.dtmf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.media.Buffer;
 import javax.media.protocol.BufferTransferHandler;
 import javax.media.protocol.PushBufferStream;
+import org.apache.log4j.Logger;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.dtmf.DtmfDetector;
-import org.mobicents.media.server.spi.dtmf.DtmfListener;
+import org.mobicents.media.server.spi.events.Basic;
+import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
@@ -29,11 +34,21 @@ import org.mobicents.media.server.spi.dtmf.DtmfListener;
  */
 public class Rfc2833 implements DtmfDetector, BufferTransferHandler {
     
-    private String mask= "%d";
+    public final static Timer TIMER = new Timer();
+    
+    private String mask= "\\.";
     private StringBuffer digitBuffer = new StringBuffer();
-    private String current;
-    private boolean detecting = false ;
-    private List <DtmfListener> listeners = new ArrayList();
+    private String current = "";
+    private boolean started = false;
+    private TimerTask cleanTask;
+    private boolean detecting = false;
+    
+    private List <NotificationListener> listeners = new ArrayList();
+    private final static String[] DTMF = new String[]{
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
+    };
+    
+    private Logger logger = Logger.getLogger(Rfc2833.class);
     
     public Rfc2833(PushBufferStream stream) {
         stream.setTransferHandler(this);
@@ -43,15 +58,35 @@ public class Rfc2833 implements DtmfDetector, BufferTransferHandler {
         this.mask = mask;
     }
 
-    public void addListener(DtmfListener listener) {
+    public void start() {
+        this.started = true;
+        cleanTask = new CleanTask();
+        TIMER.scheduleAtFixedRate(cleanTask, 5000, 5000);
+        logger.debug("Detector started");
+    }
+    
+    public void stop() {
+        this.started = false;
+        cleanTask.cancel();
+        TIMER.purge();
+        logger.debug("Detector stopped");
+    }
+    
+    public void addListener(NotificationListener listener) {
         listeners.add(listener);
     }
 
-    public void removeListener(DtmfListener listener) {
+    public void removeListener(NotificationListener listener) {
         listeners.remove(listener);
     }
     
     public void transferData(PushBufferStream stream) {
+        if (!started) {
+            return;
+        }
+        
+        detecting = true;
+        
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
@@ -59,28 +94,78 @@ public class Rfc2833 implements DtmfDetector, BufferTransferHandler {
         }
         
         byte[] data = (byte[]) buffer.getData();
-        int event = data[0] >> 7;
         
-        if (!detecting) {
-            digitBuffer.append(event);
-            detecting = true;
+        String digit = DTMF[data[0]];
+        boolean end = (data[1] & 0x7f) != 0;
+        
+        logger.debug("Arrive packet, digit=" + digit + ", end=" + end);
+        
+        if (!current.equals(digit)) {
+            current = digit;
         }
         
-        boolean end = (event & 0x01) == 0x01;
         if (end) {
-            detecting = false;
+            digitBuffer.append(current);
+            logger.debug("append " + current  + " to digit buffer");
+            
             String digits = digitBuffer.toString();
+            logger.debug("buffer: " + digits);
+            
             if (digits.matches(mask)) {
                 digitBuffer = new StringBuffer();
                 sendEvent(digits);
+                stop();
             }
         }
         
     }
 
     private void sendEvent(String digits) {
-        for (DtmfListener listener: listeners) {
-            listener.onDTMF(digits);
+        NotifyEvent evt = new NotifyEvent(this, Basic.DTMF, getCause(digits), digits);
+        logger.debug("sending event: didgits=" + digits);
+        for (NotificationListener listener: listeners) {
+            listener.update(evt);
         }
     }
+    
+    private int getCause(String seq) {
+        if (seq.equals("0")) {
+            return Basic.CAUSE_DIGIT_0;
+        } else if (seq.equals("1")) {
+            return Basic.CAUSE_DIGIT_1;
+        } else if (seq.equals("2")) {
+            return Basic.CAUSE_DIGIT_2;
+        } else if (seq.equals("3")) {
+            return Basic.CAUSE_DIGIT_3;
+        } else if (seq.equals("4")) {
+            return Basic.CAUSE_DIGIT_4;
+        } else if (seq.equals("5")) {
+            return Basic.CAUSE_DIGIT_5;
+        } else if (seq.equals("6")) {
+            return Basic.CAUSE_DIGIT_6;
+        } else if (seq.equals("7")) {
+            return Basic.CAUSE_DIGIT_7;
+        } else if (seq.equals("8")) {
+            return Basic.CAUSE_DIGIT_8;
+        } else if (seq.equals("9")) {
+            return Basic.CAUSE_DIGIT_9;
+        } else if (seq.equals("10")) {
+            return Basic.CAUSE_DIGIT_STAR;
+        } else if (seq.equals("11")) {
+            return Basic.CAUSE_DIGIT_NUM;
+        } else {
+            return Basic.CAUSE_SEQ;
+        }
+    }
+    
+    private class CleanTask extends TimerTask {
+        public void run() {
+            if (detecting) {
+                detecting = false;
+                return;
+            }
+            digitBuffer = new StringBuffer();
+        }
+    }
+    
 }

@@ -278,6 +278,15 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     /**
+     * (Non Java-doc).
+     *
+     * @see org.mobicents.media.server.spi.Endpoint#detect(int, NotificationListener, boolean);
+     */
+    public void subscribe(int eventID, String connectionID, 
+            String params[], NotificationListener listener) {
+    }
+    
+    /**
      * Imports data from specified connection.
      *
      * @param stream the received data.

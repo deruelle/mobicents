@@ -16,10 +16,13 @@
 
 package org.mobicents.media.server.spi.dtmf;
 
+import org.mobicents.media.server.spi.events.NotifyEvent;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface DtmfListener {
     public void onDTMF(String digits);
+    public void update(NotifyEvent evt);
 }

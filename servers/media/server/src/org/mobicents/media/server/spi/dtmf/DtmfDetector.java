@@ -14,6 +14,9 @@
 
 package org.mobicents.media.server.spi.dtmf;
 
+import org.mobicents.media.server.spi.NotificationListener;
+
+
 /**
  *
  * @author Oleg Kulikov
@@ -22,10 +25,10 @@ public interface DtmfDetector {
     public final static int RFC2833 = 1;
     public final static int INBOUND = 2;
     
-    //public void start();
-    //public void stop();
+    public void start();
+    public void stop();
     
     public void setDtmfMask(String regExp);
-    public void addListener(DtmfListener listener);
-    public void removeListener(DtmfListener listener);
+    public void addListener(NotificationListener listener);
+    public void removeListener(NotificationListener listener);
 }
