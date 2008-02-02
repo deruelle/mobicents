@@ -76,6 +76,9 @@ public class RtpPacket implements Serializable {
         return payloadType;
     }
     
+    public int getSeqNumber() {
+        return this.seqNumber;
+    }
     
     public byte[] getPayload() {
         return payload;
