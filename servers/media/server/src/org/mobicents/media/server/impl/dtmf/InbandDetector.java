@@ -57,7 +57,11 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
     private TimerTask cleanTask;
     private boolean started = false;
     
-    public InbandDetector(PushBufferStream stream) throws UnsupportedFormatException {
+    public InbandDetector() {
+    }
+        
+    public void start(PushBufferStream stream) throws UnsupportedFormatException {
+        this.started = true;
         stream.setTransferHandler(this);
         if (!stream.getFormat().matches(Codec.LINEAR_AUDIO)) {
             codec = CodecLocator.getCodec(stream.getFormat(), Codec.LINEAR_AUDIO);
@@ -65,10 +69,6 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
                 throw new UnsupportedFormatException(stream.getFormat());
             }
         }
-    }
-        
-    public void start() {
-        this.started = true;
     }
     
     public void stop() {

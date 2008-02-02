@@ -34,6 +34,9 @@ import java.util.Timer;
  */
 public interface Endpoint extends Serializable {
 
+    public final static String RESOURCE_DTMF_DETECTOR = "org.mobicents.dtmf.detector";
+    public final static String RESOURCE_DTMF_GENERATOR = "org.mobicents.dtmf.generator";
+    
     /**
      * Timer instance
      */

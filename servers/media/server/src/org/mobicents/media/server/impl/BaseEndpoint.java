@@ -26,6 +26,7 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Connection;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+import java.util.HashMap;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
@@ -55,6 +56,7 @@ public abstract class BaseEndpoint implements Endpoint {
     protected int highPortNumber;
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
     private ArrayList<NotificationListener> listeners = new ArrayList();
+    private HashMap resources = new HashMap();
     private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
 
     public BaseEndpoint(String localName) {
@@ -175,6 +177,22 @@ public abstract class BaseEndpoint implements Endpoint {
         return connections.values();
     }
 
+    public Object getResource(String resourceName, String connectionID) {
+        return resources.get(resourceName + "_" + connectionID);
+    }
+    
+    public Object getResource(String resourceName) {
+        return resources.get(resourceName);
+    }
+    
+    public void initResource(String resourceName, Object resource) {
+        resources.put(resourceName, resource);
+    }
+
+    public void initResource(String resourceName, String connectionID, Object resource) {
+        resources.put(resourceName + "_" + connectionID, resource);
+    }
+    
     /**
      * Used for internal connection creation.
      * 

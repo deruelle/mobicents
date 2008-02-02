@@ -27,7 +27,10 @@ import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
 import org.mobicents.media.server.impl.dtmf.Rfc2833;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.spi.dtmf.DtmfDetector;
 import org.mobicents.media.server.spi.events.Basic;
@@ -37,15 +40,25 @@ import org.mobicents.media.server.spi.events.Basic;
  * @author Oleg Kulikov
  */
 public class ConfEndpointImpl extends BaseEndpoint {
-    
+
     private transient HashMap mixers = new HashMap();
     private transient HashMap splitters = new HashMap();
-    private transient HashMap dtmfDetectors = new HashMap();
-    
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
 
     public ConfEndpointImpl(String localName) {
         super(localName);
+    }
+
+    @Override
+    public Connection doCreateConnection(Endpoint endpoint, int mode)
+            throws ResourceUnavailableException {
+        Connection connection = super.doCreateConnection(endpoint, mode);
+        logger.debug("Created connection: " + connection);
+        
+        this.initResource(RESOURCE_DTMF_DETECTOR, connection.getId(), new Rfc2833());
+        logger.debug("Intialized dtmf detector: ");
+        
+        return connection;
     }
 
     /**
@@ -86,11 +99,15 @@ public class ConfEndpointImpl extends BaseEndpoint {
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Initialize DTMF detector (RFC2833)");
             }
-            DtmfDetector d = new Rfc2833(stream);
-            dtmfDetectors.put(connectionID, d);
+            DtmfDetector detector = (DtmfDetector) getResource(Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
+            try {
+                detector.start(stream);
+            } catch (UnsupportedFormatException e) {
+                logger.error("Could not start DTMF detector", e);
+            }
             return;
         }
-        
+
         logger.debug("Append stream to a conference, stream format: " + fmt);
 
         //create and register splitter
@@ -114,10 +131,10 @@ public class ConfEndpointImpl extends BaseEndpoint {
     }
 
     @Override
-    public synchronized Collection <PushBufferStream> getAudioStreams(BaseConnection connection) {
+    public synchronized Collection<PushBufferStream> getAudioStreams(BaseConnection connection) {
         //create and register mixer
         List list = new ArrayList();
-        
+
         LocalMixer mixer = null;
         try {
             mixer = new LocalMixer(connection.getId(), connection.getAudioFormat(),
@@ -145,7 +162,6 @@ public class ConfEndpointImpl extends BaseEndpoint {
         return list;
     }
 
-
     public void play(int signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -153,15 +169,14 @@ public class ConfEndpointImpl extends BaseEndpoint {
     @Override
     public void subscribe(int eventID, String connectionID, String params[], NotificationListener listener) {
         switch (eventID) {
-            case Basic.DTMF :
-                DtmfDetector detector = (DtmfDetector) dtmfDetectors.get(connectionID);
+            case Basic.DTMF:
+                logger.info("Subscribing on DTMFs for connection: " + connectionID);
+                DtmfDetector detector = (DtmfDetector) getResource(Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
                 if (params[0] != null) {
                     detector.setDtmfMask(connectionID);
                 }
                 detector.addListener(listener);
-                detector.start();
                 break;
         }
     }
-    
 }

@@ -432,8 +432,10 @@ public class BaseConnection implements Connection, AdaptorListener {
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Strat transmission to the endpoint");
         }
-
-        endpoint.addAudioStream(stream, this.getId());
+        
+        if (endpoint != null) {
+            endpoint.addAudioStream(stream, this.getId());
+        }
 
     }
 

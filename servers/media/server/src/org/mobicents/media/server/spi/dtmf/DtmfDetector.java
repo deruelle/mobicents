@@ -14,6 +14,8 @@
 
 package org.mobicents.media.server.spi.dtmf;
 
+import javax.media.format.UnsupportedFormatException;
+import javax.media.protocol.PushBufferStream;
 import org.mobicents.media.server.spi.NotificationListener;
 
 
@@ -25,7 +27,7 @@ public interface DtmfDetector {
     public final static int RFC2833 = 1;
     public final static int INBOUND = 2;
     
-    public void start();
+    public void start(PushBufferStream stream) throws UnsupportedFormatException;
     public void stop();
     
     public void setDtmfMask(String regExp);

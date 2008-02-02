@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.media.Buffer;
+import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.BufferTransferHandler;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
@@ -50,16 +51,16 @@ public class Rfc2833 implements DtmfDetector, BufferTransferHandler {
     
     private Logger logger = Logger.getLogger(Rfc2833.class);
     
-    public Rfc2833(PushBufferStream stream) {
-        stream.setTransferHandler(this);
+    public Rfc2833() {
     }
     
     public void setDtmfMask(String mask) {
         this.mask = mask;
     }
 
-    public void start() {
+    public void start(PushBufferStream stream) throws UnsupportedFormatException {
         this.started = true;
+        stream.setTransferHandler(this);       
         cleanTask = new CleanTask();
         TIMER.scheduleAtFixedRate(cleanTask, 5000, 5000);
         logger.debug("Detector started");
@@ -81,6 +82,7 @@ public class Rfc2833 implements DtmfDetector, BufferTransferHandler {
     }
     
     public void transferData(PushBufferStream stream) {
+        logger.info("transfering...");
         if (!started) {
             return;
         }
