@@ -42,7 +42,8 @@ public class JitterBuffer {
     private boolean ready = false;
     private Format fmt;
     private int jitter;
-
+    private int seq = -1;
+    
     /**
      * Creates new instance of jitter.
      * 
@@ -71,20 +72,32 @@ public class JitterBuffer {
     public void setJitter(int size) {
         this.jitter = size;
         this.threshold = getSizeInBytes(fmt, size);
+        
         if (buffer == null) {
-            buffer = new byte[3 * this.threshold];
+            buffer = threshold != 0 ? new byte[3 * this.threshold] : new byte[200];
         }
     }
 
+    public boolean isReady() {
+        return pos > threshold;
+    }
+    
     private int getSizeInBytes(Format fmt, int size) {
         //samples per millisecond
         int s = (int) ((AudioFormat) fmt).getSampleRate() / 1000;
         int sampleSize = ((AudioFormat) fmt).getSampleSizeInBits() / 8;
 
-        return (int) s * size / sampleSize;
+        return sampleSize != 0 ? (int) s * size / sampleSize : 0;
     }
 
-    public void push(byte[] data) {
+    public void push(int seq, byte[] data) {
+        if (this.seq == seq) {
+            //duplicate packet
+            return;
+        }
+        
+        this.seq = seq;
+        
         synchronized (this) {
             while (pos + data.length > buffer.length) {
                 try {
@@ -104,7 +117,7 @@ public class JitterBuffer {
     }
 
     public byte[] next() throws InterruptedException {
-        return next(this.threshold);
+        return threshold != 0 ? next(this.threshold) : next(this.pos);
     }
 
     public byte[] next(int count) throws InterruptedException {

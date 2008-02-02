@@ -298,9 +298,10 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             }
 
             int pt = rtpPacket.getPayloadType();
+            int seq =rtpPacket.getSeqNumber();
             try {
                 ReceiveStream stream = this.getReceiveStream(pt);
-                stream.push(rtpPacket.getPayload());
+                stream.push(seq, rtpPacket.getPayload());
 
                 Thread.currentThread().yield();
             } catch (IllegalArgumentException e) {
