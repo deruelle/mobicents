@@ -12,6 +12,8 @@
 
 package org.mobicents.media.server.impl.dtmf;
 
+import org.mobicents.media.server.spi.dtmf.DtmfDetector;
+
 /**
  * Implements digit buffer.
  * 
@@ -20,4 +22,30 @@ package org.mobicents.media.server.impl.dtmf;
 public class DigitBuffer {
     public final static int TIMEOUT = 5000;
     public final static int SILENCE = 100;
+    
+    private StringBuffer buffer = new StringBuffer();
+    private String mask;
+    private DtmfDetector detector;
+    
+    private long lastActivity;
+    private long lastSymbol;
+    
+    public DigitBuffer(DtmfDetector detector, String mask) {
+        this.detector = detector;
+        this.mask = mask;
+    }
+    
+    public void push(String symbol) {
+        if (!symbol.equals(lastSymbol)) {
+            buffer.append(symbol);
+            return;
+        }
+        
+        long now = System.currentTimeMillis();
+        
+        if (now - lastActivity < SILENCE) {
+            buffer.append(symbol);
+            lastActivity = now;
+        }
+    }
 }
