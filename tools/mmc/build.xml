@@ -49,12 +49,12 @@
 
 		<path id="project.classpath.gwt">
 			<pathelement path="src" />
-			<pathelement path="bin" />
 			<fileset dir="${system.GWT_HOME}">
 				<include name="**/*.jar" />
 			</fileset>
 		</path>
 
+		<mkdir dir="${project.bin}" />
 		<mkdir dir="${project.build.tmp}" />
 		<mkdir dir="${project.war}" />
 		<mkdir dir="${project.war.classes}" />
