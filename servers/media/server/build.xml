@@ -5,7 +5,7 @@
 <project name="Media Server" default="default" basedir=".">
     <description>Builds, tests, and runs the project Media server.</description>
     <!-- import file="nbproject/build-impl.xml"/ -->
-    <import file="nbproject/ide-file-targets.xml" />
+    <!-- import file="nbproject/ide-file-targets.xml" / -->
 
     <property name="build.classes.dir" value="build/classes"/> 
     <property name="dist.dir" value="dist"/> 
