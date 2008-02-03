@@ -4,7 +4,6 @@
 <!-- (If you delete it and reopen the project it will be recreated.) -->
 <project name="Media Server Demo" default="" basedir=".">
 	<description>Builds, tests, and runs the project announcement.</description>
-	<!-- import file="nbproject/build-impl.xml"/-->
 
 	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for convenience] -->
 	<import file="${ant.file.announcement}/../../lib/build.xml" />

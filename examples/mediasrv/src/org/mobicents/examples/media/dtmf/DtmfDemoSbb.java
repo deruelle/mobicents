@@ -74,7 +74,10 @@ public abstract class DtmfDemoSbb implements Sbb {
      */
     public void startDemo(String endpointName) {
         this.setUserEndpoint(endpointName);
+        logger.info("Playing welcome message: " + WELCOME_MSG);
         this.play(WELCOME_MSG); 
+        
+        logger.info("Initializing DTMF detector");
         this.initDtmfDetector(getConnection());
     }
     
@@ -119,12 +122,10 @@ public abstract class DtmfDemoSbb implements Sbb {
         ChildRelation childRelation = this.getAnnouncementSbb();
         try {
             Announcement announcement = (Announcement) childRelation.create();
-            sbbContext.getActivities()[0].attach(announcement);
+            this.getConnectionActivityContext().attach(announcement);
             List sequence = new ArrayList();
             sequence.add(url);
-            announcement.play(this.getUserEndpoint(), sequence, false);
-            
-            initDtmfDetector(getConnection());
+            announcement.play(this.getUserEndpoint(), sequence, false);            
         } catch (CreateException e) {
             logger.error("Unexpected error, Caused by", e);
             MsConnection connection = getConnection();
@@ -169,6 +170,16 @@ public abstract class DtmfDemoSbb implements Sbb {
         for (int i = 0; i < activities.length; i++) {
             if (activities[i].getActivity() instanceof MsConnection) {
                 return (MsConnection) activities[i].getActivity();
+            }
+        }
+        return null;
+    }
+
+    private ActivityContextInterface getConnectionActivityContext() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
             }
         }
         return null;
