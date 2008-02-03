@@ -12,7 +12,7 @@
 
 package org.mobicents.media.server.impl.dtmf;
 
-import org.mobicents.media.server.spi.dtmf.DtmfDetector;
+import org.apache.log4j.Logger;
 
 /**
  * Implements digit buffer.
@@ -21,31 +21,90 @@ import org.mobicents.media.server.spi.dtmf.DtmfDetector;
  */
 public class DigitBuffer {
     public final static int TIMEOUT = 5000;
-    public final static int SILENCE = 100;
+    public final static int SILENCE = 500;
     
     private StringBuffer buffer = new StringBuffer();
-    private String mask;
-    private DtmfDetector detector;
+    private String mask = "[0-9, a,b,c,d,*,#]";
     
-    private long lastActivity;
-    private long lastSymbol;
+    private BaseDtmfDetector detector;
     
-    public DigitBuffer(DtmfDetector detector, String mask) {
+    private long lastActivity = System.currentTimeMillis();
+    private String lastSymbol;
+    
+    private Logger logger = Logger.getLogger(DigitBuffer.class);
+    
+    public DigitBuffer(BaseDtmfDetector detector) {
         this.detector = detector;
+    }
+    
+    public String getMask() {
+        return mask;
+    }
+    
+    public void setMask(String mask) {
+        this.buffer = new StringBuffer();
         this.mask = mask;
     }
     
     public void push(String symbol) {
-        if (!symbol.equals(lastSymbol)) {
-            buffer.append(symbol);
-            return;
-        }
-        
         long now = System.currentTimeMillis();
         
-        if (now - lastActivity < SILENCE) {
+        if (now - lastActivity > TIMEOUT) {
+            buffer = new StringBuffer();
+        }
+        
+        if (!symbol.equals(lastSymbol) || (now - lastActivity > SILENCE) ) {
             buffer.append(symbol);
             lastActivity = now;
+            lastSymbol = symbol;
+            String digits = buffer.toString();
+            if (digits.matches(mask)) {
+                //send event;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Send DTMF event: " + digits);
+                }
+                detector.sendEvent(digits);
+                buffer = new StringBuffer();
+            }
         }
+        
+    }
+    
+    public static void main(String[] args) throws Exception {
+        System.out.println("DIGIT BUFFER");
+        DigitBuffer digitBuffer = new DigitBuffer(null);
+        //digitBuffer.setMask("[\\d]{2}[*]");
+        digitBuffer.push("1");
+        digitBuffer.push("1");
+        
+        Thread.currentThread().sleep(500);
+        
+        digitBuffer.push("2");
+        digitBuffer.push("2");
+        digitBuffer.push("2");
+        
+        Thread.currentThread().sleep(500);
+        
+//        digitBuffer.push("*");
+//        digitBuffer.push("*");
+//        digitBuffer.push("*");
+        
+        Thread.currentThread().sleep(6000);
+        
+        digitBuffer.push("6");
+        digitBuffer.push("6");
+        
+        Thread.currentThread().sleep(500);
+        
+        digitBuffer.push("7");
+        digitBuffer.push("7");
+        digitBuffer.push("7");
+        
+        Thread.currentThread().sleep(500);
+        
+        digitBuffer.push("*");
+        digitBuffer.push("*");
+        digitBuffer.push("*");
+        
     }
 }

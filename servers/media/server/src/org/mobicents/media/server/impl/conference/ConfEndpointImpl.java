@@ -172,9 +172,9 @@ public class ConfEndpointImpl extends BaseEndpoint {
             case Basic.DTMF:
                 logger.info("Subscribing on DTMFs for connection: " + connectionID);
                 DtmfDetector detector = (DtmfDetector) getResource(Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
-                if (params[0] != null) {
-                    detector.setDtmfMask(connectionID);
-                }
+//                if (params[0] != null) {
+//                    detector.setDtmfMask(connectionID);
+//                }
                 detector.addListener(listener);
                 break;
         }
