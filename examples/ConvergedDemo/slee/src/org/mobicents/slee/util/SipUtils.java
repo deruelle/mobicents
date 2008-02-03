@@ -179,4 +179,6 @@ public interface SipUtils {
 	 */
 	public void sendOk(Request request) throws ParseException, SipException;
 	
+	public void sendStatefulOk(RequestEvent event) throws ParseException, SipException, InvalidArgumentException;
+	
 }

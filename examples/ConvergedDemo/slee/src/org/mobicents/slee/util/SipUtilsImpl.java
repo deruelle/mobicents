@@ -1,35 +1,35 @@
- /*
-  * Mobicents: The Open Source SLEE Platform      
-  *
-  * Copyright 2003-2005, CocoonHive, LLC., 
-  * and individual contributors as indicated
-  * by the @authors tag. See the copyright.txt 
-  * in the distribution for a full listing of   
-  * individual contributors.
-  *
-  * This is free software; you can redistribute it
-  * and/or modify it under the terms of the 
-  * GNU Lesser General Public License as
-  * published by the Free Software Foundation; 
-  * either version 2.1 of
-  * the License, or (at your option) any later version.
-  *
-  * This software is distributed in the hope that 
-  * it will be useful, but WITHOUT ANY WARRANTY; 
-  * without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-  * PURPOSE. See the GNU Lesser General Public License
-  * for more details.
-  *
-  * You should have received a copy of the 
-  * GNU Lesser General Public
-  * License along with this software; 
-  * if not, write to the Free
-  * Software Foundation, Inc., 51 Franklin St, 
-  * Fifth Floor, Boston, MA
-  * 02110-1301 USA, or see the FSF site:
-  * http://www.fsf.org.
-  */
+/*
+ * Mobicents: The Open Source SLEE Platform      
+ *
+ * Copyright 2003-2005, CocoonHive, LLC., 
+ * and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt 
+ * in the distribution for a full listing of   
+ * individual contributors.
+ *
+ * This is free software; you can redistribute it
+ * and/or modify it under the terms of the 
+ * GNU Lesser General Public License as
+ * published by the Free Software Foundation; 
+ * either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that 
+ * it will be useful, but WITHOUT ANY WARRANTY; 
+ * without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+ * PURPOSE. See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the 
+ * GNU Lesser General Public
+ * License along with this software; 
+ * if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, 
+ * Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site:
+ * http://www.fsf.org.
+ */
 
 package org.mobicents.slee.util;
 
@@ -47,6 +47,7 @@ import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
 import javax.sip.ResponseEvent;
+import javax.sip.ServerTransaction;
 import javax.sip.SipException;
 import javax.sip.SipProvider;
 import javax.sip.SipStack;
@@ -77,7 +78,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.slee.resource.sip.SipFactoryProvider;
 
 public class SipUtilsImpl implements SipUtils {
-	
+
 	private static Logger log = Logger.getLogger(SipUtilsImpl.class);
 
 	private SipProvider sipProvider;
@@ -88,56 +89,58 @@ public class SipUtilsImpl implements SipUtils {
 
 	private AddressFactory addressFactory;
 
-	public SipUtilsImpl(SipProvider sipProvider, HeaderFactory headerFactory, MessageFactory messageFactory, AddressFactory addressFactory) {
+	public SipUtilsImpl(SipProvider sipProvider, HeaderFactory headerFactory,
+			MessageFactory messageFactory, AddressFactory addressFactory) {
 		this.sipProvider = sipProvider;
 		this.headerFactory = headerFactory;
 		this.messageFactory = messageFactory;
 		this.addressFactory = addressFactory;
 	}
 
-
-	
 	public Dialog getDialog(ResponseEvent event) throws SipException {
 		Dialog retVal = null;
-		
-		
-			   if ( event.getDialog() == null ) {
-				   // This is non recoverable and can occur if AUTOMATIC_DIALOG_SUPPORT
-				   // is disabled in the sip stack.
-				   log.error("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled " +
-				   		"you must obtain a dialog before the first sip response arrives");
-				   throw new SipException("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled " +
-					   		"you must obtain a dialog before the first sip response arrives");
-			   } else {
-				   retVal = event.getDialog();
-				   log.debug("Returning dialog in getDialog(ResponseEvent) obtained directly from ResponseEvent");
-			   }
-			
+
+		if (event.getDialog() == null) {
+			// This is non recoverable and can occur if AUTOMATIC_DIALOG_SUPPORT
+			// is disabled in the sip stack.
+			log
+					.error("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
+							+ "you must obtain a dialog before the first sip response arrives");
+			throw new SipException(
+					"responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
+							+ "you must obtain a dialog before the first sip response arrives");
+		} else {
+			retVal = event.getDialog();
+			log
+					.debug("Returning dialog in getDialog(ResponseEvent) obtained directly from ResponseEvent");
+		}
+
 		return retVal;
 	}
 
-
 	public Dialog getDialog(RequestEvent event) throws SipException {
-	Dialog retVal = null;
-	try {
-		   if ( event.getDialog() == null ) {
-			   retVal = sipProvider.getNewDialog(event.getServerTransaction());
-		   } else {
-			   retVal = event.getDialog();
-			  }
-		} catch ( SipException ex ) {
-		    log.error("Exception in creating a new dialog in getDialog(RequestEvent)", ex);
-		    throw ex;
+		Dialog retVal = null;
+		try {
+			if (event.getDialog() == null) {
+				retVal = sipProvider.getNewDialog(event.getServerTransaction());
+			} else {
+				retVal = event.getDialog();
+			}
+		} catch (SipException ex) {
+			log
+					.error(
+							"Exception in creating a new dialog in getDialog(RequestEvent)",
+							ex);
+			throw ex;
 		}
-	return retVal;
-}
-	
+		return retVal;
+	}
+
 	/**
 	 * Hex characters
 	 */
 	private final char[] toHex = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
 			'9', 'a', 'b', 'c', 'd', 'e', 'f' };
-
 
 	public String generateTag() {
 		String tag = new Integer((int) (Math.random() * 10000)).toString();
@@ -172,16 +175,14 @@ public class SipUtilsImpl implements SipUtils {
 			addressFactory = factoryProvider.getAddressFactory();
 		} catch (NamingException e) {
 			e.printStackTrace();
-		} 
+		}
 		return addressFactory;
 	}
-
 
 	public Address convertURIToAddress(String uri) {
 		SipURI sipURI = convertURIToSipURI(uri);
 		return getAddressFactory().createAddress(sipURI);
 	}
-
 
 	public SipURI convertURIToSipURI(String uri) {
 		String[] sipUserAndHost = null;
@@ -201,7 +202,6 @@ public class SipUtilsImpl implements SipUtils {
 		return sipURI;
 	}
 
-
 	public String[] parseSipUri(String sipURI) throws URISyntaxException {
 		String[] userAndHost = new String[2];
 		final String sipPrexfix = "sip:";
@@ -213,7 +213,8 @@ public class SipUtilsImpl implements SipUtils {
 		final int nameIndex = sipPrefixIndex + 1;
 		final int hostIndex = uriIndex + 1;
 
-		if (sipURI.indexOf(sipPrexfix) == -1 || sipURI.indexOf(uriSeparator) == -1
+		if (sipURI.indexOf(sipPrexfix) == -1
+				|| sipURI.indexOf(uriSeparator) == -1
 				|| sipPrefixIndex > uriIndex) {
 			throw new URISyntaxException(
 					sipURI,
@@ -227,7 +228,6 @@ public class SipUtilsImpl implements SipUtils {
 		return userAndHost;
 	}
 
-
 	public SipURI convertAddressToSipURI(Address address) throws ParseException {
 		URI sipURI = address.getURI();
 		SipURI retVal = null;
@@ -238,7 +238,6 @@ public class SipUtilsImpl implements SipUtils {
 		}
 		return retVal;
 	}
-
 
 	public void sendCancel(ClientTransaction ct) throws SipException {
 		Request request = ct.createCancel();
@@ -251,14 +250,15 @@ public class SipUtilsImpl implements SipUtils {
 		ct.sendRequest();
 	}
 
-	public Request buildInvite(Address fromAddress,
-			Address toAddress, byte[] content, int cSeq)throws ParseException, InvalidArgumentException {
-		return buildInvite(fromAddress,toAddress, content, cSeq, null);
+	public Request buildInvite(Address fromAddress, Address toAddress,
+			byte[] content, int cSeq) throws ParseException,
+			InvalidArgumentException {
+		return buildInvite(fromAddress, toAddress, content, cSeq, null);
 	}
 
-	public Request buildInvite(Address fromAddress,
-			Address toAddress, byte[] content, int cSeq, String callId)
-			throws ParseException, InvalidArgumentException {
+	public Request buildInvite(Address fromAddress, Address toAddress,
+			byte[] content, int cSeq, String callId) throws ParseException,
+			InvalidArgumentException {
 
 		// From Header:
 		FromHeader fromHeader = headerFactory.createFromHeader(fromAddress,
@@ -289,16 +289,16 @@ public class SipUtilsImpl implements SipUtils {
 				.createMaxForwardsHeader(70);
 
 		final URI requestURI = convertAddressToSipURI(toAddress);
-		
+
 		/*
 		 * Create the request
 		 */
 		CallIdHeader callIdHeader = sipProvider.getNewCallId();
-		
-        if ((callId!=null) && (callId.trim().length()>0)){
-            callIdHeader.setCallId(callId);
-        }
-        
+
+		if ((callId != null) && (callId.trim().length() > 0)) {
+			callIdHeader.setCallId(callId);
+		}
+
 		// callId = callIdHeader.getCallId();
 		request = messageFactory.createRequest(requestURI, Request.INVITE,
 				callIdHeader, cseqHeader, fromHeader, toHeader, viaHeadersList,
@@ -322,10 +322,9 @@ public class SipUtilsImpl implements SipUtils {
 		if (log.isDebugEnabled()) {
 			log.debug("Contact Header = " + contactHeader);
 		}
-		
+
 		return request;
 	}
-
 
 	public ContactHeader createLocalContactHeader() throws ParseException {
 
@@ -355,8 +354,8 @@ public class SipUtilsImpl implements SipUtils {
 		return contactHeader;
 	}
 
-
-	public ViaHeader createLocalViaHeader() throws ParseException, InvalidArgumentException {
+	public ViaHeader createLocalViaHeader() throws ParseException,
+			InvalidArgumentException {
 		// First get the sip stack from the sip provider
 		SipStack sipStack = sipProvider.getSipStack();
 		// Get the host name of this listening point
@@ -412,53 +411,55 @@ public class SipUtilsImpl implements SipUtils {
 		request.setContentLength(contentLengthHeader);
 	}
 
-
-	public Request buildRequestWithAuthorizationHeader(
-			ResponseEvent event, String password)
-			throws TransactionUnavailableException {
+	public Request buildRequestWithAuthorizationHeader(ResponseEvent event,
+			String password) throws TransactionUnavailableException {
 		// If user is not authenticated, initialize the authentication
 		// process. First we start off by retrieving the request that
 		// triggered this response.
-		
+
 		Request request = event.getClientTransaction().getRequest();
 		Response response = event.getResponse();
 
 		if (request == null) {
 			if (log.isDebugEnabled()) {
-				log.debug("The request that caused the 407 could not be retrieved.");
+				log
+						.debug("The request that caused the 407 could not be retrieved.");
 			}
 			return null;
 		} else {
 			// Clone the previous request since we'd like to modify
 			// it with an authentication header and send it back to the
 			// server.
-			//Dialog dialog = event.getDialog();
-			//Request requestClone = (Request) request.clone();
+			// Dialog dialog = event.getDialog();
+			// Request requestClone = (Request) request.clone();
 			// Get the sequence number from the request clone
-			CSeqHeader cseqHeader = (CSeqHeader) request.getHeader(CSeqHeader.NAME);
-//			try {
-//				// Increase the sequence number by one
-//				cseqHeader
-//						.setSequenceNumber(cseqHeader.getSequenceNumber() + 1);
-//			} catch (InvalidArgumentException e) {
-//				log.error("InvalidArgumentException while setting cseqHeader.setSequenceNumber", e);
-//				e.printStackTrace();
-//			}
-			
-			FromHeader fromHeaderReq = (FromHeader)request.getHeader(FromHeader.NAME);
+			CSeqHeader cseqHeader = (CSeqHeader) request
+					.getHeader(CSeqHeader.NAME);
+			// try {
+			// // Increase the sequence number by one
+			// cseqHeader
+			// .setSequenceNumber(cseqHeader.getSequenceNumber() + 1);
+			// } catch (InvalidArgumentException e) {
+			// log.error("InvalidArgumentException while setting
+			// cseqHeader.setSequenceNumber", e);
+			// e.printStackTrace();
+			// }
+
+			FromHeader fromHeaderReq = (FromHeader) request
+					.getHeader(FromHeader.NAME);
 			Address fromAddressReq = fromHeaderReq.getAddress();
-			
-			ToHeader toHeader = (ToHeader)request.getHeader(ToHeader.NAME);
+
+			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
 			Address toAddress = toHeader.getAddress();
-			Request newRequest = null; 
-			String callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME)).getCallId();
-			try{
-				newRequest = buildInvite(fromAddressReq, toAddress, null, cseqHeader.getSequenceNumber() + 1, callId);
-			}
-			catch(ParseException parseExc){
+			Request newRequest = null;
+			String callId = ((CallIdHeader) response
+					.getHeader(CallIdHeader.NAME)).getCallId();
+			try {
+				newRequest = buildInvite(fromAddressReq, toAddress, null,
+						cseqHeader.getSequenceNumber() + 1, callId);
+			} catch (ParseException parseExc) {
 				parseExc.printStackTrace();
-			}
-			catch(InvalidArgumentException invaliArgExc){
+			} catch (InvalidArgumentException invaliArgExc) {
 				invaliArgExc.printStackTrace();
 			}
 
@@ -508,11 +509,11 @@ public class SipUtilsImpl implements SipUtils {
 			String fromHost = null;
 			String fromUser = null;
 			int fromPort = 0;
-			
+
 			String toHost = null;
 			String toUser = null;
 			int toPort = 0;
-			
+
 			SipURI fromSipURI = null;
 			SipURI toSipURI = null;
 			try {
@@ -529,8 +530,7 @@ public class SipUtilsImpl implements SipUtils {
 			toHost = toSipURI.getHost();
 			toUser = toSipURI.getUser();
 			toPort = toSipURI.getPort();
-			
-			
+
 			// Appened the port to the fromHost if available
 			if (fromPort != -1) {
 				fromHost += ":" + fromPort;
@@ -539,7 +539,7 @@ public class SipUtilsImpl implements SipUtils {
 			// Get the URI to set in the header
 			SipURI uri = null;
 			try {
-				//uri = request.getRequestURI();
+				// uri = request.getRequestURI();
 				uri = addressFactory.createSipURI(toUser, toHost);
 			} catch (ParseException e1) {
 				// TODO Auto-generated catch block
@@ -620,7 +620,7 @@ public class SipUtilsImpl implements SipUtils {
 					e.printStackTrace();
 				}
 			}
-			
+
 			System.out.println("********* New Request *******************");
 			System.out.println(newRequest);
 
@@ -630,10 +630,17 @@ public class SipUtilsImpl implements SipUtils {
 		}
 	}
 
-
 	public Request buildAck(Dialog dialog, Object content) throws SipException {
 
-		Request ackRequest = dialog.createRequest(Request.ACK);
+		// Request ackRequest = dialog.createRequest(Request.ACK);
+
+		Request ackRequest = null;
+
+		try {
+			ackRequest = dialog.createAck(dialog.getLocalSeqNumber());
+		} catch (InvalidArgumentException invalidArgExc) {
+			invalidArgExc.printStackTrace();
+		}
 
 		if (content != null) {
 
@@ -663,10 +670,20 @@ public class SipUtilsImpl implements SipUtils {
 
 		return ackRequest;
 	}
-	
 
 	public void sendOk(Request request) throws ParseException, SipException {
-		Response okResponse = messageFactory.createResponse(Response.OK, request);
+		Response okResponse = messageFactory.createResponse(Response.OK,
+				request);
 		sipProvider.sendResponse(okResponse);
+	}
+
+	public void sendStatefulOk(RequestEvent event) throws ParseException,
+			SipException, InvalidArgumentException {
+		ServerTransaction tx = event.getServerTransaction();
+		Request request = event.getRequest();
+
+		Response response = messageFactory.createResponse(Response.OK, request);
+		tx.sendResponse(response);
+
 	}
 }
