@@ -17,7 +17,9 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsConnection;
@@ -31,13 +33,19 @@ import org.mobicents.mscontrol.MsSignalDetector;
 public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListener {
     
     private Endpoint endpoint;
+    private String endpointName;
+    private MsProviderImpl provider;
     
     private String id = Long.toHexString(System.currentTimeMillis());
     private ArrayList <MsResourceListener> listeners = new ArrayList();
     
+    private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
+    
     /** Creates a new instance of MsSignalDetectorImpl */
     public MsSignalDetectorImpl(MsProviderImpl provider, String endpointName) {
-        this.endpoint = endpoint;
+        this.provider = provider;
+        this.endpointName = endpointName;
+        listeners.addAll(provider.resourceListeners);
     }
 
     public String getID() {
@@ -53,6 +61,9 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     }
     
     public void receive(int signalID, MsConnection connection, String[] params) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Subscribe eventID=" + signalID + ", connection=" + connection);
+        }
         new Thread(new SubscribeTx1(this, signalID, connection, params)).start();
     }
     
@@ -104,10 +115,15 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
         
         public void run() {
             try {
+                endpoint = EndpointQuery.find(endpointName);
                 MsConnectionImpl con = (MsConnectionImpl) connection;
                 String connectionID = con.connection.getId();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Subscribe signalID =" + signalID + ", endpoint=" + endpoint);
+                }
                 endpoint.subscribe(signalID, connectionID, params, listener);
             } catch (Exception e) {
+                logger.error(e);
             }
         }
     }
