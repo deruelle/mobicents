@@ -10,6 +10,8 @@
 	<!--property name="mobicents.home" value="${system.MOBICENTS_HOME}" /-->
 	<!-- property name="debug" value="normal" / -->
 	<property name="release.dir" value="../build/release" />
+	
+	<property name="configuration.dir" value="default" /><!-- all,default,production,minimal - the dir server/* -->
 
 	<property file="../version.properties" />
 
@@ -75,6 +77,36 @@
 
 	<target name="auto-deploy-all-release" description="This target contains all auto deploys needed  by packaging">
 		<!-- things like the MMC should be deployed here -->
+		<copy todir="${release.standalone.dir}/server/${configuration.dir}/deploy" verbose="true" >
+			<fileset dir="${mobicents.home}/../tools/mmc/build/" includes="*.war/**"/>
+		</copy>
+	</target>
+	
+	<target name="remove-unneeded-dirs" description="Removes all, minimal directories to reduce the size of the distro">
+		<delete failonerror="no" includeemptydirs="true">
+			<fileset dir="${release.standalone.dir}/server/" excludes="${configuration.dir}/**"/>
+		</delete>
+	</target>
+	
+	<target name="checkout-sip-servlets">
+		<delete dir="${release.dir}/sip-servlets" failonerror="false" />
+		<mkdir dir="${release.dir}/sip-servlets" />
+
+		<delete dir="${release.dir}/tmp" failonerror="false" />
+		<mkdir dir="${release.dir}/tmp" />
+
+		<echo>Note: Make sure you have an svn client on this machine. Otherwise you may get an error message (...error=2)</echo>
+		<svn dest="${release.dir}/tmp" failonerror="true">
+				<commandline>
+					<argument value="checkout" />
+					<argument value="https://${sip-servlets.repo}/trunk" />
+					<argument value="--username" />
+					<argument value="${sip-servlets.user}" />
+					<argument value="--password" />
+					<argument value="${sip-servlets.password}" />
+					<argument value="--non-interactive" />
+				</commandline>
+		</svn>
 	</target>
 
 	<!-- 
@@ -94,12 +126,13 @@
 
 	<target name="package-release" depends="makeall, make-release-dirs,  package-server,package-ant,package-mcmgmt,package-ras,package-examples,package-mgmt-console" description="!!! Run This target to prepare dir structure, pull everything from repo into mc.home/build/release/**">
 		<copy file="./release-README.txt" todir="${release.dir}" verbose="true" />
+		<ant target="auto-deploy-all-release"></ant>
+		<ant target="remove-unneeded-dirs"></ant>
+		<fixcrlf srcdir="${release.standalone.dir}/bin"
+		         includes="*.sh"/>
+		<chmod file="${release.standalone.dir}/bin/run.sh" perm="ugo+rx"/>
 	</target>
 
-
-	<target name="pacakge-release-by-tag" description="pacakges release by tag" depends="makeall, make-release-dirs,  package-server,package-ant,package-mcmgmt,package-ras-by-tag,package-examples,package-mgmt-console-by-tag">
-		<copy file="./release-README.txt" todir="${release.dir}" verbose="true" />
-	</target>
 	<target name="package-server" depends="init,auto-deploy-all-release">
 		<echo>Packaging release ${release.version}</echo>
 		<sync todir="${release.standalone.dir}" includeEmptyDirs="true">
@@ -129,17 +162,17 @@
 		<property name="release.sar.name" value="mobicents-sar-${release.version}" />
 		<zip destfile="${release.dir}/../ready/${release.sar.name}.zip" filesonly="false">
 			<fileset dir="${release.standalone.dir}">
-				<include name="server/all/deploy/mobicents.sar/**/*" />
-				<include name="server/all/deploy-mobicents/**/*" />
-				<include name="server/all/conf/log4j.xml" />
-				<include name="server/all/deploy/cluster-service.xml" />
-				<include name="server/all/deploy/cache-invalidation-service.xml" />
-				<include name="server/all/deploy/hsqldb-ds.xml" />
-				<include name="server/all/deploy/jboss-treecache-service.xml" />
-				<include name="server/all/lib/jgroups-all.jar" />
-				<include name="server/all/deploy/jmx-console.war/images/logo.gif" />
+				<include name="server/${configuration.dir}/deploy/mobicents.sar/**/*" />
+				<include name="server/${configuration.dir}/deploy-mobicents/**/*" />
+				<include name="server/${configuration.dir}/conf/log4j.xml" />
+				<include name="server/${configuration.dir}/deploy/cluster-service.xml" />
+				<include name="server/${configuration.dir}/deploy/cache-invalidation-service.xml" />
+				<include name="server/${configuration.dir}/deploy/hsqldb-ds.xml" />
+				<include name="server/${configuration.dir}/deploy/jboss-treecache-service.xml" />
+				<include name="server/${configuration.dir}/lib/jgroups-all.jar" />
+				<include name="server/${configuration.dir}/deploy/jmx-console.war/images/logo.gif" />
 			</fileset>
-			<fileset file="../xml/server/all/**" />
+			<!--<fileset file="../xml/server/${configuration.dir}/**" /> -->
 		</zip>
 		<checksum file="${release.dir}/../ready/${release.sar.name}.zip" algorithm="SHA" fileext=".sha1.asc" forceOverwrite="yes" />
 
@@ -172,13 +205,8 @@
 
 	</target>
 
-
-	<!-- packages mc examples into ../build/release/examples -->
-	<target name="package-examples" depends="init, check-out-examples" />
-
-
 	<!-- cehcks out mobicents-examples into ../build/release/examples -->
-	<target name="check-out-examples" depends="init">
+	<target name="package-examples" depends="init">
 
 
 		<delete dir="${release.dir}/examples" failonerror="false" />
@@ -186,18 +214,17 @@
 
 		<for delimiter="," param="dir.name" list="${examples.list}">
 			<sequential>
-				<echo>Packaging RA for release from DIR[../examples/@{dir.name}]</echo>
+				<echo>Packaging Example for release from DIR[../examples/@{dir.name}]</echo>
 
 
 				<delete dir="${release.dir}/examples/@{dir.name}" failonerror="false" />
 				<mkdir dir="${release.dir}/examples/@{dir.name}" />
 
-				<cvs tag="${checkoutby.tag}" cvsroot=":${examples.server}:${examples.user}@${examples.repo}" package="mobicents-examples/@{dir.name}" dest="${release.dir}/examples/@{dir.name}" />
-
 				<move todir="${release.dir}/examples/@{dir.name}">
-					<fileset dir="${release.dir}/examples/@{dir.name}/mobicents-examples/@{dir.name}">
+					<fileset dir="${mobicents.home}/../examples/@{dir.name}">
 						<include name="**" />
 						<exclude name="**/CVS" />
+						<exclude name="**/.svn" />
 					</fileset>
 				</move>
 				<delete dir="${release.dir}/examples/@{dir.name}/mobicents-examples" failonerror="false" />
@@ -205,203 +232,15 @@
 
 			</sequential>
 		</for>
-
-
-		<cvs cvsroot=":${examples.server}:guest@${examples.repo}" package="mobicents-examples/README.txt" dest="${release.dir}/examples" />
-		<cvs cvsroot=":${examples.server}:guest@${examples.repo}" package="mobicents-examples/version.properties" dest="${release.dir}/examples" />
-		<!--
-					<cvs cvsroot=":${examples.server}:guest@${examples.repo}" package="mobicents-examples" dest="${release.dir}/examples" />
-					-->
-
-		<move todir="${release.dir}/examples/">
-			<fileset dir="${release.dir}/examples//mobicents-examples/">
-				<include name="**" />
-				<exclude name="**/CVS" />
-			</fileset>
-		</move>
-		<delete dir="${release.dir}/examples/mobicents-examples" failonerror="false" />
-	</target>
-
-	<!-- This checks out sip ra and services , builds it and copies to appriopriate dir-->
-	<target name="check-out-sip-ra_1.2" depends="init">
-		<delete dir="${release.dir}/resources/sipra" failonerror="false" />
-		<mkdir dir="${release.dir}/resources/sipra" />
-
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-		<mkdir dir="${release.dir}/tmp" />
-
-		<echo>Note: Make sure you have an svn client on this machine. Otherwise you may get an error message (...error=2)</echo>
-		<svn dest="${release.dir}/tmp" failonerror="true">
-			<commandline>
-				<argument value="checkout" />
-				<argument value="https://${sip.ra.repo}/trunk" />
-				<argument value="--username" />
-				<argument value="${sip.ra.user}" />
-				<argument value="--password" />
-				<argument value="${sip.ra.password}" />
-				<argument value="--non-interactive" />
-			</commandline>
-		</svn>
-
-		<ant target="package-for-release" dir="${release.dir}/tmp/trunk" />
-
-		<copy todir="${release.dir}/resources/sipra">
-			<fileset dir="${release.dir}/tmp/trunk/stage">
-
-				<include name="**.jar" />
-				<include name="build.xml" />
-				<include name="version.properties" />
-			</fileset>
-		</copy>
-
-		<delete dir="${release.dir}/tmp" />
-
-
 	</target>
 
 
-	<target name="check-out-sip-ra_1.2-by-tag" depends="init">
-		<delete dir="${release.dir}/resources/sipra" failonerror="false" />
-		<mkdir dir="${release.dir}/resources/sipra" />
-
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-		<mkdir dir="${release.dir}/tmp" />
-
-		<echo>Note: Make sure you have an svn client on this machine. Otherwise you may get an error message (...error=2)</echo>
-		<svn dest="${release.dir}/tmp" failonerror="true">
-			<commandline>
-				<argument value="checkout" />
-				<argument value="https://${sip.ra.repo}/tags/${checkoutby.tag}" />
-				<argument value="--username" />
-				<argument value="${sip.ra.user}" />
-				<argument value="--password" />
-				<argument value="${sip.ra.password}" />
-				<argument value="--non-interactive" />
-			</commandline>
-		</svn>
-
-		<ant target="package-for-release" dir="${release.dir}/tmp/${checkoutby.tag}" />
-
-		<copy todir="${release.dir}/resources/sipra">
-			<fileset dir="${release.dir}/tmp/${checkoutby.tag}/stage">
-
-				<include name="**.jar" />
-				<include name="build.xml" />
-				<include name="version.properties" />
-			</fileset>
-		</copy>
-
-		<delete dir="${release.dir}/tmp" />
-
-
-	</target>
-
-	<target name="check-out-parlayx-ra" depends="init">
-
-
-		<delete dir="${release.dir}/resources/parlayxra" failonerror="false" />
-		<mkdir dir="${release.dir}/resources/parlayxra" />
-		<mkdir dir="${release.dir}/tmp" />
-		<cvs tag="${checkoutby.tag}" cvsroot=":${parlay.server}:${parlay.user}@${parlay.repo}" package="${parlay.package}" dest="${release.dir}/tmp" />
-
-
-
-		<move todir="${release.dir}/tmp">
-			<fileset dir="${release.dir}/tmp/mobicents-parlay-ra">
-				<include name="**" />
-			</fileset>
-		</move>
-		<delete dir="${release.dir}/tmp/mobicents-parlay-ra" failonerror="false" />
-
-
-		<ant target="compile" dir="${release.dir}/tmp" />
-
-		<ant target="build" dir="${release.dir}/tmp" />
-
-
-
-		<copy verbose="true" todir="${release.dir}/resources/parlayxra">
-			<fileset dir="${release.dir}/tmp/deploy">
-				<include name="**.jar" />
-
-				<include name="version.properties" />
-
-			</fileset>
-			<fileset dir="${release.dir}/tmp/source/conf">
-				<include name="parlayra-orb.properties" />
-			</fileset>
-			<fileset dir="${release.dir}/tmp/source/scripts">
-				<include name="*.bsh" />
-			</fileset>
-			<fileset dir="${release.dir}/tmp/">
-				<include name="*.txt" />
-			</fileset>
-		</copy>
-		<copy verbose="true" file="${release.dir}/tmp/package_build.xml" tofile="${release.dir}/resources/parlayxra/build.xml" />
-		<copy verbose="true" file="${release.dir}/tmp/version.properties" todir="${release.dir}/resources/parlayxra/" />
-		<delete dir="${release.dir}/tmp" />
-
-	</target>
-
-
-	<target name="package-mgmt-console" depends="init,checkout-mgmt-console">
-		<ant target="war" dir="${release.dir}/tmp/trunk/Mobicents-Management-Console/" />
-		<copy file="${release.dir}/tmp/trunk/Mobicents-Management-Console/build/tmp/management-console.war" todir="${release.dir}/tools/mgmt-console" />
-		<copy file="${release.dir}/tmp/trunk/Mobicents-Management-Console/package_build.xml" tofile="${release.dir}/tools/mgmt-console/build.xml" />
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-	</target>
-	<target name="package-mgmt-console-by-tag" depends="init,checkout-mgmt-console-by-tag">
-		<ant target="war" dir="${release.dir}/tmp/${checkoutby.tag}/Mobicents-Management-Console/" />
-		<copy file="${release.dir}/tmp/${checkoutby.tag}/Mobicents-Management-Console/build/tmp/management-console.war" todir="${release.dir}/tools/mgmt-console" />
-		<copy file="${release.dir}/tmp/${checkoutby.tag}/Mobicents-Management-Console/package_build.xml" tofile="${release.dir}/tools/mgmt-console/build.xml" />
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-	</target>
-	<target name="checkout-mgmt-console" depends="init">
-
-
+	<target name="package-mgmt-console" depends="init">
 		<delete dir="${release.dir}/tools/mgmt-console" failonerror="false" />
 		<mkdir dir="${release.dir}/tools/mgmt-console" />
-
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-		<mkdir dir="${release.dir}/tmp" />
-
-		<echo>Note: Make sure you have an svn client on this machine. Otherwise you may get an error message (...error=2)</echo>
-		<svn dest="${release.dir}/tmp" failonerror="true">
-			<commandline>
-				<argument value="checkout" />
-				<argument value="https://${mgmt-console.repo}/trunk" />
-				<argument value="--username" />
-				<argument value="${mgmt-console.user}" />
-				<argument value="--password" />
-				<argument value="${mgmt-console.password}" />
-				<argument value="--non-interactive" />
-			</commandline>
-		</svn>
-
-	</target>
-
-	<target name="checkout-mgmt-console-by-tag" depends="init">
-
-
-		<delete dir="${release.dir}/tools/mgmt-console" failonerror="false" />
-		<mkdir dir="${release.dir}/tools/mgmt-console" />
-
-		<delete dir="${release.dir}/tmp" failonerror="false" />
-		<mkdir dir="${release.dir}/tmp" />
-
-		<echo>Note: Make sure you have an svn client on this machine. Otherwise you may get an error message (...error=2)</echo>
-		<svn dest="${release.dir}/tmp" failonerror="true">
-			<commandline>
-				<argument value="checkout" />
-				<argument value="https://${mgmt-console.repo}/tags/${checkoutby.tag}" />
-				<argument value="--username" />
-				<argument value="${mgmt-console.user}" />
-				<argument value="--password" />
-				<argument value="${mgmt-console.password}" />
-				<argument value="--non-interactive" />
-			</commandline>
-		</svn>
-
+		<ant target="war" dir="${mobicents.home}/../tools/mmc/" />
+		<copy file="${mobicents.home}/../tools/mmc/build/tmp/management-console.war" todir="${release.dir}/tools/mgmt-console" />
+		<copy file="${mobicents.home}/../tools/mmc/package_build.xml" tofile="${release.dir}/tools/mgmt-console/build.xml" />
 	</target>
 
 	<!-- WE HAVE A BUNCH OF RAs in MC_HOME/ra  , except sip ra and parlay, see ant calls below-->
@@ -409,14 +248,14 @@
 		<for delimiter="," param="dir.name" list="${ra.dirs}">
 
 			<sequential>
-				<echo>Packaging RA for release from DIR[${mobicents.home}/ra/@{dir.name}]</echo>
-				<ant dir="${mobicents.home}/ra/@{dir.name}" target="package-for-release" antfile="build.xml" />
+				<echo>Packaging RA for release from DIR[${mobicents.home}/../resources/@{dir.name}]</echo>
+				<ant dir="${mobicents.home}/../resources/@{dir.name}" target="package-for-release" antfile="build.xml" />
 
 				<delete dir="${release.dir}/resources/@{dir.name}" failonerror="false" />
 				<mkdir dir="${release.dir}/resources/@{dir.name}" />
 
 				<copy overwrite="true" todir="${release.dir}/resources/@{dir.name}">
-					<fileset dir="${mobicents.home}/ra/@{dir.name}/stage">
+					<fileset dir="${mobicents.home}/../resources/@{dir.name}/stage">
 						<!--
 						<include name="**.jar" />
 						<include name="*.xml" />
@@ -429,41 +268,11 @@
 
 		</for>
 
-		<!-- OTHER RAS Go HERE -->
+		<!-- OTHER RAS Go HERE 
 		<ant target="check-out-sip-ra_1.2" />
-		<ant target="check-out-parlayx-ra" />
+		<ant target="check-out-parlayx-ra" />-->
 
 	</target>
-
-
-	<target name="package-ras-by-tag" depends="init">
-		<for delimiter="," param="dir.name" list="${ra.dirs}">
-
-			<sequential>
-				<echo>Packaging RA for release from DIR[${mobicents.home}/ra/@{dir.name}]</echo>
-				<ant dir="${mobicents.home}/ra/@{dir.name}" target="package-for-release" antfile="build.xml" />
-
-				<delete dir="${release.dir}/resources/@{dir.name}" failonerror="false" />
-				<mkdir dir="${release.dir}/resources/@{dir.name}" />
-
-				<copy todir="${release.dir}/resources/@{dir.name}">
-					<fileset dir="${mobicents.home}/ra/@{dir.name}/stage">
-						<include name="**.jar" />
-						<include name="build.xml" />
-						<include name="version.properties" />
-						<include name="**/*.txt" />
-					</fileset>
-				</copy>
-			</sequential>
-
-		</for>
-
-		<!-- OTHER RAS Go HERE -->
-		<ant target="check-out-sip-ra_1.2-by-tag" />
-		<ant target="check-out-parlayx-ra" />
-
-	</target>
-
 
 	<!-- PULLS ANT FROM WEB ANT UNZIPs IT TO release/tools/ant -->
 	<target name="package-ant" depends="init">
@@ -488,11 +297,16 @@
 		<delete dir="${release.dir}/tools/cli" failonerror="false" />
 		<mkdir dir="${release.dir}/tools/cli" />
 
-		<ant dir="../tools/mobicents-cli" target="mobicents-cli.jar" />
-		<copy file="../tools/mobicents-cli/jars/mobicents-cli.jar" todir="${release.dir}/tools/cli" />
+		<ant dir="../../tools/mobicents-cli" target="mobicents-cli.jar" />
+		<copy file="../../tools/mobicents-cli/jars/mobicents-cli.jar" todir="${release.dir}/tools/cli" />
 		<copy file="./slee-management.xml" todir="${release.dir}/tools/cli" />
 		<copy file="../lib/slee-ant-tasks.jar" todir="${release.dir}/tools/cli" />
-		<copy file="../tools/mobicents-cli/slee-management.xml" todir="${release.dir}/tools/cli" />
+		<copy file="../../tools/mobicents-cli/slee-management.xml" todir="${release.dir}/tools/cli" />
+	</target>
+	
+	
+	
+	<target name="package-sipservlets" depends="init">
 	</target>
 
 	<!-- 
