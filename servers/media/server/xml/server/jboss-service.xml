@@ -14,7 +14,7 @@
     <mbean code="org.mobicents.media.server.impl.ann.AnnTrunkManagement" 
            name="media.mobicents:trunk=announcement"> 
         <attribute name="JndiName">media/trunk/Announcement</attribute>
-        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
         <attribute name="Channels">10</attribute>
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
@@ -25,7 +25,7 @@
     <mbean code="org.mobicents.media.server.impl.packetrelay.PRTrunkManagement" 
            name="media.mobicents:trunk=packet-relay"> 
         <attribute name="JndiName">media/trunk/PacketRelay</attribute>
-        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
         <attribute name="Channels">10</attribute>
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
@@ -36,7 +36,7 @@
     <mbean code="org.mobicents.media.server.impl.test.LoopEndpointManagement" 
            name="media.mobicents:trunk=loopback"> 
         <attribute name="JndiName">media/test/Loopback/1</attribute>
-        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
@@ -46,7 +46,7 @@
     <mbean code="org.mobicents.media.server.impl.conference.ConfEndpointManagement" 
            name="media.mobicents:endpoint=conf"> 
         <attribute name="JndiName">media/trunk/Cnf/1</attribute>
-        <attribute name="BindAddress">127.0.0.1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
