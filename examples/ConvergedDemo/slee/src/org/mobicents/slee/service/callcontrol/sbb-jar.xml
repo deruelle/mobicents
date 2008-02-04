@@ -103,14 +103,13 @@
 		</event>
 		
 		<event event-direction="Receive" initial-event="False">
-			<event-name>ConnectionConnecting</event-name>
-			<event-type-ref>
-				<event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTING</event-type-name>
-				<event-type-vendor>org.mobicents.media</event-type-vendor>
-				<event-type-version>1.0</event-type-version>
-			</event-type-ref>
-		</event>		
-	
+		    <event-name>ConnectionCreated</event-name>
+		    <event-type-ref>
+		        <event-type-name>org.mobicents.slee.media.CONNECTION_CREATED</event-type-name>
+		        <event-type-vendor>org.mobicents.media</event-type-vendor>
+		        <event-type-version>1.0</event-type-version>
+		    </event-type-ref>
+		</event>	
 		<env-entry>
 			<env-entry-name>callControlSipAddress</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
@@ -143,7 +142,7 @@
 			<activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
 			<resource-adaptor-entity-binding>
 				<resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
-				<resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+				<resource-adaptor-entity-link>LocalMs</resource-adaptor-entity-link>
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
 	</sbb>

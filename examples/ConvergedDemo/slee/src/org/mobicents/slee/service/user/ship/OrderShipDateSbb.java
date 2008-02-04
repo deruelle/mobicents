@@ -1,6 +1,5 @@
 package org.mobicents.slee.service.user.ship;
 
-import java.net.URL;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.HashMap;
@@ -25,11 +24,14 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.signal.Announcement;
 import org.mobicents.seam.Order;
-import org.mobicents.slee.resource.media.ratype.ConnectionEvent;
-import org.mobicents.slee.resource.media.ratype.IVRContext;
-import org.mobicents.slee.resource.media.ratype.MediaConnection;
-import org.mobicents.slee.resource.media.ratype.MediaContextEvent;
+import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -43,6 +45,10 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 	private Logger logger = Logger.getLogger(OrderShipDateSbb.class);
 
 	private PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface = null;
+
+	private MsProvider msProvider;
+
+	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
 	private String pathToAudioDirectory = null;
 
@@ -70,13 +76,19 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
 					.lookup("slee/resources/pra/0.1/provider");
+
+			msProvider = (MsProvider) myEnv
+					.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv
+					.lookup("slee/resources/media/1.0/acifactory");
+
 		} catch (NamingException ne) {
 			ne.printStackTrace();
 		}
 	}
 
 	public void onOrderShipped(CustomEvent event, ActivityContextInterface ac) {
-		System.out.println("======== OrderShipDateSbb ORDER_SHIPPED ========");
+		logger.info("======== OrderShipDateSbb ORDER_SHIPPED ========");
 		makeCall(event, ac);
 	}
 
@@ -95,7 +107,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 				"select o from Order o where o.orderId = :orderId")
 				.setParameter("orderId", this.getCustomEvent().getOrderId())
 				.getSingleResult();
-		
+
 		Timestamp orderDate = order.getDeliveryDate();
 
 		mgr.close();
@@ -111,9 +123,9 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		stringBuffer.append(". The shippment will be at your door step on .");
 		stringBuffer.append(orderDate.getDate());
 		stringBuffer.append(" of ");
-		
+
 		String month = null;
-		
+
 		switch (orderDate.getMonth()) {
 		case 0:
 			month = "January";
@@ -152,10 +164,9 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			month = "December";
 			break;
 		default:
-			System.out.println("Invalid month.");
 			break;
 		}
-		
+
 		stringBuffer.append(month);
 		stringBuffer.append(" ");
 		stringBuffer.append(1900 + orderDate.getYear());
@@ -288,35 +299,56 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	}
 
-	public void onDtmfEvent(ConnectionEvent event, ActivityContextInterface aci) {
-		logger.debug("onDtmfEvent ");
-	}
-
-	public void onPlayerStopped(MediaContextEvent evt,
-			ActivityContextInterface aci) {
-		logger.debug("onPlayerStopped ");
+	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("-----onLinkReleased-----");
 		getChildSbbLocalObject().sendBye();
-	}
-
-	public void onPlayerFailed(MediaContextEvent evt,
-			ActivityContextInterface aci) {
-		logger.error("onPlayerFailed ");
 
 	}
 
-	public void onConnectionConnected(ConnectionEvent evt,
+	public void onAnnouncementComplete(MsNotifyEvent evt,
 			ActivityContextInterface aci) {
-		MediaConnection connection = evt.getConnection();
+		logger.info("Announcement complete: ");
 
-		IVRContext ivr = (IVRContext) connection.getMediaContext();
-		URL announcement = null;
+		MsLink link = this.getLink();
+		link.release();
+
+	}
+
+	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("--------onLinkCreated------------");
+		MsLink link = evt.getSource();
+		String announcementEndpoint = link.getEndpoints()[1];
+
+		String endpointName = link.getEndpoints()[0];
+		logger.info("endpoint name: " + endpointName);
+		logger.info("Announcement endpoint: " + announcementEndpoint);
+
+		MsSignalGenerator generator = msProvider
+				.getSignalGenerator(announcementEndpoint);
+
 		try {
-			announcement = new URL("file:" + audioFilePath);
-		} catch (Exception e) {
-			logger.error("Could not load announcement message from: "
-					+ pathToAudioDirectory + "OrderDeliveryDate.wav");
+			ActivityContextInterface generatorActivity = mediaAcif
+					.getActivityContextInterface(generator);
+			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+
+			String announcementFile = "file:" + audioFilePath;
+			generator.apply(Announcement.PLAY,
+					new String[] { announcementFile });
+
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
 		}
-		ivr.play(announcement);
+
+	}
+
+	public MsLink getLink() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
 	}
 
 	// child relation

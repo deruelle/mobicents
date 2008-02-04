@@ -1,6 +1,5 @@
 package org.mobicents.slee.service.user.delivery;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -24,12 +23,17 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSignalDetector;
+import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.signal.Announcement;
+import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.seam.Order;
-import org.mobicents.slee.resource.media.ratype.Cause;
-import org.mobicents.slee.resource.media.ratype.ConnectionEvent;
-import org.mobicents.slee.resource.media.ratype.IVRContext;
-import org.mobicents.slee.resource.media.ratype.MediaConnection;
-import org.mobicents.slee.resource.media.ratype.MediaContextEvent;
+import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -43,6 +47,10 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	private Logger logger = Logger.getLogger(OrderDeliverDateSbb.class);
 
 	private PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface = null;
+
+	private MsProvider msProvider;
+
+	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
 	private String pathToAudioDirectory = null;
 
@@ -70,6 +78,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
 					.lookup("slee/resources/pra/0.1/provider");
+
+			msProvider = (MsProvider) myEnv
+					.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv
+					.lookup("slee/resources/media/1.0/acifactory");
+
 		} catch (NamingException ne) {
 			ne.printStackTrace();
 		}
@@ -223,50 +237,116 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 	}
 
-	public void onDtmfEvent(ConnectionEvent event, ActivityContextInterface aci) {
+	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("-----onLinkReleased-----");
+
+		if (this.getSendBye()) {
+			getChildSbbLocalObject().sendBye();
+		}
+	}
+
+	public void onAnnouncementComplete(MsNotifyEvent evt,
+			ActivityContextInterface aci) {
+		logger.info("Announcement complete: ");
+		if (this.getSendBye()) {
+			MsLink link = this.getLink();
+			link.release();
+		}
+	}
+
+	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("--------onLinkCreated------------");
+		MsLink link = evt.getSource();
+		String announcementEndpoint = link.getEndpoints()[1];
+
+		String endpointName = null;
+		if (this.getEndpointName() == null) {
+			this.setEndpointName(link.getEndpoints()[0]);
+		}
+
+		if (this.getAnnouncementEndpointName() == null) {
+			this.setAnnouncementEndpointName(announcementEndpoint);
+		}
+
+		endpointName = this.getEndpointName();
+
+		logger.info("endpoint name: " + endpointName);
+		logger.info("Announcement endpoint: " + announcementEndpoint);
+
+		MsSignalGenerator generator = msProvider
+				.getSignalGenerator(announcementEndpoint);
+
+		try {
+			ActivityContextInterface generatorActivity = mediaAcif
+					.getActivityContextInterface(generator);
+			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+
+			String announcementFile = pathToAudioDirectory
+					+ "OrderDeliveryDate.wav";
+			generator.apply(Announcement.PLAY,
+					new String[] { announcementFile });
+
+			this.initDtmfDetector(getConnection(), endpointName);
+
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public MsLink getLink() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+
+	public void onDtmf(MsNotifyEvent event, ActivityContextInterface aci) {
 		boolean success = false;
 		int dtmf = event.getCause();
 
 		String dateAndTime = this.getDateAndTime();
 
 		switch (dtmf) {
-		case Cause.DTMF_0:
+		case Basic.CAUSE_DIGIT_0:
 			dateAndTime = dateAndTime + "0";
 			break;
-		case Cause.DTMF_1:
+		case Basic.CAUSE_DIGIT_1:
 			dateAndTime = dateAndTime + "1";
 			break;
-		case Cause.DTMF_2:
+		case Basic.CAUSE_DIGIT_2:
 			dateAndTime = dateAndTime + "2";
 			break;
-		case Cause.DTMF_3:
+		case Basic.CAUSE_DIGIT_3:
 			dateAndTime = dateAndTime + "3";
 			break;
-		case Cause.DTMF_4:
+		case Basic.CAUSE_DIGIT_4:
 			dateAndTime = dateAndTime + "4";
 			break;
-		case Cause.DTMF_5:
+		case Basic.CAUSE_DIGIT_5:
 			dateAndTime = dateAndTime + "5";
 			break;
-		case Cause.DTMF_6:
+		case Basic.CAUSE_DIGIT_6:
 			dateAndTime = dateAndTime + "6";
 			break;
-		case Cause.DTMF_7:
+		case Basic.CAUSE_DIGIT_7:
 			dateAndTime = dateAndTime + "7";
 			break;
-		case Cause.DTMF_8:
+		case Basic.CAUSE_DIGIT_8:
 			dateAndTime = dateAndTime + "8";
 			break;
-		case Cause.DTMF_9:
+		case Basic.CAUSE_DIGIT_9:
 			dateAndTime = dateAndTime + "9";
 			break;
 		default:
-			System.out.println("Invalid DTMF.");
 			break;
 		}
 
 		// TODO: Add logic to check if date and time is valid. We assume that
-		// use is well educated and will always punch right date and time
+		// user is well educated and will always punch right date and time
 
 		if (dateAndTime.length() == 10) {
 
@@ -335,7 +415,6 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 				month = "December";
 				break;
 			default:
-				System.out.println("Invalid month.");
 				break;
 			}
 			stringBuffer.append(" of ");
@@ -367,21 +446,21 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			ttsSession.textToAudioFile(stringBuffer.toString());
 
-			MediaConnection connection = event.getConnection();
-			IVRContext mediaContext = (IVRContext) connection.getMediaContext();
+			MsSignalGenerator generator = msProvider.getSignalGenerator(this
+					.getAnnouncementEndpointName());
 
 			try {
-				Thread.sleep(500);
-			} catch (Exception e) {
-				// ignore
-			}
+				ActivityContextInterface generatorActivity = mediaAcif
+						.getActivityContextInterface(generator);
+				generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			try {
+				String announcementFile = "file:" + audioFilePath;
+				generator.apply(Announcement.PLAY,
+						new String[] { announcementFile });
 
-				URL message = new URL("file:" + audioFilePath);
-				mediaContext.play(message);
-			} catch (Exception ex) {
-				logger.error("Unable load void messages", ex);
+				this.initDtmfDetector(getConnection(), this.getEndpointName());
+			} catch (UnrecognizedActivityException e) {
+				e.printStackTrace();
 			}
 
 			success = true;
@@ -389,47 +468,43 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 		} else {
 			this.setDateAndTime(dateAndTime);
+			this.initDtmfDetector(getConnection(), this.getEndpointName());
 		}
 	}
 
-	public void onPlayerStopped(MediaContextEvent evt,
-			ActivityContextInterface aci) {
-		logger.debug("onPlayerStopped ");
-		if (this.getSendBye()) {
-			getChildSbbLocalObject().sendBye();
+	private MsConnection getConnection() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsConnection) {
+				return (MsConnection) activities[i].getActivity();
+			}
 		}
+		return null;
 	}
 
-	public void onPlayerFailed(MediaContextEvent evt,
-			ActivityContextInterface aci) {
-		logger.error("onPlayerFailed ");
-
-	}
-
-	public void onConnectionConnected(ConnectionEvent evt,
-			ActivityContextInterface aci) {
-		MediaConnection connection = evt.getConnection();
-
-		IVRContext ivr = (IVRContext) connection.getMediaContext();
-		URL announcement = null;
+	private void initDtmfDetector(MsConnection connection, String endpointName) {
+		MsSignalDetector dtmfDetector = msProvider
+				.getSignalDetector(endpointName);
 		try {
-			announcement = new URL(pathToAudioDirectory
-					+ "OrderDeliveryDate.wav");
-		} catch (Exception e) {
-			logger.error("Could not load announcement message from: "
-					+ pathToAudioDirectory + "OrderDeliveryDate.wav");
-		}
-
-		ivr.play(announcement);
-		try {
-			Thread.sleep(1000 * 1);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			ActivityContextInterface dtmfAci = mediaAcif
+					.getActivityContextInterface(dtmfDetector);
+			dtmfAci.attach(getSbbContext().getSbbLocalObject());
+			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
 		}
 	}
 
 	// child relation
 	public abstract ChildRelation getCallControlSbbChild();
+
+	public abstract void setEndpointName(String endPoint);
+
+	public abstract String getEndpointName();
+
+	public abstract void setAnnouncementEndpointName(String endPoint);
+
+	public abstract String getAnnouncementEndpointName();
 
 	public abstract void setCustomEvent(CustomEvent customEvent);
 

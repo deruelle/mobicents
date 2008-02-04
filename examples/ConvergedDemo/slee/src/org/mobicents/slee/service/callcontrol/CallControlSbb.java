@@ -51,6 +51,7 @@ import javax.sip.TimeoutEvent;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
+import javax.sip.header.Header;
 import javax.sip.header.ViaHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
@@ -61,16 +62,14 @@ import javax.slee.RolledBackContext;
 import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
-import javax.sip.header.Header;
 
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.media.ratype.ConnectionEvent;
-import org.mobicents.slee.resource.media.ratype.IVRContext;
-import org.mobicents.slee.resource.media.ratype.MediaConnection;
-import org.mobicents.slee.resource.media.ratype.MediaContext;
-import org.mobicents.slee.resource.media.ratype.MediaProvider;
+import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.media.ratype.RtpMediaConnection;
 import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.sip.SipFactoryProvider;
 import org.mobicents.slee.service.common.SimpleCallFlowRequestState;
@@ -88,13 +87,17 @@ import org.mobicents.slee.util.StateCallback;
 public abstract class CallControlSbb implements javax.slee.Sbb {
 	private static Logger log = Logger.getLogger(CallControlSbb.class);
 
+	public final static String ENDPOINT_NAME = "media/trunk/PacketRelay/$";
+
+	public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
+
 	private SbbContext sbbContext; // This SBB's SbbContext
 
 	private SipProvider sipProvider;
 
 	private SipActivityContextInterfaceFactory activityContextInterfaceFactory;
 
-	private MediaProvider mediaProvider;
+	private MsProvider msProvider;
 
 	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
@@ -104,23 +107,21 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 	private String callControlSipAddress;
 
-	private String password;	
-
-	private IVRContext mediaContext;	
+	private String password;
 
 	public abstract ResponseEvent getResponseEventCmp();
 
 	public abstract void setResponseEventCmp(ResponseEvent evt);
 
 	public abstract void setParentCmp(SbbLocalObject sbbLocalObject);
-	
+
 	public abstract SbbLocalObject getParentCmp();
-	
-	public void setParent(SbbLocalObject sbbLocalObject){
+
+	public void setParent(SbbLocalObject sbbLocalObject) {
 		setParentCmp(sbbLocalObject);
 	}
-	
-	public ResponseEvent getResponseEvent(){
+
+	public ResponseEvent getResponseEvent() {
 		return getResponseEventCmp();
 	}
 
@@ -179,25 +180,27 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 	}
 
 	public void onByeEvent(RequestEvent event, ActivityContextInterface aci) {
+
+		log.info("************Received BYE**************");
+
 		if (log.isDebugEnabled()) {
 			log.debug("Received BYE");
 		}
 
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			Object activity = activities[i].getActivity();
-			if (activity instanceof MediaConnection) {
-				((MediaConnection) activity).release();
-				log.info("Media connection " + activity + " released");
-			}
+		MsConnection connection = this.getMediaConnection();
+		if (connection != null) {
+			log.info("Deleting media conection");
+			connection.release();
 		}
 
 		try {
-			sipUtils.sendOk(event.getRequest());
+			sipUtils.sendStatefulOk(event);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} catch (SipException e) {
 			e.printStackTrace();
+		} catch (InvalidArgumentException invalidArgEx) {
+			invalidArgEx.printStackTrace();
 		}
 
 		// executeRequestState(event);
@@ -272,15 +275,12 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 	}
 
-	public void onConnectionConnecting(ConnectionEvent evt,
+	public void onConnectionCreated(MsConnectionEvent evt,
 			ActivityContextInterface aci) {
-		System.out.println("------------ CONNECTING ------------");
+		log.info("--------------onConnectionCreated--------------");
+		MsConnection connection = evt.getConnection();
 
-		RtpMediaConnection connection = (RtpMediaConnection) evt
-				.getConnection();
-		mediaContext = (IVRContext) connection.getMediaContext();
-
-		log.info("Allocated media context: " + mediaContext);
+		log.info("Created RTP connection [" + connection.getEndpoint() + "]");
 
 		try {
 			Dialog dialog = sipUtils.getDialog(getResponseEventCmp());
@@ -290,29 +290,25 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		} catch (SipException e) {
 			e.printStackTrace();
 		}
+		MsSession session = connection.getSession();
+		MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 
+		ActivityContextInterface linkActivity = null;
 		try {
-
-			// sendCallerAck(getResponseEvent());
-			ActivityContextInterface contextAci = mediaAcif
-					.getActivityContextInterface(mediaContext);
-			contextAci.attach(sbbContext.getSbbLocalObject());
-			contextAci.attach(this.getParentCmp());
-		} catch (Exception e) {
-			log.error("Unexpected error: ", e);
-			connection.release();
+			linkActivity = mediaAcif.getActivityContextInterface(link);
+		} catch (UnrecognizedActivityException ex) {
 		}
+
+		linkActivity.attach(getParentCmp());
+		link.join(connection.getEndpoint(), ANNOUNCEMENT_ENDPOINT);
 	}
 
 	public void sendBye() {
 
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			Object activity = activities[i].getActivity();
-			if (activity instanceof MediaConnection) {
-				((MediaConnection) activity).release();
-				log.info("Media connection " + activity + " released");
-			}
+		MsConnection connection = this.getMediaConnection();
+		if (connection != null) {
+			log.info("Deleting media conection");
+			connection.release();
 		}
 
 		try {
@@ -321,6 +317,16 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		} catch (SipException e) {
 			log.error("Error sending BYE", e);
 		}
+	}
+
+	private MsConnection getMediaConnection() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (ActivityContextInterface aci : activities) {
+			if (aci.getActivity() instanceof MsConnection) {
+				return (MsConnection) aci.getActivity();
+			}
+		}
+		return null;
 	}
 
 	// TODO: Perform further operations if required in these methods.
@@ -358,12 +364,10 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			sipUtils = SipUtilsFactorySingleton.getInstance().getSipUtils();
 
 			// initilize Media API
-			mediaProvider = (MediaProvider) myEnv
+			msProvider = (MsProvider) myEnv
 					.lookup("slee/resources/media/1.0/provider");
 			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv
 					.lookup("slee/resources/media/1.0/acifactory");
-
-
 
 		} catch (NamingException ne) {
 			ne.printStackTrace();
@@ -429,8 +433,8 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		String callId = ((CallIdHeader) ct.getRequest().getHeader(
 				CallIdHeader.NAME)).getCallId();
 		SessionAssociation sa = (SessionAssociation) cache.get(callId);
-		
-		if(sa != null){
+
+		if (sa != null) {
 			Session session = sa.getSession(callId);
 			session.setToBeCancelledClientTransaction(ct);
 		}
@@ -522,37 +526,27 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 				e.printStackTrace();
 			}
 
-			Object content = event.getResponse().getContent();
-			String contentString = null;
-			if (content instanceof byte[]) {
-				contentString = new String((byte[]) content);
+			String sdp = new String(event.getResponse().getRawContent());
 
-			} else if (content instanceof String) {
-				contentString = (String) content;
-			}
+			log.debug("BeforeCalleeConfirmedState.handleOK sdpOffer = " + sdp);
 
-			final byte[] sdpOffer = contentString.getBytes();
-
-			log.debug("BeforeCalleeConfirmedState.handleOK sdpOffer = "
-					+ contentString);
-
-			RtpMediaConnection connection = null;
-
-			connection = (RtpMediaConnection) mediaProvider
-					.createConnection(MediaConnection.RTP);
+			MsSession session = msProvider.createSession();
+			MsConnection msConnection = session
+					.createNetworkConnection(ENDPOINT_NAME);
 
 			try {
 				ActivityContextInterface aci = mediaAcif
-						.getActivityContextInterface(connection);
+						.getActivityContextInterface(msConnection);
 				aci.attach(sbbContext.getSbbLocalObject());
 				aci.attach(getParentCmp());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			connection.setRemoteDescriptor(contentString);
-			connection.init(MediaContext.IVR);
-			
+			log.info("Creating RTP connection [" + ENDPOINT_NAME + "]");
+
+			msConnection.modify("$", sdp);
+
 			setState(new SessionEstablishedState(), calleeCallId);
 		}
 
@@ -1206,17 +1200,19 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 	 * @param password
 	 */
 
-	private void sendRequestWithAuthorizationHeader(ResponseEvent event) {		
-		
+	private void sendRequestWithAuthorizationHeader(ResponseEvent event) {
+
 		ClientTransaction ct = null;
 		SessionAssociation sa = null;
 		try {
 			Request request = sipUtils.buildRequestWithAuthorizationHeader(
 					event, getPassword());
-			
-			log.debug("sendRequestWithAuthorizationHeader. request with Auth = "+request); 
-			
-			ct = sipProvider.getNewClientTransaction(request);			
+
+			log
+					.debug("sendRequestWithAuthorizationHeader. request with Auth = "
+							+ request);
+
+			ct = sipProvider.getNewClientTransaction(request);
 		} catch (TransactionUnavailableException e) {
 			e.printStackTrace();
 		}
@@ -1238,27 +1234,22 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 								"Error getting dialog in sendRequestWithAuthorizationHeader",
 								e);
 			}
-			
-			//Let us remove mapping between SessionAsscoiation and old Call-ID
+
+			// Let us remove mapping between SessionAsscoiation and old Call-ID
 			ClientTransaction ctOld = event.getClientTransaction();
 			Header h = ctOld.getRequest().getHeader(CallIdHeader.NAME);
 			String oldCallId = ((CallIdHeader) h).getCallId();
-			
-			System.out.println("oldCallId = "+oldCallId);
-			
-			sa = (SessionAssociation)cache.get(oldCallId);			
-			
+
+			sa = (SessionAssociation) cache.get(oldCallId);
+
 			Header hNew = ct.getRequest().getHeader(CallIdHeader.NAME);
-			String calleeCallIdNew = ((CallIdHeader) hNew).getCallId();	
-			
-			System.out.println("calleeCallIdNew  = "+calleeCallIdNew );
-			
+			String calleeCallIdNew = ((CallIdHeader) hNew).getCallId();
+
 			Session oldCalleeSession = sa.getSession(oldCallId);
 			oldCalleeSession.setCallId(calleeCallIdNew);
-			
+
 			cache.put(calleeCallIdNew, sa);
-			
-			
+
 		}
 
 		final String callId = dialog.getCallId().getCallId();

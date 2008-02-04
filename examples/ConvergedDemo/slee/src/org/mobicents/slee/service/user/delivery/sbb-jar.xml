@@ -35,6 +35,13 @@
 		  <cmp-field>
 		    <cmp-field-name>dateAndTime</cmp-field-name>
 		  </cmp-field>	
+		  <cmp-field>
+		    <cmp-field-name>endpointName</cmp-field-name>
+		  </cmp-field>	
+		  <cmp-field>
+		    <cmp-field-name>announcementEndpointName</cmp-field-name>
+		  </cmp-field>  
+
 			<get-child-relation-method>
 				<sbb-alias-ref>CallControl</sbb-alias-ref>
 				<get-child-relation-method-name>getCallControlSbbChild</get-child-relation-method-name>
@@ -61,41 +68,52 @@
         <event-type-version>1.0</event-type-version>
       </event-type-ref>
       <initial-event-select variable="ActivityContext" />
-    </event>       
-    
-    <event event-direction="Receive" initial-event="False">
-      <event-name>ConnectionConnected</event-name>
-      <event-type-ref>
-        <event-type-name>org.mobicents.slee.media.CONNECTION_CONNECTED</event-type-name>
-        <event-type-vendor>org.mobicents.media</event-type-vendor>
-        <event-type-version>1.0</event-type-version>
-      </event-type-ref>
     </event>
-    <event event-direction="Receive" initial-event="False">
-      <event-name>PlayerFailed</event-name>
-      <event-type-ref>
-        <event-type-name>org.mobicents.slee.media.PLAYER_FAILED</event-type-name>
-        <event-type-vendor>org.mobicents.media</event-type-vendor>
-        <event-type-version>1.0</event-type-version>
-      </event-type-ref>
-    </event>
-    <event event-direction="Receive" initial-event="False">
-      <event-name>PlayerStopped</event-name>
-      <event-type-ref>
-        <event-type-name>org.mobicents.slee.media.PLAYER_STOPPED</event-type-name>
-        <event-type-vendor>org.mobicents.media</event-type-vendor>
-        <event-type-version>1.0</event-type-version>
-      </event-type-ref>
-    </event>		
     
-    <event event-direction="Receive" initial-event="False">
-      <event-name>DtmfEvent</event-name>
-      <event-type-ref>
-        <event-type-name>org.mobicents.slee.media.CONNECTION_DTMF</event-type-name>
-        <event-type-vendor>org.mobicents.media</event-type-vendor>
-        <event-type-version>1.0</event-type-version>
-      </event-type-ref>
-    </event>    
+        <event event-direction="Receive" initial-event="False">
+            <event-name>LinkCreated</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.JOIN_COMPLETE</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>    
+        
+        <!-- event event-direction="Receive" initial-event="False">
+            <event-name>LinkFailed</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.JOIN_FAIL</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event --> 
+
+        <event event-direction="Receive" initial-event="False">
+            <event-name>Dtmf</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.dtmf.DTMF</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>   
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>LinkReleased</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.LINK_DROPPED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>    
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>AnnouncementComplete</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.announcement.COMPLETE</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
     
     <env-entry>
       <description>The path to audio file where the TTSRA will save the generated .wav audio file</description>
@@ -140,7 +158,7 @@
       <activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
       <resource-adaptor-entity-binding>
         <resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
-        <resource-adaptor-entity-link>MediaRA</resource-adaptor-entity-link>
+        <resource-adaptor-entity-link>LocalMs</resource-adaptor-entity-link>
       </resource-adaptor-entity-binding>
     </resource-adaptor-type-binding>	
     

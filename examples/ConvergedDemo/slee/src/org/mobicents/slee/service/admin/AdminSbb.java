@@ -10,7 +10,6 @@
  */
 package org.mobicents.slee.service.admin;
 
-import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
 
@@ -38,12 +37,17 @@ import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
+import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSignalDetector;
+import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.signal.Announcement;
+import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.seam.Order;
-import org.mobicents.slee.resource.media.ratype.Cause;
-import org.mobicents.slee.resource.media.ratype.ConnectionEvent;
-import org.mobicents.slee.resource.media.ratype.IVRContext;
-import org.mobicents.slee.resource.media.ratype.MediaConnection;
-import org.mobicents.slee.resource.media.ratype.MediaContextEvent;
+import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -73,6 +77,10 @@ public abstract class AdminSbb extends CommonSbb {
 
 	long waitingTime = 0;
 
+	private MsProvider msProvider;
+
+	private MediaRaActivityContextInterfaceFactory mediaAcif;
+
 	/** Creates a new instance of SecondBounceSbb */
 	public AdminSbb() {
 		super();
@@ -100,6 +108,13 @@ public abstract class AdminSbb extends CommonSbb {
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) ctx
 					.lookup("slee/resources/pra/0.1/provider");
+
+			msProvider = (MsProvider) ctx
+					.lookup("slee/resources/media/1.0/provider");
+
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx
+					.lookup("slee/resources/media/1.0/acifactory");
+
 		} catch (NamingException ne) {
 			logger.error("Could not set SBB context: " + ne.toString(), ne);
 		}
@@ -107,17 +122,17 @@ public abstract class AdminSbb extends CommonSbb {
 
 	public void onOrderRejected(CustomEvent event, ActivityContextInterface ac) {
 
-		System.out.println("****** AdminSbb Recieved ORDER_REJECTED ******* ");
+		logger.info("****** AdminSbb Recieved ORDER_REJECTED ******* ");
 		timerFacility.cancelTimer(this.getTimerID());
 		ac.detach(getSbbContext().getSbbLocalObject());
 	}
-	
+
 	public void onOrderApproved(CustomEvent event, ActivityContextInterface ac) {
 
-		System.out.println("****** AdminSbb Recieved ORDER_APPROVED ******* ");
+		logger.info("****** AdminSbb Recieved ORDER_APPROVED ******* ");
 		timerFacility.cancelTimer(this.getTimerID());
 		ac.detach(getSbbContext().getSbbLocalObject());
-	}	
+	}
 
 	public void onBeforeOrderProcessed(CustomEvent event,
 			ActivityContextInterface ac) {
@@ -282,53 +297,35 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
-	public void onDtmfEvent(ConnectionEvent event, ActivityContextInterface aci) {
-		boolean success = false;
-		success = processDtmf(event);
-		this.setSendBye(success);
-	}
-
-	public void onPlayerStopped(MediaContextEvent evt,
-			ActivityContextInterface aci) {
-		logger.debug("onPlayerStopped ");
+	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("-----onLinkReleased-----");
 
 		if (this.getSendBye()) {
 			getChildSbbLocalObject().sendBye();
-			if (this.getOrderApproved()) {
-				// TODO: Logic to get the jBPM Process and change the state
-			}
 		}
-
 	}
 
-	public void onPlayerFailed(MediaContextEvent evt,
+	public void onAnnouncementComplete(MsNotifyEvent evt,
 			ActivityContextInterface aci) {
-		logger.error("onPlayerFailed ");
-
+		logger.info("Announcement complete: ");
+		if (this.getSendBye()) {
+			MsLink link = this.getLink();
+			link.release();
+		}
 	}
 
-	public boolean processDtmf(ConnectionEvent event) {
-		int dtmf = event.getCause();
+	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
+		// this.initDtmfDetector(getConnection(), this.getEndpointName());
+		int cause = evt.getCause();
+
 		EntityManager mgr = null;
 		Order order = null;
-
+		boolean successful = false;
 		String audioFile = null;
 
-		boolean successful = false;
-
-		MediaConnection connection = event.getConnection();
-		IVRContext mediaContext = (IVRContext) connection.getMediaContext();
-
-		try {
-			Thread.sleep(500);
-		} catch (Exception e) {
-			// ignore
-		}
-
-		logger.info("DTMF detected on connection " + connection);
-
-		switch (dtmf) {
-		case Cause.DTMF_1:
+		switch (cause) {
+		case Basic.CAUSE_DIGIT_1:
+			audioFile = pathToAudioDirectory + "OrderApproved.wav";
 
 			mgr = this.persistenceResourceAdaptorSbbInterface
 					.createEntityManager(new HashMap(), "custom-pu");
@@ -341,16 +338,14 @@ public abstract class AdminSbb extends CommonSbb {
 
 			order.setStatus(Order.Status.PROCESSING);
 
-			audioFile = pathToAudioDirectory + "OrderShipped.wav";
-
 			mgr.flush();
 			mgr.close();
 
-			this.setOrderApproved(true);
 			successful = true;
-			break;
 
-		case Cause.DTMF_2:
+			break;
+		case Basic.CAUSE_DIGIT_2:
+			audioFile = pathToAudioDirectory + "OrderCancelled.wav";
 
 			mgr = this.persistenceResourceAdaptorSbbInterface
 					.createEntityManager(new HashMap(), "custom-pu");
@@ -362,7 +357,6 @@ public abstract class AdminSbb extends CommonSbb {
 					.getSingleResult();
 
 			order.setStatus(Order.Status.CANCELLED);
-			audioFile = pathToAudioDirectory + "OrderCancelled.wav";
 
 			mgr.flush();
 			mgr.close();
@@ -370,69 +364,101 @@ public abstract class AdminSbb extends CommonSbb {
 			successful = true;
 
 			break;
-
 		default:
-
 			audioFile = pathToAudioDirectory + "AdminReConfirm.wav";
-			successful = false;
+
 			break;
 		}
+		this.setSendBye(successful);
+
+		MsSignalGenerator generator = msProvider.getSignalGenerator(this
+				.getAnnouncementEndpointName());
 
 		try {
+			ActivityContextInterface generatorActivity = mediaAcif
+					.getActivityContextInterface(generator);
+			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			URL message = new URL(audioFile);
-			mediaContext.play(message);
-		} catch (Exception ex) {
-			logger.error("Unable load void messages", ex);
-		}
-		return successful;
-	}
+			generator.apply(Announcement.PLAY, new String[] { audioFile });
 
-	public void onConnectionConnected(ConnectionEvent evt,
-			ActivityContextInterface aci) {
-
-		MediaConnection connection = evt.getConnection();
-
-		IVRContext ivr = (IVRContext) connection.getMediaContext();
-		URL announcement = null;
-		try {
-			announcement = new URL("file:" + audioFilePath);
-		} catch (Exception e) {
-			logger.error("Could not load announcement message from: "
-					+ audioFilePath);
-		}
-
-		ivr.play(announcement);
-		try {
-			Thread.sleep(1000 * 1);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			this.initDtmfDetector(getConnection(), this.getEndpointName());
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
 		}
 
 	}
-	
-//	 public InitialEventSelector orderIDSelect(InitialEventSelector ies) {
-//		Object event = ies.getEvent();
-//		long orderId = null;
-//
-//		if (event instanceof CustomEvent) {
-//			// If request event, the convergence name to callId
-//			orderId = ((CustomEvent) event).getOrderId();
-//			if (messageId.equals("110")) {
-//				System.out.println("The Message Id is " + messageId
-//						+ " and this is initial event");
-//				ies.setInitialEvent(true);
-//
-//			} else {
-//				System.out.println("The Message Id is " + messageId
-//						+ " and this is NOT initial event");
-//				ies.setInitialEvent(false);
-//
-//			}
-//		}
-//
-//		return ies;
-//	}	
+
+	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("--------onLinkCreated------------");
+		MsLink link = evt.getSource();
+		String announcementEndpoint = link.getEndpoints()[1];
+
+		String endpointName = null;
+		if (this.getEndpointName() == null) {			
+			this.setEndpointName(link.getEndpoints()[0]);
+		}
+
+		if (this.getAnnouncementEndpointName() == null) {			
+			this.setAnnouncementEndpointName(announcementEndpoint);
+		}
+
+		endpointName = this.getEndpointName();
+
+		logger.info("endpoint name: " + endpointName);
+		logger.info("Announcement endpoint: " + announcementEndpoint);
+
+		MsSignalGenerator generator = msProvider
+				.getSignalGenerator(announcementEndpoint);
+
+		try {
+			ActivityContextInterface generatorActivity = mediaAcif
+					.getActivityContextInterface(generator);
+			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+
+			String announcementFile = "file:" + audioFilePath;
+			generator.apply(Announcement.PLAY,
+					new String[] { announcementFile });
+
+			this.initDtmfDetector(getConnection(), endpointName);
+
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public MsLink getLink() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+
+	private MsConnection getConnection() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsConnection) {
+				return (MsConnection) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+
+	private void initDtmfDetector(MsConnection connection, String endpointName) {
+		MsSignalDetector dtmfDetector = msProvider
+				.getSignalDetector(endpointName);
+		try {
+			ActivityContextInterface dtmfAci = mediaAcif
+					.getActivityContextInterface(dtmfDetector);
+			dtmfAci.attach(getSbbContext().getSbbLocalObject());
+			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// child relation
 	public abstract ChildRelation getCallControlSbbChild();
@@ -454,6 +480,14 @@ public abstract class AdminSbb extends CommonSbb {
 	public abstract void setOrderApproved(boolean fireOrderApproved);
 
 	public abstract boolean getOrderApproved();
+
+	public abstract void setEndpointName(String endPoint);
+
+	public abstract String getEndpointName();
+
+	public abstract void setAnnouncementEndpointName(String endPoint);
+
+	public abstract String getAnnouncementEndpointName();
 
 	public abstract void setChildSbbLocalObject(
 			CallControlSbbLocalObject childSbbLocalObject);
