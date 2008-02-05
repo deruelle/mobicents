@@ -60,7 +60,7 @@ public class Filter {
         double resulti = imagW*d1;
         
         double r = Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
-        System.out.println("Freq: " + f + ", r=" + r);
+        //System.out.println("Freq: " + f + ", r=" + r);
         return r > threshold;
     } 
     

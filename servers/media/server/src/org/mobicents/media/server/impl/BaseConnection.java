@@ -68,7 +68,7 @@ public class BaseConnection implements Connection, AdaptorListener {
     private RtpSocketAdaptor rtpSocket;
     
     private AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
-    private int dtmfFormat = DtmfDetector.INBOUND;
+    private int dtmfFormat = DtmfDetector.RFC2833;
     
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;

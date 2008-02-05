@@ -17,6 +17,7 @@ package org.mobicents.media.server.impl.dtmf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import javax.media.Buffer;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.BufferTransferHandler;
@@ -48,13 +49,21 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
     private Codec codec;
     private byte[] localBuffer = new byte[8000];
     private int offset = 0;
-    private Filter filter = new Filter(750000);
+    private Filter filter = new Filter(500000);
     private boolean started = false;
     
     private Logger logger = Logger.getLogger(InbandDetector.class);
     
     public InbandDetector() {
         super();
+        Properties props = new Properties();
+        try {
+            props.load(getClass().getResourceAsStream("/dtmf.properties"));
+            int t = Integer.parseInt(props.getProperty("dtmf.threshold"));
+            filter = new Filter(t);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
         
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
