@@ -208,11 +208,14 @@ public class ConfEndpointImpl extends BaseEndpoint {
         AudioFormat fmt = (AudioFormat) stream.getFormat();
         BaseConnection connection = getConnection(connectionID);
 
-        if (fmt.getEncoding().equals("telephone-event") &&
-                connection.getDtmfFormat() == DtmfDetector.RFC2833) {
-            prepareDTMFDetector(stream, connectionID);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Prepared DTMF detector (RFC 2833), stream fmt=" + fmt);
+        logger.debug("New stream, connectionID=" + connectionID + ", fmt=" + fmt);
+
+        if (fmt.getEncoding().startsWith("telephone-event")) {
+            if (connection.getDtmfFormat() == DtmfDetector.RFC2833) {
+                prepareDTMFDetector(stream, connectionID);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Prepared DTMF detector (RFC 2833), stream fmt=" + fmt);
+                }
             }
             return;
         }

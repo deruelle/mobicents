@@ -99,12 +99,15 @@ public class JitterBuffer {
         this.seq = seq;
         
         synchronized (this) {
-            while (pos + data.length > buffer.length) {
-                try {
-                    wait();
-                } catch (InterruptedException ex) {
-                }
+            if (pos + data.length > buffer.length) {
+                return;
             }
+//            while (pos + data.length > buffer.length) {
+//                try {
+//                    wait();
+//                } catch (InterruptedException ex) {
+//                }
+//            }
 
             System.arraycopy(data, 0, buffer, pos, data.length);
             pos += data.length;

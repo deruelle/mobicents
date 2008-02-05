@@ -17,8 +17,6 @@ package org.mobicents.media.server.impl.dtmf;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.media.Buffer;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.BufferTransferHandler;
@@ -28,15 +26,13 @@ import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.dtmf.DtmfDetector;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class InbandDetector implements DtmfDetector, BufferTransferHandler {
+public class InbandDetector extends BaseDtmfDetector implements BufferTransferHandler {
 
-    public final static Timer timer = new Timer();
     public final static String[][] events = new String[][] {
         {"1", "2", "3", "A"},
         {"4", "5", "6", "B"},
@@ -47,20 +43,18 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
     private int[] lowFreq = new int[]{697, 770, 852, 941};
     private int[] highFreq = new int[]{1209, 1336, 1477, 1633};
     
-    private String mask= "%d";
     
-    private StringBuffer digitBuffer = new StringBuffer();
     private List <NotificationListener> listeners = new ArrayList();
     private Codec codec;
     private byte[] localBuffer = new byte[8000];
     private int offset = 0;
-    private Filter filter = new Filter(700000);
-    private TimerTask cleanTask;
+    private Filter filter = new Filter(750000);
     private boolean started = false;
     
     private Logger logger = Logger.getLogger(InbandDetector.class);
     
     public InbandDetector() {
+        super();
     }
         
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
@@ -81,17 +75,6 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
         this.started = false;
     }
     
-    public void setDtmfMask(String mask) {
-        this.mask = mask;
-    }
-
-    public void addListener(NotificationListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(NotificationListener listener) {
-        listeners.remove(listener);
-    }
 
     public void transferData(PushBufferStream stream) {
         if (!started) {
@@ -144,7 +127,7 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
             
             logger.debug("Found frequency " + highFreq[f1]  + ", evt=" + events[f1][f2]);
             
-            digitBuffer.append(events[f1][f2]);
+            digitBuffer.push(events[f1][f2]);
         }
     }
 
