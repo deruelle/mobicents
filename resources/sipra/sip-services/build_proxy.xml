@@ -1,0 +1,48 @@
+
+<!--
+ -->
+<project basedir="." default="" name="Proxy">
+
+	<!-- OTHER TARGET THAN build-sbb, and clean should not be called -->
+	<property environment="sys" />
+	<property name="mobicents.home" value="${sys.MOBICENTS_HOME}" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+
+	<!-- WE NEED TO DEFINE THOSE -->
+	<property name="service.name" value="sipproxy" />
+	<property name="service.id" value="JAIN SIP Proxy Service#mobicents#1.0" />
+	<property name="service.src.path" value="org/mobicents/slee/services/sip/proxy" />
+	<property name="service.inludes.src.path" value="${service.src.path}/**/*.java org/mobicents/slee/services/sip/common/**/*.java"/>
+
+
+	<path id="service.classpath">
+		<pathelement location="../lib/JainSipRi1.2.jar" />
+		<pathelement location="../lib/JainSipApi1.2.jar" />
+		<path refid="mobicents.core.classpath"/>
+		<pathelement location="../ratype/jars/sip-ratype.jar" />
+		<pathelement location="../ra/jars/sip-ra.jar" />
+		<pathelement location="./jars/sipservices_common.jar" />
+		<pathelement location="${jboss.home}/lib/jboss-system.jar" />
+		<pathelement location="${jboss.home}/client/jbossall-client.jar" />
+	</path>
+
+
+	<property name="compile.as.debug" value="false" />
+
+	<fileset dir="./jars" id="service.other.jars">
+		<include name="registrar-sbb.jar" />
+	</fileset>
+
+
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-service.xml" />
+
+
+
+
+
+
+
+
+
+
+</project>

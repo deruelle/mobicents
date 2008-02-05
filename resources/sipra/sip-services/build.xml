@@ -1,199 +1,77 @@
 
 <!--
-   
-   Authors: Francesco, Ranga, Ivelin -->
-<project basedir="." default="proxy-service-deploy" name="proxy-service.jpx">
-
+ -->
+<project basedir="." default="proxy-service-deploy" name="sipservices">
 
 
 	<!-- Definitions -->
 	<property environment="system" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
-	<property name="mobicents.home" value="../../mobicents" />
+	<property name="mobicents.home" value="../../../core" />
 
-
-	<!--property name="libs.home" value="lib" /-->
-	<property name="node" value="all" />
-	<property name="deploy.dir" value="deploy-mobicents" />
-	<property name="name" value="${ant.project.name}" />
-
-	<property name="jta" value="lib/jta.jar" />
-	<property name="javac_debug" value="lines, vars,source" />
-
-
-	<!-- COMPILATION LEVELS -->
-	<property name="src.lvl" value="1.5" />
-	<property name="trgt.lvl" value="1.5" />
 	<!-- MOBICENTS CLI -->
-	<import file="${mobicents.home}/tools/mobicents-cli/slee-management.xml" />
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" />
 
-	<!-- DEPLOY & UNDEPLOY STUFF -->
-	<property name="jnpHost" value="127.0.0.1" />
-	<property name="project.home" value=".." />
-	<property name="dest" value="classes" />
-	<property name="build" value="./build/sip" />
-	<property name="sipra" value="${project.home}" />
-	<property name="libs.home.proxy" value="${mobicents.home}/lib" />
-	<property name="classpath.prefix" value="org.mobicents" />
-	<property name="dirpath.prefix" value="org/mobicents" />
-	<property name="oc.examples.sip.home" value="." />
+	<!-- THIS BUILD makes use of other files to create conveniant build and package -->
 
+	<property name="du.name" value="sip-services" />
+	<property name="proxy.service.id" value="JAIN SIP Proxy Service#mobicents#1.1" />
+	<property name="registrar.service.id" value="SIP Registrar Service#mobicents#1.1" />
+	<!-- THIS IS BAD :/, will improve, when both services are independent -->
+	<property name="proxy.path.to.xml" value="org/mobicents/slee/services/sip/proxy" />
+	<property name="registrar.path.to.xml" value="org/mobicents/slee/services/sip/registrar" />
+	<target name="build-sbb-jars">
 
-
-
-
-
-
-
-	<property name="deployables" value="./deployable-unit" />
-
-	<property name="mobicents.sar" value="${jboss.home}/server/${node}/deploy/mobicents.sar" />
-
-	<property name="jboss.home.deploy" value="${jboss.home}/server/${node}/deploy" />
-
-	<property name="jboss.mobicents.deploy.dir" value="${jboss.home}/server/${node}/deploy-mobicents" />
-
-	<property name="slee-tck-tests-pattern" value="${tests}">
-	</property>
-
-	<property name="src" value="src" />
-	<property file="${node}.port.properties" />
-	<path id="project.class.path.proxy">
-		<pathelement location="${dest}" />
-		<pathelement location="${libs.home.proxy}/commons-pool-1.2.jar" />
-		<pathelement location="${libs.home.proxy}/junit.jar" />
-		<pathelement location="${libs.home.proxy}/log4j.jar" />
-		<pathelement location="${libs.home.proxy}/commons-collections-3.1.jar" />
-		<pathelement location="${libs.home.proxy}/commons-collections-testframework-3.1.jar" />
-		<pathelement location="${libs.home.proxy}/commons-logging.jar" />
-		<pathelement location="${libs.home.proxy}/concurrent.jar" />
-		<pathelement location="${libs.home.proxy}/javassist.jar" />
-		<!--JBoss Cache -->
-		<pathelement location="${libs.home.proxy}/jboss-aop.jar" />
-		<pathelement location="${libs.home.proxy}/jboss-cache.jar" />
-		<pathelement location="${libs.home.proxy}/jboss-common.jar" />
-		<pathelement location="${libs.home.proxy}/jboss-jmx.jar" />
-		<pathelement location="${libs.home.proxy}/jboss-system.jar" />
-		<pathelement location="${libs.home.proxy}/jboss.jar" />
-		<pathelement location="${project.home}/lib/sipunit.jar" />
-		<pathelement location="${libs.home.proxy}/jgroups-all.jar" />
-		<!--Java Transacion Api-->
-		<pathelement location="${libs.home.proxy}/jta.jar" />
-		<!--JMX REMOTE CLIENT-->
-		<pathelement location="${libs.home.proxy}/jmx-adaptor-plugin.jar" />
-		<pathelement location="${libs.home.proxy}/jnpserver.jar" />
-		<pathelement location="${libs.home.proxy}/jboss-transaction.jar" />
-		<!--TCK Tests -->
-		<pathelement location="${slee.tck.home}/jars/sleetck.jar" />
-		<pathelement location="${slee.tck.home}/jars/sleetck-ra-common.jar" />
-
-		<!-- JBoss HA for failover -->
-		<pathelement location="${libs.home.proxy}/jbossha.jar" />
-
-		<!-- Slee API jar file -->
-		<pathelement location="../lib/slee_1_1.jar" />
-
-		<!-- SIP API jar file -->
-		<pathelement location="${sipra}/lib/JainSipApi1.2.jar" />
-		<pathelement location="${sipra}/lib/JainSipRi1.2.jar" />
-
-		<!-- For the SIP examples to compile -->
-		<pathelement location="${sipra}/ratype/jars/sip-ratype.jar" />
-		<pathelement location="${sipra}/ra/jars/sip-ra.jar" />
-
-		<!-- J2EE jar - only required to compile the ejb-ref test case -->
-		<pathelement location="${libs.home.proxy}/jboss-j2ee.jar" />
-
-		<!-- ANT junit jar file -->
-		<pathelement location="${libs.home.proxy}/ant-junit.jar" />
-		<pathelement location="${libs.home.proxy}/sipunit.jar" />
-
-		<!-- Slee 1.1 Resource Adaptor Interfaces -->
-		<pathelement location="${libs.home.proxy}/sleeRA.zip" />
-		<!-- Required by test usage.types.2216 -->
-		<pathelement location="${libs.home.proxy}/dom4j.jar" />
-
-		<pathelement location="${asteriskra}/lib/asterisk-java.jar" />
-
-		<pathelement location="${mobicents.home}/classes" />
-
-		<!-- DTD Files-->
-		<pathelement location="${libs.home.proxy}/dtd" />
-	</path>
-
-	<path id="deployer.class.path">
-		<pathelement location="${libs.home.proxy}/slee_1_1.jar" />
-		<pathelement location="${jboss.home}/client/client.jar" />
-		<pathelement location="${jboss.home}/client/jbossall-client.jar" />
-		<pathelement location="${jboss.home}/client/getopt.jar" />
-		<pathelement location="${jboss.home}/lib/log4j.jar" />
-		<pathelement location="${jboss.home}/lib/jboss-jmx.jar" />
-		<pathelement location="${jboss.home}/lib/xml-apis.jar" />
-		<pathelement location="${jboss.home}/lib/xercesImpl.jar" />
-		<pathelement location="${jboss.home}/server/all/deploy/mobicents.sar" />
-	</path>
-
-	<path id="run.class.path">
-		<!-- Stuff necessary to launch jboss -->
-		<pathelement location="${jboss.home}/bin/run.jar" />
-		<pathelement location="${java.home}/lib/tools.jar" />
-		<!-- pathelement location="${project.home}/classes"/ -->
-	</path>
-
-
-
-
-	<target name="build-sip-proxy-service-jars">
-		<!-- Build the jar file for enventrytest.jar and copy over -->
-		<mkdir dir="${build}" />
-		<mkdir dir="${dest}" />
-
-		<javac classpathref="project.class.path.proxy" debug="true" source="${src.lvl}" target="${trgt.lvl}" deprecation="true" destdir="${dest}" nowarn="false">
-			<src path="${oc.examples.sip.home}/src" />
-		</javac>
-
-		<jar destfile="${build}/registrarsbb.jar">
-			<metainf file="${oc.examples.sip.home}/src/org/mobicents/slee/services/sip/registrar/META-INF/sbb-jar.xml" />
-			<fileset dir="${dest}">
-				<include name="org/mobicents/slee/services/sip/registrar/**/*.class" />
-				<include name="org/mobicents/slee/services/sip/proxy/**/RegistrationInformationAccess*.class" />
-			</fileset>
-			<fileset dir="${src}">
-				<include name="**/*.properties" />
-			</fileset>
-		</jar>
-		<jar destfile="${build}/proxysbb.jar">
-			<metainf file="${oc.examples.sip.home}/src/org/mobicents/slee/services/sip/proxy/META-INF/sbb-jar.xml" />
-			<fileset dir="${dest}">
-				<include name="org/mobicents/slee/services/sip/proxy/**/*.class" />
-				<include name="org/mobicents/slee/services/sip/common/**/*.class" />
-				<include name="org/mobicents/slee/services/sip/mbean/**/*.class" />
-				<!--include name="util/**/*.class" /-->
-			</fileset>
-			<fileset dir="${src}">
-				<include name="**/*.properties" />
-			</fileset>
-		</jar>
-		<copy todir="${build}" file="${oc.examples.sip.home}/src/org/mobicents/slee/services/sip/proxy/service.xml" />
-		<jar destfile="${build}/proxyservice.jar">
-			<metainf file="${oc.examples.sip.home}/src/org/mobicents/slee/services/sip/proxy/META-INF/deployable-unit.xml" />
-			<fileset dir="${build}">
-				<include name="proxysbb.jar" />
-				<include name="registrarsbb.jar" />
-				<include name="service.xml" />
-			</fileset>
-		</jar>
-		<move todir="${oc.examples.sip.home}/examples" file="${build}/proxyservice.jar" />
-		<echo>SIP Examples Build Dir = ${build}</echo>
-		<delete failonerror="false" includeemptydirs="true">
-			<fileset dir="${build}" />
-		</delete>
+		<ant target="build-sbb" antfile="build_location.xml">
+		</ant>
+		<ant target="build-sbb" antfile="build_registrar.xml">
+		</ant>
+		<ant target="build-sbb" antfile="build_proxy.xml">
+		</ant>
 	</target>
 
+
+	<target name="build-services-DU" depends="build-sbb-jars">
+		<mkdir dir="classes/${du.name}-DU" />
+		<mkdir dir="classes/${du.name}-DU/META-INF" />
+		<copy todir="classes/${du.name}-DU" verbose="true">
+			<fileset dir="./jars">
+				<include name="registrar-sbb.jar" />
+				<include name="sipproxy-sbb.jar" />
+				<include name="location-sbb.jar" />
+			</fileset>
+		</copy>
+
+		<copy tofile="classes/${du.name}-DU/META-INF/deployable-unit.xml" file="src/${proxy.path.to.xml}/sipproxy-deployable-unit.xml" verbose="true">
+
+		</copy>
+
+		<copy todir="classes/${du.name}-DU" file="src/${proxy.path.to.xml}/sipproxy-service.xml" verbose="true" />
+		<copy todir="classes/${du.name}-DU" file="src/${registrar.path.to.xml}/registrar-service.xml" verbose="true" />
+
+		<jar destfile="jars/${du.name}-DU.jar" basedir="classes/${du.name}-DU">
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="jars" />
+		<delete dir="classes" />
+		<ant target="clean" antfile="build_registrar.xml" />
+		<ant target="clean" antfile="build_proxy.xml" />
+		<ant target="clean" antfile="build_location.xml" />
+	</target>
+
+
+
+
+
+
+
+
 	<!-- Deploys the SIP proxy to JBOSS. -->
-	<target name="proxy-service-deploy" depends="build-sip-proxy-service-jars,management-init" description="Deploys the SIP Proxy Service">
+	<target name="proxy-service-deploy" depends="build-services-DU,init-common" description="Deploys the SIP Proxy Service">
 		<path id="proxyservice">
-			<pathelement location="examples/proxyservice.jar" />
+			<pathelement location="jars/${du.name}-DU.jar" />
 		</path>
 		<pathconvert targetos="unix" property="proxyservice" refid="proxyservice" />
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
@@ -202,21 +80,29 @@
 		<echo>Proxy Service deployed</echo>
 		<!-- Activate the proxy service -->
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
-			<activateservice serviceid="JAIN SIP Proxy Service#mobicents#1.0" />
+
+			<activateservice serviceid="${proxy.service.id}" />
 		</slee-management>
+		<sleep seconds="15"/>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<activateservice serviceid="${registrar.service.id}" />
+
+		</slee-management>
+
 		<echo> proxy service activated </echo>
 	</target>
 
 
-	<target name="proxy-service-undeploy" depends="management-init" description="unDeploys the SIP Proxy Service">
+	<target name="proxy-service-undeploy" depends="init-common" description="unDeploys the SIP Proxy Service">
 		<path id="proxyservice">
-			<pathelement location="examples/proxyservice.jar" />
+			<pathelement location="jars/${du.name}-DU.jar" />
 		</path>
 		<pathconvert targetos="unix" property="proxyservice" refid="proxyservice" />
 
 		<!-- Activate the proxy service -->
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
-			<deactivateservice serviceid="JAIN SIP Proxy Service#mobicents#1.0" />
+			<deactivateservice serviceid="${proxy.service.id}" />
+			<deactivateservice serviceid="${registrar.service.id}" />
 		</slee-management>
 		<echo> proxy service deactivated </echo>
 
@@ -227,13 +113,9 @@
 	</target>
 
 
-	<target name="clean">
 
-		<echo>SIP cleaning </echo>
-		<delete failonerror="false" includeemptydirs="true" verbose="true">
-			<fileset dir="${build}" />
-			<fileset dir="${dest}" />
-			<fileset dir="examples" />
-		</delete>
-	</target>
+
+
+
+
 </project>
