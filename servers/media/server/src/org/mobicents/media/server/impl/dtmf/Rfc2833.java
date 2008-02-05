@@ -39,10 +39,13 @@ public class Rfc2833 extends BaseDtmfDetector implements BufferTransferHandler {
         super();
     }
     
-    public void start(PushBufferStream stream) throws UnsupportedFormatException {
-        this.started = true;
+    public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);       
-        logger.debug("Detector started");
+        logger.debug("Detector prepared");
+    }
+    
+    public void start() {
+        this.started = true;
     }
     
     public void stop() {
@@ -51,7 +54,6 @@ public class Rfc2833 extends BaseDtmfDetector implements BufferTransferHandler {
     }
     
     public void transferData(PushBufferStream stream) {
-        logger.info("transfering...");
         if (!started) {
             return;
         }
@@ -67,7 +69,10 @@ public class Rfc2833 extends BaseDtmfDetector implements BufferTransferHandler {
         String digit = DTMF[data[0]];
         boolean end = (data[1] & 0x7f) != 0;
         
-        logger.debug("Arrive packet, digit=" + digit + ", end=" + end);        
+        if (logger.isDebugEnabled()) {
+            logger.debug("Arrive packet, digit=" + digit + ", end=" + end);        
+        }
+        
         digitBuffer.push(digit);
     }
     

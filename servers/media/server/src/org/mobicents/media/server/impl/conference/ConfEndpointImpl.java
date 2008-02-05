@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
+import org.mobicents.media.server.impl.dtmf.InbandDetector;
 import org.mobicents.media.server.impl.dtmf.Rfc2833;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -53,12 +54,123 @@ public class ConfEndpointImpl extends BaseEndpoint {
     public Connection doCreateConnection(Endpoint endpoint, int mode)
             throws ResourceUnavailableException {
         Connection connection = super.doCreateConnection(endpoint, mode);
-        logger.debug("Created connection: " + connection);
-        
-        this.initResource(RESOURCE_DTMF_DETECTOR, connection.getId(), new Rfc2833());
-        logger.debug("Intialized dtmf detector: ");
-        
+        //initialize dtmf detector
+        createDTMFDetector((BaseConnection) connection);
         return connection;
+    }
+
+    /**
+     * Creates DTMF detector for the specified connection.
+     * 
+     * The DTMF detector is a resource of the endpoint created and initialized 
+     * for each connection. The DTMF detection procedure is actualy devided into
+     * three steps. On first step inactive DTMF detector is created alongside 
+     * with connection using the DTMF format negotiated. The second step is used 
+     * to initialize detector with media stream. The last step is used to actual 
+     * start media analysis and events generation.
+     * 
+     * @param connection the connection for listenet dtmf.
+     */
+    private void createDTMFDetector(BaseConnection connection) {
+        switch (connection.getDtmfFormat()) {
+            case DtmfDetector.INBOUND:
+                initResource(RESOURCE_DTMF_DETECTOR, connection.getId(), new InbandDetector());
+                logger.debug("Intialized dtmf detector: INBAND");
+                break;
+            case DtmfDetector.RFC2833:
+                initResource(RESOURCE_DTMF_DETECTOR, connection.getId(), new Rfc2833());
+                logger.debug("Intialized dtmf detector: RFC 2833");
+                break;
+        }
+    }
+
+    /**
+     * Initializes DTMF detector.
+     * 
+     * The DTMF detector is a resource of the endpoint created and initialized 
+     * for each connection. The DTMF detection procedure is actualy devided into
+     * three steps. On first step inactive DTMF detector is created alongside 
+     * with connection using the DTMF format negotiated. The second step is used 
+     * to initialize detector with media stream. The last step is used to actual 
+     * start media analysis and events generation.
+     * 
+     * @param stream the media stream to detect tones from.
+     * @param connectionID the identifier of the DTMF detector.
+     */
+    private void prepareDTMFDetector(PushBufferStream stream, String connectionID) {
+        DtmfDetector detector = (DtmfDetector) getResource(
+                Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
+        try {
+            detector.prepare(stream);
+        } catch (UnsupportedFormatException e) {
+        }
+    }
+
+    /**
+     * Attach incoming streams of the specified connection as outgoing for others
+     * 
+     * @param splitter represents the incoming stream of the specified connection
+     * @param connectionID the connection identifier.
+     */
+    private void splittAudioStream(LocalSplitter splitter, String connectionID) {
+        Set<String> identifiers = mixers.keySet();
+        for (String id : identifiers) {
+            if (!id.equals(connectionID)) {
+                LocalMixer mixer = (LocalMixer) mixers.get(id);
+                try {
+                    mixer.add(connectionID, splitter.newBranch(id));
+                } catch (UnsupportedFormatException e) {
+                    logger.error("Endpoint= " + this.getLocalName() +
+                            ", Unexpected error for splitting streams", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Mixes endpoint's input streams into one single stream.
+     * 
+     * @param mixer represents mixed stream.
+     * @param connection the connection which should be excluded while mixing.
+     */
+    private void mixAudioStreams(LocalMixer mixer, Connection connection) {
+        //attach all existing streams
+        Set<String> identifiers = splitters.keySet();
+        for (String id : identifiers) {
+            if (!id.equals(connection.getId())) {
+                LocalSplitter splitter = (LocalSplitter) splitters.get(id);
+                try {
+                    mixer.add(id, splitter.newBranch(connection.getId()));
+                } catch (UnsupportedFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Starts detection DTMF on specified connection with specified parameters.
+     * 
+     * The DTMF detector is a resource of the endpoint created and initialized 
+     * for each connection. The DTMF detection procedure is actualy devided into
+     * three steps. On first step inactive DTMF detector is created alongside 
+     * with connection using the DTMF format negotiated. The second step is used 
+     * to initialize detector with media stream. The last step is used to actual 
+     * start media analysis and events generation.
+     * 
+     * @param connectionID the identifier of the connection
+     * @param params parameters for DTMF detector.
+     * @param listener the call back inetrface.
+     */
+    private void detectDTMF(String connectionID, String[] params,
+            NotificationListener listener) {
+        DtmfDetector detector = (DtmfDetector) getResource(
+                Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
+        if (params != null && params.length > 0 && params[0] != null) {
+            detector.setDtmfMask(params[0]);
+        }
+        detector.start();
+        detector.addListener(listener);
     }
 
     /**
@@ -94,40 +206,30 @@ public class ConfEndpointImpl extends BaseEndpoint {
     @Override
     public synchronized void addAudioStream(PushBufferStream stream, String connectionID) {
         AudioFormat fmt = (AudioFormat) stream.getFormat();
+        BaseConnection connection = getConnection(connectionID);
 
-        if (fmt.getEncoding().equals("telephone-event")) {
+        if (fmt.getEncoding().equals("telephone-event") &&
+                connection.getDtmfFormat() == DtmfDetector.RFC2833) {
+            prepareDTMFDetector(stream, connectionID);
             if (logger.isDebugEnabled()) {
-                logger.debug(this + " Initialize DTMF detector (RFC2833)");
-            }
-            DtmfDetector detector = (DtmfDetector) getResource(Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
-            try {
-                detector.start(stream);
-            } catch (UnsupportedFormatException e) {
-                logger.error("Could not start DTMF detector", e);
+                logger.debug("Prepared DTMF detector (RFC 2833), stream fmt=" + fmt);
             }
             return;
         }
 
-        logger.debug("Append stream to a conference, stream format: " + fmt);
-
-        //create and register splitter
         LocalSplitter splitter = new LocalSplitter(connectionID);
         splitter.setInputStream(stream);
         splitters.put(connectionID, splitter);
 
-        //append stream for each mixer
-        Set<String> identifiers = mixers.keySet();
-        for (String id : identifiers) {
-            if (!id.equals(connectionID)) {
-                LocalMixer mixer = (LocalMixer) mixers.get(id);
-                try {
-                    mixer.add(connectionID, splitter.newBranch(id));
-                } catch (UnsupportedFormatException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Initialized local splitter ID=" + connectionID);
         }
 
+        splittAudioStream(splitter, connectionID);
+
+        if (connection.getDtmfFormat() == DtmfDetector.INBOUND) {
+            this.prepareDTMFDetector(splitter.newBranch("DTMF"), connectionID);
+        }
     }
 
     @Override
@@ -140,24 +242,14 @@ public class ConfEndpointImpl extends BaseEndpoint {
             mixer = new LocalMixer(connection.getId(), connection.getAudioFormat(),
                     this.getPacketizationPeriod(), this.getJitter());
         } catch (UnsupportedFormatException e) {
+            logger.error("Unexpected error", e);
+            return list;
         }
 
         mixer.start();
         mixers.put(connection.getId(), mixer);
 
-        //attach all existing streams
-        Set<String> identifiers = splitters.keySet();
-        for (String id : identifiers) {
-            if (!id.equals(connection.getId())) {
-                LocalSplitter splitter = (LocalSplitter) splitters.get(id);
-                try {
-                    mixer.add(id, splitter.newBranch(connection.getId()));
-                } catch (UnsupportedFormatException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
+        this.mixAudioStreams(mixer, connection);
         list.add(mixer.getOutputStream());
         return list;
     }
@@ -170,12 +262,8 @@ public class ConfEndpointImpl extends BaseEndpoint {
     public void subscribe(int eventID, String connectionID, String params[], NotificationListener listener) {
         switch (eventID) {
             case Basic.DTMF:
-                logger.info("Subscribing on DTMFs for connection: " + connectionID);
-                DtmfDetector detector = (DtmfDetector) getResource(Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
-//                if (params[0] != null) {
-//                    detector.setDtmfMask(connectionID);
-//                }
-                detector.addListener(listener);
+                logger.info("Start DTMF detector for connection: " + connectionID);
+                this.detectDTMF(connectionID, params, listener);
                 break;
         }
     }

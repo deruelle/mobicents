@@ -45,6 +45,7 @@ import org.mobicents.media.server.impl.rtp.RtpSocketAdaptor;
 import org.mobicents.media.server.impl.rtp.RtpSocketAdaptorImpl;
 import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.*;
+import org.mobicents.media.server.spi.dtmf.DtmfDetector;
 
 /**
  *
@@ -65,9 +66,13 @@ public class BaseConnection implements Connection, AdaptorListener {
     private SessionDescription remoteSDP;
     private BaseConnection otherConnection;
     private RtpSocketAdaptor rtpSocket;
+    
     private AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
+    private int dtmfFormat = DtmfDetector.INBOUND;
+    
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;
+    
     private static HashMap defaultCodecs = new HashMap();
     static {
         defaultCodecs.put(new Integer(0), new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
@@ -161,6 +166,10 @@ public class BaseConnection implements Connection, AdaptorListener {
         return endpoint;
     }
 
+    public int getDtmfFormat() {
+        return this.dtmfFormat;
+    }
+    
     /**
      * (Non-Javadoc).
      *

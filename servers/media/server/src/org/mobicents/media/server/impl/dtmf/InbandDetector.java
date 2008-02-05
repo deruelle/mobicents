@@ -23,6 +23,7 @@ import javax.media.Buffer;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.BufferTransferHandler;
 import javax.media.protocol.PushBufferStream;
+import org.apache.log4j.Logger;
 import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
@@ -53,15 +54,16 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
     private Codec codec;
     private byte[] localBuffer = new byte[8000];
     private int offset = 0;
-    private Filter filter = new Filter(100);
+    private Filter filter = new Filter(700000);
     private TimerTask cleanTask;
     private boolean started = false;
+    
+    private Logger logger = Logger.getLogger(InbandDetector.class);
     
     public InbandDetector() {
     }
         
-    public void start(PushBufferStream stream) throws UnsupportedFormatException {
-        this.started = true;
+    public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);
         if (!stream.getFormat().matches(Codec.LINEAR_AUDIO)) {
             codec = CodecLocator.getCodec(stream.getFormat(), Codec.LINEAR_AUDIO);
@@ -69,6 +71,10 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
                 throw new UnsupportedFormatException(stream.getFormat());
             }
         }
+    }
+
+    public void start() {
+        this.started = true;
     }
     
     public void stop() {
@@ -107,44 +113,46 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
         System.arraycopy(data, 0, localBuffer, offset, len);
         offset += len;
         
+        if (logger.isDebugEnabled()) {
+            logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
+        }
+        
         //buffer full?
         if (offset == 8000) {
             double[] signal = new double[4000];
             int k = 0;
             for (int i = 0; i < 4000; i++) {
-                signal[i] = (data[k++] << 8) | (data[k++] & 0xff);
+                signal[i] = (localBuffer[k++] << 8) | (localBuffer[k++] & 0xff);
             }
             
+            localBuffer = new byte[8000];
+            offset = 0;
+            
+            logger.debug("Checking low frequencies");
             int f1 = checkFreq(lowFreq, signal);
             if (f1 == -1) {
+                logger.debug("No low frequencies were found, break");
                 return;
             }
             
+            logger.debug("Found frequency " + lowFreq[f1] + " Checking hight frequencies");
             int f2 = checkFreq(highFreq, signal);
             if (f2 == -1) {
+                logger.debug("No high frequencies were found, break");
                 return;
             }
             
-            if (cleanTask != null) {
-                cleanTask.cancel();
-            }
+            logger.debug("Found frequency " + highFreq[f1]  + ", evt=" + events[f1][f2]);
             
             digitBuffer.append(events[f1][f2]);
-            String digits = digitBuffer.toString();
-            
-            if (digits.matches(mask)) {
-                sendEvent(digits);
-                digitBuffer = new StringBuffer();
-                return;
-            } 
-            
-            cleanTask = new CleanTask();
-            timer.schedule(cleanTask, 5000);
         }
     }
 
     private int checkFreq(int[] freq, double[] data) {
         for (int i = 0; i < freq.length; i++) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Checking freq: " + freq[i]);
+            }
             if (filter.detect(freq[i], data)) {
                 return i;
             }
@@ -152,15 +160,4 @@ public class InbandDetector implements DtmfDetector, BufferTransferHandler {
         return -1;
     }
     
-    private void sendEvent(String digits) {
-        for (NotificationListener listener: listeners) {
-            listener.update(null);
-        }
-    }
-    
-    private class CleanTask extends TimerTask {
-        public void run() {
-            digitBuffer = new StringBuffer();
-        }
-    }
 }

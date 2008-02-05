@@ -27,7 +27,8 @@ public interface DtmfDetector {
     public final static int RFC2833 = 1;
     public final static int INBOUND = 2;
     
-    public void start(PushBufferStream stream) throws UnsupportedFormatException;
+    public void prepare(PushBufferStream stream) throws UnsupportedFormatException;
+    public void start();
     public void stop();
     
     public void setDtmfMask(String regExp);

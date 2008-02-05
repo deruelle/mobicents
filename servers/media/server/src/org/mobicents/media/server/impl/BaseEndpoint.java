@@ -169,6 +169,15 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     /**
+     * Gets connection with specified identifier.
+     * 
+     * @param connectionID the identifier of the connection to return
+     */
+    public BaseConnection getConnection(String connectionID) {
+        return (BaseConnection) connections.get(connectionID);
+    }
+    
+    /**
      * Gets all connections which are executed by this endpoint.
      *  
      * @return collection of BaseConnection objects.
