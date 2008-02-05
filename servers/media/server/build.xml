@@ -98,9 +98,7 @@
         
         <copy todir="${dist.dir}/mediaserver">
             <fileset dir="${build.classes.dir}">
-                <include name="org/mobicents/media/server/"/> 
-                <include name="org/mobicents/media/spi/"/> 
-                <include name="net/"/> 
+                <include name="org/mobicents/media/"/> 
             </fileset>
         </copy>
         <jar basedir="${dist.dir}/mediaserver" compress="true" jarfile="${dist.dir}/media-server.jar"/> 
