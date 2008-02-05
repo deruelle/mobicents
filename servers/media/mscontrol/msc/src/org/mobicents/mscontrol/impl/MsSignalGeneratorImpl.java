@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.ArrayList;
+import java.rmi.server.UID;
 import javax.naming.NamingException;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.Endpoint;
@@ -39,7 +40,8 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     private String endpointName;
     private MsProviderImpl provider;
     
-    private String id = Long.toHexString(System.currentTimeMillis());
+    private String id = (new UID()).toString();
+    
     private ArrayList <MsResourceListener> listeners = new ArrayList();
     
     private boolean released = false;

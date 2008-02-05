@@ -18,6 +18,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.rmi.server.UID;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
@@ -41,7 +42,7 @@ import org.mobicents.mscontrol.MsTerminationListener;
  */
 public class MsLinkImpl implements MsLink {
     
-    private final String id = Long.toHexString(System.currentTimeMillis());
+    private final String id = (new UID()).toString();
     
     private MsSessionImpl session;
     private int mode;

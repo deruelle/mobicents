@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.ArrayList;
+import java.rmi.server.UID;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsProvider;
@@ -33,7 +34,7 @@ import org.mobicents.mscontrol.MsTerminationListener;
  */
 public class MsSessionImpl implements MsSession {
     //unique identifier of the session
-    private String id = Long.toHexString(System.currentTimeMillis());
+    private String id = (new UID()).toString();
     
     // provider managing this session
     protected MsProviderImpl provider;

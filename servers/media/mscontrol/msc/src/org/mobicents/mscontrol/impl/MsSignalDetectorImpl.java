@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.ArrayList;
+import java.rmi.server.UID;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
@@ -36,7 +37,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     private String endpointName;
     private MsProviderImpl provider;
     
-    private String id = Long.toHexString(System.currentTimeMillis());
+    private String id = (new UID()).toString();
     private ArrayList <MsResourceListener> listeners = new ArrayList();
     
     private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);

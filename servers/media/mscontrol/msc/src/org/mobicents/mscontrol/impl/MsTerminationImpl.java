@@ -18,6 +18,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.rmi.server.UID;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.EndpointQuery;
@@ -40,7 +41,7 @@ import org.mobicents.mscontrol.MsTerminationListener;
  */
 public class MsTerminationImpl implements MsTermination {
     
-    private final String id = Long.toHexString(System.currentTimeMillis());
+    private final String id = (new UID()).toString();
     
     private int state;
     private MsLinkImpl link;
