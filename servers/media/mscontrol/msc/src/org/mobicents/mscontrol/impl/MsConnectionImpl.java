@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
+import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.naming.NamingException;
@@ -42,7 +43,7 @@ import org.mobicents.mscontrol.MsSession;
  */
 public class MsConnectionImpl implements MsConnection {
     
-    private String id = Long.toHexString(System.currentTimeMillis());
+    private String id = (new UID()).toString();
     
     private String localSdp;
     private String remoteSdp;
@@ -157,6 +158,7 @@ public class MsConnectionImpl implements MsConnection {
     }
     
     
+    @Override
     public String toString() {
         return "MsConnection[" + id + "]";
     }
