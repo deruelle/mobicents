@@ -38,6 +38,7 @@ import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
+import org.jboss.util.id.UID;
 import org.mobicents.media.server.impl.rtp.RTPAudioFormat;
 import org.mobicents.media.server.impl.rtp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.AdaptorListener;
@@ -126,7 +127,7 @@ public class BaseConnection implements Connection, AdaptorListener {
      * @return hex view of the unique integer.
      */
     private String genID() {
-        return Long.toHexString(System.currentTimeMillis() & rnd.nextInt()).toUpperCase();
+        return (new UID()).toString();
     }
 
     /**
