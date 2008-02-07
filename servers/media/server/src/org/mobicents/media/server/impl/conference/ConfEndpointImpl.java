@@ -73,7 +73,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
      */
     private void createDTMFDetector(BaseConnection connection) {
         switch (connection.getDtmfFormat()) {
-            case DtmfDetector.INBOUND:
+            case DtmfDetector.INBAND:
                 initResource(RESOURCE_DTMF_DETECTOR, connection.getId(), new InbandDetector());
                 logger.debug("Intialized dtmf detector: INBAND");
                 break;
@@ -179,7 +179,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
      * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
      */
     @Override
-    public void deleteConnection(String connectionID) {
+    public synchronized void deleteConnection(String connectionID) {
         //drop 
         try {
             Collection<BaseConnection> connections = getConnections();
@@ -230,7 +230,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
 
         splittAudioStream(splitter, connectionID);
 
-        if (connection.getDtmfFormat() == DtmfDetector.INBOUND) {
+        if (connection.getDtmfFormat() == DtmfDetector.INBAND) {
             this.prepareDTMFDetector(splitter.newBranch("DTMF"), connectionID);
         }
     }
