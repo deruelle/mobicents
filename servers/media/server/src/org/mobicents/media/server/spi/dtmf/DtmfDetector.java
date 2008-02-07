@@ -25,7 +25,7 @@ import org.mobicents.media.server.spi.NotificationListener;
  */
 public interface DtmfDetector {
     public final static int RFC2833 = 1;
-    public final static int INBOUND = 2;
+    public final static int INBAND = 2;
     
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException;
     public void start();
