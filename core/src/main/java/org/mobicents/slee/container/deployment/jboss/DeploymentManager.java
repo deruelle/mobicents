@@ -1,0 +1,343 @@
+package org.mobicents.slee.container.deployment.jboss;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+
+import javax.slee.EventTypeID;
+import javax.slee.SbbID;
+import javax.slee.ServiceID;
+import javax.slee.profile.ProfileSpecificationID;
+import javax.slee.resource.ResourceAdaptorID;
+import javax.slee.resource.ResourceAdaptorTypeID;
+
+import org.jboss.logging.Logger;
+import org.mobicents.slee.container.SleeContainer;
+import org.mobicents.slee.container.management.jmx.SleeCommandInterface;
+import org.mobicents.slee.resource.ResourceAdaptorEntity;
+
+/**
+ * This class represents the Manager responsible for executing deployment actions
+ * and for controlling dependencies and monitoring new deployments using the deployer.
+ * 
+ * @author Alexandre Mendonça
+ * @version 1.0
+ */
+public class DeploymentManager
+{
+  // The Logger.
+  private static Logger logger = Logger.getLogger( DeploymentManager.class );
+  
+  // The jnp URL data
+  private String jnpHost = System.getProperty("bind.address","127.0.0.1");
+  private String jnpPort = "1099";
+  
+  // The DUs waiting to be installed.
+  private Collection<DeployableUnit> waitingForInstallDUs = new ArrayList<DeployableUnit>();
+  
+  // The DUs waiting for being uninstalled.
+  private Collection<DeployableUnit> waitingForUninstallDUs = new ArrayList<DeployableUnit>();
+  
+  // The components already deployed to SLEE
+  private Collection<String> deployedComponents = new ArrayList<String>();
+  
+  /**
+   * Constructor.
+   */
+  public DeploymentManager() {}
+  
+  /**
+   * Method for adding a new deployable unit to the manager.
+   * @param du the DeployableUnit object to add.
+   * @throws Exception
+   */
+  public void addDeployableUnit(DeployableUnit du) throws Exception
+  {
+    // Get a fresh copy of the deployed components. 
+    updateDeployedComponents();
+    
+    // Check if there aren't already deployed components in this DU...
+    if( !deployedComponents.containsAll( du.getComponents() ) )
+    {
+      // Add it to the deploy list.
+      waitingForInstallDUs.add( du );
+    }
+    else
+    {
+      logger.warn( "Trying to deploy a duplicate DU (" + du.getDeploymentInfo().shortName + ")." );
+    }
+  }
+  
+  /**
+   * Updates the list of components already deployed to SLEE.
+   */
+  public void updateDeployedComponents()
+  {
+    try
+    {
+      // Get the SLEE Container from JNDI
+      SleeContainer sleeContainer = SleeContainer.lookupFromJndi();
+      
+      // First we'll put the components in a temp Collection
+      ArrayList<String> newDeployedComponents = new ArrayList<String>();
+      
+      // Get the deployed Profile Specifications
+      ProfileSpecificationID[] sleeProfileSpecifications = sleeContainer.getProfileSpecificationIDs();
+      
+      for( int i = 0; i < sleeProfileSpecifications.length; i++ )
+      {
+        newDeployedComponents.add( sleeProfileSpecifications[i].toString() );
+      }
+      
+      // Get the deployed Event Types
+      EventTypeID[] sleeEventTypes = sleeContainer.getEventTypes();
+      
+      for( int i = 0; i < sleeEventTypes.length; i++ )
+      {
+        String eventTypeIDwithDUnit = sleeEventTypes[i].toString();
+        
+        newDeployedComponents.add( eventTypeIDwithDUnit.substring( 0, eventTypeIDwithDUnit.indexOf( "," ) ) );
+      }
+      
+      // Get the deployed Resource Adaptor Types
+      ResourceAdaptorTypeID[] sleeRATypes = sleeContainer.getResourceAdaptorTypeIDs();
+      
+      for( int i = 0; i < sleeRATypes.length; i++ )
+      {
+        newDeployedComponents.add( sleeRATypes[i].toString() );
+      }
+      
+      // Get the deployed Resource Adaptors
+      ResourceAdaptorID[] sleeResourceAdaptors = sleeContainer.getResourceAdaptorIDs();
+
+      for( int i = 0; i < sleeResourceAdaptors.length; i++ )
+      {
+        newDeployedComponents.add( sleeResourceAdaptors[i].toString() );
+      }
+      
+      // Get the deployed Service Building Blocks (SBBs)
+      SbbID[] sleeSBBs = sleeContainer.getSbbIDs();
+      
+      for( int i = 0; i < sleeSBBs.length; i++ )
+      {
+        newDeployedComponents.add( sleeSBBs[i].toString() );
+      }
+      
+      // Get the deployed Services
+      ServiceID[] sleeServices = sleeContainer.getServiceIDs();
+
+      for( int i = 0; i < sleeServices.length; i++ )
+      {
+        newDeployedComponents.add( sleeServices[i].toString() );
+      }
+      
+      // Get the existing Resource Adaptor Entity links
+      String[] entityNames = sleeContainer.getResourceAdaptorEntityNames();
+      
+      for( int i = 0; i < entityNames.length; i++ )
+      {
+        ResourceAdaptorEntity rae = sleeContainer.getResourceAdaptorEntity( entityNames[i] );
+        
+        String raTypeId = rae == null ? "NULL" : rae.getInstalledResourceAdaptor().getRaType().getResourceAdaptorTypeID().toString();
+        
+        newDeployedComponents.add( entityNames[i] + "_@_" + raTypeId );
+      }
+
+      // All good.. Make the temp the good one.
+      deployedComponents = newDeployedComponents;
+    }
+    catch ( Exception e )
+    {
+      logger.warn( "Failure while updating deployed components.", e );
+    }
+  }
+
+  /**
+   * Method for installing a Deployable Unit into SLEE.
+   * @param du the Deployable Unit to install.
+   * @throws Exception
+   */
+  public void installDeployableUnit( DeployableUnit du ) throws Exception
+  {
+    // Check if the DU is ready to be installed
+    if( du.isReadyToInstall( true ) )
+    {
+      // Get and Run the actions needed for installing this DU
+      sciAction( du.getInstallActions() );
+      
+      // Set the DU as installed
+      du.setInstalled( true );
+      
+      // Update the deployed components from SLEE
+      updateDeployedComponents();
+      
+      // Go through the remaining DUs waiting for installation
+      Iterator<DeployableUnit> duIt = waitingForInstallDUs.iterator();
+      
+      while( duIt.hasNext() )
+      {
+        DeployableUnit waitingDU = duIt.next();
+        
+        // If it is ready for installation, follow the same procedure
+        if( waitingDU.isReadyToInstall( false ) )
+        {
+          // Get and Run the actions needed for installing this DU
+          sciAction( waitingDU.getInstallActions() );
+          
+          // Set the DU as installed
+          waitingDU.setInstalled( true );
+          
+          // Update the deployed components from SLEE
+          updateDeployedComponents();
+
+          // Remove the DU from the waiting list.
+          waitingForInstallDUs.remove( waitingDU );
+          
+          // Let's start all over.. :)
+          duIt = waitingForInstallDUs.iterator();
+        }
+      }
+    }
+    else
+    {
+      logger.info( "Unable to INSTALL " + du.getDeploymentInfo().shortName + " right now. Waiting for dependencies to be resolved." );
+      
+      // The DU can't be installed now, let's wait...
+      waitingForInstallDUs.add( du );
+    }
+  }
+  
+  /**
+   * Method for uninstalling a Deployable Unit into SLEE.
+   * @param du the Deployable Unit to install.
+   * @throws Exception
+   */
+  public void uninstallDeployableUnit( DeployableUnit du ) throws Exception
+  {
+    // It isn't installed?
+    if( !du.isInstalled() )
+    {
+      // Then it should be in the waiting list... remove and we're done.
+      waitingForInstallDUs.remove( du );
+      
+      logger.info( du.getDeploymentInfo().shortName + " wasn't deployed. Removing from waiting list." );
+    }
+    // Check if the DU is ready to be uninstalled
+    else if( du.isReadyToUninstall() )
+    { 
+      // Get and Run the actions needed for uninstalling this DU
+      sciAction( du.getUninstallActions() );
+      
+      // Set the DU as not installed
+      du.setInstalled( false );
+      
+      // Update the deployed components from SLEE
+      updateDeployedComponents();
+      
+      // Go through the remaining DUs waiting for uninstallation
+      Iterator<DeployableUnit> duIt = waitingForUninstallDUs.iterator();
+      
+      while( duIt.hasNext() )
+      {
+        DeployableUnit waitingDU = duIt.next();
+        
+        // If it is ready for being uninstalled, follow the same procedure
+        if( waitingDU.isReadyToUninstall() )
+        {
+          // Get and Run the actions needed for uninstalling this DU
+          sciAction( waitingDU.getUninstallActions() );
+          
+          // Set the DU as not installed
+          waitingDU.setInstalled( false );
+          
+          // Update the deployed components from SLEE
+          updateDeployedComponents();
+          
+          // Remove the DU from the waiting list.
+          waitingForUninstallDUs.remove( waitingDU );
+          
+          // Let's start all over.. :)
+          duIt = waitingForUninstallDUs.iterator();
+        }
+      }
+    }
+    else
+    {
+      logger.info( "Unable to UNINSTALL " + du.getDeploymentInfo().shortName + " right now. Waiting for dependents to be removed." );
+      
+      // Add it to the waiting list.
+      waitingForUninstallDUs.add( du );
+    }
+  }
+  
+  /**
+   * Method for performing the actions needed for (un)deployment.
+   * @param actions the array of strings containing the actions to perform.
+   * @throws Exception
+   */
+  private void sciAction( Collection<String[]> actions ) throws Exception
+  {
+    // Create a SLEE Command Interface with the data
+    SleeCommandInterface sleeCommandInterface = new SleeCommandInterface( "jnp://" + jnpHost + ":" + jnpPort );
+    
+    // For each action, get the params..
+    for( String[] params : actions )
+    {
+      String arg1 = params.length > 0 ? params[0] : "";
+      String arg2 = params.length > 1 ? params[1] : "";
+      String arg3 = params.length > 2 ? params[2] : "";
+      String arg4 = params.length > 3 ? params[3] : "";
+      
+      if( logger.isDebugEnabled() )
+        logger.debug( "Invoking Action: " + arg1 + " " + arg2 + " " + arg3 + " " + arg4);
+     
+      // Invoke it.
+      sleeCommandInterface.invokeOperation( arg1, arg2, arg3, arg4 );
+      
+      // Wait a little while just to make sure it finishes
+      Thread.sleep( 250 );
+    }
+  }
+
+  /**
+   * Getter for the Deployed Components collection.
+   * @return a Collection of Strings with the deployed components IDs.
+   */
+  public Collection<String> getDeployedComponents()
+  {
+    return deployedComponents;
+  }
+  
+  /**
+   * Method for showing current status of the Deployment Manager.
+   * @return a HTML string with the status.
+   */
+  public String showStatus()
+  {
+    // Update the currently deployed components.
+    updateDeployedComponents();
+    
+    String output = "";
+    
+    output += "<p>Deployable Units Waiting For Install:</p>";
+    for( DeployableUnit waitingDU : waitingForInstallDUs )
+    {
+      output += "+-- " + waitingDU.getDeploymentInfo().shortName + "<br>";
+      for( String dependency : waitingDU.getExternalDependencies() )
+      {
+        if( !deployedComponents.contains( dependency ) )
+          dependency += " <strong>MISSING!</strong>";
+        
+        output += "  +-- depends on " + dependency + "<br>";
+      }
+    }
+   
+    output += "<p>Deployable Units Waiting For Uninstall:</p>";
+    for( DeployableUnit waitingDU : waitingForUninstallDUs )
+    {
+      output += "+-- " + waitingDU.getDeploymentInfo().shortName + "<br>";
+    }
+   
+    return output;
+  }
+}

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<server>
+   <mbean code="org.mobicents.slee.container.deployment.jboss.SLEESubDeployer"
+      name="jboss.deployer:service=SLEEDeployer">
+   </mbean>
+</server>
