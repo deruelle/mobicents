@@ -47,9 +47,9 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
     
     private List <NotificationListener> listeners = new ArrayList();
     private Codec codec;
-    private byte[] localBuffer = new byte[8000];
+    private byte[] localBuffer = new byte[16000];
     private int offset = 0;
-    private Filter filter = new Filter(500000);
+    private Filter filter = new Filter(10);
     private boolean started = false;
     
     private Logger logger = Logger.getLogger(InbandDetector.class);
@@ -73,7 +73,7 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
             if (codec == null) {
                 throw new UnsupportedFormatException(stream.getFormat());
             }
-        }
+        } 
     }
 
     public void start() {
@@ -97,31 +97,43 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
         }
         
         byte[] data = (byte[]) buffer.getData();
+//        System.out.println("receive " + data.length + " bytes");
+//        InbandGenerator.print(data);
+        
+        //byte[] data = null;
         if (codec != null) {
             data = codec.process(data);
+//            System.out.println("Decompressed to " + data.length + " bytes");
+//            InbandGenerator.print(data);
         }
         
-        int len = Math.min(8000 - offset, data.length);
+        int len = Math.min(16000 - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);
         offset += len;
         
+       //System.out.println("append " + len + " bytes to the local buffer, buff size=" + offset);
         if (logger.isDebugEnabled()) {
             logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
         }
         
         //buffer full?
-        if (offset == 8000) {
-            double[] signal = new double[4000];
+        if (offset == 16000) {
+            //System.out.println("SIGNAL");
+            //InbandGenerator.print(localBuffer);
+            double[] signal = new double[8000];
             int k = 0;
-            for (int i = 0; i < 4000; i++) {
-                signal[i] = (localBuffer[k++] << 8) | (localBuffer[k++] & 0xff);
+            for (int i = 0; i < 8000; i++) {
+                signal[i] = ((localBuffer[k++] & 0xff) | (localBuffer[k++] << 8));
+                //signal[i] = signal[i] / Short.MAX_VALUE;
+                //System.out.println("s[" + i + "]=" +signal[i]);
             }
             
-            localBuffer = new byte[8000];
+            localBuffer = new byte[16000];
             offset = 0;
             
             logger.debug("Checking low frequencies");
             int f1 = checkFreq(lowFreq, signal);
+            //System.out.println("Low group: " + f1);
             if (f1 == -1) {
                 logger.debug("No low frequencies were found, break");
                 return;
@@ -135,7 +147,6 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
             }
             
             logger.debug("Found frequency " + highFreq[f1]  + ", evt=" + events[f1][f2]);
-            
             digitBuffer.push(events[f1][f2]);
         }
     }

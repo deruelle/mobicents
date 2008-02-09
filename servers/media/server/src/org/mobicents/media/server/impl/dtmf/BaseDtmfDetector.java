@@ -51,7 +51,7 @@ public abstract class BaseDtmfDetector implements DtmfDetector {
         for (NotificationListener listener: listeners) {
             listener.update(evt);
         }
-        listeners.clear();
+        //listeners.clear();
         //this.stop();
     }
     
