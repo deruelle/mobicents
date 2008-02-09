@@ -220,13 +220,13 @@
 				<delete dir="${release.dir}/examples/@{dir.name}" failonerror="false" />
 				<mkdir dir="${release.dir}/examples/@{dir.name}" />
 
-				<move todir="${release.dir}/examples/@{dir.name}">
+				<copy todir="${release.dir}/examples/@{dir.name}">
 					<fileset dir="${mobicents.home}/../examples/@{dir.name}">
 						<include name="**" />
 						<exclude name="**/CVS" />
 						<exclude name="**/.svn" />
 					</fileset>
-				</move>
+				</copy>
 				<delete dir="${release.dir}/examples/@{dir.name}/mobicents-examples" failonerror="false" />
 
 
