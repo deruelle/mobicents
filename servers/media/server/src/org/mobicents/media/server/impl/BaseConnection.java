@@ -69,7 +69,7 @@ public class BaseConnection implements Connection, AdaptorListener {
     private RtpSocketAdaptor rtpSocket;
     
     private AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
-    private int dtmfFormat = DtmfDetector.RFC2833;
+    private int dtmfFormat = DtmfDetector.INBAND;
     
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;
@@ -83,7 +83,7 @@ public class BaseConnection implements Connection, AdaptorListener {
 //        defaultCodecs.put(new Integer(5), new RTPAudioFormat(5, AudioFormat.DVI, 8000, 4, 1));
 //        defaultCodecs.put(new Integer(16), new RTPAudioFormat(16, AudioFormat.DVI, 11025, 4, 1));
 //        defaultCodecs.put(new Integer(16), new RTPAudioFormat(16, AudioFormat.DVI, 22050, 4, 1));
-        defaultCodecs.put(new Integer(101), new RTPAudioFormat(101, "telephone-event"));
+//        defaultCodecs.put(new Integer(101), new RTPAudioFormat(101, "telephone-event"));
     }
     private transient Logger logger = Logger.getLogger(BaseConnection.class);
 
@@ -223,7 +223,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             }
 
             //set attributes for dtmf
-            attributes.add(sdpFactory.createAttribute("fmtp", "101 0-15"));
+            //attributes.add(sdpFactory.createAttribute("fmtp", "101 0-15"));
 
             //generate descriptor
             md.setAttributes(attributes);
