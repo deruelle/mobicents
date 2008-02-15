@@ -19,7 +19,7 @@ do the following
 Add the following lines in your settings.xml (between the <servers> and </servers> tags) 
 maven2 file in the conf directory of your maven 2 installation directory : 
 <server>
-  <id>maven2-repository</id>
+  <id>java.net-m2-repository</id>
   <username>username</username>
   <password>password</password>
 </server>

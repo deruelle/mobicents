@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>1.2.0-beta-1</version>
+		<version>1.2.0-beta-2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-rar</artifactId>
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.mobicents</groupId>
 			<artifactId>mobicents</artifactId>
-			<version>1.2.0-beta-1</version>
+			<version>${parent.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
