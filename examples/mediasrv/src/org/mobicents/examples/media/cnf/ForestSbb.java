@@ -26,6 +26,7 @@ import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
 import org.mobicents.examples.media.Announcement;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsProvider;
@@ -57,7 +58,7 @@ public abstract class ForestSbb implements Sbb {
     public void enter(String endpointName) {
         logger.info("Joining " + endpointName + " with " + CNF_ENDPOINT);
         
-        MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
+        MsConnection connection = (MsConnection) getConnectionActivity().getActivity();
         MsSession session = connection.getSession();
         MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 
@@ -80,14 +81,13 @@ public abstract class ForestSbb implements Sbb {
         
         ChildRelation childRelation = this.getParticipantSbb();
         try {
-            logger.info("Joining crickets: " + CRICKETS);
-            Announcement crickets = (Announcement) childRelation.create();
-            connectionActivity.attach(crickets);
-            
+            logger.info("Joining crickets: " + CRICKETS);            
             List cricketVoice = new ArrayList();
             cricketVoice.add(CRICKETS);
+            Announcement crickets = (Announcement) childRelation.create();
+            connectionActivity.attach(crickets);
             crickets.play(endpointName, cricketVoice, true);
-            
+                        
             logger.info("Joining mocking: " + MOCKING);
             List mockingVoice = new ArrayList();
             mockingVoice.add(MOCKING);
@@ -96,14 +96,14 @@ public abstract class ForestSbb implements Sbb {
             
             mocking.play(endpointName, mockingVoice, true);
             
-            logger.info("Joining cuckoo: " + CUCKOO);
-            Announcement cuckoo = (Announcement) childRelation.create();
-            connectionActivity.attach(cuckoo);
+//            logger.info("Joining cuckoo: " + CUCKOO);
+//            Announcement cuckoo = (Announcement) childRelation.create();
+//            connectionActivity.attach(cuckoo);
             
-            List cuckooVoice = new ArrayList();
-            cuckooVoice.add(CUCKOO);
-            cuckoo.play(endpointName, cuckooVoice, true);
-        } catch (CreateException e) {
+//            List cuckooVoice = new ArrayList();
+//            cuckooVoice.add(CUCKOO);
+//            cuckoo.play(endpointName, cuckooVoice, true);
+        } catch (Exception e) {
             logger.error("Unexpected error", e);
         }        
     }
@@ -111,7 +111,17 @@ public abstract class ForestSbb implements Sbb {
     public void onConfBridgeFailed(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.error("Joining error: cause = " + evt.getCause());
     }
-        
+    
+    public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        System.out.println("Finita la commedia");
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsLink) {
+                ((MsLink) activities[i].getActivity()).release();
+            }
+        }
+    }
+    
     public abstract ChildRelation getParticipantSbb();
     
     public ActivityContextInterface getConnectionActivity() {

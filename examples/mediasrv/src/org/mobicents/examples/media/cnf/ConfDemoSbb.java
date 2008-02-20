@@ -24,6 +24,8 @@ import javax.slee.SbbContext;
 import org.apache.log4j.Logger;
 import org.mobicents.examples.media.Announcement;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 
 /**
@@ -64,7 +66,8 @@ public abstract class ConfDemoSbb implements Sbb {
         try {
             ChildRelation childRelation = this.getForestSbb();
             Forest forest = (Forest) childRelation.create();
-            sbbContext.getActivities()[0].attach(forest);
+            this.getConnectionActivity().attach(forest);
+            this.getConnectionActivity().detach(sbbContext.getSbbLocalObject());
             forest.enter(this.getUserEndpoint());
             logger.info("Going to the forest");
         } catch (CreateException e) {
@@ -73,8 +76,17 @@ public abstract class ConfDemoSbb implements Sbb {
             connection.release();
         }
     }
-
     
+    public ActivityContextInterface getConnectionActivity() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+        
+        return null;
+    }
 
     /**
      * CMP field accessor

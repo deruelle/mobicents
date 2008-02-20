@@ -26,6 +26,7 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
@@ -47,11 +48,12 @@ public abstract class AnnouncementSbb implements Sbb {
     private MediaRaActivityContextInterfaceFactory mediaAcif;
     private Logger logger = Logger.getLogger(AnnouncementSbb.class);
 
-    public void play(String userEndpoint, 
+    public void play(String userEndpoint,
             List announcements, boolean keepAlive) {
         //hold announcement sequence in the activity context interface
         this.setIndex(0);
         this.setSequence(announcements);
+        this.setKeepAlive(keepAlive);
 
         //join user endpoint with any of the announcement endpoint
         ActivityContextInterface connectionActivity = sbbContext.getActivities()[0];
@@ -82,18 +84,30 @@ public abstract class AnnouncementSbb implements Sbb {
     }
 
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Announcement complete: " + (this.getIndex() - 1));        
+        logger.info("Announcement complete: " + (this.getIndex() - 1));
         if (this.getIndex() < this.getSequence().size()) {
             playNext();
             return;
         }
-        
+
+        logger.info("Index= " + getIndex() + " keepAlive = " + this.getKeepAlive());
+
         if (this.getIndex() == this.getSequence().size() && !this.getKeepAlive()) {
+            logger.info("Releasing link");
             MsLink link = this.getLink();
             link.release();
         } else {
+            logger.info("Replay");
             this.setIndex(0);
             playNext();
+        }
+    }
+
+    public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        System.out.println("Finita la commedia");
+        MsLink link = this.getLink();
+        if (link != null) {
+            link.release();
         }
     }
 
@@ -112,13 +126,15 @@ public abstract class AnnouncementSbb implements Sbb {
     public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.info("Dialog completed, fire DIALOG_COMPLETE event");
         ActivityContextInterface connectionAci = this.getUserActivity();
-        connectionAci.detach(sbbContext.getSbbLocalObject());
-        this.fireLinkReleased(evt, connectionAci, null);
+        if (connectionAci != null && !connectionAci.isEnding()) {
+            connectionAci.detach(sbbContext.getSbbLocalObject());
+            this.fireLinkReleased(evt, connectionAci, null);
+        }
     }
 
-    public abstract void fireLinkReleased(MsLinkEvent evt, 
+    public abstract void fireLinkReleased(MsLinkEvent evt,
             ActivityContextInterface aci, Address address);
-    
+
     public MsLink getLink() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
         for (int i = 0; i < activities.length; i++) {
@@ -140,17 +156,21 @@ public abstract class AnnouncementSbb implements Sbb {
     }
 
     public abstract String getAnnouncementEndpoint();
+
     public abstract void setAnnouncementEndpoint(String endpoint);
 
     public abstract int getIndex();
+
     public abstract void setIndex(int index);
 
     public abstract List getSequence();
+
     public abstract void setSequence(List sequence);
 
     public abstract boolean getKeepAlive();
+
     public abstract void setKeepAlive(boolean keepAlive);
-    
+
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
         try {
