@@ -1,6 +1,4 @@
 /*
- * PREndpointManagementMBean.java
- *
  * Mobicents Media Gateway
  *
  * The source code contained in this file is in in the public domain.
@@ -14,29 +12,27 @@
  * usefulness of the software.
  */
 
-package org.mobicents.media.server.impl.conference;
+package org.mobicents.media.server.impl.ann;
 
 import java.util.Properties;
-import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public interface ConfEndpointManagementMBean extends EndpointManagementMBean {
-    /**
-     * JMX attribute.
-     *  
-     * @param properties the value of the attribute
-     * @throws org.mobicents.media.server.spi.UnknownMediaResourceException
-     */
-    public void setDTMF(Properties properties) throws UnknownMediaResourceException;
-    /**
-     * JMX attribute.
-     *  
-     * @param properties the value of the attrubute.
-     * @throws org.mobicents.media.server.spi.UnknownMediaResourceException
-     */
-    public Properties getDTMF();
+public class AnnResourceManager extends BaseResourceManager {
+    @Override
+    public MediaResource getResource(BaseEndpoint endpoint, String name, 
+            Connection connection, Properties config) throws UnknownMediaResourceException {
+        if (name.equals(Endpoint.RESOURCE_AUDIO_SOURCE)) {
+            return new LocalProxy(endpoint, connection);
+        } else return null;
+    }
+
 }

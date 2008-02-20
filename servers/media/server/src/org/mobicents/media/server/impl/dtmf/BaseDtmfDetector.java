@@ -14,8 +14,10 @@ package org.mobicents.media.server.impl.dtmf;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.dtmf.DtmfDetector;
+import org.mobicents.media.server.spi.dtmf.DTMF;
 import org.mobicents.media.server.spi.events.Basic;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
@@ -24,14 +26,15 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  * 
  * @author Oleg Kulikov
  */
-public abstract class BaseDtmfDetector implements DtmfDetector {
+public abstract class BaseDtmfDetector extends BaseResource 
+        implements MediaSink, DTMF {
 
-    protected DigitBuffer digitBuffer;
+    protected DtmfBuffer digitBuffer;
     private List <NotificationListener> listeners = new ArrayList();
     
 
     public BaseDtmfDetector() {
-        digitBuffer = new DigitBuffer(this);
+        digitBuffer = new DtmfBuffer(this);
     }
     
     public void setDtmfMask(String mask) {
@@ -51,8 +54,8 @@ public abstract class BaseDtmfDetector implements DtmfDetector {
         for (NotificationListener listener: listeners) {
             listener.update(evt);
         }
-        //listeners.clear();
-        //this.stop();
+        listeners.clear();
+        this.stop();
     }
     
     private int getCause(String seq) {

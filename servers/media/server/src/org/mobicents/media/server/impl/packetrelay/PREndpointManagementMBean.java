@@ -23,5 +23,4 @@ import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
  * @author Oleg Kulikov
  */
 public interface PREndpointManagementMBean extends EndpointManagementMBean {
-    
 }

@@ -15,46 +15,51 @@
 package org.mobicents.media.server.impl.dtmf;
 
 import java.io.IOException;
+import java.util.Properties;
 import javax.media.Buffer;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.BufferTransferHandler;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.spi.MediaResource;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class Rfc2833 extends BaseDtmfDetector implements BufferTransferHandler {
+public class Rfc2833Detector extends BaseDtmfDetector implements BufferTransferHandler {
     
-    
-    private boolean started = false;
     private final static String[] DTMF = new String[] {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
     };
     
-    private Logger logger = Logger.getLogger(Rfc2833.class);
+    private Logger logger = Logger.getLogger(Rfc2833Detector.class);
     
-    public Rfc2833() {
+    public Rfc2833Detector() {
         super();
+    }
+    
+    public void configure(Properties config) {
+        setState(MediaResource.STATE_CONFIGURED);
     }
     
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);       
+        setState(MediaResource.STATE_PREPARED);
         logger.debug("Detector prepared");
     }
     
     public void start() {
-        this.started = true;
+        setState(MediaResource.STATE_STARTED);
     }
     
     public void stop() {
-        this.started = false;
+        setState(MediaResource.STATE_PREPARED);
         logger.debug("Detector stopped");
     }
     
     public void transferData(PushBufferStream stream) {
-        if (!started) {
+        if (getState() != MediaResource.STATE_STARTED) {
             return;
         }
         
@@ -74,6 +79,10 @@ public class Rfc2833 extends BaseDtmfDetector implements BufferTransferHandler {
         }
         
         digitBuffer.push(digit);
+    }
+    
+    public void release() {
+        setState(MediaResource.STATE_NULL);
     }
     
 }

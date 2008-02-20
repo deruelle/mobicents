@@ -14,8 +14,9 @@
  * usefulness of the software.
  */
 
-package org.mobicents.media.server.impl.rtp;
+package org.mobicents.media.server.impl.sdp;
 
+import org.mobicents.media.server.impl.rtp.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.media.Format;
@@ -66,7 +67,7 @@ public class RTPFormat extends Format {
         Enumeration payloads = media.getMediaFormats(false).elements();
         while (payloads.hasMoreElements()) {
             int payload = Integer.parseInt((String)payloads.nextElement());
-            Format fmt = AVProfile.createAudioFormat(payload);
+            Format fmt = AVProfile.getAudioFormat(payload);
             if (fmt != null) {
                 formats.put(new Integer(payload), fmt);
             }

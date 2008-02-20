@@ -1,0 +1,44 @@
+/*
+ * Mobicents Media Gateway
+ *
+ * The source code contained in this file is in in the public domain.
+ * It can be used in any project or product without prior permission,
+ * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
+ * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * AND DATA ACCURACY.  We do not warrant or make any representations
+ * regarding the use of the software or the  results thereof, including
+ * but not limited to the correctness, accuracy, reliability or
+ * usefulness of the software.
+ */
+
+package org.mobicents.media.server.impl.dtmf;
+
+import java.util.Properties;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.MediaResource;
+import org.mobicents.media.server.spi.UnknownMediaResourceException;
+
+/**
+ * Intializes DTMF resources.
+ * 
+ * @author Oleg Kulikov
+ */
+public class DTMFResourceLocator {
+    public static MediaResource getDetector(BaseEndpoint endpoint, 
+            Connection connection, Properties config) throws UnknownMediaResourceException {
+        if (config == null) {
+            return new InbandDetector();
+        }
+        
+        String fmt = config.getProperty("dtmf.format");
+        if (fmt.equalsIgnoreCase("rfc2833")) {
+            return new Rfc2833Detector();
+        } else if (fmt.equalsIgnoreCase("inband")) {
+            return new InbandDetector();
+        } else {
+            throw new UnknownMediaResourceException(fmt);
+        }
+    }
+}

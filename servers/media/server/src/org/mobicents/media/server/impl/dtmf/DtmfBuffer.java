@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Oleg Kulikov
  */
-public class DigitBuffer {
+public class DtmfBuffer {
     public final static int TIMEOUT = 5000;
     public final static int SILENCE = 500;
     
@@ -31,9 +31,9 @@ public class DigitBuffer {
     private long lastActivity = System.currentTimeMillis();
     private String lastSymbol;
     
-    private Logger logger = Logger.getLogger(DigitBuffer.class);
+    private Logger logger = Logger.getLogger(DtmfBuffer.class);
     
-    public DigitBuffer(BaseDtmfDetector detector) {
+    public DtmfBuffer(BaseDtmfDetector detector) {
         this.detector = detector;
     }
     
@@ -72,7 +72,7 @@ public class DigitBuffer {
     
     public static void main(String[] args) throws Exception {
         System.out.println("DIGIT BUFFER");
-        DigitBuffer digitBuffer = new DigitBuffer(null);
+        DtmfBuffer digitBuffer = new DtmfBuffer(null);
         //digitBuffer.setMask("[\\d]{2}[*]");
         digitBuffer.push("1");
         digitBuffer.push("1");

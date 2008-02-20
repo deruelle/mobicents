@@ -17,6 +17,7 @@
 package org.mobicents.media.server.impl.jmx;
 
 import java.net.UnknownHostException;
+import java.util.Properties;
 import javax.naming.NamingException;
 import org.jboss.system.ServiceMBean;
 
@@ -124,6 +125,12 @@ public interface EndpointManagementMBean extends ServiceMBean {
      * 
      * @param portRange string indicating range in the follwing format: low-high
      */
-    public void setPortRange(String portRange);    
+    public void setPortRange(String portRange);  
+    
+    public void setPCMA(Boolean enabled);
+    public Boolean getPCMA();
+
+    public void setPCMU(Boolean enabled);
+    public Boolean getPCMU();
     
 }

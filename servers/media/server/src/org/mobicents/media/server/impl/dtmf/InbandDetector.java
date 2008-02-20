@@ -11,12 +11,9 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.dtmf;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 import javax.media.Buffer;
 import javax.media.format.UnsupportedFormatException;
@@ -26,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
-import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.MediaResource;
 
 /**
  *
@@ -34,7 +31,7 @@ import org.mobicents.media.server.spi.NotificationListener;
  */
 public class InbandDetector extends BaseDtmfDetector implements BufferTransferHandler {
 
-    public final static String[][] events = new String[][] {
+    public final static String[][] events = new String[][]{
         {"1", "2", "3", "A"},
         {"4", "5", "6", "B"},
         {"7", "8", "9", "C"},
@@ -43,17 +40,12 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
     
     private int[] lowFreq = new int[]{697, 770, 852, 941};
     private int[] highFreq = new int[]{1209, 1336, 1477, 1633};
-    
-    
-    private List <NotificationListener> listeners = new ArrayList();
     private Codec codec;
     private byte[] localBuffer = new byte[16000];
     private int offset = 0;
     private Filter filter = new Filter(10);
-    private boolean started = false;
-    
     private Logger logger = Logger.getLogger(InbandDetector.class);
-    
+
     public InbandDetector() {
         super();
         Properties props = new Properties();
@@ -65,57 +57,62 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
             e.printStackTrace();
         }
     }
-        
+
+
+    public void configure(Properties config) {
+        setState(MediaResource.STATE_CONFIGURED);
+    }
+
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);
         if (!stream.getFormat().matches(Codec.LINEAR_AUDIO)) {
             codec = CodecLocator.getCodec(stream.getFormat(), Codec.LINEAR_AUDIO);
+            setState(MediaResource.STATE_PREPARED);
             if (codec == null) {
                 throw new UnsupportedFormatException(stream.getFormat());
             }
-        } 
+        }
     }
 
     public void start() {
-        this.started = true;
+        setState(MediaResource.STATE_STARTED);
     }
-    
+
     public void stop() {
-        this.started = false;
+        setState(MediaResource.STATE_PREPARED);
     }
-    
 
     public void transferData(PushBufferStream stream) {
-        if (!started) {
+        if (getState() != MediaResource.STATE_STARTED) {
             return;
         }
-        
+
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
         } catch (IOException e) {
         }
-        
+
         byte[] data = (byte[]) buffer.getData();
 //        System.out.println("receive " + data.length + " bytes");
 //        InbandGenerator.print(data);
-        
+
         //byte[] data = null;
         if (codec != null) {
             data = codec.process(data);
 //            System.out.println("Decompressed to " + data.length + " bytes");
 //            InbandGenerator.print(data);
         }
-        
+
         int len = Math.min(16000 - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);
         offset += len;
-        
-       //System.out.println("append " + len + " bytes to the local buffer, buff size=" + offset);
+
+        //System.out.println("append " + len + " bytes to the local buffer, buff size=" + offset);
         if (logger.isDebugEnabled()) {
             logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
         }
-        
+
         //buffer full?
         if (offset == 16000) {
             //System.out.println("SIGNAL");
@@ -124,13 +121,13 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
             int k = 0;
             for (int i = 0; i < 8000; i++) {
                 signal[i] = ((localBuffer[k++] & 0xff) | (localBuffer[k++] << 8));
-                //signal[i] = signal[i] / Short.MAX_VALUE;
-                //System.out.println("s[" + i + "]=" +signal[i]);
+            //signal[i] = signal[i] / Short.MAX_VALUE;
+            //System.out.println("s[" + i + "]=" +signal[i]);
             }
-            
+
             localBuffer = new byte[16000];
             offset = 0;
-            
+
             logger.debug("Checking low frequencies");
             int f1 = checkFreq(lowFreq, signal);
             //System.out.println("Low group: " + f1);
@@ -138,15 +135,15 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
                 logger.debug("No low frequencies were found, break");
                 return;
             }
-            
+
             logger.debug("Found frequency " + lowFreq[f1] + " Checking hight frequencies");
             int f2 = checkFreq(highFreq, signal);
             if (f2 == -1) {
                 logger.debug("No high frequencies were found, break");
                 return;
             }
-            
-            logger.debug("Found frequency " + highFreq[f1]  + ", evt=" + events[f1][f2]);
+
+            logger.debug("Found frequency " + highFreq[f1] + ", evt=" + events[f1][f2]);
             digitBuffer.push(events[f1][f2]);
         }
     }
@@ -162,5 +159,9 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
         }
         return -1;
     }
-    
+
+    public void release() {
+        localBuffer = null;
+        setState(MediaResource.STATE_NULL);
+    }
 }

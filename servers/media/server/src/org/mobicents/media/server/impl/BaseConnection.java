@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
@@ -39,14 +40,13 @@ import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
-import org.mobicents.media.server.impl.rtp.RTPAudioFormat;
-import org.mobicents.media.server.impl.rtp.RTPFormat;
+import org.mobicents.media.server.impl.sdp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.AdaptorListener;
 import org.mobicents.media.server.impl.rtp.RtpSocketAdaptor;
 import org.mobicents.media.server.impl.rtp.RtpSocketAdaptorImpl;
 import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.*;
-import org.mobicents.media.server.spi.dtmf.DtmfDetector;
+import org.mobicents.media.server.spi.dtmf.DTMF;
 
 /**
  *
@@ -55,7 +55,6 @@ import org.mobicents.media.server.spi.dtmf.DtmfDetector;
 public class BaseConnection implements Connection, AdaptorListener {
 
     private final static Random rnd = new Random();
-    
     private String id;
     private int port;
     private int period = 20;
@@ -67,24 +66,10 @@ public class BaseConnection implements Connection, AdaptorListener {
     private SessionDescription remoteSDP;
     private BaseConnection otherConnection;
     private RtpSocketAdaptor rtpSocket;
-    
     private AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
-    private int dtmfFormat = DtmfDetector.INBAND;
-    
+    private int dtmfFormat = DTMF.INBAND;
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;
-    
-    private static HashMap defaultCodecs = new HashMap();
-    static {
-        defaultCodecs.put(new Integer(0), new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
-        defaultCodecs.put(new Integer(8), new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1));
-//        defaultCodecs.put(new Integer(3), new RTPAudioFormat(3, AudioFormat.GSM, 8000, 13, 1));
-//        defaultCodecs.put(new Integer(4), new RTPAudioFormat(4, AudioFormat.G723, 8000, 8, 1));
-//        defaultCodecs.put(new Integer(5), new RTPAudioFormat(5, AudioFormat.DVI, 8000, 4, 1));
-//        defaultCodecs.put(new Integer(16), new RTPAudioFormat(16, AudioFormat.DVI, 11025, 4, 1));
-//        defaultCodecs.put(new Integer(16), new RTPAudioFormat(16, AudioFormat.DVI, 22050, 4, 1));
-//        defaultCodecs.put(new Integer(101), new RTPAudioFormat(101, "telephone-event"));
-    }
     private transient Logger logger = Logger.getLogger(BaseConnection.class);
 
     /**
@@ -101,7 +86,7 @@ public class BaseConnection implements Connection, AdaptorListener {
         this.endpointName = endpoint.getLocalName();
 
         rtpSocket = new RtpSocketAdaptorImpl(
-                this.endpoint.packetizationPeriod, 
+                this.endpoint.packetizationPeriod,
                 this.endpoint.jitter);
         try {
             port = rtpSocket.init(endpoint.getBindAddress(),
@@ -170,7 +155,7 @@ public class BaseConnection implements Connection, AdaptorListener {
     public int getDtmfFormat() {
         return this.dtmfFormat;
     }
-    
+
     /**
      * (Non-Javadoc).
      *
@@ -203,7 +188,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             Vector descriptions = new Vector();
 
             //encode formats
-            HashMap fmts = codecs != null ? codecs : defaultCodecs;
+            HashMap fmts = codecs != null ? codecs : endpoint.getFormats();
             Object[] payloads = getPayloads(fmts).toArray();
 
             int[] formats = new int[payloads.length];
@@ -222,8 +207,6 @@ public class BaseConnection implements Connection, AdaptorListener {
                 attributes.add(sdpFactory.createAttribute("rtpmap", format.toString()));
             }
 
-            //set attributes for dtmf
-            //attributes.add(sdpFactory.createAttribute("fmtp", "101 0-15"));
 
             //generate descriptor
             md.setAttributes(attributes);
@@ -293,7 +276,15 @@ public class BaseConnection implements Connection, AdaptorListener {
 
         //negotiate codecs
         HashMap offer = RTPFormat.getFormats(remoteSDP);
-        codecs = select(defaultCodecs, offer);
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Offered formats: " + offer);
+        }
+
+        codecs = select(endpoint.getFormats(), offer);
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Selected formats: " + codecs);
+        }
+
         if (codecs.size() == 0) {
             throw new IOException("Codecs are not negotiated");
         }
@@ -310,6 +301,16 @@ public class BaseConnection implements Connection, AdaptorListener {
         try {
             this.period = getPacketizationPeriod(remoteSDP);
         } catch (Exception e) {
+        }
+
+        //configuring DTMF detector if supported
+        try {
+            Properties dtmfConfig = getDTMFConfig(codecs);
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " DTMF config: " + dtmfConfig);
+            }
+            endpoint.configure(Endpoint.RESOURCE_DTMF_DETECTOR, this, dtmfConfig);
+        } catch (UnknownMediaResourceException e) {
         }
 
         //refresh output stream
@@ -389,7 +390,6 @@ public class BaseConnection implements Connection, AdaptorListener {
                 Format sfmt = (Format) supported.get(pl);
                 if (sfmt.matches(ofmt)) {
                     formats.put(po, sfmt);
-                    this.audioFormat = (AudioFormat) sfmt;
                 }
             }
         }
@@ -405,8 +405,30 @@ public class BaseConnection implements Connection, AdaptorListener {
     private void applyCodecs(RtpSocketAdaptor rtpSocket, HashMap codecs) {
         Set<Integer> payloads = codecs.keySet();
         for (Integer p : payloads) {
-            rtpSocket.addFormat(p, (Format) codecs.get(p));
+            Format fmt = (Format) codecs.get(p);
+            rtpSocket.addFormat(p, fmt);
         }
+    }
+
+    private Properties getDTMFConfig(HashMap codecs) {
+        Properties properties = new Properties();
+
+        boolean is2833 = false;
+        Collection<Format> list = codecs.values();
+        for (Format fmt : list) {
+            if (fmt.getEncoding().equals("telephone-event")) {
+                is2833 = true;
+                break;
+            }
+        }
+
+        if (is2833) {
+            properties.setProperty("dtmf.format", "rfc2833");
+        } else {
+            properties.setProperty("dtmf.format", "inband");
+        }
+
+        return properties;
     }
 
     /**
@@ -431,22 +453,47 @@ public class BaseConnection implements Connection, AdaptorListener {
             logger.debug(this + " New receive stream: " + fmt);
         }
 
+        //do nothing if mode is SEND_ONLY
         if (this.mode == Connection.MODE_SEND_ONLY) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(this + " Mode is SEND_ONLY, " +
-                        "media transmission is not allowed");
-            }
+            logger.warn(this + " Unexpected media stream, mode=SEND_ONLY");
             return;
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Strat transmission to the endpoint");
-        }
-        
-        if (endpoint != null) {
-            endpoint.addAudioStream(stream, this.getId());
+        //prepare RFC 2833 DTFM detector
+        if (fmt.getEncoding().equals("telephone-event")) {
+            try {
+                endpoint.prepare(Endpoint.RESOURCE_DTMF_DETECTOR, getId(), stream);
+                return;
+            } catch (UnsupportedFormatException e) {
+                logger.error("Could not prepare DTMF detector: ", e);
+            }
         }
 
+        //prepare audio processing
+        if (fmt instanceof AudioFormat) {
+            try {
+                endpoint.configure(Endpoint.RESOURCE_AUDIO_SINK, this, null);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(this + " Configured audio sink");
+                }
+
+                MediaSink audioSink = (MediaSink) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, getId());                
+                if (audioSink == null) {
+                    return;
+                }
+                
+                audioSink.prepare(stream);
+                if (logger.isDebugEnabled()) {
+                    logger.debug(this + " Prepared audio sink");
+                }
+                //audioSink.start();
+            } catch (UnknownMediaResourceException e) {
+                logger.error("Unexpected error", e);
+            } catch (UnsupportedFormatException e) {
+                logger.error("Could not initialize audio sink", e);
+                return;
+            }
+        }
     }
 
     /**
@@ -471,32 +518,45 @@ public class BaseConnection implements Connection, AdaptorListener {
             this.connection = connection;
         }
 
-        public void run() {
-            Collection<PushBufferStream> streams = endpoint.getAudioStreams(connection);
-
-            //local connection
+        private void startTransmission(PushBufferStream stream) {
             if (otherConnection != null) {
-                for (PushBufferStream stream : streams) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Start transmission  " + stream + 
-                                " to local connection " + otherConnection);
-                    }
-                    otherConnection.newReceiveStream(stream);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Start transmission  " + stream + " to local connection " + otherConnection);
                 }
+                otherConnection.newReceiveStream(stream);
                 return;
             }
 
-            for (PushBufferStream stream : streams) {
-                try {
-                    SendStream sendStream = rtpSocket.createSendStream(stream);
-                    sendStream.start();
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Start transmission  " + stream + 
-                                " to remote peer:" + getPeer(remoteSDP));
-                    }
-                } catch (UnsupportedFormatException e) {
-                } catch (SdpException e) {
+            try {
+                SendStream sendStream = rtpSocket.createSendStream(stream);
+                sendStream.start();
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Start transmission  " + stream + " to remote peer:" + getPeer(remoteSDP));
                 }
+            } catch (UnsupportedFormatException e) {
+            } catch (SdpException e) {
+            }
+        }
+
+        public void run() {
+            //start audio
+            try {
+                Properties config = new Properties();
+                config.put("conf.connection.format", connection.audioFormat);
+                
+                if (logger.isDebugEnabled()) {
+                    logger.debug(connection + " Configuring audio source:");
+                }
+                endpoint.configure(Endpoint.RESOURCE_AUDIO_SOURCE, connection, config);
+                
+                if (logger.isDebugEnabled()) {
+                    logger.debug(connection + " Preparing audio source:");
+                }
+                MediaSource audioSource = (MediaSource) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SOURCE, getId());                
+                startTransmission(audioSource.prepare());
+
+                //audioSource.start();
+            } catch (UnknownMediaResourceException e) {
             }
         }
     }

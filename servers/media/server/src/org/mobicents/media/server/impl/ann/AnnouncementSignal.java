@@ -15,13 +15,16 @@
  */
 package org.mobicents.media.server.impl.ann;
 
+import java.util.Collection;
 import javax.media.format.AudioFormat;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.Signal;
 import org.mobicents.media.server.impl.jmf.player.AudioPlayer;
 import org.mobicents.media.server.impl.jmf.player.PlayerEvent;
 import org.mobicents.media.server.impl.jmf.player.PlayerListener;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.Announcement;
 import org.mobicents.media.server.spi.events.NotifyEvent;
@@ -58,7 +61,12 @@ public class AnnouncementSignal extends Signal implements PlayerListener {
     public void start() {
         try {
             PushBufferStream stream = player.start(params[0]);
-            endpoint.mediaProxy.setInputStream(stream);
+            Collection <BaseConnection> list = endpoint.getConnections();
+            for (BaseConnection connection : list) {
+                LocalProxy resource = (LocalProxy) endpoint.getResource(
+                        Endpoint.RESOURCE_AUDIO_SOURCE, connection.getId());
+                resource.setInputStream(stream);
+            }
         } catch (Exception e) {
             NotifyEvent report = new NotifyEvent(endpoint,
                     Announcement.FAIL,

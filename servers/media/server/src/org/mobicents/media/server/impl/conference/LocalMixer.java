@@ -11,25 +11,44 @@
  */
 package org.mobicents.media.server.impl.conference;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import javax.media.format.AudioFormat;
 import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.BaseResource;
 import org.mobicents.media.server.impl.jmf.mixer.AudioMixer;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.MediaResource;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.MediaSource;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class LocalMixer {
+public class LocalMixer extends BaseResource implements MediaSource {
 
     private String id;
     private Map streams = Collections.synchronizedMap(new HashMap());
     private AudioMixer mixer;
+    private ConfEndpointImpl endpoint;
+    private BaseConnection connection;
     private Logger logger = Logger.getLogger(LocalMixer.class);
+
+    public LocalMixer(BaseEndpoint endpoint, Connection connection) {
+        this.endpoint = (ConfEndpointImpl) endpoint;
+        this.connection = (BaseConnection) connection;
+        this.id = connection.getId();
+        this.addStateListener(this.endpoint.mixerStateListener);
+    }
 
     public LocalMixer(String id, AudioFormat fmt,
             int packetizationPeriod, int jitter) throws UnsupportedFormatException {
@@ -64,17 +83,75 @@ public class LocalMixer {
 
     public void start() {
         mixer.start();
+        setState(MediaResource.STATE_STARTED);
     }
 
     public void stop() {
         if (logger.isDebugEnabled()) {
             logger.debug("id=" + this.id + " stop mixer");
         }
+
         mixer.stop();
+
+        if (getState() == MediaResource.STATE_STARTED) {
+            setState(MediaResource.STATE_PREPARED);
+        }
     }
 
     @Override
     public String toString() {
         return "LocalMixer[" + id + "]";
+    }
+
+    public void configure(Properties config) {
+        AudioFormat fmt = (AudioFormat) config.get("conf.connection.format");
+        int packetization = endpoint.getPacketizationPeriod();
+        int jitter = endpoint.getJitter();
+
+        try {
+            mixer = new AudioMixer(packetization, jitter, fmt);
+            setState(MediaResource.STATE_CONFIGURED);
+        } catch (UnsupportedFormatException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    public void addListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public PushBufferStream prepare() {
+        setState(MediaResource.STATE_PREPARED);
+        Collection<BaseConnection> connections = endpoint.getConnections();
+        for (BaseConnection conn : connections) {
+            if (!conn.getId().equals(this.id)) {
+                LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, conn.getId());
+                if (splitter != null && splitter.getState() >= MediaResource.STATE_CONFIGURED) {
+                    try {
+                        add(conn.getId(), splitter.newBranch(id));
+                    } catch (UnsupportedFormatException e) {
+                        logger.error("Unexpected error", e);
+                    }
+                }
+            }
+        }
+        return mixer.getOutputStream();
+    }
+
+    public void release() {
+        setState(MediaResource.STATE_NULL);
+        Collection<BaseConnection> connections = endpoint.getConnections();
+        for (BaseConnection conn : connections) {
+            if (!conn.getId().equals(this.id)) {
+                LocalSplitter splitter = (LocalSplitter) endpoint.getResource(
+                        Endpoint.RESOURCE_AUDIO_SINK,
+                        conn.getId());
+                splitter.remove(id);
+            }
+        }
     }
 }

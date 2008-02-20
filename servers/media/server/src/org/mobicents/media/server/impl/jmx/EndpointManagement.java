@@ -24,6 +24,7 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
+import org.mobicents.media.server.impl.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -40,6 +41,9 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     private Integer packetizationPeriod;
     private Integer jitter;
     private String portRange;
+    
+    private boolean enablePCMA = false;
+    private boolean enablePCMU = false;
     
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
     
@@ -171,6 +175,36 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         }
     }
     
+    public void setPCMA(Boolean enabled) {
+        this.enablePCMA = enabled;
+        if (this.getState() == STARTED) {
+            if (enabled) {
+                endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
+            } else {
+                endpoint.removeFormat(AVProfile.PCMA);
+            }
+        }
+    }
+    
+    public Boolean getPCMA() {
+        return this.enablePCMA;
+    }
+
+    public void setPCMU(Boolean enabled) {
+        this.enablePCMU = enabled;
+        if (this.getState() == STARTED) {
+            if (enabled) {
+                endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
+            } else {
+                endpoint.removeFormat(AVProfile.PCMU);
+            }
+        }
+    }
+    
+    public Boolean getPCMU() {
+        return this.enablePCMU;
+    }
+    
     /**
      * Binds trunk object to the JNDI under the jndiName.
      */
@@ -220,6 +254,14 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         this.getEndpoint().setPortRange(portRange);
         this.getEndpoint().setPacketizationPeriod(packetizationPeriod);
         this.getEndpoint().setJitter(jitter);
+        
+        if (this.enablePCMA) {
+            endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
+        }
+        
+        if (this.enablePCMU) {
+            endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
+        }
         
         rebind();
         logger.info("Started Endpoint MBean " + this.getJndiName());

@@ -134,8 +134,12 @@ public class AudioPlayer {
      * Terminates player.
      */
     public void stop() {
-        processor.stop();
-        audioStream.stop();
+        if (processor != null) {
+            processor.stop();
+        }
+        if (audioStream != null) {
+            audioStream.stop();
+        }
     }
     
     /**

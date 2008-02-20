@@ -17,7 +17,9 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Properties;
 import java.util.Timer;
+import javax.media.Format;
 
 /**
  * The basic implementation of the endpoint.
@@ -34,6 +36,9 @@ import java.util.Timer;
  */
 public interface Endpoint extends Serializable {
 
+    public final static String RESOURCE_AUDIO_SOURCE = "org.mobicents.audio.source";
+    public final static String RESOURCE_AUDIO_SINK = "org.mobicents.audio.sink";
+    
     public final static String RESOURCE_DTMF_DETECTOR = "org.mobicents.dtmf.detector";
     public final static String RESOURCE_DTMF_GENERATOR = "org.mobicents.dtmf.generator";
     
@@ -135,6 +140,28 @@ public interface Endpoint extends Serializable {
      */
     public void setPortRange(String portRange);
 
+    /**
+     * Configures specified resources with specified parameters.
+     * 
+     * @param resourceName thr name of the resource.
+     * @param config resource parameters.
+     */
+    public void configure(String resourceName, Properties config) throws UnknownMediaResourceException ;
+
+    /**
+     * Configures specified resources with specified parameters for 
+     * specified connection.
+     * 
+     * @param resourceName thr name of the resource.
+     * @param connectionID the identifier of the connection to which media resource
+     * will be applied. 
+     * @param config resource parameters.
+     */
+    public void configure(String resourceName, Connection connection, Properties config) throws UnknownMediaResourceException ;
+    
+    public void addFormat(int pt, Format fmt);
+    public void removeFormat(Format fmt);
+    
     /**
      * Creates new connection with specified mode.
      *

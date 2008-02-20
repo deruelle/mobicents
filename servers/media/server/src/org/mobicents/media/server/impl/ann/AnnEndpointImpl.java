@@ -25,6 +25,7 @@ import org.apache.log4j.Logger;
 
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 
@@ -53,6 +54,11 @@ public class AnnEndpointImpl extends BaseEndpoint {
         logger = Logger.getLogger(AnnEndpointImpl.class);
     }
 
+    @Override
+    public BaseResourceManager initResourceManager() {
+        return new AnnResourceManager();
+    }
+    
     /**
      * (Non Java-doc).
      *
@@ -67,8 +73,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
             }
             
             //terminate push proxy 
-            mediaProxy.setInputStream(null);
-        } catch (UnsupportedFormatException e) {
+            //mediaProxy.setInputStream(null);
         } finally {
             super.deleteConnection(connectionID);
         }

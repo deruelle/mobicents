@@ -39,6 +39,9 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
     private int jitter;
     private String portRange;
     
+    private boolean enablePCMA = false;
+    private boolean enablePCMU = false;
+    
     private transient Logger logger = Logger.getLogger(TrunkManagement.class);
     
     /**
@@ -158,6 +161,22 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
         this.portRange = portRange;
     }
     
+    public void setPCMA(Boolean enabled) {
+        this.enablePCMA = enabled;
+    }
+    
+    public Boolean getPCMA() {
+        return enablePCMA;
+    }
+
+    public void setPCMU(Boolean enabled) {
+        this.enablePCMU = enabled;
+    }
+    
+    public Boolean getPCMU() {
+        return enablePCMU;
+    }
+    
     public abstract EndpointManagement initEndpointManagement();
     
     /**
@@ -180,6 +199,8 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
             endpoint.setPacketizationPeriod(this.getPacketizationPeriod());
             endpoint.setPortRange(this.getPortRange());
             endpoint.setJitter(this.getJitter());
+            endpoint.setPCMA(enablePCMA);
+            endpoint.setPCMU(enablePCMU);
             
             //register Endpoint as MBean
             ObjectName objectName = new ObjectName(name);
