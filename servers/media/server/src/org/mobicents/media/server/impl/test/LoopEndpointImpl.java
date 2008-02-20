@@ -14,6 +14,7 @@ package org.mobicents.media.server.impl.test;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.ResourceStateListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
 
 /**
@@ -22,9 +23,12 @@ import org.mobicents.media.server.spi.UnknownSignalException;
  */
 public class LoopEndpointImpl extends BaseEndpoint {
 
+    protected ResourceStateListener echoStateListener;
+    
     public LoopEndpointImpl(String localName) {
         super(localName);
         setMaxConnectionsAvailable(2);
+        echoStateListener = new EchoStateListener();
     }
 
     @Override

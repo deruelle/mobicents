@@ -36,23 +36,32 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
 
     private MediaPushProxy mediaProxy;
     
-    private BaseEndpoint endpoint;
+    private LoopEndpointImpl endpoint;
     private BaseConnection connection;
     
+    private boolean sourceReady = false;
+    private boolean sinkReady = false;
+    
     public Echo(Endpoint endpoint, Connection connection) {
-        this.endpoint = (BaseEndpoint) endpoint;
+        this.endpoint = (LoopEndpointImpl) endpoint;
         this.connection = (BaseConnection) connection;
+        this.addStateListener(this.endpoint.echoStateListener);
     }
     
     public PushBufferStream prepare() {
-        //state = MediaResource.STATE_PREPARED;
+        this.sourceReady = true;
+        if (this.sourceReady && this.sinkReady) {
+            setState(MediaResource.STATE_PREPARED);
+        }
         return mediaProxy;
     }
 
     public void configure(Properties config) {
-        mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
+        if (getState() < MediaResource.STATE_CONFIGURED) {
+            mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
-        setState(MediaResource.STATE_CONFIGURED);
+            setState(MediaResource.STATE_CONFIGURED);
+        }
     }
 
     public void release() {
@@ -81,7 +90,10 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
         mediaProxy.setInputStream(mediaStream);
-        setState(MediaResource.STATE_PREPARED);
+        this.sinkReady = true;
+        if (this.sourceReady && this.sinkReady) {
+            setState(MediaResource.STATE_PREPARED);
+        }
     }
 
 }

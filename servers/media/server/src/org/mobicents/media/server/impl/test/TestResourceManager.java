@@ -31,7 +31,7 @@ public class TestResourceManager extends BaseResourceManager {
     private Echo echo;
     
     @Override
-    public MediaResource getResource(BaseEndpoint endpoint, String name, 
+    public synchronized MediaResource getResource(BaseEndpoint endpoint, String name, 
             Connection connection, Properties config) throws UnknownMediaResourceException {
         if (name.equals(Endpoint.RESOURCE_AUDIO_SOURCE)) {
             if (echo == null) {
