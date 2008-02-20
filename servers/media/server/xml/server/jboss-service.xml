@@ -19,6 +19,7 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
     </mbean>
     
     <!-- PACKET RELAY -->
@@ -30,6 +31,7 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
     </mbean>
     
     <!-- LOOPBACK ENDPOINT -->
@@ -40,6 +42,7 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
     </mbean>
     
     <!-- CONF ENDPOINT -->
@@ -50,5 +53,6 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
     </mbean>
 </server>
