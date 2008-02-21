@@ -14,14 +14,16 @@
 
 package org.mobicents.media.server.impl.ivr;
 
-import javax.media.DataSink;
-import javax.media.Processor;
 import javax.media.format.AudioFormat;
-import javax.media.protocol.DataSource;
 import javax.media.protocol.FileTypeDescriptor;
 import org.mobicents.media.server.impl.ann.AnnEndpointImpl;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.Signal;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.UnknownSignalException;
+import org.mobicents.media.server.spi.events.AU;
 
 /**
  *
@@ -29,13 +31,10 @@ import org.apache.log4j.Logger;
  */
 public class IVREndpointImpl extends AnnEndpointImpl {
 
-    private Processor recorder;
-    private DataSink dataSink;
     
-    protected DataSource inputStream;
-    
-    private AudioFormat audioFormat = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    private String mediaType = FileTypeDescriptor.WAVE;
+    protected AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
+    protected String mediaType = FileTypeDescriptor.WAVE;
+    private Signal signal;
     
     private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
     
@@ -44,5 +43,37 @@ public class IVREndpointImpl extends AnnEndpointImpl {
         super(localName);
     }
     
+    
+    @Override
+    public BaseResourceManager initResourceManager() {
+        return new IVRResourceManager();
+    }
+    
+    /**
+     * (Non Java-doc).
+     *
+     * @see org.mobicents.server.spi.BaseEndpoint#play(int, String NotificationListener, boolean.
+     */
+    @Override
+    public void play(int signalID, String[] params, String connectionID,
+            NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+
+        //disable current signal
+        if (signal != null) {
+            signal.stop();
+        }
+
+        if (params == null) {
+            return;
+        }
         
+        switch (signalID) {
+            case AU.PLAY_RECORD :
+                signal = new PlayRecordSignal(this, listener, params);
+                signal.start();
+            default:
+                super.play(signalID, params, connectionID, listener, keepAlive);
+        }
+    }
+    
 }

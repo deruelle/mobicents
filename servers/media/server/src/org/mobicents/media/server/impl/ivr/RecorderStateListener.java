@@ -24,7 +24,6 @@ import javax.media.ControllerListener;
 import javax.media.DataLostErrorEvent;
 import javax.media.ResourceUnavailableEvent;
 import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
 
 /**
  *
@@ -41,7 +40,6 @@ public class RecorderStateListener implements ControllerListener {
     }
     
     public void controllerUpdate(ControllerEvent evt) {
-        NDC.push(recorder.endpoint.getLocalName());
         
         if (logger.isDebugEnabled()) {
             logger.debug("evt=" + evt);
@@ -90,7 +88,6 @@ public class RecorderStateListener implements ControllerListener {
 //            recorder.endpoint.sendEvent(new NotifyEvent(
 //                    NotifyEvent.CONTROLLER_STOPPED, recorder.endpoint, cause.getMessage()));
         }
-        NDC.pop();
     }
     
 }

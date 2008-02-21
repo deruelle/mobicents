@@ -19,7 +19,6 @@ package org.mobicents.media.server.impl.ann;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.media.format.UnsupportedFormatException;
 import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 
