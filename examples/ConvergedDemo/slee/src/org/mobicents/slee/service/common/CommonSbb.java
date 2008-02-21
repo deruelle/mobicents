@@ -63,7 +63,7 @@ public abstract class CommonSbb implements Sbb {
 
 	private TTSActivityContextInterfaceFactory ttsActivityContextInterfaceFactory;
 
-	private TTSProvider ttsProvider;
+	private TTSProvider ttsProvider;	
 
 	private Logger logger = Logger.getLogger(CommonSbb.class);
 

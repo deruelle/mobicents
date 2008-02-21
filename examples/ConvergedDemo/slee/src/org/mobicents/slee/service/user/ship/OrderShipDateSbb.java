@@ -196,10 +196,6 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			ClientTransaction ct = getSipProvider().getNewClientTransaction(
 					request);
 
-			// Get activity context from factory
-			ActivityContextInterface sipACIF = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(ct);
-
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
 
@@ -235,6 +231,14 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 								+ dialog.getCallId().getCallId());
 			}
 
+			// Get activity context from factory
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(dialog);
+
+			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(ct);
+
+			
 			calleeSession.setDialog(dialog);
 			sa.setCalleeSession(calleeSession);
 
@@ -267,7 +271,10 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			child.setParent(getSbbContext().getSbbLocalObject());
 
 			// Attach child SBB to the activity context
-			sipACIF.attach(child);
+			sipACI.attach(child);
+			clientSipACI.attach(child);
+			sipACI.attach(this.getSbbContext().getSbbLocalObject());
+
 			// Send the INVITE request
 			ct.sendRequest();
 

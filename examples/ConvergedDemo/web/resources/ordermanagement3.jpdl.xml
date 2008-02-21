@@ -14,10 +14,10 @@
     <decision name="decide" expression="#{orderApproval.howLargeIsOrder}">
         <transition name="large order" to="approval">
 			<action expression="#{beforeOrderProcessed.fireBeforeOrderProcessedEvent}"/>
-		</transition>        
+	</transition>        
         <transition name="small order" to="process">
 			<action expression="#{afterOrderProcessed.fireOrderProcessedEvent}"/>
-		</transition>
+	</transition>
     </decision>
 
     <task-node name="approval" end-tasks="true">

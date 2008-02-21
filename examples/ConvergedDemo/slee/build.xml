@@ -7,7 +7,7 @@
 	<path id="duPath">
 		<pathelement location="./jars/ConvergedDemo-DU.jar" />
 	</path>
-
+        <property name="src" value="src" />
 	<property name="duPathValue" refid="duPath" />
 	<property name="serviceID1" value="Seam DVD Example User SBB Service#org.mobicents#1.0" />
 	<property name="serviceID2" value="Seam DVD Example Admin SBB Service#org.mobicents#1.0" />
@@ -45,6 +45,15 @@
 			<pathelement location="${jboss.home}/server/${node}/lib/hibernate-entitymanager.jar" />
 		</path>
 
+		<path id="messaging">
+			<!-- pathelement path="./etc"/ -->
+			<fileset file="./lib/jboss-messaging-client.jar"/>	
+		      <fileset file="${jboss.home}/server/${node}/lib/jboss-remoting.jar"/>		      		      
+		      <fileset file="${jboss.home}/server/${node}/lib/javassist.jar"/>
+		      <fileset file="${jboss.home}/server/${node}/deploy/jboss-aop-jdk50.deployer/jboss-aop-jdk50.jar"/>
+		      <fileset file="${jboss.home}/server/${node}/deploy/jboss-aop-jdk50.deployer/trove.jar"/>
+		</path>
+
 	</target>
 
 	<target name="clean" depends="init">
@@ -62,7 +71,7 @@
 	<target name="build-utility-jar" depends="init">
 		<mkdir dir="classes/utility" />
 		<mkdir dir="library/" />
-		<javac destdir="classes/utility" srcdir="src" includes="org/mobicents/slee/util/*.java,org/mobicents/slee/service/common/*.java"  debug="on">
+		<javac destdir="classes/utility" srcdir="${src}" includes="org/mobicents/slee/util/*.java,org/mobicents/slee/service/common/*.java"  debug="on">
 			<classpath>				
 				<path refid="ExternalComponents" />
 			</classpath>
@@ -81,13 +90,13 @@
 	<target name="build-pojo" depends="init">
 		<mkdir dir="classes/pojo" />
 		<mkdir dir="library/" />
-		<javac destdir="classes/pojo" srcdir="src" includes="org/mobicents/seam/*.java"  debug="on">
+		<javac destdir="classes/pojo" srcdir="${src}" includes="org/mobicents/seam/*.java"  debug="on">
 			<classpath>				
 				<path refid="ExternalComponents" />
 				<path refid="ejb3" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/seam/persistence.xml" tofile="classes/pojo/persistence.xml" />
+		<copy file="${src}/org/mobicents/seam/persistence.xml" tofile="classes/pojo/persistence.xml" />
 
 		<jar jarfile="library/pojo.jar">
 			<metainf dir="classes/pojo" includes="persistence.xml" />
@@ -103,7 +112,7 @@
 	<target name="build-UserSbb-sbb" depends="init">
 		<mkdir dir="classes/UserSbb-sbb" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/UserSbb-sbb" srcdir="src" includes="org/mobicents/slee/service/user/*.java"  debug="on">
+		<javac destdir="classes/UserSbb-sbb" srcdir="${src}" includes="org/mobicents/slee/service/user/*.java"  debug="on">
 			<classpath>	
 				<path refid="ejb3" />			
 				<path refid="slee" />
@@ -115,12 +124,12 @@
 			<filterset>
 				<filtersfile file="../convergeddemo.properties"/>			
 			</filterset>
-       			<fileset dir="src/org/mobicents/slee/service/user">
+       			<fileset dir="${src}/org/mobicents/slee/service/user">
 	   			<include name="sbb-jar.xml" />
    	   		</fileset>
 		</copy>
 
-		<!-- copy file="src/org/mobicents/slee/service/user/UserSbb-sbb-jar.xml" tofile="classes/UserSbb-sbb/sbb-jar.xml" / -->
+		<!-- copy file="${src}/org/mobicents/slee/service/user/UserSbb-sbb-jar.xml" tofile="classes/UserSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/UserSbb-sbb.jar">
 			<metainf dir="classes/UserSbb-sbb" includes="sbb-jar.xml" />
@@ -136,7 +145,7 @@
 	<target name="build-OrderDeliverDateSbb-sbb" depends="init">
 		<mkdir dir="classes/OrderDeliverDateSbb-sbb" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/OrderDeliverDateSbb-sbb" srcdir="src" includes="org/mobicents/slee/service/user/delivery/*.java"  debug="on">
+		<javac destdir="classes/OrderDeliverDateSbb-sbb" srcdir="${src}" includes="org/mobicents/slee/service/user/delivery/*.java"  debug="on">
 			<classpath>	
 				<path refid="ejb3" />			
 				<path refid="slee" />
@@ -148,12 +157,12 @@
 			<filterset>
 				<filtersfile file="../convergeddemo.properties"/>			
 			</filterset>
-       			<fileset dir="src/org/mobicents/slee/service/user/delivery">
+       			<fileset dir="${src}/org/mobicents/slee/service/user/delivery">
 	   			<include name="sbb-jar.xml" />
    	   		</fileset>
 		</copy>
 
-		<!-- copy file="src/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-sbb-jar.xml" tofile="classes/OrderDeliverDateSbb-sbb/sbb-jar.xml" / -->
+		<!-- copy file="${src}/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-sbb-jar.xml" tofile="classes/OrderDeliverDateSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/OrderDeliverDateSbb-sbb.jar">
 			<metainf dir="classes/OrderDeliverDateSbb-sbb" includes="sbb-jar.xml" />
@@ -169,7 +178,7 @@
 	<target name="build-OrderShipDateSbb-sbb" depends="init">
 		<mkdir dir="classes/OrderShipDateSbb-sbb" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/OrderShipDateSbb-sbb" srcdir="src" includes="org/mobicents/slee/service/user/ship/*.java"  debug="on">
+		<javac destdir="classes/OrderShipDateSbb-sbb" srcdir="${src}" includes="org/mobicents/slee/service/user/ship/*.java"  debug="on">
 			<classpath>	
 				<path refid="ejb3" />			
 				<path refid="slee" />
@@ -181,12 +190,12 @@
 			<filterset>
 				<filtersfile file="../convergeddemo.properties"/>			
 			</filterset>
-       			<fileset dir="src/org/mobicents/slee/service/user/ship">
+       			<fileset dir="${src}/org/mobicents/slee/service/user/ship">
 	   			<include name="sbb-jar.xml" />
    	   		</fileset>
 		</copy>
 
-		<!-- copy file="src/org/mobicents/slee/service/user/ship/OrderShipDateSbb-sbb-jar.xml" tofile="classes/OrderShipDateSbb-sbb/sbb-jar.xml" / -->
+		<!-- copy file="${src}/org/mobicents/slee/service/user/ship/OrderShipDateSbb-sbb-jar.xml" tofile="classes/OrderShipDateSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/OrderShipDateSbb-sbb.jar">
 			<metainf dir="classes/OrderShipDateSbb-sbb" includes="sbb-jar.xml" />
@@ -207,7 +216,7 @@
 	<target name="build-CallControlSbb-sbb" depends="init">
 		<mkdir dir="classes/CallControlSbb-sbb" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/CallControlSbb-sbb" srcdir="src" includes="org/mobicents/slee/service/callcontrol/*.java"  debug="on">
+		<javac destdir="classes/CallControlSbb-sbb" srcdir="${src}" includes="org/mobicents/slee/service/callcontrol/*.java"  debug="on">
 			<classpath>				
 				<path refid="slee" />
 				<path refid="ExternalComponents" />
@@ -218,12 +227,12 @@
 			<filterset>
 				<filtersfile file="../convergeddemo.properties"/>			
 			</filterset>
-       			<fileset dir="src/org/mobicents/slee/service/callcontrol">
+       			<fileset dir="${src}/org/mobicents/slee/service/callcontrol">
 	   			<include name="sbb-jar.xml" />
    	   		</fileset>
 		</copy>
 
-		<!-- copy file="src/org/mobicents/slee/service/callcontrol/CallControlSbb-sbb-jar.xml" tofile="classes/CallControlSbb-sbb/sbb-jar.xml" / -->
+		<!-- copy file="${src}/org/mobicents/slee/service/callcontrol/CallControlSbb-sbb-jar.xml" tofile="classes/CallControlSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/CallControlSbb-sbb.jar">
 			<metainf dir="classes/CallControlSbb-sbb" includes="sbb-jar.xml" />
@@ -234,7 +243,7 @@
 	<target name="build-AdminSbb-sbb" depends="init">
 		<mkdir dir="classes/AdminSbb-sbb" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/AdminSbb-sbb" srcdir="src" includes="org/mobicents/slee/service/admin/*.java"  debug="on">
+		<javac destdir="classes/AdminSbb-sbb" srcdir="${src}" includes="org/mobicents/slee/service/admin/*.java"  debug="on">
 			<classpath>
 				<path refid="ejb3" />	
 				<path refid="slee" />
@@ -246,12 +255,12 @@
 			<filterset>
 				<filtersfile file="../convergeddemo.properties"/>			
 			</filterset>
-       			<fileset dir="src/org/mobicents/slee/service/admin">
+       			<fileset dir="${src}/org/mobicents/slee/service/admin">
 	   			<include name="sbb-jar.xml" />
    	   		</fileset>
 		</copy>
 
-		<!-- copy file="src/org/mobicents/slee/service/admin/AdminSbb-sbb-jar.xml" tofile="classes/AdminSbb-sbb/sbb-jar.xml" / -->
+		<!-- copy file="${src}/org/mobicents/slee/service/admin/AdminSbb-sbb-jar.xml" tofile="classes/AdminSbb-sbb/sbb-jar.xml" / -->
 
 		<jar jarfile="jars/AdminSbb-sbb.jar">
 			<metainf dir="classes/AdminSbb-sbb" includes="sbb-jar.xml" />
@@ -267,13 +276,13 @@
 	<target name="build-Custom-event" depends="init">
 		<mkdir dir="classes/Custom-event" />
 		<mkdir dir="jars/" />
-		<javac destdir="classes/Custom-event" srcdir="src" includes="org/mobicents/slee/service/events/*.java"  debug="on">
+		<javac destdir="classes/Custom-event" srcdir="${src}" includes="org/mobicents/slee/service/events/*.java"  debug="on">
 			<classpath>
 				<path refid="slee" />
 				<path refid="ExternalComponents" />
 			</classpath>
 		</javac>
-		<copy file="src/org/mobicents/slee/service/events/Custom-event-jar.xml" tofile="classes/Custom-event/event-jar.xml" />
+		<copy file="${src}/org/mobicents/slee/service/events/Custom-event-jar.xml" tofile="classes/Custom-event/event-jar.xml" />
 
 		<jar jarfile="jars/Custom-event.jar">
 			<metainf dir="classes/Custom-event" includes="event-jar.xml" />
@@ -288,7 +297,7 @@
 
 	<target name="build-ConvergedDemo-DU" depends="build-UserSbb-sbb,build-OrderDeliverDateSbb-sbb,build-OrderShipDateSbb-sbb, build-AdminSbb-sbb,build-CallControlSbb-sbb,build-Custom-event,build-pojo,build-utility-jar">
 		<mkdir dir="classes/ConvergedDemo-DU" />
-		<copy file="src/org/mobicents/slee/service/ConvergedDemo-deployable-unit.xml" tofile="classes/ConvergedDemo-DU/deployable-unit.xml" />
+		<copy file="${src}/org/mobicents/slee/service/ConvergedDemo-deployable-unit.xml" tofile="classes/ConvergedDemo-DU/deployable-unit.xml" />
 		<jar jarfile="jars/ConvergedDemo-DU.jar">
 			<metainf dir="classes/ConvergedDemo-DU" includes="deployable-unit.xml" />
 			<fileset includes="jars/UserSbb-sbb.jar" dir="" />
@@ -299,10 +308,10 @@
 			<fileset includes="jars/OrderShipDateSbb-sbb.jar" dir="" />
 			<fileset includes="library/pojo.jar" dir="" />
 			<fileset includes="library/utility.jar" dir="" />
-			<fileset includes="src/org/mobicents/slee/service/user/UserSbb-service.xml" dir="." />
-			<fileset includes="src/org/mobicents/slee/service/admin/AdminSbb-service.xml" dir="." />
-			<fileset includes="src/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-service.xml" dir="." />
-			<fileset includes="src/org/mobicents/slee/service/user/ship/OrderShipDateSbb-service.xml" dir="." />
+			<fileset includes="${src}/org/mobicents/slee/service/user/UserSbb-service.xml" dir="." />
+			<fileset includes="${src}/org/mobicents/slee/service/admin/AdminSbb-service.xml" dir="." />
+			<fileset includes="${src}/org/mobicents/slee/service/user/delivery/OrderDeliverDateSbb-service.xml" dir="." />
+			<fileset includes="${src}/org/mobicents/slee/service/user/ship/OrderShipDateSbb-service.xml" dir="." />
 		</jar>
 	</target>
 

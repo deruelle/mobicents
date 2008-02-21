@@ -3,8 +3,16 @@
                            "http://java.sun.com/dtd/slee-event-jar_1_0.dtd">
 <event-jar>
     <event-definition>
-        <description>Order Information Event</description>
+        <description>Fired from CheckoutAction. Initiates UserSBB and AdminSBB</description>
         <event-type-name>org.mobicents.slee.service.dvddemo.ORDER_PLACED</event-type-name>
+        <event-type-vendor>org.mobicents</event-type-vendor>
+        <event-type-version>1.0</event-type-version>
+        <event-class-name>org.mobicents.slee.service.events.CustomEvent</event-class-name>
+    </event-definition>
+
+    <event-definition>
+        <description>Fired from ESB for SalesForce Demo. Initiates AdminSBB</description>
+        <event-type-name>org.mobicents.slee.service.sfdemo.ORDER_PLACED</event-type-name>
         <event-type-vendor>org.mobicents</event-type-vendor>
         <event-type-version>1.0</event-type-version>
         <event-class-name>org.mobicents.slee.service.events.CustomEvent</event-class-name>
@@ -19,7 +27,7 @@
     </event-definition>     
     
     <event-definition>
-        <description>Order Processed Event</description>
+        <description>Fired from AfterOrderProcessedAction. Initiates OrderDeliverDateSbb</description>
         <event-type-name>org.mobicents.slee.service.dvddemo.ORDER_PROCESSED</event-type-name>
         <event-type-vendor>org.mobicents</event-type-vendor>
         <event-type-version>1.0</event-type-version>

@@ -1,7 +1,10 @@
 package org.mobicents.slee.service.user.delivery;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -10,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
+import javax.sip.RequestEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
@@ -19,8 +23,13 @@ import javax.sip.message.Request;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
+import javax.slee.InitialEventSelector;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
+import javax.slee.facilities.TimerEvent;
+import javax.slee.facilities.TimerFacility;
+import javax.slee.facilities.TimerID;
+import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
@@ -51,6 +60,8 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	private MsProvider msProvider;
 
 	private MediaRaActivityContextInterfaceFactory mediaAcif;
+
+	private TimerFacility timerFacility = null;
 
 	private String pathToAudioDirectory = null;
 
@@ -84,36 +95,52 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv
 					.lookup("slee/resources/media/1.0/acifactory");
 
+			timerFacility = (TimerFacility) myEnv
+					.lookup("slee/facilities/timer");
+
 		} catch (NamingException ne) {
 			ne.printStackTrace();
 		}
 	}
 
+	public void onOrderCancelled(CustomEvent event, ActivityContextInterface ac) {
+		logger.info("======== OrderDeliverDateSbb ORDER_CANCELLED ========");
+		if (this.getTimerID() != null) {
+			timerFacility.cancelTimer(this.getTimerID());
+			ac.detach(getSbbContext().getSbbLocalObject());
+		}
+	}
+
 	public void onOrderApproved(CustomEvent event, ActivityContextInterface ac) {
-		System.out
-				.println("======== OrderDeliverDateSbb ORDER_APPROVED ========");
-		makeCall(event, ac);
+		logger.info("======== OrderDeliverDateSbb ORDER_APPROVED ========");
+		this.setCustomEvent(event);
+		setTimer(ac);
 	}
 
 	public void onOrderProcessed(CustomEvent event, ActivityContextInterface ac) {
-		System.out
-				.println("======== OrderDeliverDateSbb ORDER_PROCESSED ========");
-		makeCall(event, ac);
+		logger.info("======== OrderDeliverDateSbb ORDER_PROCESSED ========");
+		this.setCustomEvent(event);
+		setTimer(ac);
 	}
 
-	private void makeCall(CustomEvent event, ActivityContextInterface ac) {
+	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
+		makeCall();
+	}
 
-		// Let us wait for 30 sec as User might be busy with Order Confirmation
-		// call
-		// TODO: This could be a task in jBPM process flow but for simplicity we
-		// will just skip that
-		try {
-			Thread.sleep(1000 * 30);
-		} catch (Exception e) {
-			// Ignore
-		}
+	private void setTimer(ActivityContextInterface ac) {
+		TimerOptions options = new TimerOptions();
+		options.setPersistent(true);
 
-		this.setCustomEvent(event);
+		// Set the timer on ACI
+		TimerID timerID = this.timerFacility.setTimer(ac, null, System
+				.currentTimeMillis() + 30000, options);
+
+		this.setTimerID(timerID);
+	}
+
+	private void makeCall() {
+
+		CustomEvent event = this.getCustomEvent();
 		this.setDateAndTime("");
 
 		try {
@@ -133,10 +160,6 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			// Create a new transaction based on the generated request
 			ClientTransaction ct = getSipProvider().getNewClientTransaction(
 					request);
-
-			// Get activity context from factory
-			ActivityContextInterface sipACIF = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(ct);
 
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
@@ -172,6 +195,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 						.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = "
 								+ dialog.getCallId().getCallId());
 			}
+			// Get activity context from factory
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(dialog);
+
+			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(ct);
 
 			calleeSession.setDialog(dialog);
 			sa.setCalleeSession(calleeSession);
@@ -205,7 +234,9 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			child.setParent(getSbbContext().getSbbLocalObject());
 
 			// Attach child SBB to the activity context
-			sipACIF.attach(child);
+			sipACI.attach(child);
+			clientSipACI.attach(child);
+			sipACI.attach(this.getSbbContext().getSbbLocalObject());
 			// Send the INVITE request
 			ct.sendRequest();
 
@@ -286,7 +317,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			generator.apply(Announcement.PLAY,
 					new String[] { announcementFile });
 
-			this.initDtmfDetector(getConnection(), endpointName);
+			//this.initDtmfDetector(getConnection(), endpointName);
 
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
@@ -304,13 +335,34 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		return null;
 	}
 
-	public void onDtmf(MsNotifyEvent event, ActivityContextInterface aci) {
+	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
+		System.out.println("onInfoEvent received");
+		try {
+			getSipUtils().sendOk(request.getRequest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Properties p = new Properties();
+		try {
+			p.load(new ByteArrayInputStream(request.getRequest()
+					.getRawContent()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String dtmf = p.getProperty("Signal");
+		System.out.println("The Dtmf is " + dtmf);
+
+		int cause = Integer.parseInt(dtmf);
+
 		boolean success = false;
-		int dtmf = event.getCause();
+
 
 		String dateAndTime = this.getDateAndTime();
 
-		switch (dtmf) {
+		switch (cause) {
 		case Basic.CAUSE_DIGIT_0:
 			dateAndTime = dateAndTime + "0";
 			break;
@@ -458,7 +510,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 				generator.apply(Announcement.PLAY,
 						new String[] { announcementFile });
 
-				this.initDtmfDetector(getConnection(), this.getEndpointName());
+				//this.initDtmfDetector(getConnection(), this.getEndpointName());
 			} catch (UnrecognizedActivityException e) {
 				e.printStackTrace();
 			}
@@ -468,7 +520,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 		} else {
 			this.setDateAndTime(dateAndTime);
-			this.initDtmfDetector(getConnection(), this.getEndpointName());
+			//this.initDtmfDetector(getConnection(), this.getEndpointName());
 		}
 	}
 
@@ -482,20 +534,24 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		return null;
 	}
 
-	private void initDtmfDetector(MsConnection connection, String endpointName) {
-		MsSignalDetector dtmfDetector = msProvider
-				.getSignalDetector(endpointName);
-		try {
-			ActivityContextInterface dtmfAci = mediaAcif
-					.getActivityContextInterface(dtmfDetector);
-			dtmfAci.attach(getSbbContext().getSbbLocalObject());
-			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
+	public InitialEventSelector orderIdSelect(InitialEventSelector ies) {
+		Object event = ies.getEvent();
+		long orderId = 0;
+		if (event instanceof CustomEvent) {
+			orderId = ((CustomEvent) event).getOrderId();
+		} else {
+			// If something else, use activity context.
+			ies.setActivityContextSelected(true);
+			return ies;
 		}
-	}
+		// Set the convergence name
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting convergence name to: " + orderId);
+		}
+		ies.setCustomName(String.valueOf(orderId));
+		return ies;
+	}// child relation
 
-	// child relation
 	public abstract ChildRelation getCallControlSbbChild();
 
 	public abstract void setEndpointName(String endPoint);
@@ -517,6 +573,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	public abstract void setDateAndTime(String dateAndTime);
 
 	public abstract String getDateAndTime();
+
+	// 'timerID' CMP field setter
+	public abstract void setTimerID(TimerID value);
+
+	// 'timerID' CMP field getter
+	public abstract TimerID getTimerID();
 
 	public abstract void setChildSbbLocalObject(
 			CallControlSbbLocalObject childSbbLocalObject);

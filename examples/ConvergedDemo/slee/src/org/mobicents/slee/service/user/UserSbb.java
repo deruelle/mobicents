@@ -10,8 +10,11 @@
  */
 package org.mobicents.slee.service.user;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -21,20 +24,18 @@ import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
-import javax.sip.ResponseEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.Header;
 import javax.sip.message.Request;
-import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
-import javax.slee.InitialEventSelector;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
+import javax.slee.nullactivity.NullActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
@@ -108,6 +109,9 @@ public abstract class UserSbb extends CommonSbb {
 		}
 	}
 
+	public abstract void fireOrderCancelled(CustomEvent event,
+			ActivityContextInterface aci, javax.slee.Address address);
+
 	public void onOrderPlaced(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("UserSbb: " + this
 				+ ": received an ORDER_PLACED event. OrderId = "
@@ -147,10 +151,6 @@ public abstract class UserSbb extends CommonSbb {
 			ClientTransaction ct = getSipProvider().getNewClientTransaction(
 					request);
 
-			// Get activity context from factory
-			ActivityContextInterface sipACIF = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(ct);
-
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
 
@@ -179,6 +179,13 @@ public abstract class UserSbb extends CommonSbb {
 					logger.error("Error getting dialog", e);
 				}
 			}
+
+			// Get activity context from factory
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(dialog);
+
+			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(ct);
 
 			if (logger.isDebugEnabled()) {
 				logger
@@ -217,8 +224,12 @@ public abstract class UserSbb extends CommonSbb {
 
 			child.setParent(getSbbContext().getSbbLocalObject());
 
+			child.setCustomEvent(event);
+
 			// Attach child SBB to the activity context
-			sipACIF.attach(child);
+			sipACI.attach(child);
+			clientSipACI.attach(child);
+			sipACI.attach(this.getSbbContext().getSbbLocalObject());
 			// Send the INVITE request
 			ct.sendRequest();
 
@@ -268,8 +279,38 @@ public abstract class UserSbb extends CommonSbb {
 	}
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-		// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		int cause = evt.getCause();
+		logger.info("org.mobicents.slee.media.dtmf.DTMF " + cause);
+
+		this.initDtmfDetector(getConnection(), this.getEndpointName());
+
+		handleDtmf(cause);
+	}
+
+	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
+		logger.info("javax.sip.dialog.Request.INFO received");
+		try {
+			getSipUtils().sendOk(request.getRequest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Properties p = new Properties();
+		try {
+			p.load(new ByteArrayInputStream(request.getRequest()
+					.getRawContent()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String dtmf = p.getProperty("Signal");
+		logger.debug("The Dtmf is " + dtmf);
+		int cause = Integer.parseInt(dtmf);
+		logger.debug("onDtmf " + cause);
+		handleDtmf(cause);
+	}
+
+	public void handleDtmf(int cause) {
 
 		EntityManager mgr = null;
 		Order order = null;
@@ -317,6 +358,19 @@ public abstract class UserSbb extends CommonSbb {
 
 			successful = true;
 
+			try {
+				NullActivity nullActivity = getNullActivityFactory()
+						.createNullActivity();
+
+				ActivityContextInterface nullActivityContextInterface = getNullACIFactory()
+						.getActivityContextInterface(nullActivity);
+
+				fireOrderCancelled((CustomEvent) this.getCustomEvent().clone(),
+						nullActivityContextInterface, null);
+
+			} catch (UnrecognizedActivityException unreActExc) {
+				unreActExc.printStackTrace();
+			}
 			break;
 		default:
 			String reConfirm = pathToAudioDirectory + "ReConfirm.wav";
@@ -324,20 +378,6 @@ public abstract class UserSbb extends CommonSbb {
 			break;
 		}
 		this.setSendBye(successful);
-
-		// MsConnection connection = this.getConnection();
-		// MsSession session = connection.getSession();
-		// MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
-		//
-		// ActivityContextInterface linkActivity = null;
-		// try {
-		// linkActivity = mediaAcif.getActivityContextInterface(link);
-		// } catch (UnrecognizedActivityException ex) {
-		// ex.printStackTrace();
-		// }
-		//
-		// linkActivity.attach(getSbbContext().getSbbLocalObject());
-		// link.join(this.getEndpointName(), ANNOUNCEMENT_ENDPOINT);
 
 		MsSignalGenerator generator = msProvider.getSignalGenerator(this
 				.getAnnouncementEndpointName());
@@ -351,7 +391,7 @@ public abstract class UserSbb extends CommonSbb {
 			generator.apply(Announcement.PLAY,
 					new String[] { announcementFile });
 
-			this.initDtmfDetector(getConnection(), this.getEndpointName());
+			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
 		}
@@ -405,32 +445,6 @@ public abstract class UserSbb extends CommonSbb {
 			}
 		}
 		return null;
-	}
-
-	public InitialEventSelector callIdSelect(InitialEventSelector ies) {
-		Object event = ies.getEvent();
-		String callId = null;
-		if (event instanceof ResponseEvent) {
-			// If response event, the convergence name to callId
-			Response response = ((ResponseEvent) event).getResponse();
-			callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME))
-					.getCallId();
-		} else if (event instanceof RequestEvent) {
-			// If request event, the convergence name to callId
-			Request request = ((RequestEvent) event).getRequest();
-			callId = ((CallIdHeader) request.getHeader(CallIdHeader.NAME))
-					.getCallId();
-		} else {
-			// If something else, use activity context.
-			ies.setActivityContextSelected(true);
-			return ies;
-		}
-		// Set the convergence name
-		if (logger.isDebugEnabled()) {
-			logger.debug("Setting convergence name to: " + callId);
-		}
-		ies.setCustomName(callId);
-		return ies;
 	}
 
 	private MsConnection getConnection() {

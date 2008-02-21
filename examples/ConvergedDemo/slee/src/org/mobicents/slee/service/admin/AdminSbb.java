@@ -10,9 +10,18 @@
  */
 package org.mobicents.slee.service.admin;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Properties;
 
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -20,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
+import javax.sip.RequestEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
@@ -29,6 +39,7 @@ import javax.sip.message.Request;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
+import javax.slee.InitialEventSelector;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.TimerEvent;
@@ -120,6 +131,38 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
+	public void onOrderPlaced(CustomEvent event, ActivityContextInterface ac) {
+		System.out
+				.println("****** AdminSbb Recieved org.mobicents.slee.service.sfdemo.ORDER_PLACED ******* ");
+		logger.info("AdminSbb: " + this
+				+ ": received an ORDER_PLACED event. OrderId = "
+				+ event.getOrderId() + ". ammount = " + event.getAmmount()
+				+ ". Customer Name = " + event.getCustomerName());
+
+		this.setCustomEvent(event);
+
+		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
+				audioFilePath, "kevin16");
+
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(event.getCustomerName());
+		stringBuffer.append(" has placed an order of $");
+		stringBuffer.append(event.getAmmount());
+		stringBuffer.append(". Press 1 to approve and 2 to reject.");
+
+		ttsSession.textToAudioFile(stringBuffer.toString());
+		this.setSfDemo(true);
+		this.setSendBye(false);
+		makeCall();
+
+	}
+
+	public void onOrderCancelled(CustomEvent event, ActivityContextInterface ac) {
+		logger.info("****** AdminSbb Recieved ORDER_CANCELLED ******");
+		timerFacility.cancelTimer(this.getTimerID());
+		ac.detach(getSbbContext().getSbbLocalObject());
+	}
+
 	public void onOrderRejected(CustomEvent event, ActivityContextInterface ac) {
 
 		logger.info("****** AdminSbb Recieved ORDER_REJECTED ******* ");
@@ -199,10 +242,6 @@ public abstract class AdminSbb extends CommonSbb {
 			ClientTransaction ct = getSipProvider().getNewClientTransaction(
 					request);
 
-			// Get activity context from factory
-			ActivityContextInterface sipACIF = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(ct);
-
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
 
@@ -237,6 +276,12 @@ public abstract class AdminSbb extends CommonSbb {
 						.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = "
 								+ dialog.getCallId().getCallId());
 			}
+			// Get activity context from factory
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(dialog);
+
+			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
+					.getActivityContextInterface(ct);
 
 			calleeSession.setDialog(dialog);
 			sa.setCalleeSession(calleeSession);
@@ -266,7 +311,9 @@ public abstract class AdminSbb extends CommonSbb {
 			child.setParent(getSbbContext().getSbbLocalObject());
 
 			// Attach child SBB to the activity context
-			sipACIF.attach(child);
+			sipACI.attach(child);
+			clientSipACI.attach(child);
+			sipACI.attach(this.getSbbContext().getSbbLocalObject());
 			// Send the INVITE request
 			ct.sendRequest();
 
@@ -299,7 +346,7 @@ public abstract class AdminSbb extends CommonSbb {
 
 	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("-----onLinkReleased-----");
-
+		aci.detach(getSbbContext().getSbbLocalObject());
 		if (this.getSendBye()) {
 			getChildSbbLocalObject().sendBye();
 		}
@@ -314,53 +361,160 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
-	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-		// this.initDtmfDetector(getConnection(), this.getEndpointName());
-		int cause = evt.getCause();
+	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
+		System.out.println("onInfoEvent received");
+		try {
+			getSipUtils().sendOk(request.getRequest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		Properties p = new Properties();
+		try {
+			p.load(new ByteArrayInputStream(request.getRequest()
+					.getRawContent()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String dtmf = p.getProperty("Signal");
+		System.out.println("The Dtmf is " + dtmf);
+
+		int cause = Integer.parseInt(dtmf);
 
 		EntityManager mgr = null;
 		Order order = null;
 		boolean successful = false;
 		String audioFile = null;
 
+		String destinationName = "/queue/B";
+
+		InitialContext ic = null;
+		ConnectionFactory cf = null;
+		Connection jmsConnection = null;
+
 		switch (cause) {
 		case Basic.CAUSE_DIGIT_1:
 			audioFile = pathToAudioDirectory + "OrderApproved.wav";
+			if (this.getSfDemo()) {
+				System.out.println("Lookup the Queue and put value");
+				try {
+					ic = new InitialContext();
 
-			mgr = this.persistenceResourceAdaptorSbbInterface
-					.createEntityManager(new HashMap(), "custom-pu");
+					cf = (ConnectionFactory) ic.lookup("/ConnectionFactory");
+					Queue queue = (Queue) ic.lookup(destinationName);
+					logger.info("Queue " + destinationName + " exists");
 
-			order = (Order) mgr
-					.createQuery(
-							"select o from Order o where o.orderId = :orderId")
-					.setParameter("orderId", this.getCustomEvent().getOrderId())
-					.getSingleResult();
+					jmsConnection = cf.createConnection();
+					javax.jms.Session jmsSession = jmsConnection.createSession(
+							false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+					MessageProducer sender = jmsSession.createProducer(queue);
 
-			order.setStatus(Order.Status.PROCESSING);
+					TextMessage message = jmsSession.createTextMessage(this
+							.getCustomEvent().getOrderId()
+							+ ",1");
+					sender.send(message);
+					logger.info("The message was successfully sent to the "
+							+ queue.getQueueName() + " queue");
 
-			mgr.flush();
-			mgr.close();
+				} catch (Exception e) {
+					logger.error("Exception while trying to send message", e);
+				} finally {
+					if (ic != null) {
+						try {
+							ic.close();
+						} catch (Exception e) {
+							logger.error("Exception while closing the IC", e);
+						}
+					}
+					try {
+						if (jmsConnection != null) {
+							jmsConnection.close();
+						}
+					} catch (JMSException jmse) {
+						logger.error("Could not close connection "
+								+ jmsConnection + " exception was " + jmse,
+								jmse);
+					}
+				}
 
+			} else {
+				mgr = this.persistenceResourceAdaptorSbbInterface
+						.createEntityManager(new HashMap(), "custom-pu");
+
+				order = (Order) mgr.createQuery(
+						"select o from Order o where o.orderId = :orderId")
+						.setParameter("orderId",
+								this.getCustomEvent().getOrderId())
+						.getSingleResult();
+
+				order.setStatus(Order.Status.PROCESSING);
+
+				mgr.flush();
+				mgr.close();
+			}
 			successful = true;
-
 			break;
 		case Basic.CAUSE_DIGIT_2:
 			audioFile = pathToAudioDirectory + "OrderCancelled.wav";
+			if (this.getSfDemo()) {
+				System.out.println("Lookup the Queue and put value");
+				try {
+					ic = new InitialContext();
 
-			mgr = this.persistenceResourceAdaptorSbbInterface
-					.createEntityManager(new HashMap(), "custom-pu");
+					cf = (ConnectionFactory) ic.lookup("/ConnectionFactory");
+					Queue queue = (Queue) ic.lookup(destinationName);
+					logger.info("Queue " + destinationName + " exists");
 
-			order = (Order) mgr
-					.createQuery(
-							"select o from Order o where o.orderId = :orderId")
-					.setParameter("orderId", this.getCustomEvent().getOrderId())
-					.getSingleResult();
+					jmsConnection = cf.createConnection();
+					javax.jms.Session jmsSession = jmsConnection.createSession(
+							false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+					MessageProducer sender = jmsSession.createProducer(queue);
 
-			order.setStatus(Order.Status.CANCELLED);
+					TextMessage message = jmsSession.createTextMessage(this
+							.getCustomEvent().getOrderId()
+							+ ",2");
+					sender.send(message);
+					logger.info("The message was successfully sent to the "
+							+ queue.getQueueName() + " queue");
 
-			mgr.flush();
-			mgr.close();
+				} catch (Exception e) {
+					logger.error("Exception while trying to send message", e);
+				} finally {
+					if (ic != null) {
+						try {
+							ic.close();
+						} catch (Exception e) {
+							logger.error("Exception while closing the IC", e);
+						}
+					}
+					try {
+						if (jmsConnection != null) {
+							jmsConnection.close();
+						}
+					} catch (JMSException jmse) {
+						logger.error("Could not close connection "
+								+ jmsConnection + " exception was " + jmse,
+								jmse);
+					}
+				}
 
+			} else {
+				mgr = this.persistenceResourceAdaptorSbbInterface
+						.createEntityManager(new HashMap(), "custom-pu");
+
+				order = (Order) mgr.createQuery(
+						"select o from Order o where o.orderId = :orderId")
+						.setParameter("orderId",
+								this.getCustomEvent().getOrderId())
+						.getSingleResult();
+
+				order.setStatus(Order.Status.CANCELLED);
+
+				mgr.flush();
+				mgr.close();
+			}
 			successful = true;
 
 			break;
@@ -381,11 +535,10 @@ public abstract class AdminSbb extends CommonSbb {
 
 			generator.apply(Announcement.PLAY, new String[] { audioFile });
 
-			this.initDtmfDetector(getConnection(), this.getEndpointName());
+			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
@@ -394,11 +547,11 @@ public abstract class AdminSbb extends CommonSbb {
 		String announcementEndpoint = link.getEndpoints()[1];
 
 		String endpointName = null;
-		if (this.getEndpointName() == null) {			
+		if (this.getEndpointName() == null) {
 			this.setEndpointName(link.getEndpoints()[0]);
 		}
 
-		if (this.getAnnouncementEndpointName() == null) {			
+		if (this.getAnnouncementEndpointName() == null) {
 			this.setAnnouncementEndpointName(announcementEndpoint);
 		}
 
@@ -460,6 +613,24 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
+	public InitialEventSelector orderIdSelect(InitialEventSelector ies) {
+		Object event = ies.getEvent();
+		long orderId = 0;
+		if (event instanceof CustomEvent) {
+			orderId = ((CustomEvent) event).getOrderId();
+		} else {
+			// If something else, use activity context.
+			ies.setActivityContextSelected(true);
+			return ies;
+		}
+		// Set the convergence name
+		if (logger.isDebugEnabled()) {
+			logger.debug("Setting convergence name to: " + orderId);
+		}
+		ies.setCustomName(String.valueOf(orderId));
+		return ies;
+	}
+
 	// child relation
 	public abstract ChildRelation getCallControlSbbChild();
 
@@ -484,6 +655,10 @@ public abstract class AdminSbb extends CommonSbb {
 	public abstract void setEndpointName(String endPoint);
 
 	public abstract String getEndpointName();
+
+	public abstract void setSfDemo(boolean sfDemo);
+
+	public abstract boolean getSfDemo();
 
 	public abstract void setAnnouncementEndpointName(String endPoint);
 

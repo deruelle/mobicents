@@ -47,7 +47,6 @@ import javax.sip.RequestEvent;
 import javax.sip.ResponseEvent;
 import javax.sip.SipException;
 import javax.sip.SipProvider;
-import javax.sip.TimeoutEvent;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
@@ -75,6 +74,7 @@ import org.mobicents.slee.resource.sip.SipFactoryProvider;
 import org.mobicents.slee.service.common.SimpleCallFlowRequestState;
 import org.mobicents.slee.service.common.SimpleCallFlowResponseState;
 import org.mobicents.slee.service.common.SimpleCallFlowState;
+import org.mobicents.slee.service.events.CustomEvent;
 import org.mobicents.slee.util.CacheException;
 import org.mobicents.slee.util.CacheFactory;
 import org.mobicents.slee.util.CacheUtility;
@@ -117,6 +117,14 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 	public abstract SbbLocalObject getParentCmp();
 
+	public abstract void setCustomEventCmp(CustomEvent sbbLocalObject);
+
+	public abstract CustomEvent getCustomEventCmp();
+
+	public void setCustomEvent(CustomEvent event) {
+		setCustomEventCmp(event);
+	}
+
 	public void setParent(SbbLocalObject sbbLocalObject) {
 		setParentCmp(sbbLocalObject);
 	}
@@ -131,6 +139,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 	 * ActivityContext.
 	 */
 	public InitialEventSelector callIdSelect(InitialEventSelector ies) {
+		log.info("***************     callIdSelect     ***************");
 		Object event = ies.getEvent();
 		String callId = null;
 		if (event instanceof ResponseEvent) {
@@ -172,27 +181,24 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		simpleCallFlowState.execute(event);
 	}
 
-	public void onAckEvent(RequestEvent event, ActivityContextInterface aci) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received: ACK");
-		}
-		executeRequestState(event);
-	}
+	// public void onAckEvent(RequestEvent event, ActivityContextInterface aci)
+	// {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received: ACK");
+	// }
+	// executeRequestState(event);
+	// }
 
 	public void onByeEvent(RequestEvent event, ActivityContextInterface aci) {
 
-		log.info("************Received BYE**************");
+		log.info("************Received BYEEEE**************");
 
 		if (log.isDebugEnabled()) {
 			log.debug("Received BYE");
 		}
 
-		MsConnection connection = this.getMediaConnection();
-		if (connection != null) {
-			log.info("Deleting media conection");
-			connection.release();
-		}
-
+		releaseMediaConnectionAndDialog();
+		
 		try {
 			sipUtils.sendStatefulOk(event);
 		} catch (ParseException e) {
@@ -206,22 +212,23 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		// executeRequestState(event);
 	}
 
-	public void onCancelEvent(RequestEvent event, ActivityContextInterface aci) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received CANCEL");
-		}
-		executeRequestState(event);
-	}
+	// public void onCancelEvent(RequestEvent event, ActivityContextInterface
+	// aci) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received CANCEL");
+	// }
+	// executeRequestState(event);
+	// }
 
-	public void onServerErrorRespEvent(ResponseEvent event,
-			ActivityContextInterface aci) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received server error response : "
-					+ event.getResponse().getStatusCode());
-		}
-		executeResponseState(event);
-	}
-
+	// public void onServerErrorRespEvent(ResponseEvent event,
+	// ActivityContextInterface aci) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received server error response : "
+	// + event.getResponse().getStatusCode());
+	// }
+	// executeResponseState(event);
+	// }
+	//
 	public void onClientErrorRespEvent(ResponseEvent event,
 			ActivityContextInterface aci) {
 		if (log.isDebugEnabled()) {
@@ -231,14 +238,15 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		executeResponseState(event);
 	}
 
-	public void onGlobalFailureRespEvent(ResponseEvent event,
-			ActivityContextInterface aci) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received global failure event : "
-					+ event.getResponse().getStatusCode());
-		}
-		executeResponseState(event);
-	}
+	//
+	// public void onGlobalFailureRespEvent(ResponseEvent event,
+	// ActivityContextInterface aci) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received global failure event : "
+	// + event.getResponse().getStatusCode());
+	// }
+	// executeResponseState(event);
+	// }
 
 	public void onSuccessRespEvent(ResponseEvent event,
 			ActivityContextInterface aci) {
@@ -249,32 +257,31 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		executeResponseState(event);
 	}
 
-	public void onInfoRespEvent(ResponseEvent event,
-			ActivityContextInterface aci) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received informational response event : "
-					+ event.getResponse().getStatusCode());
-		}
-		executeResponseState(event);
-	}
+	// public void onInfoRespEvent(ResponseEvent event,
+	// ActivityContextInterface aci) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received informational response event : "
+	// + event.getResponse().getStatusCode());
+	// }
+	// executeResponseState(event);
+	// }
 
 	/*
 	 * Timeouts
 	 */
-	public void onTransactionTimeoutEvent(TimeoutEvent event,
-			ActivityContextInterface ac) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received timeout event");
-		}
-	}
-
-	public void onRetransmitTimeoutEvent(TimeoutEvent event,
-			ActivityContextInterface ac) {
-		if (log.isDebugEnabled()) {
-			log.debug("Received retransmit timeout event");
-		}
-	}
-
+	// public void onTransactionTimeoutEvent(TimeoutEvent event,
+	// ActivityContextInterface ac) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received timeout event");
+	// }
+	// }
+	//
+	// public void onRetransmitTimeoutEvent(TimeoutEvent event,
+	// ActivityContextInterface ac) {
+	// if (log.isDebugEnabled()) {
+	// log.debug("Received retransmit timeout event");
+	// }
+	// }
 	public void onConnectionCreated(MsConnectionEvent evt,
 			ActivityContextInterface aci) {
 		log.info("--------------onConnectionCreated--------------");
@@ -297,36 +304,42 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		try {
 			linkActivity = mediaAcif.getActivityContextInterface(link);
 		} catch (UnrecognizedActivityException ex) {
+			ex.printStackTrace();
 		}
 
 		linkActivity.attach(getParentCmp());
+		
 		link.join(connection.getEndpoint(), ANNOUNCEMENT_ENDPOINT);
 	}
 
+	private void releaseMediaConnectionAndDialog() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		SbbLocalObject sbbLocalObject = getSbbContext().getSbbLocalObject();
+		MsConnection msConnection  = null;
+		for (ActivityContextInterface attachedAci : activities) {
+			if (attachedAci.getActivity() instanceof Dialog) {
+				attachedAci.detach(sbbLocalObject);
+			}
+			if (attachedAci.getActivity() instanceof MsConnection) {
+				attachedAci.detach(sbbLocalObject);
+				msConnection = (MsConnection) attachedAci.getActivity();
+			}
+		}
+		if(msConnection != null) {
+			msConnection.release();
+		}
+	}
+	
 	public void sendBye() {
 
-		MsConnection connection = this.getMediaConnection();
-		if (connection != null) {
-			log.info("Deleting media conection");
-			connection.release();
-		}
-
+		releaseMediaConnectionAndDialog();
+		
 		try {
 			Dialog dialog = sipUtils.getDialog(getResponseEventCmp());
 			sendRequest(dialog, Request.BYE);
 		} catch (SipException e) {
 			log.error("Error sending BYE", e);
 		}
-	}
-
-	private MsConnection getMediaConnection() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (ActivityContextInterface aci : activities) {
-			if (aci.getActivity() instanceof MsConnection) {
-				return (MsConnection) aci.getActivity();
-			}
-		}
-		return null;
 	}
 
 	// TODO: Perform further operations if required in these methods.
@@ -551,21 +564,25 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 
 		public void handleDecline(String calleeCallId, ResponseEvent event) {
-			Dialog dialog = null;
-			// TODO Handle exception
-			try {
-				dialog = sipUtils.getDialog(event);
-			} catch (SipException e) {
-				log.error("Error getting dialog in handleDecline", e);
-			}
-			Request ackRequest;
-			try {
-				ackRequest = dialog.createRequest(Request.ACK);
-				dialog.sendAck(ackRequest);
-			} catch (SipException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+			// Not sending ACK. Is it ok?
+			// sendCallerAck(event);
+
+			// Dialog dialog = null;
+			// // TODO Handle exception
+			// try {
+			// dialog = sipUtils.getDialog(event);
+			// } catch (SipException e) {
+			// log.error("Error getting dialog in handleDecline", e);
+			// }
+			// Request ackRequest;
+			// try {
+			// ackRequest = dialog.createRequest(Request.ACK);
+			// dialog.sendAck(ackRequest);
+			// } catch (SipException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 			setState(new TerminationState(), calleeCallId);
 
 		}
@@ -1247,6 +1264,14 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 			Session oldCalleeSession = sa.getSession(oldCallId);
 			oldCalleeSession.setCallId(calleeCallIdNew);
+
+			try {
+				ActivityContextInterface sipACI = activityContextInterfaceFactory
+						.getActivityContextInterface(dialog);
+				sipACI.attach(getParentCmp());
+			} catch (UnrecognizedActivityException aci) {
+				aci.printStackTrace();
+			}
 
 			cache.put(calleeCallIdNew, sa);
 
