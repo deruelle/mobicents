@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="MGCPResourceAdaptor" default="build-and-deploy-ra">
+
+	<property name="mobicents.home" value="../.." />	
+
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
+
+	<property name="ra.name" value="mgcp" />
+	<property name="ra.entity" value="MGCPRA" />
+	<property name="ra.id" value="${ra.entity}#org.mobicents#1.0" />	
+	
+	<path id="ra.classpath">
+		<path refid="mobicents.core.classpath" />
+		<path refid="mobicents.ra.mgcpra.classpath" />
+	</path>
+
+	<fileset id="ra.libs.ratype" dir="lib">
+		<include name="jainmgcp.jar" />
+	</fileset>
+	
+</project>
