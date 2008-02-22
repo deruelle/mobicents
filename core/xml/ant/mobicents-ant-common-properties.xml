@@ -222,6 +222,16 @@
 		</fileset>
 	</path>
 
+	<!-- MGCP RA RELATED -->
+
+	<property name="mobicents.ra.mgcpra" value="${mobicents.ra}/mgcp-ra" />
+	<path id="mobicents.ra.mgcpra.classpath">
+		<pathelement location="${mobicents.ra.mgcpra}/ra/jars/mgcp-ra.jar" />
+		<pathelement location="${mobicents.ra.mgcpra}/ratype/jars/mgcp-ratype.jar" />
+		<pathelement location="${mobicents.ra.mgcpra}/ratype/events/jars/mgcp-event.jar" />
+		<pathelement location="${mobicents.ra.mgcpra}/lib/jainmgcp.jar" />
+	</path>
+
 	<!-- SIP RA RELATED -->
 
 	<property name="mobicents.ra.sipra" value="${mobicents.ra}/sipra" />
