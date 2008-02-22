@@ -26,11 +26,16 @@
 	<classpathentry kind="src" path="resources/media-ra/ratype/events/src"/>
 	<classpathentry kind="src" path="resources/media-ra/ratype/src"/>
 	<classpathentry kind="src" path="resources/media-ra/ra/src"/>
+	<classpathentry kind="src" path="resources/mgcp-ra/ratype/src"/>
+	<classpathentry kind="src" path="resources/mgcp-ra/ra/src"/>
 	<classpathentry kind="src" path="resources/persistencera/ratype/src"/>
 	<classpathentry kind="src" path="resources/persistencera/ra/src"/>
 	<classpathentry kind="src" path="resources/rulesra/ratype/events/src"/>
 	<classpathentry kind="src" path="resources/rulesra/ratype/src"/>
 	<classpathentry kind="src" path="resources/rulesra/ra/src"/>
+	<classpathentry kind="src" path="resources/sipra/ra/src"/>
+	<classpathentry kind="src" path="resources/sipra/ratype/src"/>
+	<classpathentry kind="src" path="resources/sipra/sip-services/src"/>
 	<classpathentry kind="src" path="resources/smppra/ratype/events/src"/>
 	<classpathentry kind="src" path="resources/smppra/ratype/src"/>
 	<classpathentry kind="src" path="resources/smppra/ra/src"/>
@@ -41,9 +46,6 @@
 	<classpathentry kind="src" path="resources/xcapclientra/ra/src"/>
 	<classpathentry kind="src" path="resources/xmppra/ratype/src"/>
 	<classpathentry kind="src" path="resources/xmppra/ra/src"/>
-	<classpathentry kind="src" path="resources/sipra/ra/src"/>
-	<classpathentry kind="src" path="resources/sipra/ratype/src"/>
-	<classpathentry kind="src" path="resources/sipra/sip-services/src"/>
 	<classpathentry kind="src" path="servers/media/server/src"/>
 	<classpathentry kind="src" path="servers/media/mscontrol/msc/src"/>
 	<classpathentry kind="src" path="servers/media/mscontrol/msc-ra/ra/src"/>
@@ -83,8 +85,8 @@
 	<classpathentry kind="var" path="JBOSS_HOME/server/all/deploy/ejb3.deployer/jboss-ejb3.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/all/deploy/ejb3.deployer/jboss-annotations-ejb3.jar"/>
 	<classpathentry kind="var" path="JBOSS_HOME/server/all/lib/dom4j.jar"/>
-	<classpathentry kind="lib" path="resources/persistencera/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
+	<classpathentry kind="lib" path="core/jain-slee-1.0-tck/lib/ant.jar"/>
 	<classpathentry kind="lib" path="core/lib/ant-junit.jar"/>
 	<classpathentry kind="lib" path="core/lib/cactus-1.4.1.jar"/>
 	<classpathentry kind="lib" path="core/lib/cglib-asm.jar"/>
@@ -95,6 +97,8 @@
 	<classpathentry kind="lib" path="core/lib/commons-lang.jar"/>
 	<classpathentry kind="lib" path="core/lib/commons-pool-1.2.jar"/>
 	<classpathentry kind="lib" path="core/lib/commons-validator.jar"/>
+	<classpathentry kind="lib" path="resources/persistencera/lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="resources/mgcp-ra/lib/jainmgcp.jar"/>
 	<classpathentry kind="lib" path="core/lib/jakarta-oro.jar"/>
 	<classpathentry kind="lib" path="core/lib/jcs.jar"/>
 	<classpathentry kind="lib" path="core/lib/je.jar"/>
@@ -106,7 +110,6 @@
 	<classpathentry kind="lib" path="core/lib/sleetck.jar"/>
 	<classpathentry kind="lib" path="core/lib/slee_1_1.jar"/>
 	<classpathentry kind="lib" path="tools/ant-tasts/jars/slee-ant-tasks.jar"/>
-	<classpathentry kind="lib" path="core/jain-slee-1.0-tck/lib/ant.jar"/>
 	<classpathentry kind="lib" path="resources/xmppra/lib/smack.jar"/>
 	<classpathentry kind="lib" path="resources/xmppra/lib/smackx.jar"/>
 	<classpathentry kind="lib" path="resources/media-ra/lib/jmf.jar"/>
