@@ -105,5 +105,16 @@ public class SampleStatisticsImpl implements SampleStatistics, Serializable {
         return this.mean;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString()
+    {
+      return "Sample Count: " + sampleCount + "\r\n" +
+      "Minimum: " + minimum + "\r\n" +
+      "Maximum: " + maximum + "\r\n" +
+      "Mean: " + mean + "\r\n";
+    }
 }
 

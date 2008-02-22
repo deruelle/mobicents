@@ -620,6 +620,7 @@ public class ConcreteUsageParameterClassGenerator {
                     + "Min, " + "this." + paramName + "Max, " + "this."
                     + paramName + "Count);";
             getterBody += "if (reset == true) {this." + paramName + "Count=0;";
+            getterBody += "this." + paramName + "Sum = 0;";
             getterBody += "this." + paramName + "Mean = 0;";
             getterBody += "this." + paramName + "Value = 0;";
             getterBody += "this." + paramName + "Min = Long.MAX_VALUE ;";
