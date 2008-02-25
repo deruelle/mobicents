@@ -19,13 +19,13 @@
 	<property name="ear.dir" value="exploded-archives/${project.name}.ear" />
 	<property name="jar.dir" value="exploded-archives/${project.name}.jar" />
 	<property name="war.dir" value="exploded-archives/${project.name}.war" />
-	<property name="test.dir" value="test-build" />
+	<!-- property name="test.dir" value="test-build" / -->
 	<property name="bootstrap.dir" value="${basedir}/bootstrap" />
 	<property name="deploy.dir" value="${jboss.home}/server/all/deploy" />
 	<property name="ear.deploy.dir" value="${deploy.dir}/${project.name}.ear" />
 	<property name="jar.deploy.dir" value="${ear.deploy.dir}/${project.name}.jar" />
 	<property name="war.deploy.dir" value="${ear.deploy.dir}/${project.name}.war" />
-	<property name="testng.jar" value="${basedir}/lib/testng.jar" />
+	<!-- property name="testng.jar" value="${basedir}/lib/testng.jar" / -->
 	<property name="javac.debug" value="true" />
 	<property name="javac.deprecation" value="false" />
 	<property name="debug" value="false" />
@@ -222,16 +222,16 @@
 		<delete dir="${war.dir}" />
 		<delete dir="${jar.dir}" />
 		<delete dir="${src.schema.dir}" failonerror="no" />
-		<delete dir="${basedir}/test-report" />
+		<!-- delete dir="${basedir}/test-report" />
 		<delete dir="${basedir}/test-output" />
 		<delete failonerror="no">
 			<fileset dir="${test.dir}">
 				<exclude name="**/*.class" if="eclipse.running" />
 			</fileset>
-		</delete>
+		</delete -->
 	</target>
 
-	<target name="compiletest" unless="eclipse.running" description="Compile the Java source code for the tests">
+	<!-- target name="compiletest" unless="eclipse.running" description="Compile the Java source code for the tests">
 		<mkdir dir="${test.dir}" />
 		<javac classpathref="build.classpath" destdir="${test.dir}" debug="${javac.debug}" deprecation="${javac.deprecation}" nowarn="on">
 			<src path="${src.action.dir}" />
@@ -301,6 +301,6 @@
 			</patternset>
 		</unjar>
 		<ant antfile="validate.xml" target="validateConfiguration" />
-	</target>
+	</target -->
 
 </project>
