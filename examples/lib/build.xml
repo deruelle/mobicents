@@ -88,6 +88,9 @@
 	<property name="jnpPort" value="1099" />
 	<property name="jnpHost" value="127.0.0.1" />
 
+	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml"/>
+	
+	
 	<target name="management-init" depends="lib-init">
 		<echo>TASKS LOCATION[${slee-ant-tasks}]</echo>
 		<taskdef name="sbbjar" classname="org.mobicents.ant.SbbJar" classpath="${slee-ant-tasks}" />
