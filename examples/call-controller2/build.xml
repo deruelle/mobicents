@@ -19,7 +19,7 @@
 	<import file="../lib/build.xml" />
 	<echo>EXAMPLES HOME[${examples.home}]</echo>
 	
-	<target name="init" depends="lib-init">
+	<target name="init" depends="management-init">
 		<echo>SIP SERVICES HOME[${sip-services-home}]</echo>
 		<path id="libs-ref" refid="examples-libraries">
 		</path>
@@ -33,6 +33,7 @@
 		<path id="path-CallForwarding-sbb">
 			<pathelement location="${sip-services-home}/sipproxy-sbb.jar" />
 			<pathelement location="${sip-services-home}/registrar-sbb.jar" />
+			<pathelement location="${sip-services-home}/location-sbb.jar" />
 			<path refid="libs-ref" />
 		</path>
 		<path id="path-VoiceMail-sbb">
