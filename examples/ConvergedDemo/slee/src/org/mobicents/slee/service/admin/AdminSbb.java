@@ -364,7 +364,7 @@ public abstract class AdminSbb extends CommonSbb {
 	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
 		System.out.println("onInfoEvent received");
 		try {
-			getSipUtils().sendOk(request.getRequest());
+			getSipUtils().sendStatefulOk(request);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

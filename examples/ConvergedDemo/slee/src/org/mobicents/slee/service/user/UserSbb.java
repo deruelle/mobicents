@@ -290,7 +290,7 @@ public abstract class UserSbb extends CommonSbb {
 	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
 		logger.info("javax.sip.dialog.Request.INFO received");
 		try {
-			getSipUtils().sendOk(request.getRequest());
+			getSipUtils().sendStatefulOk(request);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
