@@ -14,14 +14,16 @@
 
 
 	<!-- SOME PROPS RELATED TO SBB-JAR.xml swap and jar -->
-	<property name="service.dir" value="./proxyservice_jars"/>
-	<property name="proxy.dir" value="./proxysbb_jars"/>
-	<property name="registrar.dir" value="./registrarsbb_jars"/>
-	<property name="proxysbb.jar" value="proxysbb.jar"/>
-	<property name="registrarsbb.jar" value="registrarsbb.jar"/>
-	<property name="service.jar" value="proxyservice.jar"/>
-	<property name="INVITE_INITIAL.xml" value="INITIAL_INVITE_sbb-jar.xml"/>
-	<property name="INVITE_NOT_INITIAL.xml" value="NOTINITIAL_INVITE_sbb-jar.xml"/>
+	<property name="service.dir" value="./proxyservice_jars" />
+	<property name="proxy.dir" value="./proxysbb_jars" />
+	<property name="registrar.dir" value="./registrarsbb_jars" />
+	<property name="location.dir" value="./locationsbb_jars" />
+	<property name="proxysbb.jar" value="sipproxy-sbb.jar" />
+	<property name="registrarsbb.jar" value="registrar-sbb.jar" />
+	<property name="locationsbb.jar" value="location-sbb.jar" />
+	<property name="service.jar" value="proxyservice.jar" />
+	<property name="INVITE_INITIAL.xml" value="INITIAL_INVITE_sbb-jar.xml" />
+	<property name="INVITE_NOT_INITIAL.xml" value="NOTINITIAL_INVITE_sbb-jar.xml" />
 
 	<!-- MOBICENTS MCLI[ in fact this is slee-management.xml but name has been changed for conveniance] -->
 	<import file="../build.xml" />
@@ -31,7 +33,8 @@
 	</path>
 
 	<property name="duPathValue" refid="duPath" />
-	<property name="serviceID" value="JAIN SIP Proxy Service#mobicents#1.0" />
+	<property name="serviceID1" value="JAIN SIP Proxy Service#mobicents#1.1" />
+	<property name="serviceID2" value="SIP Registrar Service#mobicents#1.1" />
 
 
 	<target name="init" depends="management-init">
@@ -43,57 +46,74 @@
 
 
 	<target name="jar-with-invite-initial" depends="init" description="Builds sip services with proxy which has INVITE as initial event">
-		<copy verbose="true" overwrite="true" file="./${INVITE_INITIAL.xml}"  tofile="${proxy.dir}/META-INF/sbb-jar.xml"/>
-		<antcall target="build-jars"/>
+		<copy verbose="true" overwrite="true" file="./${INVITE_INITIAL.xml}" tofile="${proxy.dir}/META-INF/sbb-jar.xml" />
+		<antcall target="build-jars" />
 	</target>
 
 	<target name="jar-with-invite-not-initial" depends="init" description="Builds sip services with proxy which has INVITE as not initial event">
-		<copy verbose="true" overwrite="true" file="./${INVITE_NOT_INITIAL.xml}"  tofile="${proxy.dir}/META-INF/sbb-jar.xml"/>
-		<antcall target="build-jars"/>
+		<copy verbose="true" overwrite="true" file="./${INVITE_NOT_INITIAL.xml}" tofile="${proxy.dir}/META-INF/sbb-jar.xml" />
+		<antcall target="build-jars" />
 	</target>
 
 	<target name="build-jars" depends="init">
-		<jar basedir="${proxy.dir}" destfile="${service.dir}/${proxysbb.jar}"/>
-		<jar basedir="${registrar.dir}" destfile="${service.dir}/${registrarsbb.jar}"/>
-		<jar basedir="${service.dir}" destfile="./${service.jar}"/>
-		<copy file="${service.dir}/${registrarsbb.jar}" todir="./"/>
-		<copy file="${service.dir}/${proxysbb.jar}" todir="./"/>
+		<jar basedir="${proxy.dir}" destfile="${service.dir}/${proxysbb.jar}" />
+		<jar basedir="${registrar.dir}" destfile="${service.dir}/${registrarsbb.jar}" />
+		<jar basedir="${location.dir}" destfile="${service.dir}/${locationsbb.jar}" />
+		<jar basedir="${service.dir}" destfile="./${service.jar}" />
+		<copy file="${service.dir}/${registrarsbb.jar}" todir="./" />
+		<copy file="${service.dir}/${proxysbb.jar}" todir="./" />
+		<copy file="${service.dir}/${locationsbb.jar}" todir="./" />
 	</target>
-	
+
 	<target name="deploy" depends="init" description="Deploys ra into container described by ${jnpHost} and ${jnpPort}">
-		<ant dir="../slee-sip-ra" target="ra-deploy"/>
-		
-		<echo>Installing and activating service ${serviceID}.</echo>
+		<ant dir="../slee-sip-ra" target="ra-deploy" />
+
+		<echo>Installing and activating service ${serviceID1}.</echo>
 		<echo>lib-prefix=${lib-prefix}</echo>
-		<property name="example-libs" refid="examples-libraries"/>
+		<property name="example-libs" refid="examples-libraries" />
 		<!-- echo>examples-libraries=${example-libs}</echo -->
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
 			<install url="${file_url}${duPathValue}" />
-			<activateservice serviceid="${serviceID}" />
+			<activateservice serviceid="${serviceID2}" />
 		</slee-management>
+		<sleep seconds="8" />
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+
+			<activateservice serviceid="${serviceID1}" />
+		</slee-management>
+
 	</target>
 
 	<target name="undeploy" depends="init" description="unDeploys ra from container described by ${jnpHost} and ${jnpPort}">
 		<echo>Deactivating and uninstalling service ${serviceID}.</echo>
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
-			<deactivateservice serviceid="${serviceID}" />
+			<deactivateservice serviceid="${serviceID1}" />
+
+
+		</slee-management>
+
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<deactivateservice serviceid="${serviceID2}" />
 			<uninstall url="${file_url}${duPathValue}" />
 
 		</slee-management>
-	
-		<ant dir="../slee-sip-ra" target="ra-undeploy"/>
+
+
+		<ant dir="../slee-sip-ra" target="ra-undeploy" />
 	</target>
 
-	
+
 	<target name="clean" depends="init" description="Remvoes jars">
 		<delete>
 			<fileset dir="./">
-				<filename name="**.jar"/>
+				<filename name="**.jar" />
 			</fileset>
 			<fileset dir="${service.dir}">
-				<filename name="**.jar"/>
+				<filename name="**.jar" />
 			</fileset>
 		</delete>
-		</target>
+		
+
+	</target>
 </project>
 

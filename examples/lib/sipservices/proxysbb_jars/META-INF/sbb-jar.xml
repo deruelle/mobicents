@@ -8,14 +8,21 @@
 		<description>JAIN SIP Proxy SBB</description>
 		<sbb-name>ProxySbb</sbb-name>
 		<sbb-vendor>mobicents</sbb-vendor>
-		<sbb-version>1.0</sbb-version>
+		<sbb-version>1.1</sbb-version>
 
 		<!-- Delegate to this child SBB if we need to do registrations -->
 		<sbb-ref>
 			<sbb-name>SipRegistrarSbb</sbb-name>
 			<sbb-vendor>mobicents</sbb-vendor>
-			<sbb-version>1.0</sbb-version>
+			<sbb-version>1.1</sbb-version>
 			<sbb-alias>RegistrarSbb</sbb-alias>
+		</sbb-ref>
+
+		<sbb-ref>
+			<sbb-name>LocationCacheSbb</sbb-name>
+			<sbb-vendor>mobicents</sbb-vendor>
+			<sbb-version>1.1</sbb-version>
+			<sbb-alias>LocationSbb</sbb-alias>
 		</sbb-ref>
 		<!-- SERVICE CHAINING PART -->
 		<activity-context-attribute-alias>
@@ -38,32 +45,8 @@
 				<sbb-abstract-class-name>
 					org.mobicents.slee.services.sip.proxy.ProxySbb
 				</sbb-abstract-class-name>
-				
-				<!-- 
-				<cmp-field>
-					<cmp-field-name>serverTX</cmp-field-name>
-				</cmp-field>
-				<cmp-field>
-					<cmp-field-name>
-						forkedTransactionList
-					</cmp-field-name>
-				</cmp-field>
-				<cmp-field>
-					<cmp-field-name>
-						accumulatedResponses
-					</cmp-field-name>
-				</cmp-field>
-				 -->
-				<cmp-field>
-					<cmp-field-name>
-						finishedBranches
-					</cmp-field-name>
-				</cmp-field>
-				<cmp-field>
-					<cmp-field-name>
-						localCancelByeTxMap
-					</cmp-field-name>
-				</cmp-field>
+
+
 
 				<cmp-field>
 					<cmp-field-name>configuration</cmp-field-name>
@@ -71,10 +54,22 @@
 				<cmp-field>
 					<cmp-field-name>forwardedInviteViaHeader</cmp-field-name>
 				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>serverTransactionTerminated</cmp-field-name>
+				</cmp-field>
+
 				<get-child-relation-method>
 					<sbb-alias-ref>RegistrarSbb</sbb-alias-ref>
 					<get-child-relation-method-name>
 						getRegistrarSbbChild
+					</get-child-relation-method-name>
+					<default-priority>0</default-priority>
+				</get-child-relation-method>
+				
+				<get-child-relation-method>
+					<sbb-alias-ref>LocationSbb</sbb-alias-ref>
+					<get-child-relation-method-name>
+						getLocationSbbChild
 					</get-child-relation-method-name>
 					<default-priority>0</default-priority>
 				</get-child-relation-method>
@@ -92,7 +87,7 @@
 
 		</sbb-classes>
 
-		<event event-direction="Receive" initial-event="True">
+		<event event-direction="Receive" initial-event="False">
 			<event-name>InviteEvent</event-name>
 			<event-type-ref>
 				<event-type-name>
@@ -310,7 +305,7 @@
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
 		</event>
-
+	<!-- 
 		<event event-direction="Receive" initial-event="False">
 			<event-name>TimeEvent</event-name>
 			<event-type-ref>
@@ -320,15 +315,17 @@
 				<event-type-vendor>javax.slee</event-type-vendor>
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
-			<!-- <initial-event-select variable="ActivityContext" /> -->
+			
 		</event>
 
-		
+ -->
 
 
 
 		<env-entry>
-			<description>name of MBean that holds this configuration</description>
+			<description>
+				name of MBean that holds this configuration
+			</description>
 			<env-entry-name>configuration-MBEAN</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
 			<env-entry-value>only_human</env-entry-value>
@@ -346,21 +343,23 @@
 			<env-entry-value>nist.gov;mobicents.org</env-entry-value>
 		</env-entry>
 		<!-- 
-		<env-entry>
+			<env-entry>
 			<description>List of must pass through hosts</description>
 			<env-entry-name>configuration-MUST-PASS</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
 			<env-entry-value>somehost.mobicents.org;someother.nist.gov</env-entry-value>
-		</env-entry>
-		 -->
+			</env-entry>
+		-->
 		<env-entry>
-			<description> number of seconds after ctimer will fire</description>
+			<description>
+				number of seconds after ctimer will fire
+			</description>
 			<env-entry-name>configuration-C-TIMEOUT</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
 			<env-entry-value>180</env-entry-value>
 		</env-entry>
 		<env-entry>
-		<description>Maxmimum registration time [s]</description>
+			<description>Maxmimum registration time [s]</description>
 			<env-entry-name>configuration-MAX-EXPIRES</env-entry-name>
 			<env-entry-type>java.lang.String</env-entry-type>
 			<env-entry-value>3600</env-entry-value>
@@ -371,8 +370,8 @@
 			<env-entry-type>java.lang.String</env-entry-type>
 			<env-entry-value>60</env-entry-value>
 		</env-entry>
-		
-		
+
+
 		<resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>
 				<resource-adaptor-type-name>
@@ -397,8 +396,8 @@
 				</resource-adaptor-entity-link>
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
-		
-		
+
+
 	</sbb>
 
 </sbb-jar>

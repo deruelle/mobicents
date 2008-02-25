@@ -4,11 +4,11 @@
 
 <service-xml>
     <service>
-        <service-name>JAIN SIP Proxy Service</service-name>
+        <service-name>SIP Registrar Service</service-name>
         <service-vendor>mobicents</service-vendor>
         <service-version>1.1</service-version>
         <root-sbb>
-           <sbb-name>ProxySbb</sbb-name>
+           <sbb-name>SipRegistrarSbb</sbb-name>
            <sbb-vendor>mobicents</sbb-vendor>
            <sbb-version>1.1</sbb-version>
         </root-sbb>
