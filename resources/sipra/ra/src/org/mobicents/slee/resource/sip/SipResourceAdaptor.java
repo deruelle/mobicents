@@ -414,6 +414,9 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 	}
 
 	public void setDialogIdleTimeTimeout(Long idleTimeOut) {
+		
+		
+		
 		if (idleTimeOut.longValue() < 0)
 			this.dialogTimeout = 30000;
 		else
@@ -499,6 +502,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 			throw new InvalidStateException("Cannot configure RA wrong state: "
 					+ this.state);
 		}
+	
 		if (log.isDebugEnabled()) {
 			log.debug("Configuring RA" + properties);
 		}
@@ -509,6 +513,8 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 		 * this.setTransport(properties.getProperty("gov.nist.slee.resource.sip.TRANSPORT"));
 		 */
 		this.properties = loadProperties(bootstrapContext);
+		
+		
 		// lets merge with props passed
 		if (properties != null) {
 			if (log.isDebugEnabled()) {
@@ -650,6 +656,8 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 	public void entityCreated(BootstrapContext ctx)
 			throws javax.slee.resource.ResourceException {
 		this.init(ctx);
+		
+		
 	}
 
 	public void entityActivated() throws javax.slee.resource.ResourceException {
@@ -903,6 +911,8 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 			log.error("Cannot unbind naming context");
 		}
 
+		this.state = ResourceAdaptorState.UNCONFIGURED;
+		
 		if (log.isDebugEnabled()) {
 			log.debug("Sip Resource Adaptor stopped.");
 		}
