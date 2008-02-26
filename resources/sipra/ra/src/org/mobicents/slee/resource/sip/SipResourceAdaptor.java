@@ -1467,6 +1467,8 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 
 		// HERE WE HAVE KEYs, LETS LOOKUP EVENT and fire
 
+		//This is part of hack that enables dummy ack TXs
+		boolean removeACK=false;
 		// Tx event
 		if (isEventGoingToBereceived(txEventKey)) {
 			SipToSLEEUtility.displayMessage("Resource adaptor",
@@ -1504,6 +1506,10 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 				log.debug("\n======== EVENT[1][" + txEventKey
 						+ "] IS NOT GOING TO BE RECEIVED, DROPING ========");
 			}
+			//We fake ack, so we have to remove it by hand ;[
+			if(txEventKey.getName().endsWith("ACK"))
+				removeACK=true;
+			
 		}
 
 		if (dialogAH != null && isEventGoingToBereceived(dialogEventKey)) {
@@ -1547,8 +1553,20 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 									+ dialogEventKey
 									+ "] IS NOT GOING TO BE RECEIVED, DROPING ========");
 				}
+			
+			
+			if(dialogEventKey.getName().endsWith("ACK"))
+				removeACK=true;
+			
 		}
 
+		
+		
+		if(removeACK)
+		{
+			activities.remove(((SecretWrapperInterface)req.getServerTransaction()).getActivityHandle());
+		}
+		
 	}
 
 	/**
@@ -2418,7 +2436,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 		return rfc3261Methods.contains(method);
 	}
 
-	protected void printActivities() {
+	protected void printActivities(String where) {
 		if (log.isDebugEnabled()) {
 			StringBuffer sb = new StringBuffer();
 			Iterator itKeys = activities.keySet().iterator();
@@ -2428,7 +2446,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 				keyA = itKeys.next();
 				sb.append(keyA + " == " + activities.get(keyA) + "\n");
 			}
-			log.debug("================ ACTIVITIES ================\n"
+			log.debug("================ ACTIVITIES["+where+"] ================\n"
 					+ sb.toString()
 					+ "\n=============================================");
 		}
