@@ -119,6 +119,7 @@
 	<target name="lib-init">
 
 		<!-- SOME HELPER PROPS -->
+		<property name="mscra" value="mscra" />
 		<property name="mediara" value="mediara" />
 		<property name="sipservices" value="sipservices" />
 		<property name="sipra" value="slee-sip-ra" />
@@ -135,7 +136,11 @@
 		</path>
 		<property name="sip-services-home" refid="sip-services-home.id" />
 
-
+		<path id="mscra-home.id">
+			<pathelement location="${lib-prefix}/${mscra}" />
+		</path>
+		<property name="mscra-home" refid="mscra-home.id" />
+		
 		<path id="mediara-home.id">
 			<pathelement location="${lib-prefix}/${mediara}" />
 		</path>
@@ -203,7 +208,7 @@
 			<pathelement location="${jboss.home}/lib/jboss-common.jar" />
 			<pathelement location="${jboss.home}/client/jbossall-client.jar" />
 
-			<!-- MEDIA RA -->
+			<!-- MEDIA RA 
 			<pathelement location="${lib-prefix}/${mediara}/media-ra-DU.jar" />
 			<pathelement location="${lib-prefix}/${mediara}/media-ratype-DU.jar" />
 			<pathelement location="${lib-prefix}/${mediara}/stage/media-event.jar" />
@@ -212,6 +217,18 @@
 			<pathelement location="${lib-prefix}/${mediara}/lib/jmf.jar" />
 			<pathelement location="${lib-prefix}/${mediara}/lib/media-rtp.jar" />
 			<pathelement location="${lib-prefix}/${mediara}/lib/nist-sdp-1.0.jar" />
+			-->
+			<!-- MSC RA The new Media RA -->
+			<pathelement location="${lib-prefix}/${mscra}/media-ra-DU.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/media-ratype-DU.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/stage/media-event.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/stage/media-ra.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/stage/media-ratype.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/lib/jmf.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/lib/media-control.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/lib/media-rtp.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/lib/mscontrol.jar" />
+			<pathelement location="${lib-prefix}/${mscra}/lib/nist-sdp-1.0.jar" />
 
 
 			<!-- PERSISTENCE RA -->

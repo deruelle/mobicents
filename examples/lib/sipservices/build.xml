@@ -72,7 +72,7 @@
 		<echo>lib-prefix=${lib-prefix}</echo>
 		<property name="example-libs" refid="examples-libraries" />
 		<!-- echo>examples-libraries=${example-libs}</echo -->
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}">
 			<install url="${file_url}${duPathValue}" />
 			<activateservice serviceid="${serviceID2}" />
 		</slee-management>
@@ -86,7 +86,7 @@
 
 	<target name="undeploy" depends="init" description="unDeploys ra from container described by ${jnpHost} and ${jnpPort}">
 		<echo>Deactivating and uninstalling service ${serviceID}.</echo>
-		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}" user="${user}" password="${password}" >
 			<deactivateservice serviceid="${serviceID1}" />
 
 
