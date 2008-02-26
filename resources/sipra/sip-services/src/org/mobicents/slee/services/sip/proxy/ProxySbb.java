@@ -1323,9 +1323,18 @@ public abstract class ProxySbb implements Sbb {
 			if (requestURI.equals(localNodeURI)) {
 				// throw new SipSendErrorResponseException("Possible local
 				// looping on node",Response.LOOP_DETECTED);
-				throw new SipLoopDetectedException(
-						"Possible loop detected on message:n" + request
-								+ "\n====================================");
+				//throw new SipLoopDetectedException(
+						//"Possible loop detected on LOCAL["+localNodeURI+"] MSG["+requestURI+"] message:n" + request
+						//		+ "\n====================================");
+				//this can be a loop, we will only warn as this is uncertain at this point
+				//if You know more, please patch :]
+				
+				if(log.isLoggable(Level.FINE))
+				{
+					log.fine("Possible loop detected on LOCAL["+localNodeURI+"] MSG["+requestURI+"] message:n" + request+ "\n====================================");
+				}
+				
+				
 			}
 			
 			
@@ -1554,6 +1563,8 @@ public abstract class ProxySbb implements Sbb {
 			URI requestURI = null;
 			requestURI = request.getRequestURI();
 
+			
+			//TODO: add check on multiple names!!!!!
 			if ((requestURI.isSipURI())
 					&& (((SipURI) requestURI).getUser() == null)
 					&& (((SipURI) requestURI).getHost().equalsIgnoreCase(config
