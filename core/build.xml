@@ -458,8 +458,8 @@
 	
 		<copy todir="${mobicents.sar}">
 			<filterset>
-		    	<filtersfile file="build/etc/single.properties"/>			
-		    </filterset>
+		    		<filtersfile file="build/etc/single.properties"/>			
+		    	</filterset>
 			<fileset dir="xml/sar">
 				<include name="**/*.*" />
 			</fileset>
@@ -481,13 +481,15 @@
 		<copy todir="${jboss.licenses.dir}">
 			<fileset file="LICENSES/*" />
 		</copy>
-
+		
+		<!-- changing run.sh, run,bat is not required any more
 		<copy overwrite="true" todir="${jboss.bin.dir}">
 			<fileset dir="./bin">
 				<filename name="run.*" />
 			</fileset>
 		</copy>
-
+		-->
+		
 		<echo>Touching ${mobicents.sar}/META-INF/jboss-service.xml to cause redeploy</echo>
 		<touch>
 			<fileset file="${mobicents.sar}/META-INF/jboss-service.xml" />
@@ -507,13 +509,13 @@
 			</fileset>
 		</copy>		
 		
-	    <copy todir="${mobicents-ha.sar}">
-	    	<filterset>
-	        	<filtersfile file="build/etc/clustered.properties"/>			
-	        </filterset>
-            <fileset dir="xml/sar">
+	    	<copy todir="${mobicents-ha.sar}">
+	    		<filterset>
+	        		<filtersfile file="build/etc/clustered.properties"/>			
+	        	</filterset>
+            		<fileset dir="xml/sar">
 				<include name="**/*.*" />
-		   	</fileset>
+			</fileset>
 	  	</copy>
 
 		<copy file="docs/pictures/mobicents-logo.gif" tofile="${mobicents-ha.sar}/../jmx-console.war/images/logo.gif" />
