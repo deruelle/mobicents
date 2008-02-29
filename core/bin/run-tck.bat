@@ -1,0 +1,1 @@
+%JBOSS_HOME%\bin\run.bat -Djmx.invoke.getters=true
