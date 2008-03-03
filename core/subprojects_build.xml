@@ -49,14 +49,17 @@
 
 	<!--  THIS SHOULD BE MOVED TO COMMON PART -->
 	<!--  PATH -->
-	<path id="project.class.path">
+	<path id="project.class.path" refid="mobicents.core.classpath">
+		
+		
+			<!--
 		<pathelement location="${libs.home}/log4j.jar" />
 		<pathelement location="${sipra}/lib/JainSipApi1.2.jar" />
 		<pathelement location="${sipra}/lib/JainSipRi1.2.jar" />
 		<pathelement location="${sipra}/stage/sip-resource-adaptor.jar" />
 		<pathelement location="${sipra}/stage/sip-resource-adaptor-type.jar" />
 		<pathelement location="${asteriskra}/lib/asterisk-java.jar" />
-		<!-- Slee API jar file -->
+		 Slee API jar file __>
 		<pathelement location="${libs.home}/slee_1_1.jar" />
 
 
@@ -69,7 +72,7 @@
 		<pathelement location="${libs.home}/commons-logging.jar" />
 		<pathelement location="${libs.home}/concurrent.jar" />
 		<pathelement location="${libs.home}/javassist.jar" />
-		<!--JBoss Cache -->
+		<!__JBoss Cache __>
 		<pathelement location="${jboss.home}/server/all/lib/jboss-aop.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jboss-cache.jar" />
 		<pathelement location="${jboss.home}/lib/jboss-common.jar" />
@@ -77,30 +80,30 @@
 		<pathelement location="${jboss.home}/lib/jboss-system.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jboss.jar" />
 		<pathelement location="${project.home}/lib/jgroups-all.jar" />
-		<!--Java Transacion Api-->
+		<!__Java Transacion Api__>
 		<pathelement location="${libs.home}/jta.jar" />
-		<!--JMX REMOTE CLIENT-->
+		<!__JMX REMOTE CLIENT__>
 		<pathelement location="${jboss.home}/server/all/lib/jmx-adaptor-plugin.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jnpserver.jar" />
 		<pathelement location="${jboss.home}/server/all/lib/jboss-transaction.jar" />
 
 
-		<!-- JBoss HA for failover -->
+		<!__ JBoss HA for failover __>
 		<pathelement location="${jboss.home}/server/all/lib/jbossha.jar" />
 
 
-		<!-- J2EE jar - only required to compile the ejb-ref test case -->
+		<!__ J2EE jar - only required to compile the ejb-ref test case __>
 		<pathelement location="${jboss.home}/server/all/lib/jboss-j2ee.jar" />
 
-		<!-- ANT junit jar file -->
+		<!__ ANT junit jar file __>
 		<pathelement location="${libs.home}/ant-junit.jar" />
 		<pathelement location="${libs.home}/sipunit.jar" />
 
-		<!-- Slee 1.1 Resource Adaptor Interfaces -->
+		<!__ Slee 1.1 Resource Adaptor Interfaces __>
 		<pathelement location="${libs.home}/sleeRA.zip" />
-		<!-- Required by test usage.types.2216 -->
+		<!__ Required by test usage.types.2216 __>
 		<pathelement location="${libs.home}/dom4j.jar" />
-
+		-->
 	</path>
 
 
@@ -110,14 +113,13 @@
 	<property name="sipra.home" value="../slee-sip-ra" />
 	<path id="sip-path-TCK">
 		<pathelement location="./tests/lib/SipStackBinder.jar" />
-		<pathelement location="${sipra.home}/lib/JainSipApi1.2.jar" />
-		<pathelement location="${sipra.home}/lib/JainSipRi1.2.jar" />
+		<pathelement location="${sipra.home}/lib/jain-sip-api-1.2.jar" />
+		<pathelement location="${sipra.home}/lib/jain-sip-ri-1.2.jar" />
 		<pathelement location="${sipra.home}/stage/sip-resource-adaptor.jar" />
 		<pathelement location="${jboss.home}/lib/jboss-common.jar" />
 		<pathelement location="${jboss.home}/server/${node}/jnpserver.jar" />
 		<pathelement location="${mobicents.home}/lib/concurrent.jar" />
-		<!--<pathelement location="${mobicents.home}/ra/sipra/lib/JainSipApi1.2.jar"/>
-			<pathelement location="${mobicents.home}/ra/sipra/lib/JainSipRi1.2.jar"/>-->
+	
 	</path>
 
 
