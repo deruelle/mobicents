@@ -249,8 +249,8 @@
 			<pathelement location="${lib-prefix}/${sipra}/sip-ra-DU.jar" />
 			<pathelement location="${lib-prefix}/${sipra}/sip-ratype-DU.jar" />
 			<!-- SIP LIBS -->
-			<pathelement location="${lib-prefix}/${sipra}/lib/jain-sip-api-1.2.jar" />
-			<pathelement location="${lib-prefix}/${sipra}/lib/jain-sip-ri-1.2.jar" />
+			<pathelement location="${lib-prefix}/${sipra}/lib/JainSipApi1.2.jar" />
+			<pathelement location="${lib-prefix}/${sipra}/lib/JainSipRi1.2.jar" />
 
 			<!-- XMPP RA -->
 			<pathelement location="${lib-prefix}/${xmppra}/lib/smack.jar" />
