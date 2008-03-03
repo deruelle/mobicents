@@ -9,6 +9,7 @@
 
 package org.mobicents.slee.container.management.jmx;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,10 +29,12 @@ import javax.slee.InvalidStateException;
 import javax.slee.ServiceID;
 import javax.slee.UnrecognizedServiceException;
 import javax.slee.management.ManagementException;
+import javax.slee.management.ResourceAdaptorEntityState;
 import javax.slee.management.ServiceState;
 import javax.slee.management.SleeManagementMBean;
 import javax.slee.management.SleeState;
 import javax.slee.management.SleeStateChangeNotification;
+import javax.slee.resource.ResourceException;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
@@ -39,6 +42,7 @@ import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.Version;
 import org.mobicents.slee.container.component.ComponentKey;
 import org.mobicents.slee.container.profile.SleeProfileManager;
+import org.mobicents.slee.resource.ResourceAdaptorEntity;
 import org.mobicents.slee.resource.SleeEndpointImpl;
 import org.mobicents.slee.runtime.cache.XACacheTestViewer;
 import org.mobicents.slee.runtime.facilities.ProfileTableActivityImpl;
@@ -107,6 +111,12 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 	 */
 	private ServiceID[] activeServicesBeforeStop;
 
+	/**
+	 * list of active RAEntities - before stop, these need to be activated after
+	 * start. List must be persited somewhere - TODO
+	 */
+	private ArrayList<String> activeRAEntities = new ArrayList<String>();
+
 	static {
 		MBEAN_NOTIFICATIONS = new MBeanNotificationInfo[] { new MBeanNotificationInfo(
 				new String[] { SleeStateChangeNotification.class.getName() },
@@ -116,7 +126,7 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 		try {
 			logger = Logger.getLogger(SleeManagementMBeanImpl.class);
 		} catch (Exception ex) {
-			System.err.println("error initializing slee management mbean");
+			logger.error("error initializing slee management mbean");
 		}
 	}
 
@@ -418,13 +428,13 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 			// (Ivelin) the following check is symmetric to the one is stop().
 			// see the comments in stop() for more detail.
 			if (isFullSleeStop) {
-				sleeContainer.init(this, rmiServerInterfaceMBean );
+				sleeContainer.init(this, rmiServerInterfaceMBean);
 				isFullSleeStop = false;
 			}
 			;
 
 			changeSleeState(SleeState.RUNNING);
-
+			reactivateResourceAdaptors();
 			resumeServicesActiveBeforeStop();
 		} catch (Exception ex) {
 			logger.error("Error starting SLEE container", ex);
@@ -434,6 +444,34 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 			if (sleeContainer.getSleeState() != SleeState.RUNNING)
 				stopSleeContainer();
 		}
+	}
+
+	private void reactivateResourceAdaptors() {
+
+		HashMap<String, ResourceAdaptorEntity> map = sleeContainer
+				.getResourceAdaptorEntities();
+		ArrayList<String> activated = new ArrayList<String>();
+		for (String entityName : this.activeRAEntities) {
+			ResourceAdaptorEntity entity = map.get(entityName);
+			if (entity != null) {
+				try {
+					entity.activate();
+				} catch (ResourceException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvalidStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				// errror... ;/
+			}
+
+			// this.activeRAEntities.remove(entityName);
+			activated.add(entityName);
+		}
+
+		this.activeRAEntities.removeAll(activated);
 	}
 
 	/**
@@ -545,9 +583,9 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 					// tests/management/sleestate/SleeStateMachineTest.xml
 					// 
 					/*
-					 * try { Thread.sleep(2000); } catch (InterruptedException
-					 * e1) { // TODO Auto-generated catch block
-					 * e1.printStackTrace(); }
+					 * try { try { Thread.sleep(2000); } catch
+					 * (InterruptedException e1) { // TODO Auto-generated catch
+					 * block e1.printStackTrace(); }
 					 */
 					rb = false;
 				} catch (Exception e) {
@@ -648,7 +686,22 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 	 * 
 	 */
 	private void stopAllResourceAdaptors() {
-		// TODO Auto-generated method stub
+
+		HashMap<String, ResourceAdaptorEntity> entities = this.sleeContainer
+				.getResourceAdaptorEntities();
+		Iterator<ResourceAdaptorEntity> it = entities.values().iterator();
+
+		while (it.hasNext()) {
+			ResourceAdaptorEntity entity = it.next();
+			if (entity.getState().equals(ResourceAdaptorEntityState.ACTIVE))
+				try {
+
+					entity.deactivate();
+				} catch (InvalidStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
 
 	}
 
@@ -702,13 +755,15 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 	 * 
 	 */
 	private void rememberActiveResourceAdaptorsBeforeStop() throws Exception {
-		/*
-		 * FIXME: Unfinished method, needed for SLEE shutdwn HashSet
-		 * activeResourceAdaptorsBeforeStop = new HashSet();
-		 * activeResourceAdaptorsBeforeStop.clear();
-		 * activeResourceAdaptorsBeforeStop.addAll(
-		 * sleeContainer.getResourceAdaptorEntities() );
-		 */
+		HashMap<String, ResourceAdaptorEntity> map = sleeContainer
+				.getResourceAdaptorEntities();
+
+		for (String entityName : map.keySet()) {
+			ResourceAdaptorEntity entity = map.get(entityName);
+			if (entity.getState().equals(ResourceAdaptorEntityState.ACTIVE))
+				this.activeRAEntities.add(entityName);
+
+		}
 
 	}
 
@@ -779,8 +834,7 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 		return rmiServerInterfaceMBean;
 	}
 
-	public void setRmiServerInterfaceMBean(
-			ObjectName rmiServerInterfaceMBean) {
+	public void setRmiServerInterfaceMBean(ObjectName rmiServerInterfaceMBean) {
 		this.rmiServerInterfaceMBean = rmiServerInterfaceMBean;
 	}
 
