@@ -112,8 +112,7 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 	public void sendResponse(Response arg0) throws SipException,
 			InvalidArgumentException {
 		realTransaction.sendResponse(arg0);
-		// HERE WE HAVE TO CHECK STATE CHENGE OF A DIALOG
-		// HERE WE HAVE TO CHECK FOR DIALOG STATE CHANGE
+		// HERE WE HAVE TO CHECK STATE CHANGE OF A DIALOG
 		if (dialogWrapper == null)
 			return;
 

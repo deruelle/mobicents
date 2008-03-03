@@ -88,7 +88,7 @@ public class DialogWrapper implements
 	// LAST STATE OF realDialog, THIS VAR HELPS US TO DETERMINE WHEN STATE
 	// EVENTS SHOULD BE FIRED
 	private DialogState lastState = null;
-	// LETS DOUBLE FLAG FOR TerminateOnBye - default value is true
+	// LETS DOUBLE FLAG FOR TerminateOnBye - default value is false
 	private boolean termianteOnBye = false;
 	
 	private SipResourceAdaptor sipResourceAdaptor;

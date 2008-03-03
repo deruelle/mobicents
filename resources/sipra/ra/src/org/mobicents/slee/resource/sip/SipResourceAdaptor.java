@@ -37,10 +37,6 @@ import gov.nist.javax.sip.header.CSeq;
 import gov.nist.javax.sip.header.CallID;
 import gov.nist.javax.sip.header.Via;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -48,11 +44,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -61,8 +55,6 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.naming.NamingException;
 import javax.sip.ClientTransaction;
@@ -83,13 +75,9 @@ import javax.sip.SipProvider;
 import javax.sip.SipStack;
 import javax.sip.TimeoutEvent;
 import javax.sip.Transaction;
-import javax.sip.TransactionAlreadyExistsException;
 import javax.sip.TransactionState;
 import javax.sip.TransactionTerminatedEvent;
-import javax.sip.TransactionUnavailableException;
 import javax.sip.address.AddressFactory;
-import javax.sip.address.SipURI;
-import javax.sip.header.CSeqHeader;
 import javax.sip.header.FromHeader;
 import javax.sip.header.HeaderFactory;
 import javax.sip.header.MaxForwardsHeader;
@@ -97,22 +85,14 @@ import javax.sip.header.ToHeader;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
-import javax.slee.ActivityContextInterface;
 import javax.slee.Address;
 import javax.slee.AddressPlan;
 import javax.slee.EventTypeID;
-import javax.slee.FactoryException;
 import javax.slee.InvalidStateException;
-import javax.slee.TransactionRequiredLocalException;
-import javax.slee.UnrecognizedActivityException;
 import javax.slee.UnrecognizedEventException;
 import javax.slee.facilities.EventLookupFacility;
 import javax.slee.facilities.FacilityException;
-import javax.slee.nullactivity.NullActivity;
-import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
-import javax.slee.nullactivity.NullActivityFactory;
 import javax.slee.resource.ActivityHandle;
-import javax.slee.resource.ActivityIsEndingException;
 import javax.slee.resource.BootstrapContext;
 import javax.slee.resource.FailureReason;
 import javax.slee.resource.Marshaler;
@@ -120,21 +100,16 @@ import javax.slee.resource.ResourceAdaptor;
 import javax.slee.resource.ResourceAdaptorTypeID;
 import javax.slee.resource.ResourceException;
 import javax.slee.resource.SleeEndpoint;
-import javax.transaction.SystemException;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.component.ComponentKey;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.ResourceAdaptorEntity;
 import org.mobicents.slee.resource.ResourceAdaptorState;
-import org.mobicents.slee.resource.SleeActivityHandle;
 import org.mobicents.slee.resource.sip.mbean.SipRaConfiguration;
-import org.mobicents.slee.resource.sip.wrappers.ACKDummyServerTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.ClientTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.DialogTerminatedEventWrapper;
-import org.mobicents.slee.resource.sip.wrappers.DialogTimeoutTimerTask;
 import org.mobicents.slee.resource.sip.wrappers.DialogWrapper;
 import org.mobicents.slee.resource.sip.wrappers.RequestEventWrapper;
 import org.mobicents.slee.resource.sip.wrappers.ResponseEventWrapper;
@@ -142,9 +117,7 @@ import org.mobicents.slee.resource.sip.wrappers.SecretWrapperInterface;
 import org.mobicents.slee.resource.sip.wrappers.ServerTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.TimeoutEventWrapper;
 import org.mobicents.slee.resource.sip.wrappers.TransactionTerminatedEventWrapper;
-import org.mobicents.slee.runtime.ActivityContext;
 import org.mobicents.slee.runtime.ActivityContextFactory;
-import org.mobicents.slee.runtime.SleeInternalEndpoint;
 import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
 
 /**
@@ -953,7 +926,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 	}
 
 	public Map getActivities() {
-		// TODO Auto-generated method stub
+
 		return this.activities;
 	}
 
@@ -1067,14 +1040,17 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 		}
 
 		Object activity = activities.get(ah);
-		if ((activity instanceof ServerTransactionWrapper)
-				&& (((SipActivityHandle) ah).transactionId.endsWith("INVITE"))) {
+		if ((activity instanceof ServerTransactionWrapper))
+		{
+			if( (((SipActivityHandle) ah).transactionId.endsWith("INVITE"))) {
 			((ServerTransactionWrapper) activity)
 					.processCancelOnEventProcessingSucess();
-		}else if(activity instanceof ACKDummyServerTransactionWrapper)
-		{
-			activities.remove(ah);
+			}else if((((SipActivityHandle) ah).transactionId.endsWith("ACK")))
+			{
+				activities.remove(ah);
+			}
 		}
+	
 
 	}
 
@@ -1093,15 +1069,18 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 
 		String id = ((SipActivityHandle) ah).transactionId;
 		Object activity = activities.get(ah);
-		if ((activity instanceof ServerTransactionWrapper)
-				&& (id.endsWith("INVITE"))) {
-			((ServerTransactionWrapper) activity)
-					.processCancelOnEventProcessingFailed();
-			return;
-		}else if(activity instanceof ACKDummyServerTransactionWrapper)
+		if ((activity instanceof ServerTransactionWrapper))
 		{
-			activities.remove(ah);
+			if( id.endsWith("INVITE")) {
+			((ServerTransactionWrapper) activity)
+					.processCancelOnEventProcessingSucess();
+			}else if(id.endsWith("ACK"))
+			{
+				activities.remove(ah);
+			}
 		}
+	
+
 
 		if (!id.endsWith(Request.CANCEL)
 				|| !(event instanceof RequestEventWrapper))
@@ -1763,10 +1742,9 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 
 		}
 
-		ACKDummyServerTransactionWrapper stx = new ACKDummyServerTransactionWrapper(
-				d, req.getRequest());
 
-		return stx;
+		
+		return new ServerTransactionWrapper(req.getServerTransaction(),(DialogWrapper) d,this);
 	}
 
 	/*
@@ -2473,50 +2451,49 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 	}
 
 	// *********************** DEBUG PART]
-	//private Timer debugTimer = new Timer();
+	private Timer debugTimer = new Timer();
 
-//	private org.apache.log4j.Logger debugLogger = Logger
-	//		.getLogger("org.mobicents.slee.resource.sip.DEBUG");
+	private org.apache.log4j.Logger debugLogger = Logger.getLogger("org.mobicents.slee.resource.sip.DEBUG");
 
-	//private HashMap receivedEvents = new HashMap();
-	//private ArrayList orderOfEvent = new ArrayList();
-	//private HashMap timeStamps = new HashMap();
+	private HashMap receivedEvents = new HashMap();
+	private ArrayList orderOfEvent = new ArrayList();
+	private HashMap timeStamps = new HashMap();
 
-	//private class EventTimerTask extends TimerTask {
+	private class EventTimerTask extends TimerTask {
 
-	//	int runCount = 0;
+		int runCount = 0;
 
-	//	@Override
-	//	public void run() {
+		@Override
+		public void run() {
 
-	//		debugLogger.info("-------------------- DEUMP RUN[" + runCount
-	//				+ "]-----------------");
-	//		debugLogger.info("[" + runCount + "] ACTIVITIES DUMP");
-	//		TreeMap ac = new TreeMap(activities);
-	//		int count = 0;
-	//		for (Object key : ac.keySet()) {
-	//			debugLogger.info("[" + runCount + "] AC[" + count++ + "] KEY["
-	//					+ key + "] A[" + ac.get(key) + "]");
-	//		}
-	//		debugLogger.info("[" + runCount + "] --- EVENTS RECEVIED");
-	//		ArrayList orderCopy = new ArrayList(orderOfEvent);
-	//		count = 0;
-	//		for (Object event : orderCopy) {
-	//			debugLogger.info("[" + runCount + "] EVENT[" + count++ + "] E["
-	//					+ event + "] STAMP[" + timeStamps.get(event) + "] A["
-	//					+ receivedEvents.get(event) + "]");
-	//		}
+			debugLogger.info("-------------------- DEUMP RUN[" + runCount
+					+ "]-----------------");
+			debugLogger.info("[" + runCount + "] ACTIVITIES DUMP");
+			TreeMap ac = new TreeMap(activities);
+			int count = 0;
+			for (Object key : ac.keySet()) {
+				debugLogger.info("[" + runCount + "] AC[" + count++ + "] KEY["
+						+ key + "] A[" + ac.get(key) + "]");
+			}
+			debugLogger.info("[" + runCount + "] --- EVENTS RECEVIED");
+			ArrayList orderCopy = new ArrayList(orderOfEvent);
+			count = 0;
+			for (Object event : orderCopy) {
+				debugLogger.info("[" + runCount + "] EVENT[" + count++ + "] E["
+						+ event + "] STAMP[" + timeStamps.get(event) + "] A["
+						+ receivedEvents.get(event) + "]");
+			}
 
-	//		debugLogger.info("[" + runCount
-	//				+ "] ================================================");
-//
-	//		runCount++;
-	//	}
+			debugLogger.info("[" + runCount
+					+ "] ================================================");
 
-	//}
+			runCount++;
+		}
 
-	//private void initDebug() {
-	//	debugTimer.scheduleAtFixedRate(new EventTimerTask(), 5000, 5000);
-	//}
+	}
+
+	private void initDebug() {
+		debugTimer.scheduleAtFixedRate(new EventTimerTask(), 5000, 5000);
+	}
 
 }
