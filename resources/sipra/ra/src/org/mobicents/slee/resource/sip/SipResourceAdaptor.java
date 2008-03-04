@@ -1486,7 +1486,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 						+ "] IS NOT GOING TO BE RECEIVED, DROPING ========");
 			}
 			//We fake ack, so we have to remove it by hand ;[
-			if(txEventKey.getName().endsWith("ACK"))
+			if(txEventKey!=null && txEventKey.getName().endsWith("ACK"))
 				removeACK=true;
 			
 		}
@@ -1534,7 +1534,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 				}
 			
 			
-			if(dialogEventKey.getName().endsWith("ACK"))
+			if(dialogEventKey!=null && dialogEventKey.getName().endsWith("ACK"))
 				removeACK=true;
 			
 		}
