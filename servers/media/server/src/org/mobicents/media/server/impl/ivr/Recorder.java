@@ -78,7 +78,7 @@ public class Recorder extends BaseResource implements MediaSink {
      * 
      * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
      */
-    public void record(URL url) {
+    private void record(URL url) {
         NDC.push(endpoint.getLocalName());
         
         try {
