@@ -70,8 +70,20 @@ public class ConfEndpointImpl extends BaseEndpoint {
         if (params != null && params.length > 0 && params[0] != null) {
             ((DTMF) detector).setDtmfMask(params[0]);
         }
-
+        
+        
         LocalSplitter splitter = (LocalSplitter) getResource(Endpoint.RESOURCE_AUDIO_SINK, connectionID);
+        while (splitter == null) {
+            synchronized(this) {
+                try {
+                    wait(100);
+                } catch (Exception e) {
+                    return;
+                }
+            }
+            splitter = (LocalSplitter) getResource(Endpoint.RESOURCE_AUDIO_SINK, connectionID);
+        }
+        
         try {
             detector.prepare(splitter.newBranch("DTMF"));
             detector.start();
