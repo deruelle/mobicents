@@ -39,7 +39,6 @@ import org.mobicents.slee.container.profile.SleeProfileManager;
 import org.mobicents.slee.container.service.Service;
 import org.mobicents.slee.container.service.ServiceComponent;
 import org.mobicents.slee.resource.SleeActivityHandle;
-import org.mobicents.slee.runtime.SbbInvocationState;
 import org.mobicents.slee.runtime.facilities.NullActivityContext;
 import org.mobicents.slee.runtime.facilities.NullActivityFactoryImpl;
 import org.mobicents.slee.runtime.facilities.NullActivityImpl;
@@ -73,7 +72,7 @@ public class EventRouterImpl implements EventRouter {
 
 	//  Executor Pool related fields
 	// TODO: the executor pool size should be configurable
-	public static int EXECUTOR_POOL_SIZE = 150;
+	public static int EXECUTOR_POOL_SIZE = 313;
 	ExecutorService[] execs;
 
 	private static Logger logger = Logger.getLogger(EventRouterImpl.class);
@@ -90,6 +89,21 @@ public class EventRouterImpl implements EventRouter {
 		}
 
 		public void run() {
+			// wait if there are txs running that have uncommitted modifications to
+			// the attachment set of sbb entities, to avoid concurrency issues.
+			try {
+				while(TemporaryActivityContextAttachmentModifications.SINGLETON().hasTxModifyingAttachs(de.getActivityContextId())) {
+					Thread.sleep(30);
+				}
+			} catch (InterruptedException e) {
+				
+					logger.warn("Routing event: " + de.getEventTypeId() + " activity "
+							+ de.getActivity() + " address " + de.getAddress()+ " failed to ensure no temp attachs exist for the activity, re-routing...");
+				
+				// restart invocation
+				run();
+				return;
+			}
 			if (routeQueuedEvent(de)) {
 				processSucessfulEventRouting(de);
 			}
@@ -133,9 +147,8 @@ public class EventRouterImpl implements EventRouter {
 					"Mobicents SLEE container is in STOPPED state. Cannot route events.");
 		}
 
-		EventExecutor ee = new EventExecutor(de);
-
-		this.getExecutor(de.getActivity()).execute(ee);
+		// execute routing of event
+		this.getExecutor(de.getActivity()).execute(new EventExecutor(de));
 
 		if (logger.isDebugEnabled())
 			logger.debug("FINISHED routeEvent " + de.getEventTypeId());
@@ -905,8 +918,7 @@ public class EventRouterImpl implements EventRouter {
 									// sequence as the Op
 									SbbEntityFactory.removeSbbEntity(sbbEntity,true);
 								}   
-							}   
-
+							}					
 						}          
 					} catch (Exception e) {
 						logger.error("Failure while routing event; second phase. DeferredEvent [" + de.getEventTypeId() + "]", e);
@@ -1362,6 +1374,8 @@ public class EventRouterImpl implements EventRouter {
 
 		// remove executor reference to activity
 		removeExecutor(eventObject.getActivity());
+		// stop management of temp attachs for the ac
+		TemporaryActivityContextAttachmentModifications.SINGLETON().activityContextEnded(eventObject.getActivityContextID());
 
 	}
 

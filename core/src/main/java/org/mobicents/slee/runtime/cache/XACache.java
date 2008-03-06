@@ -32,6 +32,7 @@
  */
 package org.mobicents.slee.runtime.cache;
 
+import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,7 +60,8 @@ public class XACache {
 
 	//private static Logger logger = Logger.getLogger(XACache.class.getName());
 
-	private static XACache tmem = null;
+	// singleton
+	private static XACache tmem = new XACache();
 
 	/**
 	 * The maps that hold the actual committed data
@@ -71,22 +73,31 @@ public class XACache {
 	 */
 	private ConcurrentHashMap txLocalViews = new ConcurrentHashMap();
 
-	private static TransactionManager transactionManager = null;
+	private static TransactionManager transactionManager = SleeContainer.getTransactionManager();
 
+	private XACache() {
+		
+	}
+	
 	public static void setTransactionManager(TransactionManager txm) {
 		if (txm == null) throw new NullPointerException("TransactionManager cannot be null");
 		transactionManager = txm;
 	}
 
-	static synchronized XACache getInstance() {
-		if (tmem == null) {
-			if (transactionManager == null) {
-				transactionManager = (TransactionManager)SleeContainer.getTransactionManager();
-			}
-			tmem = new XACache();
-		};
+	// returns singleton
+	static XACache getInstance() {
 		return tmem;
 	}
+	
+	// solves serialization of singleton
+	private Object readResolve() throws ObjectStreamException {
+        return tmem;
+    }
+
+    // solves cloning of singleton
+    protected Object clone() throws CloneNotSupportedException {
+            throw new CloneNotSupportedException();
+    }
 
 	/**
 	 * <pre>

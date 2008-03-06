@@ -36,6 +36,7 @@ public class DeferredEvent {
     private final Object activity;
     private final Object event;
     private final Address address;
+    private final String activityContextId;
     //private final int hashCode;
     
     public DeferredEvent (int eventId, Object event, ActivityContext ac, 
@@ -54,6 +55,7 @@ public class DeferredEvent {
 		this.event = event;
 		this.activity = ac.getActivity();
 		this.address = address;
+		this.activityContextId = ac.getActivityContextId();
 		/*
 		this.hashCode = ((activity.hashCode() * 31 + (address == null ? 0
 				: address.hashCode())) * 31 + event.hashCode())
@@ -75,6 +77,14 @@ public class DeferredEvent {
         return activity;
     }
 
+    /**
+     * Retreives the activity context id.
+     * @return
+     */
+    public String getActivityContextId() {
+		return activityContextId;
+	}
+    
     /**
      * @return Returns the address.
      */

@@ -582,12 +582,14 @@ public class SbbObject implements Serializable {
      * @return Returns the invocationSeq.
      */
     public void printInvocationSeq() {
-        Iterator i = invocationSeq.iterator();
-        String str = new String();
-        while(i.hasNext())
-            str += i.next().toString() + "\n";
-        if(log.isDebugEnabled())
-            log.debug("INVOCATION OF LIFECYCLE METHOD FOR COMPONENT: " + sbbID + "\n" + str);
+    	if(log.isDebugEnabled()) {
+    		Iterator i = invocationSeq.iterator();
+    		String str = new String();
+    		while(i.hasNext())
+    			str += i.next().toString() + "\n";
+
+    		log.debug("INVOCATION OF LIFECYCLE METHOD FOR COMPONENT: " + sbbID + "\n" + str);
+    	}
         
     }
     

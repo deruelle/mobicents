@@ -167,10 +167,6 @@ public class ActivityContext implements Serializable {
 
 		// init cacheable structures
 		init(refreshAccessTime);		
-		
-		if(!refreshAccessTime) {
-			logger.error("Not setting initial access time for ac with activity "+getActivity()+" of class "+getActivity().getClass());
-		}
 				
 		printNode();		
 	}
@@ -253,6 +249,7 @@ public class ActivityContext implements Serializable {
 						.debug("After Attach to Activity Context : Attachment Set = "
 								+ this.getSbbAttachmentSet());
 			}
+			TemporaryActivityContextAttachmentModifications.SINGLETON().txAttaching(this);
 			return true;
 		} else {
 			// we have a case of multiple consequent attachment attempts,
@@ -266,10 +263,12 @@ public class ActivityContext implements Serializable {
 	 * 
 	 * @param sbbEntityId
 	 */
-	public void detachSbbEntity(String sbbEntityId) {
+	public void detachSbbEntity(String sbbEntityId) throws javax.slee.TransactionRequiredLocalException {
 
 		getSbbAttachmentSet().remove(sbbEntityId);
 
+		TemporaryActivityContextAttachmentModifications.SINGLETON().txDetaching(this);
+		
 		if (logger.isDebugEnabled()) {
 			try {
 				logger.info("Detaching SbbEntity[ID:" + sbbEntityId
