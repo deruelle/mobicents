@@ -249,7 +249,9 @@ public class ActivityContext implements Serializable {
 						.debug("After Attach to Activity Context : Attachment Set = "
 								+ this.getSbbAttachmentSet());
 			}
-			TemporaryActivityContextAttachmentModifications.SINGLETON().txAttaching(this);
+			if (EventRouterImpl.MONITOR_UNCOMMITTED_AC_ATTACHS) {
+				TemporaryActivityContextAttachmentModifications.SINGLETON().txAttaching(this);
+			}
 			return true;
 		} else {
 			// we have a case of multiple consequent attachment attempts,
@@ -267,7 +269,9 @@ public class ActivityContext implements Serializable {
 
 		getSbbAttachmentSet().remove(sbbEntityId);
 
-		TemporaryActivityContextAttachmentModifications.SINGLETON().txDetaching(this);
+		if (EventRouterImpl.MONITOR_UNCOMMITTED_AC_ATTACHS) {
+			TemporaryActivityContextAttachmentModifications.SINGLETON().txDetaching(this);
+		}
 		
 		if (logger.isDebugEnabled()) {
 			try {

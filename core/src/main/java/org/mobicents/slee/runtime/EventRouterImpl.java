@@ -70,6 +70,18 @@ public class EventRouterImpl implements EventRouter {
 	private EventTypeID activityEndEventID;
 	private EventTypeID timerEventID;
 
+	/**
+	 * Flag that turns on or off the monitoring of uncommitted modifications of
+	 * AC attaches. When this flag is true, which means monitoring is on, if
+	 * exist uncommitted attaches/detaches on the activity where one event is
+	 * about to be routed, then that event (and others in queue) waits until no
+	 * uncommitted modifications exist. If your apps don't suffer any
+	 * concurrency issues on attach/detaches, and don't miss response events on
+	 * activities after their creation,then turn this off to get more
+	 * performance turn it off.
+	 */
+	public final static boolean MONITOR_UNCOMMITTED_AC_ATTACHS = true;
+	
 	//  Executor Pool related fields
 	// TODO: the executor pool size should be configurable
 	public static int EXECUTOR_POOL_SIZE = 313;
@@ -91,18 +103,20 @@ public class EventRouterImpl implements EventRouter {
 		public void run() {
 			// wait if there are txs running that have uncommitted modifications to
 			// the attachment set of sbb entities, to avoid concurrency issues.
-			try {
-				while(TemporaryActivityContextAttachmentModifications.SINGLETON().hasTxModifyingAttachs(de.getActivityContextId())) {
-					Thread.sleep(30);
-				}
-			} catch (InterruptedException e) {
-				
+			if (MONITOR_UNCOMMITTED_AC_ATTACHS) {
+				try {
+					while(TemporaryActivityContextAttachmentModifications.SINGLETON().hasTxModifyingAttachs(de.getActivityContextId())) {
+						Thread.sleep(30);
+					}
+				} catch (InterruptedException e) {
+
 					logger.warn("Routing event: " + de.getEventTypeId() + " activity "
 							+ de.getActivity() + " address " + de.getAddress()+ " failed to ensure no temp attachs exist for the activity, re-routing...");
-				
-				// restart invocation
-				run();
-				return;
+
+					// restart invocation
+					run();
+					return;
+				}
 			}
 			if (routeQueuedEvent(de)) {
 				processSucessfulEventRouting(de);
@@ -1375,7 +1389,9 @@ public class EventRouterImpl implements EventRouter {
 		// remove executor reference to activity
 		removeExecutor(eventObject.getActivity());
 		// stop management of temp attachs for the ac
-		TemporaryActivityContextAttachmentModifications.SINGLETON().activityContextEnded(eventObject.getActivityContextID());
+		if (MONITOR_UNCOMMITTED_AC_ATTACHS) {
+			TemporaryActivityContextAttachmentModifications.SINGLETON().activityContextEnded(eventObject.getActivityContextID());
+		}
 
 	}
 
