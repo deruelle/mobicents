@@ -9,8 +9,6 @@
 
 package org.mobicents.slee.resource;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.slee.ActivityEndEvent;
@@ -64,11 +62,36 @@ public class SleeEndpointImpl implements SleeEndpoint {
     
     public void activityCreated(Object activity) {
 
-        ActivityContext ac = acf.getActivityContext(activity);
-        if (logger.isDebugEnabled()) {
-            logger
-                .debug("Activity Created is: "
+    	SleeTransactionManager tm = sleeContainer.getTransactionManager();
+        boolean newTx = tm.requireTransaction();
+        boolean rollback = true;
+        try {
+        	ActivityContext ac = acf.getActivityContext(activity);
+        	rollback = false;
+        	if (logger.isDebugEnabled()) {
+        		logger
+                	.debug("Activity Created is: "
                         + ac.getActivityContextId());
+        	}
+        }
+        catch (Exception e) {
+        	logger.error("exception while creating activity context for new activity", e);
+        }
+        finally {
+        	try {
+        		if (!rollback) {
+        			if (newTx)
+        				tm.commit();
+        		}
+        		else {
+        			if (newTx)
+            			tm.rollback();
+            		else
+            			tm.setRollbackOnly();
+        		}
+        	} catch (SystemException e1) {
+				logger.error("failed to handle tx when creating activity context for new activity", e1);
+			}
         }
     }
     
