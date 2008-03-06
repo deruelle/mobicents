@@ -155,7 +155,6 @@ public class SbbEntity {
         this.cachedSbbEntityAttributes = new CacheableMap(SBB_ID_CACHE + "-" + CACHED_SBBE_ATTRS  + ":" + cacheNodeName);
         this.attachedActivityContexts = new CacheableSet(ACTIVITY_CONTEXTS_CACHE + "-" + ACTIVITY_CONTEXTS+"_"+sbbeId);
 
-        setAttachmentCount(0);
         setParentSbbEntityId(parentSbbEntityId);
         setParentChildRelation(parentChildRelationName);
         setRootSbbId(rootSbbEntityId);
@@ -286,10 +285,7 @@ public class SbbEntity {
             log.debug("addAcToActivityContexts : sbbEid " + this.sbbeId
                     + " acId " + acId);
         }
-        if (this.getActivityContexts().add(acId)) {
-        	// increment attachment count
-        	incrementAttachmentCount();
-        }
+        this.getActivityContexts().add(acId);
     }
 
     private void removeAcFromActivityContexts(String acId) {
@@ -298,10 +294,7 @@ public class SbbEntity {
                     + this.sbbeId + " acId " + acId);
         }
         
-        if (this.getActivityContexts().remove(acId)) {
-        	// decrement attachment count
-        	this.decrementAttachmentCount();
-        }
+        this.getActivityContexts().remove(acId);
     }
 
     /**
@@ -425,41 +418,6 @@ public class SbbEntity {
         }
     }
 
-    /*
-     * The following methods modify the attachment count They need to retrieve
-     * the SbbEntity of the parent node
-     *  
-     */
-    private void incrementAttachmentCount() {
-        int count = getAttachmentCount();
-        setAttachmentCount(count+1);
-
-        if (log.isDebugEnabled()) {
-            log.debug(this.sbbeId + " entity incremented attachment count, current value is "
-                    + count+1);
-        }
-        if (!isRootSbbEntity()) {
-        	// increment the parent also
-        	SbbEntityFactory.getSbbEntity(this.getParentSbbEntityId()).incrementAttachmentCount();
-        }
-    }
-
-    private void decrementAttachmentCount() {
-        int count = this.getAttachmentCount();
-        if (count > 0) {
-        	setAttachmentCount(count-1);
-        }
-        if (log.isDebugEnabled()) {
-            log.debug(this.sbbeId + " sbb entity decremented attachment count, current value is "
-                    + (count > 0 ? count-1 : count));
-        }
-       	
-        if (!isRootSbbEntity()) {
-        	// decrement the parent also
-        	SbbEntityFactory.getSbbEntity(this.getParentSbbEntityId()).decrementAttachmentCount();
-        }
-    }
-
     public Set<EventTypeID> getMaskedEventTypes(String acId) {
 
         if (log.isDebugEnabled()) {
@@ -557,12 +515,23 @@ public class SbbEntity {
     }
     
     public int getAttachmentCount() {
-    	Integer i = (Integer)getObjectFromCache(ATTACHMENT_COUNT);
-    	return i != null ? i.intValue() : 0;
-    }
-
-    private void setAttachmentCount(int count) {
-    	putObjectInCache(ATTACHMENT_COUNT, Integer.valueOf(count)); 
+    	
+    	int attachmentCount = getActivityContexts().size();
+    	// if it's root then it needs to add all children attachement counts too
+    	if (isRootSbbEntity()) {
+    		for (GetChildRelationMethod getChildRelationMethod : this.sbbComponent.getChildRelationMethods()) {
+            	// (re)create child relation obj
+            	ChildRelationImpl childRelationImpl = new ChildRelationImpl(getChildRelationMethod,this);
+            	// iterate all sbb entities in this child relation
+            	for (Iterator i = childRelationImpl.getSbbEntitySet().iterator(); i.hasNext();) {
+            		String childSbbEntityID = (String) i.next();
+            		// recreated the sbb entity
+            		SbbEntity childSbbEntity = SbbEntityFactory.getSbbEntity(childSbbEntityID);
+            		attachmentCount += childSbbEntity.getAttachmentCount();
+            	}
+            }
+    	}
+    	return attachmentCount;
     }
 
     public byte getPriority() {
