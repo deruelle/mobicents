@@ -112,8 +112,7 @@ public class SbbEntity {
     private boolean isBeingRemoved = false;
 	
 	// cache ids
-    private static final String ATTACHMENT_COUNT = "attachmentCount";
-	private static final String PARENT_SBB_ENTITY_ID = "parentSbbEntityId";
+    private static final String PARENT_SBB_ENTITY_ID = "parentSbbEntityId";
 	private static final String PARENT_CHILD_RELATION = "parentChildRelationName";
     private static final String ROOT_SBB_ID = "rootSbbId";
     private static final String SERVICE_CONVERGENCE_NAME = "serviceConvergenceName";
