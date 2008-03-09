@@ -18,6 +18,8 @@ package org.mobicents.media.server.impl.ivr;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.media.DataSink;
 import javax.media.Format;
@@ -33,11 +35,10 @@ import org.apache.log4j.NDC;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseResource;
 import org.mobicents.media.server.impl.packetrelay.LocalDataSource;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.events.AU;
+import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
@@ -53,6 +54,8 @@ public class Recorder extends BaseResource implements MediaSink {
     private String mediaType;
     private Format audioFormat;
     
+    private List <NotificationListener> listeners = new ArrayList();
+    
     private IVREndpointImpl endpoint;
     private BaseConnection connection;
     private LocalDataSource dataSource;
@@ -60,15 +63,10 @@ public class Recorder extends BaseResource implements MediaSink {
     
     /** Creates a new instance of Recorder */
     public Recorder(IVREndpointImpl endpoint) {
-        this.endpoint = endpoint;
-    }
-    
-    public Recorder(Endpoint endpoint, Connection connection) {
         this.endpoint = (IVREndpointImpl) endpoint;
-        this.connection = (BaseConnection) connection;
-        this.audioFormat = this.endpoint.audioFormat;
         this.mediaType = this.endpoint.mediaType;
     }
+    
     
     public void setURL(URL url) {
         this.url = url;
@@ -110,9 +108,8 @@ public class Recorder extends BaseResource implements MediaSink {
             if (logger.isDebugEnabled()) {
                 logger.debug("Started DataSink[" + dataSink + "]");
             }      
-            
         } catch (Exception e) {
-            //endpoint.sendEvent(new NotifyEvent(NotifyEvent.ERROR, endpoint, e.getMessage()));
+            sendEvent(AU.FAIL, AU.CAUSE_FACILITY_FAILURE, e.getMessage());
         } 
         NDC.remove();
     }
@@ -130,23 +127,8 @@ public class Recorder extends BaseResource implements MediaSink {
             recorder.stop();
             recorder.close();
         }
-    }
 
-    public void configure(Properties config) {
-        setState(MediaResource.STATE_CONFIGURED);
-    }
-
-    public void release() {
-        stop();
-        setState(MediaResource.STATE_NULL);
-    }
-
-    public void addListener(NotificationListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void removeListener(NotificationListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        sendEvent(AU.COMPLETE, AU.CAUSE_NORMAL, null);
     }
 
     public void start() {
@@ -155,6 +137,30 @@ public class Recorder extends BaseResource implements MediaSink {
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
         dataSource = new LocalDataSource(mediaStream);
+    }
+
+    public void configure(Properties config) {
+    }
+
+    public void release() {
+        stop();
+    }
+
+    protected void sendEvent(int eventID, int cause, String msg) {
+        NotifyEvent evt = new NotifyEvent(this, eventID, cause, msg);
+        for (NotificationListener listener: listeners) {
+            listener.update(evt);
+        }
+        listeners.clear();
+        this.stop();
+    }
+    
+    public void addListener(NotificationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(NotificationListener listener) {
+        listeners.remove(listener);
     }
     
 }

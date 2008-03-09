@@ -9,9 +9,8 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.conference;
+package org.mobicents.media.server.impl.ivr;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,12 +36,12 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     private String id;
     private Map streams = Collections.synchronizedMap(new HashMap());
     private MediaSplitter splitter = new MediaSplitter();
-    private ConfEndpointImpl endpoint;
+    private IVREndpointImpl endpoint;
     private BaseConnection connection;
     private Logger logger = Logger.getLogger(LocalSplitter.class);
 
     public LocalSplitter(Endpoint endpoint, Connection connection) {
-        this.endpoint = (ConfEndpointImpl) endpoint;
+        this.endpoint = (IVREndpointImpl) endpoint;
         this.connection = (BaseConnection) connection;
         this.id = connection.getId();
         this.addStateListener(this.endpoint.splitterStateListener);
@@ -96,19 +95,6 @@ public class LocalSplitter extends BaseResource implements MediaSink {
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
         splitter.setInputStream(mediaStream);
-        Collection<BaseConnection> connections = endpoint.getConnections();
-        for (BaseConnection conn : connections) {
-            if (!conn.getId().equals(this.id)) {
-                LocalMixer mixer = (LocalMixer) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SOURCE, conn.getId());
-                if (mixer!= null && mixer.getState() >= MediaResource.STATE_CONFIGURED) {
-                    try {
-                        mixer.add(id, this.newBranch(conn.getId()));
-                    } catch (UnsupportedFormatException e) {
-                        logger.error("Unexpected error", e);
-                    }
-                }
-            }
-        }
         setState(MediaResource.STATE_PREPARED);
     }
 
@@ -132,14 +118,5 @@ public class LocalSplitter extends BaseResource implements MediaSink {
 
     public void release() {
         setState(MediaResource.STATE_NULL);
-        Collection<BaseConnection> connections = endpoint.getConnections();
-        for (BaseConnection conn : connections) {
-            if (!conn.getId().equals(this.id)) {
-                LocalMixer mixer = (LocalMixer) endpoint.getResource(
-                        Endpoint.RESOURCE_AUDIO_SOURCE,
-                        conn.getId());
-                mixer.remove(id);
-            }
-        }
     }
 }
