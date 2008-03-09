@@ -1,0 +1,24 @@
+cactus files to be mavenized:
+
+aspectjrt-1.2.1.jar
+cactus-1.7.2.jar
+cactus-ant-1.7.2.jar
+cargo-0.5.jar
+commons-httpclient-2.0.2.jar
+commons-logging-1.0.4.jar
+geronimo-spec-j2ee-1.4-rc4.jar
+httpunit-1.6.jar
+jasper-compiler-4.1.30.jar
+jasper-runtime-4.1.30.jar
+junit-3.8.1.jar  --> this has to be copied into $ANT_HOME/lib
+nekohtml-0.9.1.jar
+org.mortbay.jetty-4.2.17.jar
+servletapi-2.3.jar
+
+
+http://jakarta.apache.org/cactus/integration/maven/installing.html
+
+other files to be mavenized:
+JainSip
+log4
+* all jboss?
