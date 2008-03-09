@@ -2,7 +2,7 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="Media Server" default="default" basedir=".">
+<project name="Media Server" default="deploy-server" basedir=".">
     <description>Builds, tests, and runs the project Media server.</description>
     <!-- import file="nbproject/build-impl.xml"/ -->
     <!-- import file="nbproject/ide-file-targets.xml" / -->
@@ -13,7 +13,7 @@
     <property name="src.test.dir" value="test"/>
     <property name="build.test.dir" value="build/test"/>
     
-    <property name="jboss.home" value="c:\jboss-4.2.2.GA" />
+    <property name="jboss.home" value="/home/abhayani/workarea/mobicents/jboss-4.2.2.GA/" />
     <property name="libs.home" value="lib"/>
     <property name="xml" value="xml"/>
     
@@ -101,8 +101,10 @@
                 <include name="org/mobicents/media/"/> 
             </fileset>
         </copy>
+        
+        <copy todir="${dist.dir}/mediaserver/org/mobicents/media/server/impl" file="${ant.file.mobicents.jpx}/../version.properties" />
         <jar basedir="${dist.dir}/mediaserver" compress="true" jarfile="${dist.dir}/media-server.jar"/> 
-        <delete dir="${dist.dir}/mediaserver"/>
+        <!-- delete dir="${dist.dir}/mediaserver"/ -->
     </target>
     
     <target name ="deploy-tests" depends="package">
