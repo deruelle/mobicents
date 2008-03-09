@@ -7,7 +7,7 @@
 
 	<property name="ra.name" value="mgcp" />
 	<property name="ra.entity" value="MGCPRA" />
-	<property name="ra.id" value="${ra.entity}#org.mobicents#1.0" />	
+	<property name="ra.id" value="${ant.project.name}#org.mobicents#2.0" />	
 	
 	<path id="ra.classpath">
 		<path refid="mobicents.core.classpath" />

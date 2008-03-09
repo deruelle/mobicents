@@ -546,6 +546,17 @@ public class Utils {
         return events;
     }
     
+    public synchronized static String encodeEventNames(EventName[] events) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < events.length; i++) {
+            buffer.append(events[i]);
+            if (i != events.length - 1) {
+                buffer.append(",");
+            }
+        }
+        return buffer.toString();
+    }
+    
     /**
      * Creates EndpointIdentifier object from givent endpont's name.
      *
@@ -695,7 +706,18 @@ public class Utils {
         return s;
     }
     
-    public static String encodeRequestedActions(RequestedAction[] actions) {
+    public synchronized static String encodeRequestedEvents(RequestedEvent[] evts) {
+        StringBuffer buffer = new StringBuffer();
+        for (int i = 0; i < evts.length; i++) {
+            buffer.append(encodeRequestedEvent(evts[i]));
+            if (i != evts.length - 1) {
+                buffer.append(",");
+            }
+        }
+        return buffer.toString();
+    }
+    
+    public synchronized static String encodeRequestedActions(RequestedAction[] actions) {
         String s = "";
         String d = "";
         for (int i = 0; i < actions.length; i++) {

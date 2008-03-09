@@ -1,148 +1,354 @@
-/*
- * File Name     : MgcpProviderImpl.java
- *
- * The JAIN MGCP API implementaion.
- *
- * The source code contained in this file is in in the public domain.
- * It can be used in any project or product without prior permission,
- * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
- * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
- * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
- * AND DATA ACCURACY.  We do not warrant or make any representations
- * regarding the use of the software or the  results thereof, including
- * but not limited to the correctness, accuracy, reliability or
- * usefulness of the software.
- */
-
 package org.mobicents.mgcp;
 
-import java.io.IOException;
-import java.util.TooManyListenersException;
-import java.util.Vector;
-import java.util.Properties;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import jain.protocol.ip.mgcp.JainMgcpProvider;
-import jain.protocol.ip.mgcp.JainMgcpStack;
-import jain.protocol.ip.mgcp.JainMgcpListener;
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
+import jain.protocol.ip.mgcp.JainMgcpListener;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
-import jain.protocol.ip.mgcp.message.Notify;
-
+import jain.protocol.ip.mgcp.JainMgcpStack;
+import jain.protocol.ip.mgcp.message.AuditConnectionResponse;
+import jain.protocol.ip.mgcp.message.AuditEndpointResponse;
 import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
+import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
+import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
+import jain.protocol.ip.mgcp.message.NotifyResponse;
+import jain.protocol.ip.mgcp.message.RestartInProgressResponse;
+import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.util.Random;
+import java.util.TooManyListenersException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
+import net.java.slee.resource.mgcp.JainMgcpProvider;
+import net.java.slee.resource.mgcp.MgcpConnectionActivity;
+import net.java.slee.resource.mgcp.MgcpEndpointActivity;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.resource.mgcp.ra.MgcpConnectionActivityHandle;
+import org.mobicents.slee.resource.mgcp.ra.MgcpConnectionActivityImpl;
+import org.mobicents.slee.resource.mgcp.ra.MgcpEndpointActivityHandle;
+import org.mobicents.slee.resource.mgcp.ra.MgcpEndpointActivityImpl;
+import org.mobicents.slee.resource.mgcp.ra.MgcpResourceAdaptor;
 
-/**
- *
- * @author Oleg Kulikov
- * @author Pavel Mitrenko
- */
 public class JainMgcpProviderImpl implements JainMgcpProvider {
-    
-    protected JainMgcpStackImpl stack;
-    protected DatagramSocket socket;
-    
-    protected HashMap remoteTransactions = new HashMap();
-    protected HashMap localTransactions = new HashMap();
-    protected HashMap transactions = new HashMap();
-    
-    protected static int TID = 0;
-    
-    private Logger logger = Logger.getLogger(JainMgcpProviderImpl.class);
-    private ExecutorService pooledExecutor = Executors.newFixedThreadPool(5);
-    protected Vector listeners = new Vector();
-    
-    /** Creates a new instance of MgcpProviderImpl */
-    public JainMgcpProviderImpl() {
-    }
-    
-    public void addJainMgcpListener(JainMgcpListener listener)
-    throws TooManyListenersException {
-        listeners.add(listener);
-    }
-    
-    public JainMgcpStack getJainMgcpStack() {
-        return stack;
-    }
-    
-    public void removeJainMgcpListener(JainMgcpListener listener) {
-        listeners.remove(listener);
-    }
-    
-    protected void fireEvent(JainMgcpCommandEvent event) {
-        for (int i = 0; i < listeners.size(); i++) {
-            JainMgcpListener listener = (JainMgcpListener) listeners.get(i);
-            listener.processMgcpCommandEvent(event);
-        }
-    }
-    
-    protected void fireEvent(JainMgcpResponseEvent event) {
-        for (int i = 0; i < listeners.size(); i++) {
-            JainMgcpListener listener = (JainMgcpListener) listeners.get(i);
-            listener.processMgcpResponseEvent(event);
-        }
-    }
-    
-    public void sendMgcpEvents(JainMgcpEvent[] events) throws IllegalArgumentException {
-        for (int i = 0; i < events.length; i++) {
-            if (events[i] instanceof JainMgcpCommandEvent) {
-                JainMgcpCommandEvent event = (JainMgcpCommandEvent) events[i];
-                TransactionHandle handle = null;
-                switch (events[i].getObjectIdentifier()) {
-                    case Constants.CMD_CREATE_CONNECTION :
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending CreateConnection object to " + 
-                                    event.getEndpointIdentifier());
-                        }
-                        handle = new CreateConnectionHandle(stack);
-                        break;
-                    case Constants.CMD_MODIFY_CONNECTION :
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending ModifyConnection object to " + 
-                                    event.getEndpointIdentifier());
-                        }
-                        handle = new ModifyConnectionHandle(stack);
-                        break;
-                    case Constants.CMD_DELETE_CONNECTION :
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending DeleteConnection object to " + 
-                                    event.getEndpointIdentifier());
-                        }
-                        handle = new DeleteConnectionHandle(stack);
-                        break;
-                    case Constants.CMD_ENDPOINT_CONFIGURATION :
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending EndpointConfiguration object to " + 
-                                    event.getEndpointIdentifier());
-                        }
-                        handle = new EndpointConfigurationHandle(stack);
-                        break;
-                    default :
-                        throw new IllegalArgumentException("Could not send type of the message yet");
-                }
+
+	private static Logger logger = Logger.getLogger(JainMgcpProviderImpl.class);
+	 
+	private final MgcpResourceAdaptor ra;
+	private final JainMgcpStackImpl stack;
+	
+	// a tx handle id must be between 1 and 999999999
+	private static int MIN_TRANSACTION_HANDLE_ID = 1;
+	private static int MAX_TRANSACTION_HANDLE_ID = Integer.MAX_VALUE < 999999999 ? Integer.MAX_VALUE : 999999999; 
+	private static AtomicInteger transactionHandleCounter = new AtomicInteger(MIN_TRANSACTION_HANDLE_ID);
+	private static AtomicLong callIdentifierCounter = new AtomicLong(1);
+	private static AtomicLong requestIdentifierCounter = new AtomicLong(1);
+	
+	public JainMgcpProviderImpl(MgcpResourceAdaptor ra, JainMgcpStackImpl stack) {
+		this.ra = ra;
+		this.stack = stack;
+	}
+	
+	public MgcpConnectionActivity getConnectionActivity(ConnectionIdentifier connectionIdentifier) {
+		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager().getMgcpConnectionActivityHandle(connectionIdentifier,-1);
+		if (handle != null) {
+			return ra.getMgcpActivityManager().getMgcpConnectionActivity(handle);
+		}
+		else {
+			try {
+				MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(connectionIdentifier,ra);
+				handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(activity);
+				ra.getSleeEndpoint().activityStarted(handle);
+				return activity;
+			} catch (Exception e) {
+				logger.error("Failed to start activity",e);
+				if (handle != null) {
+					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+				}
+				return null;
+			}
+		}
+	}
+	
+	public MgcpConnectionActivity getConnectionActivity(int transactionHandle) {
+		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager().getMgcpConnectionActivityHandle(null,transactionHandle);
+		if (handle != null) {
+			return ra.getMgcpActivityManager().getMgcpConnectionActivity(handle);
+		}
+		else {
+			try {
+				MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(transactionHandle,ra);
+				handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(activity);
+				ra.getSleeEndpoint().activityStarted(handle);				
+				return activity;
+			} catch (Exception e) {
+				logger.error("Failed to start activity",e);
+				if (handle != null) {
+					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+				}
+				return null;
+			}
+		}
+		
+	}
+
+	public MgcpEndpointActivity getEndpointActivity(EndpointIdentifier endpointIdentifier) {
+		MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(endpointIdentifier.toString());
+		MgcpEndpointActivityImpl activity = ra.getMgcpActivityManager().getMgcpEndpointActivity(handle);
+		if (activity != null) {
+			return activity;
+		}
+		else {
+			boolean insertedActivity = false;
+			activity = new MgcpEndpointActivityImpl(ra,endpointIdentifier);
+			try {
+				ra.getMgcpActivityManager().putMgcpEndpointActivity(handle, activity);
+				insertedActivity = true;
+				ra.getSleeEndpoint().activityStarted(new MgcpEndpointActivityHandle(activity.getEndpointIdentifier().toString()));
+				return activity;
+			} catch (Exception e) {
+				logger.error("Failed to start activity",e);
+				if (insertedActivity) {
+					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+				}
+				return null;
+			}
+		}	
+	}
+
+	public void addJainMgcpListener(JainMgcpListener arg0)
+			throws TooManyListenersException {
+		throw new TooManyListenersException("this provider does not support listeners");		
+	}
+
+	public JainMgcpStack getJainMgcpStack() {
+		return stack;
+	}
+
+	public void removeJainMgcpListener(JainMgcpListener arg0) {
+		// do nothing		
+	}
+
+	public void sendMgcpEvents(JainMgcpEvent[] events)
+			throws IllegalArgumentException {
+		
+		for (JainMgcpEvent event:events) {
+			
+            if (event instanceof JainMgcpCommandEvent) {
+            	
+            	// SENDING REQUEST
+                JainMgcpCommandEvent commandEvent = (JainMgcpCommandEvent) event;
+                TransactionHandler handle = null;
+                switch (commandEvent.getObjectIdentifier()) {
                 
-                handle.send(event);
+                case Constants.CMD_AUDIT_CONNECTION:
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending EndpointConfiguration object to "
+                				+ commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new AuditConnectionHandler(stack);
+                	break;
+                
+                case Constants.CMD_AUDIT_ENDPOINT:
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending EndpointConfiguration object to "
+                				+ commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new AuditEndpointHandler(stack);
+                	break;
+              	
+                case Constants.CMD_CREATE_CONNECTION:
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending CreateConnection object to "
+                				+ commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new CreateConnectionHandler(stack);
+                	break;
+
+                case Constants.CMD_DELETE_CONNECTION :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending DeleteConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new DeleteConnectionHandler(stack);
+                	break;
+                	
+                case Constants.CMD_ENDPOINT_CONFIGURATION :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending EndpointConfiguration object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new EndpointConfigurationHandler(stack);
+                	break;
+                	
+                case Constants.CMD_MODIFY_CONNECTION :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending ModifyConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new ModifyConnectionHandler(stack);
+                	break;
+                
+                case Constants.CMD_NOTIFICATION_REQUEST :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending ModifyConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new NotificationRequestHandler(stack);
+                	break;
+                	
+                case Constants.CMD_NOTIFY :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending ModifyConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new NotifyHandler(stack);
+                	break;
+                
+                case Constants.CMD_RESP_UNKNOWN :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending ModifyConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new RespUnknownHandler(stack);
+                	break;
+                	
+                case Constants.CMD_RESTART_IN_PROGRESS :
+                	if (logger.isDebugEnabled()) {
+                		logger.debug("Sending ModifyConnection object to " + 
+                				commandEvent.getEndpointIdentifier());
+                	}
+                	handle = new RestartInProgressHandler(stack);
+                	break;
+                	
+                default :
+                	throw new IllegalArgumentException("Could not send type of the message yet");
+                }
+
+                handle.send(commandEvent);
+                
             } else  {
-                JainMgcpResponseEvent event = (JainMgcpResponseEvent) events[i];
-                int tid = events[i].getTransactionHandle();
-                TransactionHandle handle = (TransactionHandle) 
-                    stack.transactions.get(new Integer(tid));
-                if (handle == null) {
-                    throw new IllegalArgumentException("Unknown transaction handle: " + tid);
+            	
+               // SENDING RESPONSE                
+                TransactionHandler handler = stack.transactions.get(Integer.valueOf(event.getTransactionHandle()));
+                if (handler == null) {
+                    throw new IllegalArgumentException("Unknown transaction handle: " + event.getTransactionHandle());
                 }
+                // callback ra if it's a create connection response
+                if (event instanceof CreateConnectionResponse) {
+                	ra.sendingCreateConnectionResponse((CreateConnectionResponse)event);
+                }
+                // send event
+                handler.send((JainMgcpResponseEvent)event);   
                 
-                handle.send(event);
             }
         }
-    }
-    
+		
+	}
+
+	public int getUniqueTransactionHandler() {
+		// retreives current counter value and sets next one
+		int current;
+		int next;
+		do {
+			current = transactionHandleCounter.get();
+			next = (current == MAX_TRANSACTION_HANDLE_ID ? MIN_TRANSACTION_HANDLE_ID : current++);
+		}
+		while(!transactionHandleCounter.compareAndSet(current,next)); 
+		
+		return current;
+	}
+	
+	public void processMgcpResponseEvent(JainMgcpResponseEvent response, JainMgcpEvent command) {
+		ra.processMgcpResponseEvent(response,command);
+	}
+	
+	public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
+		ra.processMgcpCommandEvent(command);
+	}
+	
+	protected void processTransactionTimeout(JainMgcpCommandEvent command) {
+		// notify RA
+		ra.processTimeout(command);
+		// reply to server
+		JainMgcpResponseEvent response = null;
+		// FIXME - how to change o return code of transaction timeout?!?
+		switch (command.getObjectIdentifier()) {        
+        case Constants.CMD_AUDIT_CONNECTION:
+        	response = new AuditConnectionResponse(this,ReturnCode.Transient_Error);
+        	break;        
+        case Constants.CMD_AUDIT_ENDPOINT:
+        	response = new AuditEndpointResponse(this,ReturnCode.Transient_Error);
+        	break;      	
+        case Constants.CMD_CREATE_CONNECTION:
+        	response = new CreateConnectionResponse(this,ReturnCode.Transient_Error,new ConnectionIdentifier(Long.toHexString(new Random(System.currentTimeMillis()).nextLong())));
+        	break;
+        case Constants.CMD_DELETE_CONNECTION :
+        	response = new DeleteConnectionResponse(this,ReturnCode.Transient_Error);
+        	break;        	
+        case Constants.CMD_ENDPOINT_CONFIGURATION :
+        	response = new DeleteConnectionResponse(this,ReturnCode.Transient_Error);
+        	break;        	
+        case Constants.CMD_MODIFY_CONNECTION :
+        	response = new ModifyConnectionResponse(this,ReturnCode.Transient_Error);
+        	break;        
+        case Constants.CMD_NOTIFICATION_REQUEST :
+        	response = new NotificationRequestResponse(this,ReturnCode.Transient_Error);
+        	break;        	
+        case Constants.CMD_NOTIFY :
+        	response = new NotifyResponse(this,ReturnCode.Transient_Error);
+        	break;        
+        case Constants.CMD_RESP_UNKNOWN :
+        	//FIXME - what response?!?
+        	response = new NotifyResponse(this,ReturnCode.Transient_Error);
+        	break;        	
+        case Constants.CMD_RESTART_IN_PROGRESS :
+        	response = new RestartInProgressResponse(this,ReturnCode.Transient_Error);
+        	break;        	
+        default :
+        	throw new IllegalArgumentException("Could not send type of the message yet");
+        }
+		
+		response.setTransactionHandle(command.getTransactionHandle());
+        JainMgcpEvent[] events = {response};
+        sendMgcpEvents(events);
+                
+	}
+
+	public CallIdentifier getUniqueCallIdentifier() {
+		long current = -1;
+		boolean b = true;
+		while(b) {
+			current  = callIdentifierCounter.get();
+			if (current == Long.MAX_VALUE) {
+				b = !callIdentifierCounter.compareAndSet(current,1);
+			}
+			else {
+				b = !callIdentifierCounter.compareAndSet(current, current+1);
+			}
+		}
+		return new CallIdentifier(Long.toHexString(current));
+	}
+
+	public RequestIdentifier getUniqueRequestIdentifier() {
+		long current = -1;
+		boolean b = true;
+		while(b) {
+			current  = requestIdentifierCounter.get();
+			if (current == Long.MAX_VALUE) {
+				b = !requestIdentifierCounter.compareAndSet(current,1);
+			}
+			else {
+				b = !requestIdentifierCounter.compareAndSet(current, current+1);
+			}
+		}
+		return new RequestIdentifier(Long.toHexString(current));
+	}
+	
 }

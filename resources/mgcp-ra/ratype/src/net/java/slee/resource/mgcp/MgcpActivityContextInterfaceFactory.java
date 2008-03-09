@@ -20,41 +20,32 @@ import javax.slee.ActivityContextInterface;
 import javax.slee.FactoryException;
 import javax.slee.UnrecognizedActivityException;
 
-import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
-import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
-
 /**
  * ActivityContextInterfaceFactory interface.
  *
  * @see JAIN SLEE 1.0 Specification, Final Release, p244.
  * @author Oleg Kulikov
+ * @author eduardomartins
  */
 public interface MgcpActivityContextInterfaceFactory {
-    /**
-     * Gets ActivityContextInterface for Transaction activity.
-     *
-     * @param txID the identifier of transaction.
-     * @return the ActivityContextInterface.
-     */
-    public ActivityContextInterface getActivityContextInterface(Integer txID)
-        throws NullPointerException, UnrecognizedActivityException, FactoryException;
 
     /**
-     * Gets ActivityContextInterface for call activity.
+     * Gets ActivityContextInterface for endpoint activity.
      *
-     * @param callID the identifier of the call.
+     * @param activity
+     *  the endpoint activity object.
      * @return the ActivityContextInterface.
      */
-    public ActivityContextInterface getActivityContextInterface(CallIdentifier callID)
+    public ActivityContextInterface getActivityContextInterface(MgcpEndpointActivity activity)
         throws NullPointerException, UnrecognizedActivityException, FactoryException;
     
     /**
      * Gets ActivityContextInterface for connection activity.
      *
-     * @param connectionID the identifier of the call.
+     * @param activity the connection activity object.
      * @return the ActivityContextInterface.
      */
-    public ActivityContextInterface getActivityContextInterface(ConnectionIdentifier connectionID)
+    public ActivityContextInterface getActivityContextInterface(MgcpConnectionActivity activity)
         throws NullPointerException, UnrecognizedActivityException, FactoryException;
     
 }

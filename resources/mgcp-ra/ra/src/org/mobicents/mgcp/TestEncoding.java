@@ -9,6 +9,7 @@
 
 package org.mobicents.mgcp;
 
+
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
@@ -35,7 +36,7 @@ public class TestEncoding {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        JainMgcpStackImpl stack = new JainMgcpStackImpl();
+        JainMgcpStackImpl stack = new JainMgcpStackImpl(null);
         CallIdentifier callID = new CallIdentifier("1");
         
         EndpointIdentifier endpointID = new EndpointIdentifier("ann/00","localhost:2727");
@@ -53,7 +54,7 @@ public class TestEncoding {
         parms.setRequestedEvents(new RequestedEvent[]{requestedEvent});
         createConnection.setNotificationRequestParms(parms);
         
-        CreateConnectionHandle h = new CreateConnectionHandle(stack, null, 0);
+        CreateConnectionHandler h = new CreateConnectionHandler(stack, null, 0);
         String s = h.encode(createConnection);
         
         System.out.println(s);

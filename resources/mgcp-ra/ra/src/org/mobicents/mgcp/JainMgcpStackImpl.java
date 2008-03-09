@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -43,50 +43,67 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, OAM_IF {
     protected int port = 2727;
     
     private DatagramSocket socket;
-    protected JainMgcpProviderImpl provider;
     
     private boolean stopped = true;
     
     private Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
-    private ExecutorService pool = Executors.newFixedThreadPool(5);
     
-    protected HashMap transactions = new HashMap();
-    protected int GENERATOR = 1;
+    private ExecutorService pool;
+    
+    protected JainMgcpProviderImpl provider;
+    
+    /**
+     * holds current active transactions
+     */
+    protected ConcurrentHashMap<Integer, TransactionHandler> transactions = new ConcurrentHashMap<Integer, TransactionHandler>();
     
     /** Creates a new instance of JainMgcpStackImpl */
-    public JainMgcpStackImpl() {
+    public JainMgcpStackImpl(JainMgcpProviderImpl provider) {
+    	int wantedPort = port;
+    	if (socket == null) {
+    		while(true) {
+    			try {
+    				socket = new DatagramSocket(port);
+    				logger.info("Jain Mgcp stack bound to local UDP port " + port);
+    				break;
+    			} catch (SocketException e) {
+    				logger.error("Failed to bound to local port " + port + ". Caused by", e);
+    				if (port != wantedPort+10) {
+    					port++;
+    				}
+    				else {
+    					throw new RuntimeException("Failed to find a local port to bound stack");
+    				}
+    			}
+    		}
+        }
+    	stopped = false;
+        if(logger.isDebugEnabled())
+        	logger.debug("Starting main thread " + this);
+        this.provider = provider;
+        start();
+    }
+    
+    /**
+     * Closes the stack and it's underlying resources.
+     */
+    public void close() {
+          stopped = true;
+          try {
+              logger.debug("Closing socket");
+              socket.close();
+              pool.shutdown();
+          } catch (Exception e) {
+              logger.warn("Could not gracefully close socket", e);
+          }
     }
     
     public JainMgcpProvider createProvider() throws CreateProviderException {
-        if (socket == null) {
-            try {
-                socket = new DatagramSocket(port);
-                logger.debug("Bound to local UDP port " + port);
-            } catch (SocketException e) {
-                logger.error("Failed to bound to local port " + port + ". Caused by", e);
-                throw new CreateProviderException(e.getMessage());
-            }
-        }
-        
-        provider = new JainMgcpProviderImpl();
-        provider.stack = this;
-        
-        stopped = false;
-        
-        logger.debug("Starting main thread " + this);
-        start();
-        return provider;
+       throw new CreateProviderException("this stack impl does not support creation of providers");
     }
     
     public void deleteProvider(JainMgcpProvider provider) throws DeleteProviderException {
-        provider = null;
-        stopped = true;
-        try {
-            logger.debug("Closing socket");
-            socket.close();
-        } catch (Exception e) {
-            logger.warn("Could not gracefully close socket", e);
-        }
+      // do nothing
     }
     
     public void setPort(int port) {
@@ -122,6 +139,9 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, OAM_IF {
     }
     
     public void run() {
+    	
+    	pool = Executors.newFixedThreadPool(5);
+    	
         if (logger.isDebugEnabled()) {
             logger.debug("MGCP stack started successfully on " +
                     socket.getLocalAddress() + ":" + socket.getLocalPort());
@@ -163,4 +183,6 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, OAM_IF {
             logger.debug("MGCP stack stopped gracefully");
         }
     }
+    
+    
 }

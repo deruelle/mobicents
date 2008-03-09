@@ -27,7 +27,7 @@ public class TestParsing {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        JainMgcpStackImpl stack = new JainMgcpStackImpl();
+        JainMgcpStackImpl stack = new JainMgcpStackImpl(null);
         InetAddress address = InetAddress.getLocalHost();
         
         FileInputStream in = new FileInputStream("d:\\projects\\createcon.txt");
@@ -39,7 +39,7 @@ public class TestParsing {
         }
         
         String msg = new String(out.toByteArray());
-        TransactionHandle handle = new CreateConnectionHandle(stack, address, 9201);
+        TransactionHandler handle = new CreateConnectionHandler(stack, address, 9201);
         
         System.out.println(handle.decodeCommand(msg));
     }

@@ -16,15 +16,14 @@
 
 package org.mobicents.slee.resource.mgcp.ra;
 
-import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
-import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import javax.slee.ActivityContextInterface;
 import javax.slee.FactoryException;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.resource.ActivityHandle;
 
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
-import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
+import net.java.slee.resource.mgcp.MgcpConnectionActivity;
+import net.java.slee.resource.mgcp.MgcpEndpointActivity;
 
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
@@ -36,6 +35,7 @@ import org.mobicents.slee.runtime.ActivityContextInterfaceImpl;
 /**
  *
  * @author Oleg Kulikov
+ * @author eduardomartins
  */
 public class MgcpActivityContextInterfaceFactoryImpl implements MgcpActivityContextInterfaceFactory, ResourceAdaptorActivityContextInterfaceFactory {
   
@@ -61,22 +61,29 @@ public class MgcpActivityContextInterfaceFactoryImpl implements MgcpActivityCont
         return jndiName;
     }
 
-    public ActivityContextInterface getActivityContextInterface(Integer txID) throws NullPointerException, UnrecognizedActivityException, FactoryException {
-        return createAci(new TransactionHandle(txID.intValue()));
+    public ActivityContextInterface getActivityContextInterface(MgcpConnectionActivity activity) throws NullPointerException, UnrecognizedActivityException, FactoryException {
+    	 return getAci(activity);
     }
 
-    public ActivityContextInterface getActivityContextInterface(CallIdentifier callID) throws NullPointerException, UnrecognizedActivityException, FactoryException {
-        return createAci(new CallHandle(callID));
-    }
-
-    public ActivityContextInterface getActivityContextInterface(ConnectionIdentifier connectionID) throws NullPointerException, UnrecognizedActivityException, FactoryException {
-        return createAci(ra.createConnectionlHandle(connectionID));
+    public ActivityContextInterface getActivityContextInterface(MgcpEndpointActivity activity) throws NullPointerException, UnrecognizedActivityException, FactoryException {
+        return getAci(activity);
     }
     
-    private ActivityContextInterface createAci(ActivityHandle handle) {
-        SleeActivityHandle sleeActivityHandle = new SleeActivityHandle(raEntityName, handle, serviceContainer);
-        ActivityContext ac = activityContextFactory.getActivityContext(sleeActivityHandle);
-        return new ActivityContextInterfaceImpl(serviceContainer, ac.getActivityContextId());
+    private ActivityContextInterface getAci(Object activity) throws UnrecognizedActivityException, NullPointerException {
+    	if (activity != null) {
+    		ActivityHandle activityHandle = ra.getActivityHandle(activity);
+        	if (activityHandle != null) {
+        		SleeActivityHandle sleeActivityHandle = new SleeActivityHandle(raEntityName, activityHandle, serviceContainer);
+            	ActivityContext ac = activityContextFactory.getActivityContext(sleeActivityHandle);
+            	return new ActivityContextInterfaceImpl(serviceContainer, ac.getActivityContextId());
+        	}
+        	else {
+        		throw new UnrecognizedActivityException(activity);
+        	}
+    	}
+    	else {
+    		throw new NullPointerException("activity can't be null");
+    	}
     }
 
 }

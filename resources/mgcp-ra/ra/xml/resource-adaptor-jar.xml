@@ -5,14 +5,14 @@
 <resource-adaptor-jar>
     <resource-adaptor id="mgcpra">
         <description>MGCP resource adaptor</description>
-        <resource-adaptor-name>MGCPRA</resource-adaptor-name>
+        <resource-adaptor-name>MGCPResourceAdaptor</resource-adaptor-name>
         <resource-adaptor-vendor>org.mobicents</resource-adaptor-vendor>
-        <resource-adaptor-version>1.0</resource-adaptor-version>
+        <resource-adaptor-version>2.0</resource-adaptor-version>
 
         <resource-adaptor-type-ref>
            <resource-adaptor-type-name>jain-mgcp</resource-adaptor-type-name>
            <resource-adaptor-type-vendor>net.java</resource-adaptor-type-vendor>
-           <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+           <resource-adaptor-type-version>2.0</resource-adaptor-type-version>
         </resource-adaptor-type-ref>
     
         <resource-adaptor-classes>

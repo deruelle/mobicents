@@ -18,7 +18,6 @@ package org.mobicents.mgcp;
 
 import java.net.InetAddress;
 
-import java.net.DatagramPacket;
 import org.apache.log4j.Logger;
 
 /**
@@ -28,7 +27,6 @@ import org.apache.log4j.Logger;
  */
 public class MessageHandler implements Runnable {
     
-    private DatagramPacket packet;
     private JainMgcpStackImpl stack;
     private byte[] data;
     private InetAddress address;
@@ -66,43 +64,51 @@ public class MessageHandler implements Runnable {
         // transaction to handle this message
         String tokens[] = header.split("\\s");
         if (isRequest(header)) {
-            if (logger.isDebugEnabled()) {
+            
+        	if (logger.isDebugEnabled()) {
                 logger.debug("Processing command message");
             }
+        	
             String verb = tokens[0];
             if (verb.equalsIgnoreCase("crcx")) {
-                TransactionHandle handle = new CreateConnectionHandle(
+                TransactionHandler handle = new CreateConnectionHandler(
                         stack, address, port);
                 handle.receiveCommand(msg);
             } else if (verb.equalsIgnoreCase("mdcx")) {
-                TransactionHandle handle = new ModifyConnectionHandle(
+                TransactionHandler handle = new ModifyConnectionHandler(
                         stack, address, port);
                 handle.receiveCommand(msg);
             } else if (verb.equalsIgnoreCase("dlcx")) {
-                TransactionHandle handle = new DeleteConnectionHandle(
+                TransactionHandler handle = new DeleteConnectionHandler(
                         stack, address, port);
                 handle.receiveCommand(msg);
             } else if (verb.equalsIgnoreCase("epcf")) {
-                TransactionHandle handle = new EndpointConfigurationHandle(
+                TransactionHandler handle = new EndpointConfigurationHandler(
                         stack, address, port);
                 handle.receiveCommand(msg);
             } else {
                 logger.warn("Unsupported message verbose " + verb);
                 return;
             }
+            
         } else {
+        	
+        	// RESPONSE HANDLING
+        	
             if (logger.isDebugEnabled()) {
                 logger.debug("Processing response message");
             }
-            Integer tid = new Integer(Integer.parseInt(tokens[1]));
-            TransactionHandle handle = (TransactionHandle) stack.transactions.get(tid);
             
-            if (handle == null) {
+            Integer tid = new Integer(Integer.parseInt(tokens[1]));
+            
+            TransactionHandler handler = (TransactionHandler) stack.transactions.remove(tid);
+            
+            if (handler == null) {
                 logger.warn("Unknown transaction :" + tid);
                 return;
             }
             
-            handle.receiveResponse(msg);
+            handler.receiveResponse(msg);
         }
     }
     
