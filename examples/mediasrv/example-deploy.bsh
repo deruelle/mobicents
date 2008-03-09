@@ -1,0 +1,44 @@
+/** 
+ * A BeanShell script service that deploys SLEE services in Mobicents
+ */
+
+import org.mobicents.slee.container.management.jmx.SleeBeanShellUtil;
+
+
+String serviceURL = "${jboss.server.home.url}deploy-mobicents/demo-service.jar";
+String serviceId = "ServiceID[msdemo#org.mobicents#1.0]";
+
+
+SleeBeanShellUtil slee = new SleeBeanShellUtil();
+
+/**
+ * Install and activate components in the correct order
+ */
+void start()
+{
+  try {   
+    slee.log.info("Starting Install of Service: " + serviceId); 
+    slee.deployService(serviceURL, serviceId);	
+    slee.log.info("Finished successfully Installment of Service: " + serviceId);
+   
+  } catch (Throwable t) {
+         slee.log.info("Exception while starting installation of Service: " + serviceId, t);
+  }
+}
+
+/**
+ * Deactivate and uninstall components in the reverse order of start()
+ */
+void stop()
+{
+  try {
+   
+    slee.log.info("Uninstalling: " +  serviceId);
+    slee.undeployService(serviceURL, serviceId);
+
+    slee.log.info("UnInstallment of service: " + serviceId);
+
+  } catch (Throwable t) {
+        slee.log.info("Exception while stopping installed service: " + serviceId, t);
+  }
+}
