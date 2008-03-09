@@ -124,12 +124,18 @@ public class IVREndpointImpl extends AnnEndpointImpl {
                 logger.info("Start Play/record signal for connection: " + connectionID);
                 signal = new PlayRecordSignal(this, listener, params);
                 signal.start();
+            default:
+                super.play(signalID, params, connectionID, listener, keepAlive);
+        }
+    }
+    
+    @Override
+    public void subscribe(int eventID, String connectionID, String params[], NotificationListener listener) {
+        switch (eventID) {
             case Basic.DTMF:
                 logger.info("Start DTMF detector for connection: " + connectionID);
                 this.detectDTMF(connectionID, params, listener);
                 break;
-            default:
-                super.play(signalID, params, connectionID, listener, keepAlive);
         }
     }
     
