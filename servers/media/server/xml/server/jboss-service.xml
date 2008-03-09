@@ -65,4 +65,16 @@
         <attribute name="PortRange">1024-65535</attribute>
         <attribute name="PCMA">true</attribute>
     </mbean>
+    
+    <!-- IVR Endpoint -->
+    <mbean code="org.mobicents.media.server.impl.ivr.IVREndpointManagement" 
+           name="media.mobicents:endpoint=ivr"> 
+        <attribute name="JndiName">media/trunk/IVR/1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
+        <attribute name="Jitter">60</attribute>
+        <attribute name="PacketizationPeriod">20</attribute>
+        <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
+    </mbean>
+    
 </server>
