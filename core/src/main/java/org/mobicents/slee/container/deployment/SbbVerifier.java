@@ -382,22 +382,15 @@ public class SbbVerifier {
                  }
                  if(cmpFields!=null){
                 	CtClass localSbbAbstractClass=sbbAbstractClass;
-                	if(!checkCMPFieldsAgainstDeploymentDescripor(abstractMethods,cmpFields,localSbbAbstractClass))
-                		if(!checkCMPFieldsAgainstDeploymentDescripor(superClassesAbstractMethods,cmpFields,localSbbAbstractClass))
-                		{
-                			StringBuffer sb=new StringBuffer(300);
-                            for(int c=0;c<cmpFields.length;c++)
-                            {
-                            	if(cmpFields[c]!=null)
-                            		sb.append("[ "+cmpFields[c].getFieldName()+" ]");
-                            	else
-                            		sb.append("[ "+cmpFields[c]+" ]");
-                            }
-                            this.errorString=" CMP FIELDS(null if verified):\n"+sb;
-                            logger.error(this.errorString);
-                            return false;
+                	for (CMPField cmpField:cmpFields) {
+                		if(!checkCMPFieldAgainstDeploymentDescripor(abstractMethods,cmpField,localSbbAbstractClass)) {
+                    		if(!checkCMPFieldAgainstDeploymentDescripor(superClassesAbstractMethods,cmpField,localSbbAbstractClass))
+                    		{
+                                logger.error("CMPFIELD "+cmpField.getFieldName()+" not verified with success.");
+                                return false;
+                    		}
                 		}
-                	
+                	}
                  }
         if (logger.isDebugEnabled()) {
             logger.debug("checkSbbAgainstDeploymentDescriptor CMP Fields ok");
@@ -836,143 +829,144 @@ public class SbbVerifier {
      * @param sbbAbstractClass the sbb abstract class 
      * @return true if the CMP fields follow the constraints false otherwise
      */
-    private boolean checkCMPFieldsAgainstDeploymentDescripor(Map abstractMethods,CMPField[] cmpFields,CtClass sbbAbstractClass) {               
+    private boolean checkCMPFieldAgainstDeploymentDescripor(Map abstractMethods,CMPField cmpField,CtClass sbbAbstractClass) {               
         
-    	for(int i=0;i<cmpFields.length;i++){
-        	
-    		if(cmpFields[i]==null)
-               		continue;
-    		
-    		//Set the first char of the accessor to UpperCase to follow the javabean requirements
-    		String fieldName=cmpFields[i].getFieldName().substring(0,1).toUpperCase() + cmpFields[i].getFieldName().substring(1);
-            
-            CtMethod setterAccessor=(CtMethod)abstractMethods.get("set"+fieldName);
-            CtMethod getterAccessor=(CtMethod)abstractMethods.get("get"+fieldName);       
-                    
-            if(setterAccessor==null){
-                logger.error("integrity compromised on sbbAbstractClass "+
-                        sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                        " => no setter method");
-                return false;
-            }
-            else if(getterAccessor==null){
-                logger.error("integrity compromised on sbbAbstractClass "+
-                        sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                        " => no getter method");
-                return false;
-            }
-            else {
-            	// both method exists
-            	// check that the getter accessor has a return type
-                try{
-                    CtClass returnType=getterAccessor.getReturnType();
-                    if(returnType.getName().equalsIgnoreCase("void")){
-                        logger.error("integrity compromised on sbbAbstractClass "+
-                                sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                                " => getter method has no return type");
-                        return false;
-                    }
-                }
-                catch(NotFoundException nfe){
-                    logger.error("integrity compromised on sbbAbstractClass "+
-                            sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                            " => getter method has no return type");
-                    return false;
-                }
-                //check that the getter accessor has no parameters
-                try{
-                    CtClass[] parameterTypes=getterAccessor.getParameterTypes();
-                    if(parameterTypes!=null && parameterTypes.length>0){
-                        logger.error("integrity compromised on sbbAbstractClass "+
-                                sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                                " => getter method has some parameters");
-                        return false;
-                    }
-                }
-                catch(NotFoundException nfe){}
-                
-              //check that the setter accessor has no return type
-                try{
-                    CtClass returnType=setterAccessor.getReturnType();
-                    if(!returnType.getName().equalsIgnoreCase("void")){
-                        logger.error("integrity compromised on sbbAbstractClass "+
-                                sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                                " => setter method has a return type "+returnType.getName());
-                        return false;
-                    }
-                }
-                catch(NotFoundException nfe){}
-                //check that the setter accessor has one parameter
-                try{
-                    CtClass[] parameterTypes=setterAccessor.getParameterTypes();
-                    if(parameterTypes.length!=1){
-                        logger.error("integrity compromised on sbbAbstractClass "+
-                                sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                                " => setter method has the wrong number of parameters");
-                        return false;
-                    }
-                }
-                catch(NotFoundException nfe){
-                    logger.error("integrity compromised on sbbAbstractClass "+
-                            sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                            " => setter method has no parameters");
-                    return false;
-                }
-                
-                // cross depedencies check
-                try {
-	                //check that getter return type == setter parameter type == xml type
-	                CtClass getterReturnType = getterAccessor.getReturnType();
-	                CtClass[] setterParamTypes = setterAccessor.getParameterTypes();
-	               
-	            	CtClass setterParamType = setterParamTypes[0];
-	            	if (!getterReturnType.equals(setterParamType)) {
-	            		logger.error("integrity compromised on sbbAbstractClass "+
-	                        sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-	                        " => getter return type is not same as setter parameter type");
-	            		return false;
-	            	}
-	            	
-	            	if (cmpFields[i].getSbbComponentKey() != null) {
-	            		
-	            		try {
-		            		//Then the getter return type, setter param type should be SbbLocalObject
-	            		    if (logger.isDebugEnabled()) {
-	            		        logger.debug("Getter return type is: " + getterReturnType.getName());
-	            		    }
 
-		            		//FIXME - This is a bit slow
-		            		
-		            		Class cl = Thread.currentThread().getContextClassLoader().loadClass(getterReturnType.getName());		            			            
-		            		Class sbbLOClass = Thread.currentThread().getContextClassLoader().
-		            											loadClass("javax.slee.SbbLocalObject");
-		            			            			            			            			            			           
-		            		if (!sbbLOClass.isAssignableFrom(cl)) {
-		            			logger.error("integrity compromised on sbbAbstractClass "+
-		    	                        sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-		    	                        " => getter and setter types for an sbb ref must be SbbLocalObject");
-		    	            		return false;
-		            		}
-	            		} catch (Exception e) {
-	            			logger.error("Failed check ref param", e);
-	            			return false;
-	            		}
-	            	}	            	
-                }
-                catch(NotFoundException nfe){
-                    logger.error("integrity compromised on sbbAbstractClass "+
-                            sbbAbstractClass.getName()+" on CMP Field "+fieldName+
-                            " => getter/setter accessor has no parameters/return type");
-                    return false;
-                }             
-                
-                // the methods have been verified so they are removed from the abstract method map
-                abstractMethods.remove(setterAccessor.getName()); 
-                abstractMethods.remove(getterAccessor.getName());
-                // THE FIELD HAS BEEN CHECKED, REMOVING
-                cmpFields[i]=null;
-            }            
-        }
+
+    	//Set the first char of the accessor to UpperCase to follow the javabean requirements
+    	String fieldName=cmpField.getFieldName().substring(0,1).toUpperCase() + cmpField.getFieldName().substring(1);
+
+    	CtMethod setterAccessor=(CtMethod)abstractMethods.get("set"+fieldName);
+    	CtMethod getterAccessor=(CtMethod)abstractMethods.get("get"+fieldName);       
+
+    	if(setterAccessor==null){
+    		if(logger.isDebugEnabled()) {
+    			logger.debug("no setter method in sbbAbstractClass "+    		
+    				sbbAbstractClass.getName()+" for CMP Field "+fieldName);
+    		}
+    		return false;
+    	}
+    	else if(getterAccessor==null){
+    		if(logger.isDebugEnabled()) {
+    			logger.debug("no getter method in sbbAbstractClass "+    		
+    				sbbAbstractClass.getName()+" for CMP Field "+fieldName);
+    		}
+    		return false;
+    	}
+    	else {
+    		// both method exists
+    		if(logger.isDebugEnabled()) {
+    			logger.debug("found setter and getter methods in sbbAbstractClass "+    		
+    				sbbAbstractClass.getName()+" for CMP Field "+fieldName);
+    		}
+    		// check that the getter accessor has a return type
+    		try{
+    			CtClass returnType=getterAccessor.getReturnType();
+    			if(returnType.getName().equalsIgnoreCase("void")){
+    				logger.error("integrity compromised on sbbAbstractClass "+
+    						sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    				" => getter method has no return type");
+    				return false;
+    			}
+    		}
+    		catch(NotFoundException nfe){
+    			logger.error("integrity compromised on sbbAbstractClass "+
+    					sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    			" => getter method has no return type");
+    			return false;
+    		}
+    		//check that the getter accessor has no parameters
+    		try{
+    			CtClass[] parameterTypes=getterAccessor.getParameterTypes();
+    			if(parameterTypes!=null && parameterTypes.length>0){
+    				logger.error("integrity compromised on sbbAbstractClass "+
+    						sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    				" => getter method has some parameters");
+    				return false;
+    			}
+    		}
+    		catch(NotFoundException nfe){}
+
+    		//check that the setter accessor has no return type
+    		try{
+    			CtClass returnType=setterAccessor.getReturnType();
+    			if(!returnType.getName().equalsIgnoreCase("void")){
+    				logger.error("integrity compromised on sbbAbstractClass "+
+    						sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    						" => setter method has a return type "+returnType.getName());
+    				return false;
+    			}
+    		}
+    		catch(NotFoundException nfe){}
+    		//check that the setter accessor has one parameter
+    		try{
+    			CtClass[] parameterTypes=setterAccessor.getParameterTypes();
+    			if(parameterTypes.length!=1){
+    				logger.error("integrity compromised on sbbAbstractClass "+
+    						sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    				" => setter method has the wrong number of parameters");
+    				return false;
+    			}
+    		}
+    		catch(NotFoundException nfe){
+    			logger.error("integrity compromised on sbbAbstractClass "+
+    					sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    			" => setter method has no parameters");
+    			return false;
+    		}
+
+    		// cross depedencies check
+    		try {
+    			//check that getter return type == setter parameter type == xml type
+    			CtClass getterReturnType = getterAccessor.getReturnType();
+    			CtClass[] setterParamTypes = setterAccessor.getParameterTypes();
+
+    			CtClass setterParamType = setterParamTypes[0];
+    			if (!getterReturnType.equals(setterParamType)) {
+    				logger.error("integrity compromised on sbbAbstractClass "+
+    						sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    				" => getter return type is not same as setter parameter type");
+    				return false;
+    			}
+
+    			if (cmpField.getSbbComponentKey() != null) {
+
+    				try {
+    					//Then the getter return type, setter param type should be SbbLocalObject
+    					if (logger.isDebugEnabled()) {
+    						logger.debug("Getter return type is: " + getterReturnType.getName());
+    					}
+
+    					//FIXME - This is a bit slow
+
+    					Class cl = Thread.currentThread().getContextClassLoader().loadClass(getterReturnType.getName());		            			            
+    					Class sbbLOClass = Thread.currentThread().getContextClassLoader().
+    					loadClass("javax.slee.SbbLocalObject");
+
+    					if (!sbbLOClass.isAssignableFrom(cl)) {
+    						logger.error("integrity compromised on sbbAbstractClass "+
+    								sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    						" => getter and setter types for an sbb ref must be SbbLocalObject");
+    						return false;
+    					}
+    				} catch (Exception e) {
+    					logger.error("Failed check ref param", e);
+    					return false;
+    				}
+    			}	            	
+    		}
+    		catch(NotFoundException nfe){
+    			logger.error("integrity compromised on sbbAbstractClass "+
+    					sbbAbstractClass.getName()+" on CMP Field "+fieldName+
+    			" => getter/setter accessor has no parameters/return type");
+    			return false;
+    		}             
+
+    		// the methods have been verified so they are removed from the abstract method map
+    		abstractMethods.remove(setterAccessor.getName()); 
+    		abstractMethods.remove(getterAccessor.getName());
+    	}
+    	
         return true;
     }
     
