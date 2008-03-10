@@ -42,7 +42,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     protected String mediaType = FileTypeDescriptor.WAVE;
     private Signal signal;
     protected ResourceStateListener splitterStateListener;
-    
+    protected String recordDir = null;
     private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
     
     /** Creates a new instance of IVREndpointImpl */
@@ -55,6 +55,22 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     @Override
     public BaseResourceManager initResourceManager() {
         return new IVRResourceManager();
+    }
+    
+    public void setRecordDir(String recordDir) {
+        this.recordDir = recordDir;
+    }
+    
+    public String getRecordDir() {
+        return recordDir;
+    }
+    
+    public String getMediaType() {
+        return mediaType;
+    }
+    
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
     }
     
     /**
@@ -109,7 +125,8 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     @Override
     public void play(int signalID, String[] params, String connectionID,
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
-
+        logger.info("Play signal, signalID = " + signalID);
+        
         //disable current signal
         if (signal != null) {
             signal.stop();

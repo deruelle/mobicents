@@ -27,11 +27,36 @@ import org.mobicents.media.server.spi.Endpoint;
 public class IVREndpointManagement extends AnnEndpointManagement 
     implements IVREndpointManagementMBean {
 
+    private String recordDir;
+    private String mediaType;
+    
     /** Creates a new instance of IVREndpointManagement */
     public IVREndpointManagement() {
     }
     
+    public String getRecordDir() {
+        return recordDir;
+    }
     
+    public void setRecordDir(String recordDir) {
+        this.recordDir = recordDir;
+        if (this.getState() == STARTED) {
+            ((IVREndpointImpl)getEndpoint()).setRecordDir(recordDir);
+        }
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+    
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+        if (this.getState() == STARTED) {
+            ((IVREndpointImpl)getEndpoint()).setMediaType(mediaType);
+        }
+    }
+    
+    @Override
     public Endpoint createEndpoint() throws Exception {
         IVREndpointImpl endpoint = new IVREndpointImpl(getJndiName());
         return endpoint;

@@ -26,4 +26,6 @@ import org.mobicents.media.server.impl.ann.AnnEndpointManagementMBean;
  * @author Oleg Kulikov
  */
 public interface IVREndpointManagementMBean extends AnnEndpointManagementMBean {
+    public String getRecordDir();
+    public void setRecordDir(String recordDir);
 }
