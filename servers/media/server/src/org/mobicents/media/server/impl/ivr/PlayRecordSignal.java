@@ -14,6 +14,7 @@
 package org.mobicents.media.server.impl.ivr;
 
 import java.net.URL;
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.ann.AnnouncementSignal;
 import org.mobicents.media.server.spi.Endpoint;
@@ -28,11 +29,14 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class PlayRecordSignal extends AnnouncementSignal {
 
-    private IVREndpointImpl endpoint;
+//    private IVREndpointImpl endpoint;
     private String[] params;
     private BaseConnection connection;
     private NotificationListener listener;
-
+    private Recorder recorder;
+    
+    private Logger logger = Logger.getLogger(PlayRecordSignal.class);
+    
     public PlayRecordSignal(IVREndpointImpl endpoint,
             NotificationListener listener, String params[]) {
         super(endpoint, listener, params);
@@ -43,25 +47,37 @@ public class PlayRecordSignal extends AnnouncementSignal {
     @Override
     public void start() {
         String announcement = params[0];
-        String recordURL = params[1];
-
+        String recordURL = "file:" + ((IVREndpointImpl)endpoint).recordDir + "/" + params[1];
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug("Announcement url=" + announcement + ", record=" + recordURL);
+        }
+        
         if (announcement != null) {
+            logger.info("Starting announcement, url=" + announcement);
             try {
                 endpoint.play(Announcement.PLAY, new String[]{announcement}, connection.getId(), listener, false);
             } catch (Exception e) {
+                logger.error("Could not start announcement:", e);
                 NotifyEvent report = new NotifyEvent(endpoint,
                         Announcement.FAIL,
                         Announcement.CAUSE_FACILITY_FAILURE,
                         e.getMessage());
                 this.sendEvent(report);
+                return;
             }
         }
 
+        logger.info("Starting recording to, url=" + recordURL);
         try {
-            Recorder recorder = (Recorder) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SOURCE, connection.getId());
+            LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+
+            recorder = new Recorder((IVREndpointImpl)endpoint);            
             recorder.setURL(new URL(recordURL));
+            recorder.prepare(splitter.newBranch("Recorder"));
             recorder.start();
         } catch (Exception e) {
+            logger.error("Could not start recorder:", e);
             NotifyEvent report = new NotifyEvent(endpoint,
                     AU.FAIL,
                     AU.CAUSE_FACILITY_FAILURE,
@@ -72,7 +88,8 @@ public class PlayRecordSignal extends AnnouncementSignal {
 
     @Override
     public void stop() {
-        Recorder recorder = (Recorder) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SOURCE, connection.getId());
+        LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+        splitter.remove("Recorder");
         recorder.stop();
     }
 }
