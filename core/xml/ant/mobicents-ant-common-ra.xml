@@ -226,6 +226,8 @@
 			<isreference refid="ra.libs.ra" />
 		</condition>
 		<antcall target="copy-ra-DU-libs" />
+		<!-- generate deploy-config.xml -->
+		<antcall target="gen-deploy-config" />
 		<!-- create DU jar -->
 		<echo>Creating RA DU jar.</echo>
 		<jar destfile="ra/jars/${ra.name}-ra-DU.jar">
@@ -292,7 +294,12 @@
 	</target>
 
 	<target name="ra-activate" depends="ra-activate-without-properties,ra-activate-with-properties" />
-	<target name="ra-deploy" depends="ra-install,ra-activate" />
+	<target name="ra-deploy-management" depends="ra-install,ra-activate" />
+
+	<target name="ra-deploy-persistent" depends="create-deploy-urls,init-common">
+		<copy file="${ra.url.to.deploy.ratype}" todir="${jboss.deploy}" />
+		<copy file="${ra.url.to.deploy.ra}" todir="${jboss.deploy}" />
+	</target>
 
 	<target name="ra-uninstall" depends="create-deploy-urls,init-common">
 		<echo>Uninstalling ${ra.entity}.</echo>
@@ -311,12 +318,24 @@
 		</slee-management>
 	</target>
 
-	<target name="ra-undeploy" depends="ra-deactivate,ra-uninstall" />
+	<target name="ra-undeploy-management" depends="ra-deactivate,ra-uninstall" />
+
+	<target name="ra-undeploy-persistent" depends="create-deploy-urls,init-common">
+		<delete file="${jboss.deploy}/${ra.name}-ra-DU.jar" />
+		<delete file="${jboss.deploy}/${ra.name}-ratype-DU.jar" />
+	</target>
+
+	<target name="ra-deploy">
+		<antcall target="ra-deploy-${deploy.method}" />
+	</target>
+
+	<target name="ra-undeploy">
+		<antcall target="ra-undeploy-${deploy.method}" />
+	</target>
 
 	<target name="build-and-deploy-ra" depends="build-DUs,ra-deploy" />
 
 	<target name="package-for-release" depends="build-DUs,package-for-release-do-dir,package-for-release-makeprops-with-file,pacakge-for-release-generic-notmain,pacakge-for-release-generic-main">
-
 
 		<!--ant target="package-for-release-makeprops-with-file" /-->
 	</target>
@@ -371,6 +390,18 @@
 		</propertyfile>
 	</target>
 
-
+  <target name="gen-deploy-config">
+  	<property name="properties.file" value="" />
+    <copy file="${mobicents.home}/xml/ant/deploy-config-template.xml" tofile="ra/classes/DU/META-INF/deploy-config.xml" overwrite="true">
+      <filterchain>
+        <replacetokens>
+          <token key="__ID__" value="${ra.id}" />
+          <token key="__ENTITY_NAME__" value="${ra.entity}" />
+          <token key="__LINK_NAME__" value="${ra.entity}" />
+          <token key="__PROPERTIES_FILE__" value="${properties.file}" />
+        </replacetokens>
+      </filterchain>
+    </copy>
+  </target>
 
 </project>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="windows-1250"?>
+
+<deploy-config>
+  <ra-entity resource-adaptor-id="@__ID__@" entity-name="@__ENTITY_NAME__@">
+    <properties file="@__PROPERTIES_FILE__@" />
+    <ra-link name="@__LINK_NAME__@" />
+  </ra-entity>
+</deploy-config>

@@ -89,7 +89,8 @@
     	<copy todir="classes/${service.name}-DU">
     		<fileset includes="jars/${service.name}-sbb.jar" dir=""/>        	         		    			
     	    <fileset includes="src/${service.src.path}/${service.name}-service.xml" dir=""/>		
-    	</copy>				    	
+    	</copy>
+    	<mkdir dir="jars"/>
     	<jar destfile="jars/${service.name}-DU.jar">
     		<fileset dir="classes/${service.name}-DU" />
     	</jar>    	
@@ -121,13 +122,18 @@
 		</slee-management>
     </target>
 	
-	<target name="deploy-DU" depends="create-deploy-url,init-common">		
+	<target name="deploy-DU-management" depends="create-deploy-url,init-common">		
 		<echo>Deploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
 		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">
 			<install url="${file_url}${service.url.to.deploy}"/>
 			<activateservice serviceid="${service.id}"/>
 		</slee-management>
     </target>
+
+	<target name="deploy-DU-persistent" depends="create-deploy-url,init-common">		
+		<echo>Deploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
+    <copy file="${service.url.to.deploy}" todir="${jboss.deploy}" />
+  </target>
 
 	<target name="uninstall-DU" depends="create-deploy-url,init-common">		
 		<echo>Uninstalling ${service.name} DU in URL ${service.url.to.deploy}</echo>
@@ -136,7 +142,7 @@
 		</slee-management>
 	</target>
 	
-	<target name="undeploy-DU" depends="create-deploy-url,init-common">		
+	<target name="undeploy-DU-management" depends="create-deploy-url,init-common">		
 		<echo>Undeploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
 		<slee-management host="${jnpHost}" jnpport="${jnpPort}" user="${user}" password="${password}">
 			<deactivateservice serviceid="${service.id}"/>
@@ -144,6 +150,19 @@
 		</slee-management>
 	</target>
 	
+	<target name="undeploy-DU-persistent" depends="create-deploy-url,init-common">		
+	  <echo>Undeploying ${service.name} DU in URL ${service.url.to.deploy}</echo>
+    <delete file="${jboss.deploy}/${service.name}-DU.jar" />
+  </target>
+
+  <target name="deploy-DU">
+    <antcall target="deploy-DU-${deploy.method}" /> 
+  </target>
+
+  <target name="undeploy-DU">
+    <antcall target="undeploy-DU-${deploy.method}" /> 
+  </target>
+
 	<target name="build-and-deploy-service" depends="build-sbb,build-DU,deploy-DU" />
 
 </project> 

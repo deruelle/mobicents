@@ -16,6 +16,9 @@
 	<property name="jboss.deploy" value="${jboss.home}/server/${node}/deploy" />
 	<property name="mobicents.deploy" value="${jboss.home}/server/${node}/deploy-mobicents" />
 
+	<!-- Set deploy method: persistent OR management -->
+	<property name="deploy.method" value="persistent" />
+
 	<!-- CORE RELATED -->
 
 	<path id="mobicents.core.classpath">
