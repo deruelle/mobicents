@@ -82,7 +82,7 @@ public class RTPAudioFormat extends AudioFormat {
 
     @Override
     public String toString() {
-        String encName = this.getEncoding();
+        String encName = this.getEncoding().toLowerCase();
         StringBuffer buff = new StringBuffer();
         buff.append(payload);
         buff.append(" ");
