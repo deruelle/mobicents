@@ -298,7 +298,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @return Object implementing connection.     * 
      * @throws org.mobicents.media.server.spi.ResourceUnavailableException
      */
-    public Connection doCreateConnection(Endpoint endpoint, int mode)
+    private Connection doCreateConnection(Endpoint endpoint, int mode)
             throws ResourceUnavailableException {
         return new BaseConnection(endpoint, mode);
     }
