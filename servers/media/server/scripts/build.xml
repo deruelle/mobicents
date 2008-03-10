@@ -1,0 +1,212 @@
+<!-- 
+    These scripts are mainly used for Mobicents Media Server Product Release packaging.
+-->
+<project basedir="." default="info" name="Mobicents_Media_Server_Release_scripts">
+
+        <property name="dist.dir" value="${ant.file.Mobicents_Media_Server_Release_scripts}/../../dist"/> 
+        <property name="libs.home" value="${ant.file.Mobicents_Media_Server_Release_scripts}/../../lib"/>
+        <property name="xml" value="${ant.file.Mobicents_Media_Server_Release_scripts}/../../xml"/>
+	<property name="debug" value="debug" />
+	<property name="cachemode" value="local" />
+	<property environment="system" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+        <property name="mobicents.home" value="${ant.file.Mobicents_Media_Server_Release_scripts}/../../../../../core"/>
+
+	<property name="release.dir" value="../build/release" />
+	
+	<property name="configuration.dir" value="default" /><!-- all,default,production,minimal - the dir server/* -->
+
+	<property file="../version.properties" />
+
+	<property name="release.standalone.name" value="server" />
+	<property name="release.standalone.dir" value="${release.dir}/${release.standalone.name}" />
+
+	<path id="local.project.classpath">
+
+		<pathelement location="${mobicents.home}/scripts/lib/ant-contrib-1.0b3.jar" />
+		<pathelement location="${mobicents.home}/scripts/lib/ant-svn-0.1-SNAPSHOT.jar" />
+
+	</path>
+
+	<target name="init" depends="init-deps">
+		<tstamp prefix="tstamp" />
+		<echo>Build date: ${tstamp.DSTAMP}</echo>
+
+	</target>
+
+	<target name="info">
+		<echo>****************************************************************************************</echo>
+		<echo>To create release</echo>
+		<echo>1. ant package-release  - builds Mobicents Media Server, msc-ra resource, mediasrv example and creates structre for release. </echo>
+		<echo>2. ant make-final-zip   - creates final zip </echo>
+		<echo>3. ant cleanall         - cleans the release, server, msc-ra and mediasrv </echo>
+		<echo>****************************************************************************************</echo>
+	</target>
+
+	<target name="init-deps">
+		<taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="local.project.classpath" />
+		<taskdef resource="org/apache/ant/svn/antlib.xml" classpathref="local.project.classpath" />
+	</target>
+
+	<target name="makeall">
+		<subant target="package">
+			<property name="debug" value="${debug}" />
+			<property name="cachemode" value="${cachemode}" />
+			<property name="node" value="all" />
+			<fileset dir="../" includes="build.xml" />
+		</subant>
+	</target>
+
+	<target name="cleanall" description="clean up all components" depends="clean-release">
+		<subant target="clean">
+			<property name="debug" value="debug" />
+			<property name="cachemode" value="cluster" />
+			<property name="node" value="all" />
+			<fileset dir="../" includes="build.xml" />
+		</subant>
+		<delete failonerror="no" includeemptydirs="true">
+			<fileset dir="${release.dir}" />
+		</delete>
+	</target>
+
+	<!-- 
+	 ******************************************************** 
+	 RELEASE PACKAGING TARGETS !!! SEE README FOR STRUCTURE 
+	 ********************************************************
+	 -->
+
+	<target name="make-release-dirs" depends="init">
+
+		<mkdir dir="${release.dir}" />
+
+		<!-- Full blown standalone release goes in the following dir -->
+		<mkdir dir="${release.standalone.dir}" />
+
+	</target>
+
+	<target name="package-release" depends="makeall, make-release-dirs,  package-server,package-ras,package-examples" description="!!! Run This target to prepare dir structure, pull everything from repo into mc.home/build/release/**">
+		<copy file="./release-README.txt" todir="${release.dir}" verbose="true" />		
+	</target>
+
+	<target name="package-server" depends="init">
+		<echo>Packaging release ${release.version}</echo>
+
+		<property file="../build.number" />
+		<propertyfile file="${release.standalone.dir}/version.properties" comment="Mobicents Media Server version information.">
+			<entry key="release.version" type="string" value="${release.version}" />
+			<entry key="release.date" type="date" value="now" />
+			<entry key="build.number" type="int" value="${build.number}" />
+			<entry key="cvs.tag" type="string" value="v${release.version}-d${tstamp.DSTAMP}-b${build.number}" />
+		</propertyfile>
+
+                <mkdir dir="${release.standalone.dir}/mediaserver.sar"/>
+                <copy todir="${release.standalone.dir}/mediaserver.sar" file="${dist.dir}/media-server.jar" overwrite="true"/>
+                <copy todir="${release.standalone.dir}/mediaserver.sar" file="${libs.home}/mgcp-impl.jar" overwrite="true"/>
+                <copy todir="${release.standalone.dir}/mediaserver.sar" file="${libs.home}/jainmgcp.jar" overwrite="true"/>
+                <copy todir="${release.standalone.dir}/mediaserver.sar" file="${libs.home}/jmf.jar" overwrite="true"/>
+                <copy todir="${release.standalone.dir}/mediaserver.sar" file="${libs.home}/nist-sdp-1.0.jar" overwrite="true"/>
+                <copy todir="${release.standalone.dir}" file="${ant.file.Mobicents_Media_Server_Release_scripts}/../../dtmf.properties" overwrite="true"/>
+        
+               <mkdir dir="${release.standalone.dir}/mediaserver.sar/META-INF"/>
+               <copy todir="${release.standalone.dir}/mediaserver.sar/META-INF/" file="${xml}/server/jboss-service.xml" overwrite="true"/>
+
+	</target>
+
+	<!-- cehcks out mobicents-examples into ../build/release/examples -->
+	<target name="package-examples" depends="init">
+		<delete dir="${release.dir}/examples" failonerror="false" />
+		<mkdir dir="${release.dir}/examples" />
+
+		<echo>Packaging Example for release from DIR[../examples/mediasrv]</echo>
+		<ant dir="${mobicents.home}/../examples/mediasrv" target="build-du" antfile="build.xml" />
+
+		<delete dir="${release.dir}/examples/mediasrv" failonerror="false" />
+		<mkdir dir="${release.dir}/examples/mediasrv" />
+
+		<copy todir="${release.dir}/examples/mediasrv">
+			<fileset dir="${mobicents.home}/../examples/mediasrv/dist">
+				<include name="**" />
+				<exclude name="demo-sbb.jar" />
+				<exclude name="custom-events.jar" />
+			</fileset>
+                        <fileset dir="${mobicents.home}/../examples/mediasrv">
+                                <include name="example-deploy.bsh" />
+                        </fileset>
+		</copy>
+	</target>
+
+	<target name="package-ras" depends="init">
+		<echo>Packaging RA for release from DIR[/media/mscontrol/msc-ra]</echo>
+		<ant dir="${mobicents.home}/../servers/media/mscontrol/msc-ra" target="package-for-release" antfile="build.xml" />
+
+		<delete dir="${release.dir}/resources/msc-ra" failonerror="false" />
+		<mkdir dir="${release.dir}/resources/msc-ra" />
+
+		<copy overwrite="true" todir="${release.dir}/resources/msc-ra">
+			<fileset dir="${mobicents.home}/../servers/media/mscontrol/msc-ra/stage">
+				<!--
+				<include name="**.jar" />
+				<include name="*.xml" />
+				<include name="*.properties" />
+				<include name="**/*.txt" />
+				-->
+			</fileset>
+			<fileset dir="${mobicents.home}/../servers/media/mscontrol/msc-ra">
+				<include name="msc-ra-deploy.bsh" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- 
+		 ******************************************************** 
+		 MAKE BUNDLE FILE, UPLOAD IT TO SF.NET
+		 ********************************************************
+	 -->
+
+	<target name="make-release" depends="make-final-zip,upload" />
+
+	<target name="make-final-zip" depends="init" description="package release should be called before this task, this one bundles that dir structure into zip and uploads it">
+		<!-- LETS MAKE ZIP -->
+		<mkdir dir="${release.dir}/../ready" />
+
+		<property name="release.name" value="mobicents-media-server-${release.version}" />
+		<zip destfile="${release.dir}/../ready/${release.name}.zip" filesonly="false">
+			<fileset dir="${release.dir}">
+				<include name="**" />
+			</fileset>
+		</zip>
+		<checksum file="${release.dir}/../ready/${release.name}.zip" algorithm="SHA" fileext=".sha1.asc" forceOverwrite="yes" />
+	</target>
+
+	<target name="copy-ftp-libs" unless="ftp-libs-available">
+
+		<echo>If upload failed. call again that target - "upload" - it should succed after libs are made available for ant</echo>
+		<copy todir="${ant.home}/lib">
+			<fileset dir="../lib">
+				<include name="commons-net.jar" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="init-ftp">
+		<!-- see http://weblogs.java.net/blog/schaefa/archive/2005/11/index.html -->
+		<available file="${ant.home}/lib/commons-net.jar" property="ftp-libs-available" />
+		<antcall target="copy-ftp-libs" />
+	</target>
+	<target name="upload" depends="init, init-ftp">
+		<ftp userid="${sf.net.user}" password="${sf.net.passwd}" server="upload.sourceforge.net" binary="true" remotedir="incoming">
+			<fileset dir="${release.dir}/../ready">
+				<include name="*.zip" />
+				<include name="*.asc" />
+			</fileset>
+		</ftp>
+	</target>
+
+	<target name="clean-release" depends="init" description="cleans the junk from ${release.dir}">
+		<ant dir="${mobicents.home}/../servers/media/mscontrol/msc-ra" target="clean" antfile="build.xml" />
+		<ant dir="${mobicents.home}/../examples/mediasrv" target="clean" antfile="build.xml" />
+		<delete dir="${release.dir}/../ready" />		
+		<delete dir="${release.dir}" />                
+	</target>
+
+</project>
