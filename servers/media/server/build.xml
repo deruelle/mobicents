@@ -148,7 +148,11 @@
 		<delete dir="${dist.dir}/sbb-service" />
 	</target>
 
-	<target name="package" depends="javacompile">
+    <target name="postcompile" description="Updates build number.">
+	<buildnumber file="build.number" />
+    </target>
+    
+	<target name="package" depends="javacompile,postcompile">
 		<mkdir dir="${dist.dir}" />
 		<mkdir dir="${dist.dir}/mediaserver" />
 
@@ -157,6 +161,7 @@
 				<include name="org/mobicents/media/" />
 			</fileset>
 		</copy>
+		<copy todir="${dist.dir}/mediaserver/org/mobicents/media/server/impl" file="${ant.file.mobicents.jpx}/../version.properties" />
 		<jar basedir="${dist.dir}/mediaserver" compress="true" jarfile="${dist.dir}/media-server.jar" />
 		<delete dir="${dist.dir}/mediaserver" />
 	</target>
