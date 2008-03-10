@@ -38,7 +38,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     private MediaSplitter splitter = new MediaSplitter();
     private IVREndpointImpl endpoint;
     private BaseConnection connection;
-    private Logger logger = Logger.getLogger(LocalSplitter.class);
+    private static Logger logger = Logger.getLogger(LocalSplitter.class);
 
     public LocalSplitter(Endpoint endpoint, Connection connection) {
         this.endpoint = (IVREndpointImpl) endpoint;
