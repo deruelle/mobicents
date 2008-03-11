@@ -2,15 +2,8 @@ package org.mobicents.slee.resource.sip;
 
 //import javax.slee.resource.SleeEndpoint;
 
-import javax.transaction.SystemException;
-
 import org.apache.log4j.Logger;
-import org.mobicents.slee.container.SleeContainer;
-import org.mobicents.slee.container.component.ComponentKey; //import org.mobicents.slee.resource.EventLookup;
-import org.mobicents.slee.resource.SleeActivityHandle;
-import org.mobicents.slee.runtime.ActivityContext;
-import org.mobicents.slee.runtime.ActivityContextFactory;
-import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
+import org.mobicents.slee.container.component.ComponentKey;
 
 // TO REMOVE?
 

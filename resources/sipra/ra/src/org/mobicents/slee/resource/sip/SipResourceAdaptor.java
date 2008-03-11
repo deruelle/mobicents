@@ -118,7 +118,7 @@ import org.mobicents.slee.resource.sip.wrappers.ServerTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.TimeoutEventWrapper;
 import org.mobicents.slee.resource.sip.wrappers.TransactionTerminatedEventWrapper;
 import org.mobicents.slee.runtime.ActivityContextFactory;
-import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
+//import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
 
 /**
  * 
@@ -242,8 +242,6 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 	private transient BootstrapContext bootstrapContext;
 
 	private transient SleeContainer serviceContainer;
-
-	private transient SleeTransactionManager tm = null;
 
 	// WE NEED TO KNOW IF AC EXISTS FOR SOME ActivityObjects
 	private ActivityContextFactory activityContextFactory;
@@ -775,7 +773,6 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 		SleeContainer container = SleeContainer.lookupFromJndi();
 		serviceContainer = container;
 		activityContextFactory = serviceContainer.getActivityContextFactory();
-		tm = serviceContainer.getTransactionManager();
 		ResourceAdaptorEntity resourceAdaptorEntity = ((ResourceAdaptorEntity) container
 				.getResourceAdaptorEnitity(this.bootstrapContext
 						.getEntityName()));
