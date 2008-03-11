@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.media.Buffer;
 import javax.media.Format;
 import javax.media.format.AudioFormat;
