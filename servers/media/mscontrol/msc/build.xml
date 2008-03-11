@@ -20,7 +20,7 @@
     <path id="compile.class.path">
         <pathelement location="${jboss.home}/client/log4j.jar" />
         <pathelement location="../../server/dist/media-server.jar" />
-        <pathelement location="../../server/lib/nist-sdp-1.0.jar" />
+        <pathelement location="../../server/lib/jain-sip-ri-1.2.1.jar" />
     </path>
     
     <target name="init"> 
