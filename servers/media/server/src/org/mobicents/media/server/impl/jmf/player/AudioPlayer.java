@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
 import javax.media.CannotRealizeException;
 import javax.media.Format;
 import javax.media.Manager;
