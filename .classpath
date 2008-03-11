@@ -114,7 +114,6 @@
 	<classpathentry kind="lib" path="resources/xmppra/lib/smackx.jar"/>
 	<classpathentry kind="lib" path="resources/media-ra/lib/jmf.jar"/>
 	<classpathentry kind="lib" path="resources/media-ra/lib/media-rtp.jar"/>
-	<classpathentry kind="lib" path="resources/media-ra/lib/nist-sdp-1.0.jar"/>
 	<classpathentry kind="lib" path="resources/xcapclientra/lib/commons-httpclient-3.0.1.jar"/>
 	<classpathentry kind="lib" path="resources/xcapclientra/lib/openxdm-xcap-client.jar"/>
 	<classpathentry kind="lib" path="resources/xcapclientra/lib/openxdm-xcap-commons.jar"/>
@@ -151,8 +150,8 @@
 	<classpathentry kind="lib" path="resources/persistencera/lib/hibernate-tools.jar"/>
 	<classpathentry kind="lib" path="resources/parlayra/source/lib/pmd-3.3/lib/jaxen-1.1-beta-7.jar"/>
 	<classpathentry kind="lib" path="resources/persistencera/lib/jboss-archive-browsing-2005-07-07.jar"/>
-	<classpathentry kind="lib" path="resources/sipra/lib/jain-sip-api-1.2.jar"/>
-	<classpathentry kind="lib" path="resources/sipra/lib/jain-sip-ri-1.2.jar"/>
+	<classpathentry kind="lib" path="resources/sipra/lib/jain-sip-api-1.2.1.jar"/>
+	<classpathentry kind="lib" path="resources/sipra/lib/jain-sip-ri-1.2.1.jar"/>
 	<classpathentry kind="lib" path="resources/persistencera/lib/lucene-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="resources/parlayra/source/lib/pmd-3.3/lib/xmlParserAPIs-2.6.2.jar"/>
 	<classpathentry kind="lib" path="resources/xmppra/lib/smackx-jingle.jar"/>
