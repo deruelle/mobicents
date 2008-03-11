@@ -1677,13 +1677,13 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 			log.debug("Processing request: " + req.getRequest().getMethod());
 			log.debug("Server Transaction: " + req.getServerTransaction());
 		}
-
-		if (log.isInfoEnabled() && !log.isDebugEnabled()) {
+		
+		if (log.isInfoEnabled()) {
 			log
 					.info("\n-------------------------\nREQUEST:\n-------------------------\n"
 							+ req.getRequest() + "\n-------------------------");
 		}
-
+		
 		// issue 263 related - sipp doesnt include this in all requests
 		//THIS IS HACK AND SHOULD BE REMOVED ASAP!!!
 		if (req.getRequest().getHeader(MaxForwardsHeader.NAME) == null) {
