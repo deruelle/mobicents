@@ -291,7 +291,7 @@ public class DeployableUnit
       // Check each DU for it's readiness also
       for( DeployableComponent dc : components )
       {
-        if( !dc.isUndeployable() )
+        if( !dc.isUndeployable( this ) )
           return false;
       }
     }

@@ -3,6 +3,7 @@ package org.mobicents.slee.container.deployment.jboss;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -26,6 +27,7 @@ import org.mobicents.slee.container.component.MobicentsEventTypeDescriptorIntern
 import org.mobicents.slee.container.component.MobicentsSbbDescriptorInternalImpl;
 import org.mobicents.slee.container.component.ProfileSpecificationDescriptorImpl;
 import org.mobicents.slee.container.component.ResourceAdaptorEntityBinding;
+import org.mobicents.slee.container.component.ResourceAdaptorIDImpl;
 import org.mobicents.slee.container.component.SbbIDImpl;
 import org.mobicents.slee.container.component.ServiceIDImpl;
 import org.mobicents.slee.container.component.deployment.EventTypeDeploymentDescriptorParser;
@@ -581,13 +583,12 @@ public class DeployableComponent
 
   /**
    * Perform extra verifications for undeployment.
+   * @param du the containing Deployable Unit
    * @return true if the the component can be removed.
    */
-  public boolean isUndeployable()
+  public boolean isUndeployable(DeployableUnit du)
   {
     SleeContainer sC = SleeContainer.lookupFromJndi();
-    
-    sC.getDeploymentManager().getProfileComponents();
     
     boolean result = false;
 
@@ -600,7 +601,20 @@ public class DeployableComponent
       result = true;
       break;
     case RATYPE_COMPONENT:
-      result = (sC.getResourceAdaptorType( (ResourceAdaptorTypeID) componentID ).getResourceAdaptorIDs().size() == 0);
+      // Get the DU componennts
+      Collection<String> duComponents = du.getComponents();
+      
+      // Obtaining the RAs using this RA Type 
+      HashSet<ResourceAdaptorIDImpl> raIDs = sC.getResourceAdaptorType( (ResourceAdaptorTypeID) componentID ).getResourceAdaptorIDs();
+
+      // Check if the referring RAs are in the same DU
+      for( ResourceAdaptorIDImpl raID : raIDs )
+        if( !duComponents.contains( raID.getAsText() ) )
+          return false;
+
+      // All aboard! Move on..
+      result = true;
+      
       break;
     case RA_COMPONENT:
       result = true;
