@@ -23,8 +23,8 @@
 	</path>
 
 	<fileset id="ra.libs.ratype" dir="lib">
-		<include name="JainSipApi1.2.jar" />
-		<include name="JainSipRi1.2.jar" />
+		<include name="jain-sip-api-1.2.jar" />
+		<include name="jain-sip-ri-1.2.jar" />
 	</fileset>
 
 	<target name="persistent-deploy" depends="build-DUs">
