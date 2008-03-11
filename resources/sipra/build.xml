@@ -18,13 +18,12 @@
 		<path refid="mobicents.ra.sipra.classpath" />
 		<fileset dir="lib">
 			<include name="sleetck.jar" />
-			<include name="jta.jar" />
 		</fileset>
 	</path>
 
 	<fileset id="ra.libs.ratype" dir="lib">
-		<include name="jain-sip-api-1.2.jar" />
-		<include name="jain-sip-ri-1.2.jar" />
+		<include name="jain-sip-api-1.2.1.jar" />
+		<include name="jain-sip-ri-1.2.1.jar" />
 	</fileset>
 
 	<target name="persistent-deploy" depends="build-DUs">
