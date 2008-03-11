@@ -17,7 +17,7 @@
 
 	<fileset id="ra.libs.ratype" dir="lib">
 		<include name="jmf.jar" />
-		<include name="nist-sdp-1.0.jar" />
+		<include name="jain-sip-ri-1.2.1.jar" />
 		<include name="media-rtp.jar" />
 	</fileset>
 
