@@ -154,26 +154,21 @@
 		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
 			<deactivateservice serviceid="${serviceID1}" />
 			<uninstall url="${file_url}${duPathValue}" />
-
 		</slee-management>
 	</target>
 
 	<target name="deploy-all" depends="lib-init">
-		<!-- WE NEED mediara,sipra, and this.deploy -->
-
-		
+		<!-- WE NEED msc-ra,sipra, and this.deploy -->		
 		<ant dir="${sipra-home}" target="ra-deploy" inheritall="false" />
 		<ant dir="${mediara-home}" target="ra-deploy" />
 		<ant target="deploy" />
-	
+	        <ant target="deploy-audio" />
 	</target>
 
 	<target name="undeploy-all" depends="lib-init">
-
 		<ant target="undeploy" />
 		<ant dir="${sipra-home}" target="ra-undeploy" inheritall="false" />
 		<ant dir="${mediara-home}" target="ra-undeploy" />
-
 	</target>
 
 </project>
