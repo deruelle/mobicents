@@ -42,7 +42,9 @@ public class Recorder {
     private Processor recorder;
     private DataSink dataSink;
     private String mediaType;
-    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1);
+    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1, 
+            AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
+    
     private List<RecorderListener> listeners = new ArrayList();
 
     private Logger logger = Logger.getLogger(Recorder.class);
@@ -94,12 +96,13 @@ public class Recorder {
             record(url, stream);
             sendEvent(RecorderEvent.STARTED, "NORMAL");
         } catch (Exception e) {
+            dispose();
             logger.error("Could not start recording", e);
             sendEvent(RecorderEvent.FACILITY_ERROR, e.getMessage());
         }
     }
 
-    public void stop() {
+    private void dispose() {
         if (dataSink != null) {
             try {
                 dataSink.stop();
@@ -112,6 +115,10 @@ public class Recorder {
             recorder.stop();
             recorder.close();
         }
+    }
+    
+    public void stop() {
+        dispose();
         sendEvent(RecorderEvent.STOP_BY_REQUEST, "NORMAL");
     }
 
