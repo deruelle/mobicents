@@ -276,6 +276,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             try {
                 socket.receive(udpPacket);
             } catch (SocketTimeoutException e) {
+                if (stopped) return;
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
