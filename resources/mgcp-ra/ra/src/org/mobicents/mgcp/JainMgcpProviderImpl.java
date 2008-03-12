@@ -258,7 +258,7 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 		int next;
 		do {
 			current = transactionHandleCounter.get();
-			next = (current == MAX_TRANSACTION_HANDLE_ID ? MIN_TRANSACTION_HANDLE_ID : current++);
+			next = (current == MAX_TRANSACTION_HANDLE_ID ? MIN_TRANSACTION_HANDLE_ID : current+1);
 		}
 		while(!transactionHandleCounter.compareAndSet(current,next)); 
 		
