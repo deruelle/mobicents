@@ -13,33 +13,35 @@
  */
 package org.mobicents.media.server.impl.ivr;
 
-import java.net.URL;
+import org.mobicents.media.server.impl.jmf.recorder.Recorder;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.ann.AnnouncementSignal;
+import org.mobicents.media.server.impl.jmf.recorder.RecorderEvent;
+import org.mobicents.media.server.impl.jmf.recorder.RecorderListener;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.AU;
-import org.mobicents.media.server.spi.events.Announcement;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class PlayRecordSignal extends AnnouncementSignal {
+public class PlayRecordSignal extends AnnouncementSignal implements RecorderListener {
 
 //    private IVREndpointImpl endpoint;
     private String[] params;
     private BaseConnection connection;
     private NotificationListener listener;
+    private AnnouncementSignal annSignal;
     private Recorder recorder;
-    
     private Logger logger = Logger.getLogger(PlayRecordSignal.class);
-    
+
     public PlayRecordSignal(IVREndpointImpl endpoint,
             NotificationListener listener, String params[]) {
         super(endpoint, listener, params);
+        this.params = params;
         this.listener = listener;
         connection = endpoint.getConnections().iterator().next();
     }
@@ -47,49 +49,54 @@ public class PlayRecordSignal extends AnnouncementSignal {
     @Override
     public void start() {
         String announcement = params[0];
-        String recordURL = "file:" + ((IVREndpointImpl)endpoint).recordDir + "/" + params[1];
-        
+        String recordURL = ((IVREndpointImpl) endpoint).recordDir + "/" + params[1];
+
         if (logger.isDebugEnabled()) {
             logger.debug("Announcement url=" + announcement + ", record=" + recordURL);
         }
-        
+
         if (announcement != null) {
-            logger.info("Starting announcement, url=" + announcement);
-            try {
-                endpoint.play(Announcement.PLAY, new String[]{announcement}, connection.getId(), listener, false);
-            } catch (Exception e) {
-                logger.error("Could not start announcement:", e);
-                NotifyEvent report = new NotifyEvent(endpoint,
-                        Announcement.FAIL,
-                        Announcement.CAUSE_FACILITY_FAILURE,
-                        e.getMessage());
-                this.sendEvent(report);
-                return;
-            }
+            annSignal = new AnnouncementSignal(endpoint, listener, params);
+            annSignal.start();
         }
 
-        logger.info("Starting recording to, url=" + recordURL);
-        try {
-            LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+        if (recordURL != null) {
+            logger.info("Starting recording to, url=" + recordURL);
+            recorder = new Recorder(((IVREndpointImpl) endpoint).mediaType);
 
-            recorder = new Recorder((IVREndpointImpl)endpoint);            
-            recorder.setURL(new URL(recordURL));
-            recorder.prepare(splitter.newBranch("Recorder"));
-            recorder.start();
-        } catch (Exception e) {
-            logger.error("Could not start recorder:", e);
-            NotifyEvent report = new NotifyEvent(endpoint,
-                    AU.FAIL,
-                    AU.CAUSE_FACILITY_FAILURE,
-                    e.getMessage());
-            this.sendEvent(report);
+            LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+            recorder.start(recordURL, splitter.newBranch("Recorder"));
         }
     }
 
     @Override
     public void stop() {
         LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
-        splitter.remove("Recorder");
-        recorder.stop();
+        if (splitter != null) {
+            splitter.remove("Recorder");
+        }
+
+        if (recorder != null) {
+            recorder.stop();
+        }
+
+        if (annSignal != null) {
+            annSignal.stop();
+        }
+    }
+
+    public void update(RecorderEvent evt) {
+        switch (evt.getEventID()) {
+            case RecorderEvent.STARTED:
+                break;
+            case RecorderEvent.STOP_BY_REQUEST:
+                NotifyEvent notify = new NotifyEvent(this, AU.COMPLETE, AU.CAUSE_NORMAL, "");
+                sendEvent(notify);
+                break;
+            case RecorderEvent.FACILITY_ERROR:
+                notify = new NotifyEvent(this, AU.FAIL, AU.CAUSE_FACILITY_FAILURE, evt.getMessage());
+                sendEvent(notify);
+                break;
+        }
     }
 }

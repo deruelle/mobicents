@@ -59,6 +59,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     
     public void setRecordDir(String recordDir) {
         this.recordDir = recordDir;
+        System.out.println("******** SET RECORD DIR=" + recordDir);
     }
     
     public String getRecordDir() {
@@ -141,6 +142,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
                 logger.info("Start Play/record signal for connection: " + connectionID);
                 signal = new PlayRecordSignal(this, listener, params);
                 signal.start();
+                break;
             default:
                 super.play(signalID, params, connectionID, listener, keepAlive);
         }
@@ -153,6 +155,26 @@ public class IVREndpointImpl extends AnnEndpointImpl {
                 logger.info("Start DTMF detector for connection: " + connectionID);
                 this.detectDTMF(connectionID, params, listener);
                 break;
+        }
+    }
+    
+    /**
+     * (Non Java-doc).
+     *
+     * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
+     */
+    @Override
+    public synchronized void deleteConnection(String connectionID) {
+        try {
+            //disbale current signal if enabled
+            if (signal != null) {
+                signal.stop();
+            }
+            
+            //terminate push proxy 
+            //mediaProxy.setInputStream(null);
+        } finally {
+            super.deleteConnection(connectionID);
         }
     }
     

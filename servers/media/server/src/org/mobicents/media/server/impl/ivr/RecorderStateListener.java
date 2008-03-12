@@ -16,6 +16,7 @@
 
 package org.mobicents.media.server.impl.ivr;
 
+import org.mobicents.media.server.impl.jmf.recorder.Recorder;
 import javax.media.ConnectionErrorEvent;
 import javax.media.ControllerClosedEvent;
 import javax.media.ControllerErrorEvent;
