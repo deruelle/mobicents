@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="MGCPResourceAdaptor" default="build-and-deploy-ra">
 
+	<property name="compile.as.debug" value="true" />
 	<property name="mobicents.home" value="../.." />	
 
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-ra.xml" />
