@@ -334,6 +334,13 @@ public abstract class BaseEndpoint implements Endpoint {
     public synchronized void deleteConnection(String connectionID) {
         Connection connection = (Connection) connections.remove(connectionID);
 
+        if (connection != null) {
+            connection.close();
+        }
+
+        hasConnections = connections.size() > 0;
+        logger.info("Deleted connection " + connection);
+        
         //clean all resources associated with this connection
         Set<String> names = resources.keySet();
         List<String> connectionResources = new ArrayList();
@@ -355,13 +362,6 @@ public abstract class BaseEndpoint implements Endpoint {
                 logger.debug("Disposed resource: " + mediaResource);
             }
         }
-
-        if (connection != null) {
-            connection.close();
-        }
-
-        hasConnections = connections.size() > 0;
-        logger.info("Deleted connection " + connection);
     }
 
     /**
