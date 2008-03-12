@@ -134,7 +134,11 @@ public class AudioPlayer {
      */
     public void stop() {
         if (processor != null) {
-            processor.stop();
+            if (processor.getState() == Processor.Started) {
+                processor.stop();
+            }
+            processor.close();
+            processor.deallocate();
         }
         if (audioStream != null) {
             audioStream.stop();
