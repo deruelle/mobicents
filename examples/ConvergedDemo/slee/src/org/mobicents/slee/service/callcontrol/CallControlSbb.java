@@ -319,10 +319,12 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		for (ActivityContextInterface attachedAci : activities) {
 			if (attachedAci.getActivity() instanceof Dialog) {
 				attachedAci.detach(sbbLocalObject);
+				attachedAci.detach(this.getParentCmp());
 			}
 			if (attachedAci.getActivity() instanceof MsConnection) {
 				attachedAci.detach(sbbLocalObject);
 				msConnection = (MsConnection) attachedAci.getActivity();
+				attachedAci.detach(this.getParentCmp());
 			}
 		}
 		if(msConnection != null) {
