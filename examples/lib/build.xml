@@ -225,7 +225,6 @@
 			<pathelement location="${lib-prefix}/${mscra}/stage/media-ra.jar" />
 			<pathelement location="${lib-prefix}/${mscra}/stage/media-ratype.jar" />
 			<pathelement location="${lib-prefix}/${mscra}/lib/jmf.jar" />
-			<pathelement location="${lib-prefix}/${mscra}/lib/media-control.jar" />
 			<pathelement location="${lib-prefix}/${mscra}/lib/media-rtp.jar" />
 			<pathelement location="${lib-prefix}/${mscra}/lib/mscontrol.jar" />
 			<pathelement location="${lib-prefix}/${mscra}/lib/nist-sdp-1.0.jar" />
