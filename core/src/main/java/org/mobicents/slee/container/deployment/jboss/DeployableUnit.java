@@ -1,6 +1,5 @@
 package org.mobicents.slee.container.deployment.jboss;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.slee.ComponentID;
+import javax.slee.resource.ResourceAdaptorID;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -19,11 +19,11 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.logging.Logger;
-import org.jboss.system.server.ServerConfig;
-import org.jboss.system.server.ServerConfigLocator;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.container.component.ComponentIDImpl;
+import org.mobicents.slee.container.component.ComponentKey;
 import org.mobicents.slee.container.component.DeployableUnitDescriptorImpl;
+import org.mobicents.slee.container.component.ResourceAdaptorIDImpl;
 import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
 
 /**
@@ -55,16 +55,16 @@ public class DeployableUnit
   private Collection<String> dependencies = new ArrayList<String>();
   
   // The install actions needed to install/activate this DU components.
-  private Collection<String[]> installActions = new ArrayList<String[]>();
+  private Collection<Object[]> installActions = new ArrayList<Object[]>();
 
   // The post-install actions needed to install/activate this DU components.
-  private HashMap<String, Collection<String[]>> postInstallActions = new HashMap<String, Collection<String[]>>();
+  private HashMap<String, Collection<Object[]>> postInstallActions = new HashMap<String, Collection<Object[]>>();
 
   // The pre-uninstall actions needed to deactivate/uninstall this DU components.
-  private HashMap<String, Collection<String[]>> preUninstallActions = new HashMap<String, Collection<String[]>>();
+  private HashMap<String, Collection<Object[]>> preUninstallActions = new HashMap<String, Collection<Object[]>>();
 
   // The install actions needed to deactivate/uninstall this DU components.
-  private Collection<String[]> uninstallActions = new ArrayList<String[]>();
+  private Collection<Object[]> uninstallActions = new ArrayList<Object[]>();
 
   // A flag indicating wether this DU is installed
   private boolean isInstalled = false;
@@ -82,7 +82,7 @@ public class DeployableUnit
     this.deploymentManager = deploymentManager;
     
     // First action for the DU is always install.
-    installActions.add( new String[] {"-install", duDeploymentInfo.url.toString()} );
+    installActions.add( new Object[] {"install", duDeploymentInfo.url.toString()} );
     
     // Parse the deploy-config.xml to obtain post-install/pre-uninstall actions
     parseDeployConfig();
@@ -110,7 +110,7 @@ public class DeployableUnit
     installActions.addAll( dc.getInstallActions() );
     
     // .. post-install actions (if any) ..
-    Collection<String[]> postInstallActionsStrings = postInstallActions.get( dc.getComponentKey() );
+    Collection<Object[]> postInstallActionsStrings = postInstallActions.get( dc.getComponentKey() );
     
     if( postInstallActionsStrings != null && postInstallActions.size() > 0 )
     {
@@ -118,6 +118,8 @@ public class DeployableUnit
     }
     else if( dc.getComponentType() == DeployableComponent.RA_COMPONENT )
     {
+      ComponentID cid = dc.getComponentID();
+      
       String raID = dc.getComponentKey();
       
       logger.warn( "\r\n------------------------------------------------------------" +
@@ -127,22 +129,22 @@ public class DeployableUnit
       String raName = raID.substring( raID.indexOf( '[' ) + 1, raID.indexOf( '#' ) );
       
       // Add the default Create and Activate RA Entity actions to the Install Actions
-      installActions.add( new String[] { "-createRaEntity", raID, raName, null } );
-      installActions.add( new String[] { "-activateRaEntity", raName } );
+      installActions.add( new Object[] { "createResourceAdaptorEntity", cid, raName, new Properties() } );
+      installActions.add( new Object[] { "activateResourceAdaptorEntity", raName } );
       
       // Create default link
-      installActions.add( new String[] { "-createRaLink", raName, raName } );
+      installActions.add( new Object[] { "bindLinkName", raName, raName } );
       
       // Remove default link
-      uninstallActions.add( new String[] { "-removeRaLink", raName } );
+      uninstallActions.add( new Object[] { "unbindLinkName", raName } );
       
       // Add the default Deactivate and Remove RA Entity actions to the Uninstall Actions
-      uninstallActions.add( new String[] { "-deactivateRaEntity", raName } );
-      uninstallActions.add( new String[] { "-removeRaEntity", raName } );
+      uninstallActions.add( new Object[] { "deactivateResourceAdaptorEntity", raName } );
+      uninstallActions.add( new Object[] { "removeResourceAdaptorEntity", raName } );
     }
     
     // .. pre-uninstall actions (if any) ..
-    Collection<String[]> preUninstallActionsStrings = preUninstallActions.get( dc.getComponentKey() );
+    Collection<Object[]> preUninstallActionsStrings = preUninstallActions.get( dc.getComponentKey() );
     
     if( preUninstallActionsStrings != null )
       uninstallActions.addAll( preUninstallActionsStrings );
@@ -249,7 +251,7 @@ public class DeployableUnit
    * Getter for the Install Actions.
    * @return a Collection of actions.
    */
-  public Collection<String[]> getInstallActions()
+  public Collection<Object[]> getInstallActions()
   {
     return installActions;
   }
@@ -258,13 +260,13 @@ public class DeployableUnit
    * Getter for the Uninstall Actions.
    * @return a Collection of actions.
    */
-  public Collection<String[]> getUninstallActions()
+  public Collection<Object[]> getUninstallActions()
   {
     // To make sure uninstall is the last action...
-    Collection<String[]> uActions = uninstallActions;
+    Collection<Object[]> uActions = uninstallActions;
     
     // We add it just when we return them.
-    uActions.add( new String[] {"-uninstall", duDeploymentInfo.url.toString()} );
+    uActions.add( new Object[] {"uninstall", duDeploymentInfo.url.toString()} );
     
     return uActions;
   }
@@ -421,22 +423,6 @@ public class DeployableUnit
 
     if( is != null )
     {
-      /**
-       * <deploy-config>
-       *   <ra-entity resource-adaptor-id="HttpClientResourceAdaptor#org.mobicents#1.0" entity-name="HttpClientRA">
-       *     <properties url="...">
-       *       <property name="user" value="admin" />
-       *       <property name="password" value="admin" />
-       *     </properties>
-       *     <ra-link name="HTTPClientRA" />
-       *   </ra-entity>
-       *   
-       *   <ra-entity>
-       *     <...>
-       *   </ra-entity>
-       * <deploy-config>
-       **/
-      
       // Read the file into a Document
       Document doc = new SAXReader().read( is );
       
@@ -447,10 +433,10 @@ public class DeployableUnit
       String raId = null;
       
       // The collection of Post-Install Actions
-      Collection<String[]> cPostInstallActions = new ArrayList<String[]>();
+      Collection<Object[]> cPostInstallActions = new ArrayList<Object[]>();
       
       // The collection of Pre-Uninstall Actions
-      Collection<String[]> cPreUninstallActions = new ArrayList<String[]>();
+      Collection<Object[]> cPreUninstallActions = new ArrayList<Object[]>();
       
       // Iterate through each ra-entity node
       for(Element raEntity : raEntities)
@@ -464,14 +450,12 @@ public class DeployableUnit
         // Select the properties node
         Node propsNode = raEntity.selectSingleNode( "properties" );
         
-        // The URL for storing properties file
-        String propsURL = null;
+        // The properties for this RA
+        Properties props = new Properties(); 
           
         // Do we have any properties at all?
         if( propsNode != null )
         {
-          Properties props = new Properties();
-          
           String propsFilename;
           
           // Do we have a properties file to load?
@@ -493,23 +477,14 @@ public class DeployableUnit
             // If the property already exists, it will be overwritten.
             props.put( property.attributeValue( "name" ), property.attributeValue( "value" ) );
           }
-          
-          // Locate server configurations
-          ServerConfig serverConfig = ServerConfigLocator.locate();
-          
-          // Get the server temp directory
-          String serverTempDir = serverConfig.getServerTempDeployDir().toURL().toString().replaceFirst( "file:", "" );
-          
-          // Generate a property file name
-          propsURL = serverTempDir + entityName + "_" + System.currentTimeMillis() + ".properties";
-          
-          // Store all the properties in a temporary file
-          props.store( new FileOutputStream( propsURL ), null );
         }
         
+        // Create the Resource Adaptor ID
+        ResourceAdaptorID componentID = new ResourceAdaptorIDImpl(new ComponentKey( raEntity.attributeValue( "resource-adaptor-id" )));
+        
         // Add the Create and Activate RA Entity actions to the Post-Install Actions
-        cPostInstallActions.add( new String[] { "-createRaEntity", raId, entityName, propsURL != null ? "file:" + propsURL : null } );
-        cPostInstallActions.add( new String[] { "-activateRaEntity", entityName } );
+        cPostInstallActions.add( new Object[] { "createResourceAdaptorEntity", componentID, entityName, props } );
+        cPostInstallActions.add( new Object[] { "activateResourceAdaptorEntity", entityName } );
         
         // Each RA might have zero or more links.. get them
         List<Element> links = raEntity.selectNodes( "ra-link" );
@@ -518,14 +493,14 @@ public class DeployableUnit
         {
           String linkName = link.attributeValue( "name" );
           
-          cPostInstallActions.add( new String[] { "-createRaLink", entityName, linkName } );
+          cPostInstallActions.add( new Object[] { "bindLinkName", entityName, linkName } );
           
-          cPreUninstallActions.add( new String[] { "-removeRaLink", linkName } );
+          cPreUninstallActions.add( new Object[] { "unbindLinkName", linkName } );
         }
         
         // Add the Deactivate and Remove RA Entity actions to the Pre-Uninstall Actions
-        cPreUninstallActions.add( new String[] { "-deactivateRaEntity", entityName } );
-        cPreUninstallActions.add( new String[] { "-removeRaEntity", entityName } );
+        cPreUninstallActions.add( new Object[] { "deactivateResourceAdaptorEntity", entityName } );
+        cPreUninstallActions.add( new Object[] { "removeResourceAdaptorEntity", entityName } );
         
       }
       

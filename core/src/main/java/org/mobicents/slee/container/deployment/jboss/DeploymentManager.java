@@ -1,19 +1,22 @@
 package org.mobicents.slee.container.deployment.jboss;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.slee.EventTypeID;
 import javax.slee.SbbID;
 import javax.slee.ServiceID;
+import javax.slee.management.DeployableUnitID;
 import javax.slee.profile.ProfileSpecificationID;
 import javax.slee.resource.ResourceAdaptorID;
 import javax.slee.resource.ResourceAdaptorTypeID;
 
 import org.jboss.logging.Logger;
 import org.mobicents.slee.container.SleeContainer;
-import org.mobicents.slee.container.management.jmx.SleeCommandInterface;
 import org.mobicents.slee.resource.ResourceAdaptorEntity;
 
 /**
@@ -28,10 +31,6 @@ public class DeploymentManager
   // The Logger.
   private static Logger logger = Logger.getLogger( DeploymentManager.class );
   
-  // The jnp URL data
-  private String jnpHost = System.getProperty("bind.address","127.0.0.1");
-  private String jnpPort = "1099";
-  
   // The DUs waiting to be installed.
   private Collection<DeployableUnit> waitingForInstallDUs = new ArrayList<DeployableUnit>();
   
@@ -40,6 +39,18 @@ public class DeploymentManager
   
   // The components already deployed to SLEE
   private Collection<String> deployedComponents = new ArrayList<String>();
+  
+  // Actions using DeploymentMBean
+  private Collection<String> deploymentActions = Arrays.asList( new String[] { "install", "uninstall" } );
+  
+  // Actions using ResourceManagementMBean
+  private Collection<String> resourceAdaptorActions = Arrays.asList( 
+      new String[] { "bindLinkName", "unbindLinkName", 
+      "createResourceAdaptorEntity", "removeResourceAdaptorEntity",
+      "activateResourceAdaptorEntity", "deactivateResourceAdaptorEntity" } );
+  
+  // Actions using ServiceManagementMBean
+  private Collection<String> serviceActions = Arrays.asList( new String[] { "activate", "deactivate" } );
   
   /**
    * Constructor.
@@ -275,24 +286,71 @@ public class DeploymentManager
    * @param actions the array of strings containing the actions to perform.
    * @throws Exception
    */
-  private void sciAction( Collection<String[]> actions ) throws Exception
+  private void sciAction( Collection<Object[]> actions ) throws Exception
   {
-    // Create a SLEE Command Interface with the data
-    SleeCommandInterface sleeCommandInterface = new SleeCommandInterface( "jnp://" + jnpHost + ":" + jnpPort );
-    
+    // Get the MBeanServer
+    MBeanServer ms = SleeContainer.lookupFromJndi().getMBeanServer();
+
     // For each action, get the params..
-    for( String[] params : actions )
+    for( Object[] params : actions )
     {
-      String arg1 = params.length > 0 ? params[0] : "";
-      String arg2 = params.length > 1 ? params[1] : "";
-      String arg3 = params.length > 2 ? params[2] : "";
-      String arg4 = params.length > 3 ? params[3] : "";
+      // The ObjectName for the MBean invocations
+      ObjectName objectName = null;
       
+      // The arguments and their signature
+      Object[] arguments = new Object[params.length-1];;
+      String[] signature = new String[params.length-1];
+      
+      // Get the action to perform
+      String action = (String)params[0];
+
+      // Get the parameters and the signature
+      for( int i = 1; i < params.length; i++ )
+      {
+        arguments[i-1] = params[i];
+        signature[i-1] = params[i].getClass().getName();
+      }
+
+      // Get the correct object name for the action
+      if( deploymentActions.contains( action ) )
+      {
+        // Set the corresponding ObjectName
+        objectName = new ObjectName("slee:name=DeploymentMBean");
+        
+        if(action.equals( "uninstall" ))
+        {
+          // Need to convert from file to DeployableUnitID
+          DeployableUnitID  duID = (DeployableUnitID) ms.invoke( objectName, "getDeployableUnit", 
+              new Object[]{params[1]}, new String[]{params[1].getClass().getName()} );
+          
+          // Update arguments and signature
+          arguments[0] = duID;
+          signature[0] = "javax.slee.management.DeployableUnitID";
+        }
+      }
+      else if( resourceAdaptorActions.contains( action ) )
+      {
+        // Set the corresponding ObjectName
+        objectName = new ObjectName("slee:name=ResourceManagementMBean");
+
+        // Special case as arg is ResourceAdaptorIDImpl..
+        if( action.equals( "createResourceAdaptorEntity" ) )
+          signature[0] = "javax.slee.resource.ResourceAdaptorID";
+      }
+      else if( serviceActions.contains( action ) )
+      {
+        // Set the corresponding ObjectName
+        objectName = new ObjectName("slee:name=ServiceManagementMBean");
+        
+        // Special case as arg is ServiceIDImpl..
+        signature[0] = "javax.slee.ServiceID";
+      }
+
       if( logger.isDebugEnabled() )
-        logger.debug( "Invoking Action: " + arg1 + " " + arg2 + " " + arg3 + " " + arg4);
-     
+        logger.debug( "Invoking " + action + "(" + Arrays.toString( signature ) + ") on " + objectName );
+      
       // Invoke it.
-      sleeCommandInterface.invokeOperation( arg1, arg2, arg3, arg4 );
+      ms.invoke( objectName, action, arguments, signature );
       
       // Wait a little while just to make sure it finishes
       Thread.sleep( 250 );

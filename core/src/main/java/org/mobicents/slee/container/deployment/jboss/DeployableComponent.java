@@ -71,10 +71,10 @@ public class DeployableComponent
   private Collection<String> dependencies = new ArrayList<String>();
   
   // The actions needed to perform installation for this component.
-  private Collection<String[]> installActions = new ArrayList<String[]>();
+  private Collection<Object[]> installActions = new ArrayList<Object[]>();
   
   // The actions needed to perform installation for this component.
-  private Collection<String[]> uninstallActions = new ArrayList<String[]>();
+  private Collection<Object[]> uninstallActions = new ArrayList<Object[]>();
   
   // The key identifying the component (type[name#vendor#version]).
   private String componentKey;
@@ -197,9 +197,9 @@ public class DeployableComponent
 
           dc.dependencies.add( rootSbb );
           
-          dc.installActions.add( new String[] {"-activateService", dc.componentKey} );
+          dc.installActions.add( new Object[] {"activate", dc.componentID} );
 
-          dc.uninstallActions.add( new String[] {"-deactivateService", dc.componentKey} );
+          dc.uninstallActions.add( new Object[] {"deactivate", dc.componentID} );
           
           deployableComponents.add( dc );
         }
@@ -547,18 +547,18 @@ public class DeployableComponent
 
   /**
    * Getter for Install Actions.
-   * @return a Collection of String[] with the actions needed to install this component.
+   * @return a Collection of Object[] with the actions needed to install this component.
    */
-  public Collection<String[]> getInstallActions()
+  public Collection<Object[]> getInstallActions()
   {
     return installActions;
   }
 
   /**
    * Getter for Uninstall Actions.
-   * @return a Collection of String[] with the actions needed to uninstall this component.
+   * @return a Collection of Object[] with the actions needed to uninstall this component.
    */
-  public Collection<String[]> getUninstallActions()
+  public Collection<Object[]> getUninstallActions()
   {
     return uninstallActions;
   }
@@ -570,6 +570,15 @@ public class DeployableComponent
   public int getComponentType()
   {
     return componentType;
+  }
+
+  /**
+   * Getter for component id.
+   * @return the ComponentID for the component.
+   */
+  public ComponentID getComponentID()
+  {
+    return componentID;
   }
   
   /**
