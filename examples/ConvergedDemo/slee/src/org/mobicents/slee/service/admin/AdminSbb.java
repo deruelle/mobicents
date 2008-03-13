@@ -159,7 +159,8 @@ public abstract class AdminSbb extends CommonSbb {
 
 	public void onOrderCancelled(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("****** AdminSbb Recieved ORDER_CANCELLED ******");
-		timerFacility.cancelTimer(this.getTimerID());
+		if (this.getTimerID() != null)
+			timerFacility.cancelTimer(this.getTimerID());
 		ac.detach(getSbbContext().getSbbLocalObject());
 	}
 
