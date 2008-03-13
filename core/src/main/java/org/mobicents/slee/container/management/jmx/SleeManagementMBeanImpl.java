@@ -564,10 +564,8 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 					} catch (InterruptedException e) {
 					}
 
-					stopAllResourceAdaptors();
-
 					stopAllServices();
-
+					stopAllResourceAdaptors();
 					stopAllProfileTableActivities();
 
 					// are there any other possible activities that have not
@@ -693,7 +691,10 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 
 		while (it.hasNext()) {
 			ResourceAdaptorEntity entity = it.next();
-			if (entity.getState().equals(ResourceAdaptorEntityState.ACTIVE))
+
+			if (!entity.getName().equals("tck")
+					&& entity.getState().equals(
+							ResourceAdaptorEntityState.ACTIVE))
 				try {
 
 					entity.deactivate();
@@ -760,7 +761,9 @@ public class SleeManagementMBeanImpl extends StandardMBean implements
 
 		for (String entityName : map.keySet()) {
 			ResourceAdaptorEntity entity = map.get(entityName);
-			if (entity.getState().equals(ResourceAdaptorEntityState.ACTIVE))
+			if (!entityName.equals("tck")
+					&& entity.getState().equals(
+							ResourceAdaptorEntityState.ACTIVE))
 				this.activeRAEntities.add(entityName);
 
 		}
