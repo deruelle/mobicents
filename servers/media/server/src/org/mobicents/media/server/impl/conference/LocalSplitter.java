@@ -138,7 +138,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
                 LocalMixer mixer = (LocalMixer) endpoint.getResource(
                         Endpoint.RESOURCE_AUDIO_SOURCE,
                         conn.getId());
-                mixer.remove(id);
+                if (mixer != null) mixer.remove(id);
             }
         }
     }
