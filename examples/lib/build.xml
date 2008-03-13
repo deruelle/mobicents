@@ -7,9 +7,17 @@
 	<!-- IT DEFINES BASE LIB PATH ==> refid=examples-libraries -->
 	<!-- PATHS -->
 	<property environment="system" />
+	
+	<available property="mobicents.home.initial" file="${ant.file.Mobicents_Ant_Management}/../../../core" type="dir" value="${ant.file.Mobicents_Ant_Management}/../../../core">
+	</available>	
+	<property name="mobicents.home.initial" value="${system.MOBICENTS_HOME}" />
 
-	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	<path id="mobicents.home.id">
+		<pathelement location="${mobicents.home.initial}" />
+	</path>
 
+
+	<property name="mobicents.home" refid="mobicents.home.id" />
 
 
 	<!-- LETS CHECK FOR THIS FILE -->
