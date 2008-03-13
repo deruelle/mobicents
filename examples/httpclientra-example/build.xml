@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="HttpClientRAExample" default="deploy">
 
-	<property name="mobicents.home" value="../../mobicents" />
+	<property name="mobicents.home" value="../../core" />
 
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-properties.xml" />
 	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-service.xml" />
