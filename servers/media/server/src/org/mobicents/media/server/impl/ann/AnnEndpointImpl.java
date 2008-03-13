@@ -16,14 +16,9 @@
  */
 package org.mobicents.media.server.impl.ann;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
@@ -33,12 +28,11 @@ import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.spi.events.Announcement;
 
 /**
- *
+ * Implements Announcement access point.
+ * 
  * @author Oleg Kulikov
  */
 public class AnnEndpointImpl extends BaseEndpoint {
-    //public final static Timer TIMER = new Timer();
-   // public final static int PACKETIZATION_PERIOD = 20;
     
     protected transient MediaPushProxy mediaProxy;
     protected transient Logger logger;
@@ -46,6 +40,8 @@ public class AnnEndpointImpl extends BaseEndpoint {
 
     /**
      * Creates a new instance of AnnEndpointImpl
+     * 
+     * @param localName the local name of the endpoint.
      */
     public AnnEndpointImpl(String localName) {
         super(localName);
@@ -53,6 +49,11 @@ public class AnnEndpointImpl extends BaseEndpoint {
         logger = Logger.getLogger(AnnEndpointImpl.class);
     }
 
+    /**
+     * Provides initialization of endpoint specific resource manager.
+     * 
+     * @return the endpoint specific resource manager.
+     */
     @Override
     public BaseResourceManager initResourceManager() {
         return new AnnResourceManager();
@@ -70,9 +71,6 @@ public class AnnEndpointImpl extends BaseEndpoint {
             if (signal != null) {
                 signal.stop();
             }
-            
-            //terminate push proxy 
-            //mediaProxy.setInputStream(null);
         } finally {
             super.deleteConnection(connectionID);
         }
@@ -104,29 +102,5 @@ public class AnnEndpointImpl extends BaseEndpoint {
             default:
                 throw new UnknownSignalException("Signal is unknown: " + signalID);
         }
-    }
-
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.server.spi.BaseEndpoint#addAudioStream(PushBufferStream, String)
-     */
-    public void addAudioStream(PushBufferStream stream, String connectionID) {
-    }
-
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.server.spi.BaseEndpoint#getAudioStream(BaseConnection)
-     */
-    public Collection <PushBufferStream> getAudioStreams(BaseConnection connection) {
-        List list = new ArrayList();
-
-        mediaProxy = new MediaPushProxy(this.getPacketizationPeriod(), 
-                connection.getAudioFormat());
-        mediaProxy.start();
-        
-        list.add(mediaProxy);
-        return list;
     }
 }
