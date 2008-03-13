@@ -215,7 +215,7 @@
 
 	<!-- MEDIA RA RELATED -->
 
-	<property name="mobicents.ra.mediara" value="${mobicents.ra}/media-ra" />
+	<property name="mobicents.ra.mediara" value="${mobicents.home}/../servers/media/mscontrol/msc-ra" />
 	<path id="mobicents.ra.mediara.classpath">
 		<pathelement location="${mobicents.ra.mediara}/ra/jars/media-ra.jar" />
 		<pathelement location="${mobicents.ra.mediara}/ratype/jars/media-ratype.jar" />
