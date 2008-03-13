@@ -4,9 +4,9 @@
 
 	<property environment="system" />
 	<path id="core.home">
-		<pathelement location="${system.MOBICENTS_HOME}" />
+		<pathelement location="${ant.file.sipservices}/../../../../core" />
 	</path>
-	<property name="mobicents.home" value="${system.MOBICENTS_HOME}" />
+	<property name="mobicents.home" value="${ant.file.sipservices}/../../../../core" />
 	<!--property name="mobicents.examples" value="${system.MOBICENTS_EXAMPLES}" /-->
 
 
