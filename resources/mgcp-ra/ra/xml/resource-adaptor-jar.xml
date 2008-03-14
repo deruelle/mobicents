@@ -25,7 +25,7 @@
         <config-property>
             <config-property-name>port</config-property-name>
             <config-property-type>java.lang.Integer</config-property-type>
-            <config-property-value>2475</config-property-value>
+            <config-property-value>2727</config-property-value>
         </config-property>
     </resource-adaptor>
 </resource-adaptor-jar>
