@@ -5,7 +5,6 @@
 
 	<!-- OTHER TARGET THAN build-sbb, and clean should not be called -->
 	<property environment="sys" />
-	<property name="mobicents.home" value="${sys.MOBICENTS_HOME}" />
 	<property name="jboss.home" value="${system.JBOSS_HOME}" />
 
 	<!-- WE NEED TO DEFINE THOSE -->
@@ -16,8 +15,8 @@
 
 
 	<path id="service.classpath">
-		<pathelement location="../lib/JainSipRi1.2.jar" />
-		<pathelement location="../lib/JainSipApi1.2.jar" />
+		<pathelement location="../lib/jain-sip-ri-1.2.jar" />
+		<pathelement location="../lib/jain-sip-api-1.2.jar" />
 		<path refid="mobicents.core.classpath"/>
 		<pathelement location="../ratype/jars/sip-ratype.jar" />
 		<pathelement location="../ra/jars/sip-ra.jar" />
@@ -34,8 +33,7 @@
 	</fileset>
 
 
-	<import file="${mobicents.home}/xml/ant/mobicents-ant-common-service.xml" />
-
+	<import file="${ant.file.Proxy}/../../../../core/xml/ant/mobicents-ant-common-service.xml" />
 
 
 
