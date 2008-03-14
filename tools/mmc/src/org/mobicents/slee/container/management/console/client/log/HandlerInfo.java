@@ -49,10 +49,11 @@ public class HandlerInfo implements IsSerializable {
 	
 	private String formatterClassName=null;
 	
-	private String handelerClassName=null;
+	private String handlerClassName=null;
 	
 	private String level=null;
 	
+	//This is not used, we provide only generic mods to handlers now.
 	private HashMap otherOptions=null;
 
 	public HandlerInfo()
@@ -62,14 +63,14 @@ public class HandlerInfo implements IsSerializable {
 	
 	
 	public HandlerInfo(int index, String name, String filterClassName,
-			String formatterClassName, String handelerClassName, String level,
+			String formatterClassName, String handlerClassName, String level,
 			HashMap otherOptions) {
 		super();
 		this.index = index;
 		this.name = name;
 		this.filterClassName = filterClassName;
 		this.formatterClassName = formatterClassName;
-		this.handelerClassName = handelerClassName;
+		this.handlerClassName = handlerClassName;
 		this.level = level;
 		this.otherOptions = otherOptions;
 	}
@@ -90,8 +91,8 @@ public class HandlerInfo implements IsSerializable {
 		return formatterClassName;
 	}
 
-	public String getHandelerClassName() {
-		return handelerClassName;
+	public String getHandlerClassName() {
+		return handlerClassName;
 	}
 
 	public String getLevel() {
@@ -100,6 +101,34 @@ public class HandlerInfo implements IsSerializable {
 
 	public HashMap getOtherOptions() {
 		return otherOptions;
+	}
+
+	//FIXME: This is due to issue with syncing with other side, we dont know if we are going to receive the same data about handler if handlers shift... ;[
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public void setFormatterClassName(String formatterClassName) {
+		this.formatterClassName = formatterClassName;
+	}
+
+
+
+
+	public void setFilterClassName(String filterClassName) {
+		this.filterClassName = filterClassName;
+	}
+
+
+	public void setLevel(String level) {
+		this.level = level;
+	}
+
+
+	public void setOtherOptions(HashMap otherOptions) {
+		this.otherOptions = otherOptions;
 	}
 	
 	

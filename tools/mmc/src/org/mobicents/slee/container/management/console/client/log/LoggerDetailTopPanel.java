@@ -34,15 +34,18 @@ package org.mobicents.slee.container.management.console.client.log;
 
 import org.mobicents.slee.container.management.console.client.Logger;
 import org.mobicents.slee.container.management.console.client.ServerConnection;
+import org.mobicents.slee.container.management.console.client.common.CommonControl;
 import org.mobicents.slee.container.management.console.client.common.ListPanel;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -57,11 +60,14 @@ public class LoggerDetailTopPanel extends ListPanel {
 	private  LoggerInfo info = null;
 	private String shortName = null;
 
+	private TextBox filterClassName=new TextBox();
+	private final CommonControl tree;
 	/**
 	 * 
 	 */
-	public LoggerDetailTopPanel(final LoggerInfo info, String shortName) {
+	public LoggerDetailTopPanel(final CommonControl tree,final LoggerInfo info, String shortName) {
 		super();
+		this.tree=tree;
 		this.info = info;
 		this.shortName = shortName;
 		this.setCellText(0, 0, "Short name:");
@@ -88,10 +94,19 @@ public class LoggerDetailTopPanel extends ListPanel {
 		this.setCellText(2, 0, "Level:");
 		this.setCell(2, 1, levelB);
 		this.setCellText(2, 2, "Filter class name:");
-		this.setCellText(2, 3, info.getFilterClass());
+		
+		
+		Hyperlink setFilterLink=new Hyperlink("Set",null);
+		filterClassName.setText(info.getFilterClass());
+		
+		//this.setCellText(2, 3, info.getFilterClass());
 
-		
-		
+		HorizontalPanel filterEditPanel=new HorizontalPanel();
+		filterEditPanel.setWidth("100%");
+		this.setCell(2, 3, filterEditPanel);
+		filterEditPanel.add(setFilterLink);
+		filterEditPanel.add(filterClassName);
+		filterEditPanel.setHorizontalAlignment(filterEditPanel.ALIGN_LEFT);
 		
 		
 		
@@ -140,7 +155,7 @@ public class LoggerDetailTopPanel extends ListPanel {
 					 */
 					public void onSuccess(Object result) {
 
-						
+						info.setUseParentHandlers(sendValue);
 						
 					}}
 				
@@ -153,7 +168,7 @@ public class LoggerDetailTopPanel extends ListPanel {
 		class LevelChangeListener implements ChangeListener
 		{
 
-			
+
 			public void onChange(Widget sender) {
 				ListBox ss=(ListBox) sender;
 				final String logLevel=ss.getValue(ss.getSelectedIndex());
@@ -169,7 +184,9 @@ public class LoggerDetailTopPanel extends ListPanel {
 
 				
 					public void onSuccess(Object result) {
-						// TODO Auto-generated method stub
+
+						info.setLevel(logLevel);
+						tree.onShow();
 						
 					}
 					
@@ -180,11 +197,56 @@ public class LoggerDetailTopPanel extends ListPanel {
 			
 		}
 		
+		class SetFilterClassNameListener implements ClickListener
+		{
+
+			public void onClick(Widget arg0) {
+
+
+				class SetFilterClassNameAsyncCallBack implements AsyncCallback
+				{
+
+					public void onFailure(Throwable arg0) {
+						
+						//ugly, class in class? but it allows us to have set everything in proper way
+						class GetFilterClassNameCallBack implements AsyncCallback
+						{
+
+							public void onFailure(Throwable arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							public void onSuccess(Object arg0) {
+								
+								filterClassName.setText((String) arg0);
+								
+							}}
+						
+						ServerConnection.logServiceAsync.getLoggerFilterClassName(info.getFullName(), new GetFilterClassNameCallBack());
+						
+					}
+
+					public void onSuccess(Object arg0) {
+						
+						info.setFilterClass(filterClassName.getText());
+						
+					}}
+				
+				
+				ServerConnection.logServiceAsync.setLoggerFilterClassName(info.getFullName(), filterClassName.getText(),null,null, new SetFilterClassNameAsyncCallBack());
+				
+				
+			}
+			
+		}
+		
+		
 		
 		//add listeners
 		ups.addChangeListener(new UseParentHandlerListener());
 		levelB.addChangeListener(new LevelChangeListener());
-		
+		setFilterLink.addClickListener(new SetFilterClassNameListener());
 		
 		
 	}

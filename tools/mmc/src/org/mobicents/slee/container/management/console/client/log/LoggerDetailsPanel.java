@@ -32,8 +32,6 @@
  */
 package org.mobicents.slee.container.management.console.client.log;
 
-import java.util.Iterator;
-
 import org.mobicents.slee.container.management.console.client.Logger;
 import org.mobicents.slee.container.management.console.client.ServerConnection;
 import org.mobicents.slee.container.management.console.client.common.BrowseContainer;
@@ -44,13 +42,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.DockPanel.DockLayoutConstant;
 
 /**
  * @author baranowb
@@ -59,6 +53,7 @@ import com.google.gwt.user.client.ui.DockPanel.DockLayoutConstant;
 public class LoggerDetailsPanel extends Composite implements CommonControl {
 
 	private BrowseContainer browseContainer = null;
+	private BrowseContainer handlersInfoBrowseContainer = null;
 	private String name = null;
 	private String fullName = null;
 
@@ -68,10 +63,17 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 
 	private ControlledTabedBar setters = null;
 
-	public LoggerDetailsPanel(BrowseContainer myDisplay, String name,
-			String fullName) {
+	private int selectedTabInAdd = 0;
+
+	private CommonControl _this = null;
+
+	private CommonControl tree = null;
+
+	public LoggerDetailsPanel(CommonControl tree, BrowseContainer myDisplay,
+			String name, String fullName) {
 		super();
 		this.browseContainer = myDisplay;
+		this.handlersInfoBrowseContainer = new BrowseContainer();
 		this.name = name;
 		this.fullName = fullName;
 		this.initWidget(display);
@@ -79,6 +81,8 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 		display.setHeight("100%");
 		display.setVerticalAlignment(DockPanel.ALIGN_TOP);
 		display.setHorizontalAlignment(DockPanel.ALIGN_LEFT);
+		this.tree = tree;
+		_this = this;
 
 	}
 
@@ -88,7 +92,9 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 	 * @see org.mobicents.slee.container.management.console.client.common.CommonControl#onHide()
 	 */
 	public void onHide() {
-
+		selectedTabInAdd = setters.getSelectedTabIndex();
+		// This will cause middle array to blink...
+		handlersInfoBrowseContainer.empty();
 		display.clear();
 
 	}
@@ -133,7 +139,8 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 			}
 
 			private void doInitGenericInfo(LoggerInfo info) {
-				LoggerDetailTopPanel top = new LoggerDetailTopPanel(info, name);
+				LoggerDetailTopPanel top = new LoggerDetailTopPanel(tree, info,
+						name);
 				top.setWidth("100%");
 				top.setHeight("100%");
 
@@ -149,10 +156,18 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 				// ScrollPanel scroll=new ScrollPanel(handlersBriefInfo);
 				// display.add(scroll, DockPanel.CENTER);
 				handlersBriefInfo = new ListPanel();
-				display.add(handlersBriefInfo, DockPanel.CENTER);
-				display.setCellWidth(handlersBriefInfo, "100%");
+				// display.add(handlersBriefInfo, DockPanel.CENTER);
+				// display.setCellWidth(handlersBriefInfo, "100%");
+				// handlersBriefInfo.setHeight("200px");
+				// handlersBriefInfo.setWidth("630px");
+
+				display.add(handlersInfoBrowseContainer, DockPanel.CENTER);
+				display.setCellWidth(handlersInfoBrowseContainer, "100%");
 				handlersBriefInfo.setHeight("200px");
 				handlersBriefInfo.setWidth("630px");
+				// handlersInfoBrowseContainer.
+				handlersInfoBrowseContainer.add("Handlers set",
+						handlersBriefInfo);
 
 				handlersBriefInfo.setColumnWidth(0, "25px");
 				handlersBriefInfo.setColumnWidth(1, "25px");
@@ -170,11 +185,21 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 
 						final int ii = i;
 						// TODO: add actions
-						Hyperlink details = new Hyperlink();
-						details.setHTML("#" + i);
+						Hyperlink details = new Hyperlink("#" + i,null);
+						//details.setHTML("#" + i);
+						details.setTitle("Click for handler details and configuration.");
+						Hyperlink remove = new Hyperlink("Remove",null);
+						//remove.setHTML("Remove");
 
-						Hyperlink remove = new Hyperlink();
-						details.setHTML("Remove");
+						handlersBriefInfo.setCell(i, 0, details);
+						handlersBriefInfo.setCell(i, 1, remove);
+						handlersBriefInfo.setCellText(i, 2, info
+								.getHandlerInfos()[i].getName());
+						handlersBriefInfo.setCellText(i, 3, info
+								.getHandlerInfos()[i].getHandlerClassName());
+
+						// ADD CLICK LISTENERS
+
 						ClickListener removeClick = new ClickListener() {
 
 							public void onClick(Widget sender) {
@@ -199,20 +224,48 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 									}
 								};
 
-								ServerConnection.logServiceAsync
-										.removeHandlerAtIndex(info
-												.getFullName(), ii,
-												removeCallback);
-
+								if (!info.getHandlerInfos()[ii].getName()
+										.equals("NOTIFICATION")) {
+									ServerConnection.logServiceAsync
+											.removeHandlerAtIndex(info
+													.getFullName(), ii,
+													removeCallback);
+								} else {
+									ServerConnection.logServiceAsync
+											.removeNotificationHandler(info
+													.getFullName(),
+													removeCallback);
+								}
 							}
 						};
 
-						handlersBriefInfo.setCell(i, 0, details);
-						handlersBriefInfo.setCell(i, 1, remove);
-						handlersBriefInfo.setCellText(i, 2, info
-								.getHandlerInfos()[i].getName());
-						handlersBriefInfo.setCellText(i, 3, info
-								.getHandlerInfos()[i].getHandelerClassName());
+						ClickListener detailsClickListener = new ClickListener() {
+
+							public void onClick(Widget arg0) {
+
+								// browseContainer.add("Handler["+info.getHandlerInfos()[ii].getIndex()+"]["+info.getHandlerInfos()[ii].getName()+"]",
+								// new
+								// HandlerDetailsPanel(browseContainer,info.getHandlerInfos()[ii],name,fullName));
+								ScrollPanel sp = new ScrollPanel();
+
+								HandlerDetailsPanel hdp = new HandlerDetailsPanel(
+										browseContainer,
+										info.getHandlerInfos()[ii], name,
+										fullName);
+								hdp.setHeight("200px");
+								hdp.setWidth("630px");
+								sp.add(hdp);
+								handlersInfoBrowseContainer.add("Handler["
+										+ info.getHandlerInfos()[ii].getIndex()
+										+ "]["
+										+ info.getHandlerInfos()[ii].getName()
+										+ "]", sp);
+							}
+
+						};
+
+						remove.addClickListener(removeClick);
+						details.addClickListener(detailsClickListener);
 					}
 			}
 
@@ -224,15 +277,19 @@ public class LoggerDetailsPanel extends Composite implements CommonControl {
 
 						// setter.add(new
 						// GeneralSettingsPanel(fullName),"General");
-						setters.add(new AddSocketHandlerPanel(fullName),
-								"Add socket handler");
-						setters.add(new AddNotificationHadlerPanel(fullName),
-								"Add notifiaction handler");
-						setters.add(new AddGenericHadlerPanel(fullName),
-								"Add generic handler");
+						CommonControl cc = new AddSocketHandlerPanel(fullName,
+								_this);
+						cc.onInit();
+						setters.add((Widget) cc, "Add socket handler");
+						cc = new AddNotificationHadlerPanel(fullName, _this);
+						cc.onInit();
+						setters.add((Widget) cc, "Add notifiaction handler");
+						cc = new AddGenericHadlerPanel(fullName, _this);
+						cc.onInit();
+						setters.add((Widget) cc, "Add generic handler");
 
 						setters.setSize("100%", "100%");
-						setters.selectTab(0);
+						setters.selectTab(selectedTabInAdd);
 
 					}
 

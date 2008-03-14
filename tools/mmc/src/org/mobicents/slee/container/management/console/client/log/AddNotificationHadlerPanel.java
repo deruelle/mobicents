@@ -32,9 +32,13 @@
  */
 package org.mobicents.slee.container.management.console.client.log;
 
+import org.mobicents.slee.container.management.console.client.Logger;
+import org.mobicents.slee.container.management.console.client.ServerConnection;
 import org.mobicents.slee.container.management.console.client.common.CommonControl;
 import org.mobicents.slee.container.management.console.client.common.ListPanel;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -42,24 +46,24 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author baranowb
- *
+ * 
  */
-public class AddNotificationHadlerPanel extends Composite implements CommonControl {
+public class AddNotificationHadlerPanel extends Composite implements
+		CommonControl {
 
-	
-	
 	private String loggerName = null;
 
 	private ListPanel options = new ListPanel();
 
-	//private TextBox _levelBox = new TextBox();
+	// private TextBox _levelBox = new TextBox();
 
-	private ListBox _levelList=new ListBox();
-	
-	private TextBox _nameBox = new TextBox();
+	private ListBox _levelList = new ListBox();
+
+	//private TextBox _nameBox = new TextBox();
 
 	private TextBox _formaterClassNameBox = new TextBox();
 
@@ -67,11 +71,15 @@ public class AddNotificationHadlerPanel extends Composite implements CommonContr
 
 	private TextBox _entriesNumberBox = new TextBox();
 
+	private ListPanel inner = new ListPanel();
+	private Hyperlink createLink = new Hyperlink("Create Handler", null);
 
-	public AddNotificationHadlerPanel(String loggerName) {
+	private CommonControl parent = null;
+
+	public AddNotificationHadlerPanel(String loggerName, CommonControl _this) {
 		super();
 		this.loggerName = loggerName;
-
+		this.parent = _this;
 		// TODO DO THIS IN CSS
 		// this._levelBox.setSize("40px", "10px");
 		// this._nameBox.setSize("40px", "10px");
@@ -86,39 +94,10 @@ public class AddNotificationHadlerPanel extends Composite implements CommonContr
 		// this._hostBox.setMaxLength(80);
 		// this._portBox.setMaxLength(10);
 
-		ListPanel inner = new ListPanel();
-		Hyperlink createLink = new Hyperlink("Create Handler", null);
-
-		inner.setCell(0, 0, new Label("Handler Name:"));
-		inner.setCell(0, 1, _nameBox);
-		inner.setCell(0, 2, new Label("Handler Level:"));
-		inner.setCell(0, 3, _levelList);
-		inner.setCell(1, 0, new Label("Formatter class:"));
-		inner.setCell(1, 1, _formaterClassNameBox);
-		inner.setCell(1, 2, new Label("Filter class:"));
-		inner.setCell(1, 3, _filterClassNameBox);
-		inner.setCell(2, 0, new Label("Number of entries:"));
-		inner.setCell(2, 1, _entriesNumberBox);
-	
-
-		for(int i=0;i<LogTreeNode._LEVELS.length;i++)
-		{
-			_levelList.addItem(LogTreeNode._LEVELS[i], LogTreeNode._LEVELS[i]);
-			
-		}
-		_levelList.setSelectedIndex(0);
-		
-		
-		//This leaves a lot of place in the right - to be filled with params for filter and formatter!!!!
+		// This leaves a lot of place in the right - to be filled with params
+		// for filter and formatter!!!!
 		// options.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
-		
-		
-		
-		options.setCell(0, 0, inner);
-		options.setCell(1, 0, createLink);
 
-		options.setCellAlignment(1,0,HasVerticalAlignment.ALIGN_MIDDLE,HasHorizontalAlignment.ALIGN_CENTER);
-		
 		initWidget(options);
 	}
 
@@ -145,7 +124,7 @@ public class AddNotificationHadlerPanel extends Composite implements CommonContr
 	 * @see org.mobicents.slee.container.management.console.client.common.CommonControl#onHide()
 	 */
 	public void onHide() {
-		// TODO Auto-generated method stub
+		options.emptyTable();
 
 	}
 
@@ -155,7 +134,61 @@ public class AddNotificationHadlerPanel extends Composite implements CommonContr
 	 * @see org.mobicents.slee.container.management.console.client.common.CommonControl#onInit()
 	 */
 	public void onInit() {
-		// TODO Auto-generated method stub
+		inner.setCell(0, 0, new Label("Handler Name:"));
+		inner.setCell(0, 1, new Label("NOTIFICATION"));
+		inner.setCell(0, 2, new Label("Handler Level:"));
+		inner.setCell(0, 3, _levelList);
+		inner.setCell(1, 0, new Label("Formatter class:"));
+		inner.setCell(1, 1, _formaterClassNameBox);
+		inner.setCell(1, 2, new Label("Filter class:"));
+		inner.setCell(1, 3, _filterClassNameBox);
+		inner.setCell(2, 0, new Label("Number of entries:"));
+		inner.setCell(2, 1, _entriesNumberBox);
+
+		for (int i = 0; i < LogTreeNode._LEVELS.length; i++) {
+			_levelList.addItem(LogTreeNode._LEVELS[i], LogTreeNode._LEVELS[i]);
+
+		}
+		_levelList.setSelectedIndex(0);
+		
+		class CreateNotificationHandlerClickListener implements ClickListener {
+
+			public void onClick(Widget arg0) {
+
+				class CreateNotificationHandlerCallBack implements AsyncCallback {
+
+					public void onFailure(Throwable arg0) {
+
+						Logger.error("Failed to create generic handler due to["
+								+ arg0.getMessage() + "]");
+
+					}
+
+					public void onSuccess(Object arg0) {
+
+						// FIXME: Should we remove everything here?
+
+						// We have to refresh parent.
+						parent.onHide();
+						parent.onShow();
+						//FIXME: Possibly init someething as this is NotificationH
+					}
+
+				}
+				
+				ServerConnection.logServiceAsync.createNotificationHandler(loggerName,Integer.parseInt(_entriesNumberBox.getText()),_levelList.getValue(_levelList.getSelectedIndex()),_formaterClassNameBox.getText(),_filterClassNameBox.getText(),new CreateNotificationHandlerCallBack());
+				
+			}
+
+		}
+		
+		// This leaves a lot of place in the right - to be filled with params
+		// for filter and formatter!!!!
+		// options.setHorizontalAlignment(DockPanel.ALIGN_CENTER);
+		
+		
+		createLink.addClickListener(new CreateNotificationHandlerClickListener());
+		
 
 	}
 
@@ -165,7 +198,10 @@ public class AddNotificationHadlerPanel extends Composite implements CommonContr
 	 * @see org.mobicents.slee.container.management.console.client.common.CommonControl#onShow()
 	 */
 	public void onShow() {
-		// TODO Auto-generated method stub
+		options.setCell(0, 0, inner);
+		options.setCell(1, 0, createLink);
 
+		options.setCellAlignment(1, 0, HasVerticalAlignment.ALIGN_MIDDLE,
+				HasHorizontalAlignment.ALIGN_CENTER);
 	}
 }

@@ -68,7 +68,8 @@ public class LogStructureTreePanel extends Composite implements CommonControl{
 		this.browseContainer = browseContainer;
 		browseContainer.add("Logger Configuration", this.logTree);
 		ScrollPanel scroll=new ScrollPanel();
-		scroll.setHeight("500px");
+		//TODO: MOVE ALL px to css, HERE SET PROPER VALUE FOR HEIGHT!!!
+		scroll.setHeight("630px");
 		scroll.setWidth("630px");
 		scroll.add(browseContainer);
 		initWidget(scroll);
@@ -89,7 +90,7 @@ public class LogStructureTreePanel extends Composite implements CommonControl{
 
 	
 	public void onShow() {
-	
+		refreshData();
 		
 	}
 
@@ -163,7 +164,7 @@ public class LogStructureTreePanel extends Composite implements CommonControl{
 		
 		TreeItem localLeaf=new TreeItem();
 
-		LogTreeNode logTreeNode=new LogTreeNode(browseContainer,localRoot.getShortName(),localRoot.getFqdName(),localRoot.isWasLeaf());
+		LogTreeNode logTreeNode=new LogTreeNode(this,browseContainer,localRoot.getShortName(),localRoot.getFqdName(),localRoot.isWasLeaf());
 	
 		localLeaf.setWidget(logTreeNode);
 

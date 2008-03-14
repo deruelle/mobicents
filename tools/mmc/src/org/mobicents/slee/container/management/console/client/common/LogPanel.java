@@ -43,13 +43,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class LogPanel extends VerticalPanel {
 
-	private StringBuffer stringBuffer = new StringBuffer();
+	protected StringBuffer stringBuffer = new StringBuffer();
 
-	private HTML logHTML = new HTML();
+	protected HTML logHTML = new HTML();
 
-	private ScrollPanel scrollPanel = new ScrollPanel(logHTML);
-	
-	private HorizontalPanel header = new HorizontalPanel();
+	protected ScrollPanel scrollPanel = new ScrollPanel(logHTML);
+
+	protected HorizontalPanel header = new HorizontalPanel();
 
 	public LogPanel() {
 
@@ -59,9 +59,9 @@ public class LogPanel extends VerticalPanel {
 				onClean();
 			}
 		});
-		
+
 		Label padding = new Label();
-		
+
 		header.add(padding);
 		header.add(clean);
 
@@ -89,6 +89,22 @@ public class LogPanel extends VerticalPanel {
 		println("[ERROR] " + s, "red", "images/log.error.gif");
 	}
 
+	public void config(String s) {
+		println("[CONFIG] " + s, "#774A64", "images/log.info.gif");
+	}
+
+	public void fine(String s) {
+		println("[FINE] " + s, "#7681A4", "images/log.info.gif");
+	}
+
+	public void finer(String s) {
+		println("[FINER] " + s, "#9181A4", "images/log.info.gif");
+	}
+
+	public void finest(String s) {
+		println("[FINEST] " + s, "#BE81A4", "images/log.info.gif");
+	}
+
 	private void println(String s, String color, String image) {
 		stringBuffer.append("<image align='absbottom' src='" + image
 				+ "'/><font color='" + color + "'>");
@@ -98,7 +114,7 @@ public class LogPanel extends VerticalPanel {
 		scrollPanel.setScrollPosition(100000);
 	}
 
-	private void onClean() {
+	protected void onClean() {
 		stringBuffer = new StringBuffer();
 		logHTML.setHTML("");
 		scrollPanel.setScrollPosition(0);

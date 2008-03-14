@@ -32,11 +32,15 @@
  */
 package org.mobicents.slee.container.management.console.client.pages;
 
+import org.mobicents.slee.container.management.console.client.Logger;
 import org.mobicents.slee.container.management.console.client.common.BrowseContainer;
+import org.mobicents.slee.container.management.console.client.common.CommonControl;
 import org.mobicents.slee.container.management.console.client.common.SmartTabPage;
 import org.mobicents.slee.container.management.console.client.common.SmartTabPage.SmartTabPageInfo;
+import org.mobicents.slee.container.management.console.client.log.LogDisplayPanel;
 import org.mobicents.slee.container.management.console.client.log.LogStructureTreePanel;
 
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.StackPanel;
 
@@ -48,11 +52,38 @@ public class LogManagementPage extends SmartTabPage {
 
 	
 	
-	private StackPanel switcher=new StackPanel();
+	//private StackPanel switcher=new StackPanel();
 
+	private StackPanel switcher=new StackPanel()
+	{
+		public void onBrowserEvent(Event be)
+		{
+			
+			//THIS WILL CAUSE ALL WINDOWS DO BE REFRESHED!!! - IN CASE OF 0 we dont want that?
+			//Logger.info("INDEX["+this.getSelectedIndex()+"]");
+			if(this.getSelectedIndex()==0)
+			{}else
+			{
+				if(this.getWidget(this.getSelectedIndex()) instanceof CommonControl)
+				{
+					((CommonControl)this.getWidget(this.getSelectedIndex())).onHide();
+				}
+			}
+			
+			super.onBrowserEvent(be);
+			//Logger.info("INDEX2["+this.getSelectedIndex()+"]");
+			if( this.getSelectedIndex()!=0 && this.getWidget(this.getSelectedIndex()) instanceof CommonControl)
+			{
+				((CommonControl)this.getWidget(this.getSelectedIndex())).onShow();
+			}
+		}
+	};
+	
 	private BrowseContainer browseContainer=new BrowseContainer();
 	
 	private LogStructureTreePanel logTree=new LogStructureTreePanel(this.browseContainer);
+	
+	//private LogDisplayPanel logDisplay= new LogDisplayPanel();
 	
 	public static SmartTabPageInfo getInfo() {
         return new SmartTabPageInfo("<image src='images/log.mgmt.1.jpg' /> Logging Management",
@@ -72,6 +103,7 @@ public class LogManagementPage extends SmartTabPage {
 	public void onHide() {
 		// TODO Auto-generated method stub
 		super.onHide();
+		((CommonControl)this.switcher.getWidget(this.switcher.getSelectedIndex())).onHide();
 	}
 
 	public void onInit() {
@@ -79,15 +111,18 @@ public class LogManagementPage extends SmartTabPage {
 		this.switcher.setWidth("100%");
 		this.switcher.add(logTree, createHeaderHTML("images/log.mgmt.log_configuration.jpg", "Logger Tree"), true);
 		logTree.onInit();
+		//logDisplay.onInit();
+		//this.switcher.add(logDisplay, createHeaderHTML("images/log.mgmt.log_console.jpg", "Console"), true);
 		
-		this.switcher.add(new Hyperlink("CONSOLE",true,null), createHeaderHTML("images/log.mgmt.log_console.jpg", "Console"), true);
+		
 	}
 
 
 	public void onShow() {
 		// TODO Auto-generated method stub
 		super.onShow();
-		logTree.onShow();
+		//logTree.onShow();
+		((CommonControl)this.switcher.getWidget(this.switcher.getSelectedIndex())).onShow();
 	}
 	
 	/**

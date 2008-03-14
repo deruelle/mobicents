@@ -46,6 +46,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ListPanel extends Composite {
 	
+	
+	//FIXME:Bartek add setter for cell widht after Beta2
 	private FlexTable flexTable = new FlexTable();
 
 	private DockPanel panel=new DockPanel();

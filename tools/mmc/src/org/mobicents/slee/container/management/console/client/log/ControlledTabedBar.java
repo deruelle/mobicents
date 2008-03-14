@@ -33,6 +33,7 @@
 package org.mobicents.slee.container.management.console.client.log;
 
 import org.mobicents.slee.container.management.console.client.common.CommonControl;
+import org.mobicents.slee.container.management.console.client.common.LogPanel;
 
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabBar;
@@ -58,9 +59,18 @@ public class ControlledTabedBar extends TabPanel implements CommonControl {
 
 	private int selected = -1;
 
-	private SelectTabListener stl = null;
+	private SelectTabListener stl = new SelectTabListener();
 
 	private CommonControl selectedWidget = null;
+
+	
+	
+	
+	
+	public ControlledTabedBar() {
+		super();
+		this.addTabListener(this.stl);
+	}
 
 	public void onHide() {
 
@@ -102,7 +112,7 @@ public class ControlledTabedBar extends TabPanel implements CommonControl {
 
 
 	public void add(Widget w, String tabText) {
-		// TODO Auto-generated method stub
+
 		if (w instanceof CommonControl)
 			super.add(w, tabText);
 		else
@@ -173,8 +183,14 @@ public class ControlledTabedBar extends TabPanel implements CommonControl {
 			selectedWidget=(CommonControl) getWidget(tabIndex);
 			selected=tabIndex;
 			selectedWidget.onShow();
+			
 		}
 
 	}
 
+	public int getSelectedTabIndex()
+	{
+		return selected;
+	}
+	
 }

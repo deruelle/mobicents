@@ -34,11 +34,8 @@ package org.mobicents.slee.container.management.console.client.activity;
 
 import org.mobicents.slee.container.management.console.client.ServerCallback;
 import org.mobicents.slee.container.management.console.client.ServerConnection;
-import org.mobicents.slee.container.management.console.client.common.Card;
 import org.mobicents.slee.container.management.console.client.common.BrowseContainer;
-import org.mobicents.slee.container.management.console.client.components.ComponentTypeListPanel;
-import org.mobicents.slee.container.management.console.client.components.info.ComponentTypeInfo;
-import org.mobicents.slee.container.management.console.client.Logger;
+import org.mobicents.slee.container.management.console.client.common.Card;
 
 /**
  * @author Vladimir Ralev

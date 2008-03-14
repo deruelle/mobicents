@@ -34,7 +34,6 @@ package org.mobicents.slee.container.management.console.server.mbeans;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -42,7 +41,6 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.mobicents.slee.container.management.console.client.ManagementConsoleException;
-import org.mobicents.slee.container.management.console.client.log.FQDNNode;
 
 /**
  * @author baranowb
@@ -66,7 +64,6 @@ public class LogManagementMBeanUtils {
 		}
 	}
 
-
 	public void _setDefaultLoggerLevel(Level l)
 			throws ManagementConsoleException {
 
@@ -76,7 +73,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.util.logging.Level" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -87,7 +85,8 @@ public class LogManagementMBeanUtils {
 					"_getDefaultLoggerLevel", null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -98,7 +97,8 @@ public class LogManagementMBeanUtils {
 					new Object[] { l }, new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -108,7 +108,8 @@ public class LogManagementMBeanUtils {
 					"getDefaultLoggerLevel", null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -121,7 +122,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.util.logging.Level" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -132,7 +134,8 @@ public class LogManagementMBeanUtils {
 					"_getDefaultHandlerLevel", null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -144,7 +147,8 @@ public class LogManagementMBeanUtils {
 					new Object[] { l }, new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -154,30 +158,33 @@ public class LogManagementMBeanUtils {
 					"getDefaultHandlerLevel", null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
-	public void setDefaultNotificationInterval(int numberOfEntries)
+	public void setDefaultNotificationInterval(String numberOfEntries)
 			throws ManagementConsoleException {
 		try {
 			this.mbeanServer.invoke(logMgmtMBeanName,
 					"setDefaultNotificationInterval",
-					new Object[] { numberOfEntries }, new String[] { "int" });
+					new Object[] { Integer.parseInt(numberOfEntries) }, new String[] { "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
-	public int getDefaultNotificationInterval()
+	public Integer getDefaultNotificationInterval()
 			throws ManagementConsoleException {
 		try {
 			return ((Integer) this.mbeanServer.invoke(logMgmtMBeanName,
 					"getDefaultNotificationInterval", null, null)).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -200,7 +207,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -223,7 +231,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "java.util.logging.Level" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -249,7 +258,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -263,7 +273,8 @@ public class LogManagementMBeanUtils {
 					null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -282,7 +293,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -300,7 +312,8 @@ public class LogManagementMBeanUtils {
 					null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -317,7 +330,8 @@ public class LogManagementMBeanUtils {
 					new Object[] { name }, new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -340,7 +354,7 @@ public class LogManagementMBeanUtils {
 	 *             when arg is null{}
 	 */
 	public boolean addLogger(String name, Level level)
-			throws NullPointerException, ManagementConsoleException {
+			throws  ManagementConsoleException {
 		try {
 			return ((Boolean) this.mbeanServer.invoke(logMgmtMBeanName,
 					"addLogger", new Object[] { name, level }, new String[] {
@@ -348,7 +362,8 @@ public class LogManagementMBeanUtils {
 					.booleanValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -374,8 +389,7 @@ public class LogManagementMBeanUtils {
 	 *             when arg is null{}
 	 */
 	public boolean addLogger(String name, String level)
-			throws IllegalArgumentException, NullPointerException,
-			ManagementConsoleException {
+			throws  ManagementConsoleException {
 		try {
 			return ((Boolean) this.mbeanServer.invoke(logMgmtMBeanName,
 					"addLogger", new Object[] { name, level }, new String[] {
@@ -383,7 +397,8 @@ public class LogManagementMBeanUtils {
 					.booleanValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -444,7 +459,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -509,7 +525,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "java.lang.String", "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -535,7 +552,8 @@ public class LogManagementMBeanUtils {
 					.booleanValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -547,7 +565,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String", "int" })).booleanValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -596,7 +615,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -613,7 +633,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -635,7 +656,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -668,7 +690,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -701,7 +724,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -734,7 +758,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -767,7 +792,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" })).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -781,7 +807,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -794,7 +821,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String", "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -834,7 +862,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -872,7 +901,8 @@ public class LogManagementMBeanUtils {
 							"java.util.logging.Level" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -909,7 +939,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -946,7 +977,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -983,7 +1015,8 @@ public class LogManagementMBeanUtils {
 							"java.lang.String", "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 
 	}
@@ -1016,7 +1049,8 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -1028,46 +1062,89 @@ public class LogManagementMBeanUtils {
 	 *            target configuration file in Properties format, if null, local
 	 *            file is read(jre local)
 	 */
-	public void reReadConf(URI uri) throws IOException {
+	public void reReadConf(String uri) throws ManagementConsoleException {
+		//TODO
 	}
 
 	public void addHandler(String loggerName, String handlerName,
-			String handlerClassName, String formaterClass, String filterClass,
-			String[] constructorParameters, String[] paramValues)
-			throws  ManagementConsoleException {
-		
+			String handlerLevel, String handlerClassName,
+			String[] handlerConstructorParameterTypes,
+			String[] handlerConstructorParamValues, String formaterClass,
+			String[] formatterConstructorParameterTypes,
+			String[] formatterConstructorParamValues, String filterClass,
+			String[] filterConstructorParameterTypes,
+			String[] filterConstructorParamValues)
+			throws ManagementConsoleException {
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"addHandler", new Object[] { loggerName, handlerName, handlerClassName,formaterClass,filterClass,constructorParameters,paramValues },
-					new String[] { "java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String","java.lang.String[]","java.lang.String[]", });
+			
+			
+			
+			//this.mbeanServer.invoke(logMgmtMBeanName, "addHandler",
+			//		new Object[] { loggerName, handlerName, handlerLevel,
+			//				handlerClassName, handlerConstructorParameterTypes,
+			//				handlerConstructorParamValues, formaterClass,
+			//				formatterConstructorParameterTypes,
+			//				formatterConstructorParamValues, filterClass,
+			//				filterConstructorParameterTypes,
+			//				filterConstructorParamValues }, new String[] {
+			//				"java.lang.String", "java.lang.String",
+			//				"java.lang.String", "java.lang.String",
+			//				"java.lang.String[]", "java.lang.String[]",
+			//				"java.lang.String", "java.lang.String[]",
+			//				"java.lang.String[]", "java.lang.String",
+			//				"java.lang.String[]", "java.lang.String[]" });
+			
+			
+			this.mbeanServer.invoke(logMgmtMBeanName, "addHandler",
+							new Object[] { loggerName, handlerName, handlerLevel,
+									handlerClassName, handlerConstructorParameterTypes,
+									handlerConstructorParamValues, formaterClass,
+									formatterConstructorParameterTypes,
+									formatterConstructorParamValues, filterClass,
+									filterConstructorParameterTypes,
+									filterConstructorParamValues }, new String[] {
+									"java.lang.String", "java.lang.String",
+									"java.lang.String", "java.lang.String",
+									"java.lang.Object", "java.lang.Object",
+									"java.lang.String", "java.lang.Object",
+									"java.lang.Object", "java.lang.String",
+									"java.lang.Object", "java.lang.Object" });
+			
+			
+
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
-		
+
 	}
 
-	public int numberOfHandlers(String loggerName) throws  ManagementConsoleException {
+	public int numberOfHandlers(String loggerName)
+			throws ManagementConsoleException {
 		try {
 			return ((Integer) this.mbeanServer.invoke(logMgmtMBeanName,
 					"numberOfHandlers", new Object[] { loggerName },
 					new String[] { "java.lang.String" })).intValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
 	public String getGenericHandlerLevel(String loggerName, int index)
-			throws	ManagementConsoleException {
+			throws ManagementConsoleException {
 		try {
 			return ((String) this.mbeanServer.invoke(logMgmtMBeanName,
-					"getGenericHandlerLevel", new Object[] { loggerName,index },
-					new String[] { "java.lang.String","int" }));
+					"getGenericHandlerLevel",
+					new Object[] { loggerName, index }, new String[] {
+							"java.lang.String", "int" }));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
@@ -1076,106 +1153,119 @@ public class LogManagementMBeanUtils {
 			ManagementConsoleException {
 		try {
 			return ((String) this.mbeanServer.invoke(logMgmtMBeanName,
-					"getGenericHandlerFilterClassName", new Object[] { loggerName,index },
-					new String[] { "java.lang.String","int" }));
+					"getGenericHandlerFilterClassName", new Object[] {
+							loggerName, index }, new String[] {
+							"java.lang.String", "int" }));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
 	public String getGenericHandlerFormatterClassName(String loggerName,
-			int index) throws 	ManagementConsoleException {
+			int index) throws ManagementConsoleException {
 		try {
 			return ((String) this.mbeanServer.invoke(logMgmtMBeanName,
-					"getGenericHandlerFormatterClassName", new Object[] { loggerName,index },
-					new String[] { "java.lang.String","int" }));
+					"getGenericHandlerFormatterClassName", new Object[] {
+							loggerName, index }, new String[] {
+							"java.lang.String", "int" }));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
 	public void setGenericHandlerLevel(String loggerName, int index,
-			String level) throws  ManagementConsoleException {
-		
+			String level) throws ManagementConsoleException {
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"setGenericHandlerLevel", new Object[] { loggerName,index,level },
-					new String[] { "java.lang.String","int" , "java.lang.String"});
+			this.mbeanServer.invoke(logMgmtMBeanName, "setGenericHandlerLevel",
+					new Object[] { loggerName, index, level }, new String[] {
+							"java.lang.String", "int", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
 	public void setGenericHandlerFilterClassName(String loggerName, int index,
-			String className) throws  ManagementConsoleException {
-		
+			String className) throws ManagementConsoleException {
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"setGenericHandlerFilterClassName", new Object[] { loggerName,index,className },
-					new String[] { "java.lang.String","int" , "java.lang.String"});
+			this.mbeanServer.invoke(logMgmtMBeanName,
+					"setGenericHandlerFilterClassName", new Object[] {
+							loggerName, index, className }, new String[] {
+							"java.lang.String", "int", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
 	public void setGenericHandlerFormatterClassName(String loggerName,
-			int index, String className) throws  ManagementConsoleException {
-		
+			int index, String className) throws ManagementConsoleException {
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"setGenericHandlerFormatterClassName", new Object[] { loggerName,index,className },
-					new String[] { "java.lang.String","int" , "java.lang.String"});
+			this.mbeanServer.invoke(logMgmtMBeanName,
+					"setGenericHandlerFormatterClassName", new Object[] {
+							loggerName, index, className }, new String[] {
+							"java.lang.String", "int", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
 	public String getHandlerName(String loggerName, int index)
 			throws ManagementConsoleException {
 		try {
 			return (String) this.mbeanServer.invoke(logMgmtMBeanName,
-					"getHandlerName", new Object[] { loggerName,index },
-					new String[] { "java.lang.String","int" });
+					"getHandlerName", new Object[] { loggerName, index },
+					new String[] { "java.lang.String", "int" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
 	public void setHandlerName(String loggerName, int index, String newName)
 			throws ManagementConsoleException {
-		
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"setHandlerName", new Object[] { loggerName,index,newName },
-					new String[] { "java.lang.String","int" , "java.lang.String"});
+			this.mbeanServer.invoke(logMgmtMBeanName, "setHandlerName",
+					new Object[] { loggerName, index, newName }, new String[] {
+							"java.lang.String", "int", "java.lang.String" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
 	public void setUseParentHandlersFlag(String loggerName, boolean flag)
 			throws ManagementConsoleException {
-		
+
 		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"setUseParentHandlersFlag", new Object[] { loggerName,flag },
-					new String[] { "java.lang.String","boolean" });
+			this.mbeanServer.invoke(logMgmtMBeanName,
+					"setUseParentHandlersFlag",
+					new Object[] { loggerName, flag }, new String[] {
+							"java.lang.String", "boolean" });
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
 	public boolean getUseParentHandlersFlag(String loggerName)
@@ -1186,49 +1276,55 @@ public class LogManagementMBeanUtils {
 					new String[] { "java.lang.String" })).booleanValue();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
-		
+
 	}
 
-	
-	public String getLoggerLevel(String loggerName) throws ManagementConsoleException
-	{
+	public String getLoggerLevel(String loggerName)
+			throws ManagementConsoleException {
 		try {
 			return ((String) this.mbeanServer.invoke(logMgmtMBeanName,
 					"getLoggerLevel", new Object[] { loggerName },
 					new String[] { "java.lang.String" }));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
-		}
-	}
-	
-	public void setLoggerFilterClassName(String loggerName, String className,String[] constructorParameters, String[] paramValues) throws ManagementConsoleException
-	{
-		
-		
-		try {
-			 this.mbeanServer.invoke(logMgmtMBeanName,
-					"getLoggerFilterClassName", new Object[] { loggerName,className,constructorParameters,paramValues },
-					new String[] { "java.lang.String","java.lang.String","java.lang.String[]","java.lang.String[]" });
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
 
-	public String getLoggerFilterClassName(String loggerName) throws ManagementConsoleException
-	{
+	public void setLoggerFilterClassName(String loggerName, String className,
+			String[] constructorParameters, String[] paramValues)
+			throws ManagementConsoleException {
+
+		try {
+			this.mbeanServer.invoke(logMgmtMBeanName,
+					"setLoggerFilterClassName", new Object[] { loggerName,
+							className, constructorParameters, paramValues },
+					//new String[] { "java.lang.String", "java.lang.String",
+					//		"java.lang.String[]", "java.lang.String[]" });
+							new String[] { "java.lang.String", "java.lang.String",
+					"java.lang.Object", "java.lang.Object" });
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
+		}
+	}
+
+	public String getLoggerFilterClassName(String loggerName)
+			throws ManagementConsoleException {
 		try {
 			return ((String) this.mbeanServer.invoke(logMgmtMBeanName,
 					"getLoggerFilterClassName", new Object[] { loggerName },
 					new String[] { "java.lang.String" }));
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ManagementConsoleException(SleeManagementMBeanUtils.doMessage(e));
+			throw new ManagementConsoleException(SleeManagementMBeanUtils
+					.doMessage(e));
 		}
 	}
-	
-	
+
 }

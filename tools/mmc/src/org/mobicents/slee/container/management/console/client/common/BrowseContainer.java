@@ -197,6 +197,15 @@ public class BrowseContainer extends Composite {
 	private void refreshPanel() {
 		if (panels.size() > 0 && panels.get(panels.size() - 1) != null)
 			rootPanel.add((Widget) panels.get(panels.size() - 1));
+		
+		//FIXME: Bartek, this should happen here, may cause a lot of errors ;[ Highest priority in MMC after Beta2
+		//if(panels.get(panels.size() - 1)instanceof CommonControl)
+		//{
+		//	CommonControl cc=(CommonControl) panels.get(panels.size() - 1);
+		//	cc.onHide();
+		//	cc.onShow();
+		//	
+		//}
 	}
 
 	protected void select(int index) {

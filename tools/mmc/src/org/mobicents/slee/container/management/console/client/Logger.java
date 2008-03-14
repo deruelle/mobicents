@@ -51,4 +51,21 @@ public class Logger {
 	static public void error(String s) {
 		logPanel.error(s);
 	}	
+	
+	static public void config(String s)
+	{
+		logPanel.config(s);
+	}
+	static public void fine(String s)
+	{
+		logPanel.fine(s);
+	}
+	static public void finer(String s)
+	{
+		logPanel.finer(s);
+	}
+	static public void finest(String s)
+	{
+		logPanel.finest(s);
+	}
 }
