@@ -254,6 +254,20 @@
 
 	<!-- WE HAVE A BUNCH OF RAs in MC_HOME/ra  , except sip ra and parlay, see ant calls below-->
 	<target name="package-ras" depends="init">
+		
+		<!-- Handle MSC-RA separately -->
+		<ant dir="${mobicents.home}/../servers/media/mscontrol/msc-ra" target="package-for-release" antfile="build.xml" />
+		<copy overwrite="true" todir="${release.dir}/resources/msc-ra">
+							<fileset dir="${mobicents.home}/../servers/media/mscontrol/msc-ra/stage">
+								<!--
+								<include name="**.jar" />
+								<include name="*.xml" />
+								<include name="*.properties" />
+								<include name="**/*.txt" />
+								-->
+							</fileset>
+		</copy>
+
 		<for delimiter="," param="dir.name" list="${ra.dirs}">
 
 			<sequential>
