@@ -213,7 +213,7 @@
 				<fileset dir="${lib-prefix}">
 					<include name="bsh-2.0b4.jar" />
 				</fileset>
-				<path refid="mobicents.core.classpath"/>
+				<path refid="libs-ref"/>
 			</classpath>
 		</script>
 
