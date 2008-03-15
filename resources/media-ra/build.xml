@@ -4,7 +4,7 @@
 	<property name="compile.as.debug" value="true" />
 
 
-	<import file="$${ant.file.MediaResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
+	<import file="${ant.file.MediaResourceAdaptor}/../../../core/xml/ant/mobicents-ant-common-ra.xml" />
 
 	<property name="ra.name" value="media" />
 	<property name="ra.entity" value="MediaRA" />

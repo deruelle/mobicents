@@ -1,6 +1,5 @@
 This example implements a simple GoogleTalk Service to demonstrate usage of the Jabber/XMPP RA. 
 
-The code is tested to work with Mobicents 1.0.02.GA
 Running the example:
 
 You need to first configure the example with a valid GTalk user account. 

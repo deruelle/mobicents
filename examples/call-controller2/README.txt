@@ -6,8 +6,6 @@ It demonstrates:
 
 Running the Example:
 
-The code is tested to work with Mobicents 1.0.00.GA and later releases
-
 HOW TO DEPLOY:
 /path_to_mobicents_distro/tools/ant/ant deploy-all
 (depending on your command line environment settings, you may need to stop the server and run the "deploy" command a second time if it fails the first time)
@@ -27,7 +25,7 @@ REQUIREMENTS(deploy targets are not needed if deploy-all is called):
 *lib/slee-sip-ra -> ant ra-deploy  = will deploy sip ra - it pics up jboss bind address.
 *lib/sipservices -> ant deploy = will deploy sip proxy and registrar, however this examples requires that INVITE IS NOT initial, therefore 
 there is special target in lib/sipservices, refer to "ant -projecthelp" and read desc
-*lib/mediara -> ant ra-deploy - it will dpeloy media ra
+*lib/mediara -> ant ra-deploy - it will deploy media ra
 *ANT v 1.7.0
 
 

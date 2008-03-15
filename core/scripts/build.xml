@@ -31,7 +31,6 @@
 	<target name="init" depends="init-deps">
 		<tstamp prefix="tstamp" />
 		<echo>Build date: ${tstamp.DSTAMP}</echo>
-
 	</target>
 
 
@@ -85,7 +84,8 @@
 	<target name="remove-unneeded-dirs" description="Removes all, minimal directories to reduce the size of the distro">
 		<delete failonerror="no" includeemptydirs="true">
 			<fileset dir="${release.standalone.dir}/server/" excludes="${configuration.dir}/**"/>
-		</delete>
+		</delete> 
+		
 	</target>
 	
 	<target name="checkout-sip-servlets">
@@ -128,6 +128,15 @@
 		<copy file="./release-README.txt" todir="${release.dir}" verbose="true" />
 		<ant target="auto-deploy-all-release"></ant>
 		<ant target="remove-unneeded-dirs"></ant>
+		<!-- Do any pre-package tasks -->
+		<copy failonerror="true" file="jbossjta-properties.xml" tofile="${release.standalone.dir}/server/default/conf/jbossjta-properties.xml" overwrite="true"></copy>
+		<copy failonerror="true" file="examples.lib.build.xml" tofile="${release.standalone.dir}/../examples/lib/build.xml" overwrite="true"></copy>
+				
+		<copy overwrite="true" todir="${release.dir}/examples/lib">
+			<fileset dir="${mobicents.home}/xml">
+				<include name="ant/**" />
+			</fileset>
+		</copy>
 		<fixcrlf srcdir="${release.standalone.dir}/bin"
 		         includes="*.sh"/>
 		<chmod file="${release.standalone.dir}/bin/run.sh" perm="ugo+rx"/>
@@ -278,7 +287,7 @@
 	<target name="package-ant" depends="init">
 
 
-		<get dest="./ant.zip" src="http://${ant.download.url}/${ant.download.file.prefix}${ant.download.version}${ant.download.file.suffix}" />
+		<get usetimestamp="true" dest="./ant.zip" src="http://${ant.download.url}/${ant.download.file.prefix}${ant.download.version}${ant.download.file.suffix}" />
 		<delete dir="${release.dir}/tools/ant" failonerror="false" />
 		<mkdir dir="${release.dir}/tools/ant" />
 		<unzip dest="${release.dir}/tools/" src="./ant.zip">

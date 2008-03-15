@@ -14,9 +14,8 @@ Use:
 -to start the core JSLEE server
 
 cd server
-bin/run.bat -mc
+bin/run.bat
 (on Linux and *NIX, use run.sh instead of run.bat)
-(the command line parameter '-mc' is the same as '-c all -b 127.0.0.1')
 
 To verify that the server started successfully, open your favorite web browser and point it to
 http://localhost:8080/management-console
