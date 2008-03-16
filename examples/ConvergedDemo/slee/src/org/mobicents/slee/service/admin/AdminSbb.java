@@ -142,7 +142,7 @@ public abstract class AdminSbb extends CommonSbb {
 		this.setCustomEvent(event);
 
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(event.getCustomerName());

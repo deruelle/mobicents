@@ -406,7 +406,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			Order order = null;
 
 			TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-					audioFilePath, "kevin16");
+					audioFilePath, "kevin");
 
 			char[] c = dateAndTime.toCharArray();
 

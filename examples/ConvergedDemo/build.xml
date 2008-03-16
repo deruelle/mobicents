@@ -14,7 +14,10 @@
 	deploy-all will deploy the http-servlet-ra, the example service and the example web
         -->
 	<target name="deploy-all" depends="management-init, build-all" description="!! Deploys this  example along with all dependencies !!">		
-		<!-- TODO: Add the SIPRA, TTSRA, MediaRA and PersistenceRA deployment here -->
+		<ant dir="${sipra-home}" target="ra-deploy" />
+		<ant dir="${mscra-home}" target="ra-deploy" />
+		<ant dir="${ttsra-home}" target="ra-deploy" />
+		<ant dir="${persistencera-home}" target="ra-deploy" />
 		<ant target="deploy" />
 	</target>
 
@@ -37,7 +40,10 @@
 	-->
 	<target name="undeploy-all" depends="management-init" description="!! UnDeploys this  example along with all dependencies !!">
 		<ant target="udeploy" />
-		<!-- TODO: Add the SIPRA, TTSRA, MediaRA and PersistenceRA un-deployment here -->
+		<ant dir="${sipra-home}" target="ra-undeploy" />
+		<ant dir="${mscra-home}" target="ra-undeploy" />
+		<ant dir="${ttsra-home}" target="ra-undeploy" />
+		<ant dir="${persistencera-home}" target="ra-undeploy" />
 	</target>
 
 	<!--

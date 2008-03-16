@@ -22,15 +22,7 @@
 
 
 	<target name="init" depends="management-init,lib-init">
-		<fail>
-			JBOSS_HOME environment variable is not set. It should be set to something like C:\tools\jboss-4.2.0.GA on Windows or /var/jboss-4.2.0.GA on linux/unix.
-			<condition>
-				<not>
-					<isset property="system.JBOSS_HOME" />
-				</not>
-			</condition>
-		</fail>
-
+	
 		<path id="slee">
 			<pathelement location="${examples.home}/lib/slee_1_1.jar" />
 		</path>

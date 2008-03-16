@@ -122,7 +122,7 @@ public abstract class UserSbb extends CommonSbb {
 		this.setAudioFile(audioFilePath);
 
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("Welcome ");

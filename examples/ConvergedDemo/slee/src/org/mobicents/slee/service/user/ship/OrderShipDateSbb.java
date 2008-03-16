@@ -113,7 +113,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		mgr.close();
 
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("Welcome ");
