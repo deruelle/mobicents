@@ -12,13 +12,13 @@
 <server>         
 
     <!-- Media Server Management MBean -->
-    <mbean code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
+    <!-- mbean code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
          name="media.mobicents:service=MediaServerManagement"> 
         <depends optional-attribute-name="AnnTrunkManagementMBean">media.mobicents:trunk=announcement</depends>        
         <depends optional-attribute-name="ConfEndpointManagementMBean">media.mobicents:endpoint=conf</depends>        
         <depends optional-attribute-name="LoopEndpointManagementMBean">media.mobicents:trunk=loopback</depends>        
         <depends optional-attribute-name="PRTrunkManagementMBean">media.mobicents:trunk=packet-relay</depends>        
-    </mbean>
+    </mbean -->
 
     <!-- ANNOUNCEMENT -->
     <mbean code="org.mobicents.media.server.impl.ann.AnnTrunkManagement" 
@@ -74,7 +74,10 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
+        <attribute name="PCMU">true</attribute>
+        <attribute name="PCMA">false</attribute>
+        <attribute name="MediaType">audio.x_wav</attribute>
+        <attribute name="RecordDir">${jboss.home.url}server/default</attribute>
     </mbean>
     
 </server>
