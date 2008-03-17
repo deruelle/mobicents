@@ -63,7 +63,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     }
     
     public String getRecordDir() {
-        return recordDir;
+        return this.recordDir;
     }
     
     public String getMediaType() {

@@ -51,8 +51,9 @@ public class PlayRecordSignal extends AnnouncementSignal implements RecorderList
         String announcement = params[0];
         String recordDir = ((IVREndpointImpl) endpoint).getRecordDir();
         String recordURL = null;
+        
         if( recordDir != null ){
-        	recordURL = recordURL +  "/" + params[1];
+        	recordURL = recordDir +  "/" + params[1];
         }
         else {
         	recordURL = params[1];	

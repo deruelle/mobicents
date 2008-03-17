@@ -77,7 +77,7 @@
         <attribute name="PCMU">true</attribute>
         <attribute name="PCMA">false</attribute>
         <attribute name="MediaType">audio.x_wav</attribute>
-        <attribute name="RecordDir">${jboss.home.url}server/default</attribute>
+        <attribute name="RecordDir">file:${jboss.server.data.dir}</attribute>
     </mbean>
     
 </server>
