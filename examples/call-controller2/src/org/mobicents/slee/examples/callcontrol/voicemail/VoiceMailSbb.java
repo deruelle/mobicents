@@ -333,7 +333,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 		this.setUserEndpoint(endpointName);
 
 		if (getSameUser()) {
-			
+
 			log.debug("same user, lets play the voice mail");
 			System.out.println("same user, lets play the voice mail");
 
@@ -358,10 +358,32 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 
 		} else {
 			log.debug("not the same user, start recording after announcement");
-			System.out.println("not the same user, start recording after announcement");
-			
+			System.out
+					.println("not the same user, start recording after announcement");
+
 			URL audioFileURL = getClass().getResource(recordAfterTone);
-			String recordFilePath = "file:/home/abhayani/tmp/test.wav";
+
+			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
+			String fileName = ((SipURI) toHeader.getAddress().getURI())
+					.getUser()
+					+ WAV_EXT;
+			String route = null;
+			String recordFilePath = null;
+
+			try {
+				Context initCtx = new InitialContext();
+				Context myEnv = (Context) initCtx.lookup("java:comp/env");
+
+				route = (String) myEnv.lookup("filesRoute");
+			} catch (NamingException nEx) {
+				log.warn("Lookup of filesRoute env Variable failed", nEx);
+			}
+
+			if (route != null) {
+				recordFilePath = route + fileName;
+			} else {
+				recordFilePath = fileName;
+			}
 
 			String[] params = new String[2];
 			params[0] = audioFileURL.toString();
@@ -622,7 +644,6 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 	// Interfaces
 	private HeaderFactory headerFactory;
 
-	
 	private SipActivityContextInterfaceFactory sipACIF;
 	private TimerFacility timerFacility;
 

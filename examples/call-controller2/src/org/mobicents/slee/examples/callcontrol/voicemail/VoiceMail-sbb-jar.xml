@@ -109,9 +109,11 @@
             <env-entry-value>60000</env-entry-value>
         </env-entry>
         <env-entry>
+            <description>This is the path where the recorded files will reside and is relative to ${jboss.server.data.dir} 
+            Look at RecordDir attribute of IVREndpointManagement in mediaserver.sar/META-INF/jboss-service.xml </description>
             <env-entry-name>filesRoute</env-entry-name>
             <env-entry-type>java.lang.String</env-entry-type>
-            <env-entry-value>file:/home/abhayani/tmp/</env-entry-value>
+            <env-entry-value>call-controller2/</env-entry-value>
         </env-entry>				
 		<resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>
