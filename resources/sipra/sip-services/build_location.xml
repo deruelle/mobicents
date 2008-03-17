@@ -15,8 +15,8 @@
 
 
 	<path id="service.classpath">
-		<pathelement location="../lib/jain-sip-ri-1.2.jar" />
-		<pathelement location="../lib/jain-sip-api-1.2.jar" />
+		<pathelement location="../lib/jain-sip-ri-1.2.1.jar" />
+		<pathelement location="../lib/jain-sip-api-1.2.1.jar" />
 		<path refid="mobicents.core.classpath"/>
 		<pathelement location="../ratype/jars/sip-ratype.jar" />
 		<pathelement location="../ra/jars/sip-ra.jar" />
