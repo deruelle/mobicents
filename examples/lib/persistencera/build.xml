@@ -24,7 +24,7 @@
 	
 	
 	<available value="${ra.props}" file="${ra.props}" property="ra.entity.properties.filename"></available>
-	<import file="${ant.file.Common_Ant_Targets_for_SLEE_Resource_Adaptors}/../../../examples/lib/build.xml"/>
+	<import file="${ant.file.Common_Ant_Targets_for_SLEE_Resource_Adaptors}/../../build.xml"/>
 	
 	
 	<target name="create-deploy-urls" depends="management-init">
