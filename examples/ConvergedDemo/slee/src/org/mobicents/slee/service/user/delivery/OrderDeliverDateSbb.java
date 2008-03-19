@@ -37,7 +37,6 @@ import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
-import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.signal.Announcement;
 import org.mobicents.mscontrol.signal.Basic;
@@ -406,7 +405,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			Order order = null;
 
 			TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-					audioFilePath, "kevin");
+					audioFilePath, "kevin16");
 
 			char[] c = dateAndTime.toCharArray();
 
