@@ -95,7 +95,8 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     {
       try
       {
-        org.dom4j.Document doc = new SAXReader().read(url.openStream());
+        // TODO: Configure validation via MBean property        
+        org.dom4j.Document doc = new SAXReader(false).read(url.openStream());
         
         // Is the root element a <service-xml>
         isServiceXML = doc.getRootElement().getName().equals( "service-xml" );

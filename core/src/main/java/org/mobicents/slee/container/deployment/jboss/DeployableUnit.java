@@ -423,8 +423,10 @@ public class DeployableUnit
 
     if( is != null )
     {
+      // TODO: Configure validation via MBean property
+      
       // Read the file into a Document
-      Document doc = new SAXReader().read( is );
+      Document doc = new SAXReader(false).read( is );
       
       // By now we only care about <ra-entitu> nodes
       List<Element> raEntities = doc.getRootElement().selectNodes( "ra-entity" );

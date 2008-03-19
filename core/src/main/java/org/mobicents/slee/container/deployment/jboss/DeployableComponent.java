@@ -160,8 +160,9 @@ public class DeployableComponent
       
       try
       {
+        // TODO: Configure validation via MBean property
         // Parse the descriptor
-        Document doc2 = new SAXReader().read( di.url );
+        Document doc2 = new SAXReader(false).read( di.url );
         
         List<Element> nodeList = ((Node)doc2.getRootElement()).selectNodes( "service" );
         
@@ -209,6 +210,7 @@ public class DeployableComponent
       catch ( Exception e )
       {
         logger.error( "", e );
+        return null;
       }
     }
 
