@@ -275,6 +275,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             DatagramPacket udpPacket = new DatagramPacket(buff, buff.length);
             try {
                 socket.receive(udpPacket);
+                if (stopped) return;
             } catch (SocketTimeoutException e) {
                 if (stopped) return;
             } catch (IOException e) {
