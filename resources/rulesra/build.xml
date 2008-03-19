@@ -34,7 +34,7 @@
 
 	<property name="management.dir" value="management" />
 	<property name="management.sar" value="rulesra-management.sar" />
-	<property name="management.deploy.dir" value="${jboss.home}/server/all/deploy" />
+	<property name="management.deploy.dir" value="${jboss.home}/server/${node}/deploy" />
 
 	<target name="clean-management">
 		<delete dir="${management.dir}/${management.sar}" />

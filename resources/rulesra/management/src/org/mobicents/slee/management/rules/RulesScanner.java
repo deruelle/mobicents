@@ -242,7 +242,7 @@ public class RulesScanner extends ServiceMBeanSupport implements
 		}
 
 		if (urlsToBind.size() == 0) {
-			log.warn("No Rules files found");
+			log.info("No Rules files found");
 		}
 
 		List urlsToRemove = new LinkedList();

@@ -38,9 +38,10 @@
                  deploys myapp.ear from a remote location
             http://www.test.com/netboot/apps/
                  scans the specified WebDAV location
+                 file://D:/mobicents/mobicents-examples/rules-sbb/spreadsheet/
        -->
       <attribute name="URLs">
-         file://D:/mobicents/mobicents-examples/rules-sbb/spreadsheet/
+         data/
       </attribute>
 
       <attribute name="RecursiveSearch">True</attribute>
