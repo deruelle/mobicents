@@ -70,6 +70,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
             //disbale current signal if enabled
             if (signal != null) {
                 signal.stop();
+                signal = null;
             }
         } finally {
             super.deleteConnection(connectionID);
