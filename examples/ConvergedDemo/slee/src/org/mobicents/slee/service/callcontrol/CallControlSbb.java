@@ -198,7 +198,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 
 		releaseMediaConnectionAndDialog();
-		
+
 		try {
 			sipUtils.sendStatefulOk(event);
 		} catch (ParseException e) {
@@ -308,14 +308,14 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 
 		linkActivity.attach(getParentCmp());
-		
+
 		link.join(connection.getEndpoint(), ANNOUNCEMENT_ENDPOINT);
 	}
 
 	private void releaseMediaConnectionAndDialog() {
 		ActivityContextInterface[] activities = sbbContext.getActivities();
 		SbbLocalObject sbbLocalObject = getSbbContext().getSbbLocalObject();
-		MsConnection msConnection  = null;
+		MsConnection msConnection = null;
 		for (ActivityContextInterface attachedAci : activities) {
 			if (attachedAci.getActivity() instanceof Dialog) {
 				attachedAci.detach(sbbLocalObject);
@@ -327,15 +327,15 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 				attachedAci.detach(this.getParentCmp());
 			}
 		}
-		if(msConnection != null) {
+		if (msConnection != null) {
 			msConnection.release();
 		}
 	}
-	
+
 	public void sendBye() {
 
 		releaseMediaConnectionAndDialog();
-		
+
 		try {
 			Dialog dialog = sipUtils.getDialog(getResponseEventCmp());
 			sendRequest(dialog, Request.BYE);
@@ -590,7 +590,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 
 		public void handleAuthentication(String calleeCallId,
-				ResponseEvent event) {
+				ResponseEvent event) {			
 			sendRequestWithAuthorizationHeader(event);
 			setState(new InitialState(), calleeCallId);
 		}
@@ -1220,7 +1220,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 	 */
 
 	private void sendRequestWithAuthorizationHeader(ResponseEvent event) {
-
+		
 		ClientTransaction ct = null;
 		SessionAssociation sa = null;
 		try {
@@ -1237,7 +1237,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 
 		Dialog dialog = ct.getDialog();
-
+		SbbLocalObject sbbLocalObject = this.getSbbContext().getSbbLocalObject();
 		// TODO Handle exception
 		if (dialog == null) {
 			// Automatic dialog support is off
@@ -1270,7 +1270,8 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			try {
 				ActivityContextInterface sipACI = activityContextInterfaceFactory
 						.getActivityContextInterface(dialog);
-				sipACI.attach(getParentCmp());
+				sipACI.attach(sbbLocalObject);
+				sipACI.attach(this.getParentCmp());
 			} catch (UnrecognizedActivityException aci) {
 				aci.printStackTrace();
 			}
@@ -1295,14 +1296,6 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		// transaction.
 		setDialog(dialog, callId);
 
-		// Finally, send the request!
-		try {
-			ct.sendRequest();
-		} catch (SipException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 		// Since we are about the send the request in a new client transaction,
 		// we need to
 		// attach it to the new activity context in order to receive the
@@ -1324,8 +1317,15 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 		// Attach our local interface to the new ActivityContextInterface
 		// This makes this Sbb receive responses to the request
-		SbbLocalObject sbbLocalObject = getSbbContext().getSbbLocalObject();
 		ac.attach(sbbLocalObject);
+
+		// Finally, send the request!
+		try {
+			ct.sendRequest();
+		} catch (SipException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
