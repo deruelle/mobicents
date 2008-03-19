@@ -12,9 +12,8 @@ To run Mobicents:
 -----------------
 
 1. Provided that JBOSS_HOME is the root directory where JBoss Application Server is installed
-2. JBOSS_HOME/bin/run.bat -mc
+2. JBOSS_HOME/bin/run.bat
    NOTE: on linux/unix use run.sh instead of run.bat
-   NOTE: '-mc' == '-c all -b 127.0.0.1'
 
 LICENSE
 -------

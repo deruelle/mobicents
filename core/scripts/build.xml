@@ -85,7 +85,9 @@
 		<delete failonerror="no" includeemptydirs="true">
 			<fileset dir="${release.standalone.dir}/server/" excludes="${configuration.dir}/**"/>
 		</delete> 
-		
+		<delete failonerror="no" includeemptydirs="true">
+			<fileset dir="${release.standalone.dir}/server/default/deploy" includes="media-ra*"/>
+		</delete> 
 	</target>
 	
 	<target name="checkout-sip-servlets">
@@ -124,7 +126,7 @@
 
 	</target>
 
-	<target name="package-release" depends="makeall, make-release-dirs,  package-server,package-ant,package-mcmgmt,package-ras,package-examples,package-mgmt-console" description="!!! Run This target to prepare dir structure, pull everything from repo into mc.home/build/release/**">
+	<target name="package-release" depends="makeall, make-release-dirs,  package-server,package-ant,package-mcmgmt,package-ras,package-examples,package-mgmt-console,package-sipservlets" description="!!! Run This target to prepare dir structure, pull everything from repo into mc.home/build/release/**">
 		<copy file="./release-README.txt" todir="${release.dir}" verbose="true" />
 		<ant target="auto-deploy-all-release"></ant>
 		<ant target="remove-unneeded-dirs"></ant>
@@ -256,6 +258,7 @@
 	<target name="package-ras" depends="init">
 		
 		<!-- Handle MSC-RA separately -->
+		<ant dir="${mobicents.home}/../servers/media/mscontrol/msc-ra" target="clean" antfile="build.xml" />
 		<ant dir="${mobicents.home}/../servers/media/mscontrol/msc-ra" target="package-for-release" antfile="build.xml" />
 		<copy overwrite="true" todir="${release.dir}/resources/msc-ra">
 							<fileset dir="${mobicents.home}/../servers/media/mscontrol/msc-ra/stage">
@@ -272,6 +275,7 @@
 
 			<sequential>
 				<echo>Packaging RA for release from DIR[${mobicents.home}/../resources/@{dir.name}]</echo>
+				<ant dir="${mobicents.home}/../resources/@{dir.name}" target="clean" antfile="build.xml"/>
 				<ant dir="${mobicents.home}/../resources/@{dir.name}" target="package-for-release" antfile="build.xml" />
 
 				<delete dir="${release.dir}/resources/@{dir.name}" failonerror="false" />
@@ -330,6 +334,15 @@
 	
 	
 	<target name="package-sipservlets" depends="init">
+		<property name="mss.home" value="/home/vralev/sip-servlets"/>
+		<mkdir dir="${release.dir}/examples/click2call" />
+		<copy overwrite="true" todir="${release.dir}/examples/click2call">
+			<fileset dir="${mss.home}/sip-servlets-examples/click-to-call/">
+				<include name="*.txt" />
+			</fileset>
+		</copy>
+		<copy file="${mss.home}/sip-servlets-bootstrap/release/sip-servlets-README.txt" 
+		tofile="${release.dir}/sip-servlets-readme.txt" />
 	</target>
 
 	<!-- 
@@ -545,10 +558,23 @@
 
 		<property name="release.name" value="mobicents-all-${release.version}" />
 		<zip destfile="${release.dir}/../ready/${release.name}.zip" filesonly="false">
-			<fileset dir="${release.dir}">
-				<include name="**" />
-
-			</fileset>
+			<zipfileset dir="${release.dir}/server/bin"
+			            filemode="755" prefix="server/bin">
+			            <include name="*.sh" />
+			</zipfileset>
+	         <zipfileset dir="${release.dir}/server/bin"
+	         	prefix="server/bin">
+	            <exclude name="*.sh" />
+	         </zipfileset>
+	         <zipfileset dir="${release.dir}"
+	            prefix="">
+	            <exclude name="server/bin/**"/>
+	            <exclude name="server/server/*/data/**"/>
+	            <exclude name="server/server/*/log/**"/>
+	            <exclude name="server/server/*/tmp/**"/>
+	            <exclude name="server/server/*/work/**"/>
+	            <exclude name="server/server/tmp/**"/>
+	         </zipfileset>
 
 		</zip>
 		<checksum file="${release.dir}/../ready/${release.name}.zip" algorithm="SHA" fileext=".sha1.asc" forceOverwrite="yes" />
