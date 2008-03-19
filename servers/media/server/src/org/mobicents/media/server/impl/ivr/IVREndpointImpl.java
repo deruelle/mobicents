@@ -169,6 +169,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
             //disbale current signal if enabled
             if (signal != null) {
                 signal.stop();
+                signal = null;
             }
             
             //terminate push proxy 
