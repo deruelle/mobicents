@@ -160,7 +160,7 @@
 	<target name="deploy-all" depends="lib-init">
 		<!-- WE NEED msc-ra,sipra, and this.deploy -->		
 		<ant dir="${sipra-home}" target="ra-deploy" inheritall="false" />
-		<ant dir="${mediara-home}" target="ra-deploy" />
+		<ant dir="${mscra-home}" target="ra-deploy" />
 		<ant target="deploy" />
 	        <ant target="deploy-audio" />
 	</target>
