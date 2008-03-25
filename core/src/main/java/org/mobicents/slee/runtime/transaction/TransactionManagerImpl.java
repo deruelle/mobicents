@@ -1137,7 +1137,11 @@ public class TransactionManagerImpl extends ServiceMBeanSupport
 	 * 
 	 */
 	public void startService() throws Exception {
-
+		
+		// Force this property to allow invocation of getters.
+		// http://code.google.com/p/mobicents/issues/detail?id=63
+		System.setProperty( "jmx.invoke.getters", "true" );
+		
 		initTreeCache();
 
 		// We are going to use the JBoss transaction manager
