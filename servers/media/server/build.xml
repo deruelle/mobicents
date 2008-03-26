@@ -169,9 +169,9 @@
 
 
 	<target name="deploy-server" depends="package" description="Deploys MS into container">
+		<delete failonerror="false" dir="${jboss.home}/server/default/deploy/mediaserver.sar"></delete>
 		<mkdir dir="${jboss.home}/server/default/deploy/mediaserver.sar" />
 		<copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${dist.dir}/media-server.jar" overwrite="true" />
-		<copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/jainmgcp.jar" overwrite="true" />
 		<copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/jmf.jar" overwrite="true" />
 		<copy todir="${jboss.home}/server/default/deploy/mediaserver.sar" file="${libs.home}/jain-sip-ri-1.2.1.jar" overwrite="true" />
 		<copy todir="${jboss.home}/server/default/conf" file="dtmf.properties" overwrite="true" />
