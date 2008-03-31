@@ -99,7 +99,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         
         ModifyConnection evt = (ModifyConnection) event;
         String msg = "MDCX " + evt.getTransactionHandle() + " " +
-                evt.getEndpointIdentifier() + " MGCP version 1.0\n";
+                evt.getEndpointIdentifier() + " MGCP 1.0\n";
         
         //encode mandatory parameters
         
@@ -131,7 +131,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         }
         
         if (evt.getRemoteConnectionDescriptor() != null) {
-            msg += "\n" + evt.getRemoteConnectionDescriptor() + "\n";
+            msg += "\n" + evt.getRemoteConnectionDescriptor();
         }
         return msg;
     }
@@ -144,7 +144,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
                 response.getTransactionHandle()  + " " +
                 returnCode.getComment() + "\n";
         if (response.getLocalConnectionDescriptor() != null) {
-            msg +=  "\n" + response.getLocalConnectionDescriptor() + "\n";
+            msg +=  "\n" + response.getLocalConnectionDescriptor();
         }
         
         return msg;

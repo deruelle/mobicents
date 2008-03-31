@@ -78,7 +78,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
         //encode message header
         EndpointConfiguration evt = (EndpointConfiguration) event;
         String msg = "EPCF " + evt.getTransactionHandle() + " " + 
-                evt.getEndpointIdentifier() + " MGCP version 1.0\n";
+                evt.getEndpointIdentifier() + " MGCP 1.0\n";
         
         //encode mandatory parameters
         msg += "B:e:" + evt.getBearerInformation() + "\n";

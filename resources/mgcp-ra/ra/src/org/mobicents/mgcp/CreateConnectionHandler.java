@@ -101,7 +101,7 @@ public class CreateConnectionHandler extends TransactionHandler {
         
         CreateConnection evt = (CreateConnection) event;
         String msg = "CRCX " + evt.getTransactionHandle() + " " + 
-                evt.getEndpointIdentifier() + " MGCP version 1.0\n";
+                evt.getEndpointIdentifier() + " MGCP 1.0\n";
         
         //encode mandatory parameters
         
@@ -131,7 +131,7 @@ public class CreateConnectionHandler extends TransactionHandler {
         }
         
         if (evt.getRemoteConnectionDescriptor() != null) {
-            msg += "\n" + evt.getRemoteConnectionDescriptor() + "\n";
+            msg += "\n" + evt.getRemoteConnectionDescriptor();
         }
         return msg;
     }
@@ -156,7 +156,7 @@ public class CreateConnectionHandler extends TransactionHandler {
             msg += "Z2:" + response.getSecondEndpointIdentifier() + "\n";
         }
         if (response.getLocalConnectionDescriptor() != null) {
-            msg +=  "\n" + response.getLocalConnectionDescriptor() + "\n";
+            msg +=  "\n" + response.getLocalConnectionDescriptor();
         }
         
         return msg;

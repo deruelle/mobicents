@@ -98,7 +98,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
         
         DeleteConnection evt = (DeleteConnection) event;
         String msg = "DLCX " + evt.getTransactionHandle() + " " + 
-                evt.getEndpointIdentifier() + " MGCP version 1.0\n";
+                evt.getEndpointIdentifier() + " MGCP 1.0\n";
         
         
         //encode optional parameters
