@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.management.BadAttributeValueExpException;
+
 
 
 
@@ -39,14 +41,54 @@ public class InstallServiceTest extends AbstractSleeTCKTest {
 						"\n========================\nConnecting to resource\n========================\n");
 		TCKResourceListener resourceListener = new TestResourceListenerImpl();
 		setResourceListener(resourceListener);
-		/*
-		 * Properties props = new Properties(); try {
-		 * props.load(getClass().getResourceAsStream("sipStack.properties"));
-		 *  } catch (IOException IOE) { logger.info("FAILED TO LOAD:
-		 * sipStack.properties");
-		 *  }
-		 */
+	
+		
+		
+		try
+		{
+			getLog().info(" == LOADING PROPS FROM: test.properties ==");
+			props.load(getClass().getResourceAsStream("test.properties"));
+			jnpHostURL=props.getProperty("jnpHost",jnpHostURL);
+			raTypeDUName=props.getProperty("raTypeDUName",raTypeDUName);
+			raDUName=props.getProperty("raDUName",raDUName);
+			raLINK=props.getProperty("raLINK",raLINK);
+			testServiceDUName=props.getProperty("testServiceDUName",testServiceDUName);
+			raID=props.getProperty("raID",raID);
+			serviceID=props.getProperty("serviceID",serviceID);
+			sid = new ComponentKey(this.serviceID);
+			service = new ServiceIDImpl(sid);
+			raId = new ComponentKey(this.raID);
+			ra = new ResourceAdaptorIDImpl(raId);
+			getLog().info(" == FINISHED LOADING PROPS ==");
+		}catch(Exception IOE)
+		{
+			getLog().info("FAILED TO LOAD: test.properties");
+		
+			throw IOE;
+		}
+		
+		
+		utils()
+				.getLog()
+				.info(
+						"\n===================\nSTARTING DEPLOYMENT IN FEW uS\n===================\nACTIVITY:"
+								+ activityName
+								+ "\n=======================================");
 
+		String mcHOME = System.getProperty("MOBICENTS_HOME");
+		if(mcHOME==null)
+			throw new BadAttributeValueExpException(" == The System Property MOBICENTS_HOME is required, but does not exist!! ==");
+				
+		
+		
+		
+		
+		SCI=new SleeCommandInterface(jnpHostURL);
+		 dusPATH="file://"+mcHOME + "/tests/lib/container/";
+
+		
+		 raTypeInstalled=raInstalled=raEntityActivated=raEntityCreated=raLinkCreated=serviceActivated=serviceInstalled=false;
+		 //TODO: Add tests here to remove everything from possible dirty run
 	}
 
 	protected FutureResult result;
@@ -110,148 +152,211 @@ public class InstallServiceTest extends AbstractSleeTCKTest {
 	private ServiceIDImpl service = new ServiceIDImpl(sid);
 	private ComponentKey raId = new ComponentKey(this.raID);
 	private ResourceAdaptorIDImpl ra = new ResourceAdaptorIDImpl(raId);
+	protected boolean raTypeInstalled,raInstalled,raEntityCreated,raEntityActivated,raLinkCreated,serviceInstalled,serviceActivated;
+	protected Properties props=new Properties();
+	protected String dusPATH=null;
+	protected SleeCommandInterface SCI=null;
+	protected ArrayList errors=new ArrayList(2);
+	private Object opResult=null;
+	protected void installAll() throws Exception 
+	{
+		
+
+		deployRaType();
+		deployRa();
+		createRaEntity();
+		activateRaEntity();
+		createEntityLink();
+		installService();
+		activateService();
+		
+	}
+	protected void installService() throws Exception
+	{
+		if(serviceInstalled)
+			return;
+		getLog().info(" == INSTALLING TEST SERVICE:"+dusPATH+testServiceDUName+" ==");
+		opResult=SCI.invokeOperation("-install",dusPATH+testServiceDUName,null,null);
+		getLog().info(" == SERVICE INSTALLED:"+opResult+" ==");
+		serviceInstalled=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+		
+		
+		
+	}
+	protected void createEntityLink() throws Exception 
+	{
+		if(raLinkCreated)
+			return;
+		getLog().info(" == CREATING RA LINK:"+raLINK+" ==");
+		opResult=SCI.invokeOperation("-createRaLink", raLINK, raLINK, null);
+		getLog().info(" == RA LINK CREATED:"+opResult+" ==");
+		raLinkCreated=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
+	protected void activateRaEntity() throws Exception 
+	{
+		if(raEntityActivated)
+			return;
+		getLog().info(" == ACTIVATING RA ENTITY:"+ra+" ==");
+		opResult=SCI.invokeOperation("-activateRaEntity", raLINK, null, null);
+		getLog().info(" == RA ENTITY ACTIVATED:"+opResult+" ==");
+		raEntityActivated=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
+	protected void createRaEntity() throws Exception
+	{
+		if(raEntityCreated)
+			return;
+		getLog().info(" == CREATING RA ENTITY:"+ra+" ==");
+		opResult=SCI.invokeOperation("-createRaEntity",ra.toString(),raLINK,null);
+		getLog().info(" == RA ENTITY CREATED:"+opResult+" ==");
+		raEntityCreated=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
+	
+	protected void deployRa() throws Exception
+	{
+		if(raInstalled)
+			return;
+		getLog().info(" == DEPOYING RA :"+dusPATH+dusPATH+" ==");
+		opResult=SCI.invokeOperation("-install",dusPATH+raDUName,null,null);
+		getLog().info(" == DEPLOYED RA:"+opResult+" ==");
+		raInstalled=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
+	protected void deployRaType() throws Exception
+	{
+		if(raTypeInstalled)
+			return;
+		getLog().info(" == DEPOYING RA TYPE:"+dusPATH+raTypeDUName+" ==");
+		opResult=SCI.invokeOperation("-install",dusPATH+raTypeDUName,null,null);
+		getLog().info(" == DEPLOLYED RA TYPE:"+opResult+" ==");
+		raTypeInstalled=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
+	
+	protected void activateService()throws Exception 
+	{
+		if(serviceActivated)
+			return;
+		
+		getLog().info(" == ACTIVATING SERVICE ==");
+		opResult=SCI.invokeOperation("-activateService", service.toString(), null, null);
+		getLog().info(" == SERVICE ACTIVATED:"+opResult+" ==");
+		serviceActivated=true;
+		for(long l=0;l<1000000000l;l++)
+		{}
+	}
 	
 	
-	public void run(FutureResult result) throws Exception {
-		this.result = result;
+	protected void uninstallAll() throws Exception 
+	{
 
-		TCKResourceTestInterface resource = utils().getResourceInterface();
-		activityName = utils().getTestParams().getProperty("activityName");
-		tckActivityID = resource.createActivity(activityName);
+		deactivateService();
+		uninstallService();
+		removaRaEntityLink();
+		deactivateRaEntity();
+		destroyRaEntity();
+		uninstallRa();
+		uninstallRaType();
+	}
+	
+	protected void deactivateService() throws Exception
+	{
 
-		
-		
-		Properties props=new Properties();
-		try
+		if(serviceActivated)
 		{
-			getLog().info(" == LOADING PROPS FROM: test.properties ==");
-			props.load(getClass().getResourceAsStream("test.properties"));
-			jnpHostURL=props.getProperty("jnpHost",jnpHostURL);
-			raTypeDUName=props.getProperty("raTypeDUName",raTypeDUName);
-			raDUName=props.getProperty("raDUName",raDUName);
-			raLINK=props.getProperty("raLINK",raLINK);
-			testServiceDUName=props.getProperty("testServiceDUName",testServiceDUName);
-			raID=props.getProperty("raID",raID);
-			serviceID=props.getProperty("serviceID",serviceID);
-			sid = new ComponentKey(this.serviceID);
-			service = new ServiceIDImpl(sid);
-			raId = new ComponentKey(this.raID);
-			ra = new ResourceAdaptorIDImpl(raId);
-			getLog().info(" == FINISHED LOADING PROPS ==");
-		}catch(Exception IOE)
-		{
-			getLog().info("FAILED TO LOAD: test.properties");
-			
+			opResult=SCI.invokeOperation("-deactivateService", service.toString(), null, null);
+			serviceActivated=!serviceActivated;
+			getLog().info(" == SERVICE DEACTIVATED:"+opResult+" ==");
+			serviceActivated=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
 		}
-		
-		
-		utils()
-				.getLog()
-				.info(
-						"\n===================\nSTARTING DEPLOYMENT IN FEW uS\n===================\nACTIVITY:"
-								+ activityName
-								+ "\n=======================================");
-
-		String mcHOME = System.getProperty("MOBICENTS_HOME");
-		if(mcHOME==null)
-			result.setError(" == The System Property MOBICENTS_HOME is required, but does not exist!! ==");
-				
-		
-		
-		
-		
-		SleeCommandInterface SCI=new SleeCommandInterface(jnpHostURL);
-		String dusPATH="file://"+mcHOME + "/tests/lib/container/";
-		getLog().info(" == STARTIGN DEPLOYMENT ==");
-		ArrayList errors=new ArrayList(2);
-		boolean raTypeInstalled,raInstalled,raEntityCreated,raEntityActivated,raLinkCreated,serviceInstalled,serviceActivated;
-		raTypeInstalled=raInstalled=raEntityActivated=raEntityCreated=raLinkCreated=serviceActivated=serviceInstalled=false;
-		try{
-			Object opResult=null;
-			getLog().info(" == DEPOYING RA TYPE:"+dusPATH+raTypeDUName+" ==");
-			opResult=SCI.invokeOperation("-install",dusPATH+raTypeDUName,null,null);
-			getLog().info(" == DEPLOLYED RA TYPE:"+opResult+" ==");
-			raTypeInstalled=true;
-			getLog().info(" == DEPOYING RA :"+dusPATH+dusPATH+" ==");
-			opResult=SCI.invokeOperation("-install",dusPATH+raDUName,null,null);
-			getLog().info(" == DEPLOYED RA:"+opResult+" ==");
-			raInstalled=true;
-			getLog().info(" == CREATING RA ENTITY:"+ra+" ==");
-			opResult=SCI.invokeOperation("-createRaEntity",ra.toString(),raLINK,null);
-			getLog().info(" == RA ENTITY CREATED:"+opResult+" ==");
-			raEntityCreated=true;
-			getLog().info(" == ACTIVATING RA ENTITY:"+ra+" ==");
-			opResult=SCI.invokeOperation("-activateRaEntity", raLINK, null, null);
-			getLog().info(" == RA ENTITY ACTIVATED:"+opResult+" ==");
-			raEntityActivated=true;
-			getLog().info(" == CREATING RA LINK:"+raLINK+" ==");
-			opResult=SCI.invokeOperation("-createRaLink", raLINK, raLINK, null);
-			getLog().info(" == RA LINK CREATED:"+opResult+" ==");
-			raLinkCreated=true;
-			getLog().info(" == INSTALLING TEST SERVICE:"+dusPATH+testServiceDUName+" ==");
-			opResult=SCI.invokeOperation("-install",dusPATH+testServiceDUName,null,null);
-			getLog().info(" == SERVICE INSTALLED:"+opResult+" ==");
-			serviceInstalled=true;
-			
-    		getLog().info(" == ACTIVATING SERVICE ==");
-    		opResult=SCI.invokeOperation("-activateService", service.toString(), null, null);
-			getLog().info(" == SERVICE ACTIVATED:"+opResult+" ==");
-			serviceActivated=true;
-		}catch(Exception e)
+	}
+	protected void uninstallService() throws Exception 
+	{
+		if(serviceInstalled)
 		{
-			e.printStackTrace();
-			errors.add(e);
+			opResult=SCI.invokeOperation("-uninstall",dusPATH+testServiceDUName,null,null);
+			serviceInstalled=!serviceInstalled;
+			getLog().info(" == SERVICE UNINSTALLED:"+opResult+" ==");
+			serviceInstalled=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
 		}
-		
-		try
+	}
+	protected void removaRaEntityLink() throws Exception
+	{
+		if(raLinkCreated)
 		{
-			Object opResult=null;
-			if(serviceActivated)
-			{
-				opResult=SCI.invokeOperation("-deactivateService", service.toString(), null, null);
-				serviceActivated=!serviceActivated;
-				getLog().info(" == SERVICE DEACTIVATED:"+opResult+" ==");
-			}
-			if(serviceInstalled)
-			{
-				opResult=SCI.invokeOperation("-uninstall",dusPATH+testServiceDUName,null,null);
-				serviceInstalled=!serviceInstalled;
-				getLog().info(" == SERVICE UNINSTALLED:"+opResult+" ==");
-			}
-			if(raLinkCreated)
-			{
-				opResult=SCI.invokeOperation("-removeRaLink", raLINK, null, null);
-				raLinkCreated=!raLinkCreated;
-				getLog().info(" == RA LINK REMOVED:"+opResult+" ==");
-			}
-			if(raEntityActivated)
-			{
-				opResult=SCI.invokeOperation("-deactivateRaEntity", raLINK, null, null);
-				raEntityActivated=!raEntityActivated;
-				getLog().info(" == RA ENTITY DEACTIVATED:"+opResult+" ==");
-			}
-			if(raEntityCreated)
-			{
-				opResult=SCI.invokeOperation("-removeRaEntity",raLINK,null,null);
-				raEntityCreated=!raEntityCreated;
-				getLog().info(" == RA ENTITY REMOVED:"+opResult+" ==");
-			}
-			if(raInstalled)
-			{
-				opResult=SCI.invokeOperation("-uninstall",dusPATH+raDUName,null,null);
-				raInstalled=!raInstalled;
-				getLog().info(" == RA UNINSTALLED:"+opResult+" ==");
-			}
-			if(raTypeInstalled)
-			{
-				opResult=SCI.invokeOperation("-uninstall",dusPATH+raTypeDUName,null,null);
-				raTypeInstalled=!raTypeInstalled;
-				getLog().info(" == RA TYPE UNINSTALLED:"+opResult+" ==");
-			}
-		}catch(Exception e)
-		{
-			errors.add(e);
+			opResult=SCI.invokeOperation("-removeRaLink", raLINK, null, null);
+			raLinkCreated=!raLinkCreated;
+			getLog().info(" == RA LINK REMOVED:"+opResult+" ==");
+			raLinkCreated=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
 		}
+	}
+	protected void deactivateRaEntity() throws Exception
+	{
+		if(raEntityActivated)
+		{
+			opResult=SCI.invokeOperation("-deactivateRaEntity", raLINK, null, null);
+			raEntityActivated=!raEntityActivated;
+			getLog().info(" == RA ENTITY DEACTIVATED:"+opResult+" ==");
+			raEntityActivated=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
+		}
+	}
+	protected void destroyRaEntity() throws Exception
+	{
+		
+		if(raEntityCreated)
+		{
+			opResult=SCI.invokeOperation("-removeRaEntity",raLINK,null,null);
+			raEntityCreated=!raEntityCreated;
+			getLog().info(" == RA ENTITY REMOVED:"+opResult+" ==");
+			raEntityCreated=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
+		}
+	}
+	protected void uninstallRa() throws Exception
+	{
+		if(raInstalled)
+		{
+			opResult=SCI.invokeOperation("-uninstall",dusPATH+raDUName,null,null);
+			raInstalled=!raInstalled;
+			getLog().info(" == RA UNINSTALLED:"+opResult+" ==");
+			raInstalled=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
+		}
+	}
+	protected void uninstallRaType() throws Exception
+	{
+		if(raTypeInstalled)
+		{
+			opResult=SCI.invokeOperation("-uninstall",dusPATH+raTypeDUName,null,null);
+			raTypeInstalled=!raTypeInstalled;
+			getLog().info(" == RA TYPE UNINSTALLED:"+opResult+" ==");
+			raTypeInstalled=false;
+			for(long l=0;l<1000000000l;l++)
+			{}
+		}
+	}
+	
+	protected void handleErrors()
+	{
 		if(!errors.isEmpty())
 		{
 			getLog().info(" == SOME ERRORS OCURED!!: ==");
@@ -279,6 +384,39 @@ public class InstallServiceTest extends AbstractSleeTCKTest {
 			}
 			getLog().info(" == ERROR INFO: ==\n"+sb);
 		}
+	}
+	
+	public void run(FutureResult result) throws Exception {
+		this.result = result;
+
+		TCKResourceTestInterface resource = utils().getResourceInterface();
+		activityName = utils().getTestParams().getProperty("activityName");
+		tckActivityID = resource.createActivity(activityName);
+
+		
+		
+		
+				getLog().info(" == STARTIGN DEPLOYMENT ==");
+		
+		
+		
+		try{
+			installAll();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			errors.add(e);
+		}
+		
+		try
+		{
+			uninstallAll();
+		}catch(Exception e)
+		{
+			errors.add(e);
+		}
+		
+		handleErrors();
 	}
 
 }
