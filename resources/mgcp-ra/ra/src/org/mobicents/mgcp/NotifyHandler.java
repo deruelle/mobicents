@@ -60,16 +60,16 @@ public class NotifyHandler extends TransactionHandler {
         Notify notify = (Notify) event;
         StringBuffer message = new StringBuffer();
         message.append("NTFY " + event.getTransactionHandle() + " " +
-                notify.getEndpointIdentifier() + " MGCP 1.0");
+                notify.getEndpointIdentifier() + " MGCP 1.0\n");
         
         if (notify.getNotifiedEntity() != null) {
-            message.append("N:" + notify.getNotifiedEntity());
+            message.append("N:" + notify.getNotifiedEntity() + "\n");
         }
         
-        message.append("X:" + notify.getRequestIdentifier());
+        message.append("X:" + notify.getRequestIdentifier() + "\n");
         
         if (notify.getObservedEvents() != null) {
-            message.append("O:" + Utils.encodeEventNames(notify.getObservedEvents()));
+            message.append("O:" + Utils.encodeEventNames(notify.getObservedEvents()) + "\n");
         }
         return message.toString();
     }
@@ -77,7 +77,7 @@ public class NotifyHandler extends TransactionHandler {
     @Override
     protected String encode(JainMgcpResponseEvent event) {
         return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + 
-                event.getReturnCode().getComment();
+                event.getReturnCode().getComment() + "\n";
     }
 
     private class CommandContentHandle implements MgcpContentHandler {

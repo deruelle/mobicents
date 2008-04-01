@@ -61,28 +61,28 @@ public class NotificationRequestHandler extends TransactionHandler {
         StringBuffer buffer = new StringBuffer();
         
         buffer.append("RQNT " + event.getTransactionHandle() + " " +
-                req.getEndpointIdentifier() + " MGCP 1.0");
+                req.getEndpointIdentifier() + " MGCP 1.0\n");
         
         if (req.getNotifiedEntity() != null) {
-            buffer.append("N:" + req.getNotifiedEntity());
+            buffer.append("N:" + req.getNotifiedEntity() +"\n");
         }
         
-        buffer.append("X:" + req.getRequestIdentifier());
+        buffer.append("X:" + req.getRequestIdentifier() +"\n");
         
         if (req.getDigitMap() != null) {
             //encode digit map
         }
         
         if (req.getSignalRequests() != null) {
-            buffer.append("S:" + Utils.encodeEventNames(req.getSignalRequests()));
+            buffer.append("S:" + Utils.encodeEventNames(req.getSignalRequests()) +"\n");
         }
         
         if (req.getRequestedEvents() != null) {
-            buffer.append("R:" + Utils.encodeRequestedEvents(req.getRequestedEvents()));
+            buffer.append("R:" + Utils.encodeRequestedEvents(req.getRequestedEvents()) +"\n");
         }
         
         if (req.getDetectEvents() != null) {
-            buffer.append("T:" + Utils.encodeEventNames(req.getDetectEvents()));
+            buffer.append("T:" + Utils.encodeEventNames(req.getDetectEvents()) +"\n");
         }
         
         return buffer.toString();
@@ -92,7 +92,7 @@ public class NotificationRequestHandler extends TransactionHandler {
     @Override
     protected String encode(JainMgcpResponseEvent event) {
         return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + 
-                event.getReturnCode().getComment();
+                event.getReturnCode().getComment() + "\n";
     }
     
     private class CommandContentHandle implements MgcpContentHandler {
