@@ -1,0 +1,112 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Overview_of_the_Mobicents_Media_Server">
+	<title>Overview of the Mobicents Media Server</title>
+	<formalpara>
+		<title>The Reasoning and Need for Media Servers</title>
+		<para>With the continued progress of globalization, more corporations than ever before have workgroups spread across countries and continents across the world. To support and increase the productivity of remote and telecommuting workgroups, communications companies are considering more cost effective network solutions that combine voice, wireless, data and video functionality. Businesses like these expect that the services they select and eventually implement will have call quality comparable to conventional telephone service, and they expect those services to boost productivity and reduce overall communications costs. Acquiring these desired network services requires connections from the Internet and wireless and wireline networks to Public Switched Telephone Networks (<acronym>PSTN</acronym>s) using a flexible, robust, scalable and cost-effective media gateway. The ability of such gateways to reduce overall communications costs for dispersed workgroups forms the foundation for media services and servers.</para>
+	</formalpara>
+		<!-- <para>With continued globalization, many corporations have workgroups dispersed around the world. To support workgroup productivity and communications companies are considering cost effective and less expansive network solutions that combine voice, wireless, data and video. These businesses expect the services they select and implement to have the high quality of the telephone and other services they now use, and they expect them to boost productivity and help reduce overall communication costs. To access the desired network services requires connections from wireless, wireline networks, and the Internet to Public Switched Telephone Network (PSTN) with flexible, robust, scalable and cost-effective media gateway. These gateways must reduce cost of communication of the dispersed workgroups and form the foundation for media services.</para> -->
+	<formalpara>
+		<title>Media Gateways Bridge Multiple Technologies</title>
+		<para>Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym>IP</acronym>) enable the convergence of voice, data and video. Media gateways provide the ability to switch voice media between a network and its access point. Using Digital Subscriber Line (<acronym>DSL</acronym>) and fast-Internet cable technology, a media gateway converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for wireline and wireless phones. Media gateways sit at the intersection of the PSTNs and wireless or IP-based networks.</para>
+	</formalpara>
+		<!-- <formalpara>
+			<title>Media Gateways Bridge Multiple Technologies</title>
+			<para>Today all communication can take place through a computer. Widely accessible broadband and Internet Protocol (IP) enable voice, data and video. Media gateways provide conversation and switching voice media between a network and its access point. Digital Subscriber Line (DSL) or cable modem a media gateway converts, compress and and packetizes voice data for transfer back and forth across the Internet backbone for wireline or wireless phones. Media gateways fit between the PSTN and wireless or IP-bbased networks.</para>
+		</formalpara> -->
+	<formalpara>
+		<title>The Justification for Media Gateways for VoIP</title>
+		<para>Multiple market demands are pushing companies to converge all of their media services using media gateways with VoIP capabilities. Companies expect such a convergent architecture to:</para>
+	</formalpara>
+		<!-- <formalpara>
+			<title>Why modular media gateways for VoIP</title>
+			<para>Several market demands are pushing companies to converge all of their media services using media gateways,with VoIP.Companies are expecting this architecture to:</para>
+		</formalpara> -->
+	<variablelist>
+		<title></title>
+		<varlistentry>
+			<term>Lower Initial Costs</term>
+			<listitem>
+				<para>Capital investment is decreased because low-cost commodity hardware can be used for multiple functions.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Lower Development Costs</term>
+			<listitem>
+				<para>Open system hardware and software standards with well-defined applications mean lower costs, and Application Programmable Interfaces (<acronym>API</acronym>s) accelerate development.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Handle Multiple Media Types</term>
+			<listitem>
+				<para>Companies want <acronym>VoIP</acronym> solutions today, but also need to choose extensible solutions that will handle video in the near future.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Lower the Costs of Deployment and Maintenance</term>
+			<listitem>
+				<para>Standardized, modular systems reduce training costs and maintenance while also improving uptime.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>Enable Rapid Time-to-Market</term>
+			<listitem>
+				<para>Early market entry hits the window of opportunity and maximizes revenue.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+		<!-- <itemizedlist>
+			<listitem>
+				<para>Lower initial costs. Capital investment is less because hardware can be used for multiple functions.</para>
+			</listitem>
+			<listitem>
+				<para>Lower development costs.Open system hardware and software standards with well defined application mean lower costs, and Application Programmable Interfaces (AAPIs) accelerate development.</para>
+			</listitem>
+			<listitem>
+				<para>Handle multiple media types. Companies want VoIP solutions today, but need to select solutions that will also handle video in the near future.</para>
+			</listitem>
+			<listitem>
+				<para>Lower the costs of deployment and maintenance. Standardized, modular systems reduce training costs and maintenance while also improving uptime.</para>
+			</listitem>
+			<listitem>
+				<para>Enable faster time-tto-mmarket. Early market entry hits the window of opportunity and maximizes revenue.</para>
+			</listitem>
+		</itemizedlist> -->
+	<formalpara>
+		<title>What Is the Mobicents Media Server?</title>
+		<para>The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and aimed to:</para>
+	</formalpara>
+	<itemizedlist>
+		<listitem>
+			<para>Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+		</listitem>
+		<listitem>
+			<para>Meet the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single&mdash;and singularly-capable&mdash;media gateway platform.</para>
+		</listitem>
+		<listitem>
+			<para>Increase flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</para>
+		</listitem>
+	</itemizedlist>
+	<!-- <section
+		id="section-What_Is_the_Mobicents_Media_Server">
+		<title>What Is the Mobicents Media Server?</title>
+		<para>Mobicents Media Gateway is open source, based on Java Media Framework implementation aimed to:</para>
+		<itemizedlist>
+			<listitem>
+				<para>Deliver competitive, complete, best-of-breed media gateway functionality featuring highest quality.</para>
+			</listitem>
+			<listitem>
+				<para>Meet the demands of converged wireless, wireline, cable broadband access and fixed-mobile converged VoIP networks from a single media gateway platform</para>
+			</listitem>
+			<listitem>
+				<para>Increase flexibility with a media gateway that supports wide variety of call control protocols and scales down to meet the demands of enterprises and small carrier providers.</para>
+			</listitem>
+			<listitem>
+				<para>React quickly to dynamic market requirements.</para>
+			</listitem>
+		</itemizedlist>
+	</section> -->
+</section>
