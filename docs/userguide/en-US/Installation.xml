@@ -1,0 +1,98 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter
+	id="Mobicents_User_Guide-Test">
+	<title>Installation</title>
+	<section
+		id="section-Installing_the_Mobicents_Binary">
+		<title>Installing the Mobicents Binary</title>
+		<para>Mobicents runs on top of the JBoss Application Server. The Mobicents 1.20 binary distribution comes bundled with the JBoss Application Server version 4.2.2 GA.</para>
+		<formalpara>
+			<title>Hardware Requirements</title>
+			<para>Both Mobicents and the JBoss Application Server are 100% Java. Mobicents will run on the same hardware that the JBoss Application Server runs on.</para>
+		</formalpara>
+		<formalpara>
+			<title>Pre-Install Requirements</title>
+			<para>You should ensure two things before downloading and installing the Mobicents binary release:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>You must have sufficient disk space in order to install the Mobicents binary release. Once unzipped, version 1.20 of the Mobicents binary release requires about 230 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
+			</listitem>
+			<listitem>
+				<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Applicatio..n Server.</para>
+			</listitem>
+		</itemizedlist>
+		<formalpara>
+			<title>Installing the Mobicents Binary</title>
+			<para>Once the preconditions and requirements have been met you are free to install the Mobicents binary distribution.</para>
+		</formalpara>
+		<orderedlist>
+			<listitem>
+				<formalpara>
+					<title>Download the Mobicents Binary Distribution</title>
+					<para>The latest version can be found by going to the <ulink
+							url="https://sourceforge.net/projects/mobicents/">Mobicents project page on SourceForge.net</ulink>, clicking on <emphasis>Download Mobicents</emphasis>, and then looking for <emphasis>Mobicents Server</emphasis> and <emphasis>Latest Version</emphasis>.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Verify the Integrity of the Zip File.</title>
+					<para>Along with the zip file there is a sha1 file<footnote><para>For the Mobicents 1.20 binary release, the relevant file names are <filename>mobicents-all-1_2_0_BETA1.zip</filename> and <filename>mobicents-all-1_2_0_BETA1.zip.sha1.asc</filename>.</para>
+						</footnote> which contains a checksum that can be used to verify the integrity of the zip file, and can alert you if the file has been changed since it was uploaded, or if it was corrupted upon download.</para>
+				</formalpara>
+				<para>On a Linux system you can use the <command>sha1sum</command> command to verify the integrity of the binary distribution zip file.</para>
+				<para>On a Windows system you will need to download a sha1sum-generating program such as the <command>sha1sum.exe</command> program. This will generate a checksum that you can compare with the sum in the sha1 file.</para>
+				<para>Note that if the two checksums are not identical, it means that the downloaded zip file was corrupted upon download, or has been changed since it was last uploaded to the server.</para>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Install Mobicents</title>
+					<para>Unzip the Mobicents binary distribution zip file to a location in your home directory, thus completing the install.</para>
+				</formalpara>
+			</listitem>
+		</orderedlist>
+	</section>
+	<section
+		id="section-Building_Mobicents_1.2.x">
+		<title>Building the Mobicents 1.2.x Series.</title>
+		<para>TBD: I need corrected instructions using SVN from <ulink
+				url="http://wiki.java.net/bin/view/Communications/MobicentsQuickStartGuide#How_to_build_Mobicents_1_2_x"/>
+		</para>
+	</section>
+	<section
+		id="section-Installing_EclipSLEE">
+		<title>Installing EclipSLEE: The JAIN SLEE Eclipse Plugin</title>
+		<para>The Mobicents project's EclipSLEE Plugin for the Eclipse <acronym>IDE</acronym> enables and facilitates working with Mobicents and JAIN SLEE. In particular, EclipSLEE is designed to help in the creation of the following <acronym>JAIN SLEE</acronym> components:</para>
+		<itemizedlist>
+			<listitem>
+				<para>Profile Specifications</para>
+			</listitem>
+			<listitem>
+				<para>Events</para>
+			</listitem>
+			<listitem>
+				<para>Service Building Blocks (<acronym>SBB</acronym>s)</para>
+			</listitem>
+			<listitem>
+				<para>Service XML Descriptors</para>
+			</listitem>
+			<listitem>
+				<para>Deployable Units</para>
+			</listitem>
+		</itemizedlist>
+		<para>With the EclipSLEE plugin, developers can construct complete services quickly and easily. The plug-in takes care of ensuring that the XML descriptors are correct, as well as creating skeleton Java classes to which developers can add service logic.</para>
+		<formalpara>
+			<title>How to Install EclipSLEE Eclipse Plugin</title>
+			<para>EclipSLEE can be installed simply by adding the URL of the Update site. In Eclipse, click on 
+			<menuchoice>
+				<guimenu>Help</guimenu>
+					<guimenuitem>Software Updates</guimenuitem>
+					<guimenuitem>Find and Install...</guimenuitem>
+				</menuchoice>. The <literal>Install/Update</literal> dialog box will pop up. Choose the second option, <menuchoice><guimenuitem>Search for new features to install</guimenuitem></menuchoice>, and click next to be presented with the <literal>Install</literal> dialog. On the right-hand side, click the <guibutton>New Remote Site...</guibutton> button to be presented with the <literal>New Update Site</literal> dialog. For the Name field, enter <userinput>EclipSLEE</userinput>, and in the <literal>URL</literal> field, enter the URL of the remote site: <userinput>http://people.redhat.com/vralev/eclipslee/update/</userinput>. Press <guibutton>OK</guibutton> to return to the <literal>Install</literal> dialog. Check the just-added <literal>EclipSLEE</literal> site and click the <guibutton>Finish</guibutton> button. Eclipse will then prompt you to read and accept the license agreement, and will also ask you whether you want to install all components. After following the instructions of Eclipse's plugin install wizard, the EclipSLEE plugin will be downloaded and installed (usually to the shared Eclipse plugins directory, unless you have directed Eclipse to install to another location). Restarting Eclipse is required in order to initialize the EclipSLEE plugin so that it can be used.</para>
+		</formalpara>
+	</section>
+</chapter>
+
+

@@ -1,0 +1,148 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter
+	id="chapter-Resource_Adapters">
+	<title>Resource Adapters</title>
+	<xi:include
+		href="resource_adapters/SIP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/XMPP_and_Google_Talk_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Asterisk_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Parlay_and_Parlay-X_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/J2EE_and_CA_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Diameter_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Media_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/SMPP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Media_Gateway_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/JCC_INAP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/HTTP-Server_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/HTTP-Client_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Persistence_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/XCAP_Client_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Rules_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/TTS_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/SAP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/Third-Party_Resource_Adapters.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+</chapter>
+	<!-- <section
+		id="section-SIP_Resource_Adapter">
+		<title>SIP Resource Adapter</title>
+		<para></para>
+	</section> -->
+<!-- 	<section
+		id="section-XMPP_and_Google_Talk_Resource_Adapter">
+		<title>XMPP/Google Talk Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Asterisk_Resource_Adapter">
+		<title>Asterisk Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Parlay_and_Parlay-X_Resource_Adapter">
+		<title>Parlay/Parlay-X Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-J2EE_and_CA_Resource_Adapter">
+		<title>J2EE/JCA Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Diameter_Resource_Adapter">
+		<title>Diameter Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Media_Resource_Adapter">
+		<title>Media Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-SMPP_Resource_Adapter">
+		<title>SMPP Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Media_Gateway_Resource_Adapter">
+		<title>Media Gateway Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-JCC_INAP_Resource_Adapter">
+		<title>Java Call Control (JCC) INAP Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-HTTP-Client_Resource_Adapter">
+		<title>HTTP Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Persistence_Resource_Adapter">
+		<title>Persistence Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-XCAP_Client_Resource_Adapter">
+		<title>XCAP Client Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Rules_Resource_Adapter">
+		<title>Rules Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-TTS_Resource_Adapter">
+		<title>TTS Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-SAP_Resource_Adapter">
+		<title>SAP Resource Adapter</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Third-Party_Resource_Adapters">
+		<title>Third-Party Resource Adapters</title>
+		<para></para>
+	</section> -->
+
+
