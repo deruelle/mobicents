@@ -1,0 +1,62 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter
+	id="chapter-Deploying_and_Undeploying_Resource_Adapters">
+	<title>Deploying and Undeploying Resource Adapters</title>
+	<section
+		id="section-Before_You_Begin:_Resource_Adapters_and_Deployable_Unit_Files">
+		<title>Before You Begin: Resource Adapters and Deployable Unit Files</title>
+		<para>hi</para>
+		<section
+			id="section-How_to_Recognize_Deployable_Unit_Files">
+			<title>How to Recognize Deployable Unit Files</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Correct_Order_for_Installing_Deployable_Unit_Files">
+			<title>Correct Order for Installing Deployable Unit Files</title>
+			<para></para>
+		</section>
+	</section>
+	<section
+		id="section-Deploying_Resource_Adapters">
+		<title>Deploying Resource Adapters</title>
+		<para></para>
+		<section
+			id="section-Deploying_Resource_Adapters_Via_the_Command_Line">
+			<title>Deploying Resource Adapters Via the Command Line</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files">
+			<title>Deploying Resource Adapters By Copying Deployable Unit Files</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Deploying_Resource_Adapters_With_the_Management_Console">
+			<title>Deploying Resource Adapters With the Management Console</title>
+			<para></para>
+		</section>
+	</section>
+	<section
+		id="section-Undeploying_Resource_Adapters">
+		<title>Undeploying Resource Adapters</title>
+		<para></para>
+		<section
+			id="section-Undeploying_Resource_Adapters_Via_the_Command_Line">
+			<title>Undeploying Resource Adapters Via the Command Line</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Undeploying_Resource_Adapters_By_Removing_Files">
+			<title>Undeploying Resource Adapters By Removing Files</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
+			<title>Undeploying Resource Adapters With the Management Console</title>
+			<para></para>
+		</section>
+	</section>
+</chapter>
