@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<chapter
-	id="chapter-Deploying_and_Undeploying_Resource_Adapters">
+<section
+	id="section-Deploying_and_Undeploying_Resource_Adapters">
 	<title>Deploying and Undeploying Resource Adapters</title>
 	<para>hi</para>
 	<section
@@ -61,4 +61,4 @@
 			<para></para>
 		</section>
 	</section>
-</chapter>
+</section>

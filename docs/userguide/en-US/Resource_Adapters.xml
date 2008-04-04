@@ -63,7 +63,7 @@
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 </chapter>
 	<!-- <section
-		id="section-SIP_Resource_Adapter">
+		id="chapter-SIP_Resource_Adapter">
 		<title>SIP Resource Adapter</title>
 		<para></para>
 	</section> -->
@@ -73,77 +73,77 @@
 		<para></para>
 	</section>
 	<section
-		id="section-Asterisk_Resource_Adapter">
+		id="chapter-Asterisk_Resource_Adapter">
 		<title>Asterisk Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Parlay_and_Parlay-X_Resource_Adapter">
+		id="chapter-Parlay_and_Parlay-X_Resource_Adapter">
 		<title>Parlay/Parlay-X Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-J2EE_and_CA_Resource_Adapter">
+		id="chapter-J2EE_and_CA_Resource_Adapter">
 		<title>J2EE/JCA Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Diameter_Resource_Adapter">
+		id="chapter-Diameter_Resource_Adapter">
 		<title>Diameter Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Media_Resource_Adapter">
+		id="chapter-Media_Resource_Adapter">
 		<title>Media Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-SMPP_Resource_Adapter">
+		id="chapter-SMPP_Resource_Adapter">
 		<title>SMPP Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Media_Gateway_Resource_Adapter">
+		id="chapter-Media_Gateway_Resource_Adapter">
 		<title>Media Gateway Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-JCC_INAP_Resource_Adapter">
+		id="chapter-JCC_INAP_Resource_Adapter">
 		<title>Java Call Control (JCC) INAP Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-HTTP-Client_Resource_Adapter">
+		id="chapter-HTTP-Client_Resource_Adapter">
 		<title>HTTP Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Persistence_Resource_Adapter">
+		id="chapter-Persistence_Resource_Adapter">
 		<title>Persistence Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-XCAP_Client_Resource_Adapter">
+		id="chapter-XCAP_Client_Resource_Adapter">
 		<title>XCAP Client Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Rules_Resource_Adapter">
+		id="chapter-Rules_Resource_Adapter">
 		<title>Rules Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-TTS_Resource_Adapter">
+		id="chapter-TTS_Resource_Adapter">
 		<title>TTS Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-SAP_Resource_Adapter">
+		id="chapter-SAP_Resource_Adapter">
 		<title>SAP Resource Adapter</title>
 		<para></para>
 	</section>
 	<section
-		id="section-Third-Party_Resource_Adapters">
+		id="chapter-Third-Party_Resource_Adapters">
 		<title>Third-Party Resource Adapters</title>
 		<para></para>
 	</section> -->
