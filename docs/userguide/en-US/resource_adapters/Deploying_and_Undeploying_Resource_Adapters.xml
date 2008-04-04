@@ -7,7 +7,8 @@
 	<section
 		id="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files">
 		<title>Before You Begin: Resource Adapters and Deployable Unit Files</title>
-		<para>hi</para>
+		<para>Resource adapters are JAIN SLEE components that can be deployed (i.e. <quote>loaded</quote> or <quote>installed</quote>) into the Mobicents Converged Application Server, and undeployed (<quote>uninsntalled</quote>) from it. At the file level, resource adapters consist of specially-named files called deployable unit files. Two of these deployable unit files must be loaded/installed before the Mobicents Converged Application Server will deploy the resource adapter. This section will teach you how to locate where resource adapters and their files live, and how to deploy them and undeploy them through several different, though equivalent ways: via the command line; by copying the correct files to a special directory, or removing them from it; or with the Mobicents Management Console.</para>
+		<para>Which of these various ways of accomplishing the same task is easier depends on you, the user. If you are comfortable with the command line, or like to script behavior, then deploying via the command line will probably be the easiest way for you. If you would prefer to simply copy or delete some files with your file manager, you can do it that way. And for those who prefer graphical user interfaces (<acronym>GUI</acronym>s), the Management Console provides an interface to the Mobicents Converged Application Server, and can easily be used to accomplish such tasks locally and remotely. However: no matter which method you will prefer, it is necessary to read the following two sections, on recognizing deployable unit files and knowing the correct order for installing those files, before reading one or two of the various method sections.</para>
 		<section
 			id="section-How_to_Recognize_Deployable_Unit_Files">
 			<title>How to Recognize Deployable Unit Files</title>
