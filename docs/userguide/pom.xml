@@ -43,11 +43,14 @@
 						</format>-->
 						<format>
 							<formatName>html_single</formatName>
-							<!--For HTML Single Use the first 'main-html.xsl' stylesheet resource...
-							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>-->
 							<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>
 							<finalName>index.html</finalName>
 						</format>
+						<format>
+							<formatName>html</formatName>
+							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>
+							<finalName>index.html</finalName>
+						</format>l
 					</formats>
 					<options>
 						<xincludeSupported>true</xincludeSupported>
