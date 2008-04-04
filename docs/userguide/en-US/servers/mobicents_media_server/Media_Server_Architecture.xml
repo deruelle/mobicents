@@ -65,7 +65,7 @@ In addition to control protocol modules the SLEE container is aimed to provide h
 -->
 	<para>The mobdules deployed under <acronym>SLEE</acronym> control interact with the Media Server Service Provider Interface (<acronym>SPI</acronym>) through the Media Server Control Resource Adapter, or <acronym>MSC-RA</acronym>. The <acronym>MSC-RA</acronym> follows the recommendations of JSR-309 and implements asynchronous interconnection with the Media Server <acronym>SPI</acronym> stack. This local implementation is restricted and does not all the use of high-level abstractions like VoiceXML dialogs, <abbrev>etc.</abbrev>.</para>
 <!--
-The modules deployed under SLEE control interact with Media Server SPI though Media Server Control Resource Adaptor. The MSC-RA follows to recomndations of JSR-309 and implements asynchronous interconnection with Media Server SPI stack. This local implementation is restricted and does not allow to use high level abstraction like Voice XML dialogs, etc.
+The modules deployed under SLEE control interact with Media Server SPI though Media Server Control Resource Adapter. The MSC-RA follows to recomndations of JSR-309 and implements asynchronous interconnection with Media Server SPI stack. This local implementation is restricted and does not allow to use high level abstraction like Voice XML dialogs, etc.
 -->
 	<formalpara>
 		<title>Typical Deployment Scenario</title>

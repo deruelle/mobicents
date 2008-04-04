@@ -14,8 +14,8 @@
 		<para>In Java Specification Request 22 (JSR-22), this resource adapter type name is denoted as <computeroutput>JAIN SIP</computeroutput>, and the type vendor as <computeroutput>javax.sip</computeroutput>. This resource adapter type version is 1.1. Mobicents provides a fully-compliant implementation of this specification.</para>
 	</formalpara>
 	<section
-		id="section-Installing_the_JAIN_SIP_Resource_Adaptor">
-		<title>Installing the JAIN SIP Resource Adaptor</title>
+		id="section-Installing_the_JAIN_SIP_Resource_Adapter">
+		<title>Installing the JAIN SIP Resource Adapter</title>
 		<para>To install the JAIN SIP Resource Adapter, you must first acquire the latest version. Navigate to the <ulink
 				url="https://sourceforge.net/projects/mobicents">Mobicents Sourceforge project page</ulink> and click on the <emphasis>Download Mobicents</emphasis> link. On the next page, click on the <emphasis>SLEE SIP RA</emphasis> link so that it expands to reveal the necessary jar file, which you can click to download<footnote
 				id="sip_ra_filename"><para>As of the time this was written, the jar file was named <filename>jsipv1.2ra-package-10-02-2007.jar</filename>.</para>
@@ -36,7 +36,7 @@
 </section>
 
 <!-- 
-Here is a short guide on how to build and install the Jain Sip Resource Adaptor.
+Here is a short guide on how to build and install the Jain Sip Resource Adapter.
 
     * Checkout latest source or package of sip ra 1.2. It contains ra, and sip services. Source can be obtained from svn repo: https://slee-sip-ra.dev.java.net/svn/slee-sip-ra/trunk
     * Start the Mobicents server
