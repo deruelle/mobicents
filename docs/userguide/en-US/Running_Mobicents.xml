@@ -67,7 +67,7 @@
 			</varlistentry>
 		</variablelist>
 	</section>
-	<!--<section
+	<section
 		id="chapter-Deploying_and_Undeploying_Resource_Adapters">
 		<title>Deploying and Undeploying Resource Adapters</title>
 		<para>Mobicents resource adapters can be deployed in several different ways. The easiest way depends on whether you would rather deploy them through the Mobicents Management Console, or by copying the deployable unit files into the correct directory, or by deploying them via the command line.</para>
@@ -94,7 +94,8 @@
 				</mediaobject>
 			</figure>
 			<para>Before we click the <guibutton>Browse...</guibutton> button to search for deployable unit files, it is important to know how to recognize them, and in which order they should be installed.</para>
-			<formalpara id="How_Do_I_Recognize_Deployable_Unit_Files">
+			<formalpara
+				id="How_Do_I_Recognize_Deployable_Unit_Files">
 				<title>How Do I Recognize Deployable Unit Files?</title>
 				<para></para>
 			</formalpara>
@@ -162,51 +163,54 @@
 				</mediaobject>
 			</figure>
 			<para>Successful uninstallation means that neither deployable unit files are listed in the <guimenuitem>Browse</guimenuitem> tab of the <guilabel>Deployable Units</guilabel> view, and the resource adapter is not listed in the <guilabel>Resources</guilabel> view.</para>
-	</section>
-	<section
-		id="section-Deploying_Resource_Adapters_by_Copying_Deployable_Unit_Files">
-		<title>Deploying Resource Adapters by Copying Deployable Unit Files</title>
-		<para><xref linkend="How_Do_I_Recognize_Deployable_Unit_Files"/></para>
-	</section>
-	<section
-		id="section-Deploying_Resource_Adapters_Via_the_Command_Line">
-		<title>Deploying Resource Adapters Via the Command Line</title>
-		<para>Most Mobicents resource adapters can be run by simply issuing an ant task command from the topmost Mobicents directory.</para>
-		<note>
-			<para>Remember to replace <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
+		</section>
+		<section
+			id="section-Deploying_Resource_Adapters_by_Copying_Deployable_Unit_Files">
+			<title>Deploying Resource Adapters by Copying Deployable Unit Files</title>
+			<para>
+				<xref
+					linkend="How_Do_I_Recognize_Deployable_Unit_Files"/>
+			</para>
+		</section>
+		<section
+			id="section-Deploying_Resource_Adapters_Via_the_Command_Line">
+			<title>Deploying Resource Adapters Via the Command Line</title>
+			<para>Most Mobicents resource adapters can be run by simply issuing an ant task command from the topmost Mobicents directory.</para>
+			<note>
+				<para>Remember to replace <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
 				</filename> and <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
 				</filename> in the paths below with the name of the topmost Mobicents directory and the directory name corresponding to the correct resource adapter, respectively. Look in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> to find the directory name corresponding to the resource adapter you want to deploy.</para>
-		</note>
-		<orderedlist>
-			<listitem>
-				<para>Change to the directory in the Mobicents installation:</para>
-				<para>
+			</note>
+			<orderedlist>
+				<listitem>
+					<para>Change to the directory in the Mobicents installation:</para>
+					<para>
 				<screen>
 <command>cd  <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
 							</filename>
 						</command>
 </screen>
-				</para>
-			</listitem>
-			<listitem>
-				<para>Run the ant build-and-deploy script:</para>
-				<screen>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Run the ant build-and-deploy script:</para>
+					<screen>
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
 </screen>
-				<para>For example, the directory name in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
-				<screen>
+					<para>For example, the directory name in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
+					<screen>
 <command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command>
 </screen>
-			</listitem>
-		</orderedlist>
-		<formalpara
-			id="fpara-Undeploying_Resource_Adapters_Via_the_Command_Line">
-			<title>Undeploying Resource Adapters Via the Command Line</title>
-			<para>Resource Adapters can be undeployed in almost exactly the same way that they are deployed. To undeploy a resource adapter, issue the following command from the topmost Mobicents directory, replacing <replaceable>&lt;resource_adapter&gt;</replaceable> with the name of the directory corresponding to the name of the resource adapter you want to undeploy:</para>
-		</formalpara>
-		<screen>
+				</listitem>
+			</orderedlist>
+			<formalpara
+				id="fpara-Undeploying_Resource_Adapters_Via_the_Command_Line">
+				<title>Undeploying Resource Adapters Via the Command Line</title>
+				<para>Resource Adapters can be undeployed in almost exactly the same way that they are deployed. To undeploy a resource adapter, issue the following command from the topmost Mobicents directory, replacing <replaceable>&lt;resource_adapter&gt;</replaceable> with the name of the directory corresponding to the name of the resource adapter you want to undeploy:</para>
+			</formalpara>
+			<screen>
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-undeploy</command>
 </screen>
+		</section>
 	</section>
-</section>-->
 </chapter>
