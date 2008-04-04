@@ -68,7 +68,7 @@
 		</variablelist>
 	</section>
 	<section
-		id="section-Deploying_and_Undeploying_Resource_Adapters">
+		id="chapter-Deploying_and_Undeploying_Resource_Adapters">
 		<title>Deploying and Undeploying Resource Adapters</title>
 		<para>Mobicents resource adapters can be deployed in several different ways. The easiest way depends on whether you would rather deploy them through the Mobicents Management Console, or by copying the deployable unit files into the correct directory, or by deploying them via the command line.</para>
 		<para>Likewise, undeploying resource adapters can be accomplished in multiple ways. At the end of each of the following sections on deploying resource adapters there is, in addition, a section on how, similarly, to undeploy them.</para>

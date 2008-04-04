@@ -9,7 +9,7 @@
 		id="section-Installing_the_Asterisk_Resource_Adapter">
 		<title>Installing the Asterisk Resource Adapter</title>
 		<para>The Asterisk resource adapter can be installed by referring to <xref
-				linkend="section-Deploying_and_Undeploying_Resource_Adapters"/>.</para>
+				linkend="chapter-Deploying_and_Undeploying_Resource_Adapters"/>.</para>
 		<para>Remember to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
 			</filename> with the name of the directory in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the Asterisk resource adapter (currently this directory is named <filename><replaceable>asteriskra</replaceable>
 			</filename>, but this could change in the future).
