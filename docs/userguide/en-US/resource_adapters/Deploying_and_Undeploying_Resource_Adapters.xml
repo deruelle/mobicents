@@ -86,7 +86,7 @@
 					<imageobject>
 						<imagedata
 							align="center"
-							fileref="images/deployable_units-install.png"
+							fileref="../images/deployable_units-install.png"
 							format="PNG"/>
 					</imageobject>
 				</mediaobject>
