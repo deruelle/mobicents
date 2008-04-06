@@ -19,25 +19,25 @@
 							<screen>
 <command>cd <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/server/bin</filename>
 								</command>
-</screen>
+							</screen>
 						</listitem>
 						<listitem>
 							<para>Ensure that the <filename>run.sh</filename> file is executable. If it isn't, modify its permissions so that it is:</para>
 							<screen>
 <command>chmod +x <filename>run.sh</filename>
 								</command>
-</screen>
+							</screen>
 						</listitem>
 						<listitem>
 							<para>Finally, start the Mobicents Application Server:.</para>
 							<screen>
 <command>./run.sh</command>
-</screen>
+							</screen>
 							<note>
 								<para>The above command is a shortened version of this equivalent command:</para>
 								<screen>
 <command>./run.sh -c all -b 127.0.0.1</command>
-</screen>
+								</screen>
 							</note>
 						</listitem>
 					</orderedlist>
@@ -54,12 +54,12 @@
 							<para>Start the Mobicents Application Server:</para>
 							<screen>
 <command>run.bat</command>
-</screen>
+							</screen>
 							<note>
 								<para>The above command is a shortened version of this equivalent command:</para>
 								<screen>
 <command>run.bat -c all -b 127.0.0.1</command>
-</screen>
+								</screen>
 							</note>
 						</listitem>
 					</orderedlist>
@@ -189,18 +189,18 @@
 <command>cd  <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
 							</filename>
 						</command>
-</screen>
+						</screen>
 					</para>
 				</listitem>
 				<listitem>
 					<para>Run the ant build-and-deploy script:</para>
 					<screen>
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
-</screen>
+					</screen>
 					<para>For example, the directory name in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
 					<screen>
-<command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command>
-</screen>
+						<command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command>
+					</screen>
 				</listitem>
 			</orderedlist>
 			<formalpara
@@ -210,7 +210,7 @@
 			</formalpara>
 			<screen>
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-undeploy</command>
-</screen>
+			</screen>
 		</section>
 	</section>
 </chapter>
