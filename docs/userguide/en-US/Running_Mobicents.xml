@@ -7,7 +7,7 @@
 	<section
 		id="Running_the_Mobicents_Application_Server">
 		<title>Running the Mobicents Application Server</title>
-		<para>Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (Linux) or <command>run.bat</command> (Windows) The precise instructions depend on which platform you are running Mobicents on.</para>
+		<para>Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (Linux) or <command>run.bat</command> (Windows) The precise instructions depend on which platform you are running Mobicents on.</para>
 		<variablelist>
 			<title>Platform Mobicents is Running On</title>
 			<varlistentry>
@@ -15,9 +15,9 @@
 				<listitem>
 					<orderedlist>
 						<listitem>
-							<para>Change your working directory to the <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/server/bin</filename> directory:</para>
+							<para>Change your working directory to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory:</para>
 							<screen>
-<command>cd <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/server/bin</filename>
+<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename>
 								</command>
 							</screen>
 						</listitem>
@@ -114,7 +114,7 @@
 			<para>The file with <literal>ratype</literal> in the filename is a dependency of the other file, and it <emphasis>must be installed first</emphasis>. For example, in the <acronym>SIP</acronym> resource adapter directory (we will discuss how to find the appropriate directory for your resource adapter in the next section), we find these two deployable unit files: <filename>sip-ra-DU.jar</filename> and <filename>sip-ratype-DU.jar</filename>. The file named <replaceable>&lt;sip&gt;</replaceable>-ra-DU.jar is the <quote>main</quote> deployable unit file for the <acronym>SIP</acronym> resource adapter, which we know because its file name has the name of the resource adapter (<filename>sip</filename>), followed by a hyphen and then <literal>ra</literal>, which stands for <quote>resource adapter</quote>. This <quote>main</quote> resource adapter file has a dependency: the <filename>sip-ratype-DU.jar</filename> file, which, as we noted, must be installed first.</para>
 			<formalpara>
 				<title>Installing the Deployable Unit Files</title>
-				<para>Click <guibutton>Browse...</guibutton> and navigate to the <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> directory. In this directory are subdirectories corresponding to the names of installable resource adapters. For example, the <filename>sipra</filename> directory refers to the <acronym>SIP</acronym> resource adapter. Find the correct directory for the resource adapter you want to install and enter it using the file selection dialog.</para>
+				<para>Click <guibutton>Browse...</guibutton> and navigate to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> directory. In this directory are subdirectories corresponding to the names of installable resource adapters. For example, the <filename>sipra</filename> directory refers to the <acronym>SIP</acronym> resource adapter. Find the correct directory for the resource adapter you want to install and enter it using the file selection dialog.</para>
 			</formalpara>
 			<para>Unfortunately, it is not possible to select multiple files with the file selection dialog and deploy everything at once, thereby avoiding the need to deploy them in the correct order. Locate all of the deployable unit files in the directory (explained above), determine which one is the <quote>main</quote> deployable unit file for the resource adapter, and select the first of its dependencies with the file selector.</para>
 			<figure
@@ -177,16 +177,16 @@
 			<title>Deploying Resource Adapters Via the Command Line</title>
 			<para>Most Mobicents resource adapters can be run by simply issuing an ant task command from the topmost Mobicents directory.</para>
 			<note>
-				<para>Remember to replace <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
+				<para>Remember to replace <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
 				</filename> and <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
-				</filename> in the paths below with the name of the topmost Mobicents directory and the directory name corresponding to the correct resource adapter, respectively. Look in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> to find the directory name corresponding to the resource adapter you want to deploy.</para>
+				</filename> in the paths below with the name of the topmost Mobicents directory and the directory name corresponding to the correct resource adapter, respectively. Look in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> to find the directory name corresponding to the resource adapter you want to deploy.</para>
 			</note>
 			<orderedlist>
 				<listitem>
 					<para>Change to the directory in the Mobicents installation:</para>
 					<para>
 				<screen>
-<command>cd  <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>
+<command>cd  <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
 							</filename>
 						</command>
 						</screen>
@@ -197,7 +197,7 @@
 					<screen>
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
 					</screen>
-					<para>For example, the directory name in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
+					<para>For example, the directory name in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
 					<screen><command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command></screen>
 				</listitem>
 			</orderedlist>

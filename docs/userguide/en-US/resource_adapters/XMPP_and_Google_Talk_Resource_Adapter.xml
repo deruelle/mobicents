@@ -12,7 +12,7 @@
 		<para>The XMPP and Google Talk resource adapter can be installed by referring to <xref
 				linkend="chapter-Deploying_and_Undeploying_Resource_Adapters"/>.</para>
 		<para>Remember to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
-			</filename> with the name of the directory in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the XMPP and Google Talk resource adapter (currently this directory is named <filename><replaceable>???</replaceable>
+			</filename> with the name of the directory in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the XMPP and Google Talk resource adapter (currently this directory is named <filename><replaceable>???</replaceable>
 			</filename>, but this could change in the future).
 		</para>
 	</section> -->

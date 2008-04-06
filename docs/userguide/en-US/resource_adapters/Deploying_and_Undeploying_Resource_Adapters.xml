@@ -61,7 +61,7 @@
 			<screen>
 				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
 			</screen>
-			<para>For example, the directory name in <filename><replaceable>&lt;mobicents_topmost_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
+			<para>For example, the directory name in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
 			<screen>
 <command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command>
 			</screen>
