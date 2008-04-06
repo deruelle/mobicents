@@ -74,7 +74,23 @@
 		<section
 			id="section-Deploying_Resource_Adapters_With_the_Management_Console">
 			<title>Deploying Resource Adapters With the Management Console</title>
-			<para></para>
+			<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
+					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
+			<para>Once the Mobicents Converged Application Server is running, point your browser to <systemitem><ulink
+						url="http://localhost:8080/management-console/"/>
+				</systemitem> to open the Management Console. Click on <guimenuitem>Deployable Units</guimenuitem> in the Main Menu; this will open the <guilabel>Deployable Units</guilabel> main view, where you will see a list of currently-deployed units under the <guimenuitem>Browse</guimenuitem> tab, which will read <literal>No deployable unit found</literal> at first. Two other tabs provide the possibility of searching for and installing deployable units. Click on the <guimenuitem>Install</guimenuitem> tab, and you will see a <guilabel>Package file:</guilabel> prompt and a text-entry field in which the name of the deployable unit file you want to install will be listed. But first we must locate the correct deployable unit file, so click the <guibutton>Install</guibutton> button to the right of the text-entry field.</para>
+			<figure
+				id="blah">
+				<title>The <guibutton>Install</guibutton> tab of the <guilabel>Deployable Units</guilabel> view in the Management Console</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata
+							align="center"
+							fileref="images/deployable_units-install.png"
+							format="PNG"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
 		</section>
 	</section>
 	<section
