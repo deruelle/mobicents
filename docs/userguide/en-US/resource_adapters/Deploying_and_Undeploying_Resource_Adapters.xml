@@ -15,8 +15,8 @@
 			<para>The files belonging to resource adapters, and which you will need to access in order to deploy and undeplay them, are located in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename>. It is trivial to figure out which directory in <filename>resources</filename> corresponds to the resource adapter that you wish to deploy or undeploy. For example, the <filename>sipra</filename> directory holds the files necessary for running the <acronym>SIP</acronym> resource adapter, and the <filename>xmppra</filename> directory holds the <acronym>XMPP</acronym> and Google Talk resource adapter.</para>
 		</formalpara>
 		<formalpara
-			id="fpara-section-How_to_Recognize_Deployable_Unit_Files">
-			<title>section-How_to_Recognize_Deployable_Unit_Files</title>
+			id="fpara-How_to_Recognize_Deployable_Unit_Files">
+			<title>How to Recognize Deployable Unit Files</title>
 			<para>Deployable unit files are <acronym>JAR</acronym> (Java ARchive) files. There are two deployable unit files in each resource adapter's directory. The following two patterns describe the file names:</para>
 		</formalpara>
 		<variablelist
