@@ -51,15 +51,15 @@
 			<title>Deploying Resource Adapters Via the Command Line</title>
 			<para>Resource adapters can be deployed by simply issuing an ant task command from the topmost Mobicents directory. First, change to this directory:</para>
 			<screen>
-<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
-						</filename>
-					</command>
-				</screen>
+				<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
+					</filename>
+				</command>
+			</screen>
 			<para>Run the ant build-and-deploy script, remembering to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
 				</filename> with the correct directory name (refer to <xref
 					linkend="fpara-Where_to_Find_Resource_Adapters_in_the_Mobicents_Installation"/> if you are unsure):</para>
 			<screen>
-<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
+				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
 			</screen>
 		</section>
 		<section
