@@ -41,6 +41,13 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
+		<formalpara
+			id="fpara-How_to_Determine_the_Order_for_Installing_Deployable_Unit_Files">
+			<title>How to Determine the Order for Installing Deployable Unit Files</title>
+			<para>Deployable unit files must be installed in a certain order, starting with the <emphasis>ratype</emphasis> deployable unit file, whose file name has the form: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename>.</para>
+		</formalpara>
+		<para>The second (and last) deployable unit file you must install is the <emphasis>ra</emphasis> file: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename>.</para>
+		<para>For example, if you wanted to deploy the SIP resource adapter, then you would want to first install the deployable unit file named <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename>, followed by the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file. </para>
 	</section>
 	<section
 		id="section-Deploying_Resource_Adapters">
@@ -120,8 +127,7 @@
 					</imageobject>
 				</mediaobject>
 			</figure>
-			<para>Before clicking the <guibutton>Browse</guibutton> button however, it will prove helpful to know which of the two deployable unit file to install first. The files must be installed in the correct order, starting with the <emphasis>ratype</emphasis> deployable unit file, whose file name has the form: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename>.</para>
-			<para>The second and last deployable unit file you must install is the simple <emphasis>ra</emphasis> file: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename>.</para>
+			<para>Before clicking the <guibutton>Browse</guibutton> button however, it will prove helpful to know which of the two deployable unit file to install first.</para>
 			<para>Armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to a <computeroutput>[INFO] Deployable unit installed</computeroutput> message in the <guilabel>Log Console</guilabel>.</para>
 			<para>If you see the name of the resource adapter you wanted to install listed in the <guimenuitem>Resources</guimenuitem> view of the Management Console, then that resource adapter has been successfully deployed.</para>
 			<figure
