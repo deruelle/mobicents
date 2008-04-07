@@ -134,6 +134,8 @@ Total time: 5 seconds</computeroutput>
 					</imageobject>
 				</mediaobject>
 			</figure>
+			<para>To undeploy a resource adapter with the Management Console, refer to <xref
+					linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>.</para>
 		</section>
 	</section>
 	<section
