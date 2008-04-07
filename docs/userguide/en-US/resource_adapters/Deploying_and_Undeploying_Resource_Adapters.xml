@@ -110,18 +110,8 @@
 			<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
 					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
 			<important>
-				<para>The following instructions also assume that you have already read the previous sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console:</para>
-				<para>
-							<xref
-						linkend="fpara-Where_to_Find_Resource_Adapters_in_the_Mobicents_Installation"/>
-						</para>
-				<para>
-							<xref
-						linkend="fpara-How_to_Recognize_Deployable_Unit_Files"/>
-						</para>
-				<para>
-					<xref
-						linkend="fpara-How_to_Determine_the_Correct_Order_for_Installing_Deployable_Unit_Files"/>
+				<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console: <xref
+						linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>
 				</para>
 			</important>
 			<para>Once the Mobicents Converged Application Server is running, point your browser to <systemitem><ulink
