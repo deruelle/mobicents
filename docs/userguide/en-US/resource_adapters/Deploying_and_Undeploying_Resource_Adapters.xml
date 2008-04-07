@@ -183,7 +183,7 @@
 			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
 			<title>Undeploying Resource Adapters With the Management Console</title>
 			<para>If you are looking to undeploy a resource adapter with the Management Console, then it is assumed that you have first read <xref
-					linkend="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files"/> and <xref
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> and <xref
 					linkend="section-Deploying_Resource_Adapters_With_the_Management_Console"/>. </para>
 		</section>
 	</section>
