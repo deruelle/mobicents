@@ -67,7 +67,7 @@
 			</varlistentry>
 		</variablelist>
 	</section>
-	<section
+	<!--<section
 		id="chapter-Deploying_and_Undeploying_Resource_Adapters">
 		<title>Deploying and Undeploying Resource Adapters</title>
 		<para>Mobicents resource adapters can be deployed in several different ways. The easiest way depends on whether you would rather deploy them through the Mobicents Management Console, or by copying the deployable unit files into the correct directory, or by deploying them via the command line.</para>
@@ -197,5 +197,5 @@
 <command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-undeploy</command>
 			</screen>
 		</section>
-	</section>
+	</section>-->
 </chapter>
