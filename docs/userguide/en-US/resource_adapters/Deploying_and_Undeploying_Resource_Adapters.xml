@@ -108,15 +108,18 @@
 			</warning>
 			<para>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file and copy it.</para>
 			<figure
-				id="figure-Copying_the_first_deployable_unit_file,_the_ratype_file,_in_order_to_deploy_the_SIP_resource_adatper.">
-				<title>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</title>
+				id="figure-Locating_and_Copying_the_First_Deployable_Unit_File">
+				<title>Locating and Copying the First Deployable Unit File</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata
 							align="center"
-							fileref="../images/deployable_units-selecting_the_ratype_dependency.png"
+							fileref="images/deployable_units-selecting_the_ratype_dependency.png"
 							format="PNG"/>
 					</imageobject>
+					<caption>
+						<para>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</para>
+					</caption>
 				</mediaobject>
 			</figure>
 			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>.If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
