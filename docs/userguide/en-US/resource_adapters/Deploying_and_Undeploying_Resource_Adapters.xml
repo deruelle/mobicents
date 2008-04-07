@@ -165,7 +165,22 @@
 	<section
 		id="section-Undeploying_Resource_Adapters">
 		<title>Undeploying Resource Adapters</title>
-		<para></para>
+		<note>
+			<para>The introductory section titled <xref
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+		</note>
+		<para>
+			<xref
+				linkend="section-Undeploying_Resource_Adapters_Via_the_Command_Line"/>
+		</para>
+		<para>
+			<xref
+				linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>
+		</para>
+		<para>
+			<xref
+				linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>
+		</para>
 		<section
 			id="section-Undeploying_Resource_Adapters_Via_the_Command_Line">
 			<title>Undeploying Resource Adapters Via the Command Line</title>
