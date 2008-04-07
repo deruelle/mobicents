@@ -52,8 +52,10 @@
 	<section
 		id="section-Deploying_Resource_Adapters">
 		<title>Deploying Resource Adapters</title>
-		<para>The introductory section titled <xref
-				linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+		<note>
+			<para>The introductory section titled <xref
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+		</note>
 		<para>
 			<xref
 				linkend="section-Deploying_Resource_Adapters_Via_the_Command_Line"/>
