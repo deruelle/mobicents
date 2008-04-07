@@ -67,10 +67,10 @@
 			</screen>
 			<para>If the resource adapter builds successfully, then a message similar to the following will be written to standard output:</para>
 			<screen>
-<computeroutput>ra-activate:
-ra-deploy:
-BUILD SUCCESSFUL
-Total time: 5 seconds</computeroutput>
+<computeroutput>ra-activate:</computeroutput>
+<computeroutput>ra-deploy:</computeroutput>
+<computeroutput>BUILD SUCCESSFUL</computeroutput>
+<computeroutput>Total time: 5 seconds</computeroutput>
 			</screen>
 			<para>To undeploy a resource adapter via the command line, refer to <xref
 					linkend="section-Undeploying_Resource_Adapters_Via_the_Command_Line"/>.</para>
