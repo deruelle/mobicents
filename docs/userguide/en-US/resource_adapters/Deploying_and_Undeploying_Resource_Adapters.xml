@@ -110,7 +110,7 @@
 			<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
 					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
 			<important>
-				<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console: <xref
+				<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console. See <xref
 						linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>
 				</para>
 			</important>
@@ -182,7 +182,13 @@
 		<section
 			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
 			<title>Undeploying Resource Adapters With the Management Console</title>
-			<para></para>
+			<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
+					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
+			<important>
+				<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console. See <xref
+						linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>
+				</para>
+			</important>
 		</section>
 	</section>
 </section>
