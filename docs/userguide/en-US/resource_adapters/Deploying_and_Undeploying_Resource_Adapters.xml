@@ -102,8 +102,7 @@
 			<title>Deploying Resource Adapters By Copying Deployable Unit Files</title>
 			<para>It is essential to have read the previous sections on locating resource adapter directories, recognizing deployable unit files, and determining the correct order for installing the files, before continuing. See <xref
 					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>.</para>
-			<para>You can deploy resource adapters by simply copying deployable unit files to a special directory with your file manager, or by doing the same via the command line. These instructions assume that you are using the file manager.</para>
-			<para>You can copy the two necessary files simultaneously, or one-after-the-other in the correct order, which is the way we will do it.</para>
+			<para>You can deploy resource adapters by simply copying deployable unit files to a special directory with your file manager, or by doing the same via the command line. These instructions assume that you are using the file manager. You can also copy the two necessary files simultaneously, or one-after-the-other in the correct order, which is the way we will do it.</para>
 			<warning>
 				<para>Make sure that you <emphasis>copy</emphasis> the deployable unit files, instead of <emphasis>moving</emphasis> them. If you accidentally move them, then make sure you copy them back to the correct resource adapter directory where they came from. If you accidentally move them and then delete them, you will probably have to reinstall Mobicents, so be careful to copy instead of move!</para>
 			</warning>
