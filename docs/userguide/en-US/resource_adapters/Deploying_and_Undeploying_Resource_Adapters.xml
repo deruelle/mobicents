@@ -103,17 +103,34 @@
 			<para>It is essential to have read the previous sections on locating resource adapter directories, recognizing deployable unit files, and determining the correct order for installing the files, before continuing. See <xref
 					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>.</para>
 			<para>You can deploy resource adapters by simply copying deployable unit files to a special directory with your file manager, or by doing the same via the command line. These instructions assume that you are using the file manager.</para>
-			<para>You can copy the two necessary files simultaneously, or one-after-the-other in the correct order.</para>
+			<para>You can copy the two necessary files simultaneously, or one-after-the-other in the correct order, which is the way we will do it.</para>
 			<warning>
 				<para>Make sure that you <emphasis>copy</emphasis> the deployable unit files, instead of <emphasis>moving</emphasis> them. If you accidentally move them, then make sure you copy them back to the correct resource adapter directory where they came from. If you accidentally move them and then delete them, you will probably have to reinstall Mobicents, so be careful to copy instead of move!</para>
 			</warning>
-			<para>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file and copy it. Where you will copy it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>.If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, you should see output similar to the following in the terminal, indicating that the file was successfully installed.</para>
+			<para>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file and copy it.</para>
+			<figure
+				id="figure-Copying_the_first_deployable_unit_file,_the_ratype_file,_in_order_to_deploy_the_SIP_resource_adatper.">
+				<title>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata
+							align="center"
+							fileref="../images/deployable_units-selecting_the_ratype_dependency.png"
+							format="PNG"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
+			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>.If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
 			<screen>
 <computeroutput>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]</computeroutput>
 <computeroutput>19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
 </computeroutput>
 			</screen>
-			<para>After copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory.</para>
+			<para>After successfully copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory. Copying the <emphasis>ra</emphasis> file (after the <emphasis>ratype</emphasis> file, of course) will lead to successful installation of the resource adapter, and the Mobicents Converged Application Server will output information similar to the following to standard output:</para>
+			<screen>
+<computeroutput>19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA</computeroutput>
+<computeroutput>20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA</computeroutput>
+			</screen>
 			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
 					linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
 		</section>
