@@ -80,19 +80,6 @@
 			<para>Once Mobicents is running, point your browser to <systemitem><ulink
 						url="http://localhost:8080/management-console/"/>
 		</systemitem> to open the Managment Console. First, click on <guilabel>Deployable Units</guilabel> on the Main Menu to open <guilabel>Deployable Units</guilabel> in the main view. You will see a list of currently deployed units under the <guimenuitem>Browse</guimenuitem> tab (which might currently read <literal>No deployable unit found</literal>), and the possibility of searching for and installing deployable units in the <guimenuitem>Search</guimenuitem> and <guimenuitem>Install</guimenuitem> tabs. We are going to install a deployable unit, so click on the <guimenuitem>Install</guimenuitem> tab. Now, at the top of the view it should read <guilabel>Install a deployable unit</guilabel>, and under it you will see a <guilabel>Package file:</guilabel> prompt, and a field to hold the file name, with <guibutton>Browse...</guibutton> and <guibutton>Install</guibutton> buttons to the right of it.</para>
-			<figure
-				id="figure-deployable_units-install.png">
-				<title>The <guibutton>Install</guibutton> tab of the <guilabel>Deployable Units</guilabel> view in the Management Console.</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata
-							align="center"
-							width="700"
-							fileref="images/deployable_units-install.png"
-							format="PNG"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
 			<para>Before we click the <guibutton>Browse...</guibutton> button to search for deployable unit files, it is important to know how to recognize them, and in which order they should be installed.</para>
 			<formalpara
 				id="How_Do_I_Recognize_Deployable_Unit_Files">
