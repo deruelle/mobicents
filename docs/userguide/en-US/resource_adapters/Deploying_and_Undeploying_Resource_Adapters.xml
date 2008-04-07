@@ -79,6 +79,8 @@
 			id="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files">
 			<title>Deploying Resource Adapters By Copying Deployable Unit Files</title>
 			<para></para>
+			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
+					linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
 		</section>
 		<section
 			id="section-Deploying_Resource_Adapters_With_the_Management_Console">
