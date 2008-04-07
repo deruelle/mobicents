@@ -66,8 +66,12 @@
 		<title>Installing EclipSLEE: The JAIN SLEE Eclipse Plugin</title>
 		<para>The Mobicents project's EclipSLEE Plugin for the Eclipse <acronym>IDE</acronym> enables and facilitates working with Mobicents and JAIN SLEE. In particular, EclipSLEE is designed to help in the creation of the following <acronym>JAIN SLEE</acronym> components:</para>
 		<itemizedlist>
-			<listitem><para>Profile Specifications</para></listitem>
-			<listitem><para>Events</para></listitem>
+			<listitem>
+				<para>Profile Specifications</para>
+			</listitem>
+			<listitem>
+				<para>Events</para>
+			</listitem>
 			<listitem>
 				<para>Service Building Blocks (<acronym>SBB</acronym>s)</para>
 			</listitem>
@@ -86,7 +90,8 @@
 				<guimenu>Help</guimenu>
 					<guimenuitem>Software Updates</guimenuitem>
 					<guimenuitem>Find and Install...</guimenuitem>
-				</menuchoice>. The <literal>Install/Update</literal> dialog box will pop up. Choose the second option, <menuchoice><guimenuitem>Search for new features to install</guimenuitem></menuchoice>, and click next to be presented with the <literal>Install</literal> dialog. On the right-hand side, click the <guibutton>New Remote Site...</guibutton> button to be presented with the <literal>New Update Site</literal> dialog. For the Name field, enter <userinput>EclipSLEE</userinput>, and in the <literal>URL</literal> field, enter the URL of the remote site: <userinput>http://people.redhat.com/vralev/eclipslee/update/</userinput>. Press <guibutton>OK</guibutton> to return to the <literal>Install</literal> dialog. Check the just-added <literal>EclipSLEE</literal> site and click the <guibutton>Finish</guibutton> button. Eclipse will then prompt you to read and accept the license agreement, and will also ask you whether you want to install all components. After following the instructions of Eclipse's plugin install wizard, the EclipSLEE plugin will be downloaded and installed (usually to the shared Eclipse plugins directory, unless you have directed Eclipse to install to another location). Restarting Eclipse is required in order to initialize the EclipSLEE plugin so that it can be used.</para>
+				</menuchoice>. The <literal>Install/Update</literal> dialog box will pop up. Choose the second option, <menuchoice><guimenuitem>Search for new features to install</guimenuitem>
+				</menuchoice>, and click next to be presented with the <literal>Install</literal> dialog. On the right-hand side, click the <guibutton>New Remote Site...</guibutton> button to be presented with the <literal>New Update Site</literal> dialog. For the Name field, enter <userinput>EclipSLEE</userinput>, and in the <literal>URL</literal> field, enter the URL of the remote site: <userinput>http://people.redhat.com/vralev/eclipslee/update/</userinput>. Press <guibutton>OK</guibutton> to return to the <literal>Install</literal> dialog. Check the just-added <literal>EclipSLEE</literal> site and click the <guibutton>Finish</guibutton> button. Eclipse will then prompt you to read and accept the license agreement, and will also ask you whether you want to install all components. After following the instructions of Eclipse's plugin install wizard, the EclipSLEE plugin will be downloaded and installed (usually to the shared Eclipse plugins directory, unless you have directed Eclipse to install to another location). Restarting Eclipse is required in order to initialize the EclipSLEE plugin so that it can be used.</para>
 		</formalpara>
 	</section>
 </chapter>
