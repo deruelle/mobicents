@@ -122,101 +122,101 @@
 					</caption>
 				</mediaobject>
 			</figure>
-			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (remembering that the bundled JBoss installation that comes with the binary Mobicents release is located in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default</filename>; you are actually copying the file into JBoss's <filename>deploy</filename> directory).If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
-			<screen>
+			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (remembering that the bundled JBoss installation that comes with the binary Mobicents release is located in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default</filename>; you are actually copying the file into JBoss's <filename>deploy</filename> directory). If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><envar>JBOSS_HOME</envar>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
+		<screen>
 <computeroutput>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]</computeroutput>
 <computeroutput>19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
 </computeroutput>
 			</screen>
-			<para>After successfully copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory. Copying the <emphasis>ra</emphasis> file (after the <emphasis>ratype</emphasis> file, of course) will lead to successful installation of the resource adapter, and the Mobicents Converged Application Server will output information similar to the following to standard output:</para>
-			<screen>
+		<para>After successfully copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory. Copying the <emphasis>ra</emphasis> file (after the <emphasis>ratype</emphasis> file, of course) will lead to successful installation of the resource adapter, and the Mobicents Converged Application Server will output information similar to the following to standard output:</para>
+		<screen>
 <computeroutput>19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA</computeroutput>
 <computeroutput>20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA</computeroutput>
 			</screen>
-			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
-					linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
-		</section>
-		<section
-			id="section-Deploying_Resource_Adapters_With_the_Management_Console">
-			<title>Deploying Resource Adapters With the Management Console</title>
-			<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
-					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
-			<important>
-				<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console. See <xref
-						linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>
-				</para>
-			</important>
-			<para>Once the Mobicents Converged Application Server is running, point your browser to <systemitem><ulink
-						url="http://localhost:8080/management-console/"/>
-				</systemitem> to open the Management Console. Click on <guimenuitem>Deployable Units</guimenuitem> in the Main Menu; this will open the <guilabel>Deployable Units</guilabel> main view, where you will see a list of currently-deployed units under the <guimenuitem>Browse</guimenuitem> tab, which will read <literal>No deployable unit found</literal> at first. Two other tabs provide the possibility of searching for and installing deployable units. Click on the <guimenuitem>Install</guimenuitem> tab, and you will see a <guilabel>Package file:</guilabel> prompt and a text-entry field in which the name of the deployable unit file you want to install will be listed. <remark>But first we must locate the correct deployable unit file, so click the <guibutton>Browse</guibutton> button to the right of the text-entry field.</remark>
-			</para>
-			<figure
-				id="figure-The_Install_tab_of_the_Deployable_Units_view_in_the_Management_Console">
-				<title>The Install tab of the Deployable Units view in the Management Console</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata
-							align="center"
-							fileref="../images/deployable_units-install.png"
-							format="PNG"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
-			<para>Before continuing, make sure that you know which deployable unit file to install first by reading the section titled <xref
-					linkend="fpara-How_to_Determine_the_Correct_Order_for_Installing_Deployable_Unit_Files"/>.</para>
-			<para>Once armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to <computeroutput>[INFO] Deployable unit installed</computeroutput> messages in the <guilabel>Log Console</guilabel>.</para>
-			<para>If you see the name of the resource adapter you wanted to install listed in the <guimenuitem>Resources</guimenuitem> view of the Management Console, then that resource adapter has been successfully deployed.</para>
-			<figure
-				id="figure-Successful_Deployment_of_the_SIP_Resource_Adapter_with_the_Mobicents_Management_Console">
-				<title>Successful Deployment of the SIP Resource Adapter with the Mobicents Management Console</title>
-				<mediaobject>
-					<imageobject>
-						<imagedata
-							align="center"
-							fileref="../images/deployable_units-installation_success.png"
-							format="PNG"/>
-					</imageobject>
-				</mediaobject>
-			</figure>
-			<para>To undeploy a resource adapter with the Management Console, refer to <xref
-					linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>.</para>
-		</section>
+		<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
+				linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
 	</section>
 	<section
-		id="section-Undeploying_Resource_Adapters">
-		<title>Undeploying Resource Adapters</title>
-		<note>
-			<para>The introductory section titled <xref
-					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
-		</note>
-		<para>
-			<xref
-				linkend="section-Undeploying_Resource_Adapters_Via_the_Command_Line"/>
-		</para>
-		<para>
-			<xref
-				linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>
-		</para>
-		<para>
-			<xref
-				linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>
-		</para>
-		<section
-			id="section-Undeploying_Resource_Adapters_Via_the_Command_Line">
-			<title>Undeploying Resource Adapters Via the Command Line</title>
-			<para></para>
-		</section>
-		<section
-			id="section-Undeploying_Resource_Adapters_By_Removing_Files">
-			<title>Undeploying Resource Adapters By Removing Files</title>
-			<para></para>
-		</section>
-		<section
-			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
-			<title>Undeploying Resource Adapters With the Management Console</title>
-			<para>If you are looking to undeploy a resource adapter with the Management Console, then it is assumed that you have first read <xref
-					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> and <xref
-					linkend="section-Deploying_Resource_Adapters_With_the_Management_Console"/>. </para>
-		</section>
+		id="section-Deploying_Resource_Adapters_With_the_Management_Console">
+		<title>Deploying Resource Adapters With the Management Console</title>
+		<para>The Mobicents Management Console provides a graphical way to deploy and undeploy resource adapters. This section requires that you are familiar with the Management Console; for an introduction to the Console, refer first to <xref
+				linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
+		<important>
+			<para>The following instructions also assume that you have already read introductory sections on locating resource adapter directories, recognizing deployable unit files, and determining their correct order for installation. It is essential to read those sections before attempting to deploy a resource adapter with the Management Console. See <xref
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>
+				</para>
+		</important>
+		<para>Once the Mobicents Converged Application Server is running, point your browser to <systemitem><ulink
+					url="http://localhost:8080/management-console/"/>
+				</systemitem> to open the Management Console. Click on <guimenuitem>Deployable Units</guimenuitem> in the Main Menu; this will open the <guilabel>Deployable Units</guilabel> main view, where you will see a list of currently-deployed units under the <guimenuitem>Browse</guimenuitem> tab, which will read <literal>No deployable unit found</literal> at first. Two other tabs provide the possibility of searching for and installing deployable units. Click on the <guimenuitem>Install</guimenuitem> tab, and you will see a <guilabel>Package file:</guilabel> prompt and a text-entry field in which the name of the deployable unit file you want to install will be listed. <remark>But first we must locate the correct deployable unit file, so click the <guibutton>Browse</guibutton> button to the right of the text-entry field.</remark>
+			</para>
+		<figure
+			id="figure-The_Install_tab_of_the_Deployable_Units_view_in_the_Management_Console">
+			<title>The Install tab of the Deployable Units view in the Management Console</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata
+						align="center"
+						fileref="../images/deployable_units-install.png"
+						format="PNG"/>
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<para>Before continuing, make sure that you know which deployable unit file to install first by reading the section titled <xref
+				linkend="fpara-How_to_Determine_the_Correct_Order_for_Installing_Deployable_Unit_Files"/>.</para>
+		<para>Once armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to <computeroutput>[INFO] Deployable unit installed</computeroutput> messages in the <guilabel>Log Console</guilabel>.</para>
+		<para>If you see the name of the resource adapter you wanted to install listed in the <guimenuitem>Resources</guimenuitem> view of the Management Console, then that resource adapter has been successfully deployed.</para>
+		<figure
+			id="figure-Successful_Deployment_of_the_SIP_Resource_Adapter_with_the_Mobicents_Management_Console">
+			<title>Successful Deployment of the SIP Resource Adapter with the Mobicents Management Console</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata
+						align="center"
+						fileref="../images/deployable_units-installation_success.png"
+						format="PNG"/>
+				</imageobject>
+			</mediaobject>
+		</figure>
+		<para>To undeploy a resource adapter with the Management Console, refer to <xref
+				linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>.</para>
 	</section>
+</section>
+<section
+	id="section-Undeploying_Resource_Adapters">
+	<title>Undeploying Resource Adapters</title>
+	<note>
+		<para>The introductory section titled <xref
+				linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+	</note>
+	<para>
+			<xref
+			linkend="section-Undeploying_Resource_Adapters_Via_the_Command_Line"/>
+		</para>
+	<para>
+			<xref
+			linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>
+		</para>
+	<para>
+			<xref
+			linkend="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>
+		</para>
+	<section
+		id="section-Undeploying_Resource_Adapters_Via_the_Command_Line">
+		<title>Undeploying Resource Adapters Via the Command Line</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Undeploying_Resource_Adapters_By_Removing_Files">
+		<title>Undeploying Resource Adapters By Removing Files</title>
+		<para></para>
+	</section>
+	<section
+		id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
+		<title>Undeploying Resource Adapters With the Management Console</title>
+		<para>If you are looking to undeploy a resource adapter with the Management Console, then it is assumed that you have first read <xref
+				linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> and <xref
+				linkend="section-Deploying_Resource_Adapters_With_the_Management_Console"/>. </para>
+	</section>
+</section>
 </section>
