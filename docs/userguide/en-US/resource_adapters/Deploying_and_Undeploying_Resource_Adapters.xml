@@ -134,6 +134,7 @@
 <computeroutput>19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA</computeroutput>
 <computeroutput>20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA</computeroutput>
 			</screen>
+			<para>The easier way is simply to select and copy both deployable unit files and paste them simultaneously into <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (or <filename><envar>$JBOSS_HOME</envar>/deploy</filename> if you installed JBoss separately). When you do it that way, Mobicents can figure out in which order it should install the files.</para>
 			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
 					linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
 		</section>
