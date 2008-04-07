@@ -109,8 +109,8 @@
 			</warning>
 			<para>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file and copy it. Where you will copy it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>.If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>. After copying the <emphasis>ratype</emphasis> deployable unit file, you should see output similar to the following in the terminal, indicating that the file was successfully installed.</para>
 			<screen>
-				<computeroutput>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]
-19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
+<computeroutput>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]</computeroutput>
+<computeroutput>19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
 </computeroutput>
 			</screen>
 			<para>After copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory.</para>
