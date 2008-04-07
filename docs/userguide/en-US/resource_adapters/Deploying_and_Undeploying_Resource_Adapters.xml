@@ -8,7 +8,7 @@
 		id="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files">
 		<title>Before You Begin: Resource Adapters and Deployable Unit Files</title>
 		<para>Resource adapters are JAIN SLEE components that can be deployed (i.e. <quote>loaded</quote> or <quote>installed</quote>) into the Mobicents Converged Application Server, and undeployed (<quote>uninsntalled</quote>) from it. At the file level, resource adapters consist of specially-named files called deployable unit files. Two of these deployable unit files must be loaded/installed before the Mobicents Converged Application Server will deploy the resource adapter. The next few sections will teach you how to locate where resource adapters and their files live, and how to deploy them and undeploy them through several different, though equivalent ways: via the command line; by copying the correct files to a special directory, or removing them from it; or with the Mobicents Management Console.</para>
-		<para>Which of these various ways of accomplishing the same task is easier depends on you. If you are comfortable with the command line, or like to script behavior, then deploying via the command line will probably be the preferred way for you. If you would prefer to simply copy or delete some files with the file manager, you can do it that way. And for those who prefer graphical user interfaces (<acronym>GUI</acronym>s), the Management Console provides an interface to the Mobicents Converged Application Server, and can easily be used to accomplish such tasks both locally and remotely. However&mdash;no matter which method you eventually choose, it will be necessary to read the following explanatory paragraphs, on where to find the directories corresponding to the resource adapters you want to install, and on how to recognize deployable unit files, before reading any or all of the method sections.</para>
+		<para>Which of these various ways of accomplishing the same task is easier depends on you. If you are comfortable with the command line, or like to script behavior, then deploying via the command line will probably be the preferred way for you. If you would prefer to simply copy or delete some files with the file manager, you can do it that way. And for those who prefer graphical user interfaces (<acronym>GUI</acronym>s), the Management Console provides an interface to the Mobicents Converged Application Server, and can easily be used to accomplish such tasks both locally and remotely. However&mdash;no matter which method you eventually choose, it will be necessary to read the following explanatory paragraphs, on where to find the directories corresponding to the resource adapters you want to install, and on how to recognize deployable unit files, and on the correct order in which to install the deployable unit files, before reading any or all of the method sections.</para>
 		<formalpara
 			id="fpara-Where_to_Find_Resource_Adapters_in_the_Mobicents_Installation">
 			<title>Where to Find Resource Adapters in the Mobicents Installation</title>
@@ -52,7 +52,20 @@
 	<section
 		id="section-Deploying_Resource_Adapters">
 		<title>Deploying Resource Adapters</title>
-		<para></para>
+		<para>The introductory section titled <xref
+				linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+		<para>
+			<xref
+				linkend="section-Deploying_Resource_Adapters_Via_the_Command_Line"/>
+		</para>
+		<para>
+			<xref
+				linkend="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files"/>
+		</para>
+		<para>
+				<xref
+				linkend="section-Deploying_Resource_Adapters_With_the_Management_Console"/>
+			</para>
 		<section
 			id="section-Deploying_Resource_Adapters_Via_the_Command_Line">
 			<title>Deploying Resource Adapters Via the Command Line</title>
@@ -129,7 +142,7 @@
 			</figure>
 			<para>Before continuing, make sure that you know which deployable unit file to install first by reading the section titled <xref
 					linkend="fpara-How_to_Determine_the_Correct_Order_for_Installing_Deployable_Unit_Files"/>.</para>
-			<para>Once armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to a <computeroutput>[INFO] Deployable unit installed</computeroutput> message in the <guilabel>Log Console</guilabel>.</para>
+			<para>Once armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to <computeroutput>[INFO] Deployable unit installed</computeroutput> messages in the <guilabel>Log Console</guilabel>.</para>
 			<para>If you see the name of the resource adapter you wanted to install listed in the <guimenuitem>Resources</guimenuitem> view of the Management Console, then that resource adapter has been successfully deployed.</para>
 			<figure
 				id="figure-Successful_Deployment_of_the_SIP_Resource_Adapter_with_the_Mobicents_Management_Console">
