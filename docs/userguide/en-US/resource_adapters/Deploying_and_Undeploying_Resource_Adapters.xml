@@ -100,7 +100,15 @@
 		<section
 			id="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files">
 			<title>Deploying Resource Adapters By Copying Deployable Unit Files</title>
-			<para></para>
+			<para>It is essential to have read the previous sections on locating resource adapter directories, recognizing deployable unit files, and determining the correct order for installing the files, before continuing. See <xref
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/>.</para>
+			<para>You can deploy resource adapters by simply copying deployable unit files to a special directory with your file manager, or by doing the same via the command line. These instructions assume that you are using the file manager.</para>
+			<para>You can copy the two necessary files simultaneously, or one-after-the-other in the correct order.</para>
+			<warning>
+				<para>Make sure that you <emphasis>copy</emphasis> the deployable unit files, instead of <emphasis>moving</emphasis> them. If you accidentally move them, then make sure you copy them back to the correct resource adapter directory where they came from. If you accidentally move them and then delete them, you will probably have to reinstall Mobicents, so be careful to copy instead of move!</para>
+			</warning>
+			<para>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file and copy it. Where you will copy it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>.</para>
+			<para>If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the files to is <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>.</para>
 			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
 					linkend="section-Undeploying_Resource_Adapters_By_Removing_Files"/>.</para>
 		</section>
