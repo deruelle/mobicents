@@ -66,9 +66,7 @@
 		<title>Installing EclipSLEE: The JAIN SLEE Eclipse Plugin</title>
 		<para>The Mobicents project's EclipSLEE Plugin for the Eclipse <acronym>IDE</acronym> enables and facilitates working with Mobicents and JAIN SLEE. In particular, EclipSLEE is designed to help in the creation of the following <acronym>JAIN SLEE</acronym> components:</para>
 		<itemizedlist>
-			<listitem>
-				<para>Profile Specifications</para>
-			</listitem>
+			<listitem><para>Profile Specifications</para></listitem>
 			<listitem>
 				<para>Events</para>
 			</listitem>
