@@ -111,7 +111,19 @@
 			</figure>
 			<para>Before clicking the <guibutton>Browse</guibutton> button however, it will prove helpful to know which of the two deployable unit file to install first. The files must be installed in the correct order, starting with the <emphasis>ratype</emphasis> deployable unit file, whose file name has the form: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename>.</para>
 			<para>The second and last deployable unit file you must install is the simple <emphasis>ra</emphasis> file: <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename>.</para>
-			<para>Armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the correct order, a message similar to <computeroutput>[INFO] Deployable unit installed</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. Attempting to install the files in the incorrect order will lead to an error message similar to the following: <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput>. If you receive this error message, try installing the other file first.</para>
+			<para>Armed with this knowledge, click the <guibutton>Browse</guibutton> button to find and install the first deployable unit file, whose file name will appear in the text entry field, and then click the <guibutton>Install</guibutton> button. Then install the second deployable unit file. If you install the files in the incorrect order, a message similar to <computeroutput>[ERROR] javax.slee.management.DeploymentException: Could not deploy: No DeployableUniDeploymentDescriptor descriptor (META-INF/deployable-unit.xml) was found in deployable...</computeroutput> will appear in the <guilabel>Log Console</guilabel> at the bottom of the Management Console main view. If you receive this error message, try installing the other deployable unit file first. Installing the right files in the correct order will lead to a <computeroutput>[INFO] Deployable unit installed</computeroutput> message in the <guilabel>Log Console</guilabel>.</para>
+			<figure
+				id="figure-Successful_Deployment_of_the_SIP_Resource_Adapter_with_the_Mobicents_Management_Console">
+				<title>Successful Deployment of the SIP Resource Adapter with the Mobicents Management Console</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata
+							align="center"
+							fileref="../images/deployable_units-installation_success.png"
+							format="PNG"/>
+					</imageobject>
+				</mediaobject>
+			</figure>
 		</section>
 	</section>
 	<section
