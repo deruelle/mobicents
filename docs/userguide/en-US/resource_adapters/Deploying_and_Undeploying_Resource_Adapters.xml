@@ -54,7 +54,7 @@
 		<title>Deploying Resource Adapters</title>
 		<note>
 			<para>The introductory section titled <xref
-					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> must be read before proceeding to one of the following sections.</para>
+					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> should be read before proceeding to one of the following sections.</para>
 		</note>
 		<para>
 			<xref
@@ -206,7 +206,13 @@
 		<section
 			id="section-Undeploying_Resource_Adapters_Via_the_Command_Line">
 			<title>Undeploying Resource Adapters Via the Command Line</title>
-			<para></para>
+			<para>It is as easy to undeploy resource adapters via the command line as it is to deploy them that way: by simply issuing an ant task command from the topmost Mobicents directory, after the Mobicents Converged Application Server has been started, of course.</para>
+			<screen>
+<command>cd</command>
+				<filename>
+					<replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
+				</filename>
+			</screen>
 		</section>
 		<section
 			id="section-Undeploying_Resource_Adapters_By_Removing_Files">
@@ -215,8 +221,9 @@
 					</replaceable>/deploy</filename> directory<footnote><para>The location of the <filename><replaceable><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>
 							</replaceable>/deploy</filename> directory depends on whether you installed the binary distribution of Mobicents, in which case it is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>, or downloaded and installed JBoss yourself, in which case it is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
 				</footnote>, then you can undeploy that same resource adapter merely by removing the two deployable unit files from the <filename>deploy</filename> directory. In the file manager or on the command line, simply go to <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>  and either move the correct two deployable unit files out of it, or delete both of them from it.</para>
-			<warning id="warning-Do_Not_Delete_if_You_Did_Not_Copy">
-			<title>Don't Delete if You Didn't Copy!</title>
+			<warning
+				id="warning-Dont_Delete_if_You_Didnt_Copy">
+				<title>Don't Delete if You Didn't Copy!</title>
 				<para>If you choose to delete the two deployable unit files, <emphasis>make sure</emphasis> that you indeed <emphasis>copied</emphasis> them into the <filename>deploy</filename> directory, and that they both still exist in the directory of the resource adapter you want to undeploy!</para>
 			</warning>
 			<para>Successfully removing or deleting both files from the <filename>deploy</filename> directory will result in a long string of messages sent to standard output, and ending with a line similar to: <computeroutput>17:48:10,705 INFO  [STDOUT] 17:48:10,705 INFO  [DeploymentMBeanImpl] Uninstalled DU with id DeployableUnitID[6]</computeroutput>. It is also possible to simply remove or delete only the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file and have Mobicents undeploy the resource adapter, but it is recommended to always remove or delete both files.</para>
