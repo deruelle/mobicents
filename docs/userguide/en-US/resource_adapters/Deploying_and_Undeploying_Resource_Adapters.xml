@@ -215,11 +215,12 @@
 					</replaceable>/deploy</filename> directory<footnote><para>The location of the <filename><replaceable><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>
 							</replaceable>/deploy</filename> directory depends on whether you installed the binary distribution of Mobicents, in which case it is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>, or downloaded and installed JBoss yourself, in which case it is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
 				</footnote>, then you can undeploy that same resource adapter merely by removing the two deployable unit files from the <filename>deploy</filename> directory. In the file manager or on the command line, simply go to <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>  and either move the correct two deployable unit files out of it, or delete both of them from it.</para>
-			<warning>
+			<warning id="warning-Do_Not_Delete_if_You_Did_Not_Copy">
+			<title>Don't Delete if You Didn't Copy!</title>
 				<para>If you choose to delete the two deployable unit files, <emphasis>make sure</emphasis> that you indeed <emphasis>copied</emphasis> them into the <filename>deploy</filename> directory, and that they both still exist in the directory of the resource adapter you want to undeploy!</para>
 			</warning>
 			<para>Successfully removing or deleting both files from the <filename>deploy</filename> directory will result in a long string of messages sent to standard output, and ending with a line similar to: <computeroutput>17:48:10,705 INFO  [STDOUT] 17:48:10,705 INFO  [DeploymentMBeanImpl] Uninstalled DU with id DeployableUnitID[6]</computeroutput>. It is also possible to simply remove or delete only the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file and have Mobicents undeploy the resource adapter, but it is recommended to always remove or delete both files.</para>
-			<para>TBD: Show the standard output result of correctly removing the 2 du files. Also, maybe merely mention that it is not recommended that you move them oor delete them one at a time, but that if you do, then they should be done in the reverse order that they were installed (and check this behavior).</para>
+			<note><para></para></note>
 		</section>
 		<section
 			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
