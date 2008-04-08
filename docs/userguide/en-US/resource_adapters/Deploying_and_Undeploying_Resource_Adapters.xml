@@ -214,7 +214,25 @@
 			</screen>
 			<para>You will run the same ant script that you ran to build and deploy the resource adapter, but note that the last argument has changed from <option>ra-deploy</option> to <option>ra-undeploy</option>:</para>
 			<screen>
-				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
+				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-undeploy</command>
+			</screen>
+			<para>For example, to undeploy the SIP resource adapter you would issue the following command:</para>
+			<screen>
+<command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-undeploy</command>
+			</screen>
+			<para>Upon success, a message similar to the following will be written to standard output:</para>
+			<screen>
+<computeroutput>ra-uninstall:</computeroutput>
+<computeroutput>     [echo] Uninstalling SipRA.</computeroutput>
+<computeroutput>[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run</computeroutput>
+<computeroutput>[slee-management] INFO: No response</computeroutput>
+<computeroutput>[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run</computeroutput>
+<computeroutput>[slee-management] INFO: No response</computeroutput>
+<computeroutput/>
+<computeroutput>ra-undeploy:</computeroutput>
+<computeroutput/>
+<computeroutput>BUILD SUCCESSFUL</computeroutput>
+<computeroutput>Total time: 2 seconds</computeroutput>
 			</screen>
 		</section>
 		<section
