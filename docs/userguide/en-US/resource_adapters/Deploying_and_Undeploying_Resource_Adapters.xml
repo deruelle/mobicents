@@ -212,6 +212,10 @@
 					</filename>
 				</command>
 			</screen>
+			<para>You will run the same ant script that you ran to build and deploy the resource adapter, but note that the last argument has changed from <option>ra-deploy</option> to <option>ra-undeploy</option>:</para>
+			<screen>
+				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
+			</screen>
 		</section>
 		<section
 			id="section-Undeploying_Resource_Adapters_By_Removing_Files">
