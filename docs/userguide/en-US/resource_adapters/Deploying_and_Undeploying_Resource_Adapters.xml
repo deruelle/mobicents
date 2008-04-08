@@ -220,7 +220,6 @@
 				<para>If you choose to delete the two deployable unit files, <emphasis>make sure</emphasis> that you indeed <emphasis>copied</emphasis> them into the <filename>deploy</filename> directory, and that they both still exist in the directory of the resource adapter you want to undeploy!</para>
 			</warning>
 			<para>Successfully removing or deleting both files from the <filename>deploy</filename> directory will result in a long string of messages sent to standard output, and ending with a line similar to: <computeroutput>17:48:10,705 INFO  [STDOUT] 17:48:10,705 INFO  [DeploymentMBeanImpl] Uninstalled DU with id DeployableUnitID[6]</computeroutput>. It is also possible to simply remove or delete only the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file and have Mobicents undeploy the resource adapter, but it is recommended to always remove or delete both files.</para>
-			<note><para></para></note>
 		</section>
 		<section
 			id="section-Undeploying_Resource_Adapters_With_the_Management_Console">
