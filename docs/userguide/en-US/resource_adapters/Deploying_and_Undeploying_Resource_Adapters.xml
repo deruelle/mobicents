@@ -238,8 +238,7 @@
 		<section
 			id="section-Undeploying_Resource_Adapters_By_Removing_Files">
 			<title>Undeploying Resource Adapters By Removing Files</title>
-			<para>If you deployed a resource adapter by copying the deployable unit files from the resource adapter's directory to the <filename><replaceable><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>
-					</replaceable>/deploy</filename> directory<footnote><para>The location of the <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename> directory depends on whether you installed the binary distribution of Mobicents, in which case it is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>, or downloaded and installed JBoss yourself, in which case it is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
+			<para>If you deployed a resource adapter by copying the deployable unit files from the resource adapter's directory to the <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename> directory<footnote><para>The location of the <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename> directory depends on whether you installed the binary distribution of Mobicents, in which case it is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename>, or downloaded and installed JBoss yourself, in which case it is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
 				</footnote>, then you can undeploy that same resource adapter merely by removing the two deployable unit files from the <filename>deploy</filename> directory. In the file manager or on the command line, simply go to <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename>  and either move the correct two deployable unit files out of it, or delete both of them from it.</para>
 			<warning
 				id="warning-Dont_Delete_if_You_Didnt_Copy">
@@ -250,7 +249,7 @@
 			<note
 				id="note-Leaving_Resource_Adapters_Deployed">
 				<title>Leaving Resource Adapters Deployed</title>
-				<para>One convenient way to have the Mobicents Converged Application Server deploy the correct resource adapters every time you start the server is to leave the deployable unit files in the <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename> directory. Upon startup, Mobicents will notice that the two files are still there, and will deploy the resource adapter.</para>
+				<para>One convenient way to have the Mobicents Converged Application Server deploy the correct resource adapters every time you start the server is to leave the deployable unit files in the <filename><replaceable>&lt;topmost_jboss_directory&gt;</replaceable>/deploy</filename> directory. Upon startup, Mobicents will notice that the two files are still there, and will automatically deploy the resource adapter.</para>
 			</note>
 		</section>
 		<section
@@ -259,6 +258,8 @@
 			<para>If you are looking to undeploy a resource adapter with the Management Console, then it is assumed that you have first read <xref
 					linkend="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files"/> and <xref
 					linkend="section-Deploying_Resource_Adapters_With_the_Management_Console"/>. </para>
+			<para>You can undeploy resource adapters from the <guilabel>Deployable Units</guilabel> view in the Management Console by uninstalling the two deployable unit files. Click on <guimenuitem>Deployable Units</guimenuitem> from the Main Menu, and then make sure that the <guimenuitem>Browse</guimenuitem> tab is selected at the top of the view. You will see a list of deployable unit files for the currently-installed resource adapters. Find the deployable unit file that corresponds to the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> pattern, and click on the <guilabel>Uninstall</guilabel> link in the <guilabel>Actions</guilabel> column. This will uninstall the file, and a message similar to <computeroutput>[INFO] Deployable unit sip-ra-DU uninstalled</computeroutput> will appear in the <guilabel>Console Log</guilabel> below. After uninstalling the <emphasis>ra</emphasis> file, then uninstall the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file.</para>
+			<para>If you try to uninstall the <emphasis>ratype</emphasis> deployable unit file, before the <emphasis>ra</emphasis> file, then you will receive a message similar to the following one, alerting you to the mistake: <computeroutput>[ERROR] javax.slee.management.ManagementException: Exception removing deployable Unit</computeroutput>.</para>
 		</section>
 	</section>
 </section>
