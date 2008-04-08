@@ -75,7 +75,7 @@
 			<screen>
 <command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
 </filename>
-</command>
+				</command>
 			</screen>
 			<para>Run the ant build-and-deploy script, remembering to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
 				</filename> with the correct directory name (refer to <xref
@@ -208,10 +208,9 @@
 			<title>Undeploying Resource Adapters Via the Command Line</title>
 			<para>It is as easy to undeploy resource adapters via the command line as it is to deploy them that way: by simply issuing an ant task command from the topmost Mobicents directory, after the Mobicents Converged Application Server has been started, of course.</para>
 			<screen>
-<command>cd</command>
-				<filename>
-					<replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
-				</filename>
+<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
+					</filename>
+				</command>
 			</screen>
 		</section>
 		<section
