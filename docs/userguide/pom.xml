@@ -36,11 +36,11 @@
 						</excludes>
 					</cssResource>
 					<formats>
-						<!--<format>
+						<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>
 							<finalName>${pom.name}.pdf</finalName>
-						</format>-->
+						</format>
 						<format>
 							<formatName>html_single</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>
