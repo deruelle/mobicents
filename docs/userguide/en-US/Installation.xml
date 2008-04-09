@@ -117,9 +117,10 @@
 					</command>
 					<computeroutput>/home/<varname>my_name</varname>/jboss/jboss-4.2.2.GA</computeroutput>
 				</screen>
-				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that it hasn't changed names subtly).</para>
-				<para>Altenatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file: <userinput><command>export JBOSS_HOME=&quot;<filename><replaceable>&lt;unzip_directory&gt;</replaceable>/jboss-4.2.2.GA</filename>&quot;</command>
-					</userinput>
+				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that the file name hasn't changed in some subtle way).</para>
+				<para>Altenatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file: <screen>
+<command>export JBOSS_HOME=&quot;<filename><replaceable>&lt;unzip_directory&gt;</replaceable>/jboss-4.2.2.GA</filename>&quot;</command>
+					</screen>
 				</para>
 			</step>
 		</procedure>
