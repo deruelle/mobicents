@@ -17,7 +17,7 @@
 		<formalpara
 			id="fpara-Pre-Install_Requirements_for_the_Binary_Distribution">
 			<title>Pre-Install Requirements for the Binary Distribution</title>
-			<para>You should ensure two things before downloading and installing the Mobicents binary release:</para>
+			<para>You should ensure a couple of things before downloading and installing the Mobicents binary release:</para>
 		</formalpara>
 		<itemizedlist
 			id="itemlist-Binary_Distribution_Installation_Requirements">
@@ -62,18 +62,63 @@
 		<formalpara
 			id="fpara-Pre-Install_Requirements_for_the_Source_Distribution">
 			<title>Pre-Install Requirements for the Source Distribution</title>
-			<para>You should ensure two things before downloading and installing the JBoss binary distribution and the Mobicents source:</para>
+			<para>You should ensure a few things before downloading and installing the JBoss binary distribution and the Mobicents source:</para>
 		</formalpara>
 		<itemizedlist
 			id="itemlist-Source_Distribution_Installation_Requirements">
 			<listitem>
 				<para>You must have sufficient disk space in order to install the Mobicents source as well as the JBoss binary distribution. The Mobicents source, once fetched from the development Subversion repository, will consume about 230 MB of disk space. In addition to this, the JBoss Application Server binary distribution requires approximately 140 MB, meaning that you should probably have <emphasis>at least</emphasis> 400 MB of free disk space available. Keep in mind also that disk space requirements may change with subsequent updates to the development repository.</para>
 			</listitem>
-			<listitem><para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para></listitem>
-			<listitem><para>A way to download files. We will use the wget utility in the subsequent sections, but any common web browser will do.</para></listitem>
-			<listitem><para>The Subversion version control system.</para></listitem>
-			<listitem><para>The Apache Ant build tool. Mobicents includes this in its distribution, but we will need Ant in order to then build the Ant that comes bundled with the distribution.</para></listitem>
+			<listitem>
+				<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
+			</listitem>
+			<listitem>
+				<para>A way to download files. We will use the wget utility in the subsequent sections, but any common web browser will do.</para>
+			</listitem>
+			<listitem>
+				<para>The Subversion version control system.</para>
+			</listitem>
+			<listitem>
+				<para>The Apache Ant build tool. Mobicents includes this in its distribution, but we will need Ant in order to then build the Ant that comes bundled with the distribution.</para>
+			</listitem>
 		</itemizedlist>
+		<formalpara
+			id="fpara-Installing_the_JBoss_Binary_and_Building_the_Mobicents_Source">
+			<title>Installing the JBoss Binary and Building the Mobicents Source</title>
+			<para>Once the pre-install requirements have been met, you are ready to start. We will split the entire procedure, which isn't long but may take a while depending on the speed of your Internet connection, into two parts: in the first we will install JBoss; in the second, we will download and build Mobicents.</para>
+		</formalpara>
+		<procedure
+			id="procedure-Downloading_and_Installing_JBoss">
+			<step>
+				<para>First, move to the directory that you want to install JBoss in and download the JBoss 4.2.2 General Availability (<acronym>GA</acronym>) binary distribution <footnote
+						id="jboss_sourceforge_link"><para>If the given direct link to JBoss 4.2.2 <acronym>GA</acronym> doesn't work for you, try instead to find the binary JBoss distribution here, <ulink
+								url="http://surfnet.dl.sourceforge.net/sourceforge/jboss/"/>, or by searching for the project on <ulink
+								url="http://sourceforge.net">Sourceforge.net</ulink>
+						</para>
+					</footnote>:</para>
+				<screen>
+<command>cd <filename><replaceable>&lt;directory_to_install_jboss_into&gt;</replaceable>
+						</filename>
+					</command>
+					<command>wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip</command>
+				</screen>
+			</step>
+			<step>
+				<para>Next, assuming you want to install JBoss in the same directory you downloaded the zip file distribution to, unzip it:</para>
+				<screen>
+<command>unzip jboss-4.2.2.GA.zip</command>
+				</screen>
+			</step>
+			<step>
+				<para>Finally, we must set the <envar>JBOSS_HOME</envar> environment variable. The quick-and-easy way to set it for the current session, but which will not last beyond the next reboot, is to <command>export</command> the variable on the command line, and then to <command>echo</command> the variable on the command line to make sure that it contains the right directory:</para>
+				<screen>
+<command>export JBOSS_HOME="${PWD}/jboss-4.2.2.GA"</command>
+<command>echo <envar>$JBOSS_HOME</envar></command>
+<computeroutput>/home/silas/temp/apps/jboss/jboss-4.2.2.GA</computeroutput>
+				</screen>
+				<para></para>
+			</step>
+		</procedure>
 	</section>
 	<section
 		id="section-Installing_EclipSLEE">
