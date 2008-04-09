@@ -73,26 +73,26 @@
 			<title>Deploying Resource Adapters Via the Command Line</title>
 			<para>Resource adapters can be deployed by simply issuing an ant task command from the topmost Mobicents directory. Make sure that the Mobicents Converged Application Server has been started, and then change to the topmost directory:</para>
 			<screen>
-<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
-</filename>
-				</command>
+cd &lt;topmost_mobicents_directory&gt;
 			</screen>
 			<para>Run the ant build-and-deploy script, remembering to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
 				</filename> with the correct directory name (refer to <xref
 					linkend="fpara-Where_to_Find_Resource_Adapters_in_the_Mobicents_Installation"/> if you are unsure):</para>
 			<screen>
-				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-deploy</command>
+tools/ant/bin/ant -f resources/&lt;resource_adapter&gt;/build.xml ra-deploy
 			</screen>
 			<para>For example, the directory name in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the JAIN SIP resource adapter is (currently) named <filename>sipra</filename> ("SIP Resource Adapter"). To deploy the SIP resource adapter, therefore, you would issue the following command:</para>
 			<screen>
-<command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-deploy</command>
+tools/ant/bin/ant -f resources/sipra/build.xml ra-deploy
 			</screen>
 			<para>If the resource adapter builds successfully, then a message similar to the following will be written to standard output:</para>
 			<screen>
-<computeroutput>ra-activate:</computeroutput>
-<computeroutput>ra-deploy:</computeroutput>
-<computeroutput>BUILD SUCCESSFUL</computeroutput>
-<computeroutput>Total time: 5 seconds</computeroutput>
+ra-activate:
+
+ra-deploy:
+
+BUILD SUCCESSFUL
+Total time: 5 seconds
 			</screen>
 			<para>To undeploy a resource adapter via the command line, refer to <xref
 					linkend="section-Undeploying_Resource_Adapters_Via_the_Command_Line"/>.</para>
@@ -125,14 +125,13 @@
 			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (remembering that the bundled JBoss installation that comes with the binary Mobicents release is located in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default</filename>; you are actually copying the file into JBoss's <filename>deploy</filename> directory). If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
 			<para>After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
 			<screen>
-<computeroutput>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]</computeroutput>
-<computeroutput>19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
-</computeroutput>
+19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]
+19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]
 			</screen>
 			<para>After successfully copying the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ratype-DU.jar</filename> file, proceed to copy the <filename><replaceable>&lt;resource_adapter_abbreviation&gt;</replaceable>-ra-DU.jar</filename> file to the same directory. Copying the <emphasis>ra</emphasis> file (after the <emphasis>ratype</emphasis> file, of course) will lead to successful installation of the resource adapter, and the Mobicents Converged Application Server will output information similar to the following to standard output:</para>
 			<screen>
-<computeroutput>19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA</computeroutput>
-<computeroutput>20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA</computeroutput>
+19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA
+20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA
 			</screen>
 			<para>The easier way is simply to select and copy both deployable unit files and paste them simultaneously into <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (or <filename><envar>$JBOSS_HOME</envar>/deploy</filename> if you installed JBoss separately). When you do it that way, Mobicents can figure out in which order it should install the files.</para>
 			<para>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <xref
@@ -208,31 +207,29 @@
 			<title>Undeploying Resource Adapters Via the Command Line</title>
 			<para>It is as easy to undeploy resource adapters via the command line as it is to deploy them that way: by simply issuing an ant task command from the topmost Mobicents directory, after the Mobicents Converged Application Server has been started, of course.</para>
 			<screen>
-<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>
-					</filename>
-				</command>
+cd &lt;topmost_mobicents_directory&gt;
 			</screen>
 			<para>You will run the same ant script that you ran to build and deploy the resource adapter, but note that the last argument has changed from <option>ra-deploy</option> to <option>ra-undeploy</option>:</para>
 			<screen>
-				<command>tools/ant/bin/ant -f <filename>resources/<replaceable>&lt;resource_adapter&gt;</replaceable>/build.xml</filename> ra-undeploy</command>
+tools/ant/bin/ant -f resources/&lt;resource_adapter&gt;/build.xml ra-undeploy
 			</screen>
 			<para>For example, to undeploy the SIP resource adapter you would issue the following command:</para>
 			<screen>
-<command>tools/ant/bin/ant -f <filename>resources/sipra/build.xml</filename> ra-undeploy</command>
+tools/ant/bin/ant -f resources/sipra/build.xml ra-undeploy
 			</screen>
 			<para>Upon success, a message similar to the following will be written to standard output:</para>
 			<screen>
-<computeroutput>ra-uninstall:</computeroutput>
-<computeroutput>     [echo] Uninstalling SipRA.</computeroutput>
-<computeroutput>[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run</computeroutput>
-<computeroutput>[slee-management] INFO: No response</computeroutput>
-<computeroutput>[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run</computeroutput>
-<computeroutput>[slee-management] INFO: No response</computeroutput>
-<computeroutput/>
-<computeroutput>ra-undeploy:</computeroutput>
-<computeroutput/>
-<computeroutput>BUILD SUCCESSFUL</computeroutput>
-<computeroutput>Total time: 2 seconds</computeroutput>
+ra-uninstall:
+     [echo] Uninstalling SipRA.
+[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run
+[slee-management] INFO: No response
+[slee-management] Apr 8, 2008 8:49:12 PM org.mobicents.ant.tasks.UninstallTask run
+[slee-management] INFO: No response
+
+ra-undeploy:
+
+BUILD SUCCESSFUL
+Total time: 2 seconds
 			</screen>
 		</section>
 		<section
