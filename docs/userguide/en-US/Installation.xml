@@ -83,14 +83,15 @@
 			</listitem>
 		</itemizedlist>
 		<formalpara
-			id="fpara-Installing_the_JBoss_Binary_and_Building_the_Mobicents_Source">
-			<title>Installing the JBoss Binary and Building the Mobicents Source</title>
+			id="fpara-Downloading_and_Installing_the_Jboss_Binary_Distribution">
+			<title>Downloading and Installing the Jboss Binary Distribution</title>
 			<para>Once the pre-install requirements have been met, you are ready to start. We will split the entire procedure, which isn't long but may take a while depending on the speed of your Internet connection, into two parts: in the first we will install JBoss; in the second, we will download and build Mobicents.</para>
 		</formalpara>
 		<procedure
 			id="procedure-Downloading_and_Installing_JBoss">
+			<title>Downloading and Installing JBoss</title>
 			<step>
-				<para>First, move to the directory that you want to install JBoss in and download the JBoss 4.2.2 General Availability (<acronym>GA</acronym>) binary distribution <footnote
+				<para>First, move to the directory that you want to install JBoss into, and download the JBoss 4.2.2 General Availability (<acronym>GA</acronym>) binary distribution <footnote
 						id="jboss_sourceforge_link"><para>If the given direct link to JBoss 4.2.2 <acronym>GA</acronym> doesn't work for you, try instead to find the binary JBoss distribution here, <ulink
 								url="http://surfnet.dl.sourceforge.net/sourceforge/jboss/"/>, or by searching for the project on <ulink
 								url="http://sourceforge.net">Sourceforge.net</ulink>
@@ -118,12 +119,40 @@
 					<computeroutput>/home/<varname>my_name</varname>/jboss/jboss-4.2.2.GA</computeroutput>
 				</screen>
 				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that the file name hasn't changed in some subtle way).</para>
-				<para>Altenatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file: <screen>
+				<para>Altenatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>
 <command>export JBOSS_HOME=&quot;<filename><replaceable>&lt;unzip_directory&gt;</replaceable>/jboss-4.2.2.GA</filename>&quot;</command>
 					</screen>
 				</para>
 			</step>
 		</procedure>
+		<para>Now that the JBoss Application Server has been successfully installed, we will download the source to the Mobicents Converged Application Server with Subversion, and build it.</para>
+		<formalpara
+			id="fpara-Downloading_the_Source_and_Building_Mobicents">
+			<title>Downloading the Source and Building Mobicents</title>
+			<para></para>
+		</formalpara>
+		<procedure
+			id="procedure-Downloading_the_Source_and_Building_Mobicents">
+			<step>
+				<para>First, move to the directory that you want to install Mobicents into, and use Subversion to get the latest sources:</para>
+				<screen>
+<command>cd <filename><replaceable>&lt;directory_to_install_mobicents_into&gt;</replaceable>
+						</filename>
+					</command>
+					<command>svn co http://mobicents.googlecode.com/svn/trunk mobicents</command>
+				</screen>
+			</step>
+			<step>
+				<para>Once Subversion has finished acquiring the latest revision of the sources, which may take a while, then we will then proceed to build Mobicents:</para>
+				<screen>
+<command>ant -f <filename>mobicents/core/build.xml</filename>
+					</command>
+					<computeroutput>BUILD SUCCESSFUL</computeroutput>
+					<computeroutput>Total time: 6 seconds</computeroutput>
+				</screen>
+			</step>
+		</procedure>
+	
 	</section>
 	<section
 		id="section-Installing_EclipSLEE">
