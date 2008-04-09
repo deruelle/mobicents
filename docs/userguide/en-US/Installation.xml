@@ -119,7 +119,7 @@
 					<computeroutput>/home/<varname>my_name</varname>/jboss/jboss-4.2.2.GA</computeroutput>
 				</screen>
 				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that the file name hasn't changed in some subtle way).</para>
-				<para>Altenatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>
+				<para>Alternatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>
 <command>export JBOSS_HOME=&quot;<filename><replaceable>&lt;unzip_directory&gt;</replaceable>/jboss-4.2.2.GA</filename>&quot;</command>
 					</screen>
 				</para>
@@ -152,7 +152,7 @@
 				</screen>
 			</step>
 		</procedure>
-	
+		<para>TBD: Close with a sentence and direct the reader with a ulink to the Running Mobicents (which was installed from source) chapter. This chapter will probably  have to be modified somewhat.</para>
 	</section>
 	<section
 		id="section-Installing_EclipSLEE">
