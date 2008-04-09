@@ -99,29 +99,26 @@
 						</para>
 					</footnote>:</para>
 				<screen>
-<command>cd <filename><replaceable>&lt;directory_to_install_jboss_into&gt;</replaceable>
-						</filename>
-					</command>
-					<command>wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip</command>
+cd &lt;directory_to_install_jboss_into&gt;
+wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip
 				</screen>
 			</step>
 			<step>
 				<para>Next, assuming you want to install JBoss in the same directory you downloaded the zip file distribution to, unzip it:</para>
 				<screen>
-<command>unzip jboss-4.2.2.GA.zip</command>
+unzip jboss-4.2.2.GA.zip
 				</screen>
 			</step>
 			<step>
 				<para>Finally, we must set the <envar>JBOSS_HOME</envar> environment variable. The quick-and-easy way to set it for the current session, but which will not last beyond the next reboot, is to <command>export</command> the variable on the command line, and then to <command>echo</command> the variable to make sure that it contains the right directory. For example:</para>
 				<screen>
-<command>export JBOSS_HOME=&quot;${PWD}/jboss-4.2.2.GA&quot;</command>
-					<command>echo <envar>$JBOSS_HOME</envar>
-					</command>
-					<computeroutput>/home/<varname>my_name</varname>/jboss/jboss-4.2.2.GA</computeroutput>
+export JBOSS_HOME=&quot;${PWD}/jboss-4.2.2.GA&quot;
+echo $JBOSS_HOME
+/home/my_name/jboss/jboss-4.2.2.GA
 				</screen>
 				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that the file name hasn't changed in some subtle way).</para>
 				<para>Alternatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>
-<command>export JBOSS_HOME=&quot;<filename><replaceable>&lt;unzip_directory&gt;</replaceable>/jboss-4.2.2.GA</filename>&quot;</command>
+export JBOSS_HOME=&quot;&lt;unzip_directory&gt;/jboss-4.2.2.GA&quot;
 					</screen>
 				</para>
 			</step>
@@ -135,25 +132,19 @@
 		<procedure
 			id="procedure-Downloading_the_Source_and_Building_Mobicents">
 			<step>
-				<para>First, move to the directory that you want to install Mobicents into, and use Subversion to get the latest sources:</para>
-				<!--<screen>
-<command>cd <filename><replaceable>&lt;directory_to_install_mobicents_into&gt;</replaceable>
-						</filename>
-					</command>
-					<command>svn co http://mobicents.googlecode.com/svn/trunk mobicents</command>
-				</screen>-->
-<screen>
-cd &lt;directory_to_install_mobicents_source_into&gt; 
+				<para>First, move to the directory that you want to install Mobicents into, create a directory named <filename>mobicents</filename> into which you'll install everything, and then use Subversion to get the latest sources:</para>
+				<screen>
+cd &lt;directory_to_install_mobicents_source_into&gt;
+mkdir mobicents
 svn co http://mobicents.googlecode.com/svn/trunk mobicents
 </screen>
 			</step>
 			<step>
 				<para>Once Subversion has finished acquiring the latest revision of the sources, which may take a while, then we will then proceed to build Mobicents:</para>
 				<screen>
-<command>ant -f <filename>mobicents/core/build.xml</filename>
-					</command>
-					<computeroutput>BUILD SUCCESSFUL</computeroutput>
-					<computeroutput>Total time: 6 seconds</computeroutput>
+ant -f mobicents/core/build.xml
+BUILD SUCCESSFUL
+Total time: 6 seconds
 				</screen>
 			</step>
 		</procedure>
