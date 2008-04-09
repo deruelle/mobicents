@@ -195,7 +195,7 @@ The SPI layer is an abstraction that endpoint providers must implement to enable
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/Endpoint.png"
+					fileref="Endpoint.png"
 					format="PNG"
 					width="700"/>
 			</imageobject>
