@@ -2,64 +2,58 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter
-	id="Mobicents_User_Guide-Test">
+	id="chapter-Installation">
 	<title>Installation</title>
+	<para></para>
 	<section
-		id="section-Installing_the_Mobicents_Binary">
-		<title>Installing the Mobicents Binary</title>
-		<para>Mobicents runs on top of the JBoss Application Server. The Mobicents 1.20 binary distribution comes bundled with the JBoss Application Server version 4.2.2 GA.</para>
-		<formalpara>
-			<title>Hardware Requirements</title>
+		id="section-Installing_the_Mobicents_Binary_Distribution_Distribution">
+		<title>Installing the Mobicents Binary Distribution</title>
+		<para>The Mobicents Converged Application Server runs on top of the JBoss Application Server. The Mobicents 1.20 binary distribution comes bundled with the JBoss Application Server version 4.2.2 GA.</para>
+		<formalpara
+			id="fpara-Hardware_Requirements_for_the_Binary_Distribution">
+			<title>Hardware Requirements for the Binary Distribution</title>
 			<para>Both Mobicents and the JBoss Application Server are 100% Java. Mobicents will run on the same hardware that the JBoss Application Server runs on.</para>
 		</formalpara>
-		<formalpara>
-			<title>Pre-Install Requirements</title>
+		<formalpara
+			id="fpara-Pre-Install_Requirements_and_Preconditions">
+			<title>Pre-Install Requirements and Preconditions</title>
 			<para>You should ensure two things before downloading and installing the Mobicents binary release:</para>
 		</formalpara>
-		<itemizedlist>
+		<itemizedlist
+			id="itemlist-Mobicents_Installation_Requirements">
 			<listitem>
 				<para>You must have sufficient disk space in order to install the Mobicents binary release. Once unzipped, version 1.20 of the Mobicents binary release requires about 230 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
 			</listitem>
 			<listitem>
-				<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Applicatio..n Server.</para>
+				<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
 			</listitem>
 		</itemizedlist>
 		<formalpara>
 			<title>Installing the Mobicents Binary</title>
-			<para>Once the preconditions and requirements have been met you are free to install the Mobicents binary distribution.</para>
+			<para>Once the preconditions and requirements have been met, you are ready to install the Mobicents binary distribution.</para>
 		</formalpara>
-		<orderedlist>
-			<listitem>
-				<formalpara>
-					<title>Download the Mobicents Binary Distribution</title>
-					<para>The latest version can be found by going to the <ulink
-							url="https://sourceforge.net/projects/mobicents/">Mobicents project page on SourceForge.net</ulink>, clicking on <emphasis>Download Mobicents</emphasis>, and then looking for <emphasis>Mobicents Server</emphasis> and <emphasis>Latest Version</emphasis>.</para>
-				</formalpara>
-			</listitem>
-			<listitem>
-				<formalpara>
-					<title>Verify the Integrity of the Zip File.</title>
-					<para>Along with the zip file there is a sha1 file<footnote><para>For the Mobicents 1.20 binary release, the relevant file names are <filename>mobicents-all-1_2_0_BETA1.zip</filename> and <filename>mobicents-all-1_2_0_BETA1.zip.sha1.asc</filename>.</para>
-						</footnote> which contains a checksum that can be used to verify the integrity of the zip file, and can alert you if the file has been changed since it was uploaded, or if it was corrupted upon download.</para>
-				</formalpara>
+		<procedure
+			id="procedure-Downloading_and_Verifying_the_Mobicents_Distribution">
+			<step>
+				<para>First, Download the latest version of the Mobicents binary distribution. The latest version can be found by going to the <ulink
+						url="https://sourceforge.net/projects/mobicents/">Mobicents project page on SourceForge.net</ulink>, clicking on <emphasis>Download Mobicents</emphasis>, and then looking for <emphasis>Mobicents Server</emphasis> and <emphasis>Latest Version</emphasis>.</para>
+			</step>
+			<step>
+				<para>Then verify the integrity of the zip file. Along with the zip file there is a sha1 file<footnote><para>For the Mobicents 1.20 binary release, the relevant file names are <filename>mobicents-all-1_2_0_BETA1.zip</filename> and <filename>mobicents-all-1_2_0_BETA1.zip.sha1.asc</filename>.</para>
+					</footnote> which contains a checksum that can be used to verify the integrity of the zip file, and can alert you if the file has been changed since it was uploaded, or if it was corrupted upon download.</para>
 				<para>On a Linux system you can use the <command>sha1sum</command> command to verify the integrity of the binary distribution zip file.</para>
 				<para>On a Windows system you will need to download a sha1sum-generating program such as the <command>sha1sum.exe</command> program. This will generate a checksum that you can compare with the sum in the sha1 file.</para>
 				<para>Note that if the two checksums are not identical, it means that the downloaded zip file was corrupted upon download, or has been changed since it was last uploaded to the server.</para>
-			</listitem>
-			<listitem>
-				<formalpara>
-					<title>Install Mobicents</title>
-					<para>Unzip the Mobicents binary distribution zip file to a location in your home directory, thus completing the install.</para>
-				</formalpara>
-			</listitem>
-		</orderedlist>
+			</step>
+			<step>
+				<para>Finally, install the Mobicents Converged Application Server. Unzip the Mobicents binary distribution zip file to a location in your home directory, thus completing the install.</para>
+			</step>
+		</procedure>
 	</section>
 	<section
-		id="section-Building_Mobicents_1.2.x">
-		<title>Building the Mobicents 1.2.x Series.</title>
-		<para>TBD: I need corrected instructions using SVN from <ulink
-				url="http://wiki.java.net/bin/view/Communications/MobicentsQuickStartGuide#How_to_build_Mobicents_1_2_x"/>
-		</para>
+		id="section-Building_the_Mobicents_1.2.x_Series">
+		<title>Building the Mobicents 1.2.x Series</title>
+		<para>Downloading the Mobicents source code, as well as the JBoss binary distribution, and then building the Mobicents Converged Application Server yourself is a fairly painless process. The prerequisite tools needed for such a task are few: a way to download files (we will use the wget utility here, but any web browser will do), the Subversion version control system, and the Apache Ant build tool.</para>
 	</section>
 	<section
 		id="section-Installing_EclipSLEE">
