@@ -46,14 +46,15 @@
 				<para>Note that if the two checksums are not identical, it means that the downloaded zip file was corrupted upon download, or has been changed since it was last uploaded to the server.</para>
 			</step>
 			<step>
-				<para>Finally, install the Mobicents Converged Application Server. Unzip the Mobicents binary distribution zip file to a location in your home directory, thus completing the install.</para>
+				<para>Finally, install the Mobicents Converged Application Server. Unzip the Mobicents binary distribution zip file to the location where you want it, thus completing the install.</para>
 			</step>
 		</procedure>
 	</section>
 	<section
 		id="section-Building_the_Mobicents_1.2.x_Series">
 		<title>Building the Mobicents 1.2.x Series</title>
-		<para>Downloading the Mobicents source code, as well as the JBoss binary distribution, and then building the Mobicents Converged Application Server yourself is a fairly painless procedure.</para>
+		<para>Besides simply installing the latest binary Mobicents release, you can also build the Mobicents Converged Application Server from source. There are several reasons for building Mobicents from source, including getting access to new features such as the latest resource adapters, bundled servers and examples, getting full support for debugging, and accessing extra documentation.</para>
+		<para>Note that building Mobicents from source requires a working installation of JBoss 4.2. This section on building Mobicents from source also includes the steps necessary for installing the JBoss 4.2.2 binary distribution.</para>
 		<formalpara
 			id="fpara-Hardware_Requirements_for_the_Source_Distribution">
 			<title>Hardware Requirements for the Source Distribution</title>
@@ -141,6 +142,10 @@
 					</command>
 					<command>svn co http://mobicents.googlecode.com/svn/trunk mobicents</command>
 				</screen>
+<screen>
+cd directory_above_mobicents
+svn co http://mobicents.googlecode.com/svn/trunk mobicents
+</screen>
 			</step>
 			<step>
 				<para>Once Subversion has finished acquiring the latest revision of the sources, which may take a while, then we will then proceed to build Mobicents:</para>
@@ -152,7 +157,20 @@
 				</screen>
 			</step>
 		</procedure>
-		<para>TBD: Close with a sentence and direct the reader with a ulink to the Running Mobicents (which was installed from source) chapter. This chapter will probably  have to be modified somewhat.</para>
+		<para>TBD: Close with a sentence and direct the reader with a ulink to the Running Mobicents (which was installed from source) chapter. Issues that need to be addressed in this chapter include: installing GWT 1.3, which only comes in source for x86 (not version 1.4) and then building the management console.This chapter will have to be expanded with those instructions.</para>
+		<remark>(04:34:14 AM) Luis Barreirao: to deploy management console you have to run ant -f tools/management-console/build.xml (I think before this you have to download GWT ... )
+(04:34:32 AM) dsilas@gmail.com/Gaim: it should have occurred to me that building mobicents after setting jboss_home might cause the build script to install stuff into jboss...but I didn't think it would do that
+(04:36:11 AM) Luis Barreirao: yes, JBOSS_HOME is needed for two reasons: 1- there are some libs there that must be referenced in order to compile ....
+(04:36:14 AM) dsilas@gmail.com/Gaim: google web toolkit maybe?
+(04:36:46 AM) Luis Barreirao: 2- to copy the result to the deploy folder ....
+(04:37:18 AM) Luis Barreirao: yep - Google Web Toolkit.
+(04:37:19 AM) Luis Barreirao: not the latest version ... it will display only a blank page.
+(04:37:52 AM) Luis Barreirao: if the latest is 1.4, then you must use 1.3 ....
+(04:38:05 AM) dsilas@gmail.com/Gaim: install it where?
+(04:38:37 AM) Luis Barreirao: wherever you want ;) ... then define GWT_HOME
+(04:43:15 AM) dsilas@gmail.com/Gaim: is debugging not possible with the binary distribution then?
+(04:46:44 AM) Luis Barreirao: it can be done, but you'll need the source for the binary ...
+(04:47:16 AM) Luis Barreirao: .. if you want to put breakpoints and go step-by-step, you should have the source.</remark>
 	</section>
 	<section
 		id="section-Installing_EclipSLEE">
