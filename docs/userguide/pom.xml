@@ -50,7 +50,7 @@
 							<formatName>html</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>
 							<finalName>index.html</finalName>
-						</format>l
+						</format>
 					</formats>
 					<options>
 						<xincludeSupported>true</xincludeSupported>
