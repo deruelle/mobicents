@@ -98,28 +98,20 @@
 								url="http://sourceforge.net">Sourceforge.net</ulink>
 						</para>
 					</footnote>:</para>
-				<screen>
-cd &lt;directory_to_install_jboss_into&gt;
-wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip
-				</screen>
+				<screen>cd &lt;directory_to_install_jboss_into&gt;
+wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip</screen>
 			</step>
 			<step>
 				<para>Next, assuming you want to install JBoss in the same directory you downloaded the zip file distribution to, unzip it:</para>
-				<screen>
-unzip jboss-4.2.2.GA.zip
-				</screen>
+				<screen>unzip jboss-4.2.2.GA.zip</screen>
 			</step>
 			<step>
 				<para>Finally, we must set the <envar>JBOSS_HOME</envar> environment variable. The quick-and-easy way to set it for the current session, but which will not last beyond the next reboot, is to <command>export</command> the variable on the command line, and then to <command>echo</command> the variable to make sure that it contains the right directory. For example:</para>
-				<screen>
-export JBOSS_HOME=&quot;${PWD}/jboss-4.2.2.GA&quot;
+				<screen>export JBOSS_HOME=&quot;${PWD}/jboss-4.2.2.GA&quot;
 echo $JBOSS_HOME
-/home/my_name/jboss/jboss-4.2.2.GA
-				</screen>
+/home/my_name/jboss/jboss-4.2.2.GA</screen>
 				<para>If the <command>echo</command> command doesn't produce any output, make sure that you are in the directory that you unzipped the JBoss binary distribution zip file to, and that the name of that directory is correct in the <command>export</command> command (i.e., that the file name hasn't changed in some subtle way).</para>
-				<para>Alternatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>
-export JBOSS_HOME=&quot;&lt;unzip_directory&gt;/jboss-4.2.2.GA&quot;
-					</screen>
+				<para>Alternatively, you can set the <envar>JBOSS_HOME</envar> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <filename>~/.bashrc</filename> file (and making sure that the pathname is absolute): <screen>export JBOSS_HOME=&quot;&lt;unzip_directory&gt;/jboss-4.2.2.GA&quot;</screen>
 				</para>
 			</step>
 		</procedure>
@@ -133,19 +125,15 @@ export JBOSS_HOME=&quot;&lt;unzip_directory&gt;/jboss-4.2.2.GA&quot;
 			id="procedure-Downloading_the_Source_and_Building_Mobicents">
 			<step>
 				<para>First, move to the directory that you want to install Mobicents into, create a directory named <filename>mobicents</filename> into which you'll install everything, and then use Subversion to get the latest sources:</para>
-				<screen>
-cd &lt;directory_to_install_mobicents_source_into&gt;
+				<screen>cd &lt;directory_to_install_mobicents_source_into&gt;
 mkdir mobicents
-svn co http://mobicents.googlecode.com/svn/trunk mobicents
-</screen>
+svn co http://mobicents.googlecode.com/svn/trunk mobicents</screen>
 			</step>
 			<step>
 				<para>Once Subversion has finished acquiring the latest revision of the sources, which may take a while, then we will then proceed to build Mobicents:</para>
-				<screen>
-ant -f mobicents/core/build.xml
+				<screen>ant -f mobicents/core/build.xml
 BUILD SUCCESSFUL
-Total time: 6 seconds
-				</screen>
+Total time: 6 seconds</screen>
 			</step>
 		</procedure>
 		<para>TBD: Close with a sentence and direct the reader with a ulink to the Running Mobicents (which was installed from source) chapter. Issues that need to be addressed in this chapter include: installing GWT 1.3, which only comes in source for x86 (not version 1.4) and then building the management console.This chapter will have to be expanded with those instructions.</para>
