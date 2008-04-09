@@ -136,14 +136,14 @@
 			id="procedure-Downloading_the_Source_and_Building_Mobicents">
 			<step>
 				<para>First, move to the directory that you want to install Mobicents into, and use Subversion to get the latest sources:</para>
-				<screen>
+				<!--<screen>
 <command>cd <filename><replaceable>&lt;directory_to_install_mobicents_into&gt;</replaceable>
 						</filename>
 					</command>
 					<command>svn co http://mobicents.googlecode.com/svn/trunk mobicents</command>
-				</screen>
+				</screen>-->
 <screen>
-cd directory_above_mobicents
+cd &lt;directory_to_install_mobicents_source_into&gt; 
 svn co http://mobicents.googlecode.com/svn/trunk mobicents
 </screen>
 			</step>
