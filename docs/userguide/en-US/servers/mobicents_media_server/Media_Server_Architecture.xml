@@ -169,7 +169,7 @@ A packet relay endpoint is a specific form of conference bridge, that typically 
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/ms.png"
+					fileref="../..images/ms.png"
 					format="PNG"/>
 			</imageobject>
 		</mediaobject>
