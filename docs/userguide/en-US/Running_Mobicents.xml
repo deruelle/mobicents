@@ -16,28 +16,18 @@
 					<orderedlist>
 						<listitem>
 							<para>Change your working directory to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory:</para>
-							<screen>
-<command>cd <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename>
-								</command>
-							</screen>
+							<screen>cd &lt;topmost_mobicents_directory&gt;/server/bin</screen>
 						</listitem>
 						<listitem>
 							<para>Ensure that the <filename>run.sh</filename> file is executable. If it isn't, modify its permissions so that it is:</para>
-							<screen>
-<command>chmod +x <filename>run.sh</filename>
-								</command>
-							</screen>
+							<screen>chmod +x run.sh</screen>
 						</listitem>
 						<listitem>
 							<para>Finally, start the Mobicents Application Server:.</para>
-							<screen>
-<command>./run.sh</command>
-							</screen>
+							<screen>./run.sh</screen>
 							<note>
 								<para>The above command is a shortened version of this equivalent command:</para>
-								<screen>
-<command>./run.sh -c all -b 127.0.0.1</command>
-								</screen>
+								<screen>./run.sh -c all -b 127.0.0.1</screen>
 							</note>
 						</listitem>
 					</orderedlist>
@@ -52,14 +42,10 @@
 						</listitem>
 						<listitem>
 							<para>Start the Mobicents Application Server:</para>
-							<screen>
-<command>run.bat</command>
-							</screen>
+							<screen>run.bat</screen>
 							<note>
 								<para>The above command is a shortened version of this equivalent command:</para>
-								<screen>
-<command>run.bat -c all -b 127.0.0.1</command>
-								</screen>
+								<screen>run.bat -c all -b 127.0.0.1</screen>
 							</note>
 						</listitem>
 					</orderedlist>
