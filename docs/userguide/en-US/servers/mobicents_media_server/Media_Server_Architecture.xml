@@ -25,7 +25,7 @@ This hi-degree of modularity benefits the application developer in several ways.
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/ms-general.jpg"
+					fileref="../../images/ms-general.jpg"
 					format="JPG"/>
 			</imageobject>
 		</mediaobject>
@@ -169,7 +169,7 @@ A packet relay endpoint is a specific form of conference bridge, that typically 
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/ms.png"
+					fileref="../../images/ms.png"
 					format="PNG"/>
 			</imageobject>
 		</mediaobject>
@@ -195,7 +195,7 @@ The SPI layer is an abstraction that endpoint providers must implement to enable
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/Endpoint.png"
+					fileref="../../images/Endpoint.png"
 					format="PNG"
 					width="700"/>
 			</imageobject>
