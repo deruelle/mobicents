@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>mobicents</artifactId>
+		<groupId>org.mobicents</groupId>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>converged-demo-parent</artifactId>
+	<groupId>org.mobicents.examples</groupId>
+	<version>1.2.0.BETA3-SNAPSHOT</version>
+	
+	<packaging>pom</packaging>
+	<name>Mobicents :: Examples :: ${pom.artifactId}</name>
+	
+	<modules>
+		<module>utility</module>	
+		<module>pojo</module>
+		<module>slee/events</module>	
+		<module>slee/events-du</module>	
+		<module>web/jar</module>
+		<module>web/war</module>
+		<module>web/ear</module>
+		<module>slee/callcontrol-sbb</module>
+		<module>slee/admin-sbb</module>
+		<module>slee/orderdeliverdate-sbb</module>
+		<module>slee/ordershipdate-sbb</module>
+		<module>slee/user-sbb</module>	
+		<module>slee/services-du</module>		
+	</modules>
+			
+</project>
