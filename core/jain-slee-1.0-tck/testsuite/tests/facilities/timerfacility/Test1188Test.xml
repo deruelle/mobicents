@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
-<test-description>
-    <title>Test1188Test</title>
-    <executeClass>com.opencloud.sleetck.lib.testsuite.facilities.timerfacility.Test1188Test</executeClass>
-    <assertion id="1188"/>
-    <property name="serviceDUPath" value="facilities.timerfacility.Test1188Service-du.jar"/>
-    <property name="waitPeriodMS" value="10000"/>
-</test-description>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE test-description SYSTEM "http://www.opencloud.com/dtd/slee-tck-test-description_1_0.dtd">
-<test-description>
-    <title>Test2181Test</title>
-    <executeClass>com.opencloud.sleetck.lib.testsuite.events.initialeventselector.Test2181Test</executeClass>
-    <assertion id="2181"/>
-    <property name="serviceDUPath" value="events.initialeventselector.Test2181Service-du.jar"/>
-    <property name="serviceDUPath2" value="events.initialeventselector.Test2181Service2-du.jar"/>
-</test-description>
