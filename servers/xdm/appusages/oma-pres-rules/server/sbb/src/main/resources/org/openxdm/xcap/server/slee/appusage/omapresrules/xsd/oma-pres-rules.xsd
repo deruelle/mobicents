@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:oma:xml:prs:pres-rules"
+  xmlns="urn:oma:xml:prs:pres-rules"
+  xmlns:pr="urn:ietf:params:xml:ns:pres-rules"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified" attributeFormDefault="unqualified">
+  
+ <!-- This import brings in the IETF presence authorization rules -->
+ <xs:import namespace="urn:ietf:params:xml:ns:pres-rules"/>
+
+  <!-- OMA specific "transformations" child elements -->
+  <xs:element name="provide-willingness" type="pr:booleanPermission" />
+  <xs:element name="provide-network-availability" type="pr:booleanPermission" />
+  <xs:element name="provide-session-participation" type="pr:booleanPermission" />
+  <xs:element name="provide-registration-state" type="pr:booleanPermission"/>
+  <xs:element name="provide-barring-state" type="pr:booleanPermission"/>
+  <xs:element name="provide-geopriv">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="false"/>
+        <xs:enumeration value="full"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="service-id" type="xs:string"/>
+
+</xs:schema>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><sbb-jar>
+    
+    <sbb>      
+    
+        <description/>
+       
+        <sbb-name>RLSServicesAppUsageSbb</sbb-name>
+        <sbb-vendor>org.openxdm</sbb-vendor>
+        <sbb-version>1.0</sbb-version>        
+        <sbb-ref>
+        	<sbb-name>RequestProcessorSbb</sbb-name>
+        	<sbb-vendor>org.openxdm</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>requestProcessorSbb</sbb-alias>
+        </sbb-ref>
+        <sbb-classes>
+            <sbb-abstract-class reentrant="False">
+                <sbb-abstract-class-name>org.openxdm.xcap.server.slee.appusage.rlsservices.RLSServicesAppUsageSbb</sbb-abstract-class-name>                       
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>requestProcessorSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getRequestProcessorChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>
+	        </sbb-abstract-class>	        
+        </sbb-classes>            
+        
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Post</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.POST</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+                
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Get</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.GET</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Head</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.HEAD</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Put</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.PUT</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+
+
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Delete</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.DELETE</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Options</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.OPTIONS</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+
+        <event initial-event="True" event-direction="Receive">
+            <event-name>Trace</event-name>
+            <event-type-ref>
+                <event-type-name>net.java.slee.resource.http.events.incoming.TRACE</event-type-name>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext" />
+            <initial-event-selector-method-name>
+		     	initialEventSelector
+		    </initial-event-selector-method-name>
+        </event>
+      	
+      	<event event-direction="Receive" initial-event="True">
+            <event-name>ServiceStartedEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.slee.serviceactivity.ServiceStartedEvent</event-type-name>
+                <event-type-vendor>javax.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ActivityEndEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>javax.slee.ActivityEndEvent</event-type-name>
+				<event-type-vendor> javax.slee </event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+		
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>HttpServletResourceAdaptorType</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.mobicents</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>            
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/mobicents/httpservlet/sbbrainterface</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>HttpServletRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+	   	
+	   	<resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>AppUsageCacheResourceAdaptorType</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.openxdm</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/openxdm/appusagecache/sbbrainterface</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>AppUsageCacheRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>DataSourceResourceAdaptorType</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.openxdm</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>            
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/openxdm/datasource/sbbrainterface</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>DataSourceRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+        
+    </sbb>
+    
+</sbb-jar>

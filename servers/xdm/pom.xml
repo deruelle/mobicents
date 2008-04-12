@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>	
+	
+	<parent>
+		<artifactId>mobicents</artifactId>
+		<groupId>org.mobicents</groupId>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>parent</artifactId>
+	<groupId>org.mobicents.servers.xdm</groupId>
+	<version>${mobicents.server.xdm.version}</version>
+			
+	<modules>	
+		<module>../../resources/http-servlet</module>
+		<module>commons</module>	
+		<module>client</module>
+		<module>server/appusagecache/events</module>
+		<module>server/appusagecache/ratype</module>
+		<module>server/appusagecache/ra</module>
+		<module>server/appusagecache/du</module>
+		<module>server/datasource/events</module>
+		<module>server/datasource/ratype</module>
+		<module>server/datasource/ra/jdbc</module>
+		<module>server/datasource/du</module>
+		<module>server/core/sbb</module>
+		<module>server/core/du</module>
+		<module>appusages/oma-pres-rules/server/sbb</module>
+		<module>appusages/oma-pres-rules/server/du</module>	
+		<module>appusages/pres-rules/client</module>
+		<module>appusages/pres-rules/server/sbb</module>
+		<module>appusages/pres-rules/server/du</module>
+		<module>appusages/resource-lists/client</module>
+		<module>appusages/resource-lists/server/sbb</module>
+		<module>appusages/resource-lists/server/du</module>
+		<module>appusages/rls-services/server/sbb</module>
+		<module>appusages/rls-services/server/du</module>
+		<module>appusages/xcap-caps/client</module>
+		<module>appusages/xcap-caps/server/sbb</module>
+		<module>appusages/xcap-caps/server/du</module>
+	</modules>
+			
+</project>
