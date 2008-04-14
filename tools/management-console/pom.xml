@@ -114,8 +114,11 @@
 						</goals>
 						<configuration>
 							<tasks>
+								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+	    							<isset property="jboss.home" />
+								</condition>
 								<copy overwrite="true"
-									file="target/${project.build.finalName}.war" todir="${env.JBOSS_HOME}/server/${node}/deploy" />
+									file="target/${project.build.finalName}.war" todir="${jboss.dir}/server/${node}/deploy" />
 							</tasks>
 						</configuration>
 					</execution>

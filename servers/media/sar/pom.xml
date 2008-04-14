@@ -92,7 +92,10 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy todir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.sar">
+								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+	    							<isset property="jboss.home" />
+								</condition>
+								<copy todir="${jboss.dir}/server/${node}/deploy/${project.build.finalName}.sar">
 									<fileset dir="target/${project.build.finalName}">
 										<include name="**" />
 									</fileset>
