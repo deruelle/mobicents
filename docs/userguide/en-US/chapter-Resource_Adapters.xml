@@ -1,0 +1,65 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter
+	id="chapter-Resource_Adapters">
+	<title>Resource Adapters</title>
+	<xi:include
+		href="resource_adapters/section-Deploying_and_Undeploying_Resource_Adapters.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-SIP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-XMPP_and_Google_Talk_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Asterisk_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Parlay_and_Parlay-X_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-J2EE_and_CA_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Diameter_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Media_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-SMPP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Media_Gateway_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-JCC_INAP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-HTTP-Server_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-HTTP-Client_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Persistence_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-XCAP_Client_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Rules_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-TTS_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-SAP_Resource_Adapter.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="resource_adapters/section-Third-Party_Resource_Adapters.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+</chapter>
+

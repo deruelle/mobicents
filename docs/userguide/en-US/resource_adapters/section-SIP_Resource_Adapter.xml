@@ -1,0 +1,37 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-SIP_Resource_Adapter">
+	<title>SIP Resource Adapter</title>
+	<formalpara>
+		<title>The Current Mobicents JSIP Version 1.2 implementation</title>
+		<para>The Mobicents SIP Resource Adapter is a Mobicents sub-project that aims to create a high-performance SLEE extension for the Session Initiation Protocol (SIP).</para>
+	</formalpara>
+	<para>The most recent version of the SIP Resource Adapter includes several enhancements which allow for more convenient development of SIP resources for a wide range of applications. The type name of this latest version is <computeroutput>JSIP v1.2</computeroutput>, the type vendor is <computeroutput>net.java.slee.sip</computeroutput> and the type version is <computeroutput>1.2</computeroutput>.</para>
+	<formalpara>
+		<title>The JAIN SIP Resource Adapter Version 1.1</title>
+		<para>In Java Specification Request 22 (JSR-22), this resource adapter type name is denoted as <computeroutput>JAIN SIP</computeroutput>, and the type vendor as <computeroutput>javax.sip</computeroutput>. This resource adapter type version is 1.1. Mobicents provides a fully-compliant implementation of this specification.</para>
+	</formalpara>
+	<section
+		id="section-Installing_the_JAIN_SIP_Resource_Adapter">
+		<title>Installing the JAIN SIP Resource Adapter</title>
+		<para>To install the JAIN SIP Resource Adapter, you must first acquire the latest version. Navigate to the <ulink
+				url="https://sourceforge.net/projects/mobicents">Mobicents Sourceforge project page</ulink> and click on the <emphasis>Download Mobicents</emphasis> link. On the next page, click on the <emphasis>SLEE SIP RA</emphasis> link so that it expands to reveal the necessary jar file, which you can click to download<footnote
+				id="sip_ra_filename"><para>As of the time this was written, the jar file was named <filename>jsipv1.2ra-package-10-02-2007.jar</filename>.</para>
+			</footnote> As of the time of this writing, the latest version is <emphasis>1.2 RC1 - core rc2</emphasis>.</para>
+	</section>
+	<xi:include
+		href="../examples/section-End-to-End_SIP_Example.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="../examples/section-Wake-Up_Call_Example.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="../examples/section-Third-Party_Call_Control_Example.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="../examples/section-Back-to-Back_User_Agent_Example.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+</section>
+
