@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<project name="mobicents.release" default="release" basedir=".">
+
+	<property environment="sys"/>
+	<property name="base.dir" value="${ant.file.mobicents.release}/../"/>
+	<property name="base.path" value="${ant.file.mobicents.release}/../"/>
+	
+	<property file="build.properties"/>
+
+	<property name="release.dir" value="${base.dir}/output"/>
+	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
+	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/"/>
+	
+	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+	    <os family="windows"/>
+	</condition>
+	
+	<target name="checks" description="Initialize the tasks and do the checks.">
+		<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+		  <classpath>
+		    <pathelement location="${base.dir}/lib/ant-contrib-1.0b3.jar"/>
+		  </classpath>
+		</taskdef>
+		
+		<fail message="M2_HOME environment variable is not set">
+			<condition>
+				<not>
+					<isset property="sys.M2_HOME" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="GWT_HOME environment variable is not set. GWT 1.3 is required.">
+			<condition>
+				<not>
+					<isset property="sys.GWT_HOME" />
+				</not>
+			</condition>
+		</fail>
+		<fail message="Can not find ${jboss.distro.zip.path} in the current directory.">
+			<condition>
+				<not>
+					<available file="${jboss.distro.zip.path}"/>
+				</not>
+			</condition>
+		</fail>
+	</target>
+	
+	<target name="release" depends="checks" description="Makes the release.">
+		<antcall target="extract"/>
+
+		<exec executable="${mvn.executable}" dir="${base.path}/..">
+			<arg line="clean install"/>
+		</exec>
+		<antcall target="build-mms"/>
+		<antcall target="build-mmc"/>
+		<antcall target="build-ras"/>
+		<antcall target="build-examples"/>
+		<delete failonerror="false" verbose="true" dir="${base.path}/jboss-${jboss.version}/server/all"/>
+		<delete failonerror="false" verbose="true" dir="${base.path}/jboss-${jboss.version}/server/minimal"/>
+	</target>
+	
+	<target name="build-mmc" depends="checks" description="The mobicents management console">
+		<exec executable="${mvn.executable}" dir="${base.path}/../tools/management-console">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>
+	</target>
+	
+	<target name="build-mms" depends="checks" description="The media server.">
+		<exec executable="${mvn.executable}" dir="${base.path}/../servers/media">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>
+		<!--
+		<copy overwrite="true" todir="${jboss.home}/server/default/deploy">
+			<fileset dir="${sys.JBOSS_HOME}/server/default/deploy/">
+				<include name="*media*.sar/**"/>
+			</fileset>
+		</copy> -->
+	</target>
+	
+	<target name="make-final-zip" description="Final package.">
+		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh"
+		         eol="lf" eof="remove" />
+		<zip destfile="${base.path}/mobicents-all-${mobicents.release.version}-jboss-${jboss.version}.zip" filesonly="false">
+			<zipfileset dir="${jboss.home}/bin"
+		            filemode="755" prefix="jboss-${jboss.version}/bin">
+		            <include name="*.sh" />
+			</zipfileset>
+         	<zipfileset dir="${jboss.home}/bin"
+         		prefix="jboss-${jboss.version}/bin">
+            	<exclude name="*.sh" />
+         	</zipfileset>
+         	<zipfileset dir="${release.dir}"
+            	prefix="">
+            	<exclude name="jboss-${jboss.version}/bin/**"/>
+            	<exclude name="jboss-${jboss.version}/server/*/data/**"/>
+            	<exclude name="jboss-${jboss.version}/server/*/log/**"/>
+            	<exclude name="jboss-${jboss.version}/server/*/tmp/**"/>
+            	<exclude name="jboss-${jboss.version}/server/*/work/**"/>
+            	<exclude name="jboss-${jboss.version}/server/tmp/**"/>
+         	</zipfileset>
+		</zip>
+	</target>
+
+	<target name="build-ras" depends="checks" description="Resource adapters.">
+		<for delimiter="," param="dir.name" list="${ra.dirs}">
+			<sequential>
+				<echo>Packaging RA for release from DIR[${base.dir}/../resources/@{dir.name}]</echo>
+				<exec executable="${mvn.executable}" dir="${base.dir}/../resources/@{dir.name}">
+					<arg line="clean install"/>
+				</exec>
+
+				<copy overwrite="true" todir="${release.dir}/resources/@{dir.name}">
+					<fileset dir="${base.path}/../resources/@{dir.name}/du/target">
+					
+						<include name="**.jar" />
+						<include name="*.xml" />
+						<include name="*.properties" />
+						<include name="**/*.txt" />
+					
+					</fileset>
+				</copy>
+			</sequential>
+
+		</for>
+	</target>
+	
+	<target name="build-examples" depends="checks" description="Examples.">
+		<for delimiter="," param="dir.name" list="${example.dirs}">
+			<sequential>
+				<echo>Packaging RA for release from DIR[${base.dir}/../examples/@{dir.name}]</echo>
+				<exec executable="${mvn.executable}" dir="${base.dir}/../examples/@{dir.name}">
+					<arg line="clean install"/>
+				</exec>
+
+				<copy overwrite="true" todir="${release.dir}/examples/@{dir.name}">
+					<fileset dir="${base.path}/../examples/@{dir.name}/">
+						<include name="**" />
+					</fileset>
+				</copy>
+			</sequential>
+
+		</for>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${release.dir}" />
+	</target>
+
+	<!-- Download and dependency building -->
+	<target name="proxyflags">
+		<!-- check proxy parameters. -->
+		<condition property="useproxy">
+			<equals arg1="${proxy.use}" arg2="on" />
+		</condition>
+	</target>
+
+	<target name="setproxy" depends="proxyflags" if="useproxy">
+		<taskdef name="setproxy" classname="org.apache.tools.ant.taskdefs.optional.net.SetProxy" />
+		<setproxy proxyhost="${proxy.host}" proxyport="${proxy.port}" proxyuser="${proxy.user}" proxypassword="${proxy.password}" />
+		<echo message="Using ${proxy.host}:${proxy.port} to download ${sourcefile}" />
+	</target>
+
+	<target name="downloadgz" depends="setproxy">
+		<!-- Download and extract the package -->
+		<get src="${sourcefile}" dest="${base.path}/file.tar.gz" />
+		<gunzip src="${base.path}/file.tar.gz" dest="${base.path}/file.tar" />
+		<untar src="${base.path}/file.tar" dest="${base.path}" />
+		<delete file="${base.path}/file.tar" />
+		<delete file="${base.path}/file.tar.gz" />
+	</target>
+
+	<target name="downloadzip" depends="setproxy">
+		<!-- Download and extract the package -->
+		<get src="${sourcefile}" dest="${base.path}/file.zip" />
+		<mkdir dir="${destdir}" />
+		<unzip src="${base.path}/file.zip" dest="${destdir}" />
+		<delete file="${base.path}/file.zip" />
+	</target>
+
+	<target name="downloadfile" depends="setproxy">
+		<!-- Download extract the file -->
+		<mkdir dir="${destdir}" />
+		<get src="${sourcefile}" dest="${destfile}" />
+	</target>		
+
+	<target name="extractzip" depends="setproxy">			
+		<mkdir dir="${destdir}" />
+		<unzip src="${sourcefile}" dest="${destdir}" />		
+	</target>
+
+	<target name="extract" description="Builds and download dependent components">					
+		<antcall target="extractzip">
+			<param name="sourcefile" value="${jboss.distro.zip.path}" />			
+			<param name="destdir" value="${release.dir}" />
+		</antcall>		
+	</target>
+</project>
