@@ -22,18 +22,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.media.CannotRealizeException;
-import javax.media.Format;
-import javax.media.Manager;
-import javax.media.NoDataSourceException;
-import javax.media.NoProcessorException;
-import javax.media.Processor;
-import javax.media.ProcessorModel;
-import javax.media.format.AudioFormat;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.DataSource;
-import javax.media.protocol.PushBufferDataSource;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -46,7 +39,6 @@ public class AudioPlayer {
             AudioFormat.SIGNED);
     
     protected AudioFormat format = LINEAR;
-    private Processor processor;
     private List<PlayerListener> listeners = Collections.synchronizedList(new ArrayList());
     private PushBufferAudioStream audioStream;
     
@@ -108,22 +100,10 @@ public class AudioPlayer {
      * @throws javax.media.CannotRealizeException
      */
     public PushBufferStream start(String file) throws MalformedURLException, 
-            IOException, NoDataSourceException, NoProcessorException, 
-            CannotRealizeException {
-        URL url = new URL(file);
-        DataSource ds = Manager.createDataSource(url);
-
-        ContentDescriptor cd = new ContentDescriptor(ContentDescriptor.RAW);
-        ProcessorModel pm = new ProcessorModel(ds, new Format[] {format}, cd);
+            IOException, UnsupportedAudioFileException, UnsupportedFormatException {
         
-        processor = Manager.createRealizedProcessor(pm);
-        processor.start();
-        
-        PushBufferDataSource enc = (PushBufferDataSource) processor.getDataOutput();
-        enc.start();
-        
-        audioStream = new PushBufferAudioStream(this);
-        enc.getStreams()[0].setTransferHandler(audioStream);
+        URL url = new URL(file);        
+        audioStream = new PushBufferAudioStream(this, AudioSystem.getAudioInputStream(url));
         audioStream.start();
         
         return audioStream;
@@ -133,16 +113,25 @@ public class AudioPlayer {
      * Terminates player.
      */
     public void stop() {
-        if (processor != null) {
-            if (processor.getState() == Processor.Started) {
-                processor.stop();
-            }
-            processor.close();
-            processor.deallocate();
-        }
         if (audioStream != null) {
             audioStream.stop();
         }
+    }
+
+    /**
+     * Called when player failed.
+     */
+    protected void failed(Exception e) {
+        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.FACILITY_ERROR, e.getMessage());
+        new Thread(new EventQueue(evt)).start();
+    }
+    
+    /**
+     * Called when player stopped.
+     */
+    protected void stopped() {
+        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.STOP_BY_REQUEST, null);
+        new Thread(new EventQueue(evt)).start();
     }
     
     /**
@@ -157,7 +146,7 @@ public class AudioPlayer {
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
-        audioStream.stop();
+//        audioStream.stop();
         PlayerEvent evt = new PlayerEvent(this, PlayerEvent.END_OF_MEDIA, null);
         new Thread(new EventQueue(evt)).start();
     }

@@ -16,8 +16,8 @@ package org.mobicents.media.server.impl.jmf.dsp;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.media.Format;
-import javax.media.format.AudioFormat;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
 
 /**
  *

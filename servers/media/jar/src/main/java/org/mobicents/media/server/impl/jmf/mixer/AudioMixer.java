@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
-import javax.media.format.AudioFormat;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Endpoint;
 

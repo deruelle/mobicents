@@ -16,8 +16,8 @@
 
 package org.mobicents.media.server;
 
-import javax.media.format.AudioFormat;
-import javax.media.protocol.FileTypeDescriptor;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.protocol.FileTypeDescriptor;
 
 /**
  *

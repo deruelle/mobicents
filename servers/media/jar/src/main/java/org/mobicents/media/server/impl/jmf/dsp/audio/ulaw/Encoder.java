@@ -13,7 +13,7 @@
  */
 package org.mobicents.media.server.impl.jmf.dsp.audio.ulaw;
 
-import javax.media.Format;
+import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 
 /**

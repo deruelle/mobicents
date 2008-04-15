@@ -15,7 +15,7 @@
  */
 package org.mobicents.media.server.impl.sdp;
 
-import javax.media.format.AudioFormat;
+import org.mobicents.media.format.AudioFormat;
 
 /**
  *

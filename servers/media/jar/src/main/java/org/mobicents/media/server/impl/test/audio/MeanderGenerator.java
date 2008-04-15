@@ -16,10 +16,10 @@ package org.mobicents.media.server.impl.test.audio;
 
 import java.io.IOException;
 import java.util.Timer;
-import javax.media.Time;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.PushBufferDataSource;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Time;
+import org.mobicents.media.protocol.ContentDescriptor;
+import org.mobicents.media.protocol.PushBufferDataSource;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  *

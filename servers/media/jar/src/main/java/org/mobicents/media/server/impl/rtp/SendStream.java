@@ -14,8 +14,8 @@
 
 package org.mobicents.media.server.impl.rtp;
 
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  *  interface representing a sending stream within an RTP session.

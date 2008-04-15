@@ -14,9 +14,9 @@
 
 package org.mobicents.media.server.impl.ivr;
 
-import javax.media.format.AudioFormat;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.FileTypeDescriptor;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.FileTypeDescriptor;
 import org.mobicents.media.server.impl.ann.AnnEndpointImpl;
 
 import org.apache.log4j.Logger;

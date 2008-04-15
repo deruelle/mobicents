@@ -16,9 +16,9 @@ package org.mobicents.media.server.impl.rtp;
 
 import java.net.InetAddress;
 import java.net.SocketException;
-import javax.media.Format;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  * Provides RTP/RTCP implementaion for transmitting audio/video 

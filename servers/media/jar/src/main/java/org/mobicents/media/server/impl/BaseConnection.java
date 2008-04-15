@@ -29,10 +29,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
 
-import javax.media.Format;
-import javax.media.format.AudioFormat;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 import javax.sdp.MediaDescription;
 import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;

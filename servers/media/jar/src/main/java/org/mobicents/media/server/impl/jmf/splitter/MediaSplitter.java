@@ -20,10 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
-import javax.media.Buffer;
-import javax.media.Format;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  * The MediaSplitter allows to connect one media stream to any number of 

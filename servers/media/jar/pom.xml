@@ -64,11 +64,11 @@
 			<artifactId>ant-optional</artifactId>
 			<version>${ant-optional.version}</version>
 		</dependency>
-		<dependency>
+		<!-- dependency>
 			<groupId>javax.media</groupId>
 			<artifactId>jmf</artifactId>
 			<version>${jmf.version}</version>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-ri</artifactId>

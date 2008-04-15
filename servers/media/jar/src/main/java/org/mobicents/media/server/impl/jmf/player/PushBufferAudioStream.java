@@ -14,39 +14,72 @@
 package org.mobicents.media.server.impl.jmf.player;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.TimerTask;
-import javax.media.Buffer;
-import javax.media.Format;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.ContentDescriptor;
+import org.mobicents.media.protocol.PushBufferStream;
+import javax.sound.sampled.AudioFormat.Encoding;
+import javax.sound.sampled.AudioInputStream;
+import org.mobicents.media.server.impl.jmf.dsp.Codec;
+import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class PushBufferAudioStream implements PushBufferStream, BufferTransferHandler {
+public class PushBufferAudioStream implements PushBufferStream {
 
     private AudioPlayer audioPlayer;
     private BufferTransferHandler transferHandler;
-    private List<Buffer> media = Collections.synchronizedList(new ArrayList());
+    private byte[] frame;
+    private int duration;
+    private boolean eom = false;
     private boolean started = false;
-    private boolean active = false;
-    
     private TimerTask transmittor;
     private int packetSize;
     private long seq = 0;
-    
-    public PushBufferAudioStream(AudioPlayer audioPlayer) {
+    private AudioInputStream localStream;
+    private Codec codec;
+
+    public PushBufferAudioStream(AudioPlayer audioPlayer, AudioInputStream stream) throws UnsupportedFormatException {
         this.audioPlayer = audioPlayer;
-        this.packetSize = (int) (
-                (audioPlayer.format.getSampleRate() / 1000) *
-                (audioPlayer.format.getSampleSizeInBits() / 8) *
+        this.localStream = stream;
+
+        AudioFormat fmt = new AudioFormat(
+                getEncoding(stream.getFormat().getEncoding()),
+                stream.getFormat().getFrameRate(),
+                stream.getFormat().getFrameSize() * 8,
+                stream.getFormat().getChannels());
+
+        if (!fmt.matches(audioPlayer.format)) {
+            codec = CodecLocator.getCodec(fmt, audioPlayer.format);
+            if (codec == null) {
+                throw new UnsupportedFormatException(audioPlayer.format);
+            }
+        }
+
+        packetSize = (int) ((fmt.getSampleRate() / 1000) *
+                (fmt.getSampleSizeInBits() / 8) *
                 audioPlayer.packetPeriod);
+    }
+
+    private String getEncoding(Encoding encoding) {
+        if (encoding == Encoding.ALAW) {
+            return "ALAW";
+        } else if (encoding == Encoding.ULAW) {
+            return "ULAW";
+        } else if (encoding == Encoding.PCM_SIGNED) {
+            return "LINEAR";
+        } else if (encoding == Encoding.PCM_UNSIGNED) {
+            return "LINEAR";
+        } else {
+            return null;
+        }
     }
 
     public Format getFormat() {
@@ -56,65 +89,41 @@ public class PushBufferAudioStream implements PushBufferStream, BufferTransferHa
     protected void start() {
         if (!started) {
             transmittor = new Transmittor(this);
-            Endpoint.TIMER.scheduleAtFixedRate(transmittor, 
+            Endpoint.TIMER.scheduleAtFixedRate(transmittor,
                     audioPlayer.packetPeriod, audioPlayer.packetPeriod);
             started = true;
-        }
-    }
-
-    protected void stop() {
-        if (started) {
-            transmittor.cancel();
-            Endpoint.TIMER.purge();
-            started = false;
-            media.clear();
-        }
-    }
-
-    public void setActive(boolean active) {
-        if (this.active && !active) {
-            this.active = active;
-            audioPlayer.endOfMedia();
-        } else if (!this.active && active) {
-            this.active = active;
             audioPlayer.started();
         }
     }
 
-    public void read(Buffer buffer) throws IOException {
-        if (!media.isEmpty()) {
-            byte[] data = new byte[packetSize];
-
-            int count = 0;
-            while (count < packetSize && !media.isEmpty()) {
-                Buffer buff = media.get(0);
-                
-                if (buff.isEOM()) {
-                    buffer.setEOM(true);
-                    setActive(false);
-                    return;
-                }
-                
-                int len = Math.min(packetSize - count, buff.getLength() - buff.getOffset());
-                System.arraycopy(buff.getData(), buff.getOffset(), data, count, len);
-
-                count += len;
-                buff.setOffset(buff.getOffset() + len);
-
-                if (buff.getOffset() == buff.getLength()) {
-                    media.remove(buff);
-                }
-            }
-
-           buffer.setData(data);
-           buffer.setOffset(0);
-           buffer.setLength(data.length);
-           buffer.setDuration(audioPlayer.packetPeriod);
-           buffer.setFormat(audioPlayer.format);
-           buffer.setTimeStamp(seq * audioPlayer.packetPeriod);
-           buffer.setSequenceNumber(seq++);
+    private void terminate() {
+        if (started) {
+            transmittor.cancel();
+            Endpoint.TIMER.purge();
         }
-        setActive(!media.isEmpty());
+    }
+
+    protected void stop() {
+        terminate();
+        started = false;
+        audioPlayer.stopped();
+    }
+
+    protected void fail(Exception e) {
+        terminate();
+        started = false;
+        audioPlayer.failed(e);
+    }
+
+    public void read(Buffer buffer) throws IOException {
+        buffer.setData(frame);
+        buffer.setDuration(duration);
+        buffer.setLength(frame.length);
+        buffer.setOffset(0);
+        buffer.setFormat(audioPlayer.format);
+        buffer.setTimeStamp(seq * audioPlayer.packetPeriod);
+        buffer.setEOM(eom);
+        buffer.setSequenceNumber(seq++);
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {
@@ -137,17 +146,8 @@ public class PushBufferAudioStream implements PushBufferStream, BufferTransferHa
         return new Object[0];
     }
 
-    public Object getControl(String arg0) {
+    public Object getControl(String ctrl) {
         return null;
-    }
-
-    public void transferData(PushBufferStream stream) {
-        try {
-            Buffer buffer = new Buffer();
-            stream.read(buffer);
-            media.add((Buffer) buffer.clone());
-        } catch (IOException e) {
-        }
     }
 
     private class Transmittor extends TimerTask {
@@ -159,8 +159,32 @@ public class PushBufferAudioStream implements PushBufferStream, BufferTransferHa
         }
 
         public void run() {
-            if (transferHandler != null) {
-                transferHandler.transferData(stream);
+            System.out.println("TICK");
+            byte[] packet = new byte[packetSize];
+            try {
+                int len = localStream.read(packet);
+                if (len == -1) {
+                    terminate();
+                    if (started) {
+                        audioPlayer.endOfMedia();
+                    }
+                } else {
+                    frame = new byte[len];
+                    System.arraycopy(packet, 0, frame, 0, len);
+
+                    duration = (int) (audioPlayer.packetPeriod * len / packetSize);
+                    eom = len < packetSize;
+
+                    if (codec != null) {
+                        frame = codec.process(frame);
+                    }
+
+                    if (transferHandler != null) {
+                        transferHandler.transferData(stream);
+                    }
+                }
+            } catch (IOException e) {
+                fail(e);
             }
         }
     }

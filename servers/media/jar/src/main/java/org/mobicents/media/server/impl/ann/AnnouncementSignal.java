@@ -16,8 +16,8 @@
 package org.mobicents.media.server.impl.ann;
 
 import java.util.Collection;
-import javax.media.format.AudioFormat;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.Signal;
@@ -68,6 +68,7 @@ public class AnnouncementSignal extends Signal implements PlayerListener {
                 resource.setInputStream(stream);
             }
         } catch (Exception e) {
+        	logger.error("starting of AnnouncementSignal failed",e);
             NotifyEvent report = new NotifyEvent(endpoint,
                     Announcement.FAIL,
                     Announcement.CAUSE_FACILITY_FAILURE,

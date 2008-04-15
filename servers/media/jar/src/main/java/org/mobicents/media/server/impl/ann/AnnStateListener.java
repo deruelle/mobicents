@@ -15,17 +15,13 @@
  */
 package org.mobicents.media.server.impl.ann;
 
-import javax.media.ControllerEvent;
-import javax.media.ControllerListener;
-
-
 import org.apache.log4j.Logger;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class AnnStateListener implements ControllerListener {
+public class AnnStateListener  {
 
     private AnnouncementSignal signal;
     private transient Logger logger = Logger.getLogger(AnnStateListener.class);
@@ -35,15 +31,5 @@ public class AnnStateListener implements ControllerListener {
      */
     public AnnStateListener(AnnouncementSignal player) {
         this.signal = player;
-    }
-
-    public void controllerUpdate(ControllerEvent evt) {
-        logger.info("evt=" + evt);
-        if (evt instanceof javax.media.ConfigureCompleteEvent) {
-        } else if (evt instanceof javax.media.RealizeCompleteEvent) {
-        } else if (evt instanceof javax.media.StartEvent) {
-        } else if (evt instanceof javax.media.EndOfMediaEvent) {
-            //signal.stop();
-        } 
     }
 }

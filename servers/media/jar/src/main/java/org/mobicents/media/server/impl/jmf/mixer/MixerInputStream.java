@@ -17,11 +17,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.media.Buffer;
-import javax.media.format.AudioFormat;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 

@@ -15,23 +15,20 @@
  */
 package org.mobicents.media.server.impl.jmf.recorder;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import org.mobicents.media.server.impl.ivr.*;
-import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import javax.media.DataSink;
-import javax.media.Format;
-import javax.media.Manager;
-import javax.media.MediaLocator;
-import javax.media.Processor;
-import javax.media.ProcessorModel;
-import javax.media.format.AudioFormat;
-import javax.media.protocol.DataSource;
-import javax.media.protocol.FileTypeDescriptor;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.protocol.FileTypeDescriptor;
+import org.mobicents.media.protocol.PushBufferStream;
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.packetrelay.LocalDataSource;
 
 /**
  *
@@ -39,8 +36,6 @@ import org.mobicents.media.server.impl.packetrelay.LocalDataSource;
  */
 public class Recorder {
 
-    private Processor recorder;
-    private DataSink dataSink;
     private String mediaType;
     private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1, 
             AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
@@ -48,52 +43,34 @@ public class Recorder {
     private List<RecorderListener> listeners = new ArrayList();
 
     private Logger logger = Logger.getLogger(Recorder.class);
-
+    private int recordTime = 60;
+    
     public Recorder(String mediaType) {
         this.mediaType = FileTypeDescriptor.BASIC_AUDIO;
     }
 
+    public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
+        this.recordTime = recordTime;
+    }
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
      */
-    private void record(URL url, PushBufferStream stream) throws Exception {
-        DataSource dataSource = new LocalDataSource(stream);
-        FileTypeDescriptor ftd = new FileTypeDescriptor(mediaType);
-        Format[] formats = new Format[]{audioFormat};
-
-        ProcessorModel recorderModel = new ProcessorModel(dataSource, formats, ftd);
-        recorder = Manager.createRealizedProcessor(recorderModel);
-        //recorder.addControllerListener(new RecorderStateListener(this));
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Initialized Recorder[processor=" + recorder + "]");
-        }
-
-        MediaLocator file = new MediaLocator(url);
-        dataSink = Manager.createDataSink(recorder.getDataOutput(), file);
-        dataSink.open();
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Initialized Datasink[" + dataSink + "]");
-        }
-
-        recorder.start();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Starting recorder[processor=" + recorder + "]");
-        }
-
-        dataSink.start();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Started DataSink[" + dataSink + "]");
-        }
+    private void record(String uri, PushBufferStream stream) throws Exception {
+        RecorderStream recorderStream = new RecorderStream(stream);
+        javax.sound.sampled.AudioFormat fmt = 
+                new javax.sound.sampled.AudioFormat(8000, 16, 1, true, false);
+        AudioInputStream audioStream = new AudioInputStream(recorderStream,
+                 fmt, 8000 * recordTime);
+//        AudioInputStream audioStream = AudioSystem.getAudioInputStream(recorderStream);
+        FileOutputStream file = new FileOutputStream(uri);
+        AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
     }
 
     public void start(String file, PushBufferStream stream) {
         try {
-            URL url = new URL(file);
-            record(url, stream);
+            record(file, stream);
             sendEvent(RecorderEvent.STARTED, "NORMAL");
         } catch (Exception e) {
             dispose();
@@ -103,18 +80,6 @@ public class Recorder {
     }
 
     private void dispose() {
-        if (dataSink != null) {
-            try {
-                dataSink.stop();
-            } catch (IOException e) {
-            }
-            dataSink.close();
-        }
-
-        if (recorder != null) {
-            recorder.stop();
-            recorder.close();
-        }
     }
     
     public void stop() {

@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Properties;
 import java.util.Timer;
-import javax.media.Format;
+import org.mobicents.media.Format;
 
 /**
  * The basic implementation of the endpoint.

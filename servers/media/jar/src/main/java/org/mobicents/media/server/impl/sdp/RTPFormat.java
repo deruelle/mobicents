@@ -19,7 +19,7 @@ package org.mobicents.media.server.impl.sdp;
 import org.mobicents.media.server.impl.rtp.*;
 import java.util.Enumeration;
 import java.util.HashMap;
-import javax.media.Format;
+import org.mobicents.media.Format;
 import javax.sdp.Attribute;
 import javax.sdp.Media;
 import javax.sdp.MediaDescription;

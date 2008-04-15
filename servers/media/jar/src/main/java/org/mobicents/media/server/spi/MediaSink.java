@@ -14,8 +14,8 @@
 
 package org.mobicents.media.server.spi;
 
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  *

@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Collection;
 
-import javax.media.protocol.PushBufferStream;
 import javax.naming.NamingException;
 import javax.sdp.SdpException;
 
@@ -18,7 +16,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.apache.cactus.ServletTestSuite;
-import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.ann.LocalProxy;
@@ -36,7 +34,6 @@ import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.impl.MsProviderImpl;
 /**
  * This class is a test field for tests, little example how to write

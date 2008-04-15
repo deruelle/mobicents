@@ -16,12 +16,12 @@ import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.media.Buffer;
-import javax.media.Format;
-import javax.media.format.AudioFormat;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.ContentDescriptor;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 

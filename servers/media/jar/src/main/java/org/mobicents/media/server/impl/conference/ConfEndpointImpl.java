@@ -13,7 +13,7 @@
  */
 package org.mobicents.media.server.impl.conference;
 
-import javax.media.format.UnsupportedFormatException;
+import org.mobicents.media.format.UnsupportedFormatException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseEndpoint;

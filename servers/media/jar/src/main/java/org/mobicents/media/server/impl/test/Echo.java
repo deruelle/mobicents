@@ -15,8 +15,8 @@
 package org.mobicents.media.server.impl.test;
 
 import java.util.Properties;
-import javax.media.format.UnsupportedFormatException;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;

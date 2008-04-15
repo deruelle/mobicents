@@ -15,7 +15,7 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.Serializable;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  * Receive events related to RtpSocketAdaptor.

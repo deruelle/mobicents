@@ -14,11 +14,11 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
-import javax.media.Buffer;
-import javax.media.Format;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.ContentDescriptor;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.ContentDescriptor;
+import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 /**
  *

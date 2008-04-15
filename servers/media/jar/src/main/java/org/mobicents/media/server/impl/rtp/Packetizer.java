@@ -12,9 +12,9 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
-import javax.media.Buffer;
-import javax.media.protocol.BufferTransferHandler;
-import javax.media.protocol.PushBufferStream;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.protocol.BufferTransferHandler;
+import org.mobicents.media.protocol.PushBufferStream;
 
 /**
  *
