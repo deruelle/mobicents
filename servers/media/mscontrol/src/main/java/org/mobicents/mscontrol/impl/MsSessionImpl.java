@@ -16,18 +16,17 @@
 
 package org.mobicents.mscontrol.impl;
 
-import java.util.ArrayList;
 import java.rmi.server.UID;
-import org.mobicents.mscontrol.MsLink;
-import org.mobicents.mscontrol.MsLinkListener;
-import org.mobicents.mscontrol.MsProvider;
+import java.util.ArrayList;
 
-import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
-import org.mobicents.mscontrol.MsTerminationListener;
-
+import org.mobicents.media.msc.common.*;
+import org.mobicents.media.msc.common.events.MsSessionEventID;
 /**
  *
  * @author Oleg Kulikov
@@ -44,7 +43,7 @@ public class MsSessionImpl implements MsSession {
     private ArrayList <MsLink> links = new ArrayList();
     private ArrayList <MsConnection> connections = new ArrayList();
     
-    private int state;
+    private MsSessionState state;
     
     /**
      * Creates a new instance of MsSessionImpl
@@ -68,7 +67,7 @@ public class MsSessionImpl implements MsSession {
      *
      * @see org.mobicents.mscontrol.MsSession#getState().
      */
-    public int getState() {
+    public MsSessionState getState() {
         return state;
     }
     
@@ -77,10 +76,10 @@ public class MsSessionImpl implements MsSession {
      *
      * @see org.mobicents.mscontrol.MsSession#getProvider().
      */
-    public synchronized MsLink createLink(int mode) {
+    public synchronized MsLink createLink(MsLinkMode mode) {
         MsLinkImpl link = new MsLinkImpl(this, mode);
         links.add(link);
-        setState(MsSession.ACTIVE);
+        setState(MsSessionState.ACTIVE);
         return link;
     }
     
@@ -92,7 +91,7 @@ public class MsSessionImpl implements MsSession {
     protected synchronized void dropLink(MsLink link) {
         links.remove(link);
         if (links.size() == 0 && connections.size() == 0) {
-            setState(MsSession.INVALID);
+            setState(MsSessionState.INVALID);
         }
     }
     
@@ -104,7 +103,7 @@ public class MsSessionImpl implements MsSession {
     public synchronized MsConnection createNetworkConnection(String trunkName) {
         MsConnectionImpl connection = new MsConnectionImpl(this, trunkName);
         connections.add(connection);
-        setState(MsSession.ACTIVE);
+        setState(MsSessionState.ACTIVE);
         return connection;
     }
     
@@ -116,7 +115,7 @@ public class MsSessionImpl implements MsSession {
     protected synchronized void drop(MsConnection connection) {
         connections.remove(connection);
         if (links.size() == 0 && connections.size() == 0) {
-            setState(MsSession.INVALID);
+            setState(MsSessionState.INVALID);
         }
     }
     
@@ -125,7 +124,7 @@ public class MsSessionImpl implements MsSession {
      *
      * @param eventID the id of the event to be sent.
      */
-    private void sendEvent(int eventID) {
+    private void sendEvent(MsSessionEventID eventID) {
         MsSessionEventImpl evt = new MsSessionEventImpl(this, eventID);
         new Thread(evt).start();
     }
@@ -135,18 +134,18 @@ public class MsSessionImpl implements MsSession {
      *
      * @param state the new value of the state.
      */
-    private void setState(int state) {
+    private void setState(MsSessionState state) {
         if (this.state != state) {
             this.state = state; 
             switch (state) {
-                case MsSession.IDLE :
-                    sendEvent(MsSessionEvent.SESSION_CREATED);
+                case IDLE :
+                    sendEvent(MsSessionEventID.SESSION_CREATED);
                     break;
-                case MsSession.ACTIVE :
-                    sendEvent(MsSessionEvent.SESSION_ACTIVE);
+                case ACTIVE :
+                    sendEvent(MsSessionEventID.SESSION_ACTIVE);
                     break;
-                case MsSession.INVALID :
-                    sendEvent(MsSessionEvent.SESSION_INVALID);
+                case INVALID :
+                    sendEvent(MsSessionEventID.SESSION_INVALID);
                     break;
             }
         }

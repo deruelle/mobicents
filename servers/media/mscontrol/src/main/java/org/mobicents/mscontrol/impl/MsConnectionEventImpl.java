@@ -17,6 +17,9 @@
 package org.mobicents.mscontrol.impl;
 
 import java.io.Serializable;
+
+import org.mobicents.media.msc.common.events.MsConnectionEventCause;
+import org.mobicents.media.msc.common.events.MsConnectionEventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
@@ -28,12 +31,12 @@ import org.mobicents.mscontrol.MsConnectionListener;
 public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
     
     private MsConnectionImpl connection;
-    private int eventID;
-    private int cause;
+    private MsConnectionEventID eventID;
+    private MsConnectionEventCause cause;
     private String msg;
     
     /** Creates a new instance of MsConnectionEventImpl */
-    public MsConnectionEventImpl(MsConnectionImpl connection, int eventID, int cause, String msg) {
+    public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
         this.connection = connection;
         this.eventID = eventID;
     }
@@ -42,11 +45,11 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
         return connection;
     }
 
-    public int getEventID() {
+    public MsConnectionEventID getEventID() {
         return eventID;
     }
 
-    public int getCause() {
+    public MsConnectionEventCause getCause() {
         return cause;
     }
     
@@ -57,16 +60,16 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
     public void run() {
         for (MsConnectionListener listener : connection.listeners) {
             switch (eventID) {
-                case MsConnectionEvent.CONNECTION_CREATED :
+                case CONNECTION_CREATED :
                     listener.connectionCreated(this);
                     break;
-                case MsConnectionEvent.CONNECTION_MODIFIED :
+                case CONNECTION_MODIFIED :
                     listener.connectionModifed(this);
                     break;
-                case MsConnectionEvent.CONNECTION_DELETED :
+                case CONNECTION_DELETED :
                     listener.connectionDeleted(this);
                     break;
-                case MsConnectionEvent.TX_FAILED :
+                case TX_FAILED :
                     listener.txFailed(this);
                     break;
             }

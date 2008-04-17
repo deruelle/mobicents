@@ -15,6 +15,8 @@
 package org.mobicents.media.server.impl.test;
 
 import org.mobicents.media.server.impl.ann.*;
+import org.mobicents.media.server.impl.common.MediaResourceType;
+
 import java.util.Properties;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
@@ -31,19 +33,19 @@ public class TestResourceManager extends BaseResourceManager {
     private Echo echo;
     
     @Override
-    public synchronized MediaResource getResource(BaseEndpoint endpoint, String name, 
+    public synchronized MediaResource getResource(BaseEndpoint endpoint,MediaResourceType type, 
             Connection connection, Properties config) throws UnknownMediaResourceException {
-        if (name.equals(Endpoint.RESOURCE_AUDIO_SOURCE)) {
+        if (type==type.AUDIO_SOURCE) {
             if (echo == null) {
                 echo = new Echo(endpoint, connection);
             }
             return echo;
-        } else if (name.equals(Endpoint.RESOURCE_AUDIO_SINK)) {
+        } else if (type==type.AUDIO_SINK) {
             if (echo == null) {
                 echo = new Echo(endpoint, connection);
             }
             return echo;
-        } else return super.getResource(endpoint, name, connection, config);
+        } else return super.getResource(endpoint, type, connection, config);
     }
 
 }

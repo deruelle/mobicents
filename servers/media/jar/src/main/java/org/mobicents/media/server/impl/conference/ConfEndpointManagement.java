@@ -14,6 +14,8 @@
 package org.mobicents.media.server.impl.conference;
 
 import java.util.Properties;
+
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
@@ -35,7 +37,7 @@ public class ConfEndpointManagement extends EndpointManagement
     public void setDTMF(Properties config) throws UnknownMediaResourceException {
         this.dtmfConfig = config;
         if (this.getState() == STARTED) {
-            getEndpoint().configure(Endpoint.RESOURCE_DTMF_DETECTOR, config);
+            getEndpoint().configure(MediaResourceType.DTMF_DETECTOR, config);
         }
     }
 

@@ -13,7 +13,9 @@
  */
 
 package org.mobicents.media.server.spi;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.events.*;
+import org.mobicents.media.server.impl.common.dtmf.*;
 /**
  *
  * @author Oleg Kulikov
@@ -33,5 +35,9 @@ public class UnknownMediaResourceException extends Exception {
      */
     public UnknownMediaResourceException(String msg) {
         super(msg);
+    }
+    public UnknownMediaResourceException(MediaResourceType type)
+    {
+    	super(type.toString());
     }
 }

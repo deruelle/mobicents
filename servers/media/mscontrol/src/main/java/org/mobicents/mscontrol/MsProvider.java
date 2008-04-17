@@ -50,19 +50,6 @@ public interface MsProvider {
      */
     public void addResourceListener(MsResourceListener listener);
 
-    /**
-     * Add a termination listener to all terminations.
-     *
-     * @param MsTerminationListener object that receives the specified events.
-     */
-    public void addTerminationListener(MsTerminationListener listener);
-
-    /**
-     * Removes termination listener
-     *
-     * @param MsTerminationListener object that receives the specified events.
-     */
-    public void removeTerminationListener(MsTerminationListener listener);
 
     /**
      * Add a link listener to all terminations.

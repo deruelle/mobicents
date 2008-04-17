@@ -17,15 +17,14 @@
 package org.mobicents.media.server.impl.ann;
 
 import org.apache.log4j.Logger;
-
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
-
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.events.Announcement;
+
 
 /**
  * Implements Announcement access point.
@@ -82,7 +81,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
      *
      * @see org.mobicents.server.spi.BaseEndpoint#play(int, String NotificationListener, boolean.
      */
-    public void play(int signalID, String[] params, String connectionID,
+    public void play(EventID signalID, String[] params, String connectionID,
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
 
         //disable current signal
@@ -95,7 +94,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
         }
         
         switch (signalID) {
-            case Announcement.PLAY:
+            case PLAY:
                 signal = new AnnouncementSignal(this, listener, params);
                 signal.start();
                 logger.info("play announcement [url=" + params[0] + "]");
@@ -104,4 +103,5 @@ public class AnnEndpointImpl extends BaseEndpoint {
                 throw new UnknownSignalException("Signal is unknown: " + signalID);
         }
     }
+
 }

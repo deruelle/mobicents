@@ -24,8 +24,6 @@ import java.io.Serializable;
  */
 public interface MsLink extends Serializable {
     
-    public final static int MODE_HALF_DUPLEX = 1;
-    public final static int MODE_FULL_DUPLEX = 2;
     
     /**
      * Gets the session to which this links belongs

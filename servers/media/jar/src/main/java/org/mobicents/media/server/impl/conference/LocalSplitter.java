@@ -21,6 +21,8 @@ import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.impl.common.MediaResourceState;
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.jmf.splitter.MediaSplitter;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -91,7 +93,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     }
 
     public void configure(Properties config) {
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
@@ -99,8 +101,8 @@ public class LocalSplitter extends BaseResource implements MediaSink {
         Collection<BaseConnection> connections = endpoint.getConnections();
         for (BaseConnection conn : connections) {
             if (!conn.getId().equals(this.id)) {
-                LocalMixer mixer = (LocalMixer) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SOURCE, conn.getId());
-                if (mixer!= null && mixer.getState() >= MediaResource.STATE_CONFIGURED) {
+                LocalMixer mixer = (LocalMixer) endpoint.getResource(MediaResourceType.AUDIO_SOURCE, conn.getId());
+                if (mixer!= null && mixer.getState()!=MediaResourceState.NULL) {
                     try {
                         mixer.add(id, this.newBranch(conn.getId()));
                     } catch (UnsupportedFormatException e) {
@@ -109,7 +111,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
                 }
             }
         }
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
     }
 
     public void addListener(NotificationListener listener) {
@@ -121,22 +123,22 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     }
 
     public void start() {
-        setState(MediaResource.STATE_STARTED);
+        setState(MediaResourceState.STARTED);
     }
 
     public void stop() {
-        if (getState() == MediaResource.STATE_STARTED) {
-            setState(MediaResource.STATE_PREPARED);
+        if (getState() == MediaResourceState.STARTED) {
+            setState(MediaResourceState.PREPARED);
         }
     }
 
     public void release() {
-        setState(MediaResource.STATE_NULL);
+        setState(MediaResourceState.NULL);
         Collection<BaseConnection> connections = endpoint.getConnections();
         for (BaseConnection conn : connections) {
             if (!conn.getId().equals(this.id)) {
                 LocalMixer mixer = (LocalMixer) endpoint.getResource(
-                        Endpoint.RESOURCE_AUDIO_SOURCE,
+                		MediaResourceType.AUDIO_SOURCE,
                         conn.getId());
                 if (mixer != null) mixer.remove(id);
             }

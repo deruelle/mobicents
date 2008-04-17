@@ -19,13 +19,15 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
 import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.common.MediaResourceType;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceStateListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.dtmf.DTMF;
-import org.mobicents.media.server.spi.events.Basic;
+
+
 
 /**
  *
@@ -66,13 +68,13 @@ public class ConfEndpointImpl extends BaseEndpoint {
     private void detectDTMF(String connectionID, String[] params,
             NotificationListener listener) {
         MediaSink detector = (MediaSink) getResource(
-                Endpoint.RESOURCE_DTMF_DETECTOR, connectionID);
+        		MediaResourceType.DTMF_DETECTOR, connectionID);
         if (params != null && params.length > 0 && params[0] != null) {
-            ((DTMF) detector).setDtmfMask(params[0]);
+            ((org.mobicents.media.server.spi.dtmf.DTMF) detector).setDtmfMask(params[0]);
         }
         
         
-        LocalSplitter splitter = (LocalSplitter) getResource(Endpoint.RESOURCE_AUDIO_SINK, connectionID);
+        LocalSplitter splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
         while (splitter == null) {
             synchronized(this) {
                 try {
@@ -81,7 +83,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
                     return;
                 }
             }
-            splitter = (LocalSplitter) getResource(Endpoint.RESOURCE_AUDIO_SINK, connectionID);
+            splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
         }
         
         try {
@@ -94,14 +96,14 @@ public class ConfEndpointImpl extends BaseEndpoint {
     }
 
 
-    public void play(int signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+    public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void subscribe(int eventID, String connectionID, String params[], NotificationListener listener) {
+    public void subscribe(EventID eventID, String connectionID, String params[], NotificationListener listener) {
         switch (eventID) {
-            case Basic.DTMF:
+            case DTMF:
                 logger.info("Start DTMF detector for connection: " + connectionID);
                 this.detectDTMF(connectionID, params, listener);
                 break;

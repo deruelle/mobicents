@@ -19,16 +19,20 @@ package org.mobicents.media.server.spi;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.sdp.SdpException;
-
+import org.mobicents.media.server.impl.common.*;
 /**
  *
  * @author Oleg Kulikov
  */
 public interface Connection extends Serializable {
-    public final static int MODE_RECV_ONLY = 1;
-    public final static int MODE_SEND_ONLY = 2;
-    public final static int MODE_SEND_RECV = 3;
+
         
+	/**
+	 * Returns state of this connection
+	 * @return
+	 */
+	 public ConnectionState getState();
+	
    /**
      * Gets the identifier of this connection.
      *
@@ -41,14 +45,14 @@ public interface Connection extends Serializable {
      *
      * @return integer constant indicating mode.
      */
-    public int getMode();
+    public ConnectionMode getMode();
     
     /**
      * Modify mode of this connection.
      *
      * @param mode the new value of the mode.
      */
-    public void setMode(int mode);
+    public void setMode(ConnectionMode mode);
     
     /**
      * Gets the endpoint which executes this connection.

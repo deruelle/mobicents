@@ -15,7 +15,7 @@
 package org.mobicents.media.server.spi;
 
 import java.util.Properties;
-
+import org.mobicents.media.server.impl.common.MediaResourceState;
 /**
  * Respresents the media resource which may either media generator or 
  * media detector.
@@ -23,10 +23,7 @@ import java.util.Properties;
  * @author Oleg Kulikov
  */
 public interface MediaResource {
-    public final static int STATE_NULL = 0;
-    public final static int STATE_CONFIGURED = 1;
-    public final static int STATE_PREPARED = 2;
-    public final static int STATE_STARTED = 3;
+
     
     /**
      * Provides configuration of the media resource.
@@ -45,7 +42,7 @@ public interface MediaResource {
      * 
      * @return the integer which identifies the current state.
      */
-    public int getState();
+    public MediaResourceState getState();
     
     /**
      * Registers listener for the resource.

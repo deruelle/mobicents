@@ -17,7 +17,7 @@
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
-
+import org.mobicents.media.msc.common.*;
 /**
  * A <code>MsSession</code> is a transient association of (zero or more) connection for the 
  * purposes of engaging in a real-time communications interchange. 
@@ -39,12 +39,7 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface MsSession extends Serializable {
-    /** MsSession.IDLE state indicates the Session has zero connections or links. */
-    public final static int IDLE = 0;
-    /** MsSession.IDLE state indicates the Session has one or more connections or links. */
-    public final static int ACTIVE = 1;
-    /** MsSession.IDLE state indicates the Session has lost all of its connections or links. */
-    public final static int INVALID = 2;
+
     
     /**
      * Retrieves the provider handling this session object. The Provider 
@@ -59,9 +54,9 @@ public interface MsSession extends Serializable {
      * Retrieves the state of the session. 
      * The state will be either IDLE, ACTIVE or INVALID. 
      *
-     * @return Integer representing the state of the session.
+     * @return enum representing the state of the session.
      */
-    public int getState();
+    public MsSessionState getState();
     
     /**
      * Creates a new network connection and attaches it to this session. 
@@ -100,12 +95,12 @@ public interface MsSession extends Serializable {
      *
      * @param mode specifies the mode of the link. Valid modes are
      * <ul>
-     *   <li>MsLink.HALF_DUPLEX</li>
-     *   <li>MsLink.DUPLEX</li>
+     *   <li>MsLinkMode.HALF_DUPLEX</li>
+     *   <li>MsLinkMode.DUPLEX</li>
      * </ul>
      * @return MsLink object managing this link.
      */
-    public MsLink createLink(int mode);
+    public MsLink createLink(MsLinkMode mode);
     
     /**
      * Add a listener to this session. This also reports all state changes in 

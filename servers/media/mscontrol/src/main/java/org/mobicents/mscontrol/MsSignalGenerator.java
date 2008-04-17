@@ -16,12 +16,12 @@
 
 package org.mobicents.mscontrol;
 
-import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.events.*;
 /**
  *
  * @author Oleg Kulikov
  */
 public interface MsSignalGenerator extends MsResource {
-    public void apply(int signalID, String[] params);
+    public void apply(EventID signalID, String[] params);
 }

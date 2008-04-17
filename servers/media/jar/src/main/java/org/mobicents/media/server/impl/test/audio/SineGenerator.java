@@ -29,10 +29,10 @@ public class SineGenerator extends PushBufferDataSource {
     private SineStream[] streams;
 
     /** Creates a new instance of Generator */
-    public SineGenerator(int duration, int[] freqs) {
+    public SineGenerator(int duration, int[] freqs, boolean terminateAfterSequence) {
         streams = new SineStream[freqs.length];
         for (int i = 0; i < freqs.length; i++) {
-            streams[i] = new SineStream(freqs[i], duration);
+            streams[i] = new SineStream(freqs[i], duration,terminateAfterSequence);
         }
     }
 

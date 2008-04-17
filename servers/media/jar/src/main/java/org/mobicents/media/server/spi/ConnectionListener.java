@@ -18,10 +18,17 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.ConnectionState;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface ConnectionListener extends Serializable {
+	/**
+	 * What this method does? Should it be deprecated?
+	 * @param connection
+	 */
     public void newReceiveStream(Connection connection);
+    public void onStateChange(Connection connection,ConnectionState oldState);
 }

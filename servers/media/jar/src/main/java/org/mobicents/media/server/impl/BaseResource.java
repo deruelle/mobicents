@@ -16,6 +16,8 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.ResourceStateListener;
 
@@ -26,7 +28,7 @@ import org.mobicents.media.server.spi.ResourceStateListener;
  */
 public abstract class BaseResource implements MediaResource {
 
-    private int state = MediaResource.STATE_NULL;
+    private MediaResourceState state=MediaResourceState.NULL;
     private List <ResourceStateListener> stateListeners = new ArrayList();
     
     /**
@@ -34,7 +36,7 @@ public abstract class BaseResource implements MediaResource {
      * 
      * @see org.mobicents.media.server.spi.MediaResource#getState().
      */
-    public int getState() {
+    public MediaResourceState getState() {
         return state;
     }
     
@@ -43,7 +45,7 @@ public abstract class BaseResource implements MediaResource {
      * 
      * @see org.mobicents.media.server.spi.MediaResource#setState(int).
      */
-    public void setState(int state) {
+    public void setState(MediaResourceState state) {
         this.state = state;
         for (ResourceStateListener listener: stateListeners) {
             listener.onStateChange(this, state);

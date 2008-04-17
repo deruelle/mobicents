@@ -29,6 +29,11 @@
 			<artifactId>jain-sip-ri</artifactId>
 			<version>${jain-sip.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.media</groupId>
+			<artifactId>mobicents-server-media-constants</artifactId>
+			<version>1_0_0_ALPHA3</version>
+		</dependency>
 	</dependencies>
 	
 	<build>

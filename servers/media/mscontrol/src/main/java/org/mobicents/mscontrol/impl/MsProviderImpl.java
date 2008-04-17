@@ -19,19 +19,15 @@ package org.mobicents.mscontrol.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.mobicents.mscontrol.MsConnectionListener;
-import org.mobicents.mscontrol.MsJoinException;
 import org.mobicents.mscontrol.MsLinkListener;
-import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSessionListener;
 import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.MsTermination;
-import org.mobicents.mscontrol.MsTerminationListener;
 
 /**
  *
@@ -42,7 +38,6 @@ public class MsProviderImpl implements MsProvider, Serializable {
     protected ArrayList <MsSessionListener> sessionListeners = new ArrayList();
     protected ArrayList <MsConnectionListener> connectionListeners = new ArrayList();
     protected ArrayList <MsResourceListener> resourceListeners = new ArrayList();
-    protected ArrayList <MsTerminationListener> terminationListeners = new ArrayList();
     protected ArrayList <MsLinkListener> linkListeners = new ArrayList();
     
     private ArrayList <MsSessionImpl> calls = new ArrayList();
@@ -96,23 +91,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
         return connectionListeners;
     }
     
-    /**
-     * Add a termination listener to all terminations.
-     *
-     * @param MsTerminationListener object that receives the specified events.
-     */
-    public void addTerminationListener(MsTerminationListener listener) {
-        terminationListeners.add(listener);
-    }
 
-    /**
-     * Removes termination listener
-     *
-     * @param MsTerminationListener object that receives the specified events.
-     */
-    public void removeTerminationListener(MsTerminationListener listener) {
-        terminationListeners.remove(listener);
-    }
 
     /**
      * Add a termination listener to all terminations.

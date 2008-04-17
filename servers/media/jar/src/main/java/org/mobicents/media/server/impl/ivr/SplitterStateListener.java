@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.impl.ivr;
 
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.conference.*;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.ResourceStateListener;
@@ -24,8 +25,8 @@ import org.mobicents.media.server.spi.ResourceStateListener;
  */
 public class SplitterStateListener implements ResourceStateListener {
 
-    public void onStateChange(MediaResource resource, int state) {
-        if (state == MediaResource.STATE_PREPARED) {
+	public void onStateChange(MediaResource resource, MediaResourceState state) {
+        if (state == MediaResourceState.PREPARED) {
             resource.start();
         }
     }

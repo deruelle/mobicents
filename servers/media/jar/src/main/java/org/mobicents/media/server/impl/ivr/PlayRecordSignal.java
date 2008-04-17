@@ -13,15 +13,16 @@
  */
 package org.mobicents.media.server.impl.ivr;
 
-import org.mobicents.media.server.impl.jmf.recorder.Recorder;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.ann.AnnouncementSignal;
+import org.mobicents.media.server.impl.common.MediaResourceType;
+import org.mobicents.media.server.impl.common.events.EventCause;
+import org.mobicents.media.server.impl.common.events.EventID;
+import org.mobicents.media.server.impl.jmf.recorder.Recorder;
 import org.mobicents.media.server.impl.jmf.recorder.RecorderEvent;
 import org.mobicents.media.server.impl.jmf.recorder.RecorderListener;
-import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.AU;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -73,14 +74,14 @@ public class PlayRecordSignal extends AnnouncementSignal implements RecorderList
             logger.info("Starting recording to, url=" + recordURL);
             recorder = new Recorder(((IVREndpointImpl) endpoint).mediaType);
 
-            LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+            LocalSplitter splitter = (LocalSplitter) endpoint.getResource(MediaResourceType.AUDIO_SINK, connection.getId());
             recorder.start(recordURL, splitter.newBranch("Recorder"));
         }
     }
 
     @Override
     public void stop() {
-        LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, connection.getId());
+        LocalSplitter splitter = (LocalSplitter) endpoint.getResource(MediaResourceType.AUDIO_SINK, connection.getId());
         if (splitter != null) {
             splitter.remove("Recorder");
         }
@@ -99,11 +100,11 @@ public class PlayRecordSignal extends AnnouncementSignal implements RecorderList
             case RecorderEvent.STARTED:
                 break;
             case RecorderEvent.STOP_BY_REQUEST:
-                NotifyEvent notify = new NotifyEvent(this, AU.COMPLETE, AU.CAUSE_NORMAL, "");
+                NotifyEvent notify = new NotifyEvent(this, EventID.COMPLETE, EventCause.NORMAL, "");
                 sendEvent(notify);
                 break;
             case RecorderEvent.FACILITY_ERROR:
-                notify = new NotifyEvent(this, AU.FAIL, AU.CAUSE_FACILITY_FAILURE, evt.getMessage());
+                notify = new NotifyEvent(this, EventID.FAIL, EventCause.FACILITY_FAILURE, evt.getMessage());
                 sendEvent(notify);
                 break;
         }

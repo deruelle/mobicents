@@ -18,37 +18,59 @@ package org.mobicents.media.server.spi.events;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.events.EventCause;
+import org.mobicents.media.server.impl.common.events.EventID;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public class NotifyEvent implements Serializable {
-    private int id;
-    private int cause;
+    //private int id;
+	private EventID id;
+    //private int cause;
+	private EventCause cause;
     private Object source;
     private String message;
     
-    public NotifyEvent(Object source, int id, int cause, String message) {
-        this.id = id;
-        this.source = source;
-        this.cause = cause;
-        this.message = message;
-    }
+    //public NotifyEvent(Object source, int id, int cause, String message) {
+    //    this.id = id;
+    //    this.source = source;
+    //    this.cause = cause;
+    //    this.message = message;
+    //}
     
-    public int getID() {
-        return id;
-    }
+    //public int getID() {
+    //    return id;
+    //}
     
-    public Object getSource() {
+    public NotifyEvent(Object source,EventID id, EventCause cause,
+			String message) {
+		super();
+		this.id = id;
+		this.cause = cause;
+		this.source = source;
+		this.message = message;
+	}
+
+	public Object getSource() {
         return source;
     }
     
-    public int getCause() {
-        return cause;
-    }
+    //public int getCause() {
+    //    return cause;
+    //}
     
     public String getMessage() {
         return message;
     }
+
+	public EventID getID() {
+		return id;
+	}
+
+	public EventCause getCause() {
+		return cause;
+	}
     
 }

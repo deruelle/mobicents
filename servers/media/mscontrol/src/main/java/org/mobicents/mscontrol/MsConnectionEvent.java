@@ -18,30 +18,19 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
+import org.mobicents.media.msc.common.events.MsConnectionEventCause;
+import org.mobicents.media.msc.common.events.MsConnectionEventID;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface MsConnectionEvent extends Serializable {
     
-    public final static int CONNECTION_CREATED = 0;
-    public final static int CONNECTION_MODIFIED = 1;
-    public final static int CONNECTION_DELETED = 2;
-    public final static int TX_FAILED = 3;
-    
-    public final static int CONNECTION_CONNECTED = 2;
-    public final static int CONNECTION_FAILED = 3;
-    public final static int CONNECTION_DISCONNECTED = 4;
-    
-    public final static int CAUSE_NORMAL = 0;
-    public final static int CAUSE_FACILITY_FAILURE = 1;
-    public final static int CAUSE_ENDPOINT_UNKNOWN = 2;
-    public final static int CAUSE_RESOURCE_UNAVAILABLE = 3;
-    public final static int CAUSE_REMOTE_SDP_INVALID = 4;
-    public final static int CAUSE_REMOTE_SDP_MISSING = 4;
+
     
     public MsConnection getConnection();
-    public int getEventID();
-    public int getCause();
+    public MsConnectionEventID getEventID();
+    public MsConnectionEventCause getCause();
     public String getMessage();
 }

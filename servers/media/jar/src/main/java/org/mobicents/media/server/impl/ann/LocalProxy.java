@@ -20,6 +20,7 @@ import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -47,19 +48,19 @@ public class LocalProxy extends BaseResource implements MediaSource {
     }
     
     public PushBufferStream prepare() {
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
         return mediaProxy;
     }
 
     public void configure(Properties config) {
         mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
 
     public void release() {
         mediaProxy.stop();
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
 
     public void addListener(NotificationListener listener) {
@@ -72,12 +73,13 @@ public class LocalProxy extends BaseResource implements MediaSource {
 
     public void start() {
         mediaProxy.start();
-        setState(MediaResource.STATE_STARTED);
+        setState(MediaResourceState.STARTED);
     }
 
     public void stop() {
         mediaProxy.stop();
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
+
 
 }

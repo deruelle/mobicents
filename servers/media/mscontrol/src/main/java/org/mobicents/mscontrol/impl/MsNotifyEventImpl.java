@@ -18,6 +18,7 @@ package org.mobicents.mscontrol.impl;
 
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsResource;
+import org.mobicents.media.server.impl.common.events.*;
 
 /**
  *
@@ -26,12 +27,12 @@ import org.mobicents.mscontrol.MsResource;
 public class MsNotifyEventImpl implements MsNotifyEvent {
     
     private MsResource source;
-    private int id;
-    private int cause;
+    private EventID id;
+    private EventCause cause;
     private String message;
     
     /** Creates a new instance of MsNotifyEventImpl */
-    public MsNotifyEventImpl(MsResource source, int id,int cause, String message) {
+    public MsNotifyEventImpl(MsResource source, EventID id,EventCause cause, String message) {
         this.source = source;
         this.id = id;
         this.cause = cause;
@@ -42,11 +43,11 @@ public class MsNotifyEventImpl implements MsNotifyEvent {
         return source;
     }
     
-    public int getEventID() {
+    public EventID getEventID() {
         return id;
     }
 
-    public int getCause() {
+    public EventCause getCause() {
         return cause;
     }
 

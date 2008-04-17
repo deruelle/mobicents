@@ -19,9 +19,7 @@ package org.mobicents.mscontrol.impl;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkListener;
-import org.mobicents.mscontrol.MsTermination;
-import org.mobicents.mscontrol.MsTerminationEvent;
-
+import org.mobicents.media.msc.common.events.*;
 /**
  *
  * @author Oleg Kulikov
@@ -29,18 +27,18 @@ import org.mobicents.mscontrol.MsTerminationEvent;
 public class MsLinkEventImpl implements MsLinkEvent, Runnable {
     
     private MsLinkImpl source;
-    private int eventID;
-    private int cause;
+    private MsLinkEventID eventID;
+    private MsLinkEventCause cause;
     private String msg;
     
     /** Creates a new instance of MsTerminationEventImpl */
-    public MsLinkEventImpl(MsLinkImpl source, int eventID, int cause) {
+    public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause) {
         this.source = source;
         this.eventID = eventID;
         this.cause = cause;
     }
     
-    public MsLinkEventImpl(MsLinkImpl source, int eventID, int cause, String msg) {
+    public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
         this.source = source;
         this.eventID = eventID;
         this.cause = cause;
@@ -51,11 +49,11 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
         return source;
     }
 
-    public int getEventID() {
+    public MsLinkEventID getEventID() {
         return eventID;
     }
 
-    public int getCause() {
+    public MsLinkEventCause getCause() {
         return cause;
     }
 
@@ -66,13 +64,13 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
     public void run() {
         for (MsLinkListener listener: source.linkListeners) {
             switch (eventID) {
-                case MsLinkEvent.LINK_JOINED :
+                case LINK_JOINED :
                     listener.linkJoined(this);
                     break;
-                case MsLinkEvent.LINK_DROPPED :
+                case LINK_DROPPED :
                     listener.linkDropped(this);
                     break;
-                case MsLinkEvent.LINK_FAILED :
+                case LINK_FAILED :
                     listener.linkFailed(this);
                     break;
             }

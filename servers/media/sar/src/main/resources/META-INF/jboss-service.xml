@@ -80,4 +80,15 @@
         <attribute name="RecordDir">file:${jboss.server.data.dir}</attribute>
     </mbean>
     
+    <!-- DFT test Endpoint -->
+    <mbean code="org.mobicents.media.server.impl.fft.DFTEndpointManagement" 
+           name="media.mobicents:endpoint=dft"> 
+        <attribute name="JndiName">media/trunk/DFT/1</attribute>
+        <attribute name="BindAddress">${jboss.bind.address}</attribute>
+        <attribute name="Jitter">60</attribute>
+        <attribute name="PacketizationPeriod">20</attribute>
+        <attribute name="PortRange">1024-65535</attribute>
+        <attribute name="PCMA">true</attribute>
+    </mbean>
+    
 </server>

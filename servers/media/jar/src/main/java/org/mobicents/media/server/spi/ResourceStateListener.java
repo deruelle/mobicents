@@ -16,10 +16,12 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.MediaResourceState;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface ResourceStateListener extends Serializable {
-    public void onStateChange(MediaResource resource, int state);
+	public void onStateChange(MediaResource resource, MediaResourceState state);
 }

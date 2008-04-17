@@ -17,25 +17,25 @@
 package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.rmi.server.UID;
+import java.util.ArrayList;
+
 import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
-import org.mobicents.media.server.spi.EndpointQuery;
+import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
-import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsTermination;
-import org.mobicents.mscontrol.MsTerminationEvent;
-import org.mobicents.mscontrol.MsTerminationListener;
-
+import org.mobicents.media.msc.common.MsLinkMode;
+import org.mobicents.media.msc.common.events.*;
 /**
  *
  * @author Oleg Kulikov
@@ -45,9 +45,8 @@ public class MsLinkImpl implements MsLink {
     private final String id = (new UID()).toString();
     
     private MsSessionImpl session;
-    private int mode;
+    private MsLinkMode mode;
     
-    protected ArrayList <MsTerminationListener> termListeners = new ArrayList();
     protected ArrayList <MsLinkListener> linkListeners = new ArrayList();
     
     private Connection[] connections = new Connection[2];
@@ -60,28 +59,19 @@ public class MsLinkImpl implements MsLink {
     }
     
     /** Creates a new instance of MsLink */
-    public MsLinkImpl(MsSessionImpl session, int mode) {
+    public MsLinkImpl(MsSessionImpl session, MsLinkMode mode) {
         this.session = session;
         this.linkListeners.addAll(session.provider.linkListeners);
+        this.mode=mode;
     }
     
     public MsSession getSession() {
         return session;
     }
     
-    private int getMode(int end) {
-        switch (mode) {
-            case MsLink.MODE_FULL_DUPLEX :
-                return Connection.MODE_SEND_RECV;
-            case MsLink.MODE_HALF_DUPLEX :
-                return end == 0 ?
-                    Connection.MODE_SEND_ONLY :
-                    Connection.MODE_RECV_ONLY;
-        }
-        return -1;
-    }
     
-    private void sendEvent(int eventID, int cause, String msg) {
+    
+    private void sendEvent(MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
         MsLinkEventImpl evt = new MsLinkEventImpl(this, eventID, cause, msg);
         new Thread(evt).start();
     }
@@ -120,55 +110,54 @@ public class MsLinkImpl implements MsLink {
             this.epnB = epnB;
         }
         
-        private Connection createConnection(String epn) throws NamingException,
+        private Connection createConnection(String epn,int end) throws NamingException,
                 ResourceUnavailableException, TooManyConnectionsException {
             Endpoint endpoint = EndpointQuery.lookup(epn);
-            return endpoint.createConnection(mode);
+            return endpoint.createConnection(getMode(end));
         }
         
         private void execute() {
             try {
-                connections[0] = createConnection(epnA);
+                connections[0] = createConnection(epnA,0);
                 endpoints[0] = connections[0].getEndpoint().getLocalName();
                 logger.debug("Created local connection: " + connections[0].getId());
             } catch (NamingException e) {
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_FACILITY_FAILURE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
                 return;
             } catch (ResourceUnavailableException e) {
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_ENDPOINT_UNKNOWN, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                		MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
                 return;
             } catch (TooManyConnectionsException e) {
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_RESOURCE_UNAVAILABLE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                        MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
                 return;
             }
             
             try {
-                connections[1] = createConnection(epnB);
+                connections[1] = createConnection(epnB,1);
                 endpoints[1] = connections[1].getEndpoint().getLocalName();
                 logger.debug("Created local connection: " + connections[1].getId());
             } catch (NamingException e) {
                 logger.warn("TX Failed", e);
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_FACILITY_FAILURE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                        MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
                 return;
             } catch (ResourceUnavailableException e) {
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_ENDPOINT_UNKNOWN, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                        MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
                 return;
             } catch (TooManyConnectionsException e) {
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_RESOURCE_UNAVAILABLE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                        MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
                 return;
             }
             
@@ -177,13 +166,13 @@ public class MsLinkImpl implements MsLink {
                 connections[1].setOtherParty(connections[0]);
                 logger.debug("Join connections [" + connections[0].getId() +
                         "," + connections[0].getId());
-                sendEvent(MsLinkEvent.LINK_JOINED, MsLinkEvent.CAUSE_NORMAL, null);
+                sendEvent(MsLinkEventID.LINK_JOINED, MsLinkEventCause.NORMAL, null);
             } catch (IOException e) {
                 logger.error("Could not join connections", e);
                 connections[1].getEndpoint().deleteConnection(connections[1].getId());
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                sendEvent(MsLinkEvent.LINK_FAILED,
-                        MsLinkEvent.CAUSE_FACILITY_FAILURE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,
+                        MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
             }
         }
         
@@ -205,8 +194,8 @@ public class MsLinkImpl implements MsLink {
             connections[1].getEndpoint().deleteConnection(connections[1].getId());
             logger.debug("Releasing connection " + connections[0]);
             connections[0].getEndpoint().deleteConnection(connections[0].getId());
-            sendEvent(MsLinkEvent.LINK_DROPPED,
-                    MsLinkEvent.CAUSE_NORMAL, null);
+            sendEvent(MsLinkEventID.LINK_DROPPED,
+                    MsLinkEventCause.NORMAL, null);
         }
         
         public void run() {
@@ -219,4 +208,19 @@ public class MsLinkImpl implements MsLink {
             }
         }
     }
+    
+    
+    private ConnectionMode getMode(int end) {
+        switch (mode) {
+            case FULL_DUPLEX :
+                return ConnectionMode.SEND_RECV;
+            case HALF_DUPLEX :
+                return end == 0 ?
+                		ConnectionMode.SEND :
+                			ConnectionMode.RECV;
+        }
+        return null;
+    }
+
+    
 }

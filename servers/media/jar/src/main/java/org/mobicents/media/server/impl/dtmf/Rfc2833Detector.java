@@ -21,6 +21,7 @@ import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.spi.MediaResource;
 
 /**
@@ -29,7 +30,7 @@ import org.mobicents.media.server.spi.MediaResource;
  */
 public class Rfc2833Detector extends BaseDtmfDetector implements BufferTransferHandler {
     
-    private final static String[] DTMF = new String[] {
+	private final static String[] DTMF = new String[] {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
     };
     
@@ -40,26 +41,26 @@ public class Rfc2833Detector extends BaseDtmfDetector implements BufferTransferH
     }
     
     public void configure(Properties config) {
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
     
     public void prepare(PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);       
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
         logger.debug("Detector prepared");
     }
     
     public void start() {
-        setState(MediaResource.STATE_STARTED);
+        setState(MediaResourceState.STARTED);
     }
     
     public void stop() {
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
         logger.debug("Detector stopped");
     }
     
     public void transferData(PushBufferStream stream) {
-        if (getState() != MediaResource.STATE_STARTED) {
+        if (getState() != MediaResourceState.STARTED) {
             return;
         }
         
@@ -82,7 +83,7 @@ public class Rfc2833Detector extends BaseDtmfDetector implements BufferTransferH
     }
     
     public void release() {
-        setState(MediaResource.STATE_NULL);
+        setState(MediaResourceState.NULL);
     }
     
 }

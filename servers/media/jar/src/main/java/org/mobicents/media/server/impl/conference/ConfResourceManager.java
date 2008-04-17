@@ -16,24 +16,27 @@ package org.mobicents.media.server.impl.conference;
 import java.util.Properties;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class ConfResourceManager extends BaseResourceManager {
 
-    @Override
-    public MediaResource getResource(BaseEndpoint endpoint, String name, 
-            Connection connection, Properties config) throws UnknownMediaResourceException {
-        if (name.equals(Endpoint.RESOURCE_AUDIO_SOURCE)) {
-            return new LocalMixer(endpoint, connection);
-        } else if (name.equals(Endpoint.RESOURCE_AUDIO_SINK)) {
-            return new LocalSplitter(endpoint, connection);
-        } else return super.getResource(endpoint, name, connection, config);
-    }
+	@Override
+	public MediaResource getResource(BaseEndpoint endpoint,
+			MediaResourceType type, Connection connection, Properties config)
+			throws UnknownMediaResourceException {
+		if (type == type.AUDIO_SOURCE) {
+			return new LocalMixer(endpoint, connection);
+		} else if (type == type.AUDIO_SINK) {
+			return new LocalSplitter(endpoint, connection);
+		} else
+			return super.getResource(endpoint, type, connection, config);
+	}
 }

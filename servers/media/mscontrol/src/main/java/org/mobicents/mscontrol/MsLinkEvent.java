@@ -17,25 +17,18 @@
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
-
+import org.mobicents.media.msc.common.events.*;
 /**
  *
  * @author Oleg Kulikov
  */
 public interface MsLinkEvent extends Serializable {
-    public final static int LINK_JOINED = 0;
-    public final static int LINK_DROPPED = 1;
-    public final static int LINK_FAILED = 2;
+   
     
-    public final static int CAUSE_NORMAL = 0;
-    public final static int CAUSE_FACILITY_FAILURE = 1;
-    public final static int CAUSE_ENDPOINT_UNKNOWN = 2;
-    public final static int CAUSE_RESOURCE_UNAVAILABLE = 3;
-    public final static int CAUSE_REMOTE_SDP_INVALID = 4;
-    public final static int CAUSE_REMOTE_SDP_MISSING = 5;
+   
     
     public MsLink getSource();
-    public int getEventID();
-    public int getCause();
+    public MsLinkEventID getEventID();
+    public MsLinkEventCause getCause();
     public String getMessage();
 }

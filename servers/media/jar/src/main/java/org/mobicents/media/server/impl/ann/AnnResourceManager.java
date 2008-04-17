@@ -17,6 +17,7 @@ package org.mobicents.media.server.impl.ann;
 import java.util.Properties;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaResource;
@@ -28,9 +29,9 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  */
 public class AnnResourceManager extends BaseResourceManager {
     @Override
-    public MediaResource getResource(BaseEndpoint endpoint, String name, 
+    public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, 
             Connection connection, Properties config) throws UnknownMediaResourceException {
-        if (name.equals(Endpoint.RESOURCE_AUDIO_SOURCE)) {
+        if (type==MediaResourceType.AUDIO_SOURCE) {
             return new LocalProxy(endpoint, connection);
         } else return null;
     }

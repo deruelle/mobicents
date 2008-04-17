@@ -20,6 +20,7 @@
 		<module>jar</module>
 		<module>sar</module>
 		<module>mscontrol</module>
+		<module>constants</module>
 		<!-- uncomment before changing version with release plugin
 		<module>test</module>
 		-->		

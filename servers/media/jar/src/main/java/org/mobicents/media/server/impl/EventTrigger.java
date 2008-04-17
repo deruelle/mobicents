@@ -18,7 +18,7 @@ package org.mobicents.media.server.impl;
 
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-
+ import org.mobicents.media.server.impl.common.events.*;
 /**
  *
  * @author Oleg Kulikov
@@ -26,14 +26,14 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 public class EventTrigger implements NotificationListener {
     
     private BaseEndpoint endpoint;
-    private int eventID;
+    private EventID eventID;
     private NotificationListener listener;
     private boolean persistent;
     /**
      * Creates a new instance of EventTrigger
      */
     public EventTrigger(BaseEndpoint endpoint, 
-            int eventID,       
+            EventID eventID,       
             NotificationListener listener,
             boolean persistent) {
         this.eventID = eventID;
@@ -41,7 +41,7 @@ public class EventTrigger implements NotificationListener {
         this.persistent = persistent;
     }
 
-    public int getEventID() {
+    public EventID getEventID() {
         return eventID;
     }
 

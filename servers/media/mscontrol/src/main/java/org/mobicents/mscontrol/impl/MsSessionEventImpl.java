@@ -16,6 +16,7 @@
 
 package org.mobicents.mscontrol.impl;
 
+import org.mobicents.media.msc.common.events.MsSessionEventID;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
@@ -28,10 +29,10 @@ import org.mobicents.mscontrol.MsSessionListener;
 public class MsSessionEventImpl implements MsSessionEvent, Runnable  {
     
     private MsSessionImpl session;
-    private int eventID;
+    private MsSessionEventID eventID;
     
     /** Creates a new instance of MsSessionEventImpl */
-    public MsSessionEventImpl(MsSessionImpl session, int eventID) {
+    public MsSessionEventImpl(MsSessionImpl session, MsSessionEventID eventID) {
         this.session = session;
         this.eventID = eventID;
     }
@@ -40,20 +41,20 @@ public class MsSessionEventImpl implements MsSessionEvent, Runnable  {
         return session;
     }
 
-    public int getEventID() {
+    public MsSessionEventID getEventID() {
         return eventID;
     }
     
     public void run() {
         for (MsSessionListener listener: session.listeners) {
             switch (eventID) {
-                case MsSessionEvent.SESSION_CREATED :
+                case SESSION_CREATED :
                     listener.sessionCreated(this);
                     break;
-                case MsSessionEvent.SESSION_ACTIVE :
+                case SESSION_ACTIVE :
                     listener.sessionActive(this);
                     break;
-                case MsSessionEvent.SESSION_INVALID :
+                case SESSION_INVALID :
                     listener.sessionInvalid(this);
                     break;
             }

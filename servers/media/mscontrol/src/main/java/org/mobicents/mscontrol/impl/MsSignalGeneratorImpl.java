@@ -19,6 +19,9 @@ package org.mobicents.mscontrol.impl;
 import java.util.ArrayList;
 import java.rmi.server.UID;
 import javax.naming.NamingException;
+
+import org.mobicents.media.server.impl.common.events.EventCause;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -28,7 +31,6 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
 
 /**
  *
@@ -61,7 +63,7 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
         return id;
     }
     
-    public void apply(int signalID, String[] params) {
+    public void apply(EventID signalID, String[] params) {
         new Thread(new PlayTx(this, signalID, params)).start();
     }
     
@@ -92,11 +94,11 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     }
     
     private class PlayTx implements Runnable {
-        private int signalID;
+        private EventID signalID;
         private String[] params;
         private MsSignalGeneratorImpl generator;
         
-        public PlayTx(MsSignalGeneratorImpl generator, int signalID, String[] params)  {
+        public PlayTx(MsSignalGeneratorImpl generator, EventID signalID, String[] params)  {
             this.generator = generator;
             this.signalID = signalID;
             this.params = params;
@@ -109,14 +111,14 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
                     endpoint = EndpointQuery.find(endpointName);
                 } catch (NamingException ex) {
                     MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                            Announcement.FAIL,
-                            Announcement.CAUSE_FACILITY_FAILURE,
+                    		EventID.FAIL,
+                            EventCause.FACILITY_FAILURE,
                             ex.getMessage());
                     sendEvent(error);
                 } catch (ResourceUnavailableException ex) {
                     MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                            Announcement.FAIL,
-                            Announcement.CAUSE_FACILITY_FAILURE,
+                    		EventID.FAIL,
+                    		EventCause.FACILITY_FAILURE,
                             ex.getMessage());
                     sendEvent(error);
                 }
@@ -126,8 +128,8 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
                 endpoint.play(signalID, params, null, generator, false);
             } catch (UnknownSignalException ex) {
                 MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                        Announcement.FAIL,
-                        Announcement.CAUSE_FACILITY_FAILURE,
+                		EventID.FAIL,
+                		EventCause.FACILITY_FAILURE,
                         ex.getMessage());
                 sendEvent(error);
             }

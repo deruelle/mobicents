@@ -20,7 +20,8 @@ import java.net.InetAddress;
 import java.util.Properties;
 import java.util.Timer;
 import org.mobicents.media.Format;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.events.*;
 /**
  * The basic implementation of the endpoint.
  *
@@ -35,13 +36,7 @@ import org.mobicents.media.Format;
  * @author Oleg Kulikov.
  */
 public interface Endpoint extends Serializable {
-
-    public final static String RESOURCE_AUDIO_SOURCE = "org.mobicents.audio.source";
-    public final static String RESOURCE_AUDIO_SINK = "org.mobicents.audio.sink";
-    
-    public final static String RESOURCE_DTMF_DETECTOR = "org.mobicents.dtmf.detector";
-    public final static String RESOURCE_DTMF_GENERATOR = "org.mobicents.dtmf.generator";
-    
+   
     /**
      * Timer instance
      */
@@ -146,7 +141,7 @@ public interface Endpoint extends Serializable {
      * @param resourceName thr name of the resource.
      * @param config resource parameters.
      */
-    public void configure(String resourceName, Properties config) throws UnknownMediaResourceException ;
+    public void configure(MediaResourceType type, Properties config) throws UnknownMediaResourceException ;
 
     /**
      * Configures specified resources with specified parameters for 
@@ -157,7 +152,7 @@ public interface Endpoint extends Serializable {
      * will be applied. 
      * @param config resource parameters.
      */
-    public void configure(String resourceName, Connection connection, Properties config) throws UnknownMediaResourceException ;
+    public void configure(MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException ;
     
     public void addFormat(int pt, Format fmt);
     public void removeFormat(Format fmt);
@@ -167,7 +162,7 @@ public interface Endpoint extends Serializable {
      *
      * @param mode the constant which identifies mode of the connection to be created.
      */
-    public Connection createConnection(int mode)
+    public Connection createConnection(ConnectionMode mode)
             throws TooManyConnectionsException, ResourceUnavailableException;
 
     /**
@@ -198,7 +193,7 @@ public interface Endpoint extends Serializable {
      * @param listener the callback interface.
      * @param keepAlive true if keep signal active.
      */
-    public void play(int signalID, String[] params, String connectionID,
+    public void play(EventID signalID, String[] params, String connectionID,
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException;
 
     /**
@@ -211,7 +206,7 @@ public interface Endpoint extends Serializable {
      * @param the Call Agent callback interface currently controlling that endpoint.
      * @persistent true if event is always detected on the endpoint.
      */
-    public void subscribe(int eventID, NotificationListener listener,
+    public void subscribe(EventID eventID, NotificationListener listener,
             boolean persistent);
 
     /**
@@ -224,6 +219,6 @@ public interface Endpoint extends Serializable {
      * @param connectionID the identifier of the connection.
      * @param the Call Agent callback interface currently controlling that endpoint.
      */
-    public void subscribe(int eventID, String connectionID,String params[], 
+    public void subscribe(EventID eventID, String connectionID,String params[], 
             NotificationListener listener);
 }

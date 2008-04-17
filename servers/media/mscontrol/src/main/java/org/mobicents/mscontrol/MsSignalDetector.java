@@ -17,12 +17,14 @@
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.dtmf.*;
+import org.mobicents.media.server.impl.common.events.*;
 /**
  *
  * @author Oleg Kulikov
  */
 public interface MsSignalDetector extends MsResource {
-    public void receive(int signalID, boolean persistent);
-    public void receive(int signalID, MsConnection connection, String[] params);
+    public void receive(EventID signalID, boolean persistent);
+    public void receive(EventID signalID, MsConnection connection, String[] params);
 }

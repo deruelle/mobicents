@@ -16,9 +16,10 @@ package org.mobicents.media.server.impl;
 
 import java.io.Serializable;
 import java.util.Properties;
+
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.dtmf.DTMFResourceLocator;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
@@ -28,14 +29,14 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  * @author Oleg Kulikov
  */
 public class BaseResourceManager implements Serializable {
-    public MediaResource getResource(BaseEndpoint endpoint, String name, Properties config) throws UnknownMediaResourceException {
-        throw new UnknownMediaResourceException(name);
+    public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, Properties config) throws UnknownMediaResourceException {
+        throw new UnknownMediaResourceException(type);
     }
-    public MediaResource getResource(BaseEndpoint endpoint, String name, Connection connection, Properties config) throws UnknownMediaResourceException {
-        if (name.equals(Endpoint.RESOURCE_DTMF_DETECTOR)) {
+    public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException {
+        if (MediaResourceType.DTMF_DETECTOR==type) {
             return DTMFResourceLocator.getDetector(endpoint, connection, config);
         }
-        throw new UnknownMediaResourceException(name);
+        throw new UnknownMediaResourceException(type);
     }
     
 }

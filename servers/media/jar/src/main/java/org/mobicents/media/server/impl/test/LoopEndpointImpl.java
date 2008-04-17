@@ -13,6 +13,7 @@ package org.mobicents.media.server.impl.test;
 
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceStateListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
@@ -36,7 +37,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         return new TestResourceManager();
     }
     
-    public void play(int signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+    public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

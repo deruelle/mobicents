@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.impl.test;
 
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.ResourceStateListener;
 
@@ -23,8 +24,8 @@ import org.mobicents.media.server.spi.ResourceStateListener;
  */
 public class EchoStateListener implements ResourceStateListener {
 
-    public void onStateChange(MediaResource resource, int state) {
-        if (state == MediaResource.STATE_PREPARED) {
+	public void onStateChange(MediaResource resource, MediaResourceState state) {
+        if (state == MediaResourceState.PREPARED) {
             resource.start();
         }
     }

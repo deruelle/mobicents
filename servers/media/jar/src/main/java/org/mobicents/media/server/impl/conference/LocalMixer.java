@@ -23,6 +23,8 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.impl.common.MediaResourceState;
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.jmf.mixer.AudioMixer;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -82,21 +84,21 @@ public class LocalMixer extends BaseResource implements MediaSource {
     }
 
     public void start() {
-        mixer.start();
-        setState(MediaResource.STATE_STARTED);
-    }
+		mixer.start();
+		setState(MediaResourceState.STARTED);
+	}
 
-    public void stop() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("id=" + this.id + " stop mixer");
-        }
+	public void stop() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("id=" + this.id + " stop mixer");
+		}
 
-        mixer.stop();
+		mixer.stop();
 
-        if (getState() == MediaResource.STATE_STARTED) {
-            setState(MediaResource.STATE_PREPARED);
-        }
-    }
+		if (getState() == MediaResourceState.STARTED) {
+			setState(MediaResourceState.PREPARED);
+		}
+	}
 
     @Override
     public String toString() {
@@ -104,17 +106,17 @@ public class LocalMixer extends BaseResource implements MediaSource {
     }
 
     public void configure(Properties config) {
-        AudioFormat fmt = (AudioFormat) config.get("conf.connection.format");
-        int packetization = endpoint.getPacketizationPeriod();
-        int jitter = endpoint.getJitter();
+		AudioFormat fmt = (AudioFormat) config.get("conf.connection.format");
+		int packetization = endpoint.getPacketizationPeriod();
+		int jitter = endpoint.getJitter();
 
-        try {
-            mixer = new AudioMixer(packetization, jitter, fmt);
-            setState(MediaResource.STATE_CONFIGURED);
-        } catch (UnsupportedFormatException e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-    }
+		try {
+			mixer = new AudioMixer(packetization, jitter, fmt);
+			setState(MediaResourceState.CONFIGURED);
+		} catch (UnsupportedFormatException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
     public void addListener(NotificationListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -125,33 +127,37 @@ public class LocalMixer extends BaseResource implements MediaSource {
     }
 
     public PushBufferStream prepare() {
-        setState(MediaResource.STATE_PREPARED);
-        Collection<BaseConnection> connections = endpoint.getConnections();
-        for (BaseConnection conn : connections) {
-            if (!conn.getId().equals(this.id)) {
-                LocalSplitter splitter = (LocalSplitter) endpoint.getResource(Endpoint.RESOURCE_AUDIO_SINK, conn.getId());
-                if (splitter != null && splitter.getState() >= MediaResource.STATE_CONFIGURED) {
-                    try {
-                        add(conn.getId(), splitter.newBranch(id));
-                    } catch (UnsupportedFormatException e) {
-                        logger.error("Unexpected error", e);
-                    }
-                }
-            }
-        }
-        return mixer.getOutputStream();
-    }
+		setState(MediaResourceState.PREPARED);
+		Collection<BaseConnection> connections = endpoint.getConnections();
+		for (BaseConnection conn : connections) {
+			if (!conn.getId().equals(this.id)) {
+				LocalSplitter splitter = (LocalSplitter) endpoint.getResource(
+						MediaResourceType.AUDIO_SINK, conn.getId());
+				if (splitter != null
+						&& splitter.getState() != MediaResourceState.NULL) { // not
+					// this
+					try {
+						add(conn.getId(), splitter.newBranch(id));
+					} catch (UnsupportedFormatException e) {
+						logger.error("Unexpected error", e);
+					}
 
-    public void release() {
-        setState(MediaResource.STATE_NULL);
-        Collection<BaseConnection> connections = endpoint.getConnections();
-        for (BaseConnection conn : connections) {
-            if (!conn.getId().equals(this.id)) {
-                LocalSplitter splitter = (LocalSplitter) endpoint.getResource(
-                        Endpoint.RESOURCE_AUDIO_SINK,
-                        conn.getId());
-                if (splitter != null) splitter.remove(id);
-            }
-        }
-    }
+				}
+			}
+		}
+		return mixer.getOutputStream();
+	}
+
+	public void release() {
+		setState(MediaResourceState.NULL);
+		Collection<BaseConnection> connections = endpoint.getConnections();
+		for (BaseConnection conn : connections) {
+			if (!conn.getId().equals(this.id)) {
+				LocalSplitter splitter = (LocalSplitter) endpoint.getResource(
+						MediaResourceType.AUDIO_SINK, conn.getId());
+				if (splitter != null)
+					splitter.remove(id);
+			}
+		}
+	}
 }

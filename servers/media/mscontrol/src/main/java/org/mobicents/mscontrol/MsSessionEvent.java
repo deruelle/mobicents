@@ -18,18 +18,15 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
+import org.mobicents.media.msc.common.events.MsSessionEventID;
+
 /**
  * This is the interface for all MsSession-related events.
  *
  * @author Oleg Kulikov
  */
 public interface MsSessionEvent extends Serializable {
-    //indicates that the MsSession object has been created and is in the MsSession.IDLE state.
-    public final static int SESSION_CREATED = 0;
-    //indicates that the state of the MsSession object has changed to MsSession.ACTIVE.
-    public final static int SESSION_ACTIVE = 1;
-    //indicates that the state of the MsSession object has changed to MsSession.INVALID
-    public final static int SESSION_INVALID = 2;
+   
     
     /**
      * Returns the MsSession object associated with this event.
@@ -43,5 +40,5 @@ public interface MsSessionEvent extends Serializable {
      *
      * @return the id of event
      */
-    public int getEventID();
+    public MsSessionEventID getEventID();
 }

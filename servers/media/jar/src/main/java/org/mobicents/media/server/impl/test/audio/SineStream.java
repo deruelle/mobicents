@@ -46,29 +46,40 @@ public class SineStream implements PushBufferStream {
     private int offset = 0;
     private int sizeInBytes;
     private int duration;
-    
+    private boolean terminateAfterSequence = false;
     /** Creates a new instance of GeneratorStream */
-    public SineStream(int freq, int duration) {
-        this.freq = freq;
-        this.duration = duration;
-        
-        sizeInBytes = (int)(
-                (LINEAR_AUDIO.getSampleRate()/ 1000) * 
-                (LINEAR_AUDIO.getSampleSizeInBits()/8) *
-                duration
-                );
-        System.out.println("Size in bytes=" + sizeInBytes);
-        
-        int len = (int)LINEAR_AUDIO.getSampleRate();
-        data = new byte[LINEAR_AUDIO.getSampleSizeInBits() / 8 * len];
-        int k = 0;
-        for (int i = 0; i < len; i++) {
-            short s = (short) (Short.MAX_VALUE * Math.sin(2 * Math.PI * freq * i / len));
-            data[k++] = (byte) (s >> 8);
-            data[k++] = (byte) s;
-        }
+    public SineStream(int freq, int duration, boolean terminateAfterSequence) {
+		this.terminateAfterSequence = terminateAfterSequence;
+		this.freq = freq;
+		this.duration = duration;
 
-    }
+		sizeInBytes = (int) ((LINEAR_AUDIO.getSampleRate())
+				* (LINEAR_AUDIO.getSampleSizeInBits() / 8) * this.duration / 1000); // Duration
+																					// is
+																					// in
+																					// mS
+		System.out.println("SineStream - Size in bytes=" + sizeInBytes);
+
+		// We F in 1/s - however we can put here duration of 10s,0.1s - this
+		// would affect how values are spread, this is bad, we must add scalling
+		// to that
+		
+		double d=(double)1000/this.duration;
+		data = new byte[sizeInBytes];
+
+		int len = data.length / 2;
+		int k = 0;
+
+		for (int i = 0; i < len; i++) {
+			short s = (short) (Short.MAX_VALUE * Math.sin(2 * Math.PI * freq
+					* (i/d) / len));
+
+			data[k++] = (byte) (s >> 8);
+			data[k++] = (byte) s;
+
+		}
+
+	}
 
     public Format getFormat() {
         return LINEAR_AUDIO;
@@ -122,15 +133,20 @@ public class SineStream implements PushBufferStream {
         return null;
     }
 
-    protected void start() {
-        if (!started && transferHandler != null) {
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new Transmitter(this), 0, duration);
-            started = true;
-        }
-    }
+    public void start() {
+		if (!started && transferHandler != null) {
+			timer = new Timer();
 
-    protected void stop() {
+			if (!this.terminateAfterSequence) {
+				timer.scheduleAtFixedRate(new Transmitter(this), 0, duration);
+			} else {
+				timer.schedule(new Transmitter(this), duration);
+			}
+			started = true;
+		}
+	}
+
+    public void stop() {
         if (started) {
             timer.cancel();
             timer.purge();

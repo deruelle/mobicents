@@ -39,7 +39,8 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.events.*;
 /**
  * The basic implementation of the endpoint.
  *
@@ -169,9 +170,9 @@ public abstract class BaseEndpoint implements Endpoint {
      *
      * @see org.mobicents.media.server.spi.Endpoint#configure(String, Properties);
      */
-    public void configure(String resourceName, Properties config) throws UnknownMediaResourceException {
-        MediaResource mediaResource = resourceManager.getResource(this, resourceName, config);
-        resources.put(resourceName, mediaResource);
+    public void configure(MediaResourceType type, Properties config) throws UnknownMediaResourceException {
+        MediaResource mediaResource = resourceManager.getResource(this, type, config);
+        resources.put(type, mediaResource);
     }
 
     /**
@@ -179,8 +180,8 @@ public abstract class BaseEndpoint implements Endpoint {
      *
      * @see org.mobicents.media.server.spi.Endpoint#configure(String, String, Properties);
      */
-    public synchronized void configure(String resourceName, Connection connection, Properties config) throws UnknownMediaResourceException {
-        MediaResource mediaResource = resourceManager.getResource(this, resourceName, connection, config);
+    public synchronized void configure(MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException {
+        MediaResource mediaResource = resourceManager.getResource(this, type, connection, config);
 
         if (mediaResource == null) {
             return;
@@ -188,15 +189,15 @@ public abstract class BaseEndpoint implements Endpoint {
 
         try {
             mediaResource.configure(config);
-            resources.put(resourceName + "_" + connection.getId(), mediaResource);
+            resources.put(type + "_" + connection.getId(), mediaResource);
         } catch (Exception e) {
-            logger.error("Cold not configure resource " + resourceName + ", connection = " + connection, e);
+            logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
             throw new IllegalArgumentException(e.getMessage());
         }
     }
 
-    public synchronized void prepare(String resourceName, String connectionID, PushBufferStream media) throws UnsupportedFormatException {
-        MediaResource res = (MediaResource) resources.get(resourceName + "_" + connectionID);
+    public synchronized void prepare(MediaResourceType type, String connectionID, PushBufferStream media) throws UnsupportedFormatException {
+        MediaResource res = (MediaResource) resources.get(type + "_" + connectionID);
     //res.prepare(media);
     }
 
@@ -282,8 +283,8 @@ public abstract class BaseEndpoint implements Endpoint {
         return connections.values();
     }
 
-    public Object getResource(String resourceName, String connectionID) {
-        return resources.get(resourceName + "_" + connectionID);
+    public Object getResource(MediaResourceType type, String connectionID) {
+        return resources.get(type + "_" + connectionID);
     }
 
     public Object getResource(String resourceName) {
@@ -298,7 +299,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @return Object implementing connection.     * 
      * @throws org.mobicents.media.server.spi.ResourceUnavailableException
      */
-    private Connection doCreateConnection(Endpoint endpoint, int mode)
+    private Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode)
             throws ResourceUnavailableException {
         return new BaseConnection(endpoint, mode);
     }
@@ -308,7 +309,7 @@ public abstract class BaseEndpoint implements Endpoint {
      *
      * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
      */
-    public synchronized Connection createConnection(int mode) throws TooManyConnectionsException, ResourceUnavailableException {
+    public synchronized Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
         hasConnections = true;
         try {
             if (connections.size() == connections.capacity()) {
@@ -411,7 +412,7 @@ public abstract class BaseEndpoint implements Endpoint {
      *
      * @see org.mobicents.media.server.spi.Endpoint#detect(int, NotificationListener, boolean);
      */
-    public void subscribe(int eventID, NotificationListener listener,
+    public void subscribe(EventID eventID, NotificationListener listener,
             boolean persistent) {
         EventTrigger eventDetector =
                 new EventTrigger(this, eventID, listener, persistent);
@@ -423,7 +424,7 @@ public abstract class BaseEndpoint implements Endpoint {
      *
      * @see org.mobicents.media.server.spi.Endpoint#detect(int, NotificationListener, boolean);
      */
-    public void subscribe(int eventID, String connectionID,
+    public void subscribe(EventID eventID, String connectionID,
             String params[], NotificationListener listener) {
     }
 }

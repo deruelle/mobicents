@@ -18,13 +18,23 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
+
+import org.mobicents.media.server.impl.common.events.*;
+
 /**
- *
+ * MsNotify uses system wide defined constants for eventID and eventCause -
+ * reason for that to happen is that MsNotifyEvent conveys information passed
+ * throw signaling from and to MS
+ * 
  * @author Oleg Kulikov
  */
 public interface MsNotifyEvent extends Serializable {
-    public MsResource getSource();
-    public int getEventID();
-    public int getCause();
-    public String getMessage();
+
+	public MsResource getSource();
+
+	public EventID getEventID();
+
+	public EventCause getCause();
+
+	public String getMessage();
 }

@@ -20,6 +20,7 @@ import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -51,22 +52,22 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
     public PushBufferStream prepare() {
         this.sourceReady = true;
         if (this.sourceReady && this.sinkReady) {
-            setState(MediaResource.STATE_PREPARED);
+            setState(MediaResourceState.PREPARED);
         }
         return mediaProxy;
     }
 
     public void configure(Properties config) {
-        if (getState() < MediaResource.STATE_CONFIGURED) {
+        if (getState() == MediaResourceState.NULL) {
             mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
-            setState(MediaResource.STATE_CONFIGURED);
+            setState(MediaResourceState.CONFIGURED);
         }
     }
 
     public void release() {
         mediaProxy.stop();
-        setState(MediaResource.STATE_NULL);
+        setState(MediaResourceState.NULL);
     }
 
 
@@ -80,19 +81,19 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
 
     public void start() {
         mediaProxy.start();
-        setState(MediaResource.STATE_STARTED);
+        setState(MediaResourceState.STARTED);
     }
 
     public void stop() {
         mediaProxy.stop();
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
     }
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
         mediaProxy.setInputStream(mediaStream);
         this.sinkReady = true;
         if (this.sourceReady && this.sinkReady) {
-            setState(MediaResource.STATE_PREPARED);
+            setState(MediaResourceState.PREPARED);
         }
     }
 

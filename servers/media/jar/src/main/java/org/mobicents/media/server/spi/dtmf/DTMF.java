@@ -19,9 +19,9 @@ package org.mobicents.media.server.spi.dtmf;
  * @author Oleg Kulikov
  */
 public interface DTMF {
-    public final static int RFC2833 = 1;
-    public final static int INBAND = 2;
-    
+
+
+	//FIXME: Oleg what about those two birds?
     public final static int RTP_PAYLOAD = 101;
     public final static int BUFFER_TIMOUT = 5;
     

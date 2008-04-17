@@ -26,7 +26,9 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalDetector;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.dtmf.*;
+import org.mobicents.media.server.impl.common.events.*;
 /**
  *
  * @author Oleg Kulikov
@@ -57,11 +59,11 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
         //released = true;
     }
     
-    public void receive(int signalID, boolean persistent) {
+    public void receive(EventID signalID, boolean persistent) {
         new Thread(new SubscribeTx(this, signalID, persistent)).start();
     }
     
-    public void receive(int signalID, MsConnection connection, String[] params) {
+    public void receive(EventID signalID, MsConnection connection, String[] params) {
         if (logger.isDebugEnabled()) {
             logger.debug("Subscribe eventID=" + signalID + ", connection=" + connection);
         }
@@ -81,11 +83,11 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     }
     
     private class SubscribeTx implements Runnable {
-        private int signalID;
+        private EventID signalID;
         private boolean persistent;
         private NotificationListener listener;
         
-        public SubscribeTx(NotificationListener listener, int signalID, boolean persistent)  {
+        public SubscribeTx(NotificationListener listener, EventID signalID, boolean persistent)  {
             this.listener = listener;
             this.signalID = signalID;
             this.persistent = persistent;
@@ -101,13 +103,13 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     }
     
     private class SubscribeTx1 implements Runnable {
-        private int signalID;
+        private EventID signalID;
         private boolean persistent;
         private NotificationListener listener;
         private String[] params;
         private MsConnection connection;
         
-        public SubscribeTx1(NotificationListener listener, int signalID, 
+        public SubscribeTx1(NotificationListener listener, EventID signalID, 
                 MsConnection connection, String params[])  {
             this.listener = listener;
             this.signalID = signalID;

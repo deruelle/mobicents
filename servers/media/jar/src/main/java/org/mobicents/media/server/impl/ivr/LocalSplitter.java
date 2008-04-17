@@ -20,6 +20,7 @@ import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseResource;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.splitter.MediaSplitter;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
@@ -90,12 +91,12 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     }
 
     public void configure(Properties config) {
-        setState(MediaResource.STATE_CONFIGURED);
+        setState(MediaResourceState.CONFIGURED);
     }
 
     public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
         splitter.setInputStream(mediaStream);
-        setState(MediaResource.STATE_PREPARED);
+        setState(MediaResourceState.PREPARED);
     }
 
     public void addListener(NotificationListener listener) {
@@ -107,16 +108,16 @@ public class LocalSplitter extends BaseResource implements MediaSink {
     }
 
     public void start() {
-        setState(MediaResource.STATE_STARTED);
+        setState(MediaResourceState.STARTED);
     }
 
     public void stop() {
-        if (getState() == MediaResource.STATE_STARTED) {
-            setState(MediaResource.STATE_PREPARED);
+        if (getState() == MediaResourceState.STARTED) {
+            setState(MediaResourceState.PREPARED);
         }
     }
 
     public void release() {
-        setState(MediaResource.STATE_NULL);
+        setState(MediaResourceState.NULL);
     }
 }

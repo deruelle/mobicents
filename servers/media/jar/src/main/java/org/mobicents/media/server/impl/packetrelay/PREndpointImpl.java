@@ -16,6 +16,7 @@
 
 package org.mobicents.media.server.impl.packetrelay;
 
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.impl.conference.ConfEndpointImpl;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
@@ -37,7 +38,7 @@ public class PREndpointImpl extends ConfEndpointImpl {
     
     
     @Override
-    public void play(int signalID, String params[], String connectionID,
+    public void play(EventID signalID, String params[], String connectionID,
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnknownSignalException("Not supported");
     }
