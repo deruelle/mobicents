@@ -77,8 +77,10 @@ public abstract class AdminSbb extends CommonSbb {
 	private TimerFacility timerFacility = null;
 
 	private PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface = null;
-
-	private String pathToAudioDirectory = null;
+	
+	private final String orderApproved = "audio/AdminOrderApproved.wav";
+	private final String orderCancelled = "audio/AdminOrderCancelled.wav";
+	private final String orderReConfirm = "audio/AdminReConfirm.wav";	
 
 	String audioFilePath = null;
 
@@ -103,10 +105,7 @@ public abstract class AdminSbb extends CommonSbb {
 			Context ctx = (Context) new InitialContext()
 					.lookup("java:comp/env");
 
-			audioFilePath = (String) ctx.lookup("audioFilePath");
-
-			pathToAudioDirectory = "file:"
-					+ (String) ctx.lookup("pathToAudioDirectory");
+			audioFilePath = System.getProperty("jboss.server.data.dir") + "/RecordedAdmin.wav";
 
 			callerSip = (String) ctx.lookup("callerSip");
 
@@ -142,7 +141,7 @@ public abstract class AdminSbb extends CommonSbb {
 		this.setCustomEvent(event);
 
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(event.getCustomerName());
@@ -190,7 +189,7 @@ public abstract class AdminSbb extends CommonSbb {
 		this.setCustomEvent(event);
 
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(event.getCustomerName());
@@ -397,7 +396,7 @@ public abstract class AdminSbb extends CommonSbb {
 
 		switch (cause) {
 		case Basic.CAUSE_DIGIT_1:
-			audioFile = pathToAudioDirectory + "OrderApproved.wav";
+			audioFile = (getClass().getResource(orderApproved)).toString();
 			if (this.getSfDemo()) {
 				System.out.println("Lookup the Queue and put value");
 				try {
@@ -458,7 +457,7 @@ public abstract class AdminSbb extends CommonSbb {
 			successful = true;
 			break;
 		case Basic.CAUSE_DIGIT_2:
-			audioFile = pathToAudioDirectory + "OrderCancelled.wav";
+			audioFile = (getClass().getResource(orderCancelled)).toString();
 			if (this.getSfDemo()) {
 				System.out.println("Lookup the Queue and put value");
 				try {
@@ -520,7 +519,7 @@ public abstract class AdminSbb extends CommonSbb {
 
 			break;
 		default:
-			audioFile = pathToAudioDirectory + "AdminReConfirm.wav";
+			audioFile = (getClass().getResource(orderReConfirm)).toString();
 
 			break;
 		}
