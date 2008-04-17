@@ -61,8 +61,8 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
 	private TimerFacility timerFacility = null;
-
-	private String pathToAudioDirectory = null;
+	
+	private final String orderDeliveryDate = "audio/UserOrderDeliveryDate.wav";
 
 	String audioFilePath = null;
 
@@ -80,10 +80,8 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			Context myEnv = (Context) new InitialContext()
 					.lookup("java:comp/env");
 
-			audioFilePath = (String) myEnv.lookup("audioFilePath");
+			audioFilePath = System.getProperty("jboss.server.data.dir");
 
-			pathToAudioDirectory = "file:"
-					+ (String) myEnv.lookup("pathToAudioDirectory");
 			callerSip = (String) myEnv.lookup("callerSip");
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
@@ -311,8 +309,8 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 					.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			String announcementFile = pathToAudioDirectory
-					+ "OrderDeliveryDate.wav";
+			String announcementFile = (getClass().getResource(orderDeliveryDate)).toString();
+					
 			generator.apply(Announcement.PLAY,
 					new String[] { announcementFile });
 
@@ -403,9 +401,14 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			EntityManager mgr = null;
 			Order order = null;
+			
+			StringBuffer audioPath = new StringBuffer(audioFilePath);
+			audioPath.append("/UserDeliveryDate");
+			audioPath.append(this.getCustomEvent().getOrderId());
+			audioPath.append(".wav");			
 
 			TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-					audioFilePath, "kevin16");
+					audioPath.toString(), "kevin");
 
 			char[] c = dateAndTime.toCharArray();
 
@@ -503,11 +506,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			try {
 				ActivityContextInterface generatorActivity = mediaAcif
 						.getActivityContextInterface(generator);
-				generatorActivity.attach(getSbbContext().getSbbLocalObject());
+				generatorActivity.attach(getSbbContext().getSbbLocalObject());			
+				
 
-				String announcementFile = "file:" + audioFilePath;
+				
 				generator.apply(Announcement.PLAY,
-						new String[] { announcementFile });
+						new String[] { "file:"+audioPath.toString() });
 
 				//this.initDtmfDetector(getConnection(), this.getEndpointName());
 			} catch (UnrecognizedActivityException e) {
