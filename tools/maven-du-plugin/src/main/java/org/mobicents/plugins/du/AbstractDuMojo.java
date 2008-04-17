@@ -793,7 +793,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 			// now lets glue everything and write the build.xml script
 
 			String xml = header + "\n\t<property name=\"du.filename\" value=\""
-					+ project.getArtifactId() + "-" + project.getVersion()
+					+ project.getBuild().getFinalName()
 					+ ".jar\" />\n" + "\n\t<target name=\"deploy-jmx\">\n"
 					+ "\n\t\t<antcall target=\"install-DU\" />\n";
 
