@@ -114,6 +114,18 @@ Total time: 5 seconds</screen>
 					</caption>
 				</mediaobject>
 			</figure>
+			<mediaobject
+				id="mediaobj-ss-deployable_units-selecting_the_ratype_dependency.png">
+				<imageobject>
+					<imagedata
+						align="center"
+						fileref="images/ss-deployable_units-selecting_the_ratype_dependency.png"
+						format="PNG" />
+				</imageobject>
+				<caption>
+					<para>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</para>
+				</caption>
+			</mediaobject>
 			<para>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default/deploy</filename> (remembering that the bundled JBoss installation that comes with the binary Mobicents release is located in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/server/default</filename>; you are actually copying the file into JBoss's <filename>deploy</filename> directory). If, on the other hand, you installed Mobicents and JBoss separately and set the <envar>JBOSS_HOME</envar> environment variable, then the correct directory to copy the file to is <filename><envar>$JBOSS_HOME</envar>/deploy</filename>.</para>
 			<para>After copying the <emphasis>ratype</emphasis> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</para>
 			<screen>19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]

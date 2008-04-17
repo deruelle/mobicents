@@ -4,22 +4,214 @@
 <section
 	id="section-SIP_Resource_Adapter">
 	<title>SIP Resource Adapter</title>
-	<formalpara>
-		<title>The Current Mobicents JSIP Version 1.2 implementation</title>
-		<para>The Mobicents SIP Resource Adapter is a Mobicents sub-project that aims to create a high-performance SLEE extension for the Session Initiation Protocol (SIP).</para>
+	<formalpara
+		id="fpara-Introduction_to_the_SIP_Resource_Adapter">
+		<title>Introduction to the SIP Resource Adapter</title>
+		<para>The Mobicents <acronym>SIP</acronym> resource adapter is a Mobicents sub-project that aims to create a high-performance <acronym>SLEE </acronym> extenson for the Session Iniation Protocol (<acronym>SIP</acronym>).</para>
 	</formalpara>
-	<para>The most recent version of the SIP Resource Adapter includes several enhancements which allow for more convenient development of SIP resources for a wide range of applications. The type name of this latest version is <computeroutput>JSIP v1.2</computeroutput>, the type vendor is <computeroutput>net.java.slee.sip</computeroutput> and the type version is <computeroutput>1.2</computeroutput>.</para>
-	<formalpara>
+	<para>The most recent version of the <acronym>SIP</acronym> resource adapter includes several enhancements which allow for more convenient development of <acronym>SIP</acronym> resources for a wide range of applications. The type name of this latest version is <literal>JSIP v1.2</literal>, the type vendor is <literal>net.java.slee.sip</literal>, and the type version is <literal>1.2</literal>.</para>
+	<formalpara
+		id="fpara-The_JAIN_SIP_Resource_Adapter_Version_1.1">
 		<title>The JAIN SIP Resource Adapter Version 1.1</title>
-		<para>In Java Specification Request 22 (JSR-22), this resource adapter type name is denoted as <computeroutput>JAIN SIP</computeroutput>, and the type vendor as <computeroutput>javax.sip</computeroutput>. This resource adapter type version is 1.1. Mobicents provides a fully-compliant implementation of this specification.</para>
+		<para>In Java Specification Request 22 (JSR-22), this resource adapter type name is denoted as <literal>JAIN SIP</literal>, and the type vendor as <literal>javax.sip</literal>. This resource adapter type version is 1.1. Mobicents provides a fully-compliant implementation of this specification.</para>
 	</formalpara>
 	<section
 		id="section-Installing_the_JAIN_SIP_Resource_Adapter">
 		<title>Installing the JAIN SIP Resource Adapter</title>
 		<para>To install the JAIN SIP Resource Adapter, you must first acquire the latest version. Navigate to the <ulink
-				url="https://sourceforge.net/projects/mobicents">Mobicents Sourceforge project page</ulink> and click on the <emphasis>Download Mobicents</emphasis> link. On the next page, click on the <emphasis>SLEE SIP RA</emphasis> link so that it expands to reveal the necessary jar file, which you can click to download<footnote
-				id="sip_ra_filename"><para>As of the time this was written, the jar file was named <filename>jsipv1.2ra-package-10-02-2007.jar</filename>.</para>
-			</footnote> As of the time of this writing, the latest version is <emphasis>1.2 RC1 - core rc2</emphasis>.</para>
+				url="https://sourceforge.net/projects/mobicents">Mobicents Sourceforge project page</ulink> and click on the <emphasis>Download Mobicents</emphasis> link. On the next page, click on the <emphasis>SLEE SIP RA</emphasis> link so that it expands to reveal the necessary <acronym>JAR</acronym> file, which you can click to download<footnote
+				id="sip_ra_filename"><para>As of the time this was written, the <acronym>JAR</acronym> file was named <filename>jsipv1.2ra-package-10-02-2007.jar</filename>.</para>
+			</footnote> As of the time of this writing, the latest version was <emphasis>1.2 RC1 - core rc2</emphasis>.</para>
+	</section>
+	<section
+		id="section-Configuration_of_the_JAIN_SIP_Resource_Adapter">
+		<title>Configuration of the JAIN SIP Resource Adapter</title>
+		<para>Currently, the <acronym>JAIN</acronym> <acronym>SIP</acronym> resource adapter can be configured in three different ways.</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<xref
+						linkend="fpara-Configuring_the_SIP_RA_Via_the_Provisioning_Mechanism"/>, by altering the <filename>resource-adaptor.xml</filename> configuration file.</para>
+			</listitem>
+			<listitem>
+				<para>
+					<quote>Via properites file jared with classes ( atleast to configure port and ip, it still is place to put gov.nist properties to configure other stack props)</quote>
+				</para>
+				<para>Baranowb: is this deprecated? You wrote: <quote>Properties also can be present in properties file present in ra/src/org/mobicents/slee/resources/sip/ diretory. It will be packed to jar with all classes, and wil be used to configure RA and stack(however its deprecated!!!).</quote>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<xref
+						linkend="fpara-Configuring_the_SIP_RA_Via_Passing_Properties_to_an_MBean"/>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<formalpara
+			id="fpara-Configuring_the_SIP_RA_Via_the_Provisioning_Mechanism"
+			xreflabel="Via the provisioning mechanism">
+			<title>Configuring the SIP RA Via the Provisioning Mechanism</title>
+			<para></para>
+		</formalpara>
+		<para>You can set provisioned properties in the <filename>resource-adaptor.xml</filename> file, which is located in <filename>resources/sipra/ra/xml/</filename> [TBD: this directory does not exist in the binary installation: exactly which files should we be modifying?]. </para>
+		<para>Provided here are explanations of the various property values which you can set. All of the following configuration entries, which are <literal>&lt;config-property&gt;</literal> elements in the XML file, should be unordered children of their parent <literal>&lt;resource-adapter&gt;</literal> element <footnote
+				id="footnote-resource-adaptor.xml"><para>Here is an example of the complete <filename>resource-adaptor.xml</filename> configuration file.</para>
+				<programlisting
+					linenumbering="numbered"
+					role="XML"><![CDATA[
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE resource-adaptor-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor 1.0//EN" "http://java.sun.com/dtd/slee-resource-adaptor-jar_1_0.dtd">
+<resource-adaptor-jar>
+	<resource-adaptor
+		id="jain-sip_1.1_RA">
+		<description>JAIN SIP Resource Adaptor</description>
+		<resource-adaptor-name>JainSipResourceAdaptor</resource-adaptor-name>
+		<resource-adaptor-vendor>net.java.slee.sip</resource-adaptor-vendor>
+		<resource-adaptor-version>1.2</resource-adaptor-version>
+					
+		<resource-adaptor-type-ref>
+			<resource-adaptor-type-name>JAIN SIP</resource-adaptor-type-name>
+			<resource-adaptor-type-vendor>javax.sip</resource-adaptor-type-vendor>
+			<resource-adaptor-type-version>1.2</resource-adaptor-type-version>
+		</resource-adaptor-type-ref>
+
+	<!--added oc-resource-adaptor.xml lines here altogether-->
+		<resource-adaptor-classes>
+			<resource-adaptor-class>
+				<resource-adaptor-class-name>
+                    org.mobicents.slee.resource.sip.SipResourceAdaptor
+                </resource-adaptor-class-name>
+			</resource-adaptor-class>
+		</resource-adaptor-classes>
+					
+		<config-property>
+			<description>uS after which dialog if it has not received/send any message is considered to be dead and is expunged</description>
+			<config-property-name>dialogIdleTimeTimeout</config-property-name>
+			<config-property-type>java.lang.Long</config-property-type>
+			<config-property-value>360000</config-property-value>
+		</config-property>
+					
+		<config-property>
+			<description>uS after CANCEL event is going to be fired into SLEE. This atleast gives Sbbs chance to see INVITE and respond, rather than receiving INVITE in on Tx that is in terminated state.</description>
+			<config-property-name>cancelWait</config-property-name>
+			<config-property-type>java.lang.Long</config-property-type>
+			<config-property-value>1000</config-property-value>
+		</config-property>
+					
+		<config-property>
+			<config-property-name>port</config-property-name>
+			<config-property-type>java.lang.Integer</config-property-type>
+			<config-property-value>5060</config-property-value>
+		</config-property>
+					
+		<config-property>
+			<description>IP to which SIP RAs stack should attach - if "null" it will cause RA to pick up Container bind address address</description>
+			<config-property-name>ip</config-property-name>
+			<config-property-type>java.lang.String</config-property-type>
+			<config-property-value>null</config-property-value>
+		</config-property>
+					
+		<config-property>
+			<description>List of transports, separated with ","</description>
+			<config-property-name>transports</config-property-name>
+			<config-property-type>java.lang.String</config-property-type>
+			<config-property-value>UDP</config-property-value>
+		</config-property>
+	</resource-adaptor>
+</resource-adaptor-jar>]]></programlisting>
+			</footnote>
+		</para>
+		<variablelist>
+			<varlistentry>
+				<term>dialogIdleTimeTimeout</term>
+				<listitem>
+					<para>This configuration property sets the timeout on dialogs, in milliseconds. After this amount of time, if the dialog hasn't received any requests or responses, and didn't send any, it is considered to be a <quote>dead end</quote> and is terminated.</para>
+					<programlisting
+						id="proglist-dialogIdleTimeTimeout"
+						role="XML"
+						linenumbering="numbered"><![CDATA[
+<config-property>
+	<description>uS after which dialog if it has not received/send any message is considered to be dead and is expunged</description>
+	<config-property-name>dialogIdleTimeTimeout</config-property-name>
+	<config-property-type>java.lang.Long</config-property-type>
+	<config-property-value>360000</config-property-value>
+</config-property>]]></programlisting>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>cancelWait</term>
+				<listitem>
+					<para>This configuration property sets the amount of time, in milleseconds, between receiving a <literal>CANCEL</literal> and triggering logic to handle it.</para>
+					<programlisting
+						id="proglist-cancelWait"
+						linenumbering="numbered"
+						role="XML"><![CDATA[
+<config-property>
+	<description>uS after CANCEL event is going to be fired into SLEE. This atleast gives Sbbs chance to see INVITE and respond, rather than receiving INVITE in on Tx that is in terminated state.</description>
+	<config-property-name>cancelWait</config-property-name>
+	<config-property-type>java.lang.Long</config-property-type>
+	<config-property-value>1000</config-property-value>
+</config-property>
+]]></programlisting>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>port</term>
+				<listitem>
+					<para>This configuration property sets the port number on which the underlying <acronym>SIP</acronym> stack will listen.</para>
+					<programlisting
+						id="proglist-port"
+						linenumbering="numbered"
+						role="XML"><![CDATA[
+<config-property>
+	<config-property-name>port</config-property-name>
+	<config-property-type>java.lang.Integer</config-property-type>
+	<config-property-value>5060</config-property-value>
+</config-property>
+]]></programlisting>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>ip</term>
+				<listitem>
+					<para>This configuration property sets the <acronym>IP</acronym> address of the underlying stack. If it is set to <varname>null</varname>, then the <acronym>SIP</acronym> resource adapter will use the binding address of the container as its <acronym>IP</acronym> address.</para>
+					<programlisting
+						id="proglist-ip"
+						linenumbering="numbered"
+						role="XML"><![CDATA[
+<config-property>
+	<description>IP to which SIP RAs stack should attach - if "null" it will cause RA to pick up Container bind address address</description>
+	<config-property-name>ip</config-property-name>
+	<config-property-type>java.lang.String</config-property-type>
+	<config-property-value>null</config-property-value>
+</config-property>
+]]></programlisting>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>transports</term>
+				<listitem>
+					<para>This configuration property sets the transports to be used by the stack. It is a string.</para>
+					<programlisting
+						id="proglist-transports"
+						linenumbering="numbered"
+						role="XML"><![CDATA[
+<config-property>
+	<description>List of transports, separated with ","</description>
+	<config-property-name>transports</config-property-name>
+	<config-property-type>java.lang.String</config-property-type>
+	<config-property-value>UDP</config-property-value>
+</config-property>
+]]></programlisting>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara
+			id="fpara-Configuring_the_SIP_RA_Via_Passing_Properties_to_an_MBean"
+			xreflabel="Via properties passed to the MBean which created the Resource Adapter Entity">
+			<title>Configuring the SIP RA Via Passing Properties to an MBean</title>
+			<para></para>
+		</formalpara>
 	</section>
 	<xi:include
 		href="../examples/section-End-to-End_SIP_Example.xml"

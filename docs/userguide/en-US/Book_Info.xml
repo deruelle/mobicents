@@ -8,7 +8,7 @@
 	<issuenum>1.20</issuenum>
 	<productnumber>0</productnumber>
 	<abstract>
-		<para>Mobicents is a highly scalable event-driven application server with a robust component model and fault-tolerant exec	ution environment. Mobicents is the first and only Open Source Platform certified for JSLEE 1.0 compliance. It complements J2EE to enable the convergence of voice, video and data in next-generation intelligent applications. Web and SIP can be combined together to achieve more sophisticated and natural user experience.</para>
+		<para>Mobicents is a highly scalable event-driven application server with a robust component model. Mobicents is the first and only Open Source Platform certified for JSLEE 1.0 compliance. It complements J2EE to enable the convergence of voice, video and data in next-generation intelligent applications. Web and SIP can be combined together to achieve more sophisticated and natural user experience.</para>
 	</abstract>
 	<!--<corpauthor>
 		<inlinemediaobject>
