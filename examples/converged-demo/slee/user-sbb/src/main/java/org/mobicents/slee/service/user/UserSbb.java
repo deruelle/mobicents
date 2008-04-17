@@ -72,11 +72,13 @@ public abstract class UserSbb extends CommonSbb {
 
 	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
-	private String pathToAudioDirectory = null;
-
 	String audioFilePath = null;
 
 	String callerSip = null;
+	
+	private final String orderConfirmed = "audio/UserOrderConfirmed.wav";
+	private final String orderCancelled = "audio/UserOrderCancelled.wav";
+	private final String orderReConfirm = "audio/UserReConfirm.wav";	
 
 	/** Creates a new instance of UserSbb */
 	public UserSbb() {
@@ -90,10 +92,8 @@ public abstract class UserSbb extends CommonSbb {
 			Context myEnv = (Context) new InitialContext()
 					.lookup("java:comp/env");
 
-			audioFilePath = (String) myEnv.lookup("audioFilePath");
+			audioFilePath = System.getProperty("jboss.server.data.dir");
 
-			pathToAudioDirectory = (String) myEnv
-					.lookup("pathToAudioDirectory");
 			callerSip = (String) myEnv.lookup("callerSip");
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
@@ -118,11 +118,14 @@ public abstract class UserSbb extends CommonSbb {
 				+ event.getOrderId() + ". ammount = " + event.getAmmount()
 				+ ". Customer Name = " + event.getCustomerName());
 
-		this.setCustomEvent(event);
+		this.setCustomEvent(event);		
+		
+		audioFilePath = audioFilePath + "/User" + event.getOrderId() + ".wav";
+		
 		this.setAudioFile(audioFilePath);
-
+		
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("Welcome ");
@@ -246,7 +249,7 @@ public abstract class UserSbb extends CommonSbb {
 							"TransactionUnavailableException when trying to getNewClientTransaction",
 							tranUnavExce);
 		} catch (UnrecognizedActivityException e) {
-			// TODO Auto-generated catch block
+			
 			logger
 					.error(
 							"UnrecognizedActivityException when trying to getActivityContextInterface",
@@ -318,8 +321,8 @@ public abstract class UserSbb extends CommonSbb {
 
 		switch (cause) {
 		case Basic.CAUSE_DIGIT_1:
-			String orderConfirmed = pathToAudioDirectory + "OrderConfirmed.wav";
-			this.setAudioFile(orderConfirmed);
+			
+			this.setAudioFile((getClass().getResource(orderConfirmed)).toString());
 
 			mgr = this.persistenceResourceAdaptorSbbInterface
 					.createEntityManager(new HashMap(), "custom-pu");
@@ -338,9 +341,8 @@ public abstract class UserSbb extends CommonSbb {
 			successful = true;
 
 			break;
-		case Basic.CAUSE_DIGIT_2:
-			String orderCancelled = pathToAudioDirectory + "OrderCancelled.wav";
-			this.setAudioFile(orderCancelled);
+		case Basic.CAUSE_DIGIT_2:			
+			this.setAudioFile((getClass().getResource(orderCancelled)).toString());
 
 			mgr = this.persistenceResourceAdaptorSbbInterface
 					.createEntityManager(new HashMap(), "custom-pu");
@@ -372,9 +374,8 @@ public abstract class UserSbb extends CommonSbb {
 				unreActExc.printStackTrace();
 			}
 			break;
-		default:
-			String reConfirm = pathToAudioDirectory + "ReConfirm.wav";
-			this.setAudioFile(reConfirm);
+		default:			
+			this.setAudioFile((getClass().getResource(orderReConfirm)).toString());
 			break;
 		}
 		this.setSendBye(successful);
@@ -387,9 +388,9 @@ public abstract class UserSbb extends CommonSbb {
 					.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			String announcementFile = "file:" + this.getAudioFile();
+			
 			generator.apply(Announcement.PLAY,
-					new String[] { announcementFile });
+					new String[] { this.getAudioFile() });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {

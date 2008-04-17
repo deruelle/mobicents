@@ -39,7 +39,16 @@
 			<resource>
         		<directory>src/main/resources</directory>
         		<filtering>true</filtering>
+			<excludes>
+				<exclude>org/**</exclude>
+			</excludes>
       		</resource>
+		<resource>
+			<directory>src/main/resources</directory>
+			<includes>
+				<include>org/**</include>
+			</includes>
+      		</resource>		
       	</resources>
    </build>
       	

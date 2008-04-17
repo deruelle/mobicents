@@ -50,8 +50,6 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	private MediaRaActivityContextInterfaceFactory mediaAcif;
 
-	private String pathToAudioDirectory = null;
-
 	String audioFilePath = null;
 
 	String callerSip = null;
@@ -68,10 +66,8 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			Context myEnv = (Context) new InitialContext()
 					.lookup("java:comp/env");
 
-			audioFilePath = (String) myEnv.lookup("audioFilePath");
+			audioFilePath = System.getProperty("jboss.server.data.dir");
 
-			pathToAudioDirectory = "file:"
-					+ (String) myEnv.lookup("pathToAudioDirectory");
 			callerSip = (String) myEnv.lookup("callerSip");
 
 			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
@@ -110,10 +106,16 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 		Timestamp orderDate = order.getDeliveryDate();
 
-		mgr.close();
-
+		mgr.close();		
+		
+		StringBuffer audioPath = new StringBuffer(audioFilePath);
+		audioPath.append("/UserShipDate");
+		audioPath.append(event.getOrderId());
+		audioPath.append(".wav");
+		
+		
 		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin16");
+				audioPath.toString(), "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("Welcome ");
@@ -337,10 +339,16 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			ActivityContextInterface generatorActivity = mediaAcif
 					.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+			
+			StringBuffer audioPath = new StringBuffer("file:");
+			audioPath.append(audioFilePath);
+			audioPath.append("/UserShipDate");
+			audioPath.append(this.getCustomEvent().getOrderId());
+			audioPath.append(".wav");			
 
-			String announcementFile = "file:" + audioFilePath;
+			
 			generator.apply(Announcement.PLAY,
-					new String[] { announcementFile });
+					new String[] { audioPath.toString() });
 
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
