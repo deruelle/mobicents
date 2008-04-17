@@ -77,7 +77,7 @@ public class NotifyHandler extends TransactionHandler {
     @Override
     protected String encode(JainMgcpResponseEvent event) {
         return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + 
-                event.getReturnCode().getComment() + "\n";
+                 " " + event.getReturnCode().getComment() + "\n";
     }
 
     private class CommandContentHandle implements MgcpContentHandler {
