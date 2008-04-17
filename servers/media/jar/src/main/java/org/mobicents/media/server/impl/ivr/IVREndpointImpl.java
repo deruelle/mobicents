@@ -131,6 +131,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
         //disable current signal
         if (signal != null) {
             signal.stop();
+            signal = null;
         }
 
         if (params == null) {
