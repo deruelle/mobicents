@@ -46,7 +46,7 @@ public class DtmfBuffer {
         this.mask = mask;
     }
     
-    public void push(String symbol) {
+    public synchronized void push(String symbol) {
         long now = System.currentTimeMillis();
         
         if (now - lastActivity > TIMEOUT) {

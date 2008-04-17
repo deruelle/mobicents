@@ -9,7 +9,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.dtmf;
 
 import java.util.ArrayList;
@@ -26,38 +25,44 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  * 
  * @author Oleg Kulikov
  */
-public abstract class BaseDtmfDetector extends BaseResource 
+public abstract class BaseDtmfDetector extends BaseResource
         implements MediaSink, DTMF {
 
     protected DtmfBuffer digitBuffer;
-    private List <NotificationListener> listeners = new ArrayList();
-    
+    private List<NotificationListener> listeners = new ArrayList();
 
     public BaseDtmfDetector() {
         digitBuffer = new DtmfBuffer(this);
     }
-    
+
     public void setDtmfMask(String mask) {
         digitBuffer.setMask(mask);
     }
 
     public void addListener(NotificationListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
     }
 
     public void removeListener(NotificationListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
 
-    protected void sendEvent(String seq) {
+    protected synchronized void sendEvent(String seq) {
         NotifyEvent evt = new NotifyEvent(this, Basic.DTMF, getCause(seq), seq);
-        for (NotificationListener listener: listeners) {
-            listener.update(evt);
+        synchronized (listeners) {
+            for (NotificationListener listener : listeners) {
+                listener.update(evt);
+            }
+
+            listeners.clear();
         }
-        listeners.clear();
         this.stop();
     }
-    
+
     private int getCause(String seq) {
         if (seq.equals("0")) {
             return Basic.CAUSE_DIGIT_0;
@@ -87,5 +92,4 @@ public abstract class BaseDtmfDetector extends BaseResource
             return Basic.CAUSE_SEQ;
         }
     }
-    
 }
