@@ -68,7 +68,7 @@ public class CheckoutAction implements Checkout, Serializable {
 	@Out(scope = ScopeType.BUSINESS_PROCESS, required = false)
 	BigDecimal amount = BigDecimal.ZERO;
 
-	@Out(value = "customer", scope = ScopeType.BUSINESS_PROCESS, required = false)
+	@Out(value = "userName", scope = ScopeType.BUSINESS_PROCESS, required = false)
 	String userName;
 
 	@Out(value = "customerfullname", scope = ScopeType.BUSINESS_PROCESS, required = false)

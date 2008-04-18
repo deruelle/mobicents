@@ -403,8 +403,8 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 			Order order = null;
 			
 			StringBuffer audioPath = new StringBuffer(audioFilePath);
-			audioPath.append("/UserDeliveryDate");
-			audioPath.append(this.getCustomEvent().getOrderId());
+			audioPath.append("/");
+			audioPath.append(this.getCustomEvent().getUserName());
 			audioPath.append(".wav");			
 
 			TTSSession ttsSession = getTTSProvider().getNewTTSSession(

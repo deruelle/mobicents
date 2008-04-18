@@ -120,7 +120,7 @@ public abstract class UserSbb extends CommonSbb {
 
 		this.setCustomEvent(event);		
 		
-		audioFilePath = audioFilePath + "/User" + event.getOrderId() + ".wav";
+		audioFilePath = audioFilePath + "/" + event.getUserName() + ".wav";
 		
 		this.setAudioFile(audioFilePath);
 		

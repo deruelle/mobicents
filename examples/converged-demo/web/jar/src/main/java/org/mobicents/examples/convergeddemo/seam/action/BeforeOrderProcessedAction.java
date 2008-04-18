@@ -19,12 +19,16 @@ public class BeforeOrderProcessedAction {
 
 	@In
 	String customerfullname;
+	
 	@In
 	String cutomerphone;
+	
 	@In
 	BigDecimal amount;
+	
 	@In
 	Long orderId;
+	
 	@In
 	String userName;
 

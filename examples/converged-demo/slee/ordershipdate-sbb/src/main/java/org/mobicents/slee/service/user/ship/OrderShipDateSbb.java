@@ -109,8 +109,8 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		mgr.close();		
 		
 		StringBuffer audioPath = new StringBuffer(audioFilePath);
-		audioPath.append("/UserShipDate");
-		audioPath.append(event.getOrderId());
+		audioPath.append("/");
+		audioPath.append(event.getUserName());
 		audioPath.append(".wav");
 		
 		
@@ -342,8 +342,8 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			
 			StringBuffer audioPath = new StringBuffer("file:");
 			audioPath.append(audioFilePath);
-			audioPath.append("/UserShipDate");
-			audioPath.append(this.getCustomEvent().getOrderId());
+			audioPath.append("/");
+			audioPath.append(this.getCustomEvent().getUserName());
 			audioPath.append(".wav");			
 
 			
