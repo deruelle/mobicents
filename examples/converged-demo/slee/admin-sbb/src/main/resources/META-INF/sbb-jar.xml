@@ -164,21 +164,7 @@
                 <event-type-vendor>org.mobicents.media</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
-        </event>    
-    <env-entry>
-      <description>The path to audio file where the TTSRA will save the generated .wav audio file</description>
-      <env-entry-name>audioFilePath</env-entry-name>
-      <env-entry-type>java.lang.String</env-entry-type>
-      <env-entry-value>${audio.directory}admin.wav</env-entry-value>
-    </env-entry>
-    
-    <env-entry>
-      <description>Path to the dudio directory</description>
-      <env-entry-name>pathToAudioDirectory</env-entry-name>
-      <env-entry-type>java.lang.String</env-entry-type>
-      <env-entry-value>${audio.directory}</env-entry-value>
-    </env-entry>     
-    
+        </event>
     <env-entry>
       <description>SIP URI of Admin. The call will be directed to this user who acts as Admin (Callee)</description>
       <env-entry-name>adminSip</env-entry-name>

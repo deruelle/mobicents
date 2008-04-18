@@ -6,24 +6,21 @@
  */
 package org.mobicents.examples.convergeddemo.seam.action;
 
+import java.math.BigDecimal;
+
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-
-import javax.naming.InitialContext;
-import javax.jms.TextMessage;
-import javax.jms.Session;
-import javax.jms.MessageListener;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.Message;
 import javax.jms.Connection;
-import javax.jms.MessageProducer;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+import javax.naming.InitialContext;
+import javax.slee.EventTypeID;
+import javax.slee.connection.ExternalActivityHandle;
+import javax.slee.connection.SleeConnection;
+import javax.slee.connection.SleeConnectionFactory;
 
-import java.util.*;
-import javax.naming.*;
-import java.math.BigDecimal;
-import javax.slee.*;
-import javax.slee.connection.*;
 import org.mobicents.slee.connector.server.RemoteSleeService;
 import org.mobicents.slee.service.events.CustomEvent;
 
@@ -84,7 +81,7 @@ public class EJB3MDBExample implements MessageListener
 		
 		BigDecimal amount = new BigDecimal(mssArr[1]);
 
-		CustomEvent customEvent = new CustomEvent(orderId, amount, mssArr[2], mssArr[3]);
+		CustomEvent customEvent = new CustomEvent(orderId, amount, mssArr[2], mssArr[3], mssArr[4]);
 		
 		EventTypeID requestType = conn1.getEventTypeID("org.mobicents.slee.service.sfdemo.ORDER_PLACED","org.mobicents","1.0");
 

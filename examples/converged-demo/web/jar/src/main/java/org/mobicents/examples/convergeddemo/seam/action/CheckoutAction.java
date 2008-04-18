@@ -64,12 +64,12 @@ public class CheckoutAction implements Checkout, Serializable {
 
 	@Out(scope = ScopeType.BUSINESS_PROCESS, required = false)
 	long orderId;
-
+	
 	@Out(scope = ScopeType.BUSINESS_PROCESS, required = false)
 	BigDecimal amount = BigDecimal.ZERO;
 
 	@Out(value = "customer", scope = ScopeType.BUSINESS_PROCESS, required = false)
-	String customerName;
+	String userName;
 
 	@Out(value = "customerfullname", scope = ScopeType.BUSINESS_PROCESS, required = false)
 	String customerFullName;
@@ -99,13 +99,13 @@ public class CheckoutAction implements Checkout, Serializable {
 
 			orderId = completedOrder.getOrderId();
 			amount = completedOrder.getNetAmount();
-			customerName = completedOrder.getCustomer().getUserName();
+			userName = completedOrder.getCustomer().getUserName();
 
 			customerFullName = completedOrder.getCustomer().getFirstName()
 					+ " " + completedOrder.getCustomer().getLastName();
 			customerPhone = completedOrder.getCustomer().getPhone();
 
-			fireEvent(orderId, amount, customerFullName, customerPhone);
+			fireEvent(orderId, amount, customerFullName, customerPhone, userName);
 
 		} catch (InsufficientQuantityException e) {
 			for (Product product : e.getProducts()) {
@@ -141,7 +141,7 @@ public class CheckoutAction implements Checkout, Serializable {
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void fireEvent(long orderId, BigDecimal ammount,
-			String customerName, String customerPhone) {
+			String customerFullName, String customerPhone, String userName) {
 
 		try {
 
@@ -159,7 +159,7 @@ public class CheckoutAction implements Checkout, Serializable {
 					"org.mobicents.slee.service.dvddemo.ORDER_PLACED",
 					"org.mobicents", "1.0");
 			CustomEvent customEvent = new CustomEvent(orderId, ammount,
-					customerName, customerPhone);
+					customerFullName, customerPhone, userName);
 
 			conn1.fireEvent(customEvent, requestType, handle, null);
 			conn1.close();

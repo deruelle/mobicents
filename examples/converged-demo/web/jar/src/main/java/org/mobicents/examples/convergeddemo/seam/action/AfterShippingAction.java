@@ -7,15 +7,9 @@ import javax.slee.EventTypeID;
 import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
-import javax.naming.*;
-import javax.slee.*;
-import javax.slee.connection.*;
 
-import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-
-import org.mobicents.slee.connector.server.RemoteSleeService;
 import org.mobicents.slee.service.events.CustomEvent;
 
 /**
@@ -36,6 +30,9 @@ public class AfterShippingAction {
 
 	@In
 	Long orderId;
+	
+	@In
+	String userName;
 
 	public void orderShipped() {
 		System.out
@@ -60,7 +57,7 @@ public class AfterShippingAction {
 					"org.mobicents.slee.service.dvddemo.ORDER_SHIPPED",
 					"org.mobicents", "1.0");
 			CustomEvent customEvent = new CustomEvent(orderId, amount,
-					customerfullname, cutomerphone);
+					customerfullname, cutomerphone, userName);
 
 			conn1.fireEvent(customEvent, requestType, handle, null);
 			conn1.close();

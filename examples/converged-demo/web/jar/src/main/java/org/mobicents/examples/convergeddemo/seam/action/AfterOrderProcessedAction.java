@@ -38,6 +38,9 @@ public class AfterOrderProcessedAction {
 
 	@In
 	Long orderId;
+	
+	@In
+	String userName;
 
 	public void fireOrderProcessedEvent() {
 		System.out
@@ -62,7 +65,7 @@ public class AfterOrderProcessedAction {
 					"org.mobicents.slee.service.dvddemo.ORDER_PROCESSED",
 					"org.mobicents", "1.0");
 			CustomEvent customEvent = new CustomEvent(orderId, amount,
-					customerfullname, cutomerphone);
+					customerfullname, cutomerphone, userName);
 
 			conn1.fireEvent(customEvent, requestType, handle, null);
 			conn1.close();

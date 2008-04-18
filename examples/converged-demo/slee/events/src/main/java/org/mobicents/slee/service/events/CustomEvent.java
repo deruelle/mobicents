@@ -36,14 +36,17 @@ public class CustomEvent implements Cloneable, Serializable {
 	private String customerName;
 
 	private String customerPhone;
+	
+	private String  userName;
 
 	public CustomEvent(long orderId, BigDecimal ammount, String customerName,
-			String customerPhone) {
+			String customerPhone, String  userName) {
 		id = new Random().nextLong() ^ System.currentTimeMillis();
 		this.orderId = orderId;
 		this.ammount = ammount;
 		this.customerName = customerName;
 		this.customerPhone = customerPhone;
+		this.userName = userName;
 	}
 
 	public boolean equals(Object o) {
@@ -73,11 +76,21 @@ public class CustomEvent implements Cloneable, Serializable {
 	public String getCustomerPhone() {
 		return customerPhone;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getUserName() {
+		return userName;
+	}	
 
 	public Object clone() {
 		CustomEvent clonedCustomEvent = new CustomEvent(this.getOrderId(), this
-				.getAmmount(), this.getCustomerName(), this.getCustomerPhone());
+				.getAmmount(), this.getCustomerName(), this.getCustomerPhone(), this.getUserName());
 		return clonedCustomEvent;
 	}
+
+
 
 }
