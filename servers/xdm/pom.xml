@@ -13,6 +13,10 @@
 	<groupId>org.mobicents.servers.xdm</groupId>
 	<version>${mobicents.server.xdm.version}</version>
 			
+  <properties>
+    <release.name>${release.name.prefix}${parent.version}${release.name.suffix}</release.name>
+  </properties>   
+
 	<modules>	
 		<module>../../resources/http-servlet</module>
 		<module>commons</module>	
@@ -41,5 +45,89 @@
 		<module>appusages/xcap-caps/server/sbb</module>
 		<module>appusages/xcap-caps/server/du</module>
 	</modules>
-			
+
+	<!-- uncomment for release 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<copy overwrite="true"
+									todir="${basedir}/../../release/${release.name}/servers/xdm">
+									<fileset dir="${basedir}/server/appusagecache/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/server/datasource/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/server/core/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/appusages/oma-pres-rules/server/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/appusages/pres-rules/server/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/appusages/resource-lists/server/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/appusages/rls-services/server/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+									<fileset dir="${basedir}/appusages/xcap-caps/server/du/target">
+										<include name="**.jar" />
+										<include name="*.xml" />
+										<include name="*.properties" />										
+									</fileset>
+								</copy>
+								<copy overwrite="true" file="${basedir}/server/appusagecache/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/appusagecache-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/server/datasource/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/datasource-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/server/core/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/core-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/appusages/oma-pres-rules/server/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/oma-pres-rules-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/appusages/pres-rules/server/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/pres-rules-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/appusages/resource-lists/server/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/resource-lists-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/appusages/rls-services/server/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/rls-services-du-management.xml" />
+								<copy overwrite="true" file="${basedir}/appusages/xcap-caps/server/du/target/build.xml"
+                  tofile="${basedir}/../../release/${release.name}/servers/xdm/xcap-caps-du-management.xml" />
+                <copy overwrite="true" file="${basedir}/release/build.xml"
+                  todir="${basedir}/../../release/${release.name}/servers/xdm" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>		
+	</build>
+	-->
+
 </project>

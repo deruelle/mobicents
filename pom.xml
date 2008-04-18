@@ -111,7 +111,9 @@
 		<!-- TO REMOVE -->
 		<concurrent.version>1.3.4</concurrent.version>
 		<!-- GLOBAL RELEASE PROCESS PROPERTIES -->
-		<release.name>mobicents-all-${pom.version}-jboss-${jboss.version}</release.name>
+		<release.name.prefix>mobicents-all-</release.name.prefix> 
+		<release.name.suffix>-jboss-${jboss.version}</release.name.suffix> 		
+		<release.name>${release.name.prefix}${pom.version}${release.name.suffix}</release.name>
 	</properties>
 
 
@@ -217,7 +219,11 @@
 			<id>java.freehep.org</id>
 			<url>http://java.freehep.org/maven2</url>
 		</pluginRepository>
-		<pluginRepository>			<id>andromda</id>			<name>AndroMDA Repository</name>			<url>http://team.andromda.org/maven2</url>		</pluginRepository>
+		<pluginRepository>
+			<id>andromda</id>
+			<name>AndroMDA Repository</name>
+			<url>http://team.andromda.org/maven2</url>
+		</pluginRepository>
 	</pluginRepositories>
 	
 	
@@ -260,7 +266,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--  uncomment to process release 
+			<!--  uncomment to process release
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<inherited>false</inherited>

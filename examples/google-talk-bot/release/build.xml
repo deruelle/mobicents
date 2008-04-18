@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Release_build" default="deploy-all">
+
+  <property name="home" value="${ant.file.Release_build}/../" />
+
+  <target name="deploy-all-jmx">
+    <ant antfile="${home}../../resources/xmpp/build.xml" target="deploy-jmx" inheritAll="false" />
+    <ant antfile="${home}../../examples/google-talk-bot/du-management.xml" target="deploy-jmx" inheritAll="false" />
+  </target>
+
+  <target name="undeploy-all-jmx">
+    <ant antfile="${home}../../examples/google-talk-bot/du-management.xml" target="undeploy-jmx" inheritAll="false" />
+    <ant antfile="${home}../../resources/xmpp/build.xml" target="undeploy-jmx" inheritAll="false" />
+  </target>
+
+  <target name="deploy-all">
+    <ant antfile="${home}../../resources/xmpp/build.xml" target="deploy" inheritAll="false" />
+    <ant antfile="${home}../../examples/google-talk-bot/du-management.xml" target="deploy" inheritAll="false" />
+  </target>
+
+  <target name="undeploy-all">
+    <ant antfile="${home}../../examples/google-talk-bot/du-management.xml" target="undeploy" inheritAll="false" />
+    <ant antfile="${home}../../resources/xmpp/build.xml" target="undeploy" inheritAll="false" />
+  </target>
+
+</project>
