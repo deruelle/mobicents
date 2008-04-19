@@ -29,7 +29,7 @@
 				</not>
 			</condition>
 		</fail>
-		<fail message="GWT_HOME environment variable is not set. GWT 1.3 is required.">
+		<fail message="GWT_HOME environment variable is not set. GWT 1.4 is required.">
 			<condition>
 				<not>
 					<isset property="sys.GWT_HOME" />
@@ -51,6 +51,7 @@
 		<exec executable="${mvn.executable}" dir="${base.path}/..">
 			<arg line="clean install"/>
 		</exec>
+		<antcall target="build-mss"/>
 		<antcall target="build-mms"/>
 		<antcall target="build-mmc"/>
 		<antcall target="build-ras"/>
@@ -108,17 +109,9 @@
 				<exec executable="${mvn.executable}" dir="${base.dir}/../resources/@{dir.name}">
 					<arg line="clean install"/>
 				</exec>
-
-				<copy overwrite="true" todir="${release.dir}/resources/@{dir.name}">
-					<fileset dir="${base.path}/../resources/@{dir.name}/du/target">
-					
-						<include name="**.jar" />
-						<include name="*.xml" />
-						<include name="*.properties" />
-						<include name="**/*.txt" />
-					
-					</fileset>
-				</copy>
+				<exec executable="${mvn.executable}" dir="${base.dir}/../resources/@{dir.name}">
+					<arg line="install -Prelease -Drelease.name=output"/>
+				</exec>
 			</sequential>
 
 		</for>
@@ -138,8 +131,19 @@
 					</fileset>
 				</copy>
 			</sequential>
-
 		</for>
+	</target>
+	
+	<target name="build-mss" depends="checks" description="Examples.">
+		<exec executable="${mvn.executable}" dir="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>
+		<echo>Calling Sip Servlets Release Script</echo>
+		<ant antfile="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap/release/build.xml"
+			dir="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap/release/"
+			target="release-mc-distro">
+			<property name="jboss.home" value="${jboss.home}"></property>
+		</ant>
 	</target>
 	
 	<target name="clean">
