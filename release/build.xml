@@ -120,16 +120,19 @@
 	<target name="build-examples" depends="checks" description="Examples.">
 		<for delimiter="," param="dir.name" list="${example.dirs}">
 			<sequential>
-				<echo>Packaging RA for release from DIR[${base.dir}/../examples/@{dir.name}]</echo>
+				<echo>Packaging Example for release from DIR[${base.dir}/../examples/@{dir.name}]</echo>
 				<exec executable="${mvn.executable}" dir="${base.dir}/../examples/@{dir.name}">
 					<arg line="clean install"/>
-				</exec>
-
+				</exec><!--
+				<exec executable="${mvn.executable}" dir="${base.dir}/../examples/@{dir.name}">
+					<arg line="install -Prelease -Drelease.name=output"/>
+				</exec> -->
+				
 				<copy overwrite="true" todir="${release.dir}/examples/@{dir.name}">
 					<fileset dir="${base.path}/../examples/@{dir.name}/">
 						<include name="**" />
-					</fileset>
-				</copy>
+					</fileset> 
+				</copy> 
 			</sequential>
 		</for>
 	</target>
