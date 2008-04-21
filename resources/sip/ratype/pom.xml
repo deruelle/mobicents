@@ -23,6 +23,11 @@
 			<artifactId>jain-sip-api</artifactId>
 			<version>${jain-sip.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>sip-events</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 	
 </project>
