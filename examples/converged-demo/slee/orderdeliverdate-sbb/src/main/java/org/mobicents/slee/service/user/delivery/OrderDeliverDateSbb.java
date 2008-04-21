@@ -9,6 +9,7 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.Basic;
 import javax.persistence.EntityManager;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -33,14 +34,13 @@ import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
-import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
@@ -311,7 +311,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			String announcementFile = (getClass().getResource(orderDeliveryDate)).toString();
 					
-			generator.apply(Announcement.PLAY,
+			generator.apply(EventID.PLAY,
 					new String[] { announcementFile });
 
 			//this.initDtmfDetector(getConnection(), endpointName);
@@ -360,34 +360,34 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		String dateAndTime = this.getDateAndTime();
 
 		switch (cause) {
-		case Basic.CAUSE_DIGIT_0:
+		case 0:
 			dateAndTime = dateAndTime + "0";
 			break;
-		case Basic.CAUSE_DIGIT_1:
+		case 1:
 			dateAndTime = dateAndTime + "1";
 			break;
-		case Basic.CAUSE_DIGIT_2:
+		case 2:
 			dateAndTime = dateAndTime + "2";
 			break;
-		case Basic.CAUSE_DIGIT_3:
+		case 3:
 			dateAndTime = dateAndTime + "3";
 			break;
-		case Basic.CAUSE_DIGIT_4:
+		case 4:
 			dateAndTime = dateAndTime + "4";
 			break;
-		case Basic.CAUSE_DIGIT_5:
+		case 5:
 			dateAndTime = dateAndTime + "5";
 			break;
-		case Basic.CAUSE_DIGIT_6:
+		case 6:
 			dateAndTime = dateAndTime + "6";
 			break;
-		case Basic.CAUSE_DIGIT_7:
+		case 7:
 			dateAndTime = dateAndTime + "7";
 			break;
-		case Basic.CAUSE_DIGIT_8:
+		case 8:
 			dateAndTime = dateAndTime + "8";
 			break;
-		case Basic.CAUSE_DIGIT_9:
+		case 9:
 			dateAndTime = dateAndTime + "9";
 			break;
 		default:
@@ -510,7 +510,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 				
 
 				
-				generator.apply(Announcement.PLAY,
+				generator.apply(EventID.PLAY,
 						new String[] { "file:"+audioPath.toString() });
 
 				//this.initDtmfDetector(getConnection(), this.getEndpointName());

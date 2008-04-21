@@ -63,6 +63,7 @@ import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
@@ -298,7 +299,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			e.printStackTrace();
 		}
 		MsSession session = connection.getSession();
-		MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
+		MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
 
 		ActivityContextInterface linkActivity = null;
 		try {

@@ -25,12 +25,12 @@ import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
@@ -347,7 +347,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			audioPath.append(".wav");			
 
 			
-			generator.apply(Announcement.PLAY,
+			generator.apply(EventID.PLAY,
 					new String[] { audioPath.toString() });
 
 		} catch (UnrecognizedActivityException e) {

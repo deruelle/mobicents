@@ -25,6 +25,7 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.Basic;
 import javax.persistence.EntityManager;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -49,6 +50,7 @@ import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
@@ -56,8 +58,6 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
-import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
@@ -395,7 +395,7 @@ public abstract class AdminSbb extends CommonSbb {
 		Connection jmsConnection = null;
 
 		switch (cause) {
-		case Basic.CAUSE_DIGIT_1:
+		case 1:
 			audioFile = (getClass().getResource(orderApproved)).toString();
 			if (this.getSfDemo()) {
 				System.out.println("Lookup the Queue and put value");
@@ -456,7 +456,7 @@ public abstract class AdminSbb extends CommonSbb {
 			}
 			successful = true;
 			break;
-		case Basic.CAUSE_DIGIT_2:
+		case 2:
 			audioFile = (getClass().getResource(orderCancelled)).toString();
 			if (this.getSfDemo()) {
 				System.out.println("Lookup the Queue and put value");
@@ -533,7 +533,7 @@ public abstract class AdminSbb extends CommonSbb {
 					.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			generator.apply(Announcement.PLAY, new String[] { audioFile });
+			generator.apply(EventID.PLAY, new String[] { audioFile });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {
@@ -569,7 +569,7 @@ public abstract class AdminSbb extends CommonSbb {
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			String announcementFile = "file:" + audioFilePath;
-			generator.apply(Announcement.PLAY,
+			generator.apply(EventID.PLAY,
 					new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
@@ -607,7 +607,7 @@ public abstract class AdminSbb extends CommonSbb {
 			ActivityContextInterface dtmfAci = mediaAcif
 					.getActivityContextInterface(dtmfDetector);
 			dtmfAci.attach(getSbbContext().getSbbLocalObject());
-			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
+			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
 		}

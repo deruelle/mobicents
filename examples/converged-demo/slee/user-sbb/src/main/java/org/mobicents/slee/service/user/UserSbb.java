@@ -19,6 +19,7 @@ import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.Basic;
 import javax.persistence.EntityManager;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -39,6 +40,8 @@ import javax.slee.nullactivity.NullActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventCause;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
@@ -46,8 +49,6 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.Announcement;
-import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
@@ -282,12 +283,12 @@ public abstract class UserSbb extends CommonSbb {
 	}
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-		int cause = evt.getCause();
-		logger.info("org.mobicents.slee.media.dtmf.DTMF " + cause);
+		EventCause eventCause = evt.getCause();
+		logger.info("org.mobicents.slee.media.dtmf.DTMF " + eventCause);
 
-		this.initDtmfDetector(getConnection(), this.getEndpointName());
+		this.initDtmfDetector(getConnection(), this.getEndpointName());		
 
-		handleDtmf(cause);
+		//handleDtmf(eventCause);
 	}
 
 	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
@@ -320,7 +321,7 @@ public abstract class UserSbb extends CommonSbb {
 		boolean successful = false;
 
 		switch (cause) {
-		case Basic.CAUSE_DIGIT_1:
+		case 1:
 			
 			this.setAudioFile((getClass().getResource(orderConfirmed)).toString());
 
@@ -341,7 +342,7 @@ public abstract class UserSbb extends CommonSbb {
 			successful = true;
 
 			break;
-		case Basic.CAUSE_DIGIT_2:			
+		case 2:			
 			this.setAudioFile((getClass().getResource(orderCancelled)).toString());
 
 			mgr = this.persistenceResourceAdaptorSbbInterface
@@ -389,7 +390,7 @@ public abstract class UserSbb extends CommonSbb {
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			
-			generator.apply(Announcement.PLAY,
+			generator.apply(EventID.PLAY,
 					new String[] { this.getAudioFile() });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
@@ -427,7 +428,7 @@ public abstract class UserSbb extends CommonSbb {
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			String announcementFile = "file:" + this.getAudioFile();
-			generator.apply(Announcement.PLAY,
+			generator.apply(EventID.PLAY,
 					new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
@@ -465,7 +466,7 @@ public abstract class UserSbb extends CommonSbb {
 			ActivityContextInterface dtmfAci = mediaAcif
 					.getActivityContextInterface(dtmfDetector);
 			dtmfAci.attach(getSbbContext().getSbbLocalObject());
-			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
+			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
 		} catch (UnrecognizedActivityException e) {
 		}
 	}
