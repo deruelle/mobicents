@@ -11,11 +11,11 @@ package org.mobicents.slee.resource.media.ratype;
 import javax.slee.ActivityContextInterface;
 import javax.slee.FactoryException;
 import javax.slee.UnrecognizedActivityException;
+
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsResource;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsTermination;
 
 /**
  * Implements ActivityContextInterfaceFactory interface.
@@ -31,8 +31,8 @@ public interface MediaRaActivityContextInterfaceFactory {
     	throws NullPointerException, UnrecognizedActivityException, FactoryException; 
     public ActivityContextInterface getActivityContextInterface(MsResource resource)
     	throws NullPointerException, UnrecognizedActivityException, FactoryException; 
-    public ActivityContextInterface getActivityContextInterface(MsTermination termination)
-    	throws NullPointerException, UnrecognizedActivityException, FactoryException; 
+//    public ActivityContextInterface getActivityContextInterface(MsTermination termination)
+//    	throws NullPointerException, UnrecognizedActivityException, FactoryException; 
     public ActivityContextInterface getActivityContextInterface(MsLink link)
     	throws NullPointerException, UnrecognizedActivityException, FactoryException; 
 }

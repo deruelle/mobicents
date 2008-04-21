@@ -8,16 +8,15 @@
  ***************************************************/
 package org.mobicents.slee.resource.media.ra;
 
-import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsLink;
-import org.mobicents.mscontrol.MsResource;
-import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsTermination;
 import javax.slee.ActivityContextInterface;
 import javax.slee.FactoryException;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsResource;
+import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.SleeActivityHandle;
@@ -74,10 +73,10 @@ public class MediaRaActivityContextInterfaceFactoryImpl implements
         return new ActivityContextInterfaceImpl(serviceContainer, ac.getActivityContextId());
     }
 
-    public ActivityContextInterface getActivityContextInterface(MsTermination termination) throws NullPointerException, UnrecognizedActivityException, FactoryException {
-        ActivityContext ac = getActivityContext(termination);
-        return new ActivityContextInterfaceImpl(serviceContainer, ac.getActivityContextId());
-    }
+//    public ActivityContextInterface getActivityContextInterface(MsTermination termination) throws NullPointerException, UnrecognizedActivityException, FactoryException {
+//        ActivityContext ac = getActivityContext(termination);
+//        return new ActivityContextInterfaceImpl(serviceContainer, ac.getActivityContextId());
+//    }
 
     public ActivityContextInterface getActivityContextInterface(MsLink link) throws NullPointerException, UnrecognizedActivityException, FactoryException {
         ActivityContext ac = getActivityContext(link);
