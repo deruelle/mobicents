@@ -45,6 +45,8 @@ import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
 import javax.slee.facilities.TimerID;
 
+import org.mobicents.media.server.impl.common.events.EventCause;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
@@ -52,9 +54,6 @@ import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
-import org.mobicents.mscontrol.signal.AU;
-import org.mobicents.mscontrol.signal.Announcement;
-import org.mobicents.mscontrol.signal.Basic;
 import org.mobicents.slee.examples.callcontrol.common.SubscriptionProfileSbb;
 import org.mobicents.slee.examples.callcontrol.profile.CallControlProfileCMP;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -347,7 +346,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 
 				URL audioFileURL = getClass().getResource(waitingDTMF);
 
-				generator.apply(Announcement.PLAY, new String[] { audioFileURL
+				generator.apply(EventID.PLAY, new String[] { audioFileURL
 						.toString() });
 
 				this.initDtmfDetector(evt.getConnection(), endpointName);
@@ -396,7 +395,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 				ActivityContextInterface dtmfAci = msActivityFactory
 						.getActivityContextInterface(signalGenerator);
 				dtmfAci.attach(this.getSbbLocalObject());
-				signalGenerator.apply(AU.PLAY_RECORD, params);
+				signalGenerator.apply(EventID.PLAY_RECORD, params);
 			} catch (UnrecognizedActivityException e) {
 				log.error(e.getMessage(), e);
 			}
@@ -411,7 +410,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 			ActivityContextInterface dtmfAci = msActivityFactory
 					.getActivityContextInterface(dtmfDetector);
 			dtmfAci.attach(this.getSbbLocalObject());
-			dtmfDetector.receive(Basic.DTMF, connection, new String[] {});
+			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
 		} catch (UnrecognizedActivityException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -452,7 +451,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
 		log.info("########## VOICE MAIL SBB: onDTMFEvent ##########");
-		int cause = evt.getCause();
+		EventCause cause = evt.getCause();
 		checkDtmfDigit(cause);
 		this.initDtmfDetector(this.getConnection(), this.getUserEndpoint());
 
@@ -508,7 +507,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 		}
 	}
 
-	private void checkDtmfDigit(int dtmf) {
+	private void checkDtmfDigit(EventCause dtmf) {
 		URL audioFileURL;
 
 		/**
@@ -518,15 +517,15 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 		 */
 
 		// Press 1 if you want to listen the next message
-		if (dtmf == 1) {
+		if (dtmf.equals(EventCause.DTMF_DIGIT_1) ) {
 			audioFileURL = getClass().getResource(dtmf1);
 		}
 		// Press 7 if you want to delete the last message
-		else if (dtmf == 7) {
+		else if (dtmf.equals(EventCause.DTMF_DIGIT_7) ) {
 			audioFileURL = getClass().getResource(dtmf7);
 		}
 		// Press 9 if you want to hang up
-		else if (dtmf == 9) {
+		else if (dtmf.equals(EventCause.DTMF_DIGIT_9) ) {
 			audioFileURL = getClass().getResource(dtmf9);
 
 		} else {
@@ -541,7 +540,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 					.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			generator.apply(Announcement.PLAY, new String[] { audioFileURL
+			generator.apply(EventID.PLAY, new String[] { audioFileURL
 					.toString() });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
