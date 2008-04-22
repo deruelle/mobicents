@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <artifactId>mobicents</artifactId>
+        <groupId>org.mobicents</groupId>
+        <version>1.2.0.BETA3-SNAPSHOT</version>
+    </parent>
+    
+    <groupId>org.mobicents.examples</groupId>
+    <artifactId>mms-demo-parent</artifactId>
+    <version>1.2.0.BETA3-SNAPSHOT</version>
+    
+    <packaging>pom</packaging>
+    
+    <name>Mobicents :: Examples :: ${pom.artifactId}</name>
+    
+    <modules>
+        <module>utility</module>	
+        <module>slee</module>	
+        <module>web</module>	
+    </modules>
+    
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <copy overwrite="true"
+                                              todir="${basedir}/../../release/${release.name}/examples/mms-demo">
+                                            <fileset
+                                                dir="${basedir}/slee/events-du/target">
+                                                <include name="**.jar" />
+                                                <include name="*.xml" />
+                                                <include
+                                                    name="*.properties" />
+                                            </fileset>
+                                            <fileset
+                                                dir="${basedir}/slee/services-du/target">
+                                                <include name="**.jar" />
+                                                <include name="*.xml" />
+                                                <include
+                                                    name="*.properties" />
+                                            </fileset>
+                                        </copy>
+                                        <copy overwrite="true"
+                                              file="${basedir}/web/target/ShoppingDemo.ear"
+                                              todir="${basedir}/../../release/${release.name}/examples/mms-demo" />
+                                        <copy overwrite="true"
+                                              file="${basedir}/slee/events-du/target/build.xml"
+                                              tofile="${basedir}/../../release/${release.name}/examples/mms-demo/events-du-management.xml" />
+                                        <copy overwrite="true"
+                                              file="${basedir}/slee/services-du/target/build.xml"
+                                              tofile="${basedir}/../../release/${release.name}/examples/mms-demo/services-du-management.xml" />
+                                        <copy overwrite="true"
+                                              file="${basedir}/release/build.xml"
+                                              todir="${basedir}/../../release/${release.name}/examples/mms-demo" />
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+</project>
