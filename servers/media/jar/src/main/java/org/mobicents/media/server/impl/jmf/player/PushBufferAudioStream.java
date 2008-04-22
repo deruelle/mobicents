@@ -159,7 +159,7 @@ public class PushBufferAudioStream implements PushBufferStream {
         }
 
         public void run() {
-            System.out.println("TICK");
+            //System.out.println("TICK");
             byte[] packet = new byte[packetSize];
             try {
                 int len = localStream.read(packet);

@@ -60,7 +60,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     
     public void setRecordDir(String recordDir) {
         this.recordDir = recordDir;
-        System.out.println("******** SET RECORD DIR=" + recordDir);
+        logger.info("SET RECORD DIR=" + recordDir);
     }
     
     public String getRecordDir() {

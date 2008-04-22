@@ -18,6 +18,7 @@
         <depends optional-attribute-name="ConfEndpointManagementMBean">media.mobicents:endpoint=conf</depends>        
         <depends optional-attribute-name="LoopEndpointManagementMBean">media.mobicents:trunk=loopback</depends>        
         <depends optional-attribute-name="PRTrunkManagementMBean">media.mobicents:trunk=packet-relay</depends>        
+		<attribute name="DtmfThreshold">500000</attribute>
     </mbean>
 
     <!-- ANNOUNCEMENT -->

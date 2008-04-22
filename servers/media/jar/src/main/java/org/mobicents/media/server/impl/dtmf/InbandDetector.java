@@ -15,16 +15,23 @@ package org.mobicents.media.server.impl.dtmf;
 
 import java.io.IOException;
 import java.util.Properties;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+
+import org.apache.log4j.Logger;
+import org.jboss.mx.util.MBeanServerLocator;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
-import org.apache.log4j.Logger;
-import org.mobicents.media.goertzel.Filter;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
-import org.mobicents.media.server.spi.MediaResource;
-import org.mobicents.media.server.impl.common.MediaResourceState;
+import org.mobicents.media.server.impl.jmx.MediaServerManagementMBean;
 
 /**
  * 
@@ -47,13 +54,27 @@ public class InbandDetector extends BaseDtmfDetector implements
 
 	public InbandDetector() {
 		super();
-		Properties props = new Properties();
+
 		try {
-			props.load(getClass().getResourceAsStream("dtmf.properties"));
-			int t = Integer.parseInt(props.getProperty("dtmf.threshold"));
-			filter = new Filter(t);
-		} catch (Exception e) {
-			e.printStackTrace();
+			MBeanServer server = MBeanServerLocator.locateJBoss();
+			ObjectName objectName = new ObjectName(
+					"media.mobicents:service=MediaServerManagement");
+
+			MediaServerManagementMBean mbean = (MediaServerManagementMBean) MBeanServerInvocationHandler
+					.newProxyInstance(server, objectName,
+							MediaServerManagementMBean.class, false);
+
+			int dtmfThreshold = mbean.getDtmfThreshold();
+
+			filter = new Filter(dtmfThreshold);
+
+		} catch (MalformedObjectNameException e1) {
+			logger
+					.error(
+							"The media.mobicents:service=MediaServerManagement MBean not found",
+							e1);
+		} catch (NullPointerException e1) {
+			logger.error("Failed to create InbandDetector()", e1);
 		}
 	}
 
