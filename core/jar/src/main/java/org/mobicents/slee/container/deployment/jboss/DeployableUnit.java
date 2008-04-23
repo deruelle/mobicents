@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -13,10 +12,6 @@ import java.util.jar.JarFile;
 import javax.slee.ComponentID;
 import javax.slee.resource.ResourceAdaptorID;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.logging.Logger;
 import org.mobicents.slee.container.SleeContainer;
@@ -24,7 +19,11 @@ import org.mobicents.slee.container.component.ComponentIDImpl;
 import org.mobicents.slee.container.component.ComponentKey;
 import org.mobicents.slee.container.component.DeployableUnitDescriptorImpl;
 import org.mobicents.slee.container.component.ResourceAdaptorIDImpl;
+import org.mobicents.slee.container.management.xml.XMLUtils;
 import org.mobicents.slee.runtime.transaction.SleeTransactionManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * This class represents a SLEE Deployable Unit, represented by a collection of
@@ -196,7 +195,7 @@ public class DeployableUnit
     // Remove those that are already installed...
     externalDependencies.removeAll( deploymentManager.getDeployedComponents() );
     
-    // Some reamining?
+    // Some remaining?
     if( externalDependencies.size() > 0 )
     {
       if( showMissing )
@@ -423,13 +422,11 @@ public class DeployableUnit
 
     if( is != null )
     {
-      // TODO: Configure validation via MBean property
-      
       // Read the file into a Document
-      Document doc = new SAXReader(false).read( is );
+      Document doc = XMLUtils.parseDocument( is, true );
       
       // By now we only care about <ra-entitu> nodes
-      List<Element> raEntities = doc.getRootElement().selectNodes( "ra-entity" );
+      NodeList raEntities = doc.getElementsByTagName( "ra-entity" );
       
       // The RA identifier
       String raId = null;
@@ -441,16 +438,23 @@ public class DeployableUnit
       Collection<Object[]> cPreUninstallActions = new ArrayList<Object[]>();
       
       // Iterate through each ra-entity node
-      for(Element raEntity : raEntities)
+      for( int i = 0; i < raEntities.getLength(); i++ )
       {
+        Element raEntity = (Element) raEntities.item(i);
+        
         // Get the component ID
-        raId = ComponentIDImpl.RESOURCE_ADAPTOR_ID + "[" + raEntity.attributeValue( "resource-adaptor-id" ) + "]";
+        raId = ComponentIDImpl.RESOURCE_ADAPTOR_ID + "[" + raEntity.getAttribute( "resource-adaptor-id" ) + "]";
         
         // The RA Entity Name
-        String entityName = raEntity.attributeValue( "entity-name" );
+        String entityName = raEntity.getAttribute( "entity-name" );
         
         // Select the properties node
-        Node propsNode = raEntity.selectSingleNode( "properties" );
+        NodeList propsNodeList = raEntity.getElementsByTagName("properties");
+        
+        if( propsNodeList.getLength() > 1 )
+          logger.warn( "Invalid ra-entity element, has more than one properties child. Reading only first." );
+        
+        Element propsNode = (Element) propsNodeList.item(0);
         
         // The properties for this RA
         Properties props = new Properties(); 
@@ -461,7 +465,7 @@ public class DeployableUnit
           String propsFilename;
           
           // Do we have a properties file to load?
-          if( ( propsFilename = ((Element)propsNode).attributeValue( "file" ) ) != null && !propsFilename.equals( "" ) )
+          if( ( propsFilename = ((Element)propsNode).getAttribute( "file" ) ) != null && !propsFilename.equals( "" ) )
           {
             // Get the entry from the jar
             JarEntry propsFile = componentJarFile.getJarEntry( "META-INF/" + propsFilename );
@@ -471,29 +475,31 @@ public class DeployableUnit
           }
           
           // Select the property elements
-          List<Element> propsList = propsNode.selectNodes( "property" );
+          NodeList propsList = propsNode.getElementsByTagName( "property" );
           
           // For each element, add it to the Properties object
-          for( Element property : propsList )
+          for( int j = 0; j < propsList.getLength(); j++ )
           {
+            Element property = (Element) propsList.item(j);
+            
             // If the property already exists, it will be overwritten.
-            props.put( property.attributeValue( "name" ), property.attributeValue( "value" ) );
+            props.put( property.getAttribute( "name" ), property.getAttribute( "value" ) );
           }
         }
         
         // Create the Resource Adaptor ID
-        ResourceAdaptorID componentID = new ResourceAdaptorIDImpl(new ComponentKey( raEntity.attributeValue( "resource-adaptor-id" )));
+        ResourceAdaptorID componentID = new ResourceAdaptorIDImpl(new ComponentKey( raEntity.getAttribute( "resource-adaptor-id" )));
         
         // Add the Create and Activate RA Entity actions to the Post-Install Actions
         cPostInstallActions.add( new Object[] { "createResourceAdaptorEntity", componentID, entityName, props } );
         cPostInstallActions.add( new Object[] { "activateResourceAdaptorEntity", entityName } );
         
         // Each RA might have zero or more links.. get them
-        List<Element> links = raEntity.selectNodes( "ra-link" );
+        NodeList links = raEntity.getElementsByTagName( "ra-link" );
         
-        for( Element link : links )
+        for( int j = 0; j < links.getLength(); j++ )
         {
-          String linkName = link.attributeValue( "name" );
+          String linkName = ((Element) links.item(j)).getAttribute( "name" );
           
           cPostInstallActions.add( new Object[] { "bindLinkName", entityName, linkName } );
           

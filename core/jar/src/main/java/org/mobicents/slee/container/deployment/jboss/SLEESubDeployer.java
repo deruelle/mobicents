@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.dom4j.io.SAXReader;
 import org.jboss.deployment.DeploymentException;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.deployment.SubDeployerSupport;
@@ -95,11 +94,11 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     {
       try
       {
-        // TODO: Configure validation via MBean property        
-        org.dom4j.Document doc = new SAXReader(false).read(url.openStream());
-        
+        // Parse the XML
+        Document doc = XMLUtils.parseDocument( url.openStream(), true );
+
         // Is the root element a <service-xml>
-        isServiceXML = doc.getRootElement().getName().equals( "service-xml" );
+        isServiceXML = doc.getDocumentElement().getNodeName().equals( "service-xml" );
       }
       catch ( Exception ignore )
       {
@@ -398,6 +397,22 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     return output;
   }
 
+  /**
+   * MBean WaitTimeBetweenOperations property getter
+   */
+  public long getWaitTimeBetweenOperations()
+  {
+    return dm.waitTimeBetweenOperations;
+  }
+
+  /**
+   * MBean WaitTimeBetweenOperations property getter
+   */
+  public void setWaitTimeBetweenOperations(long waitTime)
+  {
+    dm.waitTimeBetweenOperations = waitTime;
+  }
+  
   // Aux Functions ------------------------------------------------------------
 
   /**
@@ -459,5 +474,6 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     // All good. Return the parsed descriptor.
     return deployableUnitDescriptor;
   }
+
   
 }

@@ -20,5 +20,8 @@ public interface SLEESubDeployerMBean extends SubDeployerExtMBean {
      ObjectNameFactory.create("jboss.system:service=SLEESubDeployer");
   
   String showStatus() throws DeploymentException;
-  
+
+  public void setWaitTimeBetweenOperations(long waitTime);
+
+  public long getWaitTimeBetweenOperations();  
 }

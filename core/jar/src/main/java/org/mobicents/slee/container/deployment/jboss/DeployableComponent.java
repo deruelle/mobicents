@@ -14,10 +14,6 @@ import javax.slee.EventTypeID;
 import javax.slee.profile.ProfileSpecificationID;
 import javax.slee.resource.ResourceAdaptorTypeID;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 import org.jboss.deployment.DeploymentInfo;
 import org.jboss.logging.Logger;
 import org.mobicents.slee.container.SleeContainer;
@@ -41,6 +37,8 @@ import org.mobicents.slee.container.management.xml.XMLUtils;
 import org.mobicents.slee.resource.ResourceAdaptorDescriptorImpl;
 import org.mobicents.slee.resource.ResourceAdaptorTypeDescriptorImpl;
 import org.mobicents.slee.resource.ResourceAdaptorTypeIDImpl;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * This class represents a SLEE Deployable Component such as a Profile Specification,
@@ -161,20 +159,21 @@ public class DeployableComponent
       
       try
       {
-        // TODO: Configure validation via MBean property
         // Parse the descriptor
-        Document doc2 = new SAXReader(false).read( di.url );
+        org.w3c.dom.Document doc2 = XMLUtils.parseDocument( di.url.openStream(), true );
         
-        List<Element> nodeList = ((Node)doc2.getRootElement()).selectNodes( "service" );
+        NodeList nodeList = doc2.getElementsByTagName( "service" );
         
-        for( Element serviceNode : nodeList )
+        for( int i=0; i < nodeList.getLength(); i++ )
         {
+          Element curElement = (Element) nodeList.item(i);
+
+          String serviceName = curElement.getElementsByTagName( "service-name" ).item(0).getTextContent(); 
+          String serviceVendor = curElement.getElementsByTagName( "service-vendor" ).item(0).getTextContent(); 
+          String serviceVersion = curElement.getElementsByTagName( "service-version" ).item(0).getTextContent();
+
           DeployableComponent dc = new DeployableComponent( this );
           
-          String serviceName = serviceNode.selectSingleNode( "service-name" ).getText(); 
-          String serviceVendor = serviceNode.selectSingleNode( "service-vendor" ).getText();
-          String serviceVersion = serviceNode.selectSingleNode( "service-version" ).getText();
-
           dc.componentID = new ServiceIDImpl( new ComponentKey( serviceName, serviceVendor, serviceVersion ) );
           
           dc.componentKey = dc.componentID.toString();
@@ -183,10 +182,12 @@ public class DeployableComponent
           
           if( logger.isDebugEnabled() )
             logger.debug( "Component ID: " + dc.componentKey );
-          
-          String rootSbbName = serviceNode.selectSingleNode( XMLConstants.ROOT_SBB_ND + "/" + XMLConstants.SBB_NAME_ND ).getText();
-          String rootSbbVendor = serviceNode.selectSingleNode( XMLConstants.ROOT_SBB_ND + "/" + XMLConstants.SBB_VENDOR_ND ).getText();
-          String rootSbbVersion = serviceNode.selectSingleNode( XMLConstants.ROOT_SBB_ND + "/" + XMLConstants.SBB_VERSION_ND ).getText();
+
+          Element rootSbbElem = (Element) curElement.getElementsByTagName( XMLConstants.ROOT_SBB_ND ).item( 0 );
+
+          String rootSbbName = rootSbbElem.getElementsByTagName( XMLConstants.SBB_NAME_ND ).item(0).getTextContent();
+          String rootSbbVendor = rootSbbElem.getElementsByTagName( XMLConstants.SBB_VENDOR_ND ).item(0).getTextContent();
+          String rootSbbVersion = rootSbbElem.getElementsByTagName( XMLConstants.SBB_VERSION_ND ).item(0).getTextContent();
           
           String rootSbb = new SbbIDImpl( new ComponentKey(rootSbbName, rootSbbVendor, rootSbbVersion) ).toString();
 

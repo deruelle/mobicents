@@ -52,6 +52,8 @@ public class DeploymentManager
   // Actions using ServiceManagementMBean
   private Collection<String> serviceActions = Arrays.asList( new String[] { "activate", "deactivate" } );
   
+  public long waitTimeBetweenOperations = 250;
+  
   /**
    * Constructor.
    */
@@ -353,7 +355,7 @@ public class DeploymentManager
       ms.invoke( objectName, action, arguments, signature );
       
       // Wait a little while just to make sure it finishes
-      Thread.sleep( 250 );
+      Thread.sleep( waitTimeBetweenOperations );
     }
   }
 
