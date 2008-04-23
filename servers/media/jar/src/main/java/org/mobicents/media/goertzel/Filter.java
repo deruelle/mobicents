@@ -29,7 +29,7 @@ package org.mobicents.media.goertzel;
  */
 public class Filter {
     
-    private double threshold;
+    private double threshold = 150000;
     
     /** 
      * Creates a new instance of the Goertzel Filter. 
@@ -38,6 +38,12 @@ public class Filter {
      */
     public Filter(double threshold) {
         this.threshold = threshold;
+    }
+
+    /** 
+     * Creates a new instance of the Goertzel Filter. 
+     */
+    public Filter() {
     }
     
     public boolean detect(double f, double[] signal) {
@@ -60,8 +66,33 @@ public class Filter {
         double resulti = imagW*d1;
         
         double r = Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
-        //System.out.println("Freq: " + f + ", r=" + r);
+        System.out.println("Freq: " + f + ", r=" + r);
         return r > threshold;
+    } 
+
+    public double getPower(double f, double[] signal) {
+        int N = signal.length;
+        
+//        double realW = 2.0 * Math.cos(2.0*Math.PI*f/N);
+//        double imagW = Math.sin(2.0*Math.PI*f/N);
+
+        double realW = 2.0 * Math.cos(Math.PI*f/N);
+        double imagW = Math.sin(Math.PI*f/N);
+        
+        double d1 = 0.0;
+        double d2 = 0.0;
+        double y = 0;
+        
+        for (int n = 0; n < N; ++n) {
+            y  = signal[n] + realW*d1 - d2;
+            d2 = d1;
+            d1 = y;
+        }
+        
+        double resultr = 0.5*realW*d1 - d2;
+        double resulti = imagW*d1;
+        
+        return Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
     } 
     
     
