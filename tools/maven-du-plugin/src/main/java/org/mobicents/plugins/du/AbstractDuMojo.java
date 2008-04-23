@@ -23,11 +23,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -53,6 +57,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.artifact.ActiveProjectArtifact;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
@@ -62,6 +67,9 @@ import org.mobicents.plugins.du.deployconfig.DeployConfig;
 import org.mobicents.plugins.du.deployconfig.RAEntity;
 import org.mobicents.plugins.du.servicexml.ServiceIds;
 import org.w3c.dom.Document;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Base class for creating a deployable unit.
@@ -107,6 +115,34 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 	 * @parameter expression="${localRepository}"
 	 */
 	protected ArtifactRepository localRepository;
+	
+    /**
+     * Used to look up Artifacts in the remote repository.
+     * 
+     * @parameter expression="${component.org.apache.maven.artifact.factory.ArtifactFactory}"
+     * @required
+     * @readonly
+     */
+    protected org.apache.maven.artifact.factory.ArtifactFactory factory;
+	
+
+    /**
+     * Used to look up Artifacts in the remote repository.
+     * 
+     * @parameter expression="${component.org.apache.maven.artifact.resolver.ArtifactResolver}"
+     * @required
+     * @readonly
+     */
+    protected org.apache.maven.artifact.resolver.ArtifactResolver resolver;
+
+    /**
+     * List of Remote Repositories used by the resolver
+     * 
+     * @parameter expression="${project.remoteArtifactRepositories}"
+     * @readonly
+     * @required
+     */
+    protected java.util.List remoteRepos;
 
 	// ///////////////////////////////////////////////
 	// RESOURCES
@@ -332,8 +368,55 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 			// resource processing
 			List includedResources = copyResources(resources, outputDirectory);		
 			
+			// http://code.google.com/p/mobicents/issues/detail?id=100			
+			
+			getLog().info("***************************************************************");
+			getLog().info("Analizing " + project.getArtifactId()+ " for deployable-unit.xml");
+			getLog().info("***************************************************************");
+			
+			List<String> componentFilenames = new ArrayList<String>();
+			
+			// get dependency with compile scope 
+			for (Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext();) {
+				
+				Artifact projectDependencyArtifact = (Artifact) iter.next();
+				
+				if (projectDependencyArtifact.getScope().equals(Artifact.SCOPE_COMPILE)) {
+					
+			        Artifact pomArtifact = this.factory.createArtifact( projectDependencyArtifact.getGroupId(), projectDependencyArtifact.getArtifactId(), projectDependencyArtifact.getVersion(), "", "pom" );
+			        this.resolver.resolve( projectDependencyArtifact, remoteRepos, this.localRepository );
+			        MavenProject projectDependencyArtifactMavenProject = mavenProjectBuilder.buildFromRepository( pomArtifact, null, this.localRepository );
+
+			        for (Iterator iterator = projectDependencyArtifactMavenProject.getDependencyArtifacts().iterator(); iterator.hasNext();) {
+			        	
+			        	Artifact dependencyArtifact = (Artifact) iterator.next();
+			        	
+			        	if(dependencyArtifact instanceof ActiveProjectArtifact){
+			        		
+			        		getLog().info("" + projectDependencyArtifact.getArtifactId() + " depends on [" + dependencyArtifact.getArtifactId() +"]");
+			        	
+			        		for (Iterator itera = project.getDependencyArtifacts().iterator(); itera.hasNext();) {
+			        			
+			        			Artifact anArtifact = (Artifact)itera.next();
+			        			
+			        			if(anArtifact.getArtifactId().equals(dependencyArtifact.getArtifactId()) &&
+			        					anArtifact.getGroupId().equals(dependencyArtifact.getGroupId()) &&
+			        					anArtifact.getVersion().equals(dependencyArtifact.getVersion()) &&
+			        					!anArtifact.getScope().equals("runtime") ){
+			        				
+			        				// add artifacts with dependencies first
+			        				if(!componentFilenames.contains(anArtifact.getFile().getName())){
+				        				getLog().info("----> found project[" + dependencyArtifact.getArtifactId() + "] ");
+			        					componentFilenames.add(anArtifact.getFile().getName());
+			        				}
+			        			}
+			        		}
+			        	}
+			        }
+				}
+			}
+			
 			// process dependencies
-			List<String> componentFilenames = new ArrayList<String>();	
 			for (Iterator iter = project.getDependencyArtifacts().iterator(); iter.hasNext();) {
 				
 				Artifact artifact = (Artifact) iter.next();
@@ -343,8 +426,10 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 							"Adding component artifact: "
 									+ artifact.getFile().getName());
 					archiver.getArchiver().addFile(artifact.getFile(),artifact.getFile().getName());
-					// add to the list of component jar filenames, for the deploybale-unit generation later
-					componentFilenames.add(artifact.getFile().getName());
+					
+					// second add artifacts without dependencies,for the deployable-unit generation later
+					if(!componentFilenames.contains(artifact.getFile().getName()))
+						componentFilenames.add(artifact.getFile().getName());
 				}
 				
 				else if (artifact.getScope().equals(Artifact.SCOPE_RUNTIME)) {
@@ -356,7 +441,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 				}
 				
 				else {
-					getLog().warn("Ignoring dependency of unsuported scope: "+ artifact.getFile().getName());
+					getLog().warn("Ignoring dependency of unsupported scope: "+ artifact.getFile().getName());
 				}
 			}
 			
@@ -640,7 +725,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 			if (deployConfigFile.exists()) {
 
 				try {
-
+					getLog().info("Parsing deploy-config.xml without validation");
 					// parse doc into dom
 					DocumentBuilderFactory factory = DocumentBuilderFactory
 							.newInstance();
@@ -750,11 +835,53 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 					File serviceDescriptorFile = new File(outputDirectory,
 							fileName);
 					try {
-
+						// http://code.google.com/p/mobicents/issues/detail?id=104
+						getLog().info("Parsing " + fileName +" with validation");
+						
 						// parse doc into dom
 						DocumentBuilderFactory factory = DocumentBuilderFactory
 								.newInstance();
+						factory.setValidating(true);
 						DocumentBuilder parser = factory.newDocumentBuilder();
+						
+						parser.setEntityResolver(new EntityResolver() {
+							public InputSource resolveEntity(String publicID,String systemID) throws SAXException {
+								
+								InputStream is = null;
+							    BufferedReader br = null;
+							    String line;
+							    FileWriter fw = null;
+							    File entityFile = null;
+								try {
+									URI uri = new URI(systemID);
+									getLog().info("Resolving " + systemID +" locally");
+									String filename = uri.toString().substring(uri.toString().lastIndexOf("/")+1,uri.toString().length());
+									getLog().info("Resolved filename " + filename);
+									entityFile = new File(filename);
+									fw = new FileWriter(entityFile);
+									is = getClass().getClassLoader().getResourceAsStream(filename);
+									br = new BufferedReader(new InputStreamReader(is));
+								    while (null != (line = br.readLine())) {
+								    	fw.write(line);
+								    }
+								    if (fw != null) fw.close();
+								      
+									return new InputSource(new FileReader(entityFile));
+										
+								} catch (URISyntaxException e) {
+								} catch (IOException e) {
+								}finally {
+									try {
+								    	if (is != null) is.close();
+								    }catch (IOException e) {
+								    }
+								}
+
+								// If no match, returning null makes process continue normally
+								return null;
+							}
+						});
+						
 						Document document = parser.parse(serviceDescriptorFile);
 
 						// parse dom into service ids
@@ -783,6 +910,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 						}
 
 					} catch (Exception e) {
+						e.printStackTrace();
 						throw new MojoExecutionException(
 								"failed to parse service descriptor "
 										+ fileName, e);
