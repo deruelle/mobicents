@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
 import org.mobicents.media.server.impl.BaseResourceManager;
+import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.Endpoint;
@@ -27,8 +28,6 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceStateListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
 
-
-
 /**
  *
  * @author Oleg Kulikov
@@ -36,10 +35,9 @@ import org.mobicents.media.server.spi.UnknownSignalException;
 public class ConfEndpointImpl extends BaseEndpoint {
 
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
-    
     protected ResourceStateListener mixerStateListener;
     protected ResourceStateListener splitterStateListener;
-    
+
     public ConfEndpointImpl(String localName) {
         super(localName);
         this.mixerStateListener = new MixerStateListener();
@@ -68,15 +66,15 @@ public class ConfEndpointImpl extends BaseEndpoint {
     private void detectDTMF(String connectionID, String[] params,
             NotificationListener listener) {
         MediaSink detector = (MediaSink) getResource(
-        		MediaResourceType.DTMF_DETECTOR, connectionID);
+                MediaResourceType.DTMF_DETECTOR, connectionID);
         if (params != null && params.length > 0 && params[0] != null) {
             ((org.mobicents.media.server.spi.dtmf.DTMF) detector).setDtmfMask(params[0]);
         }
-        
-        
+
+
         LocalSplitter splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
         while (splitter == null) {
-            synchronized(this) {
+            synchronized (this) {
                 try {
                     wait(100);
                 } catch (Exception e) {
@@ -85,16 +83,17 @@ public class ConfEndpointImpl extends BaseEndpoint {
             }
             splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
         }
-        
+
         try {
-            detector.prepare(splitter.newBranch("DTMF"));
+            if (detector.getState() != MediaResourceState.PREPARED) {
+                detector.prepare(splitter.newBranch("DTMF"));
+            }
             detector.start();
             detector.addListener(listener);
         } catch (UnsupportedFormatException e) {
             logger.error("Unexpected format", e);
         }
     }
-
 
     public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
