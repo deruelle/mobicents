@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE resource-adaptor-type-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor Type 1.0//EN" "http://java.sun.com/dtd/slee-resource-adaptor-type-jar_1_0.dtd">
+
+
+<resource-adaptor-type-jar>
+	<description />
+
+	<resource-adaptor-type>
+
+		<description>JDiameter CCA RA Type</description>
+		<resource-adaptor-type-name>JDiameter CCA</resource-adaptor-type-name>
+		<resource-adaptor-type-vendor>java.net</resource-adaptor-type-vendor>
+		<resource-adaptor-type-version>0.8.1</resource-adaptor-type-version>
+
+		<resource-adaptor-type-classes>
+
+			<!-- 
+			<activity-type>
+				<activity-type-name>javax.sip.ServerTransaction</activity-type-name>
+			</activity-type>
+
+			<activity-context-interface-factory-interface>
+				<activity-context-interface-factory-interface-name>org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory</activity-context-interface-factory-interface-name>
+			</activity-context-interface-factory-interface>
+
+			
+			<resource-adaptor-interface>
+				<resource-adaptor-interface-name>org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface</resource-adaptor-interface-name>
+			</resource-adaptor-interface>
+			 -->
+		</resource-adaptor-type-classes>
+		
+		<!-- =====================================================  
+		     Out of dialog requests - same as JAIN SIP 1.1 RA type 
+		     =====================================================
+		-->
+		
+		
+	</resource-adaptor-type>
+</resource-adaptor-type-jar>
