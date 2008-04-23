@@ -16,13 +16,8 @@ package org.mobicents.media.server.impl.dtmf;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerInvocationHandler;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
-import org.jboss.mx.util.MBeanServerLocator;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.goertzel.Filter;
