@@ -1889,6 +1889,15 @@ public class SleeContainer implements ComponentContainer {
 		for (int i = 0; i < raTypeIDs.length; i++) {
 			this.addReferringComponent(raTypeIDs[i], sbbComponent.getID());
 		}
+		
+    // I refer to the following resource adaptor links
+    String[] entityLinks = sbbComponent.getResourceAdaptorEntityLinks();
+    for(int i = 0; i < entityLinks.length; i++)
+    {
+      ResourceAdaptorID raID = this.getResourceAdaptorID(this.
+          getResourceAdaptorEntityName( entityLinks[i]));
+      this.addReferringComponent( raID, sbbComponent.getID() );
+    }
 
 		// I refer to the following AddressProfile.
 		ProfileSpecificationID addressProfile = sbbComponent
@@ -3595,9 +3604,37 @@ public class SleeContainer implements ComponentContainer {
 	}
 
 	public void removeResourceAdaptorEntityLink(String link)
-			throws ManagementException {
+			throws ManagementException, UnrecognizedLinkNameException,
+			DependencyException {
 		if (!this.resourceAdaptorEntityLinks.containsKey(link))
-			throw new ManagementException("Entity Link not found!");
+			throw new UnrecognizedLinkNameException("Entity Link not found!");
+		
+		ResourceAdaptorID raID;
+    try {
+      raID = this.getResourceAdaptorID(this.getRAEntity(link).getName());
+    }
+    catch (UnrecognizedResourceAdaptorEntityException e) {
+      throw new ManagementException(e.getMessage());
+    }
+		
+		ComponentID[] refComps = this.getReferringComponents( raID );
+		for(int i = 0; i < refComps.length; i++)
+		{
+		  if(this.getComponentDescriptor(refComps[i]) instanceof SbbDescriptor)
+		  {
+		    SbbDescriptor sbbDesc = (SbbDescriptor) this.getComponentDescriptor(refComps[i]);
+		    String[] sbbRALinks = sbbDesc.getResourceAdaptorEntityLinks();
+		    
+		    for(int j=0; j<sbbRALinks.length; j++)
+		    {
+		      if(link.equals(sbbRALinks[j]))
+		        throw new DependencyException(
+		            sbbDesc.getID() + " is referencing this RA link"
+		                + " -- cannot remove it!");
+		    }
+		  }
+		}
+		
 		this.resourceAdaptorEntityLinks.remove(link);
 	}
 
