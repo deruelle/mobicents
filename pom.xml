@@ -209,6 +209,11 @@
 			</releases>
 		</pluginRepository>
 		<pluginRepository>
+			<id>andromda</id>
+			<name>AndroMDA Repository</name>
+			<url>http://team.andromda.org/maven2</url>
+		</pluginRepository>
+		<pluginRepository>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -218,12 +223,7 @@
 			<name>java.freehep.org</name>
 			<id>java.freehep.org</id>
 			<url>http://java.freehep.org/maven2</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>andromda</id>
-			<name>AndroMDA Repository</name>
-			<url>http://team.andromda.org/maven2</url>
-		</pluginRepository>
+		</pluginRepository>		
 	</pluginRepositories>
 	
 	
@@ -255,7 +255,7 @@
 			<plugin>
 				<groupId>org.andromda.maven.plugins</groupId>
 				<artifactId>andromdapp-maven-plugin</artifactId>
-				<version>3.3-SNAPSHOT</version>
+				<version>3.3</version>
 				<inherited>false</inherited>
 				<executions>
 					<execution>
