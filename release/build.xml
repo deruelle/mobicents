@@ -47,10 +47,10 @@
 	
 	<target name="release" depends="checks" description="Makes the release.">
 		<antcall target="extract"/>
-
-		<exec executable="${mvn.executable}" dir="${base.path}/..">
-			<arg line="clean install"/>
-		</exec>
+		<copy failonerror="true" file="jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true"></copy>
+				
+		<antcall target="build-core"/>
+		<antcall target="build-xdm"/>
 		<antcall target="build-mss"/>
 		<antcall target="build-mms"/>
 		<antcall target="build-mmc"/>
@@ -58,6 +58,12 @@
 		<antcall target="build-examples"/>
 		<delete failonerror="false" verbose="true" dir="${base.path}/jboss-${jboss.version}/server/all"/>
 		<delete failonerror="false" verbose="true" dir="${base.path}/jboss-${jboss.version}/server/minimal"/>
+	</target>
+	
+	<target name="build-core" depends="checks" description="The core">
+		<exec executable="${mvn.executable}" dir="${base.path}/..">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>
 	</target>
 	
 	<target name="build-mmc" depends="checks" description="The mobicents management console">
@@ -123,24 +129,33 @@
 				<echo>Packaging Example for release from DIR[${base.dir}/../examples/@{dir.name}]</echo>
 				<exec executable="${mvn.executable}" dir="${base.dir}/../examples/@{dir.name}">
 					<arg line="clean install"/>
-				</exec><!--
+				</exec>
 				<exec executable="${mvn.executable}" dir="${base.dir}/../examples/@{dir.name}">
 					<arg line="install -Prelease -Drelease.name=output"/>
-				</exec> -->
-				
+				</exec> 
+				<!--
 				<copy overwrite="true" todir="${release.dir}/examples/@{dir.name}">
 					<fileset dir="${base.path}/../examples/@{dir.name}/">
 						<include name="**" />
 					</fileset> 
-				</copy> 
+				</copy>  -->
 			</sequential>
 		</for>
 	</target>
 	
-	<target name="build-mss" depends="checks" description="Examples.">
-		<exec executable="${mvn.executable}" dir="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap">
+	<target name="build-xdm" depends="checks" description="XDM">
+		<exec executable="${mvn.executable}" dir="${base.path}/../servers/xdm">
 			<arg line="clean install -Djboss.home=${jboss.home}"/>
 		</exec>
+		<exec executable="${mvn.executable}" dir="${base.path}/../servers/xdm">
+			<arg line="install -Djboss.home=${jboss.home} -Prelease -Drelease.name=output"/>
+		</exec>
+	</target>
+	
+	<target name="build-mss" depends="checks" description="Sip Servlets"><!--
+		<exec executable="${mvn.executable}" dir="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>-->
 		<echo>Calling Sip Servlets Release Script</echo>
 		<ant antfile="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap/release/build.xml"
 			dir="${base.path}/../servers/sip-servlets/sip-servlets-bootstrap/release/"
