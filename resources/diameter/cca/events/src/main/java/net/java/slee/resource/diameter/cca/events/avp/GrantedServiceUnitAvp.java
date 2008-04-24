@@ -2,7 +2,6 @@ package net.java.slee.resource.diameter.cca.events.avp;
 
 import java.util.Date;
 
-import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.GroupedAvp;
 
 /**
@@ -41,7 +40,7 @@ import net.java.slee.resource.diameter.base.events.avp.GroupedAvp;
 public interface GrantedServiceUnitAvp extends GroupedAvp {
 
 	/**
-	 * <prE>
+	 * <pre>
 	 * The Tariff-Time-Change AVP (AVP Code 451) is of type Time.  It is
 	 *   sent from the server to the client and includes the time in seconds
 	 *   since January 1, 1900, 00:00 UTC, when the tariff of the service will

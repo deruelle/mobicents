@@ -1,25 +1,44 @@
 package net.java.slee.resource.diameter.cca;
+
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 public interface CreditControlProvider {
 
-	public CreditControlClientSession createNewClientSession();
+  /**
+   * Create a new client session to send and receive Diameter messages.
+   * All messages sent on an activity created by this method must contain valid
+   * routing AVPs (one or both of Destination-Realm and Destination-Host as
+   * defined by RFC3588).
+   * 
+   * @return a instance of a CreditControlClientSession to send credit control messages
+   */
+	public CreditControlClientSession createClientSession();
 
-	public CreditControlClientSession createNewClientSession(
+	/**
+	 * Create a new client session to send and receive Diameter messages.
+	 * Messages sent on an activity created by this method will automatically
+	 * have the Destination-Host and Destination-Realm AVPs set to the provided
+	 * values.
+	 * 
+	 * @param destinationHost a destination host to automatically put in all messages, may be null if not needed
+	 * @param destinationRealm a destination realm to automatically put in all messages
+	 * @return a instance of a CreditControlClientSession to send credit control messages
+	 */
+	public CreditControlClientSession createClientSession(
 			DiameterIdentityAvp destinationHost,
 			DiameterIdentityAvp destinationRealm);
 
 	/**
-	 * Provides with message factory.
+	 * Return a message factory to be used to create credit control messages
 	 * 
-	 * @return
+	 * @return a CreditControlMessageFactory implementation
 	 */
-	public CreditControlMessageFactory getMessageFactory();
+	public CreditControlMessageFactory getCreditControlMessageFactory();
 
 	/**
-	 * Provides AVP factory.
+	 * Return a AVP factory to be used to create credit control AVPs
 	 * 
-	 * @return
+	 * @return a CreditControlAVPFactory implementation
 	 */
-	public CreditControlAVPFactory getAVPFactory();
+	public CreditControlAVPFactory getCreditControlAVPFactory();
 }

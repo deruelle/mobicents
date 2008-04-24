@@ -42,8 +42,10 @@ public enum CreditControlSessionState {
 		case 4:
 			return PENDING_TERMINATION;
 		case 5:
-			return OPEN;
+		  return PENDING_BUFFERED;
 		case 6:
+			return OPEN;
+		case 7:
 			return TERMINATED;
 
 		default:

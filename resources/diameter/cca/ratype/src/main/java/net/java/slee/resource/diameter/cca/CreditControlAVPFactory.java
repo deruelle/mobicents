@@ -19,6 +19,12 @@ import net.java.slee.resource.diameter.cca.events.avp.UsedServiceUnitAvp;
 import net.java.slee.resource.diameter.cca.events.avp.UserEquipmentInfoAvp;
 import net.java.slee.resource.diameter.cca.events.avp.UserEquipmentInfoType;
 
+/**
+ * Factory to support the creation of Grouped AVP instances.
+ * 
+ * @author Alexandre Mendonça
+ *
+ */
 public interface CreditControlAVPFactory {
 
   /**

@@ -74,7 +74,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasCcSessionFailover();
+  boolean hasCcSessionFailover();
 
   /**
    * Returns the value of the Check-Balance-Result AVP, of type Enumerated.
@@ -96,7 +96,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasCheckBalanceResult();
+  boolean hasCheckBalanceResult();
 
   /**
    * Returns the value of the Cost-Information AVP, of type Grouped.
@@ -118,7 +118,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasCostInformation();
+  boolean hasCostInformation();
 
   /**
    * Returns the value of the Credit-Control-Failure-Handling AVP, of type Enumerated.
@@ -140,7 +140,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasCreditControlFailureHandling();
+  boolean hasCreditControlFailureHandling();
 
   /**
    * Returns the value of the Direct-Debiting-Failure-Handling AVP, of type Enumerated.
@@ -162,7 +162,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasDirectDebitingFailureHandling();
+  boolean hasDirectDebitingFailureHandling();
 
   /**
    * Returns the set of Failed-AVP AVPs.
@@ -207,7 +207,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasFinalUnitIndication();
+  boolean hasFinalUnitIndication();
 
   /**
    * Returns the value of the Granted-Service-Unit AVP, of type Grouped.
@@ -229,7 +229,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasGrantedServiceUnit();
+  boolean hasGrantedServiceUnit();
 
   /**
    * Returns the set of Redirect-Host AVPs.
@@ -274,7 +274,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasRedirectHostUsage();
+  boolean hasRedirectHostUsage();
 
   /**
    * Returns the value of the Redirect-Max-Cache-Time AVP, of type Unsigned32.
@@ -296,7 +296,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasRedirectMaxCacheTime();
+  boolean hasRedirectMaxCacheTime();
 
   /**
    * Returns the value of the Result-Code AVP, of type Unsigned32.
@@ -318,7 +318,7 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasResultCode();
+  boolean hasResultCode();
 
   /**
    * Returns the value of the Validity-Time AVP, of type Unsigned32.
@@ -340,5 +340,5 @@ public interface CreditControlAnswer extends CreditControlMessage {
    * 
    * @return
    */
-  boolean  hasValidityTime();
+  boolean hasValidityTime();
 }

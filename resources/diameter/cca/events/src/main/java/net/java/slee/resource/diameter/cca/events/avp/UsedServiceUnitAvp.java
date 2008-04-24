@@ -1,10 +1,5 @@
 package net.java.slee.resource.diameter.cca.events.avp;
 
-import java.util.Date;
-
-import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
-import net.java.slee.resource.diameter.base.events.avp.GroupedAvp;
-
 /**
  * <pre>
  *  &lt;b&gt;8.19. Used-Service-Unit AVP&lt;/b&gt;

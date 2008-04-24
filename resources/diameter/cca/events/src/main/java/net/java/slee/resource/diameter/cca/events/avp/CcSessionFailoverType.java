@@ -4,7 +4,6 @@ import java.io.StreamCorruptedException;
 
 import net.java.slee.resource.diameter.base.events.avp.Enumerated;
 
-
 /**
  *<pre> <b>8.4. CC-Session-Failover AVP</b>
  *
