@@ -48,6 +48,7 @@
 	<target name="release" depends="checks" description="Makes the release.">
 		<antcall target="extract"/>
 		<copy failonerror="true" file="jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true"></copy>
+		<copy failonerror="true" file="readme.txt" tofile="${release.dir}/" overwrite="true"></copy>
 				
 		<antcall target="build-core"/>
 		<antcall target="build-xdm"/>
