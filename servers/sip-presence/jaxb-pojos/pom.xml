@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>parent</artifactId>
+		<groupId>org.mobicents.servers.sippresence</groupId>
+		<version>1.0.0.BETA1</version>	
+	</parent>
+		
+	<artifactId>sip-presence-pojos</artifactId>
+				
+	<dependencies>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${jaxb-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb-impl.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>${org.mobicents.servers.sippresence.finalName}</finalName>
+	</build>
+	
+</project>

@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<artifactId>mobicents</artifactId>
+		<groupId>org.mobicents</groupId>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
+	</parent>
+		
+	<artifactId>parent</artifactId>
+	<groupId>org.mobicents.servers.sippresence</groupId>
+	<version>1.0.0.BETA1</version>
+
+	<modules>		
+		<module>sip-event</module>	
+		<module>jaxb-pojos</module>	
+		<module>publication-sbb</module>
+		<module>subscription-sbb</module>
+		<module>du</module>	
+	</modules>
+	
+	<properties>
+		<org.mobicents.servers.sippresence.finalName>
+			mobicents-sippresence-server-${pom.artifactId}-${pom.version}
+		</org.mobicents.servers.sippresence.finalName>
+		<mobicents.version>
+			1.2.0.BETA3-SNAPSHOT
+		</mobicents.version>
+	</properties>			
+	
+	<build>
+		<finalName>${org.mobicents.servers.sippresence.finalName}</finalName>
+	</build>
+	
+</project>
