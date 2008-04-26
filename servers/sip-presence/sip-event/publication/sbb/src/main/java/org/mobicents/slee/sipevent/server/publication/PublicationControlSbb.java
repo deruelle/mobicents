@@ -31,6 +31,7 @@ import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
+import javax.slee.ActivityEndEvent;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
@@ -44,6 +45,9 @@ import javax.slee.facilities.TimerPreserveMissed;
 import javax.slee.nullactivity.NullActivity;
 import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
 import javax.slee.nullactivity.NullActivityFactory;
+import javax.slee.serviceactivity.ServiceActivity;
+import javax.slee.serviceactivity.ServiceActivityFactory;
+import javax.slee.serviceactivity.ServiceStartedEvent;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -243,6 +247,8 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 	public void onPublish(RequestEvent event,
 			ActivityContextInterface aci) {
 
+		aci.detach(this.sbbContext.getSbbLocalObject());
+		
 		EntityManager entityManager = getEntityManager();
 		
 		// if exists remove UserAgent header
@@ -725,6 +731,8 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 
 	public void onOptions(RequestEvent requestEvent, ActivityContextInterface aci) {
 		
+		getLogger().info("processing options event");
+		aci.detach(this.sbbContext.getSbbLocalObject());
 		/*
 		 * A client may probe the ESC for the support of PUBLISH using the
 		 * OPTIONS request defined in SIP [4]. The ESC processes OPTIONS
@@ -740,6 +748,29 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 		
 		// TODO 
 		
+	}
+	
+	public void onServiceStartedEvent(ServiceStartedEvent event, ActivityContextInterface aci) {
+		// we want to stay attached to this service activity, to receive the activity end event on service deactivation
+		try {
+			Context myEnv = (Context) new InitialContext().lookup("java:comp/env");                     
+			//get this service activity
+			ServiceActivity sa = ((ServiceActivityFactory) myEnv.lookup("slee/serviceactivity/factory")).getActivity();                       
+			if (!sa.equals(aci.getActivity())) {
+				aci.detach(this.sbbContext.getSbbLocalObject());
+			}
+		}
+		catch (Exception e) {
+			getLogger().error("failed to process service started event",e);
+		}				
+	}
+	
+	public void onActivityEndEvent(ActivityEndEvent event, ActivityContextInterface aci) {
+		// close entity manager factory on service deactivation
+		Object activity = aci.getActivity();		
+		if (activity instanceof ServiceActivity) {
+			entityManagerFactory.close();
+		}
 	}
 	
 	// ----------- SBB LOCAL OBJECT

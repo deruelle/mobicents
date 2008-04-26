@@ -5,6 +5,7 @@ import gov.nist.javax.sip.Utils;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
+import javax.slee.ActivityEndEvent;
 import javax.slee.CreateException;
 import javax.slee.InitialEventSelector;
 import javax.slee.RolledBackContext;
@@ -50,6 +52,9 @@ import javax.slee.facilities.TimerFacility;
 import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
+import javax.slee.serviceactivity.ServiceActivity;
+import javax.slee.serviceactivity.ServiceActivityFactory;
+import javax.slee.serviceactivity.ServiceStartedEvent;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -221,6 +226,29 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 	
 	// ----------- EVENT HANDLERS
 	
+	public void onServiceStartedEvent(ServiceStartedEvent event, ActivityContextInterface aci) {
+		// we want to stay attached to this service activity, to receive the activity end event on service deactivation
+		try {
+			Context myEnv = (Context) new InitialContext().lookup("java:comp/env");                     
+			//get this service activity
+			ServiceActivity sa = ((ServiceActivityFactory) myEnv.lookup("slee/serviceactivity/factory")).getActivity();                       
+			if (!sa.equals(aci.getActivity())) {
+				aci.detach(this.sbbContext.getSbbLocalObject());
+			}
+		}
+		catch (Exception e) {
+			getLogger().error("failed to process service started event",e);
+		}				
+	}
+	
+	public void onActivityEndEvent(ActivityEndEvent event, ActivityContextInterface aci) {
+		// close entity manager factory on service deactivation
+		Object activity = aci.getActivity();
+		if (activity instanceof ServiceActivity) {
+			entityManagerFactory.close();
+		}
+	}
+	
 	/**
 	 * event handler for initial subscribe, which is out of dialog
 	 * 
@@ -229,6 +257,7 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 	 */
 	public void onSubscribeOutOfDialog(RequestEvent event,
 			ActivityContextInterface aci) {
+		aci.detach(this.sbbContext.getSbbLocalObject());
 		processSubscribe(event, aci);
 	}
 
@@ -1009,11 +1038,12 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 	}
 	
 	private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("sipevent-subscription-pu");
+	
 	private EntityManager getEntityManager() {
 		//return this.persistenceResourceAdaptorSbbInterface.createEntityManager(new HashMap(), "sipevent-subscription-pu");
 		return entityManagerFactory.createEntityManager();
 	}
-	
+
 	/**
 	 * Workaround to the prob of having 2 subscribes fired in different activities.
 	 * @param ies
