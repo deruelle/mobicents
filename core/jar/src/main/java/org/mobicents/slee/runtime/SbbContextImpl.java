@@ -137,6 +137,10 @@ public class SbbContextImpl implements SbbContext, Serializable {
     	        sbbObject.getState() != SbbObjectState.READY) 
     	    throw new IllegalStateException("Wrong state! " + ( sbbObject == null ? null : sbbObject.getState() ));
 
+    	if(this.sbbObject.getSbbEntity()==null)
+    	{
+    		throw new IllegalStateException("Wrong state! SbbEntity is not assigned");
+    	}
     	SleeContainer.getTransactionManager().mandateTransaction();
     	//ActivityContextInterface sbbObjectAci = sbbObject.getActivityContextInterface(aci);
     	String acId = ((ActivityContextIDInterface)aci).retrieveActivityContextID();
@@ -185,7 +189,8 @@ public class SbbContextImpl implements SbbContext, Serializable {
     }
 
     public ServiceID getService() throws SLEEException {
-        return this.sbbObject.getSbbEntity().getServiceId();
+        //return this.sbbObject.getSbbEntity().getServiceId();
+    	return this.sbbObject.getServiceID();
     }
 
     public void maskEvent(String[] eventNames, ActivityContextInterface aci)
@@ -197,6 +202,13 @@ public class SbbContextImpl implements SbbContext, Serializable {
                     "Cannot call SbbContext maskEvent in "
                             + this.sbbObject.getState());
         }
+        
+        if(this.sbbObject.getSbbEntity()==null)
+    	{
+        	//this shouldnt happen since SbbObject state ready shoudl be set when its fully setup, but....
+    		throw new IllegalStateException("Wrong state! SbbEntity is not assigned");
+    	}
+        
         SleeContainer.getTransactionManager().mandateTransaction();
         String acId = ((ActivityContextIDInterface)aci).retrieveActivityContextID();
     	

@@ -911,6 +911,7 @@ public class SbbEntity {
         	// invoke the appropriate sbb life-cycle methods
         	this.sbbObject.sbbActivate();
         	this.sbbObject.setSbbEntity(this);
+        	this.sbbObject.setServiceID(this.getServiceId());
         	this.sbbObject.setState(SbbObjectState.READY);
         } catch (Exception e) {
             log.error("Failed to assign and activate sbb object", e);
@@ -928,6 +929,7 @@ public class SbbEntity {
         	this.sbbObject = (SbbObject) this.pool.borrowObject();
         	// invoke the appropriate sbb life-cycle methods
         	this.sbbObject.setSbbEntity(this);
+        	this.sbbObject.setServiceID(this.getServiceId());
         	this.sbbObject.sbbCreate();
         	this.sbbObject.setState(SbbObjectState.READY);
         	this.sbbObject.sbbPostCreate();
@@ -946,6 +948,7 @@ public class SbbEntity {
     	this.sbbObject.sbbPassivate();
     	this.sbbObject.setState(SbbObjectState.POOLED);
     	this.sbbObject.setSbbEntity(null);
+    	this.sbbObject.setServiceID(null);
     	this.pool.returnObject(this.sbbObject);
     	this.sbbObject = null;
     	if (log.isDebugEnabled()) {
@@ -961,6 +964,7 @@ public class SbbEntity {
     	this.sbbObject.sbbRemove();
     	this.sbbObject.setState(SbbObjectState.POOLED);
     	this.sbbObject.setSbbEntity(null);
+    	this.sbbObject.setServiceID(null);
     	this.pool.returnObject(this.sbbObject);
     	this.sbbObject = null;
     	if (log.isDebugEnabled()) {

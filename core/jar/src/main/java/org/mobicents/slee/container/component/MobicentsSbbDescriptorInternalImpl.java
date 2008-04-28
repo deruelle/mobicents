@@ -377,6 +377,7 @@ public class MobicentsSbbDescriptorInternalImpl implements MobicentsSbbDescripto
                             (SbbID) ((MobicentsSbbDescriptor) svc
                                     .getRootSbbComponent()).getID());
             SbbObject sbbObject = (SbbObject) pool.borrowObject();
+            sbbObject.setServiceID(svc.getServiceID());
             SbbConcrete concreteSbb = (SbbConcrete) sbbObject.getSbbConcrete();
 
             Class[] argtypes = new Class[] { InitialEventSelector.class };
@@ -403,9 +404,11 @@ public class MobicentsSbbDescriptorInternalImpl implements MobicentsSbbDescripto
 
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
+                sbbObject.setServiceID(null);
                 pool.returnObject(sbbObject);
             }
         }
+        
         String convergenceName = null;
 
         StringBuffer buff = new StringBuffer();
