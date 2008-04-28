@@ -1076,7 +1076,7 @@ public class SbbVerifier {
             	
             	//LETS CHECK sbb class and super classes until we come up to Object class
             	try {
-					while(selectorMethod==null && !localSbbClass.getSuperclass().equals(Object.class))
+					while(selectorMethod==null && !localSbbClass.getSuperclass().getName().equals(Object.class.getName()))
 					{
 						localSbbClass=localSbbClass.getSuperclass();
 						meths=ClassUtils.getConcreteMethodsFromClass(localSbbClass);
