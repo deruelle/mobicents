@@ -14,10 +14,8 @@
 	<version>1.0.0.BETA1</version>
 
 	<modules>
-		<module>subscription/pojo</module>
-		<module>subscription/sbb</module>	
-		<module>publication/pojo</module>
-		<module>publication/sbb</module>	
+		<module>subscription</module>	
+		<module>publication</module>	
 	</modules>
 	
 	<properties>
