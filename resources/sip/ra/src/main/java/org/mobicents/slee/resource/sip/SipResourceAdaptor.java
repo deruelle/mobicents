@@ -561,31 +561,30 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 		// Try to bind to the specified port. It could be the case that the
 		// forwarder is running on this port.
 
-		try {
-			int i = 0;
-			for (i = 0; i < 10; i++) {
+		int i = 0;
+		for (i = 0; i < 10; i++) {
 
-				InetSocketAddress sockAddress = new InetSocketAddress(
-						stackAddress, this.port);
-				try {
-					log.info("Trying to bind to " + sockAddress);
-					DatagramSocket socket = new DatagramSocket(sockAddress);
+			InetSocketAddress sockAddress = new InetSocketAddress(
+					stackAddress, this.port);
+			try {
+				log.info("Trying to bind to " + sockAddress);
+				DatagramSocket socket = new DatagramSocket(sockAddress);
 
-					this.properties.setProperty("javax.sip.PORT", Integer
-							.valueOf(this.port).toString());
-					socket.close();
-					break;
-				} catch (Exception ex) {
+				this.properties.setProperty("javax.sip.PORT", Integer
+						.valueOf(this.port).toString());
+				socket.close();
+				break;
+			} catch (Exception ex) {
 
-					this.port += 10;
-				}
+				this.port += 10;
 			}
-			if (i == 10)
-				throw new RuntimeException(
-						"Cannot create SIP Resource adaptor - no port available to bind to ");
-		} finally {
-			log.info("RA bound to " + this.port);
 		}
+		if (i == 10)
+			throw new RuntimeException(
+					"Cannot create SIP Resource adaptor - no port available to bind to ");
+
+		log.info("RA bound to " + this.port);
+		
 		// Dialog idle timeout - timer after dialog is considered to be invalid
 		// when no trafic is generated in it.
 		this.dialogTimeout = Long.parseLong(this.properties.getProperty(
