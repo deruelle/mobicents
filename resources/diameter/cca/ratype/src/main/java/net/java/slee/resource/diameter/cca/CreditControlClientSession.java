@@ -29,7 +29,7 @@ public interface CreditControlClientSession extends CreditControlSession {
    * @param ccr the CreditControlRequest to send
    * @throws IOException
    */
-  void sendEventCreditControlRequest(CreditControlRequest ccr) throws IOException;
+  void sendCreditControlRequest(CreditControlRequest ccr) throws IOException;
   
   /**
    * Send an initial Credit-Control-Request. An event containing the answer
