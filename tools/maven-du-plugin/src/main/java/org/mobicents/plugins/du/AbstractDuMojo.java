@@ -51,6 +51,7 @@ import org.apache.maven.artifact.installer.ArtifactInstallationException;
 import org.apache.maven.artifact.installer.ArtifactInstaller;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -383,35 +384,30 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 				
 				if (projectDependencyArtifact.getScope().equals(Artifact.SCOPE_COMPILE)) {
 					
-			        Artifact pomArtifact = this.factory.createArtifact( projectDependencyArtifact.getGroupId(), projectDependencyArtifact.getArtifactId(), projectDependencyArtifact.getVersion(), "", "pom" );
-			        this.resolver.resolve( projectDependencyArtifact, remoteRepos, this.localRepository );
-			        MavenProject projectDependencyArtifactMavenProject = mavenProjectBuilder.buildFromRepository( pomArtifact, null, this.localRepository );
+			        Artifact pomArtifact = this.factory.createArtifact( projectDependencyArtifact.getGroupId(), projectDependencyArtifact.getArtifactId(), projectDependencyArtifact.getVersion(), "", "pom" );			        
+			        this.resolver.resolve( pomArtifact, remoteRepos, this.localRepository );
+			        MavenProject projectDependencyArtifactMavenProject = mavenProjectBuilder.buildWithDependencies( pomArtifact.getFile(), this.localRepository,null);
 
 			        for (Iterator iterator = projectDependencyArtifactMavenProject.getDependencyArtifacts().iterator(); iterator.hasNext();) {
 			        	
 			        	Artifact dependencyArtifact = (Artifact) iterator.next();
 			        	
-			        	if(dependencyArtifact instanceof ActiveProjectArtifact){
-			        		
-			        		getLog().info("" + projectDependencyArtifact.getArtifactId() + " depends on [" + dependencyArtifact.getArtifactId() +"]");
-			        	
-			        		for (Iterator itera = project.getDependencyArtifacts().iterator(); itera.hasNext();) {
-			        			
-			        			Artifact anArtifact = (Artifact)itera.next();
-			        			
-			        			if(anArtifact.getArtifactId().equals(dependencyArtifact.getArtifactId()) &&
-			        					anArtifact.getGroupId().equals(dependencyArtifact.getGroupId()) &&
-			        					anArtifact.getVersion().equals(dependencyArtifact.getVersion()) &&
-			        					!anArtifact.getScope().equals("runtime") ){
-			        				
-			        				// add artifacts with dependencies first
-			        				if(!componentFilenames.contains(anArtifact.getFile().getName())){
-				        				getLog().info("----> found project[" + dependencyArtifact.getArtifactId() + "] ");
-			        					componentFilenames.add(anArtifact.getFile().getName());
-			        				}
-			        			}
-			        		}
-			        	}
+		        		for (Iterator itera = project.getDependencyArtifacts().iterator(); itera.hasNext();) {
+		        			
+		        			Artifact anArtifact = (Artifact)itera.next();
+		        			
+		        			if(anArtifact.getArtifactId().equals(dependencyArtifact.getArtifactId()) &&
+		        					anArtifact.getGroupId().equals(dependencyArtifact.getGroupId()) &&
+		        					anArtifact.getVersion().equals(dependencyArtifact.getVersion()) &&
+		        					!anArtifact.getScope().equals("runtime") ){
+		        				
+		        				// add artifacts with dependencies first
+		        				if(!componentFilenames.contains(anArtifact.getFile().getName())){
+		    		        		getLog().info("" + projectDependencyArtifact.getArtifactId() + " depends on [" + dependencyArtifact.getArtifactId() +"]");
+		        					componentFilenames.add(anArtifact.getFile().getName());
+		        				}
+		        			}
+		        		}
 			        }
 				}
 			}
@@ -873,6 +869,7 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 								}finally {
 									try {
 								    	if (is != null) is.close();
+								    	if(entityFile != null) entityFile.delete();
 								    }catch (IOException e) {
 								    }
 								}
