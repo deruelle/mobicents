@@ -25,7 +25,7 @@ public class DtmfFormat extends RTPAudioFormat {
     
     @Override
     public String toString() {
-        return this.getPayload() + " telephone-event/8000\na=fmtp:" + 
+        return this.getPayload() + " telephone-event/8000" +"\r\n" + "a=fmtp:" + 
                 getPayload() + " 0-15" ;
     }
 }
