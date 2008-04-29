@@ -2,40 +2,76 @@
 
 <!DOCTYPE resource-adaptor-type-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor Type 1.0//EN" "http://java.sun.com/dtd/slee-resource-adaptor-type-jar_1_0.dtd">
 
-
 <resource-adaptor-type-jar>
 	<description />
 
 	<resource-adaptor-type>
-
-		<description>JDiameter CCA RA Type</description>
-		<resource-adaptor-type-name>JDiameter CCA</resource-adaptor-type-name>
+		<description>Diameter CCA RA Type</description>
+		<resource-adaptor-type-name>Diameter CCA</resource-adaptor-type-name>
 		<resource-adaptor-type-vendor>java.net</resource-adaptor-type-vendor>
 		<resource-adaptor-type-version>0.8.1</resource-adaptor-type-version>
 
 		<resource-adaptor-type-classes>
-
-			<!-- 
 			<activity-type>
-				<activity-type-name>javax.sip.ServerTransaction</activity-type-name>
+				<activity-type-name>
+				  net.java.slee.resource.diameter.cca.CreditControlClientSession
+				</activity-type-name>
 			</activity-type>
 
-			<activity-context-interface-factory-interface>
-				<activity-context-interface-factory-interface-name>org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory</activity-context-interface-factory-interface-name>
-			</activity-context-interface-factory-interface>
+      <activity-type>
+        <activity-type-name>
+          net.java.slee.resource.diameter.cca.CreditControlServerSession
+        </activity-type-name>
+      </activity-type>
 
+      <activity-type>
+        <activity-type-name>
+          net.java.slee.resource.diameter.base.DiameterActivity
+        </activity-type-name>
+      </activity-type>
+
+			<activity-context-interface-factory-interface>
+			  <activity-context-interface-factory-interface-name>
+			    net.java.slee.resource.diameter.cca.CreditControlActivityContextInterfaceFactory
+			  </activity-context-interface-factory-interface-name>
+			</activity-context-interface-factory-interface>
 			
 			<resource-adaptor-interface>
-				<resource-adaptor-interface-name>org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface</resource-adaptor-interface-name>
+			  <resource-adaptor-interface-name>
+			    net.java.slee.resource.diameter.cca.CreditControlProvider
+			  </resource-adaptor-interface-name>
 			</resource-adaptor-interface>
-			 -->
 		</resource-adaptor-type-classes>
-		
-		<!-- =====================================================  
-		     Out of dialog requests - same as JAIN SIP 1.1 RA type 
-		     =====================================================
-		-->
-		
-		
+
+    <event-type-ref>
+        <event-type-name>net.java.slee.resource.diameter.cca.events.CreditControlRequestEvent</event-type-name>
+        <event-type-vendor>java.net</event-type-vendor>
+        <event-type-version>0.8</event-type-version>
+    </event-type-ref>
+
+    <event-type-ref>
+        <event-type-name>net.java.slee.resource.diameter.cca.events.CreditControlRequestInitial</event-type-name>
+        <event-type-vendor>java.net</event-type-vendor>
+        <event-type-version>0.8</event-type-version>
+    </event-type-ref>
+
+    <event-type-ref>
+        <event-type-name>net.java.slee.resource.diameter.cca.events.CreditControlRequestUpdate</event-type-name>
+        <event-type-vendor>java.net</event-type-vendor>
+        <event-type-version>0.8</event-type-version>
+    </event-type-ref>
+
+    <event-type-ref>
+        <event-type-name>net.java.slee.resource.diameter.cca.events.CreditControlRequestTermination</event-type-name>
+        <event-type-vendor>java.net</event-type-vendor>
+        <event-type-version>0.8</event-type-version>
+    </event-type-ref>
+
+    <event-type-ref>
+        <event-type-name>net.java.slee.resource.diameter.cca.events.CreditControlAnswer</event-type-name>
+        <event-type-vendor>java.net</event-type-vendor>
+        <event-type-version>0.8</event-type-version>
+    </event-type-ref>
 	</resource-adaptor-type>
+	
 </resource-adaptor-type-jar>
