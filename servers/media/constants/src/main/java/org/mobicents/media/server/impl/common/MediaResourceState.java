@@ -1,10 +1,8 @@
 package org.mobicents.media.server.impl.common;
 
-import java.io.StreamCorruptedException;
-
 public enum MediaResourceState {
 
-	NULL,CONFIGURED,PREPARED,STARTED;
+	NULL,CONFIGURED,PREPARED,STARTING, STARTED;
 	
 	
    

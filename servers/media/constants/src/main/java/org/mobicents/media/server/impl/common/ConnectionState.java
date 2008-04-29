@@ -1,17 +1,17 @@
 package org.mobicents.media.server.impl.common;
 
-import java.io.StreamCorruptedException;
-
 public enum ConnectionState {
 
-	NULL,HALF_OPEN,OPEN,CLOSED;
+    NULL("NULL"), HALF_OPEN("HALF_OPEN"), OPEN("OPEN"), CLOSED("CLOSED");
 
-	private ConnectionState() {
-		
-	}
-	
-	
-
-	
-	
+    private ConnectionState(String stateName) {
+        this.stateName = stateName;
+    }
+    
+    @Override
+    public String toString() {
+        return stateName;
+    }
+    
+    private String stateName;
 }

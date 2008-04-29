@@ -1,13 +1,12 @@
 package org.mobicents.media.server.impl.common.dtmf;
 
-import java.io.StreamCorruptedException;
-
 public enum DTMFType {
-	RFC2833, INBAND;
+    
+	RFC2833("RFC2833"), INBAND("INBAND"), AUTO("AUTO");	
 
-	
-
-	private DTMFType() {
-		
+	private DTMFType(String type) {
+            this.type = type;
 	}
+        
+        private String type;
 }

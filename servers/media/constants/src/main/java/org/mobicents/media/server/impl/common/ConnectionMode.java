@@ -1,14 +1,12 @@
 package org.mobicents.media.server.impl.common;
 
-import java.io.StreamCorruptedException;
-
 
 
 /**
  * This enum represent connection mode:
  * <ul>
- * <li>SEND - only send</li>
- * <li>RECV - only receive</li>
+ * <li>SEND_ONLY - only send</li>
+ * <li>RECV_ONLY - only receive</li>
  * <li>SEND_RECV - send and receive</li>
  * <ul>
  * 
@@ -17,7 +15,7 @@ import java.io.StreamCorruptedException;
  */
 public enum ConnectionMode {
 	
-	SEND, RECV, SEND_RECV;
+	SEND_ONLY, RECV_ONLY, SEND_RECV;
 
 
 	private ConnectionMode() {
