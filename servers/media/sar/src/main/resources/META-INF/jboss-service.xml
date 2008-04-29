@@ -42,6 +42,10 @@
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
         <attribute name="PCMA">true</attribute>
+        <attribute name="DTMF">
+            detector.mode=INBAND
+            dtmf.payload = 101
+        </attribute>
     </mbean>
     
     <!-- LOOPBACK ENDPOINT -->
@@ -64,6 +68,9 @@
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
         <attribute name="PCMA">true</attribute>
+        <attribute name="DTMF">
+            detector.mode=AUTO
+        </attribute>
     </mbean>
     
     <!-- IVR Endpoint -->
