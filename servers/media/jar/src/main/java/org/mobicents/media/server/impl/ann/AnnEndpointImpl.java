@@ -16,11 +16,15 @@
  */
 package org.mobicents.media.server.impl.ann;
 
+import java.util.Collection;
+import java.util.HashMap;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
 import org.mobicents.media.server.impl.common.events.EventID;
+import org.mobicents.media.server.impl.events.ann.AnnouncementPackage;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
@@ -76,6 +80,10 @@ public class AnnEndpointImpl extends BaseEndpoint {
         }
     }
 
+    private String getConnectionID() {
+        Collection <BaseConnection> connections = getConnections();
+        return connections.iterator().next().getId();
+    }
     /**
      * (Non Java-doc).
      *
@@ -93,10 +101,18 @@ public class AnnEndpointImpl extends BaseEndpoint {
             return;
         }
         
+        if (connectionID == null) {
+            connectionID = getConnectionID();
+        }
+        
         switch (signalID) {
             case PLAY:
-                signal = new AnnouncementSignal(this, listener, params);
-                signal.start();
+                //signal = new AnnouncementSignal(this, listener, params);
+                //signal.start();
+                AnnouncementPackage pkg = new AnnouncementPackage(this);
+                HashMap opts = new HashMap();
+                opts.put("announcement.url", params[0]);
+                signal = pkg.play(signalID, opts, connectionID, listener);
                 logger.info("play announcement [url=" + params[0] + "]");
                 break;
             default:
