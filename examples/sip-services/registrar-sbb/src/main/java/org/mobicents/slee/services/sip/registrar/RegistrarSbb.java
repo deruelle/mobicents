@@ -3,12 +3,10 @@ package org.mobicents.slee.services.sip.registrar;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +18,6 @@ import javax.sip.ServerTransaction;
 import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
-import javax.sip.address.SipURI;
 import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
@@ -43,7 +40,6 @@ import javax.slee.SbbContext;
 import javax.slee.SbbID;
 import javax.slee.SbbLocalObject;
 import javax.slee.facilities.AlarmFacility;
-import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
 import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
 import javax.slee.nullactivity.NullActivityFactory;
@@ -163,6 +159,17 @@ public abstract class RegistrarSbb implements Sbb {
 		} else {
 			long i = Long.parseLong(confValue);
 			config.setSipRegistrationMinExpires(i);
+		}
+		
+		try {
+			
+			String configurationName = (String) myEnv.lookup("configuration-MBEAN");
+			if(configurationName!=null)
+				config.setName(configurationName);
+		} catch (NamingException ne) {
+
+			
+			
 		}
 		
 		config.startService();

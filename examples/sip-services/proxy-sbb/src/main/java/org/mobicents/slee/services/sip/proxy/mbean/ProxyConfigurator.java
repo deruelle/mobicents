@@ -129,12 +129,7 @@ public class ProxyConfigurator implements ProxyConfiguratorMBean,Cloneable {
 		
 	}
 
-	public void setCTimerTimeOut(double timeout) {
-		if(timeout<180)
-			throw new IllegalArgumentException("C Timer timeout time cant be less than 180s!!!");
-		cTimer=timeout;
-		
-	}
+
 
 	public void setSipHostName(String sipHostName) {
 		if(sipHostName==null || sipHostName.equals(""))
@@ -147,23 +142,12 @@ public class ProxyConfigurator implements ProxyConfiguratorMBean,Cloneable {
 		
 	}
 
-	
-
 	public void setSipTransports(String[] transports) {
 		if(transports==null )
 			throw new IllegalArgumentException("Sip Transport cant be one of ["+transports+"]");
 		this.transports=transports;
 		
 	}
-
-	public double getCTimerTimeOut() {
-		
-		return cTimer;
-	}
-
-	
-	
-	
 
 	public String[] getLocalDomainNames() {
 		String[] tmp=new String[1];
@@ -249,13 +233,16 @@ public class ProxyConfigurator implements ProxyConfiguratorMBean,Cloneable {
 		return name;
 	}
 
+	public void setName(String name)
+	{
+		this.name=name;
+	}
 	public Object clone()
 	{
 		
 		
 		
 		ProxyConfigurator proxy=new ProxyConfigurator();
-		proxy.setCTimerTimeOut(this.getCTimerTimeOut());
 		proxy.setSipHostName(this.getSipHostname());
 		proxy.setSipPort(this.getSipPort());
 		

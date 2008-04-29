@@ -38,7 +38,7 @@ public class RegistrationBindingImpl implements Serializable, RegistrationBindin
     public long getExpiryAbsolute() { return (expiry.getTime()/1000); }
 
     /**
-     * Returns number of seconds till this entry expires
+     * Returns number of mseconds till this entry expires
      * May be 0 or -ve if already expired
      */
     public int getExpiryDelta() {

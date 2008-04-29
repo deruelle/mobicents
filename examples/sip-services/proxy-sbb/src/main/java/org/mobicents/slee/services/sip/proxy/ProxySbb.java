@@ -1,9 +1,6 @@
 package org.mobicents.slee.services.sip.proxy;
 
 import gov.nist.javax.sip.address.SipUri;
-import gov.nist.javax.sip.header.CSeq;
-import gov.nist.javax.sip.header.CallID;
-import gov.nist.javax.sip.header.Via;
 
 import java.text.ParseException;
 import java.util.HashSet;
@@ -39,7 +36,6 @@ import javax.sip.header.HeaderFactory;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.RecordRouteHeader;
 import javax.sip.header.RouteHeader;
-import javax.sip.header.ToHeader;
 import javax.sip.header.ViaHeader;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
@@ -78,10 +74,13 @@ import org.mobicents.slee.services.sip.proxy.mbean.ProxyConfiguratorMBean;
 public abstract class ProxySbb implements Sbb {
 
 	// We will use java loggin?
-	private static Logger logger = Logger.getLogger(ProxySbb.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(ProxySbb.class
+			.getCanonicalName());
 
-	//private static org.apache.log4j.Logger log=org.apache.log4j.Logger.getLogger(ProxySbb.class);
-	//protected static org.apache.log4j.Logger dumpLogger=org.apache.log4j.Logger.getLogger("TMP_STACK_LOGGER");
+	// private static org.apache.log4j.Logger
+	// log=org.apache.log4j.Logger.getLogger(ProxySbb.class);
+	// protected static org.apache.log4j.Logger
+	// dumpLogger=org.apache.log4j.Logger.getLogger("TMP_STACK_LOGGER");
 	// ************************************************* SLEE STUFF
 	private SbbContext context;
 
@@ -145,41 +144,25 @@ public abstract class ProxySbb implements Sbb {
 		Object event = ies.getEvent();
 		String callId = null;
 		if (event instanceof ResponseEvent) {
-			// If response event, the convergence name to callId
-			//Response response = ((ResponseEvent) event).getResponse();
-			//callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME))
-			//		.getCallId();
-			
+
+
 			ies.setInitialEvent(false);
 			return ies;
-			
+
 		} else if (event instanceof RequestEvent) {
 			// If request event, the convergence name to callId
 			Request request = ((RequestEvent) event).getRequest();
-			
-			//if(!request.getMethod().equals(Request.ACK))
-			//{
-			//	callId = ((CallIdHeader) request.getHeader(CallIdHeader.NAME))
-			//		.getCallId();
-			//}
-			//else
-			//{
-			//	callId = ((CallIdHeader) request.getHeader(CallIdHeader.NAME))
-			//	.getCallId()+"_ACK";
-			//}
-			
-			
-			
-			if(!request.getMethod().equals(Request.ACK))
-			{
-				callId = ((ViaHeader)request.getHeaders(ViaHeader.NAME).next()).getBranch();
+
+
+			if (!request.getMethod().equals(Request.ACK)) {
+				callId = ((ViaHeader) request.getHeaders(ViaHeader.NAME).next())
+						.getBranch();
+			} else {
+				callId = ((ViaHeader) request.getHeaders(ViaHeader.NAME).next())
+						.getBranch()
+						+ "_ACK";
 			}
-			else
-			{
-				callId =  ((ViaHeader)request.getHeaders(ViaHeader.NAME).next()).getBranch()+"_ACK";
-			}
-			
-			
+
 		}
 		// Set the convergence name
 
@@ -260,7 +243,8 @@ public abstract class ProxySbb implements Sbb {
 					configurationName = (String) myEnv
 							.lookup("configuration-MBEAN");
 					ProxyConfiguration conf = (ProxyConfiguration) ConfigurationProvider
-							.getCopy(ProxyConfiguratorMBean.MBEAN_NAME_PREFIX,configurationName);
+							.getCopy(ProxyConfiguratorMBean.MBEAN_NAME_PREFIX,
+									configurationName);
 
 					setConfiguration(conf);
 
@@ -341,11 +325,11 @@ public abstract class ProxySbb implements Sbb {
 		String confValue = null;
 		Context myEnv = null;
 		try {
-			logger.finest("Building Configuration from ENV Entries");
+			logger.info("Building Configuration from ENV Entries");
 			myEnv = (Context) new InitialContext().lookup("java:comp/env");
 
 		} catch (NamingException ne) {
-			
+
 			logger.warning("Could not set SBB context:" + ne.getMessage());
 			return;
 		}
@@ -387,8 +371,18 @@ public abstract class ProxySbb implements Sbb {
 				proxyConfigurator.addLocalDomain(tmp[i]);
 		}
 
+		String configurationName=null;
+		try {
+			configurationName = (String) myEnv
+			.lookup("configuration-MBEAN");
+			
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-
+		if(configurationName!=null)
+			proxyConfigurator.setName(configurationName);
 		// GO ;] start service
 		proxyConfigurator.startService();
 
@@ -432,9 +426,9 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onRegisterEvent(RequestEvent event, ActivityContextInterface ac) {
 		// getDefaultSbbUsageParameterSet().incrementNumberOfRegister(1);
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received REGISTER request, class="
-				+ event.getClass());
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received REGISTER request, class="
+					+ event.getClass());
 		try {
 
 			// is local domain?
@@ -447,22 +441,23 @@ public abstract class ProxySbb implements Sbb {
 			}
 
 			if (!proxyProcess(sipaci)) {
-				
-				if(logger.isLoggable(Level.FINE))
-				logger.log(Level.FINE,
-						"\n===============\nLEAVEING CALL:|\n===============\n"
-								+ ((CallIdHeader) event.getRequest().getHeader(
-										CallIdHeader.NAME)).getCallId()
-								+ "\n==============================");
+
+				if (logger.isLoggable(Level.FINE))
+					logger.log(Level.FINE,
+							"\n===============\nLEAVEING CALL:|\n===============\n"
+									+ ((CallIdHeader) event.getRequest()
+											.getHeader(CallIdHeader.NAME))
+											.getCallId()
+									+ "\n==============================");
 				// WE SHOULD NOT PROCESS THIS RESPONSE
 				return;
 			}
-			if(logger.isLoggable(Level.FINER))
-			logger.log(Level.FINER,
-					"\n================+\nPROCESSING CALL:|\n================\n"
-							+ ((CallIdHeader) event.getRequest().getHeader(
-									CallIdHeader.NAME)).getCallId()
-							+ "\n================================");
+			if (logger.isLoggable(Level.FINER))
+				logger.log(Level.FINER,
+						"\n================+\nPROCESSING CALL:|\n================\n"
+								+ ((CallIdHeader) event.getRequest().getHeader(
+										CallIdHeader.NAME)).getCallId()
+								+ "\n================================");
 
 			// TODO: CHECK FOR DOMAIN
 
@@ -489,15 +484,16 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onInviteEvent(RequestEvent event, ActivityContextInterface ac) {
 		// getDefaultSbbUsageParameterSet().incrementNumberOfInvite(1);
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received INVITE request");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received INVITE request");
 		try {
 			Request request = event.getRequest();
 
 			ServerTransaction serverTransaction = (ServerTransaction) ac
 					.getActivity();
-			if(logger.isLoggable(Level.FINE))
-			logger.log(Level.FINE, "Server transacton is " + serverTransaction);
+			if (logger.isLoggable(Level.FINE))
+				logger.log(Level.FINE, "Server transacton is "
+						+ serverTransaction);
 			processRequest(serverTransaction, request, ac);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Exception during onInviteEvent", e);
@@ -507,8 +503,8 @@ public abstract class ProxySbb implements Sbb {
 	public void onByeEvent(RequestEvent event, ActivityContextInterface ac) {
 
 		// getDefaultSbbUsageParameterSet().incrementNumberOfBye(1);
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received BYE request");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received BYE request");
 		try {
 
 			Request request = event.getRequest();
@@ -524,8 +520,8 @@ public abstract class ProxySbb implements Sbb {
 	}
 
 	public void onCancelEvent(RequestEvent event, ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received CANCEL request");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received CANCEL request");
 		try {
 
 			Request request = event.getRequest();
@@ -552,10 +548,10 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onAckEvent(RequestEvent event, ActivityContextInterface ac) {
 		// getDefaultSbbUsageParameterSet().incrementNumberOfAck(1);
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received ACK request");
-		//logger.info("[PROXY onAckEvent] \n"+event.getRequest());
-		
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received ACK request");
+		// logger.info("[PROXY onAckEvent] \n"+event.getRequest());
+
 		try {
 
 			Request request = event.getRequest();
@@ -570,8 +566,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onMessageEvent(RequestEvent event, ActivityContextInterface ac) {
 		// getDefaultSbbUsageParameterSet().incrementNumberOfMessage(1);
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received MESSAGE request");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received MESSAGE request");
 		try {
 			Request request = event.getRequest();
 			ServerTransaction serverTransaction = event.getServerTransaction();
@@ -583,8 +579,8 @@ public abstract class ProxySbb implements Sbb {
 	}
 
 	public void onOptionsEvent(RequestEvent event, ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received OPTIONS request");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received OPTIONS request");
 		try {
 
 			Request request = event.getRequest();
@@ -611,9 +607,9 @@ public abstract class ProxySbb implements Sbb {
 	}
 
 	public void onInfoRespEvent(ResponseEvent event, ActivityContextInterface ac) {
-		
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 1xx (FINER) response");
+
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 1xx (FINER) response");
 		try {
 
 			Response response = event.getResponse();
@@ -627,8 +623,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onSuccessRespEvent(ResponseEvent event,
 			ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 2xx (SUCCESS) response");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 2xx (SUCCESS) response");
 		try {
 
 			Response response = event.getResponse();
@@ -642,8 +638,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onRedirRespEvent(ResponseEvent event,
 			ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 3xx (REDIRECT) response");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 3xx (REDIRECT) response");
 		try {
 
 			Response response = event.getResponse();
@@ -657,8 +653,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onClientErrorRespEvent(ResponseEvent event,
 			ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 4xx (CLIENT ERROR) response");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 4xx (CLIENT ERROR) response");
 		try {
 
 			Response response = event.getResponse();
@@ -673,8 +669,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onServerErrorRespEvent(ResponseEvent event,
 			ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 5xx (SERVER ERROR) response");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 5xx (SERVER ERROR) response");
 		try {
 
 			Response response = event.getResponse();
@@ -689,8 +685,8 @@ public abstract class ProxySbb implements Sbb {
 
 	public void onGlobalFailureRespEvent(ResponseEvent event,
 			ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received 6xx (GLOBAL FAILURE) response");
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received 6xx (GLOBAL FAILURE) response");
 		try {
 
 			Response response = event.getResponse();
@@ -712,9 +708,9 @@ public abstract class ProxySbb implements Sbb {
 		ClientTransaction clientTransaction = event.getClientTransaction();
 		ServerTransaction serverTransaction = event.getServerTransaction();
 
-		if(logger.isLoggable(Level.FINER))
-		logger.log(Level.FINER, "Received transaction timeout event, tid="
-				+ clientTransaction);
+		if (logger.isLoggable(Level.FINER))
+			logger.log(Level.FINER, "Received transaction timeout event, tid="
+					+ clientTransaction);
 		if (serverTransaction != null) {
 
 			try {
@@ -759,8 +755,7 @@ public abstract class ProxySbb implements Sbb {
 		if (request.getHeader(MaxForwardsHeader.NAME) == null) {
 			try {
 				request.addHeader(headerFactory.createMaxForwardsHeader(69));
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -771,8 +766,8 @@ public abstract class ProxySbb implements Sbb {
 						.getActivityContextInterface(ct);
 				aci.attach(getSbbContext().getSbbLocalObject());
 			} catch (UnrecognizedActivityException e) {
-				logger.log(Level.WARNING, "unable to attach to client transaction",
-						e);
+				logger.log(Level.WARNING,
+						"unable to attach to client transaction", e);
 			}
 		}
 
@@ -788,20 +783,22 @@ public abstract class ProxySbb implements Sbb {
 		provider.sendResponse(response);
 	}
 
-
 	// ** PROXY PART
 
 	private void processRequest(ServerTransaction serverTransaction,
 			Request request, ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.INFO))
-		logger.log(Level.INFO, "processRequest: request = \n"
-				+ request.toString());
-		//log.error("===> REQUEST METHOD["+request.getMethod()+"] CALLID["+((CallID)request.getHeader(CallID.NAME)).getCallId()+"] TO["+((ToHeader)request.getHeader(ToHeader.NAME)).getAddress()+"] BRANCH["+serverTransaction.getBranchId()+"]");
+		if (logger.isLoggable(Level.INFO))
+			logger.log(Level.INFO, "processRequest: request = \n"
+					+ request.toString());
+		// log.error("===> REQUEST METHOD["+request.getMethod()+"]
+		// CALLID["+((CallID)request.getHeader(CallID.NAME)).getCallId()+"]
+		// TO["+((ToHeader)request.getHeader(ToHeader.NAME)).getAddress()+"]
+		// BRANCH["+serverTransaction.getBranchId()+"]");
 		try {
 
 			if (getServerTransactionTerminated()) {
-				if(logger.isLoggable(Level.INFO))
-				logger.info("[PROXY MACHINE] txTERM \n"+request);
+				if (logger.isLoggable(Level.INFO))
+					logger.info("[PROXY MACHINE] txTERM \n" + request);
 				return;
 			}
 
@@ -809,30 +806,33 @@ public abstract class ProxySbb implements Sbb {
 
 			// LETS CHECK IF THIS CALL SHOULD BE PROCESSED BY PROXY
 			if (!proxyProcess(sipaci)) {
-				if(logger.isLoggable(Level.FINE))
-				logger.log(Level.FINE,
-						"\n===============\nLEAVEING CALL:|\n===============\n"
-								+ ((CallIdHeader) request
-										.getHeader(CallIdHeader.NAME))
-										.getCallId()
-								+ "\n==============================");
+				if (logger.isLoggable(Level.FINE))
+					logger.log(Level.FINE,
+							"\n===============\nLEAVEING CALL:|\n===============\n"
+									+ ((CallIdHeader) request
+											.getHeader(CallIdHeader.NAME))
+											.getCallId()
+									+ "\n==============================");
 				// WE SHOULD NOT PROCESS THIS REQUEST
 				return;
 			}
-			if(logger.isLoggable(Level.FINE))
-			logger.log(Level.FINE,
-					"\n================+\nPROCESSING CALL:|\n================\n"
-							+ ((CallIdHeader) request
-									.getHeader(CallIdHeader.NAME)).getCallId()
-							+ "\n================================");
+			if (logger.isLoggable(Level.FINE))
+				logger.log(Level.FINE,
+						"\n================+\nPROCESSING CALL:|\n================\n"
+								+ ((CallIdHeader) request
+										.getHeader(CallIdHeader.NAME))
+										.getCallId()
+								+ "\n================================");
 			// Create a worker to process this event
 			// MySipProxy proxy = new MySipProxy(this, sipaci);
 
 			LocationSbbLocalObject locationInterface = null;
 			if (getLocationSbbChild().size() == 0)
-				locationInterface = (LocationSbbLocalObject) getLocationSbbChild().create();
+				locationInterface = (LocationSbbLocalObject) getLocationSbbChild()
+						.create();
 			else
-				locationInterface = (LocationSbbLocalObject) getLocationSbbChild().iterator().next();
+				locationInterface = (LocationSbbLocalObject) getLocationSbbChild()
+						.iterator().next();
 
 			prepareENV();
 
@@ -840,9 +840,12 @@ public abstract class ProxySbb implements Sbb {
 			// setServerTX(serverTransaction);
 			// Go - if it is invite here, serverTransaction can be CANCEL
 			// transaction!!!! so we dont want to overwrite it above
-			ProxyMachine proxyMachine=new ProxyMachine((ProxyConfiguration)getConfiguration(),locationInterface,this.addressFactory,this.headerFactory,this.messageFactory,this.provider);
+			ProxyMachine proxyMachine = new ProxyMachine(
+					(ProxyConfiguration) getConfiguration(), locationInterface,
+					this.addressFactory, this.headerFactory,
+					this.messageFactory, this.provider);
 			proxyMachine.processRequest(serverTransaction, request);
-			
+
 		} catch (Exception e) {
 			// Send error response so client can deal with it
 			logger.log(Level.WARNING, "Exception during processRequest", e);
@@ -858,10 +861,14 @@ public abstract class ProxySbb implements Sbb {
 
 	private void processResponse(ClientTransaction clientTransaction,
 			Response response, ActivityContextInterface ac) {
-		if(logger.isLoggable(Level.INFO))
-		logger.log(Level.INFO, "processResponse: response = \n"
-				+ response.toString());
-		//log.error("===> RESPONSE CODE["+response.getStatusCode()+"] METHOD["+((CSeq)response.getHeader(CSeq.NAME)).getMethod()+"] CALLID["+((CallID)response.getHeader(CallID.NAME)).getCallId()+"] TO["+((ToHeader)response.getHeader(ToHeader.NAME)).getAddress()+"] BRANCH["+clientTransaction.getBranchId()+"]");
+		if (logger.isLoggable(Level.INFO))
+			logger.log(Level.INFO, "processResponse: response = \n"
+					+ response.toString());
+		// log.error("===> RESPONSE CODE["+response.getStatusCode()+"]
+		// METHOD["+((CSeq)response.getHeader(CSeq.NAME)).getMethod()+"]
+		// CALLID["+((CallID)response.getHeader(CallID.NAME)).getCallId()+"]
+		// TO["+((ToHeader)response.getHeader(ToHeader.NAME)).getAddress()+"]
+		// BRANCH["+clientTransaction.getBranchId()+"]");
 		try {
 
 			if (getServerTransactionTerminated()) {
@@ -872,41 +879,47 @@ public abstract class ProxySbb implements Sbb {
 
 			// LETS CHECK IF THIS CALL SHOULD BE PROCESSED BY PROXY
 			if (!proxyProcess(sipaci)) {
-				if(logger.isLoggable(Level.FINE))
-				logger.log(Level.FINE,
-						"\n===============\nLEAVEING CALL:|\n===============\n"
-								+ ((CallIdHeader) response
-										.getHeader(CallIdHeader.NAME))
-										.getCallId()
-								+ "\n==============================");
+				if (logger.isLoggable(Level.FINE))
+					logger.log(Level.FINE,
+							"\n===============\nLEAVEING CALL:|\n===============\n"
+									+ ((CallIdHeader) response
+											.getHeader(CallIdHeader.NAME))
+											.getCallId()
+									+ "\n==============================");
 				// WE SHOULD NOT PROCESS THIS RESPONSE
 				return;
 			}
-			if(logger.isLoggable(Level.FINE))
-			logger.log(Level.FINE,
-					"\n================+\nPROCESSING CALL:|\n================\n"
-							+ ((CallIdHeader) response
-									.getHeader(CallIdHeader.NAME)).getCallId()
-							+ "\n================================");
+			if (logger.isLoggable(Level.FINE))
+				logger.log(Level.FINE,
+						"\n================+\nPROCESSING CALL:|\n================\n"
+								+ ((CallIdHeader) response
+										.getHeader(CallIdHeader.NAME))
+										.getCallId()
+								+ "\n================================");
 			// Create a worker to process this event
 			// MySipProxy proxy = new MySipProxy(this, sipaci);
-			//clientTransaction.setApplicationData(response);
+			// clientTransaction.setApplicationData(response);
 			LocationSbbLocalObject locationInterface = null;
 			if (getLocationSbbChild().size() == 0)
-				locationInterface = (LocationSbbLocalObject) getLocationSbbChild().create();
+				locationInterface = (LocationSbbLocalObject) getLocationSbbChild()
+						.create();
 			else
-				locationInterface = (LocationSbbLocalObject) getLocationSbbChild().iterator().next();
+				locationInterface = (LocationSbbLocalObject) getLocationSbbChild()
+						.iterator().next();
 
 			prepareENV();
 
 			// Go
 			ServerTransaction serverTransaction = getServerTransaction(clientTransaction);
 			if (serverTransaction != null) {
-				ProxyMachine proxyMachine=new ProxyMachine((ProxyConfiguration)getConfiguration(),locationInterface,this.addressFactory,this.headerFactory,this.messageFactory,this.provider);
-				proxyMachine.processResponse(serverTransaction,clientTransaction, response);
-			}else
-			{
-				logger.warning("Weird got null tx for["+response+"]");
+				ProxyMachine proxyMachine = new ProxyMachine(
+						(ProxyConfiguration) getConfiguration(),
+						locationInterface, this.addressFactory,
+						this.headerFactory, this.messageFactory, this.provider);
+				proxyMachine.processResponse(serverTransaction,
+						clientTransaction, response);
+			} else {
+				logger.warning("Weird got null tx for[" + response + "]");
 			}
 
 		} catch (Exception e) {
@@ -1007,11 +1020,11 @@ public abstract class ProxySbb implements Sbb {
 	// more conveniant to do this like this, since otherwise we would have
 	// to either pass whole sbb or interface
 	class ProxyMachine extends MessageUtils implements MessageHandlerInterface {
-		protected  final Logger log = Logger
-				.getLogger("ProxyMachine.class");
+		protected final Logger log = Logger.getLogger("ProxyMachine.class");
 
-		//We can use those variables from top level class, but let us have our own.
-		
+		// We can use those variables from top level class, but let us have our
+		// own.
+
 		protected LocationInterface reg = null;
 
 		protected AddressFactory af = null;
@@ -1026,8 +1039,8 @@ public abstract class ProxySbb implements Sbb {
 
 		protected ProxyConfiguration pc = null;
 
-		protected ProxyConfiguration config=null;
-		
+		protected ProxyConfiguration config = null;
+
 		public ProxyMachine(ProxyConfiguration config,
 				LocationInterface registrarAccess, AddressFactory af,
 				HeaderFactory hf, MessageFactory mf, SipProvider prov)
@@ -1038,7 +1051,7 @@ public abstract class ProxySbb implements Sbb {
 			this.af = af;
 			this.hf = hf;
 			this.provider = prov;
-			this.config=config;
+			this.config = config;
 			SipUri localMachineURI = new SipUri();
 			localMachineURI.setHost(this.config.getSipHostname());
 			localMachineURI.setPort(this.config.getSipPort());
@@ -1077,7 +1090,8 @@ public abstract class ProxySbb implements Sbb {
 					// 1. Copy request
 
 					// 2. Request-URI
-					newRequest.setRequestURI(target);
+					if (target.isSipURI() && !((SipUri) target).hasLrParam())
+						newRequest.setRequestURI(target);
 
 					// *NEW* CANCEL processing
 					// CANCELs are hop-by-hop, so here must remove any existing
@@ -1181,17 +1195,19 @@ public abstract class ProxySbb implements Sbb {
 		public ClientTransaction forwardRequest(
 				ServerTransaction serverTransaction, Request request) {
 			ClientTransaction toReturn = null;
-			if(log.isLoggable(Level.FINER))
-			log.finer("Forwarding request " + request.getMethod()
-					+ " of server tx " + serverTransaction.getBranchId());
-			
-			//ProxySbb.log.error("===> REQUEST FWD METHOD["+request.getMethod()+"] CALLID["+((CallID)request.getHeader(CallID.NAME)).getCallId()+"] BRANCH["+serverTransaction.getBranchId()+"]");
-			//log.info("PRXY forwardReqeust\n"+request);
+			if (log.isLoggable(Level.FINER))
+				log.finer("Forwarding request " + request.getMethod()
+						+ " of server tx " + serverTransaction.getBranchId());
+
+			// ProxySbb.log.error("===> REQUEST FWD
+			// METHOD["+request.getMethod()+"]
+			// CALLID["+((CallID)request.getHeader(CallID.NAME)).getCallId()+"]
+			// BRANCH["+serverTransaction.getBranchId()+"]");
+			// log.info("PRXY forwardReqeust\n"+request);
 			try {
 
 				if (request.getMethod().equals(Request.ACK)) {
-					
-					
+
 					sendStatelessRequest(request);
 
 				} else if (request.getMethod().equals(Request.CANCEL)) {
@@ -1238,17 +1254,21 @@ public abstract class ProxySbb implements Sbb {
 		}
 
 		public void forwardResponse(ServerTransaction txn, Response response) {
-			if(log.isLoggable(Level.FINER))
-			log.finer("Forwarding response " + response.getStatusCode()
-					+ " of server tx " + txn.getBranchId());
-			
-			//log.info("PRXY forwardResponse\n"+response);
-			//try{
-			//ProxySbb.log.error("===> RESPONSE FWD CODE["+response.getStatusCode()+"] METHOD["+((CSeq)response.getHeader(CSeq.NAME)).getMethod()+"] CALLID["+((CallID)response.getHeader(CallID.NAME)).getCallId()+"] BRANCH["+txn==null?"GO TNULL":txn.getBranchId()+"]");
-			//}catch(Exception e)
-			//{
-			//	e.printStackTrace();
-			//}
+			if (log.isLoggable(Level.FINER))
+				log.finer("Forwarding response " + response.getStatusCode()
+						+ " of server tx " + txn.getBranchId());
+
+			// log.info("PRXY forwardResponse\n"+response);
+			// try{
+			// ProxySbb.log.error("===> RESPONSE FWD
+			// CODE["+response.getStatusCode()+"]
+			// METHOD["+((CSeq)response.getHeader(CSeq.NAME)).getMethod()+"]
+			// CALLID["+((CallID)response.getHeader(CallID.NAME)).getCallId()+"]
+			// BRANCH["+txn==null?"GO TNULL":txn.getBranchId()+"]");
+			// }catch(Exception e)
+			// {
+			// e.printStackTrace();
+			// }
 			try {
 				// trace(Level.FINEST, "Forwarding response:\n" + response);
 				if (txn != null) {
@@ -1258,7 +1278,9 @@ public abstract class ProxySbb implements Sbb {
 					sendStatelessResponse(response);
 				}
 			} catch (Exception e) {
-				log.severe("Exception during forwardResponse[\n"+response+"\n] TXBRANCH["+txn.getBranchId()+"] TXR[\n"+txn.getRequest()+"\n]:" + e);
+				log.severe("Exception during forwardResponse[\n" + response
+						+ "\n] TXBRANCH[" + txn.getBranchId() + "] TXR[\n"
+						+ txn.getRequest() + "\n]:" + e);
 			}
 		}
 
@@ -1303,12 +1325,11 @@ public abstract class ProxySbb implements Sbb {
 			// 6. Proxy-Authorization - TBD
 		}
 
-		public void detectLoop(Request request) throws SipLoopDetectedException
-		{
-			
+		public void detectLoop(Request request) throws SipLoopDetectedException {
+
 			URI requestURI = null;
 			requestURI = request.getRequestURI();
-			//, now its simple, so we wont spin requests
+			// , now its simple, so we wont spin requests
 			// to local node
 			SipUri localNodeURI = new SipUri();
 			try {
@@ -1318,58 +1339,53 @@ public abstract class ProxySbb implements Sbb {
 				e.printStackTrace();
 			}
 			localNodeURI.setPort(this.config.getSipPort());
-			
-			//This only works if UAC conforms to rfc 3261
+
+			// This only works if UAC conforms to rfc 3261
 			if (requestURI.equals(localNodeURI)) {
 				// throw new SipSendErrorResponseException("Possible local
 				// looping on node",Response.LOOP_DETECTED);
-				//throw new SipLoopDetectedException(
-						//"Possible loop detected on LOCAL["+localNodeURI+"] MSG["+requestURI+"] message:n" + request
-						//		+ "\n====================================");
-				//this can be a loop, we will only warn as this is uncertain at this point
-				//if You know more, please patch :]
-				
-				if(log.isLoggable(Level.FINE))
-				{
-					log.fine("Possible loop detected on LOCAL["+localNodeURI+"] MSG["+requestURI+"] message:n" + request+ "\n====================================");
+				// throw new SipLoopDetectedException(
+				// "Possible loop detected on LOCAL["+localNodeURI+"]
+				// MSG["+requestURI+"] message:n" + request
+				// + "\n====================================");
+				// this can be a loop, we will only warn as this is uncertain at
+				// this point
+				// if You know more, please patch :]
+
+				if (log.isLoggable(Level.FINE)) {
+					log.fine("Possible loop detected on LOCAL[" + localNodeURI
+							+ "] MSG[" + requestURI + "] message:n" + request
+							+ "\n====================================");
 				}
-				
-				
+
 			}
-			
-			
-			//do more:
-			
-			ListIterator lit =request.getHeaders(ViaHeader.NAME);
-			
-			if(lit!=null && lit.hasNext())
-			{
-				int found=0;
-				
-				
-				do
-				{
-					ViaHeader vh=(ViaHeader) lit.next();
-					if(vh.getHost().equals(localNodeURI.getHost()) && vh.getPort()==localNodeURI.getPort())
-					{
+
+			// do more:
+
+			ListIterator lit = request.getHeaders(ViaHeader.NAME);
+
+			if (lit != null && lit.hasNext()) {
+				int found = 0;
+
+				do {
+					ViaHeader vh = (ViaHeader) lit.next();
+					if (vh.getHost().equals(localNodeURI.getHost())
+							&& vh.getPort() == localNodeURI.getPort()) {
 						found++;
 					}
-					
-					if(found>=2)
-					{
+
+					if (found >= 2) {
 						throw new SipLoopDetectedException(
-								"Possible loop detected[mutliple via headers] on message:n" + request
+								"Possible loop detected[mutliple via headers] on message:n"
+										+ request
 										+ "\n====================================");
 					}
-				}while(lit.hasNext());
-				
-				
-				
+				} while (lit.hasNext());
+
 			}
-			
+
 		}
-		
-		
+
 		/**
 		 * Validate the max-forwards header throw a user error exception (too
 		 * many hops) if max-forwards reaches 0.
@@ -1412,7 +1428,7 @@ public abstract class ProxySbb implements Sbb {
 			try {
 				bindings = reg.getUserBindings(addressOfRecord);
 			} catch (LocationServiceException e) {
-			
+
 				e.printStackTrace();
 				return listOfTargets;
 			}
@@ -1458,24 +1474,25 @@ public abstract class ProxySbb implements Sbb {
 		 * Adds a default Via header to the request. Override to provide a
 		 * different Via header.
 		 */
-		public void addViaHeader(Request request) throws SipSendErrorResponseException {
+		public void addViaHeader(Request request)
+				throws SipSendErrorResponseException {
 			ViaHeader via = null;
 			try {
 				// ViaHeader via = hf.createViaHeader(config.getSipHostname(),
 				// config.getSipPort(), config.getSipTransport(), null);
-				
-				//if (request.getMethod().equals(Request.CANCEL)
-				//		|| request.getMethod().equals(Request.ACK)) {
-				//For now we cant do rfc 3261 ch 17.1.1.3
-				if (request.getMethod().equals(Request.CANCEL))
-				{
+
+				// if (request.getMethod().equals(Request.CANCEL)
+				// || request.getMethod().equals(Request.ACK)) {
+				// For now we cant do rfc 3261 ch 17.1.1.3
+				if (request.getMethod().equals(Request.CANCEL)) {
 					via = getForwardedInviteViaHeader();
-					
-					if(via==null)
-					{
-						throw new SipSendErrorResponseException("Couldnt add via ["+via+"] to msg[\n"+request+"\n]",Response.BAD_REQUEST);
+
+					if (via == null) {
+						throw new SipSendErrorResponseException(
+								"Couldnt add via [" + via + "] to msg[\n"
+										+ request + "\n]", Response.BAD_REQUEST);
 					}
-					
+
 				} else {
 					via = hf.createViaHeader(config.getSipHostname(), config
 							.getSipPort(), config.getSipTransports()[0],
@@ -1492,11 +1509,11 @@ public abstract class ProxySbb implements Sbb {
 				// via.setParameter("ID",
 				// ""+System.currentTimeMillis()+"_"+Math.random()+"_"+config.getSipHostname()+":"+config.getSipPort());
 				request.addHeader(via);
-			
-			
-			}catch(Exception e)
-			{
-				throw new SipSendErrorResponseException("Couldnt add via ["+via+"] to msg[\n"+request+"\n]",Response.SERVER_INTERNAL_ERROR);
+
+			} catch (Exception e) {
+				throw new SipSendErrorResponseException("Couldnt add via ["
+						+ via + "] to msg[\n" + request + "\n]",
+						Response.SERVER_INTERNAL_ERROR);
 			}
 		}
 
@@ -1512,10 +1529,11 @@ public abstract class ProxySbb implements Sbb {
 				myURI.setMAddrParam(config.getSipHostname());
 				myURI.setTransportParam(config.getSipTransports()[0]);
 				myURI.setParameter("cluster", "mobi-cents");
+				myURI.setParameter("lr", "");
 				Address myName = af.createAddress(myURI);
 
 				RecordRouteHeader myHeader = hf.createRecordRouteHeader(myName);
-				request.addHeader(myHeader);
+				request.addFirst(myHeader);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1563,8 +1581,7 @@ public abstract class ProxySbb implements Sbb {
 			URI requestURI = null;
 			requestURI = request.getRequestURI();
 
-			
-			//TODO: add check on multiple names!!!!!
+			// TODO: add check on multiple names!!!!!
 			if ((requestURI.isSipURI())
 					&& (((SipURI) requestURI).getUser() == null)
 					&& (((SipURI) requestURI).getHost().equalsIgnoreCase(config
@@ -1585,7 +1602,7 @@ public abstract class ProxySbb implements Sbb {
 					RouteHeader route = (RouteHeader) l.getLast();
 
 					l.removeLast(); // Remove the last route header from the
-									// list,
+					// list,
 					// possibly leaving an empty list
 
 					request.removeHeader(RouteHeader.NAME); // Remove all route
@@ -1623,7 +1640,7 @@ public abstract class ProxySbb implements Sbb {
 					int uriPort = sipURI.getPort();
 					if (uriPort <= 0)
 						uriPort = 5060; // WARNING: Assumes stack impl returns
-										// <= 0
+					// <= 0
 					// if port not specified in URI
 					String cluster = sipURI.getParameter("cluster");
 
@@ -1661,7 +1678,7 @@ public abstract class ProxySbb implements Sbb {
 		 */
 		public List determineRequestTargets(Request request)
 				throws SipSendErrorResponseException {
-			LinkedList targets = new LinkedList();
+			LinkedList targets = null;
 
 			URI requestURI = null;
 			URI target = null;
@@ -1677,7 +1694,7 @@ public abstract class ProxySbb implements Sbb {
 					target = rh.getAddress().getURI();
 				} else
 					target = request.getRequestURI();
-
+				targets = new LinkedList();
 				targets.add(target);
 			} else if (localDomain) {
 				// determine local SIP target(s) using location service etc
@@ -1692,6 +1709,7 @@ public abstract class ProxySbb implements Sbb {
 			} else {
 				// destination addr is outside our domain
 				target = requestURI;
+				targets = new LinkedList();
 				targets.add(target);
 			}
 

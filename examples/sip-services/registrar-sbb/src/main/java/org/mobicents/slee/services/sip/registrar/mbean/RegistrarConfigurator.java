@@ -12,7 +12,7 @@ import org.mobicents.slee.container.SleeContainer;
 
 public class RegistrarConfigurator implements RegistrarConfiguratorMBean {
 
-	private static final String name="v1RegistrarConf";
+	private String name="v1RegistrarConf";
 	
 	private long minExpires=150;
 	
@@ -77,6 +77,15 @@ public class RegistrarConfigurator implements RegistrarConfiguratorMBean {
 
 	public RegistrarConfigurator() {
 		super();
+	}
+	
+	public String getName()
+	{
+		return this.name;
+	}
+	public void setName(String name)
+	{
+		this.name=name;
 	}
 	
 	public  boolean startService()

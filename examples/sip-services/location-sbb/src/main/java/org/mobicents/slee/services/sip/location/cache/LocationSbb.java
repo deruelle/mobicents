@@ -1,6 +1,5 @@
 package org.mobicents.slee.services.sip.location.cache;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -8,11 +7,13 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sip.address.URI;
 import javax.slee.ActivityContextInterface;
+import javax.slee.ActivityEndEvent;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
@@ -28,12 +29,15 @@ import javax.slee.facilities.TimerPreserveMissed;
 import javax.slee.nullactivity.NullActivity;
 import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
 import javax.slee.nullactivity.NullActivityFactory;
+import javax.slee.serviceactivity.ServiceActivity;
+import javax.slee.serviceactivity.ServiceActivityFactory;
 import javax.transaction.SystemException;
 
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.services.sip.common.LocationInterface;
 import org.mobicents.slee.services.sip.common.LocationServiceException;
 import org.mobicents.slee.services.sip.common.RegistrationBinding;
+import org.mobicents.slee.services.sip.location.cache.mbean.LocationServiceMBean;
 
 public abstract class LocationSbb implements Sbb, LocationInterface {
 
@@ -214,10 +218,6 @@ public abstract class LocationSbb implements Sbb, LocationInterface {
 		return new LocationService().getBindings(sipAddress);
 	}
 
-	public List<String> getUserLocations(URI reqeustURI) {
-
-		return null;
-	}
 
 	public void removeBinding(String sipAddress, String contactAddress)
 			throws LocationServiceException {
@@ -417,6 +417,87 @@ public abstract class LocationSbb implements Sbb, LocationInterface {
 
 	}
 
+	public void onServiceStarted(
+			javax.slee.serviceactivity.ServiceStartedEvent serviceEvent,
+			ActivityContextInterface aci) {
+		// This is called when ANY service is started.
+		logger.fine("Got a Service Started Event!");
+		logger.fine("CREATING CONFIGURRATION");
+
+		startMBeanConfigurator();
+	}
+	
+	public void onActivityEndEvent(ActivityEndEvent event,
+			ActivityContextInterface aci) {
+		try {
+			Object activity = aci.getActivity();
+			if (activity instanceof ServiceActivity) {
+				Context myEnv = (Context) new InitialContext()
+						.lookup("java:comp/env");
+				// check if it's my service aci that is ending
+				ServiceActivity sa = ((ServiceActivityFactory) myEnv
+						.lookup("slee/serviceactivity/factory")).getActivity();
+				if (sa.equals(activity)) {
+					logger.finest("Service aci ending, removing mbean");
+					// lets remove our mbean
+					clearENV();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void startMBeanConfigurator() {
+
+		org.mobicents.slee.services.sip.location.cache.mbean.LocationService lsmb = new org.mobicents.slee.services.sip.location.cache.mbean.LocationService();
+
+
+		String confValue = null;
+		Context myEnv = null;
+		try {
+			logger.info("Building Configuration from ENV Entries");
+			myEnv = (Context) new InitialContext().lookup("java:comp/env");
+			String configurationName = (String) myEnv.lookup("configuration-MBEAN");
+			if(configurationName!=null)
+				lsmb.setName(configurationName);
+		} catch (NamingException ne) {
+
+			logger.warning("Could not set SBB context:" + ne.getMessage());
+			return;
+		}
+		
+		// GO ;] start service
+		lsmb.startService();
+
+	}
+
+	protected void clearENV() {
+
+		try {
+			// if (getConfiguration() != null)
+			// try {
+			logger.info("Clearing environment, removing mbean");
+			Context myEnv = (Context) new InitialContext()
+					.lookup("java:comp/env");
+
+			// env-entries
+			String configurationName = (String) myEnv.lookup("configuration-MBEAN");
+
+			MBeanServer mbs = SleeContainer.lookupFromJndi().getMBeanServer();
+			ObjectName on = new ObjectName(LocationServiceMBean.MBEAN_NAME_PREFIX
+					+ configurationName);
+			mbs.unregisterMBean(on);
+			// } catch (NamingException ne) {
+			// logger.warning("Could not set SBB context:"
+			// + ne.getMessage());
+			// }
+		} catch (Exception e) {
+			e.printStackTrace();
+			// This will happen if event is ServiceStart ????
+		}
+	}
+	
 	private static Timer tmpTimer = new Timer();
 
 	static {
