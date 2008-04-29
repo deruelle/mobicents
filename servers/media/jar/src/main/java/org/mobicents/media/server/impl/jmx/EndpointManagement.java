@@ -18,14 +18,17 @@ package org.mobicents.media.server.impl.jmx;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
+import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
 /**
  *
@@ -45,6 +48,7 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     private boolean enablePCMA = false;
     private boolean enablePCMU = false;
     
+    private Properties dtmfConfig;
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
     
     /**
@@ -206,6 +210,27 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     }
     
     /**
+     * DTMF detector configuration 
+     * 
+     * @param config configuration.
+     */
+    public void setDTMF(Properties config) {
+        this.dtmfConfig = config;
+        if (this.getState() == STARTED) {
+            getEndpoint().setDefaultConfig(MediaResourceType.DTMF_DETECTOR, config);
+        }
+    }
+    
+    /**
+     * Gets the current DTMF detector configuration.
+     * 
+     * @return current configuration.
+     */
+    public Properties getDTMF() {
+        return dtmfConfig;
+    }
+    
+    /**
      * Binds trunk object to the JNDI under the jndiName.
      */
     private void rebind() throws NamingException {
@@ -262,6 +287,8 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         if (this.enablePCMU) {
             endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
         }
+        
+        this.getEndpoint().setDefaultConfig(MediaResourceType.DTMF_DETECTOR, dtmfConfig);
         
         rebind();
         logger.info("Started Endpoint MBean " + this.getJndiName());

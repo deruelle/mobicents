@@ -133,4 +133,17 @@ public interface EndpointManagementMBean extends ServiceMBean {
     public void setPCMU(Boolean enabled);
     public Boolean getPCMU();
     
+    /**
+     * DTMF detector configuration 
+     * 
+     * @param config configuration.
+     */
+    public void setDTMF(Properties config);
+    
+    /**
+     * Gets the current DTMF detector configuration.
+     * 
+     * @return current configuration.
+     */
+    public Properties getDTMF();
 }

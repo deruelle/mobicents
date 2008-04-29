@@ -17,6 +17,7 @@
 package org.mobicents.media.server.impl.jmx;
 
 import java.net.UnknownHostException;
+import java.util.Properties;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.NamingException;
@@ -42,6 +43,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
     private boolean enablePCMA = false;
     private boolean enablePCMU = false;
     
+    private Properties dtmfConfig;
     private transient Logger logger = Logger.getLogger(TrunkManagement.class);
     
     /**
@@ -177,6 +179,14 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
         return enablePCMU;
     }
     
+    public Properties getDTMF() {
+        return dtmfConfig;
+    }
+    
+    public void setDTMF(Properties dtmfConfig) {
+        this.dtmfConfig = dtmfConfig;
+    }
+    
     public abstract EndpointManagement initEndpointManagement();
     
     /**
@@ -201,6 +211,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport
             endpoint.setJitter(this.getJitter());
             endpoint.setPCMA(enablePCMA);
             endpoint.setPCMU(enablePCMU);
+            endpoint.setDTMF(dtmfConfig);
             
             //register Endpoint as MBean
             ObjectName objectName = new ObjectName(name);
