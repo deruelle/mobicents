@@ -24,7 +24,7 @@ public class IVRResourceManager extends AnnResourceManager {
     public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, 
             Connection connection, Properties config) throws UnknownMediaResourceException {
         if (type==type.DTMF_DETECTOR) {
-            return DTMFResourceLocator.getDetector(endpoint, connection, config);
+            return DTMFResourceLocator.getDetector(config);
         } else if (type==type.AUDIO_SINK) {
             return new LocalSplitter(endpoint, connection);
         } else return super.getResource(endpoint, type, connection, config);
