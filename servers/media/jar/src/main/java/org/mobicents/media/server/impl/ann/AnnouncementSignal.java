@@ -70,6 +70,7 @@ public class AnnouncementSignal extends Signal implements PlayerListener {
                 resource.setInputStream(stream);
             }
         } catch (Exception e) {
+            logger.error("Could not start announcement signal", e);
             NotifyEvent report = new NotifyEvent(endpoint,
                     EventID.FAIL,
                     EventCause.FACILITY_FAILURE,

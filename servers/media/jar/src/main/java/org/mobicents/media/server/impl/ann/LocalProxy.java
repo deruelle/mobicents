@@ -24,7 +24,6 @@ import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
 
@@ -47,7 +46,7 @@ public class LocalProxy extends BaseResource implements MediaSource {
         mediaProxy.setInputStream(stream);
     }
     
-    public PushBufferStream prepare() {
+    public PushBufferStream prepare(Endpoint endpoint) {
         setState(MediaResourceState.PREPARED);
         return mediaProxy;
     }
@@ -79,6 +78,10 @@ public class LocalProxy extends BaseResource implements MediaSource {
     public void stop() {
         mediaProxy.stop();
         setState(MediaResourceState.CONFIGURED);
+    }
+
+    public void add(String id, PushBufferStream stream) throws UnsupportedFormatException {
+        mediaProxy.setInputStream(stream);
     }
 
 
