@@ -11,7 +11,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl;
 
 import java.io.Serializable;
@@ -29,14 +28,18 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  * @author Oleg Kulikov
  */
 public class BaseResourceManager implements Serializable {
+
     public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, Properties config) throws UnknownMediaResourceException {
-        throw new UnknownMediaResourceException(type);
-    }
-    public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException {
-        if (MediaResourceType.DTMF_DETECTOR==type) {
-            return DTMFResourceLocator.getDetector(endpoint, connection, config);
+        if (type == MediaResourceType.DTMF_DETECTOR) {
+            return DTMFResourceLocator.getDetector(config);
         }
         throw new UnknownMediaResourceException(type);
     }
-    
+
+    public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException {
+        if (MediaResourceType.DTMF_DETECTOR == type) {
+            return DTMFResourceLocator.getDetector(config);
+        }
+        throw new UnknownMediaResourceException(type);
+    }
 }

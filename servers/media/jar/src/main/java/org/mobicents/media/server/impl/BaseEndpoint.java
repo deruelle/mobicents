@@ -41,6 +41,8 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.impl.common.*;
 import org.mobicents.media.server.impl.common.events.*;
+import org.mobicents.media.server.spi.MediaSink;
+
 /**
  * The basic implementation of the endpoint.
  *
@@ -67,6 +69,7 @@ public abstract class BaseEndpoint implements Endpoint {
     private ArrayList<NotificationListener> listeners = new ArrayList();
     private HashMap resources = new HashMap();
     protected HashMap formats = new HashMap();
+    private HashMap configurations = new HashMap();
     private BaseResourceManager resourceManager;
     private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
 
@@ -168,6 +171,24 @@ public abstract class BaseEndpoint implements Endpoint {
     /**
      * (Non Java-doc).
      *
+     * @see org.mobicents.media.server.spi.Endpoint#setDefaultConfig(MediaResourceType, Properties);
+     */
+    public void setDefaultConfig(MediaResourceType type, Properties config) {
+        configurations.put(type, config);
+    }
+
+    /**
+     * (Non Java-doc).
+     *
+     * @see org.mobicents.media.server.spi.Endpoint#getDefaultConfig(MediaResourceType);
+     */
+    public Properties getDefaultConfig(MediaResourceType type) {
+        return (Properties) configurations.get(type);
+    }
+
+    /**
+     * (Non Java-doc).
+     *
      * @see org.mobicents.media.server.spi.Endpoint#configure(String, Properties);
      */
     public void configure(MediaResourceType type, Properties config) throws UnknownMediaResourceException {
@@ -190,6 +211,7 @@ public abstract class BaseEndpoint implements Endpoint {
         try {
             mediaResource.configure(config);
             resources.put(type + "_" + connection.getId(), mediaResource);
+            System.out.println("HOLD RESOURCE: " + type + "_" + connection.getId());
         } catch (Exception e) {
             logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
             throw new IllegalArgumentException(e.getMessage());
@@ -197,8 +219,11 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     public synchronized void prepare(MediaResourceType type, String connectionID, PushBufferStream media) throws UnsupportedFormatException {
-        MediaResource res = (MediaResource) resources.get(type + "_" + connectionID);
-    //res.prepare(media);
+        MediaSink res = (MediaSink) resources.get(type + "_" + connectionID);
+        if (res != null) {
+            logger.info("Preparing Sink: " + res);
+            res.prepare(this, media);
+        }
     }
 
     public void addFormat(int pt, Format fmt) {
@@ -284,11 +309,12 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     public Object getResource(MediaResourceType type, String connectionID) {
+            System.out.println("GET RESOURCE: " + type + "_" + connectionID);
         return resources.get(type + "_" + connectionID);
     }
 
-    public Object getResource(String resourceName) {
-        return resources.get(resourceName);
+    public Object getResource(MediaResourceType type) {
+        return resources.get(type);
     }
 
     /**
@@ -341,7 +367,7 @@ public abstract class BaseEndpoint implements Endpoint {
 
         hasConnections = connections.size() > 0;
         logger.info("Deleted connection " + connection);
-        
+
         //clean all resources associated with this connection
         Set<String> names = resources.keySet();
         List<String> connectionResources = new ArrayList();
