@@ -57,9 +57,11 @@ import org.mobicents.slee.resource.sip.SipResourceAdaptor;
  * @author M. Ranganathan
  * @author B. Baranowski
  */
-public class ServerTransactionWrapper implements ServerTransaction, SecretWrapperInterface {
-	
-	private static Logger logger = Logger.getLogger(ServerTransactionWrapper.class);
+public class ServerTransactionWrapper implements ServerTransaction,
+		SecretWrapperInterface {
+
+	private static Logger logger = Logger
+			.getLogger(ServerTransactionWrapper.class);
 	// REAL TX WHICH IS WRAPPED IN THIS CLASS
 	private ServerTransaction realTransaction = null;
 
@@ -74,23 +76,22 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 	private RequestEventWrapper inviteCANCEL = null;
 	private CancelWaitTimerTask cancelTimerTask = null;
 	private DialogWrapper dialogWrapper;
-	
-	private SipActivityHandle activityHandle=null;
-	
-	
+
+	private SipActivityHandle activityHandle = null;
+
 	private static long cancelWait = 5000;
-	
+
 	// Timer which postpones cancel firing into slee
 	private static Timer cancelTimer = new Timer();
-	
+
 	public static void setCancelWait(long timeout) {
 		cancelWait = timeout;
 	}
-	
+
 	private SipResourceAdaptor sipResourceAdaptor;
-	
-	
-	public ServerTransactionWrapper(ServerTransaction ST, DialogWrapper dialogWrapper, SipResourceAdaptor sipResourceAdaptor) {
+
+	public ServerTransactionWrapper(ServerTransaction ST,
+			DialogWrapper dialogWrapper, SipResourceAdaptor sipResourceAdaptor) {
 		realTransaction = ST;
 		this.dialogWrapper = dialogWrapper;
 		// STORE THIS OBJECT IN TX
@@ -98,7 +99,8 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 		this.sipResourceAdaptor = sipResourceAdaptor;
 		serviceContainer = SleeContainer.lookupFromJndi();
 		realTransaction.setApplicationData(this);
-		activityHandle=new SipActivityHandle(ST.getBranchId()+"_"+ST.getRequest().getMethod());
+		activityHandle = new SipActivityHandle(ST.getBranchId() + "_"
+				+ ST.getRequest().getMethod());
 	}
 
 	public Transaction getRealTransaction() {
@@ -111,29 +113,40 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 
 	public void sendResponse(Response arg0) throws SipException,
 			InvalidArgumentException {
-		realTransaction.sendResponse(arg0);
-		// HERE WE HAVE TO CHECK STATE CHANGE OF A DIALOG
-		if (dialogWrapper == null)
-			return;
 
-		
-		if (logger.isDebugEnabled()) {
-			logger
-					.debug("\n---------------------------------------\nSENDING RESPONSE:\n"
-							+ arg0
-							+ "\n---------------------------------------");
+		boolean gotToFire = false;
+		try {
+			if (this.dialogWrapper != null)
+				this.dialogWrapper.startStateEventFireSequence();
+			this.realTransaction.sendResponse(arg0);
+			gotToFire = true;
+			// HERE WE HAVE TO CHECK STATE CHANGE OF A DIALOG
+			if (this.dialogWrapper == null)
+				return;
+
+			if (logger.isDebugEnabled()) {
+				logger
+						.debug("\n---------------------------------------\nSENDING RESPONSE:\n"
+								+ arg0
+								+ "\n---------------------------------------");
+			}
+
+			if (logger.isDebugEnabled()) {
+				logger
+						.debug("\n-----------------------------------------\nOld State: "
+								+ ((DialogWrapper) dialogWrapper)
+										.getLastState()
+								+ "\nNew State: "
+								+ dialogWrapper.getState()
+								+ "\n--------------------------------------");
+			}
+
+			this.dialogWrapper.fireDialogStateEvent(arg0);
+			
+		} finally {
+			if (!gotToFire)
+				this.dialogWrapper.endStateEventFireSequence();
 		}
-		
-		if (logger.isDebugEnabled()) {
-			logger
-					.debug("\n-----------------------------------------\nOld State: "
-							+ ((DialogWrapper) dialogWrapper).getLastState()
-							+ "\nNew State: "
-							+ dialogWrapper.getState()
-							+ "\n--------------------------------------");
-		}
-		
-		dialogWrapper.fireDialogStateEvent(arg0);
 
 	}
 
@@ -217,7 +230,10 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 			this.cancelTimerTask = null;
 		} else {
 			this.cancelTimerTask = new CancelWaitTimerTask(this.inviteCANCEL,
-					this, sipResourceAdaptor.getSipFactoryProvider(), sipResourceAdaptor.getSleeEndpoint(), sipResourceAdaptor.getBootstrapContext().getEventLookupFacility(), logger);
+					this, sipResourceAdaptor.getSipFactoryProvider(),
+					sipResourceAdaptor.getSleeEndpoint(), sipResourceAdaptor
+							.getBootstrapContext().getEventLookupFacility(),
+					logger);
 			this.cancelTimer.schedule(this.cancelTimerTask, this.cancelWait);
 		}
 
@@ -302,7 +318,7 @@ public class ServerTransactionWrapper implements ServerTransaction, SecretWrappe
 	}
 
 	public SipActivityHandle getActivityHandle() {
-		
+
 		return this.activityHandle;
 	}
 }

@@ -39,7 +39,6 @@ import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogDoesNotExistException;
 import javax.sip.DialogState;
-import javax.sip.DialogTerminatedEvent;
 import javax.sip.InvalidArgumentException;
 import javax.sip.SipException;
 import javax.sip.Transaction;
@@ -52,10 +51,6 @@ import javax.sip.header.ToHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.AddressPlan;
-import javax.slee.UnrecognizedActivityException;
-import javax.slee.UnrecognizedEventException;
-import javax.slee.facilities.FacilityException;
-import javax.slee.resource.ActivityIsEndingException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.component.ComponentKey;
@@ -71,9 +66,8 @@ import org.mobicents.slee.resource.sip.SipToSLEEUtility;
  * @author B. Baranowski
  * @author eduardomartins
  */
-public class DialogWrapper implements
-		javax.sip.Dialog {
-	
+public class DialogWrapper implements javax.sip.Dialog {
+
 	private static Logger logger = Logger.getLogger(DialogWrapper.class);
 	// private static Logger logger=Logger.getLogger(SipResourceAdaptor.class);
 	// DIALOGS apData IS USED TO STORE THIS OBJECT, WE HAVE TO PROVIDE SOMETHING
@@ -90,47 +84,60 @@ public class DialogWrapper implements
 	private DialogState lastState = null;
 	// LETS DOUBLE FLAG FOR TerminateOnBye - default value is false
 	private boolean termianteOnBye = false;
-	
+
 	private SipResourceAdaptor sipResourceAdaptor;
-	
+
 	private static long dialogTimeout = 360000;
+
+	private boolean hasTimedOut = false;
+
 	// Timer for dialog idle timeouts
 	private static Timer dialogTimer = new Timer();
-	
+
 	private DialogTimeoutTimerTask timerTask;
-	
+
 	private SipActivityHandle activityHandle;
-	
-	public DialogWrapper(Dialog realDialog, SipResourceAdaptor sipResourceAdaptor) {
+
+	private boolean bothTagsPresent = false;
+
+	private int pendingStateEvents = 0;
+
+	private boolean hasBeenCanceled = false;
+
+	public DialogWrapper(Dialog realDialog,
+			SipResourceAdaptor sipResourceAdaptor) {
+
 		this.realDialog = realDialog;
+
 		// WE NEED SOME PLACE WHERE WE CAN STORE WRAPPER AND RETRIEVE IT IN
 		// CONVENIANT WAY
-		realDialog.setApplicationData(this);
+		try {
+			realDialog.setApplicationData(this);
 
-		// TODO: POSSIBLE FORKED DIALOG LEAK...
-		// localID=localAddress.toString()+":"+remoteAddress.toString()+":"+realDialog.getCallId();
-		// localID=localAddress.toString()+":"+remoteAddress.toString()+":"+Math.random()*10000;
-		localID = (realDialog.getLocalParty().toString() + ":" + realDialog.getRemoteParty().toString()
-				+ ":" + realDialog.getCallId()).trim();
-		lastState = realDialog.getState();
-		
-		timerTask = new DialogTimeoutTimerTask(this,sipResourceAdaptor);
-		this.dialogTimer.schedule(timerTask, dialogTimeout);
-							
-		this.sipResourceAdaptor = sipResourceAdaptor;
-		this.activityHandle=new SipActivityHandle(this.getDialogId());
-		//try {
-		//	this.realDialog.terminateOnBye(this.termianteOnBye);
-		//} catch (SipException e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
+			localID = (realDialog.getLocalParty().toString() + ":"
+					+ realDialog.getLocalTag() + ":"
+					+ realDialog.getRemoteParty().toString() + ":"
+					+ realDialog.getRemoteTag() + ":" + realDialog.getCallId())
+					.trim();
+			bothTagsPresent = (realDialog.getLocalTag() != null && realDialog
+					.getRemoteTag() != null);
+			lastState = realDialog.getState();
+
+			timerTask = new DialogTimeoutTimerTask(this, sipResourceAdaptor);
+			this.dialogTimer.schedule(timerTask, dialogTimeout);
+
+			this.sipResourceAdaptor = sipResourceAdaptor;
+			this.activityHandle = new SipActivityHandle(this.getDialogId(),true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public Dialog getRealDialog() {
 		return realDialog;
 	}
-	
+
 	public Address getLocalParty() {
 
 		return realDialog.getLocalParty();
@@ -161,13 +168,6 @@ public class DialogWrapper implements
 	public int getRemoteSequenceNumber() {
 		return realDialog.getRemoteSequenceNumber();
 	}
-
-	/*
-	 * public long getLocalSequenceNumberLong() { return
-	 * realDialog.getLocalSequenceNumberLong(); } public long
-	 * getRemoteSequenceNumberLong() { return
-	 * realDialog.getRemoteSequenceNumberLong(); }
-	 */
 
 	public long getLocalSeqNumber() {
 
@@ -208,7 +208,9 @@ public class DialogWrapper implements
 	public void sendRequest(ClientTransaction clientTransaction)
 			throws TransactionDoesNotExistException, SipException {
 		// unwrap and send request on the real client transaction
-		realDialog.sendRequest((ClientTransaction)((ClientTransactionWrapper) clientTransaction).getRealTransaction());
+		realDialog
+				.sendRequest((ClientTransaction) ((ClientTransactionWrapper) clientTransaction)
+						.getRealTransaction());
 		this.renew();
 	}
 
@@ -231,7 +233,7 @@ public class DialogWrapper implements
 							+ this.getState()
 							+ "\n--------------------------------------");
 		}
-		
+
 		this.fireDialogStateEvent(arg0);
 
 	}
@@ -261,10 +263,6 @@ public class DialogWrapper implements
 
 	public void delete() {
 		realDialog.delete();
-		// warn the RA
-		//sipResourceAdaptor.processDialogTerminated(new DialogTerminatedEventWrapper(
-		//		sipResourceAdaptor.getSipFactoryProvider(), this));
-		// cancel timer
 		this.cancel();
 	}
 
@@ -312,9 +310,9 @@ public class DialogWrapper implements
 	}
 
 	public String toString() {
-		return "[DialogW    LOCALID[" + localID + "] DESC[" + super.toString()
-				+ "] WRAPPED[" + realDialog + "] STATE["
-				+ realDialog.getState() + "] REALID["
+		return "[DialogW   Handler[" + this.activityHandle + "] LOCALID["
+				+ localID + "] DESC[" + super.toString() + "] WRAPPED["
+				+ realDialog + "] STATE[" + realDialog.getState() + "] REALID["
 				+ realDialog.getDialogId() + "]]";
 	}
 
@@ -329,7 +327,9 @@ public class DialogWrapper implements
 		}
 		if (timerTask != null) {
 			timerTask.cancel();
-			DialogTimeoutTimerTask newTimerTask = new DialogTimeoutTimerTask(this,sipResourceAdaptor);
+
+			DialogTimeoutTimerTask newTimerTask = new DialogTimeoutTimerTask(
+					this, sipResourceAdaptor);
 			dialogTimer.schedule(newTimerTask, dialogTimeout);
 			timerTask = newTimerTask;
 		}
@@ -341,21 +341,44 @@ public class DialogWrapper implements
 	 */
 	public boolean cancel() {
 		if (logger.isDebugEnabled()) {
-			logger.debug("Cancelling timeout task for dialog "
+			logger.debug("[CANCEL TIMER]Cancelling timeout task for dialog "
 					+ this.getDialogId());
 		}
+
+		boolean returnValue = false;
+
 		if (timerTask != null) {
-			return timerTask.cancel();
-		}
-		else {
+			returnValue = timerTask.cancel();
+
+			if (returnValue == true && hasBeenCanceled == false) {
+				hasBeenCanceled = true;
+			}
+
+			return returnValue;
+		} else {
+
 			return false;
 		}
+	}
+
+	public boolean hasBeenCanceled() {
+		return hasBeenCanceled;
+	}
+
+	public void setHasTimedOut() {
+		this.hasTimedOut = true;
+
+	}
+
+	public boolean getHasTimedOut() {
+		return this.hasTimedOut;
 	}
 
 	/**
 	 * Checks if state event for dialog should be fired.
 	 * 
-	 * @see org.mobicents.slee.resource.sip.wrappers.DialogWrapper#getKeyFor1_2DialogState(String method, int statusCode)
+	 * @see org.mobicents.slee.resource.sip.wrappers.DialogWrapper#getKeyFor1_2DialogState(String
+	 *      method, int statusCode)
 	 * @param response
 	 * @return
 	 *            <ul>
@@ -365,146 +388,179 @@ public class DialogWrapper implements
 	 */
 	public boolean fireDialogStateEvent(javax.sip.message.Response response) {
 
-		if (logger.isDebugEnabled()) {
-			logger
-					.debug("\n---------------------------------------------\nSTATE:"
-							+ getState()
-							+ "\nOLD:"
-							+ getLastState()
-							+ "\n---------------------------------------------");
-		}
-
-		final String sipMethod = ((CSeqHeader) response.getHeader(CSeqHeader.NAME)).getMethod();
-
-		ComponentKey key = this.getKeyFor1_2DialogState(sipMethod, response);
-		
-		if (key == null) {
+		try {
 			if (logger.isDebugEnabled()) {
 				logger
-						.debug("------------------ NO STATE EVENT HAS TO BE FIRED ----------------");
+						.debug("\n---------------------------------------------\nSTATE:"
+								+ getState()
+								+ "\nOLD:"
+								+ getLastState()
+								+ "\n---------------------------------------------");
 			}
-			return false;// WE DONT HAVE TO FIRE ANYTHING, STATE EVENTS ARE
-			// HANDLED
-			// ELSWHERE OR NONE HAS TO BE FIRED
-		}
-		else {
-			boolean result = false;
-			if (!sipResourceAdaptor.isEventGoingToBereceived(key)) {
+
+			final String sipMethod = ((CSeqHeader) response
+					.getHeader(CSeqHeader.NAME)).getMethod();
+
+			ComponentKey key = this
+					.getKeyFor1_2DialogState(sipMethod, response);
+
+			if (key == null) {
 				if (logger.isDebugEnabled()) {
+					logger
+							.debug("------------------ NO STATE EVENT HAS TO BE FIRED ----------------");
+				}
+
+				return false;// WE DONT HAVE TO FIRE ANYTHING, STATE EVENTS
+				// ARE
+				// HANDLED
+				// ELSWHERE OR NONE HAS TO BE FIRED
+			} else {
+				boolean result = false;
+				if (!sipResourceAdaptor.isEventGoingToBereceived(key)) {
+					 if (logger.isDebugEnabled()) {
 					logger.debug("------------------ STATE EVENT[" + key
 							+ "] FOR DIALOG[" + getDialogId()
 							+ "] WONT BE RECEIVED, DROPING ----------------");
-				}
-			}
-			else {
-				SipToSLEEUtility.displayMessage("Wrapper[" + this.getClass() + "]",
-						"Looking up event", key);
+					 }
+				} else {
+					SipToSLEEUtility.displayMessage("Wrapper["
+							+ this.getClass() + "]", "Looking up event", key);
 
-				int eventID = -1;
-				try {
-					eventID = sipResourceAdaptor.getBootstrapContext().getEventLookupFacility().getEventID(key.getName(), key.getVendor(),
-							key.getVersion());
-				} catch (Exception e2) {
-					logger.error(e2);
-				}
-				if (eventID == -1) {
-					SipToSLEEUtility.displayMessage("Wrapper[" + this.getClass() + "]",
-							"Event is not a a registared event type", key);
-				}
-				else {
-					SipToSLEEUtility.displayDeliveryMessage("Wrapper[" + this.getClass()
-							+ "]", eventID, key, getDialogId());
-
-					// NOW SOME LITTLE CHEAT, THIS WILL BE FIRED INSTEAD ORIGINAL
-					// RequestEvent, it should provide
-					// sbb with conveniant way of
-					// getting what it needs, no more magic, each wrapper extends class it
-					// wrapps.
-					// We just take care of proper initialization
-
-					// CTX IS NULL SINCE RESPONSE CAN BE OUR RESPONSE - IN THIS CASE WE HAVE
-					// ONLY STX, NOT CTX
+					int eventID = -1;
 					try {
-						sipResourceAdaptor.getBootstrapContext().getSleeEndpoint().fireEvent(new SipActivityHandle(this
-								.getDialogId()), new ResponseEventWrapper(this.sipResourceAdaptor.getSipFactoryProvider(),
-										null, this, response), eventID, new javax.slee.Address(AddressPlan.SIP, ((ToHeader) response.getHeader(ToHeader.NAME)).getAddress()
-												.toString()));
-						// WE HAVE TO FIRE DTE IN CASES ITS NOT FIRED
-						if (fireDTE(sipMethod,
-								response.getStatusCode())) {
-							sipResourceAdaptor.processDialogTerminated(new DialogTerminatedEvent(
-									this.sipResourceAdaptor.getSipFactoryProvider(), realDialog));
-						} else {
-							// DO NOTHING
+						eventID = sipResourceAdaptor.getBootstrapContext()
+								.getEventLookupFacility().getEventID(
+										key.getName(), key.getVendor(),
+										key.getVersion());
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+					if (eventID == -1) {
+						SipToSLEEUtility.displayMessage("Wrapper["
+								+ this.getClass() + "]",
+								"Event is not a a registared event type", key);
+					} else {
+						SipToSLEEUtility.displayDeliveryMessage("Wrapper["
+								+ this.getClass() + "]", eventID, key,
+								getDialogId());
+
+						// NOW SOME LITTLE CHEAT, THIS WILL BE FIRED INSTEAD
+						// ORIGINAL
+						// RequestEvent, it should provide
+						// sbb with conveniant way of
+						// getting what it needs, no more magic, each wrapper
+						// extends class it
+						// wrapps.
+						// We just take care of proper initialization
+						
+						if (!bothTagsPresent
+								&& (key.getName().endsWith("SetupEarly") || key
+										.getName().endsWith("SetupConfirmed"))) {
+							bothTagsPresent = (realDialog.getLocalTag() != null && realDialog
+									.getRemoteTag() != null);
+
+							if (bothTagsPresent) {
+								localID = (realDialog.getLocalParty()
+										.toString()
+										+ ":"
+										+ realDialog.getLocalTag()
+										+ ":"
+										+ realDialog.getRemoteParty()
+												.toString()
+										+ ":"
+										+ realDialog.getRemoteTag() + ":" + realDialog
+										.getCallId()).trim();
+								//SipActivityHandle oldSAH = new SipActivityHandle(
+								//		this.getActivityHandle().getID());
+								this.activityHandle.update(localID);
+								//this.sipResourceAdaptor
+								//		.updateActivityReference(oldSAH,
+								//				this.activityHandle, this);
+
+							}
+
 						}
 
-						result = true;
-					} catch (Exception e) {
-						logger.error(e);
-					} 
+						// CTX IS NULL SINCE RESPONSE CAN BE OUR RESPONSE - IN
+						// THIS CASE WE HAVE
+						// ONLY STX, NOT CTX
+						try {
+							sipResourceAdaptor
+									.getBootstrapContext()
+									.getSleeEndpoint()
+									.fireEvent(
+											this.getActivityHandle(),
+											new ResponseEventWrapper(
+													this.sipResourceAdaptor
+															.getSipFactoryProvider(),
+													null, this, response),
+											eventID,
+											new javax.slee.Address(
+													AddressPlan.SIP,
+													((ToHeader) response
+															.getHeader(ToHeader.NAME))
+															.getAddress()
+															.toString()));
+
+							result = true;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
 
 				}
 
+				try {
+					// setup failed and setup timeout end the activity
+					// if (key.getName().equals("javax.sip.dialog.SetupFailed")
+					// || key.getName().equals(
+					// "javax.sip.dialog.SetupTimeout")) {
+					// sipResourceAdaptor.sendActivityEndEvent(this);
+					// }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return result;
 			}
-			
-			// setup failed and setup timeout end the activity
-			if (key.getName().equals("javax.sip.dialog.SetupFailed") || key.getName().equals("javax.sip.dialog.SetupTimeout")) {
-				sipResourceAdaptor.sendActivityEndEvent(realDialog);
-			}
-			
-			return result;
+		} finally {
+			// if(isInStateEventFireSequence() &&
+			// DialogState.TERMINATED.equals(realDialog.getState()))
+			// sipResourceAdaptor.sendActivityEndEvent(this);
+			endStateEventFireSequence();
 		}
-		
-		
+
 	}
 
 	public static void setDialogTimeout(long timeout) {
+
 		dialogTimeout = timeout;
 	}
-
-	// public static void printMe() {
-	// logger.info("========== PRINT =============\n" + sleeEndpoint + "\n"
-	// + proxyProvider + "\n==========================");
-	// }
 
 	/**
 	 * Checks if DTE should be fired - in cases when dialog state is null
 	 * (SetupEarly state) stack doesnt fire DTE!!!
 	 */
 	private boolean fireDTE(String method, int statusCode) {
-		
+
 		/*
-		if (logger.isDebugEnabled()) {
-			logger.debug(" == fireDTE> METHOD:" + method + "  StatusCODE:"
-					+ statusCode + " ==");
-			logger
-					.debug("COND:STATE["
-							+ getState()
-							+ "] Last state["
-							+ lastState
-							+ "] ("
-							+ (lastState == null || lastState.getValue() == DialogState.EARLY
-									.getValue())
-							+ ")("
-							+ (getState() == null || getState()
-									.getValue() == DialogState.EARLY.getValue())
-							+ ") Method[" + method + "] Status[" + statusCode
-							+ "]");
-		}
-
-		if ((lastState == null || lastState.getValue() == DialogState.EARLY
-				.getValue())
-				&& (getState() == null || getState().getValue() == DialogState.EARLY
-						.getValue())
-				&& method.equals(Request.CANCEL)
-				&& statusCode == Response.OK) {
-
-			return true;
-		} else {
-
-			return false;
-		}
-		*/
+		 * if (logger.isDebugEnabled()) { logger.debug(" == fireDTE> METHOD:" +
+		 * method + " StatusCODE:" + statusCode + " =="); logger
+		 * .debug("COND:STATE[" + getState() + "] Last state[" + lastState + "] (" +
+		 * (lastState == null || lastState.getValue() == DialogState.EARLY
+		 * .getValue()) + ")(" + (getState() == null || getState() .getValue() ==
+		 * DialogState.EARLY.getValue()) + ") Method[" + method + "] Status[" +
+		 * statusCode + "]"); }
+		 * 
+		 * if ((lastState == null || lastState.getValue() == DialogState.EARLY
+		 * .getValue()) && (getState() == null || getState().getValue() ==
+		 * DialogState.EARLY .getValue()) && method.equals(Request.CANCEL) &&
+		 * statusCode == Response.OK) {
+		 * 
+		 * return true; } else {
+		 * 
+		 * return false; }
+		 */
 		return false;
 
 	}
@@ -533,44 +589,43 @@ public class DialogWrapper implements
 	 *            <li>SetupFailed
 	 *            </ul>
 	 */
-	public ComponentKey getKeyFor1_2DialogState(String method, javax.sip.message.Response response) {
+	public ComponentKey getKeyFor1_2DialogState(String method,
+			javax.sip.message.Response response) {
 		int statusCode = response.getStatusCode();
 		ComponentKey key = null;
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(" == METHOD:" + method + "  StatusCODE:" + statusCode
-				+ " ==");
+					+ " ==");
 		}
-		if (lastState != getState()) {
 
+		DialogState localLastState = getLastState(); // aka this.lastState
+		if (getLastState() != getState()) {
 			int stateToSwitch = -1;
 
+			// Status code: 99<statusCode<200
 			if (statusCode < 200 && statusCode > 99) {
 				if (getState().getValue() == DialogState._CONFIRMED
 						|| getState().getValue() == DialogState._TERMINATED) {
-					if (logger.isDebugEnabled()) {
-						logger.debug(" == 1 ==");
-					}
 					// This means we got provisional response and ok/bye without
 					// time to process first one
-					if (((ToHeader) response.getHeader(ToHeader.NAME)).getTag() != null && ((FromHeader) response
-							.getHeader(FromHeader.NAME)).getTag() != null)
+					if (((ToHeader) response.getHeader(ToHeader.NAME)).getTag() != null
+							&& ((FromHeader) response
+									.getHeader(FromHeader.NAME)).getTag() != null) {
+
 						stateToSwitch = DialogState._EARLY;
-					else {
+					} else {
+
 						setLastState(getState());
 						stateToSwitch = getState().getValue();
 					}
 				} else {
-					if (logger.isDebugEnabled()) {
-						logger.debug(" == 2 ==");
-					}
+
 					setLastState(getState());
 					stateToSwitch = getState().getValue();
 				}
 			} else {
-				if (logger.isDebugEnabled()) {
-					logger.debug(" == 3 ==");
-				}
+		
 				setLastState(getState());
 				stateToSwitch = getState().getValue();
 			}
@@ -581,79 +636,79 @@ public class DialogWrapper implements
 						SipResourceAdaptor.EVENT_DIALOG_STATE_SetupEarly,
 						SipResourceAdaptor.VENDOR_1_2,
 						SipResourceAdaptor.VERSION_1_2);
-
+			
 				break;
 			case DialogState._CONFIRMED:
 				key = new ComponentKey(
 						SipResourceAdaptor.EVENT_DIALOG_STATE_SetupConfirmed,
 						SipResourceAdaptor.VENDOR_1_2,
 						SipResourceAdaptor.VERSION_1_2);
+		
 				break;
 			case DialogState._TERMINATED:
+				// logger.info("-----> 11");
 				// LAST STATE SHOULDNT BE NULL, BUT JUST IN CASE
 				// method==INVITE is here because if CANCEL is fired as soon as
 				// INVITE -states will
 				// change in Dialog since different thread does that but method
 				// will be invite
 				// IS THIS A BUG ?
-				if ((lastState == null || lastState.getValue() == DialogState._EARLY)
+				if ((((localLastState == null) || (lastState == null)) || ((localLastState
+						.getValue() == DialogState._EARLY) || (lastState
+						.getValue() == DialogState._EARLY)))
 						&& (method.equals(Request.CANCEL) || method
-								.equals(Request.INVITE)))
+								.equals(Request.INVITE))) {
+		
 					key = new ComponentKey(
 							SipResourceAdaptor.EVENT_DIALOG_STATE_SetupFailed,
 							SipResourceAdaptor.VENDOR_1_2,
 							SipResourceAdaptor.VERSION_1_2);
-
+				}
 				break;
 			}
 		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("\n===================\nSTATE KEY:" + key
-					+ "\n===================");
-			// THIS IS THE CASE WHERE DIALGO STATE WAS NULL AND INVITE WAS
-			// CANCELED
-			// THIS CAN HAPPEN WHEN NO PROVISIONAL RESPONSE WITH TAG HAS BEEN
-			// SENT
-			// OR RECEIVED
-			/*
-			 * -------------------------------- HACK
-			 * --------------------------------
-			 */
-			logger
-					.debug("COND:STATE["
-							+ getState()
-							+ "] Last state["
-							+ lastState
-							+ "] ("
-							+ (lastState == null || lastState.getValue() == DialogState.EARLY
-									.getValue())
-							+ ")("
-							+ (getState() == null || getState()
-									.getValue() == DialogState.EARLY.getValue())
-							+ ") Method[" + method + "] Status[" + statusCode
-							+ "]");
+		 if (logger.isDebugEnabled()) {
+		logger.debug("\n===================\nSTATE KEY:" + key
+				+ "\n===================");
+		// THIS IS THE CASE WHERE DIALGO STATE WAS NULL AND INVITE WAS
+		// CANCELED
+		// THIS CAN HAPPEN WHEN NO PROVISIONAL RESPONSE WITH TAG HAS BEEN
+		// SENT
+		// OR RECEIVED
+		/*
+		 * -------------------------------- HACK
+		 * --------------------------------
+		 */
+		logger
+				.debug("COND:STATE["
+						+ getState()
+						+ "] Last state["
+						+ localLastState
+						+ "] ("
+						+ (localLastState == null || localLastState.getValue() == DialogState._EARLY)
+						+ ")("
+						+ (getState() == null || getState().getValue() == DialogState._EARLY)
+						+ ") Method[" + method + "] Status[" + statusCode + "]");
 
-		}
+		 }
 
 		if (key == null
-				&& (lastState == null || lastState.getValue() == DialogState.EARLY
-						.getValue())
-				&& (getState() == null || getState().getValue() == DialogState.EARLY
-						.getValue()) && method.equals(Request.CANCEL)
-				&& statusCode == Response.OK) {
+				&& (localLastState == null || localLastState.getValue() == DialogState._EARLY)
+				&& (getState() == null || getState().getValue() == DialogState._EARLY)
+				&& method.equals(Request.CANCEL) && statusCode == Response.OK) {
 			key = new ComponentKey(
-
-			SipResourceAdaptor.EVENT_DIALOG_STATE_SetupFailed,
+					SipResourceAdaptor.EVENT_DIALOG_STATE_SetupFailed,
 					SipResourceAdaptor.VENDOR_1_2,
 					SipResourceAdaptor.VERSION_1_2);
 
 		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("\n===================\nRETURNING STATE KEY:" + key
-					+ "\n===================");
-		}
+	
+		 if (logger.isDebugEnabled()) {
+		logger.debug("\n===================\nRETURNING STATE KEY:" + key
+				+ "\nFOR:" + method + "\nSTATUS:" + statusCode
+				+ "\n===================");
+		 }
 
 		return key;
 
@@ -661,22 +716,38 @@ public class DialogWrapper implements
 
 	@Override
 	protected void finalize() throws Throwable {
-		
+
 		super.finalize();
-		
-		try{
+
+		try {
 			realDialog.setApplicationData(null);
-			realDialog=null;
+			realDialog = null;
 			timerTask.cancel();
-		}catch(Exception e)
-		{
-			
+		} catch (Exception e) {
+
 		}
 	}
-	
-	public SipActivityHandle getActivityHandle()
-	{
+
+	public SipActivityHandle getActivityHandle() {
 		return this.activityHandle;
 	}
-	
+
+	public synchronized void startStateEventFireSequence() {
+
+		this.pendingStateEvents++;
+
+	}
+
+	public synchronized void endStateEventFireSequence() {
+		this.pendingStateEvents--;
+		if (this.pendingStateEvents < 0)
+			this.pendingStateEvents = 0;
+
+	}
+
+	public synchronized boolean isInStateEventFireSequence() {
+;
+		return this.pendingStateEvents != 0;
+	}
+
 }

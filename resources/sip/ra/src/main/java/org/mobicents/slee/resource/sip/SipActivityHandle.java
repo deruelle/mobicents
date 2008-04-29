@@ -12,6 +12,8 @@
  */
 package org.mobicents.slee.resource.sip;
 
+import java.util.HashMap;
+
 import javax.slee.resource.ActivityHandle;
 
 /**
@@ -20,34 +22,59 @@ import javax.slee.resource.ActivityHandle;
  * 
  * @author F.Moggia
  */
-public class SipActivityHandle implements ActivityHandle, Comparable<SipActivityHandle>{
-    String transactionId;
-    
-    public SipActivityHandle(String transactionId){
-    	this.transactionId = transactionId;
-    }
-    
-    public boolean equals(Object obj) {
-        if (obj != null && obj.getClass() == this.getClass()){
-        	return this.toString().equals(obj.toString());
-        } else return false;
-    }
-    
-    public int hashCode() {
-        return transactionId.hashCode();
-    }
+public class SipActivityHandle implements ActivityHandle,
+		Comparable<SipActivityHandle> {
+	private boolean isDialog = false;
+	String transactionId;
 
-    public String toString() {
-        return this.transactionId;
-    }
+	public SipActivityHandle(String transactionId) {
+		this.transactionId = transactionId.intern();
+	}
+
+	public SipActivityHandle(String transactionId, boolean isDialog) {
+		this.transactionId = transactionId.intern();
+		this.isDialog = true;
+	}
+
+	public boolean equals(Object obj) {
+		if (obj != null && obj.getClass() == this.getClass()) {
+			return this.toString().equals(obj.toString());
+		} else
+			return false;
+	}
+
+	public int hashCode() {
+		if (!this.isDialog)
+			return transactionId.hashCode();
+		else
+			return super.hashCode();
+	}
+
+	public String toString() {
+		return this.transactionId;
+	}
 
 	public int compareTo(SipActivityHandle o) {
-		
-		if(o==null)
+
+		if (o == null)
 			return 1;
 		else
 			return this.transactionId.compareTo(o.transactionId);
-		
-		
+
 	}
+
+	public void update(String updateID) {
+
+		this.transactionId = updateID.intern();
+
+	}
+
+	public String getID() {
+		return transactionId;
+	}
+
+	public boolean isDialogHandle() {
+		return this.isDialog;
+	}
+
 }

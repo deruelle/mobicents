@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.TimerTask;
 
 import javax.sip.InvalidArgumentException;
-import javax.sip.ObjectInUseException;
 import javax.sip.SipException;
 import javax.sip.TransactionState;
 import javax.sip.header.FromHeader;
@@ -22,7 +21,6 @@ import javax.slee.resource.SleeEndpoint;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.container.component.ComponentKey;
-import org.mobicents.slee.resource.EventLookup;
 import org.mobicents.slee.resource.sip.SipActivityHandle;
 import org.mobicents.slee.resource.sip.SipFactoryProvider;
 import org.mobicents.slee.resource.sip.SipResourceAdaptor;
@@ -94,7 +92,7 @@ public class CancelWaitTimerTask extends TimerTask {
 			// WE HAVE TO FIRE 487
 
 			// AND CANCEL TIMEOUT
-			//dialog.cancel();
+			dialog.cancel();
 			try {
 				requestTerminatedResponse = sipFactoryProvider
 						.getMessageFactory().createResponse(
@@ -113,8 +111,9 @@ public class CancelWaitTimerTask extends TimerTask {
 			}
 
 		} //else {
-			String idForSipHandle = inviteTX.getBranchId() + "_"
-					+ Request.INVITE;
+			//String idForSipHandle = inviteTX.getBranchId() + "_"
+			//		+ Request.INVITE;
+			SipActivityHandle SAH=inviteTX.getActivityHandle();
 			Request request = cancelTX.getRequest();
 			javax.slee.Address address;
 			FromHeader fromHeader = (FromHeader) request
@@ -147,13 +146,13 @@ public class CancelWaitTimerTask extends TimerTask {
 				return;
 			}
 			
-			SipToSLEEUtility.displayDeliveryMessage(this.getClass().getName(), eventID, key, idForSipHandle);
+			SipToSLEEUtility.displayDeliveryMessage(this.getClass().getName(), eventID, key, SAH);
 			
 			Object eventObj = cancel;
 
 			try {
 
-				sleeEndpoint.fireEvent(new SipActivityHandle(idForSipHandle),
+				sleeEndpoint.fireEvent(SAH,
 						eventObj, eventID, address);
 				//WHY IT IS NOT TERMINATED BY ITSELF ??
 				//inviteTX.terminate();

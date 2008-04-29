@@ -1,5 +1,7 @@
 package org.mobicents.slee.resource.sip;
 
+import gov.nist.javax.sip.header.CallID;
+
 import java.util.TooManyListenersException;
 
 import javax.sip.ClientTransaction;
@@ -18,8 +20,14 @@ import javax.sip.TransportAlreadySupportedException;
 import javax.sip.header.CallIdHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.sip.wrappers.ClientTransactionWrapper;
 import org.mobicents.slee.resource.sip.wrappers.DialogWrapper;
 import org.mobicents.slee.resource.sip.wrappers.SecretWrapperInterface;
@@ -51,6 +59,8 @@ public class SipProviderProxy implements SipProvider {
 
 	SipResourceAdaptor sipResourceAdaptor;
 
+	TransactionManager txMgr = null;
+
 	public void release() {
 		((SipStackProxy) stack).release();
 		provider = null;
@@ -62,6 +72,7 @@ public class SipProviderProxy implements SipProvider {
 		this.provider = provider;
 		this.sipResourceAdaptor = sipResourceAdaptor;
 		this.stack = new SipStackProxy(provider.getSipStack(), this);
+		this.txMgr = SleeContainer.getTransactionManager();
 	}
 
 	/**
@@ -173,8 +184,7 @@ public class SipProviderProxy implements SipProvider {
 
 		ClientTransactionWrapper CTW = new ClientTransactionWrapper(t,
 				dialogWrapper);
-		SipActivityHandle SAH = new SipActivityHandle(t.getBranchId() + "_"
-				+ request.getMethod());
+		SipActivityHandle SAH = CTW.getActivityHandle();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("\n === CREATED ACTIVITY FOR:\"" + t.getBranchId()
@@ -183,13 +193,43 @@ public class SipProviderProxy implements SipProvider {
 		}
 		sipResourceAdaptor.getActivities().put(SAH, CTW);
 		t.setApplicationData(CTW);
+		boolean begin = false;
 		if (!raCreates)
 			try {
+
+				if (txMgr.getTransaction() == null) {
+					txMgr.begin();
+					begin = true;
+				}
 				sipResourceAdaptor.getSleeEndpoint().activityStartedSuspended(
 						SAH);
 			} catch (Exception e) {
 				logger.error("getNewClientTransaction(" + request + ")", e);
-			} 
+			} finally {
+				if (begin)
+					try {
+						txMgr.commit();
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RollbackException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (HeuristicMixedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (HeuristicRollbackException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SystemException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+
 		return CTW;
 	}
 
@@ -221,8 +261,7 @@ public class SipProviderProxy implements SipProvider {
 		// LEAK BUG
 		// sipResourceAdaptor.getActivities().put(t.getBranchId(), STW);
 
-		SipActivityHandle SAH = new SipActivityHandle(t.getBranchId() + "_"
-				+ request.getMethod());
+		SipActivityHandle SAH = STW.getActivityHandle();
 		sipResourceAdaptor.getActivities().put(SAH, STW);
 		t.setApplicationData(STW);
 		if (logger.isDebugEnabled()) {
@@ -230,13 +269,43 @@ public class SipProviderProxy implements SipProvider {
 			logger.debug("\n=== SAH:\"" + SAH + "\"");
 		}
 
+		boolean begin = false;
 		if (!raCreates)
 			try {
+
+				if (txMgr.getTransaction() == null) {
+					txMgr.begin();
+					begin = true;
+				}
 				sipResourceAdaptor.getSleeEndpoint().activityStartedSuspended(
 						SAH);
 			} catch (Exception e) {
 				logger.error("getNewServerTransaction(" + request + ");", e);
+			} finally {
+				if (begin)
+					try {
+						txMgr.commit();
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RollbackException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (HeuristicMixedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (HeuristicRollbackException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SystemException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
+
 		return STW;
 	}
 
@@ -283,7 +352,7 @@ public class SipProviderProxy implements SipProvider {
 				logger.debug("==================== DIALOG: " + dial + " : "
 						+ dialID + " ===============");
 			}
-			SipActivityHandle SAH = new SipActivityHandle(dialID);
+			SipActivityHandle SAH = DW.getActivityHandle();
 			sipResourceAdaptor.getActivities().put(SAH, DW);
 
 			if (logger.isDebugEnabled()) {
@@ -291,13 +360,43 @@ public class SipProviderProxy implements SipProvider {
 				logger.debug("\n=== SAH:\"" + SAH + "\"");
 			}
 
+			boolean begin = false;
 			if (!raCreates)
 				try {
+
+					if (txMgr.getTransaction() == null) {
+						txMgr.begin();
+						begin = true;
+					}
 					sipResourceAdaptor.getSleeEndpoint()
 							.activityStartedSuspended(SAH);
 				} catch (Exception e) {
 					logger.error("getNewDialog(" + transaction + ")", e);
+				} finally {
+					if (begin)
+						try {
+							txMgr.commit();
+						} catch (SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalStateException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (RollbackException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (HeuristicMixedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (HeuristicRollbackException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SystemException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 				}
+
 			return DW;
 		}
 	}

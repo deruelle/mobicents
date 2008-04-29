@@ -1,11 +1,8 @@
 package org.mobicents.slee.resource.sip.wrappers;
 
 import java.util.TimerTask;
-import java.util.logging.Logger;
 
-import javax.sip.DialogState;
-
-import org.mobicents.slee.resource.sip.SipActivityHandle;
+import org.apache.log4j.Logger;
 import org.mobicents.slee.resource.sip.SipResourceAdaptor;
 
 /**
@@ -20,7 +17,7 @@ public class DialogTimeoutTimerTask extends TimerTask {
 
 	private SipResourceAdaptor sipRA;
 	private DialogWrapper dialog;
-
+	private static Logger logger=Logger.getLogger(DialogTimeoutTimerTask.class);
 	public DialogTimeoutTimerTask(DialogWrapper dialog, SipResourceAdaptor sipResourceAdaptor) {
 		this.dialog = dialog;
 		this.sipRA = sipResourceAdaptor;
@@ -28,17 +25,29 @@ public class DialogTimeoutTimerTask extends TimerTask {
 
 	public void run() {
 		try {
+
 			// if there is still a non terminated dialog that is an ra activity ...
-			if (dialog != null && sipRA != null
-					&& dialog.getState() != DialogState.TERMINATED
-					&& sipRA.getActivities().containsKey(
-							new SipActivityHandle(dialog.getDialogId()))) {
+			//java.lang.NullPointerException  ---> CAUSED BY!!!!!!!!!!!!!!!!-- && DialogState.TERMINATED!=dialog.getState() 
+		    //at org.jboss.mx.loading.RepositoryClassLoader.findClass(RepositoryClassLoader.java:630)
+		    //at java.lang.ClassLoader.loadClass(Unknown Source)
+		    //at org.jboss.mx.loading.RepositoryClassLoader.loadClassImpl(RepositoryClassLoader.java:474)
+		    //at org.jboss.mx.loading.RepositoryClassLoader.loadClass(RepositoryClassLoader.java:415)
+		    //at java.lang.ClassLoader.loadClass(Unknown Source)
+		    //at java.lang.ClassLoader.loadClassInternal(Unknown Source)
+		    //at org.mobicents.slee.resource.sip.wrappers.DialogTimeoutTimerTask.run(DialogTimeoutTimerTask.java:41)
+		    //at java.util.TimerThread.mainLoop(Unknown Source)
+		    //at java.util.TimerThread.run(Unknown Source)
+			//if (dialog != null && sipRA != null	&& DialogState.TERMINATED!=dialog.getState() && sipRA.getActivities().containsKey(dialog.getActivityHandle())) {
+			if (dialog != null && sipRA != null	&& sipRA.getActivities().containsKey(dialog.getActivityHandle())) {
 				// ... terminate it
+				dialog.setHasTimedOut();
 				dialog.delete();
 			}
+			
 		}
 		catch (Exception e) {
 			// don't let exceptions escape, will terminate timer
+			e.printStackTrace();
 		}
 	}
 

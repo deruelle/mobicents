@@ -23,6 +23,9 @@ import javax.slee.UnrecognizedActivityException;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.SleeActivityHandle;
+import org.mobicents.slee.resource.sip.wrappers.ClientTransactionWrapper;
+import org.mobicents.slee.resource.sip.wrappers.DialogWrapper;
+import org.mobicents.slee.resource.sip.wrappers.ServerTransactionWrapper;
 
 import org.mobicents.slee.runtime.ActivityContext;
 import org.mobicents.slee.runtime.ActivityContextFactory;
@@ -96,18 +99,19 @@ public class SipActivityContextInterfaceFactoryImpl implements
 	   //SIGNIFICANT performance hit? --> let me know.
 //	 Activity Handle for activity
 	   SipActivityHandle SAH=null;
-	   if(activity instanceof Transaction)
+	  
+	   
+	   if(activity instanceof ServerTransactionWrapper)
 	   {
-		   Transaction trans=(Transaction)activity;
-		   String id=trans.getBranchId()+"_"+trans.getRequest().getMethod();
-		   //String id=trans.getBranchId();
-		   SAH=new SipActivityHandle(id);
-		   // LEAK BUG
-		   //SAH=new SipActivityHandle(trans.getBranchId());
-	   }else if(activity instanceof Dialog)
+		   SAH=((ServerTransactionWrapper)activity).getActivityHandle();
+	   }
+	   else if(activity instanceof ClientTransactionWrapper)
 	   {
-		   Dialog dial=(Dialog)activity;
-		   SAH=new SipActivityHandle(dial.getDialogId());
+		   SAH=((ClientTransactionWrapper)activity).getActivityHandle();
+	   }
+	   else if(activity instanceof DialogWrapper)
+	   {
+		   SAH=((DialogWrapper)activity).getActivityHandle();
 	   }
 	   else
 		   throw new ClassCastException(" Activity does not implement javax.sip.Dialog or javax.sip.Transaction!!!");
