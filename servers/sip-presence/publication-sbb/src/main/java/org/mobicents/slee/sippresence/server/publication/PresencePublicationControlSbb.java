@@ -6,6 +6,7 @@ import java.text.ParseException;
 import javax.sip.address.URI;
 import javax.sip.header.ContentTypeHeader;
 import javax.sip.header.Header;
+import javax.sip.message.Request;
 import javax.slee.ChildRelation;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -18,6 +19,7 @@ import org.mobicents.slee.sipevent.server.publication.pojo.ComposedPublication;
 import org.mobicents.slee.sipevent.server.publication.pojo.Publication;
 import org.mobicents.slee.sipevent.server.publication.PublicationControlSbb;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbbLocalObject;
+import org.mobicents.slee.sippresence.pojo.pidf.Presence;
 
 /**
  * Publication control sbb for a SIP Presence Server.
@@ -59,6 +61,13 @@ public abstract class PresencePublicationControlSbb extends PublicationControlSb
 		} catch (Exception e) {
 			getLogger().error("failed to notify subscribers for "+composedPublication.getComposedPublicationKey(),e);
 		}
+	}
+	
+	@Override
+	protected boolean authorizePublication(Request request,
+			JAXBElement unmarshalledContent) {
+		// returns true if request uri matches entity inside pidf doc
+		return ((JAXBElement<Presence>)unmarshalledContent).getValue().getEntity().equals(request.getRequestURI().toString());
 	}
 	
 	@Override

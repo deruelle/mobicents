@@ -236,6 +236,15 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 	 */
 	protected abstract boolean isResponsibleForResource(URI uri);
 	
+	/**
+	 * verifies if request is authorized to publish the content
+	 * @param request
+	 * @param unmarshalledContent
+	 * @return
+	 */
+	protected abstract boolean authorizePublication(Request request,
+			JAXBElement unmarshalledContent);
+	
 	// ----------- EVENT HANDLERS
 
 	/**
@@ -440,47 +449,52 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 			publicationStringReader.close();
 			
 			// authorize publication
-			// TODO
+			if (!authorizePublication(event.getRequest(),unmarshalledContent)) {
+				Response response = messageFactory.createResponse(Response.FORBIDDEN, event.getRequest());
+				event.getServerTransaction().sendResponse(response);
+				getLogger().info("Response sent:\n"+response.toString());	
+			}
+			else {
+				// create SIP-ETag
+				String eTag = ETagGenerator.generate(entity, eventPackage);
 
-			// create SIP-ETag
-			String eTag = ETagGenerator.generate(entity, eventPackage);
+				// create publication pojo
+				PublicationKey publicationKey = new PublicationKey(eTag,entity,eventPackage);
+				Publication publication = new Publication(publicationKey,rawContent,contentTypeHeader.getContentType(),contentTypeHeader.getContentSubType());
+				publication.setUnmarshalledContent(unmarshalledContent);
 
-			// create publication pojo
-			PublicationKey publicationKey = new PublicationKey(eTag,entity,eventPackage);
-			Publication publication = new Publication(publicationKey,rawContent,contentTypeHeader.getContentType(),contentTypeHeader.getContentSubType());
-			publication.setUnmarshalledContent(unmarshalledContent);
+				// send 200 ok response	with expires and sipEtag				
+				Response response = messageFactory.createResponse(Response.OK, event.getRequest());
+				response.addHeader(headerFactory.createSIPETagHeader(eTag));
+				response.addHeader(headerFactory.createExpiresHeader(expires));
+				event.getServerTransaction().sendResponse(response);
+				getLogger().info("Response sent:\n"+response.toString());		
 
-			// send 200 ok response	with expires and sipEtag				
-			Response response = messageFactory.createResponse(Response.OK, event.getRequest());
-			response.addHeader(headerFactory.createSIPETagHeader(eTag));
-			response.addHeader(headerFactory.createExpiresHeader(expires));
-			event.getServerTransaction().sendResponse(response);
-			getLogger().info("Response sent:\n"+response.toString());		
-			
-			// set a timer for this publication and store it in the publication pojo
-			// create null aci
-			nullActivity = nullActivityFactory.createNullActivity();
-			ActivityContextInterface aci = nullACIFactory.getActivityContextInterface(nullActivity);
-			// attach to aci
-			aci.attach(sbbContext.getSbbLocalObject());
-			// set timer with 5 secs more
-			TimerOptions options = new TimerOptions();			
-			options.setPersistent(true);
-			options.setPreserveMissed(TimerPreserveMissed.ALL);		
-			TimerID timerID = timerFacility.setTimer(aci, null, System.currentTimeMillis() + ((expires+5) * 1000), 1, 1, options);
-			// bind a name to the aci
-			activityContextNamingfacility.bind(aci,publication.getPublicationKey().toString());
-			publication.setTimerID(timerID);		
-			
-			// compose document			
-			ComposedPublication composedPublication = getUpdatedComposedPublication(entityManager,publication);
-			
-			// persist data
-			entityManager.persist(publication);	
-			entityManager.persist(composedPublication);
-			
-			// notify subscribers			
-			notifySubscribers(composedPublication);			
+				// set a timer for this publication and store it in the publication pojo
+				// create null aci
+				nullActivity = nullActivityFactory.createNullActivity();
+				ActivityContextInterface aci = nullACIFactory.getActivityContextInterface(nullActivity);
+				// attach to aci
+				aci.attach(sbbContext.getSbbLocalObject());
+				// set timer with 5 secs more
+				TimerOptions options = new TimerOptions();			
+				options.setPersistent(true);
+				options.setPreserveMissed(TimerPreserveMissed.ALL);		
+				TimerID timerID = timerFacility.setTimer(aci, null, System.currentTimeMillis() + ((expires+5) * 1000), 1, 1, options);
+				// bind a name to the aci
+				activityContextNamingfacility.bind(aci,publication.getPublicationKey().toString());
+				publication.setTimerID(timerID);		
+
+				// compose document			
+				ComposedPublication composedPublication = getUpdatedComposedPublication(entityManager,publication);
+
+				// persist data
+				entityManager.persist(publication);	
+				entityManager.persist(composedPublication);
+
+				// notify subscribers			
+				notifySubscribers(composedPublication);	
+			}
 		}		
 		catch (Exception e) {
 			getLogger().error("failed to create publication",e);
@@ -499,7 +513,7 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 			}
 		}
 	}
-	
+
 	private ComposedPublication getUpdatedComposedPublication(
 			EntityManager entityManager, Publication publication) throws JAXBException, IOException {
 
@@ -639,42 +653,47 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 			publicationStringReader.close();
 			
 			// authorize publication
-			// TODO
+			if (!authorizePublication(event.getRequest(),unmarshalledContent)) {
+				Response response = messageFactory.createResponse(Response.FORBIDDEN, event.getRequest());
+				event.getServerTransaction().sendResponse(response);
+				getLogger().info("Response sent:\n"+response.toString());	
+			}
+			else {
+				// create new SIP-ETag
+				String eTag = ETagGenerator.generate(publication.getPublicationKey().getEntity(),publication.getPublicationKey().getEventPackage());
+				// create new publication pojo with new key and document
+				PublicationKey newPublicationKey = new PublicationKey(eTag,publication.getPublicationKey().getEntity(),publication.getPublicationKey().getEventPackage());
+				Publication newPublication = new Publication(newPublicationKey,rawContent,contentTypeHeader.getContentType(),contentTypeHeader.getContentSubType());
+				newPublication.setUnmarshalledContent(unmarshalledContent);
 
-			// create new SIP-ETag
-			String eTag = ETagGenerator.generate(publication.getPublicationKey().getEntity(),publication.getPublicationKey().getEventPackage());
-			// create new publication pojo with new key and document
-			PublicationKey newPublicationKey = new PublicationKey(eTag,publication.getPublicationKey().getEntity(),publication.getPublicationKey().getEventPackage());
-			Publication newPublication = new Publication(newPublicationKey,rawContent,contentTypeHeader.getContentType(),contentTypeHeader.getContentSubType());
-			newPublication.setUnmarshalledContent(unmarshalledContent);
-			
-			// send 200 ok response	with expires and sipEtag				
-			Response response = messageFactory.createResponse(Response.OK, event.getRequest());
-			response.addHeader(headerFactory.createSIPETagHeader(eTag));
-			response.addHeader(headerFactory.createExpiresHeader(expires));
-			event.getServerTransaction().sendResponse(response);
-			getLogger().info("Response sent:\n"+response.toString());		
-			// set a timer for this publication and store it in the new publication pojo
-			// get timer aci
-			ActivityContextInterface aci = activityContextNamingfacility.lookup(publication.getPublicationKey().toString());
-			// change aci name
-			activityContextNamingfacility.unbind(publication.getPublicationKey().toString());
-			activityContextNamingfacility.bind(aci,newPublication.getPublicationKey().toString());
-			// set timer with 5 secs more
-			TimerOptions options = new TimerOptions();			
-			options.setPersistent(true);
-			options.setPreserveMissed(TimerPreserveMissed.ALL);		
-			TimerID newTimerID = timerFacility.setTimer(aci, null, System.currentTimeMillis() + ((expires+5) * 1000), 1, 1, options);
-			newPublication.setTimerID(newTimerID);				
-			
-			// compose document			
-			ComposedPublication composedPublication = getUpdatedComposedPublication(entityManager,newPublication);
-						
-			// persist data			
-			entityManager.persist(newPublication);	
-			entityManager.persist(composedPublication);			
-			// notify subscribers
-			notifySubscribers(composedPublication);	
+				// send 200 ok response	with expires and sipEtag				
+				Response response = messageFactory.createResponse(Response.OK, event.getRequest());
+				response.addHeader(headerFactory.createSIPETagHeader(eTag));
+				response.addHeader(headerFactory.createExpiresHeader(expires));
+				event.getServerTransaction().sendResponse(response);
+				getLogger().info("Response sent:\n"+response.toString());		
+				// set a timer for this publication and store it in the new publication pojo
+				// get timer aci
+				ActivityContextInterface aci = activityContextNamingfacility.lookup(publication.getPublicationKey().toString());
+				// change aci name
+				activityContextNamingfacility.unbind(publication.getPublicationKey().toString());
+				activityContextNamingfacility.bind(aci,newPublication.getPublicationKey().toString());
+				// set timer with 5 secs more
+				TimerOptions options = new TimerOptions();			
+				options.setPersistent(true);
+				options.setPreserveMissed(TimerPreserveMissed.ALL);		
+				TimerID newTimerID = timerFacility.setTimer(aci, null, System.currentTimeMillis() + ((expires+5) * 1000), 1, 1, options);
+				newPublication.setTimerID(newTimerID);				
+
+				// compose document			
+				ComposedPublication composedPublication = getUpdatedComposedPublication(entityManager,newPublication);
+
+				// persist data			
+				entityManager.persist(newPublication);	
+				entityManager.persist(composedPublication);			
+				// notify subscribers
+				notifySubscribers(composedPublication);	
+			}
 		}
 		catch (Exception e) {
 			getLogger().error("failed to refresh publication",e);
