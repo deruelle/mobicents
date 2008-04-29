@@ -216,8 +216,8 @@ public class MsLinkImpl implements MsLink {
                 return ConnectionMode.SEND_RECV;
             case HALF_DUPLEX :
                 return end == 0 ?
-                		ConnectionMode.SEND :
-                			ConnectionMode.RECV;
+                		ConnectionMode.SEND_ONLY :
+                			ConnectionMode.RECV_ONLY;
         }
         return null;
     }
