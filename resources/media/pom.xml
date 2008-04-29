@@ -11,7 +11,7 @@
 
 	<properties>
 		<mobicents.server.mms.version>
-			1_0_0_ALPHA3
+			1.0.0.BETA1
 		</mobicents.server.mms.version>
 	</properties>
 

@@ -11,7 +11,7 @@
 	
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-server-media-parent</artifactId>
-	<version>1_0_0_BETA1</version>
+	<version>1.0.0.BETA1</version>
 		
 	<packaging>pom</packaging>
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
