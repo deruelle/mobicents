@@ -21,6 +21,7 @@ import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
 
@@ -57,7 +58,7 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
 
 	
 
-	public void prepare(PushBufferStream mediaStream)
+	public void prepare(Endpoint endpoint, PushBufferStream mediaStream)
 			throws UnsupportedFormatException {
 
 		setState(MediaResourceState.PREPARED);
@@ -344,6 +345,10 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
 
 		BIT_8, BIT_16;
 	}
+
+    public PushBufferStream newBranch(String branchID) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
 	
 	
 }

@@ -1,24 +1,20 @@
 package org.mobicents.media.server.impl.fft;
 
-import java.io.IOException;
 import java.util.Properties;
 
 
-import javax.swing.TransferHandler;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
-import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;
-import org.mobicents.media.server.impl.ann.LocalProxy;
 import org.mobicents.media.server.impl.jmf.dsp.*;
 import org.mobicents.media.server.impl.test.audio.SineGenerator;
 import org.mobicents.media.server.impl.test.audio.SineStream;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.MediaResource;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.ResourceStateListener;
 
 public class DFTSineSource extends BaseResource implements MediaSource {
 
@@ -49,7 +45,7 @@ public class DFTSineSource extends BaseResource implements MediaSource {
 
 	}
 
-	public PushBufferStream prepare() {
+	public PushBufferStream prepare(Endpoint endpoint) {
 
 		return sineSource;
 
@@ -82,5 +78,9 @@ public class DFTSineSource extends BaseResource implements MediaSource {
 		((SineStream) sineSource).stop();
 
 	}
+
+    public void add(String id, PushBufferStream stream) throws UnsupportedFormatException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }
