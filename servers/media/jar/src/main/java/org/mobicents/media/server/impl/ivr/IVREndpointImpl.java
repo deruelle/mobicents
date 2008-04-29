@@ -24,7 +24,6 @@ import org.mobicents.media.server.impl.common.events.EventID;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
-import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceStateListener;
@@ -60,7 +59,6 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     
     public void setRecordDir(String recordDir) {
         this.recordDir = recordDir;
-        logger.info("SET RECORD DIR=" + recordDir);
     }
     
     public String getRecordDir() {
@@ -91,8 +89,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
      */
     private void detectDTMF(String connectionID, String[] params,
             NotificationListener listener) {
-        MediaSink detector = (MediaSink) getResource(
-        		MediaResourceType.DTMF_DETECTOR, connectionID);
+        MediaSink detector = (MediaSink) getResource(MediaResourceType.DTMF_DETECTOR, connectionID);
         if (params != null && params.length > 0 && params[0] != null) {
             ((DTMF) detector).setDtmfMask(params[0]);
         }
@@ -111,7 +108,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
         }
         
         try {
-            detector.prepare(splitter.newBranch("DTMF"));
+            detector.prepare(this, splitter.newBranch("DTMF"));
             detector.start();
             detector.addListener(listener);
         } catch (UnsupportedFormatException e) {
