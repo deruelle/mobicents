@@ -15,8 +15,7 @@
 package org.mobicents.media.server.impl.dtmf;
 
 import java.util.Properties;
-import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.impl.common.dtmf.DTMFType;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
@@ -26,19 +25,40 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  * @author Oleg Kulikov
  */
 public class DTMFResourceLocator {
-    public static MediaResource getDetector(BaseEndpoint endpoint, 
-            Connection connection, Properties config) throws UnknownMediaResourceException {
+    /**
+     * Constructs DTMF detector using specified config.
+     * 
+     * Config has the following meanings:
+     * <p>
+     * detector.type - the type of DTMF detector. Possible values are: 
+     * RFC2833, AUTO, INBAND.
+     * 
+     * detector.threshold - the value greater then 10 which determone the 
+     * sensitivity of the detector. Valid only for INBAND detector type.
+     * 
+     * dtmf.payload the number of RTP payload
+     * interdigits.interval - the minimum value in milliseconds between two digits.
+     * </p>
+     * 
+     * @param config the config used for DTMF detector creation;
+     * @return DTMF detector instance
+     * @throws org.mobicents.media.server.spi.UnknownMediaResourceException
+     */
+    public synchronized static MediaResource getDetector(Properties config) throws UnknownMediaResourceException {        
         if (config == null) {
-            return new InbandDetector();
+            return new Rfc2833Detector();
         }
         
-        String fmt = config.getProperty("dtmf.format");
-        if (fmt.equalsIgnoreCase("rfc2833")) {
-            return new Rfc2833Detector();
-        } else if (fmt.equalsIgnoreCase("inband")) {
-            return new InbandDetector();
+        MediaResource detector = null;
+        
+        DTMFType type = DTMFType.valueOf(config.getProperty("detector.mode"));
+        if (type == DTMFType.INBAND) {
+            detector = new InbandDetector();
         } else {
-            throw new UnknownMediaResourceException(fmt);
+            detector = new Rfc2833Detector();
         }
+        
+        detector.configure(config);
+        return detector;
     }
 }

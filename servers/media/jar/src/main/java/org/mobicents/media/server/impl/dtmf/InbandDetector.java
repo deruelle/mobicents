@@ -23,10 +23,12 @@ import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.goertzel.Filter;
 import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
+import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.impl.common.MediaResourceState;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * 
@@ -51,10 +53,7 @@ public class InbandDetector extends BaseDtmfDetector implements
 
     public InbandDetector() {
         super();
-        //Properties props = new Properties();
         try {
-//            props.load(getClass().getResourceAsStream("dtmf.properties"));
-//            int t = Integer.parseInt(props.getProperty("dtmf.threshold"));
             filter = new Filter();
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,8 +64,7 @@ public class InbandDetector extends BaseDtmfDetector implements
         setState(MediaResourceState.CONFIGURED);
     }
 
-    public void prepare(PushBufferStream stream)
-            throws UnsupportedFormatException {
+    public void prepare(Endpoint endpoint, PushBufferStream stream) throws UnsupportedFormatException {
         stream.setTransferHandler(this);
         if (!stream.getFormat().matches(Codec.LINEAR_AUDIO)) {
             codec = CodecLocator.getCodec(stream.getFormat(),
@@ -232,5 +230,9 @@ public class InbandDetector extends BaseDtmfDetector implements
     public void release() {
         localBuffer = null;
         setState(MediaResourceState.NULL);
+    }
+
+    public PushBufferStream newBranch(String branchID) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 }
