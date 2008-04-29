@@ -15,8 +15,7 @@ import org.mobicents.media.server.impl.Version;
 // TODO Handle option to Start, Stop MediaServer gracefully
 public class MediaServerManagement extends ServiceMBeanSupport implements
 		MediaServerManagementMBean {
-
-	int dtmfThreshold = 500000;
+	
 
 	private ObjectName annTrunkManagementMBean;
 	private ObjectName confEndpointManagementMBean;
@@ -83,14 +82,6 @@ public class MediaServerManagement extends ServiceMBeanSupport implements
 	public void setPRTrunkManagementMBean(ObjectName prTrunkManagementMBean) {
 		this.prTrunkManagementMBean = prTrunkManagementMBean;
 
-	}
-
-	public int getDtmfThreshold(){
-		return this.dtmfThreshold;
-	}
-
-	public void setDtmfThreshold(int threshold){
-		this.dtmfThreshold = threshold;
 	}
 
 }

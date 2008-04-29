@@ -33,8 +33,4 @@ public interface MediaServerManagementMBean extends ServiceMBean {
 	public void setConfEndpointManagementMBean(
 			ObjectName confEndpointManagementMBean);
 
-	public int getDtmfThreshold();
-
-	public void setDtmfThreshold(int threshold);
-
 }
