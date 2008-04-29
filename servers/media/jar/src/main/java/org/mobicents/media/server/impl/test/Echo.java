@@ -18,13 +18,11 @@ import java.util.Properties;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.BaseConnection;
-import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResource;
 import org.mobicents.media.server.impl.common.MediaResourceState;
 import org.mobicents.media.server.impl.jmf.proxy.MediaPushProxy;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -49,7 +47,7 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
         this.addStateListener(this.endpoint.echoStateListener);
     }
     
-    public PushBufferStream prepare() {
+    public PushBufferStream prepare(Endpoint endpoint) {
         this.sourceReady = true;
         if (this.sourceReady && this.sinkReady) {
             setState(MediaResourceState.PREPARED);
@@ -89,12 +87,20 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
         setState(MediaResourceState.PREPARED);
     }
 
-    public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
+    public void prepare(Endpoint endpoint, PushBufferStream mediaStream) throws UnsupportedFormatException {
         mediaProxy.setInputStream(mediaStream);
         this.sinkReady = true;
         if (this.sourceReady && this.sinkReady) {
             setState(MediaResourceState.PREPARED);
         }
+    }
+
+    public PushBufferStream newBranch(String branchID) {
+        throw new UnsupportedOperationException("Not supported.");
+    }
+
+    public void add(String id, PushBufferStream stream) throws UnsupportedFormatException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
