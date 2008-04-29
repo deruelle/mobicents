@@ -27,6 +27,13 @@ public interface MediaSink extends MediaResource {
      * 
      * @param mediaStream the media stream.
      */
-    public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException;
+    public void prepare(Endpoint endpoint, PushBufferStream mediaStream) throws UnsupportedFormatException;
 
+    /**
+     * Spllits media sink.
+     * 
+     * @param branchID the ID of new stream
+     * @return the new copy of the original stream.
+     */
+    public PushBufferStream newBranch(String branchID);
 }

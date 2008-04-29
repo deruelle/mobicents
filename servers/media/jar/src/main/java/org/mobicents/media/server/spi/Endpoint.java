@@ -154,6 +154,22 @@ public interface Endpoint extends Serializable {
      */
     public void configure(MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException ;
     
+    /**
+     * Sets the default configuration to a specified media resource type.
+     * 
+     * @param type the type of media resource.
+     * @param config configuration to be set.
+     */
+    public void setDefaultConfig(MediaResourceType type, Properties config);
+    
+    /**
+     * Gets the default configuration of the specified media resource type
+     * 
+     * @param type the type of the media resource
+     * @return default config.
+     */
+    public Properties getDefaultConfig(MediaResourceType type);
+    
     public void addFormat(int pt, Format fmt);
     public void removeFormat(Format fmt);
     

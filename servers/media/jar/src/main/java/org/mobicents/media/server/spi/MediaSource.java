@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.spi;
 
+import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
 
 /**
@@ -21,5 +22,6 @@ import org.mobicents.media.protocol.PushBufferStream;
  * @author Oleg Kulikov
  */
 public interface MediaSource extends MediaResource {
-    public PushBufferStream prepare();
+    public PushBufferStream prepare(Endpoint endpoint);
+    public void add(String id, PushBufferStream stream) throws UnsupportedFormatException;
 }
