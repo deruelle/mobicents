@@ -26,7 +26,6 @@ import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.jmf.splitter.MediaSplitter;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
 
@@ -96,7 +95,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
         setState(MediaResourceState.CONFIGURED);
     }
 
-    public void prepare(PushBufferStream mediaStream) throws UnsupportedFormatException {
+    public void prepare(Endpoint epn, PushBufferStream mediaStream) throws UnsupportedFormatException {
         splitter.setInputStream(mediaStream);
         Collection<BaseConnection> connections = endpoint.getConnections();
         for (BaseConnection conn : connections) {

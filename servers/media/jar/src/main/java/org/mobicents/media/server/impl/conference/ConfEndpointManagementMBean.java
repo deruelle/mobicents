@@ -16,27 +16,11 @@
 
 package org.mobicents.media.server.impl.conference;
 
-import java.util.Properties;
 import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
-import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public interface ConfEndpointManagementMBean extends EndpointManagementMBean {
-    /**
-     * JMX attribute.
-     *  
-     * @param properties the value of the attribute
-     * @throws org.mobicents.media.server.spi.UnknownMediaResourceException
-     */
-    public void setDTMF(Properties properties) throws UnknownMediaResourceException;
-    /**
-     * JMX attribute.
-     *  
-     * @param properties the value of the attrubute.
-     * @throws org.mobicents.media.server.spi.UnknownMediaResourceException
-     */
-    public Properties getDTMF();
 }

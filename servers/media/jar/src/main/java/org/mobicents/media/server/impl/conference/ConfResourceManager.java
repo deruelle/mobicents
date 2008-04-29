@@ -28,15 +28,16 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  */
 public class ConfResourceManager extends BaseResourceManager {
 
-	@Override
-	public MediaResource getResource(BaseEndpoint endpoint,
-			MediaResourceType type, Connection connection, Properties config)
-			throws UnknownMediaResourceException {
-		if (type == type.AUDIO_SOURCE) {
-			return new LocalMixer(endpoint, connection);
-		} else if (type == type.AUDIO_SINK) {
-			return new LocalSplitter(endpoint, connection);
-		} else
-			return super.getResource(endpoint, type, connection, config);
-	}
+    @Override
+    public MediaResource getResource(BaseEndpoint endpoint,
+            MediaResourceType type, Connection connection, Properties config)
+            throws UnknownMediaResourceException {
+        if (type == type.AUDIO_SOURCE) {
+            return new LocalMixer(endpoint, connection);
+        } else if (type == type.AUDIO_SINK) {
+            return new LocalSplitter(endpoint, connection);
+        } else {
+            return super.getResource(endpoint, type, connection, config);
+        }
+    }
 }
