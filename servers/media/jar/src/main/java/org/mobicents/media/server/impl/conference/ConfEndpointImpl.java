@@ -69,7 +69,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
         try {
             dtmfPackage.subscribe(EventID.DTMF, null, connectionID, listener);
         } catch (Exception e) {
-            //@todo fail
+            logger.error("Detection of DTMF failed", e);
         }
     }
 
