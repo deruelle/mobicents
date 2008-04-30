@@ -11,7 +11,7 @@ Build Instructions
 
 4. Execute "mvn install" in the directory where this README file is located
 
-5. After a successful build the modules are installed in the server at JBOSS_HOME. Individual artifacts are available in the target directory for each module. The ECLIPSE project files are also generated.
+5. After a successful build the modules are installed in the server at JBOSS_HOME. Individual artifacts are available in the target directory for each module.
 
 
 Adding mobicents to Eclipse
