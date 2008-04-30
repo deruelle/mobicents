@@ -1,5 +1,16 @@
 package org.mobicents.media;
 
+/**
+ * Standard JMF class -- see <a href="http://java.sun.com/products/java-media/jmf/2.1.1/apidocs/javax/media/Buffer.html" target="_blank">this class in the JMF Javadoc</a>.
+ * Coding complete.
+ * An observation on the use of Buffer in JMF: it appears that a Buffer is not considered to be immutable as 
+ * it is processed (by a Codec, etc).  JMF will do things like swap the data of two Buffers, or when
+ * input is not consumed, update the offset and length.
+ * The result of this is that care needs to be taken in implementation code to clone buffers if a buffer
+ * is to be used for multiple things (like in a cloned DataSource).
+ * @author Ken Larson
+ *
+ */
 public class Buffer {
 
 
