@@ -61,8 +61,10 @@ public class DTMFPackage implements Serializable, ResourceStateListener {
             if (detector.getState() != MediaResourceState.PREPARED) {
                 try {
                     MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connectionID);
+                    sink.addStateListener(this);
                     if (sink.getState() != MediaResourceState.PREPARED && sink.getState() != MediaResourceState.STARTED) {
                         try {
+                            blocked = true;
                             semaphore.acquire();
                         } catch (InterruptedException e) {
                         }
@@ -77,7 +79,6 @@ public class DTMFPackage implements Serializable, ResourceStateListener {
             }
         }
         
-        System.out.println("==============START DETECTOR");
         detector.start();
         detector.addListener(listener);
     }
