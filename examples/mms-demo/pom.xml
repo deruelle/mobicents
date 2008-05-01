@@ -41,13 +41,6 @@
                                         <copy overwrite="true"
                                               todir="${basedir}/../../release/${release.name}/examples/mms-demo">
                                             <fileset
-                                                dir="${basedir}/slee/events-du/target">
-                                                <include name="**.jar" />
-                                                <include name="*.xml" />
-                                                <include
-                                                    name="*.properties" />
-                                            </fileset>
-                                            <fileset
                                                 dir="${basedir}/slee/services-du/target">
                                                 <include name="**.jar" />
                                                 <include name="*.xml" />
@@ -56,14 +49,8 @@
                                             </fileset>
                                         </copy>
                                         <copy overwrite="true"
-                                              file="${basedir}/web/target/ShoppingDemo.ear"
-                                              todir="${basedir}/../../release/${release.name}/examples/mms-demo" />
-                                        <copy overwrite="true"
-                                              file="${basedir}/slee/events-du/target/build.xml"
-                                              tofile="${basedir}/../../release/${release.name}/examples/mms-demo/events-du-management.xml" />
-                                        <copy overwrite="true"
                                               file="${basedir}/slee/services-du/target/build.xml"
-                                              tofile="${basedir}/../../release/${release.name}/examples/mms-demo/services-du-management.xml" />
+                                              tofile="${basedir}/../../release/${release.name}/examples/mms-demo/du-management.xml" />
                                         <copy overwrite="true"
                                               file="${basedir}/release/build.xml"
                                               todir="${basedir}/../../release/${release.name}/examples/mms-demo" />
