@@ -32,10 +32,11 @@ How to use?
  You should see a nice web application indicating that Mobicents is Running. 
  There is a lot more to the Management Console; look around and see what's in store for you.
 
- To verify that the SIP Servlets container is ready navigate to:
-  http://localhost:8080/click2call
+ To verify that the SIP Servlets container is ready you can check these locations:
+  http://localhost:8080/sip-servlets-management (The Sip Servlets Management console)
+  http://localhost:8080/click2call (Click To Call Demo Application)
  
- This is a pre-deployed sample application named "click2call" and you can learn more about it from examples/click2call/readme.txt
+ Click2Call is a pre-deployed sample application and you can learn more about it from examples/click2call/readme.txt
 
  Note that the SIP Servlets default SIP port is 5080, while the default SIP port for SIP RA is 5060 or 5070 if 5060 is in use.
 
