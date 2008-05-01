@@ -49,8 +49,8 @@
                                             </fileset>
                                         </copy>
                                         <copy overwrite="true"
-											file="${basedir}/web/war/target/mms-demo-audio.war"
-											todir="${basedir}/../../release/${release.name}/examples/mms-demo/mms-demo-audio.war" />
+											file="${basedir}/web/target/mms-demo-audio.war"
+											todir="${basedir}/../../release/${release.name}/examples/mms-demo/" />
                                         <copy overwrite="true"
                                               file="${basedir}/slee/services-du/target/build.xml"
                                               tofile="${basedir}/../../release/${release.name}/examples/mms-demo/du-management.xml" />
