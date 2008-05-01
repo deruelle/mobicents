@@ -142,8 +142,8 @@
 				</copy>  -->
 			</sequential>
 		</for>
-		<mkdir dir="${base.dir}/../examples/click2call"/>
-		<copy overwrite="true" todir="${base.dir}/../examples/click2call">
+		<mkdir dir="${release.dir}/examples/click2call"/>
+		<copy overwrite="true" todir="${release.dir}/examples/click2call">
 			<fileset dir="${base.path}/../servers/sip-servlets/sip-servlets-examples/click-to-call/">
 				<include name="*.txt" />
 			</fileset>
