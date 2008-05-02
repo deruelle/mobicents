@@ -50,6 +50,10 @@
 		<copy failonerror="true" file="jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true"></copy>
 		<copy failonerror="true" file="readme.txt" tofile="${release.dir}/readme.txt" overwrite="true"></copy>
 				
+		
+		<delete dir="${jboss.home}/server/all"/>
+		<delete dir="${jboss.home}/server/minimal"/>
+		
 		<antcall target="build-core"/>
 		<antcall target="build-xdm"/>
 		<antcall target="build-mss"/>
