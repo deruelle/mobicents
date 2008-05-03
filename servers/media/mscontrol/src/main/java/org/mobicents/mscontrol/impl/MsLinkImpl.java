@@ -31,7 +31,6 @@ import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.mscontrol.MsLink;
-import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.media.msc.common.MsLinkMode;
@@ -97,6 +96,7 @@ public class MsLinkImpl implements MsLink {
         new Thread(new DropTx()).start();
     }
     
+    @Override
     public String toString() {
         return "MsLink{" + id + "}";
     }
