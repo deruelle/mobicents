@@ -25,11 +25,6 @@
 			<artifactId>cca-events</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>cca-events</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
 	</dependencies>
 
 </project>
