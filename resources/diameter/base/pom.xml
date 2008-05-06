@@ -9,13 +9,10 @@
 	<parent>
 		<groupId>org.mobicents.resources.diameter</groupId>
 		<artifactId>mobicents-resources-diameter-parent</artifactId>
-		<version>1_0_0_ALPHA3</version>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>base-parent</artifactId>
-	<groupId>org.mobicents.resources.diameter</groupId>
-	<version>1.2.0.BETA3-SNAPSHOT</version>
-
 	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
 
 	<modules>
