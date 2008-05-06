@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="HsqlDbDSReplacer" default="">
+	
+	<property environment="env" />
+
+	<!-- JBOSS AS SERVER CONFIG -->
+	<property name="node" value="default" />
+	
+	<target name="install">
+		<copy overwrite="true" file="${env.JBOSS_HOME}/server/${node}/deploy/hsqldb-ds.xml" toFile="hsqldb-ds.xml.backup"/>
+		<copy overwrite="true" file="hsqldb-ds.xml" todir="${env.JBOSS_HOME}/server/${node}/deploy"/>			
+	</target>
+
+	<target name="uninstall">
+		<copy failOnError="false" overwrite="true" file="hsqldb-ds.xml.backup" toFile="${env.JBOSS_HOME}/server/${node}/deploy/hsqldb-ds.xml"/>				
+		<delete file="hsqldb-ds.xml.backup"/>
+	</target>
+
+</project>

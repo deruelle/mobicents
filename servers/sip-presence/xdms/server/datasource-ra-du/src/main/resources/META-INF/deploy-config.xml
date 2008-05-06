@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy-config>
+	<ra-entity
+		resource-adaptor-id="DataSourceResourceAdaptor#org.openxdm#1.0"
+		entity-name="DataSourceRA">
+		<properties file="" />
+		<ra-link name="DataSourceRA" />
+	</ra-entity>
+</deploy-config>

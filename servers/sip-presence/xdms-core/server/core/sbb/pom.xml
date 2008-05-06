@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>server-core-parent</artifactId>
+		<groupId>org.mobicents.servers.xdm.core</groupId>
+		<version>1.0.0.BETA2</version>
+	</parent>
+		
+	<artifactId>server-core-sbb</artifactId>
+			
+	<dependencies>	
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>server-datasource-ratype</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>server-appusagecache-ratype</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.resources</groupId>
+			<artifactId>http-servlet-ratype</artifactId>
+			<version>${mobicents.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.resources</groupId>
+			<artifactId>http-servlet-events</artifactId>
+			<version>${mobicents.version}</version>
+		</dependency>	
+	</dependencies>
+	
+	<build>
+		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>
+		<resources>
+			<resource>        		<directory>src/main/resources</directory>        		<filtering>true</filtering>      		</resource>
+      	</resources>
+	</build>
+	
+</project>

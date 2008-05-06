@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE resource-adaptor-type-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor Type 1.0//EN" "c">
+
+<resource-adaptor-type-jar>
+ 	<description />
+    <resource-adaptor-type> 
+        <resource-adaptor-type-name>AppUsageCacheResourceAdaptorType</resource-adaptor-type-name>
+        <resource-adaptor-type-vendor>org.openxdm</resource-adaptor-type-vendor>
+        <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+        <resource-adaptor-type-classes>            
+            <resource-adaptor-interface>
+                <resource-adaptor-interface-name>
+                   org.openxdm.xcap.server.slee.resource.appusagecache.AppUsageCacheResourceAdaptorSbbInterface
+                </resource-adaptor-interface-name>
+            </resource-adaptor-interface>
+        </resource-adaptor-type-classes>
+        <event-type-ref>
+            <event-type-name>DummyAppUsageCacheEvent</event-type-name>
+            <event-type-vendor>org.openxdm</event-type-vendor>
+            <event-type-version>1.0</event-type-version>
+        </event-type-ref>        
+    </resource-adaptor-type>
+ </resource-adaptor-type-jar>

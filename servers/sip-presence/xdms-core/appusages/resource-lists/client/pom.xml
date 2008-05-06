@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>appusage-resource-lists-parent</artifactId>
+		<groupId>org.mobicents.servers.xdm.core</groupId>
+		<version>1.0.0.BETA2</version>
+	</parent>
+	
+	<artifactId>appusage-resource-lists-client</artifactId>
+				
+	<dependencies>
+		<dependency>
+			<artifactId>commons</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>${jaxb-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>${jaxb-impl.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>	
+	</build>
+	
+</project>

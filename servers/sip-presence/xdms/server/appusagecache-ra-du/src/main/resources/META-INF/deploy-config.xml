@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy-config>
+	<ra-entity
+		resource-adaptor-id="AppUsageCacheResourceAdaptor#org.openxdm#1.0"
+		entity-name="AppUsageCacheRA">
+		<properties file="" />
+		<ra-link name="AppUsageCacheRA" />
+	</ra-entity>
+</deploy-config>

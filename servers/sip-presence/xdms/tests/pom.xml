@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>xdm-parent</artifactId>
+		<groupId>org.mobicents.servers.xdm</groupId>
+		<version>1.0.0.BETA2</version>
+	</parent>
+	
+	<artifactId>xdm-tests</artifactId>
+	
+	<properties>		
+		<xdm.server.xcap.root>/mobicents</xdm.server.xcap.root>
+		<xdm.server.host>127.0.0.1</xdm.server.host>
+		<xdm.server.port>8080</xdm.server.port>
+	</properties>
+				
+	<dependencies>
+		<dependency>
+			<artifactId>client</artifactId>
+			<groupId>${pom.groupId}.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>server-core-sbb</artifactId>
+			<groupId>${pom.groupId}.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>appusage-resource-lists-server-sbb</artifactId>
+			<groupId>${pom.groupId}.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+  			<artifactId>xercesImpl</artifactId>
+  			<version>${xercesImpl.version}</version>
+  		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>mobicents-xdm-${pom.artifactId}-${pom.version}</finalName>
+		<resources>
+			<resource>        		<directory>src/main/resources</directory>        		<filtering>true</filtering>      		</resource>
+      	</resources>
+      </build>
+	
+</project>

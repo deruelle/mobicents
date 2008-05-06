@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><sbb-jar>
+    
+    <sbb>                
+        <sbb-name>RequestProcessorSbb</sbb-name>
+        <sbb-vendor>org.openxdm</sbb-vendor>
+        <sbb-version>1.0</sbb-version>                
+        <sbb-classes>
+            <sbb-abstract-class reentrant="False">
+                <sbb-abstract-class-name>org.openxdm.xcap.server.slee.RequestProcessorSbb</sbb-abstract-class-name>                       
+	        </sbb-abstract-class>
+	        <sbb-local-interface>
+            	<sbb-local-interface-name>org.openxdm.xcap.server.slee.RequestProcessorSbbLocalObject</sbb-local-interface-name>
+            </sbb-local-interface>	        
+        </sbb-classes>               
+     	
+     	<env-entry>
+        	<env-entry-name>dynamicUserProvisioning</env-entry-name>
+        	<env-entry-type>java.lang.Boolean</env-entry-type>
+        	<env-entry-value>true</env-entry-value>
+        </env-entry>
+                       		
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>DataSourceResourceAdaptorType</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>org.openxdm</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>            
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/openxdm/datasource/sbbrainterface</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>DataSourceRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+       	        
+    </sbb>
+        
+</sbb-jar>
