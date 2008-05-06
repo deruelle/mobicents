@@ -20,6 +20,11 @@
 			<artifactId>jain-slee</artifactId>
 			<version>${jain-slee.version}</version>
 		</dependency>
+    <dependency>
+      <groupId>org.mobicents.core</groupId>
+      <artifactId>mobicents-core-jar</artifactId>
+      <version>${parent.version}</version>
+    </dependency>		
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>base-events</artifactId>

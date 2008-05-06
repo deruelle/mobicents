@@ -125,9 +125,9 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
     {
       logger.info( "Activating Diameter Base RA Entity" );
       
-      initializeNamingContext();
-      
       this.raProvider = new DiameterProviderImpl(this);
+      
+      initializeNamingContext();
       
       activities = new ConcurrentHashMap();
     }

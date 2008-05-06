@@ -29,14 +29,14 @@ public class DiameterActivityContextInterfaceFactoryImpl implements DiameterActi
     logger.info("Diameter Base RA :: DiameterActivityContextInterfaceFactoryImpl :: serviceContainer[" + serviceContainer + "], jndiName[" + jndiName + "].");
     
     this.serviceContainer = serviceContainer;
-    this.jndiName = "java:slee/resources/" + jndiName + "/http-client-ra-acif";
-    factory = serviceContainer.getActivityContextFactory();
+    this.jndiName = "java:slee/resources/" + jndiName + "/diameter-base-ra-acif";
+    this.factory = serviceContainer.getActivityContextFactory();
     this.raEntityName = jndiName;
   }
   
   public String getJndiName()
   {
-    return jndiName;
+    return this.jndiName;
   }
   
   public ActivityContextInterface getActivityContextInterface( DiameterActivity activity ) throws UnrecognizedActivityException

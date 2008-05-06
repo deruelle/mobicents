@@ -22,11 +22,13 @@ package net.java.slee.resource.diameter.base;
 import javax.slee.ActivityContextInterface;
 import javax.slee.UnrecognizedActivityException;
 
+import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
+
 /**
  * Interface for factory implemented by the SLEE to create ACIs.
  *
  * @author Open Cloud
  */
-public interface DiameterActivityContextInterfaceFactory {
+public interface DiameterActivityContextInterfaceFactory extends ResourceAdaptorActivityContextInterfaceFactory {
     ActivityContextInterface getActivityContextInterface(DiameterActivity activity) throws UnrecognizedActivityException;
 }
