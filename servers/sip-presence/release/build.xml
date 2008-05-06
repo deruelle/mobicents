@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Release_build" default="deploy">
+
+  <property name="home" value="${ant.file.Release_build}/../" />
+  
+  <target name="deploy-jmx">
+		<ant antfile="${home}../../resources/http-servlet/build.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/appusagecache-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/datasource-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/core-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/pres-rules-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/resource-lists-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/rls-services-du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/xcap-caps-du-management.xml" target="deploy-jmx" inheritAll="false" />
+  </target>
+
+  <target name="undeploy-jmx">
+		<ant antfile="${home}/xcap-caps-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/rls-services-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/resource-lists-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/pres-rules-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/core-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/datasource-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}/appusagecache-du-management.xml" target="undeploy-jmx" inheritAll="false" />
+		<ant antfile="${home}../../resources/http-servlet/build.xml" target="undeploy-jmx" inheritAll="false" />
+  </target>
+
+  <target name="deploy">
+		<ant antfile="${home}../../resources/http-servlet/build.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/appusagecache-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/datasource-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/core-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/pres-rules-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/resource-lists-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/rls-services-du-management.xml" target="deploy" inheritAll="false" />
+		<ant antfile="${home}/xcap-caps-du-management.xml" target="deploy" inheritAll="false" />
+   </target>
+
+  <target name="undeploy">
+		<ant antfile="${home}/xcap-caps-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/rls-services-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/resource-lists-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/pres-rules-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/core-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/datasource-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}/appusagecache-du-management.xml" target="undeploy" inheritAll="false" />
+		<ant antfile="${home}../../resources/http-servlet/build.xml" target="undeploy" inheritAll="false" />
+  </target>
+
+</project>
