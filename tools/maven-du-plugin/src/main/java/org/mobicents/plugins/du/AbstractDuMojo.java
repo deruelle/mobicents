@@ -30,6 +30,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -69,8 +71,10 @@ import org.mobicents.plugins.du.deployconfig.RAEntity;
 import org.mobicents.plugins.du.servicexml.ServiceIds;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Base class for creating a deployable unit.
@@ -846,36 +850,53 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 								InputStream is = null;
 							    BufferedReader br = null;
 							    String line;
-							    FileWriter fw = null;
-							    File entityFile = null;
+							    StringWriter stringWriter = null;
+							    StringReader stringReader = null;
 								try {
 									URI uri = new URI(systemID);
-									getLog().info("Resolving " + systemID +" locally");
+									getLog().info("Resolving " + systemID +" locally from " +uri);
 									String filename = uri.toString().substring(uri.toString().lastIndexOf("/")+1,uri.toString().length());
 									getLog().info("Resolved filename " + filename);
-									entityFile = new File(filename);
-									fw = new FileWriter(entityFile);
+									stringWriter = new StringWriter();
 									is = getClass().getClassLoader().getResourceAsStream(filename);
 									br = new BufferedReader(new InputStreamReader(is));
 								    while (null != (line = br.readLine())) {
-								    	fw.write(line);
+								    	stringWriter.write(line);
 								    }
-								    if (fw != null) fw.close();
-								      
-									return new InputSource(new FileReader(entityFile));
+								    stringWriter.flush();
+								    if (stringWriter != null) stringWriter.close();
+								    
+								    stringReader = new StringReader(stringWriter.getBuffer().toString());
+
+								    return new InputSource(stringReader);
 										
 								} catch (URISyntaxException e) {
+									e.printStackTrace();
 								} catch (IOException e) {
+									e.printStackTrace();
 								}finally {
 									try {
+									    if (br != null) br.close();
 								    	if (is != null) is.close();
-								    	if(entityFile != null) entityFile.delete();
 								    }catch (IOException e) {
+										e.printStackTrace();
 								    }
 								}
 
 								// If no match, returning null makes process continue normally
 								return null;
+							}
+						});
+						
+						parser.setErrorHandler(new ErrorHandler() {
+							public void warning(SAXParseException exception) throws SAXException {
+								getLog().warn(exception.getMessage());
+							}
+							public void fatalError(SAXParseException exception) throws SAXException {
+								getLog().warn(exception.getMessage());
+							}
+							public void error(SAXParseException exception) throws SAXException {
+								getLog().error(exception.getMessage());
 							}
 						});
 						
