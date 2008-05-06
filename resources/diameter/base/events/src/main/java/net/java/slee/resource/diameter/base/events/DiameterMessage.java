@@ -19,6 +19,7 @@
  */
 package net.java.slee.resource.diameter.base.events;
 
+import net.java.slee.resource.diameter.base.events.avp.AvpList;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
@@ -53,7 +54,7 @@ public interface DiameterMessage extends Cloneable {
      *
      * @return a list of AVPs
      */
-    DiameterAvp[] getAvps();
+    AvpList getAvps();
 
     /**
      * Returns the value of the Session-Id AVP, of type UTF8String.

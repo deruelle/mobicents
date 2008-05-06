@@ -3,9 +3,9 @@
 <!DOCTYPE resource-adaptor-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor 1.0//EN" "http://java.sun.com/dtd/slee-resource-adaptor-jar_1_0.dtd">
 
 <resource-adaptor-jar>
-	<resource-adaptor id="jain-sip_1.1_RA">
-		<description>JDiameter Base Resoruce Adaptor</description>
-		<resource-adaptor-name>JDiameterBaseResourceAdaptor</resource-adaptor-name>
+	<resource-adaptor id="diameter-base_0.8.1_RA">
+		<description>Diameter Base Resource Adaptor</description>
+		<resource-adaptor-name>DiameterBaseResourceAdaptor</resource-adaptor-name>
 		<resource-adaptor-vendor>java.net</resource-adaptor-vendor>
 		<resource-adaptor-version>0.8.1</resource-adaptor-version>
 
@@ -15,13 +15,13 @@
 			<resource-adaptor-type-version>0.8.1</resource-adaptor-type-version>
 		</resource-adaptor-type-ref>
 
-		<!--added oc-resource-adaptor.xml lines here altogether-->
 		<resource-adaptor-classes>
 			<resource-adaptor-class>
-				<resource-adaptor-class-name>java.lang.Object</resource-adaptor-class-name>
+				<resource-adaptor-class-name>
+          net.java.slee.resource.diameter.base.DiameterBaseResourceAdaptor
+        </resource-adaptor-class-name>
 			</resource-adaptor-class>
 		</resource-adaptor-classes>
-
 
 	</resource-adaptor>
 </resource-adaptor-jar>

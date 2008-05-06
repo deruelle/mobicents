@@ -26,7 +26,7 @@ package net.java.slee.resource.diameter.base.events;
  * @author Open Cloud
  */
 public interface DiameterCommand {
-//Is this AVP?
+
     /**
      * Return the code for this command, e.g., 257.
      * @return the code for this command

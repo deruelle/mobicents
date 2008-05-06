@@ -26,9 +26,9 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>base-events</artifactId>
-			<version>${pom.version}</version>
+			<groupId>org.mobicents.core</groupId>
+			<artifactId>mobicents-core-jar</artifactId>
+			<version>${parent.version}</version>
 		</dependency>
 	</dependencies>
 

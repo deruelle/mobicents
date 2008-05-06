@@ -4,6 +4,7 @@ package net.java.slee.resource.diameter.base.events;
 
 import java.util.Iterator;
 
+import net.java.slee.resource.diameter.base.events.avp.AvpList;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
@@ -315,7 +316,7 @@ public interface ReAuthAnswer extends DiameterMessage {
      * in the order they appear in the message.
      * A return value of null implies that no extensions AVPs have been set.
      */
-    DiameterAvp[] getExtensionAvps();
+    AvpList getExtensionAvps();
 
     /**
      * Sets the set of extension AVPs with all the values in the given array.
@@ -329,6 +330,6 @@ public interface ReAuthAnswer extends DiameterMessage {
      *   (i.e. an AVP for which get/set methods already appear in this class)
      * @throws IllegalStateException if setExtensionAvps has already been called
      */
-    void setExtensionAvps(DiameterAvp[] avps) throws AvpNotAllowedException;
+    void setExtensionAvps(AvpList avps) throws AvpNotAllowedException;
 
 }

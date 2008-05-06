@@ -25,7 +25,7 @@ package net.java.slee.resource.diameter.base.events;
  * @author Open Cloud
  */
 public interface DiameterHeader extends Cloneable {
-//Is this AVP?
+
     /**
      * Return true if the request flag is set in this header.
      * @return request flag

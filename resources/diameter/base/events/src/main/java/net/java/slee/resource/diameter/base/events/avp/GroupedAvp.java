@@ -36,7 +36,7 @@ public interface GroupedAvp extends DiameterAvp {
 	 * 
 	 * @param extensions
 	 */
-	public void setExtensionsAvps(DiameterAvp[] extensions);
+	public void setExtensionsAvps(AvpList extensions);
 
 	/**
 	 * Returns the set of extension AVPs. The returned array contains the
@@ -45,7 +45,7 @@ public interface GroupedAvp extends DiameterAvp {
 	 * 
 	 * @return
 	 */
-	public DiameterAvp[] getExtensionsAvps();
+	public AvpList getExtensionsAvps();
 
 	public boolean hasExtensionsAvps();
 	
