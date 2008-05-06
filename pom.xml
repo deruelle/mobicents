@@ -252,20 +252,13 @@
 					</execution>
 				</executions>
    			</plugin>
-			<!-- plugin>
+			<plugin>
 				<groupId>org.andromda.maven.plugins</groupId>
 				<artifactId>andromdapp-maven-plugin</artifactId>
 				<version>3.3</version>
 				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>eclipse</goal>
-						</goals>						
-					</execution>
-				</executions>
-			</plugin -->
+				<executions/>
+			</plugin>
 			<!--  uncomment to process release
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
