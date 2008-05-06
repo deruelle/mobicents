@@ -1,5 +1,0 @@
-All content of the OpenXDM repository is freely available under the terms and conditions of the  GNU 
-LESSER GENERAL PUBLIC LICENSE (LGPL). See terms and conditions of the license at:
-http://www.opensource.org/licenses/lgpl-license.php
-
-
