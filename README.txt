@@ -17,10 +17,14 @@ Build Instructions
 Adding mobicents to Eclipse
 ---------------------------
 
-1. Make sure Eclipse is CLOSED
+1. Fetch all the project dependencies to your local Maven2 repository:
 
-2. Add M2_HOME variable to Eclipse executing:
+mvn andromdapp:eclipse (in your mobicents directory)
+
+2. Make sure Eclipse is CLOSED
+
+3. Add M2_HOME variable to Eclipse executing:
 
 mvn -Declipse.workspace=YOUR_PATH_TO_ECLIPSE_WORKSPACE eclipse:add-maven-repo"
 
-3. Open Eclipse, in the File menu select Import, then "General->Existing Projects into Workspace", next and finally browse to root folder of mobicents, the project should appear, be sure that the option "Copy project into workspace" is not checked before pressing "Finish".
+4. Open Eclipse, in the File menu select Import, then "General->Existing Projects into Workspace", next and finally browse to root folder of mobicents, the project should appear, be sure that the option "Copy project into workspace" is not checked before pressing "Finish".
