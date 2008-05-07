@@ -155,12 +155,14 @@
 	</target>
 	
 	<target name="build-xdm" depends="checks" description="XDM">
+		<!--
 		<exec executable="${mvn.executable}" dir="${base.path}/../servers/xdm">
 			<arg line="clean install -Djboss.home=${jboss.home}"/>
 		</exec>
 		<exec executable="${mvn.executable}" dir="${base.path}/../servers/xdm">
 			<arg line="install -Djboss.home=${jboss.home} -Prelease -Drelease.name=output"/>
 		</exec>
+		-->
 	</target>
 	
 	<target name="build-mss" depends="checks" description="Sip Servlets"><!--
