@@ -14,4 +14,26 @@
 	<artifactId>base-events</artifactId>
 	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
 
+	<dependencies>
+		<dependency>
+			<artifactId>jdiameter-server-api</artifactId>
+			<groupId>jdiameter</groupId>
+			<version>1.5.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>jdiameter-client-api</artifactId>
+			<groupId>jdiameter</groupId>
+			<version>1.5.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>jdiameter-client-impl</artifactId>
+			<groupId>jdiameter</groupId>
+			<version>1.5.1</version>
+		</dependency>
+		<dependency>
+			<artifactId>jdiameter-server-impl</artifactId>
+			<groupId>jdiameter</groupId>
+			<version>1.5.1</version>
+		</dependency>
+	</dependencies>
 </project>
