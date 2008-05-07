@@ -9,16 +9,25 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 public class DiameterMessageImpl implements DiameterMessage
 {
 
+  private DiameterHeader header;
+  private DiameterCommand command;
+  private AvpList avps;
+  
+  public DiameterMessageImpl(DiameterHeader header, DiameterCommand command, AvpList avps)
+  {
+    this.header = header;
+    this.command = command;
+    this.avps = avps;
+  }
+  
   public AvpList getAvps()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return this.avps;
   }
 
   public DiameterCommand getCommand()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return this.command;
   }
 
   public DiameterIdentityAvp getDestinationHost()
@@ -35,8 +44,7 @@ public class DiameterMessageImpl implements DiameterMessage
 
   public DiameterHeader getHeader()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return this.header;
   }
 
   public DiameterIdentityAvp getOriginHost()
@@ -89,8 +97,19 @@ public class DiameterMessageImpl implements DiameterMessage
 
   public Object clone()
   {
-    // TODO Auto-generated method stub
-    return null;
+    try
+    {
+      DiameterMessageImpl newMessage = (DiameterMessageImpl)super.clone();
+      newMessage.header = (DiameterHeader) this.header.clone();
+      newMessage.command = (DiameterCommand)this.command;
+      newMessage.avps = (AvpList)this.avps.clone();
+      
+      return newMessage;
+    }
+    catch ( CloneNotSupportedException cnse )
+    {
+      throw new RuntimeException("Clone not supported.", cnse);
+    }
   }
-  
+
 }

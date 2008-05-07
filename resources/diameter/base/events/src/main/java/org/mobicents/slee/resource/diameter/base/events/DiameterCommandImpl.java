@@ -5,40 +5,51 @@ import net.java.slee.resource.diameter.base.events.DiameterCommand;
 public class DiameterCommandImpl implements DiameterCommand
 {
 
+  private int applicationId;
+  private int code;
+  private String longName;
+  private String shortName;
+  private boolean isProxiable;
+  private boolean isRequest;
+  
   public int getApplicationId()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.applicationId;
   }
 
   public int getCode()
   {
-    // TODO Auto-generated method stub
-    return 0;
+    return this.code;
   }
 
   public String getLongName()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return this.longName;
   }
 
   public String getShortName()
   {
-    // TODO Auto-generated method stub
-    return null;
+    return this.shortName;
   }
 
   public boolean isProxiable()
   {
-    // TODO Auto-generated method stub
-    return false;
+    return this.isProxiable;
   }
 
   public boolean isRequest()
   {
-    // TODO Auto-generated method stub
-    return false;
+    return this.isRequest;
+  }
+  
+  public String toString()
+  {
+    return "DiameterCommand = applicationId[" + applicationId + "], " +
+        "code[" + code + "], " + 
+        "longName[" + longName + "], " + 
+        "shortName[" + shortName + "], " +
+        "isProxiable[" + isProxiable + "], " +
+        "isRequest[" + isRequest + "].";
   }
 
 }

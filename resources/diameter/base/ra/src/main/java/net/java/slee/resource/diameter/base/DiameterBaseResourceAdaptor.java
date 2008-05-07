@@ -129,7 +129,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
       
       initializeNamingContext();
       
-      activities = new ConcurrentHashMap();
+      this.activities = new ConcurrentHashMap();
     }
     catch (Exception e) {
       logger.error( "Error Activating Diameter Base RA Entity", e );
