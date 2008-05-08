@@ -4,75 +4,62 @@ import org.jdiameter.api.Message;
 
 import net.java.slee.resource.diameter.base.events.DiameterCommand;
 
-public class DiameterCommandImpl implements DiameterCommand
-{
+public class DiameterCommandImpl implements DiameterCommand {
 
-	
-	//private long applicationId;
-	//private int code;
-	private String longName, shortName;
-	//private boolean isProxiable, isRequest;
-	private Message msg=null;
-	
-  public DiameterCommandImpl(Message msg, String longName, String shortName) {
-		super();
-		this.msg=msg;
-		//this.applicationId=msg.getApplicationId();
-		//this.code=msg.getCommandCode();
-		this.longName=longName;
-		this.shortName=shortName;
-		//this.isProxiable=msg.isProxiable();
-		//this.isRequest=msg.isRequest();
-	}
+    private int code;
+    private long applicationId;
+    private String shortName = "undefined";
+    private String longName = "undefined";
+    private boolean request, proxiable;
 
-public long getApplicationId()
-  {
-    
-    //return this.applicationId;
-	return msg.getApplicationId();
-  }
+    public DiameterCommandImpl(int code, int applicationId,  boolean request, boolean proxiable) {
+        this.code = code;
+        this.applicationId = applicationId;
+        this.request = request;
+        this.proxiable = proxiable;
+    }
 
-  public int getCode()
-  {
+    public DiameterCommandImpl(int code, long applicationId, String shortName, String longName, boolean request, boolean proxiable) {
+        this.code = code;
+        this.applicationId = applicationId;
+        this.shortName = shortName;
+        this.longName = longName;
+        this.request = request;
+        this.proxiable = proxiable;
+    }
 
-    //return this.code;
-	  return msg.getCommandCode();
-  }
+    public int getCode() {
+        return code;
+    }
 
-  public String getLongName()
-  {
-    
-    return this.longName;
-  }
+    public long getApplicationId() {
+        return applicationId;
+    }
 
-  public String getShortName()
-  {
-   
-    return this.shortName;
-  }
+    public String getShortName() {
+        return shortName;
+    }
 
-  public boolean isProxiable()
-  {
-    
-    //return this.isProxiable;
-	  return msg.isProxiable();
-  }
+    public String getLongName() {
+        return longName;
+    }
 
-  public boolean isRequest()
-  {
-   
-    //return this.isRequest;
-	  return this.msg.isRequest();
-  }
+    public boolean isRequest() {
+        return request;
+    }
+
+    public boolean isProxiable() {
+        return proxiable;
+    }
 
 	public String toString()
   {
-    return "DiameterCommand = applicationId[" + msg.getApplicationId() + "], " +
-        "code[" + msg.getCommandCode() + "], " + 
+    return "DiameterCommand : applicationId[" + getApplicationId() + "], " +
+        "code[" + getCode() + "], " + 
         "longName[" + longName + "], " + 
         "shortName[" + shortName + "], " +
-        "isProxiable[" + msg.isProxiable() + "], " +
-        "isRequest[" + msg.isRequest() + "].";
+        "isProxiable[" + isProxiable() + "], " +
+        "isRequest[" + isRequest() + "]";
   }
 
 }

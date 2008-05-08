@@ -76,25 +76,25 @@ public interface ProxyInfoAvp extends GroupedAvp {
      */
     public void setProxyState(byte[] proxyState);
 
-    /**
-     * Returns the set of extension AVPs. The returned array contains the extension AVPs
-     * in the order they appear in the message.
-     * A return value of null implies that no extensions AVPs have been set.
-     */
-    public AvpList getExtensionAvps();
+    ///**
+    // * Returns the set of extension AVPs. The returned array contains the extension AVPs
+    // * in the order they appear in the message.
+    // * A return value of null implies that no extensions AVPs have been set.
+    // */
+    //public DiameterAvp[] getExtensionAvps();
 
-    /**
-     * Sets the set of extension AVPs with all the values in the given array.
-     * The AVPs will be added to message in the order in which they appear in the array.
-     *
-     * Note: the array must not be altered by the caller following this call, and
-     * getExtensionAvps() is not guaranteed to return the same array instance,
-     * e.g. an "==" check would fail.
-     *
-     * @throws AvpNotAllowedException if an AVP is encountered of a type already known to this class
-     *   (i.e. an AVP for which get/set methods already appear in this class)
-     * @throws IllegalStateException if setExtensionAvps has already been called
-     */
-    public void setExtensionAvps(AvpList avps) throws AvpNotAllowedException;
+    ///**
+    // * Sets the set of extension AVPs with all the values in the given array.
+    // * The AVPs will be added to message in the order in which they appear in the array.
+    // *
+    // * Note: the array must not be altered by the caller following this call, and
+    // * getExtensionAvps() is not guaranteed to return the same array instance,
+    // * e.g. an "==" check would fail.
+    // *
+    // * @throws AvpNotAllowedException if an AVP is encountered of a type already known to this class
+    // *   (i.e. an AVP for which get/set methods already appear in this class)
+    // * @throws IllegalStateException if setExtensionAvps has already been called
+    // */
+    //public void setExtensionAvps(DiameterAvp[]  avps) throws AvpNotAllowedException;
 
 }

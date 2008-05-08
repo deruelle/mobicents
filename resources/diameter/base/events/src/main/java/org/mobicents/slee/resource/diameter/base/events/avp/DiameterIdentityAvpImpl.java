@@ -1,26 +1,29 @@
 package org.mobicents.slee.resource.diameter.base.events.avp;
 
 
-
 import net.java.slee.resource.diameter.base.events.avp.*;
 
-public class DiameterIdentityAvpImpl implements DiameterIdentityAvp {
-
+/**
+ * 
+ * Super project:  mobicents
+ * 12:53:13 2008-05-08	
+ * @author <a href="mailto:bbaranow@redhat.com">baranowb - Bartosz Baranowski </a>
+ */
+public class DiameterIdentityAvpImpl extends DiameterAvpImpl implements DiameterIdentityAvp {
 	
-	private DiameterAvpType type=DiameterAvpType.OCTET_STRING;
-	private String fqdn=null;
-	private int avpCode=-1;
-	private String name="no name";
-	
-	public DiameterIdentityAvpImpl(String fqdn,int avpCode, String name) {
-		super();
-		this.avpCode=avpCode;
-		this.fqdn = fqdn;
-		this.name=name;
+	public DiameterIdentityAvpImpl(int code, long vendorId, int mnd, int prt,
+			byte[] value) {
+		super(code, vendorId, mnd, prt, value);
+		super.type=DiameterAvpType.OCTET_STRING;
+		//FIXME:baranowb; how can we get name?
+		//super.name=NameDecoder.decode(code);
+		
 	}
 
 	public byte[] byteArrayValue() {
-		throw new UnsupportedOperationException ("Diameter Identity AVP of type "+type.toString()+" doesnt allow this operation!!!");
+		//FIXME: baranowb; 1. is this operation allowable, 2. if so should we return opy of array?
+		//throw new UnsupportedOperationException ("Diameter Identity AVP of type "+type.toString()+" doesnt allow this operation!!!");
+		return super.byteArrayValue();
 	}
 
 	public double doubleValue() {
@@ -31,35 +34,6 @@ public class DiameterIdentityAvpImpl implements DiameterIdentityAvp {
 		throw new UnsupportedOperationException("Diameter Identity AVP of type "+type.toString()+" doesnt allow this operation!!!");
 	}
 
-	public int getCode() {
-		
-		return avpCode;
-	}
-
-	public int getMandatoryRule() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public String getName() {
-		
-		return this.name;
-	}
-
-	public int getProtectedRule() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public DiameterAvpType getType() {
-		
-		return this.type;
-	}
-
-	public int getVendorID() {
-		//Eric: This is always 1?
-		return 1;
-	}
 
 	public int intValue() {
 		throw new UnsupportedOperationException("Diameter Identity AVP of type "+type.toString()+" doesnt allow this operation!!!");
@@ -70,13 +44,14 @@ public class DiameterIdentityAvpImpl implements DiameterIdentityAvp {
 	}
 
 	public String stringValue() {
-		return this.fqdn;
+		return super.stringValue();
 	}
 
 	public Object clone()
 	{
-		
-		DiameterIdentityAvpImpl clone=new DiameterIdentityAvpImpl(this.fqdn,this.avpCode,this.name);
+		byte[] b=new byte[super.byteArrayValue().length];
+		System.arraycopy(super.byteArrayValue(), 0, b, 0, b.length);
+		DiameterIdentityAvpImpl clone=new DiameterIdentityAvpImpl(code,vendorId,mnd,prt,b);
 		return clone;
 	}
 }

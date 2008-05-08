@@ -1,246 +1,193 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
+import org.jdiameter.api.Avp;
+import org.jdiameter.api.AvpDataException;
+import org.jdiameter.api.AvpSet;
+import org.jdiameter.api.Message;
+import org.mobicents.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvpImpl;
+
 import net.java.slee.resource.diameter.base.events.CapabilitiesExchangeAnswer;
 import net.java.slee.resource.diameter.base.events.DiameterCommand;
 import net.java.slee.resource.diameter.base.events.DiameterHeader;
 import net.java.slee.resource.diameter.base.events.avp.AddressAvp;
-import net.java.slee.resource.diameter.base.events.avp.AvpList;
+
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
+import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
 import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
 
-public class CapabilitiesExchangeAnswerImpl extends DiameterMessageImpl implements CapabilitiesExchangeAnswer
-{
+public class CapabilitiesExchangeAnswerImpl extends
+		ExtensionDiameterMessageImpl implements CapabilitiesExchangeAnswer {
+
+	public CapabilitiesExchangeAnswerImpl(Message message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
 
 	public String getLongName() {
-		
+
 		return "Capabilities-Exchange-Answer";
 	}
 
 	@Override
 	public String getShortName() {
-		
+
 		return "CEA";
 	}
 
 	public long[] getAcctApplicationIds() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return super.getAvpsAsUInt32(Avp.ACCT_APPLICATION_ID);
+
 	}
 
 	public long[] getAuthApplicationIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getErrorMessage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public AvpList getExtensionAvps() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public FailedAvp[] getFailedAvps() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAvpsAsUInt32(Avp.AUTH_APPLICATION_ID);
 	}
 
 	public long getFirmwareRevision() {
-		// TODO Auto-generated method stub
-		return 0;
+
+		return super.getAvpAsUInt32(Avp.FIRMWARE_REVISION);
 	}
 
 	public AddressAvp[] getHostIpAddresses() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAvpAsAddress(Avp.HOST_IP_ADDRESS);
 	}
 
 	public long[] getInbandSecurityIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getOriginStateId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return super.getAvpsAsUInt32(Avp.INBAND_SECURITY_ID);
 	}
 
 	public String getProductName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public long getResultCode() {
-		// TODO Auto-generated method stub
-		return 0;
+		return super.getAvpAsUtf8(Avp.PRODUCT_NAME);
 	}
 
 	public long[] getSupportedVendorIds() {
-		// TODO Auto-generated method stub
-		return null;
+		return super.getAvpsAsUInt32(Avp.SUPPORTED_VENDOR_ID);
 	}
 
 	public long getVendorId() {
-		// TODO Auto-generated method stub
-		return 0;
+		return super.getAvpAsUInt32(Avp.VENDOR_ID);
 	}
 
 	public VendorSpecificApplicationIdAvp[] getVendorSpecificApplicationIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	public boolean hasErrorMessage() {
-		// TODO Auto-generated method stub
-		return false;
+		AvpSet avps = super.message.getAvps().getAvps(
+				Avp.VENDOR_SPECIFIC_APPLICATION_ID);
+		if (avps == null)
+			return null;
+
+		VendorSpecificApplicationIdAvp[] r = new VendorSpecificApplicationIdAvp[avps
+				.size()];
+		Avp avp = null;
+		for (int i = 0; i < avps.size(); i++) {
+			// FIXME:baranowb ; setting prt to 0
+			avp = avps.getAvpByIndex(i);
+			try {
+				r[i] = new VendorSpecificApplicationIdAvpImpl(
+						Avp.VENDOR_SPECIFIC_APPLICATION_ID, avp.getVendorId(),
+						avp.isMandatory() ? 1 : 0, 0, avp.getRaw());
+			} catch (AvpDataException e) {
+
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return r;
 	}
 
 	public boolean hasFirmwareRevision() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginRealm() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginStateId() {
-		// TODO Auto-generated method stub
-		return false;
+		return getFirmwareRevision() > 0;
 	}
 
 	public boolean hasProductName() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasResultCode() {
-		// TODO Auto-generated method stub
-		return false;
+		return getProductName() != null;
 	}
 
 	public boolean hasVendorId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setAcctApplicationId(long acctApplicationId) {
-		// TODO Auto-generated method stub
-		
+		return getVendorId() > 0;
 	}
 
 	public void setAcctApplicationIds(long[] acctApplicationIds) {
-		// TODO Auto-generated method stub
-		
-	}
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpsAsUInt32(Avp.ACCT_APPLICATION_ID, acctApplicationIds,
+				false, true);
 
-	public void setAuthApplicationId(long authApplicationId) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setAuthApplicationIds(long[] authApplicationIds) {
-		// TODO Auto-generated method stub
-		
-	}
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpsAsUInt32(Avp.AUTH_APPLICATION_ID, authApplicationIds,
+				false, true);
 
-	public void setErrorMessage(String errorMessage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setExtensionAvps(AvpList avps) throws AvpNotAllowedException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setFailedAvp(FailedAvp failedAvp) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setFailedAvps(FailedAvp[] failedAvps) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setFirmwareRevision(long firmwareRevision) {
-		// TODO Auto-generated method stub
-		
+
+		super.setAvpAsUInt32(Avp.FIRMWARE_REVISION, firmwareRevision, false,
+				true);
+
 	}
 
 	public void setHostIpAddress(AddressAvp hostIpAddress) {
-		// TODO Auto-generated method stub
-		
+		super.setAvpAsAddress(Avp.HOST_IP_ADDRESS,
+				new AddressAvp[] { hostIpAddress }, false, true);
+
 	}
 
 	public void setHostIpAddresses(AddressAvp[] hostIpAddresses) {
-		// TODO Auto-generated method stub
-		
+
+		super
+				.setAvpAsAddress(Avp.HOST_IP_ADDRESS, hostIpAddresses, false,
+						true);
 	}
 
 	public void setInbandSecurityId(long inbandSecurityId) {
-		// TODO Auto-generated method stub
-		
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpAsUInt32(Avp.INBAND_SECURITY_ID, inbandSecurityId, false,
+				true);
+
 	}
 
 	public void setInbandSecurityIds(long[] inbandSecurityIds) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	public void setOriginStateId(long originStateId) {
-		// TODO Auto-generated method stub
-		
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpsAsUInt32(Avp.INBAND_SECURITY_ID, inbandSecurityIds, false,
+				true);
 	}
 
 	public void setProductName(String productName) {
-		// TODO Auto-generated method stub
-		
-	}
+		super.setAvpAsUtf8(Avp.PRODUCT_NAME, productName, true, true);
 
-	public void setResultCode(long resultCode) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setSupportedVendorId(long supportedVendorId) {
-		// TODO Auto-generated method stub
-		
+		super.setAvpAsUInt32(Avp.SUPPORTED_VENDOR_ID, supportedVendorId, false,
+				true);
+
 	}
 
 	public void setSupportedVendorIds(long[] supportedVendorIds) {
-		// TODO Auto-generated method stub
-		
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpsAsUInt32(Avp.SUPPORTED_VENDOR_ID, supportedVendorIds,
+				false, true);
 	}
 
 	public void setVendorId(long vendorId) {
-		// TODO Auto-generated method stub
-		
-	}
+		// FIXME: baranowb; setting mandatory to false
+		super.setAvpAsUInt32(Avp.VENDOR_ID, vendorId, false, true);
 
-	public void setVendorSpecificApplicationId(
-			VendorSpecificApplicationIdAvp vendorSpecificApplicationId) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public void setVendorSpecificApplicationIds(
 			VendorSpecificApplicationIdAvp[] vendorSpecificApplicationIds) {
-		// TODO Auto-generated method stub
-		
-	}
 
- 
+		// FIXME: baranowb; not sure if this will work correctly.
+		super.setAvpAsGroup(Avp.VENDOR_SPECIFIC_APPLICATION_ID,
+				vendorSpecificApplicationIds, false, true);
+
+	}
 
 }

@@ -49,4 +49,14 @@ public class DiameterProviderImpl implements DiameterProvider
     return null;
   }
 
+public DiameterIdentityAvp[] getConnectedPeers() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+public DiameterAvpFactory getDiameterAvpFactory() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }

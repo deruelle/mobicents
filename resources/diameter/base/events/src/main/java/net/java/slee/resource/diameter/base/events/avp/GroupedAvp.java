@@ -35,8 +35,9 @@ public interface GroupedAvp extends DiameterAvp {
 	 * array instance, e.g. an "==" check would fail.
 	 * 
 	 * @param extensions
+	 * @throws AvpNotAllowedException 
 	 */
-	public void setExtensionsAvps(AvpList extensions);
+	public void setExtensionAvps(DiameterAvp[] extensions) throws AvpNotAllowedException;
 
 	/**
 	 * Returns the set of extension AVPs. The returned array contains the
@@ -45,8 +46,8 @@ public interface GroupedAvp extends DiameterAvp {
 	 * 
 	 * @return
 	 */
-	public AvpList getExtensionsAvps();
+	public DiameterAvp[] getExtensionAvps();
 
-	public boolean hasExtensionsAvps();
+	public boolean hasExtensionAvps();
 	
 }

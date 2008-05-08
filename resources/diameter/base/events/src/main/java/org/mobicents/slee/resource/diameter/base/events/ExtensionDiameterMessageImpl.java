@@ -1,10 +1,13 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
+import org.jdiameter.api.Message;
+
 import net.java.slee.resource.diameter.base.events.DiameterCommand;
 import net.java.slee.resource.diameter.base.events.DiameterHeader;
 import net.java.slee.resource.diameter.base.events.ExtensionDiameterMessage;
-import net.java.slee.resource.diameter.base.events.avp.AvpList;
+
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
+import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 public class ExtensionDiameterMessageImpl extends DiameterMessageImpl implements ExtensionDiameterMessage
@@ -22,15 +25,18 @@ public class ExtensionDiameterMessageImpl extends DiameterMessageImpl implements
 		return "EM";
 	}
 
-	public AvpList getExtensionAvps() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public ExtensionDiameterMessageImpl(Message message) {
+        super(message);
+    }
 
-	public void setExtensionAvps(AvpList avps) throws AvpNotAllowedException {
-		// TODO Auto-generated method stub
-		
-	}
+    public DiameterAvp[] getExtensionAvps() {
+        return getAvps();
+    }
+
+    public void setExtensionAvps(DiameterAvp[] avps) throws AvpNotAllowedException {
+        for (DiameterAvp a : avps)
+            addAvpAsByteArray(a.getCode(), a.byteArrayValue(), a.getMandatoryRule() == 1);
+    }
 
 	
 

@@ -20,7 +20,8 @@
 package net.java.slee.resource.diameter.base.events;
 
 
-import net.java.slee.resource.diameter.base.events.avp.AvpList;
+
+import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
@@ -55,7 +56,7 @@ public interface DiameterMessage extends Cloneable {
      *
      * @return a list of AVPs
      */
-    AvpList getAvps();
+    DiameterAvp[] getAvps();
 
     /**
      * Returns the value of the Session-Id AVP, of type UTF8String.
@@ -122,4 +123,23 @@ public interface DiameterMessage extends Cloneable {
      * @return a deep copy of this message.
      */
     Object clone();
+    
+    
+    
+    /**
+     * Returns true if the Session-Id AVP is present in the message.
+     */
+    boolean hasSessionId();
+
+    /**
+     * Returns true if the Origin-Host AVP is present in the message.
+     */
+    boolean hasOriginHost();
+
+
+    /**
+     * Returns true if the Origin-Realm AVP is present in the message.
+     */
+    boolean hasOriginRealm();    
+    
 }

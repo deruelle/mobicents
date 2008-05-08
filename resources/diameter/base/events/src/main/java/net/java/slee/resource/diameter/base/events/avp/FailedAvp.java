@@ -61,7 +61,7 @@ public interface FailedAvp extends GroupedAvp {
      * in the order they appear in the message.
      * A return value of null implies that no extensions AVPs have been set.
      */
-    public AvpList getExtensionAvps();
+    public DiameterAvp[] getExtensionAvps();
 
     /**
      * Sets the set of extension AVPs with all the values in the given array.
@@ -75,6 +75,6 @@ public interface FailedAvp extends GroupedAvp {
      *   (i.e. an AVP for which get/set methods already appear in this class)
      * @throws IllegalStateException if setExtensionAvps has already been called
      */
-    public void setExtensionAvps(AvpList avps) throws AvpNotAllowedException;
+    public void setExtensionAvps(DiameterAvp[] avps) throws AvpNotAllowedException;
 
 }

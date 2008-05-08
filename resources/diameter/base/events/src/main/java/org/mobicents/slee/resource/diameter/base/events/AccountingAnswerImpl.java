@@ -2,20 +2,112 @@ package org.mobicents.slee.resource.diameter.base.events;
 
 import java.util.Date;
 
+import org.jdiameter.api.Avp;
+import org.jdiameter.api.Message;
+
 import net.java.slee.resource.diameter.base.events.AccountingAnswer;
 import net.java.slee.resource.diameter.base.events.DiameterCommand;
 import net.java.slee.resource.diameter.base.events.DiameterHeader;
 import net.java.slee.resource.diameter.base.events.avp.AccountingRealtimeRequiredType;
 import net.java.slee.resource.diameter.base.events.avp.AccountingRecordType;
-import net.java.slee.resource.diameter.base.events.avp.AvpList;
+
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
 import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
 
-public class AccountingAnswerImpl extends DiameterMessageImpl implements AccountingAnswer
+public class AccountingAnswerImpl extends ExtensionDiameterMessageImpl implements AccountingAnswer
 {
 
+	
+	public AccountingAnswerImpl(Message message) {
+        super(message);
+    }
+
+    public boolean hasAccountingRecordType() {
+        return message.getAvps().getAvp(Avp.ACC_RECORD_TYPE) != null;
+    }
+
+    public AccountingRecordType getAccountingRecordType() {
+        return AccountingRecordType.fromInt(getAvpAsInt32(Avp.ACC_RECORD_TYPE));
+    }
+
+    public void setAccountingRecordType(AccountingRecordType accountingRecordType) {
+        setAvpAsInt32(Avp.ACC_RECORD_TYPE, accountingRecordType.getValue(), true);
+    }
+
+    public boolean hasAccountingRecordNumber() {
+        return message.getAvps().getAvp(Avp.ACC_RECORD_NUMBER) != null;
+    }
+
+    public long getAccountingRecordNumber() {
+        return getAvpAsUInt32(Avp.ACC_RECORD_NUMBER);
+    }
+
+    public void setAccountingRecordNumber(long accountingRecordNumber) {
+        setAvpAsUInt32(Avp.ACC_RECORD_NUMBER, accountingRecordNumber, true);
+    }
+
+    public boolean hasAccountingSubSessionId() {
+        return message.getAvps().getAvp(Avp.ACC_SUB_SESSION_ID) != null;
+    }
+
+    public long getAccountingSubSessionId() {
+        return getAvpAsUInt32(Avp.ACC_SUB_SESSION_ID);
+    }
+
+    public void setAccountingSubSessionId(long accountingSubSessionId) {
+        setAvpAsUInt32(Avp.ACC_SUB_SESSION_ID, accountingSubSessionId, true);
+    }
+
+    public boolean hasAccountingSessionId() {
+        return false;  // todo unknown
+    }
+
+    public byte[] getAccountingSessionId() {
+        return new byte[0];  // todo unknown
+    }
+
+    public void setAccountingSessionId(byte[] accountingSessionId) {
+        // todo unknown
+    }
+
+    public boolean hasAcctMultiSessionId() {
+        return message.getAvps().getAvp(Avp.ACC_MULTI_SESSION_ID) != null;
+    }
+
+    public String getAcctMultiSessionId() {
+        return getAvpAsUtf8(Avp.ACC_MULTI_SESSION_ID);
+    }
+
+    public void setAcctMultiSessionId(String acctMultiSessionId) {
+        setAvpAsUtf8(Avp.ACC_MULTI_SESSION_ID, acctMultiSessionId, true);
+    }
+
+    public boolean hasAcctInterimInterval() {
+        return message.getAvps().getAvp(Avp.ACCT_INTERIM_INTERVAL) != null;
+    }
+
+    public long getAcctInterimInterval() {
+        return getAvpAsUInt32(Avp.ACCT_INTERIM_INTERVAL);
+    }
+
+    public void setAcctInterimInterval(long acctInterimInterval) {
+        setAvpAsUInt32(Avp.ACCT_INTERIM_INTERVAL, acctInterimInterval, true);
+    }
+
+    public boolean hasAccountingRealtimeRequired() {
+        return message.getAvps().getAvp(Avp.ACCOUNTING_REALTIME_REQUIRED) != null;
+    }
+
+    public AccountingRealtimeRequiredType getAccountingRealtimeRequired() {
+        return AccountingRealtimeRequiredType.fromInt(getAvpAsInt32(Avp.ACCOUNTING_REALTIME_REQUIRED));
+    }
+
+    public void setAccountingRealtimeRequired(AccountingRealtimeRequiredType accountingRealtimeRequired) {
+        setAvpAsInt32(Avp.ACCOUNTING_REALTIME_REQUIRED, accountingRealtimeRequired.getValue(), true);
+    }
+	
 	@Override
 	public String getLongName() {
 		
@@ -28,259 +120,6 @@ public class AccountingAnswerImpl extends DiameterMessageImpl implements Account
 		return "ACA";
 	}
 
-	public AccountingRealtimeRequiredType getAccountingRealtimeRequired() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getAccountingRecordNumber() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public AccountingRecordType getAccountingRecordType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public byte[] getAccountingSessionId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getAccountingSubSessionId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public long getAcctApplicationId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public long getAcctInterimInterval() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public String getAcctMultiSessionId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public DiameterIdentityAvp getErrorReportingHost() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Date getEventTimestamp() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public AvpList getExtensionAvps() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getOriginStateId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public ProxyInfoAvp[] getProxyInfos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getResultCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public String getUserName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public VendorSpecificApplicationIdAvp getVendorSpecificApplicationId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean hasAccountingRealtimeRequired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAccountingRecordNumber() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAccountingRecordType() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAccountingSessionId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAccountingSubSessionId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAcctApplicationId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAcctInterimInterval() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasAcctMultiSessionId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasErrorReportingHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasEventTimestamp() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginRealm() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginStateId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasResultCode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasSessionId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasUserName() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasVendorSpecificApplicationId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setAccountingRealtimeRequired(
-			AccountingRealtimeRequiredType accountingRealtimeRequired) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAccountingRecordNumber(long accountingRecordNumber) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAccountingRecordType(
-			AccountingRecordType accountingRecordType) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAccountingSessionId(byte[] accountingSessionId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAccountingSubSessionId(long accountingSubSessionId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAcctApplicationId(long acctApplicationId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAcctInterimInterval(long acctInterimInterval) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setAcctMultiSessionId(String acctMultiSessionId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setErrorReportingHost(DiameterIdentityAvp errorReportingHost) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setEventTimestamp(Date eventTimestamp) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setExtensionAvps(AvpList avps) throws AvpNotAllowedException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setOriginStateId(long originStateId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setProxyInfo(ProxyInfoAvp proxyInfo) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setProxyInfos(ProxyInfoAvp[] proxyInfos) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setResultCode(long resultCode) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setUserName(String userName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setVendorSpecificApplicationId(
-			VendorSpecificApplicationIdAvp vendorSpecificApplicationId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-  
+	
 
 }
