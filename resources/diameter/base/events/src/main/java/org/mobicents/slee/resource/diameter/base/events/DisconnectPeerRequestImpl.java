@@ -1,5 +1,7 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
+import org.jdiameter.api.Avp;
+import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.Message;
 
 import net.java.slee.resource.diameter.base.events.DiameterCommand;
@@ -29,27 +31,31 @@ public class DisconnectPeerRequestImpl extends DiameterMessageImpl implements Di
 	}
 
 	public DisconnectCauseType getDisconnectCause() {
-		// TODO Auto-generated method stub
+		
+		if(!hasDisconnectCause())
+			return null;
+		Avp avp=super.message.getAvps().getAvp(Avp.DISCONNECT_CAUSE);
+		
+		
+		try {
+			DisconnectCauseType type=DisconnectCauseType.fromInt(avp.getInteger32());
+			return type;
+		} catch (AvpDataException e) {
+			
+			e.printStackTrace();
+		}
+		
 		return null;
+		
 	}
 
 	public boolean hasDisconnectCause() {
-		// TODO Auto-generated method stub
-		return false;
+		return super.message.getAvps().getAvp(Avp.DISCONNECT_CAUSE)!=null;
 	}
 
-	public boolean hasOriginHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginRealm() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	public void setDisconnectCause(DisconnectCauseType disconnectCause) {
-		// TODO Auto-generated method stub
+		super.setAvpAsUInt32(Avp.DISCONNECT_CAUSE, disconnectCause.getValue(), true, true);
 		
 	}
 

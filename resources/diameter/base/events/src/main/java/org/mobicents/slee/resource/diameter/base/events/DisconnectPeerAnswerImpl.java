@@ -29,60 +29,6 @@ public class DisconnectPeerAnswerImpl extends DiameterMessageImpl implements Dis
 		return "DPA";
 	}
 
-	public String getErrorMessage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public FailedAvp[] getFailedAvps() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public long getResultCode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public boolean hasErrorMessage() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginRealm() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasResultCode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setFailedAvp(FailedAvp failedAvp) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setFailedAvps(FailedAvp[] failedAvps) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setResultCode(long resultCode) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
   
 }

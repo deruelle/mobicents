@@ -27,32 +27,6 @@ public class DeviceWatchdogRequestImpl extends DiameterMessageImpl implements De
 		
 		return "DWR";
 	}
-
-	public long getOriginStateId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public boolean hasOriginHost() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginRealm() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean hasOriginStateId() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void setOriginStateId(long originStateId) {
-		// TODO Auto-generated method stub
-		
-	}
-
   
 
 }

@@ -11,25 +11,27 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
 
-public class ErrorAnswerImpl extends ExtensionDiameterMessageImpl implements ErrorAnswer
-{
+public class ErrorAnswerImpl extends ExtensionDiameterMessageImpl implements
+		ErrorAnswer {
 
 	public ErrorAnswerImpl(Message message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ProxyInfoAvp getProxyInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		if(hasProxyInfo())
+			return super.getProxyInfos()[0];
+		else
+			return null;
 	}
 
 	public boolean hasProxyInfo() {
-		// TODO Auto-generated method stub
-		return false;
+		ProxyInfoAvp[] infos = super.getProxyInfos();
+		if (infos != null && infos.length > 0)
+			return true;
+		else
+			return false;
 	}
 
-
-
-  
 }
