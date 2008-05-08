@@ -41,15 +41,8 @@ package net.java.slee.resource.diameter.base.events.avp;
  * @author Open Cloud
  */
 
-public class DiameterIdentityAvp {
+public interface DiameterIdentityAvp extends DiameterAvp{
 
-    public DiameterIdentityAvp(String identity) {
-        this.identity = identity;   // TODO: validate identity is a FQDN
-    }
-
-    public String toString() {
-        return identity;
-    }
-
-    private String identity;
+	//Lets leave this as type safe set for setters, we wont have to worry
+	
 }

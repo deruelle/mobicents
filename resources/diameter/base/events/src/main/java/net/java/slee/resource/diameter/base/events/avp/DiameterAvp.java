@@ -19,6 +19,8 @@
  */
 package net.java.slee.resource.diameter.base.events.avp;
 
+import javax.naming.OperationNotSupportedException;
+
 /**
  * Diameter Attribute Value Pair (AVP).  Applications can use this interface to retrieve the
  * AVP's code, name, type and value.  Concrete implementations of this interface are created via the
@@ -77,7 +79,7 @@ public interface DiameterAvp extends Cloneable {
      * The value of this AVP if the Diameter type can be represented in
      * a Java double value (e.g., Float64, Float32)
      * @return the AVP value as a double
-     * @throws IllegalArgumentException if the AVP does not contain a double equivalent
+     * @throws OperationNotSupportedException if the AVP does not contain a double equivalent
      */
     double doubleValue();
 
@@ -85,7 +87,7 @@ public interface DiameterAvp extends Cloneable {
      * The value of this AVP if the Diameter type can be represented in
      * a Java float value (e.g., Float32)
      * @return the AVP value as a float
-     * @throws IllegalArgumentException if the AVP does not contain a float equivalent
+     * @throws OperationNotSupportedException if the AVP does not contain a float equivalent
      */
     float floatValue();
 
@@ -93,7 +95,7 @@ public interface DiameterAvp extends Cloneable {
      * The value of this AVP if the Diameter type can be represented in
      * a Java int value (e.g., Integer32)
      * @return the AVP value as an int
-     * @throws IllegalArgumentException if the AVP does not contain an int equivalent
+     * @throws OperationNotSupportedException if the AVP does not contain an int equivalent
      */
     int intValue();
 
@@ -101,7 +103,7 @@ public interface DiameterAvp extends Cloneable {
      * The value of this AVP if the Diameter type can be represented in
      * a Java long value (e.g., Integer64, Unsigned32, Integer32)
      * @return the AVP value as a long
-     * @throws IllegalArgumentException if the AVP does not contain a long equivalent
+     * @throws OperationNotSupportedException if the AVP does not contain a long equivalent
      */
     long longValue();
 
@@ -109,7 +111,7 @@ public interface DiameterAvp extends Cloneable {
      * The value of this AVP if the Diameter type is equivalent to a Java String
      * value (e.g., UTF8String)
      * @return the AVP value as a String
-     * @throws IllegalArgumentException if the AVP does not contain a String equivalent
+     * @throws 3588 if the AVP does not contain a String equivalent
      */
     String stringValue();
 

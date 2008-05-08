@@ -1,5 +1,6 @@
 package net.java.slee.resource.diameter.base.events;
 
+
 import net.java.slee.resource.diameter.base.events.avp.AvpList;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;

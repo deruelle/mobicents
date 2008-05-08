@@ -37,7 +37,7 @@ public interface DiameterCommand {
      * Return the application ID for this command, e.g., 0
      * @return the application ID for this command
      */
-    int getApplicationId();
+    long getApplicationId();
 
     /**
      * Return the short name for this command, e.g., "CER".

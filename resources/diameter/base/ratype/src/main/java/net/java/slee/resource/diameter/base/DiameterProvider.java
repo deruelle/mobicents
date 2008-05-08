@@ -24,6 +24,7 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 import java.io.IOException;
 
+
 /**
  * The interface used by an SBB to interact with the Diameter RA.
  *
@@ -38,6 +39,12 @@ public interface DiameterProvider {
      */
     DiameterMessageFactory getDiameterMessageFactory();
 
+    /**
+     * Returns avp factory for base avp types and common types, like UNSIGNED_32 type and similar.
+     * @return
+     */
+    DiameterAvpFactory getDiameterAvpFactory();
+    
     /**
      * Create a new activity to send and receive Diameter messages.
      * @return a DiameterActivity
@@ -66,4 +73,10 @@ public interface DiameterProvider {
      * @return connected peer count
      */
     int getPeerCount();
+    /**
+     * Returns array containing identities of connected peers 
+     * FIXME: baranowb; - should it be InetAddres, Port pair?
+     * @return
+     */
+    DiameterIdentityAvp[] getConnectedPeers();
 }

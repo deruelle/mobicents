@@ -7,175 +7,90 @@ import net.java.slee.resource.diameter.base.events.avp.AvpList;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
 
-public class DeviceWatchdogAnswerImpl implements DeviceWatchdogAnswer
+public class DeviceWatchdogAnswerImpl extends DiameterMessageImpl implements DeviceWatchdogAnswer
 {
 
-  public String getErrorMessage()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	@Override
+	public String getLongName() {
+		
+		return "Device-Watchdog-Answer";
+	}
 
-  public FailedAvp[] getFailedAvps()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	@Override
+	public String getShortName() {
 
-  public DiameterIdentityAvp getOriginHost()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
+		return "DWA";
+	}
 
-  public DiameterIdentityAvp getOriginRealm()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	public String getErrorMessage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-  public long getOriginStateId()
-  {
-    // TODO Auto-generated method stub
-    return 0;
-  }
+	public FailedAvp[] getFailedAvps() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-  public long getResultCode()
-  {
-    // TODO Auto-generated method stub
-    return 0;
-  }
+	public long getOriginStateId() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-  public boolean hasErrorMessage()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public long getResultCode() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-  public boolean hasOriginHost()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public boolean hasErrorMessage() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  public boolean hasOriginRealm()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public boolean hasOriginHost() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  public boolean hasOriginStateId()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public boolean hasOriginRealm() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  public boolean hasResultCode()
-  {
-    // TODO Auto-generated method stub
-    return false;
-  }
+	public boolean hasOriginStateId() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  public void setErrorMessage( String errorMessage )
-  {
-    // TODO Auto-generated method stub
+	public boolean hasResultCode() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-  }
+	public void setErrorMessage(String errorMessage) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  public void setFailedAvp( FailedAvp failedAvp )
-  {
-    // TODO Auto-generated method stub
+	public void setFailedAvp(FailedAvp failedAvp) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  }
+	public void setFailedAvps(FailedAvp[] failedAvps) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  public void setFailedAvps( FailedAvp[] failedAvps )
-  {
-    // TODO Auto-generated method stub
+	public void setOriginStateId(long originStateId) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  }
+	public void setResultCode(long resultCode) {
+		// TODO Auto-generated method stub
+		
+	}
 
-  public void setOriginHost( DiameterIdentityAvp originHost )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public void setOriginRealm( DiameterIdentityAvp originRealm )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public void setOriginStateId( long originStateId )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public void setResultCode( long resultCode )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public AvpList getAvps()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public DiameterCommand getCommand()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public DiameterIdentityAvp getDestinationHost()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public DiameterIdentityAvp getDestinationRealm()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public DiameterHeader getHeader()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public String getSessionId()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  public void setDestinationHost( DiameterIdentityAvp destinationHost )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public void setDestinationRealm( DiameterIdentityAvp destinationRealm )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public void setSessionId( String sessionId )
-  {
-    // TODO Auto-generated method stub
-
-  }
-
-  public Object clone()
-  {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
+  
 }

@@ -21,7 +21,7 @@ package net.java.slee.resource.diameter.base.events.avp;
 
 
 
-import java.util.Iterator;
+
 
 
 /**

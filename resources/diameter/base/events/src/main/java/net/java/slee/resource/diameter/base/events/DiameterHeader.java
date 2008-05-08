@@ -54,19 +54,19 @@ public interface DiameterHeader extends Cloneable {
      * Return application ID from this Diameter header.
      * @return the application ID
      */
-    int getApplicationId();
+    long getApplicationId();
 
     /**
      * Return Hop-by-Hop ID from this Diameter header.
      * @return the hop-by-hop id
      */
-    int getHopByHopId();
+    long getHopByHopId();
 
     /**
      * Return End-to-End ID from this Diameter header.
      * @return the end-to-end id
      */
-    int getEndToEndId();
+    long getEndToEndId();
 
     /**
      * Return the Diameter version ID from this Diameter header.

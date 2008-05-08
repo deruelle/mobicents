@@ -1,113 +1,70 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
+import org.jdiameter.api.Message;
+
 import net.java.slee.resource.diameter.base.events.DiameterHeader;
 
-public class DiameterHeaderImpl implements DiameterHeader, Cloneable
-{
+public class DiameterHeaderImpl implements DiameterHeader {
 
-  private short version;
-  
-  private boolean isRequest;
-  private boolean isProxiable;
-  private boolean isError;
-  private boolean isPotentiallyRetransmitted;
-  
-  private int messageLength;
-  private int commandCode;
-  private int applicationId;
-  private int hopByHopId;
-  private int endToEndId;
-  
-  public DiameterHeaderImpl(short version, short commandFlags, int messageLength, int commandCode, int applicationId, int hopByHopId, int endToEndId)
-  {
-    this.version = version;
+	private Message msg = null;
 
-    this.isRequest = (commandFlags & 0x80) == 1;
-    this.isProxiable = (commandFlags & 0x40) == 1;
-    this.isError = (commandFlags & 0x20) == 1;
-    this.isPotentiallyRetransmitted = (commandFlags & 0x10) == 1;
-    
-    this.messageLength = messageLength;
-    this.commandCode = commandCode;
-    this.applicationId = applicationId;
-    this.hopByHopId = hopByHopId;
-    this.endToEndId = endToEndId;
-  }
-  
-  public short getVersion()
-  {
-    return this.version;
-  }
+	public DiameterHeaderImpl(Message msg) {
+		super();
+		this.msg = msg;
+	}
 
-  public boolean isRequest()
-  {
-    return isRequest;
-  }
+	public long getApplicationId() {
 
-  public boolean isProxiable()
-  {
-    return isProxiable;
-  }
+		return msg.getApplicationId();
+	}
 
-  public boolean isError()
-  {
-    return this.isError;
-  }
+	public int getCommandCode() {
 
-  public boolean isPotentiallyRetransmitted()
-  {
-    return isPotentiallyRetransmitted;
-  }
+		return msg.getCommandCode();
+	}
 
-  public int getMessageLength()
-  {
-    return this.messageLength;
-  }
+	public long getEndToEndId() {
 
-  public int getCommandCode()
-  {
-    return this.commandCode;
-  }
+		return msg.getEndToEndIdentifier();
+	}
 
-  public int getApplicationId()
-  {
-    return this.applicationId;
-  }
+	public long getHopByHopId() {
 
-  public int getHopByHopId()
-  {
-    return this.hopByHopId;
-  }
+		return msg.getHopByHopIdentifier();
+	}
 
-  public int getEndToEndId()
-  {
-    return this.endToEndId;
-  }
+	public int getMessageLength() {
+		// TODO
+		return 0;
+	}
 
-  public Object clone()
-  {
-    try
-    {
-      return super.clone();
-    }
-    catch (CloneNotSupportedException cnse)
-    {
-      throw new RuntimeException("Clone not supported.", cnse);
-    }
-  }
-  
-  public String toString()
-  {
-    return "DiameterHeader = version[" + version + "], " +
-        "isRequest[" + isRequest + "], " +
-        "isProxiable[" + isProxiable + "], " +
-        "isError[" + isError + "], " +
-        "isPotentiallyRetransmitted[" + isPotentiallyRetransmitted + "], " +
-        "messageLength[" + messageLength + "], " +
-        "commandCode[" + commandCode + "], " +
-        "applicationId[" + applicationId + "], " +
-        "hopByHopId[" + hopByHopId + "], " + 
-        "endToEndId[" + endToEndId + "].";
-  }
-  
+	public short getVersion() {
+
+		return msg.getVersion();
+	}
+
+	public boolean isError() {
+
+		return msg.isError();
+	}
+
+	public boolean isPotentiallyRetransmitted() {
+		// FIXME
+		return msg.isReTransmitted();
+	}
+
+	public boolean isProxiable() {
+
+		return msg.isProxiable();
+	}
+
+	public boolean isRequest() {
+
+		return msg.isRequest();
+	}
+
+	public Object clone() {
+		DiameterHeaderImpl clone = new DiameterHeaderImpl(msg);
+		return clone;
+	}
 }
