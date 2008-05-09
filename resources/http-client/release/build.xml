@@ -3,7 +3,7 @@
 
   <property name="home" value="${ant.file.Release_build}/../" />
 
-  <property name="deploy.dir" value="${home}../../@JBOSS_VERSION@/server/@JBOSS_NODE@/deploy/" />
+  <property name="jboss.home" value="${home}../../@JBOSS_VERSION@/" />
   
   <target name="deploy-jmx">
     <ant antfile="${home}/du-management.xml" target="deploy-jmx" inheritAll="false" />
@@ -15,13 +15,13 @@
 
   <target name="deploy">
     <ant antfile="${home}/du-management.xml" target="deploy" inheritAll="false">
-      <property name="jboss.deploy" value="${deploy.dir}" />
+      <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
   <target name="undeploy">
     <ant antfile="${home}/du-management.xml" target="undeploy" inheritAll="false">
-      <property name="jboss.deploy" value="${deploy.dir}" />
+      <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
