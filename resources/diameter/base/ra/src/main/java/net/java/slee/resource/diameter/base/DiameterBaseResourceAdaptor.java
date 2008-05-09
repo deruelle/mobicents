@@ -30,9 +30,8 @@ import org.apache.log4j.Logger;
 import org.jdiameter.api.Answer;
 import org.jdiameter.api.ApplicationId;
 import org.jdiameter.api.Configuration;
-import org.jdiameter.api.IllegalStateException;
 import org.jdiameter.api.InternalException;
-import org.jdiameter.api.NetWork;
+import org.jdiameter.api.Network;
 import org.jdiameter.api.NetworkReqListener;
 import org.jdiameter.api.Request;
 import org.jdiameter.api.Session;
@@ -293,11 +292,11 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
     
     try
     {
-      NetWork network = stack.unwrap(NetWork.class);
+      Network network = stack.unwrap(Network.class);
       
-      for (ApplicationId appId : stack.getMetaData().getLocalPeerInfo().getCommonApplications())
+      for (ApplicationId appId : stack.getMetaData().getLocalPeer().getCommonApplications())
       {
-        network.remNetworkReqListener(appId);
+        network.removeNetworkReqListener(appId);
       }
     }
     catch (InternalException e)
@@ -616,10 +615,10 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
 
       this.stack.init( config );
       
-      NetWork network = stack.unwrap(NetWork.class);
+      Network network = stack.unwrap(Network.class);
       
-      for (ApplicationId appId : stack.getMetaData().getLocalPeerInfo().getCommonApplications())
-          network.addNetworkReqListener(appId, this);
+      for (ApplicationId appId : stack.getMetaData().getLocalPeer().getCommonApplications())
+          network.addNetworkReqListener(this, appId);
       
       this.stack.start();
     }
@@ -652,9 +651,9 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
   /**
    * RA Entry Point
    */
-  public Answer processInitialRequest( Session session, Request request )
+  public Answer processRequest( Request request )
   {
-    DiameterActivityHandle handle = createSessionHandle(session);
+    DiameterActivityHandle handle = createActivityHandle(request);
     
     fireEvent(handle, events.get(request.getCommandCode()) + "Request", request, null);
     
@@ -663,27 +662,29 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
   
   /**
    * Create the Diameter Activity Handle for an activity
-   * @param activity the Activity object to create the handle from
-   * @return a DiameterActivityHandle for the provided activity object
+   * @param request the Request object to create the activity handle from
+   * @return a DiameterActivityHandle for the provided request
    */
-  private DiameterActivityHandle createSessionHandle(Session activity) {
-    try {
-        logger.info("Creating activity context.");
-        DiameterActivityHandle activityHandle = new DiameterActivityHandle(activity.getSessionId());
-        
-        // FIXME alexandre: Create real activity here
-        activities.put(activityHandle, this.raProvider.createActivity());
-        
-        sleeEndpoint.activityStarted( activityHandle );
-        
-        logger.info("Activity started [" + activityHandle + "]");
-        
-        return activityHandle;
+  private DiameterActivityHandle createActivityHandle(Request request)
+  {
+    try
+    {
+      logger.info("Creating activity context.");
+      DiameterActivityHandle activityHandle = new DiameterActivityHandle(request.getSessionId());
+      
+      // FIXME alexandre: Create real activity here
+      activities.put(activityHandle, this.raProvider.createActivity());
+      
+      sleeEndpoint.activityStarted( activityHandle );
+      
+      logger.info("Activity started [" + activityHandle + "]");
+      
+      return activityHandle;
     }
     catch (Exception e)
     {
-        logger.error( "Error creating activity", e);
-        throw new RuntimeException("Error creating activity", e);
+      logger.error( "Error creating activity", e);
+      throw new RuntimeException("Error creating activity", e);
     }
   }
   
