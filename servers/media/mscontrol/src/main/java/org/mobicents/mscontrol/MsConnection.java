@@ -23,6 +23,14 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface MsConnection extends Serializable {
+	
+	
+	/**
+	 * Retrieves the MsConnection ID, basicaly a UUID
+	 * @return
+	 */
+	public String getId();
+	
     /**
      * Retrieves the MsSession that is associated with this MsConnection. 
      * This MsSession reference remains valid throughout the lifetime of the 

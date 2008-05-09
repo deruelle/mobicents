@@ -75,6 +75,10 @@ public class MsConnectionImpl implements MsConnection {
         listeners.addAll(session.provider.connectionListeners);
     }
     
+    public String getId(){
+    	return this.id;
+    }
+    
     /**
      * (Non Java-doc).
      *
