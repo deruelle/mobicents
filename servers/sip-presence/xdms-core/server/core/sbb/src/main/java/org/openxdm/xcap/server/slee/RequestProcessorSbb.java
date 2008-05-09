@@ -64,6 +64,7 @@ import org.openxdm.xcap.server.result.CreatedWriteResult;
 import org.openxdm.xcap.server.result.OKWriteResult;
 import org.openxdm.xcap.server.result.ReadResult;
 import org.openxdm.xcap.server.result.WriteResult;
+import org.openxdm.xcap.server.slee.resource.appusagecache.AppUsageCacheResourceAdaptorSbbInterface;
 import org.openxdm.xcap.server.slee.resource.datasource.DataSourceSbbInterface;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -81,6 +82,7 @@ public abstract class RequestProcessorSbb implements
 
 	private static Logger logger = Logger.getLogger(RequestProcessorSbb.class);
 
+	private AppUsageCacheResourceAdaptorSbbInterface appUsageCache;
 	private DataSourceSbbInterface dataSourceSbbInterface = null;
 
 	/**
@@ -120,6 +122,8 @@ public abstract class RequestProcessorSbb implements
 		this.sbbContext = context;
 		try {
 			myEnv = (Context) new InitialContext().lookup("java:comp/env");
+			appUsageCache = (AppUsageCacheResourceAdaptorSbbInterface) myEnv
+			.lookup("slee/resources/openxdm/appusagecache/sbbrainterface");
 			dataSourceSbbInterface = (DataSourceSbbInterface) myEnv
 					.lookup("slee/resources/openxdm/datasource/sbbrainterface");
 			dynamicUserProvisioning = ((Boolean) myEnv
@@ -188,11 +192,15 @@ public abstract class RequestProcessorSbb implements
 		return sbbContext;
 	}
 
+	// APPUSAGE CACHE ITERACTION
+	
+	
+	
 	// SERVICE LOGIC
 	// #############################################################
 
 	public WriteResult delete(ResourceSelector resourceSelector,
-			ETagValidator eTagValidator, AppUsage appUsage, String xcapRoot)
+			ETagValidator eTagValidator, String xcapRoot)
 			throws NotFoundException, InternalServerErrorException,
 			BadRequestException, CannotDeleteConflictException,
 			PreconditionFailedException, MethodNotAllowedException,
@@ -201,20 +209,28 @@ public abstract class RequestProcessorSbb implements
 			ConstraintFailureConflictException {
 
 		logAsInfo("delete(resourceSelector=" + resourceSelector
-				+ ",eTagValidator=" + eTagValidator + ",appUsage="
-				+ appUsage.getAUID() + ",xcapRoot=" + xcapRoot + ")");
+				+ ",eTagValidator=" + eTagValidator 
+				+ ",xcapRoot=" + xcapRoot + ")");
 
 		WriteResult result = new OKWriteResult();
 		DocumentSelector documentSelector = null;
 		NodeSelector nodeSelector = null;
 		AttributeSelector attributeSelector = null;
 		Map<String, String> namespaces = null;
+		AppUsage appUsage = null;
 
 		try {
 			// parse document parent String
 			documentSelector = Parser.parseDocumentSelector(resourceSelector
 					.getDocumentSelector());
-
+			// get app usage from cache
+			appUsage = appUsageCache.borrow(documentSelector.getAUID());
+			if(appUsage == null) {
+				// throw exception
+				if (isLogDebugEnabled())
+					logAsDebug("appusage not found");
+				throw new NotFoundException();
+			}
 			// get document
 			org.openxdm.xcap.common.datasource.Document document = dataSourceSbbInterface
 					.getDocument(documentSelector);
@@ -496,7 +512,6 @@ public abstract class RequestProcessorSbb implements
 							throw new NotFoundException();
 						}
 					}
-
 				}
 
 				if (isLogDebugEnabled())
@@ -546,22 +561,39 @@ public abstract class RequestProcessorSbb implements
 			if (isLogDebugEnabled())
 				logAsDebug("error parsing uri, returning not found");
 			throw new NotFoundException();
+		} catch (InterruptedException e) {
+			String msg = "failed to borrow app usage object from cache";
+			logAsError(msg, e);
+			throw new InternalServerErrorException(msg);
+		}
+		finally {
+			if (appUsage != null) {
+				appUsageCache.release(appUsage);
+			}
 		}
 
 	}
 
-	public ReadResult get(ResourceSelector resourceSelector, AppUsage appUsage)
+	public ReadResult get(ResourceSelector resourceSelector)
 			throws NotFoundException, InternalServerErrorException,
 			BadRequestException {
 
-		logAsInfo("get(resourceSelector=" + resourceSelector + ",appUsage="
-				+ appUsage.getAUID() + ")");
+		logAsInfo("get(resourceSelector=" + resourceSelector + ")");
 
+		AppUsage appUsage = null;
 		try {
 			// parse document parent String
 			DocumentSelector documentSelector = Parser
 					.parseDocumentSelector(resourceSelector
 							.getDocumentSelector());
+			// get app usage from cache
+			appUsage = appUsageCache.borrow(documentSelector.getAUID());
+			if(appUsage == null) {
+				// throw exception
+				if (isLogDebugEnabled())
+					logAsDebug("appusage not found");
+				throw new NotFoundException();
+			}
 			// get document
 			org.openxdm.xcap.common.datasource.Document document = dataSourceSbbInterface
 					.getDocument(documentSelector);
@@ -703,7 +735,16 @@ public abstract class RequestProcessorSbb implements
 			logAsError("unable to transform dom element to text.", e);
 			throw new InternalServerErrorException(e.getMessage());
 		}
-
+		catch (InterruptedException e) {
+			String msg = "failed to borrow app usage object from cache";
+			logAsError(msg, e);
+			throw new InternalServerErrorException(msg);
+		}
+		finally {
+			if (appUsage != null) {
+				appUsageCache.release(appUsage);
+			}
+		}
 	}
 
 	private NamespaceBindings getNamespaceBindings(Node element,
@@ -757,14 +798,14 @@ public abstract class RequestProcessorSbb implements
 
 	public WriteResult put(ResourceSelector resourceSelector, String mimetype,
 			InputStream contentStream, ETagValidator eTagValidator,
-			AppUsage appUsage, String xcapRoot) throws ConflictException,
+			String xcapRoot) throws ConflictException,
 			MethodNotAllowedException, UnsupportedMediaTypeException,
 			InternalServerErrorException, PreconditionFailedException,
 			BadRequestException {
 
 		logAsInfo("put(resourceSelector=" + resourceSelector + ",mimetype="
-				+ mimetype + ",eTagValidator=" + eTagValidator + ",appUsage="
-				+ appUsage.getAUID() + ",xcapRoot=" + xcapRoot + ")");
+				+ mimetype + ",eTagValidator=" + eTagValidator 
+				+ ",xcapRoot=" + xcapRoot + ")");
 
 		WriteResult result = null;
 		DocumentSelector documentSelector = null;
@@ -775,6 +816,7 @@ public abstract class RequestProcessorSbb implements
 		String attributeValue = null;
 		String newElementAsString = null;
 		Element newElement = null;
+		AppUsage appUsage = null;
 		
 		try {
 
@@ -782,6 +824,15 @@ public abstract class RequestProcessorSbb implements
 			documentSelector = Parser.parseDocumentSelector(resourceSelector
 					.getDocumentSelector());
 
+			// get app usage from cache
+			appUsage = appUsageCache.borrow(documentSelector.getAUID());
+			if(appUsage == null) {
+				// throw exception
+				if (isLogDebugEnabled())
+					logAsDebug("appusage not found");
+				throw new NoParentConflictException(xcapRoot);
+			}
+			
 			if (dynamicUserProvisioning) {
 				// creates user if does not exist
 				String[] appUsageCollections = dataSourceSbbInterface
@@ -1363,6 +1414,15 @@ public abstract class RequestProcessorSbb implements
 					documentSelector != null ? documentSelector
 							.getDocumentParent() : e.getValidParent(),
 					dataSourceSbbInterface));
+		} catch (InterruptedException e) {
+			String msg = "failed to borrow app usage object from cache";
+			logAsError(msg, e);
+			throw new InternalServerErrorException(msg);
+		}
+		finally {
+			if (appUsage != null) {
+				appUsageCache.release(appUsage);
+			}
 		}
 	}
 

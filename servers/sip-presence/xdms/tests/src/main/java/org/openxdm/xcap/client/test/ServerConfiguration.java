@@ -20,12 +20,15 @@ public class ServerConfiguration {
 		ServerConfiguration serverConfiguration = new ServerConfiguration();
 		try {
 			properties.load(serverConfiguration.getClass().getResourceAsStream("configuration.properties"));
-		} catch (IOException e) {
-			// ignore
+			SERVER_HOST = getServerHost();
+			SERVER_PORT = getServerPort();
+			SERVER_XCAP_ROOT = getServerXcapRoot();
+		} catch (Exception e) {
+			SERVER_HOST = "127.0.0.1";
+			SERVER_PORT = 8080;
+			SERVER_XCAP_ROOT = "/mobicents";
 		}
-		SERVER_HOST = getServerHost();
-		SERVER_PORT = getServerPort();
-		SERVER_XCAP_ROOT = getServerXcapRoot();
+		
 	}
 	
 	private static String getServerHost() {
@@ -47,7 +50,7 @@ public class ServerConfiguration {
 	}
 
 	private static String getServerXcapRoot() {
-		return properties.getProperty("SERVER_XCAP_ROOT", "xcap");
+		return properties.getProperty("SERVER_XCAP_ROOT", "/mobicents");
 	}
 
 	public static XCAPClient getXCAPClientInstance() throws InterruptedException {

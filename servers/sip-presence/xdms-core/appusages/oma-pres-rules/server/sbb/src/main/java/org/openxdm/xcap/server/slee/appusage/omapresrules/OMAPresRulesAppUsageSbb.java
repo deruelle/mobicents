@@ -28,6 +28,10 @@ public abstract class OMAPresRulesAppUsageSbb extends AbstractAppUsageSbb {
 
 	public AppUsageFactory getAppUsageFactory() throws InternalServerErrorException {
 
+		if(getLogger().isDebugEnabled()) {
+			getLogger().debug("getAppUsageFactory()");
+		}
+		
 		AppUsageFactory appUsageFactory = null;
 
 		try {

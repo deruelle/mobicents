@@ -28,8 +28,10 @@ public abstract class RLSServicesAppUsageSbb extends AbstractAppUsageSbb {
 
 	public AppUsageFactory getAppUsageFactory() throws InternalServerErrorException {
 
-		getLogger().info("getAppUsageFactory()");
-
+		if(getLogger().isDebugEnabled()) {
+			getLogger().debug("getAppUsageFactory()");
+		}
+		
 		AppUsageFactory appUsageFactory = null;
 
 		try {

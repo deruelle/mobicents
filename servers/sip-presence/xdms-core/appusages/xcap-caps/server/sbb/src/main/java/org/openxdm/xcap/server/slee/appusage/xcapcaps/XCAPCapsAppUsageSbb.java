@@ -31,77 +31,13 @@ public abstract class XCAPCapsAppUsageSbb extends AbstractAppUsageSbb {
 	public Logger getLogger() {
 		return logger;
 	}
-
-	private void replyToEventNotHandled(HttpServletRequestEvent event) {
-		try {
-		if(event.getRequest().getMethod().equalsIgnoreCase("DELETE") || event.getRequest().getMethod().equalsIgnoreCase("GET")) {
-				event.getResponse().sendError(404);
-			}
-			else if(event.getRequest().getMethod().equalsIgnoreCase("PUT")) {
-				NoParentConflictException e = new NoParentConflictException(ServerConfiguration.XCAP_ROOT);
-				e.setSchemeAndAuthorityURI(ServerConfiguration.SCHEME_AND_AUTHORITY_URI);
-					// add query string if exists
-					if (event.getRequest().getQueryString() != null) {
-						e.setQueryComponent(event.getRequest().getQueryString());
-					}
-					if (logger.isDebugEnabled()) logger.debug("no parent conflict exception, replying "+e.getResponseStatus());
-					event.getResponse().setStatus(e.getResponseStatus());
-					PrintWriter writer = event.getResponse().getWriter();
-					writer.print(e.getResponseContent());
-					writer.close();
-			}
-		}
-		catch (Exception e) {
-			logger.error("unable to reply to event that no service will handle",e);
-		}
-	}
-	
-	/**
-	 * This is a special app usage, since it will also handle requests here for non existent app usages
-	 */
-	public InitialEventSelector initialEventSelector(InitialEventSelector ies) {
-		if (ies.getEvent() instanceof HttpServletRequestEvent) {
-			// check auid from address
-			String addressString = ies.getAddress().getAddressString();
-			// strip sugar piece from http servlet ra
-			int auidOffset = "/mobicents/".length();
-			if (addressString.length() > auidOffset) {
-				addressString = addressString.substring(auidOffset);
-				int nextSlash = addressString.indexOf('/');
-				if(nextSlash < 1) {
-					replyToEventNotHandled((HttpServletRequestEvent) ies.getEvent());
-				}
-				else {
-					addressString = addressString.substring(0,nextSlash);
-					if (addressString.equals(getAUID())) {
-						return ies;
-					} else {
-						try {
-							if (!getDataSource().containsAppUsage(addressString)) {
-								replyToEventNotHandled((HttpServletRequestEvent) ies.getEvent());
-							}
-						} catch (InternalServerErrorException e) {
-							logger.error("failed to check if app usage exists",e);
-						}
-					}
-				}
-			}
-			else {
-				replyToEventNotHandled((HttpServletRequestEvent) ies.getEvent());
-			}
-		}
-		else {
-			logger.warn("unexpected event class in initial event selector");
-		}
-		ies.setInitialEvent(false);
-		return ies;
-		
-	}
 	
 	public AppUsageFactory getAppUsageFactory() throws InternalServerErrorException {
 
-		getLogger().info("getAppUsageFactory()");
-
+		if(getLogger().isDebugEnabled()) {
+			getLogger().debug("getAppUsageFactory()");
+		}
+		
 		AppUsageFactory appUsageFactory = null;
 
 		try {

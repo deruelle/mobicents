@@ -151,7 +151,7 @@ public class PreconditionFailedTest {
 		UserElementUriKey elementKey = new UserElementUriKey(appUsage.getAUID(),user,documentName,elementSelector,null);
 		
 		// send put request and get response
-		response = client.putIfMatch(elementKey,ElementResource.MIMETYPE,eTag+"z",elementContent);				
+		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -159,7 +159,7 @@ public class PreconditionFailedTest {
 		// 6. put new element if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(elementKey,ElementResource.MIMETYPE,eTag,elementContent);				
+		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -175,7 +175,7 @@ public class PreconditionFailedTest {
 		eTag = response.getETag();
 		
 		// send put request and get response
-		response = client.putIfMatch(elementKey,ElementResource.MIMETYPE,eTag+"z",elementContent);				
+		response = client.putIfMatch(elementKey,eTag+"z",ElementResource.MIMETYPE,elementContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -183,7 +183,7 @@ public class PreconditionFailedTest {
 		// 8. replace element if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(elementKey,ElementResource.MIMETYPE,eTag,elementContent);				
+		response = client.putIfNoneMatch(elementKey,eTag,ElementResource.MIMETYPE,elementContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -209,7 +209,7 @@ public class PreconditionFailedTest {
 		UserAttributeUriKey attrKey = new UserAttributeUriKey(appUsage.getAUID(),user,documentName,new ElementSelector(elementSelectorSteps),new AttributeSelector("name"),null);
 				
 		// send put request and get response
-		response = client.putIfMatch(attrKey,AttributeResource.MIMETYPE,eTag+"z",attrContent);				
+		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -217,7 +217,7 @@ public class PreconditionFailedTest {
 		// 12. put new attr if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(attrKey,AttributeResource.MIMETYPE,eTag,attrContent);				
+		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -233,7 +233,7 @@ public class PreconditionFailedTest {
 		eTag = response.getETag();
 		
 		// send put request and get response
-		response = client.putIfMatch(attrKey,AttributeResource.MIMETYPE,eTag+"z",attrContent);				
+		response = client.putIfMatch(attrKey,eTag+"z",AttributeResource.MIMETYPE,attrContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
@@ -241,7 +241,7 @@ public class PreconditionFailedTest {
 		// 14. replace attr if none match
 
 		// send put request and get response
-		response = client.putIfNoneMatch(attrKey,AttributeResource.MIMETYPE,eTag,attrContent);				
+		response = client.putIfNoneMatch(attrKey,eTag,AttributeResource.MIMETYPE,attrContent);				
 		// check put response
 		assertTrue("Put response must exists",response != null);
 		assertTrue("Put response code should be "+exception.getResponseStatus(),response.getCode() == exception.getResponseStatus());
