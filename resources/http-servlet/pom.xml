@@ -61,7 +61,12 @@
 											tofile="${basedir}/../../release/${release.name}/resources/http-servlet/du-management.xml" />
 										<copy overwrite="true"
 											file="${basedir}/release/build.xml"
-											todir="${basedir}/../../release/${release.name}/resources/http-servlet" />
+											todir="${basedir}/../../release/${release.name}/resources/http-servlet">
+                      <filterset>
+                        <filter token="JBOSS_VERSION" value="jboss-${jboss.version}"/>
+                        <filter token="JBOSS_NODE" value="${node}"/>
+                      </filterset>
+										</copy>
 									</tasks>
 								</configuration>
 							</execution>

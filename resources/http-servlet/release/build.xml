@@ -3,27 +3,30 @@
 
   <property name="home" value="${ant.file.Release_build}/../" />
 
-  <property environment="env"/>
-  <property name="deploy.dir" value="${env.JBOSS_HOME}/server/default/deploy/" />
+  <property name="deploy.dir" value="${home}../../@JBOSS_VERSION@/server/@JBOSS_NODE@/deploy/" />
   
   <target name="deploy-jmx">
-    <ant antfile="${home}../../resources/http-servlet/du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<copy overwrite="true" todir="${deploy.dir}" file="${home}../../resources/http-servlet/mobicents.war" />
+    <ant antfile="${home}/du-management.xml" target="deploy-jmx" inheritAll="false" />
+		<copy overwrite="true" todir="${deploy.dir}" file="${home}/mobicents.war" />
   </target>
 
   <target name="undeploy-jmx">
 		<delete file="${deploy.dir}/mobicents.war" />
-    <ant antfile="${home}../../resources/http-servlet/du-management.xml" target="undeploy-jmx" inheritAll="false" />
+    <ant antfile="${home}/du-management.xml" target="undeploy-jmx" inheritAll="false" />
   </target>
 
   <target name="deploy">
-    <ant antfile="${home}../../resources/http-servlet/du-management.xml" target="deploy" inheritAll="false" />
-		<copy overwrite="true" todir="${deploy.dir}" file="${home}../../resources/http-servlet/mobicents.war" />
+    <ant antfile="${home}/du-management.xml" target="deploy" inheritAll="false">
+      <property name="jboss.deploy" value="${deploy.dir}" />
+    </ant>
+		<copy overwrite="true" todir="${deploy.dir}" file="${home}/mobicents.war" />
   </target>
 
   <target name="undeploy">
 		<delete file="${deploy.dir}/mobicents.war" />
-    <ant antfile="${home}../../resources/http-servlet/du-management.xml" target="undeploy" inheritAll="false" />
+    <ant antfile="${home}/du-management.xml" target="undeploy" inheritAll="false">
+      <property name="jboss.deploy" value="${deploy.dir}" />
+    </ant>
   </target>
 
 </project>
