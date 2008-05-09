@@ -1,10 +1,16 @@
 package net.java.slee.resource.diameter.base;
 
+import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.NamingException;
 import javax.slee.Address;
+import javax.slee.AddressPlan;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.EventLookupFacility;
 import javax.slee.management.UnrecognizedResourceAdaptorEntityException;
@@ -17,17 +23,63 @@ import javax.slee.resource.ResourceAdaptorTypeID;
 import javax.slee.resource.ResourceException;
 import javax.slee.resource.SleeEndpoint;
 
+import net.java.slee.resource.diameter.base.events.DiameterMessage;
+import net.java.slee.resource.http.events.HttpServletRequestEvent;
+
 import org.apache.log4j.Logger;
+import org.jdiameter.api.Answer;
+import org.jdiameter.api.ApplicationId;
+import org.jdiameter.api.Configuration;
+import org.jdiameter.api.IllegalStateException;
+import org.jdiameter.api.InternalException;
+import org.jdiameter.api.NetWork;
+import org.jdiameter.api.NetworkReqListener;
+import org.jdiameter.api.Request;
+import org.jdiameter.api.Session;
+import org.jdiameter.api.Stack;
+import org.jdiameter.server.impl.StackImpl;
+import org.jdiameter.server.impl.helpers.XMLConfiguration;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.ResourceAdaptorEntity;
+import org.mobicents.slee.resource.ResourceAdaptorState;
+import org.mobicents.slee.resource.diameter.base.events.AbortSessionAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.AbortSessionRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.AccountingAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.AccountingRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.DiameterMessageImpl;
+import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.ReAuthAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.ReAuthRequestImpl;
+import org.mobicents.slee.resource.diameter.base.events.SessionTerminationAnswerImpl;
+import org.mobicents.slee.resource.diameter.base.events.SessionTerminationRequestImpl;
+import org.mobicents.slee.resource.http.events.HttpServletRequestEventImpl;
 
-public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializable
+/**
+ * Diameter Resource Adaptor
+ * 
+ * <br>Super project:  mobicents
+ * <br>1:20:00 AM May 9, 2008
+ * <br>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author Eric Svenson
+ */
+public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqListener, Serializable
 {
   private static final long serialVersionUID = 1L;
 
   private static transient Logger logger = Logger.getLogger(DiameterBaseResourceAdaptor.class);
 
+  private ResourceAdaptorState state;
+  
+  private Stack stack;
+  
   /**
   * The BootstrapContext provides the resource adaptor with the required
   * capabilities in the SLEE to execute its work. The bootstrap context is
@@ -63,14 +115,16 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
   private transient ConcurrentHashMap<ActivityHandle, DiameterActivity> activities = null;
 
   /**
-   * the activity context interface factory defined in
+   * The activity context interface factory defined in
    * DiameterRAActivityContextInterfaceFactoryImpl
    */
   private transient DiameterActivityContextInterfaceFactory acif = null;
 
-  // a link to the DiameterProvider which then will be exposed to Sbbs
+  /**
+   * A link to the DiameterProvider which then will be exposed to Sbbs
+   */
   private transient DiameterProvider raProvider = null;
-
+  
   public DiameterBaseResourceAdaptor()
   {
     logger.info( "Diameter Base RA :: DiameterBaseResourceAdaptor." );
@@ -130,6 +184,20 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
       initializeNamingContext();
       
       this.activities = new ConcurrentHashMap();
+      
+      this.state = ResourceAdaptorState.CONFIGURED;
+    }
+    catch (Exception e) {
+      logger.error( "Error Configuring Diameter Base RA Entity", e );
+    }
+    
+    try {
+      
+      // Initialize the protocol stack
+      initStack();
+      
+      // Resource Adaptor ready to rumble!
+      this.state = ResourceAdaptorState.ACTIVE;
     }
     catch (Exception e) {
       logger.error( "Error Activating Diameter Base RA Entity", e );
@@ -151,7 +219,9 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
     
     this.bootstrapContext = bootstrapContext;
     this.sleeEndpoint = bootstrapContext.getSleeEndpoint();
-    this.eventLookup = bootstrapContext.getEventLookupFacility();    
+    this.eventLookup = bootstrapContext.getEventLookupFacility();
+    
+    this.state = ResourceAdaptorState.UNCONFIGURED;
   }
 
   /**
@@ -196,6 +266,16 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
       logger.error("Diameter Base RA :: Cannot unbind naming context.");
     }
     
+    // Stop the stack
+    try
+    {
+      stack.stop(5, TimeUnit.SECONDS);
+    }
+    catch ( Exception e )
+    {
+      logger.error( "Diameter Base RA :: Failure while stopping " );
+    }
+    
     logger.info("Diameter Base RA :: RA Stopped.");    
   }
 
@@ -210,6 +290,39 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
   public void entityDeactivating()
   {
     logger.info( "Diameter Base RA :: entityDeactivating." );
+    
+    try
+    {
+      NetWork network = stack.unwrap(NetWork.class);
+      
+      for (ApplicationId appId : stack.getMetaData().getLocalPeerInfo().getCommonApplications())
+      {
+        network.remNetworkReqListener(appId);
+      }
+    }
+    catch (InternalException e)
+    {
+      logger.error(e);
+    }
+    
+    for (ActivityHandle activityHandle : activities.keySet())
+    {
+      try
+      {
+        logger.info("Ending activity [" + activityHandle + "]");
+        Session[] sa = activities.values().toArray(new Session[activities.size()]);
+        for (Session s : sa)
+        {
+          s.release();
+        }
+      }
+      catch (Exception e)
+      {
+        logger.error("Error Deactivating Activity", e);
+      }
+    }
+      
+    this.state = ResourceAdaptorState.STOPPING;
   }
 
   /**
@@ -222,6 +335,18 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
    */
   public void entityRemoved()
   {
+    // Stop the stack
+    this.stack.destroy();
+    
+    // Clean up!
+    this.acif = null;
+    this.activities = null;
+    this.bootstrapContext = null;
+    this.eventLookup = null;
+    this.raProvider = null;
+    this.sleeEndpoint = null;
+    this.stack = null;
+    
     logger.info( "Diameter Base RA :: entityRemoved." );
   }
 
@@ -236,7 +361,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
    */
   public void eventProcessingFailed( ActivityHandle handle, Object event, int eventID, Address address, int flags, FailureReason reason )
   {
-    logger.info( "Diameter Base RA :: eventProcessingFailed :: + handle[" + handle + "], event[" + event + "], eventID[" + eventID + "], address[" + address + "], flags[" + flags + "], reason[" + reason + "]." );
+    logger.info( "Diameter Base RA :: eventProcessingFailed :: handle[" + handle + "], event[" + event + "], eventID[" + eventID + "], address[" + address + "], flags[" + flags + "], reason[" + reason + "]." );
   }
 
   /**
@@ -249,7 +374,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
    */
   public void eventProcessingSuccessful( ActivityHandle handle, Object event, int eventID, Address address, int flags )
   {
-    logger.info( "Diameter Base RA :: eventProcessingSuccessful :: + handle[" + handle + "], event[" + event + "], eventID[" + eventID + "], address[" + address + "], flags[" + flags + "]." );
+    logger.info( "Diameter Base RA :: eventProcessingSuccessful :: handle[" + handle + "], event[" + event + "], eventID[" + eventID + "], address[" + address + "], flags[" + flags + "]." );
   }
 
   /**
@@ -278,6 +403,17 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
   {
     logger.info( "Diameter Base RA :: getActivityHandle :: activity[" + activity + "]." );
 
+    if (!(activity instanceof DiameterActivity))
+      return null;
+    
+    DiameterActivity inActivity = (DiameterActivity) activity;
+    for (Map.Entry<ActivityHandle, DiameterActivity> activityInfo : this.activities.entrySet())
+    {
+        Object curActivity = activityInfo.getValue();
+        if (curActivity.equals(inActivity))
+          return activityInfo.getKey();
+    }
+    
     return null;
   }
 
@@ -372,7 +508,9 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
     logger.info( "Diameter Base RA :: serviceUninstalled :: serviceKey[" + serviceKey + "]." );
   }
 
-  // set up the JNDI naming context
+  /**
+   * Set up the JNDI naming context
+   */
   private void initializeNamingContext() throws NamingException
   {
     // get the reference to the SLEE container from JNDI
@@ -427,8 +565,10 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
       logger.debug(e);
     }
   }
-
-  // clean the JNDI naming context
+  
+  /**
+   * Clean the JNDI naming context
+   */
   private void cleanNamingContext() throws NamingException
   {
     try
@@ -452,4 +592,167 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, Serializabl
     }
   }
   
+  
+  /**
+   * Initializes the RA Diameter Stack.
+   *
+   * @throws Exception 
+   */
+  private synchronized void initStack() throws Exception
+  {
+    InputStream is = null;
+    
+    try
+    {
+      // Create and configure stack
+      this.stack = new StackImpl();
+      
+      // Get configuration
+      String configFile = "/jdiameter-config.xml";
+      is = this.getClass().getResourceAsStream(configFile);
+      
+      // Load the configuration
+      Configuration config =  new XMLConfiguration( is );
+
+      this.stack.init( config );
+      
+      NetWork network = stack.unwrap(NetWork.class);
+      
+      for (ApplicationId appId : stack.getMetaData().getLocalPeerInfo().getCommonApplications())
+          network.addNetworkReqListener(appId, this);
+      
+      this.stack.start();
+    }
+    finally
+    {
+      if( is != null )
+        is.close();
+        
+      is = null;
+    }
+    
+    logger.info("Diameter Base RA :: Successfully initialized stack.");
+  }
+
+  private static final Map<Integer, String> events;
+
+  // FIXME alexandre: Use dictionary
+  static {
+      Map<Integer, String> temp = new HashMap<Integer, String>();
+      temp.put(274, "AbortSession");
+      temp.put(271, "Accounting");
+      temp.put(257, "CapabilitiesExchange");
+      temp.put(280, "DeviceWatchdog");
+      temp.put(282, "DisconnectPeer");
+      temp.put(258, "ReAuth");
+      temp.put(275, "SessionTermination");
+      events = Collections.unmodifiableMap(temp);
+  }
+  
+  /**
+   * RA Entry Point
+   */
+  public Answer processInitialRequest( Session session, Request request )
+  {
+    DiameterActivityHandle handle = createSessionHandle(session);
+    
+    fireEvent(handle, events.get(request.getCommandCode()) + "Request", request, null);
+    
+    return null;
+  }
+  
+  /**
+   * Create the Diameter Activity Handle for an activity
+   * @param activity the Activity object to create the handle from
+   * @return a DiameterActivityHandle for the provided activity object
+   */
+  private DiameterActivityHandle createSessionHandle(Session activity) {
+    try {
+        logger.info("Creating activity context.");
+        DiameterActivityHandle activityHandle = new DiameterActivityHandle(activity.getSessionId());
+        
+        // FIXME alexandre: Create real activity here
+        activities.put(activityHandle, this.raProvider.createActivity());
+        
+        sleeEndpoint.activityStarted( activityHandle );
+        
+        logger.info("Activity started [" + activityHandle + "]");
+        
+        return activityHandle;
+    }
+    catch (Exception e)
+    {
+        logger.error( "Error creating activity", e);
+        throw new RuntimeException("Error creating activity", e);
+    }
+  }
+  
+  /**
+   * Create Event object from request/answer
+   * 
+   * @param request the request to create the event from, if any.
+   * @param answer the answer to create the event from, if any.
+   * @return a DiameterMessage object wrapping the request/answer
+   */
+  private Object createEvent(Request request, Answer answer)
+  {
+    if(request == null && answer == null)
+      return null;
+    
+    int commandCode = (request != null ? request.getCommandCode() : answer.getCommandCode());
+    
+    switch (commandCode)
+    {
+      case 274: // ASR/ASA
+        return request != null ? new AbortSessionRequestImpl(request) : new AbortSessionAnswerImpl(answer);
+      case 271: // ACR/ACA
+        return request != null ? new AccountingRequestImpl(request) : new AccountingAnswerImpl(answer);
+      case 257: // CER/CEA
+        return request != null ? new CapabilitiesExchangeRequestImpl(request) : new CapabilitiesExchangeAnswerImpl(answer);
+      case 280: // DWR/DWA
+        return request != null ? new DeviceWatchdogRequestImpl(request) : new DeviceWatchdogAnswerImpl(answer);
+      case 282: // DPR/DPA
+        return request != null ? new DisconnectPeerRequestImpl(request) : new DisconnectPeerAnswerImpl(answer);
+      case 258: // RAR/RAA
+        return request != null ? new ReAuthRequestImpl(request) : new ReAuthAnswerImpl(answer);
+      case 275: // STR/STA
+        return request != null ? new SessionTerminationRequestImpl(request) : new SessionTerminationAnswerImpl(answer);
+    }
+    
+    return new DiameterMessageImpl(request != null ? request : answer);
+  }   
+
+  private void fireEvent(Request request, Answer answer)
+  {
+    String sessionId = (request != null ? request.getSessionId() : answer.getSessionId());
+    int commandCode = (request != null ? request.getCommandCode() : answer.getCommandCode());
+    String postfix = (request != null ? "Request" : "Answer");
+    
+    this.fireEvent( new DiameterActivityHandle(sessionId),
+        events.get(commandCode) + postfix, request, answer );
+  }
+
+  /**
+   * Method for firing event to SLEE
+   * 
+   * @param handle the handle for the activity where event will be fired on
+   * @param name the unqualified Event name
+   * @param request the request that will be wrapped in the event, if any
+   * @param answer the answer that will be wrapped in the event, if any
+   */
+  private void fireEvent(ActivityHandle handle, String name, Request request, Answer answer)
+  {
+    try
+    {
+      int eventID = eventLookup.getEventID("net.java.slee.resource.diameter.base.events." + name, "java.net", "0.8");
+      
+      DiameterMessage event = (DiameterMessage) createEvent(request, answer);
+      
+      sleeEndpoint.fireEvent(handle, event, eventID, null);
+    }
+    catch (Exception e)
+    {
+        logger.warn("Can not send event", e);
+    }
+  }
 }
