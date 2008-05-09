@@ -34,10 +34,15 @@ import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+import javax.slee.TransactionRequiredLocalException;
+import javax.slee.facilities.ActivityContextNamingFacility;
+import javax.slee.facilities.FacilityException;
+import javax.slee.facilities.NameAlreadyBoundException;
 
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsProvider;
@@ -58,6 +63,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	private MsProvider msProvider;
 	private MediaRaActivityContextInterfaceFactory msActivityFactory;
+
+	private ActivityContextNamingFacility activityContextNamingfacility;
 
 	/**
 	 * Creates a new instance of CreateConnectionSbb
@@ -82,6 +89,10 @@ public abstract class CreateConnectionSbb implements Sbb {
 					.lookup("slee/resources/jainmgcp/2.0/provider");
 			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx
 					.lookup("slee/resources/jainmgcp/2.0/acifactory");
+
+			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
+					.lookup("slee/facilities/activitycontextnaming");
+
 		} catch (NamingException ne) {
 			logger.warn("Could not set SBB context:" + ne.getMessage());
 		}
@@ -103,7 +114,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 
 		String endPointName = endpointID.getLocalEndpointName();
-		
+
 		if (endPointName.endsWith("/$")) {
 			this.setUseSpecificEndPointId(true);
 		}
@@ -169,13 +180,10 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		MsConnection msConnection = evt.getConnection();
 
+		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(
+				msConnection.getId());
 		CreateConnectionResponse response = new CreateConnectionResponse(this,
-				ReturnCode.Transaction_Executed_Normally,
-				new ConnectionIdentifier("0"));// TODO : Should we modify
-		// MsConnection to expose the
-		// Connection ID to be used by
-		// ConnectionIdentifier ? But
-		// the ID is UID
+				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();
 
 		ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(
@@ -198,16 +206,58 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+
+		try {
+			// bind the MsConnection aci to ActivityContextNamingFacility for
+			// processing DLCX
+			activityContextNamingfacility.bind(aci, connectionIdentifier
+					.toString());
+		} catch (TransactionRequiredLocalException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (FacilityException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (NullPointerException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (IllegalArgumentException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (NameAlreadyBoundException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		}
+
 	}
 
 	public void onConnectionTransactionFailed(MsConnectionEvent evt,
 			ActivityContextInterface aci) {
 		logger.warn("ConnectionTransactionFailed");
-		sendResponse(this.getTxId(), ReturnCode.Internal_Hardware_Failure);// TODO
-		// is
-		// the
-		// ReturnCode
-		// correct?
+
+		MsConnectionEventCause msConnectionEventCause = evt.getCause();
+
+		// TODO is the ReturnCode correct
+		switch (msConnectionEventCause) {
+		case FACILITY_FAILURE:
+			sendResponse(this.getTxId(), ReturnCode.Endpoint_Unknown);
+			break;
+
+		default:
+			sendResponse(this.getTxId(), ReturnCode.Internal_Hardware_Failure);
+			break;
+		}
+
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
