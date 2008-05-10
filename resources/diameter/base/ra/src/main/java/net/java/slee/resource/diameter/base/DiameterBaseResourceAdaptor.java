@@ -4,13 +4,13 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.NamingException;
 import javax.slee.Address;
-import javax.slee.AddressPlan;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.EventLookupFacility;
 import javax.slee.management.UnrecognizedResourceAdaptorEntityException;
@@ -24,7 +24,7 @@ import javax.slee.resource.ResourceException;
 import javax.slee.resource.SleeEndpoint;
 
 import net.java.slee.resource.diameter.base.events.DiameterMessage;
-import net.java.slee.resource.http.events.HttpServletRequestEvent;
+import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 import org.apache.log4j.Logger;
 import org.jdiameter.api.Answer;
@@ -33,6 +33,8 @@ import org.jdiameter.api.Configuration;
 import org.jdiameter.api.InternalException;
 import org.jdiameter.api.Network;
 import org.jdiameter.api.NetworkReqListener;
+import org.jdiameter.api.Peer;
+import org.jdiameter.api.PeerTable;
 import org.jdiameter.api.Request;
 import org.jdiameter.api.Session;
 import org.jdiameter.api.Stack;
@@ -50,14 +52,13 @@ import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeAnsw
 import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogAnswerImpl;
 import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogRequestImpl;
-import org.mobicents.slee.resource.diameter.base.events.DiameterMessageImpl;
 import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerAnswerImpl;
 import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.ReAuthAnswerImpl;
 import org.mobicents.slee.resource.diameter.base.events.ReAuthRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.SessionTerminationAnswerImpl;
 import org.mobicents.slee.resource.diameter.base.events.SessionTerminationRequestImpl;
-import org.mobicents.slee.resource.http.events.HttpServletRequestEventImpl;
+import org.mobicents.slee.resource.diameter.base.events.avp.DiameterIdentityAvpImpl;
 
 /**
  * Diameter Resource Adaptor
@@ -67,7 +68,7 @@ import org.mobicents.slee.resource.http.events.HttpServletRequestEventImpl;
  * <br>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
- * @author Eric Svenson
+ * @author Erick Svenson
  */
 public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqListener, Serializable
 {
@@ -657,6 +658,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
     
     fireEvent(handle, events.get(request.getCommandCode()) + "Request", request, null);
     
+    // returning null so we can answer later
     return null;
   }
   
@@ -720,7 +722,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
         return request != null ? new SessionTerminationRequestImpl(request) : new SessionTerminationAnswerImpl(answer);
     }
     
-    return new DiameterMessageImpl(request != null ? request : answer);
+    return null;
   }   
 
   private void fireEvent(Request request, Answer answer)
@@ -756,4 +758,37 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor, NetworkReqL
         logger.warn("Can not send event", e);
     }
   }
+  
+  /**
+   * 
+   * @return
+   */
+  public DiameterIdentityAvp[] getConnectedPeers()
+  {
+    if (this.stack != null)
+    {
+      try 
+      {
+        List<Peer> peers = stack.unwrap(PeerTable.class).getPeerTable();
+        DiameterIdentityAvp[] result = new DiameterIdentityAvp[peers.size()];
+        
+        int i = 0;
+        
+        for(Peer peer : peers)
+        {
+          // FIXME: alexandre: new DiameterIdentityAvpImpl( peer.toString() );
+          DiameterIdentityAvp identity = new DiameterIdentityAvpImpl( 0, 0, 0, 0, new byte[]{} );
+          
+          result[i++] = identity;
+        }
+      }
+      catch (Exception e)
+      {
+        logger.error("Failure getting peer list.", e);
+      }
+    }
+    
+    return null;
+  }
+  
 }

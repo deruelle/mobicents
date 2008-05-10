@@ -23,7 +23,7 @@ public class GroupedAvpImpl extends DiameterAvpImpl implements GroupedAvp {
 			byte[] value) {
 		super(code, vendorId, mnd, prt, null);
 		//FIXME: baranowb; in my version - 1.5.1 this is protected!s
-		avpSet = parser.decodeAvpSet(value);
+		//avpSet = parser.decodeAvpSet(value);
 
 	}
 
@@ -77,7 +77,7 @@ public class GroupedAvpImpl extends DiameterAvpImpl implements GroupedAvp {
 
 	public byte[] byteArrayValue() {
 		//FIXME: baranowb; in my version - 1.5.1 this is protected!s
-		return parser.encodeAvpSet(avpSet);
+		return null; //parser.encodeAvpSet(avpSet);
 	}
 
 	public Object clone() {
