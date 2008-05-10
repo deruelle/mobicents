@@ -48,7 +48,12 @@
 								<copy overwrite="true" file="${basedir}/du/target/build.xml"
                   tofile="${basedir}/../../release/${release.name}/examples/google-talk-bot/du-management.xml" />
                 <copy overwrite="true" file="${basedir}/release/build.xml"
-                  todir="${basedir}/../../release/${release.name}/examples/google-talk-bot" />
+                  todir="${basedir}/../../release/${release.name}/examples/google-talk-bot">
+									<filterset>
+										<filter token="JBOSS_VERSION" value="jboss-${jboss.version}"/>
+                  	<filter token="JBOSS_NODE" value="${node}"/>
+									</filterset>
+								</copy>
 							</tasks>
 						</configuration>
 					</execution>
