@@ -19,13 +19,13 @@
  */
 package net.java.slee.resource.diameter.sh.server;
 
-import net.java.slee.resource.diameter.base.events.avp.UserIdentityAvp;
 import net.java.slee.resource.diameter.sh.client.MessageFactory;
 import net.java.slee.resource.diameter.sh.client.events.ProfileUpdateAnswer;
 import net.java.slee.resource.diameter.sh.client.events.PushNotificationRequest;
 import net.java.slee.resource.diameter.sh.client.events.SubscribeNotificationsAnswer;
 import net.java.slee.resource.diameter.sh.client.events.UserDataAnswer;
 import net.java.slee.resource.diameter.sh.client.events.avp.UserData;
+import net.java.slee.resource.diameter.sh.client.events.avp.UserIdentityAvp;
 
 /**
  * The Sh Server Message Factory used to create Diameter Sh messages.

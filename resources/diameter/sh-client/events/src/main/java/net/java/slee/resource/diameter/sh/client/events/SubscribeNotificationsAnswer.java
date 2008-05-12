@@ -21,6 +21,7 @@ package net.java.slee.resource.diameter.sh.client.events;
 
 import java.util.Date;
 
+
 import net.java.slee.resource.diameter.base.events.avp.AuthSessionStateType;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
@@ -28,8 +29,8 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.ExperimentalResultAvp;
 import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
 import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
-import net.java.slee.resource.diameter.base.events.avp.SupportedFeaturesAvp;
 import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
+import net.java.slee.resource.diameter.sh.client.events.avp.SupportedFeaturesAvp;
 
 /**
  * Defines an interface representing the Subscribe-Notifications-Answer command.
