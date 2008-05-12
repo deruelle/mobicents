@@ -13,7 +13,7 @@ import net.java.slee.resource.diameter.base.events.DiameterMessage;
 import net.java.slee.resource.diameter.base.events.avp.AddressAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
-import net.java.slee.resource.diameter.base.events.avp.DiameterURI;
+import net.java.slee.resource.diameter.base.events.avp.DiameterURIAvp;
 import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
 import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
 import net.java.slee.resource.diameter.base.events.avp.RedirectHostUsageType;
@@ -27,6 +27,7 @@ import org.jdiameter.api.Message;
 import org.mobicents.slee.resource.diameter.base.events.avp.AddressAvpImpl;
 import org.mobicents.slee.resource.diameter.base.events.avp.DiameterAvpImpl;
 import org.mobicents.slee.resource.diameter.base.events.avp.DiameterIdentityAvpImpl;
+import org.mobicents.slee.resource.diameter.base.events.avp.DiameterURIAvpImpl;
 import org.mobicents.slee.resource.diameter.base.events.avp.FailedAvpImpl;
 import org.mobicents.slee.resource.diameter.base.events.avp.ProxyInfoAvpImpl;
 import org.mobicents.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvpImpl;
@@ -209,7 +210,8 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 			try {
 				avps.add(new DiameterAvpImpl(a.getCode(), a.getVendorId(), (a
 						.isMandatory() ? 1 : 0), (a.isEncrypted() ? 1 : 0), a
-						.getRaw()));
+						.getRaw(), null));
+				//FIXME: baranowb; how can we determine type? Again dicotionary is needed
 			} catch (AvpDataException e) {
 				log.warn(e);
 			}
@@ -308,15 +310,15 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 		return acc.toArray(new ProxyInfoAvp[0]);
 	}
 
-	public DiameterURI[] getRedirectHosts() {
-		List<DiameterURI> acc = new ArrayList<DiameterURI>();
+	public DiameterURIAvp[] getRedirectHosts() {
+		List<DiameterURIAvp> acc = new ArrayList<DiameterURIAvp>();
 		for (DiameterIdentityAvp i : getAllAvpAsIdentity(Avp.REDIRECT_HOST))
 			try {
-				acc.add(new DiameterURI(i.toString()));
+				acc.add(new DiameterURIAvpImpl(i.toString()));
 			} catch (URISyntaxException e) {
 				log.warn(e);
 			}
-		return acc.toArray(new DiameterURI[0]);
+		return acc.toArray(new DiameterURIAvpImpl[0]);
 	}
 
 	public RedirectHostUsageType getRedirectHostUsage() {
@@ -620,13 +622,13 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 			setProxyInfo(p);
 	}
 
-	public void setRedirectHost(DiameterURI redirectHost) {
+	public void setRedirectHost(DiameterURIAvp redirectHost) {
 		setAvpAsIdentity(Avp.REDIRECT_HOST, redirectHost.toString(), true,
 				true, false);
 	}
 
-	public void setRedirectHosts(DiameterURI[] redirectHosts) {
-		for (DiameterURI uri : redirectHosts)
+	public void setRedirectHosts(DiameterURIAvp[] redirectHosts) {
+		for (DiameterURIAvp uri : redirectHosts)
 			setRedirectHost(uri);
 	}
 

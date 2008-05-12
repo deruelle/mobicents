@@ -27,12 +27,13 @@ public class DiameterAvpImpl implements DiameterAvp {
     
     private byte[] value;
 
-    public DiameterAvpImpl(int code, long vendorId, int mnd, int prt, byte[] value) {
+    public DiameterAvpImpl(int code, long vendorId, int mnd, int prt, byte[] value, DiameterAvpType type) {
         this.code = code;
         this.vendorId = vendorId;
         this.mnd = mnd;
         this.prt = prt;
         this.value = value;
+        this.type=type;
     }
 
     public int getCode() {
@@ -108,7 +109,7 @@ public class DiameterAvpImpl implements DiameterAvp {
     }
 
     public Object clone() {
-        return new DiameterAvpImpl(code, vendorId, mnd, prt, value);
+        return new DiameterAvpImpl(code, vendorId, mnd, prt, value,type);
     }
         
     

@@ -3,6 +3,7 @@ package org.mobicents.slee.resource.diameter.base.events.avp;
 
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
+import net.java.slee.resource.diameter.base.events.avp.DiameterAvpType;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 import net.java.slee.resource.diameter.base.events.avp.GroupedAvp;
 import org.jdiameter.api.Avp;
@@ -21,7 +22,7 @@ public class GroupedAvpImpl extends DiameterAvpImpl implements GroupedAvp {
 
 	public GroupedAvpImpl(int code, long vendorId, int mnd, int prt,
 			byte[] value) {
-		super(code, vendorId, mnd, prt, null);
+		super(code, vendorId, mnd, prt, null, DiameterAvpType.GROUPED);
 		//FIXME: baranowb; in my version - 1.5.1 this is protected!s
 		//avpSet = parser.decodeAvpSet(value);
 
@@ -43,7 +44,8 @@ public class GroupedAvpImpl extends DiameterAvpImpl implements GroupedAvp {
 			for (Avp a : avpSet) {
 				acc.add(new DiameterAvpImpl(a.getCode(), a.getVendorId(), a
 						.isMandatory() ? 1 : 0, a.isEncrypted() ? 1 : 0, a
-						.getRaw()));
+						.getRaw(), null));
+				//FIXME: baranowb; how can we determine type? dictionary?
 			}
 		} catch (Exception e) {
 			log.debug(e);

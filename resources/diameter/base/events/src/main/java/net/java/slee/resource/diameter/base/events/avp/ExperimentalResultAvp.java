@@ -35,12 +35,6 @@ public interface ExperimentalResultAvp extends GroupedAvp {
     public boolean hasVendorId();
 
     /**
-     * Returns the value of the Vendor-Id AVP, of type Unsigned32.
-     * A return value of null implies that the AVP has not been set.
-     */
-    public long getVendorId(); //DUPLICATE !!!!?
-
-    /**
      * Sets the value of the Vendor-Id AVP, of type Unsigned32.
      * @throws IllegalStateException if setVendorId has already been called
      */
@@ -53,7 +47,7 @@ public interface ExperimentalResultAvp extends GroupedAvp {
 
     /**
      * Returns the value of the Experimental-Result-Code AVP, of type Unsigned32.
-     * A return value of null implies that the AVP has not been set.
+     * A return value of -1 implies that the AVP has not been set or some error has been encountered.
      */
     public long getExperimentalResultCode();
 

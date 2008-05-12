@@ -13,7 +13,7 @@ public class DiameterIdentityAvpImpl extends DiameterAvpImpl implements Diameter
 	
 	public DiameterIdentityAvpImpl(int code, long vendorId, int mnd, int prt,
 			byte[] value) {
-		super(code, vendorId, mnd, prt, value);
+		super(code, vendorId, mnd, prt, value, DiameterAvpType.OCTET_STRING);
 		super.type=DiameterAvpType.OCTET_STRING;
 		//FIXME:baranowb; how can we get name?
 		//super.name=NameDecoder.decode(code);

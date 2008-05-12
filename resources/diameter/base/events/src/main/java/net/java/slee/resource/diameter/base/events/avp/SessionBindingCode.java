@@ -32,7 +32,7 @@ package net.java.slee.resource.diameter.base.events.avp;
  *
  * @author Open Cloud
  */
-public class SessionBinding {
+public class SessionBindingCode {
 
     /**
      * When set, future re-auth messages for this session MUST NOT

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
-import net.java.slee.resource.diameter.base.events.avp.DiameterURI;
+import net.java.slee.resource.diameter.base.events.avp.DiameterURIAvp;
 import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
 import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
 import net.java.slee.resource.diameter.base.events.avp.RedirectHostUsageType;
@@ -229,7 +229,7 @@ public interface SessionTerminationAnswer extends DiameterMessage {
 	 * implies that no Redirect-Host AVPs have been set. The elements in the
 	 * given array are DiameterURI objects.
 	 */
-	DiameterURI[] getRedirectHosts();
+	DiameterURIAvp[] getRedirectHosts();
 
 	/**
 	 * Sets a single Redirect-Host AVP in the message, of type DiameterURI.
@@ -238,7 +238,7 @@ public interface SessionTerminationAnswer extends DiameterMessage {
 	 *             if setRedirectHost or setRedirectHosts has already been
 	 *             called
 	 */
-	void setRedirectHost(DiameterURI redirectHost);
+	void setRedirectHost(DiameterURIAvp redirectHost);
 
 	/**
 	 * Sets the set of Redirect-Host AVPs, with all the values in the given
@@ -253,7 +253,7 @@ public interface SessionTerminationAnswer extends DiameterMessage {
 	 *             if setRedirectHost or setRedirectHosts has already been
 	 *             called
 	 */
-	void setRedirectHosts(DiameterURI[] redirectHosts);
+	void setRedirectHosts(DiameterURIAvp[] redirectHosts);
 
 	/**
 	 * Returns true if the Redirect-Host-Usage AVP is present in the message.

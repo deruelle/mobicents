@@ -8,7 +8,7 @@ package net.java.slee.resource.diameter.base.events.avp;
  * by the Diameter RA being used.
  */
 public interface ExtensionGroupedAvp extends GroupedAvp {
-
+	//TODO: Remove this - overlaping interface?
     /**
      * Returns the set of extension AVPs. The returned array contains the extension AVPs
      * in the order they appear in the message.
