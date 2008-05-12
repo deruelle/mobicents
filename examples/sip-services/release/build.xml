@@ -65,4 +65,54 @@
     </ant>
   </target>
 
+  <!-- Special Case for CC2 and MMS Demo -->
+  
+  <target name="deploy-all-except-proxy-service-jmx">
+    <ant antfile="${home}../../resources/sip/build.xml" target="deploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/sbbs-du-management.xml" target="deploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/registrar-service-du-management.xml" target="deploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+  </target>
+
+  <target name="undeploy-all-except-proxy-service-jmx">
+    <ant antfile="${home}/registrar-service-du-management.xml" target="undeploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/sbbs-du-management.xml" target="undeploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}../../resources/sip/build.xml" target="undeploy-jmx" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+  </target>
+
+  <target name="deploy-all-except-proxy-service">
+    <ant antfile="${home}../../resources/sip/build.xml" target="deploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/sbbs-du-management.xml" target="deploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/registrar-service-du-management.xml" target="deploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+  </target>
+
+  <target name="undeploy-all-except-proxy-service">
+    <ant antfile="${home}/registrar-service-du-management.xml" target="undeploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}/sbbs-du-management.xml" target="undeploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+    <ant antfile="${home}../../resources/sip/build.xml" target="undeploy" inheritAll="false">
+      <property name="jboss.home" value="${jboss.home}" />
+    </ant>
+  </target>
+
 </project>
