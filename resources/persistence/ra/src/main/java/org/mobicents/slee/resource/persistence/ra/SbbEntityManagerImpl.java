@@ -135,7 +135,7 @@ public class SbbEntityManagerImpl extends
 	}
 
 	public void remove(Object entity) {
-		hidden.refresh(entity);
+		hidden.remove(entity);
 
 	}
 
