@@ -31,12 +31,14 @@ import net.java.slee.resource.diameter.base.events.DiameterMessage;
 public interface DiameterActivity {
 
     /**
-     * Return a DiameterMessageFactory implementation to be used to create {@link DiameterAvp}
-     * instances to add when creating a {@link DiameterMessage} object to be fired on this Activity.
+     * Return a DiameterMessageFactory implementation to be used to create
+     * instances to of {@link DiameterMessage} object to be fired on this Activity.
      * @return a DiameterMessageFactory implementation
      */
     DiameterMessageFactory getDiameterMessageFactory();
 
+    DiameterAvpFactory getDiameterAvpFactory();
+    
     /**
      * Sends the given DiameterMessage on the DiameterActivity.
      * The response to the message (if any) will be fired on this activity.
@@ -49,4 +51,8 @@ public interface DiameterActivity {
      * @return the Session ID for this activity
      */
     String getSessionId();
+    
+    void endActivity();
+    
+    
 }

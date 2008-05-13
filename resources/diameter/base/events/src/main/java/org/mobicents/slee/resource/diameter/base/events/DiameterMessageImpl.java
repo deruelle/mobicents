@@ -70,25 +70,25 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 	// ======== GETTERS
 	protected AddressAvp[] getAvpAsAddress(int code) {
 
-		AvpSet avps=message.getAvps().getAvps(code);
-		if(avps==null)
-		return null;
-		
-		AddressAvp[] r=new AddressAvp[avps.size()];
-		
-		for(int i=0;i<avps.size();i++)
-		{
+		AvpSet avps = message.getAvps().getAvps(code);
+		if (avps == null)
+			return null;
+
+		AddressAvp[] r = new AddressAvp[avps.size()];
+
+		for (int i = 0; i < avps.size(); i++) {
 			try {
-				r[i]=AddressAvpImpl.decode(avps.getAvpByIndex(i).getRaw());
+				r[i] = AddressAvpImpl.decode(avps.getAvpByIndex(i).getRaw());
 			} catch (AvpDataException e) {
-				
+
 				e.printStackTrace();
 				return null;
 			}
 		}
 		return r;
-		
+
 	}
+
 	public long getAcctApplicationId() {
 		return getAvpAsUInt32(Avp.ACCT_APPLICATION_ID);
 	}
@@ -211,7 +211,8 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 				avps.add(new DiameterAvpImpl(a.getCode(), a.getVendorId(), (a
 						.isMandatory() ? 1 : 0), (a.isEncrypted() ? 1 : 0), a
 						.getRaw(), null));
-				//FIXME: baranowb; how can we determine type? Again dicotionary is needed
+				// FIXME: baranowb; how can we determine type? Again dicotionary
+				// is needed
 			} catch (AvpDataException e) {
 				log.warn(e);
 			}
@@ -442,9 +443,11 @@ public abstract class DiameterMessageImpl implements DiameterMessage {
 			message.getAvps().removeAvp(code);
 		for (int i = 0; i < avps.length; i++) {
 			try {
-				message.getAvps().addAvp(code, InetAddress.getByAddress(avps[i].encode()), mandatory, false);
+				message.getAvps().addAvp(code,
+						InetAddress.getByAddress(avps[i].encode()), mandatory,
+						false);
 			} catch (UnknownHostException e) {
-				
+
 				e.printStackTrace();
 				return;
 			}

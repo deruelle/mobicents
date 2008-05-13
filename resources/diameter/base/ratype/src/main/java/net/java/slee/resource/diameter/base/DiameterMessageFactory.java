@@ -38,6 +38,7 @@ import net.java.slee.resource.diameter.base.events.ReAuthAnswer;
 import net.java.slee.resource.diameter.base.events.ReAuthRequest;
 import net.java.slee.resource.diameter.base.events.SessionTerminationAnswer;
 import net.java.slee.resource.diameter.base.events.SessionTerminationRequest;
+import net.java.slee.resource.diameter.base.events.avp.AccountingRecordType;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
@@ -130,7 +131,7 @@ public interface DiameterMessageFactory {
      *         {@link DiameterActivity#sendMessage(DiameterMessage)}.
      */
     AccountingRequest createAccountingRequest();
-
+    
     /**
      * Create a AccountingAnswer DiameterMessage for a ACA command containing the given AVPs.
      *

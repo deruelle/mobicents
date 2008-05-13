@@ -1,5 +1,7 @@
 package net.java.slee.resource.diameter.base;
 
+import org.jdiameter.api.Session;
+
 import net.java.slee.resource.diameter.base.events.AbortSessionAnswer;
 import net.java.slee.resource.diameter.base.events.AbortSessionRequest;
 import net.java.slee.resource.diameter.base.events.AccountingAnswer;
@@ -20,6 +22,7 @@ import net.java.slee.resource.diameter.base.events.SessionTerminationAnswer;
 import net.java.slee.resource.diameter.base.events.SessionTerminationRequest;
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
+import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 /**
  * Diameter Base Message Factory
@@ -34,7 +37,11 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
 public class DiameterMessageFactoryImpl implements DiameterMessageFactory
 {
 
-  public AbortSessionAnswer createAbortSessionAnswer( DiameterAvp[] avps ) throws AvpNotAllowedException
+  public DiameterMessageFactoryImpl(Session session, DiameterIdentityAvp ... avps ) {
+		// TODO Auto-generated constructor stub
+	}
+
+public AbortSessionAnswer createAbortSessionAnswer( DiameterAvp[] avps ) throws AvpNotAllowedException
   {
     // TODO Auto-generated method stub
     return null;

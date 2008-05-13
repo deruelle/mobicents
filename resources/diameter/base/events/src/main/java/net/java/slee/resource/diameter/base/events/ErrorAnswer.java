@@ -42,8 +42,8 @@ import net.java.slee.resource.diameter.base.events.avp.ProxyInfoAvp;
  * </pre>
  */
 public interface ErrorAnswer extends DiameterMessage {
-
-	int commandCode = 0;
+	//FIXME: baranowb - get code
+	int commandCode = -1;
 
 	/**
 	 * Returns true if the Result-Code AVP is present in the message.

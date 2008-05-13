@@ -38,7 +38,8 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
  */
 public interface ExtensionDiameterMessage extends DiameterMessage {
 
-    int commandCode = 0;
+	//FIXME: baranowb - get code
+    int commandCode = -2;
 
 
     /**
