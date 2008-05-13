@@ -22,43 +22,48 @@
 		<module>du</module>			
 	</modules>
 	
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<inherited>false</inherited>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<copy overwrite="true"
-									todir="${basedir}/../../release/${release.name}/examples/google-talk-bot">
-									<fileset
-										dir="${basedir}/du/target">
-										<include name="**.jar" />
-										<include name="*.xml" />
-										<include name="*.properties" />										
-									</fileset>
-								</copy>
-								<copy overwrite="true" file="${basedir}/du/target/build.xml"
-                  tofile="${basedir}/../../release/${release.name}/examples/google-talk-bot/du-management.xml" />
-                <copy overwrite="true" file="${basedir}/release/build.xml"
-                  todir="${basedir}/../../release/${release.name}/examples/google-talk-bot">
-									<filterset>
-										<filter token="JBOSS_VERSION" value="jboss-${jboss.version}"/>
-                  	<filter token="JBOSS_NODE" value="${node}"/>
-									</filterset>
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>		
-	</build>
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<inherited>false</inherited>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+    								<copy overwrite="true"
+    									todir="${basedir}/../../release/${release.name}/examples/google-talk-bot">
+    									<fileset
+    										dir="${basedir}/du/target">
+    										<include name="**.jar" />
+    										<include name="*.xml" />
+    										<include name="*.properties" />										
+    									</fileset>
+    								</copy>
+    								<copy overwrite="true" file="${basedir}/du/target/build.xml"
+                      tofile="${basedir}/../../release/${release.name}/examples/google-talk-bot/du-management.xml" />
+                    <copy overwrite="true" file="${basedir}/release/build.xml"
+                      todir="${basedir}/../../release/${release.name}/examples/google-talk-bot">
+    									<filterset>
+    										<filter token="JBOSS_VERSION" value="jboss-${jboss.version}"/>
+                      	<filter token="JBOSS_NODE" value="${node}"/>
+    									</filterset>
+    								</copy>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
