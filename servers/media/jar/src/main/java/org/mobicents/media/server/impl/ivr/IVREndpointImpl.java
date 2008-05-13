@@ -15,20 +15,17 @@
 package org.mobicents.media.server.impl.ivr;
 
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.FileTypeDescriptor;
 import org.mobicents.media.server.impl.ann.AnnEndpointImpl;
-import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.common.events.EventID;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
-import org.mobicents.media.server.spi.MediaSink;
+import org.mobicents.media.server.impl.events.dtmf.DTMFPackage;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceStateListener;
 import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.dtmf.DTMF;
 
 
 /**
@@ -43,6 +40,9 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     private Signal signal;
     protected ResourceStateListener splitterStateListener;
     protected String recordDir = null;
+    
+    private DTMFPackage dtmfPackage;
+    
     private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
     
     /** Creates a new instance of IVREndpointImpl */
@@ -89,33 +89,16 @@ public class IVREndpointImpl extends AnnEndpointImpl {
      */
     private void detectDTMF(String connectionID, String[] params,
             NotificationListener listener) {
-        MediaSink detector = (MediaSink) getResource(MediaResourceType.DTMF_DETECTOR, connectionID);
-        if (params != null && params.length > 0 && params[0] != null) {
-            ((DTMF) detector).setDtmfMask(params[0]);
+        if (dtmfPackage == null) {
+            dtmfPackage = new DTMFPackage(this);
         }
-        
-        
-        LocalSplitter splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
-        while (splitter == null) {
-            synchronized(this) {
                 try {
-                    wait(100);
+            dtmfPackage.subscribe(EventID.DTMF, null, connectionID, listener);
                 } catch (Exception e) {
-                    return;
+            logger.error("Detection of DTMF failed", e);
                 }
             }
-            splitter = (LocalSplitter) getResource(MediaResourceType.AUDIO_SINK, connectionID);
-        }
         
-        try {
-            detector.prepare(this, splitter.newBranch("DTMF"));
-            detector.start();
-            detector.addListener(listener);
-        } catch (UnsupportedFormatException e) {
-            logger.error("Unexpected format", e);
-        }
-    }
-    
     /**
      * (Non Java-doc).
      *
