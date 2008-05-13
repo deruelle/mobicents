@@ -1,6 +1,8 @@
 package org.mobicents.slee.container.deployment.jboss;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,8 +62,11 @@ public class DeployableComponent
   public final static int SBB_COMPONENT         = 5;
   public final static int SERVICE_COMPONENT     = 6;
   
-  // The deployable component DeploymentInfo.
-  private DeploymentInfo di;
+  // The DeploymentInfo short name
+  private String diShortName; 
+  
+  // The DeploymentInfo URL object
+  private URL diURL;
   
   // The ID of the component.
   private ComponentID componentID;
@@ -91,7 +96,8 @@ public class DeployableComponent
    */
   private DeployableComponent( DeployableComponent dc ) throws Exception
   {
-    this.di = dc.di;
+    this.diShortName = dc.diShortName;
+    this.diURL = dc.diURL;
     
     // We want no sub-sub-components...
     this.subComponents = null;
@@ -104,7 +110,8 @@ public class DeployableComponent
    */
   public DeployableComponent( DeploymentInfo di ) throws Exception
   {
-    this.di = di;
+    this.diShortName = di.shortName;
+    this.diURL = di.url;
     
     // Parse the component descriptor to obtain dependencies.
     this.subComponents = parseDescriptor();
@@ -147,20 +154,24 @@ public class DeployableComponent
   private Collection<DeployableComponent> parseDescriptor() throws IOException
   {
     if( logger.isDebugEnabled() )
-      logger.debug( "Parsing Descriptor for " + di.url.toString() );
+      logger.debug( "Parsing Descriptor for " + this.diURL.toString() );
     
     Collection<DeployableComponent> deployableComponents = new ArrayList<DeployableComponent>();
     
     // Special case for the services...
-    if( di.shortName.endsWith( ".xml" ) )
+    if( this.diShortName.endsWith( ".xml" ) )
     {
       if( logger.isDebugEnabled() )
         logger.debug( "Parsing Service Descriptor." );
       
+      InputStream is = null;
+      
       try
       {
+        is = diURL.openStream();
+        
         // Parse the descriptor
-        org.w3c.dom.Document doc2 = XMLUtils.parseDocument( di.url.openStream(), true );
+        org.w3c.dom.Document doc2 = XMLUtils.parseDocument( is, true );
         
         NodeList nodeList = doc2.getElementsByTagName( "service" );
         
@@ -206,7 +217,7 @@ public class DeployableComponent
           
           deployableComponents.add( dc );
         }
-        
+
         return deployableComponents;
       }
       catch ( Exception e )
@@ -214,351 +225,483 @@ public class DeployableComponent
         logger.error( "", e );
         return null;
       }
+      finally
+      {
+        // Clean up!
+        if( is != null )
+        {
+          try
+          {
+            is.close();
+          }
+          finally
+          {
+            is = null;
+          }
+        }
+      }
     }
-
     
-    JarFile componentJarFile = new JarFile( di.url.toString().replaceAll( "file:", "" ) );
+    JarFile componentJarFile = null;
     
-    JarEntry descriptorXML = null;
-
-    org.w3c.dom.Document doc = null;
-    
-    // Determine whether the type of this instance is an sbb, event, RA type, etc.
-    if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/sbb-jar.xml" ) ) != null )
+    try
     {
-      if( logger.isDebugEnabled() )
-        logger.debug( "Parsing SBB Descriptor." );
-
-      try
+      componentJarFile = new JarFile( diURL.toString().replaceAll( "file:", "" ) );
+      
+      JarEntry descriptorXML = null;
+  
+      org.w3c.dom.Document doc = null;
+      
+      // Determine whether the type of this instance is an sbb, event, RA type, etc.
+      if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/sbb-jar.xml" ) ) != null )
       {
-        // Create the XML document from file
-        doc = XMLUtils.parseDocument( componentJarFile.getInputStream( descriptorXML ), true );
-        org.w3c.dom.Element sbbJarNode = doc.getDocumentElement();
-
-        // Get a list of the SBBs in the descriptor
-        List<org.w3c.dom.Element> sbbNodes = XMLUtils.getAllChildElements( sbbJarNode, XMLConstants.SBB_ND );
+        if( logger.isDebugEnabled() )
+          logger.debug( "Parsing SBB Descriptor." );
+  
+        InputStream is = null;
         
-        if( sbbNodes.size() == 0 )
+        try
         {
-          logger.warn( "The " + componentJarFile.getName() + " deployment descriptor contains no sbb definitions" );
-          return null;
-        }
-
-        for( int i = sbbNodes.size() - 1; i >= 0; i-- )
-        {
-          DeployableComponent dc = new DeployableComponent( this );
+          is = componentJarFile.getInputStream( descriptorXML );
           
-          dc.componentType = SBB_COMPONENT;
-                    
-          org.w3c.dom.Element sbbNode = sbbNodes.get( i );
-          SbbDeploymentDescriptorParser parser = new SbbDeploymentDescriptorParser();
-          MobicentsSbbDescriptorInternalImpl descriptor = (MobicentsSbbDescriptorInternalImpl) parser.parseSbbComponent( sbbNode, new MobicentsSbbDescriptorInternalImpl() );
-
-          // Get the Component ID
-          dc.componentID = descriptor.getID();
-
-          // Get the Component Key
-          dc.componentKey = dc.componentID.toString();
-
-          if( logger.isDebugEnabled() )
+          // Create the XML document from file
+          doc = XMLUtils.parseDocument( is, true );
+          org.w3c.dom.Element sbbJarNode = doc.getDocumentElement();
+  
+          // Get a list of the SBBs in the descriptor
+          List<org.w3c.dom.Element> sbbNodes = XMLUtils.getAllChildElements( sbbJarNode, XMLConstants.SBB_ND );
+          
+          if( sbbNodes.size() == 0 )
           {
-            logger.debug( "Component ID: " + dc.componentKey );
-
-            logger.debug( "------------------------------ Dependencies ------------------------------" );
+            logger.warn( "The " + componentJarFile.getName() + " deployment descriptor contains no sbb definitions" );
+            return null;
           }
-          
-          // Get the list of sbb references
-          HashSet<SbbRef> sbbRefs = descriptor.getSbbRef();
-          
-          // Iterate through the SbbRef nodes
-          for( SbbRef sbbRef : sbbRefs )
-          {
-            // Add the SbbRef as a dependency
-            dc.dependencies.add( "SbbID[" + sbbRef.getComponentKey() + "]" );
-            
-            if( logger.isDebugEnabled() )
-              logger.debug( "SbbID[" + sbbRef.getComponentKey() + "]" );
-          }
-          
-          // Get the list of RA Types in the descriptor 
-          ResourceAdaptorTypeID[] rasList = descriptor.getResourceAdaptorTypes();
-          
-          // Iterate through the RA Types nodes          
-          for( int n = 0; n < rasList.length; n++ )
-          {
-            // Add the RA Type to the dependencies (maybe not needed due to the link)
-            dc.dependencies.add( rasList[n].toString() );
-            
-            if( logger.isDebugEnabled() )
-              logger.debug( rasList[n] );
-
-            // Get the entity links from the descriptor
-            Iterator<ResourceAdaptorEntityBinding> raebIt = descriptor.getResourceAdaptorEntityBindings( (ResourceAdaptorTypeIDImpl) rasList[n] );
-            
-            while( raebIt.hasNext() )
-            {
-              // Generate a special identifier for the links: linkname_@_RAType[name#vendor#version]
-              String raLink = raebIt.next().getResourceAdaptorEntityLink() + "_@_" + rasList[n];
-              
-              // Add it to dependencies
-              dc.dependencies.add( raLink );
-              
-              if( logger.isDebugEnabled() )
-                logger.debug( raLink );
-            }
-          }
-          
-          // Get the event types from descriptor...
-          EventTypeID[] eventsList = descriptor.getEventTypes();
-          for( int n = 0; n < eventsList.length; n++ )
-          {
-            dc.dependencies.add( eventsList[n].toString() );
-            
-            if( logger.isDebugEnabled() )
-              logger.debug( eventsList[n] );
-          }
-
-          // Get the profile specifications from descriptor...
-          ProfileSpecificationID[] profilesList = descriptor.getProfileSpecifications();
-          for( int n = 0; n < profilesList.length; n++ )
-          {
-            dc.dependencies.add( profilesList[n].toString() );
-            
-            if( logger.isDebugEnabled() )
-              logger.debug( profilesList[n] );
-          }
-          if( logger.isDebugEnabled() )
-            logger.debug( "--------------------------- End of Dependencies --------------------------" );
-          
-          deployableComponents.add( dc );
-        }
-      }
-      catch ( Exception e )
-      {
-        logger.error( "", e );
-      }
-
-    }
-    else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/profile-spec-jar.xml" ) ) != null )
-    {
-      if( logger.isDebugEnabled() )
-        logger.debug( "Parsing Profile Specification Descriptor." );
-
-      try
-      {
-        // Create the XML document from file
-        doc = XMLUtils.parseDocument( componentJarFile.getInputStream( descriptorXML ), true );
-        org.w3c.dom.Element profileJarNode = doc.getDocumentElement();
-
-        // Get a list of the profile specifications in the deployable unit.
-        List<org.w3c.dom.Element> profileSpecNodes = XMLUtils.getAllChildElements( profileJarNode, XMLConstants.PROFILE_SPEC_ND );
-        if( profileSpecNodes.size() == 0 )
-        {
-          logger.warn( "The " + componentJarFile.getName() + " deployment descriptor contains no profile-spec definitions" );
-          return null;
-        }
-
-        // Iterate through the profile spec nodes
-        for( int i = profileSpecNodes.size() - 1; i >= 0; i-- )
-        {
-          DeployableComponent dc = new DeployableComponent( this );
-          
-          // Set Component Type
-          dc.componentType = PROFILESPEC_COMPONENT;
-          
-          // Do the parsing...
-          org.w3c.dom.Element profileSpecNode = profileSpecNodes.get( i );
-          ProfileSpecificationDescriptorParser parser = new ProfileSpecificationDescriptorParser();
-          ProfileSpecificationDescriptorImpl descriptor = parser.parseProfileComponent( profileSpecNode, new ProfileSpecificationDescriptorImpl() );
-          
-          // Get the Component ID
-          dc.componentID = descriptor.getID();
-          
-          // Get the Component Key
-          dc.componentKey = dc.componentID.toString();
-
-          if( logger.isDebugEnabled() )
-            logger.debug( "Component ID: " + dc.componentKey );
-          
-          deployableComponents.add( dc );
-        }
-        
-      }
-      catch ( Exception e )
-      {
-        logger.error( "", e );
-      }
-    }
-    else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/event-jar.xml" ) ) != null )
-    {
-      if( logger.isDebugEnabled() )
-        logger.debug( "Parsing Event Definition Descriptor." );
-
-      try
-      {
-        // Create the XML document from file
-        doc = XMLUtils.parseDocument( componentJarFile.getInputStream( descriptorXML ), true );
-        org.w3c.dom.Element docElement = doc.getDocumentElement();
-
-        // Get a list of the event definitions in the deployment descriptor 
-        List<org.w3c.dom.Element> nodes = XMLUtils.getAllChildElements( docElement, XMLConstants.EVENT_DEFINITION_ND );
-        
-        for( int i = 0; i < nodes.size(); i++ )
-        {
-          DeployableComponent dc = new DeployableComponent( this );
-          
-          // Set Component Type
-          dc.componentType = EVENTTYPE_COMPONENT;
-          
-          // Do the parsing...
-          MobicentsEventTypeDescriptorInternalImpl descriptorImpl = new MobicentsEventTypeDescriptorInternalImpl();
-          org.w3c.dom.Element eventDefinitionNode = nodes.get( i );
-          EventTypeDeploymentDescriptorParser parser = new EventTypeDeploymentDescriptorParser();
-          parser.parse( eventDefinitionNode, descriptorImpl );
-
-          // Get the Component ID
-          dc.componentID = new EventTypeIDImpl( new ComponentKey(descriptorImpl.getName(), descriptorImpl.getVendor(), descriptorImpl.getVersion() ));
-          
-          // Get the Component Key
-          dc.componentKey = dc.componentID.toString().substring( 0, dc.componentID.toString().indexOf( ',' ) );
-
-          if( logger.isDebugEnabled() )
-            logger.debug( "Component ID: " + dc.componentKey );
-          
-          deployableComponents.add( dc );
-        }
-
-      }
-      catch ( Exception e )
-      {
-        logger.error( "", e );
-      }
-    }
-    else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/resource-adaptor-type-jar.xml" ) ) != null )
-    {
-      if( logger.isDebugEnabled() )
-        logger.debug( "Parsing Resource Adaptor Type Descriptor." );
-
-      try
-      {
-        // Create the XML document from file
-        doc = XMLUtils.parseDocument( componentJarFile.getInputStream( descriptorXML ), true );
-        org.w3c.dom.Element raJarNode = doc.getDocumentElement();
-
-        // Get a list of resource adaptor types in the deployable unit.
-        List<org.w3c.dom.Element> raTypeNodes = XMLUtils.getAllChildElements( raJarNode, XMLConstants.RESOURCE_ADAPTOR_TYPE_ND );
-        
-        if( raTypeNodes != null )
-        {
-          // Go through all the Resource Adaptor Type Elements          
-          for( Iterator<org.w3c.dom.Element> it = raTypeNodes.iterator(); it.hasNext(); )
+  
+          for( int i = sbbNodes.size() - 1; i >= 0; i-- )
           {
             DeployableComponent dc = new DeployableComponent( this );
             
-            // Set Component Type
-            dc.componentType = RATYPE_COMPONENT;        
-
-            // Do the parsing...
-            ResourceAdaptorTypeDescriptorImpl raTypeDescriptor = new ResourceAdaptorTypeDescriptorImpl();
-            ResourceAdaptorTypeDescriptorParser parser = new ResourceAdaptorTypeDescriptorParser();
-            parser.parseResourceAdaptorTypeDescriptor( it.next(), raTypeDescriptor );
-
+            dc.componentType = SBB_COMPONENT;
+                      
+            org.w3c.dom.Element sbbNode = sbbNodes.get( i );
+            SbbDeploymentDescriptorParser parser = new SbbDeploymentDescriptorParser();
+            MobicentsSbbDescriptorInternalImpl descriptor = (MobicentsSbbDescriptorInternalImpl) parser.parseSbbComponent( sbbNode, new MobicentsSbbDescriptorInternalImpl() );
+  
             // Get the Component ID
-            dc.componentID = raTypeDescriptor.getID();
-   
+            dc.componentID = descriptor.getID();
+  
             // Get the Component Key
             dc.componentKey = dc.componentID.toString();
-
+  
             if( logger.isDebugEnabled() )
             {
               logger.debug( "Component ID: " + dc.componentKey );
-
+  
               logger.debug( "------------------------------ Dependencies ------------------------------" );
             }
-
-            // Get the events this RA Type depends on
-            ComponentKey[] eventsList = raTypeDescriptor.getEventTypeRefEntries();
             
-            // Iterate them...
-            for( int i = 0; i < eventsList.length; i++ )
+            // Get the list of sbb references
+            HashSet<SbbRef> sbbRefs = descriptor.getSbbRef();
+            
+            // Iterate through the SbbRef nodes
+            for( SbbRef sbbRef : sbbRefs )
             {
-              if( logger.isDebugEnabled() )
-                logger.debug( "EventTypeID[" + eventsList[i].toString() + "]" );
+              // Add the SbbRef as a dependency
+              dc.dependencies.add( "SbbID[" + sbbRef.getComponentKey() + "]" );
               
-              // Add it to the dependencies list
-              dc.dependencies.add( "EventTypeID[" + eventsList[i].toString() + "]" );
+              if( logger.isDebugEnabled() )
+                logger.debug( "SbbID[" + sbbRef.getComponentKey() + "]" );
             }
             
+            // Get the list of RA Types in the descriptor 
+            ResourceAdaptorTypeID[] rasList = descriptor.getResourceAdaptorTypes();
+            
+            // Iterate through the RA Types nodes          
+            for( int n = 0; n < rasList.length; n++ )
+            {
+              // Add the RA Type to the dependencies (maybe not needed due to the link)
+              dc.dependencies.add( rasList[n].toString() );
+              
+              if( logger.isDebugEnabled() )
+                logger.debug( rasList[n] );
+  
+              // Get the entity links from the descriptor
+              Iterator<ResourceAdaptorEntityBinding> raebIt = descriptor.getResourceAdaptorEntityBindings( (ResourceAdaptorTypeIDImpl) rasList[n] );
+              
+              while( raebIt.hasNext() )
+              {
+                // Generate a special identifier for the links: linkname_@_RAType[name#vendor#version]
+                String raLink = raebIt.next().getResourceAdaptorEntityLink() + "_@_" + rasList[n];
+                
+                // Add it to dependencies
+                dc.dependencies.add( raLink );
+                
+                if( logger.isDebugEnabled() )
+                  logger.debug( raLink );
+              }
+            }
+            
+            // Get the event types from descriptor...
+            EventTypeID[] eventsList = descriptor.getEventTypes();
+            for( int n = 0; n < eventsList.length; n++ )
+            {
+              dc.dependencies.add( eventsList[n].toString() );
+              
+              if( logger.isDebugEnabled() )
+                logger.debug( eventsList[n] );
+            }
+  
+            // Get the profile specifications from descriptor...
+            ProfileSpecificationID[] profilesList = descriptor.getProfileSpecifications();
+            for( int n = 0; n < profilesList.length; n++ )
+            {
+              dc.dependencies.add( profilesList[n].toString() );
+              
+              if( logger.isDebugEnabled() )
+                logger.debug( profilesList[n] );
+            }
             if( logger.isDebugEnabled() )
               logger.debug( "--------------------------- End of Dependencies --------------------------" );
             
             deployableComponents.add( dc );
           }
         }
-      }
-      catch ( Exception e )
-      {
-        logger.error( "", e );
-      }
-    }
-    else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/resource-adaptor-jar.xml" ) ) != null )
-    {
-      if( logger.isDebugEnabled() )
-        logger.debug( "Parsing Resource Adaptor Descriptor." );
-
-      try
-      {
-        // Create the XML document from file
-        doc = XMLUtils.parseDocument( componentJarFile.getInputStream( descriptorXML ), true );
-
-        // Go through all the Resource Adaptor Elements
-        for( Iterator<org.w3c.dom.Element> it = XMLUtils.getAllChildElements( doc.getDocumentElement(), XMLConstants.RESOURCE_ADAPTOR ).iterator(); it.hasNext(); )
+        catch ( Exception e )
         {
-          DeployableComponent dc = new DeployableComponent( this );
-          
-          // Set Component Type
-          dc.componentType = RA_COMPONENT;
-          
-          // Get the next element
-          org.w3c.dom.Element raNode = it.next();
-
-          // Do the parsing...
-          ResourceAdaptorDescriptorImpl raDescriptor = new ResourceAdaptorDescriptorImpl();
-          ResourceAdaptorDescriptorParser parser = new ResourceAdaptorDescriptorParser();
-          parser.parseResourceAdaptorDescriptor( raNode, raDescriptor );
-
-          // Set the Component ID
-          dc.componentID = raDescriptor.getID();
-          
-          // Set the Component Key
-          dc.componentKey = dc.componentID.toString();
-
-          // Add the dependencies
-          dc.dependencies.add( raDescriptor.getResourceAdaptorType().toString() );
-
-          if( logger.isDebugEnabled() )
+          logger.error( "", e );
+        }
+        finally
+        {
+          // Clean up!
+          if( is != null )
           {
-            logger.debug( "Component ID: " + dc.componentKey );
-  
-            logger.debug( "------------------------------ Dependencies ------------------------------" );
-            logger.debug( raDescriptor.getResourceAdaptorType() );
-            logger.debug( "--------------------------- End of Dependencies --------------------------" );
+            try
+            {
+              is.close();
+            }
+            finally
+            {
+              is = null;
+            }
           }
-
-          deployableComponents.add( dc );
         }
       }
-      catch ( Exception e )
+      else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/profile-spec-jar.xml" ) ) != null )
       {
-        logger.error( "", e );
+        if( logger.isDebugEnabled() )
+          logger.debug( "Parsing Profile Specification Descriptor." );
+  
+        InputStream is = null;
+        
+        try
+        {
+          // Get the InputStream
+          is = componentJarFile.getInputStream( descriptorXML );
+          
+          // Create the XML document from file
+          doc = XMLUtils.parseDocument( is, true );
+          org.w3c.dom.Element profileJarNode = doc.getDocumentElement();
+  
+          // Get a list of the profile specifications in the deployable unit.
+          List<org.w3c.dom.Element> profileSpecNodes = XMLUtils.getAllChildElements( profileJarNode, XMLConstants.PROFILE_SPEC_ND );
+          if( profileSpecNodes.size() == 0 )
+          {
+            logger.warn( "The " + componentJarFile.getName() + " deployment descriptor contains no profile-spec definitions" );
+            return null;
+          }
+  
+          // Iterate through the profile spec nodes
+          for( int i = profileSpecNodes.size() - 1; i >= 0; i-- )
+          {
+            DeployableComponent dc = new DeployableComponent( this );
+            
+            // Set Component Type
+            dc.componentType = PROFILESPEC_COMPONENT;
+            
+            // Do the parsing...
+            org.w3c.dom.Element profileSpecNode = profileSpecNodes.get( i );
+            ProfileSpecificationDescriptorParser parser = new ProfileSpecificationDescriptorParser();
+            ProfileSpecificationDescriptorImpl descriptor = parser.parseProfileComponent( profileSpecNode, new ProfileSpecificationDescriptorImpl() );
+            
+            // Get the Component ID
+            dc.componentID = descriptor.getID();
+            
+            // Get the Component Key
+            dc.componentKey = dc.componentID.toString();
+  
+            if( logger.isDebugEnabled() )
+              logger.debug( "Component ID: " + dc.componentKey );
+            
+            deployableComponents.add( dc );
+          }
+          
+        }
+        catch ( Exception e )
+        {
+          logger.error( "", e );
+        }
+        finally
+        {
+          // Clean up!
+          if( is != null )
+          {
+            try
+            {
+              is.close();
+            }
+            finally
+            {
+              is = null;
+            }
+          }
+        }
+      }
+      else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/event-jar.xml" ) ) != null )
+      {
+        if( logger.isDebugEnabled() )
+          logger.debug( "Parsing Event Definition Descriptor." );
+  
+        InputStream is = null;
+        
+        try
+        {
+          // Get the InputStream
+          is = componentJarFile.getInputStream( descriptorXML );
+  
+          // Create the XML document from file
+          doc = XMLUtils.parseDocument( is, true );
+          org.w3c.dom.Element docElement = doc.getDocumentElement();
+  
+          // Get a list of the event definitions in the deployment descriptor 
+          List<org.w3c.dom.Element> nodes = XMLUtils.getAllChildElements( docElement, XMLConstants.EVENT_DEFINITION_ND );
+          
+          for( int i = 0; i < nodes.size(); i++ )
+          {
+            DeployableComponent dc = new DeployableComponent( this );
+            
+            // Set Component Type
+            dc.componentType = EVENTTYPE_COMPONENT;
+            
+            // Do the parsing...
+            MobicentsEventTypeDescriptorInternalImpl descriptorImpl = new MobicentsEventTypeDescriptorInternalImpl();
+            org.w3c.dom.Element eventDefinitionNode = nodes.get( i );
+            EventTypeDeploymentDescriptorParser parser = new EventTypeDeploymentDescriptorParser();
+            parser.parse( eventDefinitionNode, descriptorImpl );
+  
+            // Get the Component ID
+            dc.componentID = new EventTypeIDImpl( new ComponentKey(descriptorImpl.getName(), descriptorImpl.getVendor(), descriptorImpl.getVersion() ));
+            
+            // Get the Component Key
+            dc.componentKey = dc.componentID.toString().substring( 0, dc.componentID.toString().indexOf( ',' ) );
+  
+            if( logger.isDebugEnabled() )
+              logger.debug( "Component ID: " + dc.componentKey );
+            
+            deployableComponents.add( dc );
+          }
+  
+        }
+        catch ( Exception e )
+        {
+          logger.error( "", e );
+        }
+        finally
+        {
+          // Clean up!
+          if( is != null )
+          {
+            try
+            {
+              is.close();
+            }
+            finally
+            {
+              is = null;
+            }
+          }
+        }
+      }
+      else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/resource-adaptor-type-jar.xml" ) ) != null )
+      {
+        if( logger.isDebugEnabled() )
+          logger.debug( "Parsing Resource Adaptor Type Descriptor." );
+  
+        InputStream is = null;
+        
+        try
+        {
+          // Get the InputStream
+          is = componentJarFile.getInputStream( descriptorXML );
+  
+          // Create the XML document from file
+          doc = XMLUtils.parseDocument( is, true );
+          org.w3c.dom.Element raJarNode = doc.getDocumentElement();
+  
+          // Get a list of resource adaptor types in the deployable unit.
+          List<org.w3c.dom.Element> raTypeNodes = XMLUtils.getAllChildElements( raJarNode, XMLConstants.RESOURCE_ADAPTOR_TYPE_ND );
+          
+          if( raTypeNodes != null )
+          {
+            // Go through all the Resource Adaptor Type Elements          
+            for( Iterator<org.w3c.dom.Element> it = raTypeNodes.iterator(); it.hasNext(); )
+            {
+              DeployableComponent dc = new DeployableComponent( this );
+              
+              // Set Component Type
+              dc.componentType = RATYPE_COMPONENT;        
+  
+              // Do the parsing...
+              ResourceAdaptorTypeDescriptorImpl raTypeDescriptor = new ResourceAdaptorTypeDescriptorImpl();
+              ResourceAdaptorTypeDescriptorParser parser = new ResourceAdaptorTypeDescriptorParser();
+              parser.parseResourceAdaptorTypeDescriptor( it.next(), raTypeDescriptor );
+  
+              // Get the Component ID
+              dc.componentID = raTypeDescriptor.getID();
+     
+              // Get the Component Key
+              dc.componentKey = dc.componentID.toString();
+  
+              if( logger.isDebugEnabled() )
+              {
+                logger.debug( "Component ID: " + dc.componentKey );
+  
+                logger.debug( "------------------------------ Dependencies ------------------------------" );
+              }
+  
+              // Get the events this RA Type depends on
+              ComponentKey[] eventsList = raTypeDescriptor.getEventTypeRefEntries();
+              
+              // Iterate them...
+              for( int i = 0; i < eventsList.length; i++ )
+              {
+                if( logger.isDebugEnabled() )
+                  logger.debug( "EventTypeID[" + eventsList[i].toString() + "]" );
+                
+                // Add it to the dependencies list
+                dc.dependencies.add( "EventTypeID[" + eventsList[i].toString() + "]" );
+              }
+              
+              if( logger.isDebugEnabled() )
+                logger.debug( "--------------------------- End of Dependencies --------------------------" );
+              
+              deployableComponents.add( dc );
+            }
+          }
+        }
+        catch ( Exception e )
+        {
+          logger.error( "", e );
+        }
+        finally
+        {
+          // Clean up!
+          if( is != null )
+          {
+            try
+            {
+              is.close();
+            }
+            finally
+            {
+              is = null;
+            }
+          }
+        }
+      }
+      else if( ( descriptorXML = componentJarFile.getJarEntry( "META-INF/resource-adaptor-jar.xml" ) ) != null )
+      {
+        if( logger.isDebugEnabled() )
+          logger.debug( "Parsing Resource Adaptor Descriptor." );
+  
+        InputStream is = null;
+        
+        try
+        {
+          // Get the InputStream
+          is = componentJarFile.getInputStream( descriptorXML );
+  
+          // Create the XML document from file
+          doc = XMLUtils.parseDocument( is, true );
+  
+          // Go through all the Resource Adaptor Elements
+          for( Iterator<org.w3c.dom.Element> it = XMLUtils.getAllChildElements( doc.getDocumentElement(), XMLConstants.RESOURCE_ADAPTOR ).iterator(); it.hasNext(); )
+          {
+            DeployableComponent dc = new DeployableComponent( this );
+            
+            // Set Component Type
+            dc.componentType = RA_COMPONENT;
+            
+            // Get the next element
+            org.w3c.dom.Element raNode = it.next();
+  
+            // Do the parsing...
+            ResourceAdaptorDescriptorImpl raDescriptor = new ResourceAdaptorDescriptorImpl();
+            ResourceAdaptorDescriptorParser parser = new ResourceAdaptorDescriptorParser();
+            parser.parseResourceAdaptorDescriptor( raNode, raDescriptor );
+  
+            // Set the Component ID
+            dc.componentID = raDescriptor.getID();
+            
+            // Set the Component Key
+            dc.componentKey = dc.componentID.toString();
+  
+            // Add the dependencies
+            dc.dependencies.add( raDescriptor.getResourceAdaptorType().toString() );
+  
+            if( logger.isDebugEnabled() )
+            {
+              logger.debug( "Component ID: " + dc.componentKey );
+    
+              logger.debug( "------------------------------ Dependencies ------------------------------" );
+              logger.debug( raDescriptor.getResourceAdaptorType() );
+              logger.debug( "--------------------------- End of Dependencies --------------------------" );
+            }
+  
+            deployableComponents.add( dc );
+          }
+        }
+        catch ( Exception e )
+        {
+          logger.error( "", e );
+        }
+        finally
+        {
+          // Clean up!
+          if( is != null )
+          {
+            try
+            {
+              is.close();
+            }
+            finally
+            {
+              is = null;
+            }
+          }
+        }
+      }
+      else
+      {
+        logger.warn( "No Deployment Descriptor found in the " + componentJarFile.getName() + " entry of a deployable unit." );
+        return null;
       }
     }
-    else
+    finally
     {
-      logger.warn( "No Deployment Descriptor found in the " + componentJarFile.getName() + " entry of a deployable unit." );
-      return null;
+      // Clean up
+      if( componentJarFile != null )
+      {
+        try
+        {
+          componentJarFile.close();
+        }
+        finally
+        {
+          componentJarFile = null;
+        }
+      }
     }
-    
+
     return deployableComponents;
   }
 

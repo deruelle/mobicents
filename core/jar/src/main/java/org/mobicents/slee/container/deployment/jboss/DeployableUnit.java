@@ -1,6 +1,7 @@
 package org.mobicents.slee.container.deployment.jboss;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,8 +39,11 @@ public class DeployableUnit
   // The logger.
   private static Logger logger = Logger.getLogger( DeployableUnit.class );
   
-  // The deployment info of this DU
-  private DeploymentInfo duDeploymentInfo;
+  // The DeploymentInfo short name
+  private String diShortName; 
+  
+  // The DeploymentInfo URL object
+  private URL diURL;
   
   // The deployment manager in charge of this DU
   private DeploymentManager deploymentManager;
@@ -76,7 +80,8 @@ public class DeployableUnit
    */
   public DeployableUnit( DeploymentInfo duDeploymentInfo, DeploymentManager deploymentManager ) throws Exception
   {
-    this.duDeploymentInfo = duDeploymentInfo;
+    this.diShortName = duDeploymentInfo.shortName;
+    this.diURL = duDeploymentInfo.url;
     
     this.deploymentManager = deploymentManager;
     
@@ -206,7 +211,7 @@ public class DeployableUnit
         for( String missingDep : externalDependencies )
           missingDepList += "\r\n +-- " + missingDep;
         
-        logger.info( "Missing dependencies for " + this.duDeploymentInfo.shortName + ":" + missingDepList );
+        logger.info( "Missing dependencies for " + this.diShortName + ":" + missingDepList );
       }
       
       // Return dependencies not satified.
@@ -265,7 +270,7 @@ public class DeployableUnit
     Collection<Object[]> uActions = uninstallActions;
     
     // We add it just when we return them.
-    uActions.add( new Object[] {"uninstall", duDeploymentInfo.url.toString()} );
+    uActions.add( new Object[] {"uninstall", diURL.toString()} );
     
     return uActions;
   }
@@ -324,7 +329,7 @@ public class DeployableUnit
       tm.begin();
 
       // Get this DU Descriptor
-      DeployableUnitDescriptorImpl dudesc = (DeployableUnitDescriptorImpl) sC.getDeploymentManager().getDeployableUnitIDtoDescriptorMap().get( sC.getDeployableUnitIDFromUrl( duDeploymentInfo.url.toString() ) );
+      DeployableUnitDescriptorImpl dudesc = (DeployableUnitDescriptorImpl) sC.getDeploymentManager().getDeployableUnitIDtoDescriptorMap().get( sC.getDeployableUnitIDFromUrl( diURL.toString() ) );
 
       // Get the Components IDs from the descriptor
       ComponentID[] cid = dudesc.getComponents();
@@ -379,12 +384,12 @@ public class DeployableUnit
   }
 
   /**
-   * Getter for the DeploymentInfo object.
-   * @return the DeploymentInfo object.
+   * Getter for the DeploymentInfo short name
+   * @return a String containing the filename
    */
-  public DeploymentInfo getDeploymentInfo()
+  public String getDeploymentInfoShortName()
   {
-    return duDeploymentInfo;
+    return this.diShortName;
   }
 
   /**
@@ -411,112 +416,143 @@ public class DeployableUnit
    */
   private void parseDeployConfig() throws Exception
   {
-    // Create a JarFile object
-    JarFile componentJarFile = new JarFile( duDeploymentInfo.url.toString().replaceAll( "file:", "" ) );
+    JarFile componentJarFile = null;
     
-    // Get the JarEntry for the deploy-config.xml
-    JarEntry deployInfoXML = componentJarFile.getJarEntry( "META-INF/deploy-config.xml" );
-      
-    // If it exists, set an Input Stream on it 
-    InputStream is = deployInfoXML != null ? componentJarFile.getInputStream( deployInfoXML ) : null;
-
-    if( is != null )
+    InputStream is = null;
+    
+    try
     {
-      // Read the file into a Document
-      Document doc = XMLUtils.parseDocument( is, true );
+      // Create a JarFile object
+      componentJarFile = new JarFile( diURL.toString().replaceAll( "file:", "" ) );
       
-      // By now we only care about <ra-entitu> nodes
-      NodeList raEntities = doc.getElementsByTagName( "ra-entity" );
-      
-      // The RA identifier
-      String raId = null;
-      
-      // The collection of Post-Install Actions
-      Collection<Object[]> cPostInstallActions = new ArrayList<Object[]>();
-      
-      // The collection of Pre-Uninstall Actions
-      Collection<Object[]> cPreUninstallActions = new ArrayList<Object[]>();
-      
-      // Iterate through each ra-entity node
-      for( int i = 0; i < raEntities.getLength(); i++ )
+      // Get the JarEntry for the deploy-config.xml
+      JarEntry deployInfoXML = componentJarFile.getJarEntry( "META-INF/deploy-config.xml" );
+        
+      // If it exists, set an Input Stream on it 
+      is = deployInfoXML != null ? componentJarFile.getInputStream( deployInfoXML ) : null;
+  
+      if( is != null )
       {
-        Element raEntity = (Element) raEntities.item(i);
+        // Read the file into a Document
+        Document doc = XMLUtils.parseDocument( is, true );
         
-        // Get the component ID
-        raId = ComponentIDImpl.RESOURCE_ADAPTOR_ID + "[" + raEntity.getAttribute( "resource-adaptor-id" ) + "]";
+        // By now we only care about <ra-entitu> nodes
+        NodeList raEntities = doc.getElementsByTagName( "ra-entity" );
         
-        // The RA Entity Name
-        String entityName = raEntity.getAttribute( "entity-name" );
+        // The RA identifier
+        String raId = null;
         
-        // Select the properties node
-        NodeList propsNodeList = raEntity.getElementsByTagName("properties");
+        // The collection of Post-Install Actions
+        Collection<Object[]> cPostInstallActions = new ArrayList<Object[]>();
         
-        if( propsNodeList.getLength() > 1 )
-          logger.warn( "Invalid ra-entity element, has more than one properties child. Reading only first." );
+        // The collection of Pre-Uninstall Actions
+        Collection<Object[]> cPreUninstallActions = new ArrayList<Object[]>();
         
-        Element propsNode = (Element) propsNodeList.item(0);
-        
-        // The properties for this RA
-        Properties props = new Properties(); 
-          
-        // Do we have any properties at all?
-        if( propsNode != null )
+        // Iterate through each ra-entity node
+        for( int i = 0; i < raEntities.getLength(); i++ )
         {
-          String propsFilename;
+          Element raEntity = (Element) raEntities.item(i);
           
-          // Do we have a properties file to load?
-          if( ( propsFilename = ((Element)propsNode).getAttribute( "file" ) ) != null && !propsFilename.equals( "" ) )
-          {
-            // Get the entry from the jar
-            JarEntry propsFile = componentJarFile.getJarEntry( "META-INF/" + propsFilename );
+          // Get the component ID
+          raId = ComponentIDImpl.RESOURCE_ADAPTOR_ID + "[" + raEntity.getAttribute( "resource-adaptor-id" ) + "]";
+          
+          // The RA Entity Name
+          String entityName = raEntity.getAttribute( "entity-name" );
+          
+          // Select the properties node
+          NodeList propsNodeList = raEntity.getElementsByTagName("properties");
+          
+          if( propsNodeList.getLength() > 1 )
+            logger.warn( "Invalid ra-entity element, has more than one properties child. Reading only first." );
+          
+          Element propsNode = (Element) propsNodeList.item(0);
+          
+          // The properties for this RA
+          Properties props = new Properties(); 
             
-            // Load it.
-            props.load( componentJarFile.getInputStream( propsFile ) );
+          // Do we have any properties at all?
+          if( propsNode != null )
+          {
+            String propsFilename;
+            
+            // Do we have a properties file to load?
+            if( ( propsFilename = ((Element)propsNode).getAttribute( "file" ) ) != null && !propsFilename.equals( "" ) )
+            {
+              // Get the entry from the jar
+              JarEntry propsFile = componentJarFile.getJarEntry( "META-INF/" + propsFilename );
+              
+              // Load it.
+              props.load( componentJarFile.getInputStream( propsFile ) );
+            }
+            
+            // Select the property elements
+            NodeList propsList = propsNode.getElementsByTagName( "property" );
+            
+            // For each element, add it to the Properties object
+            for( int j = 0; j < propsList.getLength(); j++ )
+            {
+              Element property = (Element) propsList.item(j);
+              
+              // If the property already exists, it will be overwritten.
+              props.put( property.getAttribute( "name" ), property.getAttribute( "value" ) );
+            }
           }
           
-          // Select the property elements
-          NodeList propsList = propsNode.getElementsByTagName( "property" );
+          // Create the Resource Adaptor ID
+          ResourceAdaptorID componentID = new ResourceAdaptorIDImpl(new ComponentKey( raEntity.getAttribute( "resource-adaptor-id" )));
           
-          // For each element, add it to the Properties object
-          for( int j = 0; j < propsList.getLength(); j++ )
+          // Add the Create and Activate RA Entity actions to the Post-Install Actions
+          cPostInstallActions.add( new Object[] { "createResourceAdaptorEntity", componentID, entityName, props } );
+          cPostInstallActions.add( new Object[] { "activateResourceAdaptorEntity", entityName } );
+          
+          // Each RA might have zero or more links.. get them
+          NodeList links = raEntity.getElementsByTagName( "ra-link" );
+          
+          for( int j = 0; j < links.getLength(); j++ )
           {
-            Element property = (Element) propsList.item(j);
+            String linkName = ((Element) links.item(j)).getAttribute( "name" );
             
-            // If the property already exists, it will be overwritten.
-            props.put( property.getAttribute( "name" ), property.getAttribute( "value" ) );
+            cPostInstallActions.add( new Object[] { "bindLinkName", entityName, linkName } );
+            
+            cPreUninstallActions.add( new Object[] { "unbindLinkName", linkName } );
           }
+          
+          // Add the Deactivate and Remove RA Entity actions to the Pre-Uninstall Actions
+          cPreUninstallActions.add( new Object[] { "deactivateResourceAdaptorEntity", entityName } );
+          cPreUninstallActions.add( new Object[] { "removeResourceAdaptorEntity", entityName } );
+          
         }
         
-        // Create the Resource Adaptor ID
-        ResourceAdaptorID componentID = new ResourceAdaptorIDImpl(new ComponentKey( raEntity.getAttribute( "resource-adaptor-id" )));
-        
-        // Add the Create and Activate RA Entity actions to the Post-Install Actions
-        cPostInstallActions.add( new Object[] { "createResourceAdaptorEntity", componentID, entityName, props } );
-        cPostInstallActions.add( new Object[] { "activateResourceAdaptorEntity", entityName } );
-        
-        // Each RA might have zero or more links.. get them
-        NodeList links = raEntity.getElementsByTagName( "ra-link" );
-        
-        for( int j = 0; j < links.getLength(); j++ )
+        // Finally add the actions to the respective hashmap.
+        if( raId != null )
         {
-          String linkName = ((Element) links.item(j)).getAttribute( "name" );
-          
-          cPostInstallActions.add( new Object[] { "bindLinkName", entityName, linkName } );
-          
-          cPreUninstallActions.add( new Object[] { "unbindLinkName", linkName } );
+          postInstallActions.put( raId, cPostInstallActions );
+          preUninstallActions.put( raId, cPreUninstallActions );
         }
-        
-        // Add the Deactivate and Remove RA Entity actions to the Pre-Uninstall Actions
-        cPreUninstallActions.add( new Object[] { "deactivateResourceAdaptorEntity", entityName } );
-        cPreUninstallActions.add( new Object[] { "removeResourceAdaptorEntity", entityName } );
-        
+      }
+    }
+    finally
+    {
+      // Clean depoy-config.xml inputstream
+      try
+      {
+        if(is != null)
+          is.close();
+      }
+      finally
+      {
+        is = null;
       }
       
-      // Finally add the actions to the respective hashmap.
-      if( raId != null )
+      // Clean jar input streams
+      try
       {
-        postInstallActions.put( raId, cPostInstallActions );
-        preUninstallActions.put( raId, cPreUninstallActions );
+        if(componentJarFile != null)
+          componentJarFile.close();
+      }
+      finally
+      {
+        componentJarFile = null;
       }
     }
   }

@@ -1,6 +1,7 @@
 package org.mobicents.slee.container.deployment.jboss;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
@@ -92,10 +93,15 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     // Service XML should be an xml and not in the META-INF folder...
     if( name.endsWith( ".xml" ) && !name.contains( "META-INF/" ) )
     {
+      InputStream is = null;
+      
       try
       {
+        // Get the stream
+        is = url.openStream();
+        
         // Parse the XML
-        Document doc = XMLUtils.parseDocument( url.openStream(), true );
+        Document doc = XMLUtils.parseDocument( is, true );
 
         // Is the root element a <service-xml>
         isServiceXML = doc.getDocumentElement().getNodeName().equals( "service-xml" );
@@ -103,6 +109,25 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
       catch ( Exception ignore )
       {
         // ignore... wouldn't be a (good) service xml anyway.
+      }
+      finally
+      {
+        // Clean up!
+        if( is != null )
+        {
+          try
+          {
+            is.close();
+          }
+          catch ( IOException ignore )
+          {
+            // Do nothing
+          }
+          finally
+          {
+            is = null;
+          }
+        }
       }
     }
 
@@ -145,19 +170,42 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
       // If not it the accept list but it's a jar might be a DU jar...
       else if( di.shortName.endsWith( ".jar" ) )
       {
-        // Obtain the reference to the file
-        JarFile duJarFile = new JarFile( di.url.toString().replaceFirst( "file:", "" ) );
+        JarFile duJarFile = null; 
         
-        // Try to obtain the DU descriptor...
-        JarEntry duXmlEntry = duJarFile.getJarEntry( "META-INF/deployable-unit.xml" );
-        
-        // If we got it, we're accepting it!
-        if( duXmlEntry != null )
+        try
         {
-          if( logger.isDebugEnabled() )
-            logger.debug( "Accepting " + di.url.toString() + "." );
-
-          return true;
+          // Obtain the reference to the file
+          duJarFile = new JarFile( di.url.toString().replaceFirst( "file:", "" ) );
+          
+          // Try to obtain the DU descriptor...
+          JarEntry duXmlEntry = duJarFile.getJarEntry( "META-INF/deployable-unit.xml" );
+          
+          // If we got it, we're accepting it!
+          if( duXmlEntry != null )
+          {
+            if( logger.isDebugEnabled() )
+              logger.debug( "Accepting " + di.url.toString() + "." );
+  
+            return true;
+          }
+        }
+        finally
+        {
+          // Clean up!
+          if( duJarFile != null )
+          {
+            try
+            {
+              duJarFile.close();
+            }
+            catch ( IOException ignore )
+            {
+            }
+            finally
+            {
+              duJarFile = null;
+            }
+          }
         }
       }
     }
@@ -204,64 +252,87 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
       // If the DU for this component doesn't exists.. it's a new DU!
       else if( fileName.endsWith( ".jar" ) )
       {
-        // Get a reference to the DU jar file
-        JarFile duJarFile = new JarFile( di.url.toString().replaceFirst( "file:", "" ) );
-
-        // Try to get the Deployable Unit descriptor
-        JarEntry duXmlEntry = duJarFile.getJarEntry( "META-INF/deployable-unit.xml" );    
+        JarFile duJarFile = null;
         
-        // Got descriptor?
-        if( duXmlEntry != null )
+        try
         {
-          // Create a new Deployable Unit object.
-          DeployableUnit deployerDU = new DeployableUnit( di, dm );
+          // Get a reference to the DU jar file
+          duJarFile = new JarFile( di.url.toString().replaceFirst( "file:", "" ) );
+  
+          // Try to get the Deployable Unit descriptor
+          JarEntry duXmlEntry = duJarFile.getJarEntry( "META-INF/deployable-unit.xml" );    
           
-          // Let's parse the descriptor to see what we've got...
-          DeployableUnitDescriptorImpl duDesc = parseDUDescriptor( duJarFile );
-
-          // Add it to the deployable units map.
-          deployableUnits.put( di.shortName, deployerDU );
-
-          // Go through each jar entry in the DU descriptor
-          for( Element elem : (Collection<Element>)duDesc.getJarNodes() )
+          // Got descriptor?
+          if( duXmlEntry != null )
           {
-            // Get the name of the jar
-            String componentJarName = elem.getTextContent();
-
-            // Might have path... strip it!
-            int beginIndex;
-
-            if( ( beginIndex = componentJarName.lastIndexOf( '/' ) ) == -1 )
-              beginIndex = componentJarName.lastIndexOf( '\\' );
-
-            beginIndex++;
-
-            // Got a clean jar name, no paths.
-            componentJarName = componentJarName.substring( beginIndex, componentJarName.length() );
-
-            // Put it in the accept list.
-            toAccept.put( componentJarName, di );
+            // Create a new Deployable Unit object.
+            DeployableUnit deployerDU = new DeployableUnit( di, dm );
+            
+            // Let's parse the descriptor to see what we've got...
+            DeployableUnitDescriptorImpl duDesc = parseDUDescriptor( duJarFile );
+  
+            // Add it to the deployable units map.
+            deployableUnits.put( di.shortName, deployerDU );
+  
+            // Go through each jar entry in the DU descriptor
+            for( Element elem : (Collection<Element>)duDesc.getJarNodes() )
+            {
+              // Get the name of the jar
+              String componentJarName = elem.getTextContent();
+  
+              // Might have path... strip it!
+              int beginIndex;
+  
+              if( ( beginIndex = componentJarName.lastIndexOf( '/' ) ) == -1 )
+                beginIndex = componentJarName.lastIndexOf( '\\' );
+  
+              beginIndex++;
+  
+              // Got a clean jar name, no paths.
+              componentJarName = componentJarName.substring( beginIndex, componentJarName.length() );
+  
+              // Put it in the accept list.
+              toAccept.put( componentJarName, di );
+            }
+            
+            // Do the same as above... but for services
+            for( Element elem : (Collection<Element>)duDesc.getServiceNodes() )
+            {
+              // Get the name of the service XML
+              String serviceXMLName = elem.getTextContent();
+              
+              // Might have path... strip it!
+              int beginIndex;
+  
+              if( ( beginIndex = serviceXMLName.lastIndexOf( '/' ) ) == -1 )
+                beginIndex = serviceXMLName.lastIndexOf( '\\' );
+  
+              beginIndex++;
+  
+              // Got a clean XML filename
+              serviceXMLName = serviceXMLName.substring( beginIndex, serviceXMLName.length() );
+              
+              // Add it to the accept list.
+              toAccept.put( serviceXMLName, di );
+            }
           }
-          
-          // Do the same as above... but for services
-          for( Element elem : (Collection<Element>)duDesc.getServiceNodes() )
+        }
+        finally
+        {
+          // Clean up!
+          if( duJarFile != null )
           {
-            // Get the name of the service XML
-            String serviceXMLName = elem.getTextContent();
-            
-            // Might have path... strip it!
-            int beginIndex;
-
-            if( ( beginIndex = serviceXMLName.lastIndexOf( '/' ) ) == -1 )
-              beginIndex = serviceXMLName.lastIndexOf( '\\' );
-
-            beginIndex++;
-
-            // Got a clean XML filename
-            serviceXMLName = serviceXMLName.substring( beginIndex, serviceXMLName.length() );
-            
-            // Add it to the accept list.
-            toAccept.put( serviceXMLName, di );
+            try
+            {
+              duJarFile.close();
+            }
+            catch ( IOException ignore )
+            {
+            }
+            finally
+            {
+              duJarFile = null;
+            }
           }
         }
       }
@@ -430,14 +501,37 @@ public class SLEESubDeployer extends SubDeployerSupport implements SLEESubDeploy
     // The Document
     Document doc = null;
 
+    InputStream is = null;
+    
     try
     {
+      // Get the InputStream
+      is = unitJarFile.getInputStream( duXmlEntry );
+      
       // Parse the descriptor
-      doc = XMLUtils.parseDocument( unitJarFile.getInputStream( duXmlEntry ), false );
+      doc = XMLUtils.parseDocument( is, false );
     }
     catch ( IOException ex )
     {
       throw new DeploymentException( "Failed to extract the DU depl " + "descriptor from " + unitJarFile.getName() );
+    }
+    finally
+    {
+      // Clean up!
+      if( is != null )
+      {
+        try
+        {
+          is.close();
+        }
+        catch ( IOException ignore )
+        {
+        }
+        finally
+        {
+          is = null;
+        }
+      }
     }
 
     Element duNode = doc.getDocumentElement();

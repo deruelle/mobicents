@@ -77,7 +77,7 @@ public class DeploymentManager
     }
     else
     {
-      logger.warn( "Trying to deploy a duplicate DU (" + du.getDeploymentInfo().shortName + ")." );
+      logger.warn( "Trying to deploy a duplicate DU (" + du.getDeploymentInfoShortName() + ")." );
     }
   }
   
@@ -213,7 +213,7 @@ public class DeploymentManager
     }
     else
     {
-      logger.info( "Unable to INSTALL " + du.getDeploymentInfo().shortName + " right now. Waiting for dependencies to be resolved." );
+      logger.info( "Unable to INSTALL " + du.getDeploymentInfoShortName() + " right now. Waiting for dependencies to be resolved." );
       
       // The DU can't be installed now, let's wait...
       waitingForInstallDUs.add( du );
@@ -233,7 +233,7 @@ public class DeploymentManager
       // Then it should be in the waiting list... remove and we're done.
       waitingForInstallDUs.remove( du );
       
-      logger.info( du.getDeploymentInfo().shortName + " wasn't deployed. Removing from waiting list." );
+      logger.info( du.getDeploymentInfoShortName() + " wasn't deployed. Removing from waiting list." );
     }
     // Check if the DU is ready to be uninstalled
     else if( du.isReadyToUninstall() )
@@ -276,7 +276,7 @@ public class DeploymentManager
     }
     else
     {
-      logger.info( "Unable to UNINSTALL " + du.getDeploymentInfo().shortName + " right now. Waiting for dependents to be removed." );
+      logger.info( "Unable to UNINSTALL " + du.getDeploymentInfoShortName() + " right now. Waiting for dependents to be removed." );
       
       // Add it to the waiting list.
       waitingForUninstallDUs.add( du );
@@ -382,7 +382,7 @@ public class DeploymentManager
     output += "<p>Deployable Units Waiting For Install:</p>";
     for( DeployableUnit waitingDU : waitingForInstallDUs )
     {
-      output += "+-- " + waitingDU.getDeploymentInfo().shortName + "<br>";
+      output += "+-- " + waitingDU.getDeploymentInfoShortName() + "<br>";
       for( String dependency : waitingDU.getExternalDependencies() )
       {
         if( !deployedComponents.contains( dependency ) )
@@ -395,7 +395,7 @@ public class DeploymentManager
     output += "<p>Deployable Units Waiting For Uninstall:</p>";
     for( DeployableUnit waitingDU : waitingForUninstallDUs )
     {
-      output += "+-- " + waitingDU.getDeploymentInfo().shortName + "<br>";
+      output += "+-- " + waitingDU.getDeploymentInfoShortName() + "<br>";
     }
    
     return output;
