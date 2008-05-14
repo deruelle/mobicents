@@ -11,7 +11,7 @@
     <property name="executable" value="mvn" />
   </target>
 
-  <target name="deploy-all-with-initial-invite" depends="init">
+  <target name="deploy-all" depends="init">
     <exec executable="${executable}">
       <arg value="-f"/>
       <arg value="${home}/../../resources/sip/pom.xml"/>
@@ -32,7 +32,7 @@
 
   </target>
 
-  <target name="undeploy-all-with-initial-invite" depends="init">
+  <target name="undeploy-all" depends="init">
   
   <exec executable="${executable}">
       <arg value="-f"/>

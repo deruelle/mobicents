@@ -9,13 +9,13 @@
     <ant antfile="${home}../../resources/sip/build.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}/antfile="${home}/proxy-with-initial-invite-du-management.xml" target="deploy-jmx" inheritAll="false">
+    <ant antfile="${home}/proxy-with-initial-invite-du-management.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
   <target name="undeploy-all-jmx">
-    <ant antfile="${home}/antfile="${home}/proxy-with-initial-invite-du-management.xml" target="undeploy-jmx" inheritAll="false">
+    <ant antfile="${home}/proxy-with-initial-invite-du-management.xml" target="undeploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/sip/build.xml" target="undeploy-jmx" inheritAll="false">
@@ -27,13 +27,13 @@
     <ant antfile="${home}../../resources/sip/build.xml" target="deploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}/antfile="${home}/proxy-with-initial-invite-du-management.xml" target="deploy" inheritAll="false">
+    <ant antfile="${home}/proxy-with-initial-invite-du-management.xml" target="deploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
   <target name="undeploy-all">
-    <ant antfile="${home}/antfile="${home}/proxy-with-initial-invite-du-management.xml" target="undeploy" inheritAll="false">
+    <ant antfile="${home}/proxy-with-initial-invite-du-management.xml" target="undeploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/sip/build.xml" target="undeploy" inheritAll="false">
@@ -47,13 +47,13 @@
     <ant antfile="${home}../../resources/sip/build.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}/antfile="${home}/proxy-without-initial-invite-du-management.xml" target="deploy-jmx" inheritAll="false">
+    <ant antfile="${home}/proxy-without-initial-invite-du-management.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
   <target name="undeploy-all-jmx-proxy-without-initial-invite">
-    <ant antfile="${home}/antfile="${home}/proxy-without-initial-invite-du-management.xml" target="undeploy-jmx" inheritAll="false">
+    <ant antfile="${home}/proxy-without-initial-invite-du-management.xml" target="undeploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/sip/build.xml" target="undeploy-jmx" inheritAll="false">
@@ -65,13 +65,13 @@
     <ant antfile="${home}../../resources/sip/build.xml" target="deploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}/antfile="${home}/proxy-without-initial-invite-du-management.xml" target="deploy" inheritAll="false">
+    <ant antfile="${home}/proxy-without-initial-invite-du-management.xml" target="deploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
   </target>
 
   <target name="undeploy-all-proxy-without-initial-invite">
-    <ant antfile="${home}/antfile="${home}/proxy-without-initial-invite-du-management.xml" target="undeploy" inheritAll="false">
+    <ant antfile="${home}/proxy-without-initial-invite-du-management.xml" target="undeploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/sip/build.xml" target="undeploy" inheritAll="false">
