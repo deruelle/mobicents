@@ -20,7 +20,6 @@
 		<module>location-sbb</module>
 		<module>proxy-sbb</module>
 		<module>registrar-sbb</module>
-		<module>sbbs-du</module>
 		<module>proxy-with-initial-invite-sbbdescriptor</module>
 		<module>proxy-without-initial-invite-sbbdescriptor</module>
 	</modules>
