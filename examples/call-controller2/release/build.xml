@@ -8,7 +8,7 @@
   <target name="deploy-all-jmx">
     <!--ant antfile="${home}../../resources/sip/build.xml" target="deploy-jmx" inheritAll="false" /-->
     <!--ant antfile="${home}../../examples/sip-services/build.xml" target="jar-with-invite-not-initial" inheritAll="false" /-->
-    <ant antfile="${home}../../examples/sip-services/build.xml" target="deploy-all-except-proxy-service-jmx" inheritAll="false">
+    <ant antfile="${home}../../examples/sip-services/build.xml" target="deploy-all-jmx-proxy-without-initial-invite" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/media/build.xml" target="deploy-jmx" inheritAll="false">
@@ -26,7 +26,7 @@
     <ant antfile="${home}../../resources/media/build.xml" target="undeploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}../../examples/sip-services/build.xml" target="undeploy-all-except-proxy-service-jmx" inheritAll="false">
+    <ant antfile="${home}../../examples/sip-services/build.xml" target="undeploy-all-jmx-proxy-without-initial-invite" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <!--ant antfile="${home}../../resources/sip/build.xml" target="undeploy-jmx" inheritAll="false" /-->
@@ -35,7 +35,7 @@
   <target name="deploy-all">
     <!--ant antfile="${home}../../resources/sip/build.xml" target="deploy" inheritAll="false" /-->
     <!--ant antfile="${home}../../examples/sip-services/build.xml" target="jar-with-invite-not-initial" inheritAll="false" /-->
-    <ant antfile="${home}../../examples/sip-services/build.xml" target="deploy-all-except-proxy-service" inheritAll="false">
+    <ant antfile="${home}../../examples/sip-services/build.xml" target="deploy-all-proxy-without-initial-invite" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/media/build.xml" target="deploy" inheritAll="false">
@@ -53,7 +53,7 @@
     <ant antfile="${home}../../resources/media/build.xml" target="undeploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}../../examples/sip-services/build.xml" target="undeploy-all-except-proxy-service" inheritAll="false">
+    <ant antfile="${home}../../examples/sip-services/build.xml" target="undeploy-all-proxy-without-initial-invite" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <!--ant antfile="${home}../../resources/sip/build.xml" target="undeploy" inheritAll="false" /-->
