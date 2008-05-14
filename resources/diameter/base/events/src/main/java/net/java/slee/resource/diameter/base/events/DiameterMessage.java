@@ -36,7 +36,7 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 public interface DiameterMessage extends Cloneable {
 
     /**
-     * Return the {@link net.java.slee.resource.diameter.base.DiameterHeader} in this message, if it exists.  The header will not exist for
+     * Return the {@link org.mobicents.slee.resource.diameter.base.DiameterHeader} in this message, if it exists.  The header will not exist for
      * outgoing messages created via the {@link net.java.slee.resource.diameter.base.DiameterMessageFactory}.
      *
      * @return DiameterHeader if one exists, otherwise null

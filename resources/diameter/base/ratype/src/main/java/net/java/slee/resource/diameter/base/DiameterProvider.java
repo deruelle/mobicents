@@ -24,59 +24,88 @@ import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 import java.io.IOException;
 
-
 /**
  * The interface used by an SBB to interact with the Diameter RA.
- *
+ * 
  * @author Open Cloud
  */
 public interface DiameterProvider {
 
-    /**
-     * Return a DiameterMessageFactory implementation to be used to create {@link net.java.slee.resource.diameter.base.DiameterMessage} objects.
-     *
-     * @return a DiameterMessageFactory implementation
-     */
-    DiameterMessageFactory getDiameterMessageFactory();
+	/**
+	 * Return a DiameterMessageFactory implementation to be used to create
+	 * {@link org.mobicents.slee.resource.diameter.base.DiameterMessage} objects.
+	 * 
+	 * @return a DiameterMessageFactory implementation
+	 */
+	DiameterMessageFactory getDiameterMessageFactory();
 
-    /**
-     * Returns avp factory for base avp types and common types, like UNSIGNED_32 type and similar.
-     * @return
-     */
-    DiameterAvpFactory getDiameterAvpFactory();
-    
-    /**
-     * Create a new activity to send and receive Diameter messages.
-     * @return a DiameterActivity
-     * @throws CreateActivityException if the RA could not create the activity for any reason
-     */
-    DiameterActivity createActivity() throws CreateActivityException;
+	/**
+	 * Returns avp factory for base avp types and common types, like UNSIGNED_32
+	 * type and similar.
+	 * 
+	 * @return
+	 */
+	DiameterAvpFactory getDiameterAvpFactory();
 
-    /**
-     * Create a new activity to send and receive Diameter messages.
-     * @param destinationHost a destination host to automatically put in all messages
-     * @param destinationRealm a destination realm to automatically put in all messages
-     * @return a DiameterActivity
-     * @throws CreateActivityException if the RA could not create the activity for any reason
-     */
-    DiameterActivity createActivity(DiameterIdentityAvp destinationHost, DiameterIdentityAvp destinationRealm) throws CreateActivityException;
+	/**
+	 * Create a new activity to send and receive Diameter messages.
+	 * 
+	 * @return a DiameterActivity
+	 * @throws CreateActivityException
+	 *             if the RA could not create the activity for any reason
+	 */
+	DiameterActivity createActivity() throws CreateActivityException;
 
-    /**
-     * Synchronously send a Diameter request and block until a response is received.
-     * @param message the Diameter message to send
-     * @return the Diameter message containing the response
-     */
-    DiameterMessage sendSyncRequest(DiameterMessage message) throws IOException;
+	/**
+	 * Create a new activity to send and receive Diameter messages.
+	 * 
+	 * @param destinationHost
+	 *            a destination host to automatically put in all messages
+	 * @param destinationRealm
+	 *            a destination realm to automatically put in all messages
+	 * @return a DiameterActivity
+	 * @throws CreateActivityException
+	 *             if the RA could not create the activity for any reason
+	 */
+	DiameterActivity createActivity(DiameterIdentityAvp destinationHost,
+			DiameterIdentityAvp destinationRealm)
+			throws CreateActivityException;
 
-    /**
-     * Return the number of peers this Diameter resource adaptor is connected to.
-     * @return connected peer count
-     */
-    int getPeerCount();
-    /**
-     * Returns array containing identities of connected peers 
-     * FIXME: baranowb; - should it be InetAddres, Port pair?
-     * @return
-     */
-    DiameterIdentityAvp[] getConnectedPeers();
+	AccountingClientSessionActivity createAccountingActivity(
+			DiameterIdentityAvp destinationHost,
+			DiameterIdentityAvp destinationRealm)throws CreateActivityException ;
+
+	AuthClientSessionActivity createAuthenticationActivity(
+			DiameterIdentityAvp destinationHost,
+			DiameterIdentityAvp destinationRealm)throws CreateActivityException ;
+
+	AccountingClientSessionActivity createAccountingActivity()throws CreateActivityException ;
+
+	AuthClientSessionActivity createAuthenticationActivity()throws CreateActivityException ;
+
+	/**
+	 * Synchronously send a Diameter request and block until a response is
+	 * received.
+	 * 
+	 * @param message
+	 *            the Diameter message to send
+	 * @return the Diameter message containing the response
+	 */
+	DiameterMessage sendSyncRequest(DiameterMessage message) throws IOException;
+
+	/**
+	 * Return the number of peers this Diameter resource adaptor is connected
+	 * to.
+	 * 
+	 * @return connected peer count
+	 */
+	int getPeerCount();
+
+	/**
+	 * Returns array containing identities of connected peers FIXME: baranowb; -
+	 * should it be InetAddres, Port pair?
+	 * 
+	 * @return
+	 */
+	DiameterIdentityAvp[] getConnectedPeers();
 }

@@ -23,7 +23,7 @@ package net.java.slee.resource.diameter.base.events.avp;
  * A GroupedAvp represents a Diameter Grouped AVP type.
  * This is the superinterface for the RA defined Grouped AVP types.
  * An array of the AVPs contained in the class can be accessed using
- * {@link net.java.slee.resource.diameter.base.DiameterAvp#groupedAvpValue()}.
+ * {@link org.mobicents.slee.resource.diameter.base.DiameterAvp#groupedAvpValue()}.
  */
 public interface GroupedAvp extends DiameterAvp {
 

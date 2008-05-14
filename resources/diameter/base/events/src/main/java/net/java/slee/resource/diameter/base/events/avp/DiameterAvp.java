@@ -21,6 +21,8 @@ package net.java.slee.resource.diameter.base.events.avp;
 
 import javax.naming.OperationNotSupportedException;
 
+import net.java.slee.resource.diameter.base.DiameterMessageFactory;
+
 /**
  * Diameter Attribute Value Pair (AVP).  Applications can use this interface to retrieve the
  * AVP's code, name, type and value.  Concrete implementations of this interface are created via the
@@ -54,7 +56,7 @@ public interface DiameterAvp extends Cloneable {
     String getName();
 
     /**
-     * Return the AVP type (one of the String constants from {@link net.java.slee.resource.diameter.base.DiameterAvpType}.
+     * Return the AVP type (one of the String constants from {@link org.mobicents.slee.resource.diameter.base.DiameterAvpType}.
      * @return the AVP type
      */
     DiameterAvpType getType();
