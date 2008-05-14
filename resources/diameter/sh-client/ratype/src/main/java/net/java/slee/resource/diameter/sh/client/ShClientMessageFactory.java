@@ -78,7 +78,7 @@ public interface ShClientMessageFactory extends MessageFactory {
     /**
      * Create a PushNotificationAnswer containing a Result-Code or Experimental-Result AVP populated with the given value.
      * If <code>isExperimentalResultCode</code> is <code>true</code>, the <code>resultCode</code> parameter will be set
-     * in a {@link net.java.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> it 
+     * in a {@link org.mobicents.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> it 
      * will be sent as a standard Result-Code AVP. 
      * @return a PushNotificationAnswer object that can be sent using {@link ShClientNotificationActivity#sendPushNotificationAnswer(net.java.slee.resource.diameter.sh.types.PushNotificationAnswer)} 
      */

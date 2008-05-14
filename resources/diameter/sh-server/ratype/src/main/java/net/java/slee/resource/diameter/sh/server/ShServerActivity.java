@@ -54,7 +54,7 @@ public interface ShServerActivity {
 
     /**
      * Create a UserDataAnswer using the given parameter to populate the User-Data AVP.  The Result-Code AVP is 
-     * automatically set to {@link net.java.slee.resource.diameter.base.DiameterResultCode#DIAMETER_SUCCESS}. 
+     * automatically set to {@link org.mobicents.slee.resource.diameter.base.DiameterResultCode#DIAMETER_SUCCESS}. 
      * @return a UserDataAnswer object that can be sent using {@link ShServerActivity#sendUserDataAnswer(net.java.slee.resource.diameter.sh.types.UserDataAnswer)} 
      */
     UserDataAnswer createUserDataAnswer(UserData userData);
@@ -62,7 +62,7 @@ public interface ShServerActivity {
     /**
      * Create a UserDataAnswer containing a Result-Code or Experimental-Result AVP populated with the given value.
      * If <code>isExperimentalResultCode</code> is <code>true</code>, the <code>resultCode</code> parameter will be set
-     * in a {@link net.java.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
+     * in a {@link org.mobicents.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
      * result code will be set in a Result-Code AVP. 
      * @return a UserDataAnswer object that can be sent using {@link ShServerActivity#sendUserDataAnswer(net.java.slee.resource.diameter.sh.types.UserDataAnswer)}
      */
@@ -77,7 +77,7 @@ public interface ShServerActivity {
     /**
      * Create a ProfileUpdateAnswer containing a Result-Code or Experimental-Result AVP populated with the given value.
      * If <code>isExperimentalResultCode</code> is <code>true</code>, the <code>resultCode</code> parameter will be set
-     * in a {@link net.java.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
+     * in a {@link org.mobicents.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
      * result code will be set in a Result-Code AVP. 
      * @return a ProfileUpdateAnswer object that can be sent using {@link ShServerActivity#sendProfileUpdateAnswer(net.java.slee.resource.diameter.sh.types.ProfileUpdateAnswer)}
      */
@@ -92,7 +92,7 @@ public interface ShServerActivity {
     /**
      * Create a SubscribeNotificationsAnswer containing a Result-Code or Experimental-Result AVP populated with the given value.
      * If <code>isExperimentalResultCode</code> is <code>true</code>, the <code>resultCode</code> parameter will be set
-     * in a {@link net.java.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
+     * in a {@link org.mobicents.slee.resource.diameter.base.types.ExperimentalResultAvp} AVP, if it is <code>false</code> the
      * result code will be set in a Result-Code AVP. 
      * @return a SubscribeNotificationsAnswer object that can be sent using {@link ShServerActivity#sendSubscribeNotificationsAnswer(net.java.slee.resource.diameter.sh.types.SubscribeNotificationsAnswer)}
      */
