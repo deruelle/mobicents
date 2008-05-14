@@ -1,5 +1,5 @@
 Description:
-This example provides basic sip services, such as proxy location and registrar services.
+This example provides basic sip services, such as proxy, location and registrar services.
 
 Requirements:
 This example depends on the Mobicents SIP Resource Adaptor, ensure it is installed.
