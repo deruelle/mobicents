@@ -60,8 +60,9 @@ public abstract class CallForwardingSbb extends SubscriptionProfileSbb implement
 			}
 
 			request = event.getRequest();
-			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
-			URI toURI = toHeader.getAddress().getURI();
+			// ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
+		  // URI toURI = toHeader.getAddress().getURI();
+			URI toURI = event.getRequest().getRequestURI();
 			URI contactURI = isUserAvailable(toURI);
 			if (contactURI != null) {
 				// USER IS AVAILABLE
