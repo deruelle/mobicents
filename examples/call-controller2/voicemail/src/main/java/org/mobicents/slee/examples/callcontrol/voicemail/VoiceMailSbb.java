@@ -140,7 +140,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 
 					// Setting File Route where recording the voice message
 					String route = (String) myEnv.lookup("filesRoute");
-					fileRoute = route + fileName;
+					fileRoute = /*route + */fileName;
 				}
 
 				// SDP Description from the request
@@ -378,11 +378,11 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements
 				log.warn("Lookup of filesRoute env Variable failed", nEx);
 			}
 
-			if (route != null) {
-				recordFilePath = route + fileName;
-			} else {
+//			if (route != null) {
+//				recordFilePath = route + fileName;
+//			} else {
 				recordFilePath = fileName;
-			}
+//			}
 
 			String[] params = new String[2];
 			params[0] = audioFileURL.toString();
