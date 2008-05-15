@@ -21,7 +21,6 @@ package net.java.slee.resource.diameter.base.events.avp;
 
 import javax.naming.OperationNotSupportedException;
 
-import net.java.slee.resource.diameter.base.DiameterMessageFactory;
 
 /**
  * Diameter Attribute Value Pair (AVP).  Applications can use this interface to retrieve the
