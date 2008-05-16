@@ -36,6 +36,7 @@ package org.mobicents.slee.resource.sip;
 import gov.nist.javax.sip.header.CSeq;
 import gov.nist.javax.sip.header.CallID;
 import gov.nist.javax.sip.header.Via;
+import gov.nist.javax.sip.message.SIPRequest;
 
 import java.io.Serializable;
 import java.net.DatagramSocket;
@@ -1685,7 +1686,7 @@ public class SipResourceAdaptor implements SipListener, ResourceAdaptor,
 
 		}
 
-		return new ServerTransactionWrapper(req.getServerTransaction(),
+		return new ServerTransactionWrapper((ServerTransaction) ((SIPRequest) req.getRequest()).getTransaction(),
 				(DialogWrapper) d, this);
 	}
 
