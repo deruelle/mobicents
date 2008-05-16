@@ -40,6 +40,23 @@
 								</goals>
 								<configuration>
 									<tasks>
+									  <!-- Build the DUs for the release. -->
+                    <condition property="executable" value="mvn.bat">
+                      <os family="windows"/>
+                    </condition>
+                    <property name="executable" value="mvn" />
+                    <exec executable="${executable}">
+                      <arg value="-f"/>
+                      <arg value="./proxy-with-initial-invite-services-DU/pom.xml"/>
+                      <arg value="install"/>
+                    </exec>
+                    <exec executable="${executable}">
+                      <arg value="-f"/>
+                      <arg value="./proxy-without-initial-invite-services-DU/pom.xml"/>
+                      <arg value="install"/>
+                    </exec>
+                    <!-- End of Build the DUs for the release. -->
+                    
 										<copy overwrite="true"
 											todir="${basedir}/../../release/${release.name}/examples/sip-services">
 											<fileset
