@@ -16,9 +16,9 @@
 	<xi:include
 		href="resource_adapters/section-Asterisk_Resource_Adapter.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
-	<xi:include
+	<!--<xi:include
 		href="resource_adapters/section-Parlay_and_Parlay-X_Resource_Adapter.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
+		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
 	<xi:include
 		href="resource_adapters/section-J2EE_and_CA_Resource_Adapter.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
@@ -38,10 +38,10 @@
 		href="resource_adapters/section-JCC_INAP_Resource_Adapter.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
-		href="resource_adapters/section-HTTP-Server_Resource_Adapter.xml"
+		href="resource_adapters/section-HTTP_Servlet_Resource_Adapter.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
-		href="resource_adapters/section-HTTP-Client_Resource_Adapter.xml"
+		href="resource_adapters/section-HTTP_Client_Resource_Adapter.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
 		href="resource_adapters/section-Persistence_Resource_Adapter.xml"

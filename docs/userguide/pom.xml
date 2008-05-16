@@ -25,7 +25,7 @@
 				<version>2.0.0</version>
 				<extensions>true</extensions>
 				<configuration>
-					<sourceDocumentName>book-Working_with_the_Mobicents_Management_Console.xml</sourceDocumentName>
+					<sourceDocumentName>_builds/book-HTTP_Servlet_Resource_Adapter.xml</sourceDocumentName>
 					<imageResource>
 						<directory>en-US/images</directory>
 					</imageResource>
@@ -36,20 +36,20 @@
 						</excludes>
 					</cssResource>
 					<formats>
-						<!--<format>
-							<formatName>pdf</formatName>
-							<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>
-							<finalName>${pom.name}.pdf</finalName>
-						</format>-->
 						<format>
 							<formatName>html_single</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/nochunk-html.xsl</stylesheetResource>
 							<finalName>index.html</finalName>
 						</format>
-						<!--<format>
+						<format>
 							<formatName>html</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>
 							<finalName>index.html</finalName>
+						</format>
+						<!--<format>
+							<formatName>pdf</formatName>
+							<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>
+							<finalName>${pom.name}.pdf</finalName>
 						</format>-->
 					</formats>
 					<options>
