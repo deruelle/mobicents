@@ -259,16 +259,16 @@
 				<inherited>false</inherited>
 				<executions />
 			</plugin>
-			<plugins>
-				<plugin>
-					<artifactId>maven-release-plugin</artifactId>
-					<configuration>
-						<tagBase>
-							https://mobicents.googlecode.com/svn/tags
-						</tagBase>
-					</configuration>
-				</plugin>
-			</plugins>
+
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagBase>
+						https://mobicents.googlecode.com/svn/tags
+					</tagBase>
+				</configuration>
+			</plugin>
+
 			<!--  uncomment to process release
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
