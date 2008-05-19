@@ -257,8 +257,18 @@
 				<artifactId>andromdapp-maven-plugin</artifactId>
 				<version>3.3</version>
 				<inherited>false</inherited>
-				<executions/>
+				<executions />
 			</plugin>
+			<plugins>
+				<plugin>
+					<artifactId>maven-release-plugin</artifactId>
+					<configuration>
+						<tagBase>
+							https://mobicents.googlecode.com/svn/tags
+						</tagBase>
+					</configuration>
+				</plugin>
+			</plugins>
 			<!--  uncomment to process release
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
