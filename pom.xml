@@ -8,7 +8,14 @@
 	<version>1.2.0.BETA3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mobicents :: Parent :: mobicents</name>
-	
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk
+		</developerConnection>
+		<tag>HEAD</tag>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>
 	<!--
 		UNIQUE PROPERTIES FOR WHOLE PLATFORM,
 		ADVISES USAGE OF SAME VERSIONS EVERYWHERE
