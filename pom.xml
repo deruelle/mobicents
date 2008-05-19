@@ -273,6 +273,7 @@
 					<tagBase>
 						https://mobicents.googlecode.com/svn/tags
 					</tagBase>
+					<allowTimestampedSnapshots>true</allowTimestampedSnapshots> 
 				</configuration>
 			</plugin>
 
