@@ -16,7 +16,7 @@ public class AbortSessionAnswerImpl extends ExtensionDiameterMessageImpl impleme
 	@Override
 	public String getLongName() {
 
-		return "Abbort-Session-Answer";
+		return "Abort-Session-Answer";
 	}
 
 	@Override

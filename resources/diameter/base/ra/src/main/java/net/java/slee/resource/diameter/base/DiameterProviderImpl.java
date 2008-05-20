@@ -3,8 +3,6 @@ package net.java.slee.resource.diameter.base;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-import javax.sip.InvalidArgumentException;
-
 import net.java.slee.resource.diameter.base.events.DiameterMessage;
 import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
@@ -12,20 +10,13 @@ import org.apache.log4j.Logger;
 import org.jdiameter.api.Message;
 import org.jdiameter.api.Session;
 import org.mobicents.slee.resource.diameter.base.events.AbortSessionAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.AbortSessionRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.AccountingAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.AccountingRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.DiameterMessageImpl;
 import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.ReAuthAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.ReAuthRequestImpl;
 import org.mobicents.slee.resource.diameter.base.events.SessionTerminationAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.SessionTerminationRequestImpl;
 
 public class DiameterProviderImpl implements DiameterProvider
 {
@@ -53,6 +44,31 @@ public class DiameterProviderImpl implements DiameterProvider
     return null;
   }
 
+
+  public AccountingClientSessionActivity createAccountingActivity( DiameterIdentityAvp destinationHost, DiameterIdentityAvp destinationRealm ) throws CreateActivityException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public AccountingClientSessionActivity createAccountingActivity() throws CreateActivityException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public AuthClientSessionActivity createAuthenticationActivity( DiameterIdentityAvp destinationHost, DiameterIdentityAvp destinationRealm ) throws CreateActivityException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  public AuthClientSessionActivity createAuthenticationActivity() throws CreateActivityException
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
   public DiameterMessageFactory getDiameterMessageFactory()
   {
     // TODO Auto-generated method stub
@@ -81,7 +97,7 @@ public class DiameterProviderImpl implements DiameterProvider
           switch (response.getCommandCode())
           {
             case 274: // ASR/ASA
-              return new AbortSessionRequestImpl( response );
+              return new AbortSessionAnswerImpl( response );
             case 271: // ACR/ACA
               return new AccountingAnswerImpl( response );
             case 257: // CER/CEA
