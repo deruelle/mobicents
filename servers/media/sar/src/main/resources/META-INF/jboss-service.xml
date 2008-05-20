@@ -43,9 +43,15 @@
         <attribute name="PortRange">1024-65535</attribute>
         <attribute name="PCMA">true</attribute>
         <attribute name="DTMF">
+            detector.mode=AUTO           
+        </attribute>
+        
+        <!-- Use the following setting if you are using INBAND
+        <attribute name="DTMF">
             detector.mode=INBAND
             dtmf.payload = 101
         </attribute>
+        -->
     </mbean>
     
     <!-- LOOPBACK ENDPOINT -->
