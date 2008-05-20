@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import javax.naming.NamingException;
 import javax.naming.OperationNotSupportedException;
 import javax.slee.Address;
-import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.EventLookupFacility;
 import javax.slee.management.UnrecognizedResourceAdaptorEntityException;
 import javax.slee.resource.ActivityHandle;

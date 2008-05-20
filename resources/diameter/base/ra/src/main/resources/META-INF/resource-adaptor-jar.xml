@@ -18,7 +18,7 @@
 		<resource-adaptor-classes>
 			<resource-adaptor-class>
 				<resource-adaptor-class-name>
-          net.java.slee.resource.diameter.base.DiameterBaseResourceAdaptor
+          org.mobicents.slee.resource.diameter.base.DiameterBaseResourceAdaptor
         </resource-adaptor-class-name>
 			</resource-adaptor-class>
 		</resource-adaptor-classes>

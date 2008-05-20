@@ -21,16 +21,6 @@
 			<version>1.5.1</version>
 		</dependency>
 		<dependency>
-			<artifactId>jdiameter-client-api</artifactId>
-			<groupId>jdiameter</groupId>
-			<version>1.5.1</version>
-		</dependency>
-		<dependency>
-			<artifactId>jdiameter-client-impl</artifactId>
-			<groupId>jdiameter</groupId>
-			<version>1.5.1</version>
-		</dependency>
-		<dependency>
 			<artifactId>jdiameter-server-impl</artifactId>
 			<groupId>jdiameter</groupId>
 			<version>1.5.1</version>

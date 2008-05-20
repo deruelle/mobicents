@@ -1,12 +1,16 @@
 package org.mobicents.slee.resource.diameter.base;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.naming.OperationNotSupportedException;
-import javax.slee.UnrecognizedActivityException;
 import javax.slee.resource.SleeEndpoint;
+
+import net.java.slee.resource.diameter.base.DiameterActivity;
+import net.java.slee.resource.diameter.base.DiameterAvpFactory;
+import net.java.slee.resource.diameter.base.DiameterMessageFactory;
+import net.java.slee.resource.diameter.base.events.DiameterMessage;
+import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 import org.apache.log4j.Logger;
 import org.jdiameter.api.Answer;
@@ -14,21 +18,7 @@ import org.jdiameter.api.EventListener;
 import org.jdiameter.api.Message;
 import org.jdiameter.api.Request;
 import org.jdiameter.api.Session;
-import org.jdiameter.api.app.AppSession;
-import org.mobicents.slee.resource.diameter.base.events.AbortSessionRequestImpl;
-import org.mobicents.slee.resource.diameter.base.events.AccountingAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.CapabilitiesExchangeAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.DeviceWatchdogAnswerImpl;
 import org.mobicents.slee.resource.diameter.base.events.DiameterMessageImpl;
-import org.mobicents.slee.resource.diameter.base.events.DisconnectPeerAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.ReAuthAnswerImpl;
-import org.mobicents.slee.resource.diameter.base.events.SessionTerminationAnswerImpl;
-
-import net.java.slee.resource.diameter.base.DiameterActivity;
-import net.java.slee.resource.diameter.base.DiameterAvpFactory;
-import net.java.slee.resource.diameter.base.DiameterMessageFactory;
-import net.java.slee.resource.diameter.base.events.DiameterMessage;
-import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
 public class DiameterActivityImpl implements DiameterActivity {
 
@@ -125,7 +115,26 @@ public class DiameterActivityImpl implements DiameterActivity {
 	}
 
 	public DiameterMessage sendSyncMessage(DiameterMessage message) {
-		return null;
+  	// FIXME: alexandre: is this the right way to send sync?
+    try {
+      if (message instanceof DiameterMessageImpl) {
+        DiameterMessageImpl msg = (DiameterMessageImpl) message;
+        Future<Message> response = this.session.send( msg.getGenericData());
+        // FIXME: alexandre: get dest host and realm, possibly some other avps
+        
+        return (DiameterMessage) response.get();
+
+      } else {
+        throw new OperationNotSupportedException(
+            "Trying to send wrong type of message? ["
+                + message.getClass() + "] \n" + message);
+      }
+    } catch (Exception e) {
+      logger.error("Failure sending sync request.", e);
+    }
+    
+    // FIXME: alexandre: should send exception?
+    return null;
 	}
 
 }
