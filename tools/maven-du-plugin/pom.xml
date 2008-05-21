@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>1.2.0.BETA3</version>
+		<version>1.2.0.GA-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>maven-du-plugin</artifactId>
-	<version>1.0.0.BETA1</version>
+	<version>1.0.1.BETA1-SNAPSHOT</version>
 	
 	<packaging>maven-plugin</packaging>
 	<name>Mobicents :: Tools :: mobicents-du-plugin</name>
