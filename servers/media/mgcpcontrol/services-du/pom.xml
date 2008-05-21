@@ -13,7 +13,7 @@
 	
 	<artifactId>mgcp-control-services-DU</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>${parent.version}</version>
+	<version>1.0.0.BETA1</version>
 	
 	<dependencies>
 		<dependency>
