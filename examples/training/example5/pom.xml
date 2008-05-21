@@ -11,7 +11,6 @@
 	
 	<artifactId>training-example5-parent</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>1.2.0.BETA3-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	

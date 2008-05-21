@@ -10,7 +10,6 @@
     
     <groupId>org.mobicents.examples</groupId>
     <artifactId>mms-demo-parent</artifactId>
-    <version>1.2.0.BETA3-SNAPSHOT</version>
     
     <packaging>pom</packaging>
     
