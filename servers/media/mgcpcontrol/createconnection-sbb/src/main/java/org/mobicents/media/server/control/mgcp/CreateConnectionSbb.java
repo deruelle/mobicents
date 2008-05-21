@@ -16,7 +16,7 @@
 package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
-import jain.protocol.ip.mgcp.JainMgcpProvider;
+import net.java.slee.resource.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -178,10 +178,21 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public void onConnectionCreated(MsConnectionEvent evt,
 			ActivityContextInterface aci) {
 
+		logger.info(" onConnectionCreated called ");
+
 		MsConnection msConnection = evt.getConnection();
 
+		// MGCP only accepts hexadecimal string X-(
+		// ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(
+		// msConnection.getId());
+
+		// TODO This is wrong. We need to change MMS to have ID of msConnection
+		// as hexadecimal string
+		String identifier = ((CallIdentifier) mgcpProvider
+				.getUniqueCallIdentifier()).toString();
 		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(
-				msConnection.getId());
+				identifier);
+
 		CreateConnectionResponse response = new CreateConnectionResponse(this,
 				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();

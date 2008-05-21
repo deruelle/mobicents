@@ -63,6 +63,9 @@
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
         <attribute name="PCMA">true</attribute>
+	<attribute name="DTMF">
+		detector.mode=AUTO
+        </attribute>
     </mbean>
     
     <!-- CONF ENDPOINT -->

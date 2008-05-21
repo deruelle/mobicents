@@ -372,6 +372,7 @@ public class BaseConnection implements Connection, AdaptorListener {
         try {
             this.period = getPacketizationPeriod(remoteSDP);
         } catch (Exception e) {
+        	logger.info("Failed to get the Packetization Period 'ptime' ",e);
         }
 
         // configuring DTMF detector if supported
@@ -383,6 +384,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             endpoint.configure(MediaResourceType.DTMF_DETECTOR, this,
                     dtmfConfig);
         } catch (UnknownMediaResourceException e) {
+        	logger.error("UnknownMediaResourceException while configuring the DTMF for Endpoint", e);
         }
 
         configurePrimarySource();
@@ -671,9 +673,11 @@ public class BaseConnection implements Connection, AdaptorListener {
                     logger.debug("Start transmission  " + stream + " to remote peer:" + getPeer(remoteSDP));
                 }
             } catch (UnsupportedFormatException e) {
+            	logger.error("UnsupportedFormatException while starting the transmission", e);
                 setState(ConnectionState.CLOSED);
             } catch (SdpException e) {
                 setState(ConnectionState.CLOSED);
+                logger.error("SdpException while starting the transmission", e);
             }
         }
 
