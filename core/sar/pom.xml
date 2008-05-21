@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>org.mobicents.core</groupId>
 			<artifactId>mobicents-core-jar</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.tools</groupId>
 			<artifactId>mobicents-tools-anttasks</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
