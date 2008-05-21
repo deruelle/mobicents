@@ -12,7 +12,6 @@
 
 	<artifactId>xmpp-parent</artifactId>
 	<groupId>org.mobicents.resources</groupId>
-	<version>1.2.0.BETA3-SNAPSHOT</version>
 
 	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
 
