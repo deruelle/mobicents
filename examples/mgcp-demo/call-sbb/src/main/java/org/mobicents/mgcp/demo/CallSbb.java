@@ -114,7 +114,7 @@ public abstract class CallSbb implements Sbb {
         //respond(evt, Response.RINGING);
 
         CallIdentifier callID = new CallIdentifier(Integer.toHexString(CALL_ID_GEN++));
-        EndpointIdentifier endpointID = new EndpointIdentifier("localhost", ENDPOINT_NAME);
+        EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, "localhost:2727");
 
         CreateConnection createConnection = new CreateConnection(this,
                 callID, endpointID, ConnectionMode.SendRecv);
@@ -252,8 +252,8 @@ public abstract class CallSbb implements Sbb {
 
             //initialize media api
 
-            mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
-            mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory");
+            mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider/demo");
+            mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory/demo");
 
         } catch (Exception ne) {
             logger.error("Could not set SBB context:", ne);
