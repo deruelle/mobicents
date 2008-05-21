@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.mobicents.servers.media</groupId>
+		<artifactId>mobicents-server-media-parent</artifactId>
+		<version>1.0.0.BETA1</version>
+	</parent>
+	
+	<artifactId>mobicents-server-media-mscontrol</artifactId>
+	
+	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+	
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>mobicents-server-media-jar</artifactId>
+			<groupId>org.mobicents.servers.media</groupId>
+			<version>${parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+			<version>${jain-sip.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.media</groupId>
+			<artifactId>mobicents-server-media-constants</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>mobicents-media-server-${pom.artifactId}-${pom.version}</finalName>
+	</build>	
+</project>
