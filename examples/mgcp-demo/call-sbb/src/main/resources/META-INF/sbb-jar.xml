@@ -15,6 +15,9 @@
                 <sbb-abstract-class-name>
                     org.mobicents.mgcp.demo.CallSbb
                 </sbb-abstract-class-name>
+		<cmp-field>
+			<cmp-field-name>connectionIdentifier</cmp-field-name>
+                </cmp-field>		
             </sbb-abstract-class>
         </sbb-classes>
         
@@ -63,9 +66,9 @@
                 <resource-adaptor-type-vendor>net.java</resource-adaptor-type-vendor>
                 <resource-adaptor-type-version>2.0</resource-adaptor-type-version>
             </resource-adaptor-type-ref>
-            <activity-context-interface-factory-name>slee/resources/jainmgcp/2.0/acifactory/demo</activity-context-interface-factory-name>
+            <activity-context-interface-factory-name>slee/resources/jainmgcp/2.0/acifactory</activity-context-interface-factory-name>
             <resource-adaptor-entity-binding>
-                <resource-adaptor-object-name>slee/resources/jainmgcp/2.0/provider/demo</resource-adaptor-object-name>
+                <resource-adaptor-object-name>slee/resources/jainmgcp/2.0/provider</resource-adaptor-object-name>
                 <resource-adaptor-entity-link>MGCP-CSCF</resource-adaptor-entity-link>
             </resource-adaptor-entity-binding>
         </resource-adaptor-type-binding>				        
