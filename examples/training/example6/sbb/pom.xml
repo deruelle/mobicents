@@ -12,8 +12,7 @@
 	
 	<artifactId>training-example6-sbb</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>${pom.version}</version>
-		
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>

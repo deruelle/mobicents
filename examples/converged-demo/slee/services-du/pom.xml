@@ -13,7 +13,6 @@
 	
 	<artifactId>converged-demo-services-DU</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>${pom.version}</version>
 	
 	<dependencies>
 		<dependency>
