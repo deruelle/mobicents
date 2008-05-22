@@ -30,8 +30,6 @@
 		<jboss.home>${env.JBOSS_HOME}</jboss.home>
 		<!-- XDM VERSION -->
 		<mobicents.server.xdm.version>1.0.0.BETA2</mobicents.server.xdm.version>		
-		<!-- DU PLUGIN VERSION -->						
-		<mobicents.tools.mavenplugin.version>1.0.0.BETA1</mobicents.tools.mavenplugin.version>
 		<!--  ADDITIONAL CORE DEPS -->
 		<javassist.version>3.4.GA</javassist.version>
 		<jboss-cache.version>1.4.1.SP3</jboss-cache.version>

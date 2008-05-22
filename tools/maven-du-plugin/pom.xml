@@ -13,8 +13,7 @@
 	
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>maven-du-plugin</artifactId>
-	<version>${mobicents.tools.mavenplugin.version}</version>
-	
+
 	<packaging>maven-plugin</packaging>
 	<name>Mobicents :: Tools :: mobicents-du-plugin</name>
 	
