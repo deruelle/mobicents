@@ -13,7 +13,7 @@
     
     <artifactId>mgcp-services-DU</artifactId>
     <groupId>org.mobicents.examples</groupId>
-    <version>${parent.version}</version>
+    <version>${pom.version}</version>
     
     <name>Fanton :: ${pom.artifactId}</name>
     
@@ -21,7 +21,7 @@
         <dependency>
             <artifactId>call-sbb</artifactId>
             <groupId>org.mobicents.examples</groupId>
-            <version>${parent.version}</version>
+            <version>${pom.version}</version>
         </dependency>
     </dependencies>
     

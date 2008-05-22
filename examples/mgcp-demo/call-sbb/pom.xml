@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.mobicents.resources</groupId>
             <artifactId>sip-ra</artifactId>
-            <version>${parent.version}</version>
+            <version>${pom.version}</version>
         </dependency>
     </dependencies>	  
     

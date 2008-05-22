@@ -15,22 +15,22 @@
 		<dependency>
 			<artifactId>sip-services-location-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sip-services-registrar-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sip-services-proxy-with-initial-invite-sbbdescriptor</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>sip-services-proxy-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>

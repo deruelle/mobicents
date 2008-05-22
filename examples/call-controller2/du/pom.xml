@@ -16,22 +16,22 @@
 		<dependency>
 			<artifactId>call-controller2-profile</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>call-controller2-blocking-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>call-controller2-forwarding-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>call-controller2-voicemail-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 		

@@ -26,7 +26,7 @@
 		<dependency>	
 			<artifactId>persistence-ratype</artifactId>
 			<groupId>org.mobicents.resources</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>	
 	</dependencies>
 	

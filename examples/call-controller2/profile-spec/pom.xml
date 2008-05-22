@@ -11,7 +11,7 @@
 	
 	<artifactId>call-controller2-profile</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>${parent.version}</version>
+	<version>${pom.version}</version>
 	
 	<dependencies>
 		<dependency>

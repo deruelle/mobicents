@@ -16,12 +16,12 @@
 		<dependency>
 			<artifactId>parlay-example-profile</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>parlay-example-callblocking-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>	
 	

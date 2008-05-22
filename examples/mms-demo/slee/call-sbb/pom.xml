@@ -22,12 +22,12 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>sip-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.examples</groupId>
 			<artifactId>utility</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
                 
 	</dependencies>	  

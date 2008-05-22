@@ -13,33 +13,33 @@
 	
 	<artifactId>converged-demo-services-DU</artifactId>
 	<groupId>org.mobicents.examples</groupId>
-	<version>${parent.version}</version>
+	<version>${pom.version}</version>
 	
 	<dependencies>
 		<dependency>
 			<artifactId>converged-demo-callcontrol-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>converged-demo-admin-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>converged-demo-orderdeliverdate-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>converged-demo-ordershipdate-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>converged-demo-user-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>

@@ -17,7 +17,7 @@
 		<dependency>
 			<artifactId>converged-demo-custom-events</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 	
