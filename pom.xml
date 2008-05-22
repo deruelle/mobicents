@@ -131,7 +131,7 @@
 		<module>tools/cli</module>
 		<module>core/sar</module>
 		<module>tools/management-console</module>
-		<module>tools/maven-du-plugin</module>
+		<!-- module>tools/maven-du-plugin</module-->
 	</modules>
 
 	<profiles>
@@ -184,7 +184,7 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<resume>false</resume>
-						<preparationGoals></preparationGoals>
+						<preparationGoals>clean install</preparationGoals>
 					</configuration>
 					</plugin>
 				</plugins>
