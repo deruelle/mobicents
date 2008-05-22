@@ -138,30 +138,43 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				
-				<!-- module>servers/media</module-->
-				
+			
 				<module>resources/asterisk</module>
-				<module>resources/diameter</module>
+				<!-- module>resources/diameter</module-->
 				<module>resources/http-client</module>
 				<module>resources/http-servlet</module>
 				<module>resources/lab</module>
 				<module>resources/media</module>
 				<module>resources/mgcp</module>
+				<!-- module>resources/parlay</module-->
 				<module>resources/persistence</module>
 				<module>resources/rules</module>
 				<module>resources/sip</module>
 				<module>resources/smpp</module>
 				<module>resources/tts</module>
+				<!-- module>resources/xcap-client</module-->
 				<module>resources/xmpp</module>
 
-				<!-- module>examples/call-controller2</module>
+				<!--module>examples/asterisk</module>
+				<module>examples/call-controller2</module>
 				<module>examples/converged-demo</module>
 				<module>examples/google-talk-bot</module>
 				<module>examples/http-client</module>
-				<module>examples/mms-demo</module>
-				<module>examples/sip-services</module-->
-				
+				<module>examples/http-servlet</module>
+				<module>examples/ldap</module>
+				<module>examples/mgcp-demo</module>
+				<module>examples/sip-loadtest-with-dialogs</module>
+				<module>examples/sip-loadtest-without-dialogs</module>
+				<module>examples/sip-services</module>
+				<module>examples/training/example1</module>
+				<module>examples/training/example2</module>
+				<module>examples/training/example3</module>
+				<module>examples/training/example4</module>
+				<module>examples/training/example5</module>
+				<module>examples/training/example6</module>
+				<module>examples/training/example7</module>
+				<module>examples/xmpp-component</module-->
+				<!--module>examples/xcap-client</module-->
 			</modules>
 			<build>
 				<plugins>
