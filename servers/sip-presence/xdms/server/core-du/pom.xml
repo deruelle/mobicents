@@ -76,7 +76,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
-				<version>${pom.version}</version>
+				<version>${mobicents.tools.mavenplugin.version}</version>
 				<extensions>true</extensions>
 				<configuration/>
 				<executions>
