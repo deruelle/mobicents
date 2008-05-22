@@ -4,7 +4,7 @@
 	
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>maven-du-plugin</artifactId>
-	<version>1.0.0.BETA1</version>
+	<version>1.0.0.BETA2</version>
 	
 	<packaging>maven-plugin</packaging>
 	<name>Mobicents :: Tools :: mobicents-du-plugin</name>
@@ -182,10 +182,9 @@
 	</reporting>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-du-plugin-1.0.0.BETA1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-du-plugin-1.0.0.BETA1</developerConnection>
-		<tag>HEAD</tag>
-		<url>http://mobicents.googlecode.com/svn/tags/maven-du-plugin-1.0.0.BETA1</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 	
 </project>
