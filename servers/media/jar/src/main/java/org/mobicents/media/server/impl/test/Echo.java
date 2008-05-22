@@ -56,11 +56,11 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
     }
 
     public void configure(Properties config) {
-        if (getState() == MediaResourceState.NULL) {
+//        if (getState() == MediaResourceState.NULL) {
             mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
             setState(MediaResourceState.CONFIGURED);
-        }
+//        }
     }
 
     public void release() {
