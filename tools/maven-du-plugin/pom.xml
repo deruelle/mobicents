@@ -4,7 +4,7 @@
 	
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>maven-du-plugin</artifactId>
-	<version>1.0.0.BETA2</version>
+	<version>1.0.0.BETA1-SNAPSHOT</version>
 	
 	<packaging>maven-plugin</packaging>
 	<name>Mobicents :: Tools :: mobicents-du-plugin</name>
@@ -187,4 +187,13 @@
 		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 	
+	<distributionManagement>
+		<repository>
+			<!-- Copy the distribution jar file to a local checkout of the maven repository 
+				-  This variable can be set in $MAVEN_HOME/settings.xml -->
+			<id>repository.jboss.org</id>
+			<url>file://${local.jboss.maven.repository.root}</url>
+		</repository>
+	</distributionManagement>
+
 </project>

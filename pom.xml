@@ -8,6 +8,7 @@
 	<version>1.2.0.BETA3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mobicents :: Parent :: mobicents</name>
+	
 	<scm>
 		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
 		<developerConnection>
@@ -16,6 +17,16 @@
 		<tag>HEAD</tag>
 		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
+	
+	<distributionManagement>
+		<repository>
+			<!-- Copy the distribution jar file to a local checkout of the maven repository 
+				-  This variable can be set in $MAVEN_HOME/settings.xml -->
+			<id>repository.jboss.org</id>
+			<url>file://${local.jboss.maven.repository.root}</url>
+		</repository>
+	</distributionManagement>
+	
 	<!--
 		UNIQUE PROPERTIES FOR WHOLE PLATFORM,
 		ADVISES USAGE OF SAME VERSIONS EVERYWHERE
