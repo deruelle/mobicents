@@ -3,15 +3,14 @@
 	
 	<groupId>org.mobicents</groupId>
 	<artifactId>mobicents</artifactId>
-	<version>1.2.0.BETA3</version>
+	<version>1.2.0.GA-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mobicents :: Parent :: mobicents</name>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</developerConnection>
-		<tag>HEAD</tag>
-		<url>http://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 	
 	<distributionManagement>
