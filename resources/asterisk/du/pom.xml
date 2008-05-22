@@ -17,17 +17,17 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>asterisk-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>asterisk-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>asterisk-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>

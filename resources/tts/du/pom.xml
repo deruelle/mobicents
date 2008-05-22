@@ -18,19 +18,19 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>tts-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>tts-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>tts-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<!-- libs -->

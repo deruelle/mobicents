@@ -17,19 +17,19 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>xcap-client-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>xcap-client-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>xcap-client-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<!-- libs -->

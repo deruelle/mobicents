@@ -28,18 +28,18 @@
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>cca-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>cca-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>cca-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 
 		</dependency>
 	

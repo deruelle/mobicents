@@ -21,17 +21,17 @@
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>base-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>base-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>base-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>

@@ -18,17 +18,17 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-client-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-client-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-client-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>

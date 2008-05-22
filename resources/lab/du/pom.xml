@@ -18,19 +18,19 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>lab-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>lab-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>lab-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 	</dependencies>

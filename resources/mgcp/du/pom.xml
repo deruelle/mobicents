@@ -18,19 +18,19 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>mgcp-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>mgcp-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>mgcp-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<!-- libs -->

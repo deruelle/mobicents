@@ -33,30 +33,30 @@
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>cca-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>cca-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- components -->
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>ro-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>ro-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>ro-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	
 		

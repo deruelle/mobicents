@@ -18,19 +18,19 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>rules-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>rules-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>rules-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 			
 		</dependency>
 	</dependencies>	

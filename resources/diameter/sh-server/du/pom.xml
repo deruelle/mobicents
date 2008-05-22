@@ -40,17 +40,17 @@
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>sh-server-events</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>sh-server-ratype</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources.diameter</groupId>
 			<artifactId>sh-server-ra</artifactId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	
 		
