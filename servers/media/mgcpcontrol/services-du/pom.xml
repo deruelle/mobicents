@@ -19,17 +19,17 @@
 		<dependency>
 			<artifactId>createconnection-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>deleteconnection-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<artifactId>mgcp-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
 	

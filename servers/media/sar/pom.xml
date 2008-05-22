@@ -10,15 +10,15 @@
 	</parent>
 
 	<artifactId>mobicents-server-media-sar</artifactId>
-	
+	<groupId>org.mobicents.servers.media</groupId>
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	<packaging>jboss-sar</packaging>
 
 	<dependencies>
 		<dependency>
 			<artifactId>mobicents-server-media-jar</artifactId>
-			<groupId>${parent.groupId}</groupId>
-			<version>${parent.version}</version>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>ant</artifactId>

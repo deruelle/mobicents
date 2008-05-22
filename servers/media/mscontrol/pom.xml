@@ -22,7 +22,7 @@
 		<dependency>
 			<artifactId>mobicents-server-media-jar</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${parent.version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.sip</groupId>
