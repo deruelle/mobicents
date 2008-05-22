@@ -182,6 +182,7 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<resume>false</resume>
+						<preparationGoals></preparationGoals>
 					</configuration>
 					</plugin>
 				</plugins>
