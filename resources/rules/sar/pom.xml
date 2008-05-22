@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<artifactId>rules-parent</artifactId>
 		<groupId>org.mobicents.resources</groupId>
-		<version>1.2.0.BETA3-SNAPSHOT</version>
+		<version>1.2.0.BETA3</version>
 	</parent>
 	
 	<artifactId>rules-management</artifactId>
@@ -249,9 +248,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy
-									file="${project.build.directory}/${project.build.finalName}.sar"
-									toDir="${env.JBOSS_HOME}/server/${node}/deploy" />
+								<copy file="${project.build.directory}/${project.build.finalName}.sar" toDir="${env.JBOSS_HOME}/server/${node}/deploy" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -263,8 +260,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete
-									file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.sar" />
+								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.sar" />
 							</tasks>
 						</configuration>
 					</execution>
