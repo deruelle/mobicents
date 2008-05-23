@@ -10,7 +10,7 @@
 		<version>1.2.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>call-sbb</artifactId>
+	<artifactId>mms-demo-call-sbb</artifactId>
     <name>Mobicents :: Examples :: ${pom.artifactId}</name>
 		
 	<dependencies>

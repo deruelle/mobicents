@@ -16,34 +16,34 @@
 	
 	<dependencies>
 		<dependency>
-			<artifactId>call-sbb</artifactId>
+			<artifactId>mms-demo-call-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>announcement-sbb</artifactId>
+			<artifactId>mms-demo-announcement-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>echo-sbb</artifactId>
+			<artifactId>mms-demo-echo-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>dtmf-sbb</artifactId>
+			<artifactId>mms-demo-dtmf-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>cnf-sbb</artifactId>
+			<artifactId>mms-demo-cnf-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>
 			<groupId>org.mobicents.examples</groupId>
-			<artifactId>utility</artifactId>
+			<artifactId>mms-demo-utility</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>

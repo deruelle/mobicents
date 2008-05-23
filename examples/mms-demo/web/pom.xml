@@ -9,7 +9,7 @@
         <version>1.2.0.BETA3-SNAPSHOT</version>
     </parent>
     
-    <artifactId>web</artifactId>
+    <artifactId>mms-demo-web</artifactId>
     
     <packaging>war</packaging>
     <name>Mobicents :: Examples :: ${pom.artifactId} :: audio</name>
