@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.examples</groupId>
-			<artifactId>announcement-sbb</artifactId>
+			<artifactId>mms-demo-announcement-sbb</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
