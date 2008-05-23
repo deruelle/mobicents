@@ -6,13 +6,12 @@
 	<packaging>pom</packaging>
 	
     <parent>
-        <artifactId>slee</artifactId>
+        <artifactId>mms-demo-slee</artifactId>
         <groupId>org.mobicents.examples</groupId>
         <version>1.2.0.BETA3-SNAPSHOT</version>
     </parent>
 	
 	<artifactId>mms-demo-services-DU</artifactId>
-	<groupId>org.mobicents.examples</groupId>
 	
 	<dependencies>
 		<dependency>
