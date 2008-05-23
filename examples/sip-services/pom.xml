@@ -27,6 +27,15 @@
 
 	<profiles>
 		<profile>
+    		<id>maven-release</id>
+    		<!-- need to include those ones for maven releases -->
+    		<modules>
+    			<module>balancer</module>
+    			<module>proxy-with-initial-invite-services-DU</module>
+    			<module>proxy-without-initial-invite-services-DU</module>
+    		</modules>
+    	</profile>
+		<profile>
 			<id>release</id>
 			<build>
 				<plugins>

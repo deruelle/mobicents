@@ -174,6 +174,7 @@
 				<module>examples/http-servlet</module>
 				<module>examples/ldap</module>
 				<module>examples/mgcp-demo</module>
+				<module>examples/mms-demo</module>
 				<module>examples/sip-loadtest-with-dialogs</module>
 				<module>examples/sip-loadtest-without-dialogs</module>
 				<module>examples/sip-services</module>
@@ -186,6 +187,7 @@
 				<module>examples/training/example7</module>
 				<module>examples/xmpp-component</module>
 				<!--module>examples/xcap-client</module-->
+				<module>release</module>
 			</modules>
 			<build>
 				<plugins>
@@ -195,7 +197,6 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<resume>false</resume>
-						<preparationGoals>clean install</preparationGoals>
 					</configuration>
 					</plugin>
 				</plugins>
