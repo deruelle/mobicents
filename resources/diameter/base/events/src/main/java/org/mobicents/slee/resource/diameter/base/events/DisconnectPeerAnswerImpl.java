@@ -1,20 +1,25 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
-import org.jdiameter.api.Message;
-
-import net.java.slee.resource.diameter.base.events.DiameterCommand;
-import net.java.slee.resource.diameter.base.events.DiameterHeader;
 import net.java.slee.resource.diameter.base.events.DisconnectPeerAnswer;
 
-import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
-import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
+import org.jdiameter.api.Message;
 
+/**
+ * 
+ * Implementation of Disconnect-Peer-Answer Diameter Message.
+ *
+ * <br>Super project:  mobicents
+ * <br>3:34:49 PM May 21, 2008 
+ * <br>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author Erick Svenson
+ */
 public class DisconnectPeerAnswerImpl extends DiameterMessageImpl implements DisconnectPeerAnswer
 {
 
 	public DisconnectPeerAnswerImpl(Message message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -28,7 +33,5 @@ public class DisconnectPeerAnswerImpl extends DiameterMessageImpl implements Dis
 		
 		return "DPA";
 	}
-
-	
   
 }

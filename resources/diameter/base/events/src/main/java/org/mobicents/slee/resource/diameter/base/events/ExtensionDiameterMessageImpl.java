@@ -1,19 +1,30 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
-import org.jdiameter.api.Message;
-
-import net.java.slee.resource.diameter.base.events.DiameterCommand;
-import net.java.slee.resource.diameter.base.events.DiameterHeader;
 import net.java.slee.resource.diameter.base.events.ExtensionDiameterMessage;
-
 import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
 import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
-import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
 
+import org.jdiameter.api.Message;
+
+/**
+ * 
+ * Implementation of Extension-Diameter-Message Diameter Message.
+ *
+ * <br>Super project:  mobicents
+ * <br>3:39:49 PM May 21, 2008 
+ * <br>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author Erick Svenson
+ */
 public class ExtensionDiameterMessageImpl extends DiameterMessageImpl implements ExtensionDiameterMessage
 {
 
-	@Override
+  public ExtensionDiameterMessageImpl(Message message) {
+    super(message);
+  } 
+
+  @Override
 	public String getLongName() {
 		//FIXME: baranowb; not documented
 		return "Extension-Message";
@@ -25,19 +36,13 @@ public class ExtensionDiameterMessageImpl extends DiameterMessageImpl implements
 		return "EM";
 	}
 
-	public ExtensionDiameterMessageImpl(Message message) {
-        super(message);
-    }
+  public DiameterAvp[] getExtensionAvps() {
+    return getAvps();
+  }
 
-    public DiameterAvp[] getExtensionAvps() {
-        return getAvps();
-    }
-
-    public void setExtensionAvps(DiameterAvp[] avps) throws AvpNotAllowedException {
-        for (DiameterAvp a : avps)
-            addAvpAsByteArray(a.getCode(), a.byteArrayValue(), a.getMandatoryRule() == 1);
-    }
-
-	
+  public void setExtensionAvps(DiameterAvp[] avps) throws AvpNotAllowedException {
+    for (DiameterAvp a : avps)
+      addAvpAsByteArray(a.getCode(), a.byteArrayValue(), a.getMandatoryRule() == 1);
+  }
 
 }

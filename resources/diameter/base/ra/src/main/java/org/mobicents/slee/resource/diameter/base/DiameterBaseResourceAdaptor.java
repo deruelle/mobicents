@@ -767,7 +767,7 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor,
 				return new ErrorAnswerImpl(answer);
 			} else {
 				throw new IllegalArgumentException(
-						"ErrorAnswer code set on reqeust!!!\n" + request);
+						"ErrorAnswer code set on request!!!\n" + request);
 			}
 		case ExtensionDiameterMessage.commandCode:
 			// FIXME: baranowb - is this correct ?
@@ -1024,9 +1024,9 @@ public class DiameterBaseResourceAdaptor implements ResourceAdaptor,
 
 		/**
 		 * This method is for internal use only, it creates activities for
-		 * reqeusts that do not fall in certain app range or no activitis were
+		 * requests that do not fall in certain app range or no activitis were
 		 * found <br>
-		 * It should distinguish between initial requests, reqeusts with
+		 * It should distinguish between initial requests, requests with
 		 * diferent domains etc. - respo for createing XXXServerSession or basic
 		 * diameter activity lies in this method
 		 * 

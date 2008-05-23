@@ -1,30 +1,34 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
+import net.java.slee.resource.diameter.base.events.CapabilitiesExchangeAnswer;
+import net.java.slee.resource.diameter.base.events.avp.AddressAvp;
+import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
+
 import org.jdiameter.api.Avp;
 import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.AvpSet;
 import org.jdiameter.api.Message;
 import org.mobicents.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvpImpl;
 
-import net.java.slee.resource.diameter.base.events.CapabilitiesExchangeAnswer;
-import net.java.slee.resource.diameter.base.events.DiameterCommand;
-import net.java.slee.resource.diameter.base.events.DiameterHeader;
-import net.java.slee.resource.diameter.base.events.avp.AddressAvp;
-
-import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
-import net.java.slee.resource.diameter.base.events.avp.DiameterAvp;
-import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
-import net.java.slee.resource.diameter.base.events.avp.FailedAvp;
-import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
-
+/**
+ * 
+ * Implementation of Capabilities-Exchange-Answer Diameter Message.
+ *
+ * <br>Super project:  mobicents
+ * <br>3:22:58 PM May 21, 2008 
+ * <br>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author Erick Svenson
+ */
 public class CapabilitiesExchangeAnswerImpl extends
 		ExtensionDiameterMessageImpl implements CapabilitiesExchangeAnswer {
 
 	public CapabilitiesExchangeAnswerImpl(Message message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
+	@Override
 	public String getLongName() {
 
 		return "Capabilities-Exchange-Answer";
@@ -39,7 +43,6 @@ public class CapabilitiesExchangeAnswerImpl extends
 	public long[] getAcctApplicationIds() {
 
 		return super.getAvpsAsUInt32(Avp.ACCT_APPLICATION_ID);
-
 	}
 
 	public long[] getAuthApplicationIds() {
@@ -90,8 +93,7 @@ public class CapabilitiesExchangeAnswerImpl extends
 						Avp.VENDOR_SPECIFIC_APPLICATION_ID, avp.getVendorId(),
 						avp.isMandatory() ? 1 : 0, 0, avp.getRaw());
 			} catch (AvpDataException e) {
-
-				e.printStackTrace();
+			  log.error( "", e );
 				return null;
 			}
 		}

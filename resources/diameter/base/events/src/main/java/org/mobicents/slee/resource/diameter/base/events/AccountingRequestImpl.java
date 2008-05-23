@@ -1,11 +1,20 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
 import net.java.slee.resource.diameter.base.events.AccountingRequest;
-import net.java.slee.resource.diameter.base.events.avp.AccountingRealtimeRequiredType;
-import net.java.slee.resource.diameter.base.events.avp.AccountingRecordType;
 
 import org.jdiameter.api.Message;
 
+/**
+ * 
+ * Implementation of Accounting-Request Diameter Message.
+ *
+ * <br>Super project:  mobicents
+ * <br>3:09:05 PM May 21, 2008 
+ * <br>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author Erick Svenson
+ */
 public class AccountingRequestImpl extends AccountingAnswerImpl implements AccountingRequest
 {
 
@@ -25,7 +34,5 @@ public class AccountingRequestImpl extends AccountingAnswerImpl implements Accou
 	
 		return "ACR";
 	}
-
-	
  
 }

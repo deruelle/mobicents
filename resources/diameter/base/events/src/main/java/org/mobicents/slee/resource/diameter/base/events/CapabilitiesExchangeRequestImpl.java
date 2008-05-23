@@ -1,26 +1,25 @@
 package org.mobicents.slee.resource.diameter.base.events;
 
-import org.jdiameter.api.Avp;
-import org.jdiameter.api.AvpDataException;
-import org.jdiameter.api.AvpSet;
-import org.jdiameter.api.Message;
-import org.mobicents.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvpImpl;
-
 import net.java.slee.resource.diameter.base.events.CapabilitiesExchangeRequest;
-import net.java.slee.resource.diameter.base.events.DiameterCommand;
-import net.java.slee.resource.diameter.base.events.DiameterHeader;
-import net.java.slee.resource.diameter.base.events.avp.AddressAvp;
 
-import net.java.slee.resource.diameter.base.events.avp.AvpNotAllowedException;
-import net.java.slee.resource.diameter.base.events.avp.DiameterIdentityAvp;
-import net.java.slee.resource.diameter.base.events.avp.VendorSpecificApplicationIdAvp;
+import org.jdiameter.api.Message;
 
+/**
+ * 
+ * Implementation of Capabilities-ExchangeRequest Diameter Message.
+ *
+ * <br>Super project:  mobicents
+ * <br>3:23:52 PM May 21, 2008 
+ * <br>
+ * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a> 
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a> 
+ * @author Erick Svenson
+ */
 public class CapabilitiesExchangeRequestImpl extends CapabilitiesExchangeAnswerImpl implements CapabilitiesExchangeRequest
 {
 
 	public CapabilitiesExchangeRequestImpl(Message message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -34,8 +33,5 @@ public class CapabilitiesExchangeRequestImpl extends CapabilitiesExchangeAnswerI
 
 		return "CER";
 	}
-
-	
-
 	
 }
