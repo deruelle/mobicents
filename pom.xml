@@ -1,21 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>org.mobicents</groupId>
 	<artifactId>mobicents</artifactId>
-	<version>1.2.0.BETA3-SNAPSHOT</version>
+	<version>1.2.0.BETA3</version>
 	<packaging>pom</packaging>
 	<name>Mobicents :: Parent :: mobicents</name>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
-		<developerConnection>
-			scm:svn:https://mobicents.googlecode.com/svn/trunk
-		</developerConnection>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</developerConnection>
 		<tag>HEAD</tag>
-		<url>http://mobicents.googlecode.com/svn/trunk</url>
+		<url>http://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.BETA3</url>
 	</scm>
 	
 	<distributionManagement>
@@ -330,13 +326,12 @@
 						</goals>
 						<configuration>
 							<tasks>																
-								<delete dir="${basedir}/release/${release.name}" failonerror="no"/>
+								<delete dir="${basedir}/release/${release.name}" failonerror="no" />
 								<mkdir dir="${basedir}/release/${release.name}" />
 								<mkdir dir="${basedir}/release/${release.name}/resources" />
 								<mkdir dir="${basedir}/release/${release.name}/examples" />
 								<mkdir dir="${basedir}/release/${release.name}/servers" />								
-								<unzip src="${basedir}/release/jboss-${jboss.version}.zip"
-									dest="${basedir}/release/${release.name}" />
+								<unzip src="${basedir}/release/jboss-${jboss.version}.zip" dest="${basedir}/release/${release.name}" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -347,4 +342,3 @@
 	</build>
 	
 </project>
-
