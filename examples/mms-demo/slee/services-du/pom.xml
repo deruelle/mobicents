@@ -6,7 +6,7 @@
     <parent>
         <artifactId>mms-demo-slee</artifactId>
         <groupId>org.mobicents.examples</groupId>
-        <version>1.2.0.BETA3</version>
+        <version>1.2.0.GA-SNAPSHOT</version>
     </parent>
 	
 	<artifactId>mms-demo-services-DU</artifactId>

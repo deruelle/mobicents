@@ -5,12 +5,12 @@
     <parent>
         <artifactId>mgcp-demo-parent</artifactId>
         <groupId>org.mobicents.examples</groupId>
-        <version>1.2.0.BETA3</version>
+        <version>1.2.0.GA-SNAPSHOT</version>
     </parent>
     
     <artifactId>call-sbb</artifactId>
     <groupId>org.mobicents.examples</groupId>
-    <version>1.2.0.BETA3</version>
+    <version>1.2.0.GA-SNAPSHOT</version>
     
     <name>MGCP :: ${pom.artifactId}</name>
     
@@ -18,7 +18,7 @@
         <dependency>	
             <artifactId>mgcp-ratype</artifactId>
             <groupId>org.mobicents.resources</groupId>
-            <version>1.2.0.BETA3</version>
+            <version>1.2.0.GA-SNAPSHOT</version>
         </dependency>	
         
         <dependency>
