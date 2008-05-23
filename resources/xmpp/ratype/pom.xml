@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<artifactId>xmpp-parent</artifactId>
 		<groupId>org.mobicents.resources</groupId>
-		<version>1.2.0.GA-SNAPSHOT</version>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>xmpp-ratype</artifactId>
@@ -17,14 +19,10 @@
       		<version>${jain-slee.version}</version>	
     	</dependency>
 		<dependency>
-      		<groupId>com.jcraft</groupId>
-			<artifactId>jzlib</artifactId>
-			<version>${jzlib.version}</version>
+      		<groupId>com.jcraft</groupId>			<artifactId>jzlib</artifactId>			<version>${jzlib.version}</version>
     	</dependency>
 			<dependency>
-				<groupId>xmlpull</groupId>
-				<artifactId>xmlpull</artifactId>
-				<version>${xmlpull.version}</version>
+				<groupId>xmlpull</groupId>				<artifactId>xmlpull</artifactId>				<version>${xmlpull.version}</version>
 		</dependency>
 	</dependencies>
 		

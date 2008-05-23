@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<artifactId>http-servlet-parent</artifactId>
 		<groupId>org.mobicents.resources</groupId>
-		<version>1.2.0.GA-SNAPSHOT</version>
+		<version>1.2.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>http-servlet-ra-war</artifactId>
@@ -36,7 +38,9 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy overwrite="true" verbose="true" file="target/${project.build.finalName}.war" toDir="${env.JBOSS_HOME}/server/${node}/deploy" />
+								<copy overwrite="true" verbose="true"
+									file="target/${project.build.finalName}.war"
+									toDir="${env.JBOSS_HOME}/server/${node}/deploy" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -48,7 +52,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.war" />
+								<delete
+									file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.war" />
 							</tasks>
 						</configuration>
 					</execution>
