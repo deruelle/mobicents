@@ -17,13 +17,6 @@
             <sbb-alias>CreateConnectionSbb</sbb-alias>
 	</sbb-ref>
         
-	<sbb-ref>
-            <sbb-name>DeleteConnectionSbb</sbb-name>
-            <sbb-vendor>org.mobicents</sbb-vendor>
-            <sbb-version>1.0</sbb-version>
-            <sbb-alias>DeleteConnectionSbb</sbb-alias>
-	</sbb-ref>
-        
         <sbb-classes>
             <sbb-abstract-class>
                 <sbb-abstract-class-name>
@@ -34,11 +27,6 @@
 			<get-child-relation-method-name>getCreateConnectionSbbChild</get-child-relation-method-name>
 			<default-priority>0</default-priority>
 		</get-child-relation-method>
-		<get-child-relation-method>
-        		<sbb-alias-ref>DeleteConnectionSbb</sbb-alias-ref>
-			<get-child-relation-method-name>getDeleteConnectionSbbChild</get-child-relation-method-name>
-			<default-priority>0</default-priority>
-		</get-child-relation-method>
             </sbb-abstract-class>                                               
         </sbb-classes>
 
@@ -46,16 +34,6 @@
             <event-name>CreateConnection</event-name>
             <event-type-ref>
                 <event-type-name>net.java.slee.resource.mgcp.CREATE_CONNECTION</event-type-name>
-                <event-type-vendor>net.java</event-type-vendor>
-                <event-type-version>1.0</event-type-version>
-            </event-type-ref>
-            <initial-event-select variable="ActivityContext"/>
-        </event>
-
-        <event event-direction="Receive" initial-event="True">
-            <event-name>DeleteConnection</event-name>
-            <event-type-ref>
-                <event-type-name>net.java.slee.resource.mgcp.DELETE_CONNECTION</event-type-name>
                 <event-type-vendor>net.java</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
