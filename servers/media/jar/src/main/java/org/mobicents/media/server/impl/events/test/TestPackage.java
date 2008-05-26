@@ -24,6 +24,7 @@ import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -43,11 +44,11 @@ public class TestPackage implements Serializable, ResourceStateListener {
     private Logger logger = Logger.getLogger(TestPackage.class);
     
     public void subscribe(EventID eventID, HashMap params,
-            String connectionID, NotificationListener listener) {
-        SpectralAnalyser analyser = (SpectralAnalyser) endpoint.getResource(MediaResourceType.SPECTRUM_ANALYSER, connectionID);
+    		Connection connection, NotificationListener listener) {
+        SpectralAnalyser analyser = (SpectralAnalyser) endpoint.getResource(MediaResourceType.SPECTRUM_ANALYSER, connection.getId());
         if (analyser == null) {
             try {
-                endpoint.configure(MediaResourceType.SPECTRUM_ANALYSER, connectionID, null);
+                endpoint.configure(MediaResourceType.SPECTRUM_ANALYSER, connection, null);
             } catch (UnknownMediaResourceException e) {
 
             }
@@ -55,7 +56,7 @@ public class TestPackage implements Serializable, ResourceStateListener {
 
         if (analyser.getState() != MediaResourceState.PREPARED) {
             try {
-                MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connectionID);
+                MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connection.getId());
                 sink.addStateListener(this);
                 if (sink.getState() != MediaResourceState.PREPARED && sink.getState() != MediaResourceState.STARTED) {
                     try {

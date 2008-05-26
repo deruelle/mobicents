@@ -40,6 +40,17 @@ public class InbandGenerator implements PushBufferStream {
         {"*", "0", "#", "D"}
     };
     
+    public static String getToneName(int row, int column)
+    {
+    
+    	try{
+    	return events[row][column];
+    	}catch(ArrayIndexOutOfBoundsException aiobe)
+    	{
+    		return null;
+    	}
+    }
+    
     private int[] lowFreq = new int[]{697, 770, 852, 941};
     private int[] highFreq = new int[]{1209, 1336, 1477, 1633};
 
