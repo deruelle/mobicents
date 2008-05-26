@@ -2,6 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
 	
 	<parent>
 		<artifactId>mobicents</artifactId>
@@ -12,9 +13,8 @@
 	
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-server-media-parent</artifactId>
-	<version>1.0.0.BETA1</version>
-		
-	<packaging>pom</packaging>
+	<version>1.0.0.BETA2-SNAPSHOT</version>	
+	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	
   <properties>
@@ -31,6 +31,32 @@
 		-->		
 	</modules>
 
+	<!-- RELEASE STUFF -->
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>test</module>
+			</modules>
+		</profile>
+	</profiles>
+
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>
+	
+	<distributionManagement>
+		<repository>
+			<!-- Copy the distribution jar file to a local checkout of the maven repository 
+				-  This variable can be set in $MAVEN_HOME/settings.xml -->
+			<id>repository.jboss.org</id>
+			<url>file://${local.jboss.maven.repository.root}</url>
+		</repository>
+	</distributionManagement>
+	
 	<!-- uncomment for release 
 	<build>
 		<plugins>

@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-server-media-parent</artifactId>
-		<version>1.0.0.BETA1</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-server-media-sar</artifactId>
-	<groupId>org.mobicents.servers.media</groupId>
+	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	<packaging>jboss-sar</packaging>
 
