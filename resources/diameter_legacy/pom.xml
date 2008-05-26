@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>1.2.0.BETA3-SNAPSHOT</version>
+		<version>1.2.0.GA-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	
@@ -48,6 +48,17 @@
 												<include
 													name="*.properties" />
 											</fileset>
+										</copy>
+										<copy overwrite="true"
+											file="${basedir}/du/target/build.xml"
+											tofile="${basedir}/../../release/${release.name}/resources/diameter/du-management.xml" />
+										<copy overwrite="true"
+											file="${basedir}/release/build.xml"
+											todir="${basedir}/../../release/${release.name}/resources/diameter">
+											<filterset>
+												<filter token="JBOSS_VERSION" value="jboss-${jboss.version}"/>
+												<filter token="JBOSS_NODE" value="${node}"/>
+											</filterset>
 										</copy>
 									</tasks>
 								</configuration>
