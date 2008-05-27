@@ -361,7 +361,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             throw new IOException("Codecs are not negotiated");
         }
 
-        audioFormat = (AudioFormat) getDefaultAudioFormat(codecs);
+        this.audioFormat = (AudioFormat) getDefaultAudioFormat(codecs);
 
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Codecs are negotiated, default audio format : " + this.audioFormat);

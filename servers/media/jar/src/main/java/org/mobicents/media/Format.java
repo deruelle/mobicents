@@ -132,7 +132,7 @@ public class Format implements Cloneable, Serializable {
 		if (this.encoding == null)
 			return false;
 		
-		if (other.encoding == this.encoding)
+		if (other.encoding.equalsIgnoreCase(this.encoding))
 			return true;
 		
 		if (this.encodingCode == 0)
