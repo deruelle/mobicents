@@ -37,7 +37,7 @@ public class SmppMessageImpl implements ShortMessage {
     }
     
     public String getOriginator() {
-        return recipient;
+        return originator;
     }
 
     public void setOriginator(String originator) {
