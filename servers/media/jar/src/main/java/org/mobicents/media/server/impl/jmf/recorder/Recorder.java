@@ -18,6 +18,8 @@ package org.mobicents.media.server.impl.jmf.recorder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import org.mobicents.media.server.impl.common.events.RecorderEventType;
 import org.mobicents.media.server.impl.ivr.*;
 import java.net.URI;
 import java.util.ArrayList;
