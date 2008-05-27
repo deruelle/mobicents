@@ -96,14 +96,14 @@ public class PlayRecordSignal extends AnnouncementSignal implements RecorderList
     }
 
     public void update(RecorderEvent evt) {
-        switch (evt.getEventID()) {
-            case RecorderEvent.STARTED:
+        switch (evt.getEventType()) {
+            case STARTED:
                 break;
-            case RecorderEvent.STOP_BY_REQUEST:
+            case STOP_BY_REQUEST:
                 NotifyEvent notify = new NotifyEvent(this, EventID.COMPLETE, EventCause.NORMAL, "");
                 sendEvent(notify);
                 break;
-            case RecorderEvent.FACILITY_ERROR:
+            case FACILITY_ERROR:
                 notify = new NotifyEvent(this, EventID.FAIL, EventCause.FACILITY_FAILURE, evt.getMessage());
                 sendEvent(notify);
                 break;

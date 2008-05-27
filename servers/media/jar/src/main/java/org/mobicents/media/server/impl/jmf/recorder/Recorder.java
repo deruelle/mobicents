@@ -17,6 +17,8 @@ package org.mobicents.media.server.impl.jmf.recorder;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
+import org.mobicents.media.server.impl.common.events.RecorderEventType;
 import org.mobicents.media.server.impl.ivr.*;
 import java.net.URI;
 import java.util.ArrayList;
@@ -71,11 +73,11 @@ public class Recorder {
     public void start(String file, PushBufferStream stream) {
         try {
             record(file, stream);
-            sendEvent(RecorderEvent.STARTED, "NORMAL");
+            sendEvent(RecorderEventType.STARTED, "NORMAL");
         } catch (Exception e) {
             dispose();
             logger.error("Could not start recording", e);
-            sendEvent(RecorderEvent.FACILITY_ERROR, e.getMessage());
+            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
         }
     }
 
@@ -84,10 +86,10 @@ public class Recorder {
     
     public void stop() {
         dispose();
-        sendEvent(RecorderEvent.STOP_BY_REQUEST, "NORMAL");
+        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
     }
 
-    protected synchronized void sendEvent(int eventID, String msg) {
+    protected synchronized void sendEvent(RecorderEventType eventID, String msg) {
         RecorderEvent evt = new RecorderEvent(this, eventID, msg);
         new Thread(new EventQueue(evt)).start();
     }

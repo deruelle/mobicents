@@ -16,23 +16,23 @@ package org.mobicents.media.server.impl.jmf.recorder;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.events.RecorderEventType;
+
 /**
  * Implements media recorder.
  * 
  * @author Oleg Kulikov
  */
 public class RecorderEvent implements Serializable {
-    public final static int STARTED = 1;
-    public final static int STOP_BY_REQUEST = 2;
-    public final static int FACILITY_ERROR = 3;
+    
 
-    private int eventID;
+    private RecorderEventType type;
     private Recorder source;
     private String msg;
     
-    public RecorderEvent(Recorder source, int eventID, String msg) {
+    public RecorderEvent(Recorder source, RecorderEventType type, String msg) {
         this.source = source;
-        this.eventID = eventID;
+        this.type = type;
         this.msg = msg;
     }
     
@@ -40,8 +40,8 @@ public class RecorderEvent implements Serializable {
         return source;
     }
     
-    public int getEventID() {
-        return eventID;
+    public RecorderEventType getEventType() {
+        return type;
     }
     
     public String getMessage() {

@@ -16,35 +16,33 @@ package org.mobicents.media.server.impl.jmf.player;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.impl.common.events.PlayerEventType;
+
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class PlayerEvent implements Serializable {
-    public final static int STARTED = 1;
-    public final static int END_OF_MEDIA = 2;
-    public final static int STOP_BY_REQUEST = 3;
-    public final static int FACILITY_ERROR = 4;
-    
-    private int eventID;
-    private AudioPlayer source;
-    private String msg;
-    
-    public PlayerEvent(AudioPlayer source, int eventID, String msg) {
-        this.source = source;
-        this.eventID = eventID;
-        this.msg = msg;
-    }
-    
-    public AudioPlayer getSource() {
-        return source;
-    }
-    
-    public int getEventID() {
-        return eventID;
-    }
-    
-    public String getMessage() {
-        return msg;
-    }
+
+	private PlayerEventType type = null;
+	private AudioPlayer source;
+	private String msg;
+
+	public PlayerEvent(AudioPlayer source, PlayerEventType type, String msg) {
+		this.source = source;
+		this.type = type;
+		this.msg = msg;
+	}
+
+	public AudioPlayer getSource() {
+		return source;
+	}
+
+	public PlayerEventType getEventType() {
+		return type;
+	}
+
+	public String getMessage() {
+		return msg;
+	}
 }

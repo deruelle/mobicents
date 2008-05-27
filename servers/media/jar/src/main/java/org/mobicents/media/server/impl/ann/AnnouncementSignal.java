@@ -30,6 +30,7 @@ import org.mobicents.media.server.impl.jmf.player.PlayerEvent;
 import org.mobicents.media.server.impl.jmf.player.PlayerListener;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.impl.common.events.*;
 
 /**
  *
@@ -87,11 +88,11 @@ public class AnnouncementSignal extends Signal implements PlayerListener {
     }
 
     public void update(PlayerEvent event) {
-        switch (event.getEventID()) {
-            case PlayerEvent.STARTED:
+        switch (event.getEventType()) {
+            case STARTED:
                 logger.info("annoucement started, endpoint = " + endpoint.getLocalName());
                 break;
-            case PlayerEvent.END_OF_MEDIA:
+            case END_OF_MEDIA:
                 logger.info("annoucement complete, endpoint = " + endpoint.getLocalName());
                 NotifyEvent report = new NotifyEvent(endpoint,
                         EventID.COMPLETE,

@@ -25,6 +25,8 @@ import java.util.List;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
+import org.mobicents.media.server.impl.common.events.PlayerEventType;
+
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -122,7 +124,7 @@ public class AudioPlayer {
      * Called when player failed.
      */
     protected void failed(Exception e) {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.FACILITY_ERROR, e.getMessage());
+        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.FACILITY_ERROR, e.getMessage());
         new Thread(new EventQueue(evt)).start();
     }
     
@@ -130,7 +132,7 @@ public class AudioPlayer {
      * Called when player stopped.
      */
     protected void stopped() {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.STOP_BY_REQUEST, null);
+        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STOP_BY_REQUEST, null);
         new Thread(new EventQueue(evt)).start();
     }
     
@@ -138,7 +140,7 @@ public class AudioPlayer {
      * Called when player started to transmitt audio.
      */
     protected void started() {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.STARTED, null);
+        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STARTED, null);
         new Thread(new EventQueue(evt)).start();
     }
     
@@ -147,7 +149,7 @@ public class AudioPlayer {
      */
     protected void endOfMedia() {
 //        audioStream.stop();
-        PlayerEvent evt = new PlayerEvent(this, PlayerEvent.END_OF_MEDIA, null);
+        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.END_OF_MEDIA, null);
         new Thread(new EventQueue(evt)).start();
     }
     
