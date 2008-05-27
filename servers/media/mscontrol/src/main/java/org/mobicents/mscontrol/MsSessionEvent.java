@@ -18,27 +18,44 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
+import org.mobicents.media.msc.common.events.MsSessionEventCause;
 import org.mobicents.media.msc.common.events.MsSessionEventID;
 
 /**
  * This is the interface for all MsSession-related events.
- *
+ * 
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public interface MsSessionEvent extends Serializable {
-   
-    
-    /**
-     * Returns the MsSession object associated with this event.
-     *
-     * @return the MsSession object associated with this event.
-     */
-    public MsSession getSource();
-    
-    /**
-     * Returns the id of event. 
-     *
-     * @return the id of event
-     */
-    public MsSessionEventID getEventID();
+
+	/**
+	 * Returns the MsSession object associated with this event.
+	 * 
+	 * @return the MsSession object associated with this event.
+	 */
+	public MsSession getSource();
+
+	/**
+	 * Returns the id of event.
+	 * 
+	 * @return the id of event
+	 */
+	public MsSessionEventID getEventID();
+
+	/**
+	 * Returns the cause of event. Cause is COnnection created or dropped or
+	 * Link created or dropped
+	 * 
+	 * @return
+	 */
+	public MsSessionEventCause getEventCause();
+
+	/**
+	 * When the session fires Event for STATE, it passes the Connection or Link
+	 * Object which caused this state change
+	 * 
+	 * @return
+	 */
+	public Object getCauseObject();
 }

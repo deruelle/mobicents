@@ -16,6 +16,7 @@
 
 package org.mobicents.mscontrol.impl;
 
+import org.mobicents.media.msc.common.events.MsSessionEventCause;
 import org.mobicents.media.msc.common.events.MsSessionEventID;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
@@ -23,41 +24,55 @@ import org.mobicents.mscontrol.MsSessionListener;
 
 /**
  * Implementation for MsSessionEvent interface.
- *
+ * 
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
-public class MsSessionEventImpl implements MsSessionEvent, Runnable  {
-    
-    private MsSessionImpl session;
-    private MsSessionEventID eventID;
-    
-    /** Creates a new instance of MsSessionEventImpl */
-    public MsSessionEventImpl(MsSessionImpl session, MsSessionEventID eventID) {
-        this.session = session;
-        this.eventID = eventID;
-    }
+public class MsSessionEventImpl implements MsSessionEvent, Runnable {
 
-    public MsSession getSource() {
-        return session;
-    }
+	private MsSessionImpl session;
+	private MsSessionEventID eventID;
+	private MsSessionEventCause eventCause;
+	private Object causeObject;
 
-    public MsSessionEventID getEventID() {
-        return eventID;
-    }
-    
-    public void run() {
-        for (MsSessionListener listener: session.listeners) {
-            switch (eventID) {
-                case SESSION_CREATED :
-                    listener.sessionCreated(this);
-                    break;
-                case SESSION_ACTIVE :
-                    listener.sessionActive(this);
-                    break;
-                case SESSION_INVALID :
-                    listener.sessionInvalid(this);
-                    break;
-            }
-        }
-    }
+	/** Creates a new instance of MsSessionEventImpl */
+	public MsSessionEventImpl(MsSessionImpl session, MsSessionEventID eventID, MsSessionEventCause eventCause,
+			Object causeObject) {
+		this.session = session;
+		this.eventID = eventID;
+		this.eventCause = eventCause;
+		this.causeObject = causeObject;
+	}
+
+	public MsSession getSource() {
+		return session;
+	}
+
+	public MsSessionEventID getEventID() {
+		return eventID;
+	}
+
+	public MsSessionEventCause getEventCause() {
+		return this.eventCause;
+	}
+
+	public Object getCauseObject() {
+		return this.causeObject;
+	}
+
+	public void run() {
+		for (MsSessionListener listener : session.listeners) {
+			switch (eventID) {
+			case SESSION_CREATED:
+				listener.sessionCreated(this);
+				break;
+			case SESSION_ACTIVE:
+				listener.sessionActive(this);
+				break;
+			case SESSION_INVALID:
+				listener.sessionInvalid(this);
+				break;
+			}
+		}
+	}
 }

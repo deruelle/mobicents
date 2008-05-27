@@ -21,10 +21,17 @@ import java.io.Serializable;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public interface MsLink extends Serializable {
     
     
+	/**
+	 * Gets the Link ID
+	 * @return
+	 */
+	public String getId();
+	
     /**
      * Gets the session to which this links belongs
      *

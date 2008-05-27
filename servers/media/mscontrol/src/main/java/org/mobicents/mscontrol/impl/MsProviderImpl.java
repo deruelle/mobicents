@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsProvider;
@@ -117,6 +118,10 @@ public class MsProviderImpl implements MsProvider, Serializable {
     
     public MsSignalDetector getSignalDetector(String endpointName) {
         return new MsSignalDetectorImpl(this, endpointName);
+    }
+    
+    public MsConnection getMsConnection(String msConnectionId){
+    	return null;
     }
     
 }

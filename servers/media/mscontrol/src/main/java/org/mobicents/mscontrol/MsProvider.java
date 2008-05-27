@@ -76,4 +76,13 @@ public interface MsProvider {
     public MsSignalGenerator getSignalGenerator(String endpointName);
     public MsSignalDetector getSignalDetector(String endpointName);
     
+    /**
+     * Get the MsCOnnection Activity for the msConnectionId passed.  
+     * @param msConnectionId
+     * @return
+     */
+    public MsConnection getMsConnection(String msConnectionId);
+    
+    
+    
 }

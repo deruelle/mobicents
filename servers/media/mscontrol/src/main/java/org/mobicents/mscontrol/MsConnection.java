@@ -21,12 +21,13 @@ import java.io.Serializable;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public interface MsConnection extends Serializable {
 	
 	
 	/**
-	 * Retrieves the MsConnection ID, basicaly a UUID
+	 * Retrieves the MsConnection ID, basically a UUID
 	 * @return
 	 */
 	public String getId();
