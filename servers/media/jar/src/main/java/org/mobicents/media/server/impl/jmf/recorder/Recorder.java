@@ -17,8 +17,7 @@ package org.mobicents.media.server.impl.jmf.recorder;
 
 import java.io.File;
 import java.io.FileOutputStream;
-
-import org.mobicents.media.server.impl.common.events.RecorderEventType;
+import java.io.IOException;
 import org.mobicents.media.server.impl.ivr.*;
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,14 +38,13 @@ import org.apache.log4j.Logger;
 public class Recorder {
 
     private String mediaType;
-    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1, 
+    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1,
             AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
-    
     private List<RecorderListener> listeners = new ArrayList();
-
     private Logger logger = Logger.getLogger(Recorder.class);
     private int recordTime = 60;
-    
+    private FileOutputStream file;
+
     public Recorder(String mediaType) {
         this.mediaType = FileTypeDescriptor.BASIC_AUDIO;
     }
@@ -54,6 +52,7 @@ public class Recorder {
     public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
         this.recordTime = recordTime;
     }
+
     /**
      * (Non Java-doc).
      * 
@@ -61,12 +60,12 @@ public class Recorder {
      */
     private void record(String uri, PushBufferStream stream) throws Exception {
         RecorderStream recorderStream = new RecorderStream(stream);
-        javax.sound.sampled.AudioFormat fmt = 
+        javax.sound.sampled.AudioFormat fmt =
                 new javax.sound.sampled.AudioFormat(8000, 16, 1, true, false);
         AudioInputStream audioStream = new AudioInputStream(recorderStream,
-                 fmt, 8000 * recordTime);
+                fmt, 8000 * recordTime);
 //        AudioInputStream audioStream = AudioSystem.getAudioInputStream(recorderStream);
-        FileOutputStream file = new FileOutputStream(uri);
+        file = new FileOutputStream(uri);
         AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
     }
 
@@ -82,8 +81,14 @@ public class Recorder {
     }
 
     private void dispose() {
+        try {
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            logger.error("Could not close recorder file", e);
+        }
     }
-    
+
     public void stop() {
         dispose();
         sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
