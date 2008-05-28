@@ -49,7 +49,7 @@ public class MsConnectionImpl implements MsConnection {
 	private String localSdp;
 	private String remoteSdp;
 
-	private MsSessionImpl session;
+	private MsSession session;
 	private String endpointName;
 
 	protected Connection connection;
@@ -67,10 +67,10 @@ public class MsConnectionImpl implements MsConnection {
 	 * @param endpointName
 	 *            the name of the endpoint.
 	 */
-	public MsConnectionImpl(MsSessionImpl session, String endpointName) {
+	public MsConnectionImpl(MsSession session, String endpointName) {
 		this.session = session;
 		this.endpointName = endpointName;
-		listeners.addAll(session.provider.connectionListeners);
+		listeners.addAll(session.getProvider().getConnectionListeners());
 	}
 
 	public String getId() {
@@ -156,6 +156,10 @@ public class MsConnectionImpl implements MsConnection {
 			Runnable tx = new DeleteTx();
 			new Thread(tx).start();
 		}
+	}
+	
+	public void fireConnectionInitialized(){
+		sendEvent(MsConnectionEventID.CONNECTION_INITIALIZED, MsConnectionEventCause.NORMAL, null);
 	}
 
 	private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {

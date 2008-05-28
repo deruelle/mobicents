@@ -21,8 +21,10 @@ import java.io.Serializable;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani 
  */
 public interface MsConnectionListener extends Serializable {
+	public void connectionInitialized(MsConnectionEvent event);
     public void connectionCreated(MsConnectionEvent event);
     public void connectionModifed(MsConnectionEvent event);
     public void connectionDeleted(MsConnectionEvent event);

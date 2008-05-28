@@ -30,13 +30,18 @@ import org.mobicents.mscontrol.MsSessionListener;
  */
 public class MsSessionEventImpl implements MsSessionEvent, Runnable {
 
-	private MsSessionImpl session;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6590082022461848422L;
+	
+	private MsSession session;
 	private MsSessionEventID eventID;
 	private MsSessionEventCause eventCause;
 	private Object causeObject;
 
 	/** Creates a new instance of MsSessionEventImpl */
-	public MsSessionEventImpl(MsSessionImpl session, MsSessionEventID eventID, MsSessionEventCause eventCause,
+	public MsSessionEventImpl(MsSession session, MsSessionEventID eventID, MsSessionEventCause eventCause,
 			Object causeObject) {
 		this.session = session;
 		this.eventID = eventID;
@@ -61,7 +66,7 @@ public class MsSessionEventImpl implements MsSessionEvent, Runnable {
 	}
 
 	public void run() {
-		for (MsSessionListener listener : session.listeners) {
+		for (MsSessionListener listener : session.getSessionListeners()) {
 			switch (eventID) {
 			case SESSION_CREATED:
 				listener.sessionCreated(this);

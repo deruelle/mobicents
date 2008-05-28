@@ -53,4 +53,6 @@ public interface MsLink extends Serializable {
      * Drops this link
      */ 
     public void release();
+    
+    public void fireMsLinkCreated();
 }

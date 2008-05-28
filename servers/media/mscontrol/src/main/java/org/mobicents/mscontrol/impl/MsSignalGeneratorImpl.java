@@ -16,123 +16,118 @@
 
 package org.mobicents.mscontrol.impl;
 
-import java.util.ArrayList;
 import java.rmi.server.UID;
+import java.util.ArrayList;
+
 import javax.naming.NamingException;
 
 import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalGenerator;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationListener {
-    
-    private Endpoint endpoint;
-    private String endpointName;
-    private MsProviderImpl provider;
-    
-    private String id = (new UID()).toString();
-    
-    private ArrayList <MsResourceListener> listeners = new ArrayList();
-    
-    private boolean released = false;
-    
-    /** Creates a new instance of MsSignalDetectorImpl */
-    public MsSignalGeneratorImpl(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-    
-    public MsSignalGeneratorImpl(MsProviderImpl provider, String endpointName) {
-        this.provider = provider;
-        this.endpointName = endpointName;
-        listeners.addAll(provider.resourceListeners);
-    }
-    
-    public String getID() {
-        return id;
-    }
-    
-    public void apply(EventID signalID, String[] params) {
-        new Thread(new PlayTx(this, signalID, params)).start();
-    }
-    
-    public void update(NotifyEvent event) {
-        if (!released) {
-            MsNotifyEventImpl evt =
-                    new MsNotifyEventImpl(this, event.getID(), event.getCause(), event.getMessage());
-            sendEvent(evt);
-        }
-    }
-    
-    private void sendEvent(MsNotifyEvent evt) {
-        for (MsResourceListener listener: listeners) {
-            listener.update(evt);
-        }
-    }
-    
-    public void addResourceListener(MsResourceListener listener) {
-        listeners.add(listener);
-    }
-    
-    public void release() {
-        released = true;
-    }
-    
-    public String toString() {
-        return "SignalGenerator[" + id + "]";
-    }
-    
-    private class PlayTx implements Runnable {
-        private EventID signalID;
-        private String[] params;
-        private MsSignalGeneratorImpl generator;
-        
-        public PlayTx(MsSignalGeneratorImpl generator, EventID signalID, String[] params)  {
-            this.generator = generator;
-            this.signalID = signalID;
-            this.params = params;
-        }
-        
-        public void run() {
-            //if endpoint is not known yet
-            if (endpoint == null) {
-                try {
-                    endpoint = EndpointQuery.find(endpointName);
-                } catch (NamingException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                    		EventID.FAIL,
-                            EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
-                } catch (ResourceUnavailableException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                    		EventID.FAIL,
-                    		EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
-                }
-            }
-            
-            try {
-                endpoint.play(signalID, params, null, generator, false);
-            } catch (UnknownSignalException ex) {
-                MsNotifyEvent error = new MsNotifyEventImpl(generator,
-                		EventID.FAIL,
-                		EventCause.FACILITY_FAILURE,
-                        ex.getMessage());
-                sendEvent(error);
-            }
-        }
-    }
+
+	private Endpoint endpoint;
+	private String endpointName;
+	private MsProvider provider;
+
+	private String id = (new UID()).toString();
+
+	private ArrayList<MsResourceListener> listeners = new ArrayList();
+
+	private boolean released = false;
+
+	/** Creates a new instance of MsSignalDetectorImpl */
+	public MsSignalGeneratorImpl(Endpoint endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	public MsSignalGeneratorImpl(MsProvider provider, String endpointName) {
+		this.provider = provider;
+		this.endpointName = endpointName;
+		listeners.addAll(provider.getResourceListeners());
+	}
+
+	public String getID() {
+		return id;
+	}
+
+	public void apply(EventID signalID, String[] params) {
+		new Thread(new PlayTx(this, signalID, params)).start();
+	}
+
+	public void update(NotifyEvent event) {
+		if (!released) {
+			MsNotifyEventImpl evt = new MsNotifyEventImpl(this, event.getID(), event.getCause(), event.getMessage());
+			sendEvent(evt);
+		}
+	}
+
+	private void sendEvent(MsNotifyEvent evt) {
+		for (MsResourceListener listener : listeners) {
+			listener.update(evt);
+		}
+	}
+
+	public void addResourceListener(MsResourceListener listener) {
+		listeners.add(listener);
+	}
+
+	public void release() {
+		released = true;
+	}
+
+	public String toString() {
+		return "SignalGenerator[" + id + "]";
+	}
+
+	private class PlayTx implements Runnable {
+		private EventID signalID;
+		private String[] params;
+		private MsSignalGeneratorImpl generator;
+
+		public PlayTx(MsSignalGeneratorImpl generator, EventID signalID, String[] params) {
+			this.generator = generator;
+			this.signalID = signalID;
+			this.params = params;
+		}
+
+		public void run() {
+			// if endpoint is not known yet
+			if (endpoint == null) {
+				try {
+					endpoint = EndpointQuery.find(endpointName);
+				} catch (NamingException ex) {
+					MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+							ex.getMessage());
+					sendEvent(error);
+				} catch (ResourceUnavailableException ex) {
+					MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+							ex.getMessage());
+					sendEvent(error);
+				}
+			}
+
+			try {
+				endpoint.play(signalID, params, null, generator, false);
+			} catch (UnknownSignalException ex) {
+				MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex
+						.getMessage());
+				sendEvent(error);
+			}
+		}
+	}
 }

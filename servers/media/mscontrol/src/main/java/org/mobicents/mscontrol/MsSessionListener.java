@@ -26,7 +26,7 @@ import java.io.Serializable;
 public interface MsSessionListener extends Serializable {
     /**
      * Indicates that the state of the <code>MsSession</code> object has 
-     * changed to <code>MsSession.IDLE</code>.
+     * changed to <code>MsSession.IDLE</code>. This is when the MsSession is created
      *
      * param evt the <code>MsSessionEvent</code> with eventID 
      * <code>MsSessionEventEvent.SESSION_IDLE</code>.

@@ -21,8 +21,10 @@ import java.io.Serializable;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public interface MsLinkListener extends Serializable {
+	public void linkCreated(MsLinkEvent evt);
     public void linkJoined(MsLinkEvent evt);
     public void linkDropped(MsLinkEvent evt);
     public void linkFailed(MsLinkEvent evt);

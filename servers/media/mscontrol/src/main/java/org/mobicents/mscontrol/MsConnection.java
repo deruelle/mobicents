@@ -90,4 +90,6 @@ public interface MsConnection extends Serializable {
      * Deletes related connection from media server.
      */
     public void release();
+    
+    public void fireConnectionInitialized();
 }

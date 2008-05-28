@@ -25,55 +25,58 @@ import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
-    
-    private MsConnectionImpl connection;
-    private MsConnectionEventID eventID;
-    private MsConnectionEventCause cause;
-    private String msg;
-    
-    /** Creates a new instance of MsConnectionEventImpl */
-    public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
-        this.connection = connection;
-        this.eventID = eventID;
-    }
 
-    public MsConnection getConnection() {
-        return connection;
-    }
+	private MsConnectionImpl connection;
+	private MsConnectionEventID eventID;
+	private MsConnectionEventCause cause;
+	private String msg;
 
-    public MsConnectionEventID getEventID() {
-        return eventID;
-    }
+	/** Creates a new instance of MsConnectionEventImpl */
+	public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID,
+			MsConnectionEventCause cause, String msg) {
+		this.connection = connection;
+		this.eventID = eventID;
+	}
 
-    public MsConnectionEventCause getCause() {
-        return cause;
-    }
-    
-    public String getMessage() {
-        return msg;
-    }
-    
-    public void run() {
-        for (MsConnectionListener listener : connection.listeners) {
-            switch (eventID) {
-                case CONNECTION_CREATED :
-                    listener.connectionCreated(this);
-                    break;
-                case CONNECTION_MODIFIED :
-                    listener.connectionModifed(this);
-                    break;
-                case CONNECTION_DELETED :
-                    listener.connectionDeleted(this);
-                    break;
-                case TX_FAILED :
-                    listener.txFailed(this);
-                    break;
-            }
-        }
-    }
-    
+	public MsConnection getConnection() {
+		return connection;
+	}
+
+	public MsConnectionEventID getEventID() {
+		return eventID;
+	}
+
+	public MsConnectionEventCause getCause() {
+		return cause;
+	}
+
+	public String getMessage() {
+		return msg;
+	}
+
+	public void run() {
+		for (MsConnectionListener listener : connection.listeners) {
+			switch (eventID) {
+			case CONNECTION_INITIALIZED:
+				listener.connectionInitialized(this);
+				break;
+			case CONNECTION_CREATED:
+				listener.connectionCreated(this);
+				break;
+			case CONNECTION_MODIFIED:
+				listener.connectionModifed(this);
+				break;
+			case CONNECTION_DELETED:
+				listener.connectionDeleted(this);
+				break;
+			case TX_FAILED:
+				listener.txFailed(this);
+				break;
+			}
+		}
+	}
 }

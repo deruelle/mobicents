@@ -41,12 +41,17 @@ import org.mobicents.media.msc.common.events.*;
  */
 public class MsLinkImpl implements MsLink {
     
-    private final String id = (new UID()).toString();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6373269860176309745L;
+
+	private final String id = (new UID()).toString();
     
-    private MsSessionImpl session;
+    private MsSession session;
     private MsLinkMode mode;
     
-    protected ArrayList <MsLinkListener> linkListeners = new ArrayList();
+    protected ArrayList <MsLinkListener> linkListeners = new ArrayList<MsLinkListener>();
     
     private Connection[] connections = new Connection[2];
     private Logger logger = Logger.getLogger(MsLinkImpl.class);
@@ -58,14 +63,18 @@ public class MsLinkImpl implements MsLink {
     }
     
     /** Creates a new instance of MsLink */
-    public MsLinkImpl(MsSessionImpl session, MsLinkMode mode) {
+    public MsLinkImpl(MsSession session, MsLinkMode mode) {
         this.session = session;
-        this.linkListeners.addAll(session.provider.linkListeners);
+        this.linkListeners.addAll(session.getProvider().getLinkListeners());
         this.mode=mode;
     }
     
     public MsSession getSession() {
         return session;
+    }
+    
+    public void fireMsLinkCreated(){
+    	sendEvent(MsLinkEventID.LINK_CREATED, MsLinkEventCause.NORMAL, null);
     }
     
     

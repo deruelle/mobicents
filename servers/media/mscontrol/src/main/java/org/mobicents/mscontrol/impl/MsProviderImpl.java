@@ -18,7 +18,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
@@ -31,97 +31,117 @@ import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
+ * @author amit.bhayani 
+ *
  */
 public class MsProviderImpl implements MsProvider, Serializable {
-    
-    protected ArrayList <MsSessionListener> sessionListeners = new ArrayList();
-    protected ArrayList <MsConnectionListener> connectionListeners = new ArrayList();
-    protected ArrayList <MsResourceListener> resourceListeners = new ArrayList();
-    protected ArrayList <MsLinkListener> linkListeners = new ArrayList();
-    
-    private ArrayList <MsSessionImpl> calls = new ArrayList();
-    
-    /** Creates a new instance of MsProviderImpl */
-    public MsProviderImpl() {
-    }
 
-    public MsSession createSession() {
-        MsSessionImpl call = new MsSessionImpl(this);
-        calls.add(call);
-        return call;
-    }
-    
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.mscontrol.MsProvider#addSessionListener(MsSessionListener).
-     */
-    public void addSessionListener(MsSessionListener listener) {
-        sessionListeners.add(listener);
-    }
-    
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.mscontrol.MsProvider#removeSessionListener(MsSessionListener).
-     */
-    public void removeSessionListener(MsSessionListener listener) {
-        sessionListeners.remove(listener);
-    }
-    
-    public void addResourceListener(MsResourceListener listener) {
-        resourceListeners.add(listener);
-    }
-    
-    public void removeResourceListener(MsResourceListener listener) {
-        resourceListeners.remove(listener);
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2166483960453025777L;
 
-    
-    public void addConnectionListener(MsConnectionListener listener) {
-        connectionListeners.add(listener);
-    }
+	protected ArrayList<MsSessionListener> sessionListeners = new ArrayList<MsSessionListener>();
+	protected ArrayList<MsConnectionListener> connectionListeners = new ArrayList<MsConnectionListener>();
+	protected ArrayList<MsResourceListener> resourceListeners = new ArrayList<MsResourceListener>();
+	protected ArrayList<MsLinkListener> linkListeners = new ArrayList<MsLinkListener>();
 
-    public void removeConnectionListener(MsConnectionListener listener) {
-        connectionListeners.remove(listener);
-    }
-    
-    public Collection getConnectionListeners() {
-        return connectionListeners;
-    }
-    
+	private ArrayList<MsSession> calls = new ArrayList<MsSession>();
 
+	/** Creates a new instance of MsProviderImpl */
+	public MsProviderImpl() {
+	}
 
-    /**
-     * Add a termination listener to all terminations.
-     *
-     * @param MsLinkListener object that receives the specified events.
-     */
-    public void addLinkListener(MsLinkListener listener) {
-        linkListeners.add(listener);
-    }
+	public MsSession createSession() {
+		MsSession call = new MsSessionImpl(this);
+		calls.add(call);
+		call.setSessionStateIdle();
+		return call;
+	}
 
-    /**
-     * Removes termination listener
-     *
-     * @param MsLinkListener object that receives the specified events.
-     */
-    public void removeLinkListener(MsLinkListener listener) {
-        linkListeners.remove(listener);
-    }
-    
-    public MsSignalGenerator getSignalGenerator(String endpointName) {
-        return new MsSignalGeneratorImpl(this, endpointName);
-    }
-    
-    public MsSignalDetector getSignalDetector(String endpointName) {
-        return new MsSignalDetectorImpl(this, endpointName);
-    }
-    
-    public MsConnection getMsConnection(String msConnectionId){
-    	return null;
-    }
-    
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsProvider#addSessionListener(MsSessionListener).
+	 */
+	public void addSessionListener(MsSessionListener listener) {
+		sessionListeners.add(listener);
+	}
+
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsProvider#removeSessionListener(MsSessionListener).
+	 */
+	public void removeSessionListener(MsSessionListener listener) {
+		sessionListeners.remove(listener);
+	}
+	
+	public List<MsSessionListener> getSessionListeners(){
+		return this.sessionListeners;
+	}
+
+	public void addResourceListener(MsResourceListener listener) {
+		resourceListeners.add(listener);
+	}
+
+	public void removeResourceListener(MsResourceListener listener) {
+		resourceListeners.remove(listener);
+	}
+
+	public void addConnectionListener(MsConnectionListener listener) {
+		connectionListeners.add(listener);
+	}
+
+	public void removeConnectionListener(MsConnectionListener listener) {
+		connectionListeners.remove(listener);
+	}
+
+	public List<MsConnectionListener> getConnectionListeners() {
+		return this.connectionListeners;
+	}
+
+	/**
+	 * Add a termination listener to all terminations.
+	 * 
+	 * @param MsLinkListener
+	 *            object that receives the specified events.
+	 */
+	public void addLinkListener(MsLinkListener listener) {
+		linkListeners.add(listener);
+	}
+
+	/**
+	 * Removes termination listener
+	 * 
+	 * @param MsLinkListener
+	 *            object that receives the specified events.
+	 */
+	public void removeLinkListener(MsLinkListener listener) {
+		linkListeners.remove(listener);
+	}
+
+	public MsSignalGenerator getSignalGenerator(String endpointName) {
+		return new MsSignalGeneratorImpl(this, endpointName);
+	}
+
+	public MsSignalDetector getSignalDetector(String endpointName) {
+		return new MsSignalDetectorImpl(this, endpointName);
+	}
+
+	public MsConnection getMsConnection(String msConnectionId) {
+		//TODO Implement the logic here
+		return null;
+	}
+
+	public List<MsResourceListener> getResourceListeners() {
+		return resourceListeners;
+	}
+
+	public List<MsLinkListener> getLinkListeners() {
+		return this.linkListeners;
+	}
+
 }

@@ -16,19 +16,19 @@
 
 package org.mobicents.mscontrol.impl;
 
-import java.util.ArrayList;
 import java.rmi.server.UID;
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.media.server.impl.common.*;
-import org.mobicents.media.server.impl.common.dtmf.*;
-import org.mobicents.media.server.impl.common.events.*;
 /**
  *
  * @author Oleg Kulikov
@@ -37,7 +37,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     
     private Endpoint endpoint;
     private String endpointName;
-    private MsProviderImpl provider;
+    private MsProvider provider;
     
     private String id = (new UID()).toString();
     private ArrayList <MsResourceListener> listeners = new ArrayList();
@@ -45,10 +45,10 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
     
     /** Creates a new instance of MsSignalDetectorImpl */
-    public MsSignalDetectorImpl(MsProviderImpl provider, String endpointName) {
+    public MsSignalDetectorImpl(MsProvider provider, String endpointName) {
         this.provider = provider;
         this.endpointName = endpointName;
-        listeners.addAll(provider.resourceListeners);
+        listeners.addAll(provider.getResourceListeners());
     }
 
     public String getID() {
