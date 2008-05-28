@@ -6,12 +6,13 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>1.2.0.BETA3-SNAPSHOT</version>
+		<version>1.2.0.GA-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 		
 	<artifactId>sip-presence-parent</artifactId>
 	<groupId>org.mobicents.servers.sippresence</groupId>
-	<version>1.0.0.BETA2</version>
+	<version>1.0.0.BETA2-SNAPSHOT</version>
 	
 	<modules>		
 		<module>sip-event</module>	
@@ -21,9 +22,35 @@
 		
 	<properties>
 		<mobicents.version>
-			1.2.0.BETA3-SNAPSHOT
+			${mobicents.servers.jainslee.version}
 		</mobicents.version>
 		<xdm.server.xcap.root>/mobicents</xdm.server.xcap.root>
 	</properties>			
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+   				<groupId>org.mobicents.tools</groupId>
+    			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
+					<eclipseProjectName>mobicents-sip-presence-service</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>		
+	</build>
+	
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/sip-presence</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/sip-presence</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/servers/sip-presence</url>
+	</scm>
 		
 </project>

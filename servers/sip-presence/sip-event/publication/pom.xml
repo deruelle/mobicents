@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>sip-event-parent</artifactId>
 		<groupId>org.mobicents.servers.sipevent</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 		
 	<artifactId>publication-parent</artifactId>

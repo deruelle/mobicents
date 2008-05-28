@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>sip-presence-parent</artifactId>
 		<groupId>org.mobicents.servers.sippresence</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 		
 	<artifactId>ps-core-parent</artifactId>

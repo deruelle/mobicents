@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>appusage-xcap-caps-parent</artifactId>
 		<groupId>org.mobicents.servers.xdm.core</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>appusage-xcap-caps-client</artifactId>

@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>xdm-core-parent</artifactId>
 		<groupId>org.mobicents.servers.xdm.core</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>client</artifactId>

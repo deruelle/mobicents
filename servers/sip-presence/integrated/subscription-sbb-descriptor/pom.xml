@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>integrated-parent</artifactId>
 		<groupId>org.mobicents.servers.sippresence</groupId>
-		<version>1.0.0.BETA2</version>	
+		<version>1.0.0.BETA2-SNAPSHOT</version>	
 	</parent>
 		
 	<artifactId>integrated-sip-presence-subscription-control-sbb-descriptor</artifactId>
