@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="./Common_Content/css/default.css" type="text/css" />
+  </head>
+  <body>
+    <div class="book" lang="en-US" xml:lang="en-US">
+      <div class="titlepage">
+        <hr />
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="chapter">
+              <a href="#chapter-Running_Mobicents">1. Running Mobicents</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="#Running_the_Mobicents_Application_Server">1.1. Running the Mobicents Application Server</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <div class="chapter" lang="en-US" xml:lang="en-US">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title"><a id="chapter-Running_Mobicents"></a>Chapter 1. Running Mobicents</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="section">
+                <a href="#Running_the_Mobicents_Application_Server">1.1. Running the Mobicents Application Server</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <div class="section" lang="en-US" xml:lang="en-US">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h2 class="title"><a id="Running_the_Mobicents_Application_Server"></a>1.1. Running the Mobicents Application Server</h2>
+              </div>
+            </div>
+          </div>
+          <p>
+			Once installed, running Mobicents simply consists in changing to the <code class="filename"><em class="replaceable"><code>&lt;topmost_mobicents_directory&gt;</code></em>/server/bin</code> directory and invoking <code class="command">run.sh</code> (Linux) or <code class="command">run.bat</code> (Windows) The precise instructions depend on which platform you are running Mobicents on.
+		</p>
+          <div class="variablelist">
+            <h6>Platform Mobicents is Running On</h6>
+            <dl>
+              <dt>
+                <span class="term">Linux</span>
+              </dt>
+              <dd>
+                <div class="orderedlist">
+                  <ol>
+                    <li>
+                      <p>
+								Change your working directory to the <code class="filename"><em class="replaceable"><code>&lt;topmost_mobicents_directory&gt;</code></em>/server/bin</code> directory:
+							</p>
+                      <pre class="screen">cd &lt;topmost_mobicents_directory&gt;/server/bin
+</pre>
+                    </li>
+                    <li>
+                      <p>
+								Ensure that the <code class="filename">run.sh</code> file is executable. If it isn't, modify its permissions so that it is:
+							</p>
+                      <pre class="screen">chmod +x run.sh
+</pre>
+                    </li>
+                    <li>
+                      <p>
+								Finally, start the Mobicents Application Server:.
+							</p>
+                      <pre class="screen">./run.sh
+</pre>
+                      <div class="note">
+                        <h2>Note</h2>
+                        <p>
+									The above command is a shortened version of this equivalent command:
+								</p>
+                        <pre class="screen">./run.sh -c all -b 127.0.0.1
+</pre>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+              </dd>
+              <dt>
+                <span class="term">Windows</span>
+              </dt>
+              <dd>
+                <div class="orderedlist">
+                  <ol>
+                    <li>
+                      <p>
+								Change your working directory to the <code class="filename"><em class="replaceable"><code>&lt;mobicents_folder&gt;</code></em>\server\bin</code> folder.
+							</p>
+                    </li>
+                    <li>
+                      <p>
+								Start the Mobicents Application Server:
+							</p>
+                      <pre class="screen">run.bat
+</pre>
+                      <div class="note">
+                        <h2>Note</h2>
+                        <p>
+									The above command is a shortened version of this equivalent command:
+								</p>
+                        <pre class="screen">run.bat -c all -b 127.0.0.1
+</pre>
+                      </div>
+                    </li>
+                  </ol>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

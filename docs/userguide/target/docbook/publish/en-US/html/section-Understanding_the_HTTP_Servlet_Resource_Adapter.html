@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>5.11.2. Understanding the HTTP Servlet Resource Adapter</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-HTTP_Servlet_Resource_Adapter.html" title="5.11. HTTP_Server Resource Adapter"/>
+      <link rel="prev" href="section-Installing_the_HTTP_Server_Resource_Adapter.html" title="5.11.1. Installing the HTTP Servlet Resource Adapter"/>
+      <link rel="next" href="section-HTTP_Client_Resource_Adapter.html" title="5.12. The HTTP Client Resource Adapter"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_the_HTTP_Server_Resource_Adapter.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-HTTP_Client_Resource_Adapter.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Understanding_the_HTTP_Servlet_Resource_Adapter"/>5.11.2. Understanding the HTTP Servlet Resource Adapter</h3>
+               </div>
+            </div>
+         </div>
+         <p>A servlet is used to extend the capabilities of servers which host accesses to applications via a request-response programming model. Although servlets can respond to any type of request, they are commonly used to extend the applications hosted by web servers. The aim of the HTTP Servlet resource adapter is to provide the ease of same request-response programming model in the Service Logic Execution Environment (SLEE). The HTTP resource adapter is not a replacement for a servlet but is supposed to work in close proximity with servlets to smooth the integration between web applications hosted in the web server and applications developed using Service Building Blocks (SBBs) hosted in the SLEE Server.</p>
+         <div class="figure">
+            <a id="figure-orig-http-servlet-ratype.png"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <a id="mediaobj-orig-http-servlet-ratype.png"/>
+                  <img src="images/orig-http-servlet-ratype.png" align="middle" alt="The Class Diagram for the HTTP Servlet Resource Adapter"/>
+                  <div class="caption">
+                     <p>HttpSessionActivity is the only activity involved in the HTTP Servlet resource adapter</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 5.5. The Class Diagram for the HTTP Servlet Resource Adapter</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <p>
+			
+            <code class="literal">HttpSessionActivity</code> represents the <code class="literal">HttpSession</code> created from the incoming <code class="literal">javax.servlet.http.HttpServletRequest</code> received by <code class="literal">HttpServletRaServlet</code>, which in turn passes it on to HttpServletResourceEntryPoint.</p>
+         <p>
+			
+            <code class="literal">HttpServletResourceEntryPoint</code> is the link between the servlet and HttpServletResourceAdaptor. <code class="literal">HttpServletResourceAdaptor</code> fires the appropriate event like <code class="literal">GET</code>, <code class="literal">POST</code>, <code class="literal">PUT</code>, <code class="literal">DELETE</code>, etc., depending on the method of <code class="literal">HttpServletRequest</code>, and the service interested in these events will receive it as initial event. The service will use the HttpServletRequestEvent passed as an argument to an <code class="varname">on<em class="replaceable">
+                  <code>something</code>
+               </em>
+			
+            </code> event method to get an <code class="literal">HttpServletResponse</code> object. A service can add content to the response, modify headers etc. Calling the <code class="function">flushBuffer()</code> function on an <code class="literal">HttpServletResponse</code> will flush the buffer and the response will be committed.</p>
+         <p>The service can explicitly end the <code class="literal">HttpSessionActivity</code> by calling the <code class="function">invalidate()</code> function on HttpSession. Calling <code class="function">invalidate()</code> will invoke the <code class="function">sessionDestroyed()</code> method of <code class="literal">HttpServletRaSessionListener</code> by the web container. Within the <code class="function">sessionDestroyed()</code> method, the resource adapter's <code class="function">endHttpSessionActivity()</code> is called to end the activity. If <code class="literal">HttpSession</code> times out, then it is the responsibility of the container to invoke the <code class="function">sessionDestroyed()</code> function and the above steps in order to end activity.</p>
+         <p>
+			
+            <code class="literal">HttpServletResourceAdaptor</code> uses the <code class="function">request.getPathInfo()</code> function to form the web address used to fire the Event:</p>
+         <pre class="programlisting">//PathInfo can be an empty string and the creation of Address will throw exception
+//for empty String hence hardcoding prefix /mobicents
+String pathInfo = "/mobicents" + request.getPathInfo();
+
+Address address = new Address(AddressPlan.URI, pathInfo);
+sleeEndpoint.fireEvent(ah, event, eventID, address);</pre>
+         <p>SBBs which are interested in events emmitted by <code class="literal">HttpServletResourceAdaptor</code> should use </p>
+         <pre class="programlisting">&lt;initial-event-select variable="Address" /&gt;</pre>
+         <p> for calculating the convergence name, this way we can make sure that URL's submitted to HttpServletResourceAdaptor are mapped to convergence names</p>
+         <p>For example:</p>
+         <div class="itemizedlist">
+            <ul>
+               <li>
+                  <p>The URL <code class="literal">URL http://localhost:8080/mobicents/x/y</code> maps to the convergence name <code class="literal">/mobicents/x/y</code>.</p>
+               </li>
+               <li>
+                  <p>URL <code class="literal">http://localhost:8080/mobicents/sum/dum</code> maps to the convergence name <code class="literal">/mobicents/sum/dum</code>.</p>
+               </li>
+            </ul>
+         </div>
+         <h5 class="formalpara">A Service Building Block Example</h5>
+         <p class="formalpara">An SBB can be inetersted in any of the HTTP Methods <code class="literal">OPTIONS</code>, <code class="literal">GET</code>, <code class="literal">HEAD</code>, <code class="literal">POST</code>, <code class="literal">PUT</code>, <code class="literal">DELETE</code>, <code class="literal">TRACE</code>, and for each <code class="literal">HttpMethod</code>, the resource adapter fires a corresponding event.</p>
+         <p>The following code is an example of Service Building Block code:</p>
+         <pre class="programlisting">public void onPost(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+        try {
+
+            HttpServletResponse response = event.getResponse();
+            PrintWriter w = response.getWriter();
+            w.print("onPost OK! Served by SBB = " + getSbbId());
+            w.flush();
+            response.flushBuffer();
+            log
+                    .info("HttpServletRAExampleSbb: POST Request received and OK! response sent.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void onGet(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+        .....
+        .....
+
+    }
+
+    public void onHead(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+        // The HEAD method is identical to GET except that the server MUST NOT
+        // return a message-body in the response.
+        log.info("HttpServletRAExampleSbb: HEAD Request received.");
+
+    }
+
+    public void onPut(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+        ...........
+
+    }
+
+    public void onDelete(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+           .............
+
+    }
+
+    public void onOptions(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+               .............
+    }
+
+    public void onTrace(HttpServletRequestEvent event,
+            ActivityContextInterface aci) {
+               ..............
+    }</pre>
+         <div class="example">
+            <a id="example-sbb-jar.xml"/>
+            <div class="example-contents">
+               <a id="proglist-sbb-jar.xml"/>
+               <pre class="programlisting">sbb-jar.xml
+
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+&lt;sbb-jar&gt;
+    &lt;sbb&gt;
+        &lt;description/&gt;
+        &lt;sbb-name&gt;HttpServletRAExampleSBB&lt;/sbb-name&gt;
+        &lt;sbb-vendor&gt;org.mobicents&lt;/sbb-vendor&gt;
+        &lt;sbb-version&gt;1.0&lt;/sbb-version&gt;        
+        &lt;sbb-classes&gt;
+            &lt;sbb-abstract-class&gt;
+                &lt;sbb-abstract-class-name&gt;org.mobicents.slee.service.httpservletra.example.HttpServletRAExampleSbb&lt;/sbb-abstract-class-name&gt;       
+                &lt;/sbb-abstract-class&gt;
+        &lt;/sbb-classes&gt;
+       
+        &lt;event initial-event="True" event-direction="Receive"&gt;
+            &lt;event-name&gt;Post&lt;/event-name&gt;
+            &lt;event-type-ref&gt;
+                &lt;event-type-name&gt;net.java.slee.resource.http.events.incoming.POST&lt;/event-type-name&gt;
+                &lt;event-type-vendor&gt;net.java.slee&lt;/event-type-vendor&gt;
+                &lt;event-type-version&gt;1.0&lt;/event-type-version&gt;
+            &lt;/event-type-ref&gt;
+            &lt;initial-event-select variable="Address" /&gt;
+        &lt;/event&gt;
+        
+        
+        &lt;event initial-event="True" event-direction="Receive"&gt;
+            &lt;event-name&gt;Get&lt;/event-name&gt;
+            ..................
+        &lt;/event&gt;
+
+    .....
+       ....
+     &lt;event-name&gt;Head&lt;/event-name&gt;
+    ...
+    &lt;event-name&gt;Put&lt;/event-name&gt;
+    .....
+     ....
+ 
+        &lt;resource-adaptor-type-binding&gt;
+            &lt;resource-adaptor-type-ref&gt;
+                &lt;resource-adaptor-type-name&gt;HttpServletResourceAdaptorType&lt;/resource-adaptor-type-name&gt;
+                &lt;resource-adaptor-type-vendor&gt;org.mobicents&lt;/resource-adaptor-type-vendor&gt;
+                &lt;resource-adaptor-type-version&gt;1.0&lt;/resource-adaptor-type-version&gt;
+            &lt;/resource-adaptor-type-ref&gt;
+            &lt;activity-context-interface-factory-name&gt;
+                slee/resources/http-servlet-ra/http-servlet-ra-acif
+            &lt;/activity-context-interface-factory-name&gt;
+            &lt;resource-adaptor-entity-binding&gt;
+                &lt;resource-adaptor-object-name&gt;slee/resources/http-servlet-ra/org.mobicents/1.0.00/http-servlet-ra/factoryprovider&lt;/resource-adaptor-object-name&gt;
+                &lt;resource-adaptor-entity-link&gt;HttpServletRA&lt;/resource-adaptor-entity-link&gt;
+            &lt;/resource-adaptor-entity-binding&gt;
+        &lt;/resource-adaptor-type-binding&gt;
+              
+    &lt;/sbb&gt;
+&lt;/sbb-jar&gt;
+</pre>
+            </div>
+            <p class="title">
+               <b>Example 5.1. A sample sbb-jar.xml configuration file</b>
+            </p>
+         </div>
+         <br class="example-break"/>
+         <p>In order to deploy the HTTP Servlet resource adapter, execute 'ant build-and-deploy-ra' from mobicents/ra/http-servlet-ra folder. Make sure to set the MOBICENTS_HOME and JBOSS_HOME.</p>
+         <p>TBD: is this correct? Format and ensure the correctness of these last 2-3 paragraphs</p>
+         <p>To execute the test-case, follow the steps in mobicents/ra/http-servlet-ra/tests/build.xml</p>
+         <p>There is a working example httpservletra-example to demonstarte the usage of http-servlet-ra. Follow the link to download example https://mobicents-examples.dev.java.net/source/browse/mobicents-examples/httpservletra-example/ and read instructions README.txt to deploy the example</p>
+         <p>Note: Http Servlet RA is only for processing incoming HttpServletRequest and sending back the HttpServletResponse. If there is a need to create the Request from within the service make use of Http Client RA.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_the_HTTP_Server_Resource_Adapter.html">
+               <strong>Prev</strong>5.11.1. Installing the HTTP Servlet Resource Adap...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-HTTP_Client_Resource_Adapter.html">
+               <strong>Next</strong>5.12. The HTTP Client Resource Adapter</a>
+         </li>
+      </ul>
+   </body>
+</html>

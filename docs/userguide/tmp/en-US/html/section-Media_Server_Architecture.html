@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>7.2.2. Media Server Architecture</title>
+    <link rel="stylesheet" href="./Common_Content/css/default.css" type="text/css" />
+    <link rel="start" href="index.html" title="Mobicents" />
+    <link rel="up" href="section-Mobicents_Media_Server.html" title="7.2. Mobicents Media Server" />
+    <link rel="prev" href="section-Overview_of_the_Mobicents_Media_Server.html" title="7.2.1. Overview of the Mobicents Media Server" />
+    <link rel="next" href="section-Mobicents_SIP_Presence_Service.html" title="7.3. Mobicents SIP Presence Service" />
+  </head>
+  <body>
+    <p id="title">
+      <a href="http://www.redhat.com/docs">
+        <strong>7.2.2. Media Server Architecture</strong>
+      </a>
+    </p>
+    <ul class="docnav">
+      <li class="previous">
+        <a accesskey="p" href="section-Overview_of_the_Mobicents_Media_Server.html">
+          <strong>Prev</strong>
+        </a>
+      </li>
+      <li class="next">
+        <a accesskey="n" href="section-Mobicents_SIP_Presence_Service.html">
+          <strong>Next</strong>
+        </a>
+      </li>
+    </ul>
+    <div class="section" lang="en-US" xml:lang="en-US">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h3 class="title"><a id="section-Media_Server_Architecture"></a>7.2.2. Media Server Architecture</h3>
+          </div>
+        </div>
+      </div>
+      <p>
+			Media services have played an important role in the traditional Time Division Multiplexing (<acronym class="acronym">TDM</acronym>)-based telephone network. As the network migrates to an Internet Protocol (<acronym class="acronym">IP</acronym>)-based environment, media services are also moving to new environments.
+		</p>
+      <p>
+			One of the most exciting trends is the emergence and adoption of complementary modular standards that leverage the Internet to enable media services to be developed, deployed and updated more rapidly than before in a network architecture that supports the two concepts we will call provisioning-on-demand and scaling-on-demand.
+		</p>
+      <h5 class="formalpara">General Design Overview</h5>
+      <p class="formalpara">
+				Mobicents Media Server is developed on top of existing Java technologies. The Java platform is the ideal platform for network computing. It offers a single, unifying programming model that can connect all elements of a business infrastructure. The modularization effort is supported by the use of the Java Management Extension (<acronym class="acronym">JMX</acronym>) <acronym class="acronym">API</acronym>, and the industry-standard Service Logic Execution Environment (<acronym class="acronym">SLEE</acronym>) container. Using JMX enables easy management of both the server's media components and the control modules hosted by <acronym class="acronym">SLEE</acronym>.
+			</p>
+      <p>
+			This high degree of modularity benefits the application developer in several ways. The already-tight code can be further trimmed down to support applications that must have small footprints. For example, if <acronym class="acronym">PSTN</acronym> (Public Switched Telephone Network) interconnection is unnecessary in your application, then simply take the D-channel feature out of the server. If you later decide to deploy the same application within a Signaling System 7 (<acronym class="acronym">SS7</acronym>) network, then simply enable the appropriate endpoint. Another example is the freedom you have to drop your favorite media control protocol directly into the <acronym class="acronym">SLEE</acronym> container.
+		</p>
+      <div class="figure">
+        <a id="figure-Media_Server_Overview"></a>
+        <div class="figure-contents">
+          <div class="mediaobject" align="center">
+            <img src="images/orig-ms-general.jpg" align="middle" alt="Media Server Overview" />
+          </div>
+        </div>
+        <h6>Figure 7.1. Media Server Overview</h6>
+      </div>
+      <br class="figure-break" />
+      <p>
+			The components that are involved in media processing or endpoints are implemented with <acronym class="acronym">JMF</acronym>, the Java Media Framework. JMF provides a platform-neutral framework for displaying time-sensitive media. The <acronym class="acronym">JMF</acronym><acronym class="acronym">API</acronym>:
+		</p>
+      <div class="itemizedlist">
+        <ul>
+          <li>
+            <p>
+					Scales across different protocols and delivery mechanisms
+				</p>
+          </li>
+          <li>
+            <p>
+					Scales across different types of media data
+				</p>
+          </li>
+          <li>
+            <p>
+					Provides an event model for asynchnronous communication between JMF and applications or applets
+				</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+			The <acronym class="acronym">JMF</acronym> architecture allows advanced developers nto create and integrate new types of controllers and data sources. The <acronym class="acronym">JMF</acronym><acronym class="acronym">API</acronym> declares abstract interfaces which are used for handling new media sources and sinks such as audio and video files, <acronym class="acronym">PSTN</acronym> cards, webcams, etc.
+		</p>
+      <p>
+			The Media Server architecture assumes that call control intelligence is outside of the Media Server and handled by an external entity. The Mebia Server assumes that call controllers will use control procedures such as <acronym class="acronym">MGCP</acronym>, Mecago or <acronym class="acronym">MSML</acronym>, among others. Each specific control module can be plugged in directly to the server as a standard <acronym class="acronym">SLEE</acronym> deployable unit. The usage of a <acronym class="acronym">SLEE</acronym> container for the implementation of the control protocol-specific communication logic provides simple deployment and also the easy deployment of such control modules. The developer will not have to mess with low-level transaction and state management details, multi-threading, connection-pooling and other similar complex, low-level <acronym class="acronym">API</acronym>s.
+		</p>
+      <div class="note">
+        <h2>Note</h2>
+        <p>
+				The Mobicents Media Server uses <acronym class="acronym">SLEE</acronym> for implementing its own communication capabilities. The <acronym class="acronym">SLEE</acronym> container doesn't serve here as a call controller.
+			</p>
+      </div>
+      <p>
+			In addition to control protocol modules, the <acronym class="acronym">SLEE</acronym> container is aimed at providing high-level features like Interactive Voice Response (<acronym class="acronym">IVR</acronym>) and Drools or VoiceXML engines.
+		</p>
+      <p>
+			The mobdules deployed under <acronym class="acronym">SLEE</acronym> control interact with the Media Server Service Provider Interface (<acronym class="acronym">SPI</acronym>) through the Media Server Control Resource Adapter, or <acronym class="acronym">MSC-RA</acronym>. The <acronym class="acronym">MSC-RA</acronym> follows the recommendations of JSR-309 and implements asynchronous interconnection with the Media Server <acronym class="acronym">SPI</acronym> stack. This local implementation is restricted and does not all the use of high-level abstractions like VoiceXML dialogs, <abbr class="abbrev">etc.</abbr>.
+		</p>
+      <h5 class="formalpara">Typical Deployment Scenario</h5>
+      <p class="formalpara">
+				Mobicents Media Server offers a complete solution for all aspects of being a media gateway and server. This includes the Digital Signal Processors required to covert and compress <acronym class="acronym">TDB</acronym> voice circuits into <acronym class="acronym">IP</acronym> packets, announcement access points, conferencing, high-level IVR engines, <abbr class="abbrev">etc.</abbr> The gateway is able to provide signaling conversation and can operate as a Session Border Controller at the boundaries of Local Access Networks. The Media Server is always controlled by an external <acronym class="acronym">JBCP</acronym> application server which implements the call control logic.
+			</p>
+      <h5 class="formalpara">Endpoints</h5>
+      <p class="formalpara">
+				It is convenient to consider a media gateway as a collection of endpoints. An endpoint is a logical representation of a physical entity such as an analog phone or a channel in a trunk. Endpoints are sources or sinks of data and can be physical or virtual. Physical endpoint creation requires hardware installation whil esoftware is sufficient for creating a virtual endpoint. An interface on a gateway that terminates a trunk connected to a PSTN switch is an example of a physical endpoint. An audio source in an audio content server is an example of a virtual endpoint.
+			</p>
+      <p>
+			The type of the endpoint determines its functionality. Our analysis, so far, has led us to isolate the following basic endpoint types:
+		</p>
+      <div class="itemizedlist">
+        <ul>
+          <li>
+            <p>
+					Digital Signal 0 (<acronym class="acronym">DS0</acronym>)
+				</p>
+          </li>
+          <li>
+            <p>
+					Analog line
+				</p>
+          </li>
+          <li>
+            <p>
+					Announcement server access point
+				</p>
+          </li>
+          <li>
+            <p>
+					Conference bridge acces point
+				</p>
+          </li>
+          <li>
+            <p>
+					Packet relay
+				</p>
+          </li>
+          <li>
+            <p>
+					Asynchronous Transfer Mode (<acronym class="acronym">ATM</acronym>) "trunk side" interface
+				</p>
+          </li>
+        </ul>
+      </div>
+      <p>
+			This list is not exhaustive: there may be other types of endpoints defined in the future, for example test endpoints that could be used to check network quality, or frame-relay endpoints that could be used to manage audio channels multiplexed over a frame-relay virtual circuit.
+		</p>
+      <div class="variablelist">
+        <h6>Description of Various Access Point Types</h6>
+        <dl>
+          <dt>
+            <span class="term">Announcement Server Access Point</span>
+          </dt>
+          <dd>
+            <p>
+						An announcement server endpoint naturally provides access to an announcement server. Upon receiving requests from the call agent, the announcement server will "play" a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one-way, or "half-duplex":the announcement server is not expected to listen to the audio signals from the connection.
+					</p>
+          </dd>
+          <dt>
+            <span class="term">Interactive Voice Response Access Point</span>
+          </dt>
+          <dd>
+            <p>
+						An Interactive Voice Repsonse (<acronym class="acronym">IVR</acronym>) endpoint provides access to an <acronym class="acronym">IVR</acronym> service. Upon requests from the call agent, the <acronym class="acronym">IVR</acronym> server will "play" announcements and tones, and will "listen" to responses, such as (<acronym class="acronym">DTMF</acronym>) input or voice messages, from the user. A given <acronym class="acronym">IVR</acronym> endpoint is not expected to support more than one connection at a time.
+					</p>
+          </dd>
+          <dt>
+            <span class="term">Conference Bridge Access Point</span>
+          </dt>
+          <dd>
+            <p>
+						A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and the packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections shall be mixed according to the connection "mode" (as specified later in this document). The precise number of connections that an endpoint supports is characteristic of the gateway, and may in fact vary according to the alloction of resources within the gateway.
+					</p>
+          </dd>
+          <dt>
+            <span class="term">Packet Relay</span>
+          </dt>
+          <dd>
+            <p>
+						A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways, such as gateways which don't support compatible compression algorithms, or gateways that operate over different transmission networks such as IP and ATM.
+					</p>
+          </dd>
+        </dl>
+      </div>
+      <h5 class="formalpara">Signal Generators (<acronym class="acronym">SG</acronym>s) and Signal Detectors (<acronym class="acronym">SD</acronym>s)</h5>
+      <p class="formalpara">
+				This endpoint contains a set of resources which provide the media-processing functionality. It manages the interconnection of media streams between the resources, and arbitrates the flow of media stream data between them. Media services—or commands— are invoked by a client application on the endpoint; that endpoint causes the resources to perform the desired services, and directs events sent by the resources to the appropriate client. The resources in the endpoint include a primary resource and zero or more secondary resources. The primary resource is typically connected to an external media stream, and provides the data from that stream to the secondary resources. The secondary resources may process that stream (<abbr class="abbrev">e.g.</abbr> by recording it and/or performing automatic speech recognition on it), or may themselves generate generate media stream data (<abbr class="abbrev">e.g.</abbr> by playing a voice file) which is then transmitted to the primary resource.
+			</p>
+      <p>
+			A resource is statically prepared if the preparation takes place at the time of creation. A resource is dynamically prepared if preparation of a particular resource (and its associated media streams) does not occur until it is required by a media operation. Static preparation can lead to less efficient usage of a server's resources, because resources may tend to be allocated for a longer time before use. However, once a resource has been prepared, it is guaranteed to be available for use. Dynamic preparation may utilize resources more efficiently because of Just-In-Time (<acronym class="acronym">JIT</acronym>) allocation algorithms may be used.
+		</p>
+      <p>
+			An endpoint is divided logically into a Service Provider Interface (<acronym class="acronym">SPI</acronym>) that is used to implement specific a endpoint, and a management interface which is used for implementing manageable resources of that endpoint. All endpoints are plugged into the Mobicents <acronym class="acronym">SLEE</acronym> server by registering with the MBean server. The kernel in that sense is only an aggregator, and not a source of actual functionality. The functionality is provided by the <acronym class="acronym">SPI</acronym> implementation of the Mbeans, and in fact, all major endpoints are manageable MBeans interconnected through the MBean server. The best way to add endpoints to a Media Server is to write a new <acronym class="acronym">JMX</acronym> bean which provides implementation of the endpoint's <acronym class="acronym">SPI</acronym>.
+		</p>
+      <p>
+			The <acronym class="acronym">SPI</acronym> layer is an abstraction that endpoint providers must implement to enable their media-processing features. An implementation of <acronym class="acronym">SPI</acronym> for an endpoint is referred to as an <span class="emphasis"><em>Endpoint Provider</em></span>.
+		</p>
+      <div class="figure">
+        <a id="figure-EndpointManagementMBean_UML_Diagram"></a>
+        <div class="figure-contents">
+          <div class="mediaobject" align="center">
+            <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+              <tr>
+                <td align="center">
+                  <img src="images/orig-endpoint.png" align="middle" width="700" alt="EndpointManagementMBean UML Diagram" />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h6>Figure 7.2. EndpointManagementMBean UML Diagram</h6>
+      </div>
+      <br class="figure-break" />
+    </div>
+    <ul class="docnav">
+      <li class="previous">
+        <a accesskey="p" href="section-Overview_of_the_Mobicents_Media_Server.html"><strong>Prev</strong>7.2.1. Overview of the Mobicents Media Server</a>
+      </li>
+      <li class="up">
+        <a accesskey="u" href="#">
+          <strong>Up</strong>
+        </a>
+      </li>
+      <li class="home">
+        <a accesskey="h" href="index.html">
+          <strong>Home</strong>
+        </a>
+      </li>
+      <li class="next">
+        <a accesskey="n" href="section-Mobicents_SIP_Presence_Service.html"><strong>Next</strong>7.3. Mobicents SIP Presence Service</a>
+      </li>
+    </ul>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<bookinfo id="Mobicents_User_Guide-1.20">
+	<title>Mobicents</title>
+	<subtitle>User Guide</subtitle>
+	<issuenum>1.20</issuenum>
+	<productnumber>0</productnumber>
+	<abstract>
+		<para>Mobicents is a highly scalable event-driven application server with
+a robust component model. Mobicents is the first and only Open
+Source Platform certified for JSLEE 1.0 compliance. It complements
+J2EE to enable the convergence of voice, video and data in
+next-generation intelligent applications. Web and SIP can be
+combined together to achieve more sophisticated and natural user
+experience.</para></abstract>
+	<copyright>
+		<year>&YEAR;</year>
+		<holder>&HOLDER;</holder>
+	</copyright>
+	<xi:include href="Author_Group.xml" xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
+</bookinfo>
+

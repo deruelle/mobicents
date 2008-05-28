@@ -1,0 +1,83 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<chapter id="chapter-Running_Mobicents">
+	<title>Running Mobicents</title>
+	<section id="Running_the_Mobicents_Application_Server">
+		<title>Running the Mobicents Application Server</title>
+		<para>
+			Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (Linux) or <command>run.bat</command> (Windows) The precise instructions depend on which platform you are running Mobicents on.
+		</para>
+		<variablelist>
+			<title>Platform Mobicents is Running On</title>
+			<varlistentry>
+				<term>Linux</term>
+				<listitem>
+					<orderedlist>
+						<listitem>
+							<para>
+								Change your working directory to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory:
+							</para>
+<screen>cd &lt;topmost_mobicents_directory&gt;/server/bin
+</screen>
+						</listitem>
+						<listitem>
+							<para>
+								Ensure that the <filename>run.sh</filename> file is executable. If it isn&#39;t, modify its permissions so that it is:
+							</para>
+<screen>chmod +x run.sh
+</screen>
+						</listitem>
+						<listitem>
+							<para>
+								Finally, start the Mobicents Application Server:.
+							</para>
+<screen>./run.sh
+</screen>
+							<note>
+								<para>
+									The above command is a shortened version of this equivalent command:
+								</para>
+<screen>./run.sh -c all -b 127.0.0.1
+</screen>
+							</note>
+						</listitem>
+					</orderedlist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Windows</term>
+				<listitem>
+					<orderedlist>
+						<listitem>
+							<para>
+								Change your working directory to the <filename><replaceable>&lt;mobicents_folder&gt;</replaceable>\server\bin</filename> folder.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Start the Mobicents Application Server:
+							</para>
+<screen>run.bat
+</screen>
+							<note>
+								<para>
+									The above command is a shortened version of this equivalent command:
+								</para>
+<screen>run.bat -c all -b 127.0.0.1
+</screen>
+							</note>
+						</listitem>
+					</orderedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+
+</chapter>
+

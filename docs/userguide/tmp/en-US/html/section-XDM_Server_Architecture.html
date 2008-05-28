@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>7.3.2.2. XDM Server Architecture</title>
+    <link rel="stylesheet" href="./Common_Content/css/default.css" type="text/css" />
+    <link rel="start" href="index.html" title="Mobicents" />
+    <link rel="up" href="section-Mobicents_XML_Document_Management_Server.html" title="7.3.2. Mobicents XML Document Manager Server" />
+    <link rel="prev" href="section-Introduction_to_the_XML_Document_Management_Server.html" title="7.3.2.1. Introduction to the XML Document Manager Server" />
+    <link rel="next" href="section-Mobicents_Presence_Server.html" title="7.3.3. Mobicents Presence Server" />
+  </head>
+  <body>
+    <p id="title">
+      <a href="http://www.redhat.com/docs">
+        <strong>7.3.2.2. XDM Server Architecture</strong>
+      </a>
+    </p>
+    <ul class="docnav">
+      <li class="previous">
+        <a accesskey="p" href="section-Introduction_to_the_XML_Document_Management_Server.html">
+          <strong>Prev</strong>
+        </a>
+      </li>
+      <li class="next">
+        <a accesskey="n" href="section-Mobicents_Presence_Server.html">
+          <strong>Next</strong>
+        </a>
+      </li>
+    </ul>
+    <div class="section" lang="en-US" xml:lang="en-US">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h4 class="title"><a id="section-XDM_Server_Architecture"></a>7.3.2.2. XDM Server Architecture</h4>
+          </div>
+        </div>
+      </div>
+      <p>
+			The XML Document Manager Server runs on top of the Mobicents Converged Application Server and is also dependent upon the XCAP (XML Configuration Access Protocol) and <acronym class="acronym">SIP</acronym> resource adapters.
+		</p>
+      <p>
+			Architecturally, the XDM Server is essentially an <acronym class="acronym">XCAP</acronym> server that employs a <acronym class="acronym">SIP</acronym> interface, which allows the server to learn about document updates.
+		</p>
+      <p>
+			The XDM Server can also use an element named the Aggregation Proxy, which is responsible for user authentication and result-caching on XCAP requests.
+		</p>
+      <p>
+			An XDM Server abstracts the element that stores XML documents as a data source.
+		</p>
+      <div class="figure">
+        <a id="figure-orig-OPENXDM_Functional_Architecture.jpg"></a>
+        <div class="figure-contents">
+          <div class="mediaobject" align="center">
+            <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+              <tr>
+                <td align="center">
+                  <img src="images/orig-OPENXDM_Functional_Architecture.jpg" align="middle" width="700" alt="The Architecture of the Mobicents XML Document Management Server" />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h6>Figure 7.4. The Architecture of the Mobicents XML Document Management Server</h6>
+      </div>
+      <br class="figure-break" />
+      <div class="figure">
+        <a id="figure-orig-OpenXDM_JAINSLEE_Implementation.jpg"></a>
+        <div class="figure-contents">
+          <div class="mediaobject" align="center">
+            <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+              <tr>
+                <td align="center">
+                  <img src="images/orig-OpenXDM_JAINSLEE_Implementation.jpg" align="middle" width="700" alt="The JAIN SLEE Architectural Implementation of the XDM Server" />
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <h6>Figure 7.5. The JAIN SLEE Architectural Implementation of the XDM Server</h6>
+      </div>
+      <br class="figure-break" />
+    </div>
+    <ul class="docnav">
+      <li class="previous">
+        <a accesskey="p" href="section-Introduction_to_the_XML_Document_Management_Server.html"><strong>Prev</strong>7.3.2.1. Introduction to the XML Document Manager...</a>
+      </li>
+      <li class="up">
+        <a accesskey="u" href="#">
+          <strong>Up</strong>
+        </a>
+      </li>
+      <li class="home">
+        <a accesskey="h" href="index.html">
+          <strong>Home</strong>
+        </a>
+      </li>
+      <li class="next">
+        <a accesskey="n" href="section-Mobicents_Presence_Server.html"><strong>Next</strong>7.3.3. Mobicents Presence Server</a>
+      </li>
+    </ul>
+  </body>
+</html>

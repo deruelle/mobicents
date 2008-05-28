@@ -1,0 +1,25 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "../Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "../Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<section id="section-TTS_Resource_Adapter">
+	<title>TTS Resource Adapter</title>
+	<para>
+	</para>
+	<section id="section-Installing_the_TTS_Resource_Adapter">
+		<title>Installing the TTS Resource Adapter</title>
+		<para>
+			The TTS resource adapter can be installed by referring to <xref linkend="section-Deploying_and_Undeploying_Resource_Adapters" />.
+		</para>
+		<para>
+			Remember to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable></filename> with the name of the directory in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the TTS resource adapter (currently this directory is named <filename><replaceable>ttsra</replaceable></filename>, but this could change in the future).
+		</para>
+	</section>
+
+</section>
+
+

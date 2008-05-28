@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>5.1.2.2. Deploying Resource Adapters By Copying Deployable Unit Files</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Deploying_Resource_Adapters.html" title="5.1.2. Deploying Resource Adapters"/>
+      <link rel="prev" href="section-Deploying_Resource_Adapters_Via_the_Command_Line.html" title="5.1.2.1. Deploying Resource Adapters Via the Command Line"/>
+      <link rel="next" href="section-Deploying_Resource_Adapters_With_the_Management_Console.html" title="5.1.2.3. Deploying Resource Adapters With the Management Console"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Deploying_Resource_Adapters_Via_the_Command_Line.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Deploying_Resource_Adapters_With_the_Management_Console.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h4 class="title">
+                     <a id="section-Deploying_Resource_Adapters_By_Copying_Deployable_Unit_Files"/>5.1.2.2. Deploying Resource Adapters By Copying Deployable Unit Files</h4>
+               </div>
+            </div>
+         </div>
+         <p>It is essential to have read the previous sections on locating resource adapter directories, recognizing deployable unit files, and determining the correct order for installing the files, before continuing. See <a href="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files.html" title="5.1.1. Before You Begin: Resource Adapters and Deployable Unit Files">Section 5.1.1, “Before You Begin: Resource Adapters and Deployable Unit Files”</a>.</p>
+         <p>You can deploy resource adapters by simply copying deployable unit files to a special directory with your file manager, or by doing the same via the command line. These instructions assume that you are using the file manager. You can also copy the two necessary files simultaneously, or one-after-the-other in the correct order, which is the way we will do it.</p>
+         <div class="warning">
+            <h2>Warning</h2>
+            <p>Make sure that you <span class="emphasis">
+                  <em>copy</em>
+               </span> the deployable unit files, instead of <span class="emphasis">
+                  <em>moving</em>
+               </span> them. If you accidentally move them, then make sure you copy them back to the correct resource adapter directory where they came from. If you accidentally move them and then delete them, you will probably have to reinstall Mobicents, so be careful to copy instead of move!</p>
+         </div>
+         <p>Open your file manager and move to the directory corresponding to the resource adapter you want to deploy. Find the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ratype-DU.jar</code> file and copy it.</p>
+         <div class="figure">
+            <a id="figure-ss-deployable_units-selecting_the_ratype_dependency.png"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <img src="images/ss-deployable_units-selecting_the_ratype_dependency.png" align="middle" alt="Locating and Copying the First Deployable Unit File"/>
+                  <div class="caption">
+                     <p>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 5.1. Locating and Copying the First Deployable Unit File</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <div class="mediaobject" align="center">
+            <a id="mediaobj-ss-deployable_units-selecting_the_ratype_dependency.png"/>
+            <img src="images/ss-deployable_units-selecting_the_ratype_dependency.png" align="middle"/>
+            <div class="caption">
+               <p>Copying the first deployable unit file, the ratype file, in order to deploy the SIP resource adatper.</p>
+            </div>
+         </div>
+         <p>Where you will paste it to depends on whether you installed the Mobicents binary release, or built Mobicents from source. If you installed the binary version, then the correct directory to copy the files into is <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;topmost_mobicents_directory&gt;</code>
+               </em>/server/server/default/deploy</code> (remembering that the bundled JBoss installation that comes with the binary Mobicents release is located in <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;topmost_mobicents_directory&gt;</code>
+               </em>/server/server/default</code>; you are actually copying the file into JBoss's <code class="filename">deploy</code> directory). If, on the other hand, you installed Mobicents and JBoss separately and set the <code class="envar">JBOSS_HOME</code> environment variable, then the correct directory to copy the file to is <code class="filename">
+               <code class="envar">$JBOSS_HOME</code>/deploy</code>.</p>
+         <p>After copying the <span class="emphasis">
+               <em>ratype</em>
+            </span> deployable unit file, Mobicents will send a message like the following to standard output, indicating that the file was successfully installed.</p>
+         <pre class="screen">19:59:03,651 INFO  [RaTypeDeployer] Added RA Type with id ResourceAdaptorTypeID[JAIN SIP#javax.sip#1.2]
+19:59:03,683 INFO  [STDOUT] 19:59:03,682 INFO  [DeploymentMBeanImpl] Deployable unit with URL file:/home/silas/Desktop/temp/apps/mobicents/mobicents-all-1_2_0_BETA2/server/server/default/deploy/sip-ratype-DU.jar deployed as DeployableUnitID[0]</pre>
+         <p>After successfully copying the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ratype-DU.jar</code> file, proceed to copy the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ra-DU.jar</code> file to the same directory. Copying the <span class="emphasis">
+               <em>ra</em>
+            </span> file (after the <span class="emphasis">
+               <em>ratype</em>
+            </span> file, of course) will lead to successful installation of the resource adapter, and the Mobicents Converged Application Server will output information similar to the following to standard output:</p>
+         <pre class="screen">19:59:59,940 INFO  [STDOUT] 19:59:59,940 INFO  [ResourceManagementMBeanImpl] Activated RA Entity SipRA
+20:00:00,191 INFO  [STDOUT] 20:00:00,190 INFO  [ResourceManagementMBeanImpl] Created Link between RA Entity SipRA and Name SipRA</pre>
+         <p>The easier way is simply to select and copy both deployable unit files and paste them simultaneously into <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;topmost_mobicents_directory&gt;</code>
+               </em>/server/server/default/deploy</code> (or <code class="filename">
+               <code class="envar">$JBOSS_HOME</code>/deploy</code> if you installed JBoss separately). When you do it that way, Mobicents can figure out in which order it should install the files.</p>
+         <p>To undeploy a resource adapter by removing or deleting deployable unit files, refer to <a href="section-Undeploying_Resource_Adapters_By_Removing_Files.html" title="5.1.3.2. Undeploying Resource Adapters By Removing Files">Section 5.1.3.2, “Undeploying Resource Adapters By Removing Files”</a>.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Deploying_Resource_Adapters_Via_the_Command_Line.html">
+               <strong>Prev</strong>5.1.2.1. Deploying Resource Adapters Via the Comm...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Deploying_Resource_Adapters_With_the_Management_Console.html">
+               <strong>Next</strong>5.1.2.3. Deploying Resource Adapters With the Man...</a>
+         </li>
+      </ul>
+   </body>
+</html>

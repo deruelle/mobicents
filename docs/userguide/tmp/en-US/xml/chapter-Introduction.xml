@@ -1,0 +1,239 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<chapter id="chapter-Introduction">
+	<title>Introduction</title>
+	<section id="section-Introduction_to_the_Mobicents_Converged_Application_Server">
+		<title>Introduction to the Mobicents Converged Application Server</title>
+		<para>
+			The Mobicents Communication Platform is the best architecture for creating, deploying and managing services and applications integrating voice, video and data across a range of IP and communications networks. The Mobicents Communication Platform drives convergence by leveraging the following four core capabilities.
+		</para>
+		<mediaobject id="mediaobj-orig-mobicents-high-level-diagram.gif">
+			<imageobject>
+				<imagedata align="center" fileref="images/orig-mobicents-high-level-diagram.gif" format="GIF" />
+			</imageobject>
+		</mediaobject>
+		<variablelist id="varlist-Core_Capabilities_of_the_Mobicents_Converged_Application_Server">
+			<title>Core Capabilities of the Mobicents Converged Application Server</title>
+			<varlistentry>
+				<term>Mobicents JAIN-SLEE</term>
+				<listitem>
+					<para>
+						Mobicents JAIN-SLEE provides a highly-scalable event-driven application server with a robust component model and a fault-tolerant execution environment. Mobicents JAIN-SLEE is the first and only Open Source Platform certified for JSLEE 1.0 compliance. It complements J2EE to enable the convergence of voice, video and data in next-generation intelligent applications. Web and SIP can be combined together to achieve more sophisticated and natural user experience.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Mobicents Media Server</term>
+				<listitem>
+					<para>
+						The Mobicents Media Server is an open sourced server based on the Java Media Framework implementation, and aimed to:
+					</para>
+					<itemizedlist id="itemlist-MMS_aims">
+						<title>Aims of the Mobicents Media Server</title>
+						<listitem>
+							<para>
+								Deliver a competitive, complete, best-of-breed media gateway functionality of the highest quality.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Meet the demands of converged wireless, wireline, cable broadband access and fixed-mobile converged VoIP networks from a single media gateway platform.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								Increase flexibility with a media gateway that supports a wide variety of call control protocols, and which scales down to meet the demands of enterprises and small carrier providers.
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								React quickly to dynamic market requirements.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Mobicents Presence (XDM) Server</term>
+				<listitem>
+					<para>
+						The first free and open source implementation of an XML Document Management (XDM) server, as defined in the Open Mobile Alliance (OMA) specifications. This functional element of next-generation IP communication networks is responsible for handling the management of users&#39; XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>The JBoss Microcontainer</term>
+				<listitem>
+					<para>
+						The JBoss Microcontainer is the state-of-the-art hosting environment in which higher-level containers reside. It provides service registration, configuration and dependency management, classloading isolation control, package versioning, deployment, thread pooling and many other fundamental building blocks necessary for highly-scalable, fault-tolerant middleware servers.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</section>
+	
+	<section id="section-Service_Building_Blocks_and_Next-Generation_Intelligent_Networks">
+		<title>Service Building Blocks and Next-Generation Intelligent Networks</title>
+		<para>
+			In the scope of telecommunications&#39; Next Generation Intelligent Networks (<acronym>NGIN</acronym>s), Mobicents fits in as a high-performance core engine for Service Delivery Platforms (<acronym>SDP</acronym>s) and IP Multimedia Subsystems (<acronym>IMS</acronym>es).
+		</para>
+		<para>
+			Mobicents enables the composition of Service Building Blocks (<acronym>SBB</acronym>s) such as call control, billing, user-provisioning, administration, and presence-sensing features. The <acronym>JAIN SLEE</acronym><footnote id="def-jain">
+			<para>
+				<acronym>JAIN SLEE</acronym> stands for Java <acronym>API</acronym> for Intelligent Network Service Logic and Execution Environment architecture. <acronym>JSLEE</acronym> (Java Service Logic Execution Environment) is a short synonym for <acronym>JAIN SLEE</acronym>.
+			</para>
+			</footnote> specification allows popular protocol stacks such as <acronym>SIP</acronym> to be plugged in as resource adapters. The <acronym>SLEE</acronym> Service Building Blocks have many similarities to Enterprise Java Beans (<acronym>EJB</acronym>s), and naturally accommodate integration with enterprise applications, the Web, Customer Relationship Management (<acronym>CRM</acronym>) and Service-Oriented Architecture (<acronym>SOA</acronym>) end points.
+		</para>
+		<para>
+			Out-of-the-box monitoring and management of Mobicents components is achieved via <acronym>SLEE</acronym> standard-based Java Management Extensions (<acronym>JMXes</acronym>) and Simple Network Management Profile (<acronym>SNMP</acronym>) interfaces.
+		</para>
+		<para>
+			Beyond telecommunications, Mobicents is applicable to a wider variety of problems demanding high-volume, low-latency signaling. Examples include financial trading, online gaming, RFID sensor network integration, and distributed control.
+		</para>
+	</section>
+	
+	<section id="section-Mobicents_Use_Cases">
+		<title>Mobicents Use Cases</title>
+		<para>
+			The Mobicents Converged Application Server has a wide variety of use cases, including all of the following domains:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<link linkend="VoIP_Call_Control_Services">VoIP Call Control Services</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link linkend="Instant_Messaging_Services">Instant Messaging Services</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link linkend="Online_Multi-Player_Games">Online Multi-Player Games</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link linkend="Financial_Day_Trading">Financial Day Trading</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link linkend="First_Responder_Communication_Networks">First Responder Communication Networks</link>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<link linkend="Sensor_network_integration_and_RFID">Sensor Network Integration and RFID</link>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<formalpara>
+			<title><anchor id="VoIP_Call_Control_Services"></anchor>VoIP Call Control Services</title>
+			<para>
+				Voice-over-Internet Protocol (<acronym>VoIP</acronym>) services are some of the primary use cases for Mobicents. Examples of VoIP services include call routing, forwarding, termination, voice mailbox, conferencing and user provisioning.
+			</para>
+		</formalpara>
+		<formalpara>
+			<title><anchor id="Instant_Messaging_Services"></anchor>Instant Messaging Services</title>
+			<para>
+			</para>
+		</formalpara>
+		<formalpara>
+			<title><anchor id="Online_Multi-Player_Games"></anchor>Online Multi-Player Games</title>
+			<para>
+				SLEE is a great platform for Massively Multi-Player (<acronym>MMP</acronym> games. The following are some of the principle requirements for <acronym>MMP</acronym> servers, provided by the leader of <ulink url="https://games.dev.java.net/nonav/index.html">Java.net Games community</ulink>:
+			</para>
+		</formalpara>
+		<orderedlist>
+			<listitem>
+				<para>
+					<emphasis>Worst-case</emphasis> latencies from end-to-end in the back-end system, including all database operations, of no more than 100 ms.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					A programming model that allows the game programmer to program simple persistent objects, with no more work than any other standard Java object, and have them execute on data events coming into the system. These objects must be "real objects" in the simulation sense of the term.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					A programming model that is optimistically parallel while <emphasis>appearing</emphasis> to the programmer as a single-threaded event-driven model. Each event has to be <acronym>ACID-transactional</acronym> (Atomicity, Consistency, Isolation, Durability), and atomic unto itself. The programmer cannot be required to be aware in any way of multiple threads, database access, or locking. It must be inherently and transparently race-condition-proof and deadlock-proof.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					It must scale to massive numbers of simultaneous users (5-to-6 figures) online simultaneously accessing the same database of objects.
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					It needs to provide failover, fault-tolerance and efficient load-balancing. The last is critical. Game applications are cost-sensitive. Without the ability to load-balance the potentially heavy loads of multiple apps over banks of low-cost computers used to maximal efficiency, the economic model falls apart.
+				</para>
+			</listitem>
+		</orderedlist>
+		<para>
+			If you are familiar with SLEE, then you have already noticed that these requirements closely track the fundamental SLEE design principles.
+		</para>
+		<para>
+			Here are some pointers to books, blogs and papers on the subject of Massive Multi-Player games:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<ulink url="http://liquidnarrative.csc.ncsu.edu/pubs/phic.pdf">Internet-Based Games by R. Young</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://www.amazon.com/exec/obidos/tg/detail/-/1584502436/002-3357427-0961607?v=glance">Massively Multiplayer Game Development</ulink> by Thor Alexander
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://hardcodedgames.com/mmpgamedev/">MMP Blog</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://www.ibr.cs.tu-bs.de/users/wellnitz/papers/misc/ims-netgames2004.pdf">A Mobile Gaming Platform for the IMS</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink url="http://forum.nokia.com.cn/doc/SIPpresentation(24workshopHK)-new.pdf">SIP based Game Server </ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<formalpara>
+			<title><anchor id="Financial_Day_Trading"></anchor>Financial Day Trading</title>
+			<para>
+				Financial trading is a well-understood problem domain demanding highly-available, fast-response technology to serve billions of trading calls per day. Each trading call is a concise message identifying the trader, ticker and price. Day trading applications fit nicely on top of event-driven containers.
+			</para>
+		</formalpara>
+		<formalpara>
+			<title><anchor id="First_Responder_Communication_Networks"></anchor>First Responder Communication Networks</title>
+			<para>
+				We live in an unsafe world. Project P25 is focused on public safety communications digital radio interoperability. It is spurred on by growing concern which has driven many countries&#39; governments&mdash;including the US Federal Government&mdash;to reorganize in order to create focused positions to address homeland security. The National Institute of Standards and Technology (<acronym>NIST</acronym>) is building a test system for Radio-Frequency subsystem interoperability Standard, which is based on these three protocols: the Session Initiation Protocol (<acronym>SIP</acronym>), the Service Discovery Protocol (<acronym>SDP</acronym>), and the Real-time Transport Protocol (<acronym>RTP</acronym>). The reference implementation and test system will be built as SLEE services.
+			</para>
+		</formalpara>
+		<formalpara>
+			<title><anchor id="Sensor_network_integration_and_RFID"></anchor>Sensor Network Integration and RFID</title>
+			<para>
+				Gartner predicts that sensor technologies will be part of our everyday life by the year 2015. Sensors will be everywhere: as RFID tags on consumer products, devices monitoring tire pressure, location-tracking tags carried by workers in sensitive or hazardous environments, <abbrev>etc.</abbrev> In addition, all enterprise activities will be monitored using enterprise tools connected to the network; by 2010 these, as embedded Internet devices, will represent 95% of all Internet-connected systems.
+			</para>
+		</formalpara>
+		<para>
+			Pervasive sensor technologies will transform the objective of IT from providing support for fundamentally manual processes to automating the execution of tasks in response to a continuously-changing environment monitored by sensors. This requires a new kind of architecture capable of delivering <emphasis>extreme</emphasis> transaction processing.
+		</para>
+	</section>
+
+</chapter>
+

@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="./Common_Content/css/default.css" type="text/css" />
+  </head>
+  <body>
+    <div class="book" lang="en-US" xml:lang="en-US">
+      <div class="titlepage">
+        <hr />
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="chapter">
+              <a href="#id307475">1. </a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="section">
+                  <a href="#section-Mobicents_SIP_Presence_Service">1.1. Mobicents SIP Presence Service</a>
+                </span>
+              </dt>
+              <dd>
+                <dl>
+                  <dt>
+                    <span class="section">
+                      <a href="#id219108">1.1.1. SIP Presence Server Architecture</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="#section-Mobicents_XML_Document_Management_Server">1.1.2. Mobicents XML Document Management Server</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="#section-Mobicents_Presence_Server">1.1.3. Mobicents Presence Server</a>
+                    </span>
+                  </dt>
+                  <dt>
+                    <span class="section">
+                      <a href="#section-Mobicents_Resource_List_Server">1.1.4. Mobicents Resource List Server</a>
+                    </span>
+                  </dt>
+                </dl>
+              </dd>
+            </dl>
+          </dd>
+        </dl>
+      </div>
+      <div class="chapter" lang="en-US" xml:lang="en-US">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title"><a id="id307475"></a>Chapter 1. </h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="section">
+                <a href="#section-Mobicents_SIP_Presence_Service">1.1. Mobicents SIP Presence Service</a>
+              </span>
+            </dt>
+            <dd>
+              <dl>
+                <dt>
+                  <span class="section">
+                    <a href="#id219108">1.1.1. SIP Presence Server Architecture</a>
+                  </span>
+                </dt>
+                <dt>
+                  <span class="section">
+                    <a href="#section-Mobicents_XML_Document_Management_Server">1.1.2. Mobicents XML Document Management Server</a>
+                  </span>
+                </dt>
+                <dt>
+                  <span class="section">
+                    <a href="#section-Mobicents_Presence_Server">1.1.3. Mobicents Presence Server</a>
+                  </span>
+                </dt>
+                <dt>
+                  <span class="section">
+                    <a href="#section-Mobicents_Resource_List_Server">1.1.4. Mobicents Resource List Server</a>
+                  </span>
+                </dt>
+              </dl>
+            </dd>
+          </dl>
+        </div>
+        <div class="section" lang="en-US" xml:lang="en-US">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h2 class="title"><a id="section-Mobicents_SIP_Presence_Service"></a>1.1. Mobicents SIP Presence Service</h2>
+              </div>
+            </div>
+          </div>
+          <div class="section" lang="en-US" xml:lang="en-US">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h3 class="title"><a id="id219108"></a>1.1.1. SIP Presence Server Architecture</h3>
+                </div>
+              </div>
+            </div>
+            <p>
+			The Mobicents SIP Presence Service provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).
+		</p>
+            <p>
+			The Mobicents SIP Presence Server is comprised of three separate but interrelated servers.
+		</p>
+            <div class="figure">
+              <a id="figure-orig-MobicentsSipPresenceServerArchitecture.jpg"></a>
+              <div class="figure-contents">
+                <div class="mediaobject" align="center">
+                  <a id="mediaobj-orig-MobicentsSipPresenceServerArchitecture.jpg"></a>
+                  <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                    <tr>
+                      <td align="center">
+                        <img src="images/orig-MobicentsSipPresenceServerArchitecture.jpg" align="middle" width="700" alt="The Mobicents SIP Presence Service" />
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="caption">
+                    <p>
+					Functional Diagram of the Mobicents SIP Presence Service
+				</p>
+                  </div>
+                </div>
+              </div>
+              <h6>Figure 1.1. The Mobicents SIP Presence Service</h6>
+            </div>
+            <br class="figure-break" />
+            <div class="variablelist">
+              <a id="varlist-The_Three_Servers_Comprising_the_Mobicents_Presence_Service"></a>
+              <h6>The Three Servers Comprising the Mobicents Presence Service</h6>
+              <dl>
+                <dt>
+                  <span class="term">
+                    <a href="#section-Mobicents_XML_Document_Management_Server" title="1.1.2. Mobicents XML Document Management Server">Section 1.1.2, “Mobicents XML Document Management Server”</a>
+                  </span>
+                </dt>
+                <dd>
+                  <p>
+						The Mobicents XDM Server is a functional element of next-generation IP communications networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, static presence information, contact and group lists (also known as “<span class="quote">resource lists</span>”), policy data, and many others.
+					</p>
+                </dd>
+                <dt>
+                  <span class="term">
+                    <a href="#section-Mobicents_Presence_Server" title="1.1.3. Mobicents Presence Server">Presence Server</a>
+                  </span>
+                </dt>
+                <dd>
+                  <p>
+						The Presence Server is an entity that accepts, stores and distributes Presence Information. The Presence Server performs the following functions:
+					</p>
+                  <div class="itemizedlist">
+                    <ul>
+                      <li>
+                        <p>
+								It manages publications from one or multiple Presence Source(s) of a certain Presentity. This includes refreshing Presence Information, replacing existing Presence Information with newly-published information, or removing Presence Information.
+							</p>
+                      </li>
+                      <li>
+                        <p>
+								It manages subscriptions from Watchers to Presence Information and generates notifications about the Presence Information state changes, retrieving the presence authorization rules from the XDM Server.
+							</p>
+                      </li>
+                      <li>
+                        <p>
+								It manages subscriptions from Watcher Information Subscribers to Watcher information and generates notifications about Watcher information state changes.
+							</p>
+                      </li>
+                    </ul>
+                  </div>
+                </dd>
+                <dt>
+                  <span class="term">
+                    <a href="#section-Mobicents_Resource_List_Server" title="1.1.4. Mobicents Resource List Server">Resource List Server</a>
+                  </span>
+                </dt>
+                <dd>
+                  <p>
+						The Resource List Server (RLS) handles subscriptions to Presence Lists. It creates and manages back-end subscriptions to all resources in the Presence List. The list content is retrieved from the XDM Server.
+					</p>
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="section" lang="en-US" xml:lang="en-US">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h3 class="title"><a id="section-Mobicents_XML_Document_Management_Server"></a>1.1.2. Mobicents XML Document Management Server</h3>
+                </div>
+              </div>
+            </div>
+            <div class="section" lang="en-US" xml:lang="en-US">
+              <div class="titlepage">
+                <div>
+                  <div>
+                    <h4 class="title"><a id="section-Introduction_to_the_Mobicents_XML_Document_Management_Server"></a>1.1.2.1. Introduction to the Mobicents XML Document Management Server</h4>
+                  </div>
+                </div>
+              </div>
+              <p>
+			The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the Open Mobile Alliance (OMA) XML Document Management v1.1 specification. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.
+		</p>
+              <h5 class="formalpara">Functional Architecture of the Mobicents XML Document Management Server</h5>
+              <p class="formalpara">
+				The Mobicents XDM Server includes the following XCAP application usages:
+			</p>
+              <div class="itemizedlist">
+                <ul>
+                  <li>
+                    <p>
+					IETF pres-rules (RFC 5025)
+				</p>
+                  </li>
+                  <li>
+                    <p>
+					OMA pres-rules (OMA Presence Simple v1.1 Candidate Release)
+				</p>
+                  </li>
+                  <li>
+                    <p>
+					IETF resource-lists (RFC 4826)
+				</p>
+                  </li>
+                  <li>
+                    <p>
+					IETF rls-services (RFC 4826)
+				</p>
+                  </li>
+                  <li>
+                    <p>
+					IETF xcap-caps (RFC 4825)
+				</p>
+                  </li>
+                </ul>
+              </div>
+              <div class="figure">
+                <a id="figure-orig-XDMS_Functional_Architecture.jpg"></a>
+                <div class="figure-contents">
+                  <div class="mediaobject" align="center">
+                    <a id="mediaobj-orig-XDM_Functional_Architecture.jpg"></a>
+                    <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                      <tr>
+                        <td align="center">
+                          <img src="images/orig-XDM Functional Architecture.jpg" align="middle" width="700" alt="The Mobicents XML Document Management Server" />
+                        </td>
+                      </tr>
+                    </table>
+                    <div class="caption">
+                      <p>
+					Functional Architecture of the XML Document Management Server
+				</p>
+                    </div>
+                  </div>
+                </div>
+                <h6>Figure 1.2. The Mobicents XML Document Management Server</h6>
+              </div>
+              <br class="figure-break" />
+              <p>
+			The XDM Server comprises the following functional elements:
+		</p>
+              <div class="variablelist">
+                <a id="varlist-Functional_Elements_of_the_XDM_Server"></a>
+                <h6>Functional Elements of the XDM Server</h6>
+                <dl>
+                  <dt>
+                    <span class="term">Data Source</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The XDM Server data source is where all user XML documents are stored. Information related to the server itself is also stored in this element along with the user's provisioned data
+					</p>
+                    <p>
+						The data source also handles subscriptions to updates on specific documents, or complete XCAP application usages.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">Aggregation Proxy</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The aggregation proxy is responsible for handling an XDM client's XCAP requests, which includes authentication and authorization of the requester.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">Request Processor</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This element includes the XCAP Server logic to process an XCAP request and return a proper response.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">XDM Event Subscription Control</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This element, using the SIP protocol, is responsible for handling subscriptions to documents managed by the XDM. Its functions include the authentication and authorization of a subscription, attachment to update events on specific documents or application usages, and the sending of notifications when documents change.
+					</p>
+                  </dd>
+                </dl>
+              </div>
+              <h5 class="formalpara">Implementation Architecture of the Mobicents XML Document Management Server</h5>
+              <p class="formalpara">
+				The XDM Server is built on top of the Mobicents JAIN SLEE container. This figure depicts the architecture of the XDM Server implementation.
+			</p>
+              <div class="figure">
+                <a id="figure-orig-XDMS_Implementation.jpg"></a>
+                <div class="figure-contents">
+                  <div class="mediaobject" align="center">
+                    <a id="mediaobj-orig-XDMS_Implementation.jpg"></a>
+                    <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                      <tr>
+                        <td align="center">
+                          <img src="images/orig-XDMS Implementation.jpg" align="middle" width="700" alt="Mobicents XML Document Management Server" />
+                        </td>
+                      </tr>
+                    </table>
+                    <div class="caption">
+                      <p>
+					Implementation Architecture of the XML Document Management Server
+				</p>
+                    </div>
+                  </div>
+                </div>
+                <h6>Figure 1.3. Mobicents XML Document Management Server</h6>
+              </div>
+              <br class="figure-break" />
+              <div class="variablelist">
+                <a id="varlist-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server"></a>
+                <h6>The Functional Elements Which Compose the XML Document Management Server</h6>
+                <dl>
+                  <dt>
+                    <span class="term">Data Source Resource Adapter</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This Resource Adaptor implements the Data Source functional element.
+					</p>
+                    <p>
+						The <code class="literal">RA Type</code> defines two activities objects, <code class="literal">DocumentActivity</code> and <code class="literal">AppUsageActivity</code>, both of which are used to fire events that signal that a document, element or attribute was updated.
+					</p>
+                    <p>
+						The <code class="literal">RA Type</code> also defines a Service Building Block (SBB) RA interface to manage the users and documents stored in the XDM Server, and create activities, where events will be fired. The resource adapter will only fire events on activities that exist; that is, the RA won't create activities implicitly if a document is updated.
+					</p>
+                    <p>
+						The <code class="literal">RA Type</code> also provides a base abstract implementation of the resource adapter, making it very simple to change the underlying resource used to store information, which is by default the internal JDBC datasource of the JBoss Application Server.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">AppUsage Cache Resource Adaptor</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This resource adapter stores the XCAP application usages installed in the server.
+					</p>
+                    <p>
+						Each <code class="literal">AppUsage</code> is an object that includes the logic to validate XCAP documents that result from XCAP requests and are expensive to create; this resource adapter thus provides caching of AppUsages, using a pool model.
+					</p>
+                    <p>
+						The resource adapter doesn't possess events or activities.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">AppUsage Service</span>
+                  </dt>
+                  <dd>
+                    <p>
+						XCAP Application Usages are installed through a JAIN SLEE service, making it possible to add and/or remove application usages while the server is running.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">Aggregation Proxy Service</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This JAIN SLEE service implements the aggregation proxy functional element. It handles events fired by the Mobicents HTTP Servlet resource adapter and then uses two child SBBs: the <code class="literal">User Profile Enabler SBB</code> to retrieve information regarding the user needed for authentication/authorization of the XCAP request, and the <code class="literal">Request Processor SBB</code>, which handles the XCAP request.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">Request Processor SBB</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The <code class="literal">Request Processor SBB</code> implements the request processor functional element, providing a synchronous SBB interface to process XCAP requests. It uses the <code class="literal">AppUsage Cache</code> resource adapter to borrow AppUsage objects, and the Data Source resource adapter to retrieve or set documents stored in the server's data source.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">User Profile Enabler SBB (TBD: not available yet)</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This SBB provides a synchronous SBB interface used in JAIN SLEE child relations in order to retrieve user information. Two different implementations of the interface are provided, one considers that the information is stored in the XDM Data Source, another interfaces to a Diameter Sh Server such as IMS HSS.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">XCAP Diff Subscription Control Service (TBD: not available yet)</span>
+                  </dt>
+                  <dd>
+                    <p>
+						TBD
+					</p>
+                  </dd>
+                </dl>
+              </div>
+              <p>
+			The implementation architecture figure also contains client-side components:
+		</p>
+              <div class="variablelist">
+                <a id="varlist-Client-Side_Components_of_the_XML_Document_Management_Server_"></a>
+                <h6>Client-Side Components of the XML Document Management Server </h6>
+                <dl>
+                  <dt>
+                    <span class="term">XCAP Client</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The XCAP client is a simple API to interact with an XCAP Server that internally uses the Apache HTTP Client.
+					</p>
+                    <p>
+						The API documentation and example code snippets can be found TBD
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">XCAP Client Resource Adaptor</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The XCAP Client Resource Adaptor adapts the XCAP Client API into JAIN SLEE domain. It provides methods to interact with the XCAP server in both syncronous and asyncronous ways.
+					</p>
+                    <p>
+						The RA Type description and code snippets using the RA can be found here.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">XDM Client SBB</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The XDMClientSBB is an interface of a JAIN SLEE SBB to be used as a client to the Mobicents XDM Server (and others compliant with same standards), in JAIN SLEE child relations.
+					</p>
+                    <p>
+						Two implementations of this interface are provided:
+					</p>
+                    <div class="itemizedlist">
+                      <ul>
+                        <li>
+                          <p>
+								<code class="literal">InternalXDMClientSBB</code> is intended to be used on applications running in the Mobicents XDM Server JAIN SLEE container, and
+							</p>
+                        </li>
+                        <li>
+                          <p>
+								<code class="literal">ExternalXDMClientSBB</code>, which is intended to be used on applications running in a different JAIN SLEE container than the Mobicents XDM Server.
+							</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </dd>
+                </dl>
+              </div>
+              <p>
+			This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D. TBD: the next section: Server setup and testing, needs to be formatted and tested. Configuration The Mobicents XDM Server can be customized before built: * XCAP Root, through property xdm.server.xcap.root in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines the relative path to root that is considered the XCAP Root for all XCAP URIs. Must match the servlet name used in Mobicents HTTP Servlet RA. Default value is /mobicents. * Dynamic user provisioning, through property dynamicUserProvisioning in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines if the XDM Server should provision the user when a PUT request is being processed and the user is not installed for the request's application usage. Default value is true. There is no configuration needed to deploy the server. Requirements The Mobicents XDM Server depends on Mobicents JAIN SLEE server and Mobicents SIP and HTTP Servlet resource adaptors, ensure all are installed. At the moment, the Mobicents XDM Server is not compatible with JDK 1.6 Install/Uninstall From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/xdms, uninstall doing mvn clean on same directory. Using a binary release, install doing ant deploy on directory servers/sip-presence/xdms, uninstall doing ant undeploy on same directory. Testing After server is deployed, it is recommended to test it. Please lookup for further instructions in file .../xdms/tests/README.txt. No test should fail. Resources: * How to manage the server * How to create a XCAP App(lication)Usage * Integrating XDM in your JAIN SLEE Apps: code snippets for XDM Client SBB usage * XCAP Client API documentation * XCAP Client RA Type description and example code snippets * Mobicents SIP Presence Service * Want to contribute?
+		</p>
+            </div>
+          </div>
+          <div class="section" lang="en-US" xml:lang="en-US">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h3 class="title"><a id="section-Mobicents_Presence_Server"></a>1.1.3. Mobicents Presence Server</h3>
+                </div>
+              </div>
+            </div>
+            <div class="section" lang="en-US" xml:lang="en-US">
+              <div class="titlepage">
+                <div>
+                  <div>
+                    <h4 class="title"><a id="section-Introduction_to_the_Mobicents_Presence_Server"></a>1.1.3.1. Introduction to the Mobicents Presence Server</h4>
+                  </div>
+                </div>
+              </div>
+              <p>
+			Mobicents Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).
+		</p>
+              <p>
+			The Presence Server is an entity that accepts, stores and distributes SIP Presence Information.
+		</p>
+              <h5 class="formalpara">Functional Architecture of the Mobicents Presence Server</h5>
+              <p class="formalpara">
+			</p>
+              <div class="figure">
+                <a id="figure-orig-PS_Functional_Architecture.jpg"></a>
+                <div class="figure-contents">
+                  <div class="mediaobject" align="center">
+                    <a id="mediaobj-orig-PS_Functional_Architecture.jpg"></a>
+                    <img src="images/orig-PS Functional Architecture.jpg" align="middle" alt="The Mobicents Presence Server" />
+                    <div class="caption">
+                      <p>
+					Functional Diagram of the Mobicents Presence Server
+				</p>
+                    </div>
+                  </div>
+                </div>
+                <h6>Figure 1.4. The Mobicents Presence Server</h6>
+              </div>
+              <br class="figure-break" />
+              <p>
+			The Presence Server comprises the following functional elements:
+		</p>
+              <div class="variablelist">
+                <a id="varlist-The_Functional_Elements_Which_Compose_the_Presence_Server"></a>
+                <h6>The Functional Elements Which Compose the Presence Server</h6>
+                <dl>
+                  <dt>
+                    <span class="term">Presence Publication Control</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This functional element manages the publication of presence events, which includes not only the handling of new publications, but also the refreshing, modification or removal of, already-published information.
+					</p>
+                    <p>
+						Because the presence resource, which is also called a “<span class="quote">presentity</span>”, can have multiple publications simultaneously, such as some state published by a user agent or device, and some location data published by a Presence Network Agent (on behalf of the presentity), this element is also responsible for composing all of the different publications for the same resource.
+					</p>
+                    <p>
+						In some presence networks, it may be of interest to allow resources to have a static presence state, which is stored in the XDM Server. In cases like these, Presence Publication Control may need to interface with the XDM Server to retrieve and subscribe to (learn about changes to) that information, and use it when composing the final presence information document.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">Presence Subscription Control</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This functional element handles subscriptions to presence events or to the list of subscribers (watchers), for any specific resource. It is, of course, responsible for emitting notifications related to those subscriptions.
+					</p>
+                    <p>
+						Presence authorization rules, which define if a subscription is allowed or rejected and, if allowed, define which transformations to the original presence events are needed, are stored on the XDM Server by the user. Thus, Presence Subscription Control needs to retrieve and subscribe to (learn about changes to) that information.
+					</p>
+                  </dd>
+                  <dt>
+                    <span class="term">XDM Client Control</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This last element is responsible for interfacing with the XDM Server that manages the user's XML documents, and is related to the main functions of the presence server. It's capable not only of retrieving a document (or part of one), but also of subscribing to either updates of a single, specific document, or to a full collection of documents of a specific type or application.
+					</p>
+                  </dd>
+                </dl>
+              </div>
+              <h5 class="formalpara">Implementation Architecture of the Mobicents Presence Server</h5>
+              <p class="formalpara">
+			</p>
+              <div class="figure">
+                <a id="figure-orig-PS_Implementation.jpg"></a>
+                <div class="figure-contents">
+                  <div class="mediaobject" align="center">
+                    <a id="mediaobj-orig-PS_Implementation.jpg"></a>
+                    <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                      <tr>
+                        <td align="center">
+                          <img src="images/orig-PS Implementation.jpg" align="middle" width="700" alt="Implementation Architecture of the Mobicents Presence Server" />
+                        </td>
+                      </tr>
+                    </table>
+                    <div class="caption">
+                      <p>
+					The Mobicents Presence Server
+				</p>
+                    </div>
+                  </div>
+                </div>
+                <h6>Figure 1.5. Implementation Architecture of the Mobicents Presence Server</h6>
+              </div>
+              <br class="figure-break" />
+              <p>
+			The implementation of the Mobicents Presence Server comprises the following functional elements:
+		</p>
+              <div class="variablelist">
+                <a id="varlist-The_Two_Services_Which_Compose_the_Presence_Server"></a>
+                <h6>The Two Services Which Compose the Presence Server</h6>
+                <dl>
+                  <dt>
+                    <span class="term">Presence Publication Control Service</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This JAIN SLEE service includes the root Service Building Block (SBB), <code class="literal">PresencePublicationControlSbb</code>, which is the implementation of the abstract SIP event <code class="literal">PublicationControlSbb</code>. It handles publications on the "presence" event package.
+					</p>
+                    <p>
+						The <code class="literal">PresencePublicationControlSbb</code> provides the following capabilities:
+					</p>
+                    <div class="itemizedlist">
+                      <ul>
+                        <li>
+                          <p>
+								It provides the logic to authorize a publication; however, it only authorizes <code class="literal">PUBLISH</code> requests when the request URI matches the PIDF document “<span class="quote">entity</span>” attribute.
+							</p>
+                        </li>
+                        <li>
+                          <p>
+								It provides JAXB unmarshellers to validate and parse the PIDF document for the abstract <code class="literal">PublicationControlSbb</code>.
+							</p>
+                        </li>
+                        <li>
+                          <p>
+								It demands that notifying subscribers occur through a child relation to the root SBB of the Presence Subscription Control Service.
+							</p>
+                        </li>
+                        <li>
+                          <p>
+								Finally, it also provides an <code class="literal">SbbLocalObject</code> interface that can be used, in JAIN SLEE child relations, to obtain the composed presence information for a specific resource.
+							</p>
+                        </li>
+                      </ul>
+                    </div>
+                  </dd>
+                  <dt>
+                    <span class="term">Presence Subscription Control Service.</span>
+                  </dt>
+                  <dd>
+                    <p>
+						This JAIN SLEE service includes the root SBB <code class="literal">PresenceSubscriptionControlSbb</code>, which is the implementation of the abstract SIP Event <code class="literal">SubscriptionControlSbb</code>. It handles subscriptions on the "presence" event package.
+					</p>
+                    <p>
+						The standout SBB logic item is the usage of presence-rules documents, obtained through the XDM Client SBB child relation, in order to authorize subscriptions and transform the content notified (TBD: feature not used yet). It also defines a child relation to the root SBB of <code class="literal">PresencePublicationService</code> to retrieve the composed PIDF document for the subscription's notifier.
+					</p>
+                    <p>
+						The SBB also provides an <code class="literal">SbbLocalObject</code> interface that can be used, in JAIN SLEE child relations, to make the presence event known to the subscribers of a specific resource.
+					</p>
+                  </dd>
+                </dl>
+              </div>
+              <p>
+			The implementation architecture of the Presence Server also contains client-side components:
+		</p>
+              <div class="variablelist">
+                <a id="varlist-"></a>
+                <h6></h6>
+                <dl>
+                  <dt>
+                    <span class="term">Presence Client SBB (TBD: not yet available)</span>
+                  </dt>
+                  <dd>
+                    <p>
+						The <code class="literal">PresenceClientSBB</code> is the interface to a JAIN SLEE SBB intended to be used as a client for the Mobicents Presence Server (and other servers compliant with same standards), in JAIN SLEE child relations.
+					</p>
+                    <p>
+						Two implementations of this interface are provided: the <code class="literal">InternalPresenceClientSBB</code> that is used with applications running in the Mobicents Presence Server JAIN SLEE container, and the <code class="literal">ExternalPresenceClientSBB</code>, used with applications running in a different JAIN SLEE container than the Mobicents Presence Server.
+					</p>
+                  </dd>
+                </dl>
+              </div>
+              <p>
+			This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D. TBD: Server setup and testing section, following this section or perhaps before. XCAP Aware User Agent: The PS server calculates pres-rules XCAP uris of users, by default, using a non standard way, but compatible with Counterpath Eyebeam. You can change to the standards recommended way in the hard coded field "clientUAIsEyebeam" of PresenceSubscriptionControlSbb (in ps-core/subscription-sbb/src/main/java/..). This is a temporary solution due to a feature, in current jain-sip stack, that removes invalid User-Agent headers (seems most UAs are failing here) of SIP REQUESTS. In the future this configuration will not be needed. There is no configuration needed to deploy the server. Requirements The Mobicents Presence Server depends on Mobicents JAIN SLEE server and Mobicents SIP resource adaptor, ensure all are installed. Install/Uninstall At the moment the Mobicents Presence Server can only be installed integrated with Mobicents XDM Server, that is, in the all-in-1 Presence Service architecture. This is due to lack of external XDM Client SBB component. From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/integrated, uninstall doing mvn clean on same directory. Using a binary release, install doing ant deploy on directory servers/sip-presence/integrated, uninstall doing ant undeploy on same directory. Note: This will also install Mobicents XDM server, ensure all it's requirements are met too. Testing A test framework for the server is not available ... yet. Resources: * How to manage the server * Integrating PS in your JAIN SLEE Apps: code snippets for Internal Presence Client SBB usage * Integrating PS in your JAIN SLEE Apps: code snippets for External Presence Client SBB usage * Mobicents Sip Event Publication and Subscription Control components * Mobicents SIP Presence Service
+		</p>
+            </div>
+          </div>
+          <div class="section" lang="en-US" xml:lang="en-US">
+            <div class="titlepage">
+              <div>
+                <div>
+                  <h3 class="title"><a id="section-Mobicents_Resource_List_Server"></a>1.1.4. Mobicents Resource List Server</h3>
+                </div>
+              </div>
+            </div>
+            <p>
+	</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

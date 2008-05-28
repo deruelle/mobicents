@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<chapter id="chapter-The_Mobicents_Application_Server">
+	<title>The Mobicents Application Server</title>
+	<section id="section-HOWTO_Load-Test_the_Application_Server">
+		<title>HOWTO Load-Test the Application Server</title>
+		<para>
+		</para>
+	</section>
+
+</chapter>
+

@@ -1,0 +1,254 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "../Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "../Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<section id="section-Mobicents_XML_Document_Management_Server">
+	<title>Mobicents XML Document Management Server</title>
+	<section id="section-Introduction_to_the_Mobicents_XML_Document_Management_Server">
+		<title>Introduction to the Mobicents XML Document Management Server</title>
+		<para>
+			The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the Open Mobile Alliance (OMA) XML Document Management v1.1 specification. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.
+		</para>
+		<formalpara>
+			<title>Functional Architecture of the Mobicents XML Document Management Server</title>
+			<para>
+				The Mobicents XDM Server includes the following XCAP application usages:
+			</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>
+					IETF pres-rules (RFC 5025)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					OMA pres-rules (OMA Presence Simple v1.1 Candidate Release)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					IETF resource-lists (RFC 4826)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					IETF rls-services (RFC 4826)
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					IETF xcap-caps (RFC 4825)
+				</para>
+			</listitem>
+		</itemizedlist>
+		<figure id="figure-orig-XDMS_Functional_Architecture.jpg">
+			<title>The Mobicents XML Document Management Server</title>
+			<mediaobject id="mediaobj-orig-XDM_Functional_Architecture.jpg">
+				<imageobject>
+					<imagedata align="center" fileref="images/orig-XDM Functional Architecture.jpg" format="JPG" width="700" />
+				</imageobject>
+				<caption>
+				<para>
+					Functional Architecture of the XML Document Management Server
+				</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<para>
+			The XDM Server comprises the following functional elements:
+		</para>
+		<variablelist id="varlist-Functional_Elements_of_the_XDM_Server">
+			<title>Functional Elements of the XDM Server</title>
+			<varlistentry>
+				<term>Data Source</term>
+				<listitem>
+					<para>
+						The XDM Server data source is where all user XML documents are stored. Information related to the server itself is also stored in this element along with the user&#39;s provisioned data
+					</para>
+					<para>
+						The data source also handles subscriptions to updates on specific documents, or complete XCAP application usages.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy</term>
+				<listitem>
+					<para>
+						The aggregation proxy is responsible for handling an XDM client&#39;s XCAP requests, which includes authentication and authorization of the requester.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor</term>
+				<listitem>
+					<para>
+						This element includes the XCAP Server logic to process an XCAP request and return a proper response.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Event Subscription Control</term>
+				<listitem>
+					<para>
+						This element, using the SIP protocol, is responsible for handling subscriptions to documents managed by the XDM. Its functions include the authentication and authorization of a subscription, attachment to update events on specific documents or application usages, and the sending of notifications when documents change.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Implementation Architecture of the Mobicents XML Document Management Server</title>
+			<para>
+				The XDM Server is built on top of the Mobicents JAIN SLEE container. This figure depicts the architecture of the XDM Server implementation.
+			</para>
+		</formalpara>
+		<figure id="figure-orig-XDMS_Implementation.jpg">
+			<title>Mobicents XML Document Management Server</title>
+			<mediaobject id="mediaobj-orig-XDMS_Implementation.jpg">
+				<imageobject>
+					<imagedata align="center" fileref="images/orig-XDMS Implementation.jpg" format="JPG" width="700" />
+				</imageobject>
+				<caption>
+				<para>
+					Implementation Architecture of the XML Document Management Server
+				</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<variablelist id="varlist-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server">
+			<title>The Functional Elements Which Compose the XML Document Management Server</title>
+			<varlistentry>
+				<term>Data Source Resource Adapter</term>
+				<listitem>
+					<para>
+						This Resource Adaptor implements the Data Source functional element.
+					</para>
+					<para>
+						The <literal>RA Type</literal> defines two activities objects, <literal>DocumentActivity</literal> and <literal>AppUsageActivity</literal>, both of which are used to fire events that signal that a document, element or attribute was updated.
+					</para>
+					<para>
+						The <literal>RA Type</literal> also defines a Service Building Block (SBB) RA interface to manage the users and documents stored in the XDM Server, and create activities, where events will be fired. The resource adapter will only fire events on activities that exist; that is, the RA won&#39;t create activities implicitly if a document is updated.
+					</para>
+					<para>
+						The <literal>RA Type</literal> also provides a base abstract implementation of the resource adapter, making it very simple to change the underlying resource used to store information, which is by default the internal JDBC datasource of the JBoss Application Server.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Cache Resource Adaptor</term>
+				<listitem>
+					<para>
+						This resource adapter stores the XCAP application usages installed in the server.
+					</para>
+					<para>
+						Each <literal>AppUsage</literal> is an object that includes the logic to validate XCAP documents that result from XCAP requests and are expensive to create; this resource adapter thus provides caching of AppUsages, using a pool model.
+					</para>
+					<para>
+						The resource adapter doesn&#39;t possess events or activities.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Service</term>
+				<listitem>
+					<para>
+						XCAP Application Usages are installed through a JAIN SLEE service, making it possible to add and/or remove application usages while the server is running.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy Service</term>
+				<listitem>
+					<para>
+						This JAIN SLEE service implements the aggregation proxy functional element. It handles events fired by the Mobicents HTTP Servlet resource adapter and then uses two child SBBs: the <literal>User Profile Enabler SBB</literal> to retrieve information regarding the user needed for authentication/authorization of the XCAP request, and the <literal>Request Processor SBB</literal>, which handles the XCAP request.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor SBB</term>
+				<listitem>
+					<para>
+						The <literal>Request Processor SBB</literal> implements the request processor functional element, providing a synchronous SBB interface to process XCAP requests. It uses the <literal>AppUsage Cache</literal> resource adapter to borrow AppUsage objects, and the Data Source resource adapter to retrieve or set documents stored in the server&#39;s data source.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>User Profile Enabler SBB (TBD: not available yet)</term>
+				<listitem>
+					<para>
+						This SBB provides a synchronous SBB interface used in JAIN SLEE child relations in order to retrieve user information. Two different implementations of the interface are provided, one considers that the information is stored in the XDM Data Source, another interfaces to a Diameter Sh Server such as IMS HSS.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Diff Subscription Control Service (TBD: not available yet)</term>
+				<listitem>
+					<para>
+						TBD
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>
+			The implementation architecture figure also contains client-side components:
+		</para>
+		<variablelist id="varlist-Client-Side_Components_of_the_XML_Document_Management_Server_">
+			<title>Client-Side Components of the XML Document Management Server </title>
+			<varlistentry>
+				<term>XCAP Client</term>
+				<listitem>
+					<para>
+						The XCAP client is a simple API to interact with an XCAP Server that internally uses the Apache HTTP Client.
+					</para>
+					<para>
+						The API documentation and example code snippets can be found TBD
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Client Resource Adaptor</term>
+				<listitem>
+					<para>
+						The XCAP Client Resource Adaptor adapts the XCAP Client API into JAIN SLEE domain. It provides methods to interact with the XCAP server in both syncronous and asyncronous ways.
+					</para>
+					<para>
+						The RA Type description and code snippets using the RA can be found here.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Client SBB</term>
+				<listitem>
+					<para>
+						The XDMClientSBB is an interface of a JAIN SLEE SBB to be used as a client to the Mobicents XDM Server (and others compliant with same standards), in JAIN SLEE child relations.
+					</para>
+					<para>
+						Two implementations of this interface are provided:
+					</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								<literal>InternalXDMClientSBB</literal> is intended to be used on applications running in the Mobicents XDM Server JAIN SLEE container, and
+							</para>
+						</listitem>
+						<listitem>
+							<para>
+								<literal>ExternalXDMClientSBB</literal>, which is intended to be used on applications running in a different JAIN SLEE container than the Mobicents XDM Server.
+							</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>
+			This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D. TBD: the next section: Server setup and testing, needs to be formatted and tested. Configuration The Mobicents XDM Server can be customized before built: * XCAP Root, through property xdm.server.xcap.root in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines the relative path to root that is considered the XCAP Root for all XCAP URIs. Must match the servlet name used in Mobicents HTTP Servlet RA. Default value is /mobicents. * Dynamic user provisioning, through property dynamicUserProvisioning in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines if the XDM Server should provision the user when a PUT request is being processed and the user is not installed for the request&#39;s application usage. Default value is true. There is no configuration needed to deploy the server. Requirements The Mobicents XDM Server depends on Mobicents JAIN SLEE server and Mobicents SIP and HTTP Servlet resource adaptors, ensure all are installed. At the moment, the Mobicents XDM Server is not compatible with JDK 1.6 Install/Uninstall From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/xdms, uninstall doing mvn clean on same directory. Using a binary release, install doing ant deploy on directory servers/sip-presence/xdms, uninstall doing ant undeploy on same directory. Testing After server is deployed, it is recommended to test it. Please lookup for further instructions in file .../xdms/tests/README.txt. No test should fail. Resources: * How to manage the server * How to create a XCAP App(lication)Usage * Integrating XDM in your JAIN SLEE Apps: code snippets for XDM Client SBB usage * XCAP Client API documentation * XCAP Client RA Type description and example code snippets * Mobicents SIP Presence Service * Want to contribute?
+		</para>
+	</section>
+
+</section>
+
+

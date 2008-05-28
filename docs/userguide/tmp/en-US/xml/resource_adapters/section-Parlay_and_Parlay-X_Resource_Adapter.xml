@@ -1,0 +1,26 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % RH_ENTITIES SYSTEM "../Common_Content/Entities.ent">
+%RH_ENTITIES;
+<!ENTITY % RH_TRANS_ENTITIES SYSTEM "../Common_Content/Translatable-Entities.ent">
+%RH_TRANS_ENTITIES;
+]>
+
+<section id="section-Parlay_and_Parlay-X_Resource_Adapter">
+	<title>Parlay and Parlay-X Resource Adapter</title>
+	<para>
+	</para>
+	<section id="section-Installing_the_Parlay_and_Parlay-X_Resource_Adapter">
+		<title>Installing the Parlay and Parlay-X Resource Adapter</title>
+		<para>
+			The Parlay and Parlay-X resource adapter can be installed by referring to <xref linkend="section-Deploying_and_Undeploying_Resource_Adapters" />.
+		</para>
+		<para>
+			Remember to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable></filename> with the name of the directory in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the Parlay and Parlay-X resource adapter (currently this directory is named <filename><replaceable>parlayxra</replaceable></filename>, but this could change in the future).
+		</para>
+	</section>
+	
+	<xi:include href="../examples/section-Simple_Call-Blocking_Example.xml" xmlns:xi="http://www.w3.org/2001/XInclude"></xi:include>
+</section>
+
+

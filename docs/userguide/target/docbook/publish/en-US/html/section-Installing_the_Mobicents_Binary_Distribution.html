@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>2.1. Installing the Mobicents Binary Distribution</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="chapter-Installation.html" title="Chapter 2. Installation"/>
+      <link rel="prev" href="chapter-Installation.html" title="Chapter 2. Installation"/>
+      <link rel="next" href="section-Building_the_Mobicents_1.2.x_Series.html" title="2.2. Building the Mobicents 1.2.x Series"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="chapter-Installation.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Building_the_Mobicents_1.2.x_Series.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title">
+                     <a id="section-Installing_the_Mobicents_Binary_Distribution"/>2.1. Installing the Mobicents Binary Distribution</h2>
+               </div>
+            </div>
+         </div>
+         <p>The Mobicents Converged Application Server runs on top of the JBoss Application Server. The Mobicents 1.20 binary distribution comes bundled with the JBoss Application Server version 4.2.2 GA.</p>
+         <p class="formalpara">
+            <a id="fpara-Hardware_Requirements_for_the_Binary_Distribution"/>
+         </p>
+         <h5 class="formalpara">Hardware Requirements for the Binary Distribution</h5>
+         <p class="formalpara">Both the Mobicents Converged Application Server and the JBoss Application Server are 100% Java. Mobicents will run on the same hardware that the JBoss Application Server runs on.</p>
+         <p class="formalpara">
+            <a id="fpara-Pre-Install_Requirements_for_the_Binary_Distribution"/>
+         </p>
+         <h5 class="formalpara">Pre-Install Requirements for the Binary Distribution</h5>
+         <p class="formalpara">You should ensure a couple of things before downloading and installing the Mobicents binary release:</p>
+         <div class="itemizedlist">
+            <a id="itemlist-Binary_Distribution_Installation_Requirements"/>
+            <ul>
+               <li>
+                  <p>You must have sufficient disk space in order to install the Mobicents binary release. Once unzipped, version 1.20 of the Mobicents binary release requires about 230 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</p>
+               </li>
+               <li>
+                  <p>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</p>
+               </li>
+            </ul>
+         </div>
+         <h5 class="formalpara">Installing the Mobicents Binary</h5>
+         <p class="formalpara">Once the preconditions and requirements have been met, you are ready to install the Mobicents binary distribution.</p>
+         <div class="procedure">
+            <a id="procedure-Downloading_and_Verifying_the_Mobicents_Distribution"/>
+            <ol class="1">
+               <li>
+                  <p>First, Download the latest version of the Mobicents binary distribution. The latest version can be found by going to the <a xmlns:xlink="http://www.w3.org/1999/xlink" href="https://sourceforge.net/projects/mobicents/">Mobicents project page on SourceForge.net</a>, clicking on <span class="emphasis">
+                        <em>Download Mobicents</em>
+                     </span>, and then looking for <span class="emphasis">
+                        <em>Mobicents Server</em>
+                     </span> and <span class="emphasis">
+                        <em>Latest Version</em>
+                     </span>.</p>
+               </li>
+               <li>
+                  <p>Then verify the integrity of the zip file. Along with the zip file there is a sha1 file<sup>[<a id="d0e507" href="#ftn.d0e507">2</a>]</sup> which contains a checksum that can be used to verify the integrity of the zip file, and can alert you if the file has been changed since it was uploaded, or if it was corrupted upon download.</p>
+                  <p>On a Linux system you can use the <code class="command">sha1sum</code> command to verify the integrity of the binary distribution zip file.</p>
+                  <p>On a Windows system you will need to download a sha1sum-generating program such as the <code class="command">sha1sum.exe</code> program. This will generate a checksum that you can compare with the sum in the sha1 file.</p>
+                  <p>Note that if the two checksums are not identical, it means that the downloaded zip file was corrupted upon download, or has been changed since it was last uploaded to the server.</p>
+               </li>
+               <li>
+                  <p>Finally, install the Mobicents Converged Application Server. Unzip the Mobicents binary distribution zip file to the location where you want it, thus completing the install.</p>
+               </li>
+            </ol>
+         </div>
+         <div xmlns="" class="footnotes">
+            <br/>
+            <hr/>
+            <div xmlns="http://www.w3.org/1999/xhtml" class="footnote">
+               <p>
+                  <sup>[<a id="ftn.d0e507" href="#d0e507">2</a>] </sup>For the Mobicents 1.20 binary release, the relevant file names are <code class="filename">mobicents-all-1_2_0_BETA1.zip</code> and <code class="filename">mobicents-all-1_2_0_BETA1.zip.sha1.asc</code>.</p>
+            </div>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="chapter-Installation.html">
+               <strong>Prev</strong>Chapter 2. Installation</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Building_the_Mobicents_1.2.x_Series.html">
+               <strong>Next</strong>2.2. Building the Mobicents 1.2.x Series</a>
+         </li>
+      </ul>
+   </body>
+</html>
