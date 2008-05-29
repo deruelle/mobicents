@@ -30,6 +30,8 @@
   <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/dtmf-sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/echo-sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/utility/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/profile-spec/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-with-dialogs/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-without-dialogs/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/balancer/src/main/java"/>
@@ -48,6 +50,7 @@
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/sbb2/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example6/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example7/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/xcap-client/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/xmpp-component/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ra/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ratype/src/main/java"/>
