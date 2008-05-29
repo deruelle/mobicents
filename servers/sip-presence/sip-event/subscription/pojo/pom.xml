@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>persistence-ratype</artifactId>
-			<version>${mobicents.version}</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

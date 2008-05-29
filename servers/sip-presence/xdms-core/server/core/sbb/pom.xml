@@ -24,12 +24,12 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-servlet-ratype</artifactId>
-			<version>${mobicents.version}</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>http-servlet-events</artifactId>
-			<version>${mobicents.version}</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>	
 	</dependencies>
 	

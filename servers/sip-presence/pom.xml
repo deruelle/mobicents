@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>1.2.0.GA-SNAPSHOT</version>
+		<version>1-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 		
@@ -21,11 +21,23 @@
 	</modules>
 		
 	<properties>
-		<mobicents.version>
-			${mobicents.servers.jainslee.version}
-		</mobicents.version>
+		<!-- PRESENCE SERVICE CONFIGURATION -->
 		<xdm.server.xcap.root>/mobicents</xdm.server.xcap.root>
+		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
+		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
+		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>			
+	
+	<dependencyManagement>
+		<dependencies>		
+			<dependency>
+				<groupId>org.mobicents</groupId>
+				<artifactId>mobicents-jainslee-server</artifactId>
+				<version>${mobicents.server.jainslee.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	
 	<build>
 		<plugins>
