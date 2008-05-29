@@ -4,15 +4,9 @@
 
 	<groupId>org.mobicents</groupId>
 	<artifactId>mobicents</artifactId>
-	<version>1.2.0.GA-SNAPSHOT</version>
+	<version>1-SNAPSHOT</version>
 	
 	<name>Mobicents :: Parent :: mobicents</name>
-	
-	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk</url>
-	</scm>
 	
 	<distributionManagement>
     <repository>
@@ -30,14 +24,6 @@
 
 	
 	<properties>		
-		<!-- module versions -->
-		<mobicents.servers.media.version>1.0.0.BETA2-SNAPSHOT</mobicents.servers.media.version>
-		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
-		<mobicents.servers.sipservlets.version>0.4-SNAPSHOT</mobicents.servers.sipservlets.version>		
-		<mobicents.servers.sippresence.version>1.0.0.BETA2-SNAPSHOT</mobicents.servers.sippresence.version>		
-		<!-- tools modules  -->
-		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
 		<!-- dependency versions -->
 		<jboss.version>4.2.2.GA</jboss.version>
 		<javassist.version>3.4.GA</javassist.version>
@@ -114,7 +100,7 @@
 		<node>default</node>				
 		<jboss.home>${env.JBOSS_HOME}</jboss.home>
 		
-		<!-- redefine if you want to change url in manifest file -->
+		<!-- redefine in your POM if you want to change url in manifest file -->
 		<manifest.url>http://www.mobicents.org</manifest.url>
 		
 		<!-- release properties -->
@@ -125,33 +111,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- module versions -->			
-			<dependency>
-				<groupId>org.mobicents.servers.media</groupId>
-				<artifactId>mobicents-server-media-parent</artifactId>
-				<version>${mobicents.servers.media.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents</groupId>
-				<artifactId>mobicents-jainslee-server</artifactId>
-				<version>${mobicents.server.jainslee.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.servlet.sip</groupId>
-				<artifactId>sip-servlets-bootstrap</artifactId>
-				<version>${mobicents.servers.sipservlets.version}</version>
-			</dependency>
-			<dependency>
-				<artifactId>sip-presence-parent</artifactId>
-				<groupId>org.mobicents.servers.sippresence</groupId>
-				<version>${mobicents.servers.sippresence.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mobicents.tools</groupId>
-				<artifactId>maven-du-plugin</artifactId>
-				<version>${mobicents.tools.mavenplugin.version}</version>
-			</dependency>
-			<!-- dependency versions -->
+		<!-- dependency versions -->
 		
 		<dependency>
 			<groupId>ant</groupId>
@@ -188,11 +148,7 @@
 			<artifactId>bcprov-jdk14</artifactId>
 			<version>${bcprov-jdk14.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>cactus</groupId>
-			<artifactId>cactus</artifactId>
-			<version>${cactus.version}</version>
-		</dependency>		
+		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
@@ -591,38 +547,6 @@
 		</url>
 	</issueManagement>
 	
-	<profiles>
-		<profile>
-			<id>maven-release</id>
-			<modules>
-				<!-- module>servers/media</module-->
-				<module>servers/jain-slee</module>
-				<!-- module>servers/sip-servlets/sip-servlets-bootstrap</module-->
-				<!-- module>servers/sip-presence</module-->
-			</modules>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<configuration>
-							<tagBase>
-								https://mobicents.googlecode.com/svn/tags
-							</tagBase>
-							<allowTimestampedSnapshots>
-								true
-							</allowTimestampedSnapshots>
-							<autoVersionSubmodules>
-								false
-							</autoVersionSubmodules>
-							<resume>false</resume>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 	<repositories>
 		 <repository>
       <id>jboss</id>
@@ -739,7 +663,7 @@
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
    				<groupId>org.mobicents.tools</groupId>
-    			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+    			<version>1.0.0.BETA1-SNAPSHOT</version>
 				<inherited>false</inherited>
 				<executions />
 				<configuration>
