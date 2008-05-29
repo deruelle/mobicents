@@ -25,26 +25,27 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
-import javax.management.MBeanServer;
+import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
 import javax.slee.CreateException;
+import javax.slee.FactoryException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
-import org.jboss.mx.util.MBeanServerLocator;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.EndpointQuery;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
  * 
@@ -59,9 +60,10 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
 
-	private ActivityContextNamingFacility activityContextNamingfacility;
+	private MsProvider msProvider;
+	private MediaRaActivityContextInterfaceFactory msActivityFactory;
 
-	private MBeanServer mbeanServer;
+	private ActivityContextNamingFacility activityContextNamingfacility;
 
 	/** Creates a new instance of DeleteConnectionSbb */
 	public DeleteConnectionSbb() {
@@ -70,13 +72,15 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {
-			mbeanServer = MBeanServerLocator.locateJBoss();
-			Context ctx = (Context) new InitialContext()
-					.lookup("java:comp/env");
-			mgcpProvider = (JainMgcpProvider) ctx
-					.lookup("slee/resources/jainmgcp/2.0/provider");
-			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx
-					.lookup("slee/resources/jainmgcp/2.0/acifactory");
+
+			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+
+			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			msActivityFactory = (MediaRaActivityContextInterfaceFactory) ctx
+					.lookup("slee/resources/media/1.0/acifactory");
+
+			mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
+			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory");
 			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
 					.lookup("slee/facilities/activitycontextnaming");
 		} catch (NamingException ne) {
@@ -84,8 +88,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onDeleteConnection(DeleteConnection event,
-			ActivityContextInterface aci) {
+	public void onDeleteConnection(DeleteConnection event, ActivityContextInterface aci) {
 		int txID = event.getTransactionHandle();
 		logger.info("--> DLCX TX ID = " + txID);
 
@@ -99,17 +102,14 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		// found?
 
 		if (endpointID != null && callID == null && connectionID == null) {
-			// TODO : Delete all the connections for an End Point
+			deleteForEndpoint(endpointID);
 
 		} else if (endpointID != null && callID != null && connectionID == null) {
-			// TODO : Delete all the connection that relate to a Call for an
-			// endpoint
+			deleteForEndpoint(endpointID);
 		} else {
-			ConnectionIdentifier connectionIdentifier = event
-					.getConnectionIdentifier();
+			ConnectionIdentifier connectionIdentifier = event.getConnectionIdentifier();
 
-			ActivityContextInterface mediaACI = activityContextNamingfacility
-					.lookup(connectionIdentifier.toString());
+			ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(connectionIdentifier.toString());
 
 			mediaACI.attach(sbbContext.getSbbLocalObject());
 			MsConnection msConnection = (MsConnection) mediaACI.getActivity();
@@ -118,10 +118,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 
 	}
 
-	public void onConnectionDeleted(MsConnectionEvent evt,
-			ActivityContextInterface aci) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
-				ReturnCode.Transaction_Executed_Normally);
+	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
 		int txID = this.getTxId();
 
 		response.setTransactionHandle(txID);
@@ -129,34 +127,31 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
-	private void deleteForEndpoint(EndpointIdentifier endpointID, int txID) {
+	private void deleteForEndpoint(EndpointIdentifier endpointID) {
 
 		String endpointName = endpointID.getLocalEndpointName();
 
-		try {
-			Endpoint endpoint = EndpointQuery.find(endpointName);
-			endpoint.deleteAllConnections();
+		List<MsConnection> msConnections = msProvider.getMsConnections(endpointName);
 
-		} catch (NamingException e) {
-			// TODO : Send appropriate Response
-			e.printStackTrace();
-		} catch (ResourceUnavailableException e) {
-			// TODO Send appropriate Response
-			e.printStackTrace();
-		}
+		for (MsConnection c : msConnections) {
+			try {
 
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
-				ReturnCode.Transaction_Executed_Normally);
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
-	}
+				ActivityContextInterface msAci = msActivityFactory.getActivityContextInterface(c);
+				msAci.attach(sbbContext.getSbbLocalObject());
+				c.release();
 
-	private void reject(int txID, ReturnCode reason) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
-				reason);
-		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+				logger.debug("Successfully deleted MsConnection ID = " + c.getId());
+
+			} catch (FactoryException e) {
+				logger.error("FactoryException while trying to retrieve the MS ACI for MsConnection ID = " + c.getId());
+			} catch (NullPointerException e) {
+				logger.error("NullPointerException while trying to retrieve the MS ACI for MsConnection ID = "
+						+ c.getId());
+			} catch (UnrecognizedActivityException e) {
+				logger.error("UnrecognizedActivityException while trying to retrieve the MS ACI for MsConnection ID = "
+						+ c.getId());
+			}
+		}// End of for loop
 	}
 
 	public void unsetSbbContext() {
@@ -183,8 +178,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object,
-			ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
