@@ -31,7 +31,7 @@
 	
 	<properties>		
 		<!-- module versions -->
-		<mobicents.servers.media.version>1.0.0.BETA1-CP1</mobicents.servers.media.version>
+		<mobicents.servers.media.version>1.0.0.BETA2-SNAPSHOT</mobicents.servers.media.version>
 		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
 		<mobicents.servers.sipservlets.version>0.4-SNAPSHOT</mobicents.servers.sipservlets.version>		
 		<mobicents.servers.sippresence.version>1.0.0.BETA2-SNAPSHOT</mobicents.servers.sippresence.version>		
@@ -188,7 +188,11 @@
 			<artifactId>bcprov-jdk14</artifactId>
 			<version>${bcprov-jdk14.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>cactus</groupId>
+			<artifactId>cactus</artifactId>
+			<version>${cactus.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
