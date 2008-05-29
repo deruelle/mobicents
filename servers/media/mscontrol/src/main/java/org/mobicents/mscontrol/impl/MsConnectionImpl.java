@@ -46,7 +46,7 @@ public class MsConnectionImpl implements MsConnection {
 
 	private String id = (new UID()).toString();
 
-	private String localSdp;
+
 	private String remoteSdp;
 
 	private MsSession session;
@@ -55,10 +55,9 @@ public class MsConnectionImpl implements MsConnection {
 	protected Connection connection;
 	private Endpoint endpoint;
 
-	protected ArrayList<MsConnectionListener> listeners = new ArrayList();
+	protected ArrayList<MsConnectionListener> listeners = new ArrayList<MsConnectionListener>();
 	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
 
-	private ConnectionMode mode = ConnectionMode.SEND_RECV;
 
 	/**
 	 * Creates a new instance of MsConnectionImpl
@@ -182,6 +181,7 @@ public class MsConnectionImpl implements MsConnection {
 		private void execute() {
 			try {
 				endpoint = EndpointQuery.lookup(endpointName);
+				endpointName = endpoint.getLocalName(); //Set it back as the actual endpointName may have /$
 				logger.debug("Media server returns endpoint: " + endpoint.getLocalName());
 			} catch (NamingException ex) {
 				logger.warn("TX Failed", ex);

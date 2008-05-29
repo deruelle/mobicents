@@ -131,6 +131,8 @@ public interface MsSession extends Serializable {
 	public void removeSessionListener(MsSessionListener listener);
 
 	public List<MsSessionListener> getSessionListeners();
+	
+	public List<MsConnection> getConnections();
 
 	/**
 	 * Explicitly sets the MsSession state to <code>MsSessionState.IDLE</code>

@@ -92,11 +92,18 @@ public interface MsProvider {
 	public MsSignalDetector getSignalDetector(String endpointName);
 
 	/**
-	 * Get the MsCOnnection Activity for the msConnectionId passed.
+	 * Get the MsConnection for the msConnectionId passed.
 	 * 
 	 * @param msConnectionId
 	 * @return
 	 */
 	public MsConnection getMsConnection(String msConnectionId);
+	
+	/**
+	 * Gets List of MsConnection object for given endpointName 
+	 * @param endpointName
+	 * @return
+	 */
+	public List<MsConnection> getMsConnections(String endpointName);
 
 }

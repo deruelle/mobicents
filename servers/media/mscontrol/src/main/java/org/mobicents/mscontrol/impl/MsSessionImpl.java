@@ -206,4 +206,8 @@ public class MsSessionImpl implements MsSession {
 		return this.listeners;
 	}
 
+	public List<MsConnection> getConnections() {
+		return this.connections;
+	}
+
 }

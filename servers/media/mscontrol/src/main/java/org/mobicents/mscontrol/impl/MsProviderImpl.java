@@ -33,8 +33,8 @@ import org.mobicents.mscontrol.MsSignalGenerator;
 /**
  * 
  * @author Oleg Kulikov
- * @author amit.bhayani 
- *
+ * @author amit.bhayani
+ * 
  */
 public class MsProviderImpl implements MsProvider, Serializable {
 
@@ -78,8 +78,8 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	public void removeSessionListener(MsSessionListener listener) {
 		sessionListeners.remove(listener);
 	}
-	
-	public List<MsSessionListener> getSessionListeners(){
+
+	public List<MsSessionListener> getSessionListeners() {
 		return this.sessionListeners;
 	}
 
@@ -132,8 +132,27 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	}
 
 	public MsConnection getMsConnection(String msConnectionId) {
-		//TODO Implement the logic here
+
+		for (MsSession e : calls) {
+			for (MsConnection c : e.getConnections()) {
+				if (c.getId().equals(msConnectionId)) {
+					return c;
+				}
+			}
+		}
 		return null;
+	}
+
+	public List<MsConnection> getMsConnections(String endpointName) {
+		List<MsConnection> msConnectionList = new ArrayList<MsConnection>();
+		for (MsSession e : calls) {
+			for (MsConnection c : e.getConnections()) {
+				if (c.getEndpoint().equals(endpointName)) {
+					msConnectionList.add(c);
+				}
+			}
+		}
+		return msConnectionList;
 	}
 
 	public List<MsResourceListener> getResourceListeners() {
