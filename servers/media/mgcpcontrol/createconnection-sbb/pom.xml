@@ -18,7 +18,7 @@
         <dependency>	
             <artifactId>mgcp-ratype</artifactId>
             <groupId>org.mobicents.resources</groupId>
-            <version>1.2.0.GA-SNAPSHOT</version>
+	    <version>1.2.0.GA-SNAPSHOT</version>
         </dependency>
 	<dependency>	
 		<artifactId>media-ratype</artifactId>
@@ -27,14 +27,8 @@
 	</dependency>	
 	<dependency>
 		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>${log4j.version}</version>
+		<artifactId>log4j</artifactId>		
 	</dependency>
-        <dependency>
-            <groupId>org.mobicents.examples</groupId>
-            <artifactId>mms-demo-utility</artifactId>
-            <version>1.2.0.GA-SNAPSHOT</version>
-        </dependency>	
     </dependencies>	  
     
     <build>

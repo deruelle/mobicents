@@ -48,6 +48,12 @@ public abstract class MgcpSbb implements Sbb {
 		forwardEvent(relation, aci);
 	}
 
+	public void onDeleteConnection(DeleteConnection event,
+			ActivityContextInterface aci) {
+		ChildRelation relation = getDeleteConnectionSbbChild();
+		forwardEvent(relation, aci);
+	}
+
 	private void forwardEvent(ChildRelation relation,
 			ActivityContextInterface aci) {
 		try {
@@ -61,7 +67,7 @@ public abstract class MgcpSbb implements Sbb {
 
 	public abstract ChildRelation getCreateConnectionSbbChild();
 
-	
+	public abstract ChildRelation getDeleteConnectionSbbChild();
 
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;

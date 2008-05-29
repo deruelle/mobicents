@@ -9,27 +9,12 @@
         <sbb-vendor>org.mobicents</sbb-vendor>
         <sbb-version>1.0</sbb-version>
         <sbb-alias>CreateConnectionSbb</sbb-alias>
-	
-	<sbb-ref>
-		<sbb-name>DeleteConnectionSbb</sbb-name>
-		<sbb-vendor>org.mobicents</sbb-vendor>
-		<sbb-version>1.0</sbb-version>
-		<sbb-alias>DeleteConnectionSbb</sbb-alias>
-	</sbb-ref>
-        
-	<sbb-classes>
+                                        
+        <sbb-classes>
             <sbb-abstract-class>
                 <sbb-abstract-class-name>
                     org.mobicents.media.server.control.mgcp.CreateConnectionSbb
                 </sbb-abstract-class-name>
-		<get-child-relation-method>
-			<sbb-alias-ref>DeleteConnectionSbb</sbb-alias-ref>
-			<get-child-relation-method-name>getDeleteConnectionSbbChild</get-child-relation-method-name>
-			<default-priority>0</default-priority>
-		</get-child-relation-method>		
-		<cmp-field>
-			<cmp-field-name>localEndpointName</cmp-field-name>
-                </cmp-field>		
                 <cmp-field>
                     <cmp-field-name>useSpecificEndPointId</cmp-field-name>
                 </cmp-field>

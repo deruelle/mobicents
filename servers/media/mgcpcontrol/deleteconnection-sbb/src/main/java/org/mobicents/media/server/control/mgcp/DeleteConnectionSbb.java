@@ -71,9 +71,12 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		this.sbbContext = sbbContext;
 		try {
 			mbeanServer = MBeanServerLocator.locateJBoss();
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-			mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
-			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory");
+			Context ctx = (Context) new InitialContext()
+					.lookup("java:comp/env");
+			mgcpProvider = (JainMgcpProvider) ctx
+					.lookup("slee/resources/jainmgcp/2.0/provider");
+			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx
+					.lookup("slee/resources/jainmgcp/2.0/acifactory");
 			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
 					.lookup("slee/facilities/activitycontextnaming");
 		} catch (NamingException ne) {
@@ -81,7 +84,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onDeleteConnection(DeleteConnection event, ActivityContextInterface aci) {
+	public void onDeleteConnection(DeleteConnection event,
+			ActivityContextInterface aci) {
 		int txID = event.getTransactionHandle();
 		logger.info("--> DLCX TX ID = " + txID);
 
@@ -91,34 +95,38 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		CallIdentifier callID = event.getCallIdentifier();
 		ConnectionIdentifier connectionID = event.getConnectionIdentifier();
 
-		// TODO : Wildcard conventions shall not be used for EndpointIdentifier.
-		// Send Error Response if found?
+		// TODO : Wildcard conventions shall not be used. Send Error Response if
+		// found?
 
-		logger.debug("Deleting Connection for ConnectionIdentifier = " + connectionID + " EndpointIdentifier = "
-				+ endpointID + " CallIdentifier = " + callID);
+		if (endpointID != null && callID == null && connectionID == null) {
+			// TODO : Delete all the connections for an End Point
 
-		MsConnection msConnection = this.getMediaConnection();
-		msConnection.release();
+		} else if (endpointID != null && callID != null && connectionID == null) {
+			// TODO : Delete all the connection that relate to a Call for an
+			// endpoint
+		} else {
+			ConnectionIdentifier connectionIdentifier = event
+					.getConnectionIdentifier();
 
-	}
+			ActivityContextInterface mediaACI = activityContextNamingfacility
+					.lookup(connectionIdentifier.toString());
 
-	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
-		int txID = this.getTxId();
-		logger.debug("Deletion of Connection Successful for TxID = " + txID);
-		response.setTransactionHandle(txID);
-
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
-	}
-
-	private MsConnection getMediaConnection() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (ActivityContextInterface aci : activities) {
-			if (aci.getActivity() instanceof MsConnection) {				
-				return (MsConnection) aci.getActivity();
-			}
+			mediaACI.attach(sbbContext.getSbbLocalObject());
+			MsConnection msConnection = (MsConnection) mediaACI.getActivity();
+			msConnection.release();
 		}
-		return null;
+
+	}
+
+	public void onConnectionDeleted(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
+				ReturnCode.Transaction_Executed_Normally);
+		int txID = this.getTxId();
+
+		response.setTransactionHandle(txID);
+		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
 	private void deleteForEndpoint(EndpointIdentifier endpointID, int txID) {
@@ -137,13 +145,15 @@ public abstract class DeleteConnectionSbb implements Sbb {
 			e.printStackTrace();
 		}
 
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
+				ReturnCode.Transaction_Executed_Normally);
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 	}
 
 	private void reject(int txID, ReturnCode reason) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this, reason);
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this,
+				reason);
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
@@ -173,7 +183,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object,
+			ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {

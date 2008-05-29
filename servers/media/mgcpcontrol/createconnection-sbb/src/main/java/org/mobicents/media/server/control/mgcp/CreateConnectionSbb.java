@@ -16,6 +16,7 @@
 package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
+import net.java.slee.resource.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -29,21 +30,16 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
-import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.slee.SbbLocalObject;
 import javax.slee.TransactionRequiredLocalException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.FacilityException;
 import javax.slee.facilities.NameAlreadyBoundException;
 
-import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
-import net.java.slee.resource.mgcp.MgcpConnectionActivity;
-import net.java.slee.resource.mgcp.MgcpEndpointActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.msc.common.events.MsConnectionEventCause;
@@ -80,15 +76,19 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+			Context ctx = (Context) new InitialContext()
+					.lookup("java:comp/env");
 
 			// initialize media api
-			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			msProvider = (MsProvider) ctx
+					.lookup("slee/resources/media/1.0/provider");
 			msActivityFactory = (MediaRaActivityContextInterfaceFactory) ctx
 					.lookup("slee/resources/media/1.0/acifactory");
 
-			mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
-			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory");
+			mgcpProvider = (JainMgcpProvider) ctx
+					.lookup("slee/resources/jainmgcp/2.0/provider");
+			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx
+					.lookup("slee/resources/jainmgcp/2.0/acifactory");
 
 			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
 					.lookup("slee/facilities/activitycontextnaming");
@@ -98,7 +98,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onCreateConnection(CreateConnection event, ActivityContextInterface aci) {
+	public void onCreateConnection(CreateConnection event,
+			ActivityContextInterface aci) {
 
 		CreateConnectionResponse response = null;
 
@@ -116,12 +117,11 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		if (endPointName.endsWith("/$")) {
 			this.setUseSpecificEndPointId(true);
-		} else {
-			this.setLocalEndpointName(endPointName);
 		}
 
 		MsSession session = msProvider.createSession();
-		MsConnection msConnection = session.createNetworkConnection(endPointName);
+		MsConnection msConnection = session
+				.createNetworkConnection(endPointName);
 
 		logger.info("--> CRCX TX ID = " + txID + " Endpoint = " + endpointID);
 
@@ -142,7 +142,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		// Check if RemoteConnectionDescriptor is available apply it to
 		// Connection
 
-		ConnectionDescriptor remoteConnectionDescriptor = event.getRemoteConnectionDescriptor();
+		ConnectionDescriptor remoteConnectionDescriptor = event
+				.getRemoteConnectionDescriptor();
 
 		if (remoteConnectionDescriptor != null) {
 			remoteSDP = remoteConnectionDescriptor.toString();
@@ -174,12 +175,10 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	}
 
-	public void onConnectionCreated(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionCreated(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 
 		logger.info(" onConnectionCreated called ");
-
-		String domainName = "localhost"; // TODO : Get JBoss bind address
-		// here?
 
 		MsConnection msConnection = evt.getConnection();
 
@@ -189,14 +188,17 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		// TODO This is wrong. We need to change MMS to have ID of msConnection
 		// as hexadecimal string
-		String identifier = ((CallIdentifier) mgcpProvider.getUniqueCallIdentifier()).toString();
-		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
+		String identifier = ((CallIdentifier) mgcpProvider
+				.getUniqueCallIdentifier()).toString();
+		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(
+				identifier);
 
 		CreateConnectionResponse response = new CreateConnectionResponse(this,
 				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();
 
-		ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(sdpLocalDescriptor);
+		ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(
+				sdpLocalDescriptor);
 
 		response.setLocalConnectionDescriptor(localConnectionDescriptor);
 
@@ -205,39 +207,53 @@ public abstract class CreateConnectionSbb implements Sbb {
 		if (this.getUseSpecificEndPointId()) {
 
 			String localEndpointName = msConnection.getEndpoint();
+			String domainName = "localhost"; // TODO : Get JBoss bind address
+			// here?
 
-			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(localEndpointName, domainName);
+			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(
+					localEndpointName, domainName);
 
 			response.setSpecificEndpointIdentifier(specificEndpointIdentifier);
-
-			this.setLocalEndpointName(localEndpointName);
-		}
-
-		ChildRelation relation = getDeleteConnectionSbbChild();
-
-		try {
-			SbbLocalObject child = relation.create();
-			aci.attach(child);
-
-			EndpointIdentifier endpointIdentifier = new EndpointIdentifier(this.getLocalEndpointName(), domainName);
-			MgcpEndpointActivity endpointActivity = mgcpProvider.getEndpointActivity(endpointIdentifier);
-			ActivityContextInterface enpointAci = mgcpAcif.getActivityContextInterface(endpointActivity);
-			enpointAci.attach(child);
-
-			MgcpConnectionActivity connectionActivity = mgcpProvider.getConnectionActivity(this.getTxId());
-			ActivityContextInterface connectionAci = mgcpAcif.getActivityContextInterface(connectionActivity);
-			connectionAci.attach(child);
-
-			aci.detach(sbbContext.getSbbLocalObject());
-			
-		} catch (Exception e) {
-			logger.error("Unexpected error: ", e);
 		}
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+
+		try {
+			// bind the MsConnection aci to ActivityContextNamingFacility for
+			// processing DLCX
+			activityContextNamingfacility.bind(aci, connectionIdentifier
+					.toString());
+		} catch (TransactionRequiredLocalException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (FacilityException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (NullPointerException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (IllegalArgumentException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		} catch (NameAlreadyBoundException e) {
+			logger
+					.warn(
+							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
+							e);
+		}
+
 	}
 
-	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionTransactionFailed(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 		logger.warn("ConnectionTransactionFailed");
 
 		MsConnectionEventCause msConnectionEventCause = evt.getCause();
@@ -256,7 +272,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		CreateConnectionResponse response = new CreateConnectionResponse(this, reason, new ConnectionIdentifier("0"));
+		CreateConnectionResponse response = new CreateConnectionResponse(this,
+				reason, new ConnectionIdentifier("0"));
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
@@ -279,8 +296,6 @@ public abstract class CreateConnectionSbb implements Sbb {
 		 */
 		return 0;
 	}
-
-	public abstract ChildRelation getDeleteConnectionSbbChild();
 
 	public void unsetSbbContext() {
 	}
@@ -306,7 +321,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object,
+			ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
@@ -319,9 +335,5 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public abstract boolean getUseSpecificEndPointId();
 
 	public abstract void setUseSpecificEndPointId(boolean useSpecificEndPointId);
-
-	public abstract String getLocalEndpointName();
-
-	public abstract void setLocalEndpointName(String localEndpointName);
 
 }
