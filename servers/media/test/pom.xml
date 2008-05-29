@@ -23,8 +23,7 @@
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<artifactId>junit</artifactId>			
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
