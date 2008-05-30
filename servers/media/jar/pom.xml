@@ -14,7 +14,7 @@
     <name>Mobicents Media Server :: ${pom.artifactId}</name>
     
     <properties>
-        <maven.test.skip>false</maven.test.skip>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
     
     <dependencies>
@@ -50,7 +50,8 @@
         </dependency>
         <dependency>
             <groupId>cactus</groupId>
-            <artifactId>cactus</artifactId>            
+            <artifactId>cactus</artifactId>
+            <version>${cactus.version}</version>            
         </dependency>
         <dependency>
             <groupId>org.mobicents.servers.media</groupId>
