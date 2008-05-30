@@ -18,6 +18,7 @@ package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
+import jain.protocol.ip.mgcp.message.ModifyConnection;
 
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
@@ -42,20 +43,22 @@ public abstract class MgcpSbb implements Sbb {
 	public MgcpSbb() {
 	}
 
-	public void onCreateConnection(CreateConnection event,
-			ActivityContextInterface aci) {
+	public void onCreateConnection(CreateConnection event, ActivityContextInterface aci) {
 		ChildRelation relation = getCreateConnectionSbbChild();
 		forwardEvent(relation, aci);
 	}
 
-	public void onDeleteConnection(DeleteConnection event,
-			ActivityContextInterface aci) {
+	public void onDeleteConnection(DeleteConnection event, ActivityContextInterface aci) {
 		ChildRelation relation = getDeleteConnectionSbbChild();
 		forwardEvent(relation, aci);
 	}
 
-	private void forwardEvent(ChildRelation relation,
-			ActivityContextInterface aci) {
+	public void onModifyConnection(ModifyConnection event, ActivityContextInterface aci) {
+		ChildRelation relation = getModifyConnectionSbbChild();
+		forwardEvent(relation, aci);
+	}
+
+	private void forwardEvent(ChildRelation relation, ActivityContextInterface aci) {
 		try {
 			SbbLocalObject child = relation.create();
 			aci.attach(child);
@@ -68,6 +71,8 @@ public abstract class MgcpSbb implements Sbb {
 	public abstract ChildRelation getCreateConnectionSbbChild();
 
 	public abstract ChildRelation getDeleteConnectionSbbChild();
+
+	public abstract ChildRelation getModifyConnectionSbbChild();
 
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
@@ -97,8 +102,7 @@ public abstract class MgcpSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object,
-			ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {

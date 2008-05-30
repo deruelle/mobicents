@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+
+<sbb-jar>  
+  <sbb id="delete_connection">
+        <description>MGCP MDCX</description>
+        <sbb-name>ModifyConnectionSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>ModifyConnectionSbb</sbb-alias>
+                                        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.control.mgcp.ModifyConnectionSbb
+                </sbb-abstract-class-name>
+				<cmp-field>
+					<cmp-field-name>txId</cmp-field-name>
+                </cmp-field>		
+            </sbb-abstract-class>                                               
+        </sbb-classes>
+
+        <event event-direction="Receive" initial-event="True">
+            <event-name>ModifyConnection</event-name>
+            <event-type-ref>
+				<event-type-name>net.java.slee.resource.mgcp.MODIFY_CONNECTION</event-type-name>
+				<event-type-vendor>net.java</event-type-vendor>
+        		<event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+	
+	<event event-direction="Receive" initial-event="False">
+		<event-name>ConnectionModified</event-name>
+		<event-type-ref>
+			<event-type-name>org.mobicents.slee.media.CONNECTION_MODIFIED</event-type-name>
+			<event-type-vendor>org.mobicents.media</event-type-vendor>
+        	<event-type-version>1.0</event-type-version>
+		</event-type-ref>
+       </event>	
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>jain-mgcp</resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>net.java</resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>2.0</resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>slee/resources/jainmgcp/2.0/acifactory</activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>slee/resources/jainmgcp/2.0/provider</resource-adaptor-object-name>
+                <resource-adaptor-entity-link>MGCPRA</resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+	
+	<resource-adaptor-type-binding>
+		<resource-adaptor-type-ref>
+			<resource-adaptor-type-name>media_ratype</resource-adaptor-type-name>
+			<resource-adaptor-type-vendor>org.mobicents.media</resource-adaptor-type-vendor>
+			<resource-adaptor-type-version>1.0</resource-adaptor-type-version>
+		</resource-adaptor-type-ref>
+		<activity-context-interface-factory-name>slee/resources/media/1.0/acifactory</activity-context-interface-factory-name>
+		<resource-adaptor-entity-binding>
+			<resource-adaptor-object-name>slee/resources/media/1.0/provider</resource-adaptor-object-name>
+			<resource-adaptor-entity-link>LocalMs</resource-adaptor-entity-link>
+		</resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>	
+  </sbb>  
+  
+</sbb-jar>

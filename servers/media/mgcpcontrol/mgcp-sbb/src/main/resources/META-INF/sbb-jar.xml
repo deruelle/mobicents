@@ -24,6 +24,13 @@
             <sbb-alias>DeleteConnectionSbb</sbb-alias>
 	</sbb-ref>
         
+	<sbb-ref>
+		<sbb-name>ModifyConnectionSbb</sbb-name>
+		<sbb-vendor>org.mobicents</sbb-vendor>
+		<sbb-version>1.0</sbb-version>
+		<sbb-alias>ModifyConnectionSbb</sbb-alias>
+	</sbb-ref>
+	
         <sbb-classes>
             <sbb-abstract-class>
                 <sbb-abstract-class-name>
@@ -39,6 +46,11 @@
 			<get-child-relation-method-name>getDeleteConnectionSbbChild</get-child-relation-method-name>
 			<default-priority>0</default-priority>
 		</get-child-relation-method>
+		<get-child-relation-method>
+			<sbb-alias-ref>ModifyConnectionSbb</sbb-alias-ref>
+			<get-child-relation-method-name>getModifyConnectionSbbChild</get-child-relation-method-name>
+			<default-priority>0</default-priority>
+		</get-child-relation-method>		
             </sbb-abstract-class>                                               
         </sbb-classes>
 
@@ -61,6 +73,16 @@
             </event-type-ref>
             <initial-event-select variable="ActivityContext"/>
         </event>
+	
+		<event event-direction="Receive" initial-event="True">
+			<event-name>ModifyConnection</event-name>
+			<event-type-ref>
+				<event-type-name>net.java.slee.resource.mgcp.MODIFY_CONNECTION</event-type-name>
+				<event-type-vendor>net.java</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+			<initial-event-select variable="ActivityContext"/>
+        </event>	
         
         <resource-adaptor-type-binding>
             <resource-adaptor-type-ref>

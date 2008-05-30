@@ -25,6 +25,11 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
+			<artifactId>modifyconnection-sbb</artifactId>
+			<groupId>org.mobicents.servers.media</groupId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
 			<artifactId>mgcp-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>

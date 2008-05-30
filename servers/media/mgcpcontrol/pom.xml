@@ -17,6 +17,7 @@
 	<modules>
 		<module>deleteconnection-sbb</module>
 		<module>createconnection-sbb</module>
+		<module>modifyconnection-sbb</module>
 		<module>mgcp-sbb</module>
 		<module>services-du</module>
 	</modules>
