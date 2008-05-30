@@ -7,38 +7,115 @@
 	<section
 		id="section-Introduction_to_the_Mobicents_XML_Document_Management_Server">
 		<title>Introduction to the Mobicents XML Document Management Server</title>
-		<para>The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the Open Mobile Alliance (OMA) XML Document Management v1.1 specification. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
+		<para>The Mobicents XMLsection-Mobicents_XML_Document_Management_Server.xml Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the <ulink
+				url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
+	</section>
+	<section
+		id="section-Configuring_Installing_and_Testing_the_XDM_Server">
+		<title>Configuring, Installing and Testing the XDM Server</title>
 		<formalpara>
-			<title>Functional Architecture of the Mobicents XML Document Management Server</title>
-			<para>The Mobicents XDM Server includes the following XCAP application usages:</para>
+			<title>Requirements</title>
+			<para>The Mobicents XDM Server depends on the Mobicents JAIN SLEE server and the Mobicents SIP and HTTP Servlet resource adapters. Make sure that all of these requirements are deployed before deploying the XDM Server.</para>
+		</formalpara>
+		<important
+			id="important-The_XDM_Server_is_Currently_Incompatible_with_Java_1.6">
+			<title>The XDM Server is Currently Incompatible with Java 1.6</title>
+			<para>Currently, the Mobicents XDM Server will not work with Java 1.6, although this will be fixed in the future. Therefore, if you are running the XDM Server, make sure that you are using Java 1.5.</para>
+		</important>
+		<formalpara>
+			<title>Configuration</title>
+			<para>The XML Document Management Server can be customized in the following two aspects before being built.</para>
+		</formalpara>
+		<variablelist
+			id="varlist-Customizing_the_XDM_Server">
+			<title>Customizing the XDM Server</title>
+			<varlistentry>
+				<term>XCAP Root</term>
+				<listitem>
+					<para>The Maven property <literal>xdm.server.xcap.root</literal>, in the <filename>pom.xml</filename> which is inside the Mobicents Presence Service root directory (in <filename>/trunk/servers/sip-presence</filename> to be exact) defines the relative path to root that is considered the XCAP Root for all XCAP URIs. This value must match the servlet name used in the Mobicents HTTP Servlet resource adapter. The default value is <replaceable>/mobicents</replaceable>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Dynamic User Provisioning</term>
+				<listitem>
+					<para>The Maven property <literal>dynamicUserProvisioning</literal> in the <filename>pom.xml</filename> inside the Mobicents Presence Service root directory (in <filename>/trunk/servers/sip-presence</filename> to be exact) defines whether the XDM Server should provision the user when a <literal>PUT</literal> request is being processed and the user is not installed for the request's application usage. The default value is true.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
+		<formalpara>
+			<title>Installing the Mobicents XML Document Management Server</title>
+			<para>How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
 		<itemizedlist>
 			<listitem>
-				<para>IETF pres-rules (RFC 5025)</para>
+				<formalpara>
+					<title>Installing the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using a binary release, install doing ant deploy on directory servers/sip-presence/xdms, uninstall doing ant undeploy on same directory.</para>
+				</formalpara>
 			</listitem>
 			<listitem>
-				<para>OMA pres-rules (OMA Presence Simple v1.1 Candidate Release)</para>
+				<formalpara>
+					<title>Installing the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/xdms, uninstall doing mvn clean on same directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		<formalpara>
+			<title>Uninstalling the Mobicents XML Document Server</title>
+			<para>TBD (check this): The XDM Server can easily be uninstalled by invoking the <command>mvn clean</command> on the <filename>/trunk/servers/sip-presence/xdms</filename> directory.</para>
+		</formalpara>
+		<formalpara>
+			<title>Testing the Mobicents XDM Server</title>
+			<para>TBD (Make sure this is correct): is recommended that you test the XDM Server after you deploy it. For instructions on how to test the XDM Server, read and follow the instructions in <filename>.../xdms/tests/README.txt</filename>. No tests should fail.</para>
+		</formalpara>
+	</section>
+	<section
+		id="section-Functional_Architecture_of_the_Mobicents_XML_Document_Management_Server">
+		<title>Functional Architecture of the Mobicents XML Document Management Server</title>
+		<para>The Mobicents XDM Server includes the following XCAP application usages:</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<ulink
+						url="IETF pres-rules (RFC 5025)"/>
+				</para>
 			</listitem>
 			<listitem>
-				<para>IETF resource-lists (RFC 4826)</para>
+				<para>
+					<ulink
+						url="OMA pres-rules (OMA Presence Simple v1.1 Candidate Release)"/>
+				</para>
 			</listitem>
 			<listitem>
-				<para>IETF rls-services (RFC 4826)</para>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4826"/>
+				</para>
 			</listitem>
 			<listitem>
-				<para>IETF xcap-caps (RFC 4825)</para>
+				<para>
+					<ulink
+						url="IETF rls-services (RFC 4826)"/>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="IETF xcap-capsp (RFC 4825)"/>
+				</para>
 			</listitem>
 		</itemizedlist>
 		<figure
-			id="figure-orig-XDMS_Functional_Architecture.jpg">
+			id="figure-orig-OPENXDM_Functional_Architecture.jpg">
 			<title>The Mobicents XML Document Management Server</title>
 			<mediaobject
-				id="mediaobj-orig-XDM_Functional_Architecture.jpg">
+				id="mediaobj-orig-OPENXDM_Functional_Architecture.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/orig-XDM Functional Architecture.jpg"
+						fileref="images/orig-OPENXDM_Functional_Architecture.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -81,15 +158,15 @@
 			<para>The XDM Server is built on top of the Mobicents JAIN SLEE container. This figure depicts the architecture of the XDM Server implementation.</para>
 		</formalpara>
 		<figure
-			id="figure-orig-XDMS_Implementation.jpg">
+			id="figure-orig-OpenXDM_JAINSLEE_Implementation.jpg">
 			<title>Mobicents XML Document Management Server</title>
 			<mediaobject
-				id="mediaobj-orig-XDMS_Implementation.jpg">
+				id="mediaobj-orig-OpenXDM_JAINSLEE_Implementation.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/orig-XDMS Implementation.jpg"
+						fileref="images/orig-OpenXDM_JAINSLEE_Implementation.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -181,43 +258,47 @@
 								<literal>ExternalXDMClientSBB</literal>, which is intended to be used on applications running in a different JAIN SLEE container than the Mobicents XDM Server.</para>
 						</listitem>
 					</itemizedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Original Source, Unformatted Bits, and TBD</title>
+			<para>This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D.</para>
+		</formalpara>
+	</section>
+	<section
+		id="section-Resources_and_Further_Information_About_the_Mobicents_XML_Document_Server">
+		<title>Resources and Further Information About the Mobicents XML Document Server</title>
+		<para>For further information on the Mobicents XDM Server, here is a list of additional resources:</para>
+		<itemizedlist
+			id="itemlist-Further_Information_on_the_Mobicents_XDM_Server">
+			<listitem>
+				<para>How to Manage the XDM Server</para>
 			</listitem>
-		</varlistentry>
-	</variablelist>
-	<para>This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D.
-		TBD: the next section: Server setup and testing, needs to be formatted and tested.
-	Configuration
-
-The Mobicents XDM Server can be customized before built:
-
-    * XCAP Root, through property xdm.server.xcap.root in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines the relative path to root that is considered the XCAP Root for all XCAP URIs. Must match the servlet name used in Mobicents HTTP Servlet RA. Default value is /mobicents.
-    * Dynamic user provisioning, through property dynamicUserProvisioning in pom.xml inside the Mobicents Presence Service root directory (/trunk/servers/sip-presence), defines if the XDM Server should provision the user when a PUT request is being processed and the user is not installed for the request's application usage. Default value is true. 
-
-There is no configuration needed to deploy the server.
-Requirements
-
-The Mobicents XDM Server depends on Mobicents JAIN SLEE server and Mobicents SIP and HTTP Servlet resource adaptors, ensure all are installed.
-
- 
-
-At the moment, the Mobicents XDM Server is not compatible with JDK 1.6 
-Install/Uninstall
-
-From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/xdms, uninstall doing mvn clean on same directory.
-
-Using a binary release, install doing ant deploy on directory servers/sip-presence/xdms, uninstall doing ant undeploy on same directory.
-Testing 
-
-After server is deployed, it is recommended to test it. Please lookup for further instructions in file .../xdms/tests/README.txt. No test should fail.
-Resources:
-
-    * How to manage the server
-    * How to create a XCAP App(lication)Usage
-    * Integrating XDM in your JAIN SLEE Apps: code snippets for XDM Client SBB usage
-    * XCAP Client API documentation
-    * XCAP Client RA Type description and example code snippets
-    * Mobicents SIP Presence Service 
-    * Want to contribute?</para>
+			<listitem>
+				<para>How to Create an XCAP App(lication)Usage</para>
+			</listitem>
+			<listitem>
+				<para>Integrating XDM in your JAIN SLEE Apps: Code Snippets for XDM Client SBB Usage</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="XCAP Client API Documentation"/>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="XCAP Client RA Type Description and Example Code Snippets"/>
+				</para>
+			</listitem>
+			<listitem>
+				<para>Mobicents SIP Presence Service</para>
+			</listitem>
+			<listitem>
+				<para>Want to contribute?</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 </section>
-

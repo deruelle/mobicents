@@ -3,10 +3,10 @@
 ]>
 <section
 	id="section-HTTP_Servlet_Resource_Adapter">
-	<title>HTTP_Server Resource Adapter</title>
+	<title>HTTP Servlet Resource Adapter</title>
 	<para></para>
 	<section
-		id="section-Installing_the_HTTP_Server_Resource_Adapter">
+		id="section-Installing_the_HTTP_Servlet_Resource_Adapter">
 		<title>Installing the HTTP Servlet Resource Adapter</title>
 		<para>The HTTP Servlet resource adapter can be installed by referring to <xref
 				linkend="section-Deploying_and_Undeploying_Resource_Adapters"/>.</para>

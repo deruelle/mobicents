@@ -8,8 +8,36 @@
 	<section
 		id="section-Introduction_to_the_Mobicents_Presence_Server">
 		<title>Introduction to the Mobicents Presence Server</title>
-		<para>Mobicents Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
+		<para>The Mobicents Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
 		<para>The Presence Server is an entity that accepts, stores and distributes SIP Presence Information.</para>
+	</section>
+	<section
+		id="section-Configuring_Installing_and_Testing_the_Mobicents_Presence_Server">
+		<title>Configuring, Installing and Testing the Mobicents_Presence Server</title>
+		<formalpara>
+			<title>Requirements</title>
+			<para></para>
+		</formalpara>
+		<formalpara>
+			<title>Configuration</title>
+			<para></para>
+		</formalpara>
+		<formalpara>
+			<title>Installing the Mobicents Presence Server</title>
+			<para></para>
+		</formalpara>
+		<formalpara>
+			<title>Uninstalling the Mobicents Presence Server</title>
+			<para></para>
+		</formalpara>
+		<formalpara>
+			<title>Testing the Mobicents Presence Server</title>
+			<para></para>
+		</formalpara>
+	</section>
+	<section
+		id="section-Functional_Architecture_of_the_Mobicents_Presence_Server">
+		<title>Functional Architecture of the Mobicents Presence Server</title>
 		<formalpara>
 			<title>Functional Architecture of the Mobicents Presence Server</title>
 			<para></para>
