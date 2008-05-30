@@ -7,7 +7,7 @@ package org.mobicents.media.server.impl.test.audio;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mobicents.media.server.impl.NewSuperXCase;
+import org.mobicents.media.server.impl.SuperXCase;
 import static org.junit.Assert.*;
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -18,7 +18,7 @@ import org.mobicents.media.server.spi.events.test.SpectrumEvent;
  *
  * @author Oleg Kulikov
  */
-public class SineStreamTest extends NewSuperXCase implements NotificationListener {
+public class SineStreamTest extends SuperXCase implements NotificationListener {
 
     private final static int FREQ = 50;
     private final static int ERROR = 10;

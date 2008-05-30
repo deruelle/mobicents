@@ -3,7 +3,7 @@ package org.mobicents.media.server.impl.dtmf.test;
 import java.util.Arrays;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.NewSuperXCase;
+import org.mobicents.media.server.impl.SuperXCase;
 import org.mobicents.media.server.impl.dtmf.InbandDetector;
 import org.mobicents.media.server.impl.dtmf.InbandGenerator;
 import org.mobicents.media.server.impl.dtmf.test.InbandDTMFGeneratorSequentialTest.FrequenciesHolder;
@@ -63,7 +63,7 @@ public class InbandDTMFGeneratorDetectorTest extends
 				&& !timeCaptureTest) {
 			doFail("Tone name[" + toneName
 					+ "] didnt match detected tone name[" + event.getMessage()
-					+ "]. Old reason[" + getReason() + "]");
+					+ "].");
 		} else if (timeCaptureTest) {
 			logger.info("Failed to capture properly tone[" + toneName
 					+ "] - captured value indicates[" + event.getMessage()

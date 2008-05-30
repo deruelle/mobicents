@@ -93,24 +93,54 @@ public abstract class SuperXCase extends TestCase {
         synchronized (this) {
             try {
                 wait(duration * 1000);
+                
             } catch (InterruptedException e) {
-                reason = "Test interrupted";
+            	
+                reason = "Test interrupted\n"+doMessage(e);
                 return false;
             }
         }
-
         return !isFailed;
     }
 
     
     public void doFail(String reason) {
         synchronized (this) {
+        	
             isFailed = true;
             //if (reason != null) {
-                this.reason = reason;
+                this.reason = reason+", "+this.reason;
             //}
             notifyAll();
         }
     }
+    
+    protected boolean getIsFailed()
+    {
+    	return isFailed;
+    }
 
+    public static String doMessage(Throwable t) {
+		StringBuffer sb = new StringBuffer();
+		int tick = 0;
+		Throwable e = t;
+		do {
+			StackTraceElement[] trace = e.getStackTrace();
+			if (tick++ == 0)
+				sb.append(e.getClass().getCanonicalName() + ":"
+						+ e.getLocalizedMessage() + "\n");
+			else
+				sb.append("Caused by: " + e.getClass().getCanonicalName() + ":"
+						+ e.getLocalizedMessage() + "\n");
+
+			for (StackTraceElement ste : trace)
+				sb.append("\t" + ste + "\n");
+
+			e = e.getCause();
+		} while (e != null);
+
+		return sb.toString();
+
+	}
+    
 }

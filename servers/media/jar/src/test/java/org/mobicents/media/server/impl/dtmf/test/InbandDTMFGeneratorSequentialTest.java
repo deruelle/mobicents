@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.apache.log4j.Logger;
 import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.server.impl.BaseResource;
-import org.mobicents.media.server.impl.NewSuperXCase;
+import org.mobicents.media.server.impl.SuperXCase;
 import org.mobicents.media.server.impl.dtmf.InbandGenerator;
 
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
@@ -13,7 +13,7 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
-public class InbandDTMFGeneratorSequentialTest extends NewSuperXCase implements NotificationListener{
+public class InbandDTMFGeneratorSequentialTest extends SuperXCase implements NotificationListener{
 
 	protected final Logger logger = Logger
 			.getLogger(getClass().getCanonicalName());

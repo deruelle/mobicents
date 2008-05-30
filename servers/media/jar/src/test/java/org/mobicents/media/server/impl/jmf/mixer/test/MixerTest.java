@@ -5,7 +5,7 @@ import java.io.File;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.mobicents.media.server.impl.NewSuperXCase;
+import org.mobicents.media.server.impl.SuperXCase;
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
 import org.mobicents.media.server.impl.jmf.mixer.AudioMixer;
 import org.mobicents.media.server.impl.test.audio.SineStream;
@@ -13,7 +13,7 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
-public class MixerTest extends NewSuperXCase implements NotificationListener {
+public class MixerTest extends SuperXCase implements NotificationListener {
 
     private final static int FREQ[] = new int[]{50,100,150};
     private final static int PACKETIZATION_PERIOD = 20;

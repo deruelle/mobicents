@@ -1,7 +1,7 @@
 package org.mobicents.media.server.impl.jmf.splitter.test;
 
 
-import org.mobicents.media.server.impl.NewSuperXCase;
+import org.mobicents.media.server.impl.SuperXCase;
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
 import org.mobicents.media.server.impl.jmf.splitter.MediaSplitter;
 import org.mobicents.media.server.impl.test.audio.SineStream;
@@ -9,7 +9,7 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
-public class SplitterTest extends NewSuperXCase {
+public class SplitterTest extends SuperXCase {
 
     private final static int PACKETIZATION_PERIOD = 20;
     private final static int JITTER = 60;
