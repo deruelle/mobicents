@@ -1,4 +1,4 @@
-Build Instructions
+JAIN SLEE Server Build Instructions
 ------------------
 
 1. You need Apache Maven 2 installed (http://maven.apache.org/)
@@ -14,12 +14,12 @@ Build Instructions
 5. After a successful build the modules are installed in the server at JBOSS_HOME. Individual artifacts are available in the target directory for each module.
 
 
-Adding mobicents to Eclipse
+Adding project to Eclipse
 ---------------------------
 
 1. Fetch all the project dependencies to your local Maven2 repository:
 
-mvn andromdapp:eclipse (in your mobicents directory)
+mvn mobicents:eclipse
 
 2. Make sure Eclipse is CLOSED
 
@@ -27,4 +27,4 @@ mvn andromdapp:eclipse (in your mobicents directory)
 
 mvn -Declipse.workspace=YOUR_PATH_TO_ECLIPSE_WORKSPACE eclipse:add-maven-repo"
 
-4. Open Eclipse, in the File menu select Import, then "General->Existing Projects into Workspace", next and finally browse to root folder of mobicents, the project should appear, be sure that the option "Copy project into workspace" is not checked before pressing "Finish".
+4. Open Eclipse, in the File menu select Import, then "General->Existing Projects into Workspace", next and finally browse to this folder, the project should appear, be sure that the option "Copy project into workspace" is not checked before pressing "Finish".
