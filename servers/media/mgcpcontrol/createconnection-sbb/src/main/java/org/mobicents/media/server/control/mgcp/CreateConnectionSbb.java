@@ -96,8 +96,6 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	public void onCreateConnection(CreateConnection event, ActivityContextInterface aci) {
 
-		CreateConnectionResponse response = null;
-
 		String remoteSDP = null;
 
 		CallIdentifier callIdentifier = event.getCallIdentifier();
