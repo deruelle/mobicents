@@ -18,6 +18,7 @@ package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpProvider;
+import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnection;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -40,6 +41,7 @@ import javax.slee.facilities.ActivityContextNamingFacility;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 
@@ -95,28 +97,56 @@ public abstract class ModifyConnectionSbb implements Sbb {
 		logger.debug("Modifing Connection for ConnectionIdentifier = " + connectionID + " EndpointIdentifier = "
 				+ endpointID + " CallIdentifier = " + callID);
 
-		MsConnection msConnection = this.getMediaConnection();
+		ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(connectionID.toString());
+
+		mediaACI.attach(sbbContext.getSbbLocalObject());
+		MsConnection msConnection = (MsConnection) mediaACI.getActivity();
 		msConnection.modify(msConnection.getEndpoint(), remoteConnectionDescriptor.toString());
 
 	}
 
 	public void onConnectionModified(MsConnectionEvent evt, ActivityContextInterface aci) {
-		ModifyConnectionResponse response = new ModifyConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
 		int txID = this.getTxId();
-		logger.debug("Deletion of Connection Successful for TxID = " + txID);
+		logger.debug("Modify Connection Successful for TxID = " + txID);
+
+		MsConnection msConnection = evt.getConnection();
+		String localSdp = msConnection.getLocalDescriptor();
+
+		ModifyConnectionResponse response = new ModifyConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
+		ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(localSdp);
+		response.setLocalConnectionDescriptor(connectionDescriptor);
 		response.setTransactionHandle(txID);
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
-	private MsConnection getMediaConnection() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (ActivityContextInterface aci : activities) {
-			if (aci.getActivity() instanceof MsConnection) {
-				return (MsConnection) aci.getActivity();
-			}
+	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+		logger.warn("ConnectionTransactionFailed");
+
+		MsConnectionEventCause msConnectionEventCause = evt.getCause();
+
+		// TODO is the ReturnCode correct
+		switch (msConnectionEventCause) {
+		case FACILITY_FAILURE:
+			sendResponse(this.getTxId(), ReturnCode.Endpoint_Unknown);
+			break;
+
+		case REMOTE_SDP_INVALID:
+			sendResponse(this.getTxId(), ReturnCode.Missing_RemoteConnectionDescriptor);
+			break;
+
+		default:
+			sendResponse(this.getTxId(), ReturnCode.Internal_Hardware_Failure);
+			break;
 		}
-		return null;
+
+	}
+
+	private void sendResponse(int txID, ReturnCode reason) {
+		ModifyConnectionResponse response = new ModifyConnectionResponse(this, reason);
+		response.setTransactionHandle(txID);
+		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
 	public void unsetSbbContext() {
