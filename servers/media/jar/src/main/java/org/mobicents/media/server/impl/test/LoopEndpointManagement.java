@@ -14,19 +14,40 @@
 
 package org.mobicents.media.server.impl.test;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class LoopEndpointManagement extends EndpointManagement 
-        implements LoopEndpointManagementMBean {
-    
-    public Endpoint createEndpoint() throws Exception {
-        LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName());
-        return endpoint;
-    }
+public class LoopEndpointManagement extends EndpointManagement implements LoopEndpointManagementMBean {
+
+	private Logger logger = Logger.getLogger(LoopEndpointManagement.class);
+
+	public Endpoint createEndpoint() throws Exception {
+		LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName());
+		return endpoint;
+	}
+
+	public EndpointManagementMBean cloneEndpointManagementMBean() {
+		LoopEndpointManagement clone = new LoopEndpointManagement();
+		try {
+			clone.setJndiName(this.getJndiName());
+			clone.setBindAddress(this.getBindAddress());
+			clone.setJitter(this.getJitter());
+			clone.setPacketizationPeriod(this.getPacketizationPeriod());
+			clone.setPortRange(this.getPortRange());
+			clone.setPCMA(this.getPCMA());
+			clone.setPCMU(this.getPCMU());
+			clone.setDTMF(this.getDTMF());
+		} catch (Exception ex) {
+			logger.error("LoopEndpointManagement clonning failed ", ex);
+			return null;
+		}
+		return clone;
+	}
 
 }

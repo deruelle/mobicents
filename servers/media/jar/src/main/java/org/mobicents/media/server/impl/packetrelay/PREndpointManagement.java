@@ -16,7 +16,9 @@
 
 package org.mobicents.media.server.impl.packetrelay;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -26,9 +28,29 @@ import org.mobicents.media.server.spi.Endpoint;
 public class PREndpointManagement extends EndpointManagement
     implements PREndpointManagementMBean{
     
+	private Logger logger = Logger.getLogger(PREndpointManagement.class);	
+	
     /** Creates a new instance of PREndpointManagement */
     public Endpoint createEndpoint() throws Exception {
         return new PREndpointImpl(this.getJndiName());
     }
+    
+	public EndpointManagementMBean cloneEndpointManagementMBean() {
+		PREndpointManagement clone = new PREndpointManagement();
+		try {
+			clone.setJndiName(this.getJndiName());
+			clone.setBindAddress(this.getBindAddress());
+			clone.setJitter(this.getJitter());
+			clone.setPacketizationPeriod(this.getPacketizationPeriod());
+			clone.setPortRange(this.getPortRange());
+			clone.setPCMA(this.getPCMA());
+			clone.setPCMU(this.getPCMU());
+			clone.setDTMF(this.getDTMF());
+		} catch (Exception ex) {
+			logger.error("PREndpointManagement clonning failed ", ex);
+			return null;
+		}
+		return clone;
+	}         
     
 }

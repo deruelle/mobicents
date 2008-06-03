@@ -14,7 +14,9 @@
 package org.mobicents.media.server.impl.conference;
 
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -24,10 +26,30 @@ import org.mobicents.media.server.spi.Endpoint;
 public class ConfEndpointManagement extends EndpointManagement
         implements ConfEndpointManagementMBean {
 
+	private Logger logger = Logger.getLogger(ConfEndpointManagement.class);
 
     @Override
     public Endpoint createEndpoint() throws Exception {
         return new ConfEndpointImpl(this.getJndiName());
     }
+    
+    @Override
+	public EndpointManagementMBean cloneEndpointManagementMBean() {
+		ConfEndpointManagement clone = new ConfEndpointManagement();
+		try {
+			clone.setJndiName(this.getJndiName());
+			clone.setBindAddress(this.getBindAddress());
+			clone.setJitter(this.getJitter());
+			clone.setPacketizationPeriod(this.getPacketizationPeriod());
+			clone.setPortRange(this.getPortRange());
+			clone.setPCMA(this.getPCMA());
+			clone.setPCMU(this.getPCMU());
+			clone.setDTMF(this.getDTMF());
+		} catch (Exception ex) {
+			logger.error("ConfEndpointManagement clonning failed ", ex);
+			return null;
+		}
+		return clone;
+	}        
 
 }

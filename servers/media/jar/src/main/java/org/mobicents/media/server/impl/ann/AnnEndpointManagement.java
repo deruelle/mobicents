@@ -18,6 +18,7 @@ package org.mobicents.media.server.impl.ann;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -36,10 +37,30 @@ public class AnnEndpointManagement extends EndpointManagement
     public AnnEndpointManagement() {
     }
     
+    @Override
     public Endpoint createEndpoint() throws Exception {
         AnnEndpointImpl endpoint = new AnnEndpointImpl(getJndiName());
         return endpoint;
     }
+    
+    @Override
+	public EndpointManagementMBean cloneEndpointManagementMBean() {
+		AnnEndpointManagement clone = new AnnEndpointManagement();
+		try {
+			clone.setJndiName(this.getJndiName());
+			clone.setBindAddress(this.getBindAddress());
+			clone.setJitter(this.getJitter());
+			clone.setPacketizationPeriod(this.getPacketizationPeriod());
+			clone.setPortRange(this.getPortRange());
+			clone.setPCMA(this.getPCMA());
+			clone.setPCMU(this.getPCMU());
+			clone.setDTMF(this.getDTMF());
+		} catch (Exception ex) {
+			logger.error("AnnEndpointManagement clonning failed ", ex);
+			return null;
+		}
+		return clone;
+	}    
     
     
 }

@@ -15,7 +15,9 @@
  */
 package org.mobicents.media.server.impl.ivr;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.ann.AnnEndpointManagement;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -26,6 +28,8 @@ import org.mobicents.media.server.spi.Endpoint;
 public class IVREndpointManagement extends AnnEndpointManagement
         implements IVREndpointManagementMBean {
 
+	private Logger logger = Logger.getLogger(IVREndpointManagement.class);
+	
     private String recordDir;
     private String mediaType;
 
@@ -62,6 +66,27 @@ public class IVREndpointManagement extends AnnEndpointManagement
         return endpoint;
     }
 
+    @Override
+	public EndpointManagementMBean cloneEndpointManagementMBean() {
+		IVREndpointManagement clone = new IVREndpointManagement();
+		try {
+			clone.setJndiName(this.getJndiName());
+			clone.setBindAddress(this.getBindAddress());
+			clone.setJitter(this.getJitter());
+			clone.setPacketizationPeriod(this.getPacketizationPeriod());
+			clone.setPortRange(this.getPortRange());
+			clone.setPCMA(this.getPCMA());
+			clone.setPCMU(this.getPCMU());
+			clone.setRecordDir(this.getRecordDir());
+			clone.setMediaType(this.getMediaType());
+			clone.setDTMF(this.getDTMF());
+		} catch (Exception ex) {
+			logger.error("IVREndpointManagement clonning failed ", ex);
+			return null;
+		}
+		return clone;
+	}
+	
     /**
      * Starts MBean.
      */

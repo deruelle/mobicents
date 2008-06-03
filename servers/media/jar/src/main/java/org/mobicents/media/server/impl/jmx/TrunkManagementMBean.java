@@ -16,11 +16,15 @@
 
 package org.mobicents.media.server.impl.jmx;
 
+import javax.management.ObjectName;
+
+import org.jboss.system.ServiceMBean;
+
 /**
  *
  * @author Oleg Kulikov
  */
-public interface TrunkManagementMBean extends EndpointManagementMBean {
+public interface TrunkManagementMBean extends ServiceMBean {
     /**
      * Gets ammount of Endpoints.
      *
@@ -34,6 +38,14 @@ public interface TrunkManagementMBean extends EndpointManagementMBean {
      * @param channels the number of endpoints.
      */
     public void setChannels(Integer channels);
+    
+    public String getJndiName();
+    
+    public void setJndiName(String jndiName);
+    
+    public ObjectName getEndpointManagementMBean();
+    
+    public void setEndpointManagementMBean(ObjectName endpointMBean);    
     
     
 }

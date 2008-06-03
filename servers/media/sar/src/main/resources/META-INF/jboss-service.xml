@@ -1,113 +1,176 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- 
-/*****************************************************************
- *                                                               *
- *  Mobicents Media Gateway                                      *
- *                                                               *
- *****************************************************************/
+	/*****************************************************************
+	*                                                               *
+	*  Mobicents Media Gateway                                      *
+	*                                                               *
+	*****************************************************************/
 -->
 
 
-<server>         
+<server>
 
-    <!-- Media Server Management MBean -->
-    <mbean code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
-         name="media.mobicents:service=MediaServerManagement"> 
-        <depends optional-attribute-name="AnnTrunkManagementMBean">media.mobicents:trunk=announcement</depends>        
-        <depends optional-attribute-name="ConfEndpointManagementMBean">media.mobicents:endpoint=conf</depends>        
-        <depends optional-attribute-name="LoopEndpointManagementMBean">media.mobicents:trunk=loopback</depends>        
-        <depends optional-attribute-name="PRTrunkManagementMBean">media.mobicents:trunk=packet-relay</depends>        
-    </mbean>
+	<!-- Media Server Management MBean -->
+	<mbean
+		code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
+		name="media.mobicents:service=MediaServerManagement">
+		<depends optional-attribute-name="AnnTrunkManagementMBean">
+			media.mobicents:trunk=announcement
+		</depends>
+		<depends
+			optional-attribute-name="ConfEndpointManagementMBean">
+			media.mobicents:endpoint=conf
+		</depends>
+		<depends
+			optional-attribute-name="LoopEndpointManagementMBean">
+			media.mobicents:trunk=loopback
+		</depends>
+		<depends optional-attribute-name="PRTrunkManagementMBean">
+			media.mobicents:trunk=packet-relay
+		</depends>
+	</mbean>
 
-    <!-- ANNOUNCEMENT -->
-    <mbean code="org.mobicents.media.server.impl.ann.AnnTrunkManagement" 
-           name="media.mobicents:trunk=announcement"> 
-        <attribute name="JndiName">media/trunk/Announcement</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Channels">10</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
-    </mbean>
-    
-    <!-- PACKET RELAY -->
-    <mbean code="org.mobicents.media.server.impl.packetrelay.PRTrunkManagement" 
-           name="media.mobicents:trunk=packet-relay"> 
-        <attribute name="JndiName">media/trunk/PacketRelay</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Channels">10</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
-        <attribute name="DTMF">
-            detector.mode=AUTO           
-        </attribute>
-        
-        <!-- Use the following setting if you are using INBAND
-        <attribute name="DTMF">
-            detector.mode=INBAND
-            dtmf.payload = 101
-        </attribute>
-        -->
-    </mbean>
-    
-    <!-- LOOPBACK ENDPOINT -->
-    <mbean code="org.mobicents.media.server.impl.test.LoopEndpointManagement" 
-           name="media.mobicents:trunk=loopback"> 
-        <attribute name="JndiName">media/test/Loopback/1</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
-	<attribute name="DTMF">
-		detector.mode=AUTO
-        </attribute>
-    </mbean>
-    
-    <!-- CONF ENDPOINT -->
-    <mbean code="org.mobicents.media.server.impl.conference.ConfEndpointManagement" 
-           name="media.mobicents:endpoint=conf"> 
-        <attribute name="JndiName">media/trunk/Cnf/1</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
-        <attribute name="DTMF">
-            detector.mode=AUTO
-        </attribute>
-    </mbean>
-    
-    <!-- IVR Endpoint -->
-    <mbean code="org.mobicents.media.server.impl.ivr.IVREndpointManagement" 
-           name="media.mobicents:endpoint=ivr"> 
-        <attribute name="JndiName">media/trunk/IVR/1</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMU">true</attribute>
-        <attribute name="PCMA">false</attribute>
-        <attribute name="MediaType">audio.x_wav</attribute>
-        <attribute name="RecordDir">${jboss.server.data.dir}</attribute>
-        <attribute name="DTMF">
-            detector.mode=AUTO
-        </attribute>
-    </mbean>
-    
-    <!-- DFT test Endpoint -->
-    <mbean code="org.mobicents.media.server.impl.fft.DFTEndpointManagement" 
-           name="media.mobicents:endpoint=dft"> 
-        <attribute name="JndiName">media/trunk/DFT/1</attribute>
-        <attribute name="BindAddress">${jboss.bind.address}</attribute>
-        <attribute name="Jitter">60</attribute>
-        <attribute name="PacketizationPeriod">20</attribute>
-        <attribute name="PortRange">1024-65535</attribute>
-        <attribute name="PCMA">true</attribute>
-    </mbean>
-    
+	<!-- ANNOUNCEMENT ENDPOINT -->
+	<mbean
+		code="org.mobicents.media.server.impl.ann.AnnEndpointManagement"
+		name="media.mobicents:endpoint=announcement">
+		<attribute name="JndiName">
+			media/endpoint/Announcement
+		</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMA">true</attribute>
+	</mbean>
+
+	<!-- ANNOUNCEMENT TRUNK -->
+	<mbean code="org.mobicents.media.server.impl.jmx.TrunkManagement"
+		name="media.mobicents:trunk=announcement">
+		<depends optional-attribute-name="EndpointManagementMBean">
+			media.mobicents:endpoint=announcement
+		</depends>
+		<attribute name="Channels">10</attribute>
+		<attribute name="JndiName">media/trunk/Announcement</attribute>
+	</mbean>
+
+	<!-- PACKET RELAY ENDPOINT -->
+	<mbean
+		code="org.mobicents.media.server.impl.packetrelay.PREndpointManagement"
+		name="media.mobicents:endpoint=packet-relay">
+		<attribute name="JndiName">
+			media/endpoint/PacketRelay
+		</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMA">true</attribute>
+		<attribute name="DTMF">detector.mode=AUTO</attribute>
+
+		<!-- Use the following setting if you are using INBAND
+			<attribute name="DTMF">
+			detector.mode=INBAND
+			dtmf.payload = 101
+			</attribute>
+		-->
+	</mbean>
+
+	<!-- PACKET RELAY TRUNK -->
+	<mbean code="org.mobicents.media.server.impl.jmx.TrunkManagement"
+		name="media.mobicents:trunk=packet-relay">
+		<depends optional-attribute-name="EndpointManagementMBean">
+			media.mobicents:endpoint=packet-relay
+		</depends>
+		<attribute name="Channels">10</attribute>
+		<attribute name="JndiName">media/trunk/PacketRelay</attribute>
+	</mbean>
+
+	<!-- LOOPBACK ENDPOINT -->
+	<mbean
+		code="org.mobicents.media.server.impl.test.LoopEndpointManagement"
+		name="media.mobicents:endpoint=loopback">
+		<attribute name="JndiName">
+			media/test/endpoint/Loopback
+		</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMA">true</attribute>
+		<attribute name="DTMF">detector.mode=AUTO</attribute>
+	</mbean>
+
+	<!-- LOOPBACK TRUNK -->
+	<mbean code="org.mobicents.media.server.impl.jmx.TrunkManagement"
+		name="media.mobicents:trunk=loopback">
+		<depends optional-attribute-name="EndpointManagementMBean">
+			media.mobicents:endpoint=loopback
+		</depends>
+		<attribute name="Channels">10</attribute>
+		<attribute name="JndiName">media/test/trunk/Loopback</attribute>
+	</mbean>
+
+	<!-- CONF ENDPOINT -->
+	<mbean
+		code="org.mobicents.media.server.impl.conference.ConfEndpointManagement"
+		name="media.mobicents:endpoint=conf">
+		<attribute name="JndiName">media/endpoint/Conference</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMA">true</attribute>
+		<attribute name="DTMF">detector.mode=AUTO</attribute>
+	</mbean>
+
+	<!-- CONF TRUNK -->
+	<mbean code="org.mobicents.media.server.impl.jmx.TrunkManagement"
+		name="media.mobicents:trunk=conf">
+		<depends optional-attribute-name="EndpointManagementMBean">
+			media.mobicents:endpoint=conf
+		</depends>
+		<attribute name="Channels">10</attribute>
+		<attribute name="JndiName">media/trunk/Conference</attribute>
+	</mbean>
+
+	<!-- IVR Endpoint -->
+	<mbean
+		code="org.mobicents.media.server.impl.ivr.IVREndpointManagement"
+		name="media.mobicents:endpoint=ivr">
+		<attribute name="JndiName">media/endpoint/IVR</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="PCMA">false</attribute>
+		<attribute name="MediaType">audio.x_wav</attribute>
+		<attribute name="RecordDir">${jboss.server.data.dir}</attribute>
+		<attribute name="DTMF">detector.mode=AUTO</attribute>
+	</mbean>
+
+	<!-- IVR TRUNK -->
+	<mbean code="org.mobicents.media.server.impl.jmx.TrunkManagement"
+		name="media.mobicents:trunk=ivr">
+		<depends optional-attribute-name="EndpointManagementMBean">
+			media.mobicents:endpoint=ivr
+		</depends>
+		<attribute name="Channels">10</attribute>
+		<attribute name="JndiName">media/trunk/IVR</attribute>
+	</mbean>
+
+	<!-- DFT test Endpoint -->
+	<mbean
+		code="org.mobicents.media.server.impl.fft.DFTEndpointManagement"
+		name="media.mobicents:endpoint=dft">
+		<attribute name="JndiName">media/trunk/DFT/1</attribute>
+		<attribute name="BindAddress">${jboss.bind.address}</attribute>
+		<attribute name="Jitter">60</attribute>
+		<attribute name="PacketizationPeriod">20</attribute>
+		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PCMA">true</attribute>
+	</mbean>
+
 </server>

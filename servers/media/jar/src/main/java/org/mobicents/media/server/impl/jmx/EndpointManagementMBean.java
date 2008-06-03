@@ -146,4 +146,6 @@ public interface EndpointManagementMBean extends ServiceMBean {
      * @return current configuration.
      */
     public Properties getDTMF();
+    
+    public EndpointManagementMBean cloneEndpointManagementMBean();
 }

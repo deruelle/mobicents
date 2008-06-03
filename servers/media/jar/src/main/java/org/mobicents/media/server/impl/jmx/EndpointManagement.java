@@ -19,6 +19,7 @@ package org.mobicents.media.server.impl.jmx;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -28,7 +29,6 @@ import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
 /**
  *
@@ -265,6 +265,8 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     }
     
     public abstract Endpoint createEndpoint() throws Exception;
+    
+    public abstract EndpointManagementMBean cloneEndpointManagementMBean();
     
     /**
      * Starts MBean.
