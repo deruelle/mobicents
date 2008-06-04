@@ -2,12 +2,13 @@
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <section
-	id="section-Mobicents_XML_Document_Management_Server">
+	id="section-Mobicents_XML_Document_Management_Server"
+	xreflabel="XML Document Management Server">
 	<title>Mobicents XML Document Management Server</title>
 	<section
 		id="section-Introduction_to_the_Mobicents_XML_Document_Management_Server">
 		<title>Introduction to the Mobicents XML Document Management Server</title>
-		<para>The Mobicents XMLsection-Mobicents_XML_Document_Management_Server.xml Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the <ulink
+		<para>The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the <ulink
 				url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
 	</section>
 	<section
@@ -44,6 +45,8 @@
 			</varlistentry>
 		</variablelist>
 		<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
+		
+		<!--install-->
 		<formalpara>
 			<title>Installing the Mobicents XML Document Management Server</title>
 			<para>How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
@@ -52,20 +55,37 @@
 			<listitem>
 				<formalpara>
 					<title>Installing the XDM Server using the Mobicents Binary Distribution</title>
-					<para>TBD: (Fix this with proper instructions): Using a binary release, install doing ant deploy on directory servers/sip-presence/xdms, uninstall doing ant undeploy on same directory.</para>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can install the XDM Server by doing an ant deploy on the <filename>servers/sip-presence/xdms</filename> directory.</para>
 				</formalpara>
 			</listitem>
 			<listitem>
 				<formalpara>
 					<title>Installing the XDM Server after Building Mobicents from Source</title>
-					<para>TBD: (Fix this with proper instructions): From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/xdms, uninstall doing mvn clean on same directory.</para>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can install the XDM Server by doing a mvn install on the <filename>/trunk/servers/sip-presence/xdms</filename> directory.</para>
 				</formalpara>
 			</listitem>
 		</itemizedlist>
+		
+		<!--uninstall-->
 		<formalpara>
-			<title>Uninstalling the Mobicents XML Document Server</title>
-			<para>TBD (check this): The XDM Server can easily be uninstalled by invoking the <command>mvn clean</command> on the <filename>/trunk/servers/sip-presence/xdms</filename> directory.</para>
+			<title>Uninstalling the Mobicents XML Document Management Server</title>
+			<para>How you uninstall the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can uninstall the XDM Server by doing an ant undeploy on the <filename>servers/sip-presence/xdms</filename> directory.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can uninstall the XDM Server by doing a mvn clean on the <filename>/trunk/servers/sip-presence/xdms</filename> directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		
 		<formalpara>
 			<title>Testing the Mobicents XDM Server</title>
 			<para>TBD (Make sure this is correct): is recommended that you test the XDM Server after you deploy it. For instructions on how to test the XDM Server, read and follow the instructions in <filename>.../xdms/tests/README.txt</filename>. No tests should fail.</para>
@@ -79,31 +99,29 @@
 			<listitem>
 				<para>
 					<ulink
-						url="IETF pres-rules (RFC 5025)"/>
+						url="http://tools.ietf.org/html/rfc5025">IETF Presence Rules (RFC 5025)</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					<ulink
-						url="OMA pres-rules (OMA Presence Simple v1.1 Candidate Release)"/>
+						url="http://www.openmobilealliance.org/Technical/release_program/Presence_simple_v1_1.aspx">OMA Presence Rules (OMA Presence Simple v1.1 Candidate Release)</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					<ulink
-						url="http://tools.ietf.org/html/rfc4826"/>
+						url="http://tools.ietf.org/html/rfc4826">IETF Resource Lists</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<ulink
-						url="IETF rls-services (RFC 4826)"/>
+					<ulink url="http://tools.ietf.org/html/rfc4826">IETF RLS Services (RFC 4826)</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
-					<ulink
-						url="IETF xcap-capsp (RFC 4825)"/>
+					<ulink url="http://tools.ietf.org/html/rfc4825">IETF XCAP-CAPS (RFC 4825)</ulink>
 				</para>
 			</listitem>
 		</itemizedlist>
@@ -111,12 +129,12 @@
 			id="figure-orig-OPENXDM_Functional_Architecture.jpg">
 			<title>The Mobicents XML Document Management Server</title>
 			<mediaobject
-				id="mediaobj-orig-OPENXDM_Functional_Architecture.jpg">
+				id="mediaobj-orig-XDM_Functional_Architecture.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/orig-OPENXDM_Functional_Architecture.jpg"
+						fileref="images/orig-XDM_Functional_Architecture.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -167,7 +185,7 @@
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/orig-OpenXDM_JAINSLEE_Implementation.jpg"
+						fileref="images/orig-XDMS_Implementation.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -262,10 +280,7 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<formalpara>
-			<title>Original Source, Unformatted Bits, and TBD</title>
-			<para>This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D.</para>
-		</formalpara>
+			<para>TBD: This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D.</para>
 	</section>
 	<section
 		id="section-Resources_and_Further_Information_About_the_Mobicents_XML_Document_Server">

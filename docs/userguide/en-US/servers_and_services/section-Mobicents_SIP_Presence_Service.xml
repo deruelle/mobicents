@@ -67,13 +67,31 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<formalpara>
-			<title>Original Source, Unformatted Bits, and TBD</title>
-			<para>This version of the documentation is from <ulink url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service"/>, and the original author is Eduardo Martins, JBoss R &amp; D.</para>
-		</formalpara>
 		<para>To fill different needs you can deploy all servers separated, or all integrated in the same host, and on top of that, there are JAINSLEE internal client interfaces available for each, which can turn into a big advantage over other presence services.</para>
 		<para>For documentation on each server proceed to links under this page Resources section.</para>
-		
+		<formalpara>
+			<title>Resources and Further Information about the Mobicents Presence Service</title>
+			<para>For further information on the Mobicents Presence Service, here is a list of additional resources:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>Issue Tracker</para>
+			</listitem>
+			<listitem>
+				<para>
+						<ulink
+						url="http://mobicents.googlecode.com/svn/trunk/servers/sip-presence/">Source Code Location</ulink>
+					</para>
+			</listitem>
+			<listitem>
+				<para>
+						<ulink
+						url="http://forums.java.net/jive/category.jspa?categoryID=36">Java.net Forums</ulink>
+					</para>
+			</listitem>
+		</itemizedlist>
+		<para>TBD: This version of the documentation is from <ulink
+				url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service"/>, and the original author is Eduardo Martins, JBoss R &amp; D.</para>
 	</section>
 	<xi:include
 		href="section-Mobicents_XML_Document_Management_Server.xml"

@@ -38,7 +38,7 @@
 		</variablelist>
 		<formalpara>
 			<title>Installing the Mobicents Presence Server</title>
-			<para>TBM (Fix this with proper instructions): Currently, the Mobicents Presence Server can only be installed as integrated with the Mobicents XML Document Management Server, i.e. in an all-in-one Presence Server architecture<footnote
+			<para>TBD (Fix this with proper instructions): Currently, the Mobicents Presence Server can only be installed as integrated with the Mobicents XML Document Management Server, i.e. in an all-in-one Presence Server architecture<footnote
 					id="footnote-integrated_presence_server"><para>This limitation is due to the current lack of an external XDM Client SBB component.</para>
 				</footnote>.</para>
 		</formalpara>
@@ -48,23 +48,47 @@
 			<para>You should also make sure that all the install requirements of the Mobicents XDM Server are met before attempting to install the Mobicents Presence Server. See <xref
 					linkend="fpara-Requirements"/>.</para>
 		</important>
-		<para>You can install the Mobicents Presence server by issuing a <command>mvn install</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
+		
+		<!--install-->
 		<formalpara>
-			<title>Installing the Presence Server using the Mobicents Binary Distribution</title>
-			<para>TBD (fix with proper instructions): Using a binary release, you can install the Presence Server by doing an ant deploy on the <filename>/servers/sip-presence/integrated</filename> directory.</para>
+			<title>Installing the Mobicents XML Document Management Server</title>
+			<para>How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<formalpara>
+					<title>Installing the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can install the XDM Server by doing an ant deploy on the <filename>servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Installing the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can install the XDM Server by doing a mvn install on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		
+		<!--uninstall-->
 		<formalpara>
-			<title>Installing the Presence Server using the Mobicents Source Distribution</title>
-			<para>TBD (fix with proper instructions) You can install the Mobicents Presence server by issuing a <command>mvn install</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
+			<title>Uninstalling the Mobicents XML Document Management Server</title>
+			<para>How you uninstall the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
-		<formalpara>
-			<title>Uninstalling the Presence Server using the Mobicents Binary Distribution</title>
-			<para>TBD (fix with proper instructions): Using a binary release, you can uninstall the Presence Server by doing an ant deploy on the <filename>/servers/sip-presence/integrated</filename> directory.</para>
-		</formalpara>
-		<formalpara>
-			<title>Uninstalling the Presence Server using the Mobicents Source Distribution</title>
-			<para>TBD (fix with proper instructions): You can uninstall the Mobicents Presence server by issuing a <command>mvn clean</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
-		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can uninstall the XDM Server by doing an ant undeploy on the <filename>servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can uninstall the XDM Server by doing a mvn clean on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		
 		<formalpara>
 			<title>Testing the Mobicents Presence Server</title>
 			<para>A test framework for the Mobicents Presence Server is forthcoming but not available yet.</para>
@@ -186,10 +210,7 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<formalpara>
-			<title>Original Source, Unformatted Bits, and TBD</title>
-			<para>This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.</para>
-		</formalpara>
+		<para>TBD: This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.</para>
 	</section>
 	<section
 		id="section-Resources_and_Further_Information_About_the_Mobicents_Presence_Server">
