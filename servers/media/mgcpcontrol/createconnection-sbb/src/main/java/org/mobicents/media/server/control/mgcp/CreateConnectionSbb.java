@@ -192,6 +192,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		response.setLocalConnectionDescriptor(localConnectionDescriptor);
 
 		response.setTransactionHandle(this.getTxId());
+		
 
 		if (this.getUseSpecificEndPointId()) {
 

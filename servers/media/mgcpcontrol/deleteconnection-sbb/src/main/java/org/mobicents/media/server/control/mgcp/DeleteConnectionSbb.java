@@ -17,7 +17,6 @@
 package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
-import jain.protocol.ip.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -39,7 +38,9 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 
+import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
+import net.java.slee.resource.mgcp.MgcpConnectionActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
@@ -97,7 +98,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 		CallIdentifier callID = event.getCallIdentifier();
 		ConnectionIdentifier connectionID = event.getConnectionIdentifier();
-		
+
 		this.setReceivedTransactionID(event.getSource());
 
 		// TODO : Wildcard conventions shall not be used. Send Error Response if
@@ -121,7 +122,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	}
 
 	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(), ReturnCode.Transaction_Executed_Normally);
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(),
+				ReturnCode.Transaction_Executed_Normally);
 		int txID = this.getTxId();
 
 		response.setTransactionHandle(txID);
@@ -135,6 +137,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 
 		List<MsConnection> msConnections = msProvider.getMsConnections(endpointName);
 
+		List<MgcpConnectionActivity> mgcpConnectionActivities = mgcpProvider.getConnectionActivities(endpointID);
+
 		for (MsConnection c : msConnections) {
 			try {
 
@@ -143,6 +147,19 @@ public abstract class DeleteConnectionSbb implements Sbb {
 				c.release();
 
 				logger.debug("Successfully deleted MsConnection ID = " + c.getId());
+
+				for (MgcpConnectionActivity a : mgcpConnectionActivities) {
+					ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(a
+							.getConnectionIdentifier().toString());
+					MsConnection msConnection = (MsConnection) mediaACI.getActivity();
+
+					if (msConnection.getId().equals(c.getId())) {
+						logger.debug("Releasing MgcpConnectionActivity = " + a.getConnectionIdentifier());
+						a.release();
+						mgcpConnectionActivities.remove(a);
+						break;
+					}
+				}
 
 			} catch (FactoryException e) {
 				logger.error("FactoryException while trying to retrieve the MS ACI for MsConnection ID = " + c.getId());
@@ -189,9 +206,9 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public abstract int getTxId();
 
 	public abstract void setTxId(int txId);
-	
+
 	public abstract Object getReceivedTransactionID();
 
-	public abstract void setReceivedTransactionID(Object receivedTransactionID);	
+	public abstract void setReceivedTransactionID(Object receivedTransactionID);
 
 }
