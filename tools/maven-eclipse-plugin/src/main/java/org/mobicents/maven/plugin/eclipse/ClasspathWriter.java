@@ -186,17 +186,19 @@ public class ClasspathWriter
         for(Iterator i = allArtifacts.iterator(); i.hasNext();) {
         	Artifact artifact = (Artifact)i.next();
         	
-        	if (classpathExcludes.contains(artifact.getGroupId())) {
-        		logger.info("Excluding "+artifact+" from .classpath, groupId is excluded");
-        		i.remove();
-        	}
-        	else if (classpathExcludes.contains(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
-        		logger.info("Excluding "+artifact+" from .classpath, groupId:artifactId is excluded");
-        		i.remove();
-        	}
-        	else if (classpathExcludes.contains(artifact.getGroupId() + ":" + artifact.getArtifactId()+":"+artifact.getVersion())) {
-        		logger.info("Excluding "+artifact+" from .classpath, groupId:artifactId:version is excluded");
-        		i.remove();
+        	if(classpathExcludes != null) {
+	        	if (classpathExcludes.contains(artifact.getGroupId())) {
+	        		logger.info("Excluding "+artifact+" from .classpath, groupId is excluded");
+	        		i.remove();
+	        	}
+	        	else if (classpathExcludes.contains(artifact.getGroupId() + ":" + artifact.getArtifactId())) {
+	        		logger.info("Excluding "+artifact+" from .classpath, groupId:artifactId is excluded");
+	        		i.remove();
+	        	}
+	        	else if (classpathExcludes.contains(artifact.getGroupId() + ":" + artifact.getArtifactId()+":"+artifact.getVersion())) {
+	        		logger.info("Excluding "+artifact+" from .classpath, groupId:artifactId:version is excluded");
+	        		i.remove();
+	        	}
         	}
         }
         
