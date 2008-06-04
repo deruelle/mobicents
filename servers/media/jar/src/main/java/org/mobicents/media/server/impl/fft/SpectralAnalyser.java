@@ -11,7 +11,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.fft;
 
 import java.io.IOException;
@@ -39,13 +38,12 @@ import org.mobicents.media.server.spi.events.test.SpectrumEvent;
  */
 public class SpectralAnalyser extends BaseResource implements MediaSink, BufferTransferHandler {
 
-    private List <NotificationListener> listeners = new ArrayList();
+    private List<NotificationListener> listeners = new ArrayList();
     private Codec codec;
     private int offset = 0;
     private byte[] localBuffer = new byte[16000];
-    
     private Logger logger = Logger.getLogger(SpectralAnalyser.class);
-    
+
     public void configure(Properties config) {
         setState(MediaResourceState.CONFIGURED);
     }
@@ -55,13 +53,13 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
     }
 
     public void addListener(NotificationListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     public void removeListener(NotificationListener listener) {
-        synchronized(listeners) {
+        synchronized (listeners) {
             listeners.remove(listener);
         }
     }
@@ -93,11 +91,11 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
     private double[] mod(Complex[] x) {
         double[] res = new double[x.length];
         for (int i = 0; i < res.length; i++) {
-            res[i] = Math.sqrt(x[i].re()*x[i].re() + x[i].im()*x[i].im());
+            res[i] = Math.sqrt(x[i].re() * x[i].re() + x[i].im() * x[i].im());
         }
         return res;
     }
-    
+
     protected void sendEvent(double[] spectra) {
         SpectrumEvent evt = new SpectrumEvent(this, EventID.TEST_SPECTRA, spectra);
         synchronized (listeners) {
@@ -106,7 +104,7 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
             }
         }
     }
-    
+
     public void transferData(PushBufferStream stream) {
         if (getState() != MediaResourceState.STARTED) {
             return;
@@ -118,7 +116,7 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
         } catch (IOException e) {
         }
 
-        byte[] data = (byte[]) buffer.getData();        
+        byte[] data = (byte[]) buffer.getData();
         if (codec != null) {
             data = codec.process(data);
         }
@@ -133,26 +131,44 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
 
         // buffer full?
         if (offset == 16000) {
+            double[] media = new double[8000];
+            int j = 0;
+            for (int i = 0; i < media.length; i++) {
+                media[i] = (localBuffer[j++] & 0xff) | (localBuffer[j++] << 8);
+            }
+
+            //resampling
             Complex[] signal = new Complex[8192];
-            int k = 0;
+            double k = (double) (media.length - 1) / (double) (signal.length);
+
+            for (int i = 0; i < signal.length; i++) {
+                int p = (int) (k * i);
+                int q = (int) (k * i) + 1;
+
+                double K = (media[q] - media[p]) * media.length;
+                double dx = (double) i / (double) signal.length - (double) p / (double) media.length;
+                signal[i] = new Complex(media[p] + K * dx, 0);
+            }
+
+/*            int k = 0;
             for (int i = 0; i < 8000; i++) {
                 signal[i] = new Complex(
                         (localBuffer[k++] & 0xff) | (localBuffer[k++] << 8), 0);
+                System.out.println(i + " " + signal[i].re());
             }
-            
+
             //pad with zero
             for (int i = 0; i < 192; i++) {
-                signal[8000 + i] = new Complex(0,0);
+                signal[8000 + i] = new Complex(0, 0);
             }
-            
+*/
             localBuffer = new byte[16000];
             offset = 0;
-            
+
             Complex[] sp = FFT.fft(signal);
             double[] res = mod(sp);
-            
+
             sendEvent(res);
         }
     }
-
 }
