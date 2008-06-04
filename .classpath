@@ -1,134 +1,142 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="servers/jain-slee/core/ejb3-proxy/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/core/jar/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/core/jar/src/test/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/core/rar/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/asterisk/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/blocking/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/forwarding/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/profile-spec/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/voicemail/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/pojo/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/admin-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/callcontrol-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/orderdeliverdate-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/ordershipdate-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/pojos/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/rules/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/rules/sar/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/rules/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/rules/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/sip/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/sip/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/tts/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/tts/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/xmpp/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/xmpp/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/media/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/media/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/media/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/war/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/provider-api/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/lab/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/lab/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/resources/lab/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-with-dialogs/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/http-client/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mgcp-demo/mdcx-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mgcp-demo/crcx-endpoint-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mgcp-demo/call-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mgcp-demo/crcx-sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/user-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/admin-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/ordershipdate-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/orderdeliverdate-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/slee/callcontrol-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/pojo/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/utility/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/converged-demo/web/jar/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/google-talk-bot/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/http-client/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/xmpp-component/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-without-dialogs/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/blocking/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/voicemail/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/profile-spec/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/call-controller2/forwarding/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/http-servlet/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/http-servlet/sbb/src/test/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/ldap/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mgcp-demo/call-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/announcement-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/call-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/cnf-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/dtmf-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/echo-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/utility/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/profile-spec/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-with-dialogs/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/sip-loadtest-without-dialogs/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/balancer/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/location-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/proxy-sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/registrar-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/training/example1/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/training/example2/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/training/example3/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/sip-services/proxy-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/cnf-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/call-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/dtmf-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/announcement-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/slee/echo-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/mms-demo/utility/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/asterisk/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/xcap-client/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/profile-spec/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/parlay/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example4/common/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example4/sbb1/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example4/sbb2/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/common/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/events/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/sbb1/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/events/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example5/sbb2/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example6/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/training/example1/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/examples/training/example7/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/xcap-client/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/examples/xmpp-component/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/asterisk/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/diameter_legacy/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-client/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/http-servlet/war/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/lab/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/lab/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/lab/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/media/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/media/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/media/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/mgcp/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/provider-api/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/parlay/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/pojos/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/persistence/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/rules/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/rules/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/rules/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/rules/sar/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/sip/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/sip/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/smpp/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/tts/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/tts/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/xcap-client/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/xmpp/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/resources/xmpp/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/tools/ant-tasks/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/training/example2/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/training/example3/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/ldap/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/examples/google-talk-bot/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/tools/cli/src/main/java"/>
-  <classpathentry kind="src" path="servers/jain-slee/tools/management-console/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/tools/ant-tasks/src/main/java"/>
   <classpathentry kind="src" path="servers/jain-slee/tools/maven-du-plugin/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/ps-core/jaxb-pojos/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/ps-core/publication-sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/ps-core/subscription-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/tools/management-console/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/core/jar/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/core/jar/src/test/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/core/ejb3-proxy/src/main/java"/>
+  <classpathentry kind="src" path="servers/jain-slee/core/rar/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-servlets/sip-servlets-impl/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-servlets/sip-servlets-spec/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/internal-client/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/commons/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/ra/jdbc/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/ra/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/events/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/core/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/resource-lists/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/resource-lists/server/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/oma-pres-rules/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/oma-pres-rules/server/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/pres-rules/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/pres-rules/server/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/rls-services/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/rls-services/server/sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/xcap-caps/client/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/xcap-caps/server/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/sip-event/publication/pojo/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/sip-event/publication/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/sip-event/subscription/pojo/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/sip-event/subscription/sbb/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/xdms/tests/src/main/java"/>
   <classpathentry kind="src" path="servers/sip-presence/xdms/tests/src/test/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/oma-pres-rules/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/oma-pres-rules/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/pres-rules/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/pres-rules/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/resource-lists/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/resource-lists/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/rls-services/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/rls-services/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/xcap-caps/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/appusages/xcap-caps/server/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/client/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/commons/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/internal-client/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/ra/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/appusagecache/ratype/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/core/sbb/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/events/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/ra/jdbc/src/main/java"/>
-  <classpathentry kind="src" path="servers/sip-presence/xdms-core/server/datasource/ratype/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/ps-core/publication-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/ps-core/subscription-sbb/src/main/java"/>
+  <classpathentry kind="src" path="servers/sip-presence/ps-core/jaxb-pojos/src/main/java"/>
   <classpathentry kind="src" path="tools/maven-eclipse-plugin/src/main/java"/>
+  <classpathentry kind="lib" path="servers/sip-servlets/sip-servlets-impl/lib/Stun4J.jar"/>
+  <classpathentry kind="lib" path="servers/sip-servlets/sip-servlets-impl/lib/jbosssx.jar"/>
+  <classpathentry kind="lib" path="servers/sip-servlets/sip-servlets-impl/lib/jbossweb-service.jar"/>
   <classpathentry kind="var" path="M2_REPO/ant/ant-optional/1.5/ant-optional-1.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/ant/ant/1.6.5/ant-1.6.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
@@ -145,10 +153,10 @@
   <classpathentry kind="var" path="M2_REPO/com/opencloud/sleetck-minimal/1.0/sleetck-minimal-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/opencloud/sleetck-ra-common/1.0/sleetck-ra-common-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/facelets/jsf-facelets/1.1.14/jsf-facelets-1.1.14.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.4/commons-beanutils-1.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-cli/commons-cli/1.0/commons-cli-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/2.0/commons-collections-2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/2.1.1/commons-collections-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.1/commons-fileupload-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-io/commons-io/1.1/commons-io-1.1.jar"/>
@@ -160,6 +168,7 @@
   <classpathentry kind="var" path="M2_REPO/dk/i1/diameter/diameter/0.9.6.2/diameter-0.9.6.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/freemarker/freemarker/2.3.8/freemarker-2.3.8.jar"/>
+  <classpathentry kind="var" path="M2_REPO/geronimo-spec/geronimo-spec-j2ee-jacc/1.0-rc4/geronimo-spec-j2ee-jacc-1.0-rc4.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.8-brew/hsqldb-1.8.0.8-brew.jar"/>
   <classpathentry kind="var" path="M2_REPO/ie/omk/smppapi/0.3.7/smppapi-0.3.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/jain/jain-mgcp-ri/1.0/jain-mgcp-ri-1.0.jar"/>
@@ -229,6 +238,11 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-ssh-common/1.0-beta-2/wagon-ssh-common-1.0-beta-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-ssh-external/1.0-beta-2/wagon-ssh-external-1.0-beta-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-ssh/1.0-beta-2/wagon-ssh-1.0-beta-2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/annotations-api/6.0.14/annotations-api-6.0.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/catalina/6.0.14/catalina-6.0.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/coyote/6.0.14/coyote-6.0.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/juli/6.0.14/juli-6.0.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/tomcat/servlet-api/6.0.14/servlet-api-6.0.14.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/asteriskjava/asterisk-java/0.3.1/asterisk-java-0.3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/beanshell/bsh/2.0b4/bsh-2.0b4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-archiver/1.0-alpha-9/plexus-archiver-1.0-alpha-9.jar"/>
@@ -236,6 +250,7 @@
   <classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-interactivity-api/1.0-alpha-4/plexus-interactivity-api-1.0-alpha-4.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-io/1.0-alpha-1/plexus-io-1.0-alpha-1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-utils/1.4.9/plexus-utils-1.4.9.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/dnsjava/dnsjava/2.0.6/dnsjava-2.0.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/drools/drools-compiler/3.0.5/drools-compiler-3.0.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/drools/drools-core/3.0.5/drools-core-3.0.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/drools/drools-decisiontables/3.0.5/drools-decisiontables-3.0.5.jar"/>
@@ -260,9 +275,9 @@
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/freetts/cmutimelex/1.0/cmutimelex-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/freetts/en_us/1.0/en_us-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/freetts/freetts/1.0/freetts-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-constants/1.0.0.BETA1-CP1/mobicents-server-media-constants-1.0.0.BETA1-CP1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-jar/1.0.0.BETA1-CP1/mobicents-server-media-jar-1.0.0.BETA1-CP1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-mscontrol/1.0.0.BETA1-CP1/mobicents-server-media-mscontrol-1.0.0.BETA1-CP1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-constants/1.0.0.BETA2-SNAPSHOT/mobicents-server-media-constants-1.0.0.BETA2-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-jar/1.0.0.BETA2-SNAPSHOT/mobicents-server-media-jar-1.0.0.BETA2-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-server-media-mscontrol/1.0.0.BETA2-SNAPSHOT/mobicents-server-media-mscontrol-1.0.0.BETA2-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/rome/rome/0.9/rome-0.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.6.0/xercesImpl-2.6.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/xmlpull/xmlpull/1.1.3.4d_b4_min/xmlpull-1.1.3.4d_b4_min.jar"/>

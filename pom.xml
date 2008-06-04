@@ -667,7 +667,7 @@
 				<inherited>false</inherited>
 				<executions />
 				<configuration>
-					<excludePoms>servers/jain-slee/resources/diameter/**/pom.xml,servers/media/**/pom.xml,servers/sip-servlets/**/pom.xml</excludePoms>
+					<excludePoms>servers/jain-slee/resources/diameter/**/pom.xml,servers/media/**/pom.xml,servers/sip-servlets/sip-servlets-examples/pom.xml,servers/sip-servlets/mobicents-skin/pom.xml, servers/sip-servlets/sip-servlets-examples/**/pom.xml, servers/sip-servlets/sip-servlets-pbx/pom.xml, servers/sip-servlets/sip-servlets-test-suite/**/pom.xml</excludePoms>
 					<classpathExcludes>
 						<exclude>xml-apis:xml-apis</exclude>
 						<exclude>jtidy:jtidy</exclude>
