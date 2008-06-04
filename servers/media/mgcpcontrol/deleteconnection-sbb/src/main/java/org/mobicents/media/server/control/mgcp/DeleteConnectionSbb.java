@@ -97,6 +97,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 		CallIdentifier callID = event.getCallIdentifier();
 		ConnectionIdentifier connectionID = event.getConnectionIdentifier();
+		
+		this.setReceivedTransactionID(event.getSource());
 
 		// TODO : Wildcard conventions shall not be used. Send Error Response if
 		// found?
@@ -119,7 +121,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	}
 
 	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(), ReturnCode.Transaction_Executed_Normally);
 		int txID = this.getTxId();
 
 		response.setTransactionHandle(txID);
@@ -187,5 +189,9 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public abstract int getTxId();
 
 	public abstract void setTxId(int txId);
+	
+	public abstract Object getReceivedTransactionID();
+
+	public abstract void setReceivedTransactionID(Object receivedTransactionID);	
 
 }

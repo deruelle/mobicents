@@ -82,6 +82,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 		logger.info("--> MDCX TX ID = " + txID);
 
 		this.setTxId(txID);
+		this.setReceivedTransactionID(event.getSource());
 
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 		CallIdentifier callID = event.getCallIdentifier();
@@ -112,7 +113,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 		MsConnection msConnection = evt.getConnection();
 		String localSdp = msConnection.getLocalDescriptor();
 
-		ModifyConnectionResponse response = new ModifyConnectionResponse(this, ReturnCode.Transaction_Executed_Normally);
+		ModifyConnectionResponse response = new ModifyConnectionResponse(this.getReceivedTransactionID(), ReturnCode.Transaction_Executed_Normally);
 		ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(localSdp);
 		response.setLocalConnectionDescriptor(connectionDescriptor);
 		response.setTransactionHandle(txID);
@@ -143,7 +144,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		ModifyConnectionResponse response = new ModifyConnectionResponse(this, reason);
+		ModifyConnectionResponse response = new ModifyConnectionResponse(this.getReceivedTransactionID(), reason);
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
@@ -183,4 +184,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 
 	public abstract void setTxId(int txId);
 
+	public abstract Object getReceivedTransactionID();
+
+	public abstract void setReceivedTransactionID(Object receivedTransactionID);
 }

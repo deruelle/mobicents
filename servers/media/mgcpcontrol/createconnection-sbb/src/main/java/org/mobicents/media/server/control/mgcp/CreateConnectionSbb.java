@@ -16,7 +16,6 @@
 package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
-import net.java.slee.resource.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -39,6 +38,7 @@ import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.FacilityException;
 import javax.slee.facilities.NameAlreadyBoundException;
 
+import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
@@ -99,6 +99,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		String remoteSDP = null;
 
 		CallIdentifier callIdentifier = event.getCallIdentifier();
+
+		this.setReceivedTransactionID(event.getSource());
 
 		int txID = event.getTransactionHandle();
 
@@ -181,7 +183,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		String identifier = ((CallIdentifier) mgcpProvider.getUniqueCallIdentifier()).toString();
 		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
 
-		CreateConnectionResponse response = new CreateConnectionResponse(this,
+		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(),
 				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();
 
@@ -256,7 +258,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		CreateConnectionResponse response = new CreateConnectionResponse(this, reason, new ConnectionIdentifier("0"));
+		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(), reason, new ConnectionIdentifier("0"));
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
@@ -317,5 +319,9 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public abstract boolean getUseSpecificEndPointId();
 
 	public abstract void setUseSpecificEndPointId(boolean useSpecificEndPointId);
+
+	public abstract Object getReceivedTransactionID();
+
+	public abstract void setReceivedTransactionID(Object receivedTransactionID);
 
 }

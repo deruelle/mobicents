@@ -75,6 +75,8 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 		int txID = event.getTransactionHandle();
 
 		this.setTxId(txID);
+		
+		this.setReceivedTransactionID(event.getSource());
 
 		BearerInformation bearerInformation = event.getBearerInformation();
 		int encodingMethod = bearerInformation.getEncodingMethod();
@@ -124,7 +126,7 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		EndpointConfigurationResponse response = new EndpointConfigurationResponse(this, reason);
+		EndpointConfigurationResponse response = new EndpointConfigurationResponse(this.getReceivedTransactionID(), reason);
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
@@ -163,5 +165,10 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 	public abstract int getTxId();
 
 	public abstract void setTxId(int txId);
+	
+	public abstract Object getReceivedTransactionID();
+
+	public abstract void setReceivedTransactionID(Object receivedTransactionID);	
+	
 
 }

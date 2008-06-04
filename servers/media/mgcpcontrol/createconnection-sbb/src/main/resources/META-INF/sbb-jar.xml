@@ -21,7 +21,10 @@
                 <cmp-field>
                     <cmp-field-name>txId</cmp-field-name>
                 </cmp-field>
-            </sbb-abstract-class>                                               
+		<cmp-field>
+			<cmp-field-name>receivedTransactionID</cmp-field-name>
+                </cmp-field>            
+	    </sbb-abstract-class>                                               
         </sbb-classes>
 
         <event event-direction="Receive" initial-event="True">
