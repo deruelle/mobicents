@@ -1,8 +1,7 @@
 #Makefile for Mobicents_User_Guide
 
 XML_LANG	= en-US
-#DOCNAME		= REPLACEME
-DOCNAME		= Mobicents_User_Guide
+DOCNAME		= book-Working_with_the_Mobicents_Management_Console
 PRODUCT	= Mobicents
 BRAND		= JBoss
 

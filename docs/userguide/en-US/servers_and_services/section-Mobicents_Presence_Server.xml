@@ -16,23 +16,58 @@
 		<title>Configuring, Installing and Testing the Mobicents_Presence Server</title>
 		<formalpara>
 			<title>Requirements</title>
-			<para></para>
+			<para>The Mobicents Presence Server depends on the Mobicents Converged Application Server and the Mobicents SIP resource adapter, which should be deloyed before starting the Presence Server.</para>
 		</formalpara>
 		<formalpara>
 			<title>Configuration</title>
-			<para></para>
+			<para>The Mobicents Presence Server can be customized in the following aspects before being built.</para>
 		</formalpara>
+		<variablelist
+			id="varlist-Customizing_the_Presence_Server">
+			<title>Customizing the Presence Server</title>
+			<varlistentry>
+				<term>XCAP Aware User Agent</term>
+				<listitem>
+					<para>The Presence Server calculates the presence-rules XCAP URIs of users in a non-standard way by default, but one which is compatible with CounterPath eyeBeam. You can change this behavior to conform with standards by changing the contents of the <literal>clientUAIsEyebeam</literal> field of <literal>PresenceSubscriptionControlSbb</literal>, which is in <filename>ps-core/subscription-sbb/src/main/java/..</filename>.<footnote
+							id="footnote-temp_solution"><para>This is a temporary solution due to a feature in the current JAIN SIP stack that removes invalid User Agent hedaers of SIP requests. In the future, this configuration is exected to be deprecated or removed.</para>
+						</footnote>
+					</para>
+					<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
 		<formalpara>
 			<title>Installing the Mobicents Presence Server</title>
-			<para></para>
+			<para>TBM (Fix this with proper instructions): Currently, the Mobicents Presence Server can only be installed as integrated with the Mobicents XML Document Management Server, i.e. in an all-in-one Presence Server architecture<footnote
+					id="footnote-integrated_presence_server"><para>This limitation is due to the current lack of an external XDM Client SBB component.</para>
+				</footnote>.</para>
+		</formalpara>
+		<important
+			id="important-Installing_the_Presence_Server_Also_Installs_the_XDM_Server">
+			<title>Installing the Presence Server Also Installs the XDM Server</title>
+			<para>You should also make sure that all the install requirements of the Mobicents XDM Server are met before attempting to install the Mobicents Presence Server. See <xref
+					linkend="fpara-Requirements"/>.</para>
+		</important>
+		<para>You can install the Mobicents Presence server by issuing a <command>mvn install</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
+		<formalpara>
+			<title>Installing the Presence Server using the Mobicents Binary Distribution</title>
+			<para>TBD (fix with proper instructions): Using a binary release, you can install the Presence Server by doing an ant deploy on the <filename>/servers/sip-presence/integrated</filename> directory.</para>
 		</formalpara>
 		<formalpara>
-			<title>Uninstalling the Mobicents Presence Server</title>
-			<para></para>
+			<title>Installing the Presence Server using the Mobicents Source Distribution</title>
+			<para>TBD (fix with proper instructions) You can install the Mobicents Presence server by issuing a <command>mvn install</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
+		</formalpara>
+		<formalpara>
+			<title>Uninstalling the Presence Server using the Mobicents Binary Distribution</title>
+			<para>TBD (fix with proper instructions): Using a binary release, you can uninstall the Presence Server by doing an ant deploy on the <filename>/servers/sip-presence/integrated</filename> directory.</para>
+		</formalpara>
+		<formalpara>
+			<title>Uninstalling the Presence Server using the Mobicents Source Distribution</title>
+			<para>TBD (fix with proper instructions): You can uninstall the Mobicents Presence server by issuing a <command>mvn clean</command> command from the <filename>trunk/servers/sip-presence/integrated</filename> directory.</para>
 		</formalpara>
 		<formalpara>
 			<title>Testing the Mobicents Presence Server</title>
-			<para></para>
+			<para>A test framework for the Mobicents Presence Server is forthcoming but not available yet.</para>
 		</formalpara>
 	</section>
 	<section
@@ -151,36 +186,33 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.
-	TBD: Server setup and testing section, following this section or perhaps before.
-	XCAP Aware User Agent: The PS server calculates pres-rules XCAP uris of users, by default, using a non standard way, but compatible with Counterpath Eyebeam. You can change to the standards recommended way in the hard coded field "clientUAIsEyebeam" of PresenceSubscriptionControlSbb (in ps-core/subscription-sbb/src/main/java/..). This is a temporary solution due to a feature, in current jain-sip stack, that removes invalid User-Agent headers (seems most UAs are failing here) of SIP REQUESTS. In the future this configuration will not be needed.
-
-There is no configuration needed to deploy the server.
-Requirements
-
-The Mobicents Presence Server depends on Mobicents JAIN SLEE server and Mobicents SIP resource adaptor, ensure all are installed. 
-Install/Uninstall
-
-At the moment the Mobicents Presence Server can only be installed integrated with Mobicents XDM Server, that is, in the all-in-1 Presence Service architecture. This is due to lack of external XDM Client SBB component.
-
- 
-
-From source code repository, install doing mvn install on directory /trunk/servers/sip-presence/integrated, uninstall doing mvn clean on same directory.
-
-Using a binary release, install doing ant deploy on directory servers/sip-presence/integrated, uninstall doing ant undeploy on same directory.
-
- 
-
-Note: This will also install Mobicents XDM server, ensure all it's requirements are met too. 
-Testing 
-A test framework for the server is not available ... yet. 
-Resources:
-
-    * How to manage the server
-    * Integrating PS in your JAIN SLEE Apps: code snippets for Internal Presence Client SBB usage
-    * Integrating PS in your JAIN SLEE Apps: code snippets for External Presence Client SBB usage
-    * Mobicents Sip Event Publication and Subscription Control components 
-    * Mobicents SIP Presence Service </para>
+		<formalpara>
+			<title>Original Source, Unformatted Bits, and TBD</title>
+			<para>This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.</para>
+		</formalpara>
+	</section>
+	<section
+		id="section-Resources_and_Further_Information_About_the_Mobicents_Presence_Server">
+		<title>Resources and Further Information About the Mobicents Presence Server</title>
+		<para>For further information on the Mobicents Presence Server, see the following list of additional resources:</para>
+		<itemizedlist
+			id="itemlist-Further_Information_on_the_Mobicents_Presence_Server">
+			<listitem>
+				<para>How to Manage the Mobicents Presence Server</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents Presence Server into Your JAIN SLEE Applications: Code Snippets for Internal Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents Presence Server into Your JAIN SLEE Applications: Code Snippets for External Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-event-components">Mobicents Sip Event Publication and Subscription Control Components</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
 	</section>
 </section>
 

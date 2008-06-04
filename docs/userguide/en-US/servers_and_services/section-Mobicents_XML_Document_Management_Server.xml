@@ -13,7 +13,8 @@
 	<section
 		id="section-Configuring_Installing_and_Testing_the_XDM_Server">
 		<title>Configuring, Installing and Testing the XDM Server</title>
-		<formalpara>
+		<formalpara
+			id="fpara-Requirements">
 			<title>Requirements</title>
 			<para>The Mobicents XDM Server depends on the Mobicents JAIN SLEE server and the Mobicents SIP and HTTP Servlet resource adapters. Make sure that all of these requirements are deployed before deploying the XDM Server.</para>
 		</formalpara>
@@ -24,7 +25,7 @@
 		</important>
 		<formalpara>
 			<title>Configuration</title>
-			<para>The XML Document Management Server can be customized in the following two aspects before being built.</para>
+			<para>The Mobicents XML Document Management Server can be customized in the following aspects before being built.</para>
 		</formalpara>
 		<variablelist
 			id="varlist-Customizing_the_XDM_Server">
@@ -273,7 +274,7 @@
 		<itemizedlist
 			id="itemlist-Further_Information_on_the_Mobicents_XDM_Server">
 			<listitem>
-				<para>How to Manage the XDM Server</para>
+				<para>How to Manage the Mobicents XDM Server</para>
 			</listitem>
 			<listitem>
 				<para>How to Create an XCAP App(lication)Usage</para>
@@ -284,13 +285,13 @@
 			<listitem>
 				<para>
 					<ulink
-						url="XCAP Client API Documentation"/>
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-api">XCAP Client API Documentation</ulink>
 				</para>
 			</listitem>
 			<listitem>
 				<para>
 					<ulink
-						url="XCAP Client RA Type Description and Example Code Snippets"/>
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Type Description and Example Code Snippets</ulink>
 				</para>
 			</listitem>
 			<listitem>
