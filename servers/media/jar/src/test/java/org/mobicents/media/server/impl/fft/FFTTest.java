@@ -18,7 +18,8 @@ import static org.junit.Assert.*;
  */
 public class FFTTest {
 
-    private final static int F = 4;
+    private final static int F = 697;
+    private final static int F1 = 1209;
     
     public FFTTest() {
     }
@@ -44,18 +45,35 @@ public class FFTTest {
      */
     @Test
     public void fft() {
-        Complex[] signal = new Complex[64];
-        int len = signal.length;
-        for (int i = 0; i < signal.length; i++ ) {
-            short s = (short) (Short.MAX_VALUE * Math.sin(2 * Math.PI * F * i / len));
-            System.out.println(s);
+        int N = 8000;
+        int M = 8192;
+        
+        Complex[] signal = new Complex[N];
+        
+        for (int i = 0; i < N; i++ ) {
+            short s = (short)(
+                    (short) (Short.MAX_VALUE/2 * Math.sin(2 * Math.PI * F * i / N)) + 
+                    (short) (Short.MAX_VALUE/2 * Math.sin(2 * Math.PI * F1 * i / N))
+                    );
             signal[i] = new Complex(s, 0);
         }
         
-        Complex[] f = FFT.fft(signal);
+        Complex[] x= new Complex[M];
+        double k = (double)(N-1)/(double)(M);
+        System.out.println("k=" + k);
+        for (int i = 0; i < M; i++) {
+            int p = (int)(k * i);
+            int q = (int)(k * i) + 1;
+            
+            double K = (signal[q].re() - signal[p].re()) * N;
+            double dx = (double)i/(double)M - (double)p/(double)N;
+            x[i] = new Complex(signal[p].re() + K*dx, 0);
+        }
+        
+        Complex[] f = FFT.fft(x);
         
         for (int i = 0; i < f.length; i++) {
-            System.out.println(i + " " + Math.sqrt(f[i].re() * f[i].re() + f[i].im()*f[i].im()));
+            System.out.println(i + ": " + Math.sqrt(f[i].re() * f[i].re() + f[i].im()*f[i].im()));
         }
     }
 
