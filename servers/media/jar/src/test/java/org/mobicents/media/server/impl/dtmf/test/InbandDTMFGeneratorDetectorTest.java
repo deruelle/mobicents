@@ -1,16 +1,8 @@
 package org.mobicents.media.server.impl.dtmf.test;
 
-import java.util.Arrays;
 
-import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.SuperXCase;
-import org.mobicents.media.server.impl.dtmf.InbandDetector;
 import org.mobicents.media.server.impl.dtmf.InbandGenerator;
-import org.mobicents.media.server.impl.dtmf.test.InbandDTMFGeneratorSequentialTest.FrequenciesHolder;
-import org.mobicents.media.server.impl.fft.SpectralAnalyser;
-import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
 public class InbandDTMFGeneratorDetectorTest extends
 		InbandDTMFGeneratorSequentialTest {
@@ -29,7 +21,7 @@ public class InbandDTMFGeneratorDetectorTest extends
 		if (toneName != null) {
 			gen = new InbandGenerator(toneName, TEST_DURATION);
 
-			analyzer = new InbandDetector();
+//			analyzer = new InbandDetector();
 
 		} else {
 			throw new RuntimeException("Failed to obtain tone name for [" + row
@@ -56,7 +48,7 @@ public class InbandDTMFGeneratorDetectorTest extends
 	@Override
 	public void update(NotifyEvent event) {
 
-		super.notified = true;
+		//super.notified = true;
 		String toneName = InbandGenerator.getToneName(super.currentRow,
 				super.currentColumn);
 		if (event.getMessage().compareToIgnoreCase(toneName) != 0
