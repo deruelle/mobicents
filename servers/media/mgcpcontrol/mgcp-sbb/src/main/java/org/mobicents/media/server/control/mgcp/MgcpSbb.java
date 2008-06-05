@@ -18,7 +18,9 @@ package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
+import jain.protocol.ip.mgcp.message.EndpointConfiguration;
 import jain.protocol.ip.mgcp.message.ModifyConnection;
+import jain.protocol.ip.mgcp.message.NotificationRequest;
 
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
@@ -58,6 +60,16 @@ public abstract class MgcpSbb implements Sbb {
 		forwardEvent(relation, aci);
 	}
 
+	public void onEndpointConfiguration(EndpointConfiguration event, ActivityContextInterface aci) {
+		ChildRelation relation = getEndpointConfigurationSbbChild();
+		forwardEvent(relation, aci);
+	}
+
+	public void onNotificationRequest(NotificationRequest event, ActivityContextInterface aci) {
+		ChildRelation relation = getNotificationRequestSbbChild();
+		forwardEvent(relation, aci);
+	}
+
 	private void forwardEvent(ChildRelation relation, ActivityContextInterface aci) {
 		try {
 			SbbLocalObject child = relation.create();
@@ -73,6 +85,10 @@ public abstract class MgcpSbb implements Sbb {
 	public abstract ChildRelation getDeleteConnectionSbbChild();
 
 	public abstract ChildRelation getModifyConnectionSbbChild();
+
+	public abstract ChildRelation getEndpointConfigurationSbbChild();
+
+	public abstract ChildRelation getNotificationRequestSbbChild();
 
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;

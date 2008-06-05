@@ -3,17 +3,17 @@
 <!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
 
 <sbb-jar>
-	<sbb id="delete_connection">
-		<description>MGCP DLCX</description>
-		<sbb-name>DeleteConnectionSbb</sbb-name>
+	<sbb id="notification_request">
+		<description>MGCP RQNT</description>
+		<sbb-name>NotificationRequestSbb</sbb-name>
 		<sbb-vendor>org.mobicents</sbb-vendor>
 		<sbb-version>1.0</sbb-version>
-		<sbb-alias>DeleteConnectionSbb</sbb-alias>
+		<sbb-alias>NotificationRequestSbb</sbb-alias>
 
 		<sbb-classes>
 			<sbb-abstract-class>
 				<sbb-abstract-class-name>
-					org.mobicents.media.server.control.mgcp.DeleteConnectionSbb
+					org.mobicents.media.server.control.mgcp.NotificationRequestSbb
 				</sbb-abstract-class-name>
 				<cmp-field>
 					<cmp-field-name>txId</cmp-field-name>
@@ -27,28 +27,15 @@
 		</sbb-classes>
 
 		<event event-direction="Receive" initial-event="True">
-			<event-name>DeleteConnection</event-name>
+			<event-name>NotificationRequest</event-name>
 			<event-type-ref>
 				<event-type-name>
-					net.java.slee.resource.mgcp.DELETE_CONNECTION
+					net.java.slee.resource.mgcp.NOTIFICATIONREQUEST
 				</event-type-name>
 				<event-type-vendor>net.java</event-type-vendor>
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
 			<initial-event-select variable="ActivityContext" />
-		</event>
-
-		<event event-direction="Receive" initial-event="False">
-			<event-name>ConnectionDeleted</event-name>
-			<event-type-ref>
-				<event-type-name>
-					org.mobicents.slee.media.CONNECTION_DELETED
-				</event-type-name>
-				<event-type-vendor>
-					org.mobicents.media
-				</event-type-vendor>
-				<event-type-version>1.0</event-type-version>
-			</event-type-ref>
 		</event>
 
 		<resource-adaptor-type-binding>
@@ -101,5 +88,4 @@
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
 	</sbb>
-
 </sbb-jar>
