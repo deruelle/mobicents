@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+	
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
-
-	<parent>
-		<artifactId>mobicents-server-media-mgcpcontrol</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
-	</parent>
-
+	
+    <parent>
+        <artifactId>mobicents-server-media-mgcpcontrol</artifactId>
+        <groupId>org.mobicents.servers.media</groupId>
+        <version>1.0.0.BETA2-SNAPSHOT</version>
+    </parent>
+	
 	<artifactId>mgcp-control-services-DU</artifactId>
-
+	
 	<dependencies>
 		<dependency>
 			<artifactId>createconnection-sbb</artifactId>
@@ -33,19 +33,19 @@
 			<artifactId>endpointconfiguration-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<artifactId>notificationrequest-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<artifactId>mgcp-sbb</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -75,8 +75,7 @@
 						<configuration>
 							<tasks>
 								<copy overwrite="true"
-									file="target/${project.build.finalName}.jar"
-									todir="${env.JBOSS_HOME}/server/${node}/deploy" />
+									file="target/${project.build.finalName}.jar" todir="${env.JBOSS_HOME}/server/${node}/deploy" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -97,5 +96,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 </project>
