@@ -25,164 +25,197 @@ import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class InbandGenerator implements PushBufferStream {
 
-    private final static AudioFormat LINEAR = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1);
-    public final static String[][] events = new String[][]{
-        {"1", "2", "3", "A"},
-        {"4", "5", "6", "B"},
-        {"7", "8", "9", "C"},
-        {"*", "0", "#", "D"}};
+	private enum GeneratorState
+	{
+		CREATED,RUNNING,STOPING,STOPED;
+	};
+	
+	private GeneratorState state=null;
+	private final static AudioFormat LINEAR = new AudioFormat(
+			AudioFormat.LINEAR, 8000, 16, 1);
+	public final static String[][] events = new String[][] {
+			{ "1", "2", "3", "A" }, { "4", "5", "6", "B" },
+			{ "7", "8", "9", "C" }, { "*", "0", "#", "D" } };
 
-    public static String getToneName(int row, int column) {
+	public static String getToneName(int row, int column) {
 
-        try {
-            return events[row][column];
-        } catch (ArrayIndexOutOfBoundsException aiobe) {
-            return null;
-        }
-    }
-    
-    private int[] lowFreq = new int[]{697, 770, 852, 941};
-    private int[] highFreq = new int[]{1209, 1336, 1477, 1633};
-    
-    private BufferTransferHandler transferHandler;
-    private boolean started = false;
-    private byte[] data;
-    private long seqNumber = 0;
-    private Timer timer = new Timer();
-    private int offset = 0;
-    private int sizeInBytes;
-    private int packetPeriod;
-    private Codec codec;
+		try {
+			return events[row][column];
+		} catch (ArrayIndexOutOfBoundsException aiobe) {
+			return null;
+		}
+	}
 
-    public InbandGenerator(String tone, int packetPeriod) {
-        this.packetPeriod = packetPeriod;
-        codec = CodecLocator.getCodec(Codec.LINEAR_AUDIO, Codec.PCMU);
+	private int[] lowFreq = new int[] { 697, 770, 852, 941 };
+	private int[] highFreq = new int[] { 1209, 1336, 1477, 1633 };
 
-        sizeInBytes = (int) (LINEAR.getSampleRate() *
-                (LINEAR.getSampleSizeInBits() / 8) / 1000 * packetPeriod);
-        System.out.println("Size in bytes=" + sizeInBytes);
+	private BufferTransferHandler transferHandler;
+	
+	private byte[] data;
+	private long seqNumber = 0;
+	private Timer timer = new Timer();
+	private int offset = 0;
+	private int sizeInBytes;
+	private int packetPeriod;
+	private Codec codec;
 
-        data = new byte[(int) LINEAR.getSampleRate() * LINEAR.getSampleSizeInBits() / 8];
-        int len = data.length / 2;
+	public InbandGenerator(String tone, int packetPeriod) {
+		this.packetPeriod = packetPeriod;
+		codec = CodecLocator.getCodec(Codec.LINEAR_AUDIO, Codec.PCMU);
 
-        int[] freq = getFreq(tone);
-        System.out.println("f0=" + freq[0] + ", f1=" + freq[1]);
+		sizeInBytes = (int) (LINEAR.getSampleRate()
+				* (LINEAR.getSampleSizeInBits() / 8) / 1000 * packetPeriod);
+		System.out.println("Size in bytes=" + sizeInBytes);
 
-        int k = 0;
-        for (int i = 0; i < len; i++) {
-            short s = (short) ((short) (Short.MAX_VALUE / 2 * Math.sin(2 * Math.PI * freq[0] * i / len)) +
-                    (short) (Short.MAX_VALUE / 2 * Math.sin(2 * Math.PI * freq[1] * i / len)));
-            data[k++] = (byte) (s);
-            data[k++] = (byte) (s >> 8);
-        }
-    }
+		data = new byte[(int) LINEAR.getSampleRate()
+				* LINEAR.getSampleSizeInBits() / 8];
+		int len = data.length / 2;
 
-    public static void print(byte[] data) {
-        System.out.println("--------------------");
-        for (int i = 0; i < data.length; i++) {
-            System.out.print(data[i] + " ");
-        }
-        System.out.println();
-        System.out.println("--------------------");
-    }
+		int[] freq = getFreq(tone);
+		System.out.println("f0=" + freq[0] + ", f1=" + freq[1]);
 
-    public void read(Buffer buffer) throws IOException {
-        byte[] media = new byte[sizeInBytes];
+		int k = 0;
+		for (int i = 0; i < len; i++) {
+			short s = (short) ((short) (Short.MAX_VALUE / 2 * Math.sin(2
+					* Math.PI * freq[0] * i / len)) + (short) (Short.MAX_VALUE / 2 * Math
+					.sin(2 * Math.PI * freq[1] * i / len)));
+			data[k++] = (byte) (s);
+			data[k++] = (byte) (s >> 8);
+		}
+		this.state=GeneratorState.CREATED;
+	}
 
+	public static void print(byte[] data) {
+		System.out.println("--------------------");
+		for (int i = 0; i < data.length; i++) {
+			System.out.print(data[i] + " ");
+		}
+		System.out.println();
+		System.out.println("--------------------");
+	}
 
-        int count = Math.min(data.length - offset, sizeInBytes);
-        System.arraycopy(data, offset, media, 0, count);
-        offset += count;
-        if (offset == data.length) {
-            offset = 0;
-        }
+	public void read(Buffer buffer) throws IOException {
+		byte[] media = new byte[sizeInBytes];
 
-        buffer.setOffset(0);
-        buffer.setLength(media.length);
-        buffer.setSequenceNumber(seqNumber);
-        buffer.setDuration(packetPeriod);
-        buffer.setTimeStamp(seqNumber * packetPeriod); //@todo: synchronize clock
-        buffer.setData(media);
-        buffer.setFormat(LINEAR);
-        seqNumber++;
-    }
+		int count = Math.min(data.length - offset, sizeInBytes);
+		System.arraycopy(data, offset, media, 0, count);
+		offset += count;
+		if (offset == data.length) {
+			offset = 0;
+		}
 
-    private int[] getFreq(String tone) {
-        int freq[] = new int[2];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (events[i][j].equalsIgnoreCase(tone)) {
-                    freq[0] = lowFreq[i];
-                    freq[1] = highFreq[j];
-                }
-            }
-        }
-        return freq;
-    }
+		buffer.setOffset(0);
+		buffer.setLength(media.length);
+		buffer.setSequenceNumber(seqNumber);
+		buffer.setDuration(packetPeriod);
+		buffer.setTimeStamp(seqNumber * packetPeriod); // @todo: synchronize
+		// clock
+		buffer.setData(media);
+		buffer.setFormat(LINEAR);
+		seqNumber++;
+	}
 
-    public Format getFormat() {
-        return LINEAR;
-    }
+	private int[] getFreq(String tone) {
+		int freq[] = new int[2];
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (events[i][j].equalsIgnoreCase(tone)) {
+					freq[0] = lowFreq[i];
+					freq[1] = highFreq[j];
+				}
+			}
+		}
+		return freq;
+	}
 
-    public void setTransferHandler(BufferTransferHandler transferHandler) {
-        this.transferHandler = transferHandler;
-        if (transferHandler != null) {
-            start();
-        }
-    }
+	public Format getFormat() {
+		return LINEAR;
+	}
 
-    public ContentDescriptor getContentDescriptor() {
-        return new ContentDescriptor(ContentDescriptor.RAW);
-    }
+	public void setTransferHandler(BufferTransferHandler transferHandler) {
+		
+		if (transferHandler != null) {
+			this.transferHandler = transferHandler;
+			start();
+		}else
+		{
+			stop();
+			this.transferHandler = transferHandler;
+		}
+	}
 
-    public long getContentLength() {
-        return LENGTH_UNKNOWN;
-    }
+	public ContentDescriptor getContentDescriptor() {
+		return new ContentDescriptor(ContentDescriptor.RAW);
+	}
 
-    public boolean endOfStream() {
-        return false;
-    }
+	public long getContentLength() {
+		return LENGTH_UNKNOWN;
+	}
 
-    public Object[] getControls() {
-        return null;
-    }
+	public boolean endOfStream() {
+		return false;
+	}
 
-    public Object getControl(String string) {
-        return null;
-    }
+	public Object[] getControls() {
+		return null;
+	}
 
-    protected void start() {
-        if (!started && transferHandler != null) {
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new Transmitter(this), 0, packetPeriod);
-            started = true;
-        }
-    }
+	public Object getControl(String string) {
+		return null;
+	}
 
-    protected void stop() {
-        if (started) {
-            timer.cancel();
-            timer.purge();
-            started = false;
-        }
-    }
+	protected void start() {
+		if (state!=GeneratorState.RUNNING && transferHandler != null) {
+			timer = new Timer();
+			timer.scheduleAtFixedRate(new Transmitter(this), 0, packetPeriod);
+			state=GeneratorState.RUNNING;
+		}
+	}
 
-    private class Transmitter extends TimerTask {
+	protected void stop() {
+		if (state==GeneratorState.RUNNING) {
+			state=GeneratorState.STOPING;
+			try {
+				Thread.currentThread().sleep(500);
+			} catch (InterruptedException e) {
+			}
+			timer.cancel();
+			timer.purge();
+			state=GeneratorState.STOPED;
+		}
+	}
 
-        private PushBufferStream stream;
+	private class Transmitter extends TimerTask {
 
-        public Transmitter(PushBufferStream stream) {
-            this.stream = stream;
-        }
+		private PushBufferStream stream;
 
-        public void run() {
-            transferHandler.transferData(stream);
-        }
-    }
+		public Transmitter(PushBufferStream stream) {
+			if(transferHandler==null)
+			{
+				throw new NullPointerException();
+			}
+			this.stream = stream;
+		}
+
+		public void run() {
+			// Do we want to be fast here? Yes
+			if (state==GeneratorState.RUNNING)
+			{
+				try {
+					transferHandler.transferData(stream);
+				} catch (NullPointerException npe) {
+					npe.printStackTrace();
+					this.cancel();
+				}
+			}else
+			{
+				cancel();
+			}
+		}
+	}
 }

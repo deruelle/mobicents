@@ -78,4 +78,27 @@ public class Utils {
             return FileTypeDescriptor.WAVE;
         } else throw new IllegalArgumentException("Media type " + s + " not supported");
     }
+    public static String doMessage(Throwable t)
+	{
+		StringBuffer sb=new StringBuffer();
+		int tick = 0;
+		Throwable e = t;
+		do {
+			StackTraceElement[] trace = e.getStackTrace();
+			if (tick++ == 0)
+				sb.append(e.getClass().getCanonicalName() + ":"
+						+ e.getLocalizedMessage()+"\n");
+			else
+				sb.append("Caused by: "+e.getClass().getCanonicalName() + ":"
+						+ e.getLocalizedMessage()+"\n");
+			
+			for (StackTraceElement ste : trace)
+				sb.append("\t"+ste+"\n");
+
+			e = e.getCause();
+		} while (e != null);
+		
+		return sb.toString();
+		
+	}
 }

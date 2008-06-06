@@ -26,7 +26,7 @@ import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
 
 /**
- * The MediaSplitter allows to connect one media stream to any number of 
+ * The MediaSplitter allows to connect one media stream to any number of
  * destinations.
  * 
  * 
@@ -34,71 +34,77 @@ import org.mobicents.media.protocol.PushBufferStream;
  */
 public class MediaSplitter implements Serializable, BufferTransferHandler {
 
-    private List <SplitterOutputStream> branches = Collections.synchronizedList(new ArrayList());
-    private Format fmt;
-    private Timer timer;
-    
-    public MediaSplitter() {
-    }
+	private List<SplitterOutputStream> branches = new ArrayList<SplitterOutputStream>();
+	private Format fmt;
+	private Timer timer;
 
-    public MediaSplitter(Timer timer) {
-        this.timer = timer;
-    }
-    
-    public Timer getTimer() {
-        return timer;
-    }
-    
-    public void setTimer(Timer timer) {
-        this.timer = timer;
-    }
-    
-    public void setInputStream(PushBufferStream pushStream) {
-        fmt = pushStream.getFormat();
-        pushStream.setTransferHandler(this);
-    }
-    
-    public int getSize() {
-        return branches.size();
-    }
-    
-    @SuppressWarnings("static-access")
-    private void block(long delay) {
-        synchronized (this) {
-            try {
-                Thread.currentThread().sleep(delay);
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-    
-    public void close() {
-        for (SplitterOutputStream branch: branches) {
-            branch.close();
-        }
-        branches.clear();
-    }
-    
-    public void transferData(PushBufferStream stream) {
-        try {
-            Buffer buffer = new Buffer();
-            stream.read(buffer);
-            
-            for (SplitterOutputStream branch : branches) {
-                branch.push((Buffer)buffer.clone());
-            }
-            
-        } catch (IOException e) {
-        }       
-    }
+	public MediaSplitter() {
+	}
 
-    public synchronized PushBufferStream newBranch() {
-        SplitterOutputStream s = new SplitterOutputStream(fmt);
-        branches.add(s);
-        return s;
-    }
-    
-    public synchronized void closeBranch(PushBufferStream branch) {
-        branches.remove(branch);
-    }
+	public MediaSplitter(Timer timer) {
+		this.timer = timer;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
+	}
+
+	public void setInputStream(PushBufferStream pushStream) {
+		fmt = pushStream.getFormat();
+		pushStream.setTransferHandler(this);
+	}
+
+	public int getSize() {
+		return branches.size();
+	}
+
+	@SuppressWarnings("static-access")
+	private void block(long delay) {
+		synchronized (this) {
+			try {
+				Thread.currentThread().sleep(delay);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	public void close() {
+		synchronized (branches) {
+			for (SplitterOutputStream branch : branches) {
+				branch.close();
+			}
+			branches.clear();
+		}
+	}
+
+	public void transferData(PushBufferStream stream) {
+		try {
+			Buffer buffer = new Buffer();
+			stream.read(buffer);
+			synchronized (branches) {
+				for (SplitterOutputStream branch : branches) {
+					branch.push((Buffer) buffer.clone());
+				}
+			}
+		} catch (IOException e) {
+		}
+	}
+
+	public synchronized PushBufferStream newBranch() {
+		SplitterOutputStream s = new SplitterOutputStream(fmt);
+		synchronized (branches) {
+			branches.add(s);
+		}
+		return s;
+	}
+
+	public synchronized void closeBranch(PushBufferStream branch) {
+		synchronized (branches) {
+			branches.remove(branch);
+		}
+	}
 }

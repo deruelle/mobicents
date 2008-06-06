@@ -29,162 +29,163 @@ import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class PushBufferAudioStream implements PushBufferStream {
 
-    private AudioPlayer audioPlayer;
-    private BufferTransferHandler transferHandler;
-    private byte[] frame;
-    private int duration;
-    private boolean eom = false;
-    private boolean started = false;
-    private TimerTask transmittor;
-    private int packetSize;
-    private long seq = 0;
-    private AudioInputStream localStream;
-    private Codec codec;
+	private AudioPlayer audioPlayer;
+	private BufferTransferHandler transferHandler;
+	private byte[] frame;
+	private int duration;
+	private boolean eom = false;
+	private boolean started = false;
+	private TimerTask transmittor;
+	private int packetSize;
+	private long seq = 0;
+	private AudioInputStream localStream;
+	private Codec codec;
 
-    public PushBufferAudioStream(AudioPlayer audioPlayer, AudioInputStream stream) throws UnsupportedFormatException {
-        this.audioPlayer = audioPlayer;
-        this.localStream = stream;
+	public PushBufferAudioStream(AudioPlayer audioPlayer,
+			AudioInputStream stream) throws UnsupportedFormatException {
+		this.audioPlayer = audioPlayer;
+		this.localStream = stream;
 
-        AudioFormat fmt = new AudioFormat(
-                getEncoding(stream.getFormat().getEncoding()),
-                stream.getFormat().getFrameRate(),
-                stream.getFormat().getFrameSize() * 8,
-                stream.getFormat().getChannels());
+		AudioFormat fmt = new AudioFormat(getEncoding(stream.getFormat()
+				.getEncoding()), stream.getFormat().getFrameRate(), stream
+				.getFormat().getFrameSize() * 8, stream.getFormat()
+				.getChannels());
 
-        if (!fmt.matches(audioPlayer.format)) {
-            codec = CodecLocator.getCodec(fmt, audioPlayer.format);
-            if (codec == null) {
-                throw new UnsupportedFormatException(audioPlayer.format);
-            }
-        }
+		if (!fmt.matches(audioPlayer.format)) {
+			codec = CodecLocator.getCodec(fmt, audioPlayer.format);
+			if (codec == null) {
+				throw new UnsupportedFormatException(audioPlayer.format);
+			}
+		}
 
-        packetSize = (int) ((fmt.getSampleRate() / 1000) *
-                (fmt.getSampleSizeInBits() / 8) *
-                audioPlayer.packetPeriod);
-    }
+		packetSize = (int) ((fmt.getSampleRate() / 1000)
+				* (fmt.getSampleSizeInBits() / 8) * audioPlayer.packetPeriod);
+	}
 
-    private String getEncoding(Encoding encoding) {
-        if (encoding == Encoding.ALAW) {
-            return "ALAW";
-        } else if (encoding == Encoding.ULAW) {
-            return "ULAW";
-        } else if (encoding == Encoding.PCM_SIGNED) {
-            return "LINEAR";
-        } else if (encoding == Encoding.PCM_UNSIGNED) {
-            return "LINEAR";
-        } else {
-            return null;
-        }
-    }
+	private String getEncoding(Encoding encoding) {
+		if (encoding == Encoding.ALAW) {
+			return "ALAW";
+		} else if (encoding == Encoding.ULAW) {
+			return "ULAW";
+		} else if (encoding == Encoding.PCM_SIGNED) {
+			return "LINEAR";
+		} else if (encoding == Encoding.PCM_UNSIGNED) {
+			return "LINEAR";
+		} else {
+			return null;
+		}
+	}
 
-    public Format getFormat() {
-        return audioPlayer.format;
-    }
+	public Format getFormat() {
+		return audioPlayer.format;
+	}
 
-    protected void start() {
-        if (!started) {
-            transmittor = new Transmittor(this);
-            Endpoint.TIMER.scheduleAtFixedRate(transmittor,
-                    audioPlayer.packetPeriod, audioPlayer.packetPeriod);
-            started = true;
-            audioPlayer.started();
-        }
-    }
+	protected void start() {
+		if (!started) {
+			transmittor = new Transmittor(this);
+			Endpoint.TIMER.scheduleAtFixedRate(transmittor,
+					audioPlayer.packetPeriod, audioPlayer.packetPeriod);
+			started = true;
+			audioPlayer.started();
+		}
+	}
 
-    private void terminate() {
-        if (started) {
-            transmittor.cancel();
-            Endpoint.TIMER.purge();
-        }
-    }
+	private void terminate() {
+		if (started) {
+			transmittor.cancel();
+			Endpoint.TIMER.purge();
+		}
+	}
 
-    protected void stop() {
-        terminate();
-        started = false;
-        audioPlayer.stopped();
-    }
+	protected void stop() {
+		if (started) {
+			terminate();
+			started = false;
+			audioPlayer.stopped();
+		}
+	}
 
-    protected void fail(Exception e) {
-        terminate();
-        started = false;
-        audioPlayer.failed(e);
-    }
+	protected void fail(Exception e) {
+		terminate();
+		started = false;
+		audioPlayer.failed(e);
+	}
 
-    public void read(Buffer buffer) throws IOException {
-        buffer.setData(frame);
-        buffer.setDuration(duration);
-        buffer.setLength(frame.length);
-        buffer.setOffset(0);
-        buffer.setFormat(audioPlayer.format);
-        buffer.setTimeStamp(seq * audioPlayer.packetPeriod);
-        buffer.setEOM(eom);
-        buffer.setSequenceNumber(seq++);
-    }
+	public void read(Buffer buffer) throws IOException {
+		buffer.setData(frame);
+		buffer.setDuration(duration);
+		buffer.setLength(frame.length);
+		buffer.setOffset(0);
+		buffer.setFormat(audioPlayer.format);
+		buffer.setTimeStamp(seq * audioPlayer.packetPeriod);
+		buffer.setEOM(eom);
+		buffer.setSequenceNumber(seq++);
+	}
 
-    public void setTransferHandler(BufferTransferHandler transferHandler) {
-        this.transferHandler = transferHandler;
-    }
+	public void setTransferHandler(BufferTransferHandler transferHandler) {
+		this.transferHandler = transferHandler;
+	}
 
-    public ContentDescriptor getContentDescriptor() {
-        return new ContentDescriptor(ContentDescriptor.RAW);
-    }
+	public ContentDescriptor getContentDescriptor() {
+		return new ContentDescriptor(ContentDescriptor.RAW);
+	}
 
-    public long getContentLength() {
-        return PushBufferAudioStream.LENGTH_UNKNOWN;
-    }
+	public long getContentLength() {
+		return PushBufferAudioStream.LENGTH_UNKNOWN;
+	}
 
-    public boolean endOfStream() {
-        return false;
-    }
+	public boolean endOfStream() {
+		return false;
+	}
 
-    public Object[] getControls() {
-        return new Object[0];
-    }
+	public Object[] getControls() {
+		return new Object[0];
+	}
 
-    public Object getControl(String ctrl) {
-        return null;
-    }
+	public Object getControl(String ctrl) {
+		return null;
+	}
 
-    private class Transmittor extends TimerTask {
+	private class Transmittor extends TimerTask {
 
-        private PushBufferStream stream;
+		private PushBufferStream stream;
 
-        public Transmittor(PushBufferStream stream) {
-            this.stream = stream;
-        }
+		public Transmittor(PushBufferStream stream) {
+			this.stream = stream;
+		}
 
-        public void run() {
-            byte[] packet = new byte[packetSize];
-            try {
-                int len = localStream.read(packet);
-                if (len == -1) {
-                    terminate();
-                    if (started) {
-                        audioPlayer.endOfMedia();
-                    }
-                } else {
-                    frame = new byte[len];
-                    System.arraycopy(packet, 0, frame, 0, len);
+		public void run() {
+			byte[] packet = new byte[packetSize];
+			try {
+				int len = localStream.read(packet);
+				if (len == -1) {
+					terminate();
+					if (started) {
+						audioPlayer.endOfMedia();
+					}
+				} else {
+					frame = new byte[len];
+					System.arraycopy(packet, 0, frame, 0, len);
 
-                    duration = (int) (audioPlayer.packetPeriod * len / packetSize);
-                    eom = len < packetSize;
+					duration = (int) (audioPlayer.packetPeriod * len / packetSize);
+					eom = len < packetSize;
 
-                    if (codec != null) {
-                        frame = codec.process(frame);
-                    }
+					if (codec != null) {
+						frame = codec.process(frame);
+					}
 
-                    if (transferHandler != null) {
-                        transferHandler.transferData(stream);
-                    }
-                }
-            } catch (IOException e) {
-                fail(e);
-            }
-        }
-    }
+					if (transferHandler != null) {
+						transferHandler.transferData(stream);
+					}
+				}
+			} catch (IOException e) {
+				fail(e);
+			}
+		}
+	}
 }

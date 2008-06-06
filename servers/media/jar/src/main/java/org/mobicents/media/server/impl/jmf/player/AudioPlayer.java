@@ -25,6 +25,7 @@ import java.util.List;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
+import org.mobicents.media.server.Utils;
 import org.mobicents.media.server.impl.common.events.PlayerEventType;
 
 import javax.sound.sampled.AudioSystem;
@@ -124,7 +125,7 @@ public class AudioPlayer {
      * Called when player failed.
      */
     protected void failed(Exception e) {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.FACILITY_ERROR, e.getMessage());
+        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.FACILITY_ERROR, Utils.doMessage(e));
         new Thread(new EventQueue(evt)).start();
     }
     

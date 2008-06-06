@@ -34,96 +34,144 @@ import javax.sound.sampled.AudioSystem;
 import org.apache.log4j.Logger;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class Recorder {
 
-    private String mediaType;
-    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1,
-            AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
-    private List<RecorderListener> listeners = new ArrayList();
-    private Logger logger = Logger.getLogger(Recorder.class);
-    private int recordTime = 60;
-    private FileOutputStream file;
+	private String mediaType;
+	private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8,
+			1, AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
+	private List<RecorderListener> listeners = new ArrayList();
+	private Logger logger = Logger.getLogger(Recorder.class);
+	private int recordTime = 60;
+	private FileOutputStream file;
 
-    public Recorder(String mediaType) {
-        this.mediaType = FileTypeDescriptor.BASIC_AUDIO;
-    }
+	private Thread recorderThread = null;
 
-    public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
-        this.recordTime = recordTime;
-    }
+	// private RecorderRunnable runner=null;
+	public Recorder(String mediaType) {
+		this.mediaType = FileTypeDescriptor.BASIC_AUDIO;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
-     */
-    private void record(String uri, PushBufferStream stream) throws Exception {
-        RecorderStream recorderStream = new RecorderStream(stream);
-        javax.sound.sampled.AudioFormat fmt =
-                new javax.sound.sampled.AudioFormat(8000, 16, 1, true, false);
-        AudioInputStream audioStream = new AudioInputStream(recorderStream,
-                fmt, 8000 * recordTime);
-//        AudioInputStream audioStream = AudioSystem.getAudioInputStream(recorderStream);
-        file = new FileOutputStream(uri);
-        AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
-    }
+	public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
+		this.recordTime = recordTime;
+	}
 
-    public void start(String file, PushBufferStream stream) {
-        try {
-            record(file, stream);
-            sendEvent(RecorderEventType.STARTED, "NORMAL");
-        } catch (Exception e) {
-            dispose();
-            logger.error("Could not start recording", e);
-            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
-        }
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
+	 */
+	private void record(String uri, PushBufferStream stream) throws Exception {
+		if (recorderThread != null) {
+			System.out.println("Recorder thread == " + recorderThread);
+			dispose();
+		}
+		RecorderStream recorderStream = new RecorderStream(stream);
+		javax.sound.sampled.AudioFormat fmt = new javax.sound.sampled.AudioFormat(
+				8000, 16, 1, true, false);
+		AudioInputStream audioStream = new AudioInputStream(recorderStream,
+				fmt, 8000 * recordTime);
+		// AudioInputStream audioStream =
+		// AudioSystem.getAudioInputStream(recorderStream);
+		file = new FileOutputStream(uri);
+		this.recorderThread = new Thread(new RecorderRunnable(audioStream));
+		this.recorderThread.start();
 
-    private void dispose() {
-        try {
-            file.flush();
-            file.close();
-        } catch (IOException e) {
-            logger.error("Could not close recorder file", e);
-        }
-    }
+	}
 
-    public void stop() {
-        dispose();
-        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
-    }
+	public void start(String file, PushBufferStream stream) {
+		try {
+			record(file, stream);
+			sendEvent(RecorderEventType.STARTED, "NORMAL");
+		} catch (Exception e) {
+			dispose();
+			logger.error("Could not start recording", e);
+			sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+		}
+	}
 
-    protected synchronized void sendEvent(RecorderEventType eventID, String msg) {
-        RecorderEvent evt = new RecorderEvent(this, eventID, msg);
-        new Thread(new EventQueue(evt)).start();
-    }
+	private void dispose() {
+		try {
+			if (file != null) {
+				file.flush();
+				file.close();
+			}
 
-    public void addListener(RecorderListener listener) {
-        listeners.add(listener);
-    }
+			if (recorderThread != null) {
+				this.recorderThread.stop();
+				this.recorderThread = null;
+			}
+			// this.runner=null;
+		} catch (Exception e) {
+			logger.error("Could not close recorder file", e);
+			sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+		}
+	}
 
-    public void removeListener(RecorderListener listener) {
-        listeners.remove(listener);
-    }
+	public void stop() {
+		dispose();
+		sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
+	}
 
-    /**
-     * Implements async event sender
-     */
-    private class EventQueue implements Runnable {
+	protected synchronized void sendEvent(RecorderEventType eventID, String msg) {
+		RecorderEvent evt = new RecorderEvent(this, eventID, msg);
+		new Thread(new EventQueue(evt)).start();
+	}
 
-        private RecorderEvent evt;
+	public void addListener(RecorderListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
 
-        public EventQueue(RecorderEvent evt) {
-            this.evt = evt;
-        }
+	public void removeListener(RecorderListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
 
-        public void run() {
-            for (RecorderListener listener : listeners) {
-                listener.update(evt);
-            }
-        }
-    }
+	/**
+	 * Implements async event sender
+	 */
+	private class EventQueue implements Runnable {
+
+		private RecorderEvent evt;
+
+		public EventQueue(RecorderEvent evt) {
+			this.evt = evt;
+		}
+
+		public void run() {
+			synchronized (listeners) {
+				for (RecorderListener listener : listeners) {
+					listener.update(evt);
+				}
+			}
+		}
+	}
+
+	private class RecorderRunnable implements Runnable {
+		AudioInputStream audioStream = null;
+
+		public RecorderRunnable(AudioInputStream audioStream) {
+			super();
+			this.audioStream = audioStream;
+		}
+
+		public void run() {
+			try {
+				AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
+			} catch (IOException e) {
+
+				e.printStackTrace();
+				sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+				dispose();
+			}
+
+		}
+
+	}
+
 }

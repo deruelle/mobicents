@@ -65,7 +65,7 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
         byte[] buff = new byte[1];
         int count = readBytes(buff);
 
-        System.out.println("read bytes=" + count + ", value=" + (buff[0] & 0xff) + ", available=" + available);
+        //System.out.println("read bytes=" + count + ", value=" + (buff[0] & 0xff) + ", available=" + available);
         return count == -1 ? -1 : buff[0] & 0xff;
     }
 
