@@ -197,8 +197,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		if (this.getUseSpecificEndPointId()) {
 
 			String localEndpointName = msConnection.getEndpoint();
-			String domainName = "localhost"; // TODO : Get JBoss bind address
-			// here?
+			
+			String domainName = System.getProperty("jboss.bind.address");
 
 			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(localEndpointName, domainName);
 
