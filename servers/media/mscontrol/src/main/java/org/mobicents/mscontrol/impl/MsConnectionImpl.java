@@ -26,6 +26,7 @@ import javax.sdp.SdpException;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
+import org.mobicents.media.msc.common.MsConnectionState;
 import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.media.msc.common.events.MsConnectionEventID;
 import org.mobicents.media.server.impl.common.ConnectionMode;
@@ -41,11 +42,15 @@ import org.mobicents.mscontrol.MsSession;
 /**
  * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public class MsConnectionImpl implements MsConnection {
 
+	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
+
 	private String id = (new UID()).toString();
 
+	private MsConnectionState state;
 
 	private String remoteSdp;
 
@@ -56,8 +61,6 @@ public class MsConnectionImpl implements MsConnection {
 	private Endpoint endpoint;
 
 	protected ArrayList<MsConnectionListener> listeners = new ArrayList<MsConnectionListener>();
-	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
-
 
 	/**
 	 * Creates a new instance of MsConnectionImpl
@@ -155,16 +158,26 @@ public class MsConnectionImpl implements MsConnection {
 			Runnable tx = new DeleteTx();
 			new Thread(tx).start();
 		}
-		session.disassociateNetworkConnection(this);		
+		session.disassociateNetworkConnection(this);
 	}
-	
-	public void fireConnectionInitialized(){
+
+	public void fireConnectionInitialized() {
+		setState(MsConnectionState.IDLE);
 		sendEvent(MsConnectionEventID.CONNECTION_INITIALIZED, MsConnectionEventCause.NORMAL, null);
 	}
 
 	private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
 		MsConnectionEventImpl evt = new MsConnectionEventImpl(this, eventID, cause, msg);
 		new Thread(evt).start();
+	}
+
+	public MsConnectionState getState() {
+		return state;
+	}
+
+	private void setState(MsConnectionState state) {
+		this.state = state;
+
 	}
 
 	@Override
@@ -182,27 +195,34 @@ public class MsConnectionImpl implements MsConnection {
 		private void execute() {
 			try {
 				endpoint = EndpointQuery.lookup(endpointName);
-				endpointName = endpoint.getLocalName(); //Set it back as the actual endpointName may have /$
+				endpointName = endpoint.getLocalName(); // Set it back as the
+				// actual endpointName
+				// may have /$
 				logger.debug("Media server returns endpoint: " + endpoint.getLocalName());
 			} catch (NamingException ex) {
 				logger.warn("TX Failed", ex);
+				setState(MsConnectionState.FAILED);
 				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN, ex.getMessage());
 				return;
 			} catch (ResourceUnavailableException ex) {
 				logger.warn("TX Failed", ex);
+				setState(MsConnectionState.FAILED);
 				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.RESOURCE_UNAVAILABLE, ex.getMessage());
 				return;
 			}
 
 			try {
 				connection = endpoint.createConnection(ConnectionMode.SEND_RECV);
+				setState(MsConnectionState.HALF_OPEN);
 				logger.debug("Media server creates connection : id = " + connection.getId());
 			} catch (TooManyConnectionsException ex) {
 				logger.warn("TX Failed", ex);
+				setState(MsConnectionState.FAILED);
 				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.FACILITY_FAILURE, ex.getMessage());
 				return;
 			} catch (ResourceUnavailableException ex) {
 				logger.warn("TX Failed", ex);
+				setState(MsConnectionState.FAILED);
 				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.RESOURCE_UNAVAILABLE, ex.getMessage());
 				return;
 			}
@@ -214,16 +234,18 @@ public class MsConnectionImpl implements MsConnection {
 				} catch (SdpException ex) {
 					endpoint.deleteConnection(connection.getId());
 					logger.warn("TX Failed", ex);
+					setState(MsConnectionState.FAILED);
 					sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID, ex.getMessage());
 					return;
 				} catch (IOException ex) {
 					endpoint.deleteConnection(connection.getId());
 					logger.warn("TX Failed", ex);
+					setState(MsConnectionState.FAILED);
 					sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.FACILITY_FAILURE, ex.getMessage());
 					return;
 				}
 			}
-
+			setState(MsConnectionState.OPEN);
 			sendEvent(MsConnectionEventID.CONNECTION_CREATED, MsConnectionEventCause.NORMAL, null);
 		}
 
@@ -254,12 +276,15 @@ public class MsConnectionImpl implements MsConnection {
 					logger.debug("Updated remote descriptor");
 				} catch (SdpException ex) {
 					logger.warn("TX Failed", ex);
+					setState(MsConnectionState.FAILED);
 					sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID, ex.getMessage());
 				} catch (IOException ex) {
 					logger.warn("TX Failed", ex);
+					setState(MsConnectionState.FAILED);
 					sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.FACILITY_FAILURE, ex.getMessage());
 				}
 			}
+			setState(MsConnectionState.OPEN);
 			sendEvent(MsConnectionEventID.CONNECTION_MODIFIED, MsConnectionEventCause.NORMAL, null);
 		}
 
@@ -285,6 +310,7 @@ public class MsConnectionImpl implements MsConnection {
 						logger.debug("Deleting connection " + this);
 					}
 					endpoint.deleteConnection(connection.getId());
+					setState(MsConnectionState.CLOSED);
 					sendEvent(MsConnectionEventID.CONNECTION_DELETED, MsConnectionEventCause.NORMAL, null);
 				}
 			} finally {
@@ -293,4 +319,5 @@ public class MsConnectionImpl implements MsConnection {
 			}
 		}
 	}
+
 }

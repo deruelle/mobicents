@@ -18,6 +18,8 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
+import org.mobicents.media.msc.common.MsConnectionState;
+
 /**
  * Represents the actual RTP connection. MsConnection is created by calling
  * <code>MsSession.createNetworkConnection</code>. As soon as MsConnection is
@@ -50,6 +52,12 @@ public interface MsConnection extends Serializable {
 	 * @return MsSession object holding this connection.
 	 */
 	public MsSession getSession();
+	
+	/**
+	 * Returns the state of MsConnection
+	 * @return
+	 */
+	public MsConnectionState getState();
 
 	/**
 	 * Gets the session descriptor of the local end.
