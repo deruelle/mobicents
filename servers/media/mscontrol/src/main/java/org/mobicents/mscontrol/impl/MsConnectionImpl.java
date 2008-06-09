@@ -155,6 +155,7 @@ public class MsConnectionImpl implements MsConnection {
 			Runnable tx = new DeleteTx();
 			new Thread(tx).start();
 		}
+		session.disassociateNetworkConnection(this);		
 	}
 	
 	public void fireConnectionInitialized(){

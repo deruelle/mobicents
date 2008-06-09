@@ -103,9 +103,9 @@ public class MsSessionImpl implements MsSession {
 	 * @param the
 	 *            link for release reference.
 	 */
-	protected synchronized void dropLink(MsLink link) {
+	public synchronized void disassociateLink(MsLink link) {
 		links.remove(link);
-		if (links.size() == 0 && connections.size() == 0) {
+		if (links.size() == 0 && connections.size() == 0) {			
 			setState(MsSessionState.INVALID, MsSessionEventCause.LINK_DROPPED, link);
 		}
 	}
@@ -129,9 +129,9 @@ public class MsSessionImpl implements MsSession {
 	 * @param the
 	 *            connection for release reference.
 	 */
-	protected synchronized void drop(MsConnection connection) {
+	public synchronized void disassociateNetworkConnection(MsConnection connection) {
 		connections.remove(connection);
-		if (links.size() == 0 && connections.size() == 0) {
+		if (links.size() == 0 && connections.size() == 0) {			
 			setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, connection);
 		}
 	}

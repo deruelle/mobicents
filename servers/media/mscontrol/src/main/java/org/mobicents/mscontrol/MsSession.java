@@ -140,5 +140,9 @@ public interface MsSession extends Serializable {
 	 * {@link MsSessionListener}
 	 */
 	public void setSessionStateIdle();
+	
+	public void disassociateNetworkConnection(MsConnection connection);
+	
+	public void disassociateLink(MsLink link);
 
 }

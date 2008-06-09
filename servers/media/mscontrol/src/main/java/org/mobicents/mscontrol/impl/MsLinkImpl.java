@@ -103,6 +103,7 @@ public class MsLinkImpl implements MsLink {
      */
     public void release() {
         new Thread(new DropTx()).start();
+        session.disassociateLink(this);
     }
     
     @Override
