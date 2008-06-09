@@ -46,6 +46,11 @@ import org.mobicents.media.msc.common.MsSessionState;
  */
 public interface MsSession extends Serializable {
 
+	/**
+	 * Get the unique id of this session
+	 * 
+	 * @return
+	 */
 	public String getId();
 
 	/**
@@ -130,8 +135,18 @@ public interface MsSession extends Serializable {
 	 */
 	public void removeSessionListener(MsSessionListener listener);
 
+	/**
+	 * Returns the list of MsSessionListener
+	 * 
+	 * @return
+	 */
 	public List<MsSessionListener> getSessionListeners();
-	
+
+	/**
+	 * Returns the list of MsConnection associated with this MsSession
+	 * 
+	 * @return
+	 */
 	public List<MsConnection> getConnections();
 
 	/**
@@ -140,9 +155,23 @@ public interface MsSession extends Serializable {
 	 * {@link MsSessionListener}
 	 */
 	public void setSessionStateIdle();
-	
+
+	/**
+	 * Removes the instance of MsConnection from list of MsConnection's managed
+	 * by this MsSession If there are no more MsConnection or MsLink's
+	 * associated with this MsSession, it transitions to INVALID state
+	 * 
+	 * @param connection
+	 */
 	public void disassociateNetworkConnection(MsConnection connection);
-	
+
+	/**
+	 * Removes the instance of MsLink from list of MsLink's managed by this
+	 * MsSession If there are no more MsConnection or MsLink's associated with
+	 * this MsSession, it transitions to INVALID state
+	 * 
+	 * @param link
+	 */
 	public void disassociateLink(MsLink link);
 
 }

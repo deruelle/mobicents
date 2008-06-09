@@ -38,6 +38,7 @@ import org.mobicents.media.msc.common.events.*;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public class MsLinkImpl implements MsLink {
     
@@ -133,17 +134,17 @@ public class MsLinkImpl implements MsLink {
                 logger.debug("Created local connection: " + connections[0].getId());
             } catch (NamingException e) {
                 logger.warn("TX Failed", e);
-                sendEvent(MsLinkEventID.LINK_FAILED,MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
+                sendEvent(MsLinkEventID.LINK_FAILED,MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
                 return;
             } catch (ResourceUnavailableException e) {
                 logger.warn("TX Failed", e);
                 sendEvent(MsLinkEventID.LINK_FAILED,
-                		MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
+                		MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
                 return;
             } catch (TooManyConnectionsException e) {
                 logger.warn("TX Failed", e);
                 sendEvent(MsLinkEventID.LINK_FAILED,
-                        MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
+                        MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
                 return;
             }
             
@@ -155,19 +156,19 @@ public class MsLinkImpl implements MsLink {
                 logger.warn("TX Failed", e);
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
                 sendEvent(MsLinkEventID.LINK_FAILED,
-                        MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
+                        MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
                 return;
             } catch (ResourceUnavailableException e) {
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
                 logger.warn("TX Failed", e);
                 sendEvent(MsLinkEventID.LINK_FAILED,
-                        MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
+                        MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
                 return;
             } catch (TooManyConnectionsException e) {
                 connections[0].getEndpoint().deleteConnection(connections[0].getId());
                 logger.warn("TX Failed", e);
                 sendEvent(MsLinkEventID.LINK_FAILED,
-                        MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
+                        MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
                 return;
             }
             

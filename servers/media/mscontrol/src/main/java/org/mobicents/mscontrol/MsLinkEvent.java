@@ -17,18 +17,42 @@
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
-import org.mobicents.media.msc.common.events.*;
+
+import org.mobicents.media.msc.common.events.MsLinkEventCause;
+import org.mobicents.media.msc.common.events.MsLinkEventID;
+
 /**
- *
+ * Instance of MsLinkEvent is fired when ever state of MsLink is changed
+ * 
  * @author Oleg Kulikov
  */
 public interface MsLinkEvent extends Serializable {
-   
-    
-   
-    
-    public MsLink getSource();
-    public MsLinkEventID getEventID();
-    public MsLinkEventCause getCause();
-    public String getMessage();
+
+	/**
+	 * Returns the instance of MsLink who is firing this event
+	 * 
+	 * @return
+	 */
+	public MsLink getSource();
+
+	/**
+	 * Returns the MsLinkEventID that represents the state change of MsLink
+	 * 
+	 * @return
+	 */
+	public MsLinkEventID getEventID();
+
+	/**
+	 * Returns the cause for MsLinkEventID to be fired
+	 * 
+	 * @return
+	 */
+	public MsLinkEventCause getCause();
+
+	/**
+	 * Returns the message associated with event
+	 * 
+	 * @return
+	 */
+	public String getMessage();
 }

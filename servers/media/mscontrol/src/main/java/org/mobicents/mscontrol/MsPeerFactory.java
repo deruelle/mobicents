@@ -16,18 +16,18 @@
 
 package org.mobicents.mscontrol;
 
-import java.util.ArrayList;
 import org.mobicents.mscontrol.impl.MsPeerImpl;
 
 /**
- *
+ * Factory class to get the MsPeer instance which is used to create the
+ * MsProvider
+ * 
  * @author Oleg Kulikov
  */
 public class MsPeerFactory {
-    private ArrayList sessions = new ArrayList();
-    
-    public static MsPeer getPeer() throws ClassNotFoundException {
-        return new MsPeerImpl();
-    }
-    
+
+	public static MsPeer getPeer() throws ClassNotFoundException {
+		return new MsPeerImpl();
+	}
+
 }

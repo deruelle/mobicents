@@ -21,9 +21,12 @@ import java.io.Serializable;
 /**
  * Represents the actual RTP connection. MsConnection is created by calling
  * <code>MsSession.createNetworkConnection</code>. As soon as MsConnection is
- * created call <code>MsConnection.fireConnectionInitialized()</code> to set
- * the state of MsConection to
+ * created MsSession call's
+ * <code>MsConnection.fireConnectionInitialized()</code> to fire the Event
  * <code>MsConnectionEventID.CONNECTION_INITIALIZED</code>
+ * 
+ * Through out the lifetime of <code>MsConnection</code>, it maintains the
+ * reference to <code>MsSession</code>
  * 
  * @author Oleg Kulikov
  * @author amit.bhayani
@@ -95,14 +98,15 @@ public interface MsConnection extends Serializable {
 	public void modify(String localDesc, String remoteDesc);
 
 	/**
-	 * Deletes related connection from media server.
+	 * Deletes related connection from media server. If the corresponding
+	 * MsSession has only this MsConnection left then the state of MsSession
+	 * becomes INVALID
 	 */
 	public void release();
 
 	/**
-	 * As soon as Connection is created, MsSession calls this method to set the
-	 * state of MsConnection to
-	 * <code>MsConnectionEventID.CONNECTION_INITIALIZED</code>
+	 * As soon as Connection is created, MsSession calls this method to fire
+	 * event <code>MsConnectionEventID.CONNECTION_INITIALIZED</code>
 	 */
 	public void fireConnectionInitialized();
 }

@@ -17,7 +17,7 @@
 package org.mobicents.mscontrol;
 
 /**
- *
+ * Used to get the instance of MsProvider class
  * @author Oleg Kulikov
  */
 public interface MsPeer {

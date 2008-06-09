@@ -19,40 +19,61 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- *
+ * A <code>MsLink</code> represents link between two
+ * <code>org.mobicents.media.server.spi.Endpoint</code>
+ * 
+ * Application creates instance of <code>MsLink</code> by calling
+ * <code>MsSession.createLink(MsLinkMode)</code> As soon MsLink is created
+ * MsSession call's MsLink.fireMsLinkCreated() to fire the Event
+ * <code>MsLinkEventID.LINK_CREATED</code>
+ * 
+ * <code>MsLink</code> maintains the reference to <code>MsSession</code>
+ * object for life of <code>MsLink</code>
+ * 
  * @author Oleg Kulikov
  * @author amit.bhayani
  */
 public interface MsLink extends Serializable {
-    
-    
+
 	/**
 	 * Gets the Link ID
+	 * 
 	 * @return
 	 */
 	public String getId();
-	
-    /**
-     * Gets the session to which this links belongs
-     *
-     * @return the session object.
-     */
-    public MsSession getSession();
-        
-    /**
-     * Joins specified endpoints.
-     *
-     * @param a the name of the first endpoint.
-     * @param b the name of the second endpoint.
-     */
-    public void join(String a, String b);
-    
-    public String[] getEndpoints();
-    
-    /**
-     * Drops this link
-     */ 
-    public void release();
-    
-    public void fireMsLinkCreated();
+
+	/**
+	 * Gets the session to which this links belongs
+	 * 
+	 * @return the session object.
+	 */
+	public MsSession getSession();
+
+	/**
+	 * Joins specified endpoints.
+	 * 
+	 * @param a
+	 *            the name of the first endpoint.
+	 * @param b
+	 *            the name of the second endpoint.
+	 */
+	public void join(String a, String b);
+
+	/**
+	 * Returns back the Endpoints names that this link is trying to join
+	 * 
+	 * @return
+	 */
+	public String[] getEndpoints();
+
+	/**
+	 * Drops this link
+	 */
+	public void release();
+
+	/**
+	 * As soon as MsLink is created MsSession call's MsLink.fireMsLinkCreated() to
+	 * fire the Event <code>MsLinkEventID.LINK_CREATED</code>
+	 */
+	public void fireMsLinkCreated();
 }

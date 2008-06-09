@@ -90,7 +90,7 @@ public class MsSessionImpl implements MsSession {
 	 * @see org.mobicents.mscontrol.MsSession#getProvider().
 	 */
 	public synchronized MsLink createLink(MsLinkMode mode) {
-		MsLinkImpl link = new MsLinkImpl(this, mode);
+		MsLink link = new MsLinkImpl(this, mode);
 		links.add(link);
 		setState(MsSessionState.ACTIVE, MsSessionEventCause.LINK_CREATED, link);
 		link.fireMsLinkCreated();

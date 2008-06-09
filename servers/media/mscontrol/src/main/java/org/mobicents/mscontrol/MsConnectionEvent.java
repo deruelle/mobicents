@@ -22,15 +22,38 @@ import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.media.msc.common.events.MsConnectionEventID;
 
 /**
- *
+ * The instance of <code>MsConnectionEvent</code> is fired when ever the state
+ * of MsConnection changes
+ * 
  * @author Oleg Kulikov
  */
 public interface MsConnectionEvent extends Serializable {
-    
 
-    
-    public MsConnection getConnection();
-    public MsConnectionEventID getEventID();
-    public MsConnectionEventCause getCause();
-    public String getMessage();
+	/**
+	 * Returnns the underlying MsConnection object which has changed its state
+	 * 
+	 * @return MsConnection
+	 */
+	public MsConnection getConnection();
+
+	/**
+	 * Returns the MsConnectionEventID that represents the state change of
+	 * MsConnection
+	 * 
+	 * @return MsConnectionEventID
+	 */
+	public MsConnectionEventID getEventID();
+
+	/**
+	 * Returns the cause for MsConnectionEventID to be fired
+	 * 
+	 * @return MsConnectionEventCause
+	 */
+	public MsConnectionEventCause getCause();
+
+	/**
+	 * Returns the message associated with event
+	 * @return String
+	 */
+	public String getMessage();
 }

@@ -19,8 +19,17 @@ package org.mobicents.mscontrol;
 import java.util.List;
 
 /**
+ * This is the provider class which is used to create the MsSession,
+ * MsSignalGenerator and MsSignalDetector. Through out the Application life
+ * cycle MsProvider remains the same. Application that are interested in
+ * listening MsSessionEvent, MsConnectionEvent, MsLinkEvent and MsNotifyEvent
+ * calls the respective addlistener methods passing instance of class that
+ * implements respective listeners.
+ * 
+ * Use MsPeer.getProvider() to get the instance of MsProvider
  * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public interface MsProvider {
 	/**
@@ -40,6 +49,11 @@ public interface MsProvider {
 	 */
 	public void removeSessionListener(MsSessionListener listener);
 
+	/**
+	 * Returns the list of MsSessionListners registered with MsProvider
+	 * 
+	 * @return
+	 */
 	public List<MsSessionListener> getSessionListeners();
 
 	/**
@@ -49,7 +63,12 @@ public interface MsProvider {
 	 *            object that receives the specified events.
 	 */
 	public void addConnectionListener(MsConnectionListener connectionListener);
-	
+
+	/**
+	 * Returns the List of MsConnectionListener registered with MsProvider
+	 * 
+	 * @return
+	 */
 	public List<MsConnectionListener> getConnectionListeners();
 
 	/**
@@ -60,6 +79,11 @@ public interface MsProvider {
 	 */
 	public void addResourceListener(MsResourceListener listener);
 
+	/**
+	 * Returns List of MsResourceListener registered with MsProvider
+	 * 
+	 * @return
+	 */
 	public List<MsResourceListener> getResourceListeners();
 
 	/**
@@ -77,7 +101,12 @@ public interface MsProvider {
 	 *            object that receives the specified events.
 	 */
 	public void removeLinkListener(MsLinkListener listener);
-	
+
+	/**
+	 * Returns the List of MsLinkListener registered with MsProvider
+	 * 
+	 * @return
+	 */
 	public List<MsLinkListener> getLinkListeners();
 
 	/**
@@ -87,8 +116,20 @@ public interface MsProvider {
 	 */
 	public MsSession createSession();
 
+	/**
+	 * Creates a new instance of MsSignalGenerator for given EndpointName
+	 * 
+	 * @param endpointName
+	 * @return
+	 */
 	public MsSignalGenerator getSignalGenerator(String endpointName);
 
+	/**
+	 * Creates a new instance of SignalDetector for given EndpointName
+	 * 
+	 * @param endpointName
+	 * @return
+	 */
 	public MsSignalDetector getSignalDetector(String endpointName);
 
 	/**
@@ -98,9 +139,10 @@ public interface MsProvider {
 	 * @return
 	 */
 	public MsConnection getMsConnection(String msConnectionId);
-	
+
 	/**
-	 * Gets List of MsConnection object for given endpointName 
+	 * Gets List of MsConnection object for given endpointName
+	 * 
 	 * @param endpointName
 	 * @return
 	 */

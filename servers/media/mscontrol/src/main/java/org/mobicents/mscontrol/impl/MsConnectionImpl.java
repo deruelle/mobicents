@@ -186,7 +186,7 @@ public class MsConnectionImpl implements MsConnection {
 				logger.debug("Media server returns endpoint: " + endpoint.getLocalName());
 			} catch (NamingException ex) {
 				logger.warn("TX Failed", ex);
-				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.FACILITY_FAILURE, ex.getMessage());
+				sendEvent(MsConnectionEventID.TX_FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN, ex.getMessage());
 				return;
 			} catch (ResourceUnavailableException ex) {
 				logger.warn("TX Failed", ex);
