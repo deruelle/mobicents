@@ -1,7 +1,7 @@
 #Makefile for Mobicents_User_Guide
 
 XML_LANG	= en-US
-DOCNAME		= book-Working_with_the_Mobicents_Management_Console
+DOCNAME		= Mobicents_User_Guide
 PRODUCT	= Mobicents
 BRAND		= JBoss
 
