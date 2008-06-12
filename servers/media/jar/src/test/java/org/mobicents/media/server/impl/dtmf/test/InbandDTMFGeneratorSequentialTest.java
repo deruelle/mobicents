@@ -1,6 +1,7 @@
 package org.mobicents.media.server.impl.dtmf.test;
 
 
+import java.util.Date;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.NewSuperXCase;
 import org.mobicents.media.server.impl.dtmf.InbandGenerator;
@@ -146,7 +147,8 @@ public class InbandDTMFGeneratorSequentialTest extends NewSuperXCase implements 
 
     protected void runTest(int currentRow, int currentColumn) throws Exception {
         setUp(currentRow,currentColumn);
-        logger.info("Starting tone test - " + InbandGenerator.getToneName(currentRow, currentColumn));
+       System.out.println("Starting tone test - " + InbandGenerator.getToneName(currentRow, currentColumn));
+       System.out.println("analyzer= " + analyzer);
         analyzer.prepare(null, gen);
         analyzer.start();
         gen.start();
@@ -175,15 +177,16 @@ public class InbandDTMFGeneratorSequentialTest extends NewSuperXCase implements 
 //        notified = true;
 
         double spectra[] = ((SpectrumEvent) event).getSpectra();
+        System.out.println(new Date());
 //        for (int i = 0; i < spectra.length; i++) {
 //            System.out.println(i + " " + spectra[i]);
 //        }
-        System.out.println("Checking...");
+//        System.out.println("Checking...");
         if (!checkFreq(spectra, new int[] {lowFreq[currentRow],highFreq[currentColumn]},ERROR)) {
             doFail(null);
-        System.out.println("Failing...");
-        } else 
-        System.out.println("Checked...");
+//        System.out.println("Failing...");
+        } //else 
+//        System.out.println("Checked...");
         
         // Here we have spectra, lets narrow frequencies error from max to
         // minimal value and see when test "fail"
