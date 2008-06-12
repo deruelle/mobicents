@@ -46,7 +46,7 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
 
 	private String id = (new UID()).toString();
 
-	private ArrayList<MsResourceListener> listeners = new ArrayList();
+	private ArrayList<MsResourceListener> listeners = new ArrayList<MsResourceListener>();
 
 	private boolean released = false;
 
@@ -84,6 +84,10 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
 
 	public void addResourceListener(MsResourceListener listener) {
 		listeners.add(listener);
+	}
+
+	public void removeResourceListener(MsResourceListener listener) {
+		listeners.remove(listener);
 	}
 
 	public void release() {

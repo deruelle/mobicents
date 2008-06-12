@@ -19,11 +19,36 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public interface MsResource extends Serializable {
-    public String getID();
-    public void addResourceListener(MsResourceListener listener);
-    public void release();
+	/**
+	 * Returns the ID of this MsResource
+	 * 
+	 * @return
+	 */
+	public String getID();
+
+	/**
+	 * Add's the instance of class implementing MsResourceListener. update
+	 * method of this class will be called when ever underlying resource is
+	 * updated
+	 * 
+	 * @param listener
+	 */
+	public void addResourceListener(MsResourceListener listener);
+
+	/**
+	 * Removes's the instance of class implementing MsResourceListener. Call
+	 * this method if the class is no more interested in events fired by resource.
+	 * 
+	 * @param listener
+	 */
+	public void removeResourceListener(MsResourceListener listener);
+
+	/**
+	 * Release's the underlying resource
+	 */
+	public void release();
 }

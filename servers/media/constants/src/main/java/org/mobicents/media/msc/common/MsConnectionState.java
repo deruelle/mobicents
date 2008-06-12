@@ -5,7 +5,7 @@ package org.mobicents.media.msc.common;
  * <ul>
  * <li>IDLE : When the MsConnection is created for first time state is IDLE</li>
  * <li>HALF_OPEN : When the MsConnection.modify() is called but without remote
- * SDP and creationg of Connection is successful the state is HALF_OPEN</li>
+ * SDP and creation of Connection is successful the state is HALF_OPEN</li>
  * 
  * <li>OPEN : When the MsConnection.modify() is called with remote SDP and the
  * Connection is successfully modified the state is OPEN</li>

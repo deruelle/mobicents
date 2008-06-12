@@ -18,16 +18,20 @@
 		<depends optional-attribute-name="AnnTrunkManagementMBean">
 			media.mobicents:trunk=announcement
 		</depends>
-		<depends
-			optional-attribute-name="ConfEndpointManagementMBean">
-			media.mobicents:endpoint=conf
-		</depends>
-		<depends
-			optional-attribute-name="LoopEndpointManagementMBean">
-			media.mobicents:trunk=loopback
-		</depends>
 		<depends optional-attribute-name="PRTrunkManagementMBean">
 			media.mobicents:trunk=packet-relay
+		</depends>
+		<depends optional-attribute-name="LoopTrunkManagementMBean">
+			media.mobicents:trunk=loopback
+		</depends>
+		<depends optional-attribute-name="ConfTrunkManagementMBean">
+			media.mobicents:trunk=conf
+		</depends>
+		<depends optional-attribute-name="IVRTrunkManagementMBean">
+			media.mobicents:trunk=ivr
+		</depends>
+		<depends optional-attribute-name="DFTEndpointManagementMBean">
+			media.mobicents:endpoint=dft
 		</depends>
 	</mbean>
 

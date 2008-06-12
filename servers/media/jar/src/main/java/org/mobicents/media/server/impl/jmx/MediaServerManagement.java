@@ -13,13 +13,13 @@ import org.mobicents.media.server.impl.Version;
  */
 
 // TODO Handle option to Start, Stop MediaServer gracefully
-public class MediaServerManagement extends ServiceMBeanSupport implements
-		MediaServerManagementMBean {
-	
+public class MediaServerManagement extends ServiceMBeanSupport implements MediaServerManagementMBean {
 
 	private ObjectName annTrunkManagementMBean;
-	private ObjectName confEndpointManagementMBean;
-	private ObjectName loopEndpointManagementMBean;
+	private ObjectName confTrunkManagementMBean;
+	private ObjectName dftEndpointManagementMBean;
+	private ObjectName ivrTrunkManagementMBean;
+	private ObjectName loopTrunkManagementMBean;
 	private ObjectName prTrunkManagementMBean;
 
 	public MediaServerManagement() {
@@ -27,8 +27,7 @@ public class MediaServerManagement extends ServiceMBeanSupport implements
 		logger.info("[[[[[[[[[ " + getVersion() + " starting... ]]]]]]]]]");
 	}
 
-	private static Logger logger = Logger
-			.getLogger(MediaServerManagement.class);
+	private static Logger logger = Logger.getLogger(MediaServerManagement.class);
 
 	@Override
 	protected void startService() throws Exception {
@@ -42,40 +41,55 @@ public class MediaServerManagement extends ServiceMBeanSupport implements
 		logger.info("[[[[[[[[[ " + getVersion() + " Stopped " + "]]]]]]]]]");
 	}
 
+	public String getVersion() {
+		return Version.instance.toString();
+	}
+
 	public ObjectName getAnnTrunkManagementMBean() {
 		return this.annTrunkManagementMBean;
 	}
 
-	public ObjectName getConfEndpointManagementMBean() {
-		return this.confEndpointManagementMBean;
+	public ObjectName getConfTrunkManagementMBean() {
+		return this.confTrunkManagementMBean;
 	}
 
-	public ObjectName getLoopEndpointManagementMBean() {
-		return this.loopEndpointManagementMBean;
+	public ObjectName getDFTEndpointManagementMBean() {
+		return this.dftEndpointManagementMBean;
+	}
+
+	public ObjectName getIVRTrunkManagementMBean() {
+		return this.ivrTrunkManagementMBean;
+	}
+
+	public ObjectName getLoopTrunkManagementMBean() {
+		return this.loopTrunkManagementMBean;
 	}
 
 	public ObjectName getPRTrunkManagementMBean() {
 		return this.prTrunkManagementMBean;
 	}
 
-	public String getVersion() {
-		return Version.instance.toString();
-	}
-
 	public void setAnnTrunkManagementMBean(ObjectName annTrunkManagementMBean) {
 		this.annTrunkManagementMBean = annTrunkManagementMBean;
+	}
+
+	public void setConfTrunkManagementMBean(ObjectName confTrunkManagementMBean) {
+		this.confTrunkManagementMBean = confTrunkManagementMBean;
 
 	}
 
-	public void setConfEndpointManagementMBean(
-			ObjectName confEndpointManagementMBean) {
-		this.confEndpointManagementMBean = confEndpointManagementMBean;
+	public void setDFTEndpointManagementMBean(ObjectName dftEndpointManagementMBean) {
+		this.dftEndpointManagementMBean = dftEndpointManagementMBean;
 
 	}
 
-	public void setLoopEndpointManagementMBean(
-			ObjectName loopEndpointManagementMBean) {
-		this.loopEndpointManagementMBean = loopEndpointManagementMBean;
+	public void setIVRTrunkManagementMBean(ObjectName ivrTrunkManagementMBean) {
+		this.ivrTrunkManagementMBean = ivrTrunkManagementMBean;
+
+	}
+
+	public void setLoopTrunkManagementMBean(ObjectName loopTrunkManagementMBean) {
+		this.loopTrunkManagementMBean = loopTrunkManagementMBean;
 
 	}
 

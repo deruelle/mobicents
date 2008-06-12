@@ -40,7 +40,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     private MsProvider provider;
     
     private String id = (new UID()).toString();
-    private ArrayList <MsResourceListener> listeners = new ArrayList();
+    private ArrayList<MsResourceListener> listeners = new ArrayList<MsResourceListener>();
     
     private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
     
@@ -81,6 +81,10 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     public void addResourceListener(MsResourceListener listener) {
         listeners.add(listener);
     }
+    
+	public void removeResourceListener(MsResourceListener listener) {
+		listeners.remove(listener);		
+	}    
     
     private class SubscribeTx implements Runnable {
         private EventID signalID;
@@ -131,5 +135,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
             }
         }
     }
+
+
     
 }

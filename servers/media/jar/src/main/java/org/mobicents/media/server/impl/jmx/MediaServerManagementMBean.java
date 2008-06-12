@@ -6,7 +6,9 @@ import org.jboss.system.ServiceMBean;
 
 /**
  * The Media Server Managemnet interface that is responsible for starting and
- * stopping of server
+ * stopping of server.
+ * 
+ * This MBean displays the current version of MMS
  * 
  * @author amit.bhayani
  * 
@@ -23,14 +25,20 @@ public interface MediaServerManagementMBean extends ServiceMBean {
 
 	public void setPRTrunkManagementMBean(ObjectName prTrunkManagementMBean);
 
-	public ObjectName getLoopEndpointManagementMBean();
+	public ObjectName getLoopTrunkManagementMBean();
 
-	public void setLoopEndpointManagementMBean(
-			ObjectName loopEndpointManagementMBean);
+	public void setLoopTrunkManagementMBean(ObjectName loopTrunkManagementMBean);
 
-	public ObjectName getConfEndpointManagementMBean();
+	public ObjectName getConfTrunkManagementMBean();
 
-	public void setConfEndpointManagementMBean(
-			ObjectName confEndpointManagementMBean);
+	public void setConfTrunkManagementMBean(ObjectName confTrunkManagementMBean);
+
+	public ObjectName getIVRTrunkManagementMBean();
+
+	public void setIVRTrunkManagementMBean(ObjectName ivrTrunkManagementMBean);
+
+	public ObjectName getDFTEndpointManagementMBean();
+
+	public void setDFTEndpointManagementMBean(ObjectName dftEndpointManagementMBean);
 
 }
