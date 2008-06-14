@@ -50,6 +50,7 @@ import org.mobicents.media.server.spi.*;
 import org.mobicents.media.server.impl.common.*;
 import org.mobicents.media.server.impl.common.dtmf.*;
 import org.mobicents.media.server.impl.sdp.AVProfile;
+import org.mobicents.media.server.impl.sdp.RTPAudioFormat;
 
 /**
  * 
@@ -372,7 +373,7 @@ public class BaseConnection implements Connection, AdaptorListener {
         try {
             this.period = getPacketizationPeriod(remoteSDP);
         } catch (Exception e) {
-        	logger.info("Failed to get the Packetization Period 'ptime' ",e);
+            //silence here
         }
 
         // configuring DTMF detector if supported
@@ -441,7 +442,7 @@ public class BaseConnection implements Connection, AdaptorListener {
      * @return value of the packetization period in milliseconds.
      * @throws javax.sdp.SdpException
      */
-    private int getPacketizationPeriod(SessionDescription sd) throws SdpException {
+    private int getPacketizationPeriod(SessionDescription sd) throws Exception {
         MediaDescription md = (MediaDescription) sd.getMediaDescriptions(false).get(0);
         String value = md.getAttribute("ptime");
         return Integer.parseInt(value);
@@ -537,7 +538,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             for (Integer pl : local) {
                 Format sfmt = (Format) supported.get(pl);
                 if (sfmt.matches(ofmt)) {
-                    formats.put(po, sfmt);
+                    formats.put(po, ofmt);
                 }
             }
         }
@@ -570,16 +571,20 @@ public class BaseConnection implements Connection, AdaptorListener {
         Properties config = endpoint.getDefaultConfig(MediaResourceType.DTMF_DETECTOR);
 
         boolean is2833 = false;
+        int payload = 101;
+        
         Collection<Format> list = codecs.values();
         for (Format fmt : list) {
             if (fmt.getEncoding().equals("telephone-event")) {
                 is2833 = true;
+                payload = ((RTPAudioFormat)fmt).getPayload();
                 break;
             }
         }
 
         if (is2833) {
             config.setProperty("detector.mode", "RFC2833");
+            config.setProperty("payload.type", Integer.toString(payload));
         } else {
             config.setProperty("detector.mode", "INBAND");
         }
