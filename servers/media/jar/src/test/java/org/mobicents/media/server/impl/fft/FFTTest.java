@@ -72,9 +72,9 @@ public class FFTTest {
         
         Complex[] f = FFT.fft(x);
         
-        for (int i = 0; i < f.length; i++) {
-            System.out.println(i + ": " + Math.sqrt(f[i].re() * f[i].re() + f[i].im()*f[i].im()));
-        }
+//        for (int i = 0; i < f.length; i++) {
+//            System.out.println(i + ": " + Math.sqrt(f[i].re() * f[i].re() + f[i].im()*f[i].im()));
+//        }
     }
 
 

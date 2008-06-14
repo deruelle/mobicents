@@ -20,7 +20,7 @@ public class MixerTest extends SuperXCase implements NotificationListener {
     private final static int PACKETIZATION_PERIOD = 20;
     private final static int JITTER = 60;
     private final static int ERROR = 5;
-    private final static int TEST_DURATION = 5;
+    private final static int TEST_DURATION = 25;
     
     private int count = 0;
     
