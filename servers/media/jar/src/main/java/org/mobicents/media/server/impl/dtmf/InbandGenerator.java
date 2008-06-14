@@ -65,13 +65,13 @@ public class InbandGenerator implements PushBufferStream {
 
         sizeInBytes = (int) (LINEAR.getSampleRate() *
                 (LINEAR.getSampleSizeInBits() / 8) / 1000 * packetPeriod);
-        System.out.println("Size in bytes=" + sizeInBytes);
+        //System.out.println("Size in bytes=" + sizeInBytes);
 
         data = new byte[(int) LINEAR.getSampleRate() * LINEAR.getSampleSizeInBits() / 8];
         int len = data.length / 2;
 
         int[] freq = getFreq(tone);
-        System.out.println("f0=" + freq[0] + ", f1=" + freq[1]);
+        //System.out.println("f0=" + freq[0] + ", f1=" + freq[1]);
 
         int k = 0;
         for (int i = 0; i < len; i++) {

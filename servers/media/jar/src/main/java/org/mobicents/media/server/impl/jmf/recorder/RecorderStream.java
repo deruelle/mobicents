@@ -47,16 +47,16 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
     public int read() throws IOException {
         //System.out.println("Read byte");
         if (eom) {
-            System.out.println("******EOM*****");
+            //System.out.println("******EOM*****");
             return -1;
         }
 
         if (buffers.isEmpty()) {
             blocked = true;
             try {
-                System.out.println("read(): block");
+                //System.out.println("read(): block");
                 semaphore.acquire();
-                System.out.println("read(): unblock");
+                //System.out.println("read(): unblock");
             } catch (InterruptedException e) {
                 return -1;
             }
@@ -71,7 +71,7 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
 
     @Override
     public int read(byte[] buff) {
-        System.out.println("Read buffer");
+        //System.out.println("Read buffer");
         if (buffers.isEmpty()) {
             blocked = true;
             try {
@@ -119,7 +119,7 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
-            System.out.println("transfer data, isEOM=" + buffer.isEOM());
+            //System.out.println("transfer data, isEOM=" + buffer.isEOM());
         } catch (IOException e) {
         }
 

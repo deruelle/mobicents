@@ -65,7 +65,7 @@ public class Recorder {
 	 */
 	private void record(String uri, PushBufferStream stream) throws Exception {
 		if (recorderThread != null) {
-			System.out.println("Recorder thread == " + recorderThread);
+			//System.out.println("Recorder thread == " + recorderThread);
 			dispose();
 		}
 		RecorderStream recorderStream = new RecorderStream(stream);

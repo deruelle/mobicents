@@ -212,11 +212,11 @@ public class FFT {
 				for (int i = 0; i < N; i++) {
 					// x[i] = new Complex(Math.sin(2 * Math.PI * f * i / N), 0);
 					x[i] = new Complex(Double.parseDouble(r[i].trim()), 0);
-					System.out.println("[" + i + "]" + x[i]);
+					//System.out.println("[" + i + "]" + x[i]);
 				}
 
 				Complex[] ft = FFT.fft(x);
-				System.out.println("Len=" + ft.length);
+				//System.out.println("Len=" + ft.length);
 
 				File file = new File("d:/java/tmp/dft.txt");
 				file.delete();
@@ -233,10 +233,10 @@ public class FFT {
 				}
 
 				for (int i = 0; i < ft.length / 2; i++) {
-					System.out.println(i
-							+ "     "
-							+ Math.sqrt(ft[i].re() * ft[i].re() + ft[i].im()
-									* ft[i].im()) / max);
+//					System.out.println(i
+//							+ "     "
+//							+ Math.sqrt(ft[i].re() * ft[i].re() + ft[i].im()
+//									* ft[i].im()) / max);
 					oos.writeUTF("["
 							+ i
 							+ "]"

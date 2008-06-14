@@ -32,7 +32,7 @@ public class AnnResourceManager extends BaseResourceManager {
     public MediaResource getResource(BaseEndpoint endpoint, MediaResourceType type, 
             Connection connection, Properties config) throws UnknownMediaResourceException {
         if (type==MediaResourceType.AUDIO_SOURCE) {
-            System.out.println("------ RETURN PROXY-----");
+            //System.out.println("------ RETURN PROXY-----");
             return new LocalProxy(endpoint, connection);
         } else return null;
     }

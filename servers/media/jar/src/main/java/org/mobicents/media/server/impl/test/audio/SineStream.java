@@ -56,7 +56,7 @@ public class SineStream implements PushBufferStream {
         // is
         // in
         // mS
-        System.out.println("SineStream - Size in bytes=" + sizeInBytes);
+        //System.out.println("SineStream - Size in bytes=" + sizeInBytes);
 
         // We F in 1/s - however we can put here duration of 10s,0.1s - this
         // would affect how values are spread, this is bad, we must add scalling

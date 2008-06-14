@@ -71,7 +71,7 @@ public class DtmfBuffer {
     }
     
     public static void main(String[] args) throws Exception {
-        System.out.println("DIGIT BUFFER");
+        //System.out.println("DIGIT BUFFER");
         DtmfBuffer digitBuffer = new DtmfBuffer(null);
         //digitBuffer.setMask("[\\d]{2}[*]");
         digitBuffer.push("1");

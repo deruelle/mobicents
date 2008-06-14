@@ -203,7 +203,7 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
 		for (int i = 0; i < rawData.length; i++) {
 			if (this.currentPositionInBuffer == this.samplesPerSecond) {
 				logger.info("POSITION iN BFFER["+this.currentPositionInBuffer+"]");
-				System.out.println("POSITION iN BFFER["+this.currentPositionInBuffer+"]");
+				//System.out.println("POSITION iN BFFER["+this.currentPositionInBuffer+"]");
 				doDFT();
 				this.currentPositionInBuffer = 0;
 			}

@@ -211,7 +211,7 @@ public abstract class BaseEndpoint implements Endpoint {
         try {
             mediaResource.configure(config);
             resources.put(type + "_" + connection.getId(), mediaResource);
-            System.out.println("HOLD RESOURCE: " + type + "_" + connection.getId());
+            //System.out.println("HOLD RESOURCE: " + type + "_" + connection.getId());
         } catch (Exception e) {
             logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
             throw new IllegalArgumentException(e.getMessage());
@@ -309,7 +309,7 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     public Object getResource(MediaResourceType type, String connectionID) {
-            System.out.println("GET RESOURCE: " + type + "_" + connectionID);
+            //System.out.println("GET RESOURCE: " + type + "_" + connectionID);
         return resources.get(type + "_" + connectionID);
     }
 
