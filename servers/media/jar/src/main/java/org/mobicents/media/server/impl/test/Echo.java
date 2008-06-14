@@ -57,7 +57,9 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
 
     public void configure(Properties config) {
 //        if (getState() == MediaResourceState.NULL) {
-            mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
+            mediaProxy = new MediaPushProxy(
+                    endpoint.getTimer(),
+                    endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
             setState(MediaResourceState.CONFIGURED);
 //        }

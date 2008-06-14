@@ -15,13 +15,11 @@
  */
 package org.mobicents.media.server.impl.jmf.recorder;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.mobicents.media.server.impl.common.events.RecorderEventType;
 import org.mobicents.media.server.impl.ivr.*;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.mobicents.media.Format;
@@ -32,6 +30,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.common.events.RecorderEventType;
 
 /**
  * 

@@ -17,12 +17,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -36,6 +36,7 @@ public class AudioMixer implements Serializable {
             AudioFormat.SIGNED);
         
     private TimerTask mixer;
+    protected Timer timer;
     
     private MixerOutputStream outputStream;
     private List<MixerInputStream> buffers = Collections.synchronizedList(new ArrayList());
@@ -54,7 +55,8 @@ public class AudioMixer implements Serializable {
      * 
      * @param packetPeriod packetization period in milliseconds. 
      */
-    public AudioMixer(int packetPeriod, int jitter) {
+    public AudioMixer(Timer timer, int packetPeriod, int jitter) {
+        this.timer = timer;
         this.packetPeriod = packetPeriod;
         this.jitter = jitter;
         try {
@@ -69,7 +71,8 @@ public class AudioMixer implements Serializable {
      * @param packetPeriod packetization period in milliseconds. 
      * @param fmt format of the output stream.
      */
-    public AudioMixer(int packetPeriod, int jitter, AudioFormat fmt) throws UnsupportedFormatException {
+    public AudioMixer(Timer timer, int packetPeriod, int jitter, AudioFormat fmt) throws UnsupportedFormatException {
+        this.timer = timer;
         this.packetPeriod = packetPeriod;
         this.jitter = jitter;
         this.fmt = fmt;
@@ -142,7 +145,7 @@ public class AudioMixer implements Serializable {
         if (!started) {
             started = true;
             mixer = new Mixer();
-            Endpoint.TIMER.scheduleAtFixedRate(mixer, packetPeriod, packetPeriod);
+            timer.scheduleAtFixedRate(mixer, packetPeriod, packetPeriod);
         }
     }
 
@@ -153,7 +156,7 @@ public class AudioMixer implements Serializable {
         if (started) {
             started = false;
             mixer.cancel();
-            Endpoint.TIMER.purge();
+            timer.purge();
         }
     }
     
@@ -177,7 +180,8 @@ public class AudioMixer implements Serializable {
                 short s = 0;
                 for (byte[] frame : frames) {
                     if ((i + 1) < frame.length) {
-                        s += (short) (((frame[i]) << 8) | (frame[i + 1] & 0xff));
+                        short f = (short) (((frame[i]) << 8) | (frame[i + 1] & 0xff));
+                        s = (short) (s + f);
                     }
                 }
                 data[l++] = (byte) (s >> 8);

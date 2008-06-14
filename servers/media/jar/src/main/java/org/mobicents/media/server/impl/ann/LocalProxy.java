@@ -52,7 +52,8 @@ public class LocalProxy extends BaseResource implements MediaSource {
     }
 
     public void configure(Properties config) {
-        mediaProxy = new MediaPushProxy(endpoint.getPacketizationPeriod(),
+        mediaProxy = new MediaPushProxy(endpoint.getTimer(), 
+                endpoint.getPacketizationPeriod(),
                 connection.getAudioFormat());
         setState(MediaResourceState.CONFIGURED);
     }

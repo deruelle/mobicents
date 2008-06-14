@@ -56,7 +56,8 @@ public class AnnouncementSignal extends Signal implements PlayerListener {
         this.endpoint = endpoint;
         this.params = params;
         
-        player = new AudioPlayer(endpoint.getPacketizationPeriod());
+        player = new AudioPlayer(endpoint.getTimer(),
+                endpoint.getPacketizationPeriod());
         player.setFormat(audioFormat);
         player.addListener(this);
     }

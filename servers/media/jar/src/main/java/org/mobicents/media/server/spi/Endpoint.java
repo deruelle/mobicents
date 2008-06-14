@@ -40,7 +40,7 @@ public interface Endpoint extends Serializable {
     /**
      * Timer instance
      */
-    public final static Timer TIMER = new Timer();
+    //public final static Timer TIMER = new Timer();
 
     /**
      * Gets the local name attribute.

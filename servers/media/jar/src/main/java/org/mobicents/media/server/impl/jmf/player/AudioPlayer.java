@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
@@ -44,10 +45,12 @@ public class AudioPlayer {
     protected AudioFormat format = LINEAR;
     private List<PlayerListener> listeners = Collections.synchronizedList(new ArrayList());
     private PushBufferAudioStream audioStream;
+    protected Timer timer;
     
     protected int packetPeriod;
 
-    public AudioPlayer(int packetPeriod) {
+    public AudioPlayer(Timer timer, int packetPeriod) {
+        this.timer = timer;
         this.packetPeriod = packetPeriod;
     }
     

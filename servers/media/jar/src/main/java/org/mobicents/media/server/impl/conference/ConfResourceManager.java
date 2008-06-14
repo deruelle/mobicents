@@ -33,6 +33,7 @@ public class ConfResourceManager extends BaseResourceManager {
             MediaResourceType type, Connection connection, Properties config)
             throws UnknownMediaResourceException {
         if (type == type.AUDIO_SOURCE) {
+            System.out.println("RETURN NEW LOCAL MIXER");
             return new LocalMixer(endpoint, connection);
         } else if (type == type.AUDIO_SINK) {
             return new LocalSplitter(endpoint, connection);

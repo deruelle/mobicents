@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -44,13 +45,15 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     private long seq = 0;
     private Codec codec;
     private TimerTask transmission;
+    private Timer timer;
     
     public MediaPushProxy() {
     }
 
-    public MediaPushProxy(int period, AudioFormat fmt) {
+    public MediaPushProxy(Timer timer, int period, AudioFormat fmt) {
         this.period = period;
         this.fmt = fmt;
+        this.timer = timer;
     }
 
     public MediaPushProxy(Format fmt) {
@@ -84,7 +87,7 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     public void start() {
         if (transferHandler != null && !started) {
             transmission = new Transmission(this);
-            Endpoint.TIMER.scheduleAtFixedRate(transmission, 0, period);
+            timer.scheduleAtFixedRate(transmission, 0, period);
             started = true;
         }
     }
@@ -92,7 +95,7 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     public void stop() {
         if (started) {
             transmission.cancel();
-            Endpoint.TIMER.purge();
+            timer.purge();
             started = false;
         }
     }

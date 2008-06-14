@@ -54,7 +54,6 @@ public class LocalMixer extends BaseResource implements MediaSource {
     public LocalMixer(String id, AudioFormat fmt,
             int packetizationPeriod, int jitter) throws UnsupportedFormatException {
         this.id = id;
-        mixer = new AudioMixer(packetizationPeriod, jitter, fmt);
     }
 
     public void add(String id, PushBufferStream pushStream) throws UnsupportedFormatException {
@@ -95,7 +94,7 @@ public class LocalMixer extends BaseResource implements MediaSource {
         mixer.stop();
 
         if (getState() == MediaResourceState.STARTED) {
-            setState(MediaResourceState.PREPARED);
+            setState(MediaResourceState.STARTING);
         }
     }
 
@@ -110,7 +109,7 @@ public class LocalMixer extends BaseResource implements MediaSource {
         int jitter = endpoint.getJitter();
 
         try {
-            mixer = new AudioMixer(packetization, jitter, fmt);
+            mixer = new AudioMixer(endpoint.getTimer(), packetization, jitter, fmt);
             setState(MediaResourceState.CONFIGURED);
         } catch (UnsupportedFormatException e) {
             throw new IllegalArgumentException(e.getMessage());
@@ -158,5 +157,6 @@ public class LocalMixer extends BaseResource implements MediaSource {
                 }
             }
         }
+        mixer = null;
     }
 }
