@@ -2,6 +2,7 @@ package org.mobicents.media.server.impl.jmf.mixer.test;
 
 import java.io.File;
 
+import java.util.Timer;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -31,6 +32,8 @@ public class MixerTest extends SuperXCase implements NotificationListener {
     private SpectralAnalyser analyser;
     private SineStream[] sineStream;
 
+    private Timer timer = new Timer();
+    
     public static Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(MixerTest.class);
@@ -39,7 +42,7 @@ public class MixerTest extends SuperXCase implements NotificationListener {
 
     @Override
     protected void setUp() throws Exception {
-        mixer = new AudioMixer(PACKETIZATION_PERIOD, JITTER);
+        mixer = new AudioMixer(timer, PACKETIZATION_PERIOD, JITTER);
         
         sineStream = new SineStream[FREQ.length];
         for (int i = 0; i < FREQ.length; i++) {

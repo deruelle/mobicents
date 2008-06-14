@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
 
+import java.util.Timer;
 import javax.sound.sampled.AudioFileFormat;
 
 import org.mobicents.media.server.impl.SuperXCase;
@@ -34,7 +35,8 @@ public class RecorderPlayerTest extends SuperXCase implements
 	protected int[] sineF = new int[] { 155 };
 	protected SineStream ss = null;
 	protected SpectralAnalyser sa = null;
-
+        private Timer timer = new Timer();
+        
 	// Recorder event flags
 	protected boolean start_r, stop_on_reqeust;
 
@@ -90,7 +92,7 @@ public class RecorderPlayerTest extends SuperXCase implements
 		AudioPlayer ap=null;
 		try {
 			setUpFiles("wav");
-			ap = new AudioPlayer(20);
+			ap = new AudioPlayer(timer, 20);
 			ap.addListener(this);
 			sa.prepare(null, ap.start(recordFile.toURL().toString()));
 			sa.start();
