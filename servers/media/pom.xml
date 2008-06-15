@@ -11,7 +11,7 @@
 	
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-server-media-parent</artifactId>
-	<version>1.0.0.BETA2</version>	
+	<version>1.0.1.BETA3-SNAPSHOT</version>	
 	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	
@@ -46,9 +46,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-server-media-parent-1.0.0.BETA2</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-server-media-parent-1.0.0.BETA2</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/mobicents-server-media-parent-1.0.0.BETA2</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>		
 	
 	<dependencyManagement>
