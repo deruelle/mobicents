@@ -533,10 +533,16 @@
 			<version>${smpp.version}</version>
 		</dependency>
 		<dependency>
-				<groupId>antlr</groupId>
-				<artifactId>stringtemplate</artifactId>
-				<version>${antlr.stringtemplate.version}</version>
-			</dependency>	
+			<groupId>antlr</groupId>
+			<artifactId>stringtemplate</artifactId>
+			<version>${antlr.stringtemplate.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+  			<artifactId>xercesImpl</artifactId>
+  			<version>${xercesImpl.version}</version>
+		</dependency>	
+				
 		</dependencies>
 	</dependencyManagement>
 
