@@ -669,7 +669,7 @@
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
    				<groupId>org.mobicents.tools</groupId>
-    			<version>1.0.0.BETA1-SNAPSHOT</version>
+    			<version>1.0.0.BETA1</version>
 				<inherited>false</inherited>
 				<executions />
 				<configuration>
@@ -685,20 +685,6 @@
 		</plugins>		
 	</build>
 	
-	<profiles>
-		<profile>
-			<id>maven-release</id>
-			<modules>
-				<module>tools/maven-eclipse-plugin</module>
-				<!--module>servers/jain-slee/tools/maven-du-plugin</module>
-				<module>servers/jain-slee/tools/maven-archetypes</module>
-				<module>servers/jain-slee</module>
-				<module>servers/media</module>
-				<module>servers/sip-presence</module-->
-			</modules>
-		</profile>
-	</profiles>
-
 	<scm>
 		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
 		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
