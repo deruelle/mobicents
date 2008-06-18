@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>maven-eclipse-plugin</artifactId>
 	<groupId>org.mobicents.tools</groupId>
-	<version>1.0.0.BETA1-SNAPSHOT</version>
+	<version>1.0.0.BETA1</version>
 	
 	<description>
 		Maven Plugin to generate Eclipse project files, based on code
@@ -262,9 +260,9 @@
   </distributionManagement>
   
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA1</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA1</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA1</url>
 	</scm>
 	
 </project>
