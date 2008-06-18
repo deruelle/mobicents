@@ -690,11 +690,11 @@
 			<id>maven-release</id>
 			<modules>
 				<module>tools/maven-eclipse-plugin</module>
-				<module>servers/jain-slee/tools/maven-du-plugin</module>
+				<!--module>servers/jain-slee/tools/maven-du-plugin</module>
 				<module>servers/jain-slee/tools/maven-archetypes</module>
 				<module>servers/jain-slee</module>
 				<module>servers/media</module>
-				<!--module>servers/sip-presence</module-->
+				<module>servers/sip-presence</module-->
 			</modules>
 		</profile>
 	</profiles>
