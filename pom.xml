@@ -699,4 +699,10 @@
 		</profile>
 	</profiles>
 
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>
+	
 </project>
