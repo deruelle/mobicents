@@ -168,4 +168,11 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</url>
+	</scm>
+	
 </project>
