@@ -11,7 +11,7 @@
 	
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-server-media-parent</artifactId>
-	<version>1.0.1.BETA3-SNAPSHOT</version>	
+	<version>1.0.0.BETA2-SNAPSHOT</version>	
 	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	
@@ -24,11 +24,11 @@
 	<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
   </properties>   
 
-	<modules>		
+	<modules>
+		<module>mscontrol</module>
+		<module>constants</module>		
 		<module>jar</module>
 		<module>sar</module>
-		<module>mscontrol</module>
-		<module>constants</module>
 		<!-- uncomment before changing version with release plugin-->
 		<module>test</module>
 				
@@ -61,7 +61,7 @@
 		</dependencies>
 	</dependencyManagement>
 	
-	<!-- 
+	<!--  -->
 	<build>
 		<plugins>
 			<plugin>
@@ -81,8 +81,8 @@
 			</plugin>
 		</plugins>		
 	</build>
-	-->
-	<!-- uncomment for release -->
+	
+	<!-- uncomment for release 
 	<build>
 		<plugins>
 			<plugin>
@@ -126,7 +126,7 @@
 			</plugin>
 		</plugins>		
 	</build>
-	
+	-->
 
 	<!-- dupe info from parent, but it's only way to retrieve the parent without user configuration -->
 
