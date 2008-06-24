@@ -16,11 +16,11 @@ import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
 public class MixerTest extends SuperXCase implements NotificationListener {
 
-    private final static int FREQ[] = new int[]{50,100,150};
+    private final static int FREQ[] = new int[]{50,100,150,200,400};
     private final static int PACKETIZATION_PERIOD = 20;
     private final static int JITTER = 60;
-    private final static int ERROR = 5;
-    private final static int TEST_DURATION = 25;
+    private final static int ERROR = 2;
+    private final static int TEST_DURATION = 60;
     
     private int count = 0;
     
