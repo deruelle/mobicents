@@ -61,7 +61,6 @@ public abstract class BaseEndpoint implements Endpoint {
 
     private String localName;
     private transient Timer timer = new Timer();
-    
     private InetAddress bindAddress;
     protected int packetizationPeriod;
     protected int jitter;
@@ -84,7 +83,7 @@ public abstract class BaseEndpoint implements Endpoint {
     public Timer getTimer() {
         return timer;
     }
-    
+
     /**
      * (Non Java-doc).
      *
@@ -219,6 +218,7 @@ public abstract class BaseEndpoint implements Endpoint {
             mediaResource.configure(config);
             resources.put(type + "_" + connection.getId(), mediaResource);
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
             throw new IllegalArgumentException(e.getMessage());
         }
@@ -245,7 +245,7 @@ public abstract class BaseEndpoint implements Endpoint {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
-    
+
     public synchronized void prepare(MediaResourceType type, String connectionID, PushBufferStream media) throws UnsupportedFormatException {
         MediaSink res = (MediaSink) resources.get(type + "_" + connectionID);
         if (res != null) {
@@ -481,4 +481,5 @@ public abstract class BaseEndpoint implements Endpoint {
     public void subscribe(EventID eventID, String connectionID,
             String params[], NotificationListener listener) {
     }
+
 }

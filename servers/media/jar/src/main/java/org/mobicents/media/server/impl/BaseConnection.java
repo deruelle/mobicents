@@ -15,6 +15,7 @@
  */
 package org.mobicents.media.server.impl;
 
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -74,6 +75,7 @@ public class BaseConnection implements Connection, AdaptorListener {
     private SdpFactory sdpFactory = SdpFactory.getInstance();
     private HashMap codecs;
     private ConnectionState state = ConnectionState.NULL;
+    private QueuedExecutor eventQueue = new QueuedExecutor();
     private transient Logger logger = Logger.getLogger(BaseConnection.class);
 
     /**
@@ -221,8 +223,9 @@ public class BaseConnection implements Connection, AdaptorListener {
         }
         ConnectionState oldState = this.state;
         this.state = newState;
-        for (ConnectionListener cl : listeners) {
-            cl.onStateChange(this, oldState);
+        try {
+            eventQueue.execute(new StateNotificator(this,oldState));
+        } catch (InterruptedException e) {
         }
     }
 
@@ -654,6 +657,22 @@ public class BaseConnection implements Connection, AdaptorListener {
         logger.error("Facility error", e);
     }
 
+    private class StateNotificator implements Runnable {
+        private  Connection connection;
+        private ConnectionState oldState;
+        
+        public StateNotificator(Connection connection, ConnectionState oldState) {
+            this.connection = connection;
+            this.oldState = oldState;
+        }
+        
+        public void run() {
+            for (ConnectionListener cl : listeners) {
+                cl.onStateChange(connection, oldState);
+            }
+        }
+    }
+    
     private class Sender implements Runnable {
 
         private BaseConnection connection;
@@ -692,11 +711,11 @@ public class BaseConnection implements Connection, AdaptorListener {
                 if (logger.isDebugEnabled()) {
                     logger.debug(connection + " Preparing audio source:");
                 }
-                MediaSource audioSource = (MediaSource) endpoint.getResource(MediaResourceType.AUDIO_SOURCE,
+                MediaSource audioSource = (MediaSource) endpoint.getResource(
+                        MediaResourceType.AUDIO_SOURCE,
                         getId());
 
                 startTransmission(audioSource.prepare(getEndpoint()));
-
             }
         }
     }
