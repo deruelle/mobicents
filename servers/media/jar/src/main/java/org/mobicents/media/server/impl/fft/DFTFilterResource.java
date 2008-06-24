@@ -39,6 +39,8 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
 	private StringBuffer result = null;
 	private Codec codec=null;
 	private BitSize signalBufferBitFormat = BitSize.BIT_8;
+        private FFT fft = new FFT();
+        
 	/**
 	 * This shows how many bytes we have per sample - 1==8,2==16, etc
 	 */
@@ -311,7 +313,7 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
 		
 
 
-		Complex[] y = FFT.fft(this.localData);
+		Complex[] y = fft.fft(this.localData);
 		
 		StringBuffer tmpLine=new StringBuffer(5*this.localData.length);
 		

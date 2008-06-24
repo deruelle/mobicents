@@ -42,6 +42,7 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
     private Codec codec;
     private int offset = 0;
     private byte[] localBuffer = new byte[16000];
+    private FFT fft = new FFT();
     private Logger logger = Logger.getLogger(SpectralAnalyser.class);
 
     public void configure(Properties config) {
@@ -109,7 +110,6 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
         if (getState() != MediaResourceState.STARTED) {
             return;
         }
-
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
@@ -149,25 +149,11 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
                 double dx = (double) i / (double) signal.length - (double) p / (double) media.length;
                 signal[i] = new Complex(media[p] + K * dx, 0);
             }
-
-/*            int k = 0;
-            for (int i = 0; i < 8000; i++) {
-                signal[i] = new Complex(
-                        (localBuffer[k++] & 0xff) | (localBuffer[k++] << 8), 0);
-                System.out.println(i + " " + signal[i].re());
-            }
-
-            //pad with zero
-            for (int i = 0; i < 192; i++) {
-                signal[8000 + i] = new Complex(0, 0);
-            }
-*/
             localBuffer = new byte[16000];
             offset = 0;
 
-            Complex[] sp = FFT.fft(signal);
+            Complex[] sp = fft.fft(signal);
             double[] res = mod(sp);
-
             sendEvent(res);
         }
     }
