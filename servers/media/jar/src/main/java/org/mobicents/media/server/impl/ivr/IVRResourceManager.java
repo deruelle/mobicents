@@ -10,8 +10,8 @@ import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.ann.AnnResourceManager;
 import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.dtmf.DTMFResourceLocator;
+import org.mobicents.media.server.impl.fft.SpectralAnalyser;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 
@@ -27,6 +27,8 @@ public class IVRResourceManager extends AnnResourceManager {
             return DTMFResourceLocator.getDetector(config);
         } else if (type==type.AUDIO_SINK) {
             return new LocalSplitter(endpoint, connection);
+        } else if (type == type.SPECTRUM_ANALYSER) {
+            return new SpectralAnalyser();
         } else return super.getResource(endpoint, type, connection, config);
     }
 }
