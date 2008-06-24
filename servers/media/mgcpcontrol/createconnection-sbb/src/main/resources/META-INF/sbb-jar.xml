@@ -89,7 +89,7 @@
 					slee/resources/jainmgcp/2.0/provider
 				</resource-adaptor-object-name>
 				<resource-adaptor-entity-link>
-					MGCPRA
+					MGCP-MRF
 				</resource-adaptor-entity-link>
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
