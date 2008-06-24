@@ -16,6 +16,7 @@
 
 package org.mobicents.media.server.impl.jmf.player;
 
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,10 +46,12 @@ public class AudioPlayer {
     protected AudioFormat format = LINEAR;
     private List<PlayerListener> listeners = Collections.synchronizedList(new ArrayList());
     private PushBufferAudioStream audioStream;
+    
     protected Timer timer;
+    private QueuedExecutor eventService = new QueuedExecutor();
     
     protected int packetPeriod;
-
+    
     public AudioPlayer(Timer timer, int packetPeriod) {
         this.timer = timer;
         this.packetPeriod = packetPeriod;
@@ -129,7 +132,10 @@ public class AudioPlayer {
      */
     protected void failed(Exception e) {
         PlayerEvent evt = new PlayerEvent(this, PlayerEventType.FACILITY_ERROR, Utils.doMessage(e));
-        new Thread(new EventQueue(evt)).start();
+        try {
+            eventService.execute(new EventHandler(evt));
+        } catch (InterruptedException ex) {
+        }
     }
     
     /**
@@ -137,7 +143,10 @@ public class AudioPlayer {
      */
     protected void stopped() {
         PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STOP_BY_REQUEST, null);
-        new Thread(new EventQueue(evt)).start();
+        try {
+            eventService.execute(new EventHandler(evt));
+        } catch (InterruptedException ex) {
+        }
     }
     
     /**
@@ -145,25 +154,30 @@ public class AudioPlayer {
      */
     protected void started() {
         PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STARTED, null);
-        new Thread(new EventQueue(evt)).start();
+        try {
+            eventService.execute(new EventHandler(evt));
+        } catch (InterruptedException ex) {
+        }
     }
     
     /**
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
-//        audioStream.stop();
         PlayerEvent evt = new PlayerEvent(this, PlayerEventType.END_OF_MEDIA, null);
-        new Thread(new EventQueue(evt)).start();
+        try {
+            eventService.execute(new EventHandler(evt));
+        } catch (InterruptedException ex) {
+        }
     }
     
     /**
      * Implements async event sender
      */
-    private class EventQueue implements Runnable {
+    private class EventHandler implements Runnable {
         private PlayerEvent evt;
         
-        public EventQueue(PlayerEvent evt) {
+        public EventHandler(PlayerEvent evt) {
             this.evt = evt;
         }
         
