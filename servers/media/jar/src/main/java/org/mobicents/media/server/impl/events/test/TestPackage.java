@@ -25,6 +25,7 @@ import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.impl.fft.SpectralAnalyser;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -42,15 +43,19 @@ public class TestPackage implements Serializable, ResourceStateListener {
     private Semaphore semaphore = new Semaphore(0);
     private boolean blocked = false;
     private Logger logger = Logger.getLogger(TestPackage.class);
-    
+
+    public TestPackage(Endpoint endpoint) {
+        this.endpoint = (BaseEndpoint) endpoint;
+    }
+
     public void subscribe(EventID eventID, HashMap params,
-    		Connection connection, NotificationListener listener) {
+            Connection connection, NotificationListener listener) {
         SpectralAnalyser analyser = (SpectralAnalyser) endpoint.getResource(MediaResourceType.SPECTRUM_ANALYSER, connection.getId());
         if (analyser == null) {
             try {
                 endpoint.configure(MediaResourceType.SPECTRUM_ANALYSER, connection, null);
             } catch (UnknownMediaResourceException e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -73,6 +78,9 @@ public class TestPackage implements Serializable, ResourceStateListener {
                 return;
             }
         }
+
+        analyser.addListener(listener);
+        analyser.start();
 
     }
 
