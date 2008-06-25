@@ -151,6 +151,18 @@ public class EclipseMojo
     private boolean generateProjectsForModules = false;
     
     /**
+     * Whether the tests directory should be added to the classpath
+     * @parameter expression="${includeTestsDirectory}"
+     */
+    private boolean includeTestsDirectory = true;
+    
+    /**
+     * Whether the resources directory should be added to the classpath
+     * @parameter expression="${includeResourcesDirectory}"
+     */
+    private boolean includeResourcesDirectory = true;
+    
+    /**
      * The name for the Eclipse project generated. Defaults to POM's artifactId.
      * @parameter expression="${eclipseProjectName}"
      */
@@ -186,6 +198,7 @@ public class EclipseMojo
             this.processCompileSourceRoots(projects);
             final ClasspathWriter classpathWriter = new ClasspathWriter(rootProject,
                     this.getLog());
+            //TODO refactor to pass all arguments as an Options class or this will keep increasing the method signature
             classpathWriter.write(
                 projects,
                 this.repositoryVariableName,
@@ -197,7 +210,9 @@ public class EclipseMojo
                 this.project.getRemoteArtifactRepositories(),
                 this.resolveTransitiveDependencies,
                 this.classpathMerge,
-                this.classpathExcludes);
+                this.classpathExcludes,
+                this.includeResourcesDirectory,
+                this.includeTestsDirectory);
             // - reset to the original source roots
             for (final Iterator iterator = projects.iterator(); iterator.hasNext();)
             {

@@ -21,6 +21,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.model.Resource;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
@@ -57,6 +58,8 @@ public class ClasspathWriter
      * @param resolveTransitiveDependencies whether or not dependencies shall be transitively resolved.
      * @param merge anything extra (not auto-generated), that should be "merged" into the generated .classpath
      * @param classpathExcludes 
+     * @param includeTestsDirectory 
+     * @param includeResourcesDirectory 
      * @throws Exception
      */
     public void write(
@@ -70,7 +73,7 @@ public class ClasspathWriter
         final Set classpathArtifactTypes,
         final List remoteRepositories,
         final boolean resolveTransitiveDependencies,
-        final String merge, Set classpathExcludes)
+        final String merge, Set classpathExcludes, boolean includeResourcesDirectory, boolean includeTestsDirectory)
         throws Exception
     {
     	final String rootDirectory = PathNormalizer.normalizePath(this.project.getBasedir().toString());
@@ -94,8 +97,8 @@ public class ClasspathWriter
         }
 
         // - write the source roots for the root project (if they are any)
-        this.writeSourceRoots(this.project, rootDirectory, writer);
-
+        this.writeSourceRoots(this.project, rootDirectory, writer, includeTestsDirectory, includeResourcesDirectory);
+        	
         final Set allArtifacts = new LinkedHashSet(this.project.createArtifacts(
             artifactFactory,
             null,
@@ -104,7 +107,7 @@ public class ClasspathWriter
         for (final Iterator iterator = projects.iterator(); iterator.hasNext();)
         {
             final MavenProject project = (MavenProject)iterator.next();
-            this.writeSourceRoots(project, rootDirectory, writer);
+            this.writeSourceRoots(project, rootDirectory, writer, includeTestsDirectory, includeResourcesDirectory);
             final Set artifacts = project.createArtifacts(
                     artifactFactory,
                     null,
@@ -298,8 +301,10 @@ public class ClasspathWriter
      * @param project the project for which to write the source roots.
      * @param rootDirectory the root project's base directory
      * @param writer the XMLWriter used to write the source roots.
+     * @param includeTestsDirectory 
+     * @param includeResourcesDirectory 
      */
-    private void writeSourceRoots(final MavenProject project, final String rootDirectory, final XMLWriter writer)
+    private void writeSourceRoots(final MavenProject project, final String rootDirectory, final XMLWriter writer, boolean includeTestsDirectory, boolean includeResourcesDirectory)
     {
         for (final Iterator sourceIterator = project.getCompileSourceRoots().iterator(); sourceIterator.hasNext();)
         {
@@ -322,8 +327,47 @@ public class ClasspathWriter
                 }
             }
         }
+        
+        if (includeTestsDirectory) {
+			for (final Iterator testSourceIterator = project
+					.getTestCompileSourceRoots().iterator(); testSourceIterator
+					.hasNext();) {
+				final String testSourceRoot = PathNormalizer
+						.normalizePath((String) testSourceIterator.next());
+				if (new File(testSourceRoot).isDirectory()) {
+					String testSourceRootPath = StringUtils.replace(
+							testSourceRoot, rootDirectory, "");
+					if (testSourceRootPath.startsWith("/")) {
+						testSourceRootPath = testSourceRootPath.substring(1,
+								testSourceRootPath.length());
+						this.writeClasspathEntry(writer, "src",
+								testSourceRootPath);
+					}
+				}
+			}
+		}
+
+		if (includeResourcesDirectory) {
+			for (final Iterator resourceIterator = project.getResources()
+					.iterator(); resourceIterator.hasNext();) {
+				Resource resource = (Resource) resourceIterator.next();
+				File resourceDirectory = new File(resource.getDirectory());
+				if (resourceDirectory.exists()
+						&& resourceDirectory.isDirectory()) {
+					String resourceSourceRootPath = StringUtils.replace(
+							resource.getDirectory(), rootDirectory, "");
+					if (resourceSourceRootPath.startsWith("/")) {
+						resourceSourceRootPath = resourceSourceRootPath
+								.substring(1, resourceSourceRootPath.length());
+						this.writeClasspathEntry(writer, "src",
+								resourceSourceRootPath);
+					}
+				}
+			}
+		}
     }
 
+    
     /**
      * Writes a classpathentry with the given <code>kind</code> and <code>path</code> values.
      *
