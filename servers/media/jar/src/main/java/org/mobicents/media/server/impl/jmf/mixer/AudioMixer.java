@@ -48,6 +48,10 @@ public class AudioMixer implements Serializable {
     private int packetPeriod;
     private int jitter;
     
+    private double targetGain = 1;
+    private double currentGain = 1;
+    private static double maxStepDown = 1./22; // 51 samples transition from gain 1 to gain 0
+    private static double maxStepUp = 1./4000; // 3000 samples transition from gain 1 to gain 0
     private Logger logger = Logger.getLogger(AudioMixer.class);
     
     /** 
@@ -164,8 +168,66 @@ public class AudioMixer implements Serializable {
      * Implements mixing procedure for a buffer of audio.
      */
     private class Mixer extends TimerTask {
-        public void run() {
-            byte[] data = new byte[packetSize];
+    	
+    	
+    	public short[] byteToShortArray(byte[] input) {
+    		short[] output = new short[input.length>>1];
+    		for(int q=0; q<input.length; q+=2) {
+    			short f = (short) (((input[q + 1]) << 8) | (input[q] & 0xff));
+    			output[q>>1] = f;
+    		}
+    		return output;
+    	}
+    	
+    	public byte[] mix(ArrayList<byte[]> input) {
+    		int numSamples = packetSize>>1;
+    		short[][] inputs = new short[input.size()][];
+    		for(int q=0; q<input.size(); q++) {
+    			inputs[q] = byteToShortArray(input.get(q));
+    		}
+    		
+    		int[] mixed = new int[numSamples];
+    		
+    		for(int q=0; q<numSamples; q++) {
+    			for(int w=0; w<input.size(); w++) {
+    				mixed[q] += inputs[w][q];
+    			}
+    		}
+    		
+    		int numExceeding = 0;
+    		int maxExcess = 0;
+    		
+    		for(int q=0; q<numSamples; q++) {
+    			int excess = 0;
+    			int overflow = mixed[q] - Short.MAX_VALUE;
+    			int underflow = mixed[q] - Short.MIN_VALUE;
+    			
+    			if(overflow>0) excess = overflow;
+    			else if(underflow<0) excess = -underflow;
+    			
+    			if(excess>0) numExceeding++;
+    			maxExcess = Math.max(maxExcess, excess);
+    		}
+    		
+    		if(numExceeding > numSamples>>5) {
+    			targetGain = (float)(Short.MAX_VALUE)/(float)(Short.MAX_VALUE + maxExcess + 2000);
+    		} else 
+    			targetGain = 1;
+    		
+    		byte[] data = new byte[packetSize];
+    		int l = 0;
+    		for(int q=0; q<numSamples; q++) {
+    			mixed[q] *= currentGain;
+    			if(targetGain-currentGain>=maxStepUp) currentGain += maxStepUp;
+    			else if (currentGain-targetGain>maxStepDown) currentGain -= maxStepDown;
+    			short s = (short) (mixed[q]);
+                data[l++] = (byte) (s);
+                data[l++] = (byte) (s >> 8);
+    		}
+    		return data;
+    	}
+    	
+        public synchronized void run() {
 
             ArrayList<byte[]> frames = new ArrayList();
             for (MixerInputStream buffer : buffers) {
@@ -174,19 +236,7 @@ public class AudioMixer implements Serializable {
                 } 
             }
 
-            int l = 0;
-
-            for (int i = 0; i < packetSize; i += 2) {
-                short s = 0;
-                for (byte[] frame : frames) {
-                    if ((i + 1) < frame.length) {
-                        short f = (short) (((frame[i]) << 8) | (frame[i + 1] & 0xff));
-                        s = (short) (s + f);
-                    }
-                }
-                data[l++] = (byte) (s >> 8);
-                data[l++] = (byte) (s);
-            }
+            byte[] data = mix(frames);
 
             outputStream.push(data);
         }
