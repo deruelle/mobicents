@@ -11,7 +11,7 @@
         <sbb-version>1.0</sbb-version>
 
 		<sbb-ref>
-       		<sbb-name>SipPresenceSubscriptionControlSbb</sbb-name>
+       		<sbb-name>IntegratedSubscriptionControlSbb</sbb-name>
         	<sbb-vendor>org.mobicents</sbb-vendor>
         	<sbb-version>1.0</sbb-version>
         	<sbb-alias>childSbb</sbb-alias>
@@ -102,31 +102,6 @@
 				</resource-adaptor-entity-link>
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
-
-        <resource-adaptor-type-binding>
-        	<resource-adaptor-type-ref>
-        		<resource-adaptor-type-name>
-        			PersistenceAdaptorType
-        		</resource-adaptor-type-name>
-        		<resource-adaptor-type-vendor>
-        			org.mobicents
-        		</resource-adaptor-type-vendor>
-        		<resource-adaptor-type-version>
-        			0.1
-        		</resource-adaptor-type-version>
-        	</resource-adaptor-type-ref>
-        	<activity-context-interface-factory-name>
-        		slee/resources/pra/0.1/acifactory
-        	</activity-context-interface-factory-name>
-        	<resource-adaptor-entity-binding>
-        		<resource-adaptor-object-name>
-        			slee/resources/pra/0.1/provider
-        		</resource-adaptor-object-name>
-        		<resource-adaptor-entity-link>
-        			PersistenceRA
-        		</resource-adaptor-entity-link>
-        	</resource-adaptor-entity-binding>
-        </resource-adaptor-type-binding>
 
     </sbb>
     

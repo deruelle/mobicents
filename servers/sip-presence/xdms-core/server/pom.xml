@@ -15,6 +15,7 @@
 		<module>appusagecache</module>
 		<module>datasource</module>
 		<module>core</module>
+		<module>subscription-sbb</module>
 	</modules>
 	
 	<build>

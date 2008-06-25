@@ -52,7 +52,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface;
 import org.mobicents.slee.sipevent.server.publication.pojo.ComposedPublication;
@@ -80,11 +79,6 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 	protected AddressFactory addressFactory;
 	protected MessageFactory messageFactory;
 	protected HeaderFactory headerFactory;
-	
-	/**
-	 * Persistence RA sbb interface
-	 */
-	protected PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface;
 	
 	/**
 	 * SLEE Facilities
@@ -118,8 +112,6 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 			addressFactory = sipFactoryProvider.getAddressFactory();
 			headerFactory = sipFactoryProvider.getHeaderFactory();
 			messageFactory = sipFactoryProvider.getMessageFactory();
-			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) context
-			.lookup("slee/resources/pra/0.1/provider");
 			activityContextNamingfacility = (ActivityContextNamingFacility) context.lookup("slee/facilities/activitycontextnaming");
 		}
 		catch (Exception e) {

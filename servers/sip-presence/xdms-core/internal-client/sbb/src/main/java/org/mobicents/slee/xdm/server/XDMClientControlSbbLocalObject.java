@@ -2,6 +2,9 @@ package org.mobicents.slee.xdm.server;
 
 import javax.slee.SbbLocalObject;
 
+import org.openxdm.xcap.common.key.XcapUriKey;
+import org.openxdm.xcap.common.resource.AttributeResource;
+import org.openxdm.xcap.common.resource.ElementResource;
 import org.openxdm.xcap.common.uri.DocumentSelector;
 
 public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
@@ -12,24 +15,98 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 */
 	public void setParentSbb(XDMClientControlParentSbbLocalObject parentSbb);
 	
-	/**
-	 * Retrieves the xml document, stored on the XDM,  for the specified resource.
-	 * @param documentSelector
-	 * @return
-	 */
-	public Object getDocument(DocumentSelector documentSelector);
+	// --- get/put/delete interface methods
 	
 	/**
-	 * Subscribes changes on a XML document, stored on the XDM, for the specified resource.
-	 * @param documentSelector
+	 * Retrieves the XML resource from the XCAP server, for the specified key. Response is async.
 	 */
-	public void subscribeDocument(DocumentSelector documentSelector);
+	public void get(XcapUriKey key);
+
+	/**
+	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
+	 * the key. Response is async.
+	 * 
+	 * @param key
+	 * @param mimetype
+	 *            the mimetype of the content to put, for document each XCAP App
+	 *            Usage defines their own mimetype, but for elements and attributes
+	 *            you can use {@link ElementResource} and
+	 *            {@link AttributeResource} static MIMETYPE fields.
+	 * @param content
+	 */
+	public void put(XcapUriKey key, String mimetype, byte[] content);
+
+	/**
+	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
+	 * the key, if the specified ETag matches the current one on the server.
+	 * 
+	 * @param key
+	 * @param eTag
+	 * @param mimetype
+	 *            the mimetype of the content to put, for document each XCAP App
+	 *            Usage defines their own mimetype, but for elements and attributes
+	 *            you can use {@link ElementResource} and
+	 *            {@link AttributeResource} static MIMETYPE fields.
+	 * @param content
+	 */
+	public void putIfMatch(XcapUriKey key, String eTag, String mimetype,
+			byte[] content);
+
+	/**
+	 * Puts the specified content in the XCAP Server, in the XCAP URI pointed by
+	 * the key, if the specified ETag does not matches the current one on the
+	 * server.
+	 * 
+	 * @param key
+	 * @param eTag
+	 * @param mimetype
+	 *            the mimetype of the content to put, for document each XCAP App
+	 *            Usage defines their own mimetype, but for elements and attributes
+	 *            you can use {@link ElementResource} and
+	 *            {@link AttributeResource} static MIMETYPE fields.
+	 * @param content
+	 */
+	public void putIfNoneMatch(XcapUriKey key, String eTag,
+			String mimetype, byte[] content);
+
+	/**
+	 * Deletes the content related the specified XCAP URI key.
+	 * 
+	 * @param key
+	 */
+	public void delete(XcapUriKey key);
+
+	/**
+	 * Deletes the content related the specified XCAP URI key, if the specified
+	 * ETag matches the current one on the server.
+	 * 
+	 * @param key
+	 * @param eTag
+	 */
+	public void deleteIfMatch(XcapUriKey key, String eTag);
+
+	/**
+	 * Deletes the content related the specified XCAP URI key, if the specified
+	 * ETag does not matches the current one on the server.
+	 * 
+	 * @param key
+	 * @param eTag 
+	 */
+	public void deleteIfNoneMatch(XcapUriKey key, String eTag);
+
+	// --- subscribe/unsubscribe interface methods
 	
 	/**
-	 * Unsubscribes changes on a XML document, stored on the XDM, for the specified resource.
-	 * @param documentSelector
+	 * Subscribes changes on a XML document, stored on the XDM.
+	 * @param key
 	 */
-	public void unsubscribeDocument(DocumentSelector documentSelector);
+	public void subscribeDocument(DocumentSelector documentSelector); 
+	
+	/**
+	 * Unsubscribes changes on a XML document, stored on the XDM.
+	 * @param key
+	 */
+	public void unsubscribeDocument(DocumentSelector documentSelector); 
 	
 	/**
 	 * Subscribes changes on XML documents of the specified app usage, stored on the XDM.
@@ -42,4 +119,5 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param auid
 	 */
 	public void unsubscribeAppUsage(String auid);
+	
 }

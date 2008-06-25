@@ -1,54 +1,217 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project name="Release_build" default="deploy">
+<?xml version="1.0"?>
+<project name="mobicents.release" default="" basedir=".">
 
-  <property name="home" value="${ant.file.Release_build}/../" />
-  
-  <target name="deploy-jmx">
-		<ant antfile="${home}../../resources/http-servlet/build.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/appusagecache-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/datasource-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/core-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/pres-rules-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/resource-lists-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/rls-services-du-management.xml" target="deploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/xcap-caps-du-management.xml" target="deploy-jmx" inheritAll="false" />
-  </target>
+	<property environment="sys"/>
 
-  <target name="undeploy-jmx">
-		<ant antfile="${home}/xcap-caps-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/rls-services-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/resource-lists-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/pres-rules-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/core-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/datasource-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}/appusagecache-du-management.xml" target="undeploy-jmx" inheritAll="false" />
-		<ant antfile="${home}../../resources/http-servlet/build.xml" target="undeploy-jmx" inheritAll="false" />
-  </target>
+	<property name="release.dir" value="${ant.file.mobicents.release}/../target"/>
+	<property name="jboss.version" value="4.2.2.GA"/>
+	<property name="release.version" value="1.0.0.BETA2-SNAPSHOT"/>
+	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
+	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/"/>
+	<property name="jboss.config" value="default" />
 
-  <target name="deploy">
-		<ant antfile="${home}../../resources/http-servlet/build.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/appusagecache-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/datasource-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/core-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/pres-rules-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/resource-lists-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/rls-services-du-management.xml" target="deploy" inheritAll="false" />
-		<ant antfile="${home}/xcap-caps-du-management.xml" target="deploy" inheritAll="false" />
-   </target>
+	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
+		<os family="windows"/>
+	</condition>
+	<condition property="default.jboss.config">
+		<equals arg1="${jboss.config}" arg2="default"/>
+	</condition>
+	<condition property="all.jboss.config">
+		<equals arg1="${jboss.config}" arg2="all"/>
+	</condition>
 
-  <target name="undeploy">
-		<ant antfile="${home}/xcap-caps-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/rls-services-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/resource-lists-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/pres-rules-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/oma-pres-rules-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/core-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/datasource-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}/appusagecache-du-management.xml" target="undeploy" inheritAll="false" />
-		<ant antfile="${home}../../resources/http-servlet/build.xml" target="undeploy" inheritAll="false" />
-  </target>
+	<target name="build-xdms" description="">
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xdms">
+			<arg line="clean install -Djboss.home=${jboss.home}"/>
+		</exec>
+	</target>
+
+	<target name="build-integrated" description="">
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../integrated">
+			<arg line="clean install -Djboss.home=${jboss.home}" />
+		</exec>
+	</target>
+
+	<target name="release-xdms">
+		<antcall target="unzip-jboss" />
+		<antcall target="get-mobicents-jain-slee" />
+		<antcall target="build-mobicents-jain-slee" />
+		<antcall target="build-xdms" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${jboss.home}" />
+		</antcall>
+		<delete file="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}.zip"/>
+		<antcall target="zip-jboss">
+			<param name="zip.filename" value="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}.zip" />
+			<param name="jboss.home" value="${jboss.home}" />
+		</antcall>
+		<delete dir="${jboss.home}" failonerror="true" />
+	</target>
+
+	<target name="release-integrated">
+		<antcall target="unzip-jboss" />
+		<antcall target="get-mobicents-jain-slee" />
+		<antcall target="build-mobicents-jain-slee" />
+		<antcall target="build-integrated" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${jboss.home}" />
+		</antcall>
+		<delete file="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}.zip"/>
+		<antcall target="zip-jboss" >
+			<param name="zip.filename" value="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}.zip" />
+			<param name="jboss.home" value="${jboss.home}" />
+		</antcall>
+		<delete dir="${jboss.home}" failonerror="true" />
+	</target>
+
+	<target name="release-without-mobicents-jain-slee" description="Makes the release.">
+		<antcall target="build-xdms" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${release.dir}/tmp" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/appusages/oma-pres-rules-server-DU" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/appusage-oma-pres-rules-server-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/appusages/pres-rules-server-DU" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/appusage-pres-rules-server-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/appusages/resource-lists-server-DU" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/appusage-resource-lists-server-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/appusages/rls-services-server-DU" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/appusage-rls-services-server-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/appusagecache-ra-du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/server-appusagecache-ra-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/datasource-ra-du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/server-datasource-ra-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/core-du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/server-core-DU" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/subscription-control-du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/server-subscription-control-DU" />
+		</antcall>
+		<antcall target="build-integrated" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${release.dir}/tmp" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../integrated/deployable-unit" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/integrated/deployable-unit" />
+		</antcall>
+		<copy overwrite="true" file="${ant.file.mobicents.release}/../release-build.xml" toFile="${release.dir}/release-without-mobicents-jain-slee/build.xml">
+			<filterset>
+				<filter token="JBOSS.CONFIG" value="${jboss.config}" />
+			</filterset>
+		</copy>
+		<!-- TODO copy readme & licenses -->
+		<delete file="${ant.file.mobicents.release}/../mobicents-sip-presence-${release.version}.zip"/>
+		<zip destfile="${ant.file.mobicents.release}/../mobicents-sip-presence-${release.version}.zip" basedir="${release.dir}/release-without-mobicents-jain-slee"/>
+		<delete dir="${release.dir}/tmp"/>
+		<delete dir="${release.dir}/release-without-mobicents-jain-slee"/>
+	</target>
+
+	<target name="release" depends="get-jboss,release-without-mobicents-jain-slee,release-integrated,release-xdms,clean" />
+
+	<target name="release-component" description="">
+		<echo>Packaging component for release from ${source.dir}</echo>
+		<copy overwrite="true" todir="${dest.dir}">
+			<fileset dir="${source.dir}/target">
+				<include name="**.jar" />
+				<include name="*.xml" />
+				<include name="*.properties" />
+			</fileset>
+		</copy>
+		<copy overwrite="true" file="${dest.dir}/build.xml" tofile="${dest.dir}/du-management.xml" />
+		<copy overwrite="true" file="${ant.file.mobicents.release}/../component-build.xml" toFile="${dest.dir}/build.xml">
+			<filterset>
+				<filter token="JBOSS.CONFIG" value="${jboss.config}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="clean">
+		<delete dir="${release.dir}" />
+	</target>
+
+	<target name="unzip-jboss">
+		<delete dir="${jboss.home}" failonerror="true" />
+		<unzip src="${jboss.distro.zip.path}" dest="${release.dir}" />
+		<antcall target="cleanup-jboss"/>
+	</target>
+
+	<target name="cleanup-jboss">
+		<antcall target="delete-all-jboss-config"/>
+		<antcall target="delete-default-jboss-config"/>
+		<delete dir="${jboss.home}/server/minimal" />
+	</target>
+	<target name="delete-all-jboss-config" unless="all.jboss.config">
+		<delete dir="${jboss.home}/server/all" />
+	</target>
+	<target name="delete-default-jboss-config" unless="default.jboss.config">
+		<delete dir="${jboss.home}/server/default" />
+	</target>
+
+	<target name="zip-jboss" description="">
+		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh"
+			         eol="lf" eof="remove" />
+		<zip destfile="${ant.file.mobicents.release}/../${zip.filename}" filesonly="false">
+			<zipfileset dir="${jboss.home}/bin"
+			            filemode="755" prefix="bin">
+				<include name="*.sh" />
+			</zipfileset>
+			<zipfileset dir="${jboss.home}/bin"
+	         		prefix="bin">
+				<exclude name="*.sh" />
+			</zipfileset>
+			<zipfileset dir="${jboss.home}"
+	            	prefix="">
+				<exclude name="bin/**"/>
+				<exclude name="server/*/data/**"/>
+				<exclude name="server/*/log/**"/>
+				<exclude name="server/*/tmp/**"/>
+				<exclude name="server/*/work/**"/>
+				<exclude name="server/tmp/**"/>
+			</zipfileset>
+		</zip>
+	</target>
+
+	<available file="${ant.file.mobicents.release}/../mobicents-jain-slee" property="mobicents.jain.slee.checked.out"/>
+	<target name="get-mobicents-jain-slee" unless="mobicents.jain.slee.checked.out">
+		<echo>Checking out Mobicents JAIN-SLEE</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+			<arg line="-f external-components-checkout.xml install -Dexternal.modules.basedir=mobicents-jain-slee"/>
+		</exec>
+	</target>
+	<target name="build-mobicents-jain-slee">
+		<echo>Building Mobicents JAIN-SLEE</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../mobicents-jain-slee">
+			<arg line="install -Djboss.home=${jboss.home}" />
+		</exec>
+		<echo>Building Mobicents JAIN-SLEE SIP RA</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../mobicents-jain-slee/resources/sip">
+			<arg line="install -Djboss.home=${jboss.home}" />
+		</exec>
+		<echo>Building Mobicents JAIN-SLEE HTTP-SERVLET RA</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../mobicents-jain-slee/resources/http-servlet">
+			<arg line="install -Djboss.home=${jboss.home}" />
+		</exec>
+	</target>
+
+	<available file="${ant.file.mobicents.release}/../${jboss.distro.zip.path}" property="got.jboss" />
+	<target name="get-jboss" unless="got.jboss">
+		<echo>Downloading JBoss AS</echo>
+		<get dest="${ant.file.mobicents.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-4.2.2.GA.zip"/>
+	</target>
 
 </project>

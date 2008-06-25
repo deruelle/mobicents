@@ -12,20 +12,23 @@
 	<artifactId>integrated-parent</artifactId>
 	
 	<modules>		
-		<module>../xdms</module>
-		<module>subscription-sbb-descriptor</module>	
+		<module>..</module>
+		<module>../xdms/server/appusagecache-ra-du</module>
+		<module>../xdms/server/datasource-ra-du</module>
+		<module>../xdms/server/core-du</module>
+		<module>../xdms/appusages</module>
+		<module>subscription-sbb</module>	
 		<module>deployable-unit</module>	
 	</modules>
 	
 	<properties>
 		<org.mobicents.servers.sippresence.integrated.finalName>
-			mobicents-sippresence-integrated-${pom.artifactId}-${pom.version}
+			mobicents-sippresence-${pom.artifactId}-${pom.version}
 		</org.mobicents.servers.sippresence.integrated.finalName>
 	</properties>			
 	
 	<build>
 		<finalName>${org.mobicents.servers.sippresence.integrated.finalName}</finalName>
 	</build>
-	
 		
 </project>

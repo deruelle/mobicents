@@ -15,6 +15,7 @@
 		<module>appusagecache-ra-du</module>
 		<module>datasource-ra-du</module>
 		<module>core-du</module>
+		<module>subscription-control-du</module>
 	</modules>
 	
 	<build>

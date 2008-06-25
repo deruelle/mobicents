@@ -17,16 +17,21 @@
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>sip-presence-publication-control-sbb</artifactId>
 			<version>${pom.version}</version>			
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
-			<artifactId>integrated-sip-presence-subscription-control-sbb-descriptor</artifactId>
+			<artifactId>integrated-subscription-control-sbb</artifactId>
 			<version>${pom.version}</version>	
-				
 		</dependency>
 		
 		
 		<!-- libs -->
+		<dependency>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<artifactId>server-subscription-control-sbb</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>sip-presence-subscription-control-sbb</artifactId>
@@ -75,6 +80,11 @@
 			<scope>runtime</scope>		
 		</dependency>
 		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<scope>runtime</scope>	
+		</dependency>
 	</dependencies>
 		
 	<build>
@@ -106,7 +116,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy overwrite="true" file="target/${project.build.finalName}.jar" todir="${env.JBOSS_HOME}/server/${node}/deploy"/>
+								<copy overwrite="true" file="target/${project.build.finalName}.jar" todir="${jboss.home}/server/${node}/deploy"/>
 							</tasks>
 						</configuration>
 					</execution>
@@ -118,7 +128,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.jar"/>
+								<delete file="${jboss.home}/server/${node}/deploy/${project.build.finalName}.jar"/>
 							</tasks>
 						</configuration>
 					</execution>

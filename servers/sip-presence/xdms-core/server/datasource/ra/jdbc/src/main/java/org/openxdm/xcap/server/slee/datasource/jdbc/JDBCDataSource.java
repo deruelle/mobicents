@@ -711,6 +711,69 @@ public class JDBCDataSource implements DataSource {
 		addCollection(appUsage, "users/" + user);
 	}
 
+	private String selectDocumentsQuery(AppUsageRegister aur, String collection) {
+		return "SELECT doc_name FROM " + aur
+						.getDocsTable() + " WHERE doc_parent = '"
+				+ collection + "';";
+	}
+	
+	public String[] getDocuments(String auid, String collection)
+			throws InternalServerErrorException {
+		
+		requiresDatasourceOpen();
+
+		AppUsageRegister aur = activeAppUsages.get(auid);
+		if (aur != null) {
+			ResultSet rs = null;
+			Statement stmt = null;
+			Connection connection = null;
+			try {
+				connection = jdbcDataSource.getConnection();
+				stmt = connection.createStatement();
+				rs = stmt.executeQuery(selectDocumentsQuery(aur,collection));
+				ArrayList<String> list = new ArrayList<String>();
+				while (rs.next()) {
+					list.add(rs.getString(1));
+				}
+				return list.toArray(new String[list.size()]);
+			} catch (SQLException e) {
+				logger.error("SQLException: " + e.getMessage());
+				throw new InternalServerErrorException(
+						"Failed to get documents for collection "+collection+" and app usage " + auid
+								+ ". Exception: SQLException Message: "
+								+ e.getMessage());
+			} finally {
+				if (connection != null) {
+					try {
+						connection.close();
+					} catch (SQLException sqlEx) { // ignore
+						logger.error(sqlEx);
+						stmt = null;
+					}
+				}
+				if (rs != null) {
+					try {
+						rs.close();
+					} catch (SQLException sqlEx) { // ignore
+						logger.error(sqlEx);
+						rs = null;
+					}
+				}
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException sqlEx) { // ignore
+						logger.error(sqlEx);
+						stmt = null;
+					}
+				}
+			}
+		} else {
+			throw new InternalServerErrorException("unknown appUsage \""
+					+ auid + "\"");
+		}
+	}
+	
 	private String selectCollectionsQuery(AppUsageRegister aur,
 			String expression) {
 		return "SELECT collection FROM " + aur.getCollectionsTable()

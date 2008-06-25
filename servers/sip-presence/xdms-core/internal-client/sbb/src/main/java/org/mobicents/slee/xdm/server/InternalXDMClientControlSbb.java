@@ -1,22 +1,30 @@
 package org.mobicents.slee.xdm.server;
 
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
+import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
-import org.openxdm.xcap.common.datasource.Document;
+import org.openxdm.xcap.common.error.InternalServerErrorException;
+import org.openxdm.xcap.common.error.RequestException;
+import org.openxdm.xcap.common.key.XcapUriKey;
 import org.openxdm.xcap.common.uri.DocumentSelector;
+import org.openxdm.xcap.server.etag.ETagValidator;
+import org.openxdm.xcap.server.etag.IfMatchETagValidator;
+import org.openxdm.xcap.server.etag.IfNoneMatchETagValidator;
+import org.openxdm.xcap.server.result.ReadResult;
+import org.openxdm.xcap.server.result.WriteResult;
+import org.openxdm.xcap.server.slee.RequestProcessorSbbLocalObject;
+import org.openxdm.xcap.server.slee.ServerConfiguration;
 import org.openxdm.xcap.server.slee.resource.datasource.AppUsageActivity;
 import org.openxdm.xcap.server.slee.resource.datasource.AttributeUpdatedEvent;
 import org.openxdm.xcap.server.slee.resource.datasource.DataSourceActivityContextInterfaceFactory;
@@ -47,41 +55,110 @@ public abstract class InternalXDMClientControlSbb implements Sbb, XDMClientContr
 		}
 	}
 	
-	/*
-	 * JAXB context is thread safe
-	 */
-	private static final JAXBContext jaxbContext = initJAXBContext();
-	private static JAXBContext initJAXBContext() {
-		try {
-			return JAXBContext.newInstance(
-					"org.openxdm.xcap.client.appusage.resourcelists.jaxb" +
-					":org.openxdm.xcap.client.appusage.rlsservices.jaxb" +
-					":org.openxdm.xcap.client.appusage.presrules.jaxb.commonpolicy" +
-					":org.openxdm.xcap.client.appusage.presrules.jaxb" +
-					":org.openxdm.xcap.client.appusage.omapresrules.jaxb" +
-					":org.openxdm.xcap.client.appusage.xcapcaps.jaxb");
-		} catch (JAXBException e) {
-			logger.error("failed to create jaxb context",e);
-			return null;
+	public abstract ChildRelation getRequestProcessorChildRelation();
+
+	protected RequestProcessorSbbLocalObject getRequestProcessor()
+			throws InternalServerErrorException {
+		// get the child relation
+		ChildRelation childRelation = getRequestProcessorChildRelation();
+		// creates the child sbb if does not exist
+		if (childRelation.isEmpty()) {
+			try {
+				return (RequestProcessorSbbLocalObject) childRelation.create();
+			} catch (Exception e) {
+				logger.error("unable to create the child sbb.", e);
+				throw new InternalServerErrorException("");
+			}
+		}
+		else {
+			// return the child sbb
+			return (RequestProcessorSbbLocalObject) childRelation.iterator().next();
 		}
 	}
 	
 	// -- SBB LOCAL OBJECT METHODS
 	
-	public Object getDocument(DocumentSelector documentSelector) {		
-		
-		logger.info("Retrieveing "+documentSelector);
-		
+	private void delete(XcapUriKey key, ETagValidator eTagValidator) {
+		int responseCode = -1;
+		String eTag = null;
 		try {
-			Document document = dataSourceSbbInterface.getDocument(documentSelector);
-			if (document != null) {
-				return unmarshallDocument(document.getAsString());
-			}			
-		} catch (Exception e) {
-			logger.error("failed to get document from xdm datasource", e);
-		}
-		return null;
+			WriteResult writeResult = getRequestProcessor().delete(key.getResourceSelector(), null, ServerConfiguration.XCAP_ROOT);
+			responseCode =  writeResult.getResponseStatus();
+			eTag = writeResult.getResponseEntityTag();
+		} catch (RequestException e) {
+			responseCode = e.getResponseStatus();
+		} 
+		getParentSbbCMP().deleteResponse(key,responseCode,eTag);		
 	}
+	
+	public void delete(XcapUriKey key) {
+		delete(key,null);		
+	}	
+	
+	public void deleteIfMatch(XcapUriKey key, String tag) {
+		delete(key,new IfMatchETagValidator(tag));					
+	}
+	
+	public void deleteIfNoneMatch(XcapUriKey key, String tag) {
+		delete(key,new IfNoneMatchETagValidator(tag));	
+	}
+	
+	public void get(XcapUriKey key) {
+		logger.info("Retrieveing "+key);
+		int responseCode = -1;
+		String mimetype = null;
+		String content = null;
+		String eTag = null;
+		try {
+			ReadResult readResult = getRequestProcessor().get(key.getResourceSelector());
+			responseCode = 200;
+			mimetype = readResult.getResponseDataObject().getMimetype();
+			content = readResult.getResponseDataObject().toXML();
+			eTag = readResult.getResponseEntityTag();			
+		} catch (RequestException e) {
+			logger.error(e);
+			responseCode = e.getResponseStatus();
+		} 
+		getParentSbbCMP().getResponse(key, responseCode, mimetype, content, eTag);	
+	}
+	
+	private void put(XcapUriKey key, String mimetype, byte[] content, ETagValidator eTagValidator) {
+		ByteArrayInputStream bais = new ByteArrayInputStream(content);
+		int responseCode = -1;
+		String eTag = null;
+		try {
+			WriteResult writeResult = getRequestProcessor().put(key.getResourceSelector(), mimetype, bais, eTagValidator, ServerConfiguration.XCAP_ROOT);
+			responseCode =  writeResult.getResponseStatus();
+			eTag = writeResult.getResponseEntityTag();
+		} catch (RequestException e) {
+			responseCode = e.getResponseStatus();
+		} 
+		finally {
+			try {
+				bais.close();
+			} catch (IOException e) {
+				// ignore
+				logger.error(e);
+			}
+		}
+		getParentSbbCMP().putResponse(key, responseCode, eTag);
+	}
+	
+	public void put(XcapUriKey key, String mimetype, byte[] content) {
+		put(key, mimetype, content,null);		
+	}
+	
+	public void putIfMatch(XcapUriKey key, String tag, String mimetype,
+			byte[] content) {
+		put(key, mimetype, content, new IfMatchETagValidator(tag));
+	}
+	
+	public void putIfNoneMatch(XcapUriKey key, String tag, String mimetype,
+			byte[] content) {
+		put(key, mimetype, content, new IfNoneMatchETagValidator(tag));
+	}
+	
+	// --- subscribe/unsubscribe interface methods
 	
 	public void setParentSbb(XDMClientControlParentSbbLocalObject parentSbb) {
 		setParentSbbCMP(parentSbb);
@@ -111,7 +188,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb, XDMClientContr
 				}
 			}
 		}
-		logger.info("Didn't unsubscribe, not found subscription for "+documentSelector);
+		logger.info("Didn't unsubscribe, did not found subscription for "+documentSelector);
 	}
 	
 	public void subscribeAppUsage(String auid) {
@@ -138,49 +215,30 @@ public abstract class InternalXDMClientControlSbb implements Sbb, XDMClientContr
 				}
 			}
 		}
-		logger.info("Didn't unsubscribe, not found subscription for "+auid);
+		logger.info("Didn't unsubscribe, did not found subscription for "+auid);
 	}
 	
 	// EVENT HANDLER METHODS
 	
 	public void onAttributeUpdatedEvent(AttributeUpdatedEvent event, ActivityContextInterface aci) {
 		logger.info("attribute updated on "+event.getDocumentSelector());
-		warnParentSbbAboutDocumentUpdate(event.getDocumentSelector(), event.getDocumentAsString());		
+		getParentSbbCMP().attributeUpdated(event.getDocumentSelector(),event.getNodeSelector(),event.getAttributeSelector(),event.getNamespaces(),event.getOldETag(),event.getNewETag(),event.getDocumentAsString(),event.getAttributeValue());	
 	}
 	
 	public void onDocumentUpdatedEvent(DocumentUpdatedEvent event, ActivityContextInterface aci) {
 		logger.info("document updated on "+event.getDocumentSelector());
-		warnParentSbbAboutDocumentUpdate(event.getDocumentSelector(), event.getDocumentAsString());
+		getParentSbbCMP().documentUpdated(event.getDocumentSelector(),event.getOldETag(),event.getNewETag(),event.getDocumentAsString());
 	}
 
 	public void onElementUpdatedEvent(ElementUpdatedEvent event, ActivityContextInterface aci) {
 		logger.info("element updated on "+event.getDocumentSelector());
-		warnParentSbbAboutDocumentUpdate(event.getDocumentSelector(), event.getDocumentAsString());
+		getParentSbbCMP().elementUpdated(event.getDocumentSelector(),event.getNodeSelector(),event.getNamespaces(),event.getOldETag(),event.getNewETag(),event.getDocumentAsString(),event.getElementAsString());
 	}
 	
 	// CMP FIELDs
 	
 	public abstract void setParentSbbCMP(XDMClientControlParentSbbLocalObject parentSbb);
 	public abstract XDMClientControlParentSbbLocalObject getParentSbbCMP();
-	
-	// AUX METHODS
-	
-	private Object unmarshallDocument(String document) throws JAXBException {
-		// unmarshal doc
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-		StringReader stringReader = new StringReader(document);
-		Object documentUnmarshalled = unmarshaller.unmarshal(stringReader);
-		stringReader.close();
-		return documentUnmarshalled;
-	}
-	
-	private void warnParentSbbAboutDocumentUpdate(DocumentSelector documentSelector, String document) {
-		try {
-			getParentSbbCMP().documentUpdated(documentSelector,unmarshallDocument(document));
-		} catch (Exception e) {
-			logger.error("failed to unmarshall document received from xdm datasource", e);
-		}
-	}
 	
 	// SBB OBJECT LIFECYCLE METHODS
 	

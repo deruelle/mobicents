@@ -37,7 +37,7 @@ public class UnsupportedMediaTypeTest {
 	
 	private XCAPClient client = null;
 	private AppUsage appUsage = new ResourceListsAppUsage(null);
-	private String user = "sip:bob@example.com";
+	private String user = "sip:eduardo@openxdm.org";
 	private String documentName = "index";
 	
 	@Before

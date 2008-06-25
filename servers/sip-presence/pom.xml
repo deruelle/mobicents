@@ -3,6 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
@@ -19,7 +27,7 @@
 		<module>xdms-core</module>	
 		<module>ps-core</module>
 	</modules>
-		
+	
 	<properties>
 		<!-- PRESENCE SERVICE CONFIGURATION -->
 		<xdm.server.xcap.root>/mobicents</xdm.server.xcap.root>

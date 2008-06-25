@@ -316,4 +316,8 @@ public class JDBCDataSourceClient implements DataSource {
 		throw new UnsupportedOperationException();
 	}
 
+	public String[] getDocuments(String auid, String collection)
+			throws InternalServerErrorException {
+		throw new UnsupportedOperationException();
+	}
 }

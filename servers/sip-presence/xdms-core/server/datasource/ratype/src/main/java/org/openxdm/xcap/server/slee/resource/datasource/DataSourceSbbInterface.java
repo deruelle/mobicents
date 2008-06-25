@@ -79,8 +79,9 @@ public class DataSourceSbbInterface implements DataSource {
 		ra.getDataSource().deleteDocument(documentSelector);	
 		// fire event
 		ra.postDocumentUpdatedEvent(new DocumentUpdatedEvent(documentSelector,oldETag,null,null,null));
+		
 		// end document activity
-		ra.endActivity(new ActivityHandle(documentSelector.toString()));
+		//ra.endActivity(new ActivityHandle(documentSelector.toString()));
 	}
 	
 	@Deprecated
@@ -92,6 +93,11 @@ public class DataSourceSbbInterface implements DataSource {
 		return ra.getDataSource().getCollections(appUsage);
 	}
 
+	public String[] getDocuments(String auid, String collection)
+			throws InternalServerErrorException {
+		return ra.getDataSource().getDocuments(auid,collection);
+	}
+	
 	public Document getDocument(DocumentSelector documentSelector) throws InternalServerErrorException {
 		return ra.getDataSource().getDocument(documentSelector);
 	}

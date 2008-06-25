@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" path="integrated/subscription-sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/jaxb-pojos/src/main/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/subscription-sbb/src/main/java"/>
@@ -29,6 +30,7 @@
   <classpathentry kind="src" path="xdms-core/server/datasource/events/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/server/datasource/ra/jdbc/src/main/java"/>
   <classpathentry kind="src" path="xdms-core/server/datasource/ratype/src/main/java"/>
+  <classpathentry kind="src" path="xdms-core/server/subscription-sbb/src/main/java"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm/1.5.3/asm-1.5.3.jar"/>
@@ -53,10 +55,12 @@
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-api/1.2.1/jain-sip-api-1.2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.1/jain-sip-ri-1.2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/slee/jain-slee/1.1.draft/jain-slee-1.1.draft.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/jaxb-impl/2.1/jaxb-impl-2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-cache/1.4.1.SP3/jboss-cache-1.4.1.SP3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jboss/jboss-common-core/2.0.4.GA/jboss-common-core-2.0.4.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-common/4.2.2.GA/jboss-common-4.2.2.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-j2ee/4.2.2.GA/jboss-j2ee-4.2.2.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-jmx/4.2.2.GA/jboss-jmx-4.2.2.GA.jar"/>
@@ -70,11 +74,13 @@
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.12/log4j-1.2.12.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.sp1/hibernate-3.2.4.sp1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-commons-annotations/3.0.0.ga/hibernate-commons-annotations-3.0.0.ga.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-entitymanager/3.3.1.ga/hibernate-entitymanager-3.3.1.ga.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-validator/3.0.0.ga/hibernate-validator-3.0.0.ga.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate/3.2.4.ga/hibernate-3.2.4.ga.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.0.GA-SNAPSHOT/mobicents-core-jar-1.2.0.GA-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-events/1.2.0.GA-SNAPSHOT/http-servlet-events-1.2.0.GA-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/http-servlet-ratype/1.2.0.GA-SNAPSHOT/http-servlet-ratype-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/persistence-ratype/1.2.0.GA-SNAPSHOT/persistence-ratype-1.2.0.GA-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-events/1.2.0.GA-SNAPSHOT/sip-events-1.2.0.GA-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ra/1.2.0.GA-SNAPSHOT/sip-ra-1.2.0.GA-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ratype/1.2.0.GA-SNAPSHOT/sip-ratype-1.2.0.GA-SNAPSHOT.jar"/>

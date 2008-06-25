@@ -34,6 +34,11 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
+			<artifactId>appusage-resource-lists-client</artifactId>
+			<groupId>${pom.groupId}.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>${hsqldb.version}</version>
@@ -46,8 +51,15 @@
 		<dependency>
 			<groupId>xerces</groupId>
   			<artifactId>xercesImpl</artifactId>
-  			<version>${xercesImpl.version}</version>
   		</dependency>
+  		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

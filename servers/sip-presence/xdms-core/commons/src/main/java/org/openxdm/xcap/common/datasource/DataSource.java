@@ -45,6 +45,8 @@ public interface DataSource {
 	
 	public String[] getCollections(String appUsage) throws InternalServerErrorException;
 	
+	public String[] getDocuments(String auid, String collection) throws InternalServerErrorException;
+	
 	public String[] getUsers(String appUsage) throws InternalServerErrorException;
 	
 	public void removeUser(String appUsage, String user) throws InternalServerErrorException;

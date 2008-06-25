@@ -12,19 +12,14 @@
 				
 	<dependencies>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>${jaxb-api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>${jaxb-impl.version}</version>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+			<artifactId>server-datasource-ratype</artifactId>			
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
-			<artifactId>server-datasource-ratype</artifactId>			
+			<artifactId>server-core-sbb</artifactId>			
 		</dependency>
 		<dependency>
 			<artifactId>appusage-oma-pres-rules-client</artifactId>
