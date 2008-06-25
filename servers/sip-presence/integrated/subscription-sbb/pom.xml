@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>integrated-parent</artifactId>
+		<groupId>org.mobicents.servers.sippresence</groupId>
+		<version>1.0.0.BETA2-SNAPSHOT</version>	
+	</parent>
+		
+	<artifactId>integrated-subscription-control-sbb</artifactId>
+	
+	<build>
+		<finalName>${org.mobicents.servers.sippresence.integrated.finalName}</finalName>
+	</build>	
+				
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<artifactId>server-subscription-control-sbb</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>sip-presence-subscription-control-sbb</artifactId>
+			<version>${pom.version}</version>			
+		</dependency>
+		<dependency>
+			<artifactId>sip-event-subscription-control-sbb</artifactId>
+			<groupId>org.mobicents.servers.sipevent</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>sip-event-publication-control-sbb</artifactId>
+			<groupId>org.mobicents.servers.sipevent</groupId>
+			<version>${pom.version}</version>
+		</dependency>	
+		<dependency>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<artifactId>server-datasource-ratype</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<artifactId>server-appusagecache-ratype</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<artifactId>server-internal-client-sbb</artifactId>
+			<version>${pom.version}</version>
+		</dependency>			
+	</dependencies>
+	
+</project>
