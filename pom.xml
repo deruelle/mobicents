@@ -39,7 +39,8 @@
 		<junit.version>4.1</junit.version>
 		<gwt-user.version>1.4.61</gwt-user.version>
 		<commons-fileupload.version>1.1</commons-fileupload.version>
-		<jain-sip.version>1.2.1</jain-sip.version>
+		<jain-sip-api.version>1.2</jain-sip-api.version>
+		<jain-sip-ri.version>1.2.73</jain-sip-ri.version>
 		<jain-mgcp.version>1.0</jain-mgcp.version>			
 		<javax.activation.version>1.1</javax.activation.version>				
 		<jaxb-api.version>2.1</jaxb-api.version>
@@ -329,12 +330,12 @@
     	<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-api</artifactId>
-			<version>${jain-sip.version}</version>
+			<version>${jain-sip-api.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-ri</artifactId>
-			<version>${jain-sip.version}</version>
+			<version>${jain-sip-ri.version}</version>
 		</dependency>	
 		<dependency>
 			<groupId>javax.slee</groupId>
