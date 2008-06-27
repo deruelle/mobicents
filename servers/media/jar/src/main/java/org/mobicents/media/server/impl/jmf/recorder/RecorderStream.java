@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
+import org.mobicents.media.server.impl.jmf.dsp.Codec;
+import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 
 /**
  *
@@ -33,9 +36,17 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
     private Semaphore semaphore = new Semaphore(0);
     private boolean blocked = false;
     private boolean eom = false;
-
-    public RecorderStream(PushBufferStream inputStream) {
+    
+    private Codec codec;
+    
+    public RecorderStream(PushBufferStream inputStream) throws UnsupportedFormatException {
         inputStream.setTransferHandler(this);
+        if (!inputStream.getFormat().matches(Codec.LINEAR_AUDIO)) {
+            codec = CodecLocator.getCodec(inputStream.getFormat(),Codec.LINEAR_AUDIO);
+            if (codec == null) {
+                throw new UnsupportedFormatException(inputStream.getFormat());
+            }
+        }
     }
 
     @Override
@@ -119,7 +130,14 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
-            //System.out.println("transfer data, isEOM=" + buffer.isEOM());
+            byte[] data = (byte[]) buffer.getData();
+            if (codec != null) {
+                data = codec.process(data);
+            }
+            
+            buffer.setData(data);
+            buffer.setOffset(0);
+            buffer.setLength(data.length);
         } catch (IOException e) {
         }
 
