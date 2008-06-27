@@ -36,4 +36,11 @@ public interface MediaSink extends MediaResource {
      * @return the new copy of the original stream.
      */
     public PushBufferStream newBranch(String branchID);
+    
+    /**
+     * Removes specified branch.
+     * 
+     * @param branchID the identifier of the branch to be removed
+     */
+    public void remove(String branchID);
 }
