@@ -274,4 +274,8 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
     public PushBufferStream newBranch(String branchID) {
         throw new UnsupportedOperationException("Not supported.");
     }
+
+    public void remove(String branchID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
