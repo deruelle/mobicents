@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<artifactId>mobicents</artifactId>
+		<groupId>org.mobicents</groupId>
+		<version>2-SNAPSHOT</version>
+		<relativePath>../../../pom.xml</relativePath>
+	</parent>
+	
+	<groupId>org.mobicents.servers.media</groupId>
+	<artifactId>mobicents-media-server-core</artifactId>
+	<version>1.0.0.BETA2-SNAPSHOT</version>
+	
+	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+	
+  <properties>
+  	<!-- RELEASE CONFIGURATION -->
+    	<release.name>${release.name.prefix}${parent.version}${release.name.suffix}</release.name>
+    	<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
+	<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
+	<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
+	<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
+  </properties>   
+
+	<modules>		
+		<module>msc-api</module>
+		<module>msc-api-local-impl</module>
+		<module>server-constants</module>
+		<module>server-spi</module>
+		<module>server-impl</module>
+		<module>server-sar</module>
+		<module>server-test</module>				
+	</modules>
+
+	<!-- RELEASE STUFF -->
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>test</module>
+			</modules>
+		</profile>
+	</profiles>
+
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>		
+	
+	<dependencyManagement>
+		<dependencies>		
+			<dependency>
+				<groupId>org.mobicents</groupId>
+				<artifactId>mobicents-jainslee-server</artifactId>
+				<version>${mobicents.server.jainslee.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<!--  -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+   				<groupId>org.mobicents.tools</groupId>
+    			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
+					<eclipseProjectName>mobicents-media-server</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>		
+	</build>
+	
+	<!-- uncomment for release 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+				</configuration>
+                    	</plugin>			
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<copy overwrite="true" todir="${basedir}/../../release/${release.name}/jboss-${jboss.version}/server/default/deploy/mobicents-media-server-${pom.version}.sar">
+									<fileset dir="${basedir}/sar/target/mobicents-media-server-${pom.version}">
+										<include name="**" />
+									</fileset>
+								</copy>
+								<copy overwrite="true" todir="${basedir}/../../release/${release.name}/servers/media/mobicents-media-server-${pom.version}.sar">
+									<fileset dir="${basedir}/sar/target/mobicents-media-server-${pom.version}">
+										<include name="**" />
+									</fileset>
+								</copy>
+                <copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/../../release/${release.name}/servers/media">
+                  <filterset>
+                    <filter token="COMPONENT_VERSION" value="mobicents-media-server-${pom.version}" />
+                  </filterset>
+                </copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>		
+	</build>
+	-->
+
+	<!-- dupe info from parent, but it's only way to retrieve the parent without user configuration -->
+
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+</project>

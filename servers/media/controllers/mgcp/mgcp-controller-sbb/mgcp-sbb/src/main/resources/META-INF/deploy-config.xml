@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy-config>
+  <ra-entity resource-adaptor-id="MGCPResourceAdaptor#org.mobicents#2.0" entity-name="MGCP-MRF">
+    <properties file="mgcp-mrf.properties" />
+    <ra-link name="MGCP-MRF" />
+  </ra-entity>
+</deploy-config>
