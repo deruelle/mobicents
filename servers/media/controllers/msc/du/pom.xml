@@ -36,11 +36,13 @@
 			<artifactId>mobicents-media-server-msc-api</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
+			<scope>runtime</scope>
 		</dependency>		
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api-local-impl</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
+			<scope>runtime</scope>
 		</dependency>	
 	</dependencies>
 	
