@@ -169,26 +169,16 @@
 	</target>
 
 	<target name="zip-jboss" description="">
-		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh"
-			         eol="lf" eof="remove" />
+		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh" eol="lf" eof="remove" />
 		<zip destfile="${ant.file.mobicents.release}/../${zip.filename}" filesonly="false">
-			<zipfileset dir="${jboss.home}/bin"
-			            filemode="755" prefix="bin">
+			<zipfileset dir="${jboss.home}/bin" filemode="755" prefix="bin">
 				<include name="*.sh" />
 			</zipfileset>
-			<zipfileset dir="${jboss.home}/bin"
-	         		prefix="bin">
+			<zipfileset dir="${jboss.home}/bin" prefix="bin">
 				<exclude name="*.sh" />
 			</zipfileset>
-			<zipfileset dir="${jboss.home}"
-	            	prefix="">
-				<exclude name="bin/**"/>
-				<exclude name="server/*/data/**"/>
-				<exclude name="server/*/log/**"/>
-				<exclude name="server/*/tmp/**"/>
-				<exclude name="server/*/work/**"/>
-				<exclude name="server/tmp/**"/>
-			</zipfileset>
+			<zipfileset dir="${jboss.home}" prefix=""
+                        excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**"/>
 		</zip>
 	</target>
     
