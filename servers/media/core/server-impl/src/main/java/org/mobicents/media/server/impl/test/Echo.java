@@ -105,4 +105,8 @@ public class Echo extends BaseResource implements MediaSource, MediaSink {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public void remove(String branchID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

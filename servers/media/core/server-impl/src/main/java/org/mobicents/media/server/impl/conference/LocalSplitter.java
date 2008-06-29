@@ -67,7 +67,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
         return branch;
     }
 
-    public PushBufferStream remove(String id) {
+    public void remove(String id) {
         PushBufferStream pushStream = (PushBufferStream) streams.remove(id);
         if (pushStream != null) {
             splitter.closeBranch(pushStream);
@@ -76,7 +76,7 @@ public class LocalSplitter extends BaseResource implements MediaSink {
                         id + ", branches=" + splitter.getSize());
             }
         }
-        return pushStream;
+        //return pushStream;
     }
 
     public void close() {
@@ -143,4 +143,5 @@ public class LocalSplitter extends BaseResource implements MediaSink {
             }
         }
     }
+
 }

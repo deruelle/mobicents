@@ -18,12 +18,8 @@ package org.mobicents.media.server.spi;
 
 import java.io.IOException;
 import java.io.Serializable;
-
 import javax.sdp.SdpException;
-
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.ConnectionState;
-
+import org.mobicents.media.server.impl.common.*;
 /**
  *
  * @author Oleg Kulikov

@@ -13,14 +13,19 @@
  */
 package org.mobicents.media.server.impl.ivr;
 
+import java.util.Collection;
+import java.util.HashMap;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.protocol.FileTypeDescriptor;
 import org.mobicents.media.server.impl.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.common.events.EventID;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.Signal;
+import org.mobicents.media.server.impl.events.ann.AnnouncementPackage;
+import org.mobicents.media.server.impl.events.au.AdvancedAudioPackage;
 import org.mobicents.media.server.impl.events.dtmf.DTMFPackage;
 import org.mobicents.media.server.impl.events.test.TestPackage;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -101,7 +106,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
             testPackage = new TestPackage(this);
         }
         try {
-            testPackage.subscribe(EventID.TEST_SPECTRA, null,this.getConnection(connectionID) , listener);
+            testPackage.subscribe(EventID.TEST_SPECTRA, null, this.getConnection(connectionID), listener);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Detection of Spectra failed", e);
@@ -118,7 +123,6 @@ public class IVREndpointImpl extends AnnEndpointImpl {
             NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
         logger.info("Play signal, signalID = " + signalID);
 
-        //disable current signal
         if (signal != null) {
             signal.stop();
             signal = null;
@@ -128,20 +132,44 @@ public class IVREndpointImpl extends AnnEndpointImpl {
             return;
         }
 
-            System.out.println("EventID=" + signalID);
+        if (connectionID == null) {
+            connectionID = getConnectionID();
+        }
+
         switch (signalID) {
-            case PLAY_RECORD:
-                logger.info("Start Play/record signal for connection: " + connectionID);
-                signal = new PlayRecordSignal(this, listener, params);
-                signal.start();
+            case PLAY:
+                //signal = new AnnouncementSignal(this, listener, params);
+                //signal.start();
+                AnnouncementPackage pkg = new AnnouncementPackage(this);
+                HashMap opts = new HashMap();
+                opts.put("announcement.url", params[0]);
+                signal = pkg.play(signalID, opts, connectionID, listener);
+                logger.info("Execute announcement signal");
                 break;
-            case TEST_SINE :
+            case PLAY_RECORD:
+                String recordURL = null;
+                if (getRecordDir() != null) {
+                    recordURL = getRecordDir() + "/" + params[1];
+                } else {
+                    recordURL = params[1];
+                }
+
+                opts = new HashMap();
+                opts.put("announcement.url", params[0]);
+                opts.put("record.url", recordURL);
+                
+                AdvancedAudioPackage au = new AdvancedAudioPackage(this);
+                signal = au.play(signalID, opts, connectionID, listener);
+                logger.info("Execute Play/Record signal for connection: " + connectionID);
+                break;
+            case TEST_SINE:
                 signal = new SineSignal(this, listener, params);
                 signal.start();
                 break;
             default:
-                super.play(signalID, params, connectionID, listener, keepAlive);
+                throw new UnknownSignalException("Signal is unknown: " + signalID);
         }
+
     }
 
     @Override
@@ -177,5 +205,10 @@ public class IVREndpointImpl extends AnnEndpointImpl {
         } finally {
             super.deleteConnection(connectionID);
         }
+    }
+
+    private String getConnectionID() {
+        Collection<BaseConnection> connections = getConnections();
+        return connections.iterator().next().getId();
     }
 }

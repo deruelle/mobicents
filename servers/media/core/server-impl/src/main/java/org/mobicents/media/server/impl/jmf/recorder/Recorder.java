@@ -70,6 +70,7 @@ public class Recorder {
             //System.out.println("Recorder thread == " + recorderThread);
             dispose();
         }
+        
         RecorderStream recorderStream = new RecorderStream(stream);
         javax.sound.sampled.AudioFormat fmt = new javax.sound.sampled.AudioFormat(
                 8000, 16, 1, true, false);

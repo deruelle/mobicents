@@ -351,6 +351,10 @@ public class DFTFilterResource extends BaseResource implements MediaSink,
     public PushBufferStream newBranch(String branchID) {
         throw new UnsupportedOperationException("Not supported.");
     }
+
+    public void remove(String branchID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 	
 	
 }

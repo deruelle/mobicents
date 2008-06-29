@@ -157,4 +157,8 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
             sendEvent(res);
         }
     }
+
+    public void remove(String branchID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

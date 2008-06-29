@@ -101,4 +101,8 @@ public class Rfc2833Detector extends BaseDtmfDetector implements BufferTransferH
     public PushBufferStream newBranch(String branchID) {
         throw new UnsupportedOperationException("Not supported.");
     }
+
+    public void remove(String branchID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

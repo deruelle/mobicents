@@ -18,12 +18,10 @@ package org.mobicents.media.server.spi;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Properties;
-
+import java.util.Timer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.MediaResourceType;
-import org.mobicents.media.server.impl.common.events.EventID;
-
+import org.mobicents.media.server.impl.common.*;
+import org.mobicents.media.server.impl.common.events.*;
 /**
  * The basic implementation of the endpoint.
  *
