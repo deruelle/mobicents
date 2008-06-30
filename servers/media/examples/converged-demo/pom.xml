@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>converged-demo-parent</artifactId>
-
+	<groupId>org.mobicents.servers.media.examples</groupId>
 	<packaging>pom</packaging>
 	<name>Mobicents :: Examples :: ${pom.artifactId}</name>
 
