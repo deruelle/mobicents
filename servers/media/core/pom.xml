@@ -40,7 +40,13 @@
 		<profile>
 			<id>maven-release</id>
 			<modules>
-				<module>test</module>
+				<module>msc-api</module>
+				<module>msc-api-local-impl</module>
+				<module>server-constants</module>
+				<module>server-spi</module>
+				<module>server-impl</module>
+				<module>server-sar</module>
+				<module>server-test</module>	
 			</modules>
 		</profile>
 	</profiles>
@@ -79,6 +85,15 @@
 					<eclipseProjectName>mobicents-media-server</eclipseProjectName>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+				</configuration>
+                    	</plugin>			
 		</plugins>		
 	</build>
 	
