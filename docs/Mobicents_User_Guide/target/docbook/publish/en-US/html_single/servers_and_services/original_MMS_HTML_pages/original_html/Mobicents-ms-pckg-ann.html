@@ -1,0 +1,212 @@
+<p><b><font size="6">5&nbsp;Event packages.</font></b></p>
+<p>&nbsp;</p>
+<p><b>5.1 Basic package</b></p>
+<p>&nbsp;</p>
+<p>Package name: org.mobicents.media.server.spi.events.Basic</p>
+<p>&nbsp;
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+<colgroup>
+<col width="142">
+<col width="62">
+<col width="16">
+<col width="36">
+</colgroup><tbody>
+<tr valign="top">
+<td bgcolor="#0000ff" width="55%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Event ID</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="24%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Description</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="6%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Type</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="14%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Duration</font></font></font></p>
+</td>
+</tr>
+<tr valign="top">
+<td width="55%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.events.Basic.DTMF</font></font></p>
+<p><br>
+</p>
+</td>
+<td width="24%">
+<p><font face="Arial, sans-serif"><font size="2">DTMF event</font></font></p>
+</td>
+<td width="6%">
+<p><font face="Arial, sans-serif"><font size="2">BR</font></font></p>
+</td>
+<td width="14%">
+<p><br>
+</p>
+</td>
+</tr>
+</tbody></table>
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><b>5.2 Announcement package</b></p>
+<p>&nbsp;</p>
+<p>Package name: org.mobicents.media.server.spi.event.Announcement</p>
+<p>&nbsp;
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+<colgroup>
+<col width="166">
+<col width="38">
+<col width="16">
+<col width="36">
+</colgroup><tbody>
+<tr valign="top">
+<td bgcolor="#0000ff" width="65%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Event ID</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="15%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Description</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="6%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Type</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="14%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Duration</font></font></font></p>
+</td>
+</tr>
+<tr valign="top">
+<td height="15" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.Announcement.PLAY</font></font></p>
+</td>
+<td width="15%">
+<p><font face="Arial, sans-serif"><font size="2">Play announcement</font></font></p>
+</td>
+<td width="6%">
+<p><font face="Arial, sans-serif"><font size="2">TO</font></font></p>
+</td>
+<td width="14%">
+<p><font face="Arial, sans-serif"><font size="2">Variable</font></font></p>
+</td>
+</tr>
+<tr valign="top">
+<td height="18" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.Announcement.COMPLETED</font></font></p>
+</td>
+<td width="15%">
+<p><br>
+</p>
+</td>
+<td width="6%">
+<p><br>
+</p>
+</td>
+<td width="14%">
+<p><br>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td height="17" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.Announcement.FAILED</font></font></p>
+</td>
+<td width="15%">
+<p><br>
+</p>
+</td>
+<td width="6%">
+<p><br>
+</p>
+</td>
+<td width="14%">
+<p><br>
+</p>
+</td>
+</tr>
+</tbody></table>
+</p>
+<p>&nbsp;</p>
+<p>The announcement action is qualified by an URL name and by a set of initial parameters. The "operation complete" event will be detected when the announcement is played out. If the announcement cannot be played out, an operation failure event can be returned.&nbsp; The failure may be explained by a commentary.&nbsp;</p>
+<p>&nbsp;</p>
+<p><b>5.3 Advanced audio package</b></p>
+<p>&nbsp;</p>
+<p>Package name: org.mobicents.media.server.spi.events.AU</p>
+<p>&nbsp; </p>
+<p>
+<table border="1" cellpadding="4" cellspacing="0" width="100%">
+<colgroup>
+<col width="166">
+<col width="38">
+<col width="16">
+<col width="36">
+</colgroup><tbody>
+<tr valign="top">
+<td bgcolor="#0000ff" width="65%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Event ID</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="15%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Description</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="6%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Type</font></font></font></p>
+</td>
+<td bgcolor="#0000ff" width="14%">
+<p><font color="#ffffff"><font face="Arial, sans-serif"><font size="2">Duration</font></font></font></p>
+</td>
+</tr>
+<tr valign="top">
+<td height="15" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.AU.PLAY_RECORD</font></font></p>
+</td>
+<td width="15%">
+<p><font face="Arial, sans-serif"><font size="2">Play announcement</font></font></p>
+</td>
+<td width="6%">
+<p><font face="Arial, sans-serif"><font size="2">TO</font></font></p>
+</td>
+<td width="14%">
+<p><font face="Arial, sans-serif"><font size="2">Variable</font></font></p>
+</td>
+</tr>
+<tr valign="top">
+<td height="18" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.AU.PROMPT_AND_COLLECT</font></font></p>
+</td>
+<td width="15%">
+<p><br>
+</p>
+</td>
+<td width="6%">
+<p><br>
+</p>
+</td>
+<td width="14%">
+<p><br>
+</p>
+</td>
+</tr>
+<tr valign="top">
+<td height="17" width="65%">
+<p><font face="Arial, sans-serif"><font size="2">org.mobicents.media.server.spi.event.Announcement.FAILED</font></font></p>
+</td>
+<td width="15%">
+<p><br>
+</p>
+</td>
+<td width="6%">
+<p><br>
+</p>
+</td>
+<td width="14%">
+<p><br>
+</p>
+</td>
+</tr>
+</tbody></table>
+</p>
+<p>&nbsp;</p>
+<p>PLAY_RECORD Plays a prompt and records user speech.&nbsp; If the user does not speak, the user may be reprompted and given another chance to record.&nbsp; By default PlayRecord does not play an initial prompt, makes only one attempt to record, and therefore functions as a simple Record operation</p>
+<p>&nbsp;</p>
+<p></p>
+<p></p>
+<p><a href="/group/mobicents-public/web/mobicents-media-server">TOC</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-cfg-conf">Previous</a> <br>
+</p>
+<p></p>
+<wbr>

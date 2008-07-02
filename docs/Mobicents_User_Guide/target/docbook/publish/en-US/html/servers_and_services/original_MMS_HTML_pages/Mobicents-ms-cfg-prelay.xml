@@ -1,0 +1,156 @@
+<para>
+  <emphasis role="strong">4.3&nbsp;Packet relay.</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  A packet relay endpoint is a specific form of conference bridge,
+  that typically only supports two connections.&nbsp; Packets relays
+  can be found in firewalls between a protected and an open network,
+  or in transcoding servers used to provide interoperation between
+  incompatible gateways, for example gateways that do not support
+  compatible compression algorithms, or gateways that operate over
+  different transmission networks such as IP and ATM.
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.3.1&nbsp;Configuration.</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  The configurable attributes of the announcment player are as
+  follows:&nbsp;
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      <emphasis role="strong">JndiName</emphasis> - The JNDI name under
+      which endpoint&nbsp;is to&nbsp;be bound.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">BindAddress</emphasis> - The IP address to
+      which this endpoint will be bound.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">Jitter</emphasis> - The size of jitter
+      buffer in milliseconds.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PacketizationPeriod</emphasis> - the period
+      of media stream packetization in milliseconds.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PCMA</emphasis> - enable or disable G711
+      (A-law) codec support.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PCMU</emphasis> - enable or disable G711
+      (U-law) codec support.
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.3.3 Supported RTP formats</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Endpoint is able to&nbsp;receive the follwing RTP media
+  &nbsp;types:&nbsp;
+</para>
+<para>
+  <emphasis role="strong">Media type</emphasis>
+</para>
+<para>
+  <emphasis role="strong">Payload number</emphasis>
+</para>
+<para>
+  Audio: G711 (A-law) 8bit, 8kHz
+</para>
+<para>
+  8
+</para>
+<para>
+  Audio: G711 (U-law) 8bit, 8kHz
+</para>
+<para>
+  0
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.3.4 DTMF Configuration.</emphasis>
+</para>
+<para>
+  The DTMF configuration is determinted by DTMF attribute. The
+  properties are as follows:
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      <emphasis role="strong">detector.mode.</emphasis> Configures DTMF
+      detector mode. Possible values are AUTO, INBAND and RFC2833.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">dtmf.payload.</emphasis> Configures the
+      payload number if RFC2833 mode is specified
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.3.5 Supported packages</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Supported packages are as follows:&nbsp;
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      org.mobicents.media.server.spi.events.Basic
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  &nbsp;
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-media-server">TOC</ulink>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-cfg-ivr">Previous</ulink>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-cfg-conf">Next</ulink>
+</para>
+<para>
+  &nbsp;
+</para>
+

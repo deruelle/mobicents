@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>5.1.3.3. Undeploying Resource Adapters With the Management Console</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Undeploying_Resource_Adapters.html" title="5.1.3. Undeploying Resource Adapters"/>
+      <link rel="prev" href="section-Undeploying_Resource_Adapters_By_Removing_Files.html" title="5.1.3.2. Undeploying Resource Adapters By Removing Files"/>
+      <link rel="next" href="section-SIP_Resource_Adapter.html" title="5.2. SIP Resource Adapter"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Undeploying_Resource_Adapters_By_Removing_Files.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-SIP_Resource_Adapter.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h4 class="title">
+                     <a id="section-Undeploying_Resource_Adapters_With_the_Management_Console"/>5.1.3.3. Undeploying Resource Adapters With the Management Console</h4>
+               </div>
+            </div>
+         </div>
+         <p>If you are looking to undeploy a resource adapter with the Management Console, then it is assumed that you have first read <a href="section-Before_You_Begin_Resource_Adapters_and_Deployable_Unit_Files.html" title="5.1.1. Before You Begin: Resource Adapters and Deployable Unit Files">Section 5.1.1, “Before You Begin: Resource Adapters and Deployable Unit Files”</a> and <a href="section-Deploying_Resource_Adapters_With_the_Management_Console.html" title="5.1.2.3. Deploying Resource Adapters With the Management Console">Section 5.1.2.3, “Deploying Resource Adapters With the Management Console”</a>. </p>
+         <p>You can undeploy resource adapters from the <span>
+               <strong class="guilabel">Deployable Units</strong>
+            </span> view in the Management Console by uninstalling the two deployable unit files. Click on <span>
+               <strong class="guimenuitem">Deployable Units</strong>
+            </span> from the Main Menu, and then make sure that the <span>
+               <strong class="guimenuitem">Browse</strong>
+            </span> tab is selected at the top of the view. You will see a list of deployable unit files for the currently-installed resource adapters.</p>
+         <div class="figure">
+            <a id="figure-Uninstalling_Deployable_Unit_Files_with_the_Management_Console"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <img src="images/top-deploying-ss-uninstalling.png" align="middle" alt="Uninstalling Deployable Unit Files with the Management Console"/>
+                  <div class="caption">
+                     <p>The Browse tab of the Deployable Units view shows all deployable unit files for all resource adapters that are currently deployed</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 5.4. Uninstalling Deployable Unit Files with the Management Console</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <p>Find the deployable unit file that corresponds to the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ra-DU.jar</code> pattern, and click on the <span>
+               <strong class="guilabel">Uninstall</strong>
+            </span> link in the <span>
+               <strong class="guilabel">Actions</strong>
+            </span> column. This will uninstall the file, and a message similar to <code class="computeroutput">[INFO] Deployable unit sip-ra-DU uninstalled</code> will appear in the <span>
+               <strong class="guilabel">Console Log</strong>
+            </span> below. After uninstalling the <span class="emphasis">
+               <em>ra</em>
+            </span> file, then uninstall the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ratype-DU.jar</code> file, which will print a success message like the previous one to the <span>
+               <strong class="guilabel">Console Log</strong>
+            </span>.</p>
+         <p>If you try to uninstall the <span class="emphasis">
+               <em>ratype</em>
+            </span> deployable unit file before the <span class="emphasis">
+               <em>ra</em>
+            </span> file, then you will receive a message similar to the following one, alerting you to the mistake: <code class="computeroutput">[ERROR] javax.slee.management.ManagementException: Exception removing deployable Unit</code>.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Undeploying_Resource_Adapters_By_Removing_Files.html">
+               <strong>Prev</strong>5.1.3.2. Undeploying Resource Adapters By Removin...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-SIP_Resource_Adapter.html">
+               <strong>Next</strong>5.2. SIP Resource Adapter</a>
+         </li>
+      </ul>
+   </body>
+</html>

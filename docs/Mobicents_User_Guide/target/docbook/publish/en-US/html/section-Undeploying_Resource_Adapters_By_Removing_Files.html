@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>5.1.3.2. Undeploying Resource Adapters By Removing Files</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Undeploying_Resource_Adapters.html" title="5.1.3. Undeploying Resource Adapters"/>
+      <link rel="prev" href="section-Undeploying_Resource_Adapters_Via_the_Command_Line.html" title="5.1.3.1. Undeploying Resource Adapters Via the Command Line"/>
+      <link rel="next" href="section-Undeploying_Resource_Adapters_With_the_Management_Console.html" title="5.1.3.3. Undeploying Resource Adapters With the Management Console"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Undeploying_Resource_Adapters_Via_the_Command_Line.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Undeploying_Resource_Adapters_With_the_Management_Console.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h4 class="title">
+                     <a id="section-Undeploying_Resource_Adapters_By_Removing_Files"/>5.1.3.2. Undeploying Resource Adapters By Removing Files</h4>
+               </div>
+            </div>
+         </div>
+         <p>If you deployed a resource adapter by copying the deployable unit files from the resource adapter's directory to the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;topmost_jboss_directory&gt;</code>
+               </em>/deploy</code> directory<sup>[<a id="d0e1633" href="#ftn.d0e1633">4</a>]</sup>, then you can undeploy that same resource adapter merely by removing the two deployable unit files from the <code class="filename">deploy</code> directory. In the file manager or on the command line, simply go to <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;topmost_jboss_directory&gt;</code>
+               </em>/deploy</code>  and either move the correct two deployable unit files out of it, or delete both of them from it.</p>
+         <div class="warning">
+            <a id="warning-Dont_Delete_if_You_Didnt_Copy"/>
+            <h2>Don't Delete if You Didn't Copy!</h2>
+            <p>If you choose to delete the two deployable unit files, <span class="emphasis">
+                  <em>make sure</em>
+               </span> that you indeed <span class="emphasis">
+                  <em>copied</em>
+               </span> them into the <code class="filename">deploy</code> directory, and that they both still exist in the directory of the resource adapter you want to undeploy!</p>
+         </div>
+         <p>Successfully removing or deleting both files from the <code class="filename">deploy</code> directory will result in a long string of messages sent to standard output, and ending with a line similar to: <code class="computeroutput">17:48:10,705 INFO  [STDOUT] 17:48:10,705 INFO  [DeploymentMBeanImpl] Uninstalled DU with id DeployableUnitID[6]</code>. It is also possible to simply remove or delete only the <code class="filename">
+               <em class="replaceable">
+                  <code>&lt;resource_adapter_abbreviation&gt;</code>
+               </em>-ra-DU.jar</code> file and have Mobicents undeploy the resource adapter, but it is recommended to always remove or delete both files.</p>
+         <div class="note">
+            <a id="note-Leaving_Resource_Adapters_Deployed"/>
+            <h2>Leaving Resource Adapters Deployed</h2>
+            <p>One convenient way to have the Mobicents Converged Application Server deploy the correct resource adapters every time you start the server is to leave the deployable unit files in the <code class="filename">
+                  <em class="replaceable">
+                     <code>&lt;topmost_jboss_directory&gt;</code>
+                  </em>/deploy</code> directory. Upon startup, Mobicents will notice that the two files are still there, and will automatically deploy the resource adapter.</p>
+         </div>
+         <div xmlns="" class="footnotes">
+            <br/>
+            <hr/>
+            <div xmlns="http://www.w3.org/1999/xhtml" class="footnote">
+               <p>
+                  <sup>[<a id="ftn.d0e1633" href="#d0e1633">4</a>] </sup>The location of the <code class="filename">
+                     <em class="replaceable">
+                        <code>&lt;topmost_jboss_directory&gt;</code>
+                     </em>/deploy</code> directory depends on whether you installed the binary distribution of Mobicents, in which case it is <code class="filename">
+                     <em class="replaceable">
+                        <code>&lt;topmost_mobicents_directory&gt;</code>
+                     </em>/server/server/default/deploy</code>, or downloaded and installed JBoss yourself, in which case it is <code class="filename">
+                     <code class="envar">$JBOSS_HOME</code>/deploy</code>.</p>
+            </div>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Undeploying_Resource_Adapters_Via_the_Command_Line.html">
+               <strong>Prev</strong>5.1.3.1. Undeploying Resource Adapters Via the Co...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Undeploying_Resource_Adapters_With_the_Management_Console.html">
+               <strong>Next</strong>5.1.3.3. Undeploying Resource Adapters With the M...</a>
+         </li>
+      </ul>
+   </body>
+</html>

@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title/>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+   </head>
+   <body>
+      <div class="book" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <p id="title">
+                  <a href="http://www.jboss.org" class="jbossOrg_href">
+                     <strong>
+						        JBoss.org	
+						</strong>
+                  </a>
+                  <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+                     <strong>
+						        Community Documentation	
+						</strong>
+                  </a>
+               </p>
+            </div>
+            <hr/>
+         </div>
+         <div class="toc">
+            <dl>
+               <dt>
+                  <span class="chapter">
+                     <a href="#d0e3">1. Mobicents Media Server</a>
+                  </span>
+               </dt>
+               <dd>
+                  <dl>
+                     <dt>
+                        <span class="section">
+                           <a href="#section-Mobicents_Media_Server">1.1. Mobicents Media Server</a>
+                        </span>
+                     </dt>
+                     <dd>
+                        <dl>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Overview_of_Media_Servers">1.1.1. Overview of Media Servers</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Installing_Building_and_Uninstalling_the_MMS">1.1.2. Installing, Building and Uninstalling the MMS</a>
+                              </span>
+                           </dt>
+                        </dl>
+                     </dd>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="chapter" lang="en-US">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title">
+                        <a name="d0e3"/>Chapter 1. Mobicents Media Server</h2>
+                  </div>
+               </div>
+            </div>
+            <div class="toc">
+               <dl>
+                  <dt>
+                     <span class="section">
+                        <a href="#section-Mobicents_Media_Server">1.1. Mobicents Media Server</a>
+                     </span>
+                  </dt>
+                  <dd>
+                     <dl>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Overview_of_Media_Servers">1.1.1. Overview of Media Servers</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Installing_Building_and_Uninstalling_the_MMS">1.1.2. Installing, Building and Uninstalling the MMS</a>
+                           </span>
+                        </dt>
+                     </dl>
+                  </dd>
+               </dl>
+            </div>
+            <div class="section" lang="en-US">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title">
+                           <a name="section-Mobicents_Media_Server"/>1.1. Mobicents Media Server</h2>
+                     </div>
+                  </div>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Overview_of_Media_Servers"/>1.1.1. Overview of Media Servers</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <h5 class="formalpara">The Reasoning and Need for Media Servers</h5>
+                  <p class="formalpara">With the continued progress of globalization, more corporations than ever before have workgroups spread across countries and continents across the world. To support and increase the productivity of remote and telecommuting workgroups, communications companies are considering more cost effective network solutions that combine voice, wireless, data and video functionality. Businesses like these expect that the services they select and eventually implement will have call quality comparable to conventional telephone service, and they expect those services to boost productivity and reduce overall communications costs. Acquiring these desired network services requires connections from the Internet and wireless and wireline networks to Public Switched Telephone Networks (<acronym class="acronym">PSTN</acronym>s) using a flexible, robust, scalable and cost-effective media gateway. The ability of such gateways to reduce overall communications costs for dispersed workgroups forms the foundation for media services and servers.</p>
+                  <h5 class="formalpara">Media Gateways Bridge Multiple Technologies</h5>
+                  <p class="formalpara">Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym class="acronym">IP</acronym>) enable the convergence of voice, data and video. Media gateways provide the ability to switch voice media between a network and its access point. Using Digital Subscriber Line (<acronym class="acronym">DSL</acronym>) and fast-Internet cable technology, a media gateway converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for wireline and wireless phones. Media gateways sit at the intersection of the PSTNs and wireless or IP-based networks.</p>
+                  <h5 class="formalpara">The Justification for Media Gateways for VoIP</h5>
+                  <p class="formalpara">Multiple market demands are pushing companies to converge all of their media services using media gateways with VoIP capabilities. Companies expect such a convergent architecture to:</p>
+                  <div class="variablelist">
+                     <p class="title">
+                        <b>Company Expectations of a Convergent Architecture</b>
+                     </p>
+                     <dl>
+                        <dt>
+                           <span class="term">Lower Initial Costs</span>
+                        </dt>
+                        <dd>
+                           <p>Capital investment is decreased because low-cost commodity hardware can be used for multiple functions.</p>
+                        </dd>
+                        <dt>
+                           <span class="term">Lower Development Costs</span>
+                        </dt>
+                        <dd>
+                           <p>Open system hardware and software standards with well-defined applications mean lower costs, and Application Programmable Interfaces (<acronym class="acronym">API</acronym>s) accelerate development.</p>
+                        </dd>
+                        <dt>
+                           <span class="term">Handle Multiple Media Types</span>
+                        </dt>
+                        <dd>
+                           <p>Companies want <acronym class="acronym">VoIP</acronym> solutions today, but also need to choose extensible solutions that will handle video in the near future.</p>
+                        </dd>
+                        <dt>
+                           <span class="term">Lower the Costs of Deployment and Maintenance</span>
+                        </dt>
+                        <dd>
+                           <p>Standardized, modular systems reduce training costs and maintenance while also improving uptime.</p>
+                        </dd>
+                        <dt>
+                           <span class="term">Enable Rapid Time-to-Market</span>
+                        </dt>
+                        <dd>
+                           <p>Early market entry hits the window of opportunity and maximizes revenue.</p>
+                        </dd>
+                     </dl>
+                  </div>
+                  <h5 class="formalpara">What Is the Mobicents Media Server?</h5>
+                  <p class="formalpara">The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and aimed to:</p>
+                  <div class="itemizedlist">
+                     <ul>
+                        <li>
+                           <p>Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.</p>
+                        </li>
+                        <li>
+                           <p>Meet the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym class="acronym">VoIP</acronym> networks from a singleand singularly-capablemedia gateway platform.</p>
+                        </li>
+                        <li>
+                           <p>Increase flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</p>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Installing_Building_and_Uninstalling_the_MMS"/>1.1.2. Installing, Building and Uninstalling the MMS</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p class="formalpara">
+                     <a name="fpara-Building_the_MMS"/>
+                  </p>
+                  <h5 class="formalpara">Building the MMS</h5>
+                  <p class="formalpara">The server is available as a source code distribution. The source code is available from the server source repository located at http://code.google.com/p/mobicents/source/checkout. The source code availability allows you to debug the server, learn its inner workings and create customized versions for your personal use.</p>
+                  <p class="formalpara">
+                     <a name="fpara-Pre-requisites"/>
+                  </p>
+                  <h5 class="formalpara">Pre-requisites</h5>
+                  <p class="formalpara">Before installing and running the media server, you should check that your have installed Mobicents SLEE server.</p>
+                  <p class="formalpara">
+                     <a name="fpara-Accessing_the_MMS_SVN_Source_Code_Repositories"/>
+                  </p>
+                  <h5 class="formalpara">Accessing the MMS SVN Source Code Repositories</h5>
+                  <p class="formalpara">Access the source code repository for this project in one of following ways:</p>
+                  <div class="procedure">
+                     <a name="procedure-Procedure_for_Checking_Out_the_Source_Code_with_Subversion"/>
+                     <ol class="1">
+                        <li>
+                           <p>Browse source code online to view this project's directory structure and files: <a xmlns:xlink="http://www.w3.org/1999/xlink" href="https://mobicents.googlecode.com/svn/trunk/servers/media">https://mobicents.googlecode.com/svn/trunk/servers/media</a>
+				
+                           </p>
+                        </li>
+                        <li>
+                           <p>Check out source code with a Subversion client using the following command. Note: replace the last username with your own username:</p>
+                           <pre class="screen">svn checkout http://mobicents.googlecode.com/svn/trunk/ mobicents-read-only</pre>
+                        </li>
+                     </ol>
+                  </div>
+                  <p>If you are new to Subversion, you may want to visit the <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://subversion.tigris.org/">Subversion Project website</a> and read
+    <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://svnbook.red-bean.com/">Version Control with Subversion</a>.</p>
+                  <p class="formalpara">
+                     <a name="fpara-Subversion_Source_Code_Repository_Structure"/>
+                  </p>
+                  <h5 class="formalpara">Subversion Source Code Repository Structure</h5>
+                  <p class="formalpara">The top-level directory structure under the /trunk/servers/media source tree is shown in the follwing table:</p>
+                  <div class="informaltable">
+                     <a name="informaltable-SVN_Source_Code_Repo_Structure"/>
+                     <table border="1">
+                        <colgroup>
+                           <col align="left"/>
+                           <col align="left"/>
+                        </colgroup>
+                        <thead>
+                           <tr>
+                              <th align="left">Path</th>
+                              <th align="left">Description</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td align="left">/trunk/servers/media/constants</td>
+                              <td align="left">Shared library for constants</td>
+                           </tr>
+                           <tr>
+                              <td align="left">/trunk/servers/media/jar</td>
+                              <td align="left">Media server SPI and implementation</td>
+                           </tr>
+                           <tr>
+                              <td align="left">/trunk/servers/media/sar</td>
+                              <td align="left">JBoss service deployment unit</td>
+                           </tr>
+                           <tr>
+                              <td align="left">/trunk/servers/media/mgcpcontrol</td>
+                              <td align="left">MGCP module</td>
+                           </tr>
+                           <tr>
+                              <td align="left">/trunk/servers/media/mscontrol</td>
+                              <td align="left">The API for media server control</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+                  <p class="formalpara">
+                     <a name="fpara-Building_the_MMS_from_Source_Code"/>
+                  </p>
+                  <h5 class="formalpara">Building the MMS from Source Code</h5>
+                  <p class="formalpara">The build process is driven by maven configuration. The main maven script is the pom.xml file located in the project home directory. The purpose of the main pom.xml file is to compile the various module directories and then to integrate their output to produce the binary release. To build and install media server perform the following actions:</p>
+                  <div class="procedure">
+                     <a name="procedure-Steps_for_Building_and_Installing_the_MMS_"/>
+                     <ol class="1">
+                        <li>
+                           <p class="title">
+                              <b>Installing media server endpoints</b>
+                           </p>
+                           <p>switch to the /servers/media and run mvn install</p>
+                        </li>
+                        <li>
+                           <p class="title">
+                              <b>Installing Media Resource Adaptor with local link</b>
+                           </p>
+                           <p>switch to the /servers/jain-slee/resources/media and run mvn install</p>
+                        </li>
+                        <li>
+                           <p class="title">
+                              <b>Installing MGCP control module</b>
+                           </p>
+                           <p>switch to the /servers/jain-slee/resources/mgcp and run mvn install</p>
+                        </li>
+                     </ol>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

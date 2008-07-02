@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>1.1.1. SIP Presence Server Architecture</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title=""/>
+      <link rel="up" href="section-Mobicents_SIP_Presence_Service.html" title="1.1. Mobicents SIP Presence Service"/>
+      <link rel="prev" href="section-Mobicents_SIP_Presence_Service.html" title="1.1. Mobicents SIP Presence Service"/>
+      <link rel="next" href="section-Mobicents_XML_Document_Management_Server.html" title="1.1.2. "/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Mobicents_SIP_Presence_Service.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Mobicents_XML_Document_Management_Server.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="d0e8"/>1.1.1. SIP Presence Server Architecture</h3>
+               </div>
+            </div>
+         </div>
+         <p>The Mobicents SIP Presence Service provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</p>
+         <p>The Mobicents SIP Presence Server is comprised of three separate but interrelated servers.</p>
+         <div class="figure">
+            <a id="figure-sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <a id="mediaobj-sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg"/>
+                  <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                     <tr>
+                        <td align="center">
+                           <img src="images/sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg" align="middle" width="700" alt="The Mobicents SIP Presence Service"/>
+                        </td>
+                     </tr>
+                  </table>
+                  <div class="caption">
+                     <p>Functional Diagram of the Mobicents SIP Presence Service</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 1.1. The Mobicents SIP Presence Service</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <div class="variablelist">
+            <a id="varlist-The_Three_Servers_Comprising_the_Mobicents_Presence_Service"/>
+            <p class="title">
+               <b>The Three Servers Comprising the Mobicents Presence Service</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">
+					
+                     <a href="section-Mobicents_XML_Document_Management_Server.html" title="1.1.2. ">XML Document Management Server</a>
+				
+                  </span>
+               </dt>
+               <dd>
+                  <p>The Mobicents XDM Server is a functional element of next-generation IP communications networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, static presence information, contact and group lists (also known as “<span class="quote">resource lists</span>”), policy data, and many others.</p>
+               </dd>
+               <dt>
+                  <span class="term">
+					
+                     <a href="section-Mobicents_Presence_Server.html" title="1.1.3. ">Presence Server</a>
+				
+                  </span>
+               </dt>
+               <dd>
+                  <p>The Presence Server is an entity that accepts, stores and distributes Presence Information. The Presence Server performs the following functions:</p>
+                  <div class="itemizedlist">
+                     <ul>
+                        <li>
+                           <p>It manages publications from one or multiple Presence Source(s) of a certain Presentity. This includes refreshing Presence Information, replacing existing Presence Information with newly-published information, or removing Presence Information.</p>
+                        </li>
+                        <li>
+                           <p>It manages subscriptions from Watchers to Presence Information and generates notifications about the Presence Information state changes, retrieving the presence authorization rules from the XDM Server.</p>
+                        </li>
+                        <li>
+                           <p>It manages subscriptions from Watcher Information Subscribers to Watcher information and generates notifications about Watcher information state changes.</p>
+                        </li>
+                     </ul>
+                  </div>
+               </dd>
+               <dt>
+                  <span class="term">
+					
+                     <a href="section-Mobicents_Resource_List_Server.html" title="1.1.4. Mobicents Resource List Server">Resource List Server</a>
+				
+                  </span>
+               </dt>
+               <dd>
+                  <p>The Resource List Server (RLS) handles subscriptions to Presence Lists. It creates and manages back-end subscriptions to all resources in the Presence List. The list content is retrieved from the XDM Server.</p>
+               </dd>
+            </dl>
+         </div>
+         <p>To fill different needs you can deploy all servers separated, or all integrated in the same host, and on top of that, there are JAINSLEE internal client interfaces available for each, which can turn into a big advantage over other presence services.</p>
+         <p>For documentation on each server proceed to links under this page Resources section.</p>
+         <h5 class="formalpara">Resources and Further Information about the Mobicents Presence Service</h5>
+         <p class="formalpara">For further information on the Mobicents Presence Service, here is a list of additional resources:</p>
+         <div class="itemizedlist">
+            <ul>
+               <li>
+                  <p>Issue Tracker</p>
+               </li>
+               <li>
+                  <p>
+						
+                     <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://mobicents.googlecode.com/svn/trunk/servers/sip-presence/">Source Code Location</a>
+					
+                  </p>
+               </li>
+               <li>
+                  <p>
+						
+                     <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://forums.java.net/jive/category.jspa?categoryID=36">Java.net Forums</a>
+					
+                  </p>
+               </li>
+            </ul>
+         </div>
+         <p>TBD: This version of the documentation is from <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service">http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service</a>, and the original author is Eduardo Martins, JBoss R &amp; D.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Mobicents_SIP_Presence_Service.html">
+               <strong>Prev</strong>1.1. Mobicents SIP Presence Service</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Mobicents_XML_Document_Management_Server.html">
+               <strong>Next</strong>1.1.2. </a>
+         </li>
+      </ul>
+   </body>
+</html>

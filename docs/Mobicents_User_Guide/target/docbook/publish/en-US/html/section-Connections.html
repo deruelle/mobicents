@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>8.2.4. Connections</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Mobicents_Media_Server_Architecture.html" title="8.2. Mobicents Media Server Architecture"/>
+      <link rel="prev" href="section-Endpoint_Identifiers.html" title="8.2.3. Endpoint Identifiers"/>
+      <link rel="next" href="section-Events_and_Signals.html" title="8.2.5. Events and Signals"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Endpoint_Identifiers.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Events_and_Signals.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Connections"/>8.2.4. Connections</h3>
+               </div>
+            </div>
+         </div>
+         <p>Connections are created on the call agent on each endpoint that will be involved in the "call."  In the classic example of a connection between two "DS0" endpoints (EP1 and EP2), the call agents controlling the end points will establish two connections (C1 and C2):</p>
+         <div class="mediaobject" align="center">
+            <a id="mediaobj-msconn.jpg"/>
+            <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="672">
+               <tr>
+                  <td align="center">
+                     <img src="images/msconn.jpg" align="middle" width="672"/>
+                  </td>
+               </tr>
+            </table>
+            <div class="caption">
+               <p>Media Server Connections</p>
+            </div>
+         </div>
+         <p>Each connection will be designated locally by a connection identifier, and will be characterized by connection attributes.</p>
+         <h5 class="formalpara">Resources and Connection Attributes</h5>
+         <p class="formalpara">Many types of resources will be associated to a connection, such as specific signal processing functions or packetization functions. Generally, these resources fall in two categories:</p>
+         <div class="variablelist">
+            <a id="varlist-Two_Types_of_Resources"/>
+            <p class="title">
+               <b>Two Types of Resources</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">Externally-Visible Resources</span>
+               </dt>
+               <dd>
+                  <p>Externally visible resources, that affect the format of "the bits on the network" and must be communicated to the second endpoint involved in the connection.</p>
+               </dd>
+               <dt>
+                  <span class="term">Internal Resources</span>
+               </dt>
+               <dd>
+                  <p>Internal resources, that determine which signal is being sent over the connection and how the received signals are processed by the endpoint</p>
+               </dd>
+            </dl>
+         </div>
+         <p>The resources allocated to a connection, and more generally the handling of the connection, are chosen by the media server under instructions from the call agent.  The call agent will provide these  instructions by sending two set of parameters to the media server:</p>
+         <div class="itemizedlist">
+            <a id="itemlist-Two_Sets_of_Parameters"/>
+            <ul>
+               <li>
+                  <p>The local directives instruct the gateway on the choice of resources that should be used for a connection.</p>
+               </li>
+               <li>
+                  <p>When available, the "session description" provided by the other end of the connection.</p>
+               </li>
+            </ul>
+         </div>
+         <p>The local directives specify such parameters as the mode of the connection (e.g. send only, send-receive), preferred coding or packetization methods, usage of echo cancellation or silence suppression.  (A detailed list can be found in the specification of   the LocalConnectionOptions parameter of the CreateConnection command.) For each of these parameters, the call agent can either specify a value, a range of value, or no value at all.  This allow various implementations to implement various level of control, from a very tight control where the call agent specifies minute details of   the connection handling to a very loose control where the call agent only specifies broad guidelines, such as the maximum bandwidth, and let the gateway choose the detailed values.</p>
+         <p>Based on the value of the local directives, the gateway will determine the resources allocated to the connection.  When this is possible, the gateway will choose values that are in line with the remote session description - but there is no absolute requirement that the parameters be exactly the same.</p>
+         <p>Once the resource have been allocated, the gateway will compose a "session description" that describes the way it intends to receive packets.  Note that the session description may in some cases present a range of values.  For example, if the gateway is ready to accept one of several compression algorithm, it can provide a list of these accepted algorithms.</p>
+         <p class="formalpara">
+            <a id="fpara-Local_Connections_are_a_Special_Case"/>
+         </p>
+         <h5 class="formalpara">Local Connections are a Special Case</h5>
+         <p class="formalpara">Large gateways include a large number of endpoints which are often of different types.  In some networks, we may often have to setup connections between endpoints that are located within the same gateway.  Examples of such connections may be:</p>
+         <div class="itemizedlist">
+            <a id="itemlist-Examples_of_Local_Connections"/>
+            <ul>
+               <li>
+                  <p>Connecting a trunk line to a wiretap device,</p>
+               </li>
+               <li>
+                  <p>Connecting a call to an Interactive Voice-Response unit</p>
+               </li>
+               <li>
+                  <p>Connecting a call to a Conferencing unit</p>
+               </li>
+               <li>
+                  <p>Routing a call from on endpoint to another, something often described as a "hairpin" connection.</p>
+               </li>
+            </ul>
+         </div>
+         <p>Local connections are much simpler to establish than network connections. In most cases, the connection will be established through some local interconnecting device, such as for example a TDM bus.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Endpoint_Identifiers.html">
+               <strong>Prev</strong>8.2.3. Endpoint Identifiers</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Events_and_Signals.html">
+               <strong>Next</strong>8.2.5. Events and Signals</a>
+         </li>
+      </ul>
+   </body>
+</html>

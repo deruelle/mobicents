@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>8.5.3. Events</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-MMS_Control_API.html" title="8.5. MMS Control API"/>
+      <link rel="prev" href="section-Basic_API_Patterns_Listeners.html" title="8.5.2. Basic API Patterns: Listeners"/>
+      <link rel="next" href="section-MSC_API_Objects_Finite_State_Machines.html" title="8.5.4. MSC API Objects: Finite State Machines"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Basic_API_Patterns_Listeners.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-MSC_API_Objects_Finite_State_Machines.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Events"/>8.5.3. Events</h3>
+               </div>
+            </div>
+         </div>
+         <p>Each of the listener's defined above are listening to different type's of events that are fired by API.</p>
+         <h5 class="formalpara">Events related to MsSession</h5>
+         <p class="formalpara">MsSessionListener is listening for MsSessionEvent which carries the MsSessionEventID that represents state change of MsSession. The following table shows the different types of MsSessionEventID, when these events would be fired and corresponding methods of MsSessionListener that will be called.</p>
+         <div class="informaltable">
+            <a id="informaltable-Events_Related_to_MsSession"/>
+            <table border="1">
+               <colgroup>
+                  <col align="left"/>
+                  <col align="left"/>
+                  <col align="left"/>
+               </colgroup>
+               <thead>
+                  <tr>
+                     <th align="left">MsSessionEventID</th>
+                     <th align="left">Description</th>
+                     <th align="left">MsSessionListener Method Called</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td align="left">SESSION_CREATED</td>
+                     <td align="left">Fired when MsProvider.createSession() is called and a new MsSession
+        is created</td>
+                     <td align="left">public void sessionCreated(MsSessionEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">SESSION_CREATED</td>
+                     <td align="left">Fired when MsProvider.createSession() is called and a new MsSession
+        is created</td>
+                     <td align="left">public void sessionCreated(MsSessionEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">SESSION_ACTIVE</td>
+                     <td align="left">When the MsConnection or MsLink is created on MsSession for first
+        time it transitions to ACTIVE state and SESSION_ACTIVE is fired.
+        After this the state remains ACTIVE even if application creates
+        more MsConnections or MsLinks</td>
+                     <td align="left">public void sessionActive(MsSessionEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">SESSION_INVALID</td>
+                     <td align="left">When all the MsConnection or MsLink objects are disassociated from
+        MsSession, it transitions to INVALID state and SESSION_INVALID is
+        fired</td>
+                     <td align="left">public void sessionInvalid(MsSessionEvent evt)</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+         <h5 class="formalpara">Events Related to MsConnection</h5>
+         <p class="formalpara">MsConnectionListener is listening for MsConnectionEvent which carries the MsConnectionEventID that represents state change of MsConnection. The following table shows the different types of MsConnectionEventID and when these events would be fired and corresponding methods of MsConnectionListener that will be called.</p>
+         <div class="informaltable">
+            <a id="informaltable-Events_Related_to_MsConnection"/>
+            <table border="1">
+               <colgroup>
+                  <col align="left"/>
+                  <col align="left"/>
+                  <col align="left"/>
+               </colgroup>
+               <thead>
+                  <tr>
+                     <th align="left">MsConnectionEventID</th>
+                     <th align="left">Description</th>
+                     <th align="left">MsConnectionListener Method Called</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td align="left">CONNECTION_INITIALIZED</td>
+                     <td align="left">As soon as new MsConnection is created by calling MsSession.createNetworkConnection(String endpointName) CONNECTION_INITIALIZED is fired</td>
+                     <td align="left">public void connectionInitialized(MsConnectionEvent event)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">CONNECTION_CREATED</td>
+                     <td align="left">As soon as creation of RTP connection (by calling MsConnection.modify(String localDesc, String remoteDesc)) is successful, CONNECTION_CREATED is fired. When modify() is called, MsConnection checks if there is Endpoint associated with it and if there is no Endpoint means this is creation of RTP connection request</td>
+                     <td align="left">public void connectionCreated(MsConnectionEvent event)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">CONNECTION_MODIFIED</td>
+                     <td align="left">As soon as modification of MsConnection (by calling MsConnection.modify(String localDesc, String remoteDesc)) is successful CONNECTION_MODIFIED is fired. When modify() is called, MsConnection checks if there is Endpoint associated it and if there is Enpoint means this is modification request.</td>
+                     <td align="left">public void connectionModifed(MsConnectionEvent event)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">CONNECTION_DELETED</td>
+                     <td align="left">As soon as MsConnection is successfully released (MsConnection.release()) CONNECTION_DELETED is fired</td>
+                     <td align="left">public void connectionDeleted(MsConnectionEvent event)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">@Deprecated TX_FAILED</td>
+                     <td align="left">When ever creation of new RTP connection or modification of existing MsConnection fails, TX_FAILED is fired</td>
+                     <td align="left">public void txFailed(MsConnectionEvent event)</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+         <h5 class="formalpara">Events Related to MsLink</h5>
+         <p class="formalpara">MsLinkListener is listening for MsLinkEvent which carries the MsLinkEventID that represents state change of MsLink. The following table shows the different types of MsLinkEventID and when these events would be fired and corresponding methods of MsLinkListener that will be called.</p>
+         <div class="informaltable">
+            <a id="informaltable-Events_Related_to_MsLink"/>
+            <table border="1">
+               <colgroup>
+                  <col align="left"/>
+                  <col align="left"/>
+                  <col align="left"/>
+               </colgroup>
+               <thead>
+                  <tr>
+                     <th align="left">MsLinkEventID</th>
+                     <th align="left">Description</th>
+                     <th align="left">MsLinkListener Method Called</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td align="left">LINK_CREATED</td>
+                     <td align="left">As soon as new MsLink is created by calling MsSession.createLink(MsLinkMode mode) LINK_CREATED is fired</td>
+                     <td align="left">public void linkCreated(MsLinkEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">LINK_JOINED</td>
+                     <td align="left">Fired as soon as join(String a, String b) operation of MsLink is successful</td>
+                     <td align="left">public void linkJoined(MsLinkEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">INK_DROPPED</td>
+                     <td align="left">Fired as soon as release() operation of MsLink is successful</td>
+                     <td align="left">public void linkDropped(MsLinkEvent evt)</td>
+                  </tr>
+                  <tr>
+                     <td align="left">LINK_FAILED</td>
+                     <td align="left">Fired as soon as join(String a, String b) operation of MsLink fails</td>
+                     <td align="left">public void linkFailed(MsLinkEvent evt)</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Basic_API_Patterns_Listeners.html">
+               <strong>Prev</strong>8.5.2. Basic API Patterns: Listeners</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-MSC_API_Objects_Finite_State_Machines.html">
+               <strong>Next</strong>8.5.4. MSC API Objects: Finite State Machines</a>
+         </li>
+      </ul>
+   </body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<book>
+<!--	<xi:include
+		href="Book_Info.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="Preface.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
+	<chapter>
+		<title>book-Mobicents Resource List Server</title>
+		<xi:include
+			xmlns:xi="http://www.w3.org/2001/XInclude"
+			href="servers_and_services/section-Mobicents_Media_Server_Architecture.xml" />
+	</chapter>
+<!--	<xi:include
+		href="Appendix.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
+</book>

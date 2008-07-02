@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>8.2.5. Events and Signals</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Mobicents_Media_Server_Architecture.html" title="8.2. Mobicents Media Server Architecture"/>
+      <link rel="prev" href="section-Connections.html" title="8.2.4. Connections"/>
+      <link rel="next" href="section-MMS_Configuration.html" title="8.3. MMS Configuration"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Connections.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-MMS_Configuration.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Events_and_Signals"/>8.2.5. Events and Signals</h3>
+               </div>
+            </div>
+         </div>
+         <p>The concept of events and signals is central to the Media Server.  A Call Controller may ask to be notified about certain events occurring in an endpoint  (e.g., off-hook events) by passing event's identifier as parameter to endpoint's subscribe(...) method.</p>
+         <p>A Call Controller may also request certain signals to be applied to an endpoint (e.g., dial-tone) by supplying the identifier of the event in as argument to endpoint's apply(...) method.</p>
+         <p>Events and signals are grouped in packages, within which they share the same name space which we will refer to as event identifier in the following. Event identifiers are integer constants. Some of the events may be parametrized with additional data such as DTMF mask.</p>
+         <p>Signals are divided into different types depending on their behavior:</p>
+         <div class="variablelist">
+            <a id="varlist-Types_of_Signals"/>
+            <p class="title">
+               <b>Types of Signals</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">On/off (OO)</span>
+               </dt>
+               <dd>
+                  <p>Once applied, these signals last until they are turned off.  This can only happen as the result of a reboot/restart or a new signal request where the signal is explicitly turned off.  Signals of type OO are defined to be idempotent, thus multiple requests to turn a given OO signal on (or off) are perfectly valid.  An On/Off signal could be a visual message-waiting indicator (VMWI).  Once turned on, it MUST NOT be turned off until explicitly instructed to by the Call Agent, or as a result of an endpoint restart, i.e., these signals will not turn off as a result of the detection of a requested event.</p>
+               </dd>
+               <dt>
+                  <span class="term">Time-out (TO)</span>
+               </dt>
+               <dd>
+                  <p>Once applied, these signals last until they are either cancelled (by the occurrence of an event or by explicit releasing of signal generator), or a signal-specific period of time has elapsed.  A TO signal that times out will generate an "operation complete" event.  If an event occurs prior to the 180 seconds, the signal will, by default, be stopped (the "Keep signals active" action - will override this behavior).  If the signal is not stopped, the signal will time out, stop and generate an "operation complete" event, about which the server controller may or may not have requested to be notified.  A TO signal that fails after being started, but before having generated an "operation complete" event will generate an "operation failure" event which will include the name of the signal that failed.  Deletion of a connection with an active TO signal will result in such a failure.</p>
+               </dd>
+               <dt>
+                  <span class="term">Brief (BR)</span>
+               </dt>
+               <dd>
+                  <p>The duration of these signals is normally so short that they stop on their own.  If a signal stopping event occurs, or a new signal requests is applied, a currently active BR signal will not stop.  However, any pending BR signals not yet applied will be cancelled (a BR signal becomes pending if a signal request includes a BR signal, and there is already an active BR signal). As an example, a brief tone could be a DTMF digit. If the DTMF digit "1" is currently being played, and a signal stopping event occurs, the "1" would play to completion.  If a request to play DTMF digit "2" arrives before DTMF digit "1" finishes playing, DTMF digit "2" would become pending.</p>
+               </dd>
+            </dl>
+         </div>
+         <p>Signal(s) may be generated on endpoints or on connections. To each event is associated one or more actions, which can be:</p>
+         <div class="itemizedlist">
+            <a id="itemlist-Types_of_Actions_Which_Can_Be_Associated_with_Events"/>
+            <ul>
+               <li>
+                  <p>Notify the event immediately, together with the accumulated list of observed events</p>
+               </li>
+               <li>
+                  <p>Accumulate the event in an event buffer, but don't notify yet</p>
+               </li>
+               <li>
+                  <p>Keep Signal(s) active</p>
+               </li>
+               <li>
+                  <p>Ignore the event</p>
+               </li>
+            </ul>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Connections.html">
+               <strong>Prev</strong>8.2.4. Connections</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-MMS_Configuration.html">
+               <strong>Next</strong>8.3. MMS Configuration</a>
+         </li>
+      </ul>
+   </body>
+</html>

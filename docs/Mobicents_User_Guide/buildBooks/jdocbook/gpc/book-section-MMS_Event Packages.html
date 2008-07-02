@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title/>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+   </head>
+   <body>
+      <div class="book" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <p id="title">
+                  <a href="http://www.jboss.org" class="jbossOrg_href">
+                     <strong>
+						        JBoss.org	
+						</strong>
+                  </a>
+                  <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+                     <strong>
+						        Community Documentation	
+						</strong>
+                  </a>
+               </p>
+            </div>
+            <hr/>
+         </div>
+         <div class="toc">
+            <dl>
+               <dt>
+                  <span class="chapter">
+                     <a href="#d0e3">1. </a>
+                  </span>
+               </dt>
+               <dd>
+                  <dl>
+                     <dt>
+                        <span class="section">
+                           <a href="#section-MMS_Event_Packages">1.1. MMS Event Packages</a>
+                        </span>
+                     </dt>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="chapter" lang="en-US">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title">
+                        <a name="d0e3"/>Chapter 1. </h2>
+                  </div>
+               </div>
+            </div>
+            <div class="toc">
+               <dl>
+                  <dt>
+                     <span class="section">
+                        <a href="#section-MMS_Event_Packages">1.1. MMS Event Packages</a>
+                     </span>
+                  </dt>
+               </dl>
+            </div>
+            <div class="section" lang="en-US">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title">
+                           <a name="section-MMS_Event_Packages"/>1.1. MMS Event Packages</h2>
+                     </div>
+                  </div>
+               </div>
+               <p/>
+               <h5 class="formalpara">The Basic Package</h5>
+               <p class="formalpara">Package name: <code class="literal">org.mobicents.media.server.spi.events.Basic</code>
+		
+               </p>
+               <div class="informaltable">
+                  <a name="informaltable-The_Basic_Package"/>
+                  <table border="1">
+                     <colgroup>
+                        <col align="left"/>
+                        <col align="left"/>
+                        <col align="left"/>
+                        <col align="left"/>
+                     </colgroup>
+                     <thead>
+                        <tr>
+                           <th align="left">Event ID</th>
+                           <th align="left">Description</th>
+                           <th align="left">Type</th>
+                           <th align="left">Duration</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td align="left">
+						
+                              <code class="literal">org.mobicents.media.server.spi.events.Basic.DTMF</code>
+					
+                           </td>
+                           <td align="left">DTMF Event</td>
+                           <td align="left">BR</td>
+                           <td align="left"> </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <h5 class="formalpara">The Announcement Package</h5>
+               <p class="formalpara">Package name: <code class="literal">org.mobicents.media.server.spi.event.Announcement</code>
+		
+               </p>
+               <div class="informaltable">
+                  <a name="informaltable-The_Announcement_Package"/>
+                  <table border="1">
+                     <colgroup>
+                        <col align="left"/>
+                        <col align="left"/>
+                        <col align="left"/>
+                        <col align="left"/>
+                     </colgroup>
+                     <thead>
+                        <tr>
+                           <th align="left">Event ID</th>
+                           <th align="left">Description</th>
+                           <th align="left">Type</th>
+                           <th align="left">Duration</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td align="left">
+						
+                              <code class="literal">org.mobicents.media.server.spi.event.Announcement.PLAY</code>
+					
+                           </td>
+                           <td align="left">play an announcement</td>
+                           <td align="left">TO</td>
+                           <td align="left">variable</td>
+                        </tr>
+                        <tr>
+                           <td align="left">
+						
+                              <code class="literal">org.mobicents.media.server.spi.event.Announcement.COMPLETED</code>
+					
+                           </td>
+                           <td align="left"> </td>
+                           <td align="left"> </td>
+                           <td align="left"> </td>
+                        </tr>
+                        <tr>
+                           <td align="left">
+						
+                              <code class="literal">org.mobicents.media.server.spi.event.Announcement.FAILED</code>
+					
+                           </td>
+                           <td align="left"> </td>
+                           <td align="left"> </td>
+                           <td align="left"> </td>
+                        </tr>
+                     </tbody>
+                  </table>
+               </div>
+               <p>The announcement action is qualified by an URL name and by a set of initial parameters. The “<span class="quote">operation complete</span>” event will be detected when the announcement is played out. If the announcement cannot be played out, an operation failure event can be returned.  The failure may be explained by a commentary. </p>
+               <h5 class="formalpara">The Advanced Audio Package</h5>
+               <p class="formalpara">Package name: <code class="literal">org.mobicents.media.server.spi.events.AU</code>
+		
+               </p>
+               <div class="table">
+                  <a name="table-The_Advanced_Audio_Package"/>
+                  <div class="table-contents">
+                     <table summary="The Advanced Audio Package" border="1">
+                        <colgroup>
+                           <col align="left"/>
+                           <col align="left"/>
+                           <col align="left"/>
+                           <col align="left"/>
+                        </colgroup>
+                        <thead>
+                           <tr>
+                              <th align="left">Event ID</th>
+                              <th align="left">Description</th>
+                              <th align="left">Type</th>
+                              <th align="left">Duration</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td align="left">
+						
+                                 <code class="literal">org.mobicents.media.server.spi.event.AU.PLAY_RECORD</code>
+					
+                              </td>
+                              <td align="left">play an announcement</td>
+                              <td align="left">TO</td>
+                              <td align="left">variable</td>
+                           </tr>
+                           <tr>
+                              <td align="left">
+						
+                                 <code class="literal">org.mobicents.media.server.spi.event.AU.PROMPT_AND_COLLECT</code>
+					
+                              </td>
+                              <td align="left"> </td>
+                              <td align="left"> </td>
+                              <td align="left"> </td>
+                           </tr>
+                           <tr>
+                              <td align="left">
+						
+                                 <code class="literal">org.mobicents.media.server.spi.event.Announcement.FAILED</code>
+					
+                              </td>
+                              <td align="left"> </td>
+                              <td align="left"> </td>
+                              <td align="left"> </td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+                  <p class="title">
+                     <b>Table 1.1. The Advanced Audio Package</b>
+                  </p>
+               </div>
+               <br class="table-break"/>
+               <p>PLAY_RECORD Plays a prompt and records user speech.  If the user does not speak, the user may be reprompted and given another chance to record.  By default PlayRecord does not play an initial prompt, makes only one attempt to record, and therefore functions as a simple Record operation</p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

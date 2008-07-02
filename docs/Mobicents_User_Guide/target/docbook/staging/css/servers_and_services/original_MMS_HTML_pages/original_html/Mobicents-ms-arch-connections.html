@@ -1,0 +1,55 @@
+<div><b><font size="4">3.2 Connections</font></b></div>
+<div>&nbsp;</div>
+<div>Connections are created on the call agent on each endpoint that will be involved in the "call."&nbsp; In the classic example of a connection between two "DS0" endpoints (EP1 and EP2), the call agents controlling the end points will establish two connections (C1 and C2):</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div style="clear: both; text-align: center;"><a style="border: 0px none ; margin-left: 1em; margin-right: 1em; background-color: transparent;" href="/group/mobicents-public/web/msconn.jpg"><img style="border: 0px none ;" src="/group/mobicents-public/web/msconn.jpg"></a></div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>Each connection will be designated locally by a connection identifier, and will be characterized by connection attributes.</div>
+<div></div>
+<div></div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div><font size="4"><b>3.2.1 Resources and connection attributes.</b></font></div>
+<div>&nbsp;</div>
+<div>Many types of resources will be associated to a connection, such as specific signal processing functions or packetization functions. Generally, these resources fall in two categories:</div>
+<div>&nbsp;</div>
+<ul>
+<li>Externally visible resources, that affect the format of "the bits on the network" and must be communicated to the second endpoint involved in the connection.
+</li>
+<li>Internal resources, that determine which signal is being sent over the connection and how the received signals are processed by the endpoint</li>
+</ul>
+<p>The resources allocated to a connection, and more generally the handling of the connection, are chosen by the&nbsp;media server&nbsp;under instructions from the call agent.&nbsp; The call agent will provide these&nbsp; instructions by sending two set of parameters to the media server:</p>
+<ul>
+<li>The local directives instruct the gateway on the choice of resources that should be used for a connection
+</li>
+<li>When available, the "session description" provided by the other end of the connection.</li>
+</ul>
+<p>The local directives specify such parameters as the mode of the connection (e.g. send only, send-receive), preferred coding or packetization methods, usage of echo cancellation or silence suppression.&nbsp; (A detailed list can be found in the specification of&nbsp;&nbsp; the LocalConnectionOptions parameter of the CreateConnection command.) For each of these parameters, the call agent can either specify a value, a range of value, or no value at all.&nbsp; This allow various implementations to implement various level of control, from a very tight control where the call agent specifies minute details of&nbsp;&nbsp; the connection handling to a very loose control where the call agent only specifies broad guidelines, such as the maximum bandwidth, and let the gateway choose the detailed values.</p>
+<p>&nbsp;</p>
+<p>Based on the value of the local directives, the gateway will determine the resources allocated to the connection.&nbsp; When this is possible, the gateway will choose values that are in line with the remote session description - but there is no absolute requirement that the parameters be exactly the same.</p>
+<p>&nbsp;</p>
+<p>Once the resource have been allocated, the gateway will compose a "session description" that describes the way it intends to receive packets.&nbsp; Note that the session description may in some cases present a range of values.&nbsp; For example, if the gateway is ready to accept one of several compression algorithm, it can provide a list of these accepted algorithms.</p>
+<p><br>
+&nbsp;</p>
+<p><b><font size="4">3.2.2 &nbsp;Special case for local connections.</font></b></p>
+<p>&nbsp;</p>
+<p>Large gateways include a large number of endpoints which are often of different types.&nbsp; In some networks, we may often have to setup connections between endpoints that are located within the same gateway.&nbsp; Examples of such connections may be:</p>
+<ul>
+<li>Connecting a trunk line to a wiretap device,
+</li>
+<li>Connecting a call to an Interactive Voice-Response unit
+</li>
+<li>Connecting a call to a Conferencing unit
+</li>
+<li>Routing a call from on endpoint to another, something often described as a "hairpin" connection.</li>
+</ul>
+<p>Local connections are much simpler to establish than network connections. In most cases, the connection will be established through some local interconnecting device, such as for example a TDM bus.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p><a href="/group/mobicents-public/web/mobicents-media-server">TOC</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">Previous</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-arch-evts">Next</a></p>
+<p>&nbsp;</p>
+<wbr>

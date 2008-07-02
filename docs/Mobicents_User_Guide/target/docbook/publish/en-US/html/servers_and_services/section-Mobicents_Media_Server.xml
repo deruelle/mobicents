@@ -1,0 +1,307 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Mobicents_Media_Server">
+	<title>Mobicents Media Server</title>
+	<section
+		id="section-Overview_of_Media_Servers">
+		<title>Overview of Media Servers</title>
+		<formalpara>
+			<title>The Reasoning and Need for Media Servers</title>
+			<para>With the continued progress of globalization, more corporations than ever before have workgroups spread across countries and continents across the world. To support and increase the productivity of remote and telecommuting workgroups, communications companies are considering more cost effective network solutions that combine voice, wireless, data and video functionality. Businesses like these expect that the services they select and eventually implement will have call quality comparable to conventional telephone service, and they expect those services to boost productivity and reduce overall communications costs. Acquiring these desired network services requires connections from the Internet and wireless and wireline networks to Public Switched Telephone Networks (<acronym>PSTN</acronym>s) using a flexible, robust, scalable and cost-effective media gateway. The ability of such gateways to reduce overall communications costs for dispersed workgroups forms the foundation for media services and servers.</para>
+		</formalpara> 
+		<!-- <para>With continued globalization, many corporations have workgroups dispersed around the world. To support workgroup productivity and communications companies are considering cost effective and less expansive network solutions that combine voice, wireless, data and video. These businesses expect the services they select and implement to have the high quality of the telephone and other services they now use, and they expect them to boost productivity and help reduce overall communication costs. To access the desired network services requires connections from wireless, wireline networks, and the Internet to Public Switched Telephone Network (PSTN) with flexible, robust, scalable and cost-effective media gateway. These gateways must reduce cost of communication of the dispersed workgroups and form the foundation for media services.</para> -->
+		<formalpara>
+			<title>Media Gateways Bridge Multiple Technologies</title>
+			<para>Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym>IP</acronym>) enable the convergence of voice, data and video. Media gateways provide the ability to switch voice media between a network and its access point. Using Digital Subscriber Line (<acronym>DSL</acronym>) and fast-Internet cable technology, a media gateway converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for wireline and wireless phones. Media gateways sit at the intersection of the PSTNs and wireless or IP-based networks.</para>
+		</formalpara>
+		<!-- <formalpara>
+			<title>Media Gateways Bridge Multiple Technologies</title>
+			<para>Today all communication can take place through a computer. Widely accessible broadband and Internet Protocol (IP) enable voice, data and video. Media gateways provide conversation and switching voice media between a network and its access point. Digital Subscriber Line (DSL) or cable modem a media gateway converts, compress and and packetizes voice data for transfer back and forth across the Internet backbone for wireline or wireless phones. Media gateways fit between the PSTN and wireless or IP-bbased networks.</para>
+		</formalpara> -->
+		<formalpara>
+			<title>The Justification for Media Gateways for VoIP</title>
+			<para>Multiple market demands are pushing companies to converge all of their media services using media gateways with VoIP capabilities. Companies expect such a convergent architecture to:</para>
+		</formalpara>
+		<!-- <formalpara>
+			<title>Why modular media gateways for VoIP</title>
+			<para>Several market demands are pushing companies to converge all of their media services using media gateways,with VoIP.Companies are expecting this architecture to:</para>
+		</formalpara> -->
+		<variablelist>
+			<title>Company Expectations of a Convergent Architecture</title>
+			<varlistentry>
+				<term>Lower Initial Costs</term>
+				<listitem>
+					<para>Capital investment is decreased because low-cost commodity hardware can be used for multiple functions.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Lower Development Costs</term>
+				<listitem>
+					<para>Open system hardware and software standards with well-defined applications mean lower costs, and Application Programmable Interfaces (<acronym>API</acronym>s) accelerate development.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Handle Multiple Media Types</term>
+				<listitem>
+					<para>Companies want <acronym>VoIP</acronym> solutions today, but also need to choose extensible solutions that will handle video in the near future.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Lower the Costs of Deployment and Maintenance</term>
+				<listitem>
+					<para>Standardized, modular systems reduce training costs and maintenance while also improving uptime.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Enable Rapid Time-to-Market</term>
+				<listitem>
+					<para>Early market entry hits the window of opportunity and maximizes revenue.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<!-- <itemizedlist>
+			<listitem>
+				<para>Lower initial costs. Capital investment is less because hardware can be used for multiple functions.</para>
+			</listitem>
+			<listitem>
+				<para>Lower development costs.Open system hardware and software standards with well defined application mean lower costs, and Application Programmable Interfaces (AAPIs) accelerate development.</para>
+			</listitem>
+			<listitem>
+				<para>Handle multiple media types. Companies want VoIP solutions today, but need to select solutions that will also handle video in the near future.</para>
+			</listitem>
+			<listitem>
+				<para>Lower the costs of deployment and maintenance. Standardized, modular systems reduce training costs and maintenance while also improving uptime.</para>
+			</listitem>
+			<listitem>
+				<para>Enable faster time-tto-mmarket. Early market entry hits the window of opportunity and maximizes revenue.</para>
+			</listitem>
+		</itemizedlist> -->
+		<formalpara>
+			<title>What Is the Mobicents Media Server?</title>
+			<para>The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and aimed to:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+			</listitem>
+			<listitem>
+				<para>Meet the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single&mdash;and singularly-capable&mdash;media gateway platform.</para>
+			</listitem>
+			<listitem>
+				<para>Increase flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</para>
+			</listitem>
+		</itemizedlist>
+	<!-- <section
+		id="section-What_Is_the_Mobicents_Media_Server">
+		<title>What Is the Mobicents Media Server?</title>
+		<para>Mobicents Media Gateway is open source, based on Java Media Framework implementation aimed to:</para>
+		<itemizedlist>
+			<listitem>
+				<para>Deliver competitive, complete, best-of-breed media gateway functionality featuring highest quality.</para>
+			</listitem>
+			<listitem>
+				<para>Meet the demands of converged wireless, wireline, cable broadband access and fixed-mobile converged VoIP networks from a single media gateway platform</para>
+			</listitem>
+			<listitem>
+				<para>Increase flexibility with a media gateway that supports wide variety of call control protocols and scales down to meet the demands of enterprises and small carrier providers.</para>
+			</listitem>
+			<listitem>
+				<para>React quickly to dynamic market requirements.</para>
+			</listitem>
+		</itemizedlist>
+	</section> -->
+	</section>
+	<section
+		id="section-Installing_Building_and_Uninstalling_the_MMS">
+		<title>Installing, Building and Uninstalling the MMS</title>
+		<formalpara
+			id="fpara-Building_the_MMS">
+			<title>Building the MMS</title>
+			<para>The server is available as a source code distribution. The source code is available from the server source repository located at http://code.google.com/p/mobicents/source/checkout. The source code availability allows you to debug the server, learn its inner workings and create customized versions for your personal use.</para>
+		</formalpara>
+		<formalpara
+			id="fpara-Pre-requisites">
+			<title>Pre-requisites</title>
+			<para>Before installing and running the media server, you should check that your have installed Mobicents SLEE server.</para>
+		</formalpara>
+		<formalpara
+			id="fpara-Accessing_the_MMS_SVN_Source_Code_Repositories">
+			<title>Accessing the MMS SVN Source Code Repositories</title>
+			<para>Access the source code repository for this project in one of following ways:</para>
+		</formalpara>
+		<procedure
+			id="procedure-Procedure_for_Checking_Out_the_Source_Code_with_Subversion">
+			<step>
+				<para>Browse source code online to view this project's directory structure and files: <ulink
+						url="https://mobicents.googlecode.com/svn/trunk/servers/media"/>
+				</para>
+			</step>
+			<step>
+				<para>Check out source code with a Subversion client using the following command. Note: replace the last username with your own username:</para>
+				<screen>svn checkout http://mobicents.googlecode.com/svn/trunk/ mobicents-read-only</screen>
+			</step>
+		</procedure>
+		<para>If you are new to Subversion, you may want to visit the <ulink
+				url="http://subversion.tigris.org/">Subversion Project website</ulink> and read
+    <ulink
+				url="http://svnbook.red-bean.com/">Version Control with Subversion</ulink>.</para>
+		<formalpara
+			id="fpara-Subversion_Source_Code_Repository_Structure">
+			<title>Subversion Source Code Repository Structure</title>
+			<para>The top-level directory structure under the /trunk/servers/media source tree is shown in the follwing table:</para>
+		</formalpara>
+		<informaltable
+			id="informaltable-SVN_Source_Code_Repo_Structure"
+			frame="all">
+			<tgroup
+				cols="2"
+				align="left"
+				colsep="1"
+				rowsep="1">
+				<colspec
+					colnum="1"
+					colname="col1" />
+				<colspec
+					colnum="2"
+					colname="col2" />
+				<thead>
+					<row>
+						<entry>Path</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>/trunk/servers/media/constants</entry>
+						<entry>Shared library for constants</entry>
+					</row>
+					<row>
+						<entry>/trunk/servers/media/jar</entry>
+						<entry>Media server SPI and implementation</entry>
+					</row>
+					<row>
+						<entry>/trunk/servers/media/sar</entry>
+						<entry>JBoss service deployment unit</entry>
+					</row>
+					<row>
+						<entry>/trunk/servers/media/mgcpcontrol</entry>
+						<entry>MGCP module</entry>
+					</row>
+					<row>
+						<entry>/trunk/servers/media/mscontrol</entry>
+						<entry>The API for media server control</entry>
+					</row>
+				</tbody>
+			</tgroup>
+		</informaltable>
+		<formalpara
+			id="fpara-Building_the_MMS_from_Source_Code">
+			<title>Building the MMS from Source Code</title>
+			<para>The build process is driven by maven configuration. The main maven script is the pom.xml file located in the project home directory. The purpose of the main pom.xml file is to compile the various module directories and then to integrate their output to produce the binary release. To build and install media server perform the following actions:</para>
+		</formalpara>
+		<procedure
+			id="procedure-Steps_for_Building_and_Installing_the_MMS_">
+			<step>
+				<title>Installing media server endpoints</title>
+				<para>switch to the /servers/media and run mvn install</para>
+			</step>
+			<step>
+				<title>Installing Media Resource Adaptor with local link</title>
+				<para>switch to the /servers/jain-slee/resources/media and run mvn install</para>
+			</step>
+			<step>
+				<title>Installing MGCP control module</title>
+				<para>switch to the /servers/jain-slee/resources/mgcp and run mvn install</para>
+			</step>
+		</procedure>
+	</section>
+	<section
+		id="section-Writing_and_Running_Tests_Against_the_Mobicents_Media_Server">
+		<title>Writing and Running Tests Against the Mobicents Media Server</title>
+		<para>As platform became rich with functions and capabilities it became clear that it requires also a lot of man power to sustain its functionality. To help us achieve as highest availability and stability we developed tests.</para>
+		<para>MMS has two different set of tests:</para>
+		<variablelist>
+			<varlistentry>
+				<term>In-Container Tests</term>
+				<listitem>
+					<para>Tests which require setup of full container, same JVM as MMS.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Components Tests</term>
+				<listitem>
+					<para>Regular junit tests for components that not require MMS to be in running state</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>Test in both cases are driven by maven plugins - as whole build  depends on maven. However in case of incontainer tests its different - this module is not enabled. This default setup is due to requirement of incontainer test. In future we will make effort to automate whole process without any need to modify poms. Incontainer tests require MMS to be deployed in jboss. Despite availability of <quote>cargo</quote> plugin we were unsuccessfull on integrating both test types in one module due to <quote>cactus</quote> for m2, being still in alpha state.</para>
+		<para>Incontainer tests reside is separate module as they require 3rd party libraries and framework to act. It can be found in <filename>trunk/servers/media/tests</filename>
+		</para>
+		<formalpara>
+			<title>Writing In-Container Tests</title>
+			<para>  This is fairly easy. We use cactus to run tests within contianer. Here are basic steps to acomplish:</para>
+		</formalpara>
+		<procedure
+			id="procedure-Using_Cactus_to_Run_Tests_In-Container">
+			<step>
+				<para>Create the appropriate pacakge in <filename>trunk/servers/media/tests/src/main/java</filename>.</para>
+			</step>
+			<step>
+				<para>Create regular junit test case - but extends  org.apache.cactus.ServletTestCase.</para>
+			</step>
+			<step>
+				<para>Create testXXX methods, setUp, tearDown, etc - just as in regular test case - but keep in mind, it runs within container, so all local container resources are available - like JNDI entries, envirment properties.</para>
+			</step>
+			<step>
+				<para>Make public static Test suite() method return instance of org.apache.cactus.ServletTestSuite object.</para>
+			</step>
+		</procedure>
+		<formalpara>
+			<title>Writing Regular Tests</title>
+			<para>This is straightforward as those tests are regular junit tests, run with surefire plugin.</para>
+		</formalpara>
+		<formalpara>
+			<title>Running the In-Container Tests</title>
+			<para>As mentioned running those tests needs a little bit of setup. Here they are:</para>
+		</formalpara>
+		<procedure
+			id="procedure-Running_the_In-Container_Tests">
+			<step>
+				<para>Deploy MMS with mvn install command invoked from <filename>trunk/server/media</filename>.</para>
+			</step>
+			<step>
+				<para>Change the directory to <filename>tests</filename> (its a mvn module).</para>
+			</step>
+			<step>
+				<para>Set proper container home and proper containerId (see cargo reference manual) in <filename>pom.xml</filename>:</para>
+				<example
+					id="example-Setting_the_Container_Home_and_containerId">
+					<title>Setting the Container Home and containerId</title>
+<programlisting
+						id="proglist-Setting_the_Container_Home_and_containerId"
+						linenumbering="numbered"
+						role="XML"><![CDATA[
+<container>
+	<containerId>jboss42x</containerId>
+	<home>D:\java\servers\jboss-4.2.2.GA</home>
+</container>]]></programlisting>
+</example>
+			</step>
+			<step>
+				<para>Simply do mvn install - this will create war file, deploy it, run container, run tests.</para>
+			</step>
+			<step>
+				<para>Do mvn clean to remove tests war from container.</para>
+			</step>
+		</procedure>
+		<para>In the future incotnainer run should be simpler, without need of any configuration. However please keep in mind that there are plans to separate MMS entirely from container.</para>
+		<formalpara>
+			<title>Running Regular Tests</title>
+			<para>Those test are usually run while MMS is beeing build, however it is possible to run them on demand.</para>
+		</formalpara>
+		<para>Simply move to <filename>trunk/servers/media/jar</filename> and type mvn test.</para>
+	</section>
+</section>
+

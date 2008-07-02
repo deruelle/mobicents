@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>8.5.1. Basic Components of the MMS API</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-MMS_Control_API.html" title="8.5. MMS Control API"/>
+      <link rel="prev" href="section-MMS_Control_API.html" title="8.5. MMS Control API"/>
+      <link rel="next" href="section-Basic_API_Patterns_Listeners.html" title="8.5.2. Basic API Patterns: Listeners"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-MMS_Control_API.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Basic_API_Patterns_Listeners.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Basic_Components_of_the_MMS_API"/>8.5.1. Basic Components of the MMS API</h3>
+               </div>
+            </div>
+         </div>
+         <p>In this section we describes the basic objects of the API as well as the common design patterns.</p>
+         <p>The API components consist of a related set of interfaces, classes, operations, events, capabilities, and exceptions. The API provides seven key objects, which are common MS and more advanced packages. We provide a very brief description of the API in this overview document; The seven key objects are:</p>
+         <div class="variablelist">
+            <dl>
+               <dt>
+                  <span class="term">MsProvider</span>
+               </dt>
+               <dd>
+                  <p>Represents the “window” through which an application views the call processing.</p>
+               </dd>
+               <dt>
+                  <span class="term">MsSession</span>
+               </dt>
+               <dd>
+                  <p>Represents a call and is a dynamic “collection of physical and logical entities” that bring two or more endpoints together.</p>
+               </dd>
+               <dt>
+                  <span class="term">MsEndpoint</span>
+               </dt>
+               <dd>
+                  <p>Represents a logical endpoint (e.g., announcement access server, IVR).</p>
+               </dd>
+               <dt>
+                  <span class="term">MsConnection</span>
+               </dt>
+               <dd>
+                  <p>Represents the dynamic relationship between a MsSession and an UA.</p>
+               </dd>
+               <dt>
+                  <span class="term">MsLink</span>
+               </dt>
+               <dd>
+                  <p>Represent the dynamic relationship between a two endpoint located on same Media server</p>
+               </dd>
+               <dt>
+                  <span class="term">MsSignalGenerator</span>
+               </dt>
+               <dd>
+                  <p>Represents the media resource which is responsible for generating media</p>
+               </dd>
+               <dt>
+                  <span class="term">MsSignalDetector</span>
+               </dt>
+               <dd>
+                  <p>Represents the media resource which is responsible for detecting media.</p>
+               </dd>
+            </dl>
+         </div>
+         <p>The purpose of a MsConnection object is to describe the relationship between a MsSession object and an UA. A MsConnection object exists if the UA is a part of the media session. MsConnection objects are immutable in terms of their MsSession and UA references. In other words, the MsSession and UA object references do not change throughout the lifetime of the MsConnection object instance. The same MsConnection object may not be used in another MsSession.</p>
+         <div class="mediaobject" align="center">
+            <a id="mediaobj-MSControlAPI.jpg"/>
+            <img src="images/MSControlAPI.jpg" align="middle"/>
+            <div class="caption">
+               <p/>
+            </div>
+         </div>
+         <p>MsProvider can be used to create the MsSession as well as SignalGenerator and SignalDetector.</p>
+         <p>MsSession is a transient association of (zero or more) connection for the purposes of engaging in a real-time communications interchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of a MsSession object with the MsProvider.createSession() method, which returns a MsSession object that has zero connections and is in the IDLE state. The MsProvider object instance does not change throughout the lifetime of the MsSession object. The MsProvider associated with a MsSession is obtained via the getProvider() method.</p>
+         <p>Application creates instance of MsConnection object with the MsSession.createNetworkConnection(String endpointName). The Application calls MsConnection.modify(String localDesc, String remoteDesc) passing the local SDP and remote SDP. The MsConnection at this time will find out corresponding EndPoint from JNDI using endPointName passed to it and call createConnection(int mode) to create instance of Connection. This Connection creates the instance of RtpSocketAdaptorImpl which opens up the socket for RTP data transfer. The transfer of data has not yet started.</p>
+         <p>Application creates instance of MsLink object with the MsSession.createLink(MsLinkMode mode). The Application calls MsLink.join(String endpointName1, String endpointName2) passing the endpoint names of two local endpoint to be joined. The MsLink at this time will find out corresponding EndPoint's from JNDI using endPointName passed to it and call createConnection(int mode) to create instance of Connection. This Connection creates the instance of RtpSocketAdaptorImpl which opens up the socket for RTP data transfer. The transfer of data has not yet started. As soon as Connections are created for both the Endpoint's, setOtherParty(Connection other) is called on each Connection passing the other Connection which starts the data transfer between two Connection's.</p>
+         <p>The Application creates instance of MsSignalGenerator using MsProvider.getSignalGenerator(endpointName) passing endPointName. Application calls MsGenerator.apply(Announcement.PLAY, new String[] { Audio file URL }) to play the audio file. At this point MsGenerator looks up the EndPoint corresponding the endpointName passed and simply calls play on it to start the transmission of audio via RTP.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-MMS_Control_API.html">
+               <strong>Prev</strong>8.5. MMS Control API</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Basic_API_Patterns_Listeners.html">
+               <strong>Next</strong>8.5.2. Basic API Patterns: Listeners</a>
+         </li>
+      </ul>
+   </body>
+</html>

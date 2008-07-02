@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Diameter_Resource_Adapter">
+	<title>Diameter Resource Adapter</title>
+	<para></para>
+	<section
+		id="section-Installing_the_Diameter_Resource_Adapter">
+		<title>Installing the Diameter Resource Adapter</title>
+		<para>The Diameter resource adapter can be installed by referring to <xref
+				linkend="section-Deploying_and_Undeploying_Resource_Adapters"/>.</para>
+		<para>Remember to replace <filename><replaceable>&lt;resource_adapter&gt;</replaceable>
+			</filename> with the name of the directory in <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/resources</filename> corresponding to the Diameter resource adapter (currently this directory is named <filename><replaceable>diameterra</replaceable>
+			</filename>, but this could change in the future).
+		</para>
+	</section>
+</section>

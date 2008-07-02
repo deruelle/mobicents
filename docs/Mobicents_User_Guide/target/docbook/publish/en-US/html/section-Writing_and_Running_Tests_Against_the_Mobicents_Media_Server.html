@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>8.1.3. Writing and Running Tests Against the Mobicents Media Server</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Mobicents_Media_Server.html" title="8.1. Mobicents Media Server"/>
+      <link rel="prev" href="section-Installing_Building_and_Uninstalling_the_MMS.html" title="8.1.2. Installing, Building and Uninstalling the MMS"/>
+      <link rel="next" href="section-Mobicents_Media_Server_Architecture.html" title="8.2. Mobicents Media Server Architecture"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_Building_and_Uninstalling_the_MMS.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Mobicents_Media_Server_Architecture.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Writing_and_Running_Tests_Against_the_Mobicents_Media_Server"/>8.1.3. Writing and Running Tests Against the Mobicents Media Server</h3>
+               </div>
+            </div>
+         </div>
+         <p>As platform became rich with functions and capabilities it became clear that it requires also a lot of man power to sustain its functionality. To help us achieve as highest availability and stability we developed tests.</p>
+         <p>MMS has two different set of tests:</p>
+         <div class="variablelist">
+            <dl>
+               <dt>
+                  <span class="term">In-Container Tests</span>
+               </dt>
+               <dd>
+                  <p>Tests which require setup of full container, same JVM as MMS.</p>
+               </dd>
+               <dt>
+                  <span class="term">Components Tests</span>
+               </dt>
+               <dd>
+                  <p>Regular junit tests for components that not require MMS to be in running state</p>
+               </dd>
+            </dl>
+         </div>
+         <p>Test in both cases are driven by maven plugins - as whole build  depends on maven. However in case of incontainer tests its different - this module is not enabled. This default setup is due to requirement of incontainer test. In future we will make effort to automate whole process without any need to modify poms. Incontainer tests require MMS to be deployed in jboss. Despite availability of “<span class="quote">cargo</span>” plugin we were unsuccessfull on integrating both test types in one module due to “<span class="quote">cactus</span>” for m2, being still in alpha state.</p>
+         <p>Incontainer tests reside is separate module as they require 3rd party libraries and framework to act. It can be found in <code class="filename">trunk/servers/media/tests</code>
+		
+         </p>
+         <h5 class="formalpara">Writing In-Container Tests</h5>
+         <p class="formalpara">  This is fairly easy. We use cactus to run tests within contianer. Here are basic steps to acomplish:</p>
+         <div class="procedure">
+            <a id="procedure-Using_Cactus_to_Run_Tests_In-Container"/>
+            <ol class="1">
+               <li>
+                  <p>Create the appropriate pacakge in <code class="filename">trunk/servers/media/tests/src/main/java</code>.</p>
+               </li>
+               <li>
+                  <p>Create regular junit test case - but extends  org.apache.cactus.ServletTestCase.</p>
+               </li>
+               <li>
+                  <p>Create testXXX methods, setUp, tearDown, etc - just as in regular test case - but keep in mind, it runs within container, so all local container resources are available - like JNDI entries, envirment properties.</p>
+               </li>
+               <li>
+                  <p>Make public static Test suite() method return instance of org.apache.cactus.ServletTestSuite object.</p>
+               </li>
+            </ol>
+         </div>
+         <h5 class="formalpara">Writing Regular Tests</h5>
+         <p class="formalpara">This is straightforward as those tests are regular junit tests, run with surefire plugin.</p>
+         <h5 class="formalpara">Running the In-Container Tests</h5>
+         <p class="formalpara">As mentioned running those tests needs a little bit of setup. Here they are:</p>
+         <div class="procedure">
+            <a id="procedure-Running_the_In-Container_Tests"/>
+            <ol class="1">
+               <li>
+                  <p>Deploy MMS with mvn install command invoked from <code class="filename">trunk/server/media</code>.</p>
+               </li>
+               <li>
+                  <p>Change the directory to <code class="filename">tests</code> (its a mvn module).</p>
+               </li>
+               <li>
+                  <p>Set proper container home and proper containerId (see cargo reference manual) in <code class="filename">pom.xml</code>:</p>
+                  <div class="example">
+                     <a id="example-Setting_the_Container_Home_and_containerId"/>
+                     <div class="example-contents">
+                        <a id="proglist-Setting_the_Container_Home_and_containerId"/>
+                        <pre class="programlisting">
+&lt;container&gt;
+	&lt;containerId&gt;jboss42x&lt;/containerId&gt;
+	&lt;home&gt;D:\java\servers\jboss-4.2.2.GA&lt;/home&gt;
+&lt;/container&gt;</pre>
+                     </div>
+                     <p class="title">
+                        <b>Example 8.1. Setting the Container Home and containerId</b>
+                     </p>
+                  </div>
+                  <br class="example-break"/>
+               </li>
+               <li>
+                  <p>Simply do mvn install - this will create war file, deploy it, run container, run tests.</p>
+               </li>
+               <li>
+                  <p>Do mvn clean to remove tests war from container.</p>
+               </li>
+            </ol>
+         </div>
+         <p>In the future incotnainer run should be simpler, without need of any configuration. However please keep in mind that there are plans to separate MMS entirely from container.</p>
+         <h5 class="formalpara">Running Regular Tests</h5>
+         <p class="formalpara">Those test are usually run while MMS is beeing build, however it is possible to run them on demand.</p>
+         <p>Simply move to <code class="filename">trunk/servers/media/jar</code> and type mvn test.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_Building_and_Uninstalling_the_MMS.html">
+               <strong>Prev</strong>8.1.2. Installing, Building and Uninstalling the ...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Mobicents_Media_Server_Architecture.html">
+               <strong>Next</strong>8.2. Mobicents Media Server Architecture</a>
+         </li>
+      </ul>
+   </body>
+</html>

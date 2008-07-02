@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>2.2. Building the Mobicents 1.2.x Series</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="chapter-Installation.html" title="Chapter 2. Installation"/>
+      <link rel="prev" href="section-Installing_the_Mobicents_Binary_Distribution.html" title="2.1. Installing the Mobicents Binary Distribution"/>
+      <link rel="next" href="section-Installing_EclipSLEE.html" title="2.3. Installing EclipSLEE: The JAIN SLEE Eclipse Plugin"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_the_Mobicents_Binary_Distribution.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Installing_EclipSLEE.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h2 class="title">
+                     <a id="section-Building_the_Mobicents_1.2.x_Series"/>2.2. Building the Mobicents 1.2.x Series</h2>
+               </div>
+            </div>
+         </div>
+         <p>Besides simply installing the latest binary Mobicents release, you can also build the Mobicents Converged Application Server from source. There are several reasons for building Mobicents from source, including getting access to new features such as the latest resource adapters, bundled servers and examples, getting full support for debugging, and accessing extra documentation.</p>
+         <p>Note that building Mobicents from source requires a working installation of JBoss 4.2. This section on building Mobicents from source also includes the steps necessary for installing the JBoss 4.2.2 binary distribution.</p>
+         <p class="formalpara">
+            <a id="fpara-Hardware_Requirements_for_the_Source_Distribution"/>
+         </p>
+         <h5 class="formalpara">Hardware Requirements for the Source Distribution</h5>
+         <p class="formalpara">Both the Mobicents Converged Application Server and the JBoss Application Server are 100% Java. Mobicents will run on the same hardware that the JBoss Application Server runs on.</p>
+         <p class="formalpara">
+            <a id="fpara-Pre-Install_Requirements_for_the_Source_Distribution"/>
+         </p>
+         <h5 class="formalpara">Pre-Install Requirements for the Source Distribution</h5>
+         <p class="formalpara">There are a number of requirements that should be met before downloading and installing JBoss, and then acquiring the Mobicents sources and building the Mobicents Converged Application Server.</p>
+         <div class="variablelist">
+            <a id="varlist-Source_Distribution_Installation_Requirements"/>
+            <p class="title">
+               <b>Source Distribution Installation Requirements</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">Sufficient Disk Space</span>
+               </dt>
+               <dd>
+                  <p>You must have sufficient disk space in order to install the Mobicents source as well as the JBoss binary distribution. The Mobicents source, once fetched from the development Subversion repository, will consume anywhere from 250-300 MB of disk space. In addition to this, the JBoss Application Server binary distribution (version 4.2.2 GA), once decompressed, requires approximately 115 MB, meaning that you should probably have <span class="emphasis">
+                        <em>at least</em>
+                     </span> 415 MB of free disk space available. Keep in mind also that disk space requirements will change with subsequent updates to the development repository.</p>
+               </dd>
+               <dt>
+                  <span class="term">Java 1.5 or Higher</span>
+               </dt>
+               <dd>
+                  <p>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</p>
+               </dd>
+               <dt>
+                  <span class="term">A Download Utility</span>
+               </dt>
+               <dd>
+                  <p>A way to download files. We will use the wget utility in the subsequent sections, but any common web browser will do.</p>
+               </dd>
+               <dt>
+                  <span class="term">The Subversion Version Control System or Client</span>
+               </dt>
+               <dd>
+                  <p>The Subversion Version Control System (<acronym class="acronym">VCS</acronym>) is required in order to check out the latest Mobicents source code. In addition to the command line client, there are a number of other clients that can be downloaded or installed via your package manager:</p>
+                  <div class="itemizedlist">
+                     <a id="itemlist-"/>
+                     <ul>
+                        <li>
+                           <h5 class="formalpara">Basic Subversion (the shell client)</h5>
+                           <p class="formalpara">If you are reasonably proficient on the command line, this is the only client you will need. You can get a binary version for your operating system here: <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://subversion.tigris.org/project_packages.html">http://subversion.tigris.org/project_packages.html</a>. Note that I will be using the command line (shell) Subversion client throughout this Guide.</p>
+                        </li>
+                        <li>
+                           <h5 class="formalpara">The Meld Diff and Merge Tool</h5>
+                           <p class="formalpara">On Linux and UNIX-based operating systems, Meld is the Swiss Army knife of version control tools. It can do 2- and 3-way diffs between files, diffs between directories, and also serves as a graphical <acronym class="acronym">VCS</acronym> front-end for Subversion, as well as Darcs, Git, Mercurial, Bazaar(-NG), Monotone, Perforce, CVS, and probably others. Note that you will need the basic Subversion shell client installed before Meld can function as a client. Meld is available from <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://meld.sourceforge.net/install.html">http://meld.sourceforge.net/install.html</a>.</p>
+                        </li>
+                        <li>
+                           <h5 class="formalpara">TortoiseSVN</h5>
+                           <p class="formalpara">A graphical Windows Subversion client which integrates with the Explorer file manager. Available from <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://tortoisesvn.tigris.org/">http://tortoisesvn.tigris.org/</a>.</p>
+                        </li>
+                        <li>
+                           <h5 class="formalpara">Other Subversion Clients</h5>
+                           <p class="formalpara">A full list of Subversion clients is available from <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://subversion.tigris.org/links.html">http://subversion.tigris.org/links.html</a> (look under the <code class="literal">Clients and plugins</code> subheading).</p>
+                        </li>
+                     </ul>
+                  </div>
+               </dd>
+               <dt>
+                  <span class="term">Ant, version 1.7.0 or Higher</span>
+               </dt>
+               <dd>
+                  <p>The Java-based Ant build tool “<span class="quote">for tracking, resolving and managing project dependencies.</span>”, which is available here: <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://ant.apache.org/">http://ant.apache.org/</a>.</p>
+                  <div class="note">
+                     <a id="note-Both_Ant_and_Maven_Are_Required"/>
+                     <h2>Both Ant and Maven Are Required!</h2>
+                     <p>Both the Ant and Maven build tools are required in order to build the Mobicents Converged Application Server and deploy resource adapters, etc.</p>
+                  </div>
+               </dd>
+               <dt>
+                  <span class="term">Maven, version 2.0.6 or Higher</span>
+               </dt>
+               <dd>
+                  <p>The Java-based Maven build and “<span class="quote">software project management and comprehension tool</span>”, available here: <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://maven.apache.org/">http://maven.apache.org/</a>.</p>
+               </dd>
+            </dl>
+         </div>
+         <p class="formalpara">
+            <a id="fpara-Downloading_and_Installing_the_Jboss_Binary_Distribution"/>
+         </p>
+         <h5 class="formalpara">Downloading and Installing the Jboss Binary Distribution</h5>
+         <p class="formalpara">Once the pre-install requirements have been met, you are ready to start. We will split the entire procedure, which isn't long but may take a while depending on the speed of your Internet connection, into two parts: in the first we will install JBoss; in the second, we will download and build Mobicents.</p>
+         <div class="procedure">
+            <a id="procedure-Downloading_and_Installing_JBoss"/>
+            <p class="title">
+               <b>Procedure 2.1. Downloading and Installing JBoss</b>
+            </p>
+            <ol class="1">
+               <li>
+                  <p>First, move to the directory where you want to install JBoss and download the JBoss 4.2.2 General Availability (<acronym class="acronym">GA</acronym>) binary distribution<sup>[<a id="jboss_sourceforge_link" href="#ftn.jboss_sourceforge_link">3</a>]</sup>:</p>
+                  <pre class="screen">cd &lt;directory_to_install_jboss_into&gt;
+wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip</pre>
+               </li>
+               <li>
+                  <p>Next, assuming you want to install JBoss in the same directory you have downloaded the zip file into, simply unzip it:</p>
+                  <pre class="screen">unzip jboss-4.2.2.GA.zip</pre>
+               </li>
+               <li>
+                  <p>Finally, we must set the <code class="envar">JBOSS_HOME</code> environment variable. The quick-and-easy way to set it for the current session, but which will not last beyond the next reboot, is to <code class="command">export</code> the variable on the command line, and then to <code class="command">echo</code> the variable to make sure that it contains the right directory. For example:</p>
+                  <pre class="screen">export JBOSS_HOME="${PWD}/jboss-4.2.2.GA"
+echo $JBOSS_HOME
+/home/my_name/jboss/jboss-4.2.2.GA</pre>
+                  <p>If the <code class="command">echo</code> command doesn't produce any output, make sure that you are in the directory into which you unzipped the JBoss binary distribution zip file, and that the name of that directory is correct in the <code class="command">export</code> command (i.e., that the file name hasn't changed in some subtle way).</p>
+                  <p>Alternatively, you can set the <code class="envar">JBOSS_HOME</code> environment variable permanently in the startup file for your shell. If you are using the Bash shell, this would mean inserting the following line into your <code class="filename">~/.bashrc</code> startup file (remember to make sure that the path name, i.e. <code class="filename">&lt;unzip_directory&gt;</code>, is absolute!): </p>
+                  <pre class="screen">export JBOSS_HOME="&lt;unzip_directory&gt;/jboss-4.2.2.GA"</pre>
+                  <p>
+				
+                  </p>
+                  <div class="important">
+                     <a id="important-You_Must_Set_JBOSS_HOME_If_You_Are_Building_Mobicents_from_Source"/>
+                     <h2>You Must Set JBOSS_HOME If You Are Building from Source</h2>
+                     <p>The source distribution of Mobicents does not “<span class="quote">bundle</span>”, or come with, the JBoss Application Server, so you must remember to install it and set the environment variable. Conversely, the binary Mobicents distribution does come bundled with JBoss; therefore, if you are running Mobicents using the binary distribution, then you should <span class="emphasis">
+                           <em>not</em>
+                        </span> set <code class="envar">JBOSS_HOME</code>.</p>
+                  </div>
+               </li>
+            </ol>
+         </div>
+         <h5 class="formalpara">Downloading the Source and Building Mobicents</h5>
+         <p class="formalpara">Now that that you have successfully installed the JBoss Application Server and set the <code class="envar">JBOSS_HOME</code> environment variable, we will next download the Mobicents source with Subversion and then build it.</p>
+         <div class="procedure">
+            <a id="procedure-Downloading_the_Source_and_Building_Mobicents"/>
+            <ol class="1">
+               <li>
+                  <p>First, move to a directory where you want to place the files for Mobicents, create a subdirectory named <code class="filename">mobicents</code> into which you will download everything, and then use Subversion to get the latest version of the sources:</p>
+                  <pre class="screen">cd &lt;directory_to_install_mobicents_source_into&gt;
+mkdir mobicents
+svn co http://mobicents.googlecode.com/svn/trunk mobicents</pre>
+               </li>
+               <li>
+                  <p>Building Mobicents from source is a simple affair consisting of issuing a <code class="command">mvn install</code> command in the <code class="filename">&lt;mobicents&gt;</code> directory into which you checked out the sources with Subversion (this directory is named <code class="filename">trunk</code> on the Google Code Subversion repository):</p>
+                  <pre class="screen">cd &lt;mobicents&gt;
+mvn install</pre>
+                  <p>If the build command is successful, you will see a <code class="literal">BUILD SUCCESSFUL</code> message in the terminal:</p>
+                  <pre class="programlisting">[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 22 seconds
+[INFO] Finished at: Wed May 28 13:42:42 CEST 2008
+[INFO] Final Memory: 17M/117M
+[INFO] ------------------------------------------------------------------------</pre>
+                  <p>On the other hand, if the build fails, you can either:</p>
+                  <div class="itemizedlist">
+                     <a id="itemlist-build_fails"/>
+                     <ul>
+                        <li>
+                           <p>Install and use the Mobicents binary distribution, at least for the time being.</p>
+                        </li>
+                        <li>
+                           <p>Wait a day or so and hope that the build failure is fixed in the Subversion sources. Update your copy of the sources by issuing a <code class="command">svn update</code> command in the <code class="filename">&lt;mobicents&gt;</code> directory and try to build by invoking the <code class="command">mvn install</code> command again.</p>
+                        </li>
+                        <li>
+                           <p>Create a new issue on the Google Code issue tracker, located at <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://code.google.com/p/mobicents/issues/list">http://code.google.com/p/mobicents/issues/list</a>.</p>
+                        </li>
+                     </ul>
+                  </div>
+               </li>
+            </ol>
+         </div>
+         <p>TBD: Close with a sentence and direct the reader with a ulink to the Running Mobicents (which was installed from source) chapter. Issues that need to be addressed in this chapter include: installing GWT 1.3, which only comes in source for x86 (not version 1.4) and then building the management console.This chapter will have to be expanded with those instructions.</p>
+         <div xmlns="" class="footnotes">
+            <br/>
+            <hr/>
+            <div xmlns="http://www.w3.org/1999/xhtml" class="footnote">
+               <p>
+                  <sup>[<a id="ftn.jboss_sourceforge_link" href="#jboss_sourceforge_link">3</a>] </sup>If the given direct link to JBoss 4.2.2 <acronym class="acronym">GA</acronym> doesn't work for you, the binary JBoss distribution can also be found at <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://surfnet.dl.sourceforge.net/sourceforge/jboss/">http://surfnet.dl.sourceforge.net/sourceforge/jboss/</a>, or by searching for the project on <a xmlns:xlink="http://www.w3.org/1999/xlink" href="http://sourceforge.net">Sourceforge.net</a>
+						
+               </p>
+            </div>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Installing_the_Mobicents_Binary_Distribution.html">
+               <strong>Prev</strong>2.1. Installing the Mobicents Binary Distribution</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Installing_EclipSLEE.html">
+               <strong>Next</strong>2.3. Installing EclipSLEE: The JAIN SLEE Eclipse ...</a>
+         </li>
+      </ul>
+   </body>
+</html>

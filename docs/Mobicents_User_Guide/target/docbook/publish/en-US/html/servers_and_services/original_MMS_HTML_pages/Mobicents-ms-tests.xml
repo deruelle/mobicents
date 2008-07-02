@@ -1,0 +1,189 @@
+<para>
+  <emphasis role="strong">2.1 Writing and running tests against MMS</emphasis>
+</para>
+<para>
+  <emphasis role="strong">&nbsp;&nbsp;</emphasis>
+</para>
+<para>
+  &nbsp;As platform became rich with functions and capabilities it
+  became clear that it requires also a lot of man power to sustain
+  its functionality. To help us achieve as highest availability and
+  stability we developed tests/<literallayout></literallayout>
+</para>
+<para>
+  MMS has two different set of tests:
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      incontainer tests - tests that require setup of full container,
+      same JVM as MMS
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      components tests - regular junit tests for components that not
+      require MMS to be in running
+      state<emphasis role="strong">&nbsp;</emphasis>
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  Test in both cases are driven by maven plugins - as whole
+  build&nbsp; depends on maven. However in case of incontainer tests
+  its different - this module is not enabled. This default setup is
+  due to requirement of incontainer test. In future we will make
+  effort to automate whole process without any need to modify poms.
+  Incontainer tests require MMS to be deployed in jboss. Despite
+  availability of &quot;cargo&quot; plugin we were unsuccessfull on
+  integrating both test types in one module due to &quot;cactus&quot;
+  for m2, beeing still in alpha
+  state.<literallayout></literallayout><emphasis role="strong"></emphasis>Incontainer
+  tests reside is separate module as they require 3rd party libraries
+  and framework to act. It can be found int
+  <emphasis role="strong">trunk/servers/media/tests</emphasis>&nbsp;
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">2.1.1. Writing incontainer tests</emphasis>
+</para>
+<para>
+  <emphasis role="strong">&nbsp;</emphasis> This is fairly easy. We
+  use cactus to run tests within contianer. Here are basic steps to
+  acomplish :
+</para>
+<para>
+  &nbsp;
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      create apropriate pacakge&nbsp; in&nbsp;
+      trunk/servers/media/tests/src/main/java
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      create regular junit test case - but extends&nbsp;
+      org.apache.cactus.ServletTestCase.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      create testXXX methods, setUp, tearDown, etc - just as in regular
+      test case - but keep in mind, it runs within container, so all
+      local container resources are available - like JNDI entries,
+      envirment properties
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      make public static Test suite() method return instance of
+      org.apache.cactus.ServletTestSuite object.&nbsp;
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+</para>
+<para>
+  2.1.2. Writing regular tests
+</para>
+<para>
+  This is straightforward as those tests are regular junit tests, run
+  with surefire plugin.
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  2.1.3. Running incontainer tests
+</para>
+<para>
+  As mentioned running those tests needs a little bit of setup. Here
+  they are:
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      deploy MMS with mvn install command invoked from trunk/server/media
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      change directory to tests (its a mvn module)
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      set proper container home and proper containerId (see cargo
+      reference manual) in pom.xml&nbsp;
+    </para>
+  </listitem>
+</itemizedlist>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&lt;container&gt;<literallayout></literallayout>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;containerId&gt;jboss42x&lt;/containerId&gt;<literallayout></literallayout>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&lt;home&gt;D:\java\servers\jboss-4.2.2.GA&lt;/home&gt;<literallayout></literallayout>&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;
+&lt;/container&gt;<literallayout></literallayout>
+<itemizedlist>
+  <listitem>
+    <para>
+      simply do mvn install <emphasis role="strong">-</emphasis>this will
+      create war file, deploy it, run container, run tests
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      do mvn clean to remove tests war from container.
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+</para>
+<para>
+  In future incotnainer run should be simpler, without need of any
+  configuration. However please keep in mind that there are plans to
+  separate MMS entirely from container
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  2.1.4. Running regular tests
+</para>
+<para>
+  Those test are usually run while MMS is beeing build, however it is
+  possible to run them on demand.
+</para>
+<para>
+  Simply move to trunk/servers/media/jar and type mvn
+  test&nbsp;&nbsp;
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-media-server">TOC</ulink><emphasis role="strong">&nbsp;</emphasis>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-binary">Previous</ulink>&nbsp;
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">Next</ulink>&nbsp;
+</para>
+<para>
+  &nbsp;<literallayout></literallayout>
+</para>
+

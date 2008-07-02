@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title/>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+   </head>
+   <body>
+      <div class="book" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <p id="title">
+                  <a href="http://www.jboss.org" class="jbossOrg_href">
+                     <strong>
+						        JBoss.org	
+						</strong>
+                  </a>
+                  <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+                     <strong>
+						        Community Documentation	
+						</strong>
+                  </a>
+               </p>
+            </div>
+            <hr/>
+         </div>
+         <div class="toc">
+            <dl>
+               <dt>
+                  <span class="chapter">
+                     <a href="#d0e3">1. </a>
+                  </span>
+               </dt>
+               <dd>
+                  <dl>
+                     <dt>
+                        <span class="section">
+                           <a href="#section-MMS_Control_Protocols">1.1. MMS Control Protocols</a>
+                        </span>
+                     </dt>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="chapter" lang="en-US">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title">
+                        <a name="d0e3"/>Chapter 1. </h2>
+                  </div>
+               </div>
+            </div>
+            <div class="toc">
+               <dl>
+                  <dt>
+                     <span class="section">
+                        <a href="#section-MMS_Control_Protocols">1.1. MMS Control Protocols</a>
+                     </span>
+                  </dt>
+               </dl>
+            </div>
+            <div class="section" lang="en-US">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title">
+                           <a name="section-MMS_Control_Protocols"/>1.1. MMS Control Protocols</h2>
+                     </div>
+                  </div>
+               </div>
+               <p>Media Server assumes a call control architecture where the call control “<span class="quote">intelligence</span>” is outside the Media Server and handled by external call control elements known as Call State Control Function.The media server assumes that these call control elements, or CSCF,will synchronize with each other to send coherent commands and responses to the media servers under their control. Server Control Protocols is, in essence, a master/slave asynchronous protocol, where the Server Control Modules are expected to execute commands sent by CSCF. Each Server Control Module is implemented as JSLEE application and consist of a set of SBBs which are in charge to communicate with media server's endpoints via SPI. It allows to avoid difficulties with programming concurrency, low level transaction and state management details, connection pooling and other complex-level APIs.</p>
+               <h5 class="formalpara">The MGCP Module</h5>
+               <p class="formalpara">The MGCP module is included in default binary distribution. The Call Agent uses MGCP to tell the Media Server:</p>
+               <div class="itemizedlist">
+                  <ul>
+                     <li>
+                        <p>what events should be reported to the Call Agent</p>
+                     </li>
+                     <li>
+                        <p>how endpoints should be connected together</p>
+                     </li>
+                     <li>
+                        <p>what signals should be played on endpoints</p>
+                     </li>
+                  </ul>
+               </div>
+               <h5 class="formalpara">Configuring the MGCP Module</h5>
+               <p class="formalpara">The default port for MGCP is 2728. You can mobicents management console to override the default value.</p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

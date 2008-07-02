@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>7.3.2. Functional Architecture of the Mobicents SIP Presence Server</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Mobicents_SIP_Presence_Server.html" title="7.3. Introduction to the Mobicents SIP Presence Server"/>
+      <link rel="prev" href="section-Configuring_Installing_and_Testing_the_Mobicents_SIP_Presence_Server.html" title="7.3.1. Configuring, Installing and Testing the Mobicents SIP Presence Server"/>
+      <link rel="next" href="section-Resources_and_Further_Information_About_the_Mobicents_SIP_Presence_Server.html" title="7.3.3. Resources and Further Information About the Mobicents SIP Presence Server"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Configuring_Installing_and_Testing_the_Mobicents_SIP_Presence_Server.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Resources_and_Further_Information_About_the_Mobicents_SIP_Presence_Server.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h3 class="title">
+                     <a id="section-Functional_Architecture_of_the_Mobicents_SIP_Presence_Server"/>7.3.2. Functional Architecture of the Mobicents SIP Presence Server</h3>
+               </div>
+            </div>
+         </div>
+         <h5 class="formalpara">Functional Architecture of the Mobicents SIP Presence Server</h5>
+         <div class="figure">
+            <a id="figure-sas-orig-dia-PS_Functional_Architecture.jpg"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <a id="mediaobj-sas-orig-dia-PS_Functional_Architecture.jpg"/>
+                  <img src="images/sas-orig-dia-PS_Functional_Architecture.jpg" align="middle" alt="The Mobicents SIP Presence Server"/>
+                  <div class="caption">
+                     <p>Functional Diagram of the Mobicents SIP Presence Server</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 7.4. The Mobicents SIP Presence Server</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <p>The SIP Presence Server comprises the following functional elements:</p>
+         <div class="variablelist">
+            <a id="varlist-The_Functional_Elements_Which_Compose_the_Presence_Server"/>
+            <p class="title">
+               <b>The Functional Elements Which Compose the SIP Presence Server</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">Presence Publication Control</span>
+               </dt>
+               <dd>
+                  <p>This functional element manages the publication of presence events, which includes not only the handling of new publications, but also the refreshing, modification or removal of, already-published information.</p>
+                  <p>Because the presence resource, which is also called a “<span class="quote">presentity</span>”, can have multiple publications simultaneously, such as some state published by a user agent or device, and some location data published by a Presence Network Agent (on behalf of the presentity), this element is also responsible for composing all of the different publications for the same resource.</p>
+                  <p>In some presence networks, it may be of interest to allow resources to have a static presence state, which is stored in the XDM Server. In cases like these, Presence Publication Control may need to interface with the XDM Server to retrieve and subscribe to (learn about changes to) that information, and use it when composing the final presence information document.</p>
+               </dd>
+               <dt>
+                  <span class="term">Presence Subscription Control</span>
+               </dt>
+               <dd>
+                  <p>This functional element handles subscriptions to presence events or to the list of subscribers (watchers), for any specific resource. It is, of course, responsible for emitting notifications related to those subscriptions.</p>
+                  <p>Presence authorization rules, which define if a subscription is allowed or rejected and, if allowed, define which transformations to the original presence events are needed, are stored on the XDM Server by the user. Thus, Presence Subscription Control needs to retrieve and subscribe to (learn about changes to) that information.</p>
+               </dd>
+               <dt>
+                  <span class="term">XDM Client Control</span>
+               </dt>
+               <dd>
+                  <p>This last element is responsible for interfacing with the XDM Server that manages the user's XML documents, and is related to the main functions of the presence server. It's capable not only of retrieving a document (or part of one), but also of subscribing to either updates of a single, specific document, or to a full collection of documents of a specific type or application.</p>
+               </dd>
+            </dl>
+         </div>
+         <h5 class="formalpara">Implementation Architecture of the Mobicents SIP Presence Server</h5>
+         <div class="figure">
+            <a id="figure-sas-orig-dia-PS_Implementation.jpg"/>
+            <div class="figure-contents">
+               <div class="mediaobject" align="center">
+                  <a id="mediaobj-sas-orig-dia-PS_Implementation.jpg"/>
+                  <table border="0" summary="manufactured viewport for HTML img" cellspacing="0" cellpadding="0" width="700">
+                     <tr>
+                        <td align="center">
+                           <img src="images/sas-orig-dia-PS_Implementation.jpg" align="middle" width="700" alt="Implementation Architecture of the Mobicents SIP Presence Server"/>
+                        </td>
+                     </tr>
+                  </table>
+                  <div class="caption">
+                     <p>The Mobicents SIP Presence Server</p>
+                  </div>
+               </div>
+            </div>
+            <p class="title">
+               <b>Figure 7.5. Implementation Architecture of the Mobicents SIP Presence Server</b>
+            </p>
+         </div>
+         <br class="figure-break"/>
+         <p>The implementation of the Mobicents SIP Presence Server comprises the following functional elements:</p>
+         <div class="variablelist">
+            <a id="varlist-The_Two_Services_Which_Compose_the_Presence_Server"/>
+            <p class="title">
+               <b>The Two Services Which Compose the SIP Presence Server</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">Presence Publication Control Service</span>
+               </dt>
+               <dd>
+                  <p>This JAIN SLEE service includes the root Service Building Block (SBB), <code class="literal">PresencePublicationControlSbb</code>, which is the implementation of the abstract SIP event <code class="literal">PublicationControlSbb</code>. It handles publications on the "presence" event package.</p>
+                  <p>The <code class="literal">PresencePublicationControlSbb</code> provides the following capabilities:</p>
+                  <div class="itemizedlist">
+                     <ul>
+                        <li>
+                           <p>It provides the logic to authorize a publication; however, it only authorizes <code class="literal">PUBLISH</code> requests when the request URI matches the PIDF document “<span class="quote">entity</span>” attribute.</p>
+                        </li>
+                        <li>
+                           <p>It provides JAXB unmarshellers to validate and parse the PIDF document for the abstract <code class="literal">PublicationControlSbb</code>.</p>
+                        </li>
+                        <li>
+                           <p>It demands that notifying subscribers occur through a child relation to the root SBB of the Presence Subscription Control Service.</p>
+                        </li>
+                        <li>
+                           <p>Finally, it also provides an <code class="literal">SbbLocalObject</code> interface that can be used, in JAIN SLEE child relations, to obtain the composed presence information for a specific resource.</p>
+                        </li>
+                     </ul>
+                  </div>
+               </dd>
+               <dt>
+                  <span class="term">Presence Subscription Control Service.</span>
+               </dt>
+               <dd>
+                  <p>This JAIN SLEE service includes the root SBB <code class="literal">PresenceSubscriptionControlSbb</code>, which is the implementation of the abstract SIP Event <code class="literal">SubscriptionControlSbb</code>. It handles subscriptions on the "presence" event package.</p>
+                  <p>The standout SBB logic item is the usage of presence-rules documents, obtained through the XDM Client SBB child relation, in order to authorize subscriptions and transform the content notified (TBD: feature not used yet). It also defines a child relation to the root SBB of <code class="literal">PresencePublicationService</code> to retrieve the composed PIDF document for the subscription's notifier.</p>
+                  <p>The SBB also provides an <code class="literal">SbbLocalObject</code> interface that can be used, in JAIN SLEE child relations, to make the presence event known to the subscribers of a specific resource.</p>
+               </dd>
+            </dl>
+         </div>
+         <p>The implementation architecture of the SIP Presence Server also contains client-side components:</p>
+         <div class="variablelist">
+            <a id="varlist-"/>
+            <p class="title">
+               <b/>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">Presence Client SBB (TBD: not yet available)</span>
+               </dt>
+               <dd>
+                  <p>The <code class="literal">PresenceClientSBB</code> is the interface to a JAIN SLEE SBB intended to be used as a client for the Mobicents SIP Presence Server (and other servers compliant with same standards), in JAIN SLEE child relations.</p>
+                  <p>Two implementations of this interface are provided: the <code class="literal">InternalPresenceClientSBB</code> that is used with applications running in the Mobicents SIP Presence Server JAIN SLEE container, and the <code class="literal">ExternalPresenceClientSBB</code>, used with applications running in a different JAIN SLEE container than the Mobicents SIP Presence Server.</p>
+               </dd>
+            </dl>
+         </div>
+         <p>TBD: This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.</p>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Configuring_Installing_and_Testing_the_Mobicents_SIP_Presence_Server.html">
+               <strong>Prev</strong>7.3.1. Configuring, Installing and Testing the Mo...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Resources_and_Further_Information_About_the_Mobicents_SIP_Presence_Server.html">
+               <strong>Next</strong>7.3.3. Resources and Further Information About th...</a>
+         </li>
+      </ul>
+   </body>
+</html>

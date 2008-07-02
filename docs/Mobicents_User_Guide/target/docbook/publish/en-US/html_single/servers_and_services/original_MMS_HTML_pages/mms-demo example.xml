@@ -1,0 +1,330 @@
+<section>
+  <title>mms-demo Example&nbsp;</title>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    The motive of this example is to demonstrate the capabilities of
+    new Media Server (MS) and Media Server Resource Adaptors
+    (MSC-RA)<literallayout></literallayout><literallayout></literallayout>The
+    example demonstrates usage of<literallayout></literallayout>
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Announcement Endpoint
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Packet Relay Endpoint
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Loop Endpoint
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Conference Endpoint
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        IVR Endpoint
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    <literallayout></literallayout>To understand each of this
+    Endpoint's look at Media Server doco
+    <ulink url="/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">http://groups.google.com/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture</ulink><literallayout></literallayout><literallayout></literallayout>
+  </para>
+  <section>
+    <title>Dependencies</title>
+    <para>
+      The example requires
+    </para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          Mobicents Server
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Media Server
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          MSC-RA
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          SIP-RA 1.2
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      <emphasis role="strong">Where is the code?&nbsp;</emphasis>
+    </para>
+    <para>
+      <emphasis role="strong"><literallayout></literallayout></emphasis>
+    </para>
+    <para>
+      Check out the 'mms-demo' example from
+      <ulink url="http://mobicents.googlecode.com/svn/trunk/servers/jain-slee/examples/mms-demo">http://mobicents.googlecode.com/svn/trunk/servers/jain-slee/examples/mms-demo</ulink>.
+      <emphasis role="strong"><literallayout></literallayout></emphasis>
+    </para>
+  </section>
+  <section>
+    <title>Install and run</title>
+    <para>
+      Start the Mobicents Server (this will also start Media Server).
+      Make sure you have server/default/deploy/mobicents.sar and
+      server/default/deploy/mediaserver.sar in your Mobicents
+      Server<literallayout></literallayout><literallayout></literallayout>
+    </para>
+    <section>
+      <title>From binary</title>
+      <para>
+        Go to /examples/mms-demo and call 'ant deploy-all'. This will
+        deploy the SIP RA, MSC RA, the mms-demo example and also
+        mms-demo-audio.war. The war file contains the audio *.wav files
+        that are used by mms-demo example.
+      </para>
+      <para>
+        &nbsp;
+      </para>
+    </section>
+    <section>
+      <title>From Source code</title>
+      <para>
+        If you are deploying from source code, you may deploy each of the
+        resource adaptors individually<literallayout></literallayout>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+      <itemizedlist>
+        <listitem>
+          <para>
+            make sure JBOSS_HOME is set and server is running.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Call mvn install from servers/jain-slee/resources/sip to deploy SIP
+            RA&nbsp;
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Call mvn install from servers/jain-slee/resources/media to deploy
+            media RA
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Call mvn install from servers/jain-slee/examples/mms-demo to deploy
+            example
+          </para>
+        </listitem>
+      </itemizedlist>
+      <para>
+        <literallayout></literallayout>Once the example is deployed, make a
+        call from your SIP Phone
+        to<literallayout></literallayout><literallayout></literallayout>
+      </para>
+    </section>
+    <section>
+      <title>1010 : This demonstrates the usage of Loop Endpoint.</title>
+      <para>
+        As soon as the call is established CallSbb creates a Connection
+        using PREndpointImpl. PREndpointImpl has two Connections, one
+        connected to calling UA by calling
+        msConnection.modify(&quot;$&quot;, sdp). Once the connection is
+        established CallSbb creates child LoopDemoSbb and calls startDemo()
+        on it passing the PREndpoint name as argument. LoopDemoSbb creates
+        child AnnouncementSbb which uses the AnnEndpointImpl to make an
+        announcement. The other Connection of PREndpointImpl is connected
+        to Connection from AnnEndpointImpl using the
+        MsLink<literallayout></literallayout><literallayout></literallayout>....<literallayout></literallayout>MsLink
+        link =
+        session.createLink(MsLink.MODE_FULL_DUPLEX);<literallayout></literallayout>....<literallayout></literallayout>...<literallayout></literallayout>link.join(userEndpoint,
+        ANNOUNCEMENT_ENDPOINT);<literallayout></literallayout><literallayout></literallayout>Once
+        the link is created (look at onLinkCreated() ) AnnouncementSbb
+        creates the instance of MsSignalGenerator and attaches the
+        AnnouncementSbb to ActivityContextInterface created passing
+        MsSignalGenerator. MsSignalGenerator is used to play the
+        announcement as shown
+        below<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        MsSignalGenerator generator =
+        msProvider.getSignalGenerator(getAnnouncementEndpoint());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ActivityContextInterface generatorActivity =
+        mediaAcif.getActivityContextInterface(generator);<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generatorActivity.attach(sbbContext.getSbbLocalObject());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generator.apply(Announcement.PLAY, new
+        String[]{url});<literallayout></literallayout><literallayout></literallayout><literallayout></literallayout><emphasis role="strong">UA----first Connection----PREndpointImpl-----second Connection-----AnnEndpointImpl</emphasis><literallayout></literallayout><literallayout></literallayout>As
+        soon as announcement is over LoopDemoSbb creates child LoopbackSbb
+        and calls startConversation() on it passing the PREndpoint name as
+        argument. LoopbackSbb uses MsLink to associate the other Connection
+        of PREndpointImpl to LoopEndpointImpl. LoopEndpointImpl simply
+        forwards the voice packet received from caller back to
+        caller.<literallayout></literallayout><literallayout></literallayout>&nbsp;MsLink
+        link =
+        session.createLink(MsLink.MODE_FULL_DUPLEX);<literallayout></literallayout>.......<literallayout></literallayout>...<literallayout></literallayout>link.join(endpointName,
+        LOOP_ENDPOINT);<literallayout></literallayout><literallayout></literallayout><emphasis role="strong">UA----first Connection----PREndpointImpl-----second Connection-----LoopEndpointImpl</emphasis><literallayout></literallayout>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+      <para>
+        The SBB Child relation diagram
+      </para>
+      <para>
+        <ulink url="/group/mobicents-public/web/1010.PNG"><inlinemediaobject>
+                                                            <imageobject>
+                                                              <imagedata fileref="/group/mobicents-public/web/1010.PNG?display=thumb&amp;width=420&amp;height=420" />
+                                                            </imageobject>
+                                                          </inlinemediaobject></ulink>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+    </section>
+    <section>
+      <title>1011 : This demonstrates the usage of DTMF.</title>
+      <para>
+        <literallayout></literallayout>As soon as the call is established
+        CallSbb creates a Connection using PREndpointImpl. PREndpointImpl
+        has two Connections, one connected to calling UA by calling
+        msConnection.modify(&quot;$&quot;, sdp). Once the connection is
+        established CallSbb creates child DtmfDemoSbb and calls startDemo()
+        on it passing the PREndpoint name as argument. DtmfDemoSbb creates
+        child AnnouncementSbb which uses the AnnEndpointImpl to make an
+        announcement. The other Connection of PREndpointImpl is connected
+        to Connection from AnnEndpointImpl using the
+        MsLink<literallayout></literallayout><literallayout></literallayout>....<literallayout></literallayout>MsLink
+        link =
+        session.createLink(MsLink.MODE_FULL_DUPLEX);<literallayout></literallayout>....<literallayout></literallayout>...<literallayout></literallayout>link.join(userEndpoint,
+        ANNOUNCEMENT_ENDPOINT);<literallayout></literallayout><literallayout></literallayout>Once
+        the link is created (look at onLinkCreated() ) AnnouncementSbb
+        creates the instance of MsSignalGenerator and attaches the
+        AnnouncementSbb to ActivityContextInterface created passing
+        MsSignalGenerator. MsSignalGenerator is used to play the
+        announcement as shown
+        below<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        MsSignalGenerator generator =
+        msProvider.getSignalGenerator(getAnnouncementEndpoint());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ActivityContextInterface generatorActivity =
+        mediaAcif.getActivityContextInterface(generator);<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generatorActivity.attach(sbbContext.getSbbLocalObject());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generator.apply(Announcement.PLAY, new
+        String[]{url});<literallayout></literallayout><literallayout></literallayout><literallayout></literallayout><emphasis role="strong">UA----first Connection----PREndpointImpl-----second Connection-----AnnEndpointImpl</emphasis><literallayout></literallayout><literallayout></literallayout>As
+        soon as announcement is over DtmfDemoSbb creates instance of
+        MsSignalDetector and attaches the DtmfDemoSbb to
+        ActivityContextInterface created passing MsSignalDetector. This is
+        necessary so that DtmfDemoSbb receives the DTMF event, look at
+        onDtmf() method. In fact the SBB needs to be attached to this ACI
+        everytime as the activity is over as soon as the DTMf is
+        received.<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        MsSignalDetector dtmfDetector =
+        msProvider.getSignalDetector(this.getUserEndpoint());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ActivityContextInterface dtmfAci =
+        <literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        mediaAcif.getActivityContextInterface(dtmfDetector);<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dtmfAci.attach(sbbContext.getSbbLocalObject());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        dtmfDetector.receive(Basic.DTMF, connection, new
+        String[]{});<literallayout></literallayout><literallayout></literallayout>On
+        every DTMF received DtmfDemoSbb plays corresponding wav file using
+        the AnnouncementSbb as explained above.
+      </para>
+      <para>
+        &nbsp;
+      </para>
+      <para>
+        The SBB Child relation diagram
+      </para>
+      <para>
+        <ulink url="/group/mobicents-public/web/1011.PNG"><inlinemediaobject>
+                                                            <imageobject>
+                                                              <imagedata fileref="/group/mobicents-public/web/1011.PNG?display=thumb&amp;width=420&amp;height=420" />
+                                                            </imageobject>
+                                                          </inlinemediaobject></ulink>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+    </section>
+    <section>
+      <title>1012 : This demonstrates the usage of
+             ConfEndpointImpl.</title>
+      <para>
+        <literallayout></literallayout>As soon as the call is established
+        CallSbb creates a Connection using PREndpointImpl. PREndpointImpl
+        has two Connections, one connected to calling UA by calling
+        msConnection.modify(&quot;$&quot;, sdp). Once the connection is
+        established CallSbb creates child ConfDemoSbb and calls startDemo()
+        on it passing the PREndpoint name as argument. ConfDemoSbb creates
+        child AnnouncementSbb which uses the AnnEndpointImpl to make an
+        announcement. The other Connection of PREndpointImpl is connected
+        to Connection from AnnEndpointImpl using the
+        MsLink<literallayout></literallayout><literallayout></literallayout>....<literallayout></literallayout>MsLink
+        link =
+        session.createLink(MsLink.MODE_FULL_DUPLEX);<literallayout></literallayout>....<literallayout></literallayout>...<literallayout></literallayout>link.join(userEndpoint,
+        ANNOUNCEMENT_ENDPOINT);<literallayout></literallayout><literallayout></literallayout>Once
+        the link is created (look at onLinkCreated() ) AnnouncementSbb
+        creates the instance of MsSignalGenerator and attaches the
+        AnnouncementSbb to ActivityContextInterface created passing
+        MsSignalGenerator. MsSignalGenerator is used to play the
+        announcement as shown
+        below<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        MsSignalGenerator generator =
+        msProvider.getSignalGenerator(getAnnouncementEndpoint());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        ActivityContextInterface generatorActivity =
+        mediaAcif.getActivityContextInterface(generator);<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generatorActivity.attach(sbbContext.getSbbLocalObject());<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        generator.apply(Announcement.PLAY, new
+        String[]{url});<literallayout></literallayout><literallayout></literallayout><literallayout></literallayout><emphasis role="strong">UA----first Connection----PREndpointImpl-----second Connection-----AnnEndpointImpl</emphasis><literallayout></literallayout><literallayout></literallayout>As
+        soon as announcement is over ConfDemoSbb creates child ForestSbb
+        and calls enter() on it passing the PREndpoint name as argument.
+        ForestSbb uses MsLink to associate the other Connection of
+        PREndpointImpl to
+        ConfEndpointImpl<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        MsLink link =
+        session.createLink(MsLink.MODE_FULL_DUPLEX);<literallayout></literallayout>&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; link.join(endpointName,
+        CNF_ENDPOINT);<literallayout></literallayout><literallayout></literallayout>Once
+        the link is established (Look at onConfBridgeCreated() ) ForestSbb
+        creates many child AnnouncementSbb each responsible for unique
+        announcement (in this case playing crickets.wav and mocking.wav).
+        So now UA is actually listening to many announcements at same
+        go.<literallayout></literallayout><literallayout></literallayout>&nbsp;&nbsp;<emphasis role="strong">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; __third connection --------- AnnEndpointImpl<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;/<literallayout></literallayout>UA----first Connection----PREndpointImpl-----second Connection-----ConfEndpointImpl<literallayout></literallayout>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \___fourth connection ------- AnnEndpointImpl&nbsp;</emphasis>
+      </para>
+      <para>
+        <emphasis role="strong">&nbsp;</emphasis><literallayout></literallayout>
+      </para>
+      <para>
+        The SBB Child relation diagram
+      </para>
+      <para>
+        <ulink url="/group/mobicents-public/web/1012.PNG"><inlinemediaobject>
+                                                            <imageobject>
+                                                              <imagedata fileref="/group/mobicents-public/web/1012.PNG?display=thumb&amp;width=420&amp;height=420" />
+                                                            </imageobject>
+                                                          </inlinemediaobject></ulink>
+      </para>
+      <para>
+        <literallayout></literallayout>
+      </para>
+    </section>
+  </section>
+</section>
+

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>7.3.3.1. Configuring, Installing and Testing the Mobicents_SIP Presence Server</title>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+      <link rel="start" href="index.html" title="Mobicents"/>
+      <link rel="up" href="section-Mobicents_SIP_Presence_Server.html" title="7.3.3. Introduction to the Mobicents SIP SIP Presence Server"/>
+      <link rel="prev" href="section-Mobicents_SIP_Presence_Server.html" title="7.3.3. Introduction to the Mobicents SIP SIP Presence Server"/>
+      <link rel="next" href="section-Functional_Architecture_of_the_Mobicents_Presence_Server.html" title="7.3.3.2. Functional Architecture of the Mobicents SIP Presence Server"/>
+   </head>
+   <body>
+      <p id="title">
+         <a href="http://www.jboss.org" class="jbossOrg_href">
+            <strong>
+						        JBoss.org	
+						</strong>
+         </a>
+         <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+            <strong>
+						        Community Documentation	
+						</strong>
+         </a>
+      </p>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Mobicents_SIP_Presence_Server.html">
+               <strong>Prev</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Functional_Architecture_of_the_Mobicents_Presence_Server.html">
+               <strong>Next</strong>
+            </a>
+         </li>
+      </ul>
+      <div class="section" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <div>
+                  <h4 class="title">
+                     <a id="section-Configuring_Installing_and_Testing_the_Mobicents_Presence_Server"/>7.3.3.1. Configuring, Installing and Testing the Mobicents_SIP Presence Server</h4>
+               </div>
+            </div>
+         </div>
+         <h5 class="formalpara">Requirements</h5>
+         <p class="formalpara">The Mobicents SIP Presence Server depends on the Mobicents Converged Application Server and the Mobicents SIP resource adapter, which should be deloyed before starting the SIP Presence Server.</p>
+         <h5 class="formalpara">Configuration</h5>
+         <p class="formalpara">The Mobicents SIP Presence Server can be customized in the following aspects before being built.</p>
+         <div class="variablelist">
+            <a id="varlist-Customizing_the_Presence_Server"/>
+            <p class="title">
+               <b>Customizing the SIP Presence Server</b>
+            </p>
+            <dl>
+               <dt>
+                  <span class="term">XCAP Aware User Agent</span>
+               </dt>
+               <dd>
+                  <p>The SIP Presence Server calculates the presence-rules XCAP URIs of users in a non-standard way by default, but one which is compatible with CounterPath eyeBeam. You can change this behavior to conform with standards by changing the contents of the <code class="literal">clientUAIsEyebeam</code> field of <code class="literal">PresenceSubscriptionControlSbb</code>, which is in <code class="filename">ps-core/subscription-sbb/src/main/java/..</code>.<sup>[<a id="footnote-temp_solution" href="#ftn.footnote-temp_solution">7</a>]</sup>
+					
+                  </p>
+                  <p>Note that you do not need to touch or configure anything in order to deploy the server.</p>
+               </dd>
+            </dl>
+         </div>
+         <h5 class="formalpara">Installing the Mobicents SIP Presence Server</h5>
+         <p class="formalpara">TBD (Fix this with proper instructions): Currently, the Mobicents SIP Presence Server can only be installed as integrated with the Mobicents XML Document Management Server, i.e. in an all-in-one SIP Presence Server architecture<sup>[<a id="footnote-integrated_presence_server" href="#ftn.footnote-integrated_presence_server">8</a>]</sup>.</p>
+         <div class="important">
+            <a id="important-Installing_the_Presence_Server_Also_Installs_the_XDM_Server"/>
+            <h2>Installing the SIP Presence Server Also Installs the XDM Server</h2>
+            <p>You should also make sure that all the install requirements of the Mobicents XDM Server are met before attempting to install the Mobicents SIP Presence Server. See <a href="section-Configuring_Installing_and_Testing_the_XDM_Server.html#fpara-XDM_Requirements" title="Requirements">Requirements</a>.</p>
+         </div>
+         <h5 class="formalpara">Installing the Mobicents XML Document Management Server</h5>
+         <p class="formalpara">How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</p>
+         <div class="itemizedlist">
+            <ul>
+               <li>
+                  <h5 class="formalpara">Installing the XDM Server using the Mobicents Binary Distribution</h5>
+                  <p class="formalpara">TBD: (Fix this with proper instructions): Using the binary release, you can install the XDM Server by doing an ant deploy on the <code class="filename">servers/sip-presence/integrated</code> directory.</p>
+               </li>
+               <li>
+                  <h5 class="formalpara">Installing the XDM Server after Building Mobicents from Source</h5>
+                  <p class="formalpara">TBD: (Fix this with proper instructions): From the source code repository, you can install the XDM Server by doing a mvn install on the <code class="filename">/trunk/servers/sip-presence/integrated</code> directory.</p>
+               </li>
+            </ul>
+         </div>
+         <h5 class="formalpara">Uninstalling the Mobicents XML Document Management Server</h5>
+         <p class="formalpara">How you uninstall the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</p>
+         <div class="itemizedlist">
+            <ul>
+               <li>
+                  <h5 class="formalpara">Uninstalling the XDM Server using the Mobicents Binary Distribution</h5>
+                  <p class="formalpara">TBD: (Fix this with proper instructions): Using the binary release, you can uninstall the XDM Server by doing an ant undeploy on the <code class="filename">servers/sip-presence/integrated</code> directory.</p>
+               </li>
+               <li>
+                  <h5 class="formalpara">Uninstalling the XDM Server after Building Mobicents from Source</h5>
+                  <p class="formalpara">TBD: (Fix this with proper instructions): From the source code repository, you can uninstall the XDM Server by doing a mvn clean on the <code class="filename">/trunk/servers/sip-presence/integrated</code> directory.</p>
+               </li>
+            </ul>
+         </div>
+         <h5 class="formalpara">Testing the Mobicents SIP Presence Server</h5>
+         <p class="formalpara">A test framework for the Mobicents SIP Presence Server is forthcoming but not available yet.</p>
+         <div xmlns="" class="footnotes">
+            <br/>
+            <hr/>
+            <div xmlns="http://www.w3.org/1999/xhtml" class="footnote">
+               <p>
+                  <sup>[<a id="ftn.footnote-temp_solution" href="#footnote-temp_solution">7</a>] </sup>This is a temporary solution due to a feature in the current JAIN SIP stack that removes invalid User Agent hedaers of SIP requests. In the future, this configuration is exected to be deprecated or removed.</p>
+            </div>
+            <div xmlns="http://www.w3.org/1999/xhtml" class="footnote">
+               <p>
+                  <sup>[<a id="ftn.footnote-integrated_presence_server" href="#footnote-integrated_presence_server">8</a>] </sup>This limitation is due to the current lack of an external XDM Client SBB component.</p>
+            </div>
+         </div>
+      </div>
+      <ul class="docnav">
+         <li class="previous">
+            <a accesskey="p" href="section-Mobicents_SIP_Presence_Server.html">
+               <strong>Prev</strong>7.3.3. Introduction to the Mobicents SIP SIP Pres...</a>
+         </li>
+         <li class="up">
+            <a accesskey="u" href="#">
+               <strong>Top of page</strong>
+            </a>
+         </li>
+         <li class="home">
+            <a accesskey="h" href="index.html">
+               <strong>Front page</strong>
+            </a>
+         </li>
+         <li class="next">
+            <a accesskey="n" href="section-Functional_Architecture_of_the_Mobicents_Presence_Server.html">
+               <strong>Next</strong>7.3.3.2. Functional Architecture of the Mobicents...</a>
+         </li>
+      </ul>
+   </body>
+</html>

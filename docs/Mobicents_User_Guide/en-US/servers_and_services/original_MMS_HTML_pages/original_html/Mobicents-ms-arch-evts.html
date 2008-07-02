@@ -1,0 +1,34 @@
+<div><font size="4"><b>3.3 Events and signals.</b></font></div>
+<div>&nbsp;</div>
+<div>The concept of events and signals is central to the Media Server.&nbsp; A Call&nbsp;Controller may ask to be notified about certain events occurring in an endpoint&nbsp; (e.g., off-hook events) by passing event's identifier as parameter to endpoint's subscribe(...) method.</div>
+<div>&nbsp;</div>
+<div>A Call&nbsp;Controller may also request certain signals to be applied to an endpoint (e.g., dial-tone) by supplying the&nbsp;identifier of the event in&nbsp;as argument to endpoint's&nbsp;apply(...) method.</div>
+<div>&nbsp;</div>
+<div>Events and signals are grouped in packages, within which they share the same name space which we will refer to as event&nbsp;identifier in the following. Event identifiers are integer constants. Some of the events may be parametrized with additional data such as DTMF mask.</div>
+<div></div>
+<div>Signals are divided into different types depending on their behavior:</div>
+<div></div>
+<ul>
+<li>On/off (OO):&nbsp; Once applied, these signals last until they are turned off.&nbsp; This can only happen as the result of a reboot/restart&nbsp;or a new signal request where the signal is explicitly turned off.&nbsp; Signals of type OO are defined to be idempotent, thus multiple requests to turn a given OO signal on (or off) are perfectly valid.&nbsp; An On/Off signal could be a visual message-waiting indicator (VMWI).&nbsp; Once turned on, it MUST NOT be turned off until explicitly instructed to by the Call Agent, or as a result of an endpoint restart, i.e., these signals will not turn off as a result of the detection of a requested event.
+</li>
+<li>Time-out (TO):&nbsp; Once applied, these signals last until they are either cancelled (by the occurrence of an event or by explicit releasing of signal generator), or a signal-specific period of time has elapsed.&nbsp; A TO signal that times out will generate an "operation complete" event.&nbsp;&nbsp;If an event occurs prior to the 180 seconds, the signal will, by default, be stopped (the "Keep signals active" action - will override this behavior).&nbsp; If the signal is not stopped, the signal will time out, stop and generate an "operation complete" event, about which the&nbsp;server controller&nbsp;may or may not have requested to be notified.&nbsp; A TO signal that fails after being started, but before having generated an "operation complete" event will generate an "operation failure" event which will include the name of the signal that failed.&nbsp; Deletion of a connection with an active TO signal will result in such a failure.
+</li>
+<li>Brief (BR):&nbsp; The duration of these signals is normally so short that they stop on their own.&nbsp; If a signal stopping event occurs, or a new signal requests is applied, a currently active BR signal will not stop.&nbsp; However, any pending BR signals not yet applied&nbsp;will be cancelled (a BR signal becomes pending if a&nbsp;signal request&nbsp;includes a BR signal, and there is already an active BR signal). As an example, a brief tone could be a DTMF digit. If the DTMF digit "1" is currently being played, and a signal stopping event occurs, the "1" would play to completion.&nbsp; If a request to play DTMF digit "2" arrives before DTMF digit "1" finishes playing, DTMF digit "2" would become pending.<br>
+</li>
+</ul>
+<div>&nbsp;&nbsp; Signal(s) may be generated&nbsp;on endpoints or&nbsp;on connections.&nbsp;To each event is associated one or more actions, which can be:</div>
+<ul>
+<li>Notify the event immediately, together with the accumulated list of observed events
+</li>
+<li>Accumulate the event in an event buffer, but don't notify yet
+</li>
+<li>Keep Signal(s) active
+</li>
+<li>Ignore the event</li>
+</ul>
+<p>&nbsp;</p>
+<p><a href="/group/mobicents-public/web/mobicents-media-server">TOC</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-arch-connections">Previous</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-configure">Next</a></p>
+<p>&nbsp;</p>
+<wbr>

@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-MMS_Control_Protocols">
+	<title>MMS Control Protocols</title>
+	<para>Media Server assumes a call control architecture where the call control <quote>intelligence</quote> is outside the Media Server and handled by external call control elements known as Call State Control Function.The media server assumes that these call control elements, or CSCF,will synchronize with each other to send coherent commands and responses to the media servers under their control. Server Control Protocols is, in essence, a master/slave asynchronous protocol, where the Server Control Modules are expected to execute commands sent by CSCF. Each Server Control Module is implemented as JSLEE application and consist of a set of SBBs which are in charge to communicate with media server's endpoints via SPI. It allows to avoid difficulties with programming concurrency, low level transaction and state management details, connection pooling and other complex-level APIs.</para>
+	<formalpara>
+		<title>The MGCP Module</title>
+		<para>The MGCP module is included in default binary distribution. The Call Agent uses MGCP to tell the Media Server:</para>
+	</formalpara>
+	<itemizedlist>
+		<listitem>
+			<para>what events should be reported to the Call Agent</para>
+		</listitem>
+		<listitem>
+			<para>how endpoints should be connected together</para>
+		</listitem>
+		<listitem>
+			<para>what signals should be played on endpoints</para>
+		</listitem>
+	</itemizedlist>
+	<formalpara>
+		<title>Configuring the MGCP Module</title>
+		<para>The default port for MGCP is 2728. You can mobicents management console to override the default value.</para>
+	</formalpara>
+</section>
+

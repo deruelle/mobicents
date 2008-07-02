@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title/>
+      <link rel="stylesheet" href="css/jbossorg.css" type="text/css"/>
+      <meta name="generator" content="DocBook XSL Stylesheets V1.72.0"/>
+   </head>
+   <body>
+      <div class="book" lang="en-US">
+         <div class="titlepage">
+            <div>
+               <p id="title">
+                  <a href="http://www.jboss.org" class="jbossOrg_href">
+                     <strong>
+						        JBoss.org	
+						</strong>
+                  </a>
+                  <a href="http://labs.jboss.com/projects/docs" class="commDoc_href">
+                     <strong>
+						        Community Documentation	
+						</strong>
+                  </a>
+               </p>
+               <div>
+                  <h1 class="title">
+                     <a name="d0e1"/>
+                  </h1>
+               </div>
+            </div>
+            <hr/>
+         </div>
+         <div class="toc">
+            <dl>
+               <dt>
+                  <span class="chapter">
+                     <a href="#d0e4">1. </a>
+                  </span>
+               </dt>
+               <dd>
+                  <dl>
+                     <dt>
+                        <span class="section">
+                           <a href="#section-SIP_Resource_Adapter">1.1. SIP Resource Adapter</a>
+                        </span>
+                     </dt>
+                     <dd>
+                        <dl>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Installing_the_JAIN_SIP_Resource_Adapter">1.1.1. Installing the JAIN SIP Resource Adapter</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Configuration_of_the_JAIN_SIP_Resource_Adapter">1.1.2. Configuration of the JAIN SIP Resource Adapter</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-End-to-End_SIP_Example">1.1.3. Example: End-to-End SIP</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Wake-Up_Call_Example">1.1.4. Example: Wake-Up Call</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Third-Party_Call_Control_Example">1.1.5. Example: Third-Party Call Control</a>
+                              </span>
+                           </dt>
+                           <dt>
+                              <span class="section">
+                                 <a href="#section-Back-to-Back_User_Agent_Example">1.1.6. Example: Back-to-Back User Agent</a>
+                              </span>
+                           </dt>
+                        </dl>
+                     </dd>
+                  </dl>
+               </dd>
+            </dl>
+         </div>
+         <div class="chapter" lang="en-US">
+            <div class="titlepage">
+               <div>
+                  <div>
+                     <h2 class="title">
+                        <a name="d0e4"/>Chapter 1. </h2>
+                  </div>
+               </div>
+            </div>
+            <div class="toc">
+               <dl>
+                  <dt>
+                     <span class="section">
+                        <a href="#section-SIP_Resource_Adapter">1.1. SIP Resource Adapter</a>
+                     </span>
+                  </dt>
+                  <dd>
+                     <dl>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Installing_the_JAIN_SIP_Resource_Adapter">1.1.1. Installing the JAIN SIP Resource Adapter</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Configuration_of_the_JAIN_SIP_Resource_Adapter">1.1.2. Configuration of the JAIN SIP Resource Adapter</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-End-to-End_SIP_Example">1.1.3. Example: End-to-End SIP</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Wake-Up_Call_Example">1.1.4. Example: Wake-Up Call</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Third-Party_Call_Control_Example">1.1.5. Example: Third-Party Call Control</a>
+                           </span>
+                        </dt>
+                        <dt>
+                           <span class="section">
+                              <a href="#section-Back-to-Back_User_Agent_Example">1.1.6. Example: Back-to-Back User Agent</a>
+                           </span>
+                        </dt>
+                     </dl>
+                  </dd>
+               </dl>
+            </div>
+            <div class="section" lang="en-US">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title">
+                           <a name="section-SIP_Resource_Adapter"/>1.1. SIP Resource Adapter</h2>
+                     </div>
+                  </div>
+               </div>
+               <p class="formalpara">
+                  <a name="fpara-Introduction_to_the_SIP_Resource_Adapter"/>
+               </p>
+               <h5 class="formalpara">Introduction to the SIP Resource Adapter</h5>
+               <p class="formalpara">The Mobicents <acronym class="acronym">SIP</acronym> resource adapter is a Mobicents sub-project that aims to create a high-performance <acronym class="acronym">SLEE </acronym> extenson for the Session Iniation Protocol (<acronym class="acronym">SIP</acronym>).</p>
+               <p>The most recent version of the <acronym class="acronym">SIP</acronym> resource adapter includes several enhancements which allow for more convenient development of <acronym class="acronym">SIP</acronym> resources for a wide range of applications. The type name of this latest version is <code class="literal">JSIP v1.2</code>, the type vendor is <code class="literal">net.java.slee.sip</code>, and the type version is <code class="literal">1.2</code>.</p>
+               <p class="formalpara">
+                  <a name="fpara-The_JAIN_SIP_Resource_Adapter_Version_1.1"/>
+               </p>
+               <h5 class="formalpara">The JAIN SIP Resource Adapter Version 1.1</h5>
+               <p class="formalpara">In Java Specification Request 22 (JSR-22), this resource adapter type name is denoted as <code class="literal">JAIN SIP</code>, and the type vendor as <code class="literal">javax.sip</code>. This resource adapter type version is 1.1. Mobicents provides a fully-compliant implementation of this specification.</p>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Installing_the_JAIN_SIP_Resource_Adapter"/>1.1.1. Installing the JAIN SIP Resource Adapter</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p>To install the JAIN SIP Resource Adapter, you must first acquire the latest version. Navigate to the <a xmlns:xlink="http://www.w3.org/1999/xlink" href="https://sourceforge.net/projects/mobicents">Mobicents Sourceforge project page</a> and click on the <span class="emphasis">
+                        <em>Download Mobicents</em>
+                     </span> link. On the next page, click on the <span class="emphasis">
+                        <em>SLEE SIP RA</em>
+                     </span> link so that it expands to reveal the necessary <acronym class="acronym">JAR</acronym> file, which you can click to download<sup>[<a name="sip_ra_filename" href="#ftn.sip_ra_filename">1</a>]</sup> As of the time of this writing, the latest version was <span class="emphasis">
+                        <em>1.2 RC1 - core rc2</em>
+                     </span>.</p>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Configuration_of_the_JAIN_SIP_Resource_Adapter"/>1.1.2. Configuration of the JAIN SIP Resource Adapter</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p>Currently, the <acronym class="acronym">JAIN</acronym> 
+                     <acronym class="acronym">SIP</acronym> resource adapter can be configured in three different ways.</p>
+                  <div class="itemizedlist">
+                     <ul>
+                        <li>
+                           <p>
+					
+                              <a href="#fpara-Configuring_the_SIP_RA_Via_the_Provisioning_Mechanism" title="Configuring the SIP RA Via the Provisioning Mechanism">Via the provisioning mechanism</a>, by altering the <code class="filename">resource-adaptor.xml</code> configuration file.</p>
+                        </li>
+                        <li>
+                           <p>
+					“<span class="quote">Via properites file jared with classes ( atleast to configure port and ip, it still is place to put gov.nist properties to configure other stack props)</span>”
+				</p>
+                           <p>Baranowb: is this deprecated? You wrote: “<span class="quote">Properties also can be present in properties file present in ra/src/org/mobicents/slee/resources/sip/ diretory. It will be packed to jar with all classes, and wil be used to configure RA and stack(however its deprecated!!!).</span>”
+				</p>
+                        </li>
+                        <li>
+                           <p>
+					
+                              <a href="#fpara-Configuring_the_SIP_RA_Via_Passing_Properties_to_an_MBean" title="Configuring the SIP RA Via Passing Properties to an MBean">Via properties passed to the MBean which created the Resource Adapter Entity</a>
+				
+                           </p>
+                        </li>
+                     </ul>
+                  </div>
+                  <p class="formalpara">
+                     <a name="fpara-Configuring_the_SIP_RA_Via_the_Provisioning_Mechanism"/>
+                  </p>
+                  <h5 class="formalpara">Configuring the SIP RA Via the Provisioning Mechanism</h5>
+                  <p>You can set provisioned properties in the <code class="filename">resource-adaptor.xml</code> file, which is located in <code class="filename">resources/sipra/ra/xml/</code> [TBD: this directory does not exist in the binary installation: exactly which files should we be modifying?]. </p>
+                  <p>Provided here are explanations of the various property values which you can set. All of the following configuration entries, which are <code class="literal">&lt;config-property&gt;</code> elements in the XML file, should be unordered children of their parent <code class="literal">&lt;resource-adapter&gt;</code> element <sup>[<a name="footnote-resource-adaptor.xml" href="#ftn.footnote-resource-adaptor.xml">2</a>]</sup>
+		
+                  </p>
+                  <div class="variablelist">
+                     <dl>
+                        <dt>
+                           <span class="term">dialogIdleTimeTimeout</span>
+                        </dt>
+                        <dd>
+                           <p>This configuration property sets the timeout on dialogs, in milliseconds. After this amount of time, if the dialog hasn't received any requests or responses, and didn't send any, it is considered to be a “<span class="quote">dead end</span>” and is terminated.</p>
+                           <a name="proglist-dialogIdleTimeTimeout"/>
+                           <pre class="programlisting">
+&lt;config-property&gt;
+	&lt;description&gt;uS after which dialog if it has not received/send any message is considered to be dead and is expunged&lt;/description&gt;
+	&lt;config-property-name&gt;dialogIdleTimeTimeout&lt;/config-property-name&gt;
+	&lt;config-property-type&gt;java.lang.Long&lt;/config-property-type&gt;
+	&lt;config-property-value&gt;360000&lt;/config-property-value&gt;
+&lt;/config-property&gt;</pre>
+                        </dd>
+                        <dt>
+                           <span class="term">cancelWait</span>
+                        </dt>
+                        <dd>
+                           <p>This configuration property sets the amount of time, in milleseconds, between receiving a <code class="literal">CANCEL</code> and triggering logic to handle it.</p>
+                           <a name="proglist-cancelWait"/>
+                           <pre class="programlisting">
+&lt;config-property&gt;
+	&lt;description&gt;uS after CANCEL event is going to be fired into SLEE. This atleast gives Sbbs chance to see INVITE and respond, rather than receiving INVITE in on Tx that is in terminated state.&lt;/description&gt;
+	&lt;config-property-name&gt;cancelWait&lt;/config-property-name&gt;
+	&lt;config-property-type&gt;java.lang.Long&lt;/config-property-type&gt;
+	&lt;config-property-value&gt;1000&lt;/config-property-value&gt;
+&lt;/config-property&gt;
+</pre>
+                        </dd>
+                        <dt>
+                           <span class="term">port</span>
+                        </dt>
+                        <dd>
+                           <p>This configuration property sets the port number on which the underlying <acronym class="acronym">SIP</acronym> stack will listen.</p>
+                           <a name="proglist-port"/>
+                           <pre class="programlisting">
+&lt;config-property&gt;
+	&lt;config-property-name&gt;port&lt;/config-property-name&gt;
+	&lt;config-property-type&gt;java.lang.Integer&lt;/config-property-type&gt;
+	&lt;config-property-value&gt;5060&lt;/config-property-value&gt;
+&lt;/config-property&gt;
+</pre>
+                        </dd>
+                        <dt>
+                           <span class="term">ip</span>
+                        </dt>
+                        <dd>
+                           <p>This configuration property sets the <acronym class="acronym">IP</acronym> address of the underlying stack. If it is set to <code class="varname">null</code>, then the <acronym class="acronym">SIP</acronym> resource adapter will use the binding address of the container as its <acronym class="acronym">IP</acronym> address.</p>
+                           <a name="proglist-ip"/>
+                           <pre class="programlisting">
+&lt;config-property&gt;
+	&lt;description&gt;IP to which SIP RAs stack should attach - if "null" it will cause RA to pick up Container bind address address&lt;/description&gt;
+	&lt;config-property-name&gt;ip&lt;/config-property-name&gt;
+	&lt;config-property-type&gt;java.lang.String&lt;/config-property-type&gt;
+	&lt;config-property-value&gt;null&lt;/config-property-value&gt;
+&lt;/config-property&gt;
+</pre>
+                        </dd>
+                        <dt>
+                           <span class="term">transports</span>
+                        </dt>
+                        <dd>
+                           <p>This configuration property sets the transports to be used by the stack. It is a string.</p>
+                           <a name="proglist-transports"/>
+                           <pre class="programlisting">
+&lt;config-property&gt;
+	&lt;description&gt;List of transports, separated with ","&lt;/description&gt;
+	&lt;config-property-name&gt;transports&lt;/config-property-name&gt;
+	&lt;config-property-type&gt;java.lang.String&lt;/config-property-type&gt;
+	&lt;config-property-value&gt;UDP&lt;/config-property-value&gt;
+&lt;/config-property&gt;
+</pre>
+                        </dd>
+                     </dl>
+                  </div>
+                  <p class="formalpara">
+                     <a name="fpara-Configuring_the_SIP_RA_Via_Passing_Properties_to_an_MBean"/>
+                  </p>
+                  <h5 class="formalpara">Configuring the SIP RA Via Passing Properties to an MBean</h5>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-End-to-End_SIP_Example"/>1.1.3. Example: End-to-End SIP</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p/>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Wake-Up_Call_Example"/>1.1.4. Example: Wake-Up Call</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p/>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Third-Party_Call_Control_Example"/>1.1.5. Example: Third-Party Call Control</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p/>
+               </div>
+               <div class="section" lang="en-US">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title">
+                              <a name="section-Back-to-Back_User_Agent_Example"/>1.1.6. Example: Back-to-Back User Agent</h3>
+                        </div>
+                     </div>
+                  </div>
+                  <p/>
+               </div>
+            </div>
+            <div class="footnotes">
+               <br/>
+               <hr width="100" align="left"/>
+               <div class="footnote">
+                  <p>
+                     <sup>[<a name="ftn.sip_ra_filename" href="#sip_ra_filename">1</a>] </sup>As of the time this was written, the <acronym class="acronym">JAR</acronym> file was named <code class="filename">jsipv1.2ra-package-10-02-2007.jar</code>.</p>
+               </div>
+               <div class="footnote">
+                  <p>
+                     <sup>[<a name="ftn.footnote-resource-adaptor.xml" href="#footnote-resource-adaptor.xml">2</a>] </sup>Here is an example of the complete <code class="filename">resource-adaptor.xml</code> configuration file.</p>
+                  <pre class="programlisting">
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;!DOCTYPE resource-adaptor-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE Resource Adaptor 1.0//EN" "http://java.sun.com/dtd/slee-resource-adaptor-jar_1_0.dtd"&gt;
+&lt;resource-adaptor-jar&gt;
+	&lt;resource-adaptor
+		id="jain-sip_1.1_RA"&gt;
+		&lt;description&gt;JAIN SIP Resource Adaptor&lt;/description&gt;
+		&lt;resource-adaptor-name&gt;JainSipResourceAdaptor&lt;/resource-adaptor-name&gt;
+		&lt;resource-adaptor-vendor&gt;net.java.slee.sip&lt;/resource-adaptor-vendor&gt;
+		&lt;resource-adaptor-version&gt;1.2&lt;/resource-adaptor-version&gt;
+					
+		&lt;resource-adaptor-type-ref&gt;
+			&lt;resource-adaptor-type-name&gt;JAIN SIP&lt;/resource-adaptor-type-name&gt;
+			&lt;resource-adaptor-type-vendor&gt;javax.sip&lt;/resource-adaptor-type-vendor&gt;
+			&lt;resource-adaptor-type-version&gt;1.2&lt;/resource-adaptor-type-version&gt;
+		&lt;/resource-adaptor-type-ref&gt;
+
+	&lt;!--added oc-resource-adaptor.xml lines here altogether--&gt;
+		&lt;resource-adaptor-classes&gt;
+			&lt;resource-adaptor-class&gt;
+				&lt;resource-adaptor-class-name&gt;
+                    org.mobicents.slee.resource.sip.SipResourceAdaptor
+                &lt;/resource-adaptor-class-name&gt;
+			&lt;/resource-adaptor-class&gt;
+		&lt;/resource-adaptor-classes&gt;
+					
+		&lt;config-property&gt;
+			&lt;description&gt;uS after which dialog if it has not received/send any message is considered to be dead and is expunged&lt;/description&gt;
+			&lt;config-property-name&gt;dialogIdleTimeTimeout&lt;/config-property-name&gt;
+			&lt;config-property-type&gt;java.lang.Long&lt;/config-property-type&gt;
+			&lt;config-property-value&gt;360000&lt;/config-property-value&gt;
+		&lt;/config-property&gt;
+					
+		&lt;config-property&gt;
+			&lt;description&gt;uS after CANCEL event is going to be fired into SLEE. This atleast gives Sbbs chance to see INVITE and respond, rather than receiving INVITE in on Tx that is in terminated state.&lt;/description&gt;
+			&lt;config-property-name&gt;cancelWait&lt;/config-property-name&gt;
+			&lt;config-property-type&gt;java.lang.Long&lt;/config-property-type&gt;
+			&lt;config-property-value&gt;1000&lt;/config-property-value&gt;
+		&lt;/config-property&gt;
+					
+		&lt;config-property&gt;
+			&lt;config-property-name&gt;port&lt;/config-property-name&gt;
+			&lt;config-property-type&gt;java.lang.Integer&lt;/config-property-type&gt;
+			&lt;config-property-value&gt;5060&lt;/config-property-value&gt;
+		&lt;/config-property&gt;
+					
+		&lt;config-property&gt;
+			&lt;description&gt;IP to which SIP RAs stack should attach - if "null" it will cause RA to pick up Container bind address address&lt;/description&gt;
+			&lt;config-property-name&gt;ip&lt;/config-property-name&gt;
+			&lt;config-property-type&gt;java.lang.String&lt;/config-property-type&gt;
+			&lt;config-property-value&gt;null&lt;/config-property-value&gt;
+		&lt;/config-property&gt;
+					
+		&lt;config-property&gt;
+			&lt;description&gt;List of transports, separated with ","&lt;/description&gt;
+			&lt;config-property-name&gt;transports&lt;/config-property-name&gt;
+			&lt;config-property-type&gt;java.lang.String&lt;/config-property-type&gt;
+			&lt;config-property-value&gt;UDP&lt;/config-property-value&gt;
+		&lt;/config-property&gt;
+	&lt;/resource-adaptor&gt;
+&lt;/resource-adaptor-jar&gt;</pre>
+               </div>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

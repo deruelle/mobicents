@@ -1,0 +1,233 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Mobicents_Presence_Server"
+	xreflabel="Presence Server">
+	<title>Introduction to the Mobicents Presence Server</title>
+	<para>The Mobicents Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
+	<para>The Presence Server is an entity that accepts, stores and distributes SIP Presence Information.</para>
+	<section
+		id="section-Configuring_Installing_and_Testing_the_Mobicents_Presence_Server">
+		<title>Configuring, Installing and Testing the Mobicents_Presence Server</title>
+		<formalpara>
+			<title>Requirements</title>
+			<para>The Mobicents Presence Server depends on the Mobicents Converged Application Server and the Mobicents SIP resource adapter, which should be deloyed before starting the Presence Server.</para>
+		</formalpara>
+		<formalpara>
+			<title>Configuration</title>
+			<para>The Mobicents Presence Server can be customized in the following aspects before being built.</para>
+		</formalpara>
+		<variablelist
+			id="varlist-Customizing_the_Presence_Server">
+			<title>Customizing the Presence Server</title>
+			<varlistentry>
+				<term>XCAP Aware User Agent</term>
+				<listitem>
+					<para>The Presence Server calculates the presence-rules XCAP URIs of users in a non-standard way by default, but one which is compatible with CounterPath eyeBeam. You can change this behavior to conform with standards by changing the contents of the <literal>clientUAIsEyebeam</literal> field of <literal>PresenceSubscriptionControlSbb</literal>, which is in <filename>ps-core/subscription-sbb/src/main/java/..</filename>.<footnote
+							id="footnote-temp_solution"><para>This is a temporary solution due to a feature in the current JAIN SIP stack that removes invalid User Agent hedaers of SIP requests. In the future, this configuration is exected to be deprecated or removed.</para>
+						</footnote>
+					</para>
+					<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Installing the Mobicents Presence Server</title>
+			<para>TBD (Fix this with proper instructions): Currently, the Mobicents Presence Server can only be installed as integrated with the Mobicents XML Document Management Server, i.e. in an all-in-one Presence Server architecture<footnote
+					id="footnote-integrated_presence_server"><para>This limitation is due to the current lack of an external XDM Client SBB component.</para>
+				</footnote>.</para>
+		</formalpara>
+		<important
+			id="important-Installing_the_Presence_Server_Also_Installs_the_XDM_Server">
+			<title>Installing the Presence Server Also Installs the XDM Server</title>
+			<para>You should also make sure that all the install requirements of the Mobicents XDM Server are met before attempting to install the Mobicents Presence Server. See <xref
+					linkend="fpara-XDM_Requirements"/>.</para>
+		</important>
+		
+		<!--install-->
+		<formalpara>
+			<title>Installing the Mobicents XML Document Management Server</title>
+			<para>How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<formalpara>
+					<title>Installing the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can install the XDM Server by doing an ant deploy on the <filename>servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Installing the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can install the XDM Server by doing a mvn install on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		
+		<!--uninstall-->
+		<formalpara>
+			<title>Uninstalling the Mobicents XML Document Management Server</title>
+			<para>How you uninstall the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server using the Mobicents Binary Distribution</title>
+					<para>TBD: (Fix this with proper instructions): Using the binary release, you can uninstall the XDM Server by doing an ant undeploy on the <filename>servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+			<listitem>
+				<formalpara>
+					<title>Uninstalling the XDM Server after Building Mobicents from Source</title>
+					<para>TBD: (Fix this with proper instructions): From the source code repository, you can uninstall the XDM Server by doing a mvn clean on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
+				</formalpara>
+			</listitem>
+		</itemizedlist>
+		
+		<formalpara>
+			<title>Testing the Mobicents Presence Server</title>
+			<para>A test framework for the Mobicents Presence Server is forthcoming but not available yet.</para>
+		</formalpara>
+	</section>
+	<section
+		id="section-Functional_Architecture_of_the_Mobicents_Presence_Server">
+		<title>Functional Architecture of the Mobicents Presence Server</title>
+		<formalpara>
+			<title>Functional Architecture of the Mobicents Presence Server</title>
+			<para></para>
+		</formalpara>
+		<figure
+			id="figure-sas-orig-dia-PS_Functional_Architecture.jpg">
+			<title>The Mobicents Presence Server</title>
+			<mediaobject
+				id="mediaobj-sas-orig-dia-PS_Functional_Architecture.jpg">
+				<imageobject>
+					<imagedata
+						align="center"
+						fileref="images/sas-orig-dia-PS_Functional_Architecture.jpg"
+						format="JPG" />
+				</imageobject>
+				<caption>
+					<para>Functional Diagram of the Mobicents Presence Server</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<para>The Presence Server comprises the following functional elements:</para>
+		<variablelist
+			id="varlist-The_Functional_Elements_Which_Compose_the_Presence_Server">
+			<title>The Functional Elements Which Compose the Presence Server</title>
+			<varlistentry>
+				<term>Presence Publication Control</term>
+				<listitem>
+					<para>This functional element manages the publication of presence events, which includes not only the handling of new publications, but also the refreshing, modification or removal of, already-published information.</para>
+					<para>Because the presence resource, which is also called a <quote>presentity</quote>, can have multiple publications simultaneously, such as some state published by a user agent or device, and some location data published by a Presence Network Agent (on behalf of the presentity), this element is also responsible for composing all of the different publications for the same resource.</para>
+					<para>In some presence networks, it may be of interest to allow resources to have a static presence state, which is stored in the XDM Server. In cases like these, Presence Publication Control may need to interface with the XDM Server to retrieve and subscribe to (learn about changes to) that information, and use it when composing the final presence information document.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Presence Subscription Control</term>
+				<listitem>
+					<para>This functional element handles subscriptions to presence events or to the list of subscribers (watchers), for any specific resource. It is, of course, responsible for emitting notifications related to those subscriptions.</para>
+					<para>Presence authorization rules, which define if a subscription is allowed or rejected and, if allowed, define which transformations to the original presence events are needed, are stored on the XDM Server by the user. Thus, Presence Subscription Control needs to retrieve and subscribe to (learn about changes to) that information.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Client Control</term>
+				<listitem>
+					<para>This last element is responsible for interfacing with the XDM Server that manages the user's XML documents, and is related to the main functions of the presence server. It's capable not only of retrieving a document (or part of one), but also of subscribing to either updates of a single, specific document, or to a full collection of documents of a specific type or application.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Implementation Architecture of the Mobicents Presence Server</title>
+			<para></para>
+		</formalpara>
+		<figure
+			id="figure-sas-orig-dia-PS_Implementation.jpg">
+			<title>Implementation Architecture of the Mobicents Presence Server</title>
+			<mediaobject
+				id="mediaobj-sas-orig-dia-PS_Implementation.jpg">
+				<imageobject>
+					<imagedata
+						align="center"
+						width="700"
+						fileref="images/sas-orig-dia-PS_Implementation.jpg"
+						format="JPG" />
+				</imageobject>
+				<caption>
+					<para>The Mobicents Presence Server</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<para>The implementation of the Mobicents Presence Server comprises the following functional elements:</para>
+		<variablelist
+			id="varlist-The_Two_Services_Which_Compose_the_Presence_Server">
+			<title>The Two Services Which Compose the Presence Server</title>
+			<varlistentry>
+				<term>Presence Publication Control Service</term>
+				<listitem>
+					<para>This JAIN SLEE service includes the root Service Building Block (SBB), <literal>PresencePublicationControlSbb</literal>, which is the implementation of the abstract SIP event <literal>PublicationControlSbb</literal>. It handles publications on the "presence" event package.</para>
+					<para>The <literal>PresencePublicationControlSbb</literal> provides the following capabilities:</para>
+					<itemizedlist>
+						<listitem>
+							<para>It provides the logic to authorize a publication; however, it only authorizes <literal>PUBLISH</literal> requests when the request URI matches the PIDF document <quote>entity</quote> attribute.</para>
+						</listitem>
+						<listitem>
+							<para>It provides JAXB unmarshellers to validate and parse the PIDF document for the abstract <literal>PublicationControlSbb</literal>.</para>
+						</listitem>
+						<listitem>
+							<para>It demands that notifying subscribers occur through a child relation to the root SBB of the Presence Subscription Control Service.</para>
+						</listitem>
+						<listitem>
+							<para>Finally, it also provides an <literal>SbbLocalObject</literal> interface that can be used, in JAIN SLEE child relations, to obtain the composed presence information for a specific resource.</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Presence Subscription Control Service.</term>
+				<listitem>
+					<para>This JAIN SLEE service includes the root SBB <literal>PresenceSubscriptionControlSbb</literal>, which is the implementation of the abstract SIP Event <literal>SubscriptionControlSbb</literal>. It handles subscriptions on the "presence" event package.</para>
+					<para>The standout SBB logic item is the usage of presence-rules documents, obtained through the XDM Client SBB child relation, in order to authorize subscriptions and transform the content notified (TBD: feature not used yet). It also defines a child relation to the root SBB of <literal>PresencePublicationService</literal> to retrieve the composed PIDF document for the subscription's notifier.</para>
+					<para>The SBB also provides an <literal>SbbLocalObject</literal> interface that can be used, in JAIN SLEE child relations, to make the presence event known to the subscribers of a specific resource.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>The implementation architecture of the Presence Server also contains client-side components:</para>
+		<variablelist>
+			<varlistentry>
+				<term>Presence Client SBB (TBD: not yet available)</term>
+				<listitem>
+					<para>The <literal>PresenceClientSBB</literal> is the interface to a JAIN SLEE SBB intended to be used as a client for the Mobicents Presence Server (and other servers compliant with same standards), in JAIN SLEE child relations.</para>
+					<para>Two implementations of this interface are provided: the <literal>InternalPresenceClientSBB</literal> that is used with applications running in the Mobicents Presence Server JAIN SLEE container, and the <literal>ExternalPresenceClientSBB</literal>, used with applications running in a different JAIN SLEE container than the Mobicents Presence Server.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>TBD: This documentation is originally from http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-server by Eduardo Martins, JBoss R&amp;D.</para>
+	</section>
+	<section
+		id="section-Resources_and_Further_Information_About_the_Mobicents_Presence_Server">
+		<title>Resources and Further Information About the Mobicents Presence Server</title>
+		<para>For further information on the Mobicents Presence Server, see the following list of additional resources:</para>
+		<itemizedlist
+			id="itemlist-Further_Information_on_the_Mobicents_Presence_Server">
+			<listitem>
+				<para>How to Manage the Mobicents Presence Server</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents Presence Server into Your JAIN SLEE Applications: Code Snippets for Internal Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>Integrating the Mobicents Presence Server into Your JAIN SLEE Applications: Code Snippets for External Presence Client SBB Usage.</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-event-components">Mobicents Sip Event Publication and Subscription Control Components</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+</section>
+

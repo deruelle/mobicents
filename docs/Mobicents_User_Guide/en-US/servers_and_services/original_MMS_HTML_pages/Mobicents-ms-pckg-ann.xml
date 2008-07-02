@@ -1,0 +1,208 @@
+<para>
+  <emphasis role="strong">5&nbsp;Event packages.</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">5.1 Basic package</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Package name: org.mobicents.media.server.spi.events.Basic
+</para>
+&nbsp;
+<para>
+  Event ID
+</para>
+<para>
+  Description
+</para>
+<para>
+  Type
+</para>
+<para>
+  Duration
+</para>
+<para>
+  org.mobicents.media.server.spi.events.Basic.DTMF
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  DTMF event
+</para>
+<para>
+  BR
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">5.2 Announcement package</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Package name: org.mobicents.media.server.spi.event.Announcement
+</para>
+&nbsp;
+<para>
+  Event ID
+</para>
+<para>
+  Description
+</para>
+<para>
+  Type
+</para>
+<para>
+  Duration
+</para>
+<para>
+  org.mobicents.media.server.spi.event.Announcement.PLAY
+</para>
+<para>
+  Play announcement
+</para>
+<para>
+  TO
+</para>
+<para>
+  Variable
+</para>
+<para>
+  org.mobicents.media.server.spi.event.Announcement.COMPLETED
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  org.mobicents.media.server.spi.event.Announcement.FAILED
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  The announcement action is qualified by an URL name and by a set of
+  initial parameters. The &quot;operation complete&quot; event will
+  be detected when the announcement is played out. If the
+  announcement cannot be played out, an operation failure event can
+  be returned.&nbsp; The failure may be explained by a
+  commentary.&nbsp;
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">5.3 Advanced audio package</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Package name: org.mobicents.media.server.spi.events.AU
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Event ID
+</para>
+<para>
+  Description
+</para>
+<para>
+  Type
+</para>
+<para>
+  Duration
+</para>
+<para>
+  org.mobicents.media.server.spi.event.AU.PLAY_RECORD
+</para>
+<para>
+  Play announcement
+</para>
+<para>
+  TO
+</para>
+<para>
+  Variable
+</para>
+<para>
+  org.mobicents.media.server.spi.event.AU.PROMPT_AND_COLLECT
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  org.mobicents.media.server.spi.event.Announcement.FAILED
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  <literallayout></literallayout>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  PLAY_RECORD Plays a prompt and records user speech.&nbsp; If the
+  user does not speak, the user may be reprompted and given another
+  chance to record.&nbsp; By default PlayRecord does not play an
+  initial prompt, makes only one attempt to record, and therefore
+  functions as a simple Record operation
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+</para>
+<para>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-media-server">TOC</ulink>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-cfg-conf">Previous</ulink>
+  <literallayout></literallayout>
+</para>
+<para>
+</para>
+

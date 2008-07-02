@@ -1,0 +1,160 @@
+<section>
+  <title><ulink url="javascript:void(0);"></ulink>Installing and
+         building Mobicents Media Server</title>
+  <para>
+    The server is available as a&nbsp;source code&nbsp;distribution.
+    The source code is&nbsp;available from the server source repository
+    located at http://code.google.com/p/mobicents/source/checkout. The
+    source code availability allows you to debug the server, learn its
+    inner workings and create customized versions for your personal
+    use.
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    Prerequisites
+  </para>
+  <para>
+    Before installing and running the media server, you should check
+    that your&nbsp;have installed Mobicents SLEE server.
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    Accessing Media Server&nbsp;SVN source code repositories.
+  </para>
+  <para>
+    Access the source code repository for this project in one of
+    following ways:
+  </para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        Browse source code online to view this project's directory
+        structure and files.
+        <ulink url="https://mobicents.googlecode.com/svn/trunk/servers/media">https://mobicents.googlecode.com/svn/trunk/servers/media</ulink><literallayout></literallayout>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        Check out source code with a Subversion client using the following
+        command. Note: replace the last <literal>username</literal> with
+        your own username.
+      </para>
+      <para>
+        <literal>svn checkout &lt;b&gt;&lt;i&gt;http&lt;/i&gt;&lt;/b&gt;://mobicents.googlecode.com/svn/trunk/ mobicents-read-only</literal>
+      </para>
+    </listitem>
+  </itemizedlist>
+  <para>
+    If you are new to Subversion, you may want to visit the
+    <ulink url="http://subversion.tigris.org/">Subversion Project website</ulink>
+    and read
+    <ulink url="http://svnbook.red-bean.com/">Version Control with Subversion</ulink>.
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    <emphasis role="strong">SVN&nbsp;source code repository structure</emphasis>
+  </para>
+  <para>
+    The top-level directory structure&nbsp;under
+    the&nbsp;/trunk/servers/media source tree is shown in the follwing
+    table:
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    <emphasis role="strong">Path</emphasis>
+  </para>
+  <para>
+    <emphasis role="strong">Description</emphasis>
+  </para>
+  <para>
+    /trunk/servers/media/server
+  </para>
+  <para>
+    Media server implementation
+  </para>
+  <para>
+    /trunk/servers/media/mscontrol/msc
+  </para>
+  <para>
+    The API for media server control
+  </para>
+  <para>
+    /trunk/servers/media/mscontrol/mscra
+  </para>
+  <para>
+    &nbsp;Media server control&nbsp;Resource adaptor used accross
+    SLEE&nbsp;&nbsp; &nbsp;&nbsp;
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    &nbsp;&nbsp;&nbsp;
+  </para>
+  <para>
+    Building Media Server from source code
+  </para>
+  <para>
+    The build process is driven by maven configuration. The main maven
+    script is the pom.xml file located in the&nbsp;project
+    home&nbsp;directory. The purpose of the main pom.xml file is to
+    compile the various module directories&nbsp;and then to integrate
+    their output to produce the binary release.
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    The binary release structure.
+  </para>
+  <para>
+  </para>
+  <para>
+  </para>
+  <para>
+  </para>
+  Binary release create a media-server.sar directory which is a
+  standard JBoss deployable service. Media server resource adaptor
+  for local server management&nbsp;. The figure 1 depicts the
+  internal directory stucture of the binary release.
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+  </para>
+  <para>
+    In the&nbsp;figure 1&nbsp;the binary release service is shown
+    expanded and it contains a number of binary jar modules and the
+    main configuration file under META-INF/jboss-service.xml
+  </para>
+  <para>
+    &nbsp;
+  </para>
+  <para>
+    <ulink url="/group/mobicents-public/web/mobicents-media-server">TOC</ulink>
+  </para>
+  <para>
+    <ulink url="/group/mobicents-public/web/ms-overview">Previous</ulink>
+  </para>
+  <para>
+    <ulink url="/group/mobicents-public/web/mobicents-ms-tests">Next</ulink>
+  </para>
+</section>
+
