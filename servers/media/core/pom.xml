@@ -18,10 +18,11 @@
   <properties>
   	<!-- RELEASE CONFIGURATION -->
     	<release.name>${release.name.prefix}${parent.version}${release.name.suffix}</release.name>
-    	<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
+    	<!-- OTHER MOBICENTS COMPONENTS VERSIONS 
 	<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
 	<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
 	<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
+	-->
   </properties>   
 
 	<modules>		
@@ -70,7 +71,7 @@
 	<!--  -->
 	<build>
 		<plugins>
-			<plugin>
+			<!-- <plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
    				<groupId>org.mobicents.tools</groupId>
     			<version>${mobicents.tools.mavenplugin.eclipse.version}</version>
@@ -84,7 +85,7 @@
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
 					<eclipseProjectName>mobicents-media-server</eclipseProjectName>
 				</configuration>
-			</plugin>
+			</plugin> -->
 			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
