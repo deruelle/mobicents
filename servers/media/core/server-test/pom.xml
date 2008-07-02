@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>
+		<version>1.0.0.BETA2</version>
 	</parent>
 	
 	<artifactId>mobicents-media-server-test</artifactId>
@@ -54,7 +53,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy file="${project.build.directory}/${project.build.finalName}.war" toDir="${env.JBOSS_HOME}/server/${node}/deploy"></copy>
+								<copy file="${project.build.directory}/${project.build.finalName}.war" toDir="${env.JBOSS_HOME}/server/${node}/deploy" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -66,7 +65,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.war"></delete>
+								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.war" />
 							</tasks>
 						</configuration>
 					</execution>
