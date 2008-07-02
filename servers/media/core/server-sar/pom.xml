@@ -4,14 +4,14 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
-
+	
 	<artifactId>mobicents-media-server-sar</artifactId>
 	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	<packaging>jboss-sar</packaging>
-
+	
 	<dependencies>
 		<dependency>
 			<artifactId>mobicents-media-server-impl</artifactId>
@@ -45,16 +45,16 @@
 					-->
 					<excludes>
 						<exclude>concurrent:concurrent</exclude>
-							
+						
 						<exclude>
 							commons-collections:commons-collections
 						</exclude>
 						<exclude>
 							commons-logging:commons-logging
 						</exclude>
-
+						
 						<exclude>ant:ant-optional</exclude>
-
+						
 						<exclude>jboss:jboss</exclude>
 						<exclude>jboss:jboss-jmx</exclude>
 						<exclude>jboss:jboss-common</exclude>
@@ -76,7 +76,7 @@
 						<exclude>xml-apis:xml-apis</exclude>
 						<exclude>slide:webdavlib</exclude>
 					</excludes>
-
+					
 				</configuration>
 			</plugin>
 			<plugin>
@@ -91,7 +91,7 @@
 						<configuration>
 							<tasks>
 								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
-	    							<isset property="jboss.home" />
+									<isset property="jboss.home" />
 								</condition>
 								<copy todir="${jboss.dir}/server/${node}/deploy/${project.build.finalName}.sar">
 									<fileset dir="target/${project.build.finalName}">
@@ -117,5 +117,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 </project>
