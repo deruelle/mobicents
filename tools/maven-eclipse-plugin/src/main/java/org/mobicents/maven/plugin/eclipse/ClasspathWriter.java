@@ -2,9 +2,9 @@ package org.mobicents.maven.plugin.eclipse;
 
 import java.io.File;
 import java.io.FileWriter;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,20 +19,21 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.model.Resource;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
 import org.codehaus.plexus.util.xml.XMLWriter;
 import org.mobicents.maven.plugin.utils.PathNormalizer;
-import org.apache.maven.artifact.versioning.VersionRange;
 
 
 /**
  * Writes the Eclipse .classpath files.
  *
  * @author Chad Brandon
+ * @author Eduardo Martins
+ * @author Jean Deruelle
  */
 public class ClasspathWriter
     extends EclipseWriter
@@ -73,7 +74,7 @@ public class ClasspathWriter
         final Set classpathArtifactTypes,
         final List remoteRepositories,
         final boolean resolveTransitiveDependencies,
-        final String merge, Set classpathExcludes, boolean includeResourcesDirectory, boolean includeTestsDirectory)
+        final String merge, Set classpathExcludes, boolean includeResourcesDirectory)
         throws Exception
     {
     	final String rootDirectory = PathNormalizer.normalizePath(this.project.getBasedir().toString());
@@ -97,7 +98,7 @@ public class ClasspathWriter
         }
 
         // - write the source roots for the root project (if they are any)
-        this.writeSourceRoots(this.project, rootDirectory, writer, includeTestsDirectory, includeResourcesDirectory);
+        this.writeSourceRoots(this.project, rootDirectory, writer, includeResourcesDirectory);
         	
         final Set allArtifacts = new LinkedHashSet(this.project.createArtifacts(
             artifactFactory,
@@ -107,7 +108,7 @@ public class ClasspathWriter
         for (final Iterator iterator = projects.iterator(); iterator.hasNext();)
         {
             final MavenProject project = (MavenProject)iterator.next();
-            this.writeSourceRoots(project, rootDirectory, writer, includeTestsDirectory, includeResourcesDirectory);
+            this.writeSourceRoots(project, rootDirectory, writer, includeResourcesDirectory);
             final Set artifacts = project.createArtifacts(
                     artifactFactory,
                     null,
@@ -304,7 +305,7 @@ public class ClasspathWriter
      * @param includeTestsDirectory 
      * @param includeResourcesDirectory 
      */
-    private void writeSourceRoots(final MavenProject project, final String rootDirectory, final XMLWriter writer, boolean includeTestsDirectory, boolean includeResourcesDirectory)
+    private void writeSourceRoots(final MavenProject project, final String rootDirectory, final XMLWriter writer, boolean includeResourcesDirectory)
     {
         for (final Iterator sourceIterator = project.getCompileSourceRoots().iterator(); sourceIterator.hasNext();)
         {
@@ -328,7 +329,7 @@ public class ClasspathWriter
             }
         }
         
-        if (includeTestsDirectory) {
+        /*if (includeTestsDirectory) {
 			for (final Iterator testSourceIterator = project
 					.getTestCompileSourceRoots().iterator(); testSourceIterator
 					.hasNext();) {
@@ -345,9 +346,10 @@ public class ClasspathWriter
 					}
 				}
 			}
-		}
+		}*/
 
 		if (includeResourcesDirectory) {
+			HashSet<String> resourcePaths = new HashSet<String>();
 			for (final Iterator resourceIterator = project.getResources()
 					.iterator(); resourceIterator.hasNext();) {
 				Resource resource = (Resource) resourceIterator.next();
@@ -359,8 +361,30 @@ public class ClasspathWriter
 					if (resourceSourceRootPath.startsWith("/")) {
 						resourceSourceRootPath = resourceSourceRootPath
 								.substring(1, resourceSourceRootPath.length());
-						this.writeClasspathEntry(writer, "src",
-								resourceSourceRootPath);
+						//this.writeClasspathEntry(writer, "src",
+						//		resourceSourceRootPath);
+						// we need to avoid nested paths, eclipse doesn't support them
+						// check if there is already a parent resource path
+						boolean add = true;
+						for(String resourcePath : resourcePaths) {
+							if (resourceSourceRootPath.startsWith(resourcePath)) {
+								// the one we are processing is a child folder,
+								// ignore it
+								add = false;
+								break;
+							}
+						}
+						if (add) {
+							for (String resourcePath : resourcePaths) {
+								if (resourcePath
+										.startsWith(resourceSourceRootPath)) {
+									// the one we are processing is a parent
+									// folder, remove the child
+									resourcePaths.remove(resourcePath);
+								}
+							}
+							resourcePaths.add(resourceSourceRootPath);
+						}
 					}
 				}
 			}

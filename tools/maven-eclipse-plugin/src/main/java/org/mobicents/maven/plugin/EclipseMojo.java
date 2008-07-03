@@ -43,6 +43,8 @@ import org.mobicents.maven.plugin.utils.ProjectUtils;
  * @goal eclipse
  * @phase generate-sources
  * @author Chad Brandon
+ * @author Eduardo Martins
+ * @author Jean Deruelle
  * @inheritByDefault false
  */
 
@@ -151,12 +153,6 @@ public class EclipseMojo
     private boolean generateProjectsForModules = false;
     
     /**
-     * Whether the tests directory should be added to the classpath
-     * @parameter expression="${includeTestsDirectory}"
-     */
-    private boolean includeTestsDirectory = true;
-    
-    /**
      * Whether the resources directory should be added to the classpath
      * @parameter expression="${includeResourcesDirectory}"
      */
@@ -211,8 +207,7 @@ public class EclipseMojo
                 this.resolveTransitiveDependencies,
                 this.classpathMerge,
                 this.classpathExcludes,
-                this.includeResourcesDirectory,
-                this.includeTestsDirectory);
+                this.includeResourcesDirectory);
             // - reset to the original source roots
             for (final Iterator iterator = projects.iterator(); iterator.hasNext();)
             {
