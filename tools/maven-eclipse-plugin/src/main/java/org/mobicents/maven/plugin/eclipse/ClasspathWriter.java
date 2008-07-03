@@ -302,11 +302,11 @@ public class ClasspathWriter
      * @param project the project for which to write the source roots.
      * @param rootDirectory the root project's base directory
      * @param writer the XMLWriter used to write the source roots.
-     * @param includeTestsDirectory 
      * @param includeResourcesDirectory 
      */
     private void writeSourceRoots(final MavenProject project, final String rootDirectory, final XMLWriter writer, boolean includeResourcesDirectory)
     {
+    	HashSet<String> sourcePaths = new HashSet<String>();
         for (final Iterator sourceIterator = project.getCompileSourceRoots().iterator(); sourceIterator.hasNext();)
         {
             final String sourceRoot = PathNormalizer.normalizePath((String)sourceIterator.next());
@@ -321,10 +321,7 @@ public class ClasspathWriter
                     sourceRootPath = sourceRootPath.substring(
                             1,
                             sourceRootPath.length());
-                    this.writeClasspathEntry(
-                        writer,
-                        "src",
-                        sourceRootPath);
+                    sourcePaths.add(sourceRootPath);
                 }
             }
         }
@@ -349,7 +346,7 @@ public class ClasspathWriter
 		}*/
 
 		if (includeResourcesDirectory) {
-			HashSet<String> resourcePaths = new HashSet<String>();
+			
 			for (final Iterator resourceIterator = project.getResources()
 					.iterator(); resourceIterator.hasNext();) {
 				Resource resource = (Resource) resourceIterator.next();
@@ -360,13 +357,11 @@ public class ClasspathWriter
 							resource.getDirectory(), rootDirectory, "");
 					if (resourceSourceRootPath.startsWith("/")) {
 						resourceSourceRootPath = resourceSourceRootPath
-								.substring(1, resourceSourceRootPath.length());
-						//this.writeClasspathEntry(writer, "src",
-						//		resourceSourceRootPath);
+								.substring(1, resourceSourceRootPath.length());						
 						// we need to avoid nested paths, eclipse doesn't support them
 						// check if there is already a parent resource path
 						boolean add = true;
-						for(String resourcePath : resourcePaths) {
+						for(String resourcePath : sourcePaths) {
 							if (resourceSourceRootPath.startsWith(resourcePath)) {
 								// the one we are processing is a child folder,
 								// ignore it
@@ -375,19 +370,22 @@ public class ClasspathWriter
 							}
 						}
 						if (add) {
-							for (String resourcePath : resourcePaths) {
+							for (String resourcePath : sourcePaths) {
 								if (resourcePath
 										.startsWith(resourceSourceRootPath)) {
 									// the one we are processing is a parent
 									// folder, remove the child
-									resourcePaths.remove(resourcePath);
+									sourcePaths.remove(resourcePath);
 								}
 							}
-							resourcePaths.add(resourceSourceRootPath);
+							sourcePaths.add(resourceSourceRootPath);
 						}
 					}
 				}
-			}
+			}			
+		}
+		for (String sourcePath : sourcePaths) {
+			this.writeClasspathEntry(writer, "src",sourcePath);
 		}
     }
 
