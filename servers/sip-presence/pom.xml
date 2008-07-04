@@ -14,8 +14,8 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>1-SNAPSHOT</version>
-		<relativePath>../../pom.xml</relativePath>
+		<version>3-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 		
 	<artifactId>sip-presence-parent</artifactId>
@@ -34,7 +34,7 @@
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
 		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA1-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>			
 	
 	<dependencyManagement>
