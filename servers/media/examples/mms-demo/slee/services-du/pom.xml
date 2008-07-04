@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>mms-demo-slee</artifactId>
 		<groupId>org.mobicents.servers.media.examples</groupId>
-		<version>1.0.0.BETA2-SNAPSHOT</version>	
+		<version>1.0.0.BETA3-SNAPSHOT</version>	
     	</parent>
 	
 	<artifactId>mms-demo-services-DU</artifactId>
@@ -56,7 +56,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
-				<version>${mobicents.tools.mavenplugin.du.version}</version>
+				<version>1.0.0.BETA2-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration />
 				<executions>
