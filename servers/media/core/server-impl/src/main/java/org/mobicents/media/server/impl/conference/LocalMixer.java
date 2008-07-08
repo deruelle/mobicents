@@ -112,7 +112,7 @@ public class LocalMixer extends BaseResource implements MediaSource {
             mixer = new AudioMixer(endpoint.getTimer(), packetization, jitter, fmt);
             setState(MediaResourceState.CONFIGURED);
         } catch (UnsupportedFormatException e) {
-            throw new IllegalArgumentException(e.getMessage());
+            throw new IllegalArgumentException(e);
         }
     }
 
