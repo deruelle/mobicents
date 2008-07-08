@@ -16,7 +16,6 @@
 
 package org.mobicents.media.server.impl.jmf.player;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,14 +23,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.Utils;
 import org.mobicents.media.server.impl.common.events.PlayerEventType;
+import org.xiph.speex.spi.SpeexAudioFileReader;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 
 /**
  *
@@ -112,7 +116,22 @@ public class AudioPlayer {
             IOException, UnsupportedAudioFileException, UnsupportedFormatException {
         
         URL url = new URL(file);        
-        audioStream = new PushBufferAudioStream(this, AudioSystem.getAudioInputStream(url));
+        
+        AudioInputStream stream = null;
+        
+        //speex support
+        try{
+        	stream = AudioSystem.getAudioInputStream(url);
+        } catch(UnsupportedAudioFileException unSupAudio){
+        	unSupAudio.printStackTrace();
+        }
+        
+        if(stream == null ){
+        	SpeexAudioFileReader speexAudioFileReader = new SpeexAudioFileReader();
+        	stream = speexAudioFileReader.getAudioInputStream(url);
+        }
+        
+        audioStream = new PushBufferAudioStream(this, stream);
         audioStream.start();
         
         return audioStream;

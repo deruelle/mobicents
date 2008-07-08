@@ -37,7 +37,7 @@ import org.mobicents.media.server.spi.UnknownSignalException;
  */
 public class AnnEndpointImpl extends BaseEndpoint {
     
-    protected transient MediaPushProxy mediaProxy;
+
     protected transient Logger logger;
     private transient Signal signal;
 

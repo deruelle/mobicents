@@ -77,6 +77,7 @@ public class IVREndpointManagement extends AnnEndpointManagement
 			clone.setPortRange(this.getPortRange());
 			clone.setPCMA(this.getPCMA());
 			clone.setPCMU(this.getPCMU());
+			clone.setSpeex(this.getSpeex());
 			clone.setRecordDir(this.getRecordDir());
 			clone.setMediaType(this.getMediaType());
 			clone.setDTMF(this.getDTMF());

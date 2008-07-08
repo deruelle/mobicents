@@ -41,6 +41,7 @@ public class LoopEndpointManagement extends EndpointManagement implements LoopEn
 			clone.setPacketizationPeriod(this.getPacketizationPeriod());
 			clone.setPortRange(this.getPortRange());
 			clone.setPCMA(this.getPCMA());
+			clone.setSpeex(this.getSpeex());
 			clone.setPCMU(this.getPCMU());
 			clone.setDTMF(this.getDTMF());
 		} catch (Exception ex) {

@@ -318,7 +318,7 @@ public class BaseConnection implements Connection, AdaptorListener {
             throws SdpException {
         javax.sdp.Connection connection = sdp.getConnection();
 
-        Vector list = remoteSDP.getMediaDescriptions(false);
+        Vector list = sdp.getMediaDescriptions(false);
         MediaDescription md = (MediaDescription) list.get(0);
 
         try {

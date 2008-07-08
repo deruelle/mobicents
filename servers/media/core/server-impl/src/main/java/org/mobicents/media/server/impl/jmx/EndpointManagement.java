@@ -47,6 +47,7 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     
     private boolean enablePCMA = false;
     private boolean enablePCMU = false;
+    private boolean enableSpeex = false;
     
     private Properties dtmfConfig;
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
@@ -209,6 +210,21 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         return this.enablePCMU;
     }
     
+    public void setSpeex(Boolean enabled){
+    	this.enableSpeex = enabled;
+        if (this.getState() == STARTED) {
+            if (enabled) {
+                endpoint.addFormat(AVProfile.getPayload(AVProfile.SPEEX_NB), AVProfile.SPEEX_NB);
+            } else {
+                endpoint.removeFormat(AVProfile.SPEEX_NB);
+            }
+        }    	
+    }
+    
+    public Boolean getSpeex(){
+    	return this.enableSpeex;
+    }
+    
     /**
      * DTMF detector configuration 
      * 
@@ -288,6 +304,10 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         
         if (this.enablePCMU) {
             endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
+        }
+        
+        if(this.enableSpeex){
+        	endpoint.addFormat(AVProfile.getPayload(AVProfile.SPEEX_NB), AVProfile.SPEEX_NB);
         }
         
         this.getEndpoint().setDefaultConfig(MediaResourceType.DTMF_DETECTOR, dtmfConfig);

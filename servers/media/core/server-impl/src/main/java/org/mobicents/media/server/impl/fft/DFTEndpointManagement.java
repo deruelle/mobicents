@@ -27,6 +27,7 @@ public class DFTEndpointManagement extends EndpointManagement implements
 			clone.setPortRange(this.getPortRange());
 			clone.setPCMA(this.getPCMA());
 			clone.setPCMU(this.getPCMU());
+			clone.setSpeex(this.getSpeex());
 			clone.setDTMF(this.getDTMF());
 		} catch (Exception ex) {
 			logger.error("PREndpointManagement clonning failed ", ex);

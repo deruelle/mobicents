@@ -14,6 +14,8 @@
 package org.mobicents.media.server.impl.conference;
 
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.BaseResourceManager;
 import org.mobicents.media.server.impl.common.MediaResourceType;
@@ -27,13 +29,15 @@ import org.mobicents.media.server.spi.UnknownMediaResourceException;
  * @author Oleg Kulikov
  */
 public class ConfResourceManager extends BaseResourceManager {
+	
+	private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
 
     @Override
     public MediaResource getResource(BaseEndpoint endpoint,
             MediaResourceType type, Connection connection, Properties config)
             throws UnknownMediaResourceException {
         if (type == type.AUDIO_SOURCE) {
-            System.out.println("RETURN NEW LOCAL MIXER");
+        	logger.debug("RETURN NEW LOCAL MIXER");
             return new LocalMixer(endpoint, connection);
         } else if (type == type.AUDIO_SINK) {
             return new LocalSplitter(endpoint, connection);

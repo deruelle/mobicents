@@ -18,21 +18,20 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public interface Codec {
-    public final static AudioFormat LINEAR_AUDIO = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN,
-            AudioFormat.SIGNED);
-    public final static AudioFormat PCMA = new AudioFormat(
-            AudioFormat.ALAW, 8000, 8, 1);    
-    public final static AudioFormat PCMU = new AudioFormat(
-            AudioFormat.ULAW, 8000, 8, 1);
-    
-    public Format[] getSupportedInputFormats();
-    public Format[] getSupportedOutputFormats(Format fmt);
-    
-    public byte[] process(byte[] media);
+	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+	public final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+	public final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+
+	public final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+
+	public Format[] getSupportedInputFormats();
+
+	public Format[] getSupportedOutputFormats(Format fmt);
+
+	public byte[] process(byte[] media);
 }

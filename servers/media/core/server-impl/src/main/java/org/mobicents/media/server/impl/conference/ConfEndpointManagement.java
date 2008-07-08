@@ -44,6 +44,7 @@ public class ConfEndpointManagement extends EndpointManagement
 			clone.setPortRange(this.getPortRange());
 			clone.setPCMA(this.getPCMA());
 			clone.setPCMU(this.getPCMU());
+			clone.setSpeex(this.getSpeex());
 			clone.setDTMF(this.getDTMF());
 		} catch (Exception ex) {
 			logger.error("ConfEndpointManagement clonning failed ", ex);
