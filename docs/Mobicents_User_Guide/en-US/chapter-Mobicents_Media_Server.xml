@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<chapter
+	id="chapter-Mobicents_Media_Server">
+	<title>Mobicents Media Server</title>
+	<para></para>
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-Mobicents_Media_Server.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-Mobicents_Media_Server_Architecture.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-MMS_Configuration.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-MMS_Control_Protocols.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-MMS_Control_API.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-MMS_Event Packages.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-MMS_Demonstration_Example.xml" />
+</chapter>
+

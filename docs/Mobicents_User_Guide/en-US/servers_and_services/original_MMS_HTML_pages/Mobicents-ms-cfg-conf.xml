@@ -1,0 +1,151 @@
+<para>
+  <emphasis role="strong">4.4&nbsp;Confere</emphasis><emphasis role="strong">nc</emphasis><emphasis role="strong">e bridge endpoint.</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Media server should be able to establish several connections
+  between the endpoint and the packet networks, or between the
+  endpoint and other endpoints in the same gateway.&nbsp; The signals
+  originating from these connections shall be mixed according to the
+  connection &quot;mode&quot;, as specified later in this document.
+  The precise number of connections that an endpoint support is a
+  characteristic of the gateway, and may in fact vary according with
+  the allocation of resource within the gateway.
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.4.1&nbsp;Configuration.</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  The configurable attributes of the announcment player are as
+  follows:&nbsp;
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      <emphasis role="strong">JndiName</emphasis> - The JNDI name under
+      which endpoint&nbsp;is to&nbsp;be bound.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">BindAddress</emphasis> - The IP address to
+      which this endpoint will be bound.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">Jitter</emphasis> - The size of jitter
+      buffer in milliseconds.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PacketizationPeriod</emphasis> - the period
+      of media stream packetization in milliseconds.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PCMA</emphasis> - enable or disable G711
+      (A-law) codec support.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">PCMU</emphasis> - enable or disable G711
+      (U-law) codec support.
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.4.2 Supported RTP formats</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Endpoint is able to&nbsp;receive the follwing RTP media
+  &nbsp;types:&nbsp;
+</para>
+<para>
+  <emphasis role="strong">Media type</emphasis>
+</para>
+<para>
+  <emphasis role="strong">Payload number</emphasis>
+</para>
+<para>
+  Audio: G711 (A-law) 8bit, 8kHz
+</para>
+<para>
+  8
+</para>
+<para>
+  Audio: G711 (U-law) 8bit, 8kHz
+</para>
+<para>
+  0
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.4.3 DTMF Configuration.</emphasis>
+</para>
+<para>
+  The DTMF configuration is determinted by DTMF attribute. The
+  properties are as follows:
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      <emphasis role="strong">detector.mode.</emphasis> Configures DTMF
+      detector mode. Possible values are AUTO, INBAND and RFC2833.
+    </para>
+  </listitem>
+  <listitem>
+    <para>
+      <emphasis role="strong">dtmf.payload.</emphasis> Configures the
+      payload number if RFC2833 mode is specified
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  &nbsp;
+</para>
+<para>
+  <emphasis role="strong">4.4.4 Supported packages</emphasis>
+</para>
+<para>
+  &nbsp;
+</para>
+<para>
+  Supported packages are as follows:&nbsp;
+</para>
+<itemizedlist>
+  <listitem>
+    <para>
+      org.mobicents.media.server.spi.events.Basic
+    </para>
+  </listitem>
+</itemizedlist>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-media-server">TOC</ulink>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-cfg-prelay">Previous</ulink>
+</para>
+<para>
+  <ulink url="/group/mobicents-public/web/mobicents-ms-pckg-ann">Next</ulink>
+</para>
+

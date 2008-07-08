@@ -1,0 +1,55 @@
+<p><font style="font-family: courier new,monospace;" size="6"><b>2.1 Writing and running tests against MMS</b></font></p>
+<p><font style="font-family: courier new,monospace;" size="6"><b>&nbsp;&nbsp;</b></font></p>
+<p><font style="font-family: courier new,monospace;" size="6"><font size="2"><font face="arial,sans-serif">&nbsp;As platform became rich with functions and capabilities it became clear that it requires also a lot of man power to sustain its functionality. To help us achieve as highest availability and stability we developed tests/<br>
+</font></font></font></p>
+<p><font style="font-family: courier new,monospace;" size="6"><font size="2"><font face="arial,sans-serif">MMS has two different set of tests:</font></font></font></p>
+<ul>
+<li><font style="font-family: courier new,monospace;" size="6"><font size="2"><font face="arial,sans-serif">incontainer tests - tests that require setup of full container, same JVM as MMS</font></font></font></li>
+<li><font style="font-family: courier new,monospace;" size="6"><font size="2"><font face="arial,sans-serif">components tests - regular junit tests for components that not require MMS to be in running state</font></font><b>&nbsp;</b></font></li>
+</ul>
+<p><font style="font-family: courier new,monospace;" size="6"><font size="2"><font face="arial,sans-serif">Test in both cases are driven by maven plugins - as whole build&nbsp; depends on maven. However in case of incontainer tests its different - this module is not enabled. This default setup is due to requirement of incontainer test. In future we will make effort to automate whole process without any need to modify poms. Incontainer tests require MMS to be deployed in jboss. Despite availability of "cargo" plugin we were unsuccessfull on integrating both test types in one module due to "cactus" for m2, beeing still in alpha state.</font></font></font><br>
+<font style="font-family: courier new,monospace;" size="6"><b> </b></font><font size="2">Incontainer tests reside is separate module as they require 3rd party libraries and framework to act. It can be found int <b>trunk/servers/media/tests</b>&nbsp;</font></p>
+<p><font size="2">&nbsp;</font></p>
+<p><font size="2"><font size="4"><b>2.1.1. Writing incontainer tests</b></font></font></p>
+<p><font size="2"><font size="4"><b>&nbsp;</b></font> This is fairly easy. We use cactus to run tests within contianer. Here are basic steps to acomplish :</font></p>
+<p><font size="2">&nbsp;</font></p>
+<ul>
+<li><font size="2">create apropriate pacakge&nbsp; in&nbsp; trunk/servers/media/tests/src/main/java</font></li>
+<li><font size="2">create regular junit test case - but extends&nbsp; org.apache.cactus.ServletTestCase.</font></li>
+<li><font size="2">create testXXX methods, setUp, tearDown, etc - just as in regular test case - but keep in mind, it runs within container, so all local container resources are available - like JNDI entries, envirment properties</font></li>
+<li><font size="2">make public static Test suite() method return instance of </font><font size="2">org.apache.cactus.ServletTestSuite object.&nbsp;</font></li>
+</ul>
+<p><font size="2"></font></p>
+<p><font size="4">2.1.2. Writing regular tests</font></p>
+<p><font size="4"><font size="2"><font face="arial,sans-serif">This is straightforward as those tests are regular junit tests, run with surefire plugin.</font></font></font></p>
+<p><font size="4"><font size="2"><font face="arial,sans-serif">&nbsp;</font></font></font></p>
+<p><font size="4"><font size="2"><font face="arial,sans-serif">&nbsp;</font></font></font></p>
+<p><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4">2.1.3. Running incontainer tests</font></font></font></font></p>
+<p><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">As mentioned running those tests needs a little bit of setup. Here they are:</font></font></font></font></font></p>
+<ul>
+<li><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">deploy MMS with mvn install command invoked from trunk/server/media</font></font></font></font></font></li>
+<li><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">change directory to tests (its a mvn module)</font></font></font></font></font></li>
+<li><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">set proper container home and proper containerId (see cargo reference manual) in pom.xml&nbsp;</font></font></font></font></font></li>
+</ul>
+<span>&nbsp;&nbsp; &nbsp;</span><span>&nbsp;&nbsp; &nbsp;</span><span>&nbsp;&nbsp; &nbsp;</span><span>&nbsp;&nbsp; &nbsp;</span><span>&nbsp;&nbsp; &nbsp;</span>&lt;container&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;containerId&gt;jboss42x&lt;/containerId&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;home&gt;D:\java\servers\jboss-4.2.2.GA&lt;/home&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/container&gt;<br>
+<ul>
+<li><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">simply do mvn install <b>- </b>this will create war file, deploy it, run container, run tests</font></font></font></font></font></li>
+<li><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2">do mvn clean to remove tests war from container.</font></font></font></font></font></li>
+</ul>
+<p><font size="4"><font size="2"><font face="arial,sans-serif"><font size="4"><font size="2"> </font></font></font></font></font></p>
+<p>In future incotnainer run should be simpler, without need of any configuration. However please keep in mind that there are plans to separate MMS entirely from container</p>
+<p><br>
+</p>
+<p><font size="4">2.1.4. Running regular tests</font></p>
+<p><font size="4"><font size="2">Those test are usually run while MMS is beeing build, however it is possible to run them on demand.</font></font></p>
+<p><font size="4"><font size="2">Simply move to trunk/servers/media/jar and type mvn test&nbsp;</font>&nbsp;</font></p>
+<p><font size="4">&nbsp;</font></p>
+<p><font size="4"><font size="2"><a href="/group/mobicents-public/web/mobicents-media-server">TOC</a></font></font><b><font size="4">&nbsp;</font></b></p>
+<p><font size="4"><font size="2"><a href="/group/mobicents-public/web/mobicents-ms-binary">Previous</a></font>&nbsp;</font></p>
+<p><font size="4"><font size="2"><a href="/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">Next</a></font>&nbsp;</font></p>
+<p><font size="4">&nbsp;</font><br>
+</p>
+<wbr>
