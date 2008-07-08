@@ -57,6 +57,11 @@ public class DTMFPackage implements Serializable, ResourceStateListener {
         Properties config = endpoint.getDefaultConfig(MediaResourceType.DTMF_DETECTOR);
         DTMFType detectorMode = DTMFType.valueOf(config.getProperty("detector.mode"));
         
+        String mask = (String) params.get("dtmf.mask");
+        if (mask != null) {
+            detector.setDtmfMask(mask);
+        }
+        
         if (detectorMode == DTMFType.INBAND) {
             if (detector.getState() != MediaResourceState.PREPARED) {
                 try {
