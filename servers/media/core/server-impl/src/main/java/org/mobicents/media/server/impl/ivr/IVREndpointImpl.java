@@ -74,33 +74,37 @@ public class IVREndpointImpl extends AnnEndpointImpl {
 		this.mediaType = mediaType;
 	}
 
-	/**
-	 * Starts detection DTMF on specified connection with specified parameters.
-	 * 
-	 * The DTMF detector is a resource of the endpoint created and initialized
-	 * for each connection. The DTMF detection procedure is actualy devided into
-	 * three steps. On first step inactive DTMF detector is created alongside
-	 * with connection using the DTMF format negotiated. The second step is used
-	 * to initialize detector with media stream. The last step is used to actual
-	 * start media analysis and events generation.
-	 * 
-	 * @param connectionID
-	 *            the identifier of the connection
-	 * @param params
-	 *            parameters for DTMF detector.
-	 * @param listener
-	 *            the call back inetrface.
-	 */
-	private void detectDTMF(String connectionID, String[] params, NotificationListener listener) {
-		if (dtmfPackage == null) {
-			dtmfPackage = new DTMFPackage(this);
-		}
-		try {
-			dtmfPackage.subscribe(EventID.DTMF, null, connectionID, listener);
-		} catch (Exception e) {
-			logger.error("Detection of DTMF failed", e);
-		}
-	}
+    /**
+     * Starts detection DTMF on specified connection with specified parameters.
+     * 
+     * The DTMF detector is a resource of the endpoint created and initialized 
+     * for each connection. The DTMF detection procedure is actualy devided into
+     * three steps. On first step inactive DTMF detector is created alongside 
+     * with connection using the DTMF format negotiated. The second step is used 
+     * to initialize detector with media stream. The last step is used to actual 
+     * start media analysis and events generation.
+     * 
+     * @param connectionID the identifier of the connection
+     * @param params parameters for DTMF detector.
+     * @param listener the call back inetrface.
+     */
+    private void detectDTMF(String connectionID, String[] params,
+            NotificationListener listener) {
+        if (dtmfPackage == null) {
+            dtmfPackage = new DTMFPackage(this);
+        }
+        
+        HashMap parms = new HashMap();
+        if (params.length > 0) {
+            parms.put("dtmf.mask", params[0]);
+        }
+        
+        try {
+            dtmfPackage.subscribe(EventID.DTMF, parms, connectionID, listener);
+        } catch (Exception e) {
+            logger.error("Detection of DTMF failed", e);
+        }
+    }
 
 	private void testSpectra(String connectionID, NotificationListener listener) {
 		System.out.println("testing spectra");
