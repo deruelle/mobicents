@@ -1,0 +1,493 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN" "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">
+
+<sbb-jar>
+    <sbb id="vxml_document">
+        <description>VXML Document interpreter root SBB</description>
+        <sbb-name>DocumentSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>DocumentSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>FormSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>FormSbb</sbb-alias>
+        </sbb-ref>
+        <sbb-ref>
+            <sbb-name>MenuSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>MenuSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.DocumentSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>
+                        dialogs
+                    </cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>             
+                <cmp-field>
+                    <cmp-field-name>baseURI</cmp-field-name>
+                </cmp-field>             
+                <get-child-relation-method>
+                    <sbb-alias-ref>
+                        FormSbb
+                    </sbb-alias-ref>
+                    <get-child-relation-method-name>
+                        getFormSbb
+                    </get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>
+                    <sbb-alias-ref>
+                        MenuSbb
+                    </sbb-alias-ref>
+                    <get-child-relation-method-name>
+                        getMenuSbb
+                    </get-child-relation-method-name>
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.mobicents.media.server.vxml.VXMLDocument
+                </sbb-local-interface-name>                
+            </sbb-local-interface>
+        </sbb-classes>
+    </sbb>
+    
+    <sbb id="vxml_form">
+        <description>VXML Document interpreter form element</description>
+        <sbb-name>FormSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>FormSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>BlockSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>BlockSbb</sbb-alias>
+        </sbb-ref>
+
+        <sbb-ref>
+            <sbb-name>PromptSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>PromptSbb</sbb-alias>
+        </sbb-ref>
+
+        <sbb-ref>
+            <sbb-name>FieldSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>FieldSbb</sbb-alias>
+        </sbb-ref>
+
+        <sbb-ref>
+            <sbb-name>SubmitSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>SubmitSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.FormSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>index</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>variables</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>
+                    <sbb-alias-ref>BlockSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getBlockSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>
+                    <sbb-alias-ref>PromptSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getPromptSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>
+                    <sbb-alias-ref>FieldSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getFieldSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>
+                    <sbb-alias-ref>SubmitSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getSubmitSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.mobicents.media.server.vxml.VXMLDialog
+                </sbb-local-interface-name>                
+            </sbb-local-interface>
+        </sbb-classes> 
+    </sbb>
+
+    <sbb id="vxml_menu">
+        <description>VXML menu interpreter form element</description>
+        <sbb-name>MenuSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>MenuSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>PromptSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>PromptSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.MenuSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>
+                    <sbb-alias-ref>PromptSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getPromptSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>
+                    org.mobicents.media.server.vxml.VXMLDialog
+                </sbb-local-interface-name>                
+            </sbb-local-interface>
+        </sbb-classes> 
+    </sbb>
+    
+    <sbb id="vxml_block">
+        <description>VXML block element SBB</description>
+        <sbb-name>BlockSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>BlockSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>AudioSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>AudioSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.BlockSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>index</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>
+                    <sbb-alias-ref>AudioSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getAudioSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>                    
+                    org.mobicents.media.server.vxml.VXMLItem
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+        </sbb-classes>
+    </sbb>
+
+    <sbb id="vxml_field">
+        <description>VXML Field element SBB</description>
+        <sbb-name>FieldSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>FieldSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>PromptSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>PromptSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.FieldSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>index</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>
+                    <sbb-alias-ref>PromptSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getPromptSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>                    
+                    org.mobicents.media.server.vxml.VXMLField
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+        </sbb-classes>
+    </sbb>
+
+    <sbb id="vxml_submit">
+        <description>VXML Submit element SBB</description>
+        <sbb-name>SubmitSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>SubmitSbb</sbb-alias>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.SubmitSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>index</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>                    
+                    org.mobicents.media.server.vxml.VXMLItem
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+        </sbb-classes>
+    </sbb>
+    
+    <sbb id="vxml_prompt">
+        <description>VXML prompt element SBB</description>
+        <sbb-name>PromptSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>PromptSbb</sbb-alias>
+        
+        <sbb-ref>
+            <sbb-name>AudioSbb</sbb-name>
+            <sbb-vendor>org.mobicents</sbb-vendor>
+            <sbb-version>1.0</sbb-version>
+            <sbb-alias>AudioSbb</sbb-alias>
+        </sbb-ref>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.PromptSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>node</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>index</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>endpoint</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>root</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>inputValue</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>
+                    <sbb-alias-ref>AudioSbb</sbb-alias-ref>
+                        <get-child-relation-method-name>
+                            getAudioSbb
+                        </get-child-relation-method-name>                    
+                    <default-priority>0</default-priority>
+                </get-child-relation-method>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>                    
+                    org.mobicents.media.server.vxml.Prompt
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+        </sbb-classes>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>Dtmf</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.dtmf.DTMF</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>   
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>
+                    media_ratype
+                </resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>
+                    org.mobicents.media
+                </resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>
+                    1.0
+                </resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                slee/resources/media/1.0/acifactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>
+                    slee/resources/media/1.0/provider
+                </resource-adaptor-object-name>
+                <resource-adaptor-entity-link>
+                    LocalMs
+                </resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+        
+    </sbb>
+    
+    <sbb id="vxml_audio">
+        <description>audio element</description>
+        <sbb-name>AudioSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+        <sbb-alias>AudioSbb</sbb-alias>
+        
+        <sbb-classes>
+            <sbb-abstract-class>
+                <sbb-abstract-class-name>
+                    org.mobicents.media.server.vxml.sbb.AudioSbb
+                </sbb-abstract-class-name>
+                <cmp-field>
+                    <cmp-field-name>parent</cmp-field-name>
+                </cmp-field>
+            </sbb-abstract-class>
+            <sbb-local-interface>
+                <sbb-local-interface-name>                    
+                    org.mobicents.media.server.vxml.Audio
+                </sbb-local-interface-name>
+            </sbb-local-interface>
+        </sbb-classes>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>AnnouncementComplete</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.announcement.COMPLETE</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>    
+        
+        <resource-adaptor-type-binding>
+            <resource-adaptor-type-ref>
+                <resource-adaptor-type-name>
+                    media_ratype
+                </resource-adaptor-type-name>
+                <resource-adaptor-type-vendor>
+                    org.mobicents.media
+                </resource-adaptor-type-vendor>
+                <resource-adaptor-type-version>
+                    1.0
+                </resource-adaptor-type-version>
+            </resource-adaptor-type-ref>
+            <activity-context-interface-factory-name>
+                slee/resources/media/1.0/acifactory
+            </activity-context-interface-factory-name>
+            <resource-adaptor-entity-binding>
+                <resource-adaptor-object-name>
+                    slee/resources/media/1.0/provider
+                </resource-adaptor-object-name>
+                <resource-adaptor-entity-link>
+                    LocalMs
+                </resource-adaptor-entity-link>
+            </resource-adaptor-entity-binding>
+        </resource-adaptor-type-binding>
+    </sbb>
+    
+</sbb-jar>

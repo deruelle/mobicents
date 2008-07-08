@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <artifactId>mobicents-media-server-vxml</artifactId>
+        <groupId>org.mobicents.servers.media</groupId>
+        <version>1.0.0.BETA2-SNAPSHOT</version>
+    </parent>
+    
+    <artifactId>call-sbb</artifactId>
+    <name>Mobicents :: Examples :: ${pom.artifactId}</name>
+    
+    <dependencies>
+        <dependency>	
+            <artifactId>msc-ratype</artifactId>
+            <groupId>org.mobicents.servers.media</groupId>
+            <version>${pom.version}</version>
+        </dependency>	
+        <dependency>
+            <groupId>org.mobicents.resources</groupId>
+            <artifactId>sip-ra</artifactId>
+            <version>1.2.0.GA-SNAPSHOT</version>
+        </dependency>  
+        <dependency>
+            <artifactId>vxml-sbb</artifactId>
+            <groupId>org.mobicents.servers.media</groupId>
+            <version>1.0.0.BETA2-SNAPSHOT</version>
+        </dependency>
+    </dependencies>	  
+    
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>org/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>org/**</include>
+                </includes>
+            </resource>		
+        </resources>
+    </build>
+    
+</project>
