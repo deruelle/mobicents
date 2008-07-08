@@ -31,6 +31,8 @@
 	<properties>
 		<!-- PRESENCE SERVICE CONFIGURATION -->
 		<xdm.server.xcap.root>/mobicents</xdm.server.xcap.root>
+		<presence.server.notifier.presrules.auid>org.openmobilealliance.pres-rules</presence.server.notifier.presrules.auid>
+		<presence.server.notifier.presrules.documentName>pres-rules</presence.server.notifier.presrules.documentName>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
 		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>

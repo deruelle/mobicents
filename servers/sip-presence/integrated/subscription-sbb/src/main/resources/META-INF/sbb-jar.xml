@@ -97,6 +97,20 @@
 			</event-type-ref>
 		</event>
 		
+		<env-entry>
+			<description>The id of the app usage to be used to retrieve pres rules of a notifier, from the XDMS</description>
+			<env-entry-name>presRulesAUID</env-entry-name>
+			<env-entry-type>java.lang.String</env-entry-type>
+			<env-entry-value>${presence.server.notifier.presrules.auid}</env-entry-value>
+		</env-entry>
+                
+		<env-entry>
+			<description>The name of the document to be used to retrieve the pres rules of a notifier, from the XDMS</description>
+			<env-entry-name>presRulesDocumentName</env-entry-name>
+			<env-entry-type>java.lang.String</env-entry-type>
+			<env-entry-value>${presence.server.notifier.presrules.documentName}</env-entry-value>
+		</env-entry>
+        
         <resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>
 				<resource-adaptor-type-name>

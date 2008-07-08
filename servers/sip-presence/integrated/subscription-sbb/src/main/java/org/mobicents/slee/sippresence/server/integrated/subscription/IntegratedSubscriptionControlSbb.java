@@ -42,8 +42,10 @@ public abstract class IntegratedSubscriptionControlSbb extends SubscriptionContr
 	private static Logger logger = Logger.getLogger(IntegratedSubscriptionControlSbb.class);
 		
 	private AppUsageCacheResourceAdaptorSbbInterface appUsageCache;
-	private DataSourceSbbInterface dataSourceSbbInterface = null;
-	private DataSourceActivityContextInterfaceFactory dataSourceACIF = null;
+	private DataSourceSbbInterface dataSourceSbbInterface;
+	private DataSourceActivityContextInterfaceFactory dataSourceACIF;
+	private String presRulesAUID;
+	private String presRulesDocumentName;
 	
 	@Override
 	public void setSbbContext(SbbContext sbbContext) {
@@ -53,6 +55,8 @@ public abstract class IntegratedSubscriptionControlSbb extends SubscriptionContr
 			appUsageCache = (AppUsageCacheResourceAdaptorSbbInterface) context.lookup("slee/resources/xdm/appusagecache/sbbrainterface");
 			dataSourceSbbInterface = (DataSourceSbbInterface) context.lookup("slee/resources/xdm/datasource/sbbrainterface");
 			dataSourceACIF = (DataSourceActivityContextInterfaceFactory) context.lookup("slee/resources/xdm/datasource/1.0/acif");
+			presRulesAUID = (String) context.lookup("presRulesAUID");
+			presRulesDocumentName = (String) context.lookup("presRulesDocumentName");
 		} catch (NamingException e) {
 			logger.error("Can't set sbb context.", e);
 		}		
@@ -153,7 +157,7 @@ public abstract class IntegratedSubscriptionControlSbb extends SubscriptionContr
 			String eventId, int expires) {
 		
 		if (contains(PresenceSubscriptionControl.getEventPackages(),eventPackage)) {
-			PresenceSubscriptionControl.isSubscriberAuthorized(this, event, subscriber, notifier, eventPackage, eventId, expires);
+			PresenceSubscriptionControl.isSubscriberAuthorized(this, event, subscriber, notifier, eventPackage, eventId, expires,presRulesAUID,presRulesDocumentName);
 		}
 		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),eventPackage)) {
 			XcapDiffSubscriptionControl.isSubscriberAuthorized(this, event, subscriber, notifier, eventPackage, eventId, expires);
@@ -166,7 +170,7 @@ public abstract class IntegratedSubscriptionControlSbb extends SubscriptionContr
 	@Override
 	protected void removingSubscription(Subscription subscription) {
 		if (contains(PresenceSubscriptionControl.getEventPackages(),subscription.getSubscriptionKey().getEventPackage())) {
-			PresenceSubscriptionControl.removingSubscription(this, subscription);
+			PresenceSubscriptionControl.removingSubscription(this, subscription, presRulesAUID, presRulesDocumentName);
 		}
 		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),subscription.getSubscriptionKey().getEventPackage())) {
 			XcapDiffSubscriptionControl.removingSubscription(this, subscription);

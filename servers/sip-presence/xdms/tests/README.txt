@@ -1,4 +1,4 @@
-To run OpenXDM tests (after install of XDM SERVER):
+To run XDM tests (after install of XDM SERVER):
 
 mvn test
 

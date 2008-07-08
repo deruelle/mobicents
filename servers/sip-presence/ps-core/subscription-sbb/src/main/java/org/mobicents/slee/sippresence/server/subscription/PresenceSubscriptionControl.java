@@ -32,14 +32,13 @@ public class PresenceSubscriptionControl {
 
 	private static Logger logger = Logger.getLogger(PresenceSubscriptionControl.class);
 	private static final String[] eventPackages = {"presence"};
-	private static final boolean clientUAIsEyebeam = true;	
 	
 	public static String[] getEventPackages() {
 		return eventPackages;
 	}
 	
 	public static void isSubscriberAuthorized(PresenceSubscriptionControlSbbLocalObject sbb, RequestEvent event, String subscriber,
-			String notifier, String eventPackage, String eventId, int expires) {
+			String notifier, String eventPackage, String eventId, int expires, String presRulesAUID, String presRulesDocumentName) {
 		
 		// get current combined rule from cmp
 		Map combinedRules = sbb.getCombinedRules();
@@ -63,8 +62,8 @@ public class PresenceSubscriptionControl {
 			}
 		}
 		if (combinedRule == null) {
-			// get pres-rules doc on xdm (doc path depends on user agent) FIXME use user agent
-			DocumentSelector documentSelector = getDocumentSelector(notifier);
+			// get pres-rules doc on xdm 
+			DocumentSelector documentSelector = getDocumentSelector(notifier,presRulesAUID,presRulesDocumentName);
 			if (documentSelector == null) {
 				sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.FORBIDDEN);
 			}
@@ -84,7 +83,7 @@ public class PresenceSubscriptionControl {
 	
 	}
 	
-	public static void removingSubscription(PresenceSubscriptionControlSbbLocalObject sbb, Subscription subscription) {
+	public static void removingSubscription(PresenceSubscriptionControlSbbLocalObject sbb, Subscription subscription, String presRulesAUID, String presRulesDocumentName) {
 		// get combined rules cmp
 		Map combinedRules = sbb.getCombinedRules();
 		if (combinedRules != null) {
@@ -100,7 +99,7 @@ public class PresenceSubscriptionControl {
 					}
 				}
 				if (!subscriptionNeeded) {
-					DocumentSelector documentSelector = getDocumentSelector(subscription.getNotifier());
+					DocumentSelector documentSelector = getDocumentSelector(subscription.getNotifier(),presRulesAUID,presRulesDocumentName);
 					sbb.getXDMChildSbb().unsubscribeDocument(documentSelector);
 				}
 			}
@@ -285,28 +284,8 @@ public class PresenceSubscriptionControl {
 	 * @param user
 	 * @return
 	 */
-	private static DocumentSelector getDocumentSelector(String user) {
-		
-		if(clientUAIsEyebeam) {
-			String userName = null;
-			int i = user.indexOf('@');
-			if (i>0) {
-				userName = user.substring(0, i);
-				if (user.startsWith("sip:")) {
-					userName = userName.substring(4);
-				}
-			}
-			if (userName != null) {
-				return new DocumentSelector("org.openmobilealliance.pres-rules","users/"+userName,"pres-rules");
-			}
-			else {
-				return null;
-			}
-		}
-		else {
-			return new DocumentSelector("pres-rules","users/"+user,"index");
-		}
-		
+	private static DocumentSelector getDocumentSelector(String user, String presRulesAUID, String presRulesDocumentName) {
+		return new DocumentSelector(presRulesAUID,"users/"+user,presRulesDocumentName);
 	}
 	
 	/**
@@ -315,13 +294,7 @@ public class PresenceSubscriptionControl {
 	 * @return
 	 */
 	private static String getUser(DocumentSelector documentSelector) {
-		
-		if(clientUAIsEyebeam) {
-			return "sip:" + documentSelector.getDocumentParent().substring("users/".length()) + "@"+System.getProperty("bind.address","127.0.0.1");
-		}
-		else {
-			return documentSelector.getDocumentParent().substring("users/".length());
-		}
+		return documentSelector.getDocumentParent().substring("users/".length());
 	}
 	
 	

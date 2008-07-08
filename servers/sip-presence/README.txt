@@ -8,12 +8,11 @@ This module is a full SIP Presence Service, including servers:
 
 ----> REQUIREMENTS:
 
-The XDMS depends on the Mobicents Http-Servlet RA and the PS
-depends on the Mobicents SIP and Persistence RAs. Of course,
-you need to deploy those RAs prior to the installation of  
+The XDMS and PS depends on the Mobicents Http-Servlet and SIP RAs.
+Of course, you need to deploy those RAs prior to the installation of  
 the servers.
 
-Important, at the moment the XDM is not compatible with JDK 1.6!
+IMPORTANT, at the moment the XDM is not compatible with JDK 1.6!
 
 ----> CONFIGURATION:
 
@@ -28,16 +27,19 @@ directory. Note that if you change this value then you need to
 also change the servlet name of the Mobicents Http Servlet RA
 (consult its documentation for how to do this).
 
-- XCAP Aware User Agent: The PS server calculates pres-rules
-XCAP uris of users, by default, using a non standard way, but
-compatible with Counterpath Eyebeam. You can change to the 
-standards recommended way in the hard coded field
- "clientUAIsEyebeam" of PresenceSubscriptionControlSbb 
-(in ps-core/subscription-sbb/src/main/java/..). This is a
-temporary solution due to a feature, in current jain-sip stack,
-that removes invalid User-Agent headers (seems most UAs are
-failing here) of SIP REQUESTS. In the future this configuration
-will not be needed.
+- Presence Server's Notifiers PresRules AUID : The id of the
+app usage to be used, by the Presence Server, to retrieve
+pres rules of a notifier, from the XDMS. You can change the
+default value (OMA Pres Rules) using the property
+${presence.server.notifier.presrules.auid} in the pom.xml on 
+this directory, before building the server(s).
+
+- Presence Server's Notifiers PresRules Document Name : The
+name of the document to be used, by the Presence Server, to
+retrieve the pres rules of a notifier, from the XDMS. You
+can change the default value (pres-rules) using the
+property ${presence.server.notifier.presrules.documentName} in the
+pom.xml on this directory, before building the server(s).
 
 ----> INSTALL:
 

@@ -3,9 +3,11 @@ package org.mobicents.slee.sippresence.server.subscription;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.naming.NamingException;
 import javax.sip.RequestEvent;
 import javax.sip.header.HeaderFactory;
 import javax.slee.ChildRelation;
+import javax.slee.SbbContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -22,6 +24,9 @@ import org.openxdm.xcap.common.key.XcapUriKey;
 import org.openxdm.xcap.common.uri.AttributeSelector;
 import org.openxdm.xcap.common.uri.DocumentSelector;
 import org.openxdm.xcap.common.uri.NodeSelector;
+import org.openxdm.xcap.server.slee.resource.appusagecache.AppUsageCacheResourceAdaptorSbbInterface;
+import org.openxdm.xcap.server.slee.resource.datasource.DataSourceActivityContextInterfaceFactory;
+import org.openxdm.xcap.server.slee.resource.datasource.DataSourceSbbInterface;
 
 /**
  * Subscription control sbb for a SIP Presence Server.
@@ -31,6 +36,21 @@ import org.openxdm.xcap.common.uri.NodeSelector;
 public abstract class PresenceSubscriptionControlSbb extends SubscriptionControlSbb implements PresenceSubscriptionControlSbbLocalObject {
 
 	private static Logger logger = Logger.getLogger(PresenceSubscriptionControlSbb.class);
+	
+	private String presRulesAUID;
+	private String presRulesDocumentName;
+	
+	@Override
+	public void setSbbContext(SbbContext sbbContext) {
+		// TODO Auto-generated method stub
+		super.setSbbContext(sbbContext);
+		try {
+			presRulesAUID = (String) context.lookup("presRulesAUID");
+			presRulesDocumentName = (String) context.lookup("presRulesDocumentName");
+		} catch (NamingException e) {
+			logger.error("Can't set sbb context.", e);
+		}		
+	}
 	
 	// --- PUBLICATION CHILD SBB
 	public abstract ChildRelation getPublicationControlChildRelation();
@@ -114,7 +134,7 @@ public abstract class PresenceSubscriptionControlSbb extends SubscriptionControl
 	protected void isSubscriberAuthorized(RequestEvent event, String subscriber,
 			String notifier, String eventPackage, String eventId, int expires) {
 		
-		PresenceSubscriptionControl.isSubscriberAuthorized(this, event, subscriber, notifier, eventPackage, eventId, expires);
+		PresenceSubscriptionControl.isSubscriberAuthorized(this, event, subscriber, notifier, eventPackage, eventId, expires, presRulesAUID, presRulesDocumentName);
 	}
 	
 	/**
@@ -128,7 +148,7 @@ public abstract class PresenceSubscriptionControlSbb extends SubscriptionControl
 	
 	@Override
 	protected void removingSubscription(Subscription subscription) {
-		PresenceSubscriptionControl.removingSubscription(this, subscription);
+		PresenceSubscriptionControl.removingSubscription(this, subscription, presRulesAUID, presRulesDocumentName);
 	}
 	
 	/**
