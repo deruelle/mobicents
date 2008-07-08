@@ -152,13 +152,13 @@ Total time: 5 seconds</screen>
 				</systemitem> to open the Management Console. Click on <guimenuitem>Deployable Units</guimenuitem> in the Main Menu; this will open the <guilabel>Deployable Units</guilabel> main view, where you will see a list of currently-deployed units under the <guimenuitem>Browse</guimenuitem> tab, which will read <literal>No deployable unit found</literal> at first. Two other tabs provide the possibility of searching for and installing deployable units. Click on the <guimenuitem>Install</guimenuitem> tab, and you will see a <guilabel>Package file:</guilabel> prompt and a text-entry field in which the name of the deployable unit file you want to install will be listed. <remark>But first we must locate the correct deployable unit file, so click the <guibutton>Browse</guibutton> button to the right of the text-entry field.</remark>
 			</para>
 			<figure
-				id="figure-top-deploying-ss-install.png">
+				id="figure-top-DeployingRAs-ss-Install.png">
 				<title>The Install tab of the Deployable Units view in the Management Console</title>
 				<mediaobject>
 					<imageobject>
 						<imagedata
 							align="center"
-							fileref="images/top-deploying-ss-install.png"
+							fileref="images/top-DeployingRAs-ss-Install.png"
 							format="PNG"/>
 					</imageobject>
 				</mediaobject>

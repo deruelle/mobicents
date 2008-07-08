@@ -23,12 +23,12 @@
 		<figure>
 			<title>The Class Diagram for the HTTP Client Resource Adapter</title>
 			<mediaobject
-				id="mediaobj-ras-http-client-orig-http-client-ra.png">
+				id="mediaobj-orig-ras-HTTPClient-HTTPClientRA.png">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/ras-http-client-orig-http-client-ra.png"
+						fileref="images/orig-ras-HTTPClient-HTTPClientRA.png"
 						format="PNG" />
 				</imageobject>
 			</mediaobject>

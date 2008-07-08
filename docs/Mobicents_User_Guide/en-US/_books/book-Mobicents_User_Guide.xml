@@ -18,9 +18,6 @@
 		href="chapter-Running_Mobicents.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
-		href="chapter-Working_with_the_Mobicents_Management_Console.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
-	<xi:include
 		href="chapter-Resource_Adapters.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include

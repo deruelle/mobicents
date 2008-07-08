@@ -127,15 +127,15 @@
 			</listitem>
 		</itemizedlist>
 		<figure
-			id="figure-sas-orig-dia-XDM_Functional_Architecture.jpg">
+			id="figure-orig-sas-XDMS-dia-XDMFunctionalArchitecture.jpg">
 			<title>The Mobicents XML Document Management Server</title>
 			<mediaobject
-				id="mediaobj-sas-orig-dia-XDM_Functional_Architecture.jpg">
+				id="mediaobj-orig-sas-XDMS-dia-XDMFunctionalArchitecture.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/sas-orig-dia-XDM_Functional_Architecture.jpg"
+						fileref="images/orig-sas-XDMS-dia-XDMFunctionalArchitecture.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -178,15 +178,15 @@
 			<para>The XDM Server is built on top of the Mobicents JAIN SLEE container. This figure depicts the architecture of the XDM Server implementation.</para>
 		</formalpara>
 		<figure
-			id="figure-sas-orig-dia-XDMS_Implementation.jpg">
+			id="figure-orig-sas-XDMS-dia-XDMSImplementation.jpg">
 			<title>Mobicents XML Document Management Server</title>
 			<mediaobject
-				id="mediaobj-sas-orig-dia-XDMS_Implementation.jpg">
+				id="mediaobj-orig-sas-XDMS-dia-XDMSImplementation.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/sas-orig-dia-XDMS_Implementation.jpg"
+						fileref="images/orig-sas-XDMS-dia-XDMSImplementation.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>

@@ -101,14 +101,14 @@
 			<para></para>
 		</formalpara>
 		<figure
-			id="figure-sas-orig-dia-PS_Functional_Architecture.jpg">
+			id="figure-orig-sas-SIPPresenceServer-dia-PSFunctionalArchitecture.jpg">
 			<title>The Mobicents SIP Presence Server</title>
 			<mediaobject
-				id="mediaobj-sas-orig-dia-PS_Functional_Architecture.jpg">
+				id="mediaobj-orig-sas-SIPPresenceServer-dia-PSFunctionalArchitecture.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/sas-orig-dia-PS_Functional_Architecture.jpg"
+						fileref="images/orig-sas-SIPPresenceServer-dia-PSFunctionalArchitecture.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
@@ -147,15 +147,15 @@
 			<para></para>
 		</formalpara>
 		<figure
-			id="figure-sas-orig-dia-PS_Implementation.jpg">
+			id="figure-orig-sas-SIPPresenceServer-dia-PSImplementation.jpg">
 			<title>Implementation Architecture of the Mobicents SIP Presence Server</title>
 			<mediaobject
-				id="mediaobj-sas-orig-dia-PS_Implementation.jpg">
+				id="mediaobj-orig-sas-SIPPresenceServer-dia-PSImplementation.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/sas-orig-dia-PS_Implementation.jpg"
+						fileref="images/orig-sas-SIPPresenceServer-dia-PSImplementation.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>

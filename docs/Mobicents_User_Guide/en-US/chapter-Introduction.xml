@@ -9,11 +9,11 @@
 		<title>Introduction to the Mobicents Converged Application Server</title>
 		<para>The Mobicents Communication Platform is the best architecture for creating, deploying and managing services and applications integrating voice, video and data across a range of IP and communications networks. The Mobicents Communication Platform drives convergence by leveraging the following four core capabilities.</para>
 		<mediaobject
-			id="mediaobj-top-orig-dia-mobicents-high-level-diagram.gif">
+			id="mediaobj-orig-top-Introduction-dia-MobicentsHighLevelDiagram.gif">
 			<imageobject>
 				<imagedata
 					align="center"
-					fileref="images/top-orig-dia-mobicents-high-level-diagram.gif"
+					fileref="images/orig-top-Introduction-dia-MobicentsHighLevelDiagram.gif"
 					format="GIF" />
 			</imageobject>
 		</mediaobject>

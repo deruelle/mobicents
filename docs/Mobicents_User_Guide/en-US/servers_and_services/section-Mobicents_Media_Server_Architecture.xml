@@ -27,12 +27,14 @@ This hi-degree of modularity benefits the application developer in several ways.
 			<mediaobject>
 				<imageobject>
 					<imagedata
-						align="center"
-						fileref="images/sas-orig-dia-ms-general.jpg"
+						align="left"
+						fileref="images/orig-sas-MMSArchitecture-MSGeneral.jpg"
 						format="JPG"/>
 				</imageobject>
 			</mediaobject>
 		</figure>
+		<!--<remark>
+		Silas: This section removed from the text because JMF has been removed in favor of a custom Player and Recorder implementation.
 		<para>The components that are involved in media processing or endpoints are implemented with <acronym>JMF</acronym>, the Java Media Framework. JMF provides a platform-neutral framework for displaying time-sensitive media. The <acronym>JMF</acronym> <acronym>API</acronym>:</para>
 		<itemizedlist>
 			<listitem>
@@ -45,8 +47,8 @@ This hi-degree of modularity benefits the application developer in several ways.
 				<para>Provides an event model for asynchnronous communication between JMF and applications or applets</para>
 			</listitem>
 		</itemizedlist>
-		<para>The <acronym>JMF</acronym> architecture allows advanced developers nto create and integrate new types of controllers and data sources. The <acronym>JMF</acronym> <acronym>API</acronym> declares abstract interfaces which are used for handling new media sources and sinks such as audio and video files, <acronym>PSTN</acronym> cards, webcams, etc.</para>
-		<para>The Media Server architecture assumes that call control intelligence is outside of the Media Server and handled by an external entity. The Mebia Server assumes that call controllers will use control procedures such as <acronym>MGCP</acronym>, Mecago or <acronym>MSML</acronym>, among others. Each specific control module can be plugged in directly to the server as a standard <acronym>SLEE</acronym> deployable unit. The usage of a <acronym>SLEE</acronym> container for the implementation of the control protocol-specific communication logic provides simple deployment and also the easy deployment of such control modules. The developer will not have to mess with low-level transaction and state management details, multi-threading, connection-pooling and other similar complex, low-level <acronym>API</acronym>s.</para>
+		<para>The <acronym>JMF</acronym> architecture allows advanced developers nto create and integrate new types of controllers and data sources. The <acronym>JMF</acronym> <acronym>API</acronym> declares abstract interfaces which are used for handling new media sources and sinks such as audio and video files, <acronym>PSTN</acronym> cards, webcams, etc.</para></remark>-->
+		<para>The Media Server architecture assumes that call control intelligence is outside of the Media Server and handled by an external entity. The Media Server assumes that call controllers will use control procedures such as <acronym>MGCP</acronym>, Mecago or <acronym>MSML</acronym>, among others. Each specific control module can be plugged in directly to the server as a standard <acronym>SLEE</acronym> deployable unit. The usage of a <acronym>SLEE</acronym> container for the implementation of the control protocol-specific communication logic provides simple deployment and also the easy deployment of such control modules. The developer will not have to mess with low-level transaction and state management details, multi-threading, connection-pooling and other similar complex, low-level <acronym>API</acronym>s.</para>
 		<note>
 			<para>The Mobicents Media Server uses <acronym>SLEE</acronym> for implementing its own communication capabilities. The <acronym>SLEE</acronym> container doesn't serve here as a call controller.</para>
 		</note>
@@ -78,9 +80,9 @@ The modules deployed under SLEE control interact with Media Server SPI though Me
 			id="mediaobj-ms-deplyment.gif">
 			<imageobject>
 				<imagedata
-					align="center"
+					align="left"
 					fileref="images/ms-deplyment.gif"
-					format="GIF" />
+					format="GIF"/>
 			</imageobject>
 			<caption>
 				<para>Typical Deployment Scenario</para>
@@ -202,7 +204,8 @@ The SPI layer is an abstraction that endpoint providers must implement to enable
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/sas-orig-dia-endpoint.png"
+						width="700"
+						fileref="images/orig-sas-MMSArchictecture-dia-Endpoint.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>

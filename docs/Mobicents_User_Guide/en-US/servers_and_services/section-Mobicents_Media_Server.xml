@@ -147,6 +147,7 @@
 				url="http://subversion.tigris.org/">Subversion Project website</ulink> and read
     <ulink
 				url="http://svnbook.red-bean.com/">Version Control with Subversion</ulink>.</para>
+		<remark>TBD: This needs to be updated to reflect the current directory structure. Also the current process to build from source needs to be changed.</remark>
 		<formalpara
 			id="fpara-Subversion_Source_Code_Repository_Structure">
 			<title>Subversion Source Code Repository Structure</title>

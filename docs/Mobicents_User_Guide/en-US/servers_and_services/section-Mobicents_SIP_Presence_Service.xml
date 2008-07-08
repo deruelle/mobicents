@@ -10,15 +10,15 @@
 		<title>Architecture of the Mobicents SIP Presence Service</title>
 		<para>The Mobicents SIP Presence Service is comprised of three separate but interrelated servers.</para>
 		<figure
-			id="figure-sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg">
+			id="figure-orig-sas-SIPPresService-dia-SIPPresServiceArchitecture.jpg">
 			<title>The Mobicents SIP Presence Service</title>
 			<mediaobject
-				id="mediaobj-sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg">
+				id="mediaobj-orig-sas-SIPPresService-dia-SIPPresServiceArchitecture.jpg">
 				<imageobject>
 					<imagedata
 						align="center"
 						width="700"
-						fileref="images/sas-orig-dia-MobicentsSipPresenceServerArchitecture.jpg"
+						fileref="images/orig-sas-SIPPresService-dia-SIPPresServiceArchitecture.jpg"
 						format="JPG" />
 				</imageobject>
 				<caption>
