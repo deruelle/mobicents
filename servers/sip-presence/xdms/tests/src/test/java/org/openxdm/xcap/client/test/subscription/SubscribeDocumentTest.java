@@ -2,6 +2,8 @@ package org.openxdm.xcap.client.test.subscription;
 
 import static org.junit.Assert.assertTrue;
 
+import gov.nist.javax.sip.Utils;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.text.ParseException;
@@ -157,9 +159,10 @@ public class SubscribeDocumentTest implements SipListener {
 		
 		// let's wait for test to succeed or timeout
 		synchronized (this) {
-			//object = new Object();
 			this.wait(15000);
 		}
+		
+		
 		
 		assertTrue("Test timer expired (15 secs)",passed);
 	}
@@ -169,7 +172,7 @@ public class SubscribeDocumentTest implements SipListener {
 			// create >From Header
 			Address address = addressFactory.createAddress(subscriberSipUri);
 			FromHeader fromHeader = headerFactory.createFromHeader(
-					address, "12345");
+					address, Utils.generateTag());
 
 			// create To Header
 			ToHeader toHeader = headerFactory.createToHeader(address,
@@ -178,7 +181,7 @@ public class SubscribeDocumentTest implements SipListener {
 			// Create ViaHeaders
 			ArrayList viaHeaders = new ArrayList();
 			int port = sipProvider.getListeningPoint(transport).getPort();
-			ViaHeader viaHeader = headerFactory.createViaHeader("127.0.0.1",
+			ViaHeader viaHeader = headerFactory.createViaHeader(ServerConfiguration.SERVER_HOST,
 					port, transport, null);
 			viaHeaders.add(viaHeader);
 
@@ -210,7 +213,7 @@ public class SubscribeDocumentTest implements SipListener {
 
 			// add route
 			request.addHeader(headerFactory.createRouteHeader(addressFactory
-					.createAddress("<sip:127.0.0.1:" + notifierPort
+					.createAddress("<sip:"+ServerConfiguration.SERVER_HOST+":" + notifierPort
 							+ ";transport=" + transport + ";lr>")));
 						
 			// Create an event header for the subscription.
@@ -485,7 +488,7 @@ public class SubscribeDocumentTest implements SipListener {
 			addressFactory = sipFactory.createAddressFactory();
 			messageFactory = sipFactory.createMessageFactory();
 			
-			this.listeningPoint = sipStack.createListeningPoint("127.0.0.1", 6060,
+			this.listeningPoint = sipStack.createListeningPoint(ServerConfiguration.SERVER_HOST, 6060,
 					transport);
 			sipProvider = sipStack.createSipProvider(listeningPoint);
 			sipProvider.addSipListener(this);
