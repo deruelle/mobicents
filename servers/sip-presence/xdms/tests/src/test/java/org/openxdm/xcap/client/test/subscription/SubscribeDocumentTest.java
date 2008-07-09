@@ -33,6 +33,7 @@ import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
 import javax.sip.header.FromHeader;
+import javax.sip.header.Header;
 import javax.sip.header.HeaderFactory;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.SubscriptionStateHeader;
@@ -48,6 +49,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openxdm.xcap.client.Response;
@@ -101,6 +103,7 @@ public class SubscribeDocumentTest implements SipListener {
 	protected ListeningPoint listeningPoint;
 	
 	protected Dialog subscriberDialog;
+	protected String subscriberToTag; 
 	
 	protected String newEtag;
 	protected String previousEtag;
@@ -227,7 +230,7 @@ public class SubscribeDocumentTest implements SipListener {
 
 			// save the dialog
 			this.subscriberDialog = clientTransaction.getDialog();
-
+			
 			// send the request out.
 			clientTransaction.sendRequest();
 			
@@ -266,7 +269,7 @@ public class SubscribeDocumentTest implements SipListener {
 	private void processTest1Notify(RequestEvent requestEvent) throws JAXBException, ParseException, SipException, InvalidArgumentException {
 		DocumentType documentType = processNotify(requestEvent);
 		assertTrue("previous etag is set", documentType.getPreviousEtag() == null || documentType.getPreviousEtag().equals(""));	
-		assertTrue("new etag doesn't match one received in XCAP PUT response", documentType.getNewEtag() != null && documentType.getNewEtag().equals(newEtag));	
+		assertTrue("new etag ("+documentType.getNewEtag()+") doesn't match one received in XCAP PUT response ("+newEtag+")", documentType.getNewEtag() != null && documentType.getNewEtag().equals(newEtag));	
 	}
 
 	// ---- TEST 2
@@ -297,8 +300,8 @@ public class SubscribeDocumentTest implements SipListener {
 
 	private void processTest2Notify(RequestEvent requestEvent) throws ParseException, SipException, InvalidArgumentException, JAXBException {
 		DocumentType documentType = processNotify(requestEvent);
-		assertTrue("previous etag doesn't match one received in first XCAP PUT response", documentType.getPreviousEtag() != null && documentType.getPreviousEtag().equals(previousEtag));	
-		assertTrue("new etag doesn't match one received in second XCAP PUT response", documentType.getNewEtag() != null && documentType.getNewEtag().equals(newEtag));	
+		assertTrue("previous etag ("+documentType.getPreviousEtag()+") doesn't match one received in first XCAP PUT response ("+previousEtag+")", documentType.getPreviousEtag() != null && documentType.getPreviousEtag().equals(previousEtag));	
+		assertTrue("new etag ("+documentType.getNewEtag()+") doesn't match one received in XCAP PUT response ("+newEtag+")", documentType.getNewEtag() != null && documentType.getNewEtag().equals(newEtag));	
 	}
 	
 	// ---- TEST 3
@@ -338,6 +341,11 @@ public class SubscribeDocumentTest implements SipListener {
 		
 		Request request = this.subscriberDialog
 				.createRequest(Request.SUBSCRIBE);
+		ToHeader toHeader = (ToHeader)request.getHeader(ToHeader.NAME);
+		if (toHeader.getTag() == null) {
+			toHeader.setTag(subscriberToTag);			
+		}
+		
 		// Create a new MaxForwardsHeader
 		request.setHeader(headerFactory
 				.createMaxForwardsHeader(70));
@@ -352,6 +360,16 @@ public class SubscribeDocumentTest implements SipListener {
 	}
 	
 	private void processTest4Notify(RequestEvent requestEvent) throws ParseException, SipException, InvalidArgumentException, JAXBException {
+		
+		Request notify = requestEvent.getRequest();
+		
+		javax.sip.message.Response response = messageFactory.createResponse(200, notify);
+		// SHOULD add a Contact
+		ContactHeader contact = (ContactHeader) contactHeader.clone();
+		((SipURI)contact.getAddress().getURI()).setParameter( "id", "sub" );
+		response.addHeader( contact );
+		requestEvent.getServerTransaction().sendResponse(response);	
+		
 		SubscriptionStateHeader subscriptionState = (SubscriptionStateHeader) requestEvent.getRequest().getHeader(SubscriptionStateHeader.NAME);
 		assertTrue("subscription didn't terminate", subscriptionState.getState().equalsIgnoreCase(SubscriptionStateHeader.TERMINATED));
 					
@@ -394,12 +412,13 @@ public class SubscribeDocumentTest implements SipListener {
 					break;	
 
 				default:
-					throw new RuntimeException("unknown test");
+					System.err.println("unknown test");
+					setTestResult(false);
 				}
 			}
 			catch(Exception e) {
-				logger.error(e);
-				throw new RuntimeException(e.getMessage());
+				e.printStackTrace();
+				setTestResult(false);
 			}
 			
 		}
@@ -407,9 +426,12 @@ public class SubscribeDocumentTest implements SipListener {
 
 	public void processResponse(ResponseEvent responseReceivedEvent) {
 		
-		logger.info("Response received:\n" + responseReceivedEvent.getResponse().getStatusCode());
+		System.out.println("Response received:\n" + responseReceivedEvent.getResponse());
 		assertTrue("received response to subscribe which signals that subscription was not approved", responseReceivedEvent.getResponse().getStatusCode() == 200);
 
+		if (subscriberToTag == null) {
+			subscriberToTag = ((ToHeader)responseReceivedEvent.getResponse().getHeader(ToHeader.NAME)).getTag();
+		}
 	}
 	
 	// --- UNUSED SIP LISTENER METHODS

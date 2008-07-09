@@ -19,6 +19,7 @@ import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.ListeningPoint;
 import javax.sip.RequestEvent;
+import javax.sip.ResponseEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
 import javax.sip.SipProvider;
@@ -438,6 +439,22 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 		entityManager.close();
 	}
 
+	public void onResponseClientErrorEvent(ResponseEvent event, ActivityContextInterface aci) {
+		// we got a error response from a notify, let's end all subscriptions on the dialog for now
+		// due to not getting this event on dialog
+		if (event.getDialog() != null) {
+			removeDialogSubscriptions(event.getDialog());
+		}
+	}
+	
+	public void onResponseServerErrorEvent(ResponseEvent event, ActivityContextInterface aci) {
+		// we got a error response from a notify, let's end all subscriptions on the dialog for now
+		// due to not getting this event on dialog
+		if (event.getDialog() != null) {
+			removeDialogSubscriptions(event.getDialog());
+		}
+	}
+	
 	// ---- SUBSCRIPTION CREATION --------------------------------------------------------------	
 
 	private void newSubscription(RequestEvent event,
@@ -713,25 +730,36 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 		.setParameter("eventPackage",eventPackage)
 		.getResultList();
 		
+		SbbLocalObject sbbLocalObject = sbbContext.getSbbLocalObject();
+		
 		for(Iterator it=resultList.iterator();it.hasNext();) {
 			Subscription subscription = (Subscription) it.next();
 			if (subscription.getStatus().equals(Subscription.Status.active)) {
 				try {
 					// get subscription dialog
 					ActivityContextInterface dialogACI = activityContextNamingfacility.lookup(subscription.getSubscriptionKey().toString());
-					Dialog dialog = (Dialog) dialogACI.getActivity();						
-					// create notify
-					Request notify = createNotify(dialog,subscription);						
-					// add content
-					if (content != null) {
-						notify = setNotifyContent(subscription,notify,content,contentTypeHeader);
+					if (dialogACI != null) {
+						Dialog dialog = (Dialog) dialogACI.getActivity();						
+						// create notify
+						Request notify = createNotify(dialog,subscription);						
+						// add content
+						if (content != null) {
+							notify = setNotifyContent(subscription,notify,content,contentTypeHeader);
+						}
+						// send notify in dialog related with subscription
+						ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
+						// FIXME remove once we have error responses in dialog activities
+						sipActivityContextInterfaceFactory.getActivityContextInterface(clientTransaction).attach(sbbLocalObject);
+						dialog.sendRequest(clientTransaction);
+						if (getLogger().isDebugEnabled()) {
+							getLogger().debug("NotifySubscribers: subscription "+subscription.getSubscriptionKey()+" sent request:\n"+notify.toString());
+						}
 					}
-					// send notify in dialog related with subscription
-					ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
-					dialog.sendRequest(clientTransaction);
-					if (getLogger().isDebugEnabled()) {
-						getLogger().debug("Request sent:\n"+notify.toString());
-					}
+					else {
+						// clean up
+						getLogger().warn("Unable to find dialog aci to notify subscription "+subscription.getSubscriptionKey()+". Removing subscription data");
+						removeSubscriptionData(entityManager, subscription, null, null);
+					}	
 
 				} catch (Exception e) {
 					getLogger().error("failed to notify subscriber",e);
@@ -756,22 +784,31 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 		.setParameter("eventPackage",key.getEventPackage())
 		.setParameter("eventId",key.getEventId()).getSingleResult();
 		
-		if (subscription.getStatus().equals(Subscription.Status.active)) {
+		if (subscription != null && subscription.getStatus().equals(Subscription.Status.active)) {
 			try {
 				// get subscription dialog
 				ActivityContextInterface dialogACI = activityContextNamingfacility.lookup(subscription.getSubscriptionKey().toString());
-				Dialog dialog = (Dialog) dialogACI.getActivity();						
-				// create notify
-				Request notify = createNotify(dialog,subscription);						
-				// add content
-				if (content != null) {
-					notify = setNotifyContent(subscription,notify,content,contentTypeHeader);
+				if (dialogACI != null) {
+					Dialog dialog = (Dialog) dialogACI.getActivity();						
+					// create notify
+					Request notify = createNotify(dialog,subscription);						
+					// add content
+					if (content != null) {
+						notify = setNotifyContent(subscription,notify,content,contentTypeHeader);
+					}
+					// send notify in dialog related with subscription
+					ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
+					// FIXME remove once we have error responses in dialog activities
+					sipActivityContextInterfaceFactory.getActivityContextInterface(clientTransaction).attach(sbbContext.getSbbLocalObject());
+					dialog.sendRequest(clientTransaction);
+					if (getLogger().isDebugEnabled()) {
+						getLogger().debug("Notify subscriber: subscription "+subscription.getSubscriptionKey()+" sent request:\n"+notify.toString());
+					}
 				}
-				// send notify in dialog related with subscription
-				ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
-				dialog.sendRequest(clientTransaction);
-				if (getLogger().isDebugEnabled()) {
-					getLogger().debug("Request sent:\n"+notify.toString());
+				else {
+					// clean up
+					getLogger().warn("Unable to find dialog aci to notify subscription "+subscription.getSubscriptionKey()+". Removing subscription data");
+					removeSubscriptionData(entityManager, subscription, null, null);
 				}
 
 			} catch (Exception e) {
@@ -972,7 +1009,9 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 			getLogger().error("failed to unbind subscription dialog aci name");
 		}
 		// verify if dialog is not needed anymore (and remove if that's the case)
-		verifyDialogSubscriptions(entityManager,subscription,dialog,aci);		
+		if (dialog != null) {
+			verifyDialogSubscriptions(entityManager,subscription,dialog,aci);		
+		}
 		entityManager.flush();
 		
 		getLogger().info("Removed data for "+subscription);
@@ -1186,6 +1225,21 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * removes all subscriptions in a dialog
+	 * @param dialog
+	 */
+	private void removeDialogSubscriptions(Dialog dialog) {
+		EntityManager entityManager = getEntityManager();
+		for (Object object : getDialogSubscriptions(entityManager, dialog)) {
+			Subscription subscription = (Subscription) object;
+			getLogger().info("Removing "+subscription.getSubscriptionKey()+" data due to error on notify response.");
+			removeSubscriptionData(entityManager, subscription, dialog, activityContextNamingfacility.lookup(subscription.getSubscriptionKey().toString()));
+		}
+		entityManager.flush();
+		entityManager.close();
 	}
 	
 	// -- JPA STUFF
