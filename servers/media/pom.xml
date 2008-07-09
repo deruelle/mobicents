@@ -4,9 +4,9 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>2</version>
-		<relativePath>../../pom.xml</relativePath>
-	</parent>
+		<version>3-SNAPSHOT</version>
+		<relativePath>../../parent/pom.xml</relativePath>
+       </parent>
 	
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-media-server-parent</artifactId>
