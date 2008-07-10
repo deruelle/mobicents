@@ -16,10 +16,7 @@
 
 package org.mobicents.mscontrol;
 
-import java.io.Serializable;
-import org.mobicents.media.server.impl.common.*;
-import org.mobicents.media.server.impl.common.dtmf.*;
-import org.mobicents.media.server.impl.common.events.*;
+import org.mobicents.media.server.impl.common.events.EventID;
 /**
  *
  * @author Oleg Kulikov

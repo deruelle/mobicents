@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mobicents.mscontrol.MsCallbackHandler;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsLinkListener;
@@ -50,6 +51,8 @@ public class MsProviderImpl implements MsProvider, Serializable {
 
 	private ArrayList<MsSession> calls = new ArrayList<MsSession>();
 
+	private MsCallbackHandler callbackHandler = null;
+
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
 	}
@@ -57,6 +60,11 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	public MsSession createSession() {
 		MsSession call = new MsSessionImpl(this);
 		calls.add(call);
+
+		if (callbackHandler != null) {
+			callbackHandler.handle(call);
+		}
+
 		call.setSessionStateIdle();
 		return call;
 	}
@@ -124,11 +132,19 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	}
 
 	public MsSignalGenerator getSignalGenerator(String endpointName) {
-		return new MsSignalGeneratorImpl(this, endpointName);
+		MsSignalGenerator msSignalGenerator = new MsSignalGeneratorImpl(this, endpointName);
+		if (callbackHandler != null) {
+			callbackHandler.handle(msSignalGenerator);
+		}
+		return msSignalGenerator;
 	}
 
 	public MsSignalDetector getSignalDetector(String endpointName) {
-		return new MsSignalDetectorImpl(this, endpointName);
+		MsSignalDetector signalDetectror = new MsSignalDetectorImpl(this, endpointName);
+		if (callbackHandler != null) {
+			callbackHandler.handle(signalDetectror);
+		}
+		return signalDetectror;
 	}
 
 	public MsConnection getMsConnection(String msConnectionId) {
@@ -161,6 +177,15 @@ public class MsProviderImpl implements MsProvider, Serializable {
 
 	public List<MsLinkListener> getLinkListeners() {
 		return this.linkListeners;
+	}
+
+	public MsCallbackHandler getCallbackHandler() {
+		return this.callbackHandler;
+	}
+
+	public void setCallbackHandler(MsCallbackHandler callbackHandler) {
+		this.callbackHandler = callbackHandler;
+
 	}
 
 }

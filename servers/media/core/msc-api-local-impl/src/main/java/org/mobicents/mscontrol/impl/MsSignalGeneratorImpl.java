@@ -65,6 +65,14 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
 		return id;
 	}
 
+	public void setResourceStateIdle() {
+		MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.DTMF, EventCause.NORMAL,
+				"Created new MsSignalGenerator");
+		for (MsResourceListener listener : listeners) {
+			listener.resourceCreated(evt);
+		}
+	}
+
 	public void apply(EventID signalID, String[] params) {
 		new Thread(new PlayTx(this, signalID, params)).start();
 	}

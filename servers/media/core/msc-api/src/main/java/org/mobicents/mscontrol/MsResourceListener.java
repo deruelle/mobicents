@@ -21,7 +21,10 @@ import java.io.Serializable;
 /**
  *
  * @author Oleg Kulikov
+ * @author Amit Bhayani
  */
 public interface MsResourceListener extends Serializable {
     public void update(MsNotifyEvent notifyEvent);
+    
+    public void resourceCreated(MsNotifyEvent notifyEvent);
 }

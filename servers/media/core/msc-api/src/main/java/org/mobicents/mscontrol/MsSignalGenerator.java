@@ -23,5 +23,5 @@ import org.mobicents.media.server.impl.common.events.*;
  * @author Oleg Kulikov
  */
 public interface MsSignalGenerator extends MsResource {
-    public void apply(EventID signalID, String[] params);
+    public void apply(EventID signalID, String[] params);	
 }

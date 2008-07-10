@@ -24,6 +24,7 @@ import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.media.msc.common.MsSessionState;
 import org.mobicents.media.msc.common.events.MsSessionEventCause;
 import org.mobicents.media.msc.common.events.MsSessionEventID;
+import org.mobicents.mscontrol.MsCallbackHandler;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsProvider;
@@ -44,6 +45,8 @@ public class MsSessionImpl implements MsSession {
 	// unique identifier of the session
 	private String id = (new UID()).toString();
 
+	private MsCallbackHandler msCallbackHandler = null;
+
 	// provider managing this session
 	protected MsProvider provider;
 	protected ArrayList<MsSessionListener> listeners = new ArrayList<MsSessionListener>();
@@ -59,6 +62,7 @@ public class MsSessionImpl implements MsSession {
 	 */
 	public MsSessionImpl(MsProvider provider) {
 		this.provider = provider;
+		msCallbackHandler = this.provider.getCallbackHandler();
 		this.listeners.addAll(provider.getSessionListeners());
 	}
 
@@ -92,6 +96,10 @@ public class MsSessionImpl implements MsSession {
 	public synchronized MsLink createLink(MsLinkMode mode) {
 		MsLink link = new MsLinkImpl(this, mode);
 		links.add(link);
+
+		if (msCallbackHandler != null) {
+			msCallbackHandler.handle(link);
+		}
 		setState(MsSessionState.ACTIVE, MsSessionEventCause.LINK_CREATED, link);
 		link.fireMsLinkCreated();
 		return link;
@@ -105,7 +113,7 @@ public class MsSessionImpl implements MsSession {
 	 */
 	public synchronized void disassociateLink(MsLink link) {
 		links.remove(link);
-		if (links.size() == 0 && connections.size() == 0) {			
+		if (links.size() == 0 && connections.size() == 0) {
 			setState(MsSessionState.INVALID, MsSessionEventCause.LINK_DROPPED, link);
 		}
 	}
@@ -118,6 +126,11 @@ public class MsSessionImpl implements MsSession {
 	public synchronized MsConnection createNetworkConnection(String trunkName) {
 		MsConnection connection = new MsConnectionImpl(this, trunkName);
 		connections.add(connection);
+
+		if (msCallbackHandler != null) {
+			msCallbackHandler.handle(connection);
+		}
+
 		setState(MsSessionState.ACTIVE, MsSessionEventCause.CONNECTION_CREATED, connection);
 		connection.fireConnectionInitialized();
 		return connection;
@@ -131,7 +144,7 @@ public class MsSessionImpl implements MsSession {
 	 */
 	public synchronized void disassociateNetworkConnection(MsConnection connection) {
 		connections.remove(connection);
-		if (links.size() == 0 && connections.size() == 0) {			
+		if (links.size() == 0 && connections.size() == 0) {
 			setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, connection);
 		}
 	}

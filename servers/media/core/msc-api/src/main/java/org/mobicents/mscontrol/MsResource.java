@@ -46,6 +46,8 @@ public interface MsResource extends Serializable {
 	 * @param listener
 	 */
 	public void removeResourceListener(MsResourceListener listener);
+	
+	public void setResourceStateIdle();
 
 	/**
 	 * Release's the underlying resource

@@ -17,9 +17,11 @@ import javax.slee.UnrecognizedActivityException;
 import javax.slee.UnrecognizedEventException;
 import javax.slee.facilities.EventLookupFacility;
 import javax.slee.facilities.FacilityException;
+import javax.slee.resource.ActivityAlreadyExistsException;
 import javax.slee.resource.ActivityHandle;
 import javax.slee.resource.ActivityIsEndingException;
 import javax.slee.resource.BootstrapContext;
+import javax.slee.resource.CouldNotStartActivityException;
 import javax.slee.resource.FailureReason;
 import javax.slee.resource.Marshaler;
 import javax.slee.resource.ResourceAdaptor;
@@ -29,6 +31,7 @@ import javax.slee.resource.SleeEndpoint;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.common.events.EventID;
+import org.mobicents.mscontrol.MsCallbackHandler;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
@@ -42,6 +45,7 @@ import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
+import org.mobicents.mscontrol.impl.MsProviderImpl;
 import org.mobicents.slee.container.SleeContainer;
 import org.mobicents.slee.resource.ResourceAdaptorActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.ResourceAdaptorEntity;
@@ -59,8 +63,8 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  * @author amit.bhayani
  * 
  */
-public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListener, MsResourceListener, MsLinkListener,
-		MsSessionListener {
+public class MediaResourceAdaptor implements ResourceAdaptor, MsCallbackHandler, MsConnectionListener,
+		MsResourceListener, MsLinkListener, MsSessionListener {
 	public Properties properties;
 
 	private MsProvider msProvider;
@@ -142,11 +146,12 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 	public void entityActivated() throws ResourceException {
 		try {
 
-			msProvider = new RaMsProviderImpl(this);
+			msProvider = new MsProviderImpl();
 			msProvider.addConnectionListener(this);
 			msProvider.addSessionListener(this);
 			msProvider.addResourceListener(this);
 			msProvider.addLinkListener(this);
+			msProvider.setCallbackHandler(this);
 
 			this.initializeNamingContext();
 			// activities = new HashMap();
@@ -403,6 +408,108 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		}
 	}
 
+	// -----------------------------------------------------------------------------
+	// MsCallbackHandler impl. All activities are created here
+	// -----------------------------------------------------------------------------
+	public void handle(Object object) {
+		if (object instanceof MsConnection) {
+			MsConnection connection = (MsConnection) object;
+
+			MsConnectionActivityHandle msConnectionActivityHandle = mediaActivityManager
+					.putMsConnectionActivity(connection);
+			try {
+				sleeEndpoint.activityStarted(msConnectionActivityHandle);
+			} catch (NullPointerException e) {
+				logger
+						.error("NullPointerException while trying to start the MsConnection Activity for MsConnection id = "
+								+ connection.getId());
+			} catch (IllegalStateException e) {
+				logger
+						.error("IllegalStateException while trying to start the MsConnection Activity for MsConnection id = "
+								+ connection.getId());
+			} catch (ActivityAlreadyExistsException e) {
+				logger
+						.error("ActivityAlreadyExistsException while trying to start the MsConnection Activity for MsConnection id = "
+								+ connection.getId());
+			} catch (CouldNotStartActivityException e) {
+				logger
+						.error("CouldNotStartActivityException while trying to start the MsConnection Activity for MsConnection id = "
+								+ connection.getId());
+			}
+
+		} else if (object instanceof MsLink) {
+			MsLink msLink = (MsLink) object;
+
+			MsLinkActivityHandle msLinkActivityHandle = mediaActivityManager.putMsLinkActivity(msLink);
+			try {
+				sleeEndpoint.activityStarted(msLinkActivityHandle);
+			} catch (NullPointerException e) {
+				logger.error("NullPointerException while trying to start the MsLink Activity for MsLink id = "
+						+ msLink.getId());
+			} catch (IllegalStateException e) {
+				logger.error("IllegalStateException while trying to start the MsLink Activity for MsLink id = "
+						+ msLink.getId());
+			} catch (ActivityAlreadyExistsException e) {
+				logger
+						.error("ActivityAlreadyExistsException while trying to start the MsLink Activity for MsLink id = "
+								+ msLink.getId());
+			} catch (CouldNotStartActivityException e) {
+				logger
+						.error("CouldNotStartActivityException while trying to start the MsLink Activity for MsLink id = "
+								+ msLink.getId());
+			}
+
+		} else if (object instanceof MsResource) {
+			MsResource msResource = (MsResource) object;
+
+			MsResourceActivityHandle msResourceActivityHandle = mediaActivityManager.putMsResourceActivity(msResource);
+			try {
+				sleeEndpoint.activityStarted(msResourceActivityHandle);
+			} catch (NullPointerException e) {
+				logger.error("NullPointerException while trying to start the MsResource Activity for MsResource id = "
+						+ msResource.getID());
+			} catch (IllegalStateException e) {
+				logger.error("IllegalStateException while trying to start the MsResource Activity for MsResource id = "
+						+ msResource.getID());
+			} catch (ActivityAlreadyExistsException e) {
+				logger
+						.error("ActivityAlreadyExistsException while trying to start the MsResource Activity for MsResource id = "
+								+ msResource.getID());
+			} catch (CouldNotStartActivityException e) {
+				logger
+						.error("CouldNotStartActivityException while trying to start the MsResource Activity for MsResource id = "
+								+ msResource.getID());
+			}
+
+		} else if (object instanceof MsSession) {
+			MsSession raMsSessionImpl = (MsSession) object;
+			MsSessionActivityHandle msSessionActivityHandle = mediaActivityManager
+					.putMsSessionActivity(raMsSessionImpl);
+			try {
+				sleeEndpoint.activityStarted(msSessionActivityHandle);
+			} catch (NullPointerException e) {
+				logger.error("NullPointerException while trying to start the MsSession Activity for MsSession id = "
+						+ raMsSessionImpl.getId());
+			} catch (IllegalStateException e) {
+				logger.error("IllegalStateException while trying to start the MsSession Activity for MsSession id = "
+						+ raMsSessionImpl.getId());
+			} catch (ActivityAlreadyExistsException e) {
+				logger
+						.error("ActivityAlreadyExistsException while trying to start the MsSession Activity for MsSession id = "
+								+ raMsSessionImpl.getId());
+			} catch (CouldNotStartActivityException e) {
+				logger
+						.error("CouldNotStartActivityException while trying to start the MsSession Activity for MsSession id = "
+								+ raMsSessionImpl.getId());
+			}
+
+		} else {
+			// Should never happen
+			logger.warn("The activity is not implemented for " + object);
+		}
+
+	}
+
 	private synchronized void fireEvent(String eventName, ActivityHandle activityHandle, Object event) {
 		int eventID = -1;
 		try {
@@ -443,46 +550,16 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		return sleeEndpoint;
 	}
 
-	// public void onConnecting(MsConnectionEvent evt) {
-	// MsConnection connection = evt.getConnection();
-	// // MediaActivityHandle handle = new
-	// // MediaActivityHandle(connection.toString());
-	// ActivityHandle handle = getActivityHandle(connection);
-	// this.fireEvent("org.mobicents.slee.media.CONNECTION_CONNECTING", handle,
-	// evt);
-	// }
+	// -----------------------------------------------------------------------------
+	// Resource events
+	// -----------------------------------------------------------------------------
+	public void resourceCreated(MsNotifyEvent notifyEvent) {
+		MsResource event = notifyEvent.getSource();
+		MsResourceActivityHandle msResourceActivityHandle = mediaActivityManager.getMsResourceActivityHandle(event
+				.getID());
+		this.fireEvent("org.mobicents.slee.media.RESOURCE_CREATED", msResourceActivityHandle, event);
 
-	// public void onConnected(MsConnectionEvent evt) {
-	// MsConnection connection = evt.getConnection();
-	// // MediaActivityHandle handle = new
-	// // MediaActivityHandle(connection.toString());
-	// ActivityHandle handle = getActivityHandle(connection);
-	// this.fireEvent("org.mobicents.slee.media.CONNECTION_CONNECTED", handle,
-	// evt);
-	// }
-
-	// public void onFailed(MsConnectionEvent evt) {
-	// MsConnection connection = evt.getConnection();
-	// // MediaActivityHandle handle = new
-	// // MediaActivityHandle(connection.toString());
-	// ActivityHandle handle = getActivityHandle(connection);
-	// this.fireEvent("org.mobicents.slee.media.CONNECTION_FAILED", handle,
-	// evt);
-	// }
-
-	// public void onDisconnected(MsConnectionEvent evt) {
-	// MsConnection connection = evt.getConnection();
-	// // MediaActivityHandle handle = new
-	// // MediaActivityHandle(connection.toString());
-	// ActivityHandle handle = getActivityHandle(connection);
-	// this.fireEvent("org.mobicents.slee.media.CONNECTION_DISCONNECTED",
-	// handle, evt);
-	// try {
-	// sleeEndpoint.activityEnding(handle);
-	// } catch (Exception e) {
-	// logger.error("Could not end activity: " + connection);
-	// }
-	// }
+	}
 
 	public void update(MsNotifyEvent event) {
 		MsResource resource = event.getSource();
@@ -525,7 +602,6 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 
 	public void linkJoined(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
-
 		MsLinkActivityHandle msLinkActivityHandle = mediaActivityManager.getMsLinkActivityHandle(link.getId());
 		this.fireEvent("org.mobicents.slee.media.JOIN_COMPLETE", msLinkActivityHandle, evt);
 	}

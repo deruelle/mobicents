@@ -148,4 +148,20 @@ public interface MsProvider {
 	 */
 	public List<MsConnection> getMsConnections(String endpointName);
 
+	/**
+	 * An application ( that implements MsCallbackHandler ) using MsProvider can
+	 * be called synchronously by setting CallbackHandler here. If the
+	 * application is not interested in callback than it may not set it and
+	 * CallbackHandler will be null;
+	 * 
+	 * @param callbackHandler
+	 */
+	public void setCallbackHandler(MsCallbackHandler callbackHandler);
+
+	/**
+	 * Get the CallbackHandler implementation
+	 * @return
+	 */
+	public MsCallbackHandler getCallbackHandler();
+
 }
