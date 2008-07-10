@@ -11,15 +11,30 @@
 		
 	<artifactId>integrated-parent</artifactId>
 	
+	
 	<modules>		
-		<module>..</module>
-		<module>../xdms/server/appusagecache-ra-du</module>
-		<module>../xdms/server/datasource-ra-du</module>
-		<module>../xdms/server/core-du</module>
-		<module>../xdms/appusages</module>
 		<module>subscription-sbb</module>	
 		<module>deployable-unit</module>	
 	</modules>
+	
+	<profiles>
+		<profile>
+			<id>integrated-server</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+					<module>..</module>
+					<module>../xdms/server/appusagecache-ra-du</module>
+					<module>../xdms/server/datasource-ra-du</module>
+					<module>../xdms/server/core-du</module>
+					<module>../xdms/appusages</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven-release</id>
+		</profile>
+	</profiles>
 	
 	<properties>
 		<org.mobicents.servers.sippresence.integrated.finalName>

@@ -20,6 +20,18 @@
 		<equals arg1="${jboss.config}" arg2="all"/>
 	</condition>
 
+	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.file.mobicents.release}/../ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="build-xcap-client" description="">
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xcap-client">
+			<arg line="clean install -Djboss.home=${jboss.home} -P maven-release" />
+		</exec>
+	</target>
+
 	<target name="build-xdms" description="">
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xdms">
 			<arg line="clean install -Djboss.home=${jboss.home}"/>
@@ -40,6 +52,7 @@
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
+		<antcall target="build-with-mobicents-src-zip"/>
 		<delete  dir="." includes="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}-*.zip"/>
 		<antcall target="zip-jboss">
 			<param name="zip.filename" value="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}-${time.stamp}.zip" />
@@ -56,12 +69,29 @@
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
+		<antcall target="build-with-mobicents-src-zip"/>
 		<delete  dir="." includes="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}-*.zip"/>
 		<antcall target="zip-jboss" >
 			<param name="zip.filename" value="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}-${time.stamp}.zip" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
 		<delete dir="${jboss.home}" failonerror="true" />
+	</target>
+
+	<target name="build-with-mobicents-src-zip" depends="set-src-excludes">
+		<property name="zip.filename" value="mobicents-sip-presence-src.zip" />
+		<mkdir dir="${release.dir}/with-mobicents-src" />
+		<for param="dir.name">
+			<dirset dir="${ant.file.mobicents.release}/../../" includes="**/src/main/java" excludes="xcap-client/**" />
+			<sequential>
+				<echo>Packaging src for @{dir.name}</echo>
+				<copy todir="${release.dir}/with-mobicents-src" includeEmptyDirs="yes">
+					<fileset dir="@{dir.name}" />
+				</copy>
+			</sequential>
+		</for>
+		<zip destfile="${jboss.home}/${zip.filename}" basedir="${release.dir}/with-mobicents-src" />
+		<delete dir="${release.dir}/with-mobicents-src" />
 	</target>
 
 	<target name="release-without-mobicents-jain-slee" description="Makes the release.">
@@ -101,6 +131,18 @@
 			<param name="source.dir" value="${ant.file.mobicents.release}/../../xdms/server/subscription-control-du" />
 			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xdms/server-subscription-control-DU" />
 		</antcall>
+		<antcall target="build-xcap-client" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${release.dir}/tmp" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xcap-client/ra/du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xcap-client/ra" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../xcap-client/ra-example/du" />
+			<param name="dest.dir" value="${release.dir}/release-without-mobicents-jain-slee/xcap-client/ra-example" />
+		</antcall>
 		<antcall target="build-integrated" inheritall="false">
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${release.dir}/tmp" />
@@ -114,6 +156,8 @@
 				<filter token="JBOSS.CONFIG" value="${jboss.config}" />
 			</filterset>
 		</copy>
+		<!-- create src zip -->
+		<antcall target="build-without-mobicents-jain-slee-src-zip" />
 		<!-- TODO copy readme & licenses -->
 		<delete dir="." includes="mobicents-sip-presence-${release.version}-*.zip"/>
 		<zip destfile="${ant.file.mobicents.release}/../mobicents-sip-presence-${release.version}-${time.stamp}.zip" basedir="${release.dir}/release-without-mobicents-jain-slee"/>
@@ -121,12 +165,28 @@
 		<delete dir="${release.dir}/release-without-mobicents-jain-slee"/>
 	</target>
 
-	<target name="set-time-stamp">
-	    <tstamp>
-	        <format property="time.stamp" pattern="yyMMddHHmm" />
-	    </tstamp>
+	<target name="build-without-mobicents-jain-slee-src-zip" depends="set-src-excludes">
+		<property name="zip.filename" value="src.zip" />
+		<mkdir dir="${release.dir}/release-without-mobicents-jain-slee-src" />
+		<for param="dir.name">
+			<dirset dir="${ant.file.mobicents.release}/../../" includes="**/src/main/java" />
+			<sequential>
+				<echo>Packaging src for @{dir.name}</echo>
+				<copy todir="${release.dir}/release-without-mobicents-jain-slee-src" includeEmptyDirs="yes">
+					<fileset dir="@{dir.name}" />
+				</copy>
+			</sequential>
+		</for>
+		<zip destfile="${release.dir}/release-without-mobicents-jain-slee/${zip.filename}" basedir="${release.dir}/release-without-mobicents-jain-slee-src" />
+		<delete dir="${release.dir}/release-without-mobicents-jain-slee-src" />
 	</target>
-	
+
+	<target name="set-time-stamp">
+		<tstamp>
+			<format property="time.stamp" pattern="yyMMddHHmm" />
+		</tstamp>
+	</target>
+
 	<target name="release" depends="get-jboss,set-time-stamp,release-without-mobicents-jain-slee,release-integrated,release-xdms,build-src-zip,clean" />
 
 	<target name="release-component" description="">
@@ -181,37 +241,40 @@
                         excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**"/>
 		</zip>
 	</target>
-    
-   <target name="set-src-excludes">
-        <defaultexcludes add="**/target/**"/>
-        <defaultexcludes add="**/docs/**"/>
-        <defaultexcludes add="**/legacy/**"/>
-        <defaultexcludes add="**/release/**"/>
-        <defaultexcludes add="**/logs/**"/>
-        <defaultexcludes add="**/tests/**"/>
-        <defaultexcludes add="**/${*}/**"/>
-        <defaultexcludes add="**/*JBOSS_HOME*/**"/>
-        <defaultexcludes add="**/*CATALINA_HOME*/**"/>
-        <defaultexcludes add="**/.gwt-cache/**"/>
-        <defaultexcludes add="**/.settings/**"/>
-        <defaultexcludes add="**/.project"/>
-        <defaultexcludes add="**/.classpath"/>
-        <defaultexcludes add="**/*.class" echo="true"/>
-    </target>
-	
-    <target name="build-src-zip" depends="set-src-excludes">
-        <property name="zip.filename" value="mobicents-sip-presence-${release.version}-${time.stamp}-src.zip" />
-    	
-    	<copy todir="${release.dir}/src/mobicents/servers/sip-presence" includeEmptyDirs="false">
-    		<fileset dir="${ant.file.mobicents.release}/../../"/>
-    	</copy>
-    	
-        <zip destfile="${ant.file.mobicents.release}/../${zip.filename}" basedir="${release.dir}/src"/>
-    	<delete dir="${release.dir}/src"/>
-    	
-        <defaultexcludes default="true"/>
-    </target>
-    
+
+	<target name="set-src-excludes">
+		<defaultexcludes add="**/target/**"/>
+		<defaultexcludes add="**/docs/**"/>
+		<defaultexcludes add="**/legacy/**"/>
+		<defaultexcludes add="**/release/**"/>
+		<defaultexcludes add="**/logs/**"/>
+		<defaultexcludes add="**/tests/**"/>
+		<defaultexcludes add="**/${*}/**"/>
+		<defaultexcludes add="**/*JBOSS_HOME*/**"/>
+		<defaultexcludes add="**/*CATALINA_HOME*/**"/>
+		<defaultexcludes add="**/.gwt-cache/**"/>
+		<defaultexcludes add="**/.settings/**"/>
+		<defaultexcludes add="**/.project"/>
+		<defaultexcludes add="**/.classpath"/>
+		<defaultexcludes add="**/*.class" echo="true"/>
+	</target>
+
+	<target name="build-src-zip" depends="set-src-excludes">
+		<property name="zip.filename" value="mobicents-sip-presence-${release.version}-${time.stamp}-src.zip" />
+
+		<copy todir="${release.dir}/src/mobicents/servers/sip-presence" includeEmptyDirs="false">
+			<fileset dir="${ant.file.mobicents.release}/../../"/>
+		</copy>
+
+		<zip destfile="${ant.file.mobicents.release}/../${zip.filename}" basedir="${release.dir}/src"/>
+		<delete dir="${release.dir}/src"/>
+
+		<defaultexcludes default="true"/>
+	</target>
+
+
+
+
 	<available file="${ant.file.mobicents.release}/../mobicents-jain-slee" property="mobicents.jain.slee.checked.out"/>
 	<target name="get-mobicents-jain-slee" unless="mobicents.jain.slee.checked.out">
 		<echo>Checking out Mobicents JAIN-SLEE</echo>
@@ -219,7 +282,7 @@
 			<arg line="-f external-components-checkout.xml install -Dexternal.modules.basedir=mobicents-jain-slee"/>
 		</exec>
 	</target>
-	
+
 	<target name="build-mobicents-jain-slee">
 		<echo>Building Mobicents JAIN-SLEE</echo>
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../mobicents-jain-slee">

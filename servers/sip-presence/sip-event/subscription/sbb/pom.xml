@@ -19,7 +19,6 @@
 		<dependency>
 			<artifactId>sip-ra</artifactId>
 			<groupId>org.mobicents.resources</groupId>
-			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 	</dependencies>
 	

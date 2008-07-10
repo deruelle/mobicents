@@ -15,9 +15,26 @@
 	<groupId>org.mobicents.servers.xdm</groupId>
 
 	<modules>
-		<module>..</module>
 		<module>server</module>
 		<module>appusages</module>
 	</modules>
+	
+	<profiles>
+		<profile>
+			<id>xdm-server</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>..</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>tests</module>
+			</modules>
+		</profile>
+	</profiles>
 	
 </project>

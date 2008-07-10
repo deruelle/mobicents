@@ -23,7 +23,8 @@
 	<version>1.0.0.BETA2-SNAPSHOT</version>
 	
 	<modules>		
-		<module>sip-event</module>	
+		<module>sip-event</module>
+		<module>xcap-client</module>	
 		<module>xdms-core</module>	
 		<module>ps-core</module>
 	</modules>
@@ -42,9 +43,34 @@
 	<dependencyManagement>
 		<dependencies>		
 			<dependency>
-				<groupId>org.mobicents</groupId>
-				<artifactId>mobicents-jainslee-server</artifactId>
-				<version>${mobicents.server.jainslee.version}</version>
+				<groupId>org.mobicents.core</groupId>
+				<artifactId>mobicents-core-jar</artifactId>
+				<version>${mobicents.servers.jainslee.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mobicents.resources</groupId>
+				<artifactId>http-servlet-ratype</artifactId>
+				<version>${mobicents.servers.jainslee.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mobicents.resources</groupId>
+				<artifactId>http-servlet-events</artifactId>
+				<version>${mobicents.servers.jainslee.version}</version>
+			</dependency>
+			<dependency>
+				<artifactId>sip-ra</artifactId>
+				<groupId>org.mobicents.resources</groupId>
+				<version>${mobicents.servers.jainslee.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${hsqldb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -98,5 +124,14 @@
 			</snapshots>
 		</repository>
 	</repositories>
-		
+	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>xdms</module>
+				<module>integrated</module>
+			</modules>
+		</profile>
+	</profiles>	
 </project>

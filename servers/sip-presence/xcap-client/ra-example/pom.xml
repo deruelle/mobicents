@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	
+	<modelVersion>4.0.0</modelVersion>
+	<packaging>pom</packaging>
+	
+	<parent>
+		<artifactId>sip-presence-parent</artifactId>
+		<groupId>org.mobicents.servers.sippresence</groupId>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>xcap-client-ra-example-parent</artifactId>
+		
+	<modules>
+		<module>sbb</module>						
+		<module>du</module>			
+	</modules>
+	
+	<build>
+		<finalName>mobicents-sip-presence-${pom.artifactId}-${pom.version}</finalName>	
+	</build>
+	
+</project>

@@ -25,7 +25,6 @@
 		<dependency>
 			<groupId>org.mobicents.core</groupId>
 			<artifactId>mobicents-core-jar</artifactId>
-			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 	</dependencies>
 	

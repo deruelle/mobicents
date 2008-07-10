@@ -22,7 +22,6 @@
 
 	<modules>
 		<module>commons</module>
-		<module>client</module>
 		<module>server</module>		
 		<module>appusages</module>
 		<module>internal-client</module>
