@@ -14,6 +14,7 @@
 package org.mobicents.examples.media;
 
 import java.util.List;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.slee.ActivityContextInterface;
@@ -23,6 +24,7 @@ import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.media.server.impl.common.events.EventID;
@@ -32,183 +34,200 @@ import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsResource;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public abstract class AnnouncementSbb implements Sbb {
 
-    public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
-    private SbbContext sbbContext;
-    private MsProvider msProvider;
-    private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(AnnouncementSbb.class);
+	public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
+	private SbbContext sbbContext;
+	private MsProvider msProvider;
+	private MediaRaActivityContextInterfaceFactory mediaAcif;
+	private Logger logger = Logger.getLogger(AnnouncementSbb.class);
 
-    public void play(String userEndpoint,
-            List announcements, boolean keepAlive) {
-        //hold announcement sequence in the activity context interface
-        this.setKeepAlive(keepAlive);
-        this.setIndex(0);
-        this.setSequence(announcements);
+	public void play(String userEndpoint, List announcements, boolean keepAlive) {
+		// hold announcement sequence in the activity context interface
+		this.setKeepAlive(keepAlive);
+		this.setIndex(0);
+		this.setSequence(announcements);
 
-        //join user endpoint with any of the announcement endpoint
-        //ActivityContextInterface connectionActivity = sbbContext.getActivities()[0];
-        ActivityContextInterface connectionActivity = this.getUserActivity();
-        logger.info("Joining " + userEndpoint + " with " + ANNOUNCEMENT_ENDPOINT);
+		// join user endpoint with any of the announcement endpoint
+		// ActivityContextInterface connectionActivity =
+		// sbbContext.getActivities()[0];
+		ActivityContextInterface connectionActivity = this.getUserActivity();
+		logger.info("Joining " + userEndpoint + " with " + ANNOUNCEMENT_ENDPOINT);
 
-        MsConnection connection = (MsConnection) connectionActivity.getActivity();
-        MsSession session = connection.getSession();
-        MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
+		MsConnection connection = (MsConnection) connectionActivity.getActivity();
+		MsSession session = connection.getSession();
+		MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
 
-        ActivityContextInterface linkActivity = null;
-        try {
-            linkActivity = mediaAcif.getActivityContextInterface(link);
-        } catch (UnrecognizedActivityException ex) {
-        }
+		ActivityContextInterface linkActivity = null;
+		try {
+			linkActivity = mediaAcif.getActivityContextInterface(link);
+		} catch (UnrecognizedActivityException ex) {
+		}
 
-        linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(userEndpoint, ANNOUNCEMENT_ENDPOINT);
-    }
+		linkActivity.attach(sbbContext.getSbbLocalObject());
+		link.join(userEndpoint, ANNOUNCEMENT_ENDPOINT);
+	}
 
-    public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        MsLink link = evt.getSource();
-        String announcementEndpoint = link.getEndpoints()[1];
+	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+		MsLink link = evt.getSource();
+		String announcementEndpoint = link.getEndpoints()[1];
 
-        logger.info("Announcement endpoint: " + announcementEndpoint);
-        this.setAnnouncementEndpoint(announcementEndpoint);
+		logger.info("Announcement endpoint: " + announcementEndpoint);
+		this.setAnnouncementEndpoint(announcementEndpoint);
 
-        playNext();
-    }
+		playNext();
+	}
 
-    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Announcement complete: " + (this.getIndex() - 1));
-        if (this.getIndex() < this.getSequence().size()) {
-            logger.info("Playing announcement[" + this.getIndex() + "]");
-            playNext();
-            return;
-        }
+	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+		logger.info("Announcement complete: " + (this.getIndex() - 1));
+		if (this.getIndex() < this.getSequence().size()) {
+			logger.info("Playing announcement[" + this.getIndex() + "]");
+			playNext();
+			return;
+		}
 
-        if (this.getIndex() == this.getSequence().size() && !this.getKeepAlive()) {
-            logger.info("Releasing link");
-            MsLink link = this.getLink();
-            link.release();
-        } else {
-            this.setIndex(0);
-            playNext();
-        }
-    }
+		if (this.getIndex() == this.getSequence().size() && !this.getKeepAlive()) {
+			logger.info("Releasing link");
+			MsLink link = this.getLink();
+			link.release();
+		} else {
+			this.setIndex(0);
+			playNext();
+		}
+	}
 
-    public void playNext() {
-        String url = (String) this.getSequence().get(this.getIndex());
-        MsSignalGenerator generator = msProvider.getSignalGenerator(getAnnouncementEndpoint());
-        try {
-            ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-            generatorActivity.attach(sbbContext.getSbbLocalObject());
-            generator.apply(EventID.PLAY, new String[]{url});
-            this.setIndex(getIndex() + 1);
-        } catch (UnrecognizedActivityException e) {
-        }
-    }
+	public void playNext() {
+		String url = (String) this.getSequence().get(this.getIndex());
+		MsSignalGenerator generator = msProvider.getSignalGenerator(getAnnouncementEndpoint());
+		try {
+			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
+			generatorActivity.attach(sbbContext.getSbbLocalObject());
+			generator.apply(EventID.PLAY, new String[] { url });
+			this.setIndex(getIndex() + 1);
+		} catch (UnrecognizedActivityException e) {
+		}
+	}
 
-    public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Link release completed");
+	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("Link release completed");
 
-        ActivityContextInterface connectionAci = getUserActivity();
-        if (connectionAci != null && !connectionAci.isEnding()) {
-            connectionAci.detach(sbbContext.getSbbLocalObject());
-            fireLinkReleased(evt, connectionAci, null);
-        }
-    }
+		ActivityContextInterface connectionAci = getUserActivity();
+		if (connectionAci != null && !connectionAci.isEnding()) {
+			connectionAci.detach(sbbContext.getSbbLocalObject());
+			fireLinkReleased(evt, connectionAci, null);
+		}
+	}
 
-    public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        logger.info("Disconnecting from " + getAnnouncementEndpoint());
-        MsLink link = getLink();
-        if (link != null) {
-            link.release();
-        }
-    }
+	public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+		logger.info("Disconnecting from " + getAnnouncementEndpoint());
+		MsResource resource = getResource();
 
-    public abstract void fireLinkReleased(MsLinkEvent evt,
-            ActivityContextInterface aci, Address address);
+		if (resource != null) {
+			resource.release();
+		}
 
-    public MsLink getLink() {
-        ActivityContextInterface[] activities = sbbContext.getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsLink) {
-                return (MsLink) activities[i].getActivity();
-            }
-        }
-        return null;
-    }
+		MsLink link = getLink();
+		if (link != null) {
+			link.release();
+		}
 
-    public ActivityContextInterface getUserActivity() {
-        ActivityContextInterface activities[] = sbbContext.getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsConnection) {
-                return activities[i];
-            }
-        }
-        return null;
-    }
+	}
 
-    public abstract String getAnnouncementEndpoint();
+	public abstract void fireLinkReleased(MsLinkEvent evt, ActivityContextInterface aci, Address address);
 
-    public abstract void setAnnouncementEndpoint(String endpoint);
+	public MsLink getLink() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
 
-    public abstract int getIndex();
+	public MsResource getResource() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsResource) {
+				return (MsResource) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
 
-    public abstract void setIndex(int index);
+	public ActivityContextInterface getUserActivity() {
+		ActivityContextInterface activities[] = sbbContext.getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsConnection) {
+				return activities[i];
+			}
+		}
+		return null;
+	}
 
-    public abstract List getSequence();
+	public abstract String getAnnouncementEndpoint();
 
-    public abstract void setSequence(List sequence);
+	public abstract void setAnnouncementEndpoint(String endpoint);
 
-    public abstract boolean getKeepAlive();
+	public abstract int getIndex();
 
-    public abstract void setKeepAlive(boolean keepAlive);
+	public abstract void setIndex(int index);
 
-    public void setSbbContext(SbbContext sbbContext) {
-        this.sbbContext = sbbContext;
-        try {
-            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-            msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
-            mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
-        } catch (Exception ne) {
-            logger.error("Could not set SBB context:", ne);
-        }
-    }
+	public abstract List getSequence();
 
-    public void unsetSbbContext() {
-    }
+	public abstract void setSequence(List sequence);
 
-    public void sbbCreate() throws CreateException {
-    }
+	public abstract boolean getKeepAlive();
 
-    public void sbbPostCreate() throws CreateException {
-    }
+	public abstract void setKeepAlive(boolean keepAlive);
 
-    public void sbbActivate() {
-    }
+	public void setSbbContext(SbbContext sbbContext) {
+		this.sbbContext = sbbContext;
+		try {
+			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
+		} catch (Exception ne) {
+			logger.error("Could not set SBB context:", ne);
+		}
+	}
 
-    public void sbbPassivate() {
-    }
+	public void unsetSbbContext() {
+	}
 
-    public void sbbLoad() {
-    }
+	public void sbbCreate() throws CreateException {
+	}
 
-    public void sbbStore() {
-    }
+	public void sbbPostCreate() throws CreateException {
+	}
 
-    public void sbbRemove() {
-    }
+	public void sbbActivate() {
+	}
 
-    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
-    }
+	public void sbbPassivate() {
+	}
 
-    public void sbbRolledBack(RolledBackContext arg0) {
-    }
+	public void sbbLoad() {
+	}
+
+	public void sbbStore() {
+	}
+
+	public void sbbRemove() {
+	}
+
+	public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
+	}
+
+	public void sbbRolledBack(RolledBackContext arg0) {
+	}
 }

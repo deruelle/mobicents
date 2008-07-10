@@ -20,9 +20,11 @@ import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsProvider;
@@ -30,104 +32,106 @@ import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public abstract class LoopbackSbb implements Sbb {
 
-    public final static String LOOP_ENDPOINT = "media/test/trunk/Loopback/1";
-    private SbbContext sbbContext;
-    private MsProvider msProvider;
-    private MediaRaActivityContextInterfaceFactory mediaAcif;
-    private Logger logger = Logger.getLogger(LoopbackSbb.class);
-    
-    /**
-     * Starts dialog.
-     * 
-     * @param endpointName the user's endpoint.
-     * @param aci the user's activity context interface.
-     */
-    public void startConversation(String endpointName) {
-        logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
-        
-        MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
-        MsSession session = connection.getSession();
-        MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
+	public final static String LOOP_ENDPOINT = "media/test/trunk/Loopback/1";
+	private SbbContext sbbContext;
+	private MsProvider msProvider;
+	private MediaRaActivityContextInterfaceFactory mediaAcif;
+	private Logger logger = Logger.getLogger(LoopbackSbb.class);
 
-        ActivityContextInterface linkActivity = null;
-        try {
-            linkActivity = mediaAcif.getActivityContextInterface(link);
-        } catch (UnrecognizedActivityException ex) {
-        }
+	/**
+	 * Starts dialog.
+	 * 
+	 * @param endpointName
+	 *            the user's endpoint.
+	 * @param aci
+	 *            the user's activity context interface.
+	 */
+	public void startConversation(String endpointName) {
+		logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
 
-        linkActivity.attach(sbbContext.getSbbLocalObject());
-        link.join(endpointName, LOOP_ENDPOINT);
-    }
-    
-    /**
-     * Terminates conversation
-     */
-    public void stop() {
-        getLink().release();
-    }
+		MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
+		MsSession session = connection.getSession();
+		MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
 
-    public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Link created, Endpoint=" + evt.getSource().getEndpoints()[1]);
-    }
+		ActivityContextInterface linkActivity = null;
+		try {
+			linkActivity = mediaAcif.getActivityContextInterface(link);
+		} catch (UnrecognizedActivityException ex) {
+		}
 
-    public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.error("Joining error: cause = " + evt.getCause());
-    }
-        
-    public MsLink getLink() {
-        ActivityContextInterface[] activities = sbbContext.getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsLink) {
-                return (MsLink) activities[i].getActivity();
-            }
-        }
-        return null;
-    }
-    
-    public void setSbbContext(SbbContext sbbContext) {
-        this.sbbContext = sbbContext;
-        try {
-            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-            msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
-            mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
-        } catch (Exception ne) {
-            logger.error("Could not set SBB context:", ne);
-        }
-    }
+		linkActivity.attach(sbbContext.getSbbLocalObject());
+		link.join(endpointName, LOOP_ENDPOINT);
+	}
 
-    public void unsetSbbContext() {
-    }
+	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("Link created, Endpoint=" + evt.getSource().getEndpoints()[1]);
+	}
 
-    public void sbbCreate() throws CreateException {
-    }
+	public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.error("Joining error: cause = " + evt.getCause());
+	}
 
-    public void sbbPostCreate() throws CreateException {
-    }
+	public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+		MsLink link = getLink();
+		if (link != null) {
+			link.release();
+		}
+	}
 
-    public void sbbActivate() {
-    }
+	public MsLink getLink() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
 
-    public void sbbPassivate() {
-    }
+	public void setSbbContext(SbbContext sbbContext) {
+		this.sbbContext = sbbContext;
+		try {
+			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
+		} catch (Exception ne) {
+			logger.error("Could not set SBB context:", ne);
+		}
+	}
 
-    public void sbbLoad() {
-    }
+	public void unsetSbbContext() {
+	}
 
-    public void sbbStore() {
-    }
+	public void sbbCreate() throws CreateException {
+	}
 
-    public void sbbRemove() {
-    }
+	public void sbbPostCreate() throws CreateException {
+	}
 
-    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
-    }
+	public void sbbActivate() {
+	}
 
-    public void sbbRolledBack(RolledBackContext arg0) {
-    }
-    
+	public void sbbPassivate() {
+	}
+
+	public void sbbLoad() {
+	}
+
+	public void sbbStore() {
+	}
+
+	public void sbbRemove() {
+	}
+
+	public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
+	}
+
+	public void sbbRolledBack(RolledBackContext arg0) {
+	}
+
 }
