@@ -1054,30 +1054,40 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 			.setParameter("eventPackage",subscription.getSubscriptionKey().getEventPackage()+".winfo").getResultList();
 			// process result
 			if (!winfoSubscriptions.isEmpty()) {
+				SbbLocalObject sbbLocalObject = sbbContext.getSbbLocalObject();
 				for(Iterator it=winfoSubscriptions.iterator();it.hasNext();) {
 					Subscription winfoSubscription = (Subscription) it.next();
 					if (winfoSubscription.getStatus().equals(Subscription.Status.active)) {
 						try {
 							// get subscription dialog
 							ActivityContextInterface winfoDialogAci = activityContextNamingfacility.lookup(winfoSubscription.getSubscriptionKey().toString());
-							Dialog winfoDialog = (Dialog) winfoDialogAci.getActivity();
-							// increment subscription version
-							winfoSubscription.incrementVersion();
-							// create notify
-							Request notify = createNotify(winfoDialog,winfoSubscription);			
-							// add content
-							notify.setContent(getPartialWatcherInfoContent(winfoSubscription,subscription),getWatcherInfoContentHeader());																		
-							// send notify in dialog related with subscription
-							ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
-							winfoDialog.sendRequest(clientTransaction);
-							if (getLogger().isDebugEnabled()) {
-								getLogger().debug("Request sent:\n"+notify.toString());
+							if (winfoDialogAci != null) {
+								Dialog winfoDialog = (Dialog) winfoDialogAci.getActivity();
+								// increment subscription version
+								winfoSubscription.incrementVersion();
+								// create notify
+								Request notify = createNotify(winfoDialog,winfoSubscription);			
+								// add content
+								notify.setContent(getPartialWatcherInfoContent(winfoSubscription,subscription),getWatcherInfoContentHeader());																		
+								// send notify in dialog related with subscription
+								ClientTransaction clientTransaction = sipProvider.getNewClientTransaction(notify);
+								// FIXME remove once we can get errors on dialog activity
+								sipActivityContextInterfaceFactory.getActivityContextInterface(clientTransaction).attach(sbbLocalObject);
+								winfoDialog.sendRequest(clientTransaction);
+								if (getLogger().isDebugEnabled()) {
+									getLogger().debug("Request sent:\n"+notify.toString());
+								}
+								// persist subscription
+								entityManager.persist(winfoSubscription);
 							}
-							// persist subscription
-							entityManager.persist(winfoSubscription);
-						} catch (Exception e) {
-							getLogger().error("failed to notify winfo subscriber",e);
-						}
+							else {
+								// dialog is gone, cleanup subscription
+								getLogger().warn("Unable to find dialog aci to notify subscription "+winfoSubscription.getSubscriptionKey()+". Removing subscription data");
+								removeSubscriptionData(entityManager, winfoSubscription, null, null);
+							}
+							} catch (Exception e) {
+								getLogger().error("failed to notify winfo subscriber",e);
+							}
 					}					
 				}
 				entityManager.flush();
