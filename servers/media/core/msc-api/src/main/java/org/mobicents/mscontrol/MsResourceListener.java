@@ -27,4 +27,6 @@ public interface MsResourceListener extends Serializable {
     public void update(MsNotifyEvent notifyEvent);
     
     public void resourceCreated(MsNotifyEvent notifyEvent);
+    
+    public void resourceInvalid(MsNotifyEvent notifyEvent);
 }

@@ -100,6 +100,12 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
 
 	public void release() {
 		released = true;
+
+		MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
+				"Inavlidated MsSignalGenerator");
+		for (MsResourceListener listener : listeners) {
+			listener.resourceInvalid(evt);
+		}
 	}
 
 	public String toString() {

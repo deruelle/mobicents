@@ -59,6 +59,12 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
 
 	public void release() {
 		// released = true;
+
+		MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
+				"Inavlidated MsSignalDetector");
+		for (MsResourceListener listener : listeners) {
+			listener.resourceInvalid(evt);
+		}
 	}
 
 	public void setResourceStateIdle() {
