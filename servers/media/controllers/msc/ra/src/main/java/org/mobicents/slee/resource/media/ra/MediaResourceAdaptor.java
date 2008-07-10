@@ -590,6 +590,24 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsCallbackHandler,
 		}
 	}
 
+	public void resourceInvalid(MsNotifyEvent notifyEvent) {
+		MsResource resource = notifyEvent.getSource();
+
+		MsResourceActivityHandle msResourceActivityHandle = mediaActivityManager.getMsResourceActivityHandle(resource
+				.getID());
+
+		if (msResourceActivityHandle != null) {
+
+			// NOTE : Not firing any event here.
+			try {
+				sleeEndpoint.activityEnding(msResourceActivityHandle);
+			} catch (Exception e) {
+				logger.error("Could not end activity: " + resource);
+			}
+		}
+
+	}
+
 	// -----------------------------------------------------------------------------
 	// Link events
 	// -----------------------------------------------------------------------------
