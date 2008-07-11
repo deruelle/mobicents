@@ -75,6 +75,8 @@ public abstract class BaseEndpoint implements Endpoint {
     private BaseResourceManager resourceManager;
     private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
 
+    protected static Timer connectionTimer = new Timer();
+    
     public BaseEndpoint(String localName) {
         this.localName = localName;
         this.resourceManager = initResourceManager();

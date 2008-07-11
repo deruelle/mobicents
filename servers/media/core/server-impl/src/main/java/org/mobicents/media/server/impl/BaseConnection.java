@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import org.mobicents.media.Format;
@@ -59,6 +60,8 @@ import org.mobicents.media.server.impl.sdp.RTPAudioFormat;
  */
 public class BaseConnection implements Connection, AdaptorListener {
 
+    public static int CONNECTION_TIMEOUT = 30;
+    
     private String id;
     private int port;
     private int period = 20;
@@ -76,8 +79,20 @@ public class BaseConnection implements Connection, AdaptorListener {
     private HashMap codecs;
     private ConnectionState state = ConnectionState.NULL;
     private QueuedExecutor eventQueue = new QueuedExecutor();
+    
+    private TimerTask closeTask;
+    private boolean timerStarted = false;
+    
     private transient Logger logger = Logger.getLogger(BaseConnection.class);
 
+    private class CloseConnectionTask extends TimerTask {
+        public void run() {
+            logger.info("Connection timer expired, Disconnecting");
+            timerStarted = false;
+            close();
+        }
+    }
+    
     /**
      * Creates a new instance of BaseConnection.
      * 
@@ -93,7 +108,8 @@ public class BaseConnection implements Connection, AdaptorListener {
 
         this.endpoint = (BaseEndpoint) endpoint;
         this.endpointName = endpoint.getLocalName();
-
+        this.closeTask = new CloseConnectionTask();
+        
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Initializing audio formats");
         }
@@ -102,8 +118,12 @@ public class BaseConnection implements Connection, AdaptorListener {
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Initializing RTP stack");
         }
+        
         initRTPSocket();
-
+        BaseEndpoint.connectionTimer.schedule(
+                closeTask, 60 * CONNECTION_TIMEOUT * 1000);
+        timerStarted = true;
+        
         if (mode != ConnectionMode.SEND_ONLY) {
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Configuring primary media sink");
@@ -361,6 +381,8 @@ public class BaseConnection implements Connection, AdaptorListener {
             logger.debug(this + " Selected formats: " + codecs);
         }
 
+        //@FIXME
+        //DTMF may be negotiated but speech codecs no
         if (codecs.size() == 0) {
             throw new IOException("Codecs are not negotiated");
         }
@@ -599,6 +621,11 @@ public class BaseConnection implements Connection, AdaptorListener {
      * Releases all resources requested by this connection.
      */
     public void close() {
+        if (timerStarted) {
+            closeTask.cancel();
+            BaseEndpoint.connectionTimer.purge();
+        }
+       
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Close RTP socket");
         }
