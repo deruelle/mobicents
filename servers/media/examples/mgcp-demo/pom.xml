@@ -39,21 +39,15 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <copy overwrite="true" todir="${basedir}/release/${release.name}/mgcp-demo">
-                                            <fileset dir="${basedir}/events-du/target">
-                                                <include name="**.jar" />
-                                                <include name="*.xml" />
-                                                <include name="*.properties" />
-                                            </fileset>
+                                        <copy overwrite="true" todir="${basedir}/../../release/${release.name}/examples/mgcp-demo">
                                             <fileset dir="${basedir}/services-du/target">
                                                 <include name="**.jar" />
                                                 <include name="*.xml" />
                                                 <include name="*.properties" />
                                             </fileset>
                                         </copy>
-                                        <copy overwrite="true" file="${basedir}/events-du/target/build.xml" tofile="${basedir}/release/${release.name}/mgcp-demo/events-du-management.xml" />
-                                        <copy overwrite="true" file="${basedir}/services-du/target/build.xml" tofile="${basedir}/release/${release.name}/mgcp-demo/services-du-management.xml" />
-                                        <copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/release/${release.name}/mgcp-demo" />
+                                        <copy overwrite="true" file="${basedir}/services-du/target/build.xml" tofile="${basedir}/../../release/${release.name}/examples/mgcp-demo/du-management.xml" />
+                                        <copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/../../release/${release.name}/examples/mgcp-demo" />
                                     </tasks>
                                 </configuration>
                             </execution>

@@ -23,9 +23,13 @@
 		<module>controllers/mgcp/mgcp-ra</module>
 		<module>controllers/mgcp/mgcp-controller-sbb</module>
 		
-		<!-- This will automatically install mgcp-demo and mms-demo( depends on sip-ra). For call-controller2 and converged-demo, its better to do it manually as they have dependencies on other RA's appart from sip Ra -->
+		<!-- This will automatically install mgcp-demo and mms-demo (depends on sip-ra) -->
 		<module>examples/mgcp-demo</module>
 		<module>examples/mms-demo</module>
+        
+        <!-- For call-controller2 and converged-demo, although they have dependencies on other RA's appart from sip Ra -->
+        <module>examples/call-controller2</module>
+        <module>examples/converged-demo</module>
 	</modules>
 
 </project>
