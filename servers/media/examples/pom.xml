@@ -1,0 +1,49 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>org.mobicents.servers.media</groupId>
+		<artifactId>mobicents-media-server-core</artifactId>
+		<version>1.0.0.BETA3-SNAPSHOT</version>	
+	</parent>
+	
+	<artifactId>mobicents-media-server-examples-parent</artifactId>
+	
+	<packaging>pom</packaging>
+	
+	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>	
+
+	<modules>
+		<module>mgcp-demo</module>
+		<module>mms-demo</module>
+		<module>call-controller2</module>
+		<module>converged-demo</module>
+	</modules>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-media-server-examples
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
