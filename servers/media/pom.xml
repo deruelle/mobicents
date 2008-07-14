@@ -1,35 +1,30 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
 		<version>3-SNAPSHOT</version>
 		<relativePath>../../parent/pom.xml</relativePath>
-       </parent>
-	
+	</parent>
+
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-media-server-parent</artifactId>
 	<version>1.0.0.BETA3-SNAPSHOT</version>
-	
+
 	<packaging>pom</packaging>
-	
-	<name>Mobicents Media Server :: ${pom.artifactId}</name>	
+
+	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 
 	<modules>
 		<module>core</module>
-		<module>controllers/msc</module>
-		<module>controllers/mgcp/mgcp-stack</module>
-		<module>controllers/mgcp/mgcp-ra</module>
-		<module>controllers/mgcp/mgcp-controller-sbb</module>
-		
+		<module>controllers</module>
+
 		<!-- This will automatically install mgcp-demo and mms-demo (depends on sip-ra) -->
-		<module>examples/mgcp-demo</module>
-		<module>examples/mms-demo</module>
-        
-        <!-- For call-controller2 and converged-demo, although they have dependencies on other RA's appart from sip Ra -->
-        <module>examples/call-controller2</module>
-        <module>examples/converged-demo</module>
+		<!-- This will automatically install call-controller2 and converged-demo, although they have runtime dependencies on other RA's appart from sip Ra -->		
+		<module>examples</module>
 	</modules>
 
 </project>
