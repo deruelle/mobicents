@@ -85,7 +85,7 @@
 				<imageobject>
 					<imagedata
 						align="left"
-						fileref="images/ss-TrunkTopLevel.png"
+						fileref="images/top-Installation-ss-TrunkTopLevel.png"
 						format="PNG" />
 				</imageobject>
 				<!--<caption>
@@ -98,7 +98,7 @@
 				<imageobject>
 					<imagedata
 						align="right"
-						fileref="images/ss-ServersSubDir.png"
+						fileref="images/top-Installation-ss-ServersSubDir.png"
 						format="PNG" />
 				</imageobject>
 				<!--<caption>
