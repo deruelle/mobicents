@@ -7,8 +7,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>3-SNAPSHOT</version>
-		<relativePath>../../parent/pom.xml</relativePath>
+		<version>2</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
