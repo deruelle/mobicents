@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>	
             <artifactId>msc-ratype</artifactId>
-            <groupId>org.mobicents.servers.media</groupId>
+            <groupId>${pom.groupId}</groupId>
             <version>${pom.version}</version>
         </dependency>	
         <dependency>
@@ -24,8 +24,8 @@
         </dependency>  
         <dependency>
             <artifactId>vxml-sbb</artifactId>
-            <groupId>org.mobicents.servers.media</groupId>
-            <version>1.0.0.BETA2-SNAPSHOT</version>
+            <groupId>${pom.groupId}</groupId>
+            <version>${pom.version}</version>
         </dependency>
     </dependencies>	  
     
