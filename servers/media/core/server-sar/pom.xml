@@ -1,17 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>mobicents-media-server-sar</artifactId>
-	
+
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	<packaging>jboss-sar</packaging>
-	
+
 	<dependencies>
 		<dependency>
 			<artifactId>mobicents-media-server-impl</artifactId>
@@ -26,10 +30,19 @@
 					<artifactId>cactus</artifactId>
 					<groupId>cactus</groupId>
 				</exclusion>
+				<!-- This is sneakly passed, we cant to that with UCL, as instanceof wont return true for the same classes - it check Class objects, whihc for two CLs will differ -->
+				<exclusion>
+					<artifactId>mobicents-media-server-spi</artifactId>
+					<groupId>${pom.groupId}</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>mobicents-media-server-constants</artifactId>
+					<groupId>${pom.groupId}</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>mobicents-media-server-${pom.version}</finalName>
 		<plugins>
@@ -41,20 +54,16 @@
 				<configuration>
 					<!--<deploymentDescriptorFile>
 						xml/META-INF/jboss-service.xml
-					</deploymentDescriptorFile>
+						</deploymentDescriptorFile>
 					-->
 					<excludes>
 						<exclude>concurrent:concurrent</exclude>
-						
-						<exclude>
-							commons-collections:commons-collections
-						</exclude>
-						<exclude>
-							commons-logging:commons-logging
-						</exclude>
-						
+
+						<exclude>commons-collections:commons-collections</exclude>
+						<exclude>commons-logging:commons-logging</exclude>
+
 						<exclude>ant:ant-optional</exclude>
-						
+
 						<exclude>jboss:jboss</exclude>
 						<exclude>jboss:jboss-jmx</exclude>
 						<exclude>jboss:jboss-common</exclude>
@@ -76,7 +85,7 @@
 						<exclude>xml-apis:xml-apis</exclude>
 						<exclude>slide:webdavlib</exclude>
 					</excludes>
-					
+
 				</configuration>
 			</plugin>
 			<plugin>
@@ -90,7 +99,11 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+								<condition
+									property="jboss.dir"
+									value="${jboss.home}"
+									else="${env.JBOSS_HOME}"
+								>
 									<isset property="jboss.home" />
 								</condition>
 								<copy todir="${jboss.dir}/server/${node}/deploy/${project.build.finalName}.sar">
@@ -117,5 +130,5 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

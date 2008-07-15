@@ -18,6 +18,8 @@ package org.mobicents.media.server.spi;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Logger;
+
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -25,27 +27,36 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 //import org.mobicents.media.server.impl.BaseEndpoint;
 
+
+
 /**
  *
  * @author Oleg Kulikov
  */
 public class EndpointQuery {
     
+	protected static Logger logger=Logger.getLogger(EndpointQuery.class.getCanonicalName());
     public static synchronized Endpoint findAny(String name)
     throws NamingException, ResourceUnavailableException  {
         InitialContext ic = new InitialContext();
         
         Context ctx = (Context) ic.lookup(name);
+        
         NamingEnumeration list = ctx.listBindings("");
         while (list.hasMore()) {
+        	
             Binding binding = (Binding) list.next();
             String bindingName = binding.getName();
+            
             Object obj = binding.getObject();
             if (obj instanceof Endpoint) { 
                 Endpoint endpoint = (Endpoint)obj;
                 if (!endpoint.hasConnections()) {
                     return endpoint;
                 }
+            }else
+            {
+            	logger.info("Wrong class["+obj.getClass()+"], it doesnt implement ["+Endpoint.class+"], if it does, its a class loader issue!!!");
             }
         }
         
