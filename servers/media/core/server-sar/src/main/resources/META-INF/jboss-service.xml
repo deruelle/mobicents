@@ -47,7 +47,8 @@
 		<attribute name="PacketizationPeriod">20</attribute>
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="Speex">false</attribute>
 	</mbean>
 
 	<!-- ANNOUNCEMENT TRUNK -->
@@ -72,7 +73,8 @@
 		<attribute name="PacketizationPeriod">20</attribute>
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="Speex">false</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 
 		<!-- Use the following setting if you are using INBAND
@@ -105,7 +107,8 @@
 		<attribute name="PacketizationPeriod">20</attribute>
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="Speex">false</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
@@ -129,7 +132,8 @@
 		<attribute name="PacketizationPeriod">20</attribute>
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="Speex">false</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
@@ -151,10 +155,10 @@
 		<attribute name="BindAddress">${jboss.bind.address}</attribute>
 		<attribute name="Jitter">60</attribute>
 		<attribute name="PacketizationPeriod">20</attribute>
-		<attribute name="PortRange">1024-65535</attribute>
+		<attribute name="PortRange">1024-65535</attribute>		
+		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="PCMA">false</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="Speex">false</attribute>
 		<attribute name="MediaType">audio.x_wav</attribute>
 		<attribute name="RecordDir">${jboss.server.data.dir}</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
@@ -180,7 +184,8 @@
 		<attribute name="PacketizationPeriod">20</attribute>
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
-		<attribute name="Speex">true</attribute>
+		<attribute name="PCMU">true</attribute>
+		<attribute name="Speex">false</attribute>
 	</mbean>
 
 </server>
