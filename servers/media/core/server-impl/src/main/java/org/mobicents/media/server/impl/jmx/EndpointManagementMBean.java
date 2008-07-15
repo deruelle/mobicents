@@ -152,4 +152,46 @@ public interface EndpointManagementMBean extends ServiceMBean {
     public Properties getDTMF();
     
     public EndpointManagementMBean cloneEndpointManagementMBean();
+    
+    /**
+     * Gets the address of the STUN server configured for the endpoint.
+     * 
+     * @return the address of the STUN server
+     */
+    public String getStunServerAddress();
+
+    /**
+     * Sets the address of the STUN server used for this endpoint
+     * 
+     * @param stunServerAddress the address of the STUN server
+     */
+	public void setStunServerAddress(String stunServerAddress);
+
+	/**
+	 * Gets the port of the STUN server configured for this endpoint
+	 * 
+	 * @return
+	 */
+	public int getStunServerPort();
+	
+	/**
+	 * Sets the STUN server port for this endpoint
+	 * 
+	 * @param stunServerPort
+	 */
+	public void setStunServerPort(int stunServerPort);
+	
+	/**
+	 * Do we use stun for this endpoint
+	 * 
+	 * @return
+	 */
+	public boolean isUseStun();
+	
+	/**
+	 * Sets if we want stun for this endpoint
+	 * 
+	 * @param useStun
+	 */
+	public void setUseStun(boolean useStun);
 }

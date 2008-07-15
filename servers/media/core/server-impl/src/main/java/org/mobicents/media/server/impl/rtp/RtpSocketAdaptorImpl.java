@@ -26,6 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+
+import net.java.stun4j.StunAddress;
+import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
+import net.java.stun4j.client.StunDiscoveryReport;
+
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
@@ -51,6 +56,13 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     private InetAddress localhost;
     private int period = 20;
     private int jitter = 60;
+    
+    //STUN variables
+    private String publicAddressFromStun = null;
+	private int publicPortFromStun;
+    private boolean useStun = false;
+    private String stunServerAddress;
+    private int stunServerPort;
 
     private Logger logger = Logger.getLogger(RtpSocketAdaptorImpl.class);
     
@@ -67,6 +79,17 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         this.period = period;
         this.jitter = jitter;
     }
+    
+    /**
+     * Creates a new instance of RtpSocketAdaptorImpl
+     */
+    public RtpSocketAdaptorImpl(int period, int jitter, String stunServerAddress, int stunServerPort) {
+        this.period = period;
+        this.jitter = jitter;
+        this.stunServerAddress = stunServerAddress;
+        this.stunServerPort = stunServerPort;
+        this.useStun = true;
+    }
 
     /**
      * (Non Java-doc).
@@ -80,6 +103,13 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             try {
                 InetSocketAddress bindAddress = new InetSocketAddress(localAddress, port);
                 socket = new DatagramSocket(bindAddress);
+                if(useStun) {
+                	socket.disconnect();
+                	socket.close();
+                	socket = null;
+                	mapStun(port, bindAddress.getHostName());
+                	socket = new DatagramSocket(bindAddress);
+                }
                 socket.setSoTimeout(100);
                 bound = true;
             } catch (SocketException e) {
@@ -99,6 +129,55 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         receiverThread.setPriority(Thread.MAX_PRIORITY);
 
         return port;
+    }
+    
+    public boolean isUseStun() {
+		return useStun;
+	}
+
+	public void setUseStun(boolean useStun) {
+		this.useStun = useStun;
+	}
+
+	public String getPublicAddressFromStun() {
+		return publicAddressFromStun;
+	}
+
+	public int getPublicPortFromStun() {
+		return publicPortFromStun;
+	}
+
+    public void mapStun(int localPort, String localAddress) {
+    	try {
+			if(InetAddress.getByName(localAddress).isLoopbackAddress()) {
+				logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+			} else {
+				StunAddress localStunAddress = new StunAddress(localAddress,
+						localPort);
+
+				StunAddress serverStunAddress = new StunAddress(
+						stunServerAddress, stunServerPort);
+
+				NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
+						localStunAddress, serverStunAddress);
+				addressDiscovery.start();
+				StunDiscoveryReport report = addressDiscovery
+						.determineAddress();
+				if(report.getPublicAddress() != null) {
+					this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress().getHostAddress();
+					this.publicPortFromStun = report.getPublicAddress().getPort();
+					//TODO set a timer to retry the binding and provide a callback to update the global ip address and port
+				} else {
+					useStun = false;
+					logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+				}
+				logger.info("Stun report = " + report);
+				addressDiscovery.shutDown();
+			}
+    	} catch (Throwable t) {
+    		logger.error("Stun lookup has failed: " + t.getMessage());
+    	}
+		
     }
 
     /**

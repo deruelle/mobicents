@@ -73,7 +73,11 @@ public abstract class BaseEndpoint implements Endpoint {
     protected HashMap formats = new HashMap();
     private HashMap configurations = new HashMap();
     private BaseResourceManager resourceManager;
-    private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
+    private String stunServerAddress;
+	private int stunServerPort;
+	private boolean useStun = false;
+
+	private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
 
     protected static Timer connectionTimer = new Timer();
     
@@ -85,6 +89,30 @@ public abstract class BaseEndpoint implements Endpoint {
     public Timer getTimer() {
         return timer;
     }
+    
+    public String getStunServerAddress() {
+		return stunServerAddress;
+	}
+
+	public void setStunServerAddress(String stunServerAddress) {
+		this.stunServerAddress = stunServerAddress;
+	}
+
+	public int getStunServerPort() {
+		return stunServerPort;
+	}
+
+	public void setStunServerPort(int stunServerPort) {
+		this.stunServerPort = stunServerPort;
+	}
+	
+	public boolean isUseStun() {
+		return useStun;
+	}
+
+	public void setUseStun(boolean useStun) {
+		this.useStun = useStun;
+	}
 
     /**
      * (Non Java-doc).

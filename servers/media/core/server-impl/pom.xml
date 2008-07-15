@@ -58,6 +58,12 @@
 			<artifactId>jspeex</artifactId>
 			<version>0.9.7</version>
 		</dependency>		
+		<dependency>
+			<groupId>net.java.stun4j</groupId>
+			<artifactId>stun4j</artifactId>
+			<version>1.0.MOBICENTS</version>            
+			<scope>provided</scope>
+		</dependency>	
 	</dependencies>        
 	
 	

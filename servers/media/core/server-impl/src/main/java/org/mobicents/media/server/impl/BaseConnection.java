@@ -139,9 +139,17 @@ public class BaseConnection implements Connection, AdaptorListener {
      * @throws org.mobicents.media.server.spi.ResourceUnavailableException
      */
     private void initRTPSocket() throws ResourceUnavailableException {
-        rtpSocket = new RtpSocketAdaptorImpl(
+    	if(this.endpoint.isUseStun()) {
+    		rtpSocket = new RtpSocketAdaptorImpl(
+                    endpoint.packetizationPeriod,
+                    endpoint.jitter,
+                    endpoint.getStunServerAddress(),
+                    endpoint.getStunServerPort());
+    	} else {
+    		rtpSocket = new RtpSocketAdaptorImpl(
                 endpoint.packetizationPeriod,
                 endpoint.jitter);
+    	}
         try {
             port = rtpSocket.init(endpoint.getBindAddress(),
                     endpoint.lowPortNumber, endpoint.highPortNumber);
@@ -265,8 +273,16 @@ public class BaseConnection implements Connection, AdaptorListener {
 
         String networkType = javax.sdp.Connection.IN;
         String addressType = javax.sdp.Connection.IP4;
-        String address = endpoint.getBindAddress().getHostAddress();
-
+        String address = null;
+        int audioPort = 0;
+        RtpSocketAdaptorImpl rtpSocketImpl = (RtpSocketAdaptorImpl) this.rtpSocket;
+        if(!rtpSocketImpl.isUseStun()) {
+        	address = endpoint.getBindAddress().getHostAddress();
+        	audioPort = this.port;
+        } else {
+        	address = rtpSocketImpl.getPublicAddressFromStun();
+        	audioPort = rtpSocketImpl.getPublicPortFromStun();
+        }
         try {
             localSDP = sdpFactory.createSessionDescription();
             localSDP.setVersion(sdpFactory.createVersion(0));

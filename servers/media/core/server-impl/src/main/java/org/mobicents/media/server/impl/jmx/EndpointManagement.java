@@ -49,6 +49,10 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     private boolean enablePCMU = false;
     private boolean enableSpeex = false;
     
+    private String stunServerAddress;
+	private int stunServerPort;
+	private boolean useStun = false;
+    
     private Properties dtmfConfig;
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
     
@@ -245,6 +249,39 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     public Properties getDTMF() {
         return dtmfConfig;
     }
+    
+    public String getStunServerAddress() {
+		return stunServerAddress;
+	}
+
+	public void setStunServerAddress(String stunServerAddress) {
+		this.stunServerAddress = stunServerAddress;
+        if (this.getState() == STARTED) {
+            this.getEndpoint().setStunServerAddress(stunServerAddress);
+        }
+	}
+
+	public int getStunServerPort() {
+		return stunServerPort;
+	}
+
+	public void setStunServerPort(int stunServerPort) {
+		this.stunServerPort = stunServerPort;
+        if (this.getState() == STARTED) {
+            this.getEndpoint().setStunServerPort(stunServerPort);
+        }
+	}
+	
+	public boolean isUseStun() {
+		return useStun;
+	}
+
+	public void setUseStun(boolean useStun) {
+		this.useStun = useStun;
+        if (this.getState() == STARTED) {
+            this.getEndpoint().setUseStun(useStun);
+        }
+	}
     
     /**
      * Binds trunk object to the JNDI under the jndiName.
