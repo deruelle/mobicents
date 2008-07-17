@@ -37,6 +37,7 @@
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
 		<attribute name="Speex">false</attribute>
+		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
 	<!-- ANNOUNCEMENT TRUNK -->
