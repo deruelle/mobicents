@@ -41,6 +41,23 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>		 	          		
+					<execution>
+						<id>copy-to-jboss-lib</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<includeArtifactIds>jain-sip-ri</includeArtifactIds>
+							<outputDirectory>${env.JBOSS_HOME}/server/${node}/lib</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+		 	      	</plugin>						
+			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
