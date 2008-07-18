@@ -6,6 +6,7 @@
 package org.mobicents.media.server.impl.codec.ulaw.test;
 
 import junit.framework.TestCase;
+import org.mobicents.media.Buffer;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 
@@ -75,14 +76,20 @@ public class CodecTest extends TestCase {
      * Test of process method, of class Decoder.
      */
     public void testCodec() {
+        Buffer buffer = new Buffer();
+        buffer.setData(src);
+        buffer.setOffset(0);
+        buffer.setLength(src.length);
+        
         Codec compressor = CodecLocator.getCodec(Codec.LINEAR_AUDIO, Codec.PCMU);
-        byte[] compressed = compressor.process(src);
+        compressor.process(buffer);
         
         Codec decompressor = CodecLocator.getCodec(Codec.PCMU, Codec.LINEAR_AUDIO);
-        byte[] decompressed = decompressor.process(compressed);
+        decompressor.process(buffer);
         
+        byte[] res = (byte[]) buffer.getData();
         for (int i = 0; i < src.length; i++) {
-            if (src[i] != decompressed[i]) {
+            if (src[i] != res[i]) {
                 fail("mismatch found at " + i);
             }
         }
