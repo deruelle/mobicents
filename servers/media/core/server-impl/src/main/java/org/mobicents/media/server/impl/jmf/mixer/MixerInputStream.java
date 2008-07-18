@@ -73,7 +73,8 @@ public class MixerInputStream implements BufferTransferHandler {
      */
     private void transcode(Buffer buffer) {
         if (codec != null) {
-            byte[] data = new byte[buffer.getLength() - buffer.getOffset()];
+            codec.process(buffer);
+/*            byte[] data = new byte[buffer.getLength() - buffer.getOffset()];
             System.arraycopy(buffer.getData(), buffer.getOffset(), data, 0, data.length);
 
             byte[] media = codec.process(data);
@@ -81,6 +82,7 @@ public class MixerInputStream implements BufferTransferHandler {
             buffer.setData(media);
             buffer.setOffset(0);
             buffer.setLength(media.length);
+ */ 
         }
     }
     

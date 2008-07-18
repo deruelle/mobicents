@@ -13,11 +13,13 @@
  */
 package org.mobicents.media.server.impl.jmf.dsp.audio.ulaw;
 
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 
 /**
- *
+ * Implements G.711 U-law compressor.
+ * 
  * @author Oleg Kulikov
  */
 public class Encoder implements Codec {
@@ -60,32 +62,42 @@ public class Encoder implements Codec {
         return formats;
     }
 
-    public byte[] process(byte[] media) {
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
+     */
+    public void process(Buffer buffer) {
+        byte[] data = (byte[]) buffer.getData();
+        
+        int offset = buffer.getOffset();
+        int length = buffer.getLength();
+        
+        byte[] media = new byte[length - offset];
+        System.arraycopy(data, 0, media, 0, media.length);
+        
+        byte[] res = process(data);
+        
+        buffer.setData(res);
+        buffer.setOffset(0);
+        buffer.setLength(0);
+    }
+    
+    /**
+     * Perform compression using U-law.
+     * 
+     * @param media the input uncompressed media
+     * @return the output compressed media.
+     */
+    private byte[] process(byte[] media) {
         byte[] compressed = new byte[media.length / 2];
 
         int j = 0;
         for (int i = 0; i < compressed.length; i++) {
             short sample = (short) ((media[j++] & 0xff) | ((media[j++]) << 8));
-//            compressed[i] = linearToMuLawSample(sample);
             compressed[i] = linear2ulaw(sample);
         }
         return compressed;
-    }
-
-    private byte linearToMuLawSample(short sample) {
-        int sign = (sample >> 8) & 0x80;
-        if (sign == 0x80) {
-            sample = (short) -sample;
-        }
-        if (sample > cClip) {
-            sample = cClip;
-        }
-        sample = (short) (sample + cBias);
-        int exponent = (int) muLawCompressTable[(sample >> 7) & 0xFF];
-        int mantissa = (sample >> (exponent + 3)) & 0x0F;
-        int compressedByte = ~(sign | (exponent << 4) | mantissa);
-
-        return (byte) compressedByte;
     }
 
     /*

@@ -84,6 +84,10 @@ public class RtpPacket implements Serializable {
         return payload;
     }
     
+    public int getTimestamp() {
+        return timestamp;
+    }
+    
     public byte[] toByteArray() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         bout.write(0x80);

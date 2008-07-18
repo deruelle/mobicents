@@ -116,11 +116,11 @@ public class SpectralAnalyser extends BaseResource implements MediaSink, BufferT
         } catch (IOException e) {
         }
 
-        byte[] data = (byte[]) buffer.getData();
         if (codec != null) {
-            data = codec.process(data);
+            codec.process(buffer);
         }
-
+        
+        byte[] data = (byte[]) buffer.getData();
         int len = Math.min(16000 - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);
         offset += len;

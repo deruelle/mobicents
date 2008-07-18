@@ -144,11 +144,15 @@ public class InbandDetector extends BaseDtmfDetector implements BufferTransferHa
         } catch (IOException e) {
         }
 
+        if (codec != null) {
+            codec.process(buffer);
+        }
+        
         byte[] data = (byte[]) buffer.getData();
 
-        if (codec != null) {
-            data = codec.process(data);
-        }
+//        if (codec != null) {
+//            data = codec.process(data);
+//        }
 
         int len = Math.min(localBuffer.length - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);

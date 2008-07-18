@@ -14,7 +14,6 @@
 package org.mobicents.media.server.impl.jmf.player;
 
 import java.io.IOException;
-import java.util.Timer;
 import java.util.TimerTask;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -27,7 +26,6 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
-import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * 
@@ -122,6 +120,9 @@ public class PushBufferAudioStream implements PushBufferStream {
         buffer.setTimeStamp(seq * audioPlayer.packetPeriod);
         buffer.setEOM(eom);
         buffer.setSequenceNumber(seq++);
+        if (codec != null) {
+            codec.process(buffer);
+        }
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {
@@ -172,9 +173,9 @@ public class PushBufferAudioStream implements PushBufferStream {
                     duration = (int) (audioPlayer.packetPeriod * len / packetSize);
                     eom = len < packetSize;
 
-                    if (codec != null) {
-                        frame = codec.process(frame);
-                    }
+//                    if (codec != null) {
+//                        frame = codec.process(frame);
+//                    }
 
                     if (transferHandler != null) {
                         transferHandler.transferData(stream);

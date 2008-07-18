@@ -13,15 +13,17 @@
  */
 package org.mobicents.media.server.impl.jmf.dsp.audio.alaw;
 
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 
 /**
- *
+ * Implements G.711 A-Law decompressor.
+ * 
  * @author Oleg Kulikov
  */
 public class Decoder implements Codec {
-
+    /** decompress table constants */
     private static short aLawDecompressTable[] = new short[]{
         -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
         -7552, -7296, -8064, -7808, -6528, -6272, -7040, -6784,
@@ -57,6 +59,11 @@ public class Decoder implements Codec {
         944, 912, 1008, 976, 816, 784, 880, 848
     };
 
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     */
     public Format[] getSupportedInputFormats() {
         Format[] formats = new Format[] {
             Codec.PCMA
@@ -64,6 +71,11 @@ public class Decoder implements Codec {
         return formats;
     }
     
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     */
     public Format[] getSupportedOutputFormats(Format fmt) {
         Format[] formats = new Format[] {
             Codec.LINEAR_AUDIO
@@ -71,7 +83,34 @@ public class Decoder implements Codec {
         return formats;
     }
     
-    public byte[] process(byte[] media) {
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
+     */
+    public void process(Buffer buffer) {
+        byte[] data = (byte[]) buffer.getData();
+        
+        int offset = buffer.getOffset();
+        int length = buffer.getLength();
+        
+        byte[] media = new byte[length - offset];
+        System.arraycopy(data, 0, media, 0, media.length);
+        
+        byte[] res = process(data);
+        
+        buffer.setData(res);
+        buffer.setOffset(0);
+        buffer.setLength(0);
+    }
+    
+    /**
+     * Perform decompression using A-law.
+     * 
+     * @param media the input compressed media
+     * @return the output decompressed media.
+     */
+    private byte[] process(byte[] media) {
         byte[] decompressed = new byte[media.length * 2];
         int j = 0;
         for (int i = 0; i < media.length; i++) {

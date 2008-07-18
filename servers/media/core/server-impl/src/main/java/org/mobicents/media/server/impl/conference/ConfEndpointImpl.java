@@ -14,6 +14,7 @@
 package org.mobicents.media.server.impl.conference;
 
 
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseEndpoint;
 
@@ -66,8 +67,13 @@ public class ConfEndpointImpl extends BaseEndpoint {
         if (dtmfPackage == null) {
             dtmfPackage = new DTMFPackage(this);
         }
+        HashMap parms = new HashMap();
+        if (params.length > 0) {
+            parms.put("dtmf.mask", params[0]);
+        }
+        
         try {
-            dtmfPackage.subscribe(EventID.DTMF, null, connectionID, listener);
+            dtmfPackage.subscribe(EventID.DTMF, parms, connectionID, listener);
         } catch (Exception e) {
             logger.error("Detection of DTMF failed", e);
         }

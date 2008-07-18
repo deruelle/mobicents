@@ -71,15 +71,18 @@ public class MixerOutputStream implements Serializable, PushBufferStream {
     }
     
     public void read(Buffer buffer) throws IOException {
-        byte[] cframe = codec != null ? codec.process(frame) : frame; 
-        buffer.setData(cframe);
+//        byte[] cframe = codec != null ? codec.process(frame) : frame; 
+        buffer.setData(frame);
         buffer.setOffset(0);
-        buffer.setLength(cframe.length);
+        buffer.setLength(frame.length);
         buffer.setDuration(duration);
         buffer.setTimeStamp(duration * seq);
         buffer.setSequenceNumber(seq++);
 
         buffer.setFormat(fmt);
+        if (codec != null) {
+            codec.process(buffer);
+        }
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {

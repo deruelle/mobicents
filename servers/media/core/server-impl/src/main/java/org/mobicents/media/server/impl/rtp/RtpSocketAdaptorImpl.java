@@ -511,6 +511,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
          * Silence is not transmitted, however the timestamp and sequence number
          * are still incremented monotonously during silence periods.
          */
+        @Override
         public void run() {
             this.stopped = false;
             int s = ticks * period;
@@ -518,6 +519,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
                 try {
                     byte[] data = packetizer.next(s);
                     RtpPacket p = new RtpPacket((byte) pt, seq++, timestamp, ssrc, data);
+                    System.out.println("send[seq=" + seq + ",timestamp=" + timestamp + ", len=" + data.length);
                     peer.send(p);
                     Thread.currentThread().sleep(10);
                     timestamp += s;

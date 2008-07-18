@@ -13,6 +13,7 @@
  */
 package org.mobicents.media.server.impl.jmf.dsp.audio.ulaw;
 
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 
@@ -63,6 +64,11 @@ public class Decoder implements Codec {
         56, 48, 40, 32, 24, 16, 8, 0
     };
 
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     */
     public Format[] getSupportedInputFormats() {
         Format[] formats = new Format[]{
             Codec.PCMU
@@ -70,6 +76,11 @@ public class Decoder implements Codec {
         return formats;
     }
 
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     */
     public Format[] getSupportedOutputFormats(Format fmt) {
         Format[] formats = new Format[]{
             Codec.LINEAR_AUDIO
@@ -77,11 +88,37 @@ public class Decoder implements Codec {
         return formats;
     }
 
-    public byte[] process(byte[] media) {
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
+     */
+    public void process(Buffer buffer) {
+        byte[] data = (byte[]) buffer.getData();
+        
+        int offset = buffer.getOffset();
+        int length = buffer.getLength();
+        
+        byte[] media = new byte[length - offset];
+        System.arraycopy(data, 0, media, 0, media.length);
+        
+        byte[] res = process(data);
+        
+        buffer.setData(res);
+        buffer.setOffset(0);
+        buffer.setLength(0);
+    }
+    
+    /**
+     * Perform decopression
+     * 
+     * @param media the compressed media.
+     * @param uncompressed media.
+     */
+    private byte[] process(byte[] media) {
         byte[] decompressed = new byte[media.length * 2];
         int j = 0;
         for (int i = 0; i < media.length; i++) {
-//            short s = muLawDecompressTable[media[i] & 0xff];
             short s = this.ulaw2linear(media[i]);
             decompressed[j++] = (byte) s;
             decompressed[j++] = (byte) (s >> 8);

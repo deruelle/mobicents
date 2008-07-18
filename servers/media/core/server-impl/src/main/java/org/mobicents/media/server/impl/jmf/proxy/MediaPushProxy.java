@@ -28,7 +28,6 @@ import org.mobicents.media.protocol.ContentDescriptor;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.mobicents.media.server.impl.jmf.dsp.Codec;
 import org.mobicents.media.server.impl.jmf.dsp.CodecLocator;
-import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -136,8 +135,8 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     }
 
     public void read(Buffer buffer) throws IOException {
-        byte[] fdata = readFrame(sizeInBytes);
-        byte[] data = codec != null ? codec.process(fdata) : fdata;
+        byte[] data = readFrame(sizeInBytes);
+        //byte[] data = codec != null ? codec.process(fdata) : fdata;
         buffer.setData(data);
         buffer.setDiscard(false);
         buffer.setDuration(period);
@@ -148,6 +147,9 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
         buffer.setOffset(0);
         buffer.setTimeStamp(seq * period);
         buffer.setSequenceNumber(seq++);
+        if (codec != null) {
+            codec.process(buffer);
+        }
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {

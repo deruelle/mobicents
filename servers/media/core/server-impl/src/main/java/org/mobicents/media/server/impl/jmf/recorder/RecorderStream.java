@@ -130,10 +130,13 @@ public class RecorderStream extends InputStream implements BufferTransferHandler
         Buffer buffer = new Buffer();
         try {
             stream.read(buffer);
-            byte[] data = (byte[]) buffer.getData();
             if (codec != null) {
-                data = codec.process(data);
+                codec.process(buffer);
             }
+            byte[] data = (byte[]) buffer.getData();
+//            if (codec != null) {
+//                data = codec.process(data);
+//            }
             
             buffer.setData(data);
             buffer.setOffset(0);
