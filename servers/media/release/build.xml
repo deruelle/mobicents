@@ -1,184 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="media.server.release" default="release" basedir=".">
 
-    <property name="release.version" value="1.0.0.BETA3-SNAPSHOT"/>
+	<property name="release.version" value="1.0.0.BETA3-SNAPSHOT" />
 
-    <property name="release.dir" value="${ant.file.media.server.release}/../target"/>
-    <property name="release.dir.core" value="${release.dir}/../core/"/>
-    <property name="release.dir.all" value="${release.dir}/../all/"/>
-	
-	<property name="jboss.version" value="4.2.2.GA"/>
+	<property name="release.dir" value="${ant.file.media.server.release}/../target" />
+	<property name="release.dir.core" value="${release.dir}/../core/" />
+	<property name="release.dir.all" value="${release.dir}/../all/" />
+
+	<property name="jboss.version" value="4.2.2.GA" />
 	<property name="jboss.config" value="default" />
-    <property name="jboss.home" value="${release.dir.all}/jboss-${jboss.version}/"/>
-    <property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
-    <condition property="default.jboss.config">
-        <equals arg1="${jboss.config}" arg2="default"/>
-    </condition>
-    <condition property="all.jboss.config">
-        <equals arg1="${jboss.config}" arg2="all"/>
-    </condition>
-	
+	<property name="jboss.home" value="${release.dir.all}/jboss-${jboss.version}/" />
+	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip" />
+		
+	<condition property="default.jboss.config">
+		<equals arg1="${jboss.config}" arg2="default" />
+	</condition>
+	<condition property="all.jboss.config">
+		<equals arg1="${jboss.config}" arg2="all" />
+	</condition>
+
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
-        <os family="windows"/>
-    </condition>
-	
+		<os family="windows" />
+	</condition>
+
 	<available file="${ant.file.media.server.release}/../${jboss.distro.zip.path}" property="got.jboss" />
-    <target name="get-jboss" unless="got.jboss">
-        <echo>Downloading JBoss AS</echo>
-        <get dest="${ant.file.mobicents.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-4.2.2.GA.zip"/>
-    </target>
-	
-    <target name="unzip-jboss">
-        <delete dir="${jboss.home}" failonerror="true" />
-        <mkdir dir="${jboss.home}" />
-        <unzip src="${jboss.distro.zip.path}" dest="${release.dir.all}" />
-        <antcall target="cleanup-jboss"/>
-    </target>
-    
-    <target name="cleanup-jboss">
-        <antcall target="delete-all-jboss-config"/>
-        <antcall target="delete-default-jboss-config"/>
-        <delete dir="${jboss.home}/server/minimal" />
-    </target>
-    <target name="delete-all-jboss-config" unless="all.jboss.config">
-        <delete dir="${jboss.home}/server/all" />
-    </target>
-    <target name="delete-default-jboss-config" unless="default.jboss.config">
-        <delete dir="${jboss.home}/server/default" />
-    </target>
-	
-    <available file="${ant.file.media.server.release}/../mobicents-jain-slee" property="mobicents.jain.slee.checked.out"/>
-    <target name="get-mobicents-jain-slee" unless="mobicents.jain.slee.checked.out">
-        <echo>Checking out Mobicents JAIN-SLEE</echo>
-        <exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
-            <arg line="-f external-components-checkout.xml install -Dexternal.modules.basedir=mobicents-jain-slee"/>
-        </exec>
-    </target>
+	<target name="get-jboss" unless="got.jboss">
+		<echo>Downloading JBoss AS</echo>
+		<get dest="${ant.file.mobicents.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-4.2.2.GA.zip" />
+	</target>
+
+	<target name="unzip-jboss">
+		<delete dir="${jboss.home}" failonerror="true" />
+		<mkdir dir="${jboss.home}" />
+		<unzip src="${jboss.distro.zip.path}" dest="${release.dir.all}" />
+		<antcall target="cleanup-jboss" />
+	</target>
+
+	<target name="cleanup-jboss">
+		<antcall target="delete-all-jboss-config" />
+		<antcall target="delete-default-jboss-config" />
+		<delete dir="${jboss.home}/server/minimal" />
+	</target>
+	<target name="delete-all-jboss-config" unless="all.jboss.config">
+		<delete dir="${jboss.home}/server/all" />
+	</target>
+	<target name="delete-default-jboss-config" unless="default.jboss.config">
+		<delete dir="${jboss.home}/server/default" />
+	</target>
+
+	<available file="${ant.file.media.server.release}/../mobicents-jain-slee" property="mobicents.jain.slee.checked.out" />
+	<target name="get-mobicents-jain-slee" unless="mobicents.jain.slee.checked.out">
+		<echo>Checking out Mobicents JAIN-SLEE</echo>
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
+			<arg line="-f external-components-checkout.xml install -Dexternal.modules.basedir=mobicents-jain-slee" />
+		</exec>
+	</target>
 
 	<target name="build-mobicents-jain-slee">
-        <echo>Building Mobicents JAIN-SLEE</echo>
+		<echo>Building Mobicents JAIN-SLEE</echo>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../mobicents-jain-slee">
-		    <arg line="clean install -Djboss.home=${jboss.home}" />
+			<arg line="clean install -Djboss.home=${jboss.home}" />
 		</exec>
-		
+
 		<ant antfile="${ant.file.media.server.release}/../mobicents-jain-slee/release/build.xml" target="build-ras">
 			<property name="release.dir" value="${release.dir.all}" />
 		</ant>
 		<ant antfile="${ant.file.media.server.release}/../mobicents-jain-slee/release/build.xml" target="build-examples">
-		    <property name="release.dir" value="${release.dir.all}" />
+			<property name="release.dir" value="${release.dir.all}" />
 		</ant>
-		
-		<copy overwrite="true" todir="${release.dir.all}/" >
-			<fileset dir="${ant.file.media.server.release}/../mobicents-jain-slee/release/target" includes="**/resources/** **/examples/**" />
-		</copy>
-        <copy failonerror="true" file="${ant.file.media.server.release}/../mobicents-jain-slee/release/jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true"/>
-    </target>
 
-    <!-- ########## -->
-	
+		<copy overwrite="true" todir="${release.dir.all}/">
+			<fileset dir="${ant.file.media.server.release}/../mobicents-jain-slee/release/target" includes="**/resources/tts/* **/resources/sip/* **/resources/persistence/*" />
+		</copy>
+		<copy failonerror="true" file="${ant.file.media.server.release}/../mobicents-jain-slee/release/jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true" />
+	</target>
+
+	<!-- ########## -->
+
 	<target name="release-core">
 		<delete dir="${release.dir.core}" />
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
-			<arg line="clean install" />
+			<!-- Passing -DJBOSS_HOME=${basedir}/all/tmp is hack. Look at trunk/servers/media/core/server-spi/pom.xml for maven-dependency-plugin.-->
+			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp" />
 		</exec>
-		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/server-sar/target/mobicents-media-server-${release.version}.sar" todir="${release.dir.core}/server/" />
-		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" todir="${release.dir.core}/server/" />
-		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api-local-impl/target/mobicents-media-server-msc-api-local-impl-${release.version}.jar" todir="${release.dir.core}/server/" />
+		
+		<copy overwrite="true" todir="${release.dir.core}/server/mobicents-media-server-${release.version}.sar" >
+			<fileset dir="${ant.file.media.server.release}/../../core/server-sar/target/mobicents-media-server-${release.version}" />
+		</copy>
+		
+		<copy overwrite="true" todir="${release.dir.core}/lib" >
+			<fileset file="${ant.file.media.server.release}/../../core/server-spi/target/mobicents-media-server-spi-${release.version}.jar" />
+			<fileset file="${ant.file.media.server.release}/../../core/server-constants/target/mobicents-media-server-constants-${release.version}.jar" />
+			<fileset file="${release.dir.all}/tmp/server/${jboss.config}/lib/jain-sip-ri-*.jar" />
+		</copy>
+		
+		<delete dir="${release.dir.all}" />
+				
+		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" todir="${release.dir.core}/controllers/msc" />
+		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api-local-impl/target/mobicents-media-server-msc-api-local-impl-${release.version}.jar" todir="${release.dir.core}/controllers/msc" />
 		<copy overwrite="true" file="${ant.file.media.server.release}/../release-core-README.txt" tofile="${release.dir.core}/README.txt" />
 		
-		<zip destfile="${ant.file.media.server.release}/../${zip.filename}" basedir="${release.dir.core}"/>
+		<zip destfile="${ant.file.media.server.release}/../${zip.filename}" basedir="${release.dir.core}" />
 	</target>
-	
-   <target name="release-all">
-        <delete dir="${release.dir.all}" />
 
-        <antcall target="get-jboss" />
-        <antcall target="unzip-jboss" />
-        <antcall target="get-mobicents-jain-slee" />
-        <antcall target="build-mobicents-jain-slee" />
-        
-        <exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
-            <arg line="clean install" />
-        </exec>
-        <copy overwrite="true" file="${ant.file.media.server.release}/../../core/server-sar/target/mobicents-media-server-${release.version}.sar" todir="${jboss.home}/server/${jboss.config}/deploy" />
-        <copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" todir="${jboss.home}/server/${jboss.config}/deploy" />
-        <copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api-local-impl/target/mobicents-media-server-msc-api-local-impl-${release.version}.jar" todir="${jboss.home}/server/${jboss.config}/deploy" />
+	<target name="release-all">
+		<delete dir="${release.dir.all}" />
 
-        <exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../">
-            <arg line="clean install -Djboss.home=${release.dir.all}/tmp" />
-        </exec>
-        <exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../">
-            <arg line="-o install -Prelease -Drelease.name=all -Djboss.home=${release.dir.all}/tmp" />
-        </exec>
+		<antcall target="get-jboss" />
+		<antcall target="unzip-jboss" />
+		<antcall target="get-mobicents-jain-slee" />
+		<antcall target="build-mobicents-jain-slee" />
 
-        <delete dir="${release.dir.all}/tmp" />
+		<exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
+			<arg line="clean install" />
+		</exec>
+		
+		<copy overwrite="true" todir="${jboss.home}/server/${jboss.config}/deploy/mobicents-media-server-${release.version}.sar" >
+			<fileset dir="${ant.file.media.server.release}/../../core/server-sar/target/mobicents-media-server-${release.version}" />
+		</copy>
+				
+		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" todir="${release.dir.all}/media-server/controllers/msc" />
+		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api-local-impl/target/mobicents-media-server-msc-api-local-impl-${release.version}.jar" todir="${release.dir.all}/media-server/controllers/msc" />
+		
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
+			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+		</exec> 
+		
+		<copy overwrite="true" todir="${jboss.home}/server/${jboss.config}/lib" >
+			<fileset file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" />
+			<fileset file="${ant.file.media.server.release}/../../core/server-spi/target/mobicents-media-server-spi-${release.version}.jar" />
+			<fileset file="${ant.file.media.server.release}/../../core/server-constants/target/mobicents-media-server-constants-${release.version}.jar" />
+			<fileset file="${release.dir.all}/tmp/server/${jboss.config}/lib/jain-sip-ri-*.jar" />
+		</copy>		
+		
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
+			<arg line="-o install -Prelease -Drelease.name=all" />
+		</exec>
 
-        <copy overwrite="true" file="${ant.file.media.server.release}/../release-all-README.txt" tofile="${release.dir.all}/README.txt" />
+		<delete dir="${release.dir.all}/tmp" />
 
-        <fixcrlf srcdir="${jboss.home}/bin" includes="*.sh" eol="lf" eof="remove" />
-        <zip destfile="${ant.file.media.server.release}/../${zip.filename}" filesonly="false">
-            <zipfileset dir="${jboss.home}/bin" filemode="755" prefix="jboss-${jboss.version}/bin">
-                <include name="*.sh" />
-            </zipfileset>
-            <zipfileset dir="${jboss.home}/bin" prefix="jboss-${jboss.version}/bin">
-                <exclude name="*.sh" />
-            </zipfileset>
-            <zipfileset dir="${release.dir.all}" prefix=""
-                excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**"/>
-            </zip>
-    </target>
-	
+		<copy overwrite="true" file="${ant.file.media.server.release}/../release-all-README.txt" tofile="${release.dir.all}/README.txt" />
+
+		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh" eol="lf" eof="remove" />
+		<zip destfile="${ant.file.media.server.release}/../${zip.filename}" filesonly="false">
+			<zipfileset dir="${jboss.home}/bin" filemode="755" prefix="jboss-${jboss.version}/bin">
+				<include name="*.sh" />
+			</zipfileset>
+			<zipfileset dir="${jboss.home}/bin" prefix="jboss-${jboss.version}/bin">
+				<exclude name="*.sh" />
+			</zipfileset>
+			<zipfileset dir="${release.dir.all}" prefix="" excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**" />
+		</zip>
+	</target>
+
 	<target name="release-src" depends="set-src-excludes">
-        <copy todir="${release.dir}/src/mobicents/servers/media" includeEmptyDirs="false">
-            <fileset dir="${ant.file.mobicents.release}/../../"/>
-        </copy>
-		<delete dir="${release.dir}/src/mobicents/servers/media/voicexml"/>
-        <zip destfile="${ant.file.mobicents.release}/../${zip.filename}" basedir="${release.dir}/src"/>
-        <delete dir="${release.dir}/src"/>
+		<copy todir="${release.dir}/src/mobicents/servers/media" includeEmptyDirs="false">
+			<fileset dir="${ant.file.mobicents.release}/../../" />
+		</copy>
+		<delete dir="${release.dir}/src/mobicents/servers/media/voicexml" />
+		<zip destfile="${ant.file.mobicents.release}/../${zip.filename}" basedir="${release.dir}/src" />
+		<delete dir="${release.dir}/src" />
 
-        <defaultexcludes default="true"/>
-    </target>
-		
-	<target name="release" >
+		<defaultexcludes default="true" />
+	</target>
+
+	<target name="release">
 		<tstamp>
-		    <format property="time.stamp" pattern="yyMMddHHmm" />
+			<format property="time.stamp" pattern="yyMMddHHmm" />
 		</tstamp>
-		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip"/>
+		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip" />
 
-        <antcall target="release-core">
-            <param name="zip.filename" value="mobicents-media-server-core-${release.version}-${time.stamp}.zip" />
-        </antcall>
+		<antcall target="release-core">
+			<param name="zip.filename" value="mobicents-media-server-core-${release.version}-${time.stamp}.zip" />
+		</antcall>
 		<antcall target="release-all">
-            <param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
-        </antcall>
-        <antcall target="release-src">
-            <param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
-        </antcall>
-		
-        <antcall target="clean" />
-    </target>
+			<param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
+		</antcall>
+		<antcall target="release-src">
+			<param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
+		</antcall>
+
+		<antcall target="clean" />
+	</target>
 
 	<target name="clean">
 		<delete dir="${release.dir}" />
-        <delete dir="${release.dir.core}" />
-        <delete dir="${release.dir.all}" />
+		<delete dir="${release.dir.core}" />
+		<delete dir="${release.dir.all}" />
 	</target>
-	
+
 	<target name="set-src-excludes">
-	    <defaultexcludes add="**/target/**"/>
-        <defaultexcludes add="**/docs/**"/>
-        <defaultexcludes add="**/legacy/**"/>
-        <defaultexcludes add="**/release/**"/>
-        <defaultexcludes add="**/logs/**"/>
-        <defaultexcludes add="**/tests/**"/>
-        <defaultexcludes add="**/${*}/**"/>
-        <defaultexcludes add="**/*JBOSS_HOME*/**"/>
-        <defaultexcludes add="**/*CATALINA_HOME*/**"/>
-        <defaultexcludes add="**/.gwt-cache/**"/>
-        <defaultexcludes add="**/.settings/**"/>
-        <defaultexcludes add="**/.project"/>
-        <defaultexcludes add="**/.classpath"/>
-        <defaultexcludes add="**/*.class" echo="true"/>
-    </target>
-	
+		<defaultexcludes add="**/target/**" />
+		<defaultexcludes add="**/docs/**" />
+		<defaultexcludes add="**/legacy/**" />
+		<defaultexcludes add="**/release/**" />
+		<defaultexcludes add="**/logs/**" />
+		<defaultexcludes add="**/tests/**" />
+		<defaultexcludes add="**/${*}/**" />
+		<defaultexcludes add="**/*JBOSS_HOME*/**" />
+		<defaultexcludes add="**/*CATALINA_HOME*/**" />
+		<defaultexcludes add="**/.gwt-cache/**" />
+		<defaultexcludes add="**/.settings/**" />
+		<defaultexcludes add="**/.project" />
+		<defaultexcludes add="**/.classpath" />
+		<defaultexcludes add="**/*.class" echo="true" />
+	</target>
+
 </project>
