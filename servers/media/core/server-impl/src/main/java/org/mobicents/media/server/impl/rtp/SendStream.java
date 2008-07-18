@@ -15,6 +15,7 @@
 package org.mobicents.media.server.impl.rtp;
 
 import org.mobicents.media.format.UnsupportedFormatException;
+import org.mobicents.media.protocol.BufferTransferHandler;
 import org.mobicents.media.protocol.PushBufferStream;
 
 /**
@@ -22,7 +23,7 @@ import org.mobicents.media.protocol.PushBufferStream;
  *
  * @author Oleg Kulikov
  */
-public interface SendStream {
+public interface SendStream extends BufferTransferHandler {
     /**
      * Changes the output stream.
      * The new stream will be sent with same SSRC.

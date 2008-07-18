@@ -36,6 +36,7 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.Buffer;
 
 /**
  *
@@ -56,16 +57,14 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     private InetAddress localhost;
     private int period = 20;
     private int jitter = 60;
-    
     //STUN variables
     private String publicAddressFromStun = null;
-	private int publicPortFromStun;
+    private int publicPortFromStun;
     private boolean useStun = false;
     private String stunServerAddress;
     private int stunServerPort;
-
     private Logger logger = Logger.getLogger(RtpSocketAdaptorImpl.class);
-    
+
     /**
      * Creates a new instance of RtpSocketAdaptorImpl
      */
@@ -79,7 +78,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         this.period = period;
         this.jitter = jitter;
     }
-    
+
     /**
      * Creates a new instance of RtpSocketAdaptorImpl
      */
@@ -103,12 +102,12 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             try {
                 InetSocketAddress bindAddress = new InetSocketAddress(localAddress, port);
                 socket = new DatagramSocket(bindAddress);
-                if(useStun) {
-                	socket.disconnect();
-                	socket.close();
-                	socket = null;
-                	mapStun(port, bindAddress.getHostName());
-                	socket = new DatagramSocket(bindAddress);
+                if (useStun) {
+                    socket.disconnect();
+                    socket.close();
+                    socket = null;
+                    mapStun(port, bindAddress.getHostName());
+                    socket = new DatagramSocket(bindAddress);
                 }
                 socket.setSoTimeout(100);
                 bound = true;
@@ -130,54 +129,53 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
 
         return port;
     }
-    
+
     public boolean isUseStun() {
-		return useStun;
-	}
+        return useStun;
+    }
 
-	public void setUseStun(boolean useStun) {
-		this.useStun = useStun;
-	}
+    public void setUseStun(boolean useStun) {
+        this.useStun = useStun;
+    }
 
-	public String getPublicAddressFromStun() {
-		return publicAddressFromStun;
-	}
+    public String getPublicAddressFromStun() {
+        return publicAddressFromStun;
+    }
 
-	public int getPublicPortFromStun() {
-		return publicPortFromStun;
-	}
+    public int getPublicPortFromStun() {
+        return publicPortFromStun;
+    }
 
     public void mapStun(int localPort, String localAddress) {
-    	try {
-			if(InetAddress.getByName(localAddress).isLoopbackAddress()) {
-				logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
-			} else {
-				StunAddress localStunAddress = new StunAddress(localAddress,
-						localPort);
+        try {
+            if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
+                logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+            } else {
+                StunAddress localStunAddress = new StunAddress(localAddress,
+                        localPort);
 
-				StunAddress serverStunAddress = new StunAddress(
-						stunServerAddress, stunServerPort);
+                StunAddress serverStunAddress = new StunAddress(
+                        stunServerAddress, stunServerPort);
 
-				NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
-						localStunAddress, serverStunAddress);
-				addressDiscovery.start();
-				StunDiscoveryReport report = addressDiscovery
-						.determineAddress();
-				if(report.getPublicAddress() != null) {
-					this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress().getHostAddress();
-					this.publicPortFromStun = report.getPublicAddress().getPort();
-					//TODO set a timer to retry the binding and provide a callback to update the global ip address and port
-				} else {
-					useStun = false;
-					logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
-				}
-				logger.info("Stun report = " + report);
-				addressDiscovery.shutDown();
-			}
-    	} catch (Throwable t) {
-    		logger.error("Stun lookup has failed: " + t.getMessage());
-    	}
-		
+                NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
+                        localStunAddress, serverStunAddress);
+                addressDiscovery.start();
+                StunDiscoveryReport report = addressDiscovery.determineAddress();
+                if (report.getPublicAddress() != null) {
+                    this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress().getHostAddress();
+                    this.publicPortFromStun = report.getPublicAddress().getPort();
+                //TODO set a timer to retry the binding and provide a callback to update the global ip address and port
+                } else {
+                    useStun = false;
+                    logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+                }
+                logger.info("Stun report = " + report);
+                addressDiscovery.shutDown();
+            }
+        } catch (Throwable t) {
+            logger.error("Stun lookup has failed: " + t.getMessage());
+        }
+
     }
 
     /**
@@ -354,9 +352,13 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             DatagramPacket udpPacket = new DatagramPacket(buff, buff.length);
             try {
                 socket.receive(udpPacket);
-                if (stopped) return;
+                if (stopped) {
+                    return;
+                }
             } catch (SocketTimeoutException e) {
-                if (stopped) return;
+                if (stopped) {
+                    return;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
@@ -379,7 +381,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             }
 
             int pt = rtpPacket.getPayloadType();
-            int seq =rtpPacket.getSeqNumber();
+            int seq = rtpPacket.getSeqNumber();
             try {
                 ReceiveStream stream = this.getReceiveStream(pt);
                 stream.push(seq, rtpPacket.getPayload());
@@ -444,7 +446,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         }
     }
 
-    private class SendStreamImpl extends Thread implements SendStream {
+    private class SendStreamImpl implements SendStream {
 
         private boolean stopped = false;
         //payload type
@@ -456,13 +458,14 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         //source synchronization
         private final long ssrc = System.currentTimeMillis();
         //packetizer
-        private Packetizer packetizer;
+        //private Packetizer packetizer;
+        private RTPPacketizer packetizer;
         //the amount of ticks in one milliseconds
         int ticks;
 
         public SendStreamImpl(PushBufferStream stream) throws UnsupportedFormatException {
-            super("RTPSendStream");
-            this.setPriority(Thread.MAX_PRIORITY);
+            //super("RTPSendStream");
+            //this.setPriority(Thread.MAX_PRIORITY);
             init(stream);
         }
 
@@ -489,9 +492,28 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
             }
 
             ticks = (int) fmt.getSampleRate() / 1000;
-            packetizer = new Packetizer(16000, ticks * period);
-            stream.setTransferHandler(packetizer);
+            //packetizer = new RTPPacketizer(16000, ticks * period);
+            packetizer = new RTPPacketizer();
+            stream.setTransferHandler(this);
+        }
 
+        public void transferData(PushBufferStream stream) {
+            Buffer buffer = new Buffer();
+            try {
+                stream.read(buffer);
+                packetizer.process(buffer, period);
+            } catch (IOException e) {
+            }
+            
+            byte[] data = (byte[]) buffer.getData();
+            RtpPacket p = new RtpPacket((byte) pt, 
+                    (int) buffer.getSequenceNumber(), 
+                    (int)buffer.getTimeStamp(), ssrc, data);
+            try {
+                peer.send(p);
+            } catch (IOException e) {
+                logger.error("I/O Error", e);
+            }
         }
 
         /**
@@ -500,10 +522,24 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
          * @see org.mobicents.media.server.impl.rtp.SendStream#close().
          */
         public void close() {
-            stopped = true;
-            this.interrupt();
         }
 
+        /**
+         * (Non Java-doc).
+         *
+         * @see org.mobicents.media.server.impl.rtp.SendStream#stop().
+         */
+        public void start() {
+        }
+        
+        /**
+         * (Non Java-doc).
+         *
+         * @see org.mobicents.media.server.impl.rtp.SendStream#stop().
+         */
+        public void stop() {
+        }
+        
         /**
          * Main loop.
          *
@@ -511,24 +547,24 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
          * Silence is not transmitted, however the timestamp and sequence number
          * are still incremented monotonously during silence periods.
          */
-        @Override
-        public void run() {
-            this.stopped = false;
-            int s = ticks * period;
-            while (!stopped) {
-                try {
-                    byte[] data = packetizer.next(s);
-                    RtpPacket p = new RtpPacket((byte) pt, seq++, timestamp, ssrc, data);
-                    System.out.println("send[seq=" + seq + ",timestamp=" + timestamp + ", len=" + data.length);
-                    peer.send(p);
-                    Thread.currentThread().sleep(10);
-                    timestamp += s;
-                } catch (InterruptedException e) {
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
+//        @Override
+//        public void run() {
+//            this.stopped = false;
+//            int s = ticks * period;
+//            while (!stopped) {
+//                try {
+//                    byte[] data = packetizer.next(s);
+//                    RtpPacket p = new RtpPacket((byte) pt, seq++, timestamp, ssrc, data);
+//                    System.out.println("send[seq=" + seq + ",timestamp=" + timestamp + ", len=" + data.length);
+//                    peer.send(p);
+//                    Thread.currentThread().sleep(10);
+//                    timestamp += s;
+//                } catch (InterruptedException e) {
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        }
     }
 }
