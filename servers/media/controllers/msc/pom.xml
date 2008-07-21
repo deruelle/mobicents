@@ -24,6 +24,9 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<properties>
+				<release.dir>${basedir}/../../../release/${release.name}/resources/media</release.dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -37,15 +40,15 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<copy overwrite="true" todir="${basedir}/../../release/${release.name}/resources/media">
+										<copy overwrite="true" todir="${release.dir}">
 											<fileset dir="${basedir}/du/target">
 												<include name="**.jar" />
 												<include name="*.xml" />
 												<include name="*.properties" />
 											</fileset>
 										</copy>
-										<copy overwrite="true" file="${basedir}/du/target/build.xml" tofile="${basedir}/../../release/${release.name}/resources/media/du-management.xml" />
-										<copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/../../release/${release.name}/resources/media">
+										<copy overwrite="true" file="${basedir}/du/target/build.xml" tofile="${release.dir}/du-management.xml" />
+										<copy overwrite="true" file="${basedir}/release/build.xml" todir="${release.dir}">
                       <filterset>
                         <filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
                         <filter token="JBOSS_NODE" value="${node}" />

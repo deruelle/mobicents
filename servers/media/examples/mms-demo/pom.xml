@@ -25,6 +25,9 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<properties>
+				<release.dir>${basedir}/../../../release/${release.name}/examples/mms-demo</release.dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -39,7 +42,7 @@
 								<configuration>
 									<tasks>
 										<copy overwrite="true"
-											todir="${basedir}/../../release/${release.name}/examples/mms-demo">
+											todir="${release.dir}">
 											<fileset
 												dir="${basedir}/slee/services-du/target">
 												<include name="**.jar" />
@@ -50,13 +53,13 @@
 										</copy>
 										<copy overwrite="true"
 											file="${basedir}/web/target/mms-demo-audio.war"
-											todir="${basedir}/../../release/${release.name}/examples/mms-demo/" />
+											todir="${release.dir}" />
 										<copy overwrite="true"
 											file="${basedir}/slee/services-du/target/build.xml"
-											tofile="${basedir}/../../release/${release.name}/examples/mms-demo/du-management.xml" />
+											tofile="${release.dir}/du-management.xml" />
 										<copy overwrite="true"
 											file="${basedir}/release/build.xml"
-											todir="${basedir}/../../release/${release.name}/examples/mms-demo">
+											todir="${release.dir}">
 											<filterset>
 												<filter
 													token="JBOSS_VERSION" value="jboss-${jboss.version}" />

@@ -35,6 +35,9 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<properties>
+				<release.dir>${basedir}/../../../release/${release.name}/examples/converged-demo</release.dir>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -50,7 +53,7 @@
 									<tasks>
 										<copy
 											overwrite="true"
-											todir="${basedir}/../../release/${release.name}/examples/converged-demo"
+											todir="${release.dir}"
 										>
 											<fileset dir="${basedir}/slee/events-du/target">
 												<include name="**.jar" />
@@ -66,27 +69,27 @@
 										<copy
 											overwrite="true"
 											file="${basedir}/web/ear/datasource/ShoppingDemo-dev-ds.xml"
-											todir="${basedir}/../../release/${release.name}/examples/converged-demo"
+											todir="${release.dir}"
 										/>
 										<copy
 											overwrite="true"
 											file="${basedir}/web/ear/target/ShoppingDemo.ear"
-											todir="${basedir}/../../release/${release.name}/examples/converged-demo"
+											todir="${release.dir}"
 										/>
 										<copy
 											overwrite="true"
 											file="${basedir}/slee/events-du/target/build.xml"
-											tofile="${basedir}/../../release/${release.name}/examples/converged-demo/events-du-management.xml"
+											tofile="${release.dir}/events-du-management.xml"
 										/>
 										<copy
 											overwrite="true"
 											file="${basedir}/slee/services-du/target/build.xml"
-											tofile="${basedir}/../../release/${release.name}/examples/converged-demo/services-du-management.xml"
+											tofile="${release.dir}/services-du-management.xml"
 										/>
 										<copy
 											overwrite="true"
 											file="${basedir}/release/build.xml"
-											todir="${basedir}/../../release/${release.name}/examples/converged-demo"
+											todir="${release.dir}"
 										>
 											<filterset>
 												<filter
