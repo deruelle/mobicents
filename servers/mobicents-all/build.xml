@@ -20,11 +20,17 @@
 		<equals arg1="${jboss.config}" arg2="all"/>
 	</condition>
 
-	<target name="release" depends="get-jboss,unzip-jboss,get-servers,release-jain-slee,release-sip-presence">
+	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${ant.file.mobicents.release}/../ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="release" depends="get-jboss,unzip-jboss,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets">
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
 		<antcall target="zip-release"/>
 		<antcall target="clean"/>
-	</target>	
+	</target>
 
 	<!-- get, unzip and clean jboss -->
 
@@ -83,24 +89,108 @@
 	<target name="release-jain-slee">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
-		</ant>	
+		</ant>
 	</target>
 
 	<target name="release-media">
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all" />
+		<!-- tmp stuff, some scripts in the mms tagged must be replaced to make the release work -->
+		<!--copy file="${ant.file.mobicents.all.release}/../tmp/media/release/build.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml"
+			overwrite="true"/>
+		<copy file="${ant.file.mobicents.all.release}/../tmp/media/controllers/mgcp/mgcp-ra/pom.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/controllers/mgcp/mgcp-ra/pom.xml"
+			overwrite="true"/>
+		<copy file="${ant.file.mobicents.all.release}/../tmp/media/controllers/msc/pom.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/controllers/msc/pom.xml"
+			overwrite="true"/>
+		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/call-controller2/pom.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/call-controller2/pom.xml"
+			overwrite="true"/>
+		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/converged-demo/pom.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/converged-demo/pom.xml"
+			overwrite="true"/>
+		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/mms-demo/pom.xml"
+			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/mms-demo/pom.xml"
+			overwrite="true"/-->
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
+			<property name="release.dir" value="${release.dir}"/>
+		</ant>
 	</target>
 
 	<target name="release-sip-presence">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
 			<property name="release.build.jboss.home" value="${home}../jboss-${jboss.version}"/>
-		</ant>		
+		</ant>
 	</target>
 
 	<target name="release-sip-servlets">
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/release/build.xml" target="release-mobicents-all" />
+
+		<!--ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/release/build.xml" target="release-mobicents-all" /-->
+
+		<!-- this code should be moved to mss release script, to replace current target release-mc-distro -->
+		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/sip-servlets-bootstrap/release"/>
+
+		<mkdir dir="${jboss.home}/server/${jboss.config}/conf/dars" />
+		<copy verbose="true" failonerror="true" file="${mss.release.dir}/../src/site/resources/click2call-dar.properties" todir="${jboss.home}/server/${jboss.config}/conf/dars" />
+
+		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/server-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/server.xml" />
+		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/context-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/context.xml" />
+		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/jboss-service.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
+		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/webserver-xmbean.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
+		<echo>Done copying.</echo>
+		<exec executable="${mvn.executable}" dir="${mss.release.dir}/..">
+			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home}/" />
+		</exec>
+
+		<exec executable="${mvn.executable}" dir="${mss.release.dir}/../../sip-servlets-examples/click-to-call">
+			<arg line="clean install" />
+		</exec>
+
+		<copy file="${mss.release.dir}/../../sip-servlets-examples/click-to-call/target/click-to-call-servlet-1.0.war" tofile="${jboss.home}/server/${jboss.config}/deploy/click2call.war" />
+
+		<ant dir="${mss.release.dir}/../../sip-servlets-management/" antfile="build.xml" target="war">
+		</ant>
+		<copy file="${mss.release.dir}/../../sip-servlets-management/build/tmp/sip-servlets-management.war" tofile="${jboss.home}/server/${jboss.config}/deploy/sip-servlets-management.war" />
+
 	</target>
 
+	<!-- zip source -->
+
+	<target name="build-src-zip" depends="set-src-excludes">
+		<property name="zip.filename" value="mobicents-all-src.zip" />
+		<mkdir dir="${release.dir}/mobicents-all-src" />
+		<for param="dir.name">
+			<dirset dir="${ant.file.mobicents.all.release}/../target/servers"
+				includes="**/src/main/java"
+				 />
+			<sequential>
+				<echo>Packaging src for @{dir.name}</echo>
+				<copy todir="${release.dir}/mobicents-all-src" includeEmptyDirs="yes">
+					<fileset dir="@{dir.name}" />
+				</copy>
+			</sequential>
+		</for>
+		<zip destfile="${release.dir}/${zip.filename}" basedir="${release.dir}/mobicents-all-src" />
+		<delete dir="${release.dir}/mobicents-all-src" />
+	</target>
+
+	<target name="set-src-excludes">
+		<defaultexcludes add="**/target/**" />
+		<defaultexcludes add="**/docs/**" />
+		<defaultexcludes add="**/legacy/**" />
+		<defaultexcludes add="**/release/**" />
+		<defaultexcludes add="**/logs/**" />
+		<defaultexcludes add="**/tests/**" />
+		<defaultexcludes add="**/${*}/**" />
+		<defaultexcludes add="**/*JBOSS_HOME*/**" />
+		<defaultexcludes add="**/*CATALINA_HOME*/**" />
+		<defaultexcludes add="**/.gwt-cache/**" />
+		<defaultexcludes add="**/.settings/**" />
+		<defaultexcludes add="**/.project" />
+		<defaultexcludes add="**/.classpath" />
+		<defaultexcludes add="**/*.class" echo="true" />
+	</target>
 	<!-- zip release -->
 
 	<target name="zip-release" depends="set-zip-filename">

@@ -14,9 +14,9 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 		<jainslee.scmVersion>HEAD</jainslee.scmVersion>
-		<media.scmVersion>2164</media.scmVersion>
+		<media.scmVersion>HEAD</media.scmVersion>
 		<sippresence.scmVersion>HEAD</sippresence.scmVersion>
-		<sipservlets.scmVersion>2204</sipservlets.scmVersion>
+		<sipservlets.scmVersion>HEAD</sipservlets.scmVersion>
 	</properties>
 	
 	<profiles>
@@ -103,7 +103,7 @@
 								${checkout.basedir}/sip-servlets
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
+								scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.4.1
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -133,6 +133,8 @@
 							<basedir>
 								${checkout.basedir}/jain-slee
 							</basedir>
+							<scmVersion>${jainslee.scmVersion}</scmVersion>
+							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
 								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/jain-slee
 							</connectionUrl>
@@ -150,6 +152,8 @@
 							<basedir>
 								${checkout.basedir}/media
 							</basedir>
+							<scmVersion>${media.scmVersion}</scmVersion>
+							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
 								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media
 							</connectionUrl>
@@ -167,6 +171,8 @@
 							<basedir>
 								${checkout.basedir}/sip-presence
 							</basedir>
+							<scmVersion>${sippresence.scmVersion}</scmVersion>
+							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
 								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-presence
 							</connectionUrl>
@@ -184,8 +190,10 @@
 							<basedir>
 								${checkout.basedir}/sip-servlets
 							</basedir>
+							<scmVersion>${sipservlets.scmVersion}</scmVersion>
+							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
+								scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.4.1
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
