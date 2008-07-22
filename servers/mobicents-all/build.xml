@@ -139,8 +139,9 @@
 		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/jboss-service.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
 		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/webserver-xmbean.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
 		<echo>Done copying.</echo>
+		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/..">
-			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home}/" />
+			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}/" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/../../sip-servlets-examples/click-to-call">
@@ -158,7 +159,7 @@
 	<!-- zip source -->
 
 	<target name="build-src-zip" depends="set-src-excludes">
-		<property name="zip.filename" value="mobicents-all-src.zip" />
+		<property name="src.zip.filename" value="mobicents-all-src.zip" />
 		<mkdir dir="${release.dir}/mobicents-all-src" />
 		<for param="dir.name">
 			<dirset dir="${ant.file.mobicents.all.release}/../target/servers"
@@ -171,7 +172,7 @@
 				</copy>
 			</sequential>
 		</for>
-		<zip destfile="${release.dir}/${zip.filename}" basedir="${release.dir}/mobicents-all-src" />
+		<zip destfile="${release.dir}/${src.zip.filename}" basedir="${release.dir}/mobicents-all-src" />
 		<delete dir="${release.dir}/mobicents-all-src" />
 	</target>
 
