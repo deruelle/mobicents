@@ -36,7 +36,7 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<release.dir>${basedir}/../../../release/${release.name}/examples/converged-demo</release.dir>
+				<release.dir>${basedir}/../../release/${release.name}/examples/converged-demo</release.dir>
 			</properties>
 			<build>
 				<plugins>
