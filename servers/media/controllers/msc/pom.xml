@@ -25,7 +25,7 @@
 		<profile>
 			<id>release</id>
 			<properties>
-				<release.dir>${basedir}/../../../release/${release.name}/resources/media</release.dir>
+				<release.dir>${basedir}/../../release/${release.name}/resources/media</release.dir>
 			</properties>
 			<build>
 				<plugins>
