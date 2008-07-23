@@ -81,7 +81,8 @@
 	<echo>${jboss.home}</echo>
 		<!-- installs MMS into JBoss AS -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../core">
-			<arg line="clean install -Djboss.home=${jboss.home}" />
+			<!-- Passing -DJBOSS_HOME=${basedir}/all/tmp is hack. Look at trunk/servers/media/core/server-spi/pom.xml for maven-dependency-plugin.-->
+			<arg line="clean install -Djboss.home=${jboss.home} -DJBOSS_HOME=${jboss.home}" />
 		</exec>
 		<!-- builds and moves media and mgcp RAs to resources -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/mgcp/mgcp-ra">
@@ -153,7 +154,7 @@
 		<antcall target="build-mobicents-jain-slee" />
 
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
-			<arg line="clean install" />
+			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
 		</exec>
 
 		<copy overwrite="true" todir="${jboss.home}/server/${jboss.config}/deploy/mobicents-media-server-${release.version}.sar" >
@@ -163,10 +164,6 @@
 		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" todir="${release.dir.all}/media-server/controllers/msc" />
 		<copy overwrite="true" file="${ant.file.media.server.release}/../../core/msc-api-local-impl/target/mobicents-media-server-msc-api-local-impl-${release.version}.jar" todir="${release.dir.all}/media-server/controllers/msc" />
 
-		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
-			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
-		</exec>
-
 		<copy overwrite="true" todir="${jboss.home}/server/${jboss.config}/lib" >
 			<fileset file="${ant.file.media.server.release}/../../core/msc-api/target/mobicents-media-server-msc-api-${release.version}.jar" />
 			<fileset file="${ant.file.media.server.release}/../../core/server-spi/target/mobicents-media-server-spi-${release.version}.jar" />
@@ -175,7 +172,7 @@
 		</copy>
 
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
-			<arg line="-o install -Prelease -Drelease.name=all" />
+			<arg line="clean install -Drelease.name=all -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp -P release" />
 		</exec>
 
 		<delete dir="${release.dir.all}/tmp" />
