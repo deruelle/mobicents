@@ -21,10 +21,12 @@
 	<modules>
 		<module>../core</module>
 		<module>../controllers</module>
-		<module>../voicexml</module>
+		
 		<!-- This will automatically install mgcp-demo and mms-demo (depends on sip-ra) -->
 		<!-- This will automatically install call-controller2 and converged-demo, although they have runtime dependencies on other RA's appart from sip Ra -->		
 		<module>../examples</module>
+		
+		<module>../voicexml</module>
 
 	</modules>
 
