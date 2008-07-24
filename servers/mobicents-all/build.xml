@@ -5,7 +5,7 @@
 
 	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="jboss.version" value="4.2.2.GA"/>
-	<property name="release.version" value="1.2.0.GA-SNAPSHOT"/>
+	<property name="release.version" value="1.2.0.CR1-SNAPSHOT"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
 	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/"/>
 	<property name="jboss.config" value="default" />
@@ -37,7 +37,7 @@
 	<available file="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" property="got.jboss" />
 	<target name="get-jboss" unless="got.jboss">
 		<echo>Downloading JBoss AS</echo>
-		<get dest="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-4.2.2.GA.zip" />
+		<get dest="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
 	</target>
 
 	<target name="unzip-jboss">
@@ -112,8 +112,10 @@
 		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/mms-demo/pom.xml"
 			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/mms-demo/pom.xml"
 			overwrite="true"/-->
+		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
+			<property name="jboss.home" value="${jboss.home.converted}"/>
 		</ant>
 	</target>
 
@@ -158,7 +160,7 @@
 
 	<!-- zip source -->
 
-	<target name="build-src-zip" depends="set-src-excludes">
+	<target name="build-src-zip" depends="">
 		<property name="src.zip.filename" value="mobicents-all-src.zip" />
 		<mkdir dir="${release.dir}/mobicents-all-src" />
 		<for param="dir.name">
@@ -176,22 +178,6 @@
 		<delete dir="${release.dir}/mobicents-all-src" />
 	</target>
 
-	<target name="set-src-excludes">
-		<defaultexcludes add="**/target/**" />
-		<defaultexcludes add="**/docs/**" />
-		<defaultexcludes add="**/legacy/**" />
-		<defaultexcludes add="**/release/**" />
-		<defaultexcludes add="**/logs/**" />
-		<defaultexcludes add="**/tests/**" />
-		<defaultexcludes add="**/${*}/**" />
-		<defaultexcludes add="**/*JBOSS_HOME*/**" />
-		<defaultexcludes add="**/*CATALINA_HOME*/**" />
-		<defaultexcludes add="**/.gwt-cache/**" />
-		<defaultexcludes add="**/.settings/**" />
-		<defaultexcludes add="**/.project" />
-		<defaultexcludes add="**/.classpath" />
-		<defaultexcludes add="**/*.class" echo="true" />
-	</target>
 	<!-- zip release -->
 
 	<target name="zip-release" depends="set-zip-filename">
