@@ -63,6 +63,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     private boolean useStun = false;
     private String stunServerAddress;
     private int stunServerPort;
+    private boolean usePortMapping = true;
     private Logger logger = Logger.getLogger(RtpSocketAdaptorImpl.class);
 
     /**
@@ -82,12 +83,15 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
     /**
      * Creates a new instance of RtpSocketAdaptorImpl
      */
-    public RtpSocketAdaptorImpl(int period, int jitter, String stunServerAddress, int stunServerPort) {
+    public RtpSocketAdaptorImpl(int period, int jitter, String stunServerAddress, int stunServerPort,
+    		boolean usePortMapping, String knownPublicAddressFromStun) {
         this.period = period;
         this.jitter = jitter;
         this.stunServerAddress = stunServerAddress;
         this.stunServerPort = stunServerPort;
         this.useStun = true;
+        this.usePortMapping = usePortMapping;
+        this.publicAddressFromStun = knownPublicAddressFromStun;
     }
 
     /**
@@ -103,11 +107,16 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
                 InetSocketAddress bindAddress = new InetSocketAddress(localAddress, port);
                 socket = new DatagramSocket(bindAddress);
                 if (useStun) {
-                    socket.disconnect();
-                    socket.close();
-                    socket = null;
-                    mapStun(port, bindAddress.getHostName());
-                    socket = new DatagramSocket(bindAddress);
+                	if(usePortMapping) {
+                		socket.disconnect();
+                		socket.close();
+                		socket = null;
+                		mapStun(port, bindAddress.getHostName());
+                		socket = new DatagramSocket(bindAddress);
+                	} else {
+                		// publicAddressFromStun is already set
+                		this.publicPortFromStun = port;
+                	}
                 }
                 socket.setSoTimeout(100);
                 bound = true;
@@ -150,6 +159,8 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         try {
             if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
                 logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+                this.publicAddressFromStun = localAddress;
+                this.publicPortFromStun = localPort;
             } else {
                 StunAddress localStunAddress = new StunAddress(localAddress,
                         localPort);

@@ -24,6 +24,10 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import net.java.stun4j.StunAddress;
+import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
+import net.java.stun4j.client.StunDiscoveryReport;
+
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.common.MediaResourceType;
@@ -52,6 +56,8 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     private String stunServerAddress;
 	private int stunServerPort;
 	private boolean useStun = false;
+	private boolean usePortMapping = true;
+	private String publicAddressFromStun = null;
     
     private Properties dtmfConfig;
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
@@ -321,6 +327,38 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     
     public abstract EndpointManagementMBean cloneEndpointManagementMBean();
     
+    private void mapStun(int localPort, String localAddress) {
+        try {
+            if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
+                logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+                this.publicAddressFromStun = localAddress;
+            } else {
+                StunAddress localStunAddress = new StunAddress(localAddress,
+                        localPort);
+
+                StunAddress serverStunAddress = new StunAddress(
+                        stunServerAddress, stunServerPort);
+
+                NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
+                        localStunAddress, serverStunAddress);
+                addressDiscovery.start();
+                StunDiscoveryReport report = addressDiscovery.determineAddress();
+                if (report.getPublicAddress() != null) {
+                    this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress().getHostAddress();
+                //TODO set a timer to retry the binding and provide a callback to update the global ip address and port
+                } else {
+                    useStun = false;
+                    logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+                }
+                logger.info("Stun report = " + report);
+                addressDiscovery.shutDown();
+            }
+        } catch (Throwable t) {
+            logger.error("Stun lookup has failed: " + t.getMessage());
+        }
+
+    }
+
     /**
      * Starts MBean.
      */
@@ -334,6 +372,13 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         this.getEndpoint().setPortRange(portRange);
         this.getEndpoint().setPacketizationPeriod(packetizationPeriod);
         this.getEndpoint().setJitter(jitter);
+        
+        if(!this.usePortMapping && this.useStun) {
+        	int startPort = 31000;
+        	while(this.publicAddressFromStun == null) {
+        		mapStun(startPort++, bindAddress);
+        	}
+        }
         
         if (this.enablePCMA) {
             endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
@@ -353,7 +398,29 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         logger.info("Started Endpoint MBean " + this.getJndiName());
     }
     
-    /**
+    public boolean isUsePortMapping() {
+		return usePortMapping;
+	}
+
+	public void setUsePortMapping(boolean usePortMapping) {
+		this.usePortMapping = usePortMapping;
+        if (this.getState() == STARTED) {
+            this.getEndpoint().setUsePortMapping(usePortMapping);
+        }
+	}
+
+	public String getPublicAddressFromStun() {
+		return publicAddressFromStun;
+	}
+
+	public void setPublicAddressFromStun(String publicAddressFromStun) {
+		this.publicAddressFromStun = publicAddressFromStun;
+        if (this.getState() == STARTED) {
+            this.getEndpoint().setPublicAddressFromStun(publicAddressFromStun);
+        }
+	}
+
+	/**
      * Stops MBean.
      */
     @Override

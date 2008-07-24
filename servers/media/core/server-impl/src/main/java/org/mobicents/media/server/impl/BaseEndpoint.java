@@ -76,6 +76,9 @@ public abstract class BaseEndpoint implements Endpoint {
     private String stunServerAddress;
 	private int stunServerPort;
 	private boolean useStun = false;
+	private boolean usePortMapping = true;
+
+	private String publicAddressFromStun = null;
 
 	private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
 
@@ -102,6 +105,22 @@ public abstract class BaseEndpoint implements Endpoint {
 		return stunServerPort;
 	}
 
+	public boolean isUsePortMapping() {
+		return usePortMapping;
+	}
+
+	public void setUsePortMapping(boolean usePortMapping) {
+		this.usePortMapping = usePortMapping;
+	}
+
+	public String getPublicAddressFromStun() {
+		return publicAddressFromStun;
+	}
+
+	public void setPublicAddressFromStun(String publicAddressFromStun) {
+		this.publicAddressFromStun = publicAddressFromStun;
+	}
+	
 	public void setStunServerPort(int stunServerPort) {
 		this.stunServerPort = stunServerPort;
 	}

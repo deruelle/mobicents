@@ -144,7 +144,9 @@ public class BaseConnection implements Connection, AdaptorListener {
                     endpoint.packetizationPeriod,
                     endpoint.jitter,
                     endpoint.getStunServerAddress(),
-                    endpoint.getStunServerPort());
+                    endpoint.getStunServerPort(),
+                    endpoint.isUsePortMapping(),
+                    endpoint.getPublicAddressFromStun());
     	} else {
     		rtpSocket = new RtpSocketAdaptorImpl(
                 endpoint.packetizationPeriod,

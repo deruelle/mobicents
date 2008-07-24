@@ -279,4 +279,33 @@ public interface Endpoint extends Serializable {
 	 * @param useStun
 	 */
 	public void setUseStun(boolean useStun);
+	
+	/**
+	 * Returns true is port mapping is enabled (port address translation)
+	 * 
+	 * @return
+	 */
+	public boolean isUsePortMapping();
+	
+	/**
+	 * Setter for port address translation
+	 * 
+	 * @param portMapping
+	 */
+	public void setUsePortMapping(boolean portMapping);
+	
+	/**
+	 * The address resolved by STUN
+	 * 
+	 * @return
+	 */
+	public String getPublicAddressFromStun();
+	
+	/**
+	 * The address resolved by STUN
+	 * 
+	 * @param address
+	 */
+	public void setPublicAddressFromStun(String address);
+	
 }

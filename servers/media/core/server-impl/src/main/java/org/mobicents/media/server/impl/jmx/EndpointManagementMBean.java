@@ -194,4 +194,18 @@ public interface EndpointManagementMBean extends ServiceMBean {
 	 * @param useStun
 	 */
 	public void setUseStun(boolean useStun);
+	
+	/**
+	 * Do we use PAT for this endpoint
+	 * 
+	 * @return
+	 */
+	public boolean isUsePortMapping();
+	
+	/**
+	 * Sets if we want PAT for this endpoint
+	 * 
+	 * @param useStun
+	 */
+	public void setUsePortMapping(boolean usePortMapping);
 }
