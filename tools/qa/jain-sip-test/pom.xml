@@ -85,7 +85,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.mobicents.qa.jainsip.test.InstrumentedSimpleCallSetupTest</mainClass>
+                            <mainClass>org.mobicents.qa.performance.jainsip.InstrumentedSimpleCallSetupTest</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

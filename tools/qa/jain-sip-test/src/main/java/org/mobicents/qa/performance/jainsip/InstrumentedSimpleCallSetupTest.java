@@ -56,11 +56,12 @@ public class InstrumentedSimpleCallSetupTest implements SipListener {
 	sipFactory.setPathName("gov.nist");
 
 	Properties properties = new Properties();
-	properties.setProperty("javax.sip.STACK_NAME", "mobicents");
+	properties.setProperty("javax.sip.STACK_NAME", "mobicents-standalone-test");
+	properties.setProperty("gov.nist.javax.sip.MAX_SERVER_TRANSACTIONS", "500000");
 	properties.setProperty("gov.nist.javax.sip.DEBUG_LOG", "debuglog.txt");
 	properties.setProperty("gov.nist.javax.sip.SERVER_LOG", "stack_log.txt");
 	properties.setProperty("javax.sip.AUTOMATIC_DIALOG_SUPPORT", "false");
-	properties.setProperty("gov.nist.javax.sip.THREAD_POOL_SIZE", "64");
+	properties.setProperty("gov.nist.javax.sip.THREAD_POOL_SIZE", "32");
 	properties.setProperty("gov.nist.javax.sip.REENTRANT_LISTENER", "true");
 	properties.setProperty("gov.nist.javax.sip.TRACE_LEVEL", debug ? "32" : "0");
 
@@ -200,9 +201,9 @@ public class InstrumentedSimpleCallSetupTest implements SipListener {
 	SimpleCallSetupTestFileUtils.executize(".");
 
 	// new FixedRateGovernor(inspector, new SippController(ip, control), 100);
-	// new LinearRateGovernor(inspector, new SippController(ip, control), 10, 1);
+	new LinearRateGovernor(inspector, new SippController(ip, control), 10, 1);
 	// new ExponentialLinearRateGovernor(inspector, new SippController(ip, control), 4, 1.2, 1);
-	new MyFirstHeuristicsGovernor(inspector, new SippController(ip, control));
+	// new MyFirstHeuristicsGovernor(inspector, new SippController(ip, control));
     }
 
     private class ByeTimerTask extends TimerTask {
