@@ -22,6 +22,7 @@
 				org.hibernate.transaction.JTATransactionFactory
 			</property>
 			 -->
+			<property name="jboss.entity.manager.factory.jndi.name" value="java:/ShoppingDemoSleeEntityManagerFactory"/>
 		</properties>
 	</persistence-unit>
 </persistence>

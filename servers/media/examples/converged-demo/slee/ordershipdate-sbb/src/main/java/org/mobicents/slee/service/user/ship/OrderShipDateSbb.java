@@ -8,6 +8,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
@@ -44,7 +45,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	private Logger logger = Logger.getLogger(OrderShipDateSbb.class);
 
-	private PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface = null;
+	private EntityManagerFactory emf;
 
 	private MsProvider msProvider;
 
@@ -63,20 +64,17 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		super.setSbbContext(context);
 		try {
 
-			Context myEnv = (Context) new InitialContext()
-					.lookup("java:comp/env");
+			Context myEnv = (Context) new InitialContext().lookup("java:comp/env");
 
 			audioFilePath = System.getProperty("jboss.server.data.dir");
 
 			callerSip = (String) myEnv.lookup("callerSip");
 
-			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) myEnv
-					.lookup("slee/resources/pra/0.1/provider");
+			msProvider = (MsProvider) myEnv.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv.lookup("slee/resources/media/1.0/acifactory");
 
-			msProvider = (MsProvider) myEnv
-					.lookup("slee/resources/media/1.0/provider");
-			mediaAcif = (MediaRaActivityContextInterfaceFactory) myEnv
-					.lookup("slee/resources/media/1.0/acifactory");
+			InitialContext newIc = new InitialContext();
+			emf = (EntityManagerFactory) newIc.lookup("java:/ShoppingDemoSleeEntityManagerFactory");
 
 		} catch (NamingException ne) {
 			ne.printStackTrace();
@@ -96,26 +94,21 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		this.setCustomEvent(event);
 		this.setDateAndTime("");
 
-		mgr = this.persistenceResourceAdaptorSbbInterface.createEntityManager(
-				new HashMap(), "custom-pu");
+		mgr = emf.createEntityManager();
 
-		order = (Order) mgr.createQuery(
-				"select o from Order o where o.orderId = :orderId")
-				.setParameter("orderId", this.getCustomEvent().getOrderId())
-				.getSingleResult();
+		order = (Order) mgr.createQuery("select o from Order o where o.orderId = :orderId").setParameter("orderId",
+				this.getCustomEvent().getOrderId()).getSingleResult();
 
 		Timestamp orderDate = order.getDeliveryDate();
 
-		mgr.close();		
-		
+		mgr.close();
+
 		StringBuffer audioPath = new StringBuffer(audioFilePath);
 		audioPath.append("/");
 		audioPath.append(event.getUserName());
 		audioPath.append(".wav");
-		
-		
-		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioPath.toString(), "kevin");
+
+		TTSSession ttsSession = getTTSProvider().getNewTTSSession(audioPath.toString(), "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append("Welcome ");
@@ -182,21 +175,17 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 		try {
 			// Set the caller address to the address of our call controller
-			Address callerAddress = getSipUtils()
-					.convertURIToAddress(callerSip);
+			Address callerAddress = getSipUtils().convertURIToAddress(callerSip);
 			callerAddress.setDisplayName(callerSip);
 
 			// Retrieve the callee addresses from the event
-			Address calleeAddress = getSipUtils().convertURIToAddress(
-					event.getCustomerPhone());
+			Address calleeAddress = getSipUtils().convertURIToAddress(event.getCustomerPhone());
 
 			// Build the INVITE request
-			Request request = getSipUtils().buildInvite(callerAddress,
-					calleeAddress, null, 1);
+			Request request = getSipUtils().buildInvite(callerAddress, calleeAddress, null, 1);
 
 			// Create a new transaction based on the generated request
-			ClientTransaction ct = getSipProvider().getNewClientTransaction(
-					request);
+			ClientTransaction ct = getSipProvider().getNewClientTransaction(request);
 
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
@@ -211,16 +200,14 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			// The dialog for the client transaction in which the INVITE is sent
 			Dialog dialog = ct.getDialog();
 			if (dialog != null && logger.isDebugEnabled()) {
-				logger
-						.debug("Obtained dialog from ClientTransaction : automatic dialog support on");
+				logger.debug("Obtained dialog from ClientTransaction : automatic dialog support on");
 			}
 			if (dialog == null) {
 				// Automatic dialog support turned off
 				try {
 					dialog = getSipProvider().getNewDialog(ct);
 					if (logger.isDebugEnabled()) {
-						logger
-								.debug("Obtained dialog for INVITE request to callee with getNewDialog");
+						logger.debug("Obtained dialog for INVITE request to callee with getNewDialog");
 					}
 				} catch (Exception e) {
 					logger.error("Error getting dialog", e);
@@ -228,19 +215,16 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = "
-								+ dialog.getCallId().getCallId());
+				logger.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = " + dialog.getCallId().getCallId());
 			}
 
 			// Get activity context from factory
-			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(dialog);
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface(
+					dialog);
 
 			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
 					.getActivityContextInterface(ct);
 
-			
 			calleeSession.setDialog(dialog);
 			sa.setCalleeSession(calleeSession);
 
@@ -265,8 +249,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 			ChildRelation relation = getCallControlSbbChild();
 			// Create child SBB
-			CallControlSbbLocalObject child = (CallControlSbbLocalObject) relation
-					.create();
+			CallControlSbbLocalObject child = (CallControlSbbLocalObject) relation.create();
 
 			setChildSbbLocalObject(child);
 
@@ -281,29 +264,18 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			ct.sendRequest();
 
 		} catch (ParseException parExc) {
-			logger.error("Parse Exception while parsing the callerAddess",
-					parExc);
+			logger.error("Parse Exception while parsing the callerAddess", parExc);
 		} catch (InvalidArgumentException invalidArgExcep) {
-			logger.error(
-					"InvalidArgumentException while building Invite Request",
-					invalidArgExcep);
+			logger.error("InvalidArgumentException while building Invite Request", invalidArgExcep);
 		} catch (TransactionUnavailableException tranUnavExce) {
-			logger
-					.error(
-							"TransactionUnavailableException when trying to getNewClientTransaction",
-							tranUnavExce);
+			logger.error("TransactionUnavailableException when trying to getNewClientTransaction", tranUnavExce);
 		} catch (UnrecognizedActivityException e) {
 			// TODO Auto-generated catch block
-			logger
-					.error(
-							"UnrecognizedActivityException when trying to getActivityContextInterface",
-							e);
+			logger.error("UnrecognizedActivityException when trying to getActivityContextInterface", e);
 		} catch (CreateException creaExce) {
-			logger.error("CreateException while trying to create Child",
-					creaExce);
+			logger.error("CreateException while trying to create Child", creaExce);
 		} catch (SipException sipExec) {
-			logger.error("SipException while trying to send INVITE Request",
-					sipExec);
+			logger.error("SipException while trying to send INVITE Request", sipExec);
 		}
 
 	}
@@ -314,8 +286,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	}
 
-	public void onAnnouncementComplete(MsNotifyEvent evt,
-			ActivityContextInterface aci) {
+	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
 		logger.info("Announcement complete: ");
 
 		MsLink link = this.getLink();
@@ -332,23 +303,19 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 		logger.info("endpoint name: " + endpointName);
 		logger.info("Announcement endpoint: " + announcementEndpoint);
 
-		MsSignalGenerator generator = msProvider
-				.getSignalGenerator(announcementEndpoint);
+		MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
 
 		try {
-			ActivityContextInterface generatorActivity = mediaAcif
-					.getActivityContextInterface(generator);
+			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
-			
+
 			StringBuffer audioPath = new StringBuffer("file:");
 			audioPath.append(audioFilePath);
 			audioPath.append("/");
 			audioPath.append(this.getCustomEvent().getUserName());
-			audioPath.append(".wav");			
+			audioPath.append(".wav");
 
-			
-			generator.apply(EventID.PLAY,
-					new String[] { audioPath.toString() });
+			generator.apply(EventID.PLAY, new String[] { audioPath.toString() });
 
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
@@ -381,8 +348,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	public abstract String getDateAndTime();
 
-	public abstract void setChildSbbLocalObject(
-			CallControlSbbLocalObject childSbbLocalObject);
+	public abstract void setChildSbbLocalObject(CallControlSbbLocalObject childSbbLocalObject);
 
 	public abstract CallControlSbbLocalObject getChildSbbLocalObject();
 }

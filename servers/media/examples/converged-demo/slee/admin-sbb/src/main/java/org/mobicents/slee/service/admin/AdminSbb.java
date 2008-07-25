@@ -13,7 +13,6 @@ package org.mobicents.slee.service.admin;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.Properties;
 
 import javax.jms.Connection;
@@ -25,8 +24,8 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.Basic;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
@@ -59,7 +58,6 @@ import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
 import org.mobicents.slee.service.common.CommonSbb;
@@ -76,11 +74,11 @@ public abstract class AdminSbb extends CommonSbb {
 
 	private TimerFacility timerFacility = null;
 
-	private PersistenceResourceAdaptorSbbInterface persistenceResourceAdaptorSbbInterface = null;
-	
+	private EntityManagerFactory emf;
+
 	private final String orderApproved = "audio/AdminOrderApproved.wav";
 	private final String orderCancelled = "audio/AdminOrderCancelled.wav";
-	private final String orderReConfirm = "audio/AdminReConfirm.wav";	
+	private final String orderReConfirm = "audio/AdminReConfirm.wav";
 
 	String audioFilePath = null;
 
@@ -102,8 +100,7 @@ public abstract class AdminSbb extends CommonSbb {
 	public void setSbbContext(SbbContext sbbContext) {
 		super.setSbbContext(sbbContext);
 		try {
-			Context ctx = (Context) new InitialContext()
-					.lookup("java:comp/env");
+			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 
 			audioFilePath = System.getProperty("jboss.server.data.dir") + "/RecordedAdmin.wav";
 
@@ -116,14 +113,12 @@ public abstract class AdminSbb extends CommonSbb {
 			// Getting Timer Facility interface
 			timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
 
-			persistenceResourceAdaptorSbbInterface = (PersistenceResourceAdaptorSbbInterface) ctx
-					.lookup("slee/resources/pra/0.1/provider");
+			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
 
-			msProvider = (MsProvider) ctx
-					.lookup("slee/resources/media/1.0/provider");
+			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
 
-			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx
-					.lookup("slee/resources/media/1.0/acifactory");
+			InitialContext newIc = new InitialContext();
+			emf = (EntityManagerFactory) newIc.lookup("java:/ShoppingDemoSleeEntityManagerFactory");
 
 		} catch (NamingException ne) {
 			logger.error("Could not set SBB context: " + ne.toString(), ne);
@@ -131,17 +126,13 @@ public abstract class AdminSbb extends CommonSbb {
 	}
 
 	public void onOrderPlaced(CustomEvent event, ActivityContextInterface ac) {
-		System.out
-				.println("****** AdminSbb Recieved org.mobicents.slee.service.sfdemo.ORDER_PLACED ******* ");
-		logger.info("AdminSbb: " + this
-				+ ": received an ORDER_PLACED event. OrderId = "
-				+ event.getOrderId() + ". ammount = " + event.getAmmount()
-				+ ". Customer Name = " + event.getCustomerName());
+		
+		logger.info("AdminSbb: " + this + ": received an ORDER_PLACED event. OrderId = " + event.getOrderId()
+				+ ". ammount = " + event.getAmmount() + ". Customer Name = " + event.getCustomerName());
 
 		this.setCustomEvent(event);
 
-		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin");
+		TTSSession ttsSession = getTTSProvider().getNewTTSSession(audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(event.getCustomerName());
@@ -177,19 +168,14 @@ public abstract class AdminSbb extends CommonSbb {
 		ac.detach(getSbbContext().getSbbLocalObject());
 	}
 
-	public void onBeforeOrderProcessed(CustomEvent event,
-			ActivityContextInterface ac) {
-		System.out
-				.println("****** AdminSbb Recieved BEFORE_ORDER_PROCESSED ******* ");
-		logger.info("AdminSbb: " + this
-				+ ": received an ORDER_PLACED event. OrderId = "
-				+ event.getOrderId() + ". ammount = " + event.getAmmount()
-				+ ". Customer Name = " + event.getCustomerName());
+	public void onBeforeOrderProcessed(CustomEvent event, ActivityContextInterface ac) {
+		
+		logger.info("AdminSbb: " + this + ": received an ORDER_PLACED event. OrderId = " + event.getOrderId()
+				+ ". ammount = " + event.getAmmount() + ". Customer Name = " + event.getCustomerName());
 
 		this.setCustomEvent(event);
 
-		TTSSession ttsSession = getTTSProvider().getNewTTSSession(
-				audioFilePath, "kevin");
+		TTSSession ttsSession = getTTSProvider().getNewTTSSession(audioFilePath, "kevin");
 
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(event.getCustomerName());
@@ -216,9 +202,7 @@ public abstract class AdminSbb extends CommonSbb {
 		options.setPersistent(true);
 
 		// Set the timer on ACI
-		TimerID timerID = this.timerFacility.setTimer(ac, null, System
-				.currentTimeMillis()
-				+ waitingTime, options);
+		TimerID timerID = this.timerFacility.setTimer(ac, null, System.currentTimeMillis() + waitingTime, options);
 
 		this.setTimerID(timerID);
 	}
@@ -227,20 +211,17 @@ public abstract class AdminSbb extends CommonSbb {
 
 		try {
 			// Set the caller address to the address of our call controller
-			Address callerAddress = getSipUtils()
-					.convertURIToAddress(callerSip);
+			Address callerAddress = getSipUtils().convertURIToAddress(callerSip);
 			callerAddress.setDisplayName(callerSip);
 
 			// Retrieve the callee addresses from the event
 			Address calleeAddress = getSipUtils().convertURIToAddress(adminSip);
 
 			// Build the INVITE request
-			Request request = getSipUtils().buildInvite(callerAddress,
-					calleeAddress, null, 1);
+			Request request = getSipUtils().buildInvite(callerAddress, calleeAddress, null, 1);
 
 			// Create a new transaction based on the generated request
-			ClientTransaction ct = getSipProvider().getNewClientTransaction(
-					request);
+			ClientTransaction ct = getSipProvider().getNewClientTransaction(request);
 
 			Header h = ct.getRequest().getHeader(CallIdHeader.NAME);
 			String calleeCallId = ((CallIdHeader) h).getCallId();
@@ -255,16 +236,14 @@ public abstract class AdminSbb extends CommonSbb {
 			// The dialog for the client transaction in which the INVITE is sent
 			Dialog dialog = ct.getDialog();
 			if (dialog != null && logger.isDebugEnabled()) {
-				logger
-						.debug("Obtained dialog from ClientTransaction : automatic dialog support on");
+				logger.debug("Obtained dialog from ClientTransaction : automatic dialog support on");
 			}
 			if (dialog == null) {
 				// Automatic dialog support turned off
 				try {
 					dialog = getSipProvider().getNewDialog(ct);
 					if (logger.isDebugEnabled()) {
-						logger
-								.debug("Obtained dialog for INVITE request to callee with getNewDialog");
+						logger.debug("Obtained dialog for INVITE request to callee with getNewDialog");
 					}
 				} catch (Exception e) {
 					logger.error("Error getting dialog", e);
@@ -272,13 +251,11 @@ public abstract class AdminSbb extends CommonSbb {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger
-						.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = "
-								+ dialog.getCallId().getCallId());
+				logger.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = " + dialog.getCallId().getCallId());
 			}
 			// Get activity context from factory
-			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory()
-					.getActivityContextInterface(dialog);
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface(
+					dialog);
 
 			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
 					.getActivityContextInterface(ct);
@@ -303,8 +280,7 @@ public abstract class AdminSbb extends CommonSbb {
 
 			ChildRelation relation = getCallControlSbbChild();
 			// Create child SBB
-			CallControlSbbLocalObject child = (CallControlSbbLocalObject) relation
-					.create();
+			CallControlSbbLocalObject child = (CallControlSbbLocalObject) relation.create();
 
 			setChildSbbLocalObject(child);
 
@@ -318,29 +294,18 @@ public abstract class AdminSbb extends CommonSbb {
 			ct.sendRequest();
 
 		} catch (ParseException parExc) {
-			logger.error("Parse Exception while parsing the callerAddess",
-					parExc);
+			logger.error("Parse Exception while parsing the callerAddess", parExc);
 		} catch (InvalidArgumentException invalidArgExcep) {
-			logger.error(
-					"InvalidArgumentException while building Invite Request",
-					invalidArgExcep);
+			logger.error("InvalidArgumentException while building Invite Request", invalidArgExcep);
 		} catch (TransactionUnavailableException tranUnavExce) {
-			logger
-					.error(
-							"TransactionUnavailableException when trying to getNewClientTransaction",
-							tranUnavExce);
+			logger.error("TransactionUnavailableException when trying to getNewClientTransaction", tranUnavExce);
 		} catch (UnrecognizedActivityException e) {
 			// TODO Auto-generated catch block
-			logger
-					.error(
-							"UnrecognizedActivityException when trying to getActivityContextInterface",
-							e);
+			logger.error("UnrecognizedActivityException when trying to getActivityContextInterface", e);
 		} catch (CreateException creaExce) {
-			logger.error("CreateException while trying to create Child",
-					creaExce);
+			logger.error("CreateException while trying to create Child", creaExce);
 		} catch (SipException sipExec) {
-			logger.error("SipException while trying to send INVITE Request",
-					sipExec);
+			logger.error("SipException while trying to send INVITE Request", sipExec);
 		}
 	}
 
@@ -352,8 +317,7 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
-	public void onAnnouncementComplete(MsNotifyEvent evt,
-			ActivityContextInterface aci) {
+	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
 		logger.info("Announcement complete: ");
 		if (this.getSendBye()) {
 			MsLink link = this.getLink();
@@ -362,7 +326,7 @@ public abstract class AdminSbb extends CommonSbb {
 	}
 
 	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
-		System.out.println("onInfoEvent received");
+		logger.info("onInfoEvent received");
 		try {
 			getSipUtils().sendStatefulOk(request);
 		} catch (Exception e) {
@@ -371,15 +335,14 @@ public abstract class AdminSbb extends CommonSbb {
 
 		Properties p = new Properties();
 		try {
-			p.load(new ByteArrayInputStream(request.getRequest()
-					.getRawContent()));
+			p.load(new ByteArrayInputStream(request.getRequest().getRawContent()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		String dtmf = p.getProperty("Signal");
-		System.out.println("The Dtmf is " + dtmf);
+		logger.info("The Dtmf is " + dtmf);
 
 		int cause = Integer.parseInt(dtmf);
 
@@ -398,7 +361,7 @@ public abstract class AdminSbb extends CommonSbb {
 		case 1:
 			audioFile = (getClass().getResource(orderApproved)).toString();
 			if (this.getSfDemo()) {
-				System.out.println("Lookup the Queue and put value");
+				
 				try {
 					ic = new InitialContext();
 
@@ -407,16 +370,13 @@ public abstract class AdminSbb extends CommonSbb {
 					logger.info("Queue " + destinationName + " exists");
 
 					jmsConnection = cf.createConnection();
-					javax.jms.Session jmsSession = jmsConnection.createSession(
-							false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+					javax.jms.Session jmsSession = jmsConnection.createSession(false,
+							javax.jms.Session.AUTO_ACKNOWLEDGE);
 					MessageProducer sender = jmsSession.createProducer(queue);
 
-					TextMessage message = jmsSession.createTextMessage(this
-							.getCustomEvent().getOrderId()
-							+ ",1");
+					TextMessage message = jmsSession.createTextMessage(this.getCustomEvent().getOrderId() + ",1");
 					sender.send(message);
-					logger.info("The message was successfully sent to the "
-							+ queue.getQueueName() + " queue");
+					logger.info("The message was successfully sent to the " + queue.getQueueName() + " queue");
 
 				} catch (Exception e) {
 					logger.error("Exception while trying to send message", e);
@@ -433,21 +393,15 @@ public abstract class AdminSbb extends CommonSbb {
 							jmsConnection.close();
 						}
 					} catch (JMSException jmse) {
-						logger.error("Could not close connection "
-								+ jmsConnection + " exception was " + jmse,
-								jmse);
+						logger.error("Could not close connection " + jmsConnection + " exception was " + jmse, jmse);
 					}
 				}
 
 			} else {
-				mgr = this.persistenceResourceAdaptorSbbInterface
-						.createEntityManager(new HashMap(), "custom-pu");
+				mgr = emf.createEntityManager();
 
-				order = (Order) mgr.createQuery(
-						"select o from Order o where o.orderId = :orderId")
-						.setParameter("orderId",
-								this.getCustomEvent().getOrderId())
-						.getSingleResult();
+				order = (Order) mgr.createQuery("select o from Order o where o.orderId = :orderId").setParameter(
+						"orderId", this.getCustomEvent().getOrderId()).getSingleResult();
 
 				order.setStatus(Order.Status.PROCESSING);
 
@@ -459,7 +413,7 @@ public abstract class AdminSbb extends CommonSbb {
 		case 2:
 			audioFile = (getClass().getResource(orderCancelled)).toString();
 			if (this.getSfDemo()) {
-				System.out.println("Lookup the Queue and put value");
+				
 				try {
 					ic = new InitialContext();
 
@@ -468,16 +422,13 @@ public abstract class AdminSbb extends CommonSbb {
 					logger.info("Queue " + destinationName + " exists");
 
 					jmsConnection = cf.createConnection();
-					javax.jms.Session jmsSession = jmsConnection.createSession(
-							false, javax.jms.Session.AUTO_ACKNOWLEDGE);
+					javax.jms.Session jmsSession = jmsConnection.createSession(false,
+							javax.jms.Session.AUTO_ACKNOWLEDGE);
 					MessageProducer sender = jmsSession.createProducer(queue);
 
-					TextMessage message = jmsSession.createTextMessage(this
-							.getCustomEvent().getOrderId()
-							+ ",2");
+					TextMessage message = jmsSession.createTextMessage(this.getCustomEvent().getOrderId() + ",2");
 					sender.send(message);
-					logger.info("The message was successfully sent to the "
-							+ queue.getQueueName() + " queue");
+					logger.info("The message was successfully sent to the " + queue.getQueueName() + " queue");
 
 				} catch (Exception e) {
 					logger.error("Exception while trying to send message", e);
@@ -494,21 +445,15 @@ public abstract class AdminSbb extends CommonSbb {
 							jmsConnection.close();
 						}
 					} catch (JMSException jmse) {
-						logger.error("Could not close connection "
-								+ jmsConnection + " exception was " + jmse,
-								jmse);
+						logger.error("Could not close connection " + jmsConnection + " exception was " + jmse, jmse);
 					}
 				}
 
 			} else {
-				mgr = this.persistenceResourceAdaptorSbbInterface
-						.createEntityManager(new HashMap(), "custom-pu");
+				mgr = emf.createEntityManager();
 
-				order = (Order) mgr.createQuery(
-						"select o from Order o where o.orderId = :orderId")
-						.setParameter("orderId",
-								this.getCustomEvent().getOrderId())
-						.getSingleResult();
+				order = (Order) mgr.createQuery("select o from Order o where o.orderId = :orderId").setParameter(
+						"orderId", this.getCustomEvent().getOrderId()).getSingleResult();
 
 				order.setStatus(Order.Status.CANCELLED);
 
@@ -525,12 +470,10 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 		this.setSendBye(successful);
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(this
-				.getAnnouncementEndpointName());
+		MsSignalGenerator generator = msProvider.getSignalGenerator(this.getAnnouncementEndpointName());
 
 		try {
-			ActivityContextInterface generatorActivity = mediaAcif
-					.getActivityContextInterface(generator);
+			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			generator.apply(EventID.PLAY, new String[] { audioFile });
@@ -560,17 +503,14 @@ public abstract class AdminSbb extends CommonSbb {
 		logger.info("endpoint name: " + endpointName);
 		logger.info("Announcement endpoint: " + announcementEndpoint);
 
-		MsSignalGenerator generator = msProvider
-				.getSignalGenerator(announcementEndpoint);
+		MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
 
 		try {
-			ActivityContextInterface generatorActivity = mediaAcif
-					.getActivityContextInterface(generator);
+			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			String announcementFile = "file:" + audioFilePath;
-			generator.apply(EventID.PLAY,
-					new String[] { announcementFile });
+			generator.apply(EventID.PLAY, new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
 
@@ -601,11 +541,9 @@ public abstract class AdminSbb extends CommonSbb {
 	}
 
 	private void initDtmfDetector(MsConnection connection, String endpointName) {
-		MsSignalDetector dtmfDetector = msProvider
-				.getSignalDetector(endpointName);
+		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(endpointName);
 		try {
-			ActivityContextInterface dtmfAci = mediaAcif
-					.getActivityContextInterface(dtmfDetector);
+			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
 			dtmfAci.attach(getSbbContext().getSbbLocalObject());
 			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
 		} catch (UnrecognizedActivityException e) {
@@ -664,8 +602,7 @@ public abstract class AdminSbb extends CommonSbb {
 
 	public abstract String getAnnouncementEndpointName();
 
-	public abstract void setChildSbbLocalObject(
-			CallControlSbbLocalObject childSbbLocalObject);
+	public abstract void setChildSbbLocalObject(CallControlSbbLocalObject childSbbLocalObject);
 
 	public abstract CallControlSbbLocalObject getChildSbbLocalObject();
 
