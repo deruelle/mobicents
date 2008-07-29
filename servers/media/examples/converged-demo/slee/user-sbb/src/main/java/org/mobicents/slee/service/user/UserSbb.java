@@ -10,10 +10,7 @@
  */
 package org.mobicents.slee.service.user;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -23,7 +20,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
-import javax.sip.RequestEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
@@ -253,44 +249,19 @@ public abstract class UserSbb extends CommonSbb {
 	}
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-		EventCause eventCause = evt.getCause();
-		logger.info("org.mobicents.slee.media.dtmf.DTMF " + eventCause);
-
-		this.initDtmfDetector(getConnection(), this.getEndpointName());
-
-		// handleDtmf(eventCause);
-	}
-
-	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
-		logger.info("javax.sip.dialog.Request.INFO received");
-		try {
-			getSipUtils().sendStatefulOk(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Properties p = new Properties();
-		try {
-			p.load(new ByteArrayInputStream(request.getRequest().getRawContent()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		String dtmf = p.getProperty("Signal");
-		logger.debug("The Dtmf is " + dtmf);
-		int cause = Integer.parseInt(dtmf);
-		logger.debug("onDtmf " + cause);
+		logger.info("DTMF received");
+		EventCause cause = evt.getCause();
 		handleDtmf(cause);
 	}
 
-	public void handleDtmf(int cause) {
+	public void handleDtmf(EventCause cause) {
 
 		EntityManager mgr = null;
 		Order order = null;
 		boolean successful = false;
 
 		switch (cause) {
-		case 1:
+		case DTMF_DIGIT_1:
 
 			this.setAudioFile((getClass().getResource(orderConfirmed)).toString());
 
@@ -307,7 +278,7 @@ public abstract class UserSbb extends CommonSbb {
 			successful = true;
 
 			break;
-		case 2:
+		case DTMF_DIGIT_2:
 			this.setAudioFile((getClass().getResource(orderCancelled)).toString());
 
 			mgr = emf.createEntityManager();

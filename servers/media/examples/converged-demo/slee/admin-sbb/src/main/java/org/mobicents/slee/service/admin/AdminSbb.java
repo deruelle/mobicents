@@ -10,10 +10,7 @@
  */
 package org.mobicents.slee.service.admin;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.Properties;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -29,7 +26,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
-import javax.sip.RequestEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
@@ -49,6 +45,7 @@ import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
@@ -126,7 +123,7 @@ public abstract class AdminSbb extends CommonSbb {
 	}
 
 	public void onOrderPlaced(CustomEvent event, ActivityContextInterface ac) {
-		
+
 		logger.info("AdminSbb: " + this + ": received an ORDER_PLACED event. OrderId = " + event.getOrderId()
 				+ ". ammount = " + event.getAmmount() + ". Customer Name = " + event.getCustomerName());
 
@@ -169,7 +166,7 @@ public abstract class AdminSbb extends CommonSbb {
 	}
 
 	public void onBeforeOrderProcessed(CustomEvent event, ActivityContextInterface ac) {
-		
+
 		logger.info("AdminSbb: " + this + ": received an ORDER_PLACED event. OrderId = " + event.getOrderId()
 				+ ". ammount = " + event.getAmmount() + ". Customer Name = " + event.getCustomerName());
 
@@ -325,26 +322,9 @@ public abstract class AdminSbb extends CommonSbb {
 		}
 	}
 
-	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
-		logger.info("onInfoEvent received");
-		try {
-			getSipUtils().sendStatefulOk(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Properties p = new Properties();
-		try {
-			p.load(new ByteArrayInputStream(request.getRequest().getRawContent()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		String dtmf = p.getProperty("Signal");
-		logger.info("The Dtmf is " + dtmf);
-
-		int cause = Integer.parseInt(dtmf);
+	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
+		logger.info("DTMF received");
+		EventCause cause = evt.getCause();
 
 		EntityManager mgr = null;
 		Order order = null;
@@ -358,10 +338,12 @@ public abstract class AdminSbb extends CommonSbb {
 		Connection jmsConnection = null;
 
 		switch (cause) {
-		case 1:
+		case DTMF_DIGIT_1:
 			audioFile = (getClass().getResource(orderApproved)).toString();
+			
+			//This piece of code is to integrate with JMS Queue for SalesForce example.
 			if (this.getSfDemo()) {
-				
+
 				try {
 					ic = new InitialContext();
 
@@ -410,10 +392,10 @@ public abstract class AdminSbb extends CommonSbb {
 			}
 			successful = true;
 			break;
-		case 2:
+		case DTMF_DIGIT_2:
 			audioFile = (getClass().getResource(orderCancelled)).toString();
 			if (this.getSfDemo()) {
-				
+
 				try {
 					ic = new InitialContext();
 

@@ -1,9 +1,6 @@
 package org.mobicents.slee.service.user.delivery;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,7 +10,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.InvalidArgumentException;
-import javax.sip.RequestEvent;
 import javax.sip.SipException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
@@ -33,12 +29,14 @@ import javax.slee.facilities.TimerOptions;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
+import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
@@ -283,7 +281,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			generator.apply(EventID.PLAY, new String[] { announcementFile });
 
-			// this.initDtmfDetector(getConnection(), endpointName);
+			this.initDtmfDetector(getConnection(), endpointName);
 
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
@@ -301,60 +299,43 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		return null;
 	}
 
-	public void onInfoEvent(RequestEvent request, ActivityContextInterface aci) {
-		logger.info("onInfoEvent received");
-		try {
-			getSipUtils().sendStatefulOk(request);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		Properties p = new Properties();
-		try {
-			p.load(new ByteArrayInputStream(request.getRequest().getRawContent()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		String dtmf = p.getProperty("Signal");
-		logger.info("The Dtmf is " + dtmf);
-
-		int cause = Integer.parseInt(dtmf);
+	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
+		logger.info("DTMF received");
+		EventCause cause = evt.getCause();
 
 		boolean success = false;
 
 		String dateAndTime = this.getDateAndTime();
 
 		switch (cause) {
-		case 0:
+		case DTMF_DIGIT_0:
 			dateAndTime = dateAndTime + "0";
 			break;
-		case 1:
+		case DTMF_DIGIT_1:
 			dateAndTime = dateAndTime + "1";
 			break;
-		case 2:
+		case DTMF_DIGIT_2:
 			dateAndTime = dateAndTime + "2";
 			break;
-		case 3:
+		case DTMF_DIGIT_3:
 			dateAndTime = dateAndTime + "3";
 			break;
-		case 4:
+		case DTMF_DIGIT_4:
 			dateAndTime = dateAndTime + "4";
 			break;
-		case 5:
+		case DTMF_DIGIT_5:
 			dateAndTime = dateAndTime + "5";
 			break;
-		case 6:
+		case DTMF_DIGIT_6:
 			dateAndTime = dateAndTime + "6";
 			break;
-		case 7:
+		case DTMF_DIGIT_7:
 			dateAndTime = dateAndTime + "7";
 			break;
-		case 8:
+		case DTMF_DIGIT_8:
 			dateAndTime = dateAndTime + "8";
 			break;
-		case 9:
+		case DTMF_DIGIT_9:
 			dateAndTime = dateAndTime + "9";
 			break;
 		default:
@@ -469,8 +450,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 				generator.apply(EventID.PLAY, new String[] { "file:" + audioPath.toString() });
 
-				// this.initDtmfDetector(getConnection(),
-				// this.getEndpointName());
+				//this.initDtmfDetector(getConnection(), this.getEndpointName());
 			} catch (UnrecognizedActivityException e) {
 				e.printStackTrace();
 			}
@@ -480,9 +460,20 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 		} else {
 			this.setDateAndTime(dateAndTime);
-			// this.initDtmfDetector(getConnection(), this.getEndpointName());
+			this.initDtmfDetector(getConnection(), this.getEndpointName());
 		}
 	}
+	
+	private void initDtmfDetector(MsConnection connection, String endpointName) {
+		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(endpointName);
+		try {
+			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
+			dtmfAci.attach(getSbbContext().getSbbLocalObject());
+			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
+		} catch (UnrecognizedActivityException e) {
+			e.printStackTrace();
+		}
+	}	
 
 	private MsConnection getConnection() {
 		ActivityContextInterface[] activities = getSbbContext().getActivities();
