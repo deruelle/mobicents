@@ -247,7 +247,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		// TODO is the ReturnCode correct
 		switch (msConnectionEventCause) {
 		case FACILITY_FAILURE:
-			sendResponse(this.getTxId(), ReturnCode.Endpoint_Unknown);
+			sendResponse(this.getTxId(), ReturnCode.Endpoint_Insufficient_Resources);
 			break;
 
 		default:
