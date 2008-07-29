@@ -14,9 +14,6 @@
     <ant antfile="${home}../../resources/media/build.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}../../resources/persistence/build.xml" target="deploy-jmx" inheritAll="false">
-      <property name="jboss.home" value="${jboss.home}" />
-    </ant>
     <ant antfile="${home}../../resources/tts/build.xml" target="deploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
@@ -42,9 +39,6 @@
     <ant antfile="${home}../../resources/tts/build.xml" target="undeploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
-    <ant antfile="${home}../../resources/persistence/build.xml" target="undeploy-jmx" inheritAll="false">
-      <property name="jboss.home" value="${jboss.home}" />
-    </ant>
     <ant antfile="${home}../../resources/media/build.xml" target="undeploy-jmx" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
@@ -58,9 +52,6 @@
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/media/build.xml" target="deploy" inheritAll="false">
-      <property name="jboss.home" value="${jboss.home}" />
-    </ant>
-    <ant antfile="${home}../../resources/persistence/build.xml" target="deploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/tts/build.xml" target="deploy" inheritAll="false">
@@ -86,9 +77,6 @@
     <delete file="${deploy.dir}/ShoppingDemo.ear" />
     <delete file="${deploy.dir}/ShoppingDemo-dev-ds.xml" />
     <ant antfile="${home}../../resources/tts/build.xml" target="undeploy" inheritAll="false">
-      <property name="jboss.home" value="${jboss.home}" />
-    </ant>
-    <ant antfile="${home}../../resources/persistence/build.xml" target="undeploy" inheritAll="false">
       <property name="jboss.home" value="${jboss.home}" />
     </ant>
     <ant antfile="${home}../../resources/media/build.xml" target="undeploy" inheritAll="false">

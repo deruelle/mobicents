@@ -24,10 +24,6 @@
       <arg value="install"/>
     </exec>
 
-    <exec executable="${executable}" dir="${home}/../../resources/persistence/">
-      <arg value="install"/>
-    </exec>
-
     <exec executable="${executable}" dir="${home}/../../resources/tts/">
       <arg value="install"/>
     </exec>
@@ -47,10 +43,6 @@
     </exec>
 
     <exec executable="${executable}" dir="${home}/../../../media/">
-      <arg value="clean"/>
-    </exec>
-    
-    <exec executable="${executable}" dir="${home}/../../resources/persistence/">
       <arg value="clean"/>
     </exec>
     
