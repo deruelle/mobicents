@@ -8,6 +8,8 @@
  ***************************************************/
 package org.mobicents.slee.examples.callcontrol.voicemail;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 
@@ -286,8 +288,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 		if (getSameUser()) {
 
-			log.debug("same user, lets play the voice mail");
-			System.out.println("same user, lets play the voice mail");
+			log.info("same user, lets play the voice mail");
 
 			MsSignalGenerator generator = msProvider.getSignalGenerator(endpointName);
 
@@ -295,11 +296,25 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				ActivityContextInterface generatorActivity = msActivityFactory.getActivityContextInterface(generator);
 				generatorActivity.attach(this.getSbbLocalObject());
 
-				URL audioFileURL = getClass().getResource(waitingDTMF);
+				String audioFile = getAudioFileString();
+				File file = null;
+				boolean fileExist = false;
+				URL audioFileURL = null;
+				try {
+					file = new File(audioFile);
+					fileExist = file.exists();
+				} catch (NullPointerException npe) {
+					// Ignore
+				}
 
+				if (fileExist) {
+
+					audioFileURL = getClass().getResource(waitingDTMF);
+					this.initDtmfDetector(evt.getConnection(), endpointName);
+				} else {
+					audioFileURL = getClass().getResource(novoicemessage);
+				}
 				generator.apply(EventID.PLAY, new String[] { audioFileURL.toString() });
-
-				this.initDtmfDetector(evt.getConnection(), endpointName);
 
 			} catch (UnrecognizedActivityException e) {
 				e.printStackTrace();
@@ -313,17 +328,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
 			String fileName = ((SipURI) toHeader.getAddress().getURI()).getUser() + WAV_EXT;
-			String route = null;
+
 			String recordFilePath = null;
-
-			try {
-				Context initCtx = new InitialContext();
-				Context myEnv = (Context) initCtx.lookup("java:comp/env");
-
-				route = (String) myEnv.lookup("filesRoute");
-			} catch (NamingException nEx) {
-				log.warn("Lookup of filesRoute env Variable failed", nEx);
-			}
 
 			if (route != null) {
 				recordFilePath = route + fileName;
@@ -424,6 +430,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 			dialog.sendRequest(ct);
 
+			releaseMediaConnectionAndDialog();
+
 		} catch (TransactionUnavailableException e) {
 			log.error(e.getMessage(), e);
 		} catch (SipException e) {
@@ -448,42 +456,90 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		}
 	}
 
-	private void checkDtmfDigit(EventCause dtmf) {
-		URL audioFileURL;
+	private String getAudioFileString() {
 
-		/**
-		 * TODO: The Feature of listening the next message and deleting the last
-		 * message is not implemented yet. After pressing 1 or 7 you will only
-		 * listen a message saying which number you have pressed
-		 */
+		FromHeader fromHeader = (FromHeader) this.getInviteRequest().getHeader(FromHeader.NAME);
+
+		String fileName = ((SipURI) fromHeader.getAddress().getURI()).getUser() + WAV_EXT;
+
+		String recordFilePath = System.getProperty("jboss.server.data.dir") + "/";
+
+		if (route != null) {
+			recordFilePath = recordFilePath + route + fileName;
+		} else {
+			recordFilePath = recordFilePath + fileName;
+		}
+
+		log.info("The File to be played = " + recordFilePath);
+
+		return recordFilePath;
+	}
+
+	private void checkDtmfDigit(EventCause dtmf) {
+		URL audioFileURL = null;
+
+		boolean bye = false;
 
 		// Press 1 if you want to listen the next message
 		if (dtmf.equals(EventCause.DTMF_DIGIT_1)) {
-			audioFileURL = getClass().getResource(dtmf1);
+			String filePath = getAudioFileString();
+			String audioFileString = "file://" + filePath;
+
+			try {
+
+				// Just to check if file exist
+				File file = new File(filePath);
+				if (file.exists()) {
+					audioFileURL = new URL(audioFileString);
+				} else {
+					audioFileURL = getClass().getResource(novoicemessage);
+				}
+			} catch (NullPointerException npe) {
+				log.error("Ignore. NullPointerException. The file does not exist " + audioFileString, npe);
+				audioFileURL = getClass().getResource(dtmf1);
+
+			} catch (MalformedURLException e1) {
+				log.error("Ignore. MalformedURLException while trying to create the audio file URL " + audioFileString,
+						e1);
+				audioFileURL = getClass().getResource(dtmf1);
+			}
 		}
 		// Press 7 if you want to delete the last message
 		else if (dtmf.equals(EventCause.DTMF_DIGIT_7)) {
 			audioFileURL = getClass().getResource(dtmf7);
+			String filePath = null;
+
+			filePath = getAudioFileString();
+			File fileToBeDeleted = new File(filePath);
+			boolean deleted = fileToBeDeleted.delete();
+			log.info("Deletion of file " + filePath + " is successful = " + deleted);
+
 		}
 		// Press 9 if you want to hang up
 		else if (dtmf.equals(EventCause.DTMF_DIGIT_9)) {
-			audioFileURL = getClass().getResource(dtmf9);
+			// audioFileURL = getClass().getResource(dtmf9);
+			this.sendByeRequest();
+			bye = true;
 
 		} else {
 			audioFileURL = getClass().getResource(tryAgain);
 		}
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(this.getUserEndpoint());
+		if (!bye) {
 
-		try {
-			ActivityContextInterface generatorActivity = msActivityFactory.getActivityContextInterface(generator);
-			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+			MsSignalGenerator generator = msProvider.getSignalGenerator(this.getUserEndpoint());
 
-			generator.apply(EventID.PLAY, new String[] { audioFileURL.toString() });
+			try {
+				ActivityContextInterface generatorActivity = msActivityFactory.getActivityContextInterface(generator);
+				generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			// this.initDtmfDetector(getConnection(), this.getEndpointName());
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
+				generator.apply(EventID.PLAY, new String[] { audioFileURL.toString() });
+
+				// this.initDtmfDetector(getConnection(),
+				// this.getEndpointName());
+			} catch (UnrecognizedActivityException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -551,6 +607,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			// Getting Timer Facility interface
 			timerFacility = (TimerFacility) myEnv.lookup("slee/facilities/timer");
 
+			route = (String) myEnv.lookup("filesRoute");
+
 		} catch (NamingException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -584,6 +642,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private final String dtmf7 = "audiofiles/DTMF7.wav";
 	private final String dtmf9 = "audiofiles/DTMF9.wav";
 	private final String tryAgain = "audiofiles/TryAgain.wav";
+	private final String novoicemessage = "audiofiles/NoVoiceMessage.wav";
 
 	private final String USER = "vmail";
 	private final String HOST = "nist.gov";
@@ -594,6 +653,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private MediaRaActivityContextInterfaceFactory msActivityFactory;
 
 	public final static String ENDPOINT_NAME = "media/trunk/IVR/$";
+
+	private String route = null;
 
 	/**
 	 * ***************************************** ************** CMP Fields
