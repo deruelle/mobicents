@@ -41,6 +41,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
         super(localName);
         this.mixerStateListener = new MixerStateListener();
         this.splitterStateListener = new SplitterStateListener();
+        this.setMaxConnectionsAvailable(1000);
     }
 
     @Override

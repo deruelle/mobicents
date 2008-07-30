@@ -36,7 +36,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
@@ -62,7 +62,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 
 		<!-- Use the following setting if you are using INBAND
@@ -95,7 +95,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
@@ -121,7 +121,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
 	</mbean>
 
@@ -147,7 +147,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 		<attribute name="MediaType">audio.x_wav</attribute>
 		<attribute name="RecordDir">${jboss.server.data.dir}</attribute>
 		<attribute name="DTMF">detector.mode=AUTO</attribute>
@@ -175,7 +175,7 @@
 		<attribute name="PortRange">1024-65535</attribute>
 		<attribute name="PCMA">true</attribute>
 		<attribute name="PCMU">true</attribute>
-		<attribute name="Speex">false</attribute>
+		<attribute name="Speex">true</attribute>
 	</mbean>
 	<loader-repository>media.mobicents:archive=MediaServer,type=UCL</loader-repository>
 </server>

@@ -131,6 +131,7 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
         try {
             localhost = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
+        	e.printStackTrace();
         }
 
         receiverThread = new Thread(this);

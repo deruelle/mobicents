@@ -33,7 +33,7 @@ public class PREndpointImpl extends ConfEndpointImpl {
      */
     public PREndpointImpl(String localName) {
         super(localName);
-        setMaxConnectionsAvailable(2);
+        this.setMaxConnectionsAvailable(2);
     }
     
     

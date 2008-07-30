@@ -28,7 +28,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
     
     public LoopEndpointImpl(String localName) {
         super(localName);
-        setMaxConnectionsAvailable(2);
+        this.setMaxConnectionsAvailable(2);
         echoStateListener = new EchoStateListener();
     }
 

@@ -50,7 +50,8 @@ public class IVREndpointImpl extends AnnEndpointImpl {
 	/** Creates a new instance of IVREndpointImpl */
 	public IVREndpointImpl(String localName) {
 		super(localName);
-		this.splitterStateListener = new SplitterStateListener();
+		this.setMaxConnectionsAvailable(1);
+		this.splitterStateListener = new SplitterStateListener();		
 	}
 
 	@Override

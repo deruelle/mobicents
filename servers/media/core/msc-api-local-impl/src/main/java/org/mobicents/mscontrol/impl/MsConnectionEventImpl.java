@@ -16,8 +16,6 @@
 
 package org.mobicents.mscontrol.impl;
 
-import java.io.Serializable;
-
 import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.media.msc.common.events.MsConnectionEventID;
 import org.mobicents.mscontrol.MsConnection;
@@ -40,6 +38,8 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
 			MsConnectionEventCause cause, String msg) {
 		this.connection = connection;
 		this.eventID = eventID;
+		this.cause = cause;
+		this.msg = msg;
 	}
 
 	public MsConnection getConnection() {
