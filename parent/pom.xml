@@ -28,19 +28,19 @@
 		<jboss.version>4.2.2.GA</jboss.version>
 		<javassist.version>3.6.0.GA</javassist.version>
 		<jboss-cache.version>1.4.1.SP3</jboss-cache.version>
-		<commons-pool.version>1.2</commons-pool.version>
+		<commons-pool.version>1.4</commons-pool.version>
 		<commons-lang.version>2.1</commons-lang.version>
 		<commons-jxpath.version>1.2</commons-jxpath.version>
 		<sleetck-ra-common.version>1.0</sleetck-ra-common.version>
 		<sleetck-minimal.version>1.0</sleetck-minimal.version>
 		<jgroups.version>2.4.1</jgroups.version>
 		<jain-slee.version>1.1.draft</jain-slee.version>
-		<log4j.version>1.2.12</log4j.version>
+		<log4j.version>1.2.14</log4j.version>
 		<junit.version>4.1</junit.version>
 		<gwt-user.version>1.4.61</gwt-user.version>
 		<commons-fileupload.version>1.1</commons-fileupload.version>
 		<jain-sip-api.version>1.2</jain-sip-api.version>
-		<jain-sip-ri.version>1.2.73</jain-sip-ri.version>
+		<jain-sip-ri.version>1.2.76</jain-sip-ri.version>
 		<jain-mgcp.version>1.0</jain-mgcp.version>			
 		<javax.activation.version>1.1</javax.activation.version>
 		<jcc.version>1.1</jcc.version>				
@@ -676,22 +676,6 @@
 							</Implementation-URL>
 						</manifestEntries>
 					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-eclipse-plugin</artifactId>
-   				<groupId>org.mobicents.tools</groupId>
-    			<version>1.0.0.BETA1</version>
-				<inherited>false</inherited>
-				<executions />
-				<configuration>
-					<excludePoms>servers/jain-slee/resources/diameter/**/pom.xml,servers/media/**/pom.xml,servers/sip-servlets/sip-servlets-examples/pom.xml,servers/sip-servlets/mobicents-skin/pom.xml, servers/sip-servlets/sip-servlets-examples/**/pom.xml, servers/sip-servlets/sip-servlets-pbx/pom.xml, servers/sip-servlets/sip-servlets-test-suite/**/pom.xml</excludePoms>
-					<classpathExcludes>
-						<exclude>xml-apis:xml-apis</exclude>
-						<exclude>jtidy:jtidy</exclude>
-					</classpathExcludes>
-					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>mobicents-all</eclipseProjectName>
 				</configuration>
 			</plugin>
 		</plugins>		
