@@ -41,7 +41,7 @@ public class ReceiveStream implements PushBufferStream, Runnable {
         this.fmt = fmt;
         this.period = period;
 
-        jitterBuffer = new JitterBuffer(fmt, jitter);
+        jitterBuffer = new JitterBuffer(fmt, jitter, period);
 
         runThread = new Thread(this);
         runThread.start();
@@ -96,7 +96,7 @@ public class ReceiveStream implements PushBufferStream, Runnable {
 
     protected void push(int seq, byte[] data) {
         if (logger.isDebugEnabled()) {
-            logger.debug("push " + data.length + " bytes to jitter buffer, fmt=" + fmt);
+            logger.debug("<-- receive " + data.length + " bytes packet, fmt=" + fmt);
         }
         jitterBuffer.push(seq, data);
     }

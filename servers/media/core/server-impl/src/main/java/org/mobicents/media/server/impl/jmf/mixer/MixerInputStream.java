@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.format.UnsupportedFormatException;
@@ -36,9 +37,13 @@ public class MixerInputStream implements BufferTransferHandler {
     private List<Buffer> buffers = Collections.synchronizedList(new ArrayList());
     private int jitter;
     private long duration;
-
-    public MixerInputStream(PushBufferStream stream, int jitter)
+    private AudioMixer mixer;
+    
+    private Logger logger = Logger.getLogger(MixerInputStream.class);
+    
+    public MixerInputStream(AudioMixer mixer, PushBufferStream stream, int jitter)
             throws UnsupportedFormatException {
+        this.mixer = mixer;
         this.jitter = jitter;
         this.stream = stream;
 
@@ -74,15 +79,6 @@ public class MixerInputStream implements BufferTransferHandler {
     private void transcode(Buffer buffer) {
         if (codec != null) {
             codec.process(buffer);
-/*            byte[] data = new byte[buffer.getLength() - buffer.getOffset()];
-            System.arraycopy(buffer.getData(), buffer.getOffset(), data, 0, data.length);
-
-            byte[] media = codec.process(data);
-            
-            buffer.setData(media);
-            buffer.setOffset(0);
-            buffer.setLength(media.length);
- */ 
         }
     }
     
@@ -98,6 +94,11 @@ public class MixerInputStream implements BufferTransferHandler {
         } catch (IOException e) {
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " <-- receive " + buffer.getLength() + " bytes packet, fmt=" + 
+                    buffer.getFormat() + ", timestamp = " + buffer.getTimeStamp() + ", src=" + stream + ", dst=");
+        }
+        
         if (duration + buffer.getDuration() > jitter) {
             //silently discard packet
             return;
@@ -142,5 +143,10 @@ public class MixerInputStream implements BufferTransferHandler {
         }
 
         return media;
+    }
+    
+    @Override
+    public String toString() {
+        return mixer.toString();
     }
 }

@@ -74,7 +74,7 @@ public class Encoder implements Codec {
         
         buffer.setData(res);
         buffer.setOffset(0);
-        buffer.setLength(0);
+        buffer.setLength(res.length);
     }
     
     /**

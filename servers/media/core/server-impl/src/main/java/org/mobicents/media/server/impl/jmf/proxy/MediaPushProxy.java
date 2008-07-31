@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -45,6 +46,7 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     private Codec codec;
     private TimerTask transmission;
     private Timer timer;
+    private Logger logger = Logger.getLogger(MediaPushProxy.class);
     
     public MediaPushProxy() {
     }
@@ -70,7 +72,7 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
     public void setInputStream(PushBufferStream inputStream) throws UnsupportedFormatException {
         if (inputStream != null) {
             inputStream.setTransferHandler(this);
-            sizeInBytes = ((AudioFormat)inputStream.getFormat()).getSampleSizeInBits() * period;
+            sizeInBytes = ((AudioFormat) inputStream.getFormat()).getSampleSizeInBits() * period;
             if (!fmt.matches(inputStream.getFormat())) {
                 codec = CodecLocator.getCodec(inputStream.getFormat(), fmt);
                 if (codec == null) {
@@ -147,8 +149,14 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
         buffer.setOffset(0);
         buffer.setTimeStamp(seq * period);
         buffer.setSequenceNumber(seq++);
+        
         if (codec != null) {
             codec.process(buffer);
+        }
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug("--> send " + buffer.getLength() + " bytes packet, fmt=" + 
+                    buffer.getFormat() + ", timestamp = " + buffer.getTimeStamp() + ", src=" + this);
         }
     }
 
@@ -181,6 +189,10 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
         Buffer buffer = new Buffer();
         try {
             bufferStream.read(buffer);
+            if (logger.isDebugEnabled()) {
+                logger.debug("<-- receive " + buffer.getLength() + " bytes packet, fmt=" +
+                        buffer.getFormat() + ", timestamp = " + buffer.getTimeStamp() + ", src=" + bufferStream);
+            }
             buffers.add((Buffer) buffer.clone());
         } catch (IOException e) {
         }
@@ -197,7 +209,7 @@ public class MediaPushProxy implements PushBufferStream, BufferTransferHandler {
         public void run() {
             if (!buffers.isEmpty()) {
                 transferHandler.transferData(pushStream);
-            } 
+            }
         }
     }
 }

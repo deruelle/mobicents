@@ -43,6 +43,8 @@ public class JitterBuffer {
     private Format fmt;
     private int jitter;
     private int seq = -1;
+    private int period;
+    private int packetSize;
     
     /**
      * Creates new instance of jitter.
@@ -50,9 +52,10 @@ public class JitterBuffer {
      * @param fmt the format of the received media
      * @param jitter the size of the jitter in milliseconds.
      */
-    public JitterBuffer(Format fmt, int jitter) {
+    public JitterBuffer(Format fmt, int jitter, int period) {
         this.fmt = fmt;
         setJitter(jitter);
+        setPeriod(period);
     }
 
     /**
@@ -78,6 +81,11 @@ public class JitterBuffer {
         }
     }
 
+    public void setPeriod(int period) {
+        this.period = period;
+        this.packetSize = getSizeInBytes(fmt, period);
+    }
+    
     public boolean isReady() {
         return pos > threshold;
     }
@@ -120,7 +128,7 @@ public class JitterBuffer {
     }
 
     public byte[] next() throws InterruptedException {
-        return threshold != 0 ? next(this.threshold) : next(this.pos);
+        return packetSize != 0 ? next(this.packetSize) : next(this.pos);
     }
 
     public byte[] next(int count) throws InterruptedException {

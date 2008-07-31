@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -31,13 +32,15 @@ import org.mobicents.media.protocol.PushBufferStream;
  */
 public class SplitterOutputStream implements PushBufferStream {
 
-    private long id = System.currentTimeMillis();
+    private MediaSplitter splitter;
     public final static long PERIOD = 1000;
     private Format fmt;
     private BufferTransferHandler transferHandler;
     private List<Buffer> buffers = Collections.synchronizedList(new ArrayList());
-
-    public SplitterOutputStream(Format fmt) {
+    private Logger logger = Logger.getLogger(SplitterOutputStream.class);
+    
+    public SplitterOutputStream(MediaSplitter splitter, Format fmt) {
+        this.splitter = splitter;
         if (fmt != null) {
             this.fmt = fmt;
         } else {
@@ -63,6 +66,10 @@ public class SplitterOutputStream implements PushBufferStream {
             buffer.setSequenceNumber(buff.getSequenceNumber());
             buffer.setTimeStamp(buff.getTimeStamp());
         }
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " --> send " + buffer.getLength() + " bytes packet, fmt=" + 
+                    buffer.getFormat() + ", timestamp = " + buffer.getTimeStamp());
+        }        
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {
@@ -99,4 +106,8 @@ public class SplitterOutputStream implements PushBufferStream {
     protected void close() {
     }
 
+    @Override
+    public String toString() {
+        return splitter.toString();
+    }
 }

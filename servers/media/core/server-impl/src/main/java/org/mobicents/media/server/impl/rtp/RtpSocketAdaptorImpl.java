@@ -523,6 +523,9 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
                     (int)buffer.getTimeStamp(), ssrc, data);
             try {
                 peer.send(p);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("--> send " + data.length + " bytes packet, fmt=" + buffer.getFormat());
+                }
             } catch (IOException e) {
                 logger.error("I/O Error", e);
             }

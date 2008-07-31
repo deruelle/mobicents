@@ -15,6 +15,7 @@ package org.mobicents.media.server.impl.jmf.mixer;
 
 import java.io.IOException;
 import java.io.Serializable;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -36,6 +37,8 @@ public class MixerOutputStream implements Serializable, PushBufferStream {
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
+    
+    private AudioMixer mixer;
     private byte[] frame;
     private BufferTransferHandler transferHandler;
     private int seq = 0;
@@ -43,10 +46,12 @@ public class MixerOutputStream implements Serializable, PushBufferStream {
     private Codec codec;
     
     private long id = System.currentTimeMillis();
+    private Logger logger = Logger.getLogger(MixerOutputStream.class);
     
     /** Creates a new instance of PcmMuxStream */
-    public MixerOutputStream(AudioFormat fmt, long duration)
+    public MixerOutputStream(AudioMixer mixer, AudioFormat fmt, long duration)
             throws UnsupportedFormatException {
+        this.mixer = mixer;
         this.fmt = fmt;
         this.duration = duration;
 
@@ -78,11 +83,17 @@ public class MixerOutputStream implements Serializable, PushBufferStream {
         buffer.setDuration(duration);
         buffer.setTimeStamp(duration * seq);
         buffer.setSequenceNumber(seq++);
-
+        
         buffer.setFormat(fmt);
         if (codec != null) {
             codec.process(buffer);
         }
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " --> send " + buffer.getLength() + " bytes packet, fmt=" + 
+                    buffer.getFormat() + ", timestamp = " + buffer.getTimeStamp() + ", src=" + this);
+        }
+        
     }
 
     public void setTransferHandler(BufferTransferHandler transferHandler) {
@@ -114,5 +125,10 @@ public class MixerOutputStream implements Serializable, PushBufferStream {
             frame = data;
             transferHandler.transferData(this);
         }
+    }
+    
+    @Override
+    public String toString() {
+        return mixer.toString();
     }
 }

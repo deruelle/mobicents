@@ -30,11 +30,14 @@ import org.apache.log4j.Logger;
  */
 public class AudioMixer implements Serializable {
     
+    private static int ID_GENERATOR = 0;
+    
     private final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-        
+    
+    private String ID;
     private TimerTask mixer;
     protected Timer timer;
     
@@ -52,6 +55,7 @@ public class AudioMixer implements Serializable {
     private double currentGain = 1;
     private static double maxStepDown = 1./22; // 51 samples transition from gain 1 to gain 0
     private static double maxStepUp = 1./4000; // 3000 samples transition from gain 1 to gain 0
+    
     private Logger logger = Logger.getLogger(AudioMixer.class);
     
     /** 
@@ -59,16 +63,20 @@ public class AudioMixer implements Serializable {
      * 
      * @param packetPeriod packetization period in milliseconds. 
      */
-    public AudioMixer(Timer timer, int packetPeriod, int jitter) {
+/*    public AudioMixer(Timer timer, int packetPeriod, int jitter) {
         this.timer = timer;
         this.packetPeriod = packetPeriod;
         this.jitter = jitter;
+        
+        if (ID_GENERATOR == Integer.MAX_VALUE) ID_GENERATOR = 0;
+        this.ID = Integer.toHexString(ID_GENERATOR++);
+        
         try {
             this.init();
         } catch (UnsupportedFormatException e) {
         }
     }
-
+*/
     /** 
      * Creates a new instance of AudioMixer.
      * 
@@ -80,6 +88,10 @@ public class AudioMixer implements Serializable {
         this.packetPeriod = packetPeriod;
         this.jitter = jitter;
         this.fmt = fmt;
+        
+        if (ID_GENERATOR == Integer.MAX_VALUE) ID_GENERATOR = 0;
+        this.ID = Integer.toHexString(ID_GENERATOR++);
+        
         this.init();
     }
     
@@ -90,7 +102,7 @@ public class AudioMixer implements Serializable {
      */
     private void init() throws UnsupportedFormatException {
         this.packetSize = 16 * packetPeriod;        
-        outputStream = new MixerOutputStream(fmt, packetPeriod);
+        outputStream = new MixerOutputStream(this, fmt, packetPeriod);
     }
     
     /**
@@ -110,7 +122,7 @@ public class AudioMixer implements Serializable {
      * can not be mixed or decoded.
      */
     public synchronized void addInputStream(PushBufferStream stream) throws UnsupportedFormatException {
-        MixerInputStream buffer = new MixerInputStream(stream, jitter);
+        MixerInputStream buffer = new MixerInputStream(this, stream, jitter);
         buffers.add(buffer);
     }
 
@@ -162,6 +174,11 @@ public class AudioMixer implements Serializable {
             mixer.cancel();
             timer.purge();
         }
+    }
+    
+    @Override
+    public String toString() {
+        return "AudioMixer[ID=" + ID + "]";
     }
     
     /**
