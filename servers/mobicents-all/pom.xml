@@ -103,7 +103,7 @@
 								${checkout.basedir}/sip-servlets
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/branches/sip-servlets/0.4.x
+								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -193,7 +193,7 @@
 							<scmVersion>${sipservlets.scmVersion}</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/branches/sip-servlets/0.4.x
+								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
