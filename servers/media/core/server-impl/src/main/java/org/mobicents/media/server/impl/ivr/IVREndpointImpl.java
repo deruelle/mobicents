@@ -128,7 +128,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
 	 */
 	@Override
 	public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener,
-			boolean keepAlive) throws UnknownSignalException {
+			boolean keepAlive, boolean startRecordingImmediately) throws UnknownSignalException {
 		logger.info("Play signal, signalID = " + signalID);
 
 		if (signal != null) {
@@ -181,7 +181,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
 			opts.put("record.url", recordURL);
 
 			AdvancedAudioPackage au = new AdvancedAudioPackage(this);
-			signal = au.play(signalID, opts, connectionID, listener);
+			signal = au.play(signalID, opts, connectionID, listener, startRecordingImmediately);
 			logger.info("Execute Play/Record signal for connection: " + connectionID);
 			break;
 		case TEST_SINE:

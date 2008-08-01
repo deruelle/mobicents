@@ -37,7 +37,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         return new TestResourceManager();
     }
     
-    public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+    public void play(EventID signalID, String[] params, String connectionID, NotificationListener listener, boolean keepAlive, boolean beginRecordingImmediately) throws UnknownSignalException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

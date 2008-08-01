@@ -140,7 +140,7 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
 			}
 
 			try {
-				endpoint.play(signalID, params, null, generator, false);
+				endpoint.play(signalID, params, null, generator, false, false);
 			} catch (UnknownSignalException ex) {
 				MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex
 						.getMessage());

@@ -90,7 +90,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
      * @see org.mobicents.server.spi.BaseEndpoint#play(int, String NotificationListener, boolean.
      */
     public void play(EventID signalID, String[] params, String connectionID,
-            NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+            NotificationListener listener, boolean keepAlive, boolean startRecordingImmediately) throws UnknownSignalException {
 
         //disable current signal
         if (signal != null) {

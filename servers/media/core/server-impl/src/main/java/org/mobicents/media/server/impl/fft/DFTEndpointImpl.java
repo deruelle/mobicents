@@ -25,7 +25,7 @@ public class DFTEndpointImpl extends BaseEndpoint {
 	}
 
 	public void play(EventID signalID, String[] params, String connectionID,
-			NotificationListener listener, boolean keepAlive)
+			NotificationListener listener, boolean keepAlive, boolean beginRecordingImmediately)
 			throws UnknownSignalException {
 
 		if (played != null) {

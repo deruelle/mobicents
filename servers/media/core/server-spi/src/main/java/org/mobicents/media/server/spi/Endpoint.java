@@ -210,7 +210,7 @@ public interface Endpoint extends Serializable {
      * @param keepAlive true if keep signal active.
      */
     public void play(EventID signalID, String[] params, String connectionID,
-            NotificationListener listener, boolean keepAlive) throws UnknownSignalException;
+            NotificationListener listener, boolean keepAlive, boolean beginRecordingImmediately) throws UnknownSignalException;
 
     /**
      * Asks the to detect requested event and report. 

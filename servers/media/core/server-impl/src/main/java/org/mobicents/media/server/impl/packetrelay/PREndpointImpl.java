@@ -39,7 +39,7 @@ public class PREndpointImpl extends ConfEndpointImpl {
     
     @Override
     public void play(EventID signalID, String params[], String connectionID,
-            NotificationListener listener, boolean keepAlive) throws UnknownSignalException {
+            NotificationListener listener, boolean keepAlive, boolean beginRecordingImmediately) throws UnknownSignalException {
         throw new UnknownSignalException("Not supported");
     }
     
