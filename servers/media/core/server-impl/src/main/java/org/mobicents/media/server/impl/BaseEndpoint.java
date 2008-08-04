@@ -260,8 +260,17 @@ public abstract class BaseEndpoint implements Endpoint {
 	 * @see org.mobicents.media.server.spi.Endpoint#configure(String, String,
 	 *      Properties);
 	 */
-	public synchronized void configure(MediaResourceType type, Connection connection, Properties config)
+	public  void configure(MediaResourceType type, Connection connection, Properties config)
 			throws UnknownMediaResourceException {
+		BaseConnection baseConnection=(BaseConnection) connection;
+		
+		try{
+		baseConnection.lockState();
+		if(connection.getState()==ConnectionState.CLOSED)
+		{
+			//FIXME:Add removal operation? Create tasks for that!!!
+			throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
+		}
 		MediaResource mediaResource = resourceManager.getResource(this, type, connection, config);
 
 		if (mediaResource == null) {
@@ -276,6 +285,15 @@ public abstract class BaseEndpoint implements Endpoint {
 			logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
 			throw new IllegalArgumentException(e.getMessage());
 		}
+		}
+		catch(InterruptedException ie)
+		{
+			//FIXME: How shoyld we handle Interruptedxception?
+		}
+		finally
+		{
+			baseConnection.releaseState();
+		}
 	}
 
 	/**
@@ -284,9 +302,21 @@ public abstract class BaseEndpoint implements Endpoint {
 	 * @see org.mobicents.media.server.spi.Endpoint#configure(String, String,
 	 *      Properties);
 	 */
-	public synchronized void configure(MediaResourceType type, String connectionID, Properties config)
+	public void configure(MediaResourceType type, String connectionID, Properties config)
 			throws UnknownMediaResourceException {
 		Connection connection = this.getConnection(connectionID);
+		if(connection==null)
+		{
+			throw new IllegalArgumentException("Cannt find valid connection");
+		}
+		BaseConnection baseConnection=(BaseConnection) connection;
+		try{
+			baseConnection.lockState();
+			if(connection.getState()==ConnectionState.CLOSED)
+			{
+				//FIXME:Add removal operation? Create tasks for that!!!
+				throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
+			}
 		MediaResource mediaResource = resourceManager.getResource(this, type, connection, config);
 
 		if (mediaResource == null) {
@@ -300,14 +330,45 @@ public abstract class BaseEndpoint implements Endpoint {
 			logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
 			throw new IllegalArgumentException(e.getMessage());
 		}
+		}
+		catch(InterruptedException ie)
+		{
+			//FIXME: How shoyld we handle Interruptedxception?
+		}
+		finally
+		{
+			baseConnection.releaseState();
+		}
 	}
 
-	public synchronized void prepare(MediaResourceType type, String connectionID, PushBufferStream media)
+	public void prepare(MediaResourceType type, String connectionID, PushBufferStream media)
 			throws UnsupportedFormatException {
+		Connection connection = this.getConnection(connectionID);
+		if(connection==null)
+		{
+			throw new IllegalArgumentException("Cannt find valid connection");
+		}
+		BaseConnection baseConnection=(BaseConnection) connection;
+		try{
+			baseConnection.lockState();
+			if(connection.getState()==ConnectionState.CLOSED)
+			{
+				//FIXME:Add removal operation? Create tasks for that!!!
+				throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
+			}
 		MediaSink res = (MediaSink) resources.get(type + "_" + connectionID);
 		if (res != null) {
 			logger.info("Preparing Sink: " + res);
 			res.prepare(this, media);
+		}
+		}
+		catch(InterruptedException ie)
+		{
+			//FIXME: How shoyld we handle Interruptedxception?
+		}
+		finally
+		{
+			baseConnection.releaseState();
 		}
 	}
 
@@ -449,8 +510,26 @@ public abstract class BaseEndpoint implements Endpoint {
 		Connection connection = (Connection) connections.remove(connectionID);
 
 		if (connection != null) {
-			connection.close();
-		}
+			
+			if(connection==null)
+			{
+				throw new IllegalArgumentException("Cannt find valid connection");
+			}
+			BaseConnection baseConnection=(BaseConnection) connection;
+			try{
+				baseConnection.lockState();
+				if(connection.getState()==ConnectionState.CLOSED)
+				{
+					//FIXME:Add removal operation? Create tasks for that!!!
+					throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
+				}
+			try {
+				connection.close();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 
 		hasConnections = connections.size() > 0;
 		logger.info("Deleted connection " + connection);
@@ -475,6 +554,16 @@ public abstract class BaseEndpoint implements Endpoint {
 			MediaResource mediaResource = (MediaResource) resources.remove(name);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Disposed resource: " + mediaResource);
+			}
+		}
+			}
+			catch(InterruptedException ie)
+			{
+				//FIXME: How shoyld we handle Interruptedxception?
+			}
+			finally
+			{
+				baseConnection.releaseState();
 			}
 		}
 	}

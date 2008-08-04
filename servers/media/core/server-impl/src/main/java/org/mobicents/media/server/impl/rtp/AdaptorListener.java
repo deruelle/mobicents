@@ -27,8 +27,9 @@ public interface AdaptorListener extends Serializable {
      * This method is called when new receive stream is detetcted.
      *
      * @param the new receive stream.
+     * @throws InterruptedException 
      */
-    public void newReceiveStream(PushBufferStream receiveStream);
+    public void newReceiveStream(PushBufferStream receiveStream) throws InterruptedException;
     
     /**
      * This method is call when some exceptions detected.

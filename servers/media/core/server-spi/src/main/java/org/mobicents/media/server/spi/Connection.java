@@ -89,13 +89,15 @@ public interface Connection extends Serializable {
      * Joins localy this and other connections.
      *
      * @param other the other connectio to join with.
+     * @throws InterruptedException 
      */
-    public void setOtherParty(Connection other) throws IOException;
+    public void setOtherParty(Connection other) throws IOException, InterruptedException;
     
     public void addListener(ConnectionListener listener);
     public void removeListener(ConnectionListener listener);
     /**
      * Closes this connection.
+     * @throws InterruptedException 
      */
-    public void close();
+    public void close() throws InterruptedException;
 }
