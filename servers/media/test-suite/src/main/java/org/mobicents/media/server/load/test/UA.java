@@ -4,7 +4,7 @@ import jain.protocol.ip.mgcp.CreateProviderException;
 import jain.protocol.ip.mgcp.DeleteProviderException;
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
-import jain.protocol.ip.mgcp.JainMgcpListener;
+import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import jain.protocol.ip.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
@@ -203,7 +203,7 @@ public class UA implements Runnable {
 		}
 	}
 
-	class JainMgcpListnerImpl implements JainMgcpListener {
+	class JainMgcpListnerImpl implements JainMgcpExtendedListener {
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
 			logger.debug("processMgcpCommandEvent = " + arg0);
@@ -285,6 +285,23 @@ public class UA implements Runnable {
 
 			}
 
+		}
+
+		public void transactionEnded(int handle) {
+			System.out.println("transactionEnded for handle = "+handle);
+			
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent command) {
+			System.out.println("Request not able to send");
+			System.out.println("transactionRxTimedOut for JainMgcpCommandEvent = "+command);
+			System.out.println("Clean the MGCP Stack");
+			
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent command) {
+			System.out.println("transactionTxTimedOut for JainMgcpCommandEvent = "+command);
+			
 		}
 
 	}
