@@ -121,7 +121,7 @@ public class MessageHandler implements Runnable {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Processing response message");
                 }
-                String domainName = address.getHostName();
+                //String domainName = address.getHostName();
                 String tid = tokens[1];
 
                 TransactionHandler handler = (TransactionHandler) stack.transactions.get(Integer.valueOf(tid));
