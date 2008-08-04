@@ -1,108 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="Mobicents Presence Service" default="">
 
-	<property name="home" value="${ant.file.Release_build}/../" />
+	<property name="home" value="${ant.file.Mobicents Presence Service}/../" />
 	<property environment="env"/>
 	<property name="jboss.home" value="@JBOSS.HOME@" />
 	<property name="jboss.config" value="@JBOSS.CONFIG@" />
 	<property name="jnpHost" value="127.0.0.1" />
 	<property name="jnpPort" value="1099" />
 
+	<!-- COMMON STUFF -->
+
+	<target name="common-deploy-X">
+		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+	</target>
+
+	<target name="common-undeploy-X">
+		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+	</target>
+
+	<!-- XDM SERVER -->
+
+	<target name="xdms-deploy-X">
+		<antcall target="common-deploy-X"/>
+		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="deploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+	</target>
+
+	<target name="xdms-undeploy-X">
+		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="undeploy${X}" inheritAll="false">
+			<property name="jboss.home" value="${jboss.home}" />
+			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
+		</ant>
+		<antcall target="common-undeploy-X" />
+	</target>
+
+	<target name="xdms-deploy" description="hard deploy the XDM server ">
+		<property name="X" value=""/>
+		<antcall target="xdms-deploy-X"/>
+	</target>
+
 	<target name="xdms-deploy-jmx" description="deploys the XDM server via jmx">
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
+		<property name="X" value="-jmx"/>
+		<antcall target="xdms-deploy-X"/>
+	</target>
+
+	<target name="xdms-undeploy" description="hard undeploy the XDM server">
+		<property name="X" value=""/>
+		<antcall target="xdms-undeploy-X"/>
 	</target>
 
 	<target name="xdms-undeploy-jmx" description="undeploys the XDM server via jmx">
-		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
+		<property name="X" value="-jmx"/>
+		<antcall target="xdms-undeploy-X"/>
+	</target>
+
+	<!-- INTEGRATED SERVER -->
+
+	<target name="integrated-deploy-X">
+		<antcall target="common-deploy-X"/>
+		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="deploy${X}" inheritAll="false">
 			<property name="jboss.home" value="${jboss.home}" />
 			<property name="node" value="${jboss.config}" />
 			<property name="jnpHost" value="${jnpHost}" />
@@ -110,246 +154,34 @@
 		</ant>
 	</target>
 
-	<target name="xdms-deploy" description="hard deploys the XDM server">
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="deploy" inheritAll="false">
+	<target name="integrated-undeploy-X">
+		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="undeploy${X}" inheritAll="false">
 			<property name="jboss.home" value="${jboss.home}" />
 			<property name="node" value="${jboss.config}" />
+			<property name="jnpHost" value="${jnpHost}" />
+			<property name="jnpPort" value="${jnpPort}" />
 		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
+		<antcall target="common-undeploy-X" />
 	</target>
 
-	<target name="xdms-undeploy" description="hard undeploys the XDM server">
-		<ant antfile="${home}/xdms/server-subscription-control-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
+	<target name="integrated-deploy" description="hard deploy the integrated presence service">
+		<property name="X" value=""/>
+		<antcall target="integrated-deploy-X"/>
 	</target>
 
 	<target name="integrated-deploy-jmx" description="deploys the integrated presence service via jmx">
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
+		<property name="X" value="-jmx"/>
+		<antcall target="integrated-deploy-X"/>
+	</target>
+
+	<target name="integrated-undeploy" description="hard undeploy the integrated presence service">
+		<property name="X" value=""/>
+		<antcall target="integrated-undeploy-X"/>
 	</target>
 
 	<target name="integrated-undeploy-jmx" description="undeploys the integrated presence service via jmx">
-		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-	</target>
-
-	<target name="integrated-deploy" description="hard deploys the integrated presence service">
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-	</target>
-
-	<target name="integrated-undeploy" description="hard undeploys the integrated presence service">
-		<ant antfile="${home}/integrated/deployable-unit/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-core-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-datasource-ra-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/server-appusagecache-ra-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-oma-pres-rules-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-pres-rules-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-resource-lists-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}/xdms/appusage-rls-services-server-DU/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
+		<property name="X" value="-jmx"/>
+		<antcall target="integrated-undeploy-X"/>
 	</target>
 
 </project>

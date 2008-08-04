@@ -98,10 +98,17 @@
 		<copydir dest="${release.dir}/resources/xcap-client" src="${release.dir}/sip-presence/xcap-client/ra"/>
 		<copy file="${ant.file.mobicents.release}/../../xcap-client/ra/release/build.xml" todir="${release.dir}/resources/xcap-client" overwrite="true">
 			<filterset>
-			     <filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
-			     <filter token="JBOSS_CONFIG" value="${jboss.config}" />
+				<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
+				<filter token="JBOSS_CONFIG" value="${jboss.config}" />
 			</filterset>
 		</copy>
+		<copy file="${ant.file.mobicents.release}/../mobicents-all-dependencies.xml" todir="${release.dir}/sip-presence-service/dependencies.xml" overwrite="true">
+			<filterset>
+				<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
+				<filter token="JBOSS_CONFIG" value="${jboss.config}" />
+			</filterset>
+		</copy>
+		<copy file="${ant.file.mobicents.release}/../mobicents-all-readme.txt" todir="${release.dir}/sip-presence-service/readme.txt" overwrite="true" />
 		<delete dir="${release.dir}/sip-presence/xcap-client/ra" />
 		<delete dir="${release.dir}/tmp" />
 	</target>
