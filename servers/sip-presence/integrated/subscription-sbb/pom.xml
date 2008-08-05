@@ -11,7 +11,7 @@
 	<artifactId>integrated-subscription-control-sbb</artifactId>
 	
 	<build>
-		<finalName>${org.mobicents.servers.sippresence.integrated.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}integrated-sub-sbb-${pom.version}</finalName>
 		<resources>
 			<resource>
         		<directory>src/main/resources</directory>

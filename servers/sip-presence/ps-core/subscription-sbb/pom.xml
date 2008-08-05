@@ -34,7 +34,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>${org.mobicents.servers.sippresence.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}ps-core-sub-sbb-${pom.version}</finalName>
 	</build>
 	
 </project>

@@ -11,7 +11,7 @@
 	<artifactId>server-datasource-ra-jdbc</artifactId>
 	
 	<build>
-		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-core-ds-ra-jdbc-${pom.version}</finalName>
 	</build>
 		
 	<dependencies>	

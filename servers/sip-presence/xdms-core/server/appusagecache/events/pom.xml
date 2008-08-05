@@ -12,6 +12,6 @@
 	<artifactId>server-appusagecache-events</artifactId>	
 		
 	<build>
-		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-core-aucache-events-${pom.version}</finalName>	
 	</build>
 </project>

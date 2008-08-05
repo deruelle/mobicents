@@ -18,8 +18,4 @@
 		<module>subscription-control-du</module>
 	</modules>
 	
-	<build>
-		<finalName>mobicents-xdm-${pom.artifactId}-${pom.version}</finalName>
-	</build>
-	
 </project>

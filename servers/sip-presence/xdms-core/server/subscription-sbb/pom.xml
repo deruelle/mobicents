@@ -34,7 +34,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>		
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-core-sub-sbb-${pom.version}</finalName>		
 	</build>
 	
 </project>

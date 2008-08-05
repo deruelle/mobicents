@@ -23,8 +23,4 @@
 		</org.mobicents.servers.sipevent.finalName>
 	</properties>			
 	
-	<build>
-		<finalName>${org.mobicents.servers.sipevent.finalName}</finalName>
-	</build>
-	
 </project>

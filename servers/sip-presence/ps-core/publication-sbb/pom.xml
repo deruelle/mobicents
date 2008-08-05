@@ -29,7 +29,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>${org.mobicents.servers.sippresence.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}ps-core-pub-sbb-${pom.version}</finalName>
 	</build>
 	
 </project>

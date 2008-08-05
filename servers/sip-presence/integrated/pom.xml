@@ -35,15 +35,5 @@
 			<id>maven-release</id>
 		</profile>
 	</profiles>
-	
-	<properties>
-		<org.mobicents.servers.sippresence.integrated.finalName>
-			mobicents-sippresence-${pom.artifactId}-${pom.version}
-		</org.mobicents.servers.sippresence.integrated.finalName>
-	</properties>			
-	
-	<build>
-		<finalName>${org.mobicents.servers.sippresence.integrated.finalName}</finalName>
-	</build>
 		
 </project>

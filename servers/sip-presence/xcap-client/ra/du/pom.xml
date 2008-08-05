@@ -48,7 +48,7 @@
 	
 	
 	<build>
-		<finalName>mobicents-sip-presence-${pom.artifactId}-${pom.version}</finalName>	
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}${pom.artifactId}-${pom.version}</finalName>	
 		<plugins>
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>

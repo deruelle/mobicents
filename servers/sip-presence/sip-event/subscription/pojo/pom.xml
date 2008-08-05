@@ -30,7 +30,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>${org.mobicents.servers.sipevent.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}sip-event-sub-pojo-${pom.version}</finalName>
 	</build>
 	
 </project>

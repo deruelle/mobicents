@@ -31,7 +31,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>${org.mobicents.servers.sipevent.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}sip-event-pub-sbb-${pom.version}</finalName>
 	</build>
 	
 </project>

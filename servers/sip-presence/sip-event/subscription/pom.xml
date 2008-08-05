@@ -16,8 +16,4 @@
 		<module>sbb</module>	
 	</modules>	
 	
-	<build>
-		<finalName>${org.mobicents.servers.sipevent.finalName}</finalName>
-	</build>
-	
 </project>

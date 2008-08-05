@@ -38,7 +38,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>mobicents-xdm-${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-aucache-ra-DU-${pom.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>

@@ -61,7 +61,6 @@
 	</dependencies>
 
 	<build>
-		<finalName>mobicents-xdm-${pom.artifactId}-${pom.version}</finalName>
 		<resources>
 			<resource>        		<directory>src/main/resources</directory>        		<filtering>true</filtering>      		</resource>
       	</resources>

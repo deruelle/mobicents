@@ -38,6 +38,10 @@
 		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
+		<!-- maven stuff, don't change -->
+		<mobicents.sip.presence.service.finalName.prefix>
+			msps-
+		</mobicents.sip.presence.service.finalName.prefix>
 	</properties>			
 	
 	<dependencyManagement>
@@ -76,6 +80,7 @@
 	</dependencyManagement>
 	
 	<build>
+		<finalName>${mobicents.sip.presence.service.finalName}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>

@@ -18,8 +18,4 @@
 		<module>du</module>			
 	</modules>
 	
-	<build>
-		<finalName>mobicents-sip-presence-${pom.artifactId}-${pom.version}</finalName>	
-	</build>
-	
 </project>

@@ -11,7 +11,7 @@
 	<artifactId>server-appusagecache-ra</artifactId>	
 	
 	<build>
-		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-core-aucache-ra-${pom.version}</finalName>
 	</build>
 		
 	<dependencies>	

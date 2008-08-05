@@ -18,8 +18,4 @@
 		<module>subscription-sbb</module>
 	</modules>
 	
-	<build>
-		<finalName>mobicents-xdm-core-${pom.artifactId}-${pom.version}</finalName>		
-	</build>
-	
 </project>

@@ -88,7 +88,7 @@
 	</dependencies>
 		
 	<build>
-		<finalName>${org.mobicents.servers.sippresence.integrated.finalName}</finalName>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}integrated-du-${pom.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
