@@ -94,7 +94,7 @@
 		<delete dir="${release.dir}/with-mobicents-src" />
 	</target>
 
-	<target name="release-mobicents-all" depends="release-standalone">		
+	<target name="release-mobicents-all" depends="release-standalone">
 		<copydir dest="${release.dir}/resources/xcap-client" src="${release.dir}/sip-presence/xcap-client/ra"/>
 		<copy file="${ant.file.mobicents.release}/../../xcap-client/ra/release/build.xml" todir="${release.dir}/resources/xcap-client" overwrite="true">
 			<filterset>
@@ -104,8 +104,8 @@
 		</copy>
 		<copy file="${ant.file.mobicents.release}/../mobicents-all-dependencies.xml" toFile="${release.dir}/sip-presence/dependencies.xml" overwrite="true">
 			<filterset>
-				<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
-				<filter token="JBOSS_CONFIG" value="${jboss.config}" />
+				<filter token="JBOSS.CONFIG" value="${jboss.config}" />
+				<filter token="JBOSS.HOME" value="${release.build.jboss.home}" />
 			</filterset>
 		</copy>
 		<copy file="${ant.file.mobicents.release}/../mobicents-all-readme.txt" toFile="${release.dir}/sip-presence/readme.txt" overwrite="true" />
@@ -122,7 +122,7 @@
 		<delete dir="${release.dir}/tmp" />
 		<delete dir="${release.dir}/sip-presence" />
 	</target>
-	
+
 	<target name="release-standalone" description="Makes the release.">
 		<property name="release.build.jboss.home" value="${env.JBOSS_HOME}"/>
 		<antcall target="build-xdms" inheritall="false">
@@ -184,7 +184,7 @@
 		<copy overwrite="true" file="${ant.file.mobicents.release}/../release-build.xml" toFile="${release.dir}/sip-presence/build.xml">
 			<filterset>
 				<filter token="JBOSS.CONFIG" value="${jboss.config}" />
-				<filter token="JBOSS.HOME" value="${release.build.jboss.home}" />		   
+				<filter token="JBOSS.HOME" value="${release.build.jboss.home}" />
 			</filterset>
 		</copy>
 	</target>
