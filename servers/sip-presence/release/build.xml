@@ -102,13 +102,13 @@
 				<filter token="JBOSS_CONFIG" value="${jboss.config}" />
 			</filterset>
 		</copy>
-		<copy file="${ant.file.mobicents.release}/../mobicents-all-dependencies.xml" todir="${release.dir}/sip-presence-service/dependencies.xml" overwrite="true">
+		<copy file="${ant.file.mobicents.release}/../mobicents-all-dependencies.xml" toFile="${release.dir}/sip-presence/dependencies.xml" overwrite="true">
 			<filterset>
 				<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
 				<filter token="JBOSS_CONFIG" value="${jboss.config}" />
 			</filterset>
 		</copy>
-		<copy file="${ant.file.mobicents.release}/../mobicents-all-readme.txt" todir="${release.dir}/sip-presence-service/readme.txt" overwrite="true" />
+		<copy file="${ant.file.mobicents.release}/../mobicents-all-readme.txt" toFile="${release.dir}/sip-presence/readme.txt" overwrite="true" />
 		<delete dir="${release.dir}/sip-presence/xcap-client/ra" />
 		<delete dir="${release.dir}/tmp" />
 	</target>
