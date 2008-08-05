@@ -196,6 +196,8 @@ public class MsLinkImpl implements MsLink {
 				connections[0].getEndpoint().deleteConnection(connections[0].getId());
 				state = MsLinkState.FAILED;
 				sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
+			} catch (InterruptedException e) {				
+				e.printStackTrace();
 			}
 		}
 

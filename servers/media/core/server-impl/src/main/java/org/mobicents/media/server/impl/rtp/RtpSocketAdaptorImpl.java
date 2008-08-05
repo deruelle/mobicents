@@ -344,7 +344,12 @@ public class RtpSocketAdaptorImpl implements RtpSocketAdaptor, Runnable {
 
             //notify listeners
             for (AdaptorListener listener : listeners) {
-                listener.newReceiveStream(receiveStream);
+                try {
+					listener.newReceiveStream(receiveStream);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         }
 
