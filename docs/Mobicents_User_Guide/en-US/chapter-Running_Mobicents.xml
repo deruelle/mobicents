@@ -71,7 +71,7 @@
 			</listitem>
 		</itemizedlist>
 		<figure
-			id="top-ss-mmc-initial_view.png">
+			id="figure-top-ss-mmc-initial_view.png">
 			<title>The Mobicents Management Console, initial view</title>
 			<mediaobject>
 				<imageobject>
@@ -91,7 +91,7 @@
 			<para>This view can be selected by clicking on <literal>Deployable Units</literal> from the Main Menu, and shows a list of all deployable units that can be deployed with the Mobicents Converged Application Server.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-deployable_units.png">
+			id="figure-top-ss-mmc-deployable_units">
 			<title>The <literal>Deployable Units</literal> view</title>
 			<mediaobject>
 				<imageobject>
@@ -110,7 +110,7 @@
 			<para>The next view on the Main Menu is the <literal>Components</literal> view, which displays a list of component types, such as services, <acronym>SBB</acronym>s, resource adapters, <abbrev>etc.</abbrev>, and their current count. Clicking on a component type will cause the management console to show a list of components for that type. From there, you can click on the different components to see their details.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-components.png">
+			id="figure-top-ss-mmc-components">
 			<title>The <literal>Compenents</literal> view</title>
 			<mediaobject>
 				<imageobject>
@@ -128,7 +128,7 @@
 			<para>The <literal>Services</literal> view naturally shows the list of available services, their state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and all currently possible actions for that resource adapter, such as <literal>activate</literal>, <literal>deactivate</literal> or <literal>remove</literal>.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-services.png">
+			id="figure-top-ss-mmc-services">
 			<title>The <literal>Services</literal> view</title>
 			<mediaobject>
 				<imageobject>
@@ -147,7 +147,7 @@
 			<para>Choosing <literal>Resources</literal> from the <literal>Main Menu</literal> will put the currently-deployed resource adapters in view. There, you can see their name, type, vendor and version. Clicking on one of the resource adapters will provide further information such as the name of the deployable unit, its state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and the currenty possible actions for specific services, such as activating, deactivating, or removing them.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-resources.png">
+			id="figure-top-ss-mmc-resources">
 			<title>The <literal>Resources</literal> view</title>
 			<mediaobject>
 				<imageobject>
@@ -165,7 +165,7 @@
 			<para>The Activity Contexts view can be displayed by clicking on <literal>Activities</literal> from the <literal>Main Menu</literal>, and shows the current activity contexts. The <literal>TTL</literal> field shows how much time the activity can remain idle before being marked for garbage collection.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-activities.png">
+			id="figure-top-ss-mmc-activities">
 			<title>The <literal>Activities</literal> view</title>
 			<mediaobject>
 				<imageobject>

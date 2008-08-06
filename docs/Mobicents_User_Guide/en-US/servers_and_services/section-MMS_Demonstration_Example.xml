@@ -76,7 +76,7 @@ ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterfa
 generatorActivity.attach(sbbContext.getSbbLocalObject());
 generator.apply(Announcement.PLAY, new String[]{url});]]></programlisting>
 	<mediaobject
-		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl.png">
+		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl-1.png">
 		<imageobject>
 			<imagedata
 				align="center"

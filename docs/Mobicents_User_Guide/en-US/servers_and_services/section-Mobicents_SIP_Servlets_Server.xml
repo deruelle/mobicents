@@ -1,0 +1,89 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Mobicents_SIP_Presence_Service">
+	<title>Mobicents SIP Presence Service</title>
+	<para>Mobicents SIP Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is an implementation of the SIP Servlet v1.1 (JSR 289) specification on top of Tomcat and Jboss containers, and it strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation  is leveraged as the SIP stack, and Mobicents JSLEE is used as the SLEE implementation.</para>
+	<formalpara>
+		<title>Features of Mobicents SIP Servlets</title>
+		<para></para>
+	</formalpara>
+	<itemizedlist
+		id="itemlist-Principal_and_new_features_of_SIP_Servlets">
+		<listitem>
+			<para>conformance with the latest SIP Servlet v1.1 (JSR 289) specification.</para>
+		</listitem>
+		<listitem>
+			<para>current call rate of 100 calls per second over a 24-hour duration: 8,640,000 total calls.</para>
+		</listitem>
+		<listitem>
+			<para>failover support.</para>
+		</listitem>
+		<listitem>
+			<para>merged SIP and HTTP session management.</para>
+		</listitem>
+		<listitem>
+			<para>an in-browser Management Console.</para>
+		</listitem>
+		<listitem>
+			<para>a bundled JSLEE/SIP interoperability demonstration application.</para>
+		</listitem>
+		<listitem>
+			<para>a bundled Mobicents Media Server</para>
+		</listitem>
+		<listitem>
+			<para>extensions such as SUBSCRIBE/NOTIFY and others.</para>
+		</listitem>
+	</itemizedlist>
+	
+	<section
+		id="Downloading_Installing_and_Running_the_SIP_Servlets_Server_Binary_Distribution">
+		<title>Downloading, Installing and Running the SIP Servlets Server Binary Distribution</title>
+		<para>The Mobicents SIP Servlets Server is able to run on top of both the Tomcat HTTP Server and the JBoss Application Server. Installing the SIP Servlets Server consists in downloading either a customized (SIP Servlet-ized) version of Tomcat or a customized version of the JBoss Application Server.</para>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$dl_title2</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$obtain_title2</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$config_title2</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$run_title2</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$stop_title2</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Pre-Install_Requirements_and_Prerequisites">
+			<title>$uninstall_title2</title>
+			<para></para>
+		</section>
+	</section>
+
+
+</section>
+
+
+
+
+
+
+

@@ -5,7 +5,10 @@
 	id="chapter-Resource_Adapters">
 	<title>Resource Adapters</title>
 	<xi:include
-		href="chapter-Deploying_and_Undeploying_Resource_Adapters.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="resource_adapters/section-Resource_Adapters.xml" />
+	<xi:include
+		href="resource_adapters/section-Deploying_and_Undeploying_Resource_Adapters.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
 		href="resource_adapters/section-SIP_Resource_Adapter.xml"

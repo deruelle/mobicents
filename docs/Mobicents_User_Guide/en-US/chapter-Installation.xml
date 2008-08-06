@@ -88,42 +88,106 @@
 						fileref="images/top-Installation-ss-TrunkTopLevel.png"
 						format="PNG" />
 				</imageobject>
-				<!--<caption>
-					<para>Mobicents trunk Top-Level Directory</para>
-				</caption>-->
 			</mediaobject>
-			<para>When downloading and building Mobicents from source, we are only concerned with all the files and directories which which lie in and under the <filename>trunk</filename> directory. In the following sections, we will create a local Subversion repository for only the source code and files we need access to, by performing a <command>svn checkout</command> on the Mobicents <filename>trunk</filename> directory. But first, let's examine the contents and structure of <filename>trunk</filename> in more detail.</para>
+			<para>When downloading and building Mobicents from source, we are only concerned with all the files and directories located in and under the <filename>trunk</filename> directory. In the following sections, we will create a local Subversion repository for only the source code and files we need access to, by performing a <command>svn checkout</command> on the Mobicents <filename>trunk</filename> directory. But first, let's examine the contents and structure of <filename>trunk</filename> in more detail.</para>
+			<formalpara>
+				<title>
+					<filename>trunk</filename>
+				</title>
+				<para>The Mobicents Subversion repository is logically laid out. The top-level <filename>trunk</filename> directory merely contains five subdirectories: <filename>docs</filename>, <filename>parent</filename>, <filename>release</filename>, <filename>server</filename> and <filename>tools</filename>. The <filename>docs</filename> directory contains the source files for this Guide, while additional, supplementary documentation can be located in <filename>README</filename> and other text files in various subdirectories.</para>
+			</formalpara>
 			<mediaobject
-				id="mediaobj-ss-ServersSubDir.png">
+				id="mediaobj-top-Installation-ss-ServersSubDir.png">
 				<imageobject>
 					<imagedata
 						align="right"
 						fileref="images/top-Installation-ss-ServersSubDir.png"
 						format="PNG" />
 				</imageobject>
-				<!--<caption>
-					<para>servers Subdirectory of the Top-Level trunk directory</para>
-				</caption>-->
+				<caption>
+					<para></para>
+				</caption>
 			</mediaobject>
-			<para>The Mobicents Subversion repository is logically laid out. The top-level <filename>trunk</filename> directory merely contains four subdirectories: <filename>docs</filename>, <filename>parent</filename>, <filename>release</filename>, <filename>server</filename> and <filename>tools</filename>. The <filename>docs</filename> directory contains the source files for this Guide, while additional, supplementary documentation can be located in various other subdirectories.</para>
-			<para>The source code for the Mobicents JAIN SLEE server and other Mobicents project servers (currently the SIP Presence Server, SIP Servlets Server, and Mobicents Media Server) lives, naturally, in the <filename>servers</filename> subdirectory of <filename>trunk</filename>.</para>
-			<para>Another directory which is interesting for us now is the <filename>tools</filename> subdirectory, which contains the source code for the Mobicents Eclipse IDE plugin, and SIP Balancer application.</para>
+			<formalpara>
+				<title>trunk/servers</title>
+				<para>The servers directory contains all of the important files for running the various servers that ship with the Mobicents Converged Application Server, including the Mobicents JAIN-SLEE core, the Mobicents Media Server, and the SIP Servlets and SIP Presence Servers.</para>
+			</formalpara>
+			
+			<mediaobject
+				id="mediaobj-ss-ServersSubDir.png">
+				<imageobject>
+					<imagedata
+						align="left"
+						fileref="images/top-Installation-ss-JainSleeSubDir.png"
+						format="PNG" />
+				</imageobject>
+			</mediaobject>
+			<formalpara>
+				<title>
+					<filename>trunk/servers/jain-slee</filename>
+				</title>
+				<para>The source code for the Mobicents JAIN SLEE server and other Mobicents project servers (currently the SIP Presence Server, SIP Servlets Server, and Mobicents Media Server) lives, naturally, in the <filename>servers</filename> subdirectory of <filename>trunk</filename>.</para>
+			</formalpara>
 			<para>Because we are currently concerned with installing and working with the Mobicents JAIN SLEE server, it is helpful to take a look in the <filename>servers/jain-slee</filename> directory, which contains a <filename>pom.xml</filename> build file, used for building the JAIN SLEE server, as well as the following subdirectories:</para>
 			<variablelist>
 				<varlistentry>
-					<term><filename>core</filename></term>
+					<term>
+						<filename>core</filename>
+					</term>
 					<listitem>
-						<para>Core code and files for the Mobicents JAIN SLEE server.</para>
+						<para>This directory contains the core code, build, JAR and resource files necessary for running the Mobicents JAIN SLEE server.</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
-					<term><filename>examples</filename></term>
+					<term>
+						<filename>examples</filename>
+					</term>
 					<listitem>
-						<para>This directory contains</para>
+						<para>This directory contains all of the necessary build files for running any of the many examples that the Mobicents Converged Application Server ships with. For information on installing and running specific examples, see <xref
+								linkend="chapter-Mobicents_Examples"/>.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>release</term>
+					<listitem>
+						<para>The <filename>release</filename> directory contains a <filename>readme.txt</filename> file which provides general information on the specific Mobicents release (much of which is contained in this guide), as well as various configuration files.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>resources</term>
+					<listitem>
+						<para>The <filename>resources</filename> directory contains the code and resource and build files necessary to run all of the many Mobicents resource adatpers. For information on deploying and undeploying resource adapters using the Mobicents Management Console, command line, or by copying and deleting files, see <xref
+								linkend="section-Deploying_and_Undeploying_Resource_Adapters"/>. For information about specific resource adapters, see <xref
+								linkend="chapter-Resource_Adapters"/>.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>tools</term>
+					<listitem>
+						<para>The <filename>tools</filename> subdirectory of the <filename>jain-slee</filename> directory contains the resources necessary for running the Mobicents Management Console and command line interface. You probably won't need to worry about this directory.</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
+			<mediaobject
+				id="mediaobj-top-Installation-ss-ToolsSubDir.png">
+				<imageobject>
+					<imagedata
+						align="right"
+						fileref="images/top-Installation-ss-ToolsSubDir.png"
+						format="PNG" />
+				</imageobject>
+				<caption>
+					<para></para>
+				</caption>
+			</mediaobject>
+			<formalpara>
+				<title>
+					<filename>trunk/tools</filename>
+				</title>
+				<para>A final directory which is interesting for us is the <filename>tools</filename> subdirectory of the top-level <filename>trunk</filename> directory, which contains the source code for the Mobicents Eclipse IDE plugin, SIP Balancer application, and various quality assurance tools (the <filename>QA</filename> directory).</para>
+			</formalpara>
 		</section>
+		
 		<section
 			id="section-SourceDistribution-Pre-Install_Requirements_and_Pre-Requisites">
 			<title>Pre-Install Requirements and Pre-Requisites</title>
@@ -275,13 +339,10 @@ svn co http://mobicents.googlecode.com/svn/trunk mobicents</screen>
 					<screen>cd &lt;mobicents&gt;
 mvn install</screen>
 					<para>If the build command succeeds, you will see a <literal>BUILD SUCCESSFUL</literal> message in the terminal:</para>
-					<programlisting><![CDATA[[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESSFUL
-[INFO] ------------------------------------------------------------------------
+					<programlisting><![CDATA[[INFO] BUILD SUCCESSFUL
 [INFO] Total time: 22 seconds
 [INFO] Finished at: Wed May 28 13:42:42 CEST 2008
-[INFO] Final Memory: 17M/117M
-[INFO] ------------------------------------------------------------------------]]></programlisting>
+[INFO] Final Memory: 17M/117M]]></programlisting>
 					<para>On the other hand, if the build fails, you can either:</para>
 					<itemizedlist
 						id="itemlist-build_fails">

@@ -119,12 +119,13 @@
 		<formalpara
 			id="fpara-Building_the_MMS">
 			<title>Building the MMS</title>
-			<para>The server is available as a source code distribution. The source code is available from the server source repository located at http://code.google.com/p/mobicents/source/checkout. The source code availability allows you to debug the server, learn its inner workings and create customized versions for your personal use.</para>
+			<para>The server is available as a source code distribution. The source code is available from the server source repository located at <ulink
+					url="http://code.google.com/p/mobicents/source/checkout"/>. The source code availability allows you to debug the server, learn its inner workings and create customized versions for your personal use.</para>
 		</formalpara>
 		<formalpara
 			id="fpara-Pre-requisites">
 			<title>Pre-requisites</title>
-			<para>Before installing and running the media server, you should check that your have installed Mobicents SLEE server.</para>
+			<para>Before installing and running the media server, you should check that you have installed the Mobicents JSLEE server.</para>
 		</formalpara>
 		<formalpara
 			id="fpara-Accessing_the_MMS_SVN_Source_Code_Repositories">
@@ -200,7 +201,7 @@
 		<formalpara
 			id="fpara-Building_the_MMS_from_Source_Code">
 			<title>Building the MMS from Source Code</title>
-			<para>The build process is driven by maven configuration. The main maven script is the pom.xml file located in the project home directory. The purpose of the main pom.xml file is to compile the various module directories and then to integrate their output to produce the binary release. To build and install media server perform the following actions:</para>
+			<para>The build process is driven by maven configuration. The main maven script is the <filename>pom.xml</filename> file located in the project home directory. The purpose of the main <filename>pom.xml</filename> file is to compile the various module directories and then to integrate their output to produce the binary release. To build and install media server perform the following actions:</para>
 		</formalpara>
 		<procedure
 			id="procedure-Steps_for_Building_and_Installing_the_MMS_">
@@ -237,7 +238,7 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>Test in both cases are driven by maven plugins - as whole build  depends on maven. However in case of incontainer tests its different - this module is not enabled. This default setup is due to requirement of incontainer test. In future we will make effort to automate whole process without any need to modify poms. Incontainer tests require MMS to be deployed in jboss. Despite availability of <quote>cargo</quote> plugin we were unsuccessfull on integrating both test types in one module due to <quote>cactus</quote> for m2, being still in alpha state.</para>
+		<para>Test in both cases are driven by maven plugins - as whole build  depends on maven. However in case of incontainer tests its different - this module is not enabled. This default setup is due to requirement of incontainer test. In future we will make effort to automate whole process without any need to modify <filename>pom.xml</filename> configuration files. Incontainer tests require MMS to be deployed in JBoss. Despite availability of <quote>cargo</quote> plugin we were unsuccessfull on integrating both test types in one module due to <quote>cactus</quote> for m2, being still in alpha state.</para>
 		<para>Incontainer tests reside is separate module as they require 3rd party libraries and framework to act. It can be found in <filename>trunk/servers/media/tests</filename>
 		</para>
 		<formalpara>
