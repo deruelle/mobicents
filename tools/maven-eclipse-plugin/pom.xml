@@ -3,7 +3,7 @@
 
 	<artifactId>maven-eclipse-plugin</artifactId>
 	<groupId>org.mobicents.tools</groupId>
-	<version>1.0.0.BETA2-SNAPSHOT</version>
+	<version>1.0.0.BETA2</version>
 	
 	<description>
 		Maven Plugin to generate Eclipse project files, based on code
@@ -260,9 +260,9 @@
   </distributionManagement>
   
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/tools/maven-eclipse-plugin</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA2</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA2</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/maven-eclipse-plugin-1.0.0.BETA2</url>
 	</scm>
 	
 </project>
