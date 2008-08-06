@@ -4,7 +4,7 @@
 
 	<groupId>org.mobicents</groupId>
 	<artifactId>mobicents</artifactId>
-	<version>3</version>
+	<version>4-SNAPSHOT</version>
 	
 	<name>Mobicents :: Parent :: mobicents</name>
 	
@@ -677,9 +677,9 @@
 	</build>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-parent-3</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-parent-3</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/mobicents-parent-3</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 	
 </project>
