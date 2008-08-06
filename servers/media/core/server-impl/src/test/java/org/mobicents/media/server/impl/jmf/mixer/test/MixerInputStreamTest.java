@@ -42,7 +42,7 @@ public class MixerInputStreamTest extends TestCase {
         generator.start();
         PushBufferStream stream = generator.getStreams()[0];
         try {
-            inputStream = new MixerInputStream(stream, JITTER);
+            inputStream = new MixerInputStream(null, stream, JITTER);
         } catch (UnsupportedFormatException e) {
             fail(e.getMessage());
         }
