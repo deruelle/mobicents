@@ -21,7 +21,6 @@
       <url>dav:https://snapshots.jboss.org/maven2</url>
     </snapshotRepository>
   </distributionManagement>
-
 	
 	<properties>		
 		<!-- dependency versions -->
@@ -105,10 +104,6 @@
 		<!-- redefine in your POM if you want to change url in manifest file -->
 		<manifest.url>http://www.mobicents.org</manifest.url>
 		
-		<!-- release properties -->
-		<release.name.prefix>mobicents-all-</release.name.prefix> 
-		<release.name.suffix>-jboss-${jboss.version}</release.name.suffix> 		
-		<release.name>${release.name.prefix}${pom.version}${release.name.suffix}</release.name>
 	</properties>
 
 	<dependencyManagement>
