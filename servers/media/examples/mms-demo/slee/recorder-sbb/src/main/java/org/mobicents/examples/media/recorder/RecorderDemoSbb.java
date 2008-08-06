@@ -49,7 +49,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class RecorderDemoSbb implements Sbb {
 
-	private final static String INFO_MSG = "http://localhost:8080/msdemo/audio/recorder.wav";
+	private final static String INFO_MSG = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/recorder.wav";
 	private final static String RECORDER = "test.wav";
 	private final static String IVR_ENDPOINT = "media/endpoint/IVR";
 

@@ -42,17 +42,17 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class DtmfDemoSbb implements Sbb {
 
-	private final static String WELCOME_MSG = "http://localhost:8080/msdemo/audio/welcome.wav";
-	private final static String DTMF_0 = "http://localhost:8080/msdemo/audio/dtmf0.wav";
-	private final static String DTMF_1 = "http://localhost:8080/msdemo/audio/dtmf1.wav";
-	private final static String DTMF_2 = "http://localhost:8080/msdemo/audio/dtmf2.wav";
-	private final static String DTMF_3 = "http://localhost:8080/msdemo/audio/dtmf3.wav";
-	private final static String DTMF_4 = "http://localhost:8080/msdemo/audio/dtmf4.wav";
-	private final static String DTMF_5 = "http://localhost:8080/msdemo/audio/dtmf5.wav";
-	private final static String DTMF_6 = "http://localhost:8080/msdemo/audio/dtmf6.wav";
-	private final static String DTMF_7 = "http://localhost:8080/msdemo/audio/dtmf7.wav";
-	private final static String DTMF_8 = "http://localhost:8080/msdemo/audio/dtmf8.wav";
-	private final static String DTMF_9 = "http://localhost:8080/msdemo/audio/dtmf9.wav";
+	private final static String WELCOME_MSG = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/welcome.wav";
+	private final static String DTMF_0 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf0.wav";
+	private final static String DTMF_1 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf1.wav";
+	private final static String DTMF_2 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf2.wav";
+	private final static String DTMF_3 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf3.wav";
+	private final static String DTMF_4 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf4.wav";
+	private final static String DTMF_5 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf5.wav";
+	private final static String DTMF_6 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf6.wav";
+	private final static String DTMF_7 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf7.wav";
+	private final static String DTMF_8 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf8.wav";
+	private final static String DTMF_9 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf9.wav";
 
 	private MsProvider msProvider;
 	private MediaRaActivityContextInterfaceFactory mediaAcif;

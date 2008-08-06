@@ -12,7 +12,6 @@
 
 package org.mobicents.examples.media;
 
-import javax.slee.ActivityContextInterface;
 import javax.slee.SbbLocalObject;
 
 /**

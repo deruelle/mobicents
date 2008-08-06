@@ -33,7 +33,7 @@ import org.mobicents.mscontrol.MsLinkEvent;
 public abstract class LoopDemoSbb implements Sbb {
 
     private final static String WELCOME_MSG =
-            "http://localhost:8080/msdemo/audio/loopinfo.wav";
+            "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/loopinfo.wav";
     
     private SbbContext sbbContext;
     private Logger logger = Logger.getLogger(LoopDemoSbb.class);

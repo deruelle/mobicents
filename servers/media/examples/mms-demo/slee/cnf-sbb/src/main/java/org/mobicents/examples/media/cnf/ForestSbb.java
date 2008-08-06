@@ -40,9 +40,9 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
 public abstract class ForestSbb implements Sbb {
 
     public final static String CNF_ENDPOINT = "media/trunk/Conference/$";
-    public final static String CRICKETS = "http://localhost:8080/msdemo/audio/crickets.wav";
-    public final static String MOCKING = "http://localhost:8080/msdemo/audio/mocking.wav";
-    public final static String CUCKOO = "http://localhost:8080/msdemo/audio/cuckoo.wav";
+    public final static String CRICKETS = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/crickets.wav";
+    public final static String MOCKING = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/mocking.wav";
+    public final static String CUCKOO = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/cuckoo.wav";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
