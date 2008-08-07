@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>	
             <artifactId>msc-ratype</artifactId>
-	    <groupId>org.mobicents.servers.media</groupId>
+	    <groupId>org.mobicents.servers.media.controllers</groupId>
             <version>${pom.version}</version>
         </dependency>	
         <dependency>

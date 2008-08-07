@@ -71,7 +71,9 @@ public abstract class CRCXSbb implements Sbb {
 	private static int GEN = 1;
 
 	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/1";
-	public final static String HELLO_WORLD = "http://localhost/mgcpdemo/audio/helloworld.wav";
+	public final static String HELLO_WORLD = "http://192.168.0.101/mgcpdemo/audio/helloworld.wav";
+
+	public final static String JBOSS_BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
 
 	private SbbContext sbbContext;
 
@@ -117,7 +119,7 @@ public abstract class CRCXSbb implements Sbb {
 		// respond(evt, Response.RINGING);
 
 		CallIdentifier callID = new CallIdentifier(Integer.toHexString(CALL_ID_GEN++));
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, "localhost:2729");
+		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
 
 		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 
@@ -201,7 +203,7 @@ public abstract class CRCXSbb implements Sbb {
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, "localhost:2729");
+		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
 		DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
 
 		deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
@@ -210,7 +212,7 @@ public abstract class CRCXSbb implements Sbb {
 
 		deleteConnection.setTransactionHandle(txID);
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
-		
+
 		ServerTransaction tx = evt.getServerTransaction();
 		Request request = evt.getRequest();
 
@@ -218,7 +220,7 @@ public abstract class CRCXSbb implements Sbb {
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
-		}		
+		}
 	}
 
 	private void respond(RequestEvent evt, int cause) {

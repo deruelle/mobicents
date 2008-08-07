@@ -14,7 +14,7 @@
 		<dependency>
 			<artifactId>sip-services-location-sbb</artifactId>
 			<groupId>org.mobicents.examples</groupId>
-			<version>1.2.0.GA-SNAPSHOT</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>sip-ra</artifactId>
-			<version>1.2.0.GA-SNAPSHOT</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>	
 	</dependencies>
 	

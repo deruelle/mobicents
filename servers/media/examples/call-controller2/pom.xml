@@ -4,15 +4,14 @@
 	<packaging>pom</packaging>
 	
 	<parent>
-		<groupId>org.mobicents.servers.media</groupId>
-		<artifactId>mobicents-media-server-core</artifactId>
+		<groupId>org.mobicents.servers.media.examples</groupId>
+		<artifactId>mobicents-media-server-examples-parent</artifactId>
     		<version>1.0.0.BETA3-SNAPSHOT</version>	
 	</parent>
 	
-	<artifactId>call-controller2-example-parent</artifactId>
-	<groupId>org.mobicents.servers.media.examples</groupId>
+	<artifactId>call-controller2-example-parent</artifactId>	
 	
-	<name>Mobicents :: Examples :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>
 				
 	<modules>
 		<module>profile-spec</module>						

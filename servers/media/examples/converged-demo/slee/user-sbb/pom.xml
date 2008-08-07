@@ -21,11 +21,6 @@
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
 		</dependency>
-		<dependency>	
-			<artifactId>persistence-ratype</artifactId>
-			<groupId>org.mobicents.resources</groupId>
-			<version>1.2.0.GA-SNAPSHOT</version>
-		</dependency>	
 	</dependencies>
 	
 	<!-- NEEDED TO FILTER RESOURCES WITH PROPERTIES -->

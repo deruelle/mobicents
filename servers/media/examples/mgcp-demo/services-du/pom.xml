@@ -15,22 +15,22 @@
     
     <dependencies>
         <dependency>
-            <artifactId>call-sbb</artifactId>
+	    <artifactId>mgcp-demo-call-sbb</artifactId>
 	    <groupId>${pom.groupId}</groupId>
             <version>${pom.version}</version>
         </dependency>
 	<dependency>
-		<artifactId>crcx-sbb</artifactId>
+		<artifactId>mgcp-demo-crcx-sbb</artifactId>
 		<groupId>${pom.groupId}</groupId>
 		<version>${pom.version}</version>
         </dependency>
 	<dependency>
-		<artifactId>crcx-endpoint-sbb</artifactId>
+		<artifactId>mgcp-demo-crcx-endpoint-sbb</artifactId>
 		<groupId>${pom.groupId}</groupId>
 		<version>${pom.version}</version>
         </dependency>
 	<dependency>
-		<artifactId>mdcx-sbb</artifactId>
+		<artifactId>mgcp-demo-mdcx-sbb</artifactId>
 		<groupId>${pom.groupId}</groupId>
 		<version>${pom.version}</version>
         </dependency>	

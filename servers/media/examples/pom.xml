@@ -8,17 +8,32 @@
 	</parent>
 	
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
+	<groupId>org.mobicents.servers.media.examples</groupId>
 	
 	<packaging>pom</packaging>
 	
-	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>	
-
+	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>
+	
 	<modules>
 		<module>mgcp-demo</module>
 		<module>mms-demo</module>
 		<module>call-controller2</module>
 		<module>converged-demo</module>
 	</modules>
+	
+	<!-- RELEASE STUFF -->
+	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>mgcp-demo</module>
+				<module>mms-demo</module>
+				<module>call-controller2</module>
+				<module>converged-demo</module>
+			</modules>
+		</profile>
+	</profiles>	
 	
 	<build>
 		<plugins>
@@ -43,6 +58,15 @@
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+				</configuration>
+			</plugin>			
 		</plugins>
 	</build>
 

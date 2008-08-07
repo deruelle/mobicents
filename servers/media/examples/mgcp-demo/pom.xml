@@ -2,16 +2,16 @@
     <modelVersion>4.0.0</modelVersion>
     
     <parent>
-	    <groupId>org.mobicents.servers.media</groupId>
-	    <artifactId>mobicents-media-server-core</artifactId>
+	    <groupId>org.mobicents.servers.media.examples</groupId>
+	    <artifactId>mobicents-media-server-examples-parent</artifactId>
 	    <version>1.0.0.BETA3-SNAPSHOT</version>	
     </parent>
     
     <artifactId>mgcp-demo-parent</artifactId>
-    <groupId>org.mobicents.servers.media.examples</groupId>
+    
     
     <packaging>pom</packaging>
-    <name>MGCP :: ${pom.artifactId}</name>
+    <name>Mobicents Media Server Examples :: ${pom.artifactId}</name>
     
     <url>http://maven.apache.org</url>
     
