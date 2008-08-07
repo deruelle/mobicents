@@ -2,7 +2,6 @@ package org.mobicents.slee.service.user.ship;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.HashMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,7 +32,6 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.persistence.ratype.PersistenceResourceAdaptorSbbInterface;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
 import org.mobicents.slee.service.common.CommonSbb;
