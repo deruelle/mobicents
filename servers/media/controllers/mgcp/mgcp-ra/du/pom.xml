@@ -8,12 +8,12 @@
 
 	<parent>
 		<artifactId>mgcp-parent</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
+		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mgcp-ra-DU</artifactId>
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<!-- components -->
@@ -55,7 +55,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
-				<version>1.0.0.BETA2-SNAPSHOT</version>
+				<version>${mobicents.tools.mavenplugin.du.version}</version>
 				<extensions>true</extensions>
 				<configuration />
 				<executions>

@@ -8,17 +8,38 @@
 	</parent>
 	
 	<artifactId>mobicents-media-server-controllers-parent</artifactId>
+	<groupId>org.mobicents.servers.media.controllers</groupId>
 	
 	<packaging>pom</packaging>
 	
 	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>	
 
+	<properties>
+		<mobicents.media.server.core.groupId>
+			org.mobicents.servers.media
+		</mobicents.media.server.core.groupId>		
+	</properties>
+	
 	<modules>
 		<module>msc</module>
 		<module>mgcp/mgcp-stack</module>
 		<module>mgcp/mgcp-ra</module>
 		<module>mgcp/mgcp-controller-sbb</module>
 	</modules>
+	
+	<!-- RELEASE STUFF -->
+	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>msc</module>
+				<module>mgcp/mgcp-stack</module>
+				<module>mgcp/mgcp-ra</module>
+				<module>mgcp/mgcp-controller-sbb</module>
+			</modules>
+		</profile>
+	</profiles>	
 	
 	<build>
 		<plugins>
@@ -43,6 +64,15 @@
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+				</configuration>
+			</plugin>			
 		</plugins>
 	</build>
 

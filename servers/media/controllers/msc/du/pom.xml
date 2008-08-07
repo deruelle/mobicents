@@ -4,12 +4,12 @@
 	
 	<parent>
 		<artifactId>msc-parent</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
+		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>msc-ra-DU</artifactId>
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 	
 	<dependencies>
 		<!-- components -->
@@ -34,13 +34,13 @@
 		<!-- libs -->
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api</artifactId>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>		
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api-local-impl</artifactId>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>	
@@ -52,7 +52,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
-				<version>1.0.0.BETA2-SNAPSHOT</version>
+				<version>${mobicents.tools.mavenplugin.du.version}</version>
 				<extensions>true</extensions>
 				<configuration />
 				<executions>

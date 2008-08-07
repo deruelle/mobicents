@@ -8,12 +8,12 @@
 
 	<parent>
 		<artifactId>mgcp-parent</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
+		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mgcp-ra</artifactId>
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 
 	<dependencies>
 		<dependency>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>org.mobicents.core</groupId>
 			<artifactId>mobicents-core-jar</artifactId>
-			<version>1.2.0.GA-SNAPSHOT</version>
+			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 	</dependencies>
 

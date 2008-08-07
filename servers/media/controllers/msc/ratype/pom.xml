@@ -3,21 +3,21 @@
 	
 	<parent>
 		<artifactId>msc-parent</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
+		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>msc-ratype</artifactId>
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 	
 	<dependencies>
 		<dependency>
       		<groupId>javax.slee</groupId>
-			<artifactId>jain-slee</artifactId>
+		<artifactId>jain-slee</artifactId>
 	    </dependency>
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api</artifactId>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>org.mobicents.servers.media</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 	</dependencies>

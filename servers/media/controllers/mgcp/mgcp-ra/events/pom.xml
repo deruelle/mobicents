@@ -3,11 +3,11 @@
 
 	<parent>
 		<artifactId>mgcp-parent</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
+		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>mgcp-events</artifactId>
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 		
 </project>
