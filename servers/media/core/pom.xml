@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>3-SNAPSHOT</version>
+		<version>3</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
@@ -26,10 +26,10 @@
 			1.2.0.GA-SNAPSHOT
 		</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>
-			1.0.0.BETA2-SNAPSHOT
+			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.du.version>
 		<mobicents.tools.mavenplugin.eclipse.version>
-			1.0.0.BETA1-SNAPSHOT
+			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 
 	</properties>
