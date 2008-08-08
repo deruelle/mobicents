@@ -23,7 +23,7 @@
 		</release.name>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS  -->
 		<mobicents.servers.jainslee.version>
-			1.2.0.GA-SNAPSHOT
+			1.2.0.CR1
 		</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>
 			1.0.0.BETA2
