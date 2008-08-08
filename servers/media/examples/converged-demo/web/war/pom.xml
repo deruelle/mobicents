@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>converged-demo-parent</artifactId>
 		<groupId>org.mobicents.servers.media.examples</groupId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>
+		<version>1.0.0.BETA3</version>
 	</parent>
 	
 	<artifactId>converged-demo-web-war</artifactId>
