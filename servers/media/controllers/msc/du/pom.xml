@@ -35,13 +35,13 @@
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${pom.version}</version>
+			<version>${mobicents.media.server.core.version}</version>
 			<scope>runtime</scope>
 		</dependency>		
 		<dependency>
 			<artifactId>mobicents-media-server-msc-api-local-impl</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${pom.version}</version>
+			<version>${mobicents.media.server.core.version}</version>
 			<scope>runtime</scope>
 		</dependency>	
 	</dependencies>

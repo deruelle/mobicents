@@ -28,12 +28,12 @@
 		<dependency>
 			<artifactId>mobicents-media-server-spi</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${pom.version}</version>
+			<version>${mobicents.media.server.core.version}</version>
 		</dependency>	
 		<dependency>
 			<artifactId>mobicents-media-server-impl</artifactId>
 			<groupId>org.mobicents.servers.media</groupId>
-			<version>${pom.version}</version>
+			<version>${mobicents.media.server.core.version}</version>
 		</dependency>		
 		<dependency>
 			<groupId>log4j</groupId>

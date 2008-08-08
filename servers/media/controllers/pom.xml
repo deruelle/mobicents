@@ -16,9 +16,9 @@
 	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>	
 
 	<properties>
-		<mobicents.media.server.core.groupId>
-			org.mobicents.servers.media
-		</mobicents.media.server.core.groupId>		
+		<mobicents.media.server.core.version>
+			1.0.0.BETA3
+		</mobicents.media.server.core.version>		
 	</properties>
 	
 	<modules>
