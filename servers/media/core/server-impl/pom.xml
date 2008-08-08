@@ -59,6 +59,11 @@
 			<version>0.9.7</version>
 		</dependency>		
 		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>itu-g729c-codec</artifactId>
+			<version>${pom.version}</version>
+		</dependency>	
+		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>
 			<version>1.0.MOBICENTS</version>            

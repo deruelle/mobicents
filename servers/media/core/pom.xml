@@ -40,6 +40,7 @@
 		<module>server-impl</module>
 		<module>server-sar</module>
 		<module>server-test</module>
+		<module>g729</module>
 	</modules>
 
 	<!-- RELEASE STUFF -->
