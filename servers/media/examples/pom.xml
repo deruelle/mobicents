@@ -4,15 +4,22 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>	
+		<version>1.0.0.BETA3</version>	
 	</parent>
 	
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
 	<groupId>org.mobicents.servers.media.examples</groupId>
+	<version>1.0.0.BETA3-SNAPSHOT</version>	
 	
 	<packaging>pom</packaging>
 	
 	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>
+	
+	<properties>
+		<mobicents.media.server.controllers.version>
+			1.0.0.BETA3
+		</mobicents.media.server.controllers.version>		
+	</properties>	
 	
 	<modules>
 		<module>mgcp-demo</module>
@@ -34,6 +41,12 @@
 			</modules>
 		</profile>
 	</profiles>	
+	
+	<scm>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>	
 	
 	<build>
 		<plugins>
@@ -70,4 +83,26 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>		
+	
 </project>
