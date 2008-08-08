@@ -113,7 +113,7 @@ class UAConnectionListener implements ConnectionListener, NotificationListener {
 
 			String[] params = new String[] { url.toExternalForm() };
 			try {
-				connection.getEndpoint().play(EventID.TEST_SINE, params, connection.getId(), this, false);
+				connection.getEndpoint().play(EventID.TEST_SINE, params, connection.getId(), this, false, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -131,7 +131,7 @@ class UAConnectionListener implements ConnectionListener, NotificationListener {
 			URL url = getClass().getResource("/dtmf-0.wav");
 			String[] params = new String[] { url.toExternalForm() };
 			try {
-				connection.getEndpoint().play(EventID.TEST_SINE, params, connection.getId(), this, false);
+				connection.getEndpoint().play(EventID.TEST_SINE, params, connection.getId(), this, false, false);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
