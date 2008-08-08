@@ -25,6 +25,9 @@
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="chapter-Mobicents_SIP_Servlets_Server.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
 		href="chapter-Mobicents_SIP_Presence_Service.xml" />
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"

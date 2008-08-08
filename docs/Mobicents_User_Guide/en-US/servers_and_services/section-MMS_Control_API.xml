@@ -9,8 +9,8 @@
 	<section
 		id="section-Basic_Components_of_the_MMS_API">
 		<title>Basic Components of the MMS API</title>
-		<para>In this section we describes the basic objects of the API as well as the common design patterns.</para>
-		<para>The API components consist of a related set of interfaces, classes, operations, events, capabilities, and exceptions. The API provides seven key objects, which are common MS and more advanced packages. We provide a very brief description of the API in this overview document; The seven key objects are:</para>
+		<para>This section describes the basic objects of the API as well as some common design patterns.</para>
+		<para>The API components consist of a related set of interfaces, classes, operations, events, capabilities, and exceptions. The API provides seven key objects common to media servers, and more advanced packages. We provide a very brief description of the API in this overview document; The seven key objects are:</para>
 		<variablelist>
 			<varlistentry>
 				<term>MsProvider</term>
@@ -19,33 +19,37 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsSession</term>
+				<term>
+					<literal>MsSession</literal>
+				</term>
 				<listitem>
-					<para>Represents a call and is a dynamic “collection of physical and logical entities” that bring two or more endpoints together.</para>
+					<para>Represents a call; this object is a dynamic “collection of physical and logical entities” that bring two or more endpoints together.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>MsEndpoint</term>
 				<listitem>
-					<para>Represents a logical endpoint (e.g., announcement access server, IVR).</para>
+					<para>Represents a logical endpoint (e.g., an announcement access server or an interactive voice response server).</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsConnection</term>
+				<term>
+					<literal>MsConnection</literal>
+				</term>
 				<listitem>
-					<para>Represents the dynamic relationship between a MsSession and an UA.</para>
+					<para>Represents the dynamic relationship between an <literal>MsSession</literal> and a user agent.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>MsLink</term>
 				<listitem>
-					<para>Represent the dynamic relationship between a two endpoint located on same Media server</para>
+					<para>Represent the dynamic relationship between two endpoints located on the same Media Server.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>MsSignalGenerator</term>
 				<listitem>
-					<para>Represents the media resource which is responsible for generating media</para>
+					<para>Represents the media resource which is responsible for generating media.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -55,7 +59,7 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>The purpose of an MsConnection object is to describe the relationship between a MsSession object and an UA. A MsConnection object exists if the UA is a part of the media session. MsConnection objects are immutable in terms of their MsSession and UA references. In other words, the MsSession and UA object references do not change throughout the lifetime of the MsConnection object instance. The same MsConnection object may not be used in another MsSession.</para>
+		<para>The purpose of an <literal>MsConnection</literal> object is to describe the relationship between an <literal>MsSession</literal> object and a user agent. An <literal>MsConnection</literal> object exists if the user agent is part of the media session. <literal>MsConnection</literal> objects are immutable in terms of their <literal>MsSession</literal> and user agent references. In other words, the <literal>MsSession</literal> and user agent object references do not change throughout the lifetime of the <literal>MsConnection</literal> object instance. The same <literal>MsConnection</literal> object may not be used in another <literal>MsSession</literal>.</para>
 		<mediaobject
 			id="mediaobj-sas-MMSControlAPI-dia-MsControlAPI.jpg">
 			<imageobject>
@@ -69,40 +73,60 @@
 				<para>Interface Diagram of the MMS API</para>
 			</caption>
 		</mediaobject>
-		<para>MsProvider can be used to create the MsSession as well as SignalGenerator and SignalDetector.</para>
-		<para>MsSession is a transient association of (zero or more) connection for the purposes of engaging in a real-time communications interchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of a MsSession object with the MsProvider.createSession() method, which returns a MsSession object that has zero connections and is in the IDLE state. The MsProvider object instance does not change throughout the lifetime of the MsSession object. The MsProvider associated with a MsSession is obtained via the getProvider() method.</para>
-		<para>Application creates instance of MsConnection object with the MsSession.createNetworkConnection(String endpointName). The Application calls MsConnection.modify(String localDesc, String remoteDesc) passing the local SDP and remote SDP. The MsConnection at this time will find out corresponding EndPoint from JNDI using endPointName passed to it and call createConnection(int mode) to create instance of Connection. This Connection creates the instance of RtpSocketAdaptorImpl which opens up the socket for RTP data transfer. The transfer of data has not yet started.</para>
-		<para>Application creates instance of MsLink object with the MsSession.createLink(MsLinkMode mode). The Application calls MsLink.join(String endpointName1, String endpointName2) passing the endpoint names of two local endpoint to be joined. The MsLink at this time will find out corresponding EndPoint's from JNDI using endPointName passed to it and call createConnection(int mode) to create instance of Connection. This Connection creates the instance of RtpSocketAdaptorImpl which opens up the socket for RTP data transfer. The transfer of data has not yet started. As soon as Connections are created for both the Endpoint's, setOtherParty(Connection other) is called on each Connection passing the other Connection which starts the data transfer between two Connection's.</para>
-		<para>The Application creates instance of MsSignalGenerator using MsProvider.getSignalGenerator(endpointName) passing endPointName. Application calls MsGenerator.apply(Announcement.PLAY, new String[] { Audio file URL }) to play the audio file. At this point MsGenerator looks up the EndPoint corresponding the endpointName passed and simply calls play on it to start the transmission of audio via RTP.</para>
+		<para>
+			<literal>MsProvider</literal> can be used to create the <literal>MsSession</literal> object as well as the <literal>SignalGenerator</literal> and <literal>SignalDetector</literal> objects.</para>
+		<para>
+			<literal>
+				<literal>MsSession</literal>
+			</literal> is a transient association of (zero or more) connections for the purposes of engaging in a real-time communications interchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of an <literal>MsSession</literal> object with the <function>MsProvider.createSession()</function> method, which returns an <literal>MsSession</literal> object that has zero connections and is in the <literal>IDLE</literal> state. The MsProvider object instance does not change throughout the lifetime of the <literal>MsSession</literal> object. The MsProvider associated with an <literal>MsSession</literal> is obtained via the getProvider() method.</para>
+		<para>Applications create instances of <literal>MsConnection</literal> objects with the <literal>MsSession</literal>
+			<function>.createNetworkConnection(String endpointName)</function> method. The Application calls <literal>MsConnection</literal>
+			<function>.modify(String localDesc, String remoteDesc)</function> passing the local <remark>TBD: what are these abbreviations?</remark>SDP and remote SDP. <literal>MsConnection</literal> at this time will find out the corresponding EndPoint, using JNDI, and using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of Connection. This Connection creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data has not yet started.</para>
+		<para>Applications create instances of <literal>MsLink</literal> object with the <literal>MsSession</literal>
+			<function>.createLink(MsLinkMode mode)</function> method. The application calls <literal>MsLink</literal>
+			<function>.join(String endpointName1, String endpointName2)</function>, passing the endpoint names of the two local endpoint to be joined. At this point, the <literal>MsLink</literal> object will find out the corresponding <literal>EndPoint</literal>s, using JNDI, and by using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of the <literal>Connection</literal> object. This <literal>Connection</literal> creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data has not yet started. As soon as <literal>Connection</literal>s are created for both <literal>EndPoint</literal>s, <function>setOtherParty(Connection other)</function> is called on each <literal>Connection</literal> passing the other <literal>Connection</literal>, which starts the data transfer between the two <literal>Connection</literal>s.</para>
+		<para>The application creates instances of <literal>MsSignalGenerator</literal> using <literal>MsProvider</literal>
+			<function>.getSignalGenerator(endpointName)</function>, passing <literal>endPointName</literal>. The application calls <literal>MsGenerator</literal>
+			<function>.apply(Announcement.PLAY, new String[] { Audio file URL })</function> to play the audio file. At this point <literal>MsGenerator</literal> looks up the <literal>EndPoint</literal> corresponding to the <literal>endpointName</literal> passed, and simply calls play on it to start the transmission of audio via RTP.</para>
 	</section>
 	<section
 		id="section-Basic_API_Patterns_Listeners">
 		<title>Basic API Patterns: Listeners</title>
-		<para>The basic programming pattern of the API is that applications (which reside <quote>above</quote> the API) make synchronous calls to API methods. The platform or network element implementing the API can inform the application of underlying events (e.g. the arrival of incoming calls) by means of Java events. The application provides Listener objects corresponding to the events that it is interested in obtaining.</para>
+		<para>The basic programming pattern of the API is that applications (which reside <quote>above</quote> the API) make synchronous calls to API methods. The platform or network element implementing the API can inform the application of underlying events (for example, the arrival of incoming calls) by means of Java events. The application provides <literal>Listener</literal> objects corresponding to the events it is interested in obtaining.</para>
 		<variablelist>
-			<title>Listeners</title>
+			<title>
+				<literal>Listeners</literal>
+			</title>
 			<varlistentry>
-				<term>MsSessionListener</term>
+				<term>
+					<literal>MsSessionListener</literal>
+				</term>
 				<listitem>
-					<para>For underlying application that is interested in receiving events for state change of MsSession should implement MsSessionListener.</para>
+					<para>Applications which are interested in receiving events for changes in state of the <literal>MsSession</literal> object should implement <literal>MsSessionListener</literal>.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsConnectionListener</term>
+				<term>
+					<literal>MsConnectionListener</literal>
+				</term>
 				<listitem>
-					<para>For underlying application that is interested in receiving events for state change of MsConnection should implement MsConnectionListener.</para>
+					<para>Applications which are interested in receiving events for changes of state in <literal>MsConnection</literal> should implement <literal>MsConnectionListener</literal>.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsLinkListener</term>
+				<term>
+					<literal>MsLinkListener</literal>
+				</term>
 				<listitem>
-					<para>For underlying application that is interested in receiving events for state change of MsLink should implement MsLinkListener.</para>
+					<para>Applications which are interested in receiving events for changes in state of MsLink should implement MsLinkListener.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsResourceListener</term>
+				<term>
+					<literal>MsResourceListener</literal>
+				</term>
 				<listitem>
-					<para>For underlying application that is interested in receiving events for state change of MsSignalDetector or MsSignalGenerator should implement MsResourceListener.</para>
+					<para>Applications interested in receiving events for changes in state of <literal>MsSignalDetector</literal> or <literal>MsSignalGenerator</literal> should implement <literal>MsResourceListener</literal>.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -110,10 +134,12 @@
 	<section
 		id="section-Events">
 		<title>Events</title>
-		<para>Each of the listener's defined above are listening to different type's of events that are fired by API.</para>
+		<para>Each of the listeners defined above listen to different types of events fired by the API.</para>
 		<formalpara>
-			<title>Events related to MsSession</title>
-			<para>MsSessionListener is listening for MsSessionEvent which carries the MsSessionEventID that represents state change of MsSession. The following table shows the different types of MsSessionEventID, when these events would be fired and corresponding methods of MsSessionListener that will be called.</para>
+			<title>Events related to <literal>MsSession</literal>
+			</title>
+			<para>
+				<literal>MsSessionListener</literal> is listening for <literal>MsSessionEvent</literal>, which carries the <literal>MsSessionEventID</literal> representing an <literal>MsSession</literal> state change. The following table shows the different types of <literal>MsSessionEventID</literal>, when these events are fired, and the corresponding methods of <literal>MsSessionListener</literal> that will be called.</para>
 		</formalpara>
 		<informaltable
 			id="informaltable-Events_Related_to_MsSession"
@@ -134,46 +160,65 @@
 					colname="col3"/>
 				<thead>
 					<row>
-						<entry>MsSessionEventID</entry>
+						<entry>
+							<literal>MsSessionEventID</literal>
+						</entry>
 						<entry>Description</entry>
-						<entry>MsSessionListener Method Called</entry>
+						<entry>
+							<literal>MsSessionListener</literal> Method Called</entry>
 					</row>
 				</thead>
 				<tbody>
 					<row>
-						<entry>SESSION_CREATED</entry>
-						<entry>Fired when MsProvider.createSession() is called and a new MsSession
+						<entry>
+							<literal>SESSION_CREATED</literal>
+						</entry>
+						<entry>Fired when <literal>MsProvider</literal>
+							<function>.createSession()</function> is called and a new <literal>MsSession</literal> is created</entry>
+						<entry>
+							<function>public void sessionCreated(<literal>MsSessionEvent</literal> evt)</function>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<literal>SESSION_CREATED</literal>
+						</entry>
+						<entry>Fired when <literal>MsProvider</literal>
+							<function>.createSession()</function> is called and a new <literal>MsSession</literal>
         is created</entry>
-						<entry>public void sessionCreated(MsSessionEvent evt)</entry>
+						<entry>
+							<function>public void sessionCreated(<literal>MsSessionEvent</literal> evt)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>SESSION_CREATED</entry>
-						<entry>Fired when MsProvider.createSession() is called and a new MsSession
-        is created</entry>
-						<entry>public void sessionCreated(MsSessionEvent evt)</entry>
+						<entry>
+							<literal>SESSION_ACTIVE</literal>
+						</entry>
+						<entry>When the <literal>MsConnection</literal> or <literal>MsLink</literal> is created on <literal>MsSession</literal> for the first time, it transitions to <literal>ACTIVE</literal> state and <literal>SESSION_ACTIVE</literal> is fired. After this the state remains <literal>ACTIVE</literal> even if the application creates more <literal>MsConnection</literal>s or <literal>MsLink</literal>s.</entry>
+						<entry>
+							<function>public void sessionActive(<literal>MsSessionEvent</literal> evt)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>SESSION_ACTIVE</entry>
-						<entry>When the MsConnection or MsLink is created on MsSession for first
-        time it transitions to ACTIVE state and SESSION_ACTIVE is fired.
-        After this the state remains ACTIVE even if application creates
-        more MsConnections or MsLinks</entry>
-						<entry>public void sessionActive(MsSessionEvent evt)</entry>
-					</row>
-					<row>
-						<entry>SESSION_INVALID</entry>
-						<entry>When all the MsConnection or MsLink objects are disassociated from
-        MsSession, it transitions to INVALID state and SESSION_INVALID is
+						<entry>
+							<literal>SESSION_INVALID</literal>
+						</entry>
+						<entry>When all the <literal>MsConnection</literal> or MsLink objects are disassociated from
+        <literal>MsSession</literal>, it transitions to <literal>INVALID</literal> state and <literal>SESSION_INVALID</literal> is
         fired</entry>
-						<entry>public void sessionInvalid(MsSessionEvent evt)</entry>
+						<entry>
+							<function>public void sessionInvalid(<literal>MsSessionEvent</literal> evt)</function>
+						</entry>
 					</row>
 				</tbody>
 			</tgroup>
 		</informaltable>
 		
 		<formalpara>
-			<title>Events Related to MsConnection</title>
-			<para>MsConnectionListener is listening for MsConnectionEvent which carries the MsConnectionEventID that represents state change of MsConnection. The following table shows the different types of MsConnectionEventID and when these events would be fired and corresponding methods of MsConnectionListener that will be called.</para>
+			<title>Events Related to <literal>MsConnection</literal>
+			</title>
+			<para>
+				<literal>MsConnectionListener</literal> listens for an <literal>MsConnectionEvent</literal>, which carries the <literal>MsConnectionEventID</literal> that represents an <literal>MsConnection</literal> state change. The following table shows the different types of <literal>MsConnectionEventID</literal>, when these events would be fired, and the corresponding methods of <literal>MsConnectionListener</literal> that will be called.</para>
 		</formalpara>
 		<informaltable
 			id="informaltable-Events_Related_to_MsConnection"
@@ -194,43 +239,71 @@
 					colname="col3"/>
 				<thead>
 					<row>
-						<entry>MsConnectionEventID</entry>
+						<entry>
+							<literal>MsConnectionEventID</literal>
+						</entry>
 						<entry>Description</entry>
-						<entry>MsConnectionListener Method Called</entry>
+						<entry>
+							<literal>MsConnectionListener</literal> Method Called</entry>
 					</row>
 				</thead>
 				<tbody>
 					<row>
-						<entry>CONNECTION_INITIALIZED</entry>
-						<entry>As soon as new MsConnection is created by calling MsSession.createNetworkConnection(String endpointName) CONNECTION_INITIALIZED is fired</entry>
-						<entry>public void connectionInitialized(MsConnectionEvent event)</entry>
+						<entry>
+							<literal>CONNECTION_INITIALIZED</literal>
+						</entry>
+						<entry>As soon as new <literal>MsConnection</literal> is created by calling <literal>MsSession</literal>
+							<function>.createNetworkConnection(String endpointName)</function>,  <literal>CONNECTION_INITIALIZED</literal> is fired.</entry>
+						<entry>
+							<function>public void connectionInitialized(<literal>MsConnection</literal>Event event)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>CONNECTION_CREATED</entry>
-						<entry>As soon as creation of RTP connection (by calling MsConnection.modify(String localDesc, String remoteDesc)) is successful, CONNECTION_CREATED is fired. When modify() is called, MsConnection checks if there is Endpoint associated with it and if there is no Endpoint means this is creation of RTP connection request</entry>
-						<entry>public void connectionCreated(MsConnectionEvent event)</entry>
+						<entry>
+							<literal>CONNECTION_CREATED</literal>
+						</entry>
+						<entry>As soon as the RTP connection created by calling <literal>MsConnection</literal>
+							<function>.modify(String localDesc, String remoteDesc)</function> is successful, <literal>CONNECTION_CREATED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated with it and, if there is no endpoint, then this is creation of RTP connection request</entry>
+						<entry>public void connectionCreated(<literal>MsConnection</literal>Event event)<remark>TBD: fix this last sentence: meaning unsure</remark>
+						</entry>
 					</row>
 					<row>
-						<entry>CONNECTION_MODIFIED</entry>
-						<entry>As soon as modification of MsConnection (by calling MsConnection.modify(String localDesc, String remoteDesc)) is successful CONNECTION_MODIFIED is fired. When modify() is called, MsConnection checks if there is Endpoint associated it and if there is Enpoint means this is modification request.</entry>
-						<entry>public void connectionModifed(MsConnectionEvent event)</entry>
+						<entry>
+							<literal>CONNECTION_MODIFIED</literal>
+						</entry>
+						<entry>As soon as <literal>MsConnection</literal> is successfully modified, by calling <literal>MsConnection</literal>
+							<function>.modify(String localDesc, String remoteDesc)</function>, <literal>CONNECTION_MODIFIED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated it and, if so, then this means it is a modification request.</entry>
+						<entry>
+							<function>public void connectionModifed(<literal>MsConnection</literal>Event event)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>CONNECTION_DELETED</entry>
-						<entry>As soon as MsConnection is successfully released (MsConnection.release()) CONNECTION_DELETED is fired</entry>
-						<entry>public void connectionDeleted(MsConnectionEvent event)</entry>
+						<entry>
+							<literal>CONNECTION_DELETED</literal>
+						</entry>
+						<entry>As soon as <literal>MsConnection</literal> is successfully released,  (<literal>MsConnection</literal>
+							<function>.release()</function>) <literal>CONNECTION_DELETED</literal> is fired.</entry>
+						<entry>
+							<function>public void connectionDeleted(<literal>MsConnection</literal>Event event)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>@Deprecated TX_FAILED</entry>
-						<entry>When ever creation of new RTP connection or modification of existing MsConnection fails, TX_FAILED is fired</entry>
-						<entry>public void txFailed(MsConnectionEvent event)</entry>
+						<entry>
+							<literal>@Deprecated TX_FAILED</literal>
+						</entry>
+						<entry>Whenever the creation of a new RTP connection or the modification of an existing <literal>MsConnection</literal> fails, <literal>TX_FAILED</literal> is fired.</entry>
+						<entry>
+							<function>public void txFailed(<literal>MsConnection</literal>Event event)</function>
+						</entry>
 					</row>
 				</tbody>
 			</tgroup>
 		</informaltable>
 		<formalpara>
-			<title>Events Related to MsLink</title>
-			<para>MsLinkListener is listening for MsLinkEvent which carries the MsLinkEventID that represents state change of MsLink. The following table shows the different types of MsLinkEventID and when these events would be fired and corresponding methods of MsLinkListener that will be called.</para>
+			<title>Events Related to <literal>MsLink</literal>
+			</title>
+			<para>
+				<function>MsLinkListener</function> listens for an <literal>MsLinkEvent</literal> which carries the <literal>MsLinkEventID</literal> that represents an MsLink state change. The following table shows the different types of <literal>MsLinkEventID</literal>, when these events are fired, and the corresponding methods of <literal>MsLinkListener</literal> that are called.</para>
 		</formalpara>
 		<informaltable
 			id="informaltable-Events_Related_to_MsLink"
@@ -251,31 +324,51 @@
 					colname="col3"/>
 				<thead>
 					<row>
-						<entry>MsLinkEventID</entry>
+						<entry>
+							<literal>MsLinkEventID</literal>
+						</entry>
 						<entry>Description</entry>
-						<entry>MsLinkListener Method Called</entry>
+						<entry>
+							<literal>MsLinkListener</literal> method called</entry>
 					</row>
 				</thead>
 				<tbody>
 					<row>
-						<entry>LINK_CREATED</entry>
-						<entry>As soon as new MsLink is created by calling MsSession.createLink(MsLinkMode mode) LINK_CREATED is fired</entry>
-						<entry>public void linkCreated(MsLinkEvent evt)</entry>
+						<entry>
+							<literal>LINK_CREATED</literal>
+						</entry>
+						<entry>As soon as a new <literal>MsLink</literal> is created by calling <literal>MsSession</literal>
+							<function>.createLink(MsLinkMode mode)</function>, <literal>LINK_CREATED</literal> is fired.</entry>
+						<entry>
+							<function>public void linkCreated(MsLinkEvent evt)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>LINK_JOINED</entry>
-						<entry>Fired as soon as join(String a, String b) operation of MsLink is successful</entry>
-						<entry>public void linkJoined(MsLinkEvent evt)</entry>
+						<entry>
+							<literal>LINK_JOINED</literal>
+						</entry>
+						<entry>Fired as soon as the <function>join(String a, String b)</function> operation of <literal>MsLink</literal> is successful.</entry>
+						<entry>
+							<function>public void linkJoined(MsLinkEvent evt)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>INK_DROPPED</entry>
-						<entry>Fired as soon as release() operation of MsLink is successful</entry>
-						<entry>public void linkDropped(MsLinkEvent evt)</entry>
+						<entry>
+							<literal>LINK_DROPPED</literal>
+						</entry>
+						<entry>Fired as soon as the <function>release()</function> operation of <literal>MsLink</literal> is successful.</entry>
+						<entry>
+							<function>public void linkDropped(MsLinkEvent evt)</function>
+						</entry>
 					</row>
 					<row>
-						<entry>LINK_FAILED</entry>
-						<entry>Fired as soon as join(String a, String b) operation of MsLink fails</entry>
-						<entry>public void linkFailed(MsLinkEvent evt)</entry>
+						<entry>
+							<literal>LINK_FAILED</literal>
+						</entry>
+						<entry>Fired as soon as the <function>join(String a, String b)</function> operation of <literal>MsLink</literal> fails.</entry>
+						<entry>
+							<function>public void linkFailed(MsLinkEvent evt)</function>
+						</entry>
 					</row>
 				</tbody>
 			</tgroup>
@@ -284,28 +377,34 @@
 	<section
 		id="section-MSC_API_Objects_Finite_State_Machines">
 		<title>MSC API Objects: Finite State Machines</title>
-		<para></para>
 		<formalpara>
-			<title>MsSessionState Finite State Machine</title>
-			<para>The behavior of the MsSession is specified in terms of Finite State Machines (FSMs) represented by MsSessionState, shown below.</para>
+			<title>
+				<literal>MsSession</literal>State Finite State Machine</title>
+			<para>The behavior of <literal>MsSession</literal> is specified in terms of Finite State Machines (<acronym>FSM</acronym>s) represented by <literal>MsSessionState</literal>, shown below:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
-				<term>IDLE</term>
+				<term>
+					<literal>IDLE</literal>
+				</term>
 				<listitem>
-					<para>This state indicates the Session has zero connections or links.</para>
+					<para>This state indicates that the session has zero connections or links.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>ACTIVE</term>
+				<term>
+					<literal>ACTIVE</literal>
+				</term>
 				<listitem>
-					<para>This state indicates the Session has one or more connections or links.</para>
+					<para>This state indicates that the session has one or more connections or links.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>INVALID</term>
+				<term>
+					<literal>INVALID</literal>
+				</term>
 				<listitem>
-					<para>This state indicates the Session has lost all of its connections or links.</para>
+					<para>This state indicates the session has lost all of its connections or links.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -322,68 +421,90 @@
 			</caption>
 		</mediaobject>
 		<formalpara>
-			<title>MsConnection Finite State Machine</title>
-			<para>MsConnection state is represented by MsConnectionState enum</para>
+			<title>
+				<literal>MsConnection</literal> Finite State Machine</title>
+			<para>
+				<literal>MsConnection</literal> state is represented by the <literal>MsConnectionState</literal> enum:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
-				<term>IDLE</term>
+				<term>
+					<literal>IDLE</literal>
+				</term>
 				<listitem>
-					<para>This state indicates that the MsConnection is just created and has no resources attached to it</para>
+					<para>This state indicates that the <literal>MsConnection</literal> has only been created and has no resources attached to it.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>HALF_OPEN</term>
+				<term>
+					<literal>HALF_OPEN</literal>
+				</term>
 				<listitem>
-					<para>This state indicates that the MsConnection has created the RTP Socket but doesn't yet have any information of Remote SDP to send the RTP Packets. MsConnection is still usable in HALF_OPEN state if its only receiving the RTP Packets but doesn't have to send any</para>
+					<para>This state indicates that the <literal>MsConnection</literal> has created the RTP socket, but doesn't yet have any information about Remote SDP to send the RTP Packets. <literal>MsConnection</literal> is still usable in <literal>HALF_OPEN</literal> state if it is only receiving the RTP Packets but doesn't have to send any.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>OPEN</term>
+				<term>
+					<literal>OPEN</literal>
+				</term>
 				<listitem>
-					<para>state indicates that the MsConnection now has information of remote SDP and can send RTP Packates to the remote IP (for example UA)</para>
+					<para>This state indicates that the <literal>MsConnection</literal> now has information about remote SDP and can send RTP Packates to the remote IP (for example, to a remote user agent).</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>FAILED</term>
+				<term>
+					<literal>FAILED</literal>
+				</term>
 				<listitem>
-					<para>This state indicates that creation or modification of MsConnection failed and is not reusable anymore</para>
+					<para>This state indicates that the creation or modification of <literal>MsConnection</literal> failed, and that the <literal>MsConnection</literal> object isn't reusable anymore.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>CLOSED</term>
+				<term>
+					<literal>CLOSED</literal>
+				</term>
 				<listitem>
-					<para>state indicates that MsConnection has released all its resources and closed the RTP sockets. Its not usable any more. </para>
+					<para>This state indicates that <literal>MsConnection</literal> has released all its resources and closed the RTP sockets. It is not usable any more.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
 		<formalpara>
-			<title>MsLink Finite State Machine</title>
-			<para>MsLink state is represented by MsLinkState enum:</para>
+			<title>
+				<literal>MsLink</literal> Finite State Machine</title>
+			<para>
+				<literal>MsLink</literal> state is represented by the <literal>MsLinkState</literal> enum:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
-				<term>IDLE</term>
+				<term>
+					<literal>IDLE</literal>
+				</term>
 				<listitem>
-					<para> This state indicates that the MsLink is created and has no endpoints associated with it</para>
+					<para> This state indicates that the <literal>MsLink</literal> has been created and has no endpoints associated with it</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>JOINED</term>
+				<term>
+					<literal>JOINED</literal>
+				</term>
 				<listitem>
-					<para> This state indicates that the Connection's from both the Endpoint's are created and data transfer has started</para>
+					<para> This state indicates that the connections from both endpoints have been created and that data transfer has started.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>FAILED</term>
+				<term>
+					<literal>FAILED</literal>
+				</term>
 				<listitem>
-					<para> This state indicates that the creation of MsLink failed and is not usable anymore</para>
+					<para> This state indicates that the creation of <literal>MsLink</literal> failed and is not usable anymore.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>INVALID</term>
+				<term>
+					<literal>INVALID</literal>
+				</term>
 				<listitem>
-					<para>state indicates that MsLink has closed Connection's of both the Endpoint's and is not usable anymore</para>
+					<para>This state indicates that <literal>MsLink</literal> has closed the connections of both endpoints and is not usable anymore.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -391,7 +512,7 @@
 	<section
 		id="section-API_Methods_and_Usage">
 		<title>API Methods and Usage</title>
-		<para>So far we have specified the key objects as well as their FSMs. To understand operationally how these objects are used and the methods they offer, we refer the user to the UML sequence diagram examples. The following call flow depicts the simple announcement.</para>
+		<para>So far we have specified the key objects as well as their Finite State Machines (<acronym>FSM</acronym>s). To understand operationally how these objects are used and the methods they provide, we can look at the UML sequence diagram examples. The following call flow depicts a simple announcement.</para>
 		<mediaobject
 			id="mediaobj-sas-MMSControlAPI-dia-IVRMsConnectionAPI.jpg">
 			<imageobject>
@@ -408,52 +529,53 @@
 		<remark>TBD: Replace this orderedlist with a callout list once the graphic is remade.</remark>
 		<orderedlist>
 			<listitem>
-				<para>application receives underlying signaling message</para>
+				<para>The application receives an underlying signaling message.</para>
 			</listitem>
 			<listitem>
-				<para>application registers listeners</para>
+				<para>The application registers listeners.</para>
 			</listitem>
 			<listitem>
-				<para>application registers listeners</para>
+				<para>The application registers listeners.</para>
 			</listitem>
 			<listitem>
-				<para>application registers listeners</para>
+				<para>The application registers listeners.</para>
 			</listitem>
 			<listitem>
-				<para>application creates MsSession object.</para>
+				<para>The application creates an <literal>MsSession</literal> object.</para>
 			</listitem>
 			<listitem>
-				<para>application creates MsConnection object using MsSession object.</para>
+				<para>The application creates an <literal>MsConnection</literal> object using the <literal>MsSession</literal> object.</para>
 			</listitem>
 			<listitem>
-				<para>application modify MsConnection passing SDP descriptor received on signaling channel.</para>
+				<para>The application modifies <literal>MsConnection</literal>, passing the SDP descriptor received on the signaling channel.</para>
 			</listitem>
 			<listitem>
-				<para>MsConnection implementation sends request to the Media Server using one of the control protocol.</para>
+				<para>
+					The <literal>MsConnection</literal> implementation sends a request to the media server using one of the control protocols.</para>
 			</listitem>
 			<listitem>
-				<para>Server responds that connection on the Media server is created</para>
+				<para>The server responds that the media server connection has been created.</para>
 			</listitem>
 			<listitem>
-				<para>Application receive ConnectionEvent.CONNECTION_CREATED</para>
+				<para>The application receives <literal>ConnectionEvent.CONNECTION_CREATED</literal>.</para>
 			</listitem>
 			<listitem>
-				<para>application obtains server's SDP and sends response to the UA. Media conversation started.</para>
+				<para>The application obtains the server's SDP and sends a response to the user agent. Media conversation has started.</para>
 			</listitem>
 			<listitem>
-				<para>Application creates SignalGenerator and ask it to play announcement</para>
+				<para>The application creates a <literal>SignalGenerator</literal> object and asks it to play an announcement.</para>
 			</listitem>
 			<listitem>
-				<para>Application creates SignalGenerator and ask it to play announcement</para>
+				<para>The application creates a <literal>SignalGenerator</literal> object and asks it to play an announcement.</para>
 			</listitem>
 			<listitem>
-				<para>Application creates SignalGenerator and ask it to play announcement</para>
+				<para>The application creates a <literal>SignalGenerator</literal> and asks it to play the announcement.</para>
 			</listitem>
 			<listitem>
-				<para>Server report that announcement complete.</para>
+				<para>The server reports that the announcement is complete.</para>
 			</listitem>
 			<listitem>
-				<para>Server report that announcement complete.</para>
+				<para>The server reports that the announcement is complete.</para>
 			</listitem>
 		</orderedlist>
 		<example
@@ -473,14 +595,14 @@ import org.mobicents.mscontrol.impl.MsProviderImpl;
  * This is just a psuedocode to show how to use the MSC Api. This example uses
  * the Packet Relay Endpoint and Announcement Endpoint as follows
  *
- * UA <----> RTP Connection <---- (one side) Packet Relay Endpoint (other side) <-----> MsLink  <----> Announcement Endpoint
+ * user agent <----> RTP Connection <---- (one side) Packet Relay Endpoint (other side) <-----> MsLink  <----> Announcement Endpoint
  *
  * @author amit bhayani
  *
  */
-public class MyMSCTest implements MsSessionListener, MsConnectionListener, MsLinkListener {
+public class MyMSCTest implements <literal>MsSessionListener</literal>, <literal>MsConnection</literal>Listener, MsLinkListener {
 
-    private MsSession session;
+    private <literal>MsSession</literal> session;
     private MsProvider msProvider;
 
     public void startMedia() {
@@ -498,27 +620,27 @@ public class MyMSCTest implements MsSessionListener, MsConnectionListener, MsLin
 
         // Creating the connection passing the Endpoint Name. Here we are
         // creating Packet Relay Endpoint which has only two connections. One is
-        // connected to UA and other we can connect to Announcement Endpoint
-        MsConnection connection = session.createNetworkConnection("media/trunk/PacketRelay/$");
+        // connected to user agent and other we can connect to Announcement Endpoint
+        <literal>MsConnection</literal> connection = session.createNetworkConnection("media/trunk/PacketRelay/$");
 
         // Get the Remote SDP here and pass it to connection. If creation of
         // connection is successful connectionCreated method will be called
         connection.modify("$", remoteDesc);
     }
 
-    public void sessionActive(MsSessionEvent evt) {
+    public void sessionActive(<literal>MsSessionEvent</literal> evt) {
 
     }
 
-    public void sessionCreated(MsSessionEvent evt) {
+    public void sessionCreated(<literal>MsSessionEvent</literal> evt) {
 
     }
 
-    public void sessionInvalid(MsSessionEvent evt) {
+    public void sessionInvalid(<literal>MsSessionEvent</literal> evt) {
 
     }
 
-    public void connectionCreated(MsConnectionEvent event) {
+    public void connectionCreated(<literal>MsConnection</literal>Event event) {
 
         // Since the Endpoint name passed was having '$' MS would have picked
         // the endpoint that is free and hence we need the actual name here
@@ -529,21 +651,21 @@ public class MyMSCTest implements MsSessionListener, MsConnectionListener, MsLin
 
     }
 
-    public void connectionDeleted(MsConnectionEvent event) {
+    public void connectionDeleted(<literal>MsConnection</literal>Event event) {
 
     }
 
-    public void connectionInitialized(MsConnectionEvent event) {
+    public void connectionInitialized(<literal>MsConnection</literal>Event event) {
         // TODO Auto-generated method stub
 
     }
 
-    public void connectionModifed(MsConnectionEvent event) {
+    public void connectionModifed(<literal>MsConnection</literal>Event event) {
         // TODO Auto-generated method stub
 
     }
 
-    public void txFailed(MsConnectionEvent event) {
+    public void txFailed(<literal>MsConnection</literal>Event event) {
         // TODO Auto-generated method stub
 
     }
@@ -587,34 +709,4 @@ public class MyMSCTest implements MsSessionListener, MsConnectionListener, MsLin
 </example>
 	</section>
 </section>
-
-
-
-	
-
-
-	
-
-
-	
-
-
-	
-
-
-
-
-	
-
-
-	
-
-
-
-
-	
-
-
-	
-
 

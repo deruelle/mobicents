@@ -5,7 +5,7 @@
 	id="section-MMS_Configuration">
 	<title>MMS Configuration</title>
 	<para>All endpoints are plugged into the Mobicents SLEE server by registering with the MBean server. After the Media server has succesfully started, you can then locate the JMX console at <ulink
-			url="http://localhost:8080/jmx-console"/> in the default distribution. Note that if you have configured the servlet container (i.e. Tomcat) to service a different port, then you will need to supply a different port number in the URL.</para>
+			url="http://localhost:8080/jmx-console"/> in the default distribution. Note that if you have configured the servlet container, e.g. Tomcat, to service a different port, then you will need to supply a different port number in the URL.</para>
 	<mediaobject
 		id="mediaobj-sas-MMSConfiguration-ss-JMXConsole.gif">
 		<imageobject>

@@ -2,88 +2,254 @@
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <section
-	id="section-Mobicents_SIP_Presence_Service">
-	<title>Mobicents SIP Presence Service</title>
-	<para>Mobicents SIP Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is an implementation of the SIP Servlet v1.1 (JSR 289) specification on top of Tomcat and Jboss containers, and it strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation  is leveraged as the SIP stack, and Mobicents JSLEE is used as the SLEE implementation.</para>
-	<formalpara>
-		<title>Features of Mobicents SIP Servlets</title>
-		<para></para>
-	</formalpara>
+	id="section-Mobicents_SIP_Servlets_Server">
+	<title>Mobicents SIP Servlets Server</title>
+	<para>Mobicents SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is an implementation of the SIP Servlet v1.1 (JSR 289) specification on top of Tomcat and Jboss containers, and it strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation  is leveraged as the SIP stack, and Mobicents JSLEE is used as the SLEE implementation.</para>
 	<itemizedlist
 		id="itemlist-Principal_and_new_features_of_SIP_Servlets">
+		<title>Features of the Mobicents SIP Servlets Server</title>
 		<listitem>
-			<para>conformance with the latest SIP Servlet v1.1 (JSR 289) specification.</para>
+			<para>conformance with the latest SIP Servlet v1.1 (JSR 289) specification</para>
 		</listitem>
 		<listitem>
-			<para>current call rate of 100 calls per second over a 24-hour duration: 8,640,000 total calls.</para>
+			<para>a current call rate of 100 calls per second over a 24-hour duration: 8,640,000 total calls</para>
 		</listitem>
 		<listitem>
-			<para>failover support.</para>
+			<para>failover support</para>
 		</listitem>
 		<listitem>
-			<para>merged SIP and HTTP session management.</para>
+			<para>merged SIP and HTTP session management</para>
 		</listitem>
 		<listitem>
-			<para>an in-browser Management Console.</para>
+			<para>a browser-based Management Console</para>
 		</listitem>
 		<listitem>
-			<para>a bundled JSLEE/SIP interoperability demonstration application.</para>
+			<para>a bundled JSLEE/SIP interoperability demonstration application</para>
 		</listitem>
 		<listitem>
-			<para>a bundled Mobicents Media Server</para>
+			<para>Mobicents Media Server</para>
 		</listitem>
 		<listitem>
-			<para>extensions such as SUBSCRIBE/NOTIFY and others.</para>
+			<para>extensions such as SUBSCRIBE/NOTIFY, among othersothers</para>
 		</listitem>
 	</itemizedlist>
 	
+	<!--Tomcat-->
 	<section
-		id="Downloading_Installing_and_Running_the_SIP_Servlets_Server_Binary_Distribution">
-		<title>Downloading, Installing and Running the SIP Servlets Server Binary Distribution</title>
-		<para>The Mobicents SIP Servlets Server is able to run on top of both the Tomcat HTTP Server and the JBoss Application Server. Installing the SIP Servlets Server consists in downloading either a customized (SIP Servlet-ized) version of Tomcat or a customized version of the JBoss Application Server.</para>
+		id="section-Downloading_and_Installing_a_SIP_Servlet-Enabled_Tomcat">
+		<title>Downloading and Installing a SIP Servlet-Enabled Tomcat</title>
+		<para>The Mobicents SIP Servlets Server is able to run on top of both the Tomcat Servlet Container as well as the JBoss Application Server. Installing the SIP Servlets Server consists in downloading either a customized (SIP Servlet-ized) version of Tomcat, or a customized version of JBoss. This section details how to download, install and run a SIP Servlet-Enabled Tomcat; if you would rather run SIP Servlets in JBoss, go to <xref
+				linkend="section-Downloading_and_Installing_a_SIP_Servlet-Enabled_JBoss_Application_Server"/>.</para>
+		<formalpara>
+			<title>Differences Between the Standard Tomcat Installation and One Customized for Mobicents SIP Servlets</title>
+			<para>Provided here is a list of differences between a standard Tomcat Servlet Container installation and the Mobicents-provided SIP Servlets-customized Tomcat installation. The differences include:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>The <filename>server.xml</filename> configuration file has been modified to provide extended classes to the standard Tomcat container classes, in order to allow SIP applications to be loaded and the SIP stack started.</para>
+			</listitem>
+			<listitem>
+				<para>A <filename>dars</filename> directory containing the default applications' router properties files for using the SIP Servlet Click-to-Call application (which comes bundled with the release) has been added to the <filename>conf</filename> directory.</para>
+			</listitem>
+			<listitem>
+				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added, sorted by directory:</para>
+				<variablelist>
+					<varlistentry>
+						<term>common/lib</term>
+						<listitem>
+							<itemizedlist>
+								<listitem>
+									<para>sip-servlets-spec-1.1.4.jar</para>
+								</listitem>
+								<listitem>
+									<para>jain-sip-api-1.2.1.jar</para>
+								</listitem>
+								<listitem>
+									<para>jain-sip-ri-1.2.1.jar</para>
+								</listitem>
+								<listitem>
+									<para>concurrent-1.3.4.jar</para>
+								</listitem>
+								<listitem>
+									<para>log4j-1.2.14.jar</para>
+								</listitem>
+							</itemizedlist>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>server/lib</term>
+						<listitem>
+							<para>sip-servlets-impl-0.4.1.jar</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</listitem>
+		</itemizedlist>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>Pre-Install Requirements and Prerequisites</title>
+			id="section-Tomcat_Pre-Install_Requirements_and_Prerequisites">
+			<title>Tomcat Pre-Install Requirements and Prerequisites</title>
+			<variablelist>
+			<title>Hardware Requirements</title>
+				<varlistentry>
+					<term>Sufficient Disk Space</term>
+					<listitem>
+						<para>You must have sufficient disk  space in order to install the customized Tomcat Servlet server.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist>
+				<varlistentry>
+					<term>Software Prerequisites</term>
+					<listitem>
+						<para>A working installation of Java 1.5 or higher is required in order to run the SIP Servlet-ized Tomcat server.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		<section
+			id="section-Downloading_the_Customized_Tomcat_Servlet_Container">
+			<title>Downloading the Customized Tomcat Servlet Container</title>
+			<para>The customized Tomcat servlet container can be downloaded from the Mobicents SIP Servlets Server project page on <ulink url="http://sourceforge.net">sourceforge.net</ulink>. TBD: put project page here</para>
+		</section>
+		<section
+			id="section-Installing_the_Customized_Tomcat_Servlet_Container">
+			<title>Installing the Customized Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$dl_title2</title>
+			id="section-Testing_the_Custom_Tomcat_Servlet_Container">
+			<title>Testing the Custom Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$obtain_title2</title>
+			id="section-Configuring_the_Custom_Tomcat_Servlet_Container">
+			<title>Configuring the Custom Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$config_title2</title>
+			id="section-Running_the_Custom_Tomcat_Servlet_Container">
+			<title>Running the Custom Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$run_title2</title>
+			id="section-Stopping_the_Custom_Tomcat_Servlet_Container">
+			<title>Stopping the Custom Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$stop_title2</title>
-			<para></para>
-		</section>
-		<section
-			id="section-Pre-Install_Requirements_and_Prerequisites">
-			<title>$uninstall_title2</title>
+			id="section-Uninstalling_the_Custom_Tomcat_Servlet_Container">
+			<title>Uninstalling the Custom Tomcat Servlet Container</title>
 			<para></para>
 		</section>
 	</section>
-
-
+	
+	<!--JBoss-->
+	<section
+		id="section-Downloading_and_Installing_a_SIP_Servlet-Enabled_JBoss_Application_Server">
+		<title>Downloading and Installing a SIP Servlet-Enabled JBoss Application Server</title>
+		<para>The Mobicents SIP Servlets Server is able to run on top of both the Tomcat Servlet Container as well as the JBoss Application Server. Installing the SIP Servlets Server consists in downloading either a customized (SIP Servlet-ized) version of Tomcat, or a customized version of JBoss. This section details how to download, install and run a SIP Servlet-Enabled JBoss Application Server; if you would rather run SIP Servlets in the more lightweight Tomcat, go to <xref
+				linkend="section-Downloading_and_Installing_a_SIP_Servlet-Enabled_Tomcat"/>.</para>
+		<formalpara>
+			<title>Differences Between a Standard JBoss Installation and One Customized for Mobicents SIP Servlets</title>
+			<para>Provided here is a list of differences between a standard JBoss Application Server installation and the Mobicents-provided SIP Servlets-customized JBoss installation. The differences include:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>The <filename>server/default/deploy</filename> directory contains both HTTP and SIP Servlet applications (WAR and SAR files).</para>
+			</listitem>
+			<listitem>
+				<para>The <filename>server/default/deploy/jboss-web.deployer</filename> unit has been modified to provide extended classes to the standard JBoss container classes, in order to allow SIP applications to be loaded and the SIP stack to be started.</para>
+			</listitem>
+			<listitem>
+				<para>A <filename>dars</filename> directory containing all of the default applications' router properties files for using the various SIP Servlets applications (which come bundled with the release) has been added to the <filename>server/default/conf</filename> directory.</para>
+				<para>a dars directory containing all the default applications router properties files for using the sip servlets applications bundled with the release, has been added to the server/default/conf</para>
+			</listitem>
+			<listitem>
+				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added, sorted by directory:</para>
+				<variablelist>
+					<varlistentry>
+						<term>server/default/lib</term>
+						<listitem>
+							<itemizedlist>
+								<listitem>
+									<para>sip-servlets-impl-0.4.1.jar</para>
+								</listitem>
+								<listitem>
+									<para>sip-servlets-spec-1.1.4.jar</para>
+								</listitem>
+								<listitem>
+									<para>jain-sip-api-1.2.1.jar</para>
+								</listitem>
+								<listitem>
+									<para>jain-sip-ri-1.2.1.jar</para>
+								</listitem>
+								<listitem>
+									<para>concurrent-1.3.4.jar</para>
+								</listitem>
+								<listitem>
+									<para>log4j-1.2.14.jar</para>
+								</listitem>
+							</itemizedlist>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</listitem>
+		</itemizedlist>
+		<section
+			id="section-JBoss_Pre-Install_Requirements_and_Prerequisites">
+			<title>JBoss_Pre-Install Requirements and Prerequisites</title>
+			<variablelist id="varlist-Hardware_Requirements">
+	<title>Hardware Requirements</title>
+	<varlistentry>
+		<term>Sufficient Disk Space</term>
+		<listitem>
+			<para>You must have sufficient disk space in order to install the customized JBoss Application Server.</para>
+		</listitem>
+	</varlistentry>
+</variablelist>
+<variablelist>
+	<varlistentry>
+		<term>Software Prerequisites</term>
+		<listitem>
+			<para>A working installation of Java 1.5 or higher is required in order to run the SIP Servlet-ized JBoss Application Server.</para>
+		</listitem>
+	</varlistentry>
+</variablelist>
+		</section>
+		<section
+			id="section-Downloading_the_Customized_JBoss_Application_Server">
+			<title>Downloading the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Installing_the_Customized_JBoss_Application_Server">
+			<title>Installing the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Testing_the_Customized_JBoss_Application_Server">
+			<title>Testing the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Configuring_the_Customized_JBoss_Application_Server">
+			<title>Configuring the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Running_the_Customized_JBoss_Application_Server">
+			<title>Running the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Stopping_the_Customized_JBoss_Application_Server">
+			<title>Stopping the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+		<section
+			id="section-Uninstalling_the_Customized_JBoss_Application_Server">
+			<title>Uninstalling the Customized JBoss Application Server</title>
+			<para></para>
+		</section>
+	</section>
 </section>
-
-
-
-
-
-
-

@@ -1,0 +1,38 @@
+<?xml version='1.0'?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<bookinfo
+	id="Mobicents_SIP_Servlets_Server_Guide-Product_Name_and_Version">
+	<title>Mobicents SIP Servlets Server Guide</title>
+	<subtitle></subtitle>
+	<issuenum>0.1</issuenum>
+	<productnumber>0</productnumber>
+	<abstract>
+		<para>This book instructs users on how to Install the Mobicents Converged Application Server from both the binary and source distributions.</para>
+	</abstract>
+	<corpauthor>
+		<inlinemediaobject>
+			<imageobject>
+				<imagedata
+					format="SVG"
+					fileref="Common_Content/images/title_logo.svg" />
+			</imageobject>
+			<textobject>
+				<phrase>Logo</phrase>
+			</textobject>
+		</inlinemediaobject>
+	</corpauthor>
+	<copyright>
+		<year>&YEAR;</year>
+		<holder>&HOLDER;</holder>
+	</copyright>
+	<xi:include
+		href="../Common_Content/Legal_Notice.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+	<xi:include
+		href="Author_Group.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />
+</bookinfo>
+
+
+
