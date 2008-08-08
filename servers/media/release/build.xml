@@ -70,7 +70,7 @@
 		</ant>
 
 		<copy overwrite="true" todir="${release.dir.all}/">
-			<fileset dir="${ant.file.media.server.release}/../mobicents-jain-slee/release/target" includes="**/resources/tts/* **/resources/sip/* **/resources/persistence/*" />
+			<fileset dir="${ant.file.media.server.release}/../mobicents-jain-slee/release/target" includes="**/resources/tts/* **/resources/sip/* **/examples/sip-services/*" />
 		</copy>
 		<copy failonerror="true" file="${ant.file.media.server.release}/../mobicents-jain-slee/release/jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true" />
 	</target>

@@ -1,9 +1,13 @@
-====================================================================
-! Welcome to Mobicents Media server - The Open Source Media server !
-====================================================================
-* This media-server_1_0_0_BETA2 binary is only having the Mobicents Media Server related   * 
-* jars. The complete binary media-server-all_1_0_0_BETA2 with MGCP Controller and examples *
-* will be released after mobicents-all 1.2.0.GA is released.                               *
+==========================================================================
+! Welcome to Mobicents Media server (MMS) - The Open Source Media server !
+==========================================================================
+This mobicents-media-server-all-1.0.0.BETA3 binary is having
+	* Mobicents Media Server
+	* Examples for Mobicents Media Server
+	* Controllers which includes MGCP controller and Media Server Controller which is local (in JVM) controller for MMS
+        * Resource Adaprors required by examples
+
+This is complete Media Server which includes the JBoss AS 4.2.2.GA and Mobicents Core Server (JAIN SLEE).
 
 Mobicents Media Server is open source media server aimed to:
 
@@ -14,24 +18,31 @@ Mobicents Media Server is open source media server aimed to:
  to meet the demands of enterprises and small carrier providers. 
 -React quickly to dynamic market requirements. 
 
-Mobicents home page: http://groups.google.com/group/mobicents-public/web/mobicents-media-server
-Version information: media-server_1.0.0.BETA2
+Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
+Mobicents documentation page: http://groups.google.com/group/mobicents-public/web/mobicents-media-server
+Version information: media-server_1.0.0.BETA3
 
 
 To install media server
 ----------------------------------------------------------------------
 1. Run Mobicents SLEE server.
-2. Install Media server binary. Copy content of media-server_1_0_0_BETA2/server/ to the JBoss deployment directory (jboss-4.2.2.GA/server/default/deploy)
-   2.1 mobicents-media-server-1.0.0.BETA2 is core Mobicents Media Server (MMS)
+2. Unzip Media server binary and call run.bat (run.sh for linux from ) mobicents-media-server-all-1.0.0.BETA3/jboss-4.2.2.GA/bin
 
-
-Highlights of 1.0.0.BETA2
+To Deploy Examples
 ----------------------------------------------------------------------
-1) Fixed the problems with automatic detection of DTMF in case of Inband and RFC2833.
-2) Added the MGCP Control which can be used to remotely control the MMS
-3) Added the test suite to MMS
-4) As usual fixed other bugs related to functionality and performance
+Go to examples directory /mobicents-media-server-all-1.0.0.BETA3/examples/call-controller2 and call 'ant deploy-all' to deploy example and all the dependencies
 
-Acknowledgement
+To undeploy call 'ant undeploy-all'
+
+Look at link to know more about examples http://groups.google.com/group/mobicents-public/web/mobicents-examples
+
+
+Highlights of 1.0.0.BETA3
 ----------------------------------------------------------------------
-The org.mobicents.media.*, org.mobicents.media.format.* and org.mobicents.media.protocol.* is taken from FMJ, but we have changed the package from javax.media.* to org.mobicents.* to avoid dependency on FMJ. This may change in future release.
+1) Added Speex Codec to MMS
+2) Added STUN Support
+3) Improved the performance by fine tunning the Threads Model
+4) Improved MMS test suite
+5) As usual fixed other bugs related to functionality and performance
+
+Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/

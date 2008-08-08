@@ -1,7 +1,7 @@
 ====================================================================
 ! Welcome to Mobicents Media server - The Open Source Media server !
 ====================================================================
-* This media-server_1_0_0_BETA2 binary is only having the Mobicents Media Server related   * 
+* This media-server_1_0_0_BETA3 binary is only having the Mobicents Media Server related   * 
 * jars. The complete binary media-server-all_1_0_0_BETA2 with MGCP Controller and examples *
 * will be released after mobicents-all 1.2.0.GA is released.                               *
 
@@ -14,8 +14,9 @@ Mobicents Media Server is open source media server aimed to:
  to meet the demands of enterprises and small carrier providers. 
 -React quickly to dynamic market requirements. 
 
-Mobicents home page: http://groups.google.com/group/mobicents-public/web/mobicents-media-server
-Version information: media-server_1.0.0.BETA2
+Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
+Mobicents documentation page: http://groups.google.com/group/mobicents-public/web/mobicents-media-server
+Version information: media-server_1.0.0.BETA3
 
 
 To install media server
@@ -25,13 +26,12 @@ To install media server
    2.1 mobicents-media-server-1.0.0.BETA2 is core Mobicents Media Server (MMS)
 
 
-Highlights of 1.0.0.BETA2
+Highlights of 1.0.0.BETA3
 ----------------------------------------------------------------------
-1) Fixed the problems with automatic detection of DTMF in case of Inband and RFC2833.
-2) Added the MGCP Control which can be used to remotely control the MMS
-3) Added the test suite to MMS
-4) As usual fixed other bugs related to functionality and performance
+1) Added Speex Codec to MMS
+2) Added STUN Support
+3) Improved the performance by fine tunning the Threads Model
+4) Improved MMS test suite
+5) As usual fixed other bugs related to functionality and performance
 
-Acknowledgement
-----------------------------------------------------------------------
-The org.mobicents.media.*, org.mobicents.media.format.* and org.mobicents.media.protocol.* is taken from FMJ, but we have changed the package from javax.media.* to org.mobicents.* to avoid dependency on FMJ. This may change in future release.
+Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/
