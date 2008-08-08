@@ -29,6 +29,7 @@ public abstract class AVProfile {
 	public final static RTPAudioFormat PCMU = new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1);
 	public final static RTPAudioFormat PCMA = new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1);
 	public final static RTPAudioFormat SPEEX_NB = new RTPAudioFormat(97, AudioFormat.SPEEX, 8000, 8, 1);
+	public final static RTPAudioFormat G729 = new RTPAudioFormat(18, AudioFormat.G729, 8000, 8, 1);
 	public final static RTPAudioFormat DTMF_FORMAT = new DtmfFormat(DTMF.RTP_PAYLOAD, "telephone-event");
 
 	public static RTPAudioFormat getAudioFormat(int pt) {
@@ -37,6 +38,8 @@ public abstract class AVProfile {
 			return PCMU;
 		case 8:
 			return PCMA;
+		case 18:
+			return G729;
 		case 97:
 			return SPEEX_NB;
 		default:
@@ -49,6 +52,8 @@ public abstract class AVProfile {
 			return 0;
 		} else if (fmt.matches(PCMA)) {
 			return 8;
+		} else if (fmt.matches(G729)) {
+			return 18;
 		} else if (fmt.matches(SPEEX_NB)) {
 			return 97;
 		} else {

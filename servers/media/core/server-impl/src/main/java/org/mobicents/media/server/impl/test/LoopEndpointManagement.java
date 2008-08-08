@@ -44,6 +44,7 @@ public class LoopEndpointManagement extends EndpointManagement implements LoopEn
 			clone.setSpeex(this.getSpeex());
 			clone.setPCMU(this.getPCMU());
 			clone.setDTMF(this.getDTMF());
+			clone.setG729(this.getG729());
 		} catch (Exception ex) {
 			logger.error("LoopEndpointManagement clonning failed ", ex);
 			return null;

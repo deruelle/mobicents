@@ -52,6 +52,7 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
     private boolean enablePCMA = false;
     private boolean enablePCMU = false;
     private boolean enableSpeex = false;
+    private boolean enableG729 = false;
     
     private String stunServerAddress;
 	private int stunServerPort;
@@ -231,6 +232,21 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         }    	
     }
     
+    public Boolean getG729(){
+    	return this.enableG729;
+    }
+    
+    public void setG729(Boolean enabled){
+    	this.enableG729 = enabled;
+        if (this.getState() == STARTED) {
+            if (enabled) {
+                endpoint.addFormat(AVProfile.getPayload(AVProfile.G729), AVProfile.G729);
+            } else {
+                endpoint.removeFormat(AVProfile.G729);
+            }
+        }    	
+    }
+    
     public Boolean getSpeex(){
     	return this.enableSpeex;
     }
@@ -390,6 +406,10 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         
         if(this.enableSpeex){
         	endpoint.addFormat(AVProfile.getPayload(AVProfile.SPEEX_NB), AVProfile.SPEEX_NB);
+        }
+        
+        if(this.enableSpeex){
+        	endpoint.addFormat(AVProfile.getPayload(AVProfile.G729), AVProfile.G729);
         }
         
         this.getEndpoint().setDefaultConfig(MediaResourceType.DTMF_DETECTOR, dtmfConfig);

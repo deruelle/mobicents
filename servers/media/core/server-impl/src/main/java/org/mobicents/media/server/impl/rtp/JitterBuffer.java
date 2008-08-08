@@ -81,9 +81,15 @@ public class JitterBuffer {
         }
     }
 
+    // HACK: TODO: FIXME: remove these hardcoded values.
     public void setPeriod(int period) {
-        this.period = period;
-        this.packetSize = getSizeInBytes(fmt, period);
+    	if(this.fmt.getEncoding().contains("g729")) {
+    		this.period = 20;
+    		this.packetSize = 20;
+    	} else {
+    		this.period = period;
+    		this.packetSize = getSizeInBytes(fmt, period);
+    	}
     }
     
     public boolean isReady() {

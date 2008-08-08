@@ -136,6 +136,8 @@ public interface EndpointManagementMBean extends ServiceMBean {
     public void setSpeex(Boolean enabled);
     public Boolean getSpeex();
     
+    public void setG729(Boolean enabled);
+    public Boolean getG729();
     
     /**
      * DTMF detector configuration 

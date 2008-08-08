@@ -48,6 +48,8 @@ public class CodecLocator {
 
 		codecs.add(new org.mobicents.media.server.impl.jmf.dsp.audio.speex.Encoder());
 		codecs.add(new org.mobicents.media.server.impl.jmf.dsp.audio.speex.Decoder());
+		codecs.add(new org.mobicents.media.server.impl.jmf.dsp.audio.g729.Encoder());
+		codecs.add(new org.mobicents.media.server.impl.jmf.dsp.audio.g729.Decoder());
 	}
 
 	private static boolean matches(Format[] supported, Format input) {

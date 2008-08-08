@@ -35,7 +35,10 @@ public interface Codec {
 
 	public final static AudioFormat SPEEX = new AudioFormat(
                 AudioFormat.SPEEX, 8000, 8, 1);
-
+	
+	public final static AudioFormat G729 = new AudioFormat(
+            AudioFormat.G729, 8000, 8, 1);
+	
 	public Format[] getSupportedInputFormats();
 	public Format[] getSupportedOutputFormats(Format fmt);
 

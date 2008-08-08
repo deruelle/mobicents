@@ -35,6 +35,8 @@ public class RTPPacketizer {
             buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
         } else if (fmt.equals(Codec.SPEEX)) {
             buffer.setTimeStamp(buffer.getSequenceNumber() * 16 * packetPeriod);
+        } else if (fmt.equals(Codec.G729)) {
+            buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
         }
     }
 }

@@ -309,12 +309,16 @@ public class BaseConnection implements Connection, AdaptorListener {
 			// generate media descriptor
 			MediaDescription md = sdpFactory.createMediaDescription("audio", port, 1, "RTP/AVP", formats);
 
+			boolean g729 = false;
 			// set attributes for formats
 			Vector attributes = new Vector();
 			for (int i = 0; i < formats.length; i++) {
 				Format format = (Format) fmts.get(new Integer(formats[i]));
 				attributes.add(sdpFactory.createAttribute("rtpmap", format.toString()));
+				if(format.getEncoding().contains("g729")) g729 = true;
 			}
+			
+			if(g729) attributes.add(sdpFactory.createAttribute("fmtp", "18 annexb=no"));
 
 			// generate descriptor
 			md.setAttributes(attributes);

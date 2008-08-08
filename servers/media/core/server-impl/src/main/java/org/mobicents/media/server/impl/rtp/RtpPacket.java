@@ -61,7 +61,13 @@ public class RtpPacket implements Serializable {
         ssrc = in.readInt();
         
         payload = new byte[160];
-        in.read(payload);
+        int numBytes = in.read(payload);
+		if (numBytes < 0)
+			numBytes = 0;
+		byte[] realPayload = new byte[numBytes];
+		for (int q = 0; q < numBytes; q++)
+			realPayload[q] = payload[q];
+		payload = realPayload;
     }
     
     public RtpPacket(byte payloadType, int seqNumber, int timestamp, long ssrc, byte[] payload) {
