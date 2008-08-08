@@ -10,6 +10,8 @@
 	
 	<artifactId>converged-demo-web-jar</artifactId>
 	
+	<packaging>jar</packaging>
+	
 	<dependencies>
     	<dependency>
       		<artifactId>converged-demo-custom-events</artifactId>
