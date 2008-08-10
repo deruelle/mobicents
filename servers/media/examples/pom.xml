@@ -17,7 +17,7 @@
 	
 	<properties>
 		<mobicents.media.server.controllers.version>
-			1.0.0.BETA3
+			1.0.0.BETA4-SNAPSHOT
 		</mobicents.media.server.controllers.version>		
 	</properties>	
 	
