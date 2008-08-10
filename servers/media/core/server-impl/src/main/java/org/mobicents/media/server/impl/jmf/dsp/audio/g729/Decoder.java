@@ -52,19 +52,16 @@ public class Decoder implements Codec {
 		voicing = 60;
 	}
 
-	@Override
 	public Format[] getSupportedInputFormats() {
 		Format[] formats = new Format[] { Codec.G729 };
 		return formats;
 	}
 
-	@Override
 	public Format[] getSupportedOutputFormats(Format fmt) {
 		Format[] formats = new Format[] { Codec.LINEAR_AUDIO };
 		return formats;
 	}
 
-	@Override
 	public void process(Buffer buffer) {
 
 		byte[] data = (byte[]) buffer.getData();

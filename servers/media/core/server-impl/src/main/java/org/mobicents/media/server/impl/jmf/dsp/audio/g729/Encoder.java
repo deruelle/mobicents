@@ -44,13 +44,11 @@ public class Encoder implements Codec {
 
 	}
 
-	@Override
 	public Format[] getSupportedInputFormats() {
 		Format[] formats = new Format[] { Codec.LINEAR_AUDIO };
 		return formats;
 	}
 
-	@Override
 	public Format[] getSupportedOutputFormats(Format fmt) {
 		Format[] formats = new Format[] { Codec.G729 };
 		return formats;
