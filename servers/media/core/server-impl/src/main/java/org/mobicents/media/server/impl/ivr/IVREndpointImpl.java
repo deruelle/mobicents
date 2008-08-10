@@ -166,6 +166,10 @@ public class IVREndpointImpl extends AnnEndpointImpl {
 					java.io.File file = new java.io.File(new StringBuffer(recordDir).append("/")
 							.append(folderStructure).toString());
 					boolean fileCreationSuccess = file.mkdirs();
+					
+					if(!fileCreationSuccess){
+						logger.warn("The creation of record file "+param1+" failed");
+					}
 				}
 				recordURL = recordDir + "/" + param1;
 			} else {
