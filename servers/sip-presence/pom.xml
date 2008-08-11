@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 	
@@ -20,7 +19,7 @@
 		
 	<artifactId>sip-presence-parent</artifactId>
 	<groupId>org.mobicents.servers.sippresence</groupId>
-	<version>1.0.0.BETA2-SNAPSHOT</version>
+	<version>1.0.0.BETA2</version>
 	
 	<modules>		
 		<module>sip-event</module>
@@ -101,9 +100,9 @@
 	</build>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/sip-presence</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/sip-presence</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk/servers/sip-presence</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</url>
 	</scm>
 	
 	<!-- dupe info from parent, but it's only way to retrieve the parent without user configuration -->
