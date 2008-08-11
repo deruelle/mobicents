@@ -96,6 +96,13 @@
 					<eclipseProjectName>mobicents-sip-presence-service</eclipseProjectName>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <configuration>
+            	    <finalName>${mobicents.sip.presence.service.finalName}-src</finalName>
+                </configuration>
+            </plugin>
 		</plugins>		
 	</build>
 	
@@ -136,7 +143,7 @@
 				<module>xdms</module>
 				<module>integrated</module>
 			</modules>
-                        <build>
+            <build>
 				<plugins>
 					<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
