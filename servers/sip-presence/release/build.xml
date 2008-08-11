@@ -291,7 +291,6 @@
 				<exclude name="**/legacy/**" />
 				<exclude name="**/release/**" />
 				<exclude name="**/logs/**" />
-				<exclude name="**/tests/**" />
 				<exclude name="**/${*}/**" />
 				<exclude name="**/*JBOSS_HOME*/**" />
 				<exclude name="**/*CATALINA_HOME*/**" />
