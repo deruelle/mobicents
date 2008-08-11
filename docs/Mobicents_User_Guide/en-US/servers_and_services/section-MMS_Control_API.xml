@@ -5,17 +5,19 @@
 	id="section-MMS_Control_API">
 	<title>MMS Control API</title>
 	<para></para>
-	<para>The main objective of the Media Server control API is to provide multimedia application developers with a Media Server abstraction interface.</para>
+	<para>The main objective of the Media Server Control API is to provide multimedia application developers with a Media Server abstraction interface.</para>
 	<section
 		id="section-Basic_Components_of_the_MMS_API">
 		<title>Basic Components of the MMS API</title>
 		<para>This section describes the basic objects of the API as well as some common design patterns.</para>
-		<para>The API components consist of a related set of interfaces, classes, operations, events, capabilities, and exceptions. The API provides seven key objects common to media servers, and more advanced packages. We provide a very brief description of the API in this overview document; The seven key objects are:</para>
+		<para>The API components consist of a related set of interfaces, classes, operations, events, capabilities, and exceptions. The API provides seven key objects common to media servers, and more advanced packages. We provide a very brief description of the API in this overview document; the seven key objects are:</para>
 		<variablelist>
 			<varlistentry>
-				<term>MsProvider</term>
+				<term>
+					<literal>MsProvider</literal>
+				</term>
 				<listitem>
-					<para>Represents the “window” through which an application views the call processing.</para>
+					<para>Represents the <quote>window</quote> through which an application views the call processing.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -23,13 +25,15 @@
 					<literal>MsSession</literal>
 				</term>
 				<listitem>
-					<para>Represents a call; this object is a dynamic “collection of physical and logical entities” that bring two or more endpoints together.</para>
+					<para>Represents a call; this object is a dynamic <quote>collection of physical and logical entities</quote> that bring two or more endpoints together.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsEndpoint</term>
+				<term>
+					<literal>MsEndpoint</literal>
+				</term>
 				<listitem>
-					<para>Represents a logical endpoint (e.g., an announcement access server or an interactive voice response server).</para>
+					<para>Represents a logical endpoint (e.g., an announcement access server, or an interactive voice response server).</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -41,21 +45,27 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsLink</term>
+				<term>
+					<literal>MsLink</literal>
+				</term>
 				<listitem>
 					<para>Represent the dynamic relationship between two endpoints located on the same Media Server.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsSignalGenerator</term>
+				<term>
+					<literal>MsSignalGenerator</literal>
+				</term>
 				<listitem>
 					<para>Represents the media resource which is responsible for generating media.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>MsSignalDetector</term>
+				<term>
+					<literal>MsSignalDetector</literal>
+				</term>
 				<listitem>
-					<para>Represents the media resource which is responsible for detecting media.</para>
+					<para>Represents the media resource responsible for detecting media.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -76,18 +86,10 @@
 		<para>
 			<literal>MsProvider</literal> can be used to create the <literal>MsSession</literal> object as well as the <literal>SignalGenerator</literal> and <literal>SignalDetector</literal> objects.</para>
 		<para>
-			<literal>
-				<literal>MsSession</literal>
-			</literal> is a transient association of (zero or more) connections for the purposes of engaging in a real-time communications interchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of an <literal>MsSession</literal> object with the <function>MsProvider.createSession()</function> method, which returns an <literal>MsSession</literal> object that has zero connections and is in the <literal>IDLE</literal> state. The MsProvider object instance does not change throughout the lifetime of the <literal>MsSession</literal> object. The MsProvider associated with an <literal>MsSession</literal> is obtained via the getProvider() method.</para>
-		<para>Applications create instances of <literal>MsConnection</literal> objects with the <literal>MsSession</literal>
-			<function>.createNetworkConnection(String endpointName)</function> method. The Application calls <literal>MsConnection</literal>
-			<function>.modify(String localDesc, String remoteDesc)</function> passing the local <remark>TBD: what are these abbreviations?</remark>SDP and remote SDP. <literal>MsConnection</literal> at this time will find out the corresponding EndPoint, using JNDI, and using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of Connection. This Connection creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data has not yet started.</para>
-		<para>Applications create instances of <literal>MsLink</literal> object with the <literal>MsSession</literal>
-			<function>.createLink(MsLinkMode mode)</function> method. The application calls <literal>MsLink</literal>
-			<function>.join(String endpointName1, String endpointName2)</function>, passing the endpoint names of the two local endpoint to be joined. At this point, the <literal>MsLink</literal> object will find out the corresponding <literal>EndPoint</literal>s, using JNDI, and by using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of the <literal>Connection</literal> object. This <literal>Connection</literal> creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data has not yet started. As soon as <literal>Connection</literal>s are created for both <literal>EndPoint</literal>s, <function>setOtherParty(Connection other)</function> is called on each <literal>Connection</literal> passing the other <literal>Connection</literal>, which starts the data transfer between the two <literal>Connection</literal>s.</para>
-		<para>The application creates instances of <literal>MsSignalGenerator</literal> using <literal>MsProvider</literal>
-			<function>.getSignalGenerator(endpointName)</function>, passing <literal>endPointName</literal>. The application calls <literal>MsGenerator</literal>
-			<function>.apply(Announcement.PLAY, new String[] { Audio file URL })</function> to play the audio file. At this point <literal>MsGenerator</literal> looks up the <literal>EndPoint</literal> corresponding to the <literal>endpointName</literal> passed, and simply calls play on it to start the transmission of audio via RTP.</para>
+				<literal>MsSession</literal> is a transient association of zero or more connections for the purposes of engaging in a real-time communication exchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of an <literal>MsSession</literal> object with the <function>MsProvider.createSession()</function> method, which returns an <literal>MsSession</literal> object that has zero connections and is in the <literal>IDLE</literal> state. The <literal>MsProvider</literal> object instance does not change throughout the lifetime of the <literal>MsSession</literal> object. The <literal>MsProvider</literal> object associated with an <literal>MsSession</literal> object is obtained via the <function>getProvider()</function> method.</para>
+		<para>Applications create instances of <literal>MsConnection</literal> objects with the <function>MsSession.createNetworkConnection(String endpointName)</function> method. The Application calls <function>MsConnection.modify(String localDesc, String remoteDesc)</function> passing the local SDP and remote SDP. <literal>MsConnection</literal> at this time will find out the corresponding EndPoint, using JNDI, and using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of <literal>Connection</literal>. This <literal>Connection</literal> creates an instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data does not yet begin.</para>
+		<para>Applications create instances of <literal>MsLink</literal> objects with the <function>MsSession.createLink(MsLinkMode mode)</function> method. The application calls the <function>MsLink.join(String endpointName1, String endpointName2)</function>, passing the endpoint names of the two local endpoints to be joined. At this point, the <literal>MsLink</literal> object will find out the corresponding <literal>EndPoint</literal>s, using JNDI, and by using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of the <literal>Connection</literal> object. This <literal>Connection</literal> creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data does not yet begin. As soon as <literal>Connection</literal>s are created for both <literal>EndPoint</literal>s, <function>setOtherParty(Connection other)</function> is called on each <literal>Connection</literal> passing the other <literal>Connection</literal>, which starts the data transfer between the two <literal>Connection</literal>s.</para>
+		<para>The application creates instances of <literal>MsSignalGenerator</literal> using <function>MsProvider.getSignalGenerator(endpointname)</function>, passing <literal>endPointName</literal>. The application calls <function>MsGenerator.apply(Announcement.PLAY, new String[] {Audio file URL})</function> to play the audio file. At this point <literal>MsGenerator</literal> looks up the <literal>EndPoint</literal> corresponding to the endpointname passed, and simply calls play on it to start the transmission of audio via RTP.</para>
 	</section>
 	<section
 		id="section-Basic_API_Patterns_Listeners">
@@ -173,8 +175,7 @@
 						<entry>
 							<literal>SESSION_CREATED</literal>
 						</entry>
-						<entry>Fired when <literal>MsProvider</literal>
-							<function>.createSession()</function> is called and a new <literal>MsSession</literal> is created</entry>
+						<entry>Fired when <function>MsProvider.createSession()</function> is called and a new <literal>MsSession</literal> is created</entry>
 						<entry>
 							<function>public void sessionCreated(<literal>MsSessionEvent</literal> evt)</function>
 						</entry>
@@ -183,8 +184,7 @@
 						<entry>
 							<literal>SESSION_CREATED</literal>
 						</entry>
-						<entry>Fired when <literal>MsProvider</literal>
-							<function>.createSession()</function> is called and a new <literal>MsSession</literal>
+						<entry>Fired when <function>MsProvider.createSession()</function> is called and a new <literal>MsSession</literal>
         is created</entry>
 						<entry>
 							<function>public void sessionCreated(<literal>MsSessionEvent</literal> evt)</function>
@@ -252,8 +252,7 @@
 						<entry>
 							<literal>CONNECTION_INITIALIZED</literal>
 						</entry>
-						<entry>As soon as new <literal>MsConnection</literal> is created by calling <literal>MsSession</literal>
-							<function>.createNetworkConnection(String endpointName)</function>,  <literal>CONNECTION_INITIALIZED</literal> is fired.</entry>
+						<entry>As soon as new <literal>MsConnection</literal> is created by calling <function>MsSession.createNetworkConnection(String endpointName)</function>,  <literal>CONNECTION_INITIALIZED</literal> is fired.</entry>
 						<entry>
 							<function>public void connectionInitialized(<literal>MsConnection</literal>Event event)</function>
 						</entry>
@@ -262,8 +261,7 @@
 						<entry>
 							<literal>CONNECTION_CREATED</literal>
 						</entry>
-						<entry>As soon as the RTP connection created by calling <literal>MsConnection</literal>
-							<function>.modify(String localDesc, String remoteDesc)</function> is successful, <literal>CONNECTION_CREATED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated with it and, if there is no endpoint, then this is creation of RTP connection request</entry>
+						<entry>As soon as the RTP connection created by calling <function>MsConnection.modify(String localDesc, String remoteDesc)</function> is successful, <literal>CONNECTION_CREATED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated with it and, if there is no endpoint, then this is creation of RTP connection request</entry>
 						<entry>public void connectionCreated(<literal>MsConnection</literal>Event event)<remark>TBD: fix this last sentence: meaning unsure</remark>
 						</entry>
 					</row>
@@ -271,8 +269,7 @@
 						<entry>
 							<literal>CONNECTION_MODIFIED</literal>
 						</entry>
-						<entry>As soon as <literal>MsConnection</literal> is successfully modified, by calling <literal>MsConnection</literal>
-							<function>.modify(String localDesc, String remoteDesc)</function>, <literal>CONNECTION_MODIFIED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated it and, if so, then this means it is a modification request.</entry>
+						<entry>As soon as <literal>MsConnection</literal> is successfully modified, by calling <function>MsConnection.modify(String localDesc, String remoteDesc)</function>, <literal>CONNECTION_MODIFIED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated it and, if so, then this means it is a modification request.</entry>
 						<entry>
 							<function>public void connectionModifed(<literal>MsConnection</literal>Event event)</function>
 						</entry>
@@ -281,8 +278,7 @@
 						<entry>
 							<literal>CONNECTION_DELETED</literal>
 						</entry>
-						<entry>As soon as <literal>MsConnection</literal> is successfully released,  (<literal>MsConnection</literal>
-							<function>.release()</function>) <literal>CONNECTION_DELETED</literal> is fired.</entry>
+						<entry>As soon as <literal>MsConnection</literal> is successfully released,  (<function>MsConnection.release()</function>) <literal>CONNECTION_DELETED</literal> is fired.</entry>
 						<entry>
 							<function>public void connectionDeleted(<literal>MsConnection</literal>Event event)</function>
 						</entry>
@@ -337,8 +333,7 @@
 						<entry>
 							<literal>LINK_CREATED</literal>
 						</entry>
-						<entry>As soon as a new <literal>MsLink</literal> is created by calling <literal>MsSession</literal>
-							<function>.createLink(MsLinkMode mode)</function>, <literal>LINK_CREATED</literal> is fired.</entry>
+						<entry>As soon as a new <literal>MsLink</literal> is created by calling <function>MsSession.createLink(MsLinkMode mode)</function>, <literal>LINK_CREATED</literal> is fired.</entry>
 						<entry>
 							<function>public void linkCreated(MsLinkEvent evt)</function>
 						</entry>

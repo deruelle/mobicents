@@ -111,16 +111,15 @@
 			</tbody>
 		</tgroup>
 	</informaltable>
-	<para>The announcement action is qualified by an URL name and by a set of initial parameters. The <quote>operation complete</quote> event will be detected when the announcement is played out. If the announcement cannot be played out, an operation failure event can be returned.  The failure may be explained by a commentary. </para>
+	<para>Announcement actions are qualified by URLs and by sets of initial parameters. The <quote>operation completed</quote> (<literal>COMPLETED</literal>) event will be detected once an announcement has finished playing. If the announcement cannot be played in its entirety, an <quote>operation failure</quote> (<literal>FAILED</literal>) event can be returned. The failure can also be explained with a commentary.</para>
 	<formalpara>
 		<title>The Advanced Audio Package</title>
 		<para>Package name: <literal>org.mobicents.media.server.spi.events.AU</literal>
 		</para>
 	</formalpara>
-	<table
-		id="table-The_Advanced_Audio_Package"
+	<informaltable
+		id="informaltable-The_Advanced_Audio_Package"
 		frame="all">
-		<title>The Advanced Audio Package</title>
 		<tgroup
 			cols="4"
 			align="left"
@@ -151,7 +150,7 @@
 					<entry>
 						<literal>org.mobicents.media.server.spi.event.AU.PLAY_RECORD</literal>
 					</entry>
-					<entry>play an announcement</entry>
+					<entry>play a prompt (optional) and then record some speech</entry>
 					<entry>TO</entry>
 					<entry>variable</entry>
 				</row>
@@ -173,7 +172,7 @@
 				</row>
 			</tbody>
 		</tgroup>
-	</table>
-	<para>PLAY_RECORD Plays a prompt and records user speech.  If the user does not speak, the user may be reprompted and given another chance to record.  By default PlayRecord does not play an initial prompt, makes only one attempt to record, and therefore functions as a simple Record operation</para>
+	</informaltable>
+	<para>The function of <literal>PLAY_RECORD</literal> is to play a prompt and record the user's speech. If the user does not speak, the user may be re-prompted and given another chance to record. By default, <literal>PLAY_RECORD</literal> does not play an initial prompt, makes only one attempt to record, and therefore functions as a simple record operation</para>
 </section>
 

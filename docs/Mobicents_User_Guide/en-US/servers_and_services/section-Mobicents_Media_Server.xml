@@ -80,17 +80,17 @@
 		</itemizedlist> -->
 		<formalpara>
 			<title>What Is the Mobicents Media Server?</title>
-			<para>The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and aimed to:</para>
+			<para>The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and is aimed at:</para>
 		</formalpara>
 		<itemizedlist>
 			<listitem>
-				<para>Deliver competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+				<para>Delivering competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
 			</listitem>
 			<listitem>
-				<para>Meet the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single&mdash;and singularly-capable&mdash;media gateway platform.</para>
+				<para>Meeting the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single&mdash;and singularly-capable&mdash;media gateway platform.</para>
 			</listitem>
 			<listitem>
-				<para>Increase flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</para>
+				<para>Increasing flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</para>
 			</listitem>
 		</itemizedlist>
 	<!-- <section

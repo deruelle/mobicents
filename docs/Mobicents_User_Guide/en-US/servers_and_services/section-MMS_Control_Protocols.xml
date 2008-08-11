@@ -4,25 +4,26 @@
 <section
 	id="section-MMS_Control_Protocols">
 	<title>MMS Control Protocols</title>
-	<para>Media Server assumes a call control architecture where the call control <quote>intelligence</quote> is outside the Media Server and handled by external call control elements known as Call State Control Function.The media server assumes that these call control elements, or CSCF,will synchronize with each other to send coherent commands and responses to the media servers under their control. Server Control Protocols is, in essence, a master/slave asynchronous protocol, where the Server Control Modules are expected to execute commands sent by CSCF. Each Server Control Module is implemented as JSLEE application and consist of a set of SBBs which are in charge to communicate with media server's endpoints via SPI. It allows to avoid difficulties with programming concurrency, low level transaction and state management details, connection pooling and other complex-level APIs.</para>
+	<para>The Mobicents Media Server adopts a call control architecture where the call control <quote>intelligence</quote> is located outside of the Media Server itself, and is handled by external call control elements collectively known as Call State Control Function.The media server assumes that these call control elements, or CSCF,will synchronize with each other to send coherent commands and responses to the media servers under their control. Server Control Protocols is, in essence, an asynchronous master/slave protocol, where the Server Control Modules are expected to execute commands sent by CSCF. Each Server Control Module is implemented as a JSLEE application, and consists of a set of Service Building Blocks (<acronym>SBB</acronym>)s which are in charge to communicate with media server's endpoints via SPI. Such an architecture avoids difficulties with programming concurrency, low-level transaction and state-management details, connection-pooling and other complex APIs.</para>
 	<formalpara>
 		<title>The MGCP Module</title>
 		<para>The MGCP module is included in default binary distribution. The Call Agent uses MGCP to tell the Media Server:</para>
 	</formalpara>
 	<itemizedlist>
 		<listitem>
-			<para>what events should be reported to the Call Agent</para>
+			<para>which events should be reported to the Call Agent;</para>
 		</listitem>
 		<listitem>
-			<para>how endpoints should be connected together</para>
+			<para>how endpoints should be connected; and,</para>
 		</listitem>
 		<listitem>
-			<para>what signals should be played on endpoints</para>
+			<para>what signals should be played on which endpoints.</para>
 		</listitem>
 	</itemizedlist>
 	<formalpara>
 		<title>Configuring the MGCP Module</title>
-		<para>The default port for MGCP is 2728. You can mobicents management console to override the default value.</para>
+		<para>The default port for MGCP is 2728. The Mobicents Management Console can be used to override the default port. For more information about the Management Console, refer to <ulink
+				url="section-Working_with_the_Mobicents_Management_Console"/>.</para>
 	</formalpara>
 </section>
 

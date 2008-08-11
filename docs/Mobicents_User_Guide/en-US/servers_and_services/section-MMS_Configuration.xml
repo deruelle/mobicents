@@ -4,7 +4,7 @@
 <section
 	id="section-MMS_Configuration">
 	<title>MMS Configuration</title>
-	<para>All endpoints are plugged into the Mobicents SLEE server by registering with the MBean server. After the Media server has succesfully started, you can then locate the JMX console at <ulink
+	<para>All endpoints are plugged into the Mobicents JAIN-SLEE server by registering with the MBean server. After the Media Server has succesfully started, you can then locate the JMX console at <ulink
 			url="http://localhost:8080/jmx-console"/> in the default distribution. Note that if you have configured the servlet container, e.g. Tomcat, to service a different port, then you will need to supply a different port number in the URL.</para>
 	<mediaobject
 		id="mediaobj-sas-MMSConfiguration-ss-JMXConsole.gif">
@@ -21,7 +21,7 @@
 	<section
 		id="section-Announcement_Server_Access_Points">
 		<title>Announcement Server Access Points</title>
-		<para>An Announcement Server endpoint provides access to an announcement service. Upon requests from the Call Agent, an Announcement Server will <quote>play</quote> a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an Announcement Server are typically one-way, i.e. <quote>half-duplex</quote>: the Announcement Server is not expected to listen to audio signals from the connection.</para>
+		<para>An Announcement Server endpoint provides access to an announcement service. Upon requests from the call agent, an Announcement Server will <quote>play</quote> a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an Announcement Server are typically one-way, i.e. <quote>half-duplex</quote>: the Announcement Server is not expected to listen to audio signals from the connection.</para>
 		<formalpara>
 			<title>Configuration of an Announcement Server Access Point</title>
 			<para>The configurable attributes of the Announcement Server are as follows:</para>
@@ -167,7 +167,7 @@
 			<varlistentry>
 				<term>JndiName</term>
 				<listitem>
-					<para>The Java Naming and Directory Interface (<acronym>JNDI</acronym>) name under which endpoint is to be bound.</para>
+					<para>The Java Naming and Directory Interface (<acronym>JNDI</acronym>) name under which the endpoint is to be bound.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -311,7 +311,7 @@ dtmf.payload = 101
 	<section
 		id="section-Packet_Relay_Endpoint">
 		<title>Packet Relay Endpoint</title>
-		<para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packets relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways (for example, gateways which do not support compatible compression algorithms, or gateways which operate over different transmission networks such as IP or ATM).</para>
+		<para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways (for example, gateways which do not support compatible compression algorithms, or gateways which operate over different transmission networks such as IP or ATM).</para>
 		<formalpara>
 			<title>Configuration of the Packet Relay Endpoint</title>
 			<para>The configurable attributes of the Packet Relay endpoint are as follows:</para>
@@ -532,6 +532,85 @@ dtmf.payload = 101
 				</para>
 			</listitem>
 		</itemizedlist>
+	</section>
+	<section
+		id="section-MMS_STUN_Support">
+		<title>MMS STUN Support</title>
+		<para>When using Mobicents Media Server behind a routing device performing Network Address Translation, you may need to employ the Simple Traversal of User Datagram Protocol through Network Address Translators (abbreviated: <acronym>STUN</acronym>) protocol in order for the server to operate correctly. In general, it is recommended to avoid deploying the MMS behind a NAT, since doing so can incur significant performance penalties and failures. Nevertheless, the current MMS implementation does work with a static NAT, a.k.a. a one-to-one (1-1) NAT, in which no port-mapping occurs. Full Cone NAT should also work with Address-Restricted NAT.</para>
+		<para>For more informantion STUN NAT classification, refer to chapter 5 of <ulink
+				url="http://www.faqs.org/rfcs/rfc3489.html">RFC3489 - STUN - Simple Traversal of User Datagram Protocol (UDP)</ulink>.</para>
+		<formalpara>
+			<title>MMS STUN Configuration</title>
+			<para>Each endpoint in the Media Server can have its own STUN preferences. The STUN options are specified in the <filename>jboss-service.xml</filename> configuration file. Here is an example of an Announcement Endpoint with static NAT configuration:</para>
+		</formalpara>
+		<example
+			id="example-Static_NAT_configuration_of_an_Announcement_Endpoint_in_jboss-service.xml">
+			<title>Static NAT configuration of an Announcement Endpoint in jboss-service.xml</title>
+<programlisting
+				id="proglist-Static_NAT_configuration_of_an_Announcement_Endpoint_in_jboss-service.xml"
+				linenumbering="numbered"
+				role="XML"><![CDATA[
+<!-- ANNOUNCEMENT ENDPOINT -->
+<mbean
+	code="org.mobicents.media.server.impl.ann.AnnEndpointManagement"
+	name="media.mobicents:endpoint=announcement">
+	<attribute
+		name="JndiName">media/endpoint/Announcement</attribute>
+	<attribute
+		name="BindAddress">${jboss.bind.address}</attribute>
+	<attribute
+		name="Jitter">60</attribute>
+	<attribute
+		name="PacketizationPeriod">20</attribute>
+	<attribute
+		name="PortRange">1024-65535</attribute>
+	<attribute
+		name="PCMA">true</attribute>
+	<attribute
+		name="PCMU">true</attribute>
+	<attribute
+		name="Speex">false</attribute>
+	<attribute
+		name="DTMF">detector.mode=AUTO</attribute>
+	<attribute
+		name="UseStun">true</attribute>
+	<attribute
+		name="StunServerAddress">stun.ekiga.net</attribute>
+	<attribute
+		name="StunServerPort">3478</attribute>
+	<attribute
+		name="UsePortMapping">false</attribute>
+</mbean>
+]]></programlisting>
+</example>
+		<para>There are four attributes related to STUN configuration:</para>
+		<variablelist>
+			<varlistentry>
+				<term>UseStun</term>
+				<listitem>
+					<para>A boolean attribute which enables or disables STUN for the current endpoint.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>StunServerAddress</term>
+				<listitem>
+					<para>A string attribute; the address of a STUN server. In the <filename>jboss-service.xml</filename> configuration file example, this attribute is set to <ulink
+							url="stun.ekiga.net"/>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>StunServerPort</term>
+				<listitem>
+					<para>A string attribute representing the port number of the STUN server. <filename>jboss-service.xml</filename> configuration file example, 3478 is the port of the Ekiga server.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>UsePortMapping</term>
+				<listitem>
+					<para>A boolean attribute that specifies whether the NAT is mapping the port numbers. A NAT is mapping ports if the internal and external ports are <emphasis>not</emphasis> guaranteed to be the same for every connection through the NAT. In other words, if the client established a connection with the NAT at the hypothetical addresss 111.111.111.111, on port 1024, then the NAT will establish the second leg of the connection to some different (private) address, but on the same port, such as 192.168.1.1:1024. If these ports are the same (1024), then your NAT is not mapping the ports, and you can set this attribute to false, which improves the performance of the NAT traversal by doing the STUN lookup only once at boot-time, instead of doing it everytime a new connection is established. NATs that don't map ports are also known as static NATs.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
 	</section>
 </section>
                                                                                                                                                                                    

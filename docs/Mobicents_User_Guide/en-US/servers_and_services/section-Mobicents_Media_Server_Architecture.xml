@@ -6,7 +6,7 @@
 	<title>Mobicents Media Server Architecture</title>
 	<para>Media services have played an important role in the traditional Time Division Multiplexing (<acronym>TDM</acronym>)-based telephone network. As the network migrates to an Internet Protocol (<acronym>IP</acronym>)-based environment, media services are also moving to new environments.</para>
 	<para>One of the most exciting trends is the emergence and adoption of complementary modular standards that leverage the Internet to enable media services to be developed, deployed and updated more rapidly than before in a network architecture that supports the two concepts we will call provisioning-on-demand and scaling-on-demand.</para>
-	<!-- <para>Media services have played an important role in the traditional time division multiplexing (TDM)-based telephone network. As the network migrates to an Internet Protocol (IP)-based environment, media services are also moving to new environments.  One of the most exciting trends is the emergence and adoption of complementary modular standards that leverage the Internet to enable media services to be developed, deployed, and updated more rapidly than before in a network architecture that supports concepts we call provisioning on demand and scaling on demand.</para> -->
+	<!-- <para>Media services have played an important role in the traditional time division multiplexing (TDM)-based telephone network. As the network migrates to an Internet Protocol (IP)-based environment, media services are also moving to new environments. One of the most exciting trends is the emergence and adoption of complementary modular standards that leverage the Internet to enable media services to be developed, deployed, and updated more rapidly than before in a network architecture that supports concepts we call provisioning on demand and scaling on demand.</para> -->
 	<section
 		id="section-Design_Overview_and_Typical_Deployment_Scenario">
 		<title>Design Overview and Typical Deployment Scenario</title>
@@ -74,8 +74,23 @@ The modules deployed under SLEE control interact with Media Server SPI though Me
 -->
 		<formalpara>
 			<title>Typical Deployment Scenario</title>
-			<para>Mobicents Media Server offers a complete solution for all aspects of being a media gateway and server. This includes the Digital Signal Processors required to covert and compress <acronym>TDB</acronym> voice circuits into <acronym>IP</acronym> packets, announcement access points, conferencing, high-level IVR engines, <abbrev>etc.</abbrev> The gateway is able to provide signaling conversation and can operate as a Session Border Controller at the boundaries of Local Access Networks. The Media Server is always controlled by an external <acronym>JBCP</acronym> application server which implements the call control logic.</para>
+			<para>Mobicents Media Server offers a complete media gateway and server solution; here is a non-exhaustive list of MMS capabilities:</para>
 		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>Digital Signal Procesing to convert and compress TDB voice circuits into IP packets</para>
+			</listitem>
+			<listitem>
+				<para>announcement access points</para>
+			</listitem>
+			<listitem>
+				<para>conferencing</para>
+			</listitem>
+			<listitem>
+				<para>high-level Interactive Voice Response (<acronym>IVR</acronym>) engines</para>
+			</listitem>
+		</itemizedlist>
+		<para>The gateway is able to provide signaling conversation and can operate as a Session Border Controller at the boundaries of Local Access Networks (<acronym>LAN</acronym>s). The Media Server is always controlled by an external JBoss Communications Platform (<acronym>JBCP</acronym>) Application Server, which implements the call control logic.</para>
 		<mediaobject
 			id="mediaobj-sas-MMSArchitecture-MSDeployment.gif">
 			<imageobject>
@@ -92,14 +107,14 @@ The modules deployed under SLEE control interact with Media Server SPI though Me
 <!--
 Typical deployment scenario.
  
-Mobicent Media Server offers a complete solution for all aspects of media gateway and media server. This is include the Digital Signal Processors required to convert and compress TDM voice circuits into IP packets, Announcement access points, Conferencing, hi-level IVR engines, etc. The gateway is able to provide signalling conversation and can operate as Session Border Controller at the boundaries of the LANs.  The Media Server is always controlled by external JBCP Application server which implements the call control logic.
+Mobicent Media Server offers a complete solution for all aspects of media gateway and media server. This is include the Digital Signal Processors required to convert and compress TDM voice circuits into IP packets, Announcement access points, Conferencing, hi-level IVR engines, etc. The gateway is able to provide signalling conversation and can operate as Session Border Controller at the boundaries of the LANs. The Media Server is always controlled by external JBCP Application server which implements the call control logic.
 -->
 	<section
 		id="section-Endpoints">
 		<title>Endpoints</title>
 		<formalpara>
 			<title>Endpoints</title>
-			<para>It is convenient to consider a media gateway as a collection of endpoints. An endpoint is a logical representation of a physical entity such as an analog phone or a channel in a trunk. Endpoints are sources or sinks of data and can be physical or virtual. Physical endpoint creation requires hardware installation whil esoftware is sufficient for creating a virtual endpoint. An interface on a gateway that terminates a trunk connected to a PSTN switch is an example of a physical endpoint. An audio source in an audio content server is an example of a virtual endpoint.</para>
+			<para>It is convenient to consider a media gateway as a collection of endpoints. An endpoint is a logical representation of a physical entity such as an analog phone or a channel in a trunk. Endpoints are sources or sinks of data and can be physical or virtual. Physical endpoint creation requires hardware installation while software is sufficient for creating a virtual endpoint. An interface on a gateway that terminates a trunk connected to a Public Telephone Switched Network (<acronym>PSTN</acronym>) switch is an example of a physical endpoint. An audio source in an audio content server is an example of a virtual endpoint.</para>
 		</formalpara>
 <!--
 3.1 Endpoints. 
@@ -108,19 +123,19 @@ It is convinient to consider media gateway as a collection of endpoints. An Endp
 		<para>The type of the endpoint determines its functionality. Our analysis, so far, has led us to isolate the following basic endpoint types:</para>
 		<itemizedlist>
 			<listitem>
-				<para>Digital Signal 0 (<acronym>DS0</acronym>)</para>
+				<para>digital signal 0 (<acronym>DS0</acronym>)</para>
 			</listitem>
 			<listitem>
-				<para>Analog line</para>
+				<para>analog line</para>
 			</listitem>
 			<listitem>
-				<para>Announcement server access point</para>
+				<para>announcement server access point</para>
 			</listitem>
 			<listitem>
-				<para>Conference bridge acces point</para>
+				<para>conference bridge acces point</para>
 			</listitem>
 			<listitem>
-				<para>Packet relay</para>
+				<para>packet relay</para>
 			</listitem>
 			<listitem>
 				<para>Asynchronous Transfer Mode (<acronym>ATM</acronym>) &quot;trunk side&quot; interface</para>
@@ -136,7 +151,7 @@ The type of the endpoint determines its functionality. Our analysis,so far,has l
     * Conference bridge access point,
     * Packet relay,
     * ATM "trunk side"interface. -->
-		<para>This list is not exhaustive: there may be other types of endpoints defined in the future, for example test endpoints that could be used to check network quality, or frame-relay endpoints that could be used to manage audio channels multiplexed over a frame-relay virtual circuit.</para>
+		<para>This list is not final: there may be other types of endpoints defined in the future. For example, test endpoints that could be used to check network quality, or frame-relay endpoints that could be used to manage audio channels multiplexed over a frame-relay virtual circuit.</para>
 <!--
 This list is not final.There may be other types of endpoints defined in the future,for example test endpoints that could be used to check network quality,or frame-relay endpoints that could be used to manage audio channels multiplexed over a frame-relay virtual circuit.
 -->
@@ -145,10 +160,10 @@ This list is not final.There may be other types of endpoints defined in the futu
 			<varlistentry>
 				<term>Announcement Server Access Point</term>
 				<listitem>
-					<para>An announcement server endpoint naturally provides access to an announcement server. Upon receiving requests from the call agent, the announcement server will &quot;play&quot; a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one-way, or &quot;half-duplex&quot;:the announcement server is not expected to listen to the audio signals from the connection.</para>
+					<para>An announcement server endpoint naturally provides access to an announcement server. Upon receiving requests from the call agent, the announcement server will &quot;play&quot; a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one-way, or <quote>half-duplex</quote>: the announcement server is not expected to listen to the audio signals from the connection.</para>
 <!--			Announcement Server Access Point
 
-An announcement server endpoint provides access to an announcement service.  Under requests from the Call Agent, the announcement server will "play" a specified announcement.  A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one way, or "half  duplex" - the announcement server is not expected to listen to the audio signals from the connection.-->
+An announcement server endpoint provides access to an announcement service. Under requests from the Call Agent, the announcement server will "play" a specified announcement. A given announcement endpoint is not expected to support more than one connection at a time. Connections to an announcement server are typically one way, or "half  duplex" - the announcement server is not expected to listen to the audio signals from the connection.-->
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -157,31 +172,31 @@ An announcement server endpoint provides access to an announcement service.  Und
 					<para>An Interactive Voice Repsonse (<acronym>IVR</acronym>) endpoint provides access to an <acronym>IVR</acronym> service. Upon requests from the call agent, the <acronym>IVR</acronym> server will &quot;play&quot; announcements and tones, and will &quot;listen&quot; to responses, such as (<acronym>DTMF</acronym>) input or voice messages, from the user. A given <acronym>IVR</acronym> endpoint is not expected to support more than one connection at a time.</para>
 <!--			Interactive Voice Response Access Point
 
-An Interactive Voice Response (IVR) endpoint provides access to an IVR service.  Under requests from the Call Agent, the IVR server will "play" announcements and tones, and will "listen" to responses, such as DTMF input or voice messages, from the user. A given IVR endpoint is not expected to support more than one connection at a time.-->
+An Interactive Voice Response (IVR) endpoint provides access to an IVR service. Under requests from the Call Agent, the IVR server will "play" announcements and tones, and will "listen" to responses, such as DTMF input or voice messages, from the user. A given IVR endpoint is not expected to support more than one connection at a time.-->
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Conference Bridge Access Point</term>
 				<listitem>
-					<para>A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and the packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections shall be mixed according to the connection &quot;mode&quot; (as specified later in this document). The precise number of connections that an endpoint supports is characteristic of the gateway, and may in fact vary according to the alloction of resources within the gateway.</para>
+					<para>A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and the packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections shall be mixed according to the connection <quote>mode</quote> (as specified later in this document). The precise number of connections that an endpoint supports is characteristic of the gateway, and may, in fact, vary according to the alloction of resources within the gateway.</para>
 <!--			Conference Bridge Access Point
 
-A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and the packet networks, or between the endpoint and other endpoints in the same gateway.  The signals originating from these connections shall be mixed according to the connection "mode", as specified later in this document.  The precise number of connections that an endpoint supports is a characteristic of the gateway, and may in fact vary according to the allocation of resources within the gateway.-->
+A conference bridge endpoint is used to provide access to a specific conference. Media gateways should be able to establish several connections between the endpoint and the packet networks, or between the endpoint and other endpoints in the same gateway. The signals originating from these connections shall be mixed according to the connection "mode", as specified later in this document. The precise number of connections that an endpoint supports is a characteristic of the gateway, and may in fact vary according to the allocation of resources within the gateway.-->
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>Packet Relay</term>
+				<term>Packet Relay Endpoint</term>
 				<listitem>
-					<para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways, such as gateways which don't support compatible compression algorithms, or gateways that operate over different transmission networks such as IP and ATM.</para>
+					<para>A packet relay endpoint is a specific form of conference bridge that typically only supports two connections. Packet relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between incompatible gateways, such as gateways which don't support compatible compression algorithms, or gateways that operate over different transmission networks such as IP or ATM.</para>
 <!--			Packet Relay
 
-A packet relay endpoint is a specific form of conference bridge, that typically only supports two connections.  Packets relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between   incompatible gateways, for example gateways that do not support compatible compression algorithms, or gateways that operate over  different transmission networks such as IP and ATM.-->
+A packet relay endpoint is a specific form of conference bridge, that typically only supports two connections. Packets relays can be found in firewalls between a protected and an open network, or in transcoding servers used to provide interoperation between   incompatible gateways, for example gateways that do not support compatible compression algorithms, or gateways that operate over  different transmission networks such as IP and ATM.-->
 				</listitem>
 			</varlistentry>
 		</variablelist>
 		<formalpara>
 			<title>Signal Generators (<acronym>SG</acronym>s) and Signal Detectors (<acronym>SD</acronym>s)</title>
-			<para>This endpoint contains a set of resources which provide the media-processing functionality. It manages the interconnection of media streams between the resources, and arbitrates the flow of media stream data between them. Media services&mdash;or commands&mdash; are invoked by a client application on the endpoint; that endpoint causes the resources to perform the desired services, and directs events sent by the resources to the appropriate client. The resources in the endpoint include a primary resource and zero or more secondary resources. The primary resource is typically connected to an external media stream, and provides the data from that stream to the secondary resources. The secondary resources may process that stream (<abbrev>e.g.</abbrev> by recording it and/or performing automatic speech recognition on it), or may themselves generate generate media stream data (<abbrev>e.g.</abbrev> by playing a voice file) which is then transmitted to the primary resource.</para>
+			<para>This endpoint contains a set of resources which provide media-processing functionality. It manages the interconnection of media streams between the resources, and arbitrates the flow of media stream data between them. Media services, also called <quote>commands</quote>, are invoked by a client application on the endpoint; that endpoint causes the resources to perform the desired services, and directs events sent by the resources to the appropriate client. The resources in the endpoint include a primary resource and zero or more secondary resources. The primary resource is typically connected to an external media stream, and provides the data from that stream to the secondary resources. The secondary resources may process that stream (<abbrev>e.g.</abbrev> by recording it and/or performing automatic speech recognition on it), or may themselves generate generate media stream data (<abbrev>e.g.</abbrev>, by playing a voice file) which is then transmitted to the primary resource.</para>
 		</formalpara>
 		<mediaobject
 			id="mediaobj-sas-MMSArchitecture-Endpoint.gif">
@@ -200,10 +215,13 @@ A packet relay endpoint is a specific form of conference bridge, that typically 
 3.1.1 Signal Generators (SG) and Signal Detectors (SD)
 
 The Endpoint contains a set of resources, which provide the media processing functionality. It manages the interconnection of media streams between the resources, and arbitrates the flow of media stream data between them. Media services (or commands) are invoked by a client application on the Endpoint; the endpoint causes the resources to perform the desired services, and directs events sent by the resources to the appropriate client. The resources in the Endpoint include a primary resource and zero or more secondary resources. The primary resource is typically connected to an external media stream, and provides the data from that stream to the secondary resources. The secondary resources may process that stream (e.g., by recording it, performing ASR on it), or may themselves generate media stream data (e.g., by playing a voice file) which is transmitted to the primary resource.-->
-		<para>A resource is statically prepared if the preparation takes place at the time of creation. A resource is dynamically prepared if preparation of a particular resource (and its associated media streams) does not occur until it is required by a media operation. Static preparation can lead to less efficient usage of a server's resources, because resources may tend to be allocated for a longer time before use. However, once a resource has been prepared, it is guaranteed to be available for use. Dynamic preparation may utilize resources more efficiently because of Just-In-Time (<acronym>JIT</acronym>) allocation algorithms may be used.</para>
+		<para>A resource is statically-prepared if the preparation takes place at the time of creation. A resource is dynamically-prepared if preparation of a particular resource (and its associated media streams) does not occur until it is required by a media operation. Static preparation can lead to less efficient usage of the Media Server's resources, because those resources tend to be allocated for a longer time before use. However, once a resource has been prepared, it is guaranteed to be available for use. Dynamic preparation may utilize resources more efficiently because just-in-time (<acronym>JIT</acronym>) allocation algorithms may be used.</para>
 <!--A resource is statically prepared if preparation takes place at creation time. A resource is dynamically prepared if preparation of a particular resource (and its associated media streams) does not occur until it is required by a media operation. Static preparation can lead to less efficient usage of a server’s resources, because resources may tend to be allocated for a longer time before use. However, once a resource has been prepared, it is guaranteed to be available for use. Dynamic preparation may utilize resource more efficiently, because just-in-time (JIT) allocation algorithms may be used.-->
-		<para>An endpoint is divided logically into a Service Provider Interface (<acronym>SPI</acronym>) that is used to implement specific a endpoint, and a management interface which is used for implementing manageable resources of that endpoint. All endpoints are plugged into the Mobicents <acronym>SLEE</acronym> server by registering with the MBean server. The kernel in that sense is only an aggregator, and not a source of actual functionality. The functionality is provided by the <acronym>SPI</acronym> implementation of the Mbeans, and in fact, all major endpoints are manageable MBeans interconnected through the MBean server. The best way to add endpoints to a Media Server is to write a new <acronym>JMX</acronym> bean which provides implementation of the endpoint's <acronym>SPI</acronym>.</para>
-		<para>The <acronym>SPI</acronym> layer is an abstraction that endpoint providers must implement to enable their media-processing features. An implementation of <acronym>SPI</acronym> for an endpoint is referred to as an <emphasis>Endpoint Provider</emphasis>.</para>
+		<!--<remark>TBD: I'm not sure whether the following paragraphs should be included in the text:</remark>
+		<remark>
+			<para>An endpoint is divided logically into a Service Provider Interface (<acronym>SPI</acronym>) that is used to implement specific a endpoint, and a management interface which is used for implementing the manageable resources of that endpoint. All endpoints are plugged into the Mobicents <acronym>SLEE</acronym> server by registering with the MBean server. The kernel in that sense is only an aggregator, and not a source of actual functionality. The functionality is provided by the <acronym>SPI</acronym> implementation of the Mbeans, and in fact, all major endpoints are manageable MBeans interconnected through the MBean server. The best way to add endpoints to a Media Server is to write a new <acronym>JMX</acronym> bean which provides an implementation of the endpoint's <acronym>SPI</acronym>.</para>
+			<para>The <acronym>SPI</acronym> layer is an abstraction that endpoint providers must implement to enable their media-processing features. An implementation of <acronym>SPI</acronym> for an endpoint is referred to as an <emphasis>Endpoint Provider</emphasis>.</para>
+		</remark>-->
 <!--
 An endpoint is divided logically into a Service Provider Interface (SPI) that is used to implement specific endpoint and a management interface which is used for implementing manageable resources of the endpoint. All endpoints are plugged into Mobicents SLEE server by registering with the MBean server. The kernel in that sense is only an aggregator, and not a source of actual functionality. The functionality is provided by SPI implementation of the MBeans, and in fact all major endpoints are manageable MBeans interconnected through the MBean server. The best way to add endpoints to a Media Server is to write a new JMX MBean which provides implementation of the endpoint's SPI.
  
@@ -238,7 +256,7 @@ AnnEndpointImpl : Is responsible for announcement and allows only one Connection
 LoopEndpointImpl : This is used for testing the connection between the UA and media server. LoopEndpointImpl forwards the received media back to UA, so this is like echo test. 
  
  
-The primary use of the Endpoint is to configure media resources in order to perform media processing (e.g., playing or recording voice files, speech recognition) on a call.The components of the Endpoint are depicted in Figure 2.  
+The primary use of the Endpoint is to configure media resources in order to perform media processing (e.g., playing or recording voice files, speech recognition) on a call.The components of the Endpoint are depicted in Figure 2. 
  
  
  
@@ -273,12 +291,12 @@ STATE_STARTED :
 	<section
 		id="section-Endpoint_Identifiers">
 		<title>Endpoint Identifiers</title>
-		<para>The endpoint is identified by its local name. The syntax of the local name depends on the type of endpoint being named. However, the local name for each of these types is naturally hierarchical, beginning with a term which identifies the physical  gateway containing the given endpoint, and ending in a term which specifies the individual endpoint concerned.  With this in mind,  the JNDI naming rules are applied to the endpoint identifiers</para>
+		<para>An endpoint is identified by its local name. The syntax of the local name depends on the type of endpoint being named. However, the local name for each of these types is naturally hierarchical, beginning with a term which identifies the physical gateway containing the given endpoint, and ending in a term which specifies the individual endpoint concerned. With this in mind,  the JNDI naming rules are applied to the endpoint identifiers.</para>
 	</section>
 	<section
 		id="section-Connections">
 		<title>Connections</title>
-		<para>Connections are created on the call agent on each endpoint that will be involved in the "call."  In the classic example of a connection between two "DS0" endpoints (EP1 and EP2), the call agents controlling the end points will establish two connections (C1 and C2):</para>
+		<para>Connections are created on the call agent on each endpoint that will be involved in the <quote>call</quote>. In the classic example of a connection between two <quote>DS0</quote> endpoints (EP1 and EP2), the call agents controlling the endpoints establish two connections (C1 and C2):</para>
 		<mediaobject
 			id="mediaobj-sas-MMSArchitecture-dia-MsConnection.jpg">
 			<imageobject>
@@ -292,10 +310,10 @@ STATE_STARTED :
 				<para>Media Server Connections</para>
 			</caption>
 		</mediaobject>
-		<para>Each connection will be designated locally by a connection identifier, and will be characterized by connection attributes.</para>
+		<para>Each connection is designated locally by a connection identifier, and will be characterized by connection attributes.</para>
 		<formalpara>
 			<title>Resources and Connection Attributes</title>
-			<para>Many types of resources will be associated to a connection, such as specific signal processing functions or packetization functions. Generally, these resources fall in two categories:</para>
+			<para>Many types of resources can be associated with a connection, such as specific signal-processing functions or packetization functions. Generally, these resources fall in two categories:</para>
 		</formalpara>
 		<variablelist
 			id="varlist-Two_Types_of_Resources">
@@ -303,57 +321,57 @@ STATE_STARTED :
 			<varlistentry>
 				<term>Externally-Visible Resources</term>
 				<listitem>
-					<para>Externally visible resources, that affect the format of "the bits on the network" and must be communicated to the second endpoint involved in the connection.</para>
+					<para>Externally-visible resources are ones which affect the format of <quote>the bits on the network</quote>, and must be communicated to the second endpoint involved in the connection.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Internal Resources</term>
 				<listitem>
-					<para>Internal resources, that determine which signal is being sent over the connection and how the received signals are processed by the endpoint</para>
+					<para>Internal resources are resources which determine which signal is being sent over the connection and how the received signals are processed by the endpoint.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>The resources allocated to a connection, and more generally the handling of the connection, are chosen by the media server under instructions from the call agent.  The call agent will provide these  instructions by sending two set of parameters to the media server:</para>
+		<para>The resources allocated to a connection or, more generally, to the handling of the connection, are chosen by the Media Server under instructions from the call agent. The call agent provides these instructions by sending two set of parameters to the Media Server:</para>
 		<itemizedlist
 			id="itemlist-Two_Sets_of_Parameters">
 			<listitem>
 				<para>The local directives instruct the gateway on the choice of resources that should be used for a connection.</para>
 			</listitem>
 			<listitem>
-				<para>When available, the "session description" provided by the other end of the connection.</para>
+				<para>When available, the <quote>session description</quote> is provided by the other end of the connection.</para>
 			</listitem>
 		</itemizedlist>
-		<para>The local directives specify such parameters as the mode of the connection (e.g. send only, send-receive), preferred coding or packetization methods, usage of echo cancellation or silence suppression.  (A detailed list can be found in the specification of   the LocalConnectionOptions parameter of the CreateConnection command.) For each of these parameters, the call agent can either specify a value, a range of value, or no value at all.  This allow various implementations to implement various level of control, from a very tight control where the call agent specifies minute details of   the connection handling to a very loose control where the call agent only specifies broad guidelines, such as the maximum bandwidth, and let the gateway choose the detailed values.</para>
-		<para>Based on the value of the local directives, the gateway will determine the resources allocated to the connection.  When this is possible, the gateway will choose values that are in line with the remote session description - but there is no absolute requirement that the parameters be exactly the same.</para>
-		<para>Once the resource have been allocated, the gateway will compose a "session description" that describes the way it intends to receive packets.  Note that the session description may in some cases present a range of values.  For example, if the gateway is ready to accept one of several compression algorithm, it can provide a list of these accepted algorithms.</para>
+		<para>The local directives specify parameters such as the mode of the connection (e.g. send-only, or send-receive), preferred coding or packetization methods, the usage of echo-cancellation or silence suppression, etc. (A more comprehensive and detailed list can be found in the specification of the <literal>LocalConnectionOptions</literal> parameter of the <literal>CreateConnection</literal> command.) For each of these parameters, the call agent can either specify a value, a range of values, or no value at all. This allow various implementations to implement various levels of control, from very tight control where the call agent specifies minute details of the connection-handling, to very loose control, where the call agent only specifies broad guidelines, such as the maximum bandwidth, and lets the gateway select the detailed values itself.</para>
+		<para>Based on the value of the local directives, the gateway determines the resources allocated to the connection. When this is possible, the gateway will choose values that are in line with the remote session description; however, there is no absolute requirement that the parameters will be exactly the same.</para>
+		<para>Once the resource have been allocated, the gateway will compose a <quote>session description</quote> that describes the way it intends to receive packets. Note that the session description may in some cases present a range of values. For example, if the gateway is ready to accept one of several compression algorithms, it can provide a list of these accepted algorithms.</para>
 		<formalpara
-			id="fpara-Local_Connections_are_a_Special_Case">
-			<title>Local Connections are a Special Case</title>
-			<para>Large gateways include a large number of endpoints which are often of different types.  In some networks, we may often have to setup connections between endpoints that are located within the same gateway.  Examples of such connections may be:</para>
+			id="fpara-Local_Connections_Are_a_Special_Case">
+			<title>Local Connections Are a Special Case</title>
+			<para>Large gateways include a large number of endpoints which are often of different types. In some networks, we may often have to setup connections between endpoints located within the same gateway. Examples of such connections may be:</para>
 		</formalpara>
 		<itemizedlist
 			id="itemlist-Examples_of_Local_Connections">
 			<listitem>
-				<para>Connecting a trunk line to a wiretap device,</para>
+				<para>connecting a trunk line to a wiretap device;</para>
 			</listitem>
 			<listitem>
-				<para>Connecting a call to an Interactive Voice-Response unit</para>
+				<para>connecting a call to an Interactive Voice-Response (<acronym>IVR</acronym>) unit;</para>
 			</listitem>
 			<listitem>
-				<para>Connecting a call to a Conferencing unit</para>
+				<para>connecting a call to a conferencing unit; or,</para>
 			</listitem>
 			<listitem>
-				<para>Routing a call from on endpoint to another, something often described as a "hairpin" connection.</para>
+				<para>routing a call from one endpoint to another, something often described as a <quote>hairpin</quote> connection.</para>
 			</listitem>
 		</itemizedlist>
-		<para>Local connections are much simpler to establish than network connections. In most cases, the connection will be established through some local interconnecting device, such as for example a TDM bus.</para>
+		<para>Local connections are much simpler to establish than network connections. In most cases, the connection will be established through some local interconnecting device, such as, for example, a TDM bus.</para>
 	</section>
 	<section
 		id="section-Events_and_Signals">
 		<title>Events and Signals</title>
-		<para>The concept of events and signals is central to the Media Server.  A Call Controller may ask to be notified about certain events occurring in an endpoint  (e.g., off-hook events) by passing event's identifier as parameter to endpoint's subscribe(...) method.</para>
-		<para>A Call Controller may also request certain signals to be applied to an endpoint (e.g., dial-tone) by supplying the identifier of the event in as argument to endpoint's apply(...) method.</para>
-		<para>Events and signals are grouped in packages, within which they share the same name space which we will refer to as event identifier in the following. Event identifiers are integer constants. Some of the events may be parametrized with additional data such as DTMF mask.</para>
+		<para>The concept of events and signals is central to the Media Server. A Call Controller may ask to be notified about certain events occurring in an endpoint  (for example: off-hook events) by passing an event identifier as a parameter to an endpoint's <function>subscribe()</function> method.</para>
+		<para>A Call Controller may also request certain signals to be applied to an endpoint (for example: a dial-tone) by supplying the identifier of the event as an argument to the endpoint's <function>apply()</function> method.</para>
+		<para>Events and signals are grouped in packages, within which they share the same namespace which we will refer to as an event identifier in the following. Event identifiers are integer constants. Some of the events may be parametrized with additional data such as with a DTMF mask.</para>
 		<para>Signals are divided into different types depending on their behavior:</para>
 		<variablelist
 			id="varlist-Types_of_Signals">
@@ -361,36 +379,36 @@ STATE_STARTED :
 			<varlistentry>
 				<term>On/off (OO)</term>
 				<listitem>
-					<para>Once applied, these signals last until they are turned off.  This can only happen as the result of a reboot/restart or a new signal request where the signal is explicitly turned off.  Signals of type OO are defined to be idempotent, thus multiple requests to turn a given OO signal on (or off) are perfectly valid.  An On/Off signal could be a visual message-waiting indicator (VMWI).  Once turned on, it MUST NOT be turned off until explicitly instructed to by the Call Agent, or as a result of an endpoint restart, i.e., these signals will not turn off as a result of the detection of a requested event.</para>
+					<para>Once applied, these signals last until they are turned off. This can only happen as the result of a reboot/restart or a new signal request where the signal is explicitly turned off. Signals of type OO are defined to be idempotent; thus, multiple requests to turn a given OO signal on (or off) are perfectly valid. An On/Off signal could be a visual message-waiting indicator (<acronym>VMWI</acronym>). Once turned on, it <emphasis>must not</emphasis> be turned off until explicitly instructed to by the Call Agent, or as a result of an endpoint restart. In other words, these signals will not turn off as a result of the detection of a requested event.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Time-out (TO)</term>
 				<listitem>
-					<para>Once applied, these signals last until they are either cancelled (by the occurrence of an event or by explicit releasing of signal generator), or a signal-specific period of time has elapsed.  A TO signal that times out will generate an "operation complete" event.  If an event occurs prior to the 180 seconds, the signal will, by default, be stopped (the "Keep signals active" action - will override this behavior).  If the signal is not stopped, the signal will time out, stop and generate an "operation complete" event, about which the server controller may or may not have requested to be notified.  A TO signal that fails after being started, but before having generated an "operation complete" event will generate an "operation failure" event which will include the name of the signal that failed.  Deletion of a connection with an active TO signal will result in such a failure.</para>
+					<para>Once applied, these signals last until they are either cancelled (by the occurrence of an event or by explicit releasing of signal generator), or a signal-specific period of time has elapsed. A TO signal that times out will generate an <quote>operation complete</quote> event. If an event occurs prior to the allotted 180 seconds, the signal will, by default, be stopped (the <quote>keep signals active</quote> action can be used to override this behavior). If the signal is not stopped, the signal will time out, stop, and generate an <quote>operation complete</quote> event, about which the server controller may or may not have requested to be notified. A TO signal that fails after being started, but before having generated an <quote>operation complete</quote> event, will generate an <quote>operation failure</quote> event which will include the name of the signal that failed. Deletion of a connection with an active TO signal will result in such a failure.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>Brief (BR)</term>
 				<listitem>
-					<para>The duration of these signals is normally so short that they stop on their own.  If a signal stopping event occurs, or a new signal requests is applied, a currently active BR signal will not stop.  However, any pending BR signals not yet applied will be cancelled (a BR signal becomes pending if a signal request includes a BR signal, and there is already an active BR signal). As an example, a brief tone could be a DTMF digit. If the DTMF digit "1" is currently being played, and a signal stopping event occurs, the "1" would play to completion.  If a request to play DTMF digit "2" arrives before DTMF digit "1" finishes playing, DTMF digit "2" would become pending.</para>
+					<para>The duration of these signals is normally so short that they stop on their own. If a signal stopping event occurs, or a new signal request is applied, a currently active BR signal will not stop. However, any pending BR signals not yet applied will be cancelled (a BR signal becomes pending if a signal request includes a BR signal, and there is already an active BR signal). As an example, a brief tone could be a DTMF digit. If the DTMF digit <literal>1</literal> is currently being played, and a signal stopping event occurs, the <literal>1</literal> would play to completion. If a request to play DTMF digit <literal>2</literal> arrives before DTMF digit <literal>1</literal> finishes playing, DTMF digit <literal>2</literal> would become pending.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
-		<para>Signal(s) may be generated on endpoints or on connections. To each event is associated one or more actions, which can be:</para>
+		<para>Signal(s) may be generated on endpoints or on connections. One or more actions such as the following are associated with each event:</para>
 		<itemizedlist
 			id="itemlist-Types_of_Actions_Which_Can_Be_Associated_with_Events">
 			<listitem>
-				<para>Notify the event immediately, together with the accumulated list of observed events</para>
+				<para>notify the event immediately, together with the accumulated list of observed events;</para>
 			</listitem>
 			<listitem>
-				<para>Accumulate the event in an event buffer, but don't notify yet</para>
+				<para>accumulate the event in an event buffer, but do not yet notify;</para>
 			</listitem>
 			<listitem>
-				<para>Keep Signal(s) active</para>
+				<para>keep signal(s) active; or</para>
 			</listitem>
 			<listitem>
-				<para>Ignore the event</para>
+				<para>ignore the event.</para>
 			</listitem>
 		</itemizedlist>
 	</section>
