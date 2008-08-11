@@ -14,7 +14,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>3-SNAPSHOT</version>
+		<version>3</version>
 		<relativePath>../../parent/pom.xml</relativePath>
 	</parent>
 		
@@ -35,10 +35,10 @@
 		<presence.server.notifier.presrules.auid>org.openmobilealliance.pres-rules</presence.server.notifier.presrules.auid>
 		<presence.server.notifier.presrules.documentName>pres-rules</presence.server.notifier.presrules.documentName>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
-		<mobicents.servers.jainslee.version>1.2.0.GA-SNAPSHOT</mobicents.servers.jainslee.version>
-		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.du.version>
-		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2-SNAPSHOT</mobicents.tools.mavenplugin.eclipse.version>
-		<!-- maven stuff, don't change -->
+		<mobicents.servers.jainslee.version>1.2.0.CR1</mobicents.servers.jainslee.version>
+		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2</mobicents.tools.mavenplugin.du.version>
+		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
+		<!-- don't change -->
 		<mobicents.sip.presence.service.finalName.prefix>
 			msps-
 		</mobicents.sip.presence.service.finalName.prefix>
