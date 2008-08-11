@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>server-parent</artifactId>
 		<groupId>org.mobicents.servers.xdm</groupId>
-		<version>1.0.0.BETA2</version>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>server-core-DU</artifactId>
