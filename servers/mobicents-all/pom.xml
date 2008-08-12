@@ -13,10 +13,14 @@
 		<checkout.basedir>${basedir}/target/servers/</checkout.basedir>
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
-		<jainslee.scmVersion>HEAD</jainslee.scmVersion>
-		<media.scmVersion>HEAD</media.scmVersion>
-		<sippresence.scmVersion>HEAD</sippresence.scmVersion>
-		<sipservlets.scmVersion>HEAD</sipservlets.scmVersion>
+		
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.CR1</jainslee.connectionURL>
+		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-core-1.0.0.BETA3</media.core.connectionURL>
+		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-controllers-1.0.0.BETA3</media.controllers.connectionURL>
+		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-examples-1.0.0.BETA3</media.examples.connectionURL>
+		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
+		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</sippresence.connectionURL>
+		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.5</sipservlets.connectionURL>
 	</properties>
 	
 	<profiles>
@@ -36,34 +40,94 @@
 						</goals>
 						<phase>validate</phase>
 						<configuration>
-							<scmVersion>${jainslee.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<checkoutDirectory>
 								${checkout.basedir}/jain-slee
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/jain-slee
+								${jainslee.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
 						</configuration>
 					</execution>
 					<execution>
-						<id>media-checkout</id>
+						<id>media-core-checkout</id>
 						<goals>
 							<goal>checkout</goal>
 						</goals>
 						<phase>validate</phase>
 						<configuration>
-							<scmVersion>${media.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<checkoutDirectory>
-								${checkout.basedir}/media
+								${checkout.basedir}/media/core
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media
+								${media.core.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-controllers-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<checkoutDirectory>
+								${checkout.basedir}/media/controllers
+							</checkoutDirectory>
+							<connectionUrl>
+								${media.controllers.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-examples-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<checkoutDirectory>
+								${checkout.basedir}/media/examples
+							</checkoutDirectory>
+							<connectionUrl>
+								${media.examples.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-release-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<checkoutDirectory>
+								${checkout.basedir}/media/release
+							</checkoutDirectory>
+							<connectionUrl>
+								${media.release.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -76,14 +140,14 @@
 						</goals>
 						<phase>validate</phase>
 						<configuration>
-							<scmVersion>${sippresence.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<checkoutDirectory>
 								${checkout.basedir}/sip-presence
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-presence
+								${sippresence.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -96,14 +160,14 @@
 						</goals>
 						<phase>validate</phase>
 						<configuration>
-							<scmVersion>${sipservlets.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<skipCheckoutIfExists>true</skipCheckoutIfExists>
 							<checkoutDirectory>
 								${checkout.basedir}/sip-servlets
 							</checkoutDirectory>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
+								${sipservlets.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -133,29 +197,87 @@
 							<basedir>
 								${checkout.basedir}/jain-slee
 							</basedir>
-							<scmVersion>${jainslee.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/jain-slee
+								${jainslee.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
 						</configuration>
 					</execution>
 					<execution>
-						<id>media-update</id>
+						<id>media-core-update</id>
 						<goals>
 							<goal>update</goal>
 						</goals>
 						<phase>validate</phase>
 						<configuration>
 							<basedir>
-								${checkout.basedir}/media
+								${checkout.basedir}/media/core
 							</basedir>
-							<scmVersion>${media.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media
+								${media.core.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-controllers-update</id>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<basedir>
+								${checkout.basedir}/media/controllers
+							</basedir>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<connectionUrl>
+								${media.controllers.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-examples-update</id>
+						<goals>
+							<goal>update</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<basedir>
+								${checkout.basedir}/media/examples
+							</basedir>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<connectionUrl>
+								${media.examples.connectionURL}
+							</connectionUrl>
+							<username>${checkout.username}</username>
+							<password>${checkout.password}</password>
+						</configuration>
+					</execution>
+					<execution>
+						<id>media-release-checkout</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<scmVersion>HEAD</scmVersion>
+							<scmVersionType>revision</scmVersionType>
+							<skipCheckoutIfExists>true</skipCheckoutIfExists>
+							<checkoutDirectory>
+								${checkout.basedir}/media/release
+							</checkoutDirectory>
+							<connectionUrl>
+								${media.release.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -171,10 +293,10 @@
 							<basedir>
 								${checkout.basedir}/sip-presence
 							</basedir>
-							<scmVersion>${sippresence.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-presence
+								${sippresence.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
@@ -190,10 +312,10 @@
 							<basedir>
 								${checkout.basedir}/sip-servlets
 							</basedir>
-							<scmVersion>${sipservlets.scmVersion}</scmVersion>
+							<scmVersion>HEAD</scmVersion>
 							<scmVersionType>revision</scmVersionType>
 							<connectionUrl>
-								scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets
+								${sipservlets.connectionURL}
 							</connectionUrl>
 							<username>${checkout.username}</username>
 							<password>${checkout.password}</password>
