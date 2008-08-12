@@ -137,7 +137,7 @@
 		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets"/>
 
 		<mkdir dir="${jboss.home}/server/${jboss.config}/conf/dars" />
-		<copy verbose="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/src/site/resources/click2call-dar.properties" todir="${jboss.home}/server/${jboss.config}/conf/dars" />
+		<copy verbose="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/src/site/resources/click2call-dar.properties" toFile="${jboss.home}/server/${jboss.config}/conf/dars/mobicents-dar.properties" />
 
 		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/server-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/server.xml" />
 		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/context-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/context.xml" />
@@ -146,7 +146,7 @@
 		<echo>Done copying.</echo>
 		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}">
-			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted} -X" />
+			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/sip-servlets-examples/click-to-call">
