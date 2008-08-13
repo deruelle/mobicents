@@ -52,6 +52,8 @@
   <classpathentry kind="src" path="mgcp-demo/call-sbb/src/main/java"/>
   <classpathentry kind="src" path="mgcp-demo/crcx-endpoint-sbb/src/main/java"/>
   <classpathentry kind="src" path="mgcp-demo/crcx-endpoint-sbb/src/main/resources"/>
+  <classpathentry kind="src" path="mgcp-demo/rqnt-sbb/src/main/java"/>
+  <classpathentry kind="src" path="mgcp-demo/rqnt-sbb/src/main/resources"/>
   <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/asm/asm/1.5.3/asm-1.5.3.jar"/>
@@ -102,16 +104,16 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/seam/jboss-seam-ui/2.0.0.GA/jboss-seam-ui-2.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/seam/jboss-seam/2.0.0.GA/jboss-seam-2.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jbpm/jbpm-jpdl/3.2.1/jbpm-jpdl-3.2.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.0.GA-SNAPSHOT/mobicents-core-jar-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-location-sbb/1.2.0.GA-SNAPSHOT/sip-services-location-sbb-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-events/1.2.0.GA-SNAPSHOT/sip-events-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ra/1.2.0.GA-SNAPSHOT/sip-ra-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ratype/1.2.0.GA-SNAPSHOT/sip-ratype-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/tts-ratype/1.2.0.GA-SNAPSHOT/tts-ratype-1.2.0.GA-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/mgcp-ratype/1.0.0.BETA3-SNAPSHOT/mgcp-ratype-1.0.0.BETA3-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/msc-ratype/1.0.0.BETA3-SNAPSHOT/msc-ratype-1.0.0.BETA3-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-constants/1.0.0.BETA3-SNAPSHOT/mobicents-media-server-constants-1.0.0.BETA3-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-msc-api/1.0.0.BETA3-SNAPSHOT/mobicents-media-server-msc-api-1.0.0.BETA3-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.0.CR1/mobicents-core-jar-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-location-sbb/1.2.0.CR1/sip-services-location-sbb-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-events/1.2.0.CR1/sip-events-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ra/1.2.0.CR1/sip-ra-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ratype/1.2.0.CR1/sip-ratype-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/tts-ratype/1.2.0.CR1/tts-ratype-1.2.0.CR1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/mgcp-ratype/1.0.0.BETA4-SNAPSHOT/mgcp-ratype-1.0.0.BETA4-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/msc-ratype/1.0.0.BETA4-SNAPSHOT/msc-ratype-1.0.0.BETA4-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-constants/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-constants-1.0.0.BETA4-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-msc-api/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-msc-api-1.0.0.BETA4-SNAPSHOT.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>
 </classpath>

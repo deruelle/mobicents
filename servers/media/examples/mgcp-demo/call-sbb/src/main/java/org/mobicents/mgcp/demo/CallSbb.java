@@ -45,6 +45,7 @@ public abstract class CallSbb implements Sbb {
 	public final static String CRCX_CONNECTIONID_DEMO = "2010";
 	public final static String CRCX_ENDPOINTID_DEMO = "2011";
 	public final static String MDCX_DEMO = "2012";
+	public final static String RQNT_DEMO = "2013";
 
 	private SbbContext sbbContext;
 
@@ -76,6 +77,9 @@ public abstract class CallSbb implements Sbb {
 			forwardEvent(relation, aci, evt);
 		} else if (destination.indexOf(MDCX_DEMO) > 0) {
 			ChildRelation relation = getMDCXSbbChild();
+			forwardEvent(relation, aci, evt);
+		} else if (destination.indexOf(RQNT_DEMO) > 0) {
+			ChildRelation relation = getRQNTSbbChild();
 			forwardEvent(relation, aci, evt);
 		}
 		logger.info("MGCP Demo can understand only "+CRCX_CONNECTIONID_DEMO+", "+CRCX_ENDPOINTID_DEMO+" and "+MDCX_DEMO+" dialed numbers");
@@ -125,6 +129,8 @@ public abstract class CallSbb implements Sbb {
 	public abstract ChildRelation getCRCXEndpointSbbChild();
 
 	public abstract ChildRelation getMDCXSbbChild();
+	
+	public abstract ChildRelation getRQNTSbbChild();
 
 	public void unsetSbbContext() {
 	}
