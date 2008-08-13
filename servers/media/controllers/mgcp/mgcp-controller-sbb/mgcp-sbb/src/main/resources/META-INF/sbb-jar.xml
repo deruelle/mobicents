@@ -132,7 +132,7 @@
 			<event-name>NotificationRequest</event-name>
 			<event-type-ref>
 				<event-type-name>
-					net.java.slee.resource.mgcp.NOTIFICATIONREQUEST
+					net.java.slee.resource.mgcp.NOTIFICATION_REQUEST
 				</event-type-name>
 				<event-type-vendor>net.java</event-type-vendor>
 				<event-type-version>1.0</event-type-version>

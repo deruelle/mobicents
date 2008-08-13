@@ -44,7 +44,7 @@ public class MessageHandler implements Runnable {
     }
 
     /**
-     * RFC 3435, $3.5.5: split piggybacked messages again
+     * RFC 3435, $3.5.5: split piggy backed messages again
      * <P>
      * Messages within the packet are split on their separator "EOL DOT EOL".
      *

@@ -88,7 +88,7 @@
     </event-definition>
     
     <event-definition>
-        <event-type-name>net.java.slee.resource.mgcp.NOTIFICATIONREQUEST</event-type-name>
+	<event-type-name>net.java.slee.resource.mgcp.NOTIFICATION_REQUEST</event-type-name>
         <event-type-vendor>net.java</event-type-vendor>
         <event-type-version>1.0</event-type-version>
         <event-class-name>jain.protocol.ip.mgcp.message.NotificationRequest</event-class-name>
