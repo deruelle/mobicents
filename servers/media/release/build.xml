@@ -170,9 +170,21 @@
 			<fileset file="${ant.file.media.server.release}/../../core/server-constants/target/mobicents-media-server-constants-${release.version}.jar" />
 			<fileset file="${release.dir.all}/tmp/server/${jboss.config}/lib/jain-sip-ri-*.jar" />
 		</copy>
+		
+		<!-- Build the Controllers and then execute the release profile  -->
+		<exec executable="${mvn.executable}" dir="${media.server.release}/../../controllers">
+			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+		</exec>	
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers">
+			<arg line="-o install -Drelease.name=all -Prelease" />
+		</exec>		
 
-		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
-			<arg line="clean install -Drelease.name=all -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp -P release" />
+		<!-- Build the Examples and then execute the release profile  -->
+		<exec executable="${mvn.executable}" dir="${media.server.release}/../../examples">
+			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+		</exec>	
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples">
+			<arg line="-o install -Drelease.name=all -Prelease" />
 		</exec>
 
 		<delete dir="${release.dir.all}/tmp" />
@@ -208,17 +220,17 @@
 		</tstamp>
 		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip" />
 
-		<antcall target="release-core">
+		<!--antcall target="release-core">
 			<param name="zip.filename" value="mobicents-media-server-core-${release.version}-${time.stamp}.zip" />
-		</antcall>
+		</antcall -->
 		<antcall target="release-all">
 			<param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
 		</antcall>
-		<antcall target="release-src">
+		<!-- antcall target="release-src">
 			<param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
-		</antcall>
+		</antcall -->
 
-		<antcall target="clean" />
+		<!-- antcall target="clean" / -->
 	</target>
 
 	<target name="clean">
@@ -242,6 +254,12 @@
 		<defaultexcludes add="**/.project" />
 		<defaultexcludes add="**/.classpath" />
 		<defaultexcludes add="**/*.class" echo="true" />
+	</target>
+	
+	<target name="test">
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
+			<arg line="clean install -Drelease.name=all -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp -P release" />
+		</exec>
 	</target>
 
 </project>
