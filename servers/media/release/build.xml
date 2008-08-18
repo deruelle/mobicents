@@ -220,17 +220,17 @@
 		</tstamp>
 		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip" />
 
-		<!--antcall target="release-core">
+		<antcall target="release-core">
 			<param name="zip.filename" value="mobicents-media-server-core-${release.version}-${time.stamp}.zip" />
-		</antcall -->
+		</antcall>
 		<antcall target="release-all">
 			<param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
 		</antcall>
-		<!-- antcall target="release-src">
+		<antcall target="release-src">
 			<param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
-		</antcall -->
+		</antcall>
 
-		<!-- antcall target="clean" / -->
+		<antcall target="clean" />
 	</target>
 
 	<target name="clean">
