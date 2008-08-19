@@ -213,7 +213,8 @@
 			<para></para>
 		</formalpara>
 	</section>
-	<xi:include
+	<!--TBD: (These and other relevant examples should be included in the Resource Adapter sections)-->
+	<!--<xi:include
 		href="../examples/section-End-to-End_SIP_Example.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
@@ -224,6 +225,6 @@
 		xmlns:xi="http://www.w3.org/2001/XInclude" />
 	<xi:include
 		href="../examples/section-Back-to-Back_User_Agent_Example.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />
+		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
 </section>
 

@@ -2,59 +2,11 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <chapter
-	id="chapter-Running_Mobicents">
-	<title>Running Mobicents</title>
-	<section id="section-Running_the_Mobicents_Converged_Application_Server">
-	<title>Running the Mobicents Converged Application Server</title>
-		<para>Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (Linux) or <command>run.bat</command> (Windows) The precise instructions depend on which platform you are running Mobicents on.</para>
-		<variablelist>
-			<title>Platform Mobicents is Running On</title>
-			<varlistentry>
-				<term>Linux</term>
-				<listitem>
-					<orderedlist>
-						<listitem>
-							<para>Change your working directory to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory:</para>
-							<screen>cd &lt;topmost_mobicents_directory&gt;/server/bin</screen>
-						</listitem>
-						<listitem>
-							<para>Ensure that the <filename>run.sh</filename> file is executable. If it isn't, modify its permissions so that it is:</para>
-							<screen>chmod +x run.sh</screen>
-						</listitem>
-						<listitem>
-							<para>Finally, start the Mobicents Application Server:.</para>
-							<screen>./run.sh</screen>
-							<note>
-								<para>The above command is a shortened version of this equivalent command:</para>
-								<screen>./run.sh -c all -b 127.0.0.1</screen>
-							</note>
-						</listitem>
-					</orderedlist>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>Windows</term>
-				<listitem>
-					<orderedlist>
-						<listitem>
-							<para>Change your working directory to the <filename><replaceable>&lt;mobicents_folder&gt;</replaceable>\server\bin</filename> folder.</para>
-						</listitem>
-						<listitem>
-							<para>Start the Mobicents Application Server:</para>
-							<screen>run.bat</screen>
-							<note>
-								<para>The above command is a shortened version of this equivalent command:</para>
-								<screen>run.bat -c all -b 127.0.0.1</screen>
-							</note>
-						</listitem>
-					</orderedlist>
-				</listitem>
-			</varlistentry>
-		</variablelist>
-	</section>
+	id="chapter-Working_with_the_Mobicents_Management_Console">
+	<title>Working with the Mobicents Management Console</title>
 	<section
-		id="section-Working_with_the_Mobicents_Management_Console">
-		<title>Working with the Mobicents Management Console</title>
+		id="section-Introduction_to_the_MMC">
+		<title>Introduction to the MMC</title>
 		<para>Once Mobicents is running, you can access the management console by pointing your browser to <systemitem><ulink
 					url="http://localhost:8080/management-console/"/>
 		</systemitem>. If you are working with a remote machine, replace <userinput>localhost</userinput> with the name of the remote machine's host, and <userinput>8080</userinput> with the correct port.</para>
@@ -71,13 +23,13 @@
 			</listitem>
 		</itemizedlist>
 		<figure
-			id="figure-top-ss-mmc-initial_view.png">
+			id="figure-top-WorkingWithMMC-ss-MMCInitialView.png">
 			<title>The Mobicents Management Console, initial view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-initial_view.png"
+						fileref="images/top-WorkingWithMMC-ss-MMCInitialView.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>
@@ -91,13 +43,13 @@
 			<para>This view can be selected by clicking on <literal>Deployable Units</literal> from the Main Menu, and shows a list of all deployable units that can be deployed with the Mobicents Converged Application Server.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-deployable_units">
+			id="figure-top-WorkingWithMMC-ss-DeployableUnits.png">
 			<title>The <literal>Deployable Units</literal> view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-deployable_units.png"
+						fileref="images/top-WorkingWithMMC-ss-DeployableUnits.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>
@@ -110,13 +62,13 @@
 			<para>The next view on the Main Menu is the <literal>Components</literal> view, which displays a list of component types, such as services, <acronym>SBB</acronym>s, resource adapters, <abbrev>etc.</abbrev>, and their current count. Clicking on a component type will cause the management console to show a list of components for that type. From there, you can click on the different components to see their details.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-components">
+			id="figure-top-WorkingWithMMC-ss-MMCComponents.png">
 			<title>The <literal>Compenents</literal> view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-components.png"
+						fileref="images/top-WorkingWithMMC-ss-MMCComponents.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>
@@ -128,13 +80,13 @@
 			<para>The <literal>Services</literal> view naturally shows the list of available services, their state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and all currently possible actions for that resource adapter, such as <literal>activate</literal>, <literal>deactivate</literal> or <literal>remove</literal>.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-services">
+			id="figure-top-WorkingWithMMC-ss-Services.png">
 			<title>The <literal>Services</literal> view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-services.png"
+						fileref="images/top-WorkingWithMMC-ss-Services.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>
@@ -147,13 +99,13 @@
 			<para>Choosing <literal>Resources</literal> from the <literal>Main Menu</literal> will put the currently-deployed resource adapters in view. There, you can see their name, type, vendor and version. Clicking on one of the resource adapters will provide further information such as the name of the deployable unit, its state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and the currenty possible actions for specific services, such as activating, deactivating, or removing them.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-resources">
+			id="figure-top-WorkingWithMMC-ss-Resources.png">
 			<title>The <literal>Resources</literal> view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-resources.png"
+						fileref="images/top-WorkingWithMMC-ss-Resources.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>
@@ -165,13 +117,13 @@
 			<para>The Activity Contexts view can be displayed by clicking on <literal>Activities</literal> from the <literal>Main Menu</literal>, and shows the current activity contexts. The <literal>TTL</literal> field shows how much time the activity can remain idle before being marked for garbage collection.</para>
 		</formalpara>
 		<figure
-			id="figure-top-ss-mmc-activities">
+			id="figure-top-WorkingWithMMC-ss-MMCActivities.png">
 			<title>The <literal>Activities</literal> view</title>
 			<mediaobject>
 				<imageobject>
 					<imagedata
 						align="center"
-						fileref="images/top-ss-mmc-activities.png"
+						fileref="images/top-WorkingWithMMC-ss-MMCActivities.png"
 						format="PNG"/>
 				</imageobject>
 			</mediaobject>

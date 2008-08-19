@@ -10,7 +10,7 @@
 		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="chapter-Installation.xml" />
+		href="chapter-Working_with_the_Mobicents_Management_Console.xml" />
 <!--	<xi:include
 		href="Appendix.xml"
 		xmlns:xi="http://www.w3.org/2001/XInclude" />-->
