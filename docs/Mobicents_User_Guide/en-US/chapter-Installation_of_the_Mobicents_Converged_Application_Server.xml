@@ -6,7 +6,7 @@
 	<title>Installation of the Mobicents Converged Application Server</title>
 	<para>The Mobicents Converged Application Server can be installed by downloading the ready-to-go binary distribution, or, alterately, the source code can be obtained using the Subversion version control system (<acronym>VCS</acronym>) and then built from source. Installing the binary distribution is recommended for most users, and obtaining and building the source code distribution is recommended for those who want access to the latest revisions and capabilities.</para>
 	<section
-		id="section-binary-Mobicents-_Installing_Configuring_and_Running">
+		id="section-binary-Mobicents-Installing_Configuring_and_Running">
 		<title>Binary Distribution: Installing, Configuring and Running</title>
 		<para>The Mobicents Converged Application Server runs on top of the JBoss Application Server. The Mobicents 1.20 binary distribution comes bundled with the JBoss Application Server version 4.2.2 GA.</para>
 		<section
@@ -136,12 +136,12 @@
 	</section>
 	
 	<section
-		id="section-source-Mobicents-_Installing_Configuring_and_Running">
+		id="section-source-Mobicents-Installing_Configuring_and_Running">
 		<title>Source Distribution: Installing, Configuring and Running</title>
-		<para>The Mobicents source code is also available from a Subversion repository; it is possible and often suggested to install the Mobicents Converged Application Server from source. There are several reasons why you might choose to do so:</para>
+		<para>The Mobicents source code is also available from the project's Subversion repository; it is possible and often suggested to install the Mobicents Converged Application Server from source. There are several reasons why you might choose to do so:</para>
 		<itemizedlist>
 			<listitem>
-				<para>to learn more about the Mobicents project's directory structure structure and build system;</para>
+				<para>to learn more about the Mobicents project's directory structure structure and Maven-based build system;</para>
 			</listitem>
 			<listitem>
 				<para>for faster access to new features, such as the latest versions of the resource adapters, bundled servers, and examples;</para>
@@ -153,6 +153,23 @@
 				<para>to obtain proper debugging support.</para>
 			</listitem>
 		</itemizedlist>
+		<para>Directions for installing the Mobicents Converged Application Server from source code are available online. However, it is both helpful and advised to first read the following sections:</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<xref
+						linkend="section-Before_You_Begin_Mobicents_Subversion_Repository_Directory_Structure"/>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<xref
+						linkend="section-source-Mobicents-Pre-Install_Requirements_and_Prerequisites"/>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<para>After reviewing the sections on the Mobicents directory structure and the pre-install requirements, refer to the online instructions at <ulink
+				url="http://groups.google.com/group/mobicents-public/web/quick-start-guide-with-maven-2">Quick Start Guide with Maven 2 and the Mobicents Sources</ulink>.</para>
 		
 		<section
 			id="section-Before_You_Begin_Mobicents_Subversion_Repository_Directory_Structure">
@@ -378,13 +395,16 @@
 					</listitem>
 				</varlistentry>
 			</variablelist>
+			<!--REMOVE THIS NEXT PARAGRAPH EVENTUALLY-->
+			<para>After reviewing the sections on the Mobicents directory structure and the pre-install requirements, refer to the online instructions at <ulink
+				url="http://groups.google.com/group/mobicents-public/web/quick-start-guide-with-maven-2">Quick Start Guide with Maven 2 and the Mobicents Sources</ulink>.</para>
 		</section>
 
 <!-- the JBoss Application Server Binary Distribution -->
-		<section
+<!--		<section
 			id="section-binary-JBoss-Installing_Configuring_and_Running">
 			<title>Installing, Configuring and Running the JBoss Application Server Binary Distribution</title>
-			<para></para>
+			<para></para>-->
 			<!--<formalpara
 				id="formalpara-binary-JBoss-Pre-Install_Requirements_and_Prerequisites">
 				<title>Pre-Install Requirements and Prerequisites</title>
@@ -410,7 +430,7 @@
 				</listitem>
 			</varlistentry>
 		</variablelist> -->
-			<formalpara
+			<!--<formalpara
 				id="formalpara-binary-JBoss-Downloading">
 				<title>Downloading</title>
 				<para>First, move to the directory where you want to install JBoss and download the JBoss 4.2.2 <acronym>GA</acronym> (General Availability) binary distribution<footnote
@@ -429,13 +449,13 @@ wget http://surfnet.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.2.GA.zip</scr
 				<para>Assuming you want to install JBoss in the same directory you have downloaded the zip file to, simply decompress it.</para>
 			</formalpara>
 			<para>For example, the following command will accomplish this on Linux:</para>
-			<screen>unzip jboss-4.2.2.GA.zip</screen>
+			<screen>unzip jboss-4.2.2.GA.zip</screen>-->
 	<!-- <formalpara
 		id="formalpara-binary-JBoss-Testing">
 		<title>Testing</title>
 		<para></para>
 	</formalpara> -->
-			<formalpara
+			<!--<formalpara
 				id="formalpara-binary-JBoss-Configuring">
 				<title>Configuring</title>
 				<para>Setting the <envar>JBOSS_HOME</envar> environment variable is all that is required to configure JBoss for Mobicents. The quick-and-easy way to set it for the current session, but which will not last beyond the next reboot, is to <command>export</command> the variable on the command line, and then to <command>echo</command> the variable to make sure that it contains the right directory. For example:</para>
@@ -463,16 +483,16 @@ echo $JBOSS_HOME
 				<title>Stopping</title>
 				<para>Just as the Mobicents start scripts automatically start the JBoss Application Server, so will they stop it. Refer to <xref
 						linkend="section-source-Mobicents-Stopping"/>.</para>
-			</formalpara>
+			</formalpara>-->
 			<!--<formalpara
 				id="formalpara-binary-JBoss-Uninstalling">
 				<title>Uninstalling</title>
 				<para></para>
 			</formalpara>-->
-		</section>
+		<!--</section>-->
 		
 		<!-- Source Distribution -->
-		<section
+		<!--<section
 			id="section-source-Mobicents-Obtaining_the_Source_Code">
 			<title>Obtaining the Source Code</title>
 			<para>Now that that you have successfully installed the JBoss Application Server and set the <envar>JBOSS_HOME</envar> environment variable, we will next download the Mobicents source with Subversion and then build it.</para>
@@ -532,6 +552,6 @@ mvn install</screen>
 			id="section-source-Mobicents-Uninstalling">
 			<title>Uninstalling</title>
 			<para></para>
-		</section>
+		</section>-->
 	</section>
 </chapter>
