@@ -14,13 +14,13 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 		
-		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.0.CR1</jainslee.connectionURL>
-		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-core-1.0.0.BETA3</media.core.connectionURL>
-		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-controllers-1.0.0.BETA3</media.controllers.connectionURL>
-		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-media-server-examples-1.0.0.BETA3</media.examples.connectionURL>
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/jain-slee</jainslee.connectionURL>
+		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/core</media.core.connectionURL>
+		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/controllers</media.controllers.connectionURL>
+		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/examples</media.examples.connectionURL>
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
 		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</sippresence.connectionURL>
-		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.5</sipservlets.connectionURL>
+		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets</sipservlets.connectionURL>
 	</properties>
 	
 	<profiles>
