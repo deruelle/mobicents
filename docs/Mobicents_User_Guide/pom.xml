@@ -13,7 +13,7 @@
 		<plugins>
 			<plugin>
 				<groupId>org.jboss.maven.plugins</groupId>
-				<artifactId>maven-jdocbook-plugin</artifactId>
+				<artifactId>maven-jdocbook-plugin</artifactId>                                                
 				<version>2.1.2</version>
 				<extensions>true</extensions>
 				<dependencies>
@@ -44,11 +44,11 @@
                         <directory>src/main/css</directory>
                     </cssResource>-->
 					<formats>
-			<!--   <format>
+			   <!--<format>
 				    <formatName>pdf</formatName>
 				    <stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>
 				    <finalName>Administration_And_Configuration_Guide.pdf</finalName>
-			    </format> -->
+			    </format>--> 
 						<format>
 							<formatName>html</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>

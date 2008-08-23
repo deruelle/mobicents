@@ -35,7 +35,7 @@
 				<varlistentry>
 					<term>Java 1.5 or Higher</term>
 					<listitem>
-						<para>A working installation of Java 1.5 or higher is required in order to run the Mobicents Converged Application Server. Note that the JBoss Application Server is a runtime dependency of Mobicents and, as mentioned, comes bundled with the binary distribution.</para>
+						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the Mobicents Converged Application Server. Note that the JBoss Application Server is a runtime dependency of Mobicents and, as mentioned, comes bundled with the binary distribution.</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
@@ -62,7 +62,7 @@
 		<section
 			id="section-binary-Mobicents-Installing">
 			<title>Installing</title>
-			<para>Once the preconditions and requirements have been met, and you have downloaded the Mobicents binary distribution, you are ready to install it. Simply decompress the Mobicents binary distribution zip file to a location of your choice, thus completing the install.</para>
+			<para>Once the preconditions and requirements have been met, and you have downloaded the Mobicents binary distribution, you are ready to install it. Simply decompress the downloaded archive to a location of your choice, thus completing the install.</para>
 		</section>
 		<section
 			id="section-binary-Mobicents-Testing">
@@ -77,7 +77,7 @@
 		<section
 			id="section-binary-Mobicents-Running">
 			<title>Running</title>
-			<para>Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (Linux) or <command>run.bat</command> (Windows) The precise instructions depend on which platform you are running Mobicents on.</para>
+			<para>Once installed, running Mobicents simply consists in changing to the <filename><replaceable>&lt;topmost_mobicents_directory&gt;</replaceable>/server/bin</filename> directory and invoking <command>run.sh</command> (on Linux) or <command>run.bat</command> (on Windows) The precise instructions depend on which platform you are running Mobicents on.</para>
 			<variablelist>
 				<title>Platform Mobicents is Running On</title>
 				<varlistentry>
@@ -89,7 +89,7 @@
 								<screen>cd &lt;topmost_mobicents_directory&gt;/server/bin</screen>
 							</listitem>
 							<listitem>
-								<para>Ensure that the <filename>run.sh</filename> file is executable. If it isn't, modify its permissions so that it is:</para>
+								<para>Ensure that the <filename>run.sh</filename> file is executable. If it is not, modify its permissions so that it is:</para>
 								<screen>chmod +x run.sh</screen>
 							</listitem>
 							<listitem>
@@ -205,7 +205,7 @@
 			</mediaobject>
 			<formalpara>
 				<title>trunk/servers</title>
-				<para>The servers directory contains all of the important files for running the various servers that ship with the Mobicents Converged Application Server, including the Mobicents JAIN-SLEE core, the Mobicents Media Server, and the SIP Servlets and SIP Presence Servers.</para>
+				<para>The servers directory contains all of the important files for running the various servers that ship with the Mobicents Converged Application Server, including the Mobicents JAIN SLEE core, the Mobicents Media Server, and the SIP Servlets and SIP Presence Servers.</para>
 			</formalpara>
 			
 			<mediaobject
