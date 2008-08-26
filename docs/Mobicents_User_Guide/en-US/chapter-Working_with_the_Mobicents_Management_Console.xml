@@ -77,7 +77,7 @@
 			<title>
 				<literal>Services</literal>
 			</title>
-			<para>The <literal>Services</literal> view naturally shows the list of available services, their state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and all currently possible actions for that resource adapter, such as <literal>activate</literal>, <literal>deactivate</literal> or <literal>remove</literal>.</para>
+			<para>The <literal>Services</literal> view shows the list of available services, their state, whether <literal>ACTIVE</literal> or <literal>INACTIVE</literal>, and all currently possible actions for that resource adapter, such as <literal>activate</literal>, <literal>deactivate</literal> or <literal>remove</literal>.</para>
 		</formalpara>
 		<figure
 			id="figure-top-WorkingWithMMC-ss-Services.png">

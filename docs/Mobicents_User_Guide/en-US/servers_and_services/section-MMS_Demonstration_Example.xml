@@ -132,8 +132,7 @@ MsLink link = session.createLink(MsLink.MODE_FULL_DUPLEX);
 ....
 ...
 link.join(userEndpoint, ANNOUNCEMENT_ENDPOINT);]]></programlisting>
-	<para>
-Once the link is created (look at onLinkCreated() ) AnnouncementSbb creates the instance of MsSignalGenerator and attaches the AnnouncementSbb to ActivityContextInterface created passing MsSignalGenerator. MsSignalGenerator is used to play the announcement as shown below.</para>
+	<para>Once the link is created (look at onLinkCreated() ) AnnouncementSbb creates the instance of MsSignalGenerator and attaches the AnnouncementSbb to ActivityContextInterface created passing MsSignalGenerator. MsSignalGenerator is used to play the announcement as shown below.</para>
 	<programlisting
 		linenumbering="numbered"
 		role="Java"><![CDATA[MsSignalGenerator generator = msProvider.getSignalGenerator(getAnnouncementEndpoint());
@@ -141,7 +140,7 @@ ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterfa
 generatorActivity.attach(sbbContext.getSbbLocalObject());
 generator.apply(Announcement.PLAY, new String[]{url});]]></programlisting>
 	<mediaobject
-		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl.png">
+		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl.png-1">
 		<imageobject>
 			<imagedata
 				align="center"
@@ -196,7 +195,7 @@ ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterfa
 generatorActivity.attach(sbbContext.getSbbLocalObject());
 generator.apply(Announcement.PLAY, new String[]{url});]]></programlisting>
 	<mediaobject
-		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl.png">
+		id="mediaobj-sas-MMSDemonstrationEx-dia-AnnEndpointImpl.png-2">
 		<imageobject>
 			<imagedata
 				align="center"
