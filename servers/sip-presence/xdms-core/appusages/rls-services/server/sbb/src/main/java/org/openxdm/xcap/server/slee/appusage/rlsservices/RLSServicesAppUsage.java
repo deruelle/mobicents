@@ -199,8 +199,10 @@ public class RLSServicesAppUsage extends AppUsage {
 		 yet been allocated.		
 		 */
 		
+		/*
 		// initialize service uri attrib set
 		Set<String> serviceUriSet = new HashSet<String>();
+		*/
 		
 		/*
 		 o  In addition, an RLS services document can contain a <list>
@@ -209,6 +211,7 @@ public class RLSServicesAppUsage extends AppUsage {
 		 in Section 3.4.7 MUST be enforced.				 
 		 */		
 		
+		/*
 		// initialize name uri attrib set
 		Set<String> listNameUriSet = new HashSet<String>();
 			
@@ -253,7 +256,7 @@ public class RLSServicesAppUsage extends AppUsage {
 						}			 
 						else if (serviceChildNode.getNodeType() == Node.ELEMENT_NODE && serviceChildNode.getLocalName().equals("resource-list")) {
 							// resource-list element
-				
+				*/
 							/*
 							 o  The URI in a <resource-list> element MUST be an absolute URI.  The
 							 server MUST verify that the URI path contains "resource-lists" in
@@ -266,7 +269,7 @@ public class RLSServicesAppUsage extends AppUsage {
 							 verifying that the URI actually points to a <list> element within
 							 a valid resource lists document.
 							 */
-							
+				/*			
 							// flag setup
 							boolean throwException = true;
 							// node value is the uri to evaluate
@@ -310,7 +313,8 @@ public class RLSServicesAppUsage extends AppUsage {
 					}
 				}
 			}						
-		}		
+		}	
+		*/	
 	}
 		
 }
