@@ -320,7 +320,7 @@
 	<available file="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" property="got.mobicents-jain-slee" />
 	<target name="get-mobicents-jain-slee" unless="got.mobicents-jain-slee">
 		<echo>Downloading Mobicents JAIN SLEE Server</echo>
-		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-4.2.2.GA.zip" />
+		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-1.2.0.CR1-jboss-4.2.2.GA.zip" />
 	</target>
 
 </project>
