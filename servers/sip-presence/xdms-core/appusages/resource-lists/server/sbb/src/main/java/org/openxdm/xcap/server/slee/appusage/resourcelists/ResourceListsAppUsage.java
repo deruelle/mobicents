@@ -38,7 +38,7 @@ public class ResourceListsAppUsage extends AppUsage {
 		*/
 		
 		// initialize name attrib set
-		Set<String> nameSet = new HashSet<String>();
+		//Set<String> nameSet = new HashSet<String>();
 		
 		/*
 		 o  The "uri" attribute in a <entry> element MUST be unique amongst
@@ -48,7 +48,7 @@ public class ResourceListsAppUsage extends AppUsage {
 		 */
 		
 		// initialize uri attrib set
-		Set<String> uriSet = new HashSet<String>();
+		//Set<String> uriSet = new HashSet<String>();
 		
 		/*
 		 o  The URI in the "ref" attribute of the <entry-ref> element MUST be
@@ -61,7 +61,7 @@ public class ResourceListsAppUsage extends AppUsage {
 		*/
 		
 		// initialize ref uri attrib set
-		Set<String> refUriSet = new HashSet<String>();
+		//Set<String> refUriSet = new HashSet<String>();
 		
 		/*
 		 o  The URI in the "anchor" attribute of the <external> element MUST
@@ -76,8 +76,9 @@ public class ResourceListsAppUsage extends AppUsage {
 		 */
 		
 		// initialize anchor uri attrib set
-		Set<String> anchorUriSet = new HashSet<String>();
+		//Set<String> anchorUriSet = new HashSet<String>();
 
+		/*
 		// get childs
 		NodeList childNodes = node.getChildNodes();
 		// process each one
@@ -163,6 +164,7 @@ public class ResourceListsAppUsage extends AppUsage {
 				}							
 			}
 		}		
+		*/
 	}
 		
 	public void checkConstraintsOnPut(Document document, String xcapRoot, DocumentSelector documentSelector, DataSource dataSource) throws UniquenessFailureConflictException, ConstraintFailureConflictException, InternalServerErrorException {
