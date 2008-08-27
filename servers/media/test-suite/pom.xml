@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>
+		<version>1.0.0.BETA4-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-media-server-test-suite</artifactId>
@@ -39,7 +39,7 @@
 		</dependency>
 		<dependency>
 			<artifactId>mgcp-stack</artifactId>
-			<groupId>${pom.groupId}</groupId>
+			<groupId>org.mobicents.servers.media.controllers</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
@@ -61,6 +61,21 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.appframework</groupId>
+			<artifactId>appframework</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.appframework</groupId>
+			<artifactId>swing-layout</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.appframework</groupId>
+			<artifactId>swing-worker</artifactId>
+			<version>1.1</version>
 		</dependency>
 	</dependencies>
 
@@ -106,96 +121,207 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<artifactId>mobicents-media-server-spi</artifactId>
+									<artifactId>
+										mobicents-media-server-spi
+									</artifactId>
 									<groupId>${pom.groupId}</groupId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>mobicents-media-server-spi.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										mobicents-media-server-spi.jar
+									</destFileName>
 								</artifactItem>
 								<artifactItem>
-									<artifactId>mobicents-media-server-impl</artifactId>
+									<artifactId>
+										mobicents-media-server-impl
+									</artifactId>
 									<groupId>${pom.groupId}</groupId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>mobicents-media-server-impl.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										mobicents-media-server-impl.jar
+									</destFileName>
 								</artifactItem>
 								<artifactItem>
 									<artifactId>log4j</artifactId>
 									<groupId>log4j</groupId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>log4j.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										log4j.jar
+									</destFileName>
 								</artifactItem>
 								<artifactItem>
-									<artifactId>jain-mgcp-ri</artifactId>
+									<artifactId>
+										jain-mgcp-ri
+									</artifactId>
 									<groupId>jain</groupId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>jain-mgcp-ri.jar</destFileName>
-								</artifactItem>							
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jain-mgcp-ri.jar
+									</destFileName>
+								</artifactItem>
 								<artifactItem>
 									<artifactId>mgcp-stack</artifactId>
-									<groupId>${pom.groupId}</groupId>
+									<groupId>
+										org.mobicents.servers.media.controllers
+									</groupId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>mgcp-stack.jar</destFileName>
-								</artifactItem>								
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										mgcp-stack.jar
+									</destFileName>
+								</artifactItem>
 								<artifactItem>
 									<artifactId>concurrent</artifactId>
 									<groupId>concurrent</groupId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>concurrent.jar</destFileName>
-								</artifactItem>								
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										concurrent.jar
+									</destFileName>
+								</artifactItem>
 
 								<artifactItem>
-									<artifactId>mobicents-media-server-constants</artifactId>
+									<artifactId>
+										mobicents-media-server-constants
+									</artifactId>
 									<groupId>${pom.groupId}</groupId>
 									<version>${pom.version}</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>mobicents-media-server-constants.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										mobicents-media-server-constants.jar
+									</destFileName>
 								</artifactItem>
-								
+
 								<artifactItem>
 									<groupId>javax.sip</groupId>
 									<artifactId>jain-sip-ri</artifactId>
-									<version>${jain-sip-ri.version}</version>
+									<version>
+										${jain-sip-ri.version}
+									</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>jain-sip-ri.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jain-sip-ri.jar
+									</destFileName>
 								</artifactItem>
-								
+
 								<artifactItem>
 									<groupId>jboss</groupId>
-									<artifactId>jboss-common</artifactId>									
+									<artifactId>
+										jboss-common
+									</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>jboss-common.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jboss-common.jar
+									</destFileName>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.jspeex
+									</groupId>
+									<artifactId>jspeex</artifactId>
+									<version>0.9.7</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jspeex.jar
+									</destFileName>
+								</artifactItem>
+
+
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.appframework
+									</groupId>
+									<artifactId>
+										appframework
+									</artifactId>
+									<version>1.0.3</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										appframework.jar
+									</destFileName>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.appframework
+									</groupId>
+									<artifactId>
+										swing-layout
+									</artifactId>
+									<version>1.0.3</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										swing-layout.jar
+									</destFileName>
 								</artifactItem>
 								
 								<artifactItem>
-									<groupId>org.mobicents.external.jspeex</groupId>
-									<artifactId>jspeex</artifactId>	
-									<version>0.9.7</version>								
+									<groupId>
+										org.mobicents.external.appframework
+									</groupId>
+									<artifactId>
+										swing-worker
+									</artifactId>
+									<version>1.1</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}</outputDirectory>
-									<destFileName>jspeex.jar</destFileName>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										swing-worker.jar
+									</destFileName>
 								</artifactItem>								
-								
+
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -213,23 +339,41 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy overwrite="true" todir="${project.build.directory}" >	
-									<fileset dir="src/main/resources"/>
+								<copy overwrite="true"
+									todir="${project.build.directory}">
+									<fileset dir="src/main/resources" />
 								</copy>
 								<java
-									classname="org.mobicents.media.server.load.test.EchoLoadTest">
+									classname="org.mobicents.media.server.load.test.gui.Main" fork="true">
 									<classpath>
-										<pathelement location="target/${pom.artifactId}-${pom.version}.jar" />
-										<pathelement location="target/mobicents-media-server-spi.jar" />
-										<pathelement location="target/mobicents-media-server-impl.jar" />
-										<pathelement location="target/log4j.jar" />
-										<pathelement location="target/mgcp-stack.jar" />							
-										<pathelement location="target/jain-mgcp-ri.jar" />											
-										<pathelement location="target/concurrent.jar" />												
-										<pathelement location="target/mobicents-media-server-constants.jar" />			
-										<pathelement location="target/jain-sip-ri.jar" />
-										<pathelement location="target/jboss-common.jar" />
-										<pathelement location="target/jspeex.jar" />
+										<pathelement
+											location="target/${pom.artifactId}-${pom.version}.jar" />
+										<pathelement
+											location="target/mobicents-media-server-spi.jar" />
+										<pathelement
+											location="target/mobicents-media-server-impl.jar" />
+										<pathelement
+											location="target/log4j.jar" />
+										<pathelement
+											location="target/mgcp-stack.jar" />
+										<pathelement
+											location="target/jain-mgcp-ri.jar" />
+										<pathelement
+											location="target/concurrent.jar" />
+										<pathelement
+											location="target/mobicents-media-server-constants.jar" />
+										<pathelement
+											location="target/jain-sip-ri.jar" />
+										<pathelement
+											location="target/jboss-common.jar" />
+										<pathelement
+											location="target/jspeex.jar" />
+										<pathelement
+											location="target/appframework.jar" />
+										<pathelement
+											location="target/swing-layout.jar" />
+										<pathelement
+											location="target/swing-worker.jar" />											
 									</classpath>
 								</java>
 							</tasks>

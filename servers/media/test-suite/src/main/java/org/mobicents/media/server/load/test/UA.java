@@ -1,11 +1,7 @@
 package org.mobicents.media.server.load.test;
 
-import jain.protocol.ip.mgcp.CreateProviderException;
-import jain.protocol.ip.mgcp.DeleteProviderException;
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
-import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
-import jain.protocol.ip.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
@@ -23,7 +19,6 @@ import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.TooManyListenersException;
 
@@ -49,15 +44,25 @@ import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.UnknownMediaResourceException;
 import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.mgcp.stack.JainMgcpStackImpl;
+import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
+import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 public class UA implements Runnable {
 
 	private Logger logger = Logger.getLogger(UA.class);
 
+	private boolean taskCompleted = false;
+
 	private String name = "null";
 
 	private int UACount = 0;
+	private InetAddress clientMachineIPAddress;
+	private int endpointLowPortNumber = 10240;
+	private int endpointHighPortNumber = 65535;
+	private String endpointDTMFDetector = "INBAND";
+	private String jbossBindAddress;
+	private int serverMGCPStackPort = 0;
+	private String audioFileToPlay = null;
 
 	RtpSocketAdaptor rtpSocket = null;
 
@@ -67,17 +72,30 @@ public class UA implements Runnable {
 
 	private String sendSdp = null;
 
-	private JainMgcpStackImpl stack = null;
-	private JainMgcpProvider provider = null;
+	private JainMgcpStackProviderImpl provider = null;
 
 	private EndpointIdentifier endpointID = null;
 	private ConnectionIdentifier connectionIdentifier = null;
 
 	private boolean endOfMediaEventFired = false;
 
-	public UA(int UACount) {
+	private EchoLoadTest echoLoadTest;
+
+	private JainMgcpListnerImpl listenerImpl = null;
+
+	public UA(int UACount, InetAddress clientMachineIPAddress, String jbossBindAddress, int serverMGCPStackPort,
+			String audioFileToPlay, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest) {
 		this.UACount = UACount;
 		this.name = "UA" + UACount;
+
+		this.clientMachineIPAddress = clientMachineIPAddress;
+		this.jbossBindAddress = jbossBindAddress;
+		this.serverMGCPStackPort = serverMGCPStackPort;
+		this.audioFileToPlay = audioFileToPlay;
+
+		this.provider = provider;
+
+		this.echoLoadTest = echoLoadTest;
 	}
 
 	public void run() {
@@ -85,20 +103,22 @@ public class UA implements Runnable {
 		logger.info("Starting the UA = " + this.name);
 
 		try {
+			this.setTaskCompleted(false);
+
 			uaEndpoint = new IVREndpointImpl("test/client/" + this.UACount);
 			uaEndpoint.addFormat(AVProfile.PCMA.getPayload(), AVProfile.PCMA);
 			uaEndpoint.addFormat(AVProfile.PCMU.getPayload(), AVProfile.PCMU);
 			uaEndpoint.setJitter(60);
 			uaEndpoint.setPacketizationPeriod(20);
-			uaEndpoint.setBindAddress(InetAddress.getByName(EchoLoadTest.EndpointBindAddress));
-			uaEndpoint.setPortRange((EchoLoadTest.EndpointLowPortNumber + UACount) + "-"
-					+ EchoLoadTest.EndpointHighPortNumber);
+			uaEndpoint.setBindAddress(clientMachineIPAddress);
+			uaEndpoint.setPortRange((endpointLowPortNumber + UACount) + "-" + endpointHighPortNumber);
 
 			Properties dtmfConfig = new Properties();
-			dtmfConfig.setProperty("detector.mode", EchoLoadTest.EndpointDTMFDetector);
+			dtmfConfig.setProperty("detector.mode", endpointDTMFDetector);
 
 			uaEndpoint.setDefaultConfig(MediaResourceType.DTMF_DETECTOR, dtmfConfig);
-			uaEndpoint.configure(MediaResourceType.DTMF_DETECTOR, dtmfConfig);
+			// uaEndpoint.configure(MediaResourceType.DTMF_DETECTOR,
+			// dtmfConfig);
 
 			uaConnection = uaEndpoint.createConnection(org.mobicents.media.server.impl.common.ConnectionMode.SEND_RECV);
 			uaConnection.addListener(new UAConnectionListener(uaConnection));
@@ -107,37 +127,43 @@ public class UA implements Runnable {
 
 			logger.debug("sendSdp = " + sendSdp);
 
-			stack = new JainMgcpStackImpl(2728 + this.UACount);
-			provider = stack.createProvider();
-
-			JainMgcpListnerImpl listenerImpl = new JainMgcpListnerImpl();
+			listenerImpl = new JainMgcpListnerImpl();
 			provider.addJainMgcpListener(listenerImpl);
 
-			CallIdentifier callID = new CallIdentifier("1");
+			CallIdentifier callID = provider.getUniqueCallIdentifier();
 
-			endpointID = new EndpointIdentifier("media/test/trunk/Loopback/" + this.UACount,
-					EchoLoadTest.JBossBindAddress + ":" + EchoLoadTest.ServerMGCPStackPort);
+			endpointID = new EndpointIdentifier("media/test/trunk/Loopback/" + this.UACount, jbossBindAddress + ":"
+					+ serverMGCPStackPort);
 
 			CreateConnection createConnection = new CreateConnection("", callID, endpointID, ConnectionMode.SendRecv);
 
 			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(sendSdp));
 
-			createConnection.setTransactionHandle(1);
+			createConnection.setTransactionHandle(provider.getUniqueTransactionHandler());
 
 			provider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
-			logger.debug("******* CreateConnection command sent ***********");
+			logger.debug(this.name + " CreateConnection command sent for TxId "
+					+ createConnection.getTransactionHandle() + " and CallId " + callID);
 
-		} catch (CreateProviderException cpex) {
-			logger.error("CreateProviderException ", cpex);
+			// Now let us go to sleep unless the task is completed successfully
+			// or with errors
+
+			while (!isTaskCompleted()) {
+
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			logger.debug(this.name + " Completed ");
+
 		} catch (TooManyListenersException tmlex) {
 			logger.error("TooManyListenersException ", tmlex);
 		} catch (ConflictingParameterException e) {
 			logger.error("ConflictingParameterException ", e);
-		} catch (UnknownHostException e) {
-			logger.error("UnknownHostException ", e);
-		} catch (UnknownMediaResourceException e) {
-			logger.error("UnknownMediaResourceException ", e);
 		} catch (TooManyConnectionsException e) {
 			logger.error("TooManyConnectionsException ", e);
 		} catch (ResourceUnavailableException e) {
@@ -160,9 +186,13 @@ public class UA implements Runnable {
 			logger.debug("onStateChange: New Connection state = " + connection.getState() + " Old Connection State = "
 					+ oldState);
 
-			String RECORDER_FILE = "recordedfile" + UACount + ".wav";
+			final String RECORDER_FILE = "recordedfile" + UACount + "-"+ System.currentTimeMillis() +".wav";
 
-			String[] params = new String[] { EchoLoadTest.AudioFileToPlay, RECORDER_FILE };
+			final String AUDIO_FILE_TO_PLAY = "file://" + audioFileToPlay;
+
+			logger.info("AUDIO_FILE_TOPLAY = " + AUDIO_FILE_TO_PLAY);
+
+			String[] params = new String[] { AUDIO_FILE_TO_PLAY, RECORDER_FILE };
 			if (connection.getState() == ConnectionState.OPEN) {
 
 				logger.debug("Start the play and record ");
@@ -184,6 +214,17 @@ public class UA implements Runnable {
 
 				endOfMediaEventFired = true;
 				logger.info("EventID.COMPLETE Announcement Completes here now send DELETE MGCPCommand" + event);
+
+				// let us sleep for sometime before sending the
+				// DeleteConnectionMGCPRequest
+
+				// try {
+				// Thread.sleep(1000 * 60);
+				// } catch (InterruptedException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+
 				sendDeleteConnectionMGCPRequest();
 
 			} else if (event.getID() == EventID.FAIL && !endOfMediaEventFired) {
@@ -244,6 +285,7 @@ public class UA implements Runnable {
 				break;
 			default:
 				logger.error("SOMETHING IS BROKEN = " + responseEvent);
+				echoLoadTest.addTaskCompletedFailure();
 				cleanUp();
 				break;
 
@@ -253,24 +295,9 @@ public class UA implements Runnable {
 
 		private void processDeleteConnectionResponse(DeleteConnectionResponse responseEvent) {
 			logger.debug("Connection deleted at server, do the clean up here");
+			echoLoadTest.addTaskCompletedSuccessfully();
 			cleanUp();
 
-		}
-
-		private void cleanUp() {
-			// Cleaning
-
-			uaEndpoint.deleteAllConnections();
-			logger.info("All Connections deleted for endpoint " + uaEndpoint.getLocalName());
-
-			// TODO : stack.deleteProvider(provider) does nothing :(
-			try {
-				stack.deleteProvider(provider);
-				stack.close();
-			} catch (DeleteProviderException e) {
-				logger.error("DeleteProviderException ", e);
-			}
-			logger.info("MGCP Stack also down");
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent responseEvent) {
@@ -288,22 +315,36 @@ public class UA implements Runnable {
 		}
 
 		public void transactionEnded(int handle) {
-			System.out.println("transactionEnded for handle = "+handle);
-			
+			logger.debug("transactionEnded for handle = " + handle);
+
 		}
 
 		public void transactionRxTimedOut(JainMgcpCommandEvent command) {
-			System.out.println("Request not able to send");
-			System.out.println("transactionRxTimedOut for JainMgcpCommandEvent = "+command);
-			System.out.println("Clean the MGCP Stack");
-			
+			logger.debug("Request not able to send");
+			logger.debug("transactionRxTimedOut for JainMgcpCommandEvent = " + command);
+			logger.debug("Clean the MGCP Stack");
+
 		}
 
 		public void transactionTxTimedOut(JainMgcpCommandEvent command) {
-			System.out.println("transactionTxTimedOut for JainMgcpCommandEvent = "+command);
-			
+			logger.debug(name + " transactionTxTimedOut for JainMgcpCommandEvent = " + command);
+
+			echoLoadTest.addTaskCompletedFailure();
+			// This is failure condition
+			cleanUp();
+
 		}
 
+	}
+
+	private void cleanUp() {
+		// Cleaning
+
+		uaEndpoint.deleteAllConnections();
+		logger.info("All Connections deleted for endpoint " + uaEndpoint.getLocalName());
+		provider.removeJainMgcpListener(listenerImpl);
+		listenerImpl = null;
+		setTaskCompleted(true);
 	}
 
 	public static void main(String args[]) {
@@ -319,7 +360,15 @@ public class UA implements Runnable {
 			BasicConfigurator.configure();
 		}
 
-		UA ua = new UA(1);
-		ua.run();
+		// UA ua = new UA(1);
+		// ua.run();
+	}
+
+	public boolean isTaskCompleted() {
+		return taskCompleted;
+	}
+
+	public void setTaskCompleted(boolean taskCompleted) {
+		this.taskCompleted = taskCompleted;
 	}
 }
