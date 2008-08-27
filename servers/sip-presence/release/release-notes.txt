@@ -1,0 +1,39 @@
+We are happy to announce Mobicents SIP Presence Service 1.0.0.BETA2!
+
+Release Notes
+-------------------------------------------------------------------------------
+Mobicents SIP Presence Service is composed by Mobicents XDM and Presence Servers, on this release you can find:
+* Mobicents XDM Server standalone installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-xdms-<version>.zip)
+* Mobicents XDM Server and Mobicents SIP Presence Servers integrated installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-integrated-<version>.zip)
+* Mobicents SIP Presence Service binary package that you can use to install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>.zip)
+* Mobicents SIP Presence Service source project that you can use to build and install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>-src.zip)
+
+Where to download from?
+-------------------------------------------------------------------------------
+The distribution can be found on SourceForge.net.
+URL: https://sourceforge.net/project/showfiles.php?group_id=102670&package_id=287660&release_id=619669
+
+SVN tag: mobicents-sip-presence-service-1.0.0.BETA2
+
+Source repositories:
+-------------------------------------------------------------------------------
+http://mobicents.googlecode.com/svn/trunk/servers/sip-presence
+
+How to get started:
+-------------------------------------------------------------------------------
+The servers that are bundled with JBoss AS just need to be started as usual.
+For binary or source packages see the README file in the top directory of the zip file.
+Any other directory where additional instructions are needed has its own README file.
+
+Documentation
+-------------------------------------------------------------------------------
+http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service-guide
+
+Change Log
+-------------------------------------------------------------------------------
+This is actually the first binary release of the servers, so everything is new! See full specs, architecture, etc. at
+http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service-guide
+
+Looking forward to your feedback!!!
+
+Mobicents Team
