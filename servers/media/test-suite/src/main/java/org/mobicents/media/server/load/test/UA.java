@@ -33,7 +33,6 @@ import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.impl.common.MediaResourceType;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.impl.ivr.IVREndpointImpl;
-import org.mobicents.media.server.impl.rtp.RtpSocketAdaptor;
 import org.mobicents.media.server.impl.sdp.AVProfile;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
@@ -62,9 +61,7 @@ public class UA implements Runnable {
 	private String endpointDTMFDetector = "INBAND";
 	private String jbossBindAddress;
 	private int serverMGCPStackPort = 0;
-	private String audioFileToPlay = null;
-
-	RtpSocketAdaptor rtpSocket = null;
+	private String audioFileToPlay = null;	
 
 	private Endpoint uaEndpoint;
 

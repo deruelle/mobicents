@@ -17,13 +17,16 @@ import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 public class EchoLoadTest {
-	
+
+	public static final int ECHO_LOAD_TEST = 1;
+	public static final int ANNOUNCEMENT_LOAD_TEST = 2;
+
 	private Logger logger = Logger.getLogger(EchoLoadTest.class);
 
 	private int numberOfUA = -1;
-	
+
 	private List<ScheduledFuture<?>> listOfFuture = new ArrayList<ScheduledFuture<?>>();
-	
+
 	private List<JainMgcpStackImpl> listOfJainMgcpStackImpl = new ArrayList<JainMgcpStackImpl>();
 	private ScheduledThreadPoolExecutor scheduler;
 
@@ -33,16 +36,20 @@ public class EchoLoadTest {
 	private InetAddress clientMachineIPAddress;
 	private String jbossBindAddress;
 	private int serverMGCPStackPort = 0;
+	private int clientMGCPStackPort = 0;
 	private String audioFileToPlay = null;
-	
+
 	private int taskCompletedSuccessfully = 0;
 	private int taskCompletedFailure = 0;
 
+	private int testIdentifier = 0;
+
+	public EchoLoadTest(int testIdentifier) {
+		this.testIdentifier = testIdentifier;
+	}
+
 	public static void main(String args[]) {
-		EchoLoadTest test = new EchoLoadTest();
-		
-
-
+		EchoLoadTest test = new EchoLoadTest(EchoLoadTest.ANNOUNCEMENT_LOAD_TEST);
 		test.setNumberOfUA(1);
 		try {
 			InetAddress clientMachineIPAddress = InetAddress.getByName("127.0.0.1");
@@ -53,8 +60,8 @@ public class EchoLoadTest {
 
 		test.setJbossBindAddress("127.0.0.1");
 		test.setServerMGCPStackPort(2727);
+		test.setClientMGCPStackPort(6727);
 		test.setAudioFileToPlay("");
-		
 		test.test();
 	}
 
@@ -68,12 +75,22 @@ public class EchoLoadTest {
 
 		for (int count = 1; count <= numberOfUAtemp; count++) {
 			try {
-				JainMgcpStackImpl stack = new JainMgcpStackImpl(2728 + count);
+				JainMgcpStackImpl stack = new JainMgcpStackImpl(clientMachineIPAddress, this.getClientMGCPStackPort() + count);
 				listOfJainMgcpStackImpl.add(stack);
-				JainMgcpStackProviderImpl provider = (JainMgcpStackProviderImpl)stack.createProvider();
-				
-				UA ua = new UA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort,
-						audioFileToPlay, provider, this);
+				JainMgcpStackProviderImpl provider = (JainMgcpStackProviderImpl) stack.createProvider();
+
+				Runnable ua = null;
+				switch (testIdentifier) {
+				case EchoLoadTest.ECHO_LOAD_TEST:
+					ua = new UA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+							provider, this);
+					break;
+
+				case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:
+					ua = new AnnouncementUA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort,
+							provider, this);
+					break;
+				}
 
 				final ScheduledFuture<?> future = getScheduler().scheduleWithFixedDelay(ua, 0, 1, TimeUnit.SECONDS);
 
@@ -123,10 +140,9 @@ public class EchoLoadTest {
 			System.out.println("Future " + future + " cancel result = " + result);
 		}
 		getScheduler().shutdown();
-		
-		
-		//TODO : Should we wait for sometime before closing the MGCP Stack?
-		for(JainMgcpStackImpl stack : listOfJainMgcpStackImpl){
+
+		// TODO : Should we wait for sometime before closing the MGCP Stack?
+		for (JainMgcpStackImpl stack : listOfJainMgcpStackImpl) {
 			stack.close();
 		}
 
@@ -201,16 +217,22 @@ public class EchoLoadTest {
 	}
 
 	public synchronized void addTaskCompletedSuccessfully() {
-		
 		this.taskCompletedSuccessfully++;
 	}
 
-	public int getTaskCompletedFailure() {		
+	public int getTaskCompletedFailure() {
 		return taskCompletedFailure;
 	}
 
 	public synchronized void addTaskCompletedFailure() {
-		logger.debug("The value of taskCompletedFailure =  "+taskCompletedFailure);
-		this.taskCompletedFailure = this.taskCompletedFailure + 1; 
+		this.taskCompletedFailure++;
+	}
+
+	public int getClientMGCPStackPort() {
+		return clientMGCPStackPort;
+	}
+
+	public void setClientMGCPStackPort(int clientMGCPStackPort) {
+		this.clientMGCPStackPort = clientMGCPStackPort;
 	}
 }

@@ -154,6 +154,8 @@ public class MainView extends FrameView {
         jTextFieldSuccessfulTask = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTextFieldErrorTask = new javax.swing.JTextField();
+        jLabelClientMGCPPort = new javax.swing.JLabel();
+        jTextFieldClientMGCPPort = new javax.swing.JTextField();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
@@ -216,17 +218,17 @@ public class MainView extends FrameView {
         jLabelServerMGCPPort.setText(resourceMap.getString("jLabelServerMGCPPort.text")); // NOI18N
         jLabelServerMGCPPort.setToolTipText(resourceMap.getString("jLabelServerMGCPPort.toolTipText")); // NOI18N
         jLabelServerMGCPPort.setName("jLabelServerMGCPPort"); // NOI18N
-        jLabelServerMGCPPort.setBounds(20, 120, 150, 15);
+        jLabelServerMGCPPort.setBounds(20, 150, 150, 15);
         jLayeredPaneEchoTest.add(jLabelServerMGCPPort, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTextFieldServerMGCPPort.setText(resourceMap.getString("jTextFieldServerMGCPPort.text")); // NOI18N
         jTextFieldServerMGCPPort.setName("jTextFieldServerMGCPPort"); // NOI18N
-        jTextFieldServerMGCPPort.setBounds(180, 120, 100, 19);
+        jTextFieldServerMGCPPort.setBounds(180, 150, 100, 19);
         jLayeredPaneEchoTest.add(jTextFieldServerMGCPPort, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelPlayAudioFile.setText(resourceMap.getString("jLabelPlayAudioFile.text")); // NOI18N
         jLabelPlayAudioFile.setName("jLabelPlayAudioFile"); // NOI18N
-        jLabelPlayAudioFile.setBounds(20, 150, 140, 15);
+        jLabelPlayAudioFile.setBounds(20, 180, 140, 15);
         jLayeredPaneEchoTest.add(jLabelPlayAudioFile, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTextFieldAudioFilePlay.setName("jTextFieldAudioFilePlay"); // NOI18N
@@ -235,7 +237,7 @@ public class MainView extends FrameView {
                 jTextFieldAudioFilePlayMouseClicked(evt);
             }
         });
-        jTextFieldAudioFilePlay.setBounds(180, 150, 400, 19);
+        jTextFieldAudioFilePlay.setBounds(180, 180, 400, 19);
         jLayeredPaneEchoTest.add(jTextFieldAudioFilePlay, javax.swing.JLayeredPane.DEFAULT_LAYER);
         java.io.File file = new java.io.File(".");
         try{
@@ -246,7 +248,7 @@ public class MainView extends FrameView {
 
         jLabelRecordDirectory.setText(resourceMap.getString("jLabelRecordDirectory.text")); // NOI18N
         jLabelRecordDirectory.setName("jLabelRecordDirectory"); // NOI18N
-        jLabelRecordDirectory.setBounds(20, 180, 140, 20);
+        jLabelRecordDirectory.setBounds(20, 210, 140, 20);
         jLayeredPaneEchoTest.add(jLabelRecordDirectory, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jTextFieldAudioFileRecord.setText(resourceMap.getString("jTextFieldAudioFileRecord.text")); // NOI18N
@@ -256,7 +258,7 @@ public class MainView extends FrameView {
                 jTextFieldAudioFileRecordMouseClicked(evt);
             }
         });
-        jTextFieldAudioFileRecord.setBounds(180, 180, 400, 19);
+        jTextFieldAudioFileRecord.setBounds(180, 210, 400, 19);
         jLayeredPaneEchoTest.add(jTextFieldAudioFileRecord, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelTestMachineIPAdd.setText(resourceMap.getString("jLabelTestMachineIPAdd.text")); // NOI18N
@@ -276,7 +278,7 @@ public class MainView extends FrameView {
                 jButtonStartActionPerformed(evt);
             }
         });
-        jButtonStart.setBounds(180, 210, 150, 25);
+        jButtonStart.setBounds(180, 240, 150, 25);
         jLayeredPaneEchoTest.add(jButtonStart, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelUACounts.setText(resourceMap.getString("jLabelUACounts.text")); // NOI18N
@@ -386,6 +388,17 @@ public class MainView extends FrameView {
         jTextFieldErrorTask.setName("jTextFieldErrorTask"); // NOI18N
         jTextFieldErrorTask.setBounds(180, 470, 150, 19);
         jLayeredPaneEchoTest.add(jTextFieldErrorTask, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jLabelClientMGCPPort.setText(resourceMap.getString("jLabelClientMGCPPort.text")); // NOI18N
+        jLabelClientMGCPPort.setToolTipText(resourceMap.getString("jLabelClientMGCPPort.toolTipText")); // NOI18N
+        jLabelClientMGCPPort.setName("jLabelClientMGCPPort"); // NOI18N
+        jLabelClientMGCPPort.setBounds(20, 120, 150, 15);
+        jLayeredPaneEchoTest.add(jLabelClientMGCPPort, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jTextFieldClientMGCPPort.setText(resourceMap.getString("jTextFieldClientMGCPPort.text")); // NOI18N
+        jTextFieldClientMGCPPort.setName("jTextFieldClientMGCPPort"); // NOI18N
+        jTextFieldClientMGCPPort.setBounds(180, 120, 100, 19);
+        jLayeredPaneEchoTest.add(jTextFieldClientMGCPPort, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -548,7 +561,7 @@ public class MainView extends FrameView {
 		jTextFieldAudioFilePlay.setEditable(false);
 		jTextFieldAudioFileRecord.setEditable(false);
 
-		test = new EchoLoadTest();
+		test = new EchoLoadTest(EchoLoadTest.ANNOUNCEMENT_LOAD_TEST);
 
 		test.setNumberOfUA(Integer.parseInt(jTextFieldUACount.getText()));
 		try {
@@ -560,6 +573,7 @@ public class MainView extends FrameView {
 
 		test.setJbossBindAddress(jTextFieldJBossBindAdd.getText());
 		test.setServerMGCPStackPort(Integer.parseInt(jTextFieldServerMGCPPort.getText()));
+                test.setClientMGCPStackPort(Integer.parseInt(jTextFieldClientMGCPPort.getText()));
 		test.setAudioFileToPlay(jTextFieldAudioFilePlay.getText());
 
 		jButtonStart.setEnabled(false);
@@ -628,6 +642,7 @@ public class MainView extends FrameView {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelActiveConcurrentTask;
+    private javax.swing.JLabel jLabelClientMGCPPort;
     private javax.swing.JLabel jLabelCompletedTask;
     private javax.swing.JLabel jLabelJBossBindAdd;
     private javax.swing.JLabel jLabelPlayAudioFile;
@@ -648,6 +663,7 @@ public class MainView extends FrameView {
     private javax.swing.JTextField jTextFieldActiveCount;
     private javax.swing.JTextField jTextFieldAudioFilePlay;
     private javax.swing.JTextField jTextFieldAudioFileRecord;
+    private javax.swing.JTextField jTextFieldClientMGCPPort;
     private javax.swing.JTextField jTextFieldCompletedTask;
     private javax.swing.JTextField jTextFieldErrorTask;
     private javax.swing.JTextField jTextFieldJBossBindAdd;
