@@ -1,7 +1,7 @@
 /*
  * TestEncoding.java
  *
- * Created on 12 Март 2007 г., 12:37
+ * Created on 12 пїЅпїЅпїЅпїЅ 2007 пїЅ., 12:37
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -21,6 +21,8 @@ import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
+import java.net.InetAddress;
+
 /**
  *
  * @author 1
@@ -35,7 +37,7 @@ public class TestEncoding {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        JainMgcpStackImpl stack = new JainMgcpStackImpl(2728);
+        JainMgcpStackImpl stack = new JainMgcpStackImpl(InetAddress.getByName("127.0.0.1"), 2728);
         CallIdentifier callID = new CallIdentifier("1");
         
         EndpointIdentifier endpointID = new EndpointIdentifier("ann/00","localhost:2727");

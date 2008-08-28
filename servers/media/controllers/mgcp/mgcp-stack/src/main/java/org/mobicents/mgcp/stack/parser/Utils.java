@@ -32,6 +32,7 @@ import jain.protocol.ip.mgcp.message.parms.GainControl;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionExtension;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.NotificationRequestParms;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.PacketizationPeriod;
 import jain.protocol.ip.mgcp.message.parms.ReasonCode;
 import jain.protocol.ip.mgcp.message.parms.RegularConnectionParm;
@@ -52,6 +53,7 @@ import java.text.ParseException;
  * 
  * @author Oleg Kulikov
  * @author Pavel Mitrenko
+ * @author Amit Bhayani
  */
 public class Utils {
 
@@ -540,7 +542,8 @@ public class Utils {
 		} else if (value.toLowerCase().startsWith("e")) {
 			return new RequestedAction(decodeEmbeddedRequest(value));
 		} else if (value.equalsIgnoreCase("X")) {
-			//X is RequestIdentifier and we have already taken care of this. Ignore here
+			// X is RequestIdentifier and we have already taken care of this.
+			// Ignore here
 			return RequestedAction.Ignore;
 		} else {
 			throw new ParseException("Extension action not suported", 0);
@@ -885,5 +888,25 @@ public class Utils {
 		}
 
 		return reasonCode;
+	}
+
+	public static NotifiedEntity decodeNotifiedEntity(String value) throws ParseException {
+		NotifiedEntity notifiedEntity = null;
+
+		try {
+			String tokens[] = value.split("@");
+			String localName = tokens[0];
+
+			String tokens1[] = tokens[1].split(":");
+			String domainName = tokens1[0];
+
+			int port = Integer.parseInt(tokens1[1]);
+			
+			notifiedEntity = new NotifiedEntity(localName, domainName, port);
+		} catch (Exception ex) {			
+			throw new ParseException("unable to parse the "+value + " Message = "+ex.getMessage(), 0);
+		}
+
+		return notifiedEntity;
 	}
 }

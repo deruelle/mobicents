@@ -2,12 +2,10 @@ package org.mobicents.mgcp.stack;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
-import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
-import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -19,6 +17,12 @@ import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
 import org.mobicents.mgcp.stack.parser.Utils;
+
+/**
+ * @author Oleg Kulikov
+ * @author Amit Bhayani
+ *
+ */
 
 public class NotificationRequestHandler extends TransactionHandler {
 
@@ -126,7 +130,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("N")) {
-				command.setNotifiedEntity(new NotifiedEntity(value));
+				command.setNotifiedEntity(Utils.decodeNotifiedEntity(value));
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setRequestIdentifier(new RequestIdentifier(value));
 			} else if (name.equalsIgnoreCase("R")) {

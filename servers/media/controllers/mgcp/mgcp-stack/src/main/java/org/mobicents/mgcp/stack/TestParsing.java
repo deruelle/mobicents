@@ -1,7 +1,7 @@
 /*
  * TestParsing.java
  *
- * Created on 8 Март 2007 г., 21:35
+ * Created on 8 пїЅпїЅпїЅпїЅ 2007 пїЅ., 21:35
  *
  * To change this template, choose Tools | Template Manager
  * and open the template in the editor.
@@ -28,7 +28,7 @@ public class TestParsing {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
-        JainMgcpStackImpl stack = new JainMgcpStackImpl(2728);
+        JainMgcpStackImpl stack = new JainMgcpStackImpl(InetAddress.getByName("127.0.0.1"), 2728);
         InetAddress address = InetAddress.getLocalHost();
         
         FileInputStream in = new FileInputStream("d:\\projects\\createcon.txt");

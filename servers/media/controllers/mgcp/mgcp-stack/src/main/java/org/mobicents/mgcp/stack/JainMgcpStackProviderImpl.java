@@ -135,14 +135,14 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
                     case Constants.CMD_NOTIFICATION_REQUEST:
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Sending ModifyConnection object to " + commandEvent.getEndpointIdentifier());
+                            logger.debug("Sending NotificationRequest object to " + commandEvent.getEndpointIdentifier());
                         }
                         handle = new NotificationRequestHandler(this.runningStack);
                         break;
 
                     case Constants.CMD_NOTIFY:
                         if (logger.isDebugEnabled()) {
-                            logger.debug("Sending ModifyConnection object to " + commandEvent.getEndpointIdentifier());
+                            logger.debug("Sending Notify object to " + commandEvent.getEndpointIdentifier());
                         }
                         handle = new NotifyHandler(this.runningStack);
                         break;
