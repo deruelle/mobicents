@@ -193,8 +193,9 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 		}
 
 		try {
-
-			stack = new JainMgcpStackImpl(port.intValue());
+			String jbossBindAddress = System.getProperty("jboss.bind.address", "127.0.0.1");
+			InetAddress inetAddress = InetAddress.getByName(jbossBindAddress);
+			stack = new JainMgcpStackImpl(inetAddress, port.intValue());
 			mgcpProvider = new JainMgcpProviderImpl(this, stack.createProvider());
 		} catch (Exception e) {
 			throw new ResourceException(e.getMessage());
