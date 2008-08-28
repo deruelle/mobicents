@@ -39,7 +39,11 @@
 						endpointIdentifier
 					</cmp-field-name>
 				</cmp-field>
-
+				<cmp-field>
+					<cmp-field-name>
+						notifiedEntity
+					</cmp-field-name>
+				</cmp-field>
 
 			</sbb-abstract-class>
 		</sbb-classes>

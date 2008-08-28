@@ -18,7 +18,6 @@ package org.mobicents.media.server.control.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpProvider;
-import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnection;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;

@@ -35,8 +35,11 @@ import javax.slee.FactoryException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+import javax.slee.TransactionRequiredLocalException;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.ActivityContextNamingFacility;
+import javax.slee.facilities.FacilityException;
+import javax.slee.facilities.NameNotBoundException;
 
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
@@ -142,15 +145,10 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		for (MsConnection c : msConnections) {
 			try {
 
-				ActivityContextInterface msAci = msActivityFactory.getActivityContextInterface(c);
-				msAci.attach(sbbContext.getSbbLocalObject());
-				c.release();
-
-				logger.debug("Successfully deleted MsConnection ID = " + c.getId());
-
 				for (MgcpConnectionActivity a : mgcpConnectionActivities) {
-					ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(a
-							.getConnectionIdentifier().toString());
+
+					String connectionIdentifier = a.getConnectionIdentifier().toString();
+					ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(connectionIdentifier);
 					MsConnection msConnection = (MsConnection) mediaACI.getActivity();
 
 					if (msConnection.getId().equals(c.getId())) {
@@ -159,7 +157,23 @@ public abstract class DeleteConnectionSbb implements Sbb {
 						mgcpConnectionActivities.remove(a);
 						break;
 					}
+
+					try {
+						activityContextNamingfacility.unbind(connectionIdentifier);
+					} catch (TransactionRequiredLocalException e) {
+						e.printStackTrace();
+					} catch (FacilityException e) {
+						e.printStackTrace();
+					} catch (NameNotBoundException e) {
+						e.printStackTrace();
+					}
 				}
+
+				ActivityContextInterface msAci = msActivityFactory.getActivityContextInterface(c);
+				msAci.attach(sbbContext.getSbbLocalObject());
+				c.release();
+
+				logger.debug("Successfully deleted MsConnection ID = " + c.getId());
 
 			} catch (FactoryException e) {
 				logger.error("FactoryException while trying to retrieve the MS ACI for MsConnection ID = " + c.getId());

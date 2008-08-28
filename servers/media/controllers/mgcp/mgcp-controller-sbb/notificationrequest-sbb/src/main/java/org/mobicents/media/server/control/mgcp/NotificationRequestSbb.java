@@ -21,6 +21,7 @@ import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
@@ -34,6 +35,7 @@ import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 
@@ -47,6 +49,7 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
+import org.mobicents.slee.runtime.facilities.ActivityContextNamingFacilityImpl;
 
 /**
  * @author amit bhayani
@@ -102,6 +105,13 @@ public abstract class NotificationRequestSbb implements Sbb {
 		EndpointIdentifier endpointID = notificationRequest.getEndpointIdentifier();
 		this.setEndpointIdentifier(endpointID);
 
+		NotifiedEntity notifiedEntity = notificationRequest.getNotifiedEntity();
+		if (notifiedEntity == null) {
+			logger.warn("NotifiedEntity is null, NOTIFY request will fail");
+		}
+
+		this.setNotifiedEntity(notifiedEntity);
+
 		EventName[] eventNames = notificationRequest.getSignalRequests();
 
 		RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
@@ -113,9 +123,19 @@ public abstract class NotificationRequestSbb implements Sbb {
 			ConnectionIdentifier connectionIdentifier = event.getConnectionIdentifier();
 
 			if (connectionIdentifier != null) {
-				mediaACI = activityContextNamingfacility.lookup(connectionIdentifier.toString());
 
-				mediaACI.attach(sbbContext.getSbbLocalObject());
+				logger.info("The size of activityContextNamingfacility is growing >>> "
+						+ ((ActivityContextNamingFacilityImpl) activityContextNamingfacility).getBindings().size());
+
+				String tmpConnectionIdentifier = connectionIdentifier.toString();
+
+				mediaACI = activityContextNamingfacility.lookup(tmpConnectionIdentifier);
+
+				logger.debug("Lookeup the ActivityContextInterface = " + mediaACI + " to ConnectionIdentifier = "
+						+ tmpConnectionIdentifier);
+
+				SbbLocalObject sbbObjectLocalObject = sbbContext.getSbbLocalObject();
+				mediaACI.attach(sbbObjectLocalObject);
 				msConnection = (MsConnection) mediaACI.getActivity();
 			}
 
@@ -166,6 +186,10 @@ public abstract class NotificationRequestSbb implements Sbb {
 				Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
 						.getRequestIdentifier(), new EventName[] { eventName });
 
+				notify.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
+
+				notify.setNotifiedEntity(this.getNotifiedEntity());
+
 				JainMgcpEvent[] events = { notify };
 				mgcpProvider.sendMgcpEvents(events);
 			}
@@ -182,6 +206,8 @@ public abstract class NotificationRequestSbb implements Sbb {
 			if (eventName.getEventIdentifier().intValue() == MgcpEvent.REPORT_FAILURE) {
 				Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
 						.getRequestIdentifier(), new EventName[] { eventName });
+
+				notify.setNotifiedEntity(this.getNotifiedEntity());
 
 				JainMgcpEvent[] events = { notify };
 				mgcpProvider.sendMgcpEvents(events);
@@ -245,5 +271,9 @@ public abstract class NotificationRequestSbb implements Sbb {
 	public abstract void setEndpointIdentifier(EndpointIdentifier endpointIdentifier);
 
 	public abstract EndpointIdentifier getEndpointIdentifier();
+
+	public abstract void setNotifiedEntity(NotifiedEntity notifiedEntity);
+
+	public abstract NotifiedEntity getNotifiedEntity();
 
 }

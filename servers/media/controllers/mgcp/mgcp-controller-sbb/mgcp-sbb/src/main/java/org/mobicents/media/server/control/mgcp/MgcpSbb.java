@@ -25,6 +25,7 @@ import jain.protocol.ip.mgcp.message.NotificationRequest;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
+import javax.slee.InitialEventSelector;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
@@ -67,7 +68,12 @@ public abstract class MgcpSbb implements Sbb {
 
 	public void onNotificationRequest(NotificationRequest event, ActivityContextInterface aci) {
 		ChildRelation relation = getNotificationRequestSbbChild();
-		forwardEvent(relation, aci);
+		if (relation.size() > 0) {
+			logger.debug(" onNotificationRequest size of child is > 0 ");
+		} else {
+			forwardEvent(relation, aci);
+		}
+
 	}
 
 	private void forwardEvent(ChildRelation relation, ActivityContextInterface aci) {
@@ -122,6 +128,20 @@ public abstract class MgcpSbb implements Sbb {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
+	}
+
+	public InitialEventSelector endpointIdSelect(InitialEventSelector ies) {
+		Object event = ies.getEvent();
+		String endpointId = null;
+
+		if (event instanceof NotificationRequest) {
+			// If request event, the convergence name to callId
+			endpointId = ((NotificationRequest) event).getEndpointIdentifier().toString();
+			logger.debug("endpointIdSelect() Setting the customName to " + endpointId);
+			ies.setCustomName(endpointId);
+		}
+
+		return ies;
 	}
 
 }

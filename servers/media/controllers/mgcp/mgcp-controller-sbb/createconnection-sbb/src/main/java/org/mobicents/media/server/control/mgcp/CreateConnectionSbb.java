@@ -182,6 +182,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		String identifier = ((CallIdentifier) mgcpProvider.getUniqueCallIdentifier()).toString();
 		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
 
+		bindMediaActivityContextInterface(aci, connectionIdentifier);
+
 		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(),
 				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();
@@ -191,12 +193,11 @@ public abstract class CreateConnectionSbb implements Sbb {
 		response.setLocalConnectionDescriptor(localConnectionDescriptor);
 
 		response.setTransactionHandle(this.getTxId());
-		
 
 		if (this.getUseSpecificEndPointId()) {
 
 			String localEndpointName = msConnection.getEndpoint();
-			
+
 			String domainName = System.getProperty("jboss.bind.address");
 
 			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(localEndpointName, domainName);
@@ -205,11 +206,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+		
+		logger.info(" onConnectionCreated exiting ");
+	}
 
+	private void bindMediaActivityContextInterface(ActivityContextInterface aci,
+			ConnectionIdentifier connectionIdentifier) {
 		try {
 			// bind the MsConnection aci to ActivityContextNamingFacility for
 			// processing DLCX
 			activityContextNamingfacility.bind(aci, connectionIdentifier.toString());
+
+			logger.debug("Bound the ActivityContextInterface = " + aci + " to ConnectionIdentifier = "
+					+ connectionIdentifier.toString());
+
 		} catch (TransactionRequiredLocalException e) {
 			logger
 					.warn(
@@ -236,7 +246,6 @@ public abstract class CreateConnectionSbb implements Sbb {
 							"Binding of MsConnection ACI to ActivityContextNamingfacility failed. DLCX for this ConnectionIdentifier may fail",
 							e);
 		}
-
 	}
 
 	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
@@ -258,7 +267,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(), reason, new ConnectionIdentifier("0"));
+		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(), reason,
+				new ConnectionIdentifier("0"));
 		response.setTransactionHandle(txID);
 		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
