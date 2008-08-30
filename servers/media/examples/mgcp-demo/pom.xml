@@ -48,7 +48,12 @@
                                             </fileset>
                                         </copy>
                                         <copy overwrite="true" file="${basedir}/services-du/target/build.xml" tofile="${basedir}/../../release/${release.name}/examples/mgcp-demo/du-management.xml" />
-                                        <copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/../../release/${release.name}/examples/mgcp-demo" />
+                                        <copy overwrite="true" file="${basedir}/release/build.xml" todir="${basedir}/../../release/${release.name}/examples/mgcp-demo">                                    
+											<filterset>
+												<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
+												<filter token="JBOSS.CONFIG" value="${node}" />
+											</filterset>
+										</copy>										
                                     </tasks>
                                 </configuration>
                             </execution>
