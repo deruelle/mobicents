@@ -5,19 +5,12 @@
 
 	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="jboss.version" value="4.2.2.GA"/>
-	<property name="release.version" value="1.2.0.CR1"/>
+	<property name="release.version" value="1.2.0.CR2"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
 	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/"/>
-	<property name="jboss.config" value="default" />
 
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
 		<os family="windows"/>
-	</condition>
-	<condition property="default.jboss.config">
-		<equals arg1="${jboss.config}" arg2="default"/>
-	</condition>
-	<condition property="all.jboss.config">
-		<equals arg1="${jboss.config}" arg2="all"/>
 	</condition>
 
 	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml">
@@ -43,19 +36,7 @@
 	<target name="unzip-jboss">
 		<delete dir="${jboss.home}" failonerror="true" />
 		<unzip src="${jboss.distro.zip.path}" dest="${release.dir}" />
-		<antcall target="cleanup-jboss"/>
-	</target>
-
-	<target name="cleanup-jboss">
-		<antcall target="delete-all-jboss-config"/>
-		<antcall target="delete-default-jboss-config"/>
 		<delete dir="${jboss.home}/server/minimal" />
-	</target>
-	<target name="delete-all-jboss-config" unless="all.jboss.config">
-		<delete dir="${jboss.home}/server/all" />
-	</target>
-	<target name="delete-default-jboss-config" unless="default.jboss.config">
-		<delete dir="${jboss.home}/server/default" />
 	</target>
 
 	<!-- get servers -->
@@ -91,7 +72,12 @@
 
 	<target name="release-jain-slee">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
-			<property name="release.dir" value="${release.dir}"/>
+			<property name="release.dir" value="${release.dir}" />
+			<property name="jboss.config" value="all" />
+		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
+			<property name="release.dir" value="${release.dir}" />
+			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
 
@@ -119,23 +105,36 @@
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
 			<property name="jboss.home" value="${jboss.home.converted}"/>
+			<property name="jboss.config" value="all" />
+		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
+			<property name="release.dir" value="${release.dir}" />
+			<property name="jboss.home" value="${jboss.home.converted}" />
+			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
 
 	<target name="release-sip-presence">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
+			<property name="release.dir" value="${release.dir}" />
+			<property name="release.build.jboss.home" value="${home}../jboss-${jboss.version}" />
+			<property name="jboss.config" value="all" />
+		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
 			<property name="release.build.jboss.home" value="${home}../jboss-${jboss.version}"/>
+			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
 
 	<target name="release-sip-servlets">
 
 		<!--ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/release/build.xml" target="release-mobicents-all" /-->
-
+		
 		<!-- this code should be moved to mss release script, to replace current target release-mc-distro -->
 		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets"/>
-
+		<property name="jboss.config" value="default" />
+		
 		<mkdir dir="${jboss.home}/server/${jboss.config}/conf/dars" />
 		<copy verbose="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/src/site/resources/click2call-dar.properties" toFile="${jboss.home}/server/${jboss.config}/conf/dars/mobicents-dar.properties" />
 
