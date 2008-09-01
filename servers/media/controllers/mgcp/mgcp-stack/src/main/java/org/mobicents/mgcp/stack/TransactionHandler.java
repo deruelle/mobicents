@@ -66,8 +66,9 @@ import org.apache.log4j.Logger;
  * 
  * @author Oleg Kulikov
  * @author Pavel Mitrenko
+ * @author Amit Bhayani
  */
-public abstract class TransactionHandler {
+public abstract class TransactionHandler implements Runnable {
 
 	private static int GENERATOR = 1;
 
@@ -88,11 +89,18 @@ public abstract class TransactionHandler {
 	private int remotePort;
 	/** Used to hold parsed command event */
 	protected JainMgcpCommandEvent commandEvent;
+
+	/** Used to hold parsed response event * */
+	protected JainMgcpResponseEvent responseEvent;
+
 	/** Logger instance */
 	private Logger logger = Logger.getLogger(TransactionHandler.class);
 	/** Expiration timer */
 	private static Timer timer = new Timer();
 	private TransactionTimerTask timerTask;
+
+	/** Flag to check if this is Command or Response event * */
+	private boolean isCommand = false;
 
 	private class TransactionTimerTask extends TimerTask {
 
@@ -246,6 +254,14 @@ public abstract class TransactionHandler {
 	 */
 	protected abstract JainMgcpResponseEvent decodeResponse(String message) throws ParseException;
 
+	public void run() {
+		if (isCommand) {
+			this.send(this.getCommandEvent());
+		} else {
+			this.send(this.getResponseEvent());
+		}
+	}
+
 	/**
 	 * Sends MGCP command from the application to the endpoint specified in the
 	 * message.
@@ -253,15 +269,12 @@ public abstract class TransactionHandler {
 	 * @param event
 	 *            the jain mgcp command event object.
 	 */
-	public void send(JainMgcpCommandEvent event) {
+	private void send(JainMgcpCommandEvent event) {
 
 		sent = true;
 
 		String host = null;
 		int port = 0;
-
-		// save command to later link it with response
-		this.commandEvent = event;
 
 		switch (event.getObjectIdentifier()) {
 		case Constants.CMD_NOTIFY:
@@ -321,7 +334,7 @@ public abstract class TransactionHandler {
 	 * @param event
 	 *            the jain mgcp response event object.
 	 */
-	public void send(JainMgcpResponseEvent event) {
+	private void send(JainMgcpResponseEvent event) {
 
 		if (timerTask != null) {
 			timerTask.cancel();
@@ -456,5 +469,29 @@ public abstract class TransactionHandler {
 		} else {
 			return new ReceivedTransactionID(tid, remoteAddress.toString(), remotePort);
 		}
+	}
+
+	public boolean isCommand() {
+		return isCommand;
+	}
+
+	public void setCommand(boolean isCommand) {
+		this.isCommand = isCommand;
+	}
+
+	private JainMgcpCommandEvent getCommandEvent() {
+		return commandEvent;
+	}
+
+	public void setCommandEvent(JainMgcpCommandEvent commandEvent) {
+		this.commandEvent = commandEvent;
+	}
+
+	private JainMgcpResponseEvent getResponseEvent() {
+		return responseEvent;
+	}
+
+	public void setResponseEvent(JainMgcpResponseEvent responseEvent) {
+		this.responseEvent = responseEvent;
 	}
 }
