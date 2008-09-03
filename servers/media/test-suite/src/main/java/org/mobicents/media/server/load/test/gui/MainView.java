@@ -32,98 +32,95 @@ import org.mobicents.media.server.load.test.EchoLoadTest;
  */
 public class MainView extends FrameView {
 
-	public MainView(SingleFrameApplication app) {
-		super(app);
-		this.app = app;
-		fileFilter = new WavFileFilter("wav");
-		appResourceMap = getContext().getResourceMap();
-		initComponents();
+    public MainView(SingleFrameApplication app) {
+        super(app);
+        this.app = app;
+        fileFilter = new WavFileFilter("wav");
+        appResourceMap = getContext().getResourceMap();
+        initComponents();
 
-		// status bar initialization - message timeout, idle icon and busy
-		// animation, etc
-		ResourceMap resourceMap = getResourceMap();
-		int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
-		messageTimer = new Timer(messageTimeout, new ActionListener() {
+        // status bar initialization - message timeout, idle icon and busy
+        // animation, etc
+        ResourceMap resourceMap = getResourceMap();
+        int messageTimeout = resourceMap.getInteger("StatusBar.messageTimeout");
+        messageTimer = new Timer(messageTimeout, new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				statusMessageLabel.setText("");
-			}
-		});
-		messageTimer.setRepeats(false);
-		int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
-		for (int i = 0; i < busyIcons.length; i++) {
-			busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
-		}
-		busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                statusMessageLabel.setText("");
+            }
+        });
+        messageTimer.setRepeats(false);
+        int busyAnimationRate = resourceMap.getInteger("StatusBar.busyAnimationRate");
+        for (int i = 0; i < busyIcons.length; i++) {
+            busyIcons[i] = resourceMap.getIcon("StatusBar.busyIcons[" + i + "]");
+        }
+        busyIconTimer = new Timer(busyAnimationRate, new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
-				statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
-			}
-		});
-		idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
-		statusAnimationLabel.setIcon(idleIcon);
-		progressBar.setVisible(false);
+            public void actionPerformed(ActionEvent e) {
+                busyIconIndex = (busyIconIndex + 1) % busyIcons.length;
+                statusAnimationLabel.setIcon(busyIcons[busyIconIndex]);
+            }
+        });
+        idleIcon = resourceMap.getIcon("StatusBar.idleIcon");
+        statusAnimationLabel.setIcon(idleIcon);
+        progressBar.setVisible(false);
 
-		// connecting action tasks to status bar via TaskMonitor
-		TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
-		taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        // connecting action tasks to status bar via TaskMonitor
+        TaskMonitor taskMonitor = new TaskMonitor(getApplication().getContext());
+        taskMonitor.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
 
-			public void propertyChange(java.beans.PropertyChangeEvent evt) {
-				String propertyName = evt.getPropertyName();
-				if ("started".equals(propertyName)) {
-					if (!busyIconTimer.isRunning()) {
-						statusAnimationLabel.setIcon(busyIcons[0]);
-						busyIconIndex = 0;
-						busyIconTimer.start();
-					}
-					progressBar.setVisible(true);
-					progressBar.setIndeterminate(true);
-				} else if ("done".equals(propertyName)) {
-					busyIconTimer.stop();
-					statusAnimationLabel.setIcon(idleIcon);
-					progressBar.setVisible(false);
-					progressBar.setValue(0);
-				} else if ("message".equals(propertyName)) {
-					String text = (String) (evt.getNewValue());
-					statusMessageLabel.setText((text == null) ? "" : text);
-					messageTimer.restart();
-				} else if ("progress".equals(propertyName)) {
-					int value = (Integer) (evt.getNewValue());
-					progressBar.setVisible(true);
-					progressBar.setIndeterminate(false);
-					progressBar.setValue(value);
-				}
-			}
-		});
-	}
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                String propertyName = evt.getPropertyName();
+                if ("started".equals(propertyName)) {
+                    if (!busyIconTimer.isRunning()) {
+                        statusAnimationLabel.setIcon(busyIcons[0]);
+                        busyIconIndex = 0;
+                        busyIconTimer.start();
+                    }
+                    progressBar.setVisible(true);
+                    progressBar.setIndeterminate(true);
+                } else if ("done".equals(propertyName)) {
+                    busyIconTimer.stop();
+                    statusAnimationLabel.setIcon(idleIcon);
+                    progressBar.setVisible(false);
+                    progressBar.setValue(0);
+                } else if ("message".equals(propertyName)) {
+                    String text = (String) (evt.getNewValue());
+                    statusMessageLabel.setText((text == null) ? "" : text);
+                    messageTimer.restart();
+                } else if ("progress".equals(propertyName)) {
+                    int value = (Integer) (evt.getNewValue());
+                    progressBar.setVisible(true);
+                    progressBar.setIndeterminate(false);
+                    progressBar.setValue(value);
+                }
+            }
+        });
+    }
 
-	@Action
-	public void showAboutBox() {
-		if (aboutBox == null) {
-			JFrame mainFrame = Main.getApplication().getMainFrame();
-			aboutBox = new MainAboutBox(mainFrame);
-			aboutBox.setLocationRelativeTo(mainFrame);
-		}
-		Main.getApplication().show(aboutBox);
-	}
+    @Action
+    public void showAboutBox() {
+        if (aboutBox == null) {
+            JFrame mainFrame = Main.getApplication().getMainFrame();
+            aboutBox = new MainAboutBox(mainFrame);
+            aboutBox.setLocationRelativeTo(mainFrame);
+        }
+        Main.getApplication().show(aboutBox);
+    }
 
-	/**
-	 * This method is called from within the constructor to initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is always
-	 * regenerated by the Form Editor.
-	 */
-	@SuppressWarnings("unchecked")
-	// <editor-fold defaultstate="collapsed" desc="Generated
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel();
-        jLayeredPane1 = new javax.swing.JLayeredPane();
-        jLabel1 = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         jLayeredPaneEchoTest = new javax.swing.JLayeredPane();
-        jLabel2 = new javax.swing.JLabel();
+        jLabelHeader = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         jLabelJBossBindAdd = new javax.swing.JLabel();
         jTextFieldJBossBindAdd = new javax.swing.JTextField();
@@ -156,6 +153,7 @@ public class MainView extends FrameView {
         jTextFieldErrorTask = new javax.swing.JTextField();
         jLabelClientMGCPPort = new javax.swing.JLabel();
         jTextFieldClientMGCPPort = new javax.swing.JTextField();
+        jButtonOpenRTP = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
@@ -173,27 +171,14 @@ public class MainView extends FrameView {
         mainPanel.setName("mainPanel"); // NOI18N
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.mobicents.media.server.load.test.gui.Main.class).getContext().getResourceMap(MainView.class);
-        jLayeredPane1.setBackground(resourceMap.getColor("jLayeredPane1.background")); // NOI18N
-        jLayeredPane1.setName("jLayeredPane1"); // NOI18N
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
-        jLabel1.setName("jLabel1"); // NOI18N
-        jLabel1.setBounds(0, 0, 540, 20);
-        jLayeredPane1.add(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        jSeparator1.setName("jSeparator1"); // NOI18N
-        jSeparator1.setBounds(15, 22, 530, 10);
-        jLayeredPane1.add(jSeparator1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         jLayeredPaneEchoTest.setBackground(resourceMap.getColor("jLayeredPaneEchoTest.background")); // NOI18N
         jLayeredPaneEchoTest.setName("jLayeredPaneEchoTest"); // NOI18N
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N
-        jLabel2.setName("jLabel2"); // NOI18N
-        jLabel2.setBounds(0, 0, 540, 20);
-        jLayeredPaneEchoTest.add(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLabelHeader.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelHeader.setText(resourceMap.getString("jLabelHeader.text")); // NOI18N
+        jLabelHeader.setName("jLabelHeader"); // NOI18N
+        jLabelHeader.setBounds(0, 0, 540, 20);
+        jLayeredPaneEchoTest.add(jLabelHeader, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jSeparator2.setName("jSeparator2"); // NOI18N
         jSeparator2.setBounds(15, 22, 530, 10);
@@ -212,7 +197,7 @@ public class MainView extends FrameView {
 
         jTextFieldUACount.setText(resourceMap.getString("jTextFieldUACount.text")); // NOI18N
         jTextFieldUACount.setName("jTextFieldUACount"); // NOI18N
-        jTextFieldUACount.setBounds(180, 30, 110, 19);
+        jTextFieldUACount.setBounds(180, 30, 100, 19);
         jLayeredPaneEchoTest.add(jTextFieldUACount, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jLabelServerMGCPPort.setText(resourceMap.getString("jLabelServerMGCPPort.text")); // NOI18N
@@ -400,24 +385,34 @@ public class MainView extends FrameView {
         jTextFieldClientMGCPPort.setBounds(180, 120, 100, 19);
         jLayeredPaneEchoTest.add(jTextFieldClientMGCPPort, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jButtonOpenRTP.setText(resourceMap.getString("jButtonOpenRTP.text")); // NOI18N
+        jButtonOpenRTP.setEnabled(false);
+        jButtonOpenRTP.setName("jButtonOpenRTP"); // NOI18N
+        jButtonOpenRTP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonOpenRTPActionPerformed(evt);
+            }
+        });
+        jButtonOpenRTP.setBounds(450, 500, 150, 25);
+        jLayeredPaneEchoTest.add(jButtonOpenRTP, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
             .add(mainPanelLayout.createSequentialGroup()
-                .add(jLayeredPaneEchoTest, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 687, Short.MAX_VALUE)
+                .addContainerGap()
+                .add(jLayeredPaneEchoTest, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 658, Short.MAX_VALUE)
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(mainPanelLayout.createSequentialGroup()
-                .add(jLayeredPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 524, Short.MAX_VALUE)
-                .add(31, 31, 31)
-                .add(jLayeredPaneEchoTest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 544, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .add(jLayeredPaneEchoTest, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 544, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLayeredPane1.setVisible(false);
         jLayeredPaneEchoTest.setVisible(false);
 
         menuBar.setName("menuBar"); // NOI18N
@@ -481,11 +476,11 @@ public class MainView extends FrameView {
         statusPanel.setLayout(statusPanelLayout);
         statusPanelLayout.setHorizontalGroup(
             statusPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 699, Short.MAX_VALUE)
+            .add(statusPanelSeparator, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
             .add(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(statusMessageLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 515, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 498, Short.MAX_VALUE)
                 .add(progressBar, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(statusAnimationLabel)
@@ -508,142 +503,185 @@ public class MainView extends FrameView {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
-	private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuItem2ActionPerformed
-	// TODO add your handling code here:
-		System.out.println("Testing configuration for Loop Endpoint");
-		jLayeredPaneEchoTest.setVisible(true);
-		jLayeredPane1.setVisible(false);
-	}// GEN-LAST:event_jMenuItem2ActionPerformed
+private void jButtonOpenRTPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonOpenRTPActionPerformed
 
-	private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuItem1ActionPerformed
-	// TODO add your handling code here:
-		System.out.println("Testing configuration for Announcement Endpoint");
-		jLayeredPaneEchoTest.setVisible(false);
-		jLayeredPane1.setVisible(true);
-	}// GEN-LAST:event_jMenuItem1ActionPerformed
+    showOpenRTP();
+}//GEN-LAST:event_jButtonOpenRTPActionPerformed
 
-	private void jTextFieldAudioFilePlayMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jTextFieldAudioFilePlayMouseClicked
-	// TODO add your handling code here:
-		JFileChooser fc = createFileChooser("openFileChooser", this.fileFilter);
-		int option = fc.showOpenDialog(getFrame());
-		if (JFileChooser.APPROVE_OPTION == option) {
-			File file = fc.getSelectedFile();
-			jTextFieldAudioFilePlay.setText(file.getAbsolutePath());
-		}
+    @Action
+    public void showOpenRTP() {
+        if (openRTP == null) {
+            JFrame mainFrame = Main.getApplication().getMainFrame();
+            openRTP = new MainOpenRTP(mainFrame, jTextFieldTestIP.getText());
+            openRTP.setLocationRelativeTo(mainFrame);
+        }
+        Main.getApplication().show(openRTP);
+    }
 
-	}// GEN-LAST:event_jTextFieldAudioFilePlayMouseClicked
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
 
-	private void jTextFieldAudioFileRecordMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jTextFieldAudioFileRecordMouseClicked
+        System.out.println("Testing configuration for Loop Endpoint");
+        
+        testIdentifier = EchoLoadTest.ECHO_LOAD_TEST;
 
-		JFileChooser chooser = new JFileChooser();
-		chooser.setName("Directory");
+        jLabelHeader.setText("Loop End Point Load Test");
+        jLabelPlayAudioFile.setVisible(true);
+        jTextFieldAudioFilePlay.setVisible(true);
+        jLabelRecordDirectory.setVisible(true);
+        jTextFieldAudioFileRecord.setVisible(true);
+        jButtonOpenRTP.setVisible(false);
 
-		chooser.setCurrentDirectory(new java.io.File("."));
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		chooser.setAcceptAllFileFilterUsed(false);
+        jLayeredPaneEchoTest.setVisible(true);
 
-		int option = chooser.showOpenDialog(getFrame());
-		if (JFileChooser.APPROVE_OPTION == option) {
-			File file = chooser.getSelectedFile();
-			jTextFieldAudioFileRecord.setText(file.getAbsolutePath());
-		}
-	}// GEN-LAST:event_jTextFieldAudioFileRecordMouseClicked
+    }// GEN-LAST:event_jMenuItem2ActionPerformed
 
-	private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStartActionPerformed
-	// TODO add your handling code here:
-		System.out.println("Start the test here baby");
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
 
-		jTextFieldUACount.setEditable(false);
-		jTextFieldJBossBindAdd.setEditable(false);
-		jTextFieldTestIP.setEnabled(false);
-		jTextFieldServerMGCPPort.setEditable(false);
-		
-		jTextFieldAudioFilePlay.setEditable(false);
-		jTextFieldAudioFileRecord.setEditable(false);
+        System.out.println("Testing configuration for Announcement Endpoint");
+        
+        testIdentifier = EchoLoadTest.ANNOUNCEMENT_LOAD_TEST;
+        
+        jLabelHeader.setText("Announcement End Point Load Test");
+        jLabelPlayAudioFile.setVisible(false);
+        jTextFieldAudioFilePlay.setVisible(false);
+        jLabelRecordDirectory.setVisible(false);
+        jTextFieldAudioFileRecord.setVisible(false);
+        jButtonOpenRTP.setVisible(true);
 
-		test = new EchoLoadTest(EchoLoadTest.ANNOUNCEMENT_LOAD_TEST);
 
-		test.setNumberOfUA(Integer.parseInt(jTextFieldUACount.getText()));
-		try {
-			InetAddress clientMachineIPAddress = InetAddress.getByName(jTextFieldTestIP.getText());
-			test.setClientMachineIPAddress(clientMachineIPAddress);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+        jLayeredPaneEchoTest.setVisible(true);
 
-		test.setJbossBindAddress(jTextFieldJBossBindAdd.getText());
-		test.setServerMGCPStackPort(Integer.parseInt(jTextFieldServerMGCPPort.getText()));
-                test.setClientMGCPStackPort(Integer.parseInt(jTextFieldClientMGCPPort.getText()));
-		test.setAudioFileToPlay(jTextFieldAudioFilePlay.getText());
+    }// GEN-LAST:event_jMenuItem1ActionPerformed
 
-		jButtonStart.setEnabled(false);
-		jButtonStop.setEnabled(true);
-		jButtonIncreaseLoad.setEnabled(true);
-		jButtonDecreaseLoad.setEnabled(true);
+    private void jTextFieldAudioFilePlayMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jTextFieldAudioFilePlayMouseClicked
+        // TODO add your handling code here:
 
-		myPeriodicTask = new MyPeriodicTask(500L);
-		getContext().getTaskService().execute(myPeriodicTask);
+        JFileChooser fc = createFileChooser("openFileChooser", this.fileFilter);
+        int option = fc.showOpenDialog(getFrame());
+        if (JFileChooser.APPROVE_OPTION == option) {
+            File file = fc.getSelectedFile();
+            jTextFieldAudioFilePlay.setText(file.getAbsolutePath());
+        }
 
-		test.test();
+    }// GEN-LAST:event_jTextFieldAudioFilePlayMouseClicked
 
-	}// GEN-LAST:event_jButtonStartActionPerformed
+    private void jTextFieldAudioFileRecordMouseClicked(java.awt.event.MouseEvent evt) {// GEN-FIRST:event_jTextFieldAudioFileRecordMouseClicked
 
-	private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStopActionPerformed
-	// TODO add your handling code here:
+        JFileChooser chooser = new JFileChooser();
+        chooser.setName("Directory");
 
-		myPeriodicTask.cancel(false);
-		System.out.println("Stop the test here baby");
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
 
-		jTextFieldUACount.setEditable(true);
-		jTextFieldJBossBindAdd.setEditable(true);
-		jTextFieldTestIP.setEnabled(true);
-		jTextFieldServerMGCPPort.setEditable(true);
-		
-		jTextFieldAudioFilePlay.setEditable(true);
-		jTextFieldAudioFileRecord.setEditable(true);
+        int option = chooser.showOpenDialog(getFrame());
+        if (JFileChooser.APPROVE_OPTION == option) {
+            File file = chooser.getSelectedFile();
+            jTextFieldAudioFileRecord.setText(file.getAbsolutePath());
+        }
+    }// GEN-LAST:event_jTextFieldAudioFileRecordMouseClicked
 
-		test.cancel();
+    private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStartActionPerformed
+        // TODO add your handling code here:
 
-		jButtonStart.setEnabled(true);
-		jButtonStop.setEnabled(false);
-		jButtonIncreaseLoad.setEnabled(false);
-		jButtonDecreaseLoad.setEnabled(false);
+        System.out.println("Start the test here baby");
 
-	}// GEN-LAST:event_jButtonStopActionPerformed
+        jTextFieldUACount.setEditable(false);
+        jTextFieldJBossBindAdd.setEditable(false);
+        jTextFieldTestIP.setEnabled(false);
+        jTextFieldServerMGCPPort.setEditable(false);
 
-	private void jButtonIncreaseLoadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonIncreaseLoadActionPerformed
-	// TODO add your handling code here:
-		test.add();
-	}// GEN-LAST:event_jButtonIncreaseLoadActionPerformed
+        jTextFieldAudioFilePlay.setEditable(false);
+        jTextFieldAudioFileRecord.setEditable(false);
 
-	private void jButtonDecreaseLoadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonDecreaseLoadActionPerformed
-	// TODO add your handling code here:
-		test.reduce();
-	}// GEN-LAST:event_jButtonDecreaseLoadActionPerformed
+        test = new EchoLoadTest(testIdentifier);
 
-	private JFileChooser createFileChooser(String name, FileFilter fileFilter) {
-		JFileChooser fc = new JFileChooser();
-		fc.setName(name);
-		if (fileFilter != null) {
-			fc.setFileFilter(fileFilter);
-		}
-		appResourceMap.injectComponents(fc);
-		return fc;
-	}
+        test.setNumberOfUA(Integer.parseInt(jTextFieldUACount.getText()));
+        try {
+            InetAddress clientMachineIPAddress = InetAddress.getByName(jTextFieldTestIP.getText());
+            test.setClientMachineIPAddress(clientMachineIPAddress);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
-	private EchoLoadTest test = null;
+        test.setJbossBindAddress(jTextFieldJBossBindAdd.getText());
+        test.setServerMGCPStackPort(Integer.parseInt(jTextFieldServerMGCPPort.getText()));
+        test.setClientMGCPStackPort(Integer.parseInt(jTextFieldClientMGCPPort.getText()));
+        test.setAudioFileToPlay(jTextFieldAudioFilePlay.getText());
+
+        jButtonStart.setEnabled(false);
+        jButtonStop.setEnabled(true);
+        jButtonIncreaseLoad.setEnabled(true);
+        jButtonDecreaseLoad.setEnabled(true);
+        jButtonOpenRTP.setEnabled(true);
+
+        myPeriodicTask = new MyPeriodicTask(500L);
+        getContext().getTaskService().execute(myPeriodicTask);
+
+        test.test();
+
+    }// GEN-LAST:event_jButtonStartActionPerformed
+
+    private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStopActionPerformed
+        // TODO add your handling code here:
+
+        myPeriodicTask.cancel(false);
+        System.out.println("Stop the test here baby");
+
+        jTextFieldUACount.setEditable(true);
+        jTextFieldJBossBindAdd.setEditable(true);
+        jTextFieldTestIP.setEnabled(true);
+        jTextFieldServerMGCPPort.setEditable(true);
+
+        jTextFieldAudioFilePlay.setEditable(true);
+        jTextFieldAudioFileRecord.setEditable(true);
+
+        test.cancel();
+
+        jButtonStart.setEnabled(true);
+        jButtonStop.setEnabled(false);
+        jButtonIncreaseLoad.setEnabled(false);
+        jButtonDecreaseLoad.setEnabled(false);
+        jButtonOpenRTP.setEnabled(false);
+
+    }// GEN-LAST:event_jButtonStopActionPerformed
+
+    private void jButtonIncreaseLoadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonIncreaseLoadActionPerformed
+        // TODO add your handling code here:
+
+        test.add();
+    }// GEN-LAST:event_jButtonIncreaseLoadActionPerformed
+
+    private void jButtonDecreaseLoadActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonDecreaseLoadActionPerformed
+        // TODO add your handling code here:
+
+        test.reduce();
+    }// GEN-LAST:event_jButtonDecreaseLoadActionPerformed
+
+    private JFileChooser createFileChooser(String name, FileFilter fileFilter) {
+        JFileChooser fc = new JFileChooser();
+        fc.setName(name);
+        if (fileFilter != null) {
+            fc.setFileFilter(fileFilter);
+        }
+        appResourceMap.injectComponents(fc);
+        return fc;
+    }
+    private EchoLoadTest test = null;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonDecreaseLoad;
     private javax.swing.JButton jButtonIncreaseLoad;
+    private javax.swing.JButton jButtonOpenRTP;
     private javax.swing.JButton jButtonStart;
     private javax.swing.JButton jButtonStop;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabelActiveConcurrentTask;
     private javax.swing.JLabel jLabelClientMGCPPort;
     private javax.swing.JLabel jLabelCompletedTask;
+    private javax.swing.JLabel jLabelHeader;
     private javax.swing.JLabel jLabelJBossBindAdd;
     private javax.swing.JLabel jLabelPlayAudioFile;
     private javax.swing.JLabel jLabelRecordDirectory;
@@ -652,12 +690,10 @@ public class MainView extends FrameView {
     private javax.swing.JLabel jLabelTaskScheduled;
     private javax.swing.JLabel jLabelTestMachineIPAdd;
     private javax.swing.JLabel jLabelUACounts;
-    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPaneEchoTest;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JTextField jTextFieldActiveCount;
@@ -680,77 +716,79 @@ public class MainView extends FrameView {
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
     // End of variables declaration//GEN-END:variables
-	private final Timer messageTimer;
-	private final Timer busyIconTimer;
-	private final Icon idleIcon;
-	private final Icon[] busyIcons = new Icon[15];
-	private int busyIconIndex = 0;
-	private JDialog aboutBox;
-	WavFileFilter fileFilter;
-	private ResourceMap appResourceMap;
-	private SingleFrameApplication app;
-	private MyPeriodicTask myPeriodicTask;
+    private final Timer messageTimer;
+    private final Timer busyIconTimer;
+    private final Icon idleIcon;
+    private final Icon[] busyIcons = new Icon[15];
+    private int busyIconIndex = 0;
+    private JDialog aboutBox;
+    private JDialog openRTP;
+    WavFileFilter fileFilter;
+    private ResourceMap appResourceMap;
+    private SingleFrameApplication app;
+    private MyPeriodicTask myPeriodicTask;
+    private int testIdentifier = 0;
 
-	private class MyPeriodicTask extends Task<Void, Void> {
+    private class MyPeriodicTask extends Task<Void, Void> {
 
-		private final long period;
+        private final long period;
 
-		MyPeriodicTask(long period) {
-			super(app);
-			this.period = period;
-		}
+        MyPeriodicTask(long period) {
+            super(app);
+            this.period = period;
+        }
 
-		public Void doInBackground() throws InterruptedException {
-			while (!isCancelled()) {
-				Thread.sleep(period);
-				publish((Void) null);
-			}
-			return (Void) null;
-		}
+        public Void doInBackground() throws InterruptedException {
+            while (!isCancelled()) {
+                Thread.sleep(period);
+                publish((Void) null);
+            }
+            return (Void) null;
+        }
 
-		public void process(List<Void> ignored) {
-			long dt = getExecutionDuration(TimeUnit.MILLISECONDS);
-			jTextFieldActiveCount.setText(String.valueOf(test.getScheduler().getActiveCount()));
-			jTextFieldCompletedTask.setText(String.valueOf(test.getScheduler().getCompletedTaskCount()));
-			jTextFieldTaskScheduled.setText(String.valueOf(test.getScheduler().getTaskCount()));
-			jTextFieldPoolSize.setText(String.valueOf(test.getNumberOfUA()));
-			
-			jTextFieldSuccessfulTask.setText(String.valueOf(test.getTaskCompletedSuccessfully()));
-			jTextFieldErrorTask.setText(String.valueOf(test.getTaskCompletedFailure()));
-		}
-	}
+        public void process(List<Void> ignored) {
+            long dt = getExecutionDuration(TimeUnit.MILLISECONDS);
+            jTextFieldActiveCount.setText(String.valueOf(test.getScheduler().getActiveCount()));
+            jTextFieldCompletedTask.setText(String.valueOf(test.getScheduler().getCompletedTaskCount()));
+            jTextFieldTaskScheduled.setText(String.valueOf(test.getScheduler().getTaskCount()));
+            jTextFieldPoolSize.setText(String.valueOf(test.getNumberOfUA()));
 
-	/*
-	 * This is a substitute for FileNameExtensionFilter, which is only available
-	 * on Java SE 6.
-	 */
-	private static class WavFileFilter extends FileFilter {
+            jTextFieldSuccessfulTask.setText(String.valueOf(test.getTaskCompletedSuccessfully()));
+            jTextFieldErrorTask.setText(String.valueOf(test.getTaskCompletedFailure()));
+        }
+    }
 
-		private final String description;
+    /*
+     * This is a substitute for FileNameExtensionFilter, which is only available
+     * on Java SE 6.
+     */
+    private static class WavFileFilter extends FileFilter {
 
-		WavFileFilter(String description) {
-			this.description = description;
-		}
+        private final String description;
 
-		@Override
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
-			}
-			String fileName = f.getName();
-			int i = fileName.lastIndexOf('.');
-			if ((i > 0) && (i < (fileName.length() - 1))) {
-				String fileExt = fileName.substring(i + 1);
-				if ("wav".equalsIgnoreCase(fileExt)) {
-					return true;
-				}
-			}
-			return false;
-		}
+        WavFileFilter(String description) {
+            this.description = description;
+        }
 
-		@Override
-		public String getDescription() {
-			return description;
-		}
-	}
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+            String fileName = f.getName();
+            int i = fileName.lastIndexOf('.');
+            if ((i > 0) && (i < (fileName.length() - 1))) {
+                String fileExt = fileName.substring(i + 1);
+                if ("wav".equalsIgnoreCase(fileExt)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String getDescription() {
+            return description;
+        }
+    }
 }

@@ -15,7 +15,6 @@
 
 	<name>Mobicents Media Server Test Suite:: ${pom.artifactId}</name>
 
-
 	<dependencies>
 		<dependency>
 			<artifactId>mobicents-media-server-spi</artifactId>
@@ -77,6 +76,28 @@
 			<artifactId>swing-worker</artifactId>
 			<version>1.1</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.mobicents.external.fmj</groupId>
+			<artifactId>fmj</artifactId>
+			<version>1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.external.fmj</groupId>
+			<artifactId>mp3spi</artifactId>
+			<version>1.9.4</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.external.fmj</groupId>
+			<artifactId>tritonus_share</artifactId>
+			<version>1.0</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.mobicents.external.fmj</groupId>
+			<artifactId>vorbisspi</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		
 	</dependencies>
 
 
@@ -320,6 +341,78 @@
 									<destFileName>
 										swing-worker.jar
 									</destFileName>
+								</artifactItem>
+								
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.fmj
+									</groupId>
+									<artifactId>
+										fmj
+									</artifactId>
+									<version>1.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										fmj.jar
+									</destFileName>
+								</artifactItem>	
+								
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.fmj
+									</groupId>
+									<artifactId>
+										mp3spi
+									</artifactId>
+									<version>1.9.4</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										mp3spi.jar
+									</destFileName>
+								</artifactItem>	
+								
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.fmj
+									</groupId>
+									<artifactId>
+										tritonus_share
+									</artifactId>
+									<version>1.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										tritonus_share.jar
+									</destFileName>
+								</artifactItem>	
+								
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.fmj
+									</groupId>
+									<artifactId>
+										vorbisspi
+									</artifactId>
+									<version>1.0.2</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										vorbisspi.jar
+									</destFileName>
 								</artifactItem>								
 
 							</artifactItems>
@@ -373,7 +466,15 @@
 										<pathelement
 											location="target/swing-layout.jar" />
 										<pathelement
-											location="target/swing-worker.jar" />											
+											location="target/swing-worker.jar" />			
+										<pathelement
+											location="target/fmj.jar" />				
+										<pathelement
+										location="target/mp3spi.jar" />	
+										<pathelement
+										location="target/tritonus_share.jar" />	
+										<pathelement
+										location="target/vorbisspi.jar" />										
 									</classpath>
 								</java>
 							</tasks>

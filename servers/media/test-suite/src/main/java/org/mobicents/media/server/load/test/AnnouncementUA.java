@@ -70,6 +70,8 @@ public class AnnouncementUA implements Runnable {
 
 	private JainMgcpListnerImpl listenerImpl = null;
 
+	private boolean openRTP = false;
+
 	public AnnouncementUA(int UACount, InetAddress clientMachineIPAddress, String jbossBindAddress,
 			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest) {
 		this.UACount = UACount;
@@ -85,7 +87,7 @@ public class AnnouncementUA implements Runnable {
 	}
 
 	public void run() {
-		logger.info("Starting the AnnouncementUA = " + this.name);
+		logger.info(this.name + "Starting the AnnouncementUA = " + this.name);
 
 		try {
 			this.setTaskCompleted(false);
@@ -100,7 +102,7 @@ public class AnnouncementUA implements Runnable {
 
 			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 
-			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(getLocalDescriptor()));
+			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(getLocalDescriptor(this.UACount)));
 
 			createConnection.setTransactionHandle(provider.getUniqueTransactionHandler());
 
@@ -138,6 +140,14 @@ public class AnnouncementUA implements Runnable {
 		this.taskCompleted = taskCompleted;
 	}
 
+	public boolean isOpenRTP() {
+		return openRTP;
+	}
+
+	public void setOpenRTP(boolean openRTP) {
+		this.openRTP = openRTP;
+	}
+
 	class JainMgcpListnerImpl implements JainMgcpExtendedListener {
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
@@ -145,7 +155,7 @@ public class AnnouncementUA implements Runnable {
 			switch (command.getObjectIdentifier()) {
 			case Constants.CMD_NOTIFY:
 				logger.info(name + " Announcement Completed Successfully");
-				//echoLoadTest.addTaskCompletedSuccessfully();
+				// echoLoadTest.addTaskCompletedSuccessfully();
 
 				// Send NotifyResponse
 				NotifyResponse notifyResponse = new NotifyResponse(command.getSource(),
@@ -155,10 +165,12 @@ public class AnnouncementUA implements Runnable {
 
 				provider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
-				//cleanUp();
-				
-				//Send DeleteConnection 
+				// cleanUp();
+
+				// Send DeleteConnection
 				sendDeleteConnectionMGCPRequest();
+
+				// sendNotificationRequestMGCPRequest();
 				break;
 
 			default:
@@ -171,46 +183,23 @@ public class AnnouncementUA implements Runnable {
 		}
 
 		private void processCreateConnectionResponse(CreateConnectionResponse responseEvent) {
-			logger.debug("processCreateConnectionResponse() ");
+			logger.debug(name + " processCreateConnectionResponse() ");
 			ReturnCode returnCode = responseEvent.getReturnCode();
 
 			switch (returnCode.getValue()) {
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-				logger.debug("TRANSACTION_EXECUTED_NORMALLY = ");
-
-				String HELLO_WORLD = "http://" + jbossBindAddress + ":8080/msdemo/audio/welcome.wav";
-
 				connectionIdentifier = ((CreateConnectionResponse) responseEvent).getConnectionIdentifier();
+				logger
+						.debug(name + " TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
+								+ connectionIdentifier);
+				
+				//Before Sending Notification lets Open RTP Session to Play Audio in case 
 
-				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, provider
-						.getUniqueRequestIdentifier());
-
-				EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann
-						.withParm(HELLO_WORLD), connectionIdentifier) };
-				notificationRequest.setSignalRequests(signalRequests);
-
-				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
-
-				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc, connectionIdentifier),
-								actions),
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of, connectionIdentifier),
-								actions) };
-
-				notificationRequest.setRequestedEvents(requestedEvents);
-				notificationRequest.setTransactionHandle(provider.getUniqueTransactionHandler());
-
-				NotifiedEntity notifiedEntity = new NotifiedEntity(clientMachineIPAddress.getHostName(),
-						clientMachineIPAddress.getHostName(), provider.getJainMgcpStack().getPort());
-				notificationRequest.setNotifiedEntity(notifiedEntity);
-
-				provider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
-
-				logger.info(" NotificationRequest sent");
+				sendNotificationRequestMGCPRequest();
 
 				break;
 			default:
-				logger.error("SOMETHING IS BROKEN = " + responseEvent);
+				logger.error(name + " SOMETHING IS BROKEN = " + responseEvent);
 				echoLoadTest.addTaskCompletedFailure();
 				cleanUp();
 				break;
@@ -220,25 +209,25 @@ public class AnnouncementUA implements Runnable {
 		}
 
 		private void processDeleteConnectionResponse(DeleteConnectionResponse responseEvent) {
-			logger.debug("Connection deleted at server, do the clean up here");
+			logger.debug(name + " Connection deleted at server, do the clean up here");
 			echoLoadTest.addTaskCompletedSuccessfully();
 			cleanUp();
 
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent responseEvent) {
-			logger.debug("processMgcpResponseEvent = " + responseEvent);
+			logger.debug(name + " processMgcpResponseEvent = " + responseEvent);
 			switch (responseEvent.getObjectIdentifier()) {
 			case Constants.RESP_CREATE_CONNECTION:
-				
-				//Let us sleep here for few secs 
+
+				// Let us sleep here for few secs
 				try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 				processCreateConnectionResponse((CreateConnectionResponse) responseEvent);
 				break;
 			case Constants.RESP_DELETE_CONNECTION:
@@ -258,12 +247,12 @@ public class AnnouncementUA implements Runnable {
 		}
 
 		public void transactionEnded(int handle) {
-			logger.debug("transactionEnded for handle = " + handle);
+			logger.debug(name + " transactionEnded for handle = " + handle);
 
 		}
 
 		public void transactionRxTimedOut(JainMgcpCommandEvent command) {
-			logger.debug("Request not able to send");
+			logger.debug(name + " Request not able to send");
 			logger.debug("transactionRxTimedOut for JainMgcpCommandEvent = " + command);
 			logger.debug("Clean the MGCP Stack");
 			echoLoadTest.addTaskCompletedFailure();
@@ -275,18 +264,55 @@ public class AnnouncementUA implements Runnable {
 			logger.debug(name + " transactionTxTimedOut for JainMgcpCommandEvent = " + command);
 
 			echoLoadTest.addTaskCompletedFailure();
+
+			if (connectionIdentifier != null) {
+				sendDeleteConnectionMGCPRequest();
+			} else {
+				cleanUp();
+			}
+
 			// This is failure condition
-			cleanUp();
 
 		}
-		
+
 		private void sendDeleteConnectionMGCPRequest() {
 			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
 			deleteConnection.setConnectionIdentifier(connectionIdentifier);
 			deleteConnection.setTransactionHandle(provider.getUniqueTransactionHandler());
 
 			provider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
-		}		
+		}
+
+		private void sendNotificationRequestMGCPRequest() {
+
+			String HELLO_WORLD = "http://" + jbossBindAddress + ":8080/mms-load-test/audio/result"+ UACount +".wav";
+
+			NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, provider
+					.getUniqueRequestIdentifier());
+
+			EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(HELLO_WORLD),
+					connectionIdentifier) };
+			notificationRequest.setSignalRequests(signalRequests);
+
+			RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+
+			RequestedEvent[] requestedEvents = {
+					new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc, connectionIdentifier),
+							actions),
+					new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of, connectionIdentifier),
+							actions) };
+
+			notificationRequest.setRequestedEvents(requestedEvents);
+			notificationRequest.setTransactionHandle(provider.getUniqueTransactionHandler());
+
+			NotifiedEntity notifiedEntity = new NotifiedEntity(clientMachineIPAddress.getHostName(),
+					clientMachineIPAddress.getHostName(), provider.getJainMgcpStack().getPort());
+			notificationRequest.setNotifiedEntity(notifiedEntity);
+
+			provider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
+
+			logger.info(name + " NotificationRequest sent");
+		}
 
 	}// End of Private Class JainMgcpListnerImpl
 
@@ -298,10 +324,10 @@ public class AnnouncementUA implements Runnable {
 		setTaskCompleted(true);
 	}
 
-	public String getLocalDescriptor() {
+	private String getLocalDescriptor(int port) {
 
 		String userName = "MediaServerLoadTest";
-		long sessionID = System.currentTimeMillis() & 0xffffff;
+		long sessionID = UACount;
 		long sessionVersion = sessionID;
 
 		String networkType = javax.sdp.Connection.IN;
@@ -309,7 +335,7 @@ public class AnnouncementUA implements Runnable {
 		String address = clientMachineIPAddress.getHostAddress();
 
 		// TODO : Port should be assigned
-		int audioPort = 8000;
+		int audioPort = 7999 + port;
 
 		SessionDescription localSDP = null;
 		SdpFactory sdpFactory = SdpFactory.getInstance();
@@ -397,7 +423,7 @@ public class AnnouncementUA implements Runnable {
 		}
 		AnnouncementUA ua = new AnnouncementUA(1, clientMachineIPAddress, "127.0.0.1", 2729, null, null);
 
-		System.out.println("getLocalDescriptor = " + ua.getLocalDescriptor());
+		System.out.println("getLocalDescriptor = " + ua.getLocalDescriptor(1));
 		// ua.run();
 	}
 

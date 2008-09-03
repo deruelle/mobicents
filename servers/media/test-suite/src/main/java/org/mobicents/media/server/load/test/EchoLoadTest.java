@@ -75,7 +75,8 @@ public class EchoLoadTest {
 
 		for (int count = 1; count <= numberOfUAtemp; count++) {
 			try {
-				JainMgcpStackImpl stack = new JainMgcpStackImpl(clientMachineIPAddress, this.getClientMGCPStackPort() + count);
+				JainMgcpStackImpl stack = new JainMgcpStackImpl(clientMachineIPAddress, this.getClientMGCPStackPort()
+						+ count);
 				listOfJainMgcpStackImpl.add(stack);
 				JainMgcpStackProviderImpl provider = (JainMgcpStackProviderImpl) stack.createProvider();
 
@@ -95,12 +96,21 @@ public class EchoLoadTest {
 				final ScheduledFuture<?> future = getScheduler().scheduleWithFixedDelay(ua, 0, 1, TimeUnit.SECONDS);
 
 				listOfFuture.add(future);
+
+				// Let us go to sleep for 100 ms
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			} catch (CreateProviderException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
-		}
+		} // end of for loop
 
 		System.out.println("test() returning");
 
@@ -108,11 +118,38 @@ public class EchoLoadTest {
 
 	public void add() {
 		System.out.println("add() called");
-		RunnableImpl runnableImpl = new RunnableImpl(1000 * 4);
-		final ScheduledFuture<?> future = getScheduler().scheduleWithFixedDelay(runnableImpl, 0, 1, TimeUnit.SECONDS);
+		try {
+			Runnable ua = null;
+			numberOfUA++;
 
-		listOfFuture.add(future);
-		numberOfUA++;
+			JainMgcpStackImpl stack = new JainMgcpStackImpl(clientMachineIPAddress, this.getClientMGCPStackPort()
+					+ numberOfUA);
+			listOfJainMgcpStackImpl.add(stack);
+			JainMgcpStackProviderImpl provider;
+
+			provider = (JainMgcpStackProviderImpl) stack.createProvider();
+
+			switch (testIdentifier) {
+			case EchoLoadTest.ECHO_LOAD_TEST:
+				ua = new UA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+						provider, this);
+				break;
+
+			case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:
+				ua = new AnnouncementUA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort,
+						provider, this);
+				break;
+			}
+			
+			final ScheduledFuture<?> future = getScheduler().scheduleWithFixedDelay(ua, 0, 1, TimeUnit.SECONDS);
+
+			listOfFuture.add(future);
+			
+		} catch (CreateProviderException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			numberOfUA--;
+		}
 
 	}
 
