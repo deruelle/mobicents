@@ -10,7 +10,7 @@ public enum EventID {
     PROMPT_AND_COLLECT("org.mobicents.media.au.PROMPT_AND_COLLECT"),
     DTMF("org.mobicents.media.dtmf.DTMF"),
     TEST_SPECTRA("org.mobicents.media.test.TEST_SPECTRA"),
-    TEST_SINE("org.mobicents.media.test.SINE"),
+    TEST_SINE("org.mobicents.media.test.TEST_SINE"),
     INVALID("");
     private String eventID;
 
