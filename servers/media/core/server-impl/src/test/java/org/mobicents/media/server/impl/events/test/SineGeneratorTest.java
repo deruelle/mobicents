@@ -86,6 +86,7 @@ public class SineGeneratorTest {
             fail("Empty");
         }
         
+        synchronized(spectra) {
         for (Object s : spectra ) {
             double[] ss = (double[])s;
             int[] ext = Utils.getFreq(ss);
@@ -94,6 +95,7 @@ public class SineGeneratorTest {
                 fail(Utils.getReason());
             }
             
+        }
         }
     }
 
@@ -108,7 +110,9 @@ public class SineGeneratorTest {
 //                System.out.print(s[i] + " ");
 //            }
 //            System.out.println();
-            spectra.add(s);
+            synchronized(spectra) {
+                spectra.add(s);
+            }
         }
         
     }
