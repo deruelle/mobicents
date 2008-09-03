@@ -1,0 +1,434 @@
+/*
+ * RtpConnectionImpl.java
+ *
+ * Mobicents Media Gateway
+ *
+ * The source code contained in this file is in in the public domain.
+ * It can be used in any project or product without prior permission,
+ * license or royalty payments. There is  NO WARRANTY OF ANY KIND,
+ * EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION,
+ * THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+ * AND DATA ACCURACY.  We do not warrant or make any representations
+ * regarding the use of the software or the  results thereof, including
+ * but not limited to the correctness, accuracy, reliability or
+ * usefulness of the software.
+ */
+package org.mobicents.media.server.impl;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Vector;
+
+import javax.naming.NamingException;
+import javax.sdp.MediaDescription;
+import javax.sdp.SdpException;
+import javax.sdp.SdpFactory;
+import javax.sdp.SessionDescription;
+
+import org.apache.log4j.Logger;
+import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.common.ConnectionMode;
+import org.mobicents.media.server.impl.common.ConnectionState;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
+import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
+import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
+
+import javax.naming.InitialContext;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+
+/**
+ * 
+ * @author Oleg Kulikov
+ */
+public class RtpConnectionImpl extends BaseConnection {
+
+    private String localAddress;
+    private int localPort;
+    private HashMap audioFormats;
+    private HashMap videoFormats;
+    private SessionDescription localSDP;
+    private SessionDescription remoteSDP;
+    private RtpSocket rtpSocket;
+    private SdpFactory sdpFactory = SdpFactory.getInstance();
+    private HashMap codecs;
+    
+    /**
+     * Creates a new instance of RtpConnectionImpl.
+     * 
+     * @param endpoint
+     *            the endpoint executing this connection.
+     * @param mode
+     *            the mode of this connection.
+     */
+    public RtpConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+        super(endpoint, mode);
+        logger = Logger.getLogger(RtpConnectionImpl.class);
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Initializing RTP stack");
+        }
+
+        initRTPSocket();
+
+        try {
+            inputDsp.getInput().connect(rtpSocket.getReceiveStream());
+        } catch (IOException e) {
+            throw new ResourceUnavailableException(e.getMessage());
+        }
+
+        setState(ConnectionState.HALF_OPEN);
+    }
+
+    /**
+     * Gets the reference to used RTP Factory instance.
+     * 
+     * @return RtpFactory instance.
+     */
+    private RtpFactory getRtpFactory() throws NamingException {
+        String jndiName = endpoint.getRtpFactoryName();
+        if (jndiName != null) {
+            InitialContext ic = new InitialContext();
+            logger.info("Lookup RTPFactory[" + endpoint.getRtpFactoryName() + "]");
+            return (RtpFactory) ic.lookup(endpoint.getRtpFactoryName());
+        } else {
+            return new RtpFactory();
+        }
+    }
+
+    /**
+     * Provides intialization of the RTP stack.
+     * 
+     * @throws org.mobicents.media.server.spi.ResourceUnavailableException
+     */
+    private void initRTPSocket() throws ResourceUnavailableException {
+        try {
+            //obtain RTP factory
+            RtpFactory rtpFactory = getRtpFactory();
+
+            //try to open rtp socket
+            rtpSocket = rtpFactory.getRTPSocket();
+
+            //hold local address and port
+            localAddress = rtpFactory.getBindAddress();
+            localPort = rtpSocket.getPort();
+
+            //obtain rtp formats
+            audioFormats = rtpFactory.getAudioFormats();
+
+            //start rtp receiver and sender
+            rtpSocket.start();
+        } catch (SocketException e) {
+            logger.error(this + " Fail while binding RTP socket", e);
+            throw new ResourceUnavailableException(e.getMessage());
+        } catch (NamingException e) {
+            logger.error(this + " Could not obtain RTP Factory", e);
+            throw new ResourceUnavailableException(e.getMessage());
+        }
+    }
+
+    @Override
+    protected void setState(ConnectionState newState) {
+        ConnectionState oldState = this.state;
+        this.state = newState;
+
+        switch (state) {
+            //In state = HALF_OPEN connection is able to receive media
+            //so we get endpoint's specific audio sink and assign it as
+            //consumer for RTP receiver stream
+            case HALF_OPEN:
+                break;
+
+            //In state=OPEN the remote entity (address and port) is already known.
+            //It means that now can be started sender stream, so we are obtaining
+            // source stream from the endpoint and starting RTP sender stream.    
+            case OPEN:
+                break;
+
+            //Disconnect input and iutput streams    
+            case CLOSED:
+                //disconnect and release mux
+                outputDsp.getOutput().disconnect(rtpSocket.getSendStream());
+                
+                mux.getOutput().stop();
+                mux.getOutput().disconnect(outputDsp.getInput());
+                
+                //disconnect and release demmux
+                inputDsp.getInput().disconnect(rtpSocket.getReceiveStream());
+                
+                demux.stop();
+                demux.getInput().disconnect(inputDsp.getOutput());
+
+                break;
+        }
+
+        super.setState(newState);
+    }
+
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
+     */
+    public String getLocalDescriptor() {
+        if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
+            throw new IllegalStateException("State is " + state);
+        }
+
+        String userName = "MediaServer";
+        long sessionID = System.currentTimeMillis() & 0xffffff;
+        long sessionVersion = sessionID;
+
+        String networkType = javax.sdp.Connection.IN;
+        String addressType = javax.sdp.Connection.IP4;
+        String address = null;
+
+        RtpSocketImpl rtpSocketImpl = (RtpSocketImpl) this.rtpSocket;
+
+        int audioPort = 0;
+        if (!rtpSocketImpl.isUseStun()) {
+            address = localAddress;
+            audioPort = rtpSocket.getPort();
+        } else {
+            address = rtpSocketImpl.getPublicAddressFromStun();
+            audioPort = rtpSocketImpl.getPublicPortFromStun();
+        }
+
+        try {
+            localSDP = sdpFactory.createSessionDescription();
+            localSDP.setVersion(sdpFactory.createVersion(0));
+            localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType, address));
+            localSDP.setSessionName(sdpFactory.createSessionName("session"));
+            localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
+
+            Vector descriptions = new Vector();
+
+            // encode formats
+            HashMap fmts = codecs != null ? codecs : audioFormats;
+            Object[] payloads = getPayloads(fmts).toArray();
+
+            int[] formats = new int[payloads.length];
+            for (int i = 0; i < formats.length; i++) {
+                formats[i] = ((Integer) payloads[i]).intValue();
+            }
+
+            // generate media descriptor
+            MediaDescription md = sdpFactory.createMediaDescription("audio", localPort, 1, "RTP/AVP", formats);
+
+            boolean g729 = false;
+            // set attributes for formats
+            Vector attributes = new Vector();
+            for (int i = 0; i < formats.length; i++) {
+                Format format = (Format) fmts.get(new Integer(formats[i]));
+                attributes.add(sdpFactory.createAttribute("rtpmap", format.toString()));
+                if (format.getEncoding().contains("g729")) {
+                    g729 = true;
+                }
+            }
+
+            if (g729) {
+                attributes.add(sdpFactory.createAttribute("fmtp", "18 annexb=no"));
+            }
+
+            // generate descriptor
+            md.setAttributes(attributes);
+            descriptions.add(md);
+
+            localSDP.setMediaDescriptions(descriptions);
+        } catch (SdpException e) {
+            logger.error("Could not create descriptor", e);
+        }
+        return localSDP.toString();
+    }
+
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#getRemoteDescriptor();
+     */
+    public String getRemoteDescriptor() {
+        return remoteSDP != null ? remoteSDP.toString() : null;
+    }
+
+    /**
+     * Extracts address and port of the remote party.
+     * 
+     * @param sdp
+     *            session description.
+     * @return socket address of the remote party.
+     */
+    private InetSocketAddress getPeer(SessionDescription sdp) throws SdpException {
+        javax.sdp.Connection connection = sdp.getConnection();
+
+        Vector list = sdp.getMediaDescriptions(false);
+        MediaDescription md = (MediaDescription) list.get(0);
+
+        try {
+            InetAddress address = InetAddress.getByName(connection.getAddress());
+            int port = md.getMedia().getMediaPort();
+            return new InetSocketAddress(address, port);
+        } catch (UnknownHostException e) {
+            throw new SdpException(e);
+        }
+    }
+
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
+     */
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException {
+        if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+            throw new IllegalStateException("State is " + state);
+        }
+
+        remoteSDP = sdpFactory.createSessionDescription(descriptor);
+
+        // add peer to RTP socket
+        InetSocketAddress peer = getPeer(remoteSDP);
+        rtpSocket.setPeer(peer.getAddress(), peer.getPort());
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Set peer: " + peer);
+        }
+
+        // negotiate codecs
+        HashMap offer = RTPFormat.getFormats(remoteSDP);
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Offered formats: " + offer);
+        }
+
+        codecs = select(audioFormats, offer);
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Selected formats: " + codecs);
+        }
+
+        Set<Integer> keys = codecs.keySet();
+        for (Integer key : keys) {
+            rtpSocket.addFormat(key, (Format) codecs.get(key));
+        }
+        // @FIXME
+        // DTMF may be negotiated but speech codecs no
+        if (codecs.size() == 0) {
+            throw new IOException("Codecs are not negotiated");
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(this + " Codecs are negotiated");
+        }
+
+        try {
+            rtpSocket.setPeriod(getPacketizationPeriod(remoteSDP));
+        } catch (Exception e) {
+            // silence here
+        }
+        
+        outputDsp.getOutput().connect(rtpSocket.getSendStream());
+        mux.getOutput().start();
+
+        setState(ConnectionState.OPEN);
+    }
+
+    /**
+     * Gets packetization period encoded in session descriptor.
+     * 
+     * @param sd
+     *            the session descriptor
+     * @return value of the packetization period in milliseconds.
+     * @throws javax.sdp.SdpException
+     */
+    private int getPacketizationPeriod(SessionDescription sd) throws Exception {
+        MediaDescription md = (MediaDescription) sd.getMediaDescriptions(false).get(0);
+        String value = md.getAttribute("ptime");
+        return Integer.parseInt(value);
+
+    }
+
+    /**
+     * (Non-Javadoc).
+     * 
+     * @throws InterruptedException
+     * 
+     * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
+     */
+    public void setOtherParty(Connection other) {
+    }
+
+    /**
+     * Gets the collection of payload types.
+     * 
+     * @param fmts
+     *            the map with payload type as key and format as a value.
+     * @return sorted collection of payload types.
+     */
+    private Collection getPayloads(HashMap fmts) {
+        Object[] payloads = fmts.keySet().toArray();
+
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < payloads.length; i++) {
+            list.add(payloads[i]);
+        }
+
+        Collections.sort(list);
+        return list;
+    }
+
+    /**
+     * Selects codecs shared between supported and offered.
+     * 
+     * @param supported
+     *            the map with the supported codecs.
+     * @param offered
+     *            the list with the offered codecs.
+     */
+    private HashMap select(HashMap supported, HashMap offered) {
+        HashMap formats = new HashMap();
+        Set<Integer> offer = offered.keySet();
+        for (Integer po : offer) {
+            Format ofmt = (Format) offered.get(po);
+            Set<Integer> local = supported.keySet();
+            for (Integer pl : local) {
+                Format sfmt = (Format) supported.get(pl);
+                if (sfmt.matches(ofmt)) {
+                    formats.put(po, ofmt);
+                }
+            }
+        }
+        return formats;
+    }
+
+    /**
+     * Releases all resources requested by this connection.
+     * 
+     * @throws InterruptedException
+     */
+    @Override
+    public void close() {
+        rtpSocket.close();
+        super.close();
+    }
+
+    /**
+     * Gets the text representation of the connection.
+     * 
+     * @return text representation of the connection.
+     */
+    @Override
+    public String toString() {
+        return "(connectionID=" + id + ", endpoint=" + endpointName + ", state=" + state + ")";
+    }
+
+    public void error(Exception e) {
+        logger.error("Facility error", e);
+    }
+}
