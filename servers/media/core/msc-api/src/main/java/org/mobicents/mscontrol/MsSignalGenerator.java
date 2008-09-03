@@ -16,12 +16,15 @@
 
 package org.mobicents.mscontrol;
 
+import org.mobicents.media.server.impl.common.events.EventID;
 
-import org.mobicents.media.server.impl.common.events.*;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface MsSignalGenerator extends MsResource {
     public void apply(EventID signalID, String[] params);	
+    public void apply(EventID signalID, MsConnection connection, String[] params);	
+    public void apply(EventID signalID, MsLink link, String[] params);	
 }

@@ -18,7 +18,6 @@ package org.mobicents.media.server.spi.events;
 import java.io.Serializable;
 
 import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.impl.common.events.EventID;
 
 /**
  *
@@ -26,7 +25,7 @@ import org.mobicents.media.server.impl.common.events.EventID;
  */
 public class NotifyEvent implements Serializable {
     //private int id;
-    private EventID id;
+    private String id;
     //private int cause;
     private EventCause cause;
     private Object source;
@@ -42,13 +41,13 @@ public class NotifyEvent implements Serializable {
     //    return id;
     //}
 
-    public NotifyEvent(Object source, EventID id) {
+    public NotifyEvent(Object source, String id) {
         super();
         this.id = id;
         this.source = source;
     }
     
-    public NotifyEvent(Object source, EventID id, EventCause cause,
+    public NotifyEvent(Object source, String id, EventCause cause,
             String message) {
         super();
         this.id = id;
@@ -68,7 +67,7 @@ public class NotifyEvent implements Serializable {
         return message;
     }
 
-    public EventID getID() {
+    public String getID() {
         return id;
     }
 

@@ -14,30 +14,16 @@
 package org.mobicents.media.server.impl.events.test;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 import org.apache.log4j.Logger;
-import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.common.MediaResourceState;
-import org.mobicents.media.server.impl.common.MediaResourceType;
-import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.media.server.impl.fft.SpectralAnalyser;
-import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
-import org.mobicents.media.server.spi.MediaSink;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.ResourceStateListener;
-import org.mobicents.media.server.spi.UnknownMediaResourceException;
-import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class TestPackage implements Serializable, ResourceStateListener {
+public class TestPackage implements Serializable {
 
     private BaseEndpoint endpoint;
     private Semaphore semaphore = new Semaphore(0);
@@ -48,45 +34,5 @@ public class TestPackage implements Serializable, ResourceStateListener {
         this.endpoint = (BaseEndpoint) endpoint;
     }
 
-    public void subscribe(EventID eventID, HashMap params,
-            Connection connection, NotificationListener listener) {
-        SpectralAnalyser analyser = (SpectralAnalyser) endpoint.getResource(MediaResourceType.SPECTRUM_ANALYSER, connection.getId());
-        if (analyser == null) {
-            try {
-                endpoint.configure(MediaResourceType.SPECTRUM_ANALYSER, connection, null);
-            } catch (UnknownMediaResourceException e) {
-                e.printStackTrace();
-            }
-        }
 
-        if (analyser.getState() != MediaResourceState.PREPARED) {
-            try {
-                MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connection.getId());
-                sink.addStateListener(this);
-                if (sink.getState() != MediaResourceState.PREPARED && sink.getState() != MediaResourceState.STARTED) {
-                    try {
-                        blocked = true;
-                        semaphore.acquire();
-                    } catch (InterruptedException e) {
-                    }
-                }
-                analyser.prepare(endpoint, sink.newBranch("DFT"));
-            } catch (UnsupportedFormatException ex) {
-                logger.error("Could not prepare Spectral analyser ", ex);
-                NotifyEvent evt = new NotifyEvent(this, EventID.TEST_SPECTRA, EventCause.FACILITY_FAILURE, ex.getMessage());
-                listener.update(evt);
-                return;
-            }
-        }
-
-        analyser.addListener(listener);
-        analyser.start();
-
-    }
-
-    public void onStateChange(MediaResource resource, MediaResourceState state) {
-        if (state == MediaResourceState.PREPARED && blocked) {
-            semaphore.release();
-        }
-    }
 }

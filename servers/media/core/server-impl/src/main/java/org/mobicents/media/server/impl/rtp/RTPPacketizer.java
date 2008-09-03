@@ -14,13 +14,13 @@ package org.mobicents.media.server.impl.rtp;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.jmf.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class RTPPacketizer {
+public class RtpPacketizer {
     /**
      * Set required timestamp mark.
      * 

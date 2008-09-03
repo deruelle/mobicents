@@ -13,123 +13,66 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
-import java.io.IOException;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.Format;
-import org.mobicents.media.protocol.BufferTransferHandler;
-import org.mobicents.media.protocol.ContentDescriptor;
-import org.mobicents.media.protocol.PushBufferStream;
 import org.apache.log4j.Logger;
+import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.clock.Timer;
+
 /**
  *
  * @author Oleg Kulikov
  */
-public class ReceiveStream implements PushBufferStream, Runnable {
+public class ReceiveStream extends AbstractSource implements Runnable {
 
-    private BufferTransferHandler transferHandler;
-    private long seq = 0L;
-    private boolean stopped = false;
-    private Format fmt;
     private int period;
     private JitterBuffer jitterBuffer;
-    private Thread runThread;
-
-    private Logger logger = Logger.getLogger(ReceiveStream.class);
+    private Timer timer = new Timer();
+    private Buffer frame;
+    protected Format[] formats;
     
+    private Logger logger = Logger.getLogger(ReceiveStream.class);
+
     /** Creates a new instance of ReceiveStream */
-    public ReceiveStream(Format fmt, int period, int jitter) {
-        this.fmt = fmt;
+    public ReceiveStream(RtpSocket rtpSocket, int period, int jitter) {
         this.period = period;
 
-        jitterBuffer = new JitterBuffer(fmt, jitter, period);
+        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period);
 
-        runThread = new Thread(this);
-        runThread.start();
+        timer.setListener(this);
+        timer.start();
+    }
+    
+    protected void push(RtpPacket rtpPacket) {
+        jitterBuffer.write(rtpPacket);
     }
 
-    public Format getFormat() {
-        return fmt;
+    public void stop() {
+        timer.stop();
     }
-
-    public void read(Buffer buffer) throws IOException {
-        try {
-            byte[] data = jitterBuffer.next();
-
-            buffer.setData(data);
-            buffer.setOffset(0);
-            buffer.setLength(data.length);
-            buffer.setFormat(fmt);
-            buffer.setSequenceNumber(seq);
-            buffer.setTimeStamp(period * seq);
-            seq++;
-        } catch (InterruptedException e) {
-            stopped = true;
-        }
-    }
-
-    public void setTransferHandler(BufferTransferHandler transferHandler) {
-        synchronized (this) {
-            this.transferHandler = transferHandler;
-            notifyAll();
-        }
-    }
-
-    public ContentDescriptor getContentDescriptor() {
-        return new ContentDescriptor(ContentDescriptor.RAW);
-    }
-
-    public long getContentLength() {
-        return LENGTH_UNKNOWN;
-    }
-
-    public boolean endOfStream() {
-        return false;
-    }
-
-    public Object[] getControls() {
-        return null;
-    }
-
-    public Object getControl(String ctrl) {
-        return null;
-    }
-
-    protected void push(int seq, byte[] data) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("<-- receive " + data.length + " bytes packet, fmt=" + fmt);
-        }
-        jitterBuffer.push(seq, data);
-    }
-
-    protected void disable() {
-        synchronized (this) {
-            stopped = true;
-            notifyAll();
-        }
-    }
-
-    private void waitForHandler() throws InterruptedException {
-        synchronized (this) {
-            if (transferHandler == null) {
-                wait();
-            }
-        }
-    }
-
+    
     public void run() {
-        try {
-            waitForHandler();
-        } catch (InterruptedException e) {
+        frame = jitterBuffer.read();
+        if (frame == null) {
             return;
         }
-        while (!stopped) {
-            if (this.jitterBuffer.isReady()) {
-                transferHandler.transferData(this);
-            } else try {
-                Thread.currentThread().sleep(20);
-            } catch (InterruptedException e) {
-                return;
-            }
+
+        //fmt = frame.getFormat();
+
+        if (sink == null) {
+            return;
         }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("<-- Pushing " + frame + " to " + sink);
+        }
+        sink.receive(frame);
+    }
+
+    public void start() {
+    }
+
+    public Format[] getFormats() {
+        return formats;
     }
 }

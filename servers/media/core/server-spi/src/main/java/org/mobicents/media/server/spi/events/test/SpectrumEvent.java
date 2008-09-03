@@ -14,7 +14,6 @@
 
 package org.mobicents.media.server.spi.events.test;
 
-import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -25,7 +24,7 @@ public class SpectrumEvent extends NotifyEvent {
     
     private double[] spectra;
     
-    public SpectrumEvent(Object source, EventID eventID, double[] spectra) {
+    public SpectrumEvent(Object source, String eventID, double[] spectra) {
         super(source, eventID);
         this.spectra = spectra;
     }

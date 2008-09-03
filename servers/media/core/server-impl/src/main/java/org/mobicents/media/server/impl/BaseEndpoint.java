@@ -15,34 +15,30 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import org.mobicents.media.format.UnsupportedFormatException;
-import org.mobicents.media.protocol.PushBufferStream;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Connection;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 import java.util.Timer;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.sdp.AVProfile;
-import org.mobicents.media.server.spi.MediaResource;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
-import org.mobicents.media.server.spi.UnknownMediaResourceException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.impl.common.*;
-import org.mobicents.media.server.impl.common.events.*;
-import org.mobicents.media.server.spi.MediaSink;
+import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.FacilityException;
+import org.mobicents.media.server.spi.UnknownSignalException;
+import org.mobicents.media.server.spi.events.EventDetector;
+import org.mobicents.media.server.spi.events.EventPackage;
+import org.mobicents.media.server.spi.events.Options;
+import org.mobicents.media.server.spi.events.Signal;
 
 /**
  * The basic implementation of the endpoint.
@@ -59,578 +55,360 @@ import org.mobicents.media.server.spi.MediaSink;
  */
 public abstract class BaseEndpoint implements Endpoint {
 
-	private String localName;
-	private transient Timer timer = new Timer();
-	private InetAddress bindAddress;
-	protected int packetizationPeriod;
-	protected int jitter;
-	private boolean hasConnections;
-	protected int lowPortNumber;
-	protected int highPortNumber;
-	private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
-	private int maxConnections = 0;
-	private ArrayList<NotificationListener> listeners = new ArrayList();
-	private HashMap resources = new HashMap();
-	protected HashMap formats = new HashMap();
-	private HashMap configurations = new HashMap();
-	private BaseResourceManager resourceManager;
-	private String stunServerAddress;
-	private int stunServerPort;
-	private boolean useStun = false;
-	private boolean usePortMapping = true;
-
-	private String publicAddressFromStun = null;
-
-	private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
-
-	protected static Timer connectionTimer = new Timer();
-
-	public BaseEndpoint(String localName) {
-		this.localName = localName;
-		this.resourceManager = initResourceManager();
-	}
-
-	public Timer getTimer() {
-		return timer;
-	}
-
-	public String getStunServerAddress() {
-		return stunServerAddress;
-	}
-
-	public void setStunServerAddress(String stunServerAddress) {
-		this.stunServerAddress = stunServerAddress;
-	}
-
-	public int getStunServerPort() {
-		return stunServerPort;
-	}
-
-	public boolean isUsePortMapping() {
-		return usePortMapping;
-	}
-
-	public void setUsePortMapping(boolean usePortMapping) {
-		this.usePortMapping = usePortMapping;
-	}
-
-	public String getPublicAddressFromStun() {
-		return publicAddressFromStun;
-	}
-
-	public void setPublicAddressFromStun(String publicAddressFromStun) {
-		this.publicAddressFromStun = publicAddressFromStun;
-	}
-
-	public void setStunServerPort(int stunServerPort) {
-		this.stunServerPort = stunServerPort;
-	}
-
-	public boolean isUseStun() {
-		return useStun;
-	}
-
-	public void setUseStun(boolean useStun) {
-		this.useStun = useStun;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getLocalName();
-	 */
-	public String getLocalName() {
-		return localName;
-	}
-
-	/**
-	 * Gets the maximum amount of the connections that endpoint can implement.
-	 * 
-	 * @return the maximum available connections.
-	 */
-	public int getMaxConnectionsAvailable() {
-		return maxConnections;
-	}
-
-	/**
-	 * Sets the maximum amount of the connections that endpoint can implement.
-	 * 
-	 * @return the maximum available connections.
-	 */
-	public void setMaxConnectionsAvailable(int amount) {
-		this.maxConnections = amount;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getLocalName);
-	 */
-	public InetAddress getBindAddress() {
-		return bindAddress;
-	}
-
-	public void setBindAddress(InetAddress bindAddress) {
-		this.bindAddress = bindAddress;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getPcketizationPeriod();
-	 */
-	public Integer getPacketizationPeriod() {
-		return packetizationPeriod;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#setPcketizationPeriod(Integer);
-	 */
-	public void setPacketizationPeriod(Integer period) {
-		packetizationPeriod = period;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getJitter();
-	 */
-	public Integer getJitter() {
-		return jitter;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#setJitter(Integer);
-	 */
-	public void setJitter(Integer jitter) {
-		this.jitter = jitter;
-	}
-
-	/**
-	 * Gets the supported formats.
-	 * 
-	 * @return the map where key is an RTP payload number and value is a format
-	 *         instance.
-	 */
-	public HashMap getFormats() {
-		return formats;
-	}
-
-	public BaseResourceManager initResourceManager() {
-		return new BaseResourceManager();
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#setDefaultConfig(MediaResourceType,
-	 *      Properties);
-	 */
-	public void setDefaultConfig(MediaResourceType type, Properties config) {
-		configurations.put(type, config);
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getDefaultConfig(MediaResourceType);
-	 */
-	public Properties getDefaultConfig(MediaResourceType type) {
-		return (Properties) configurations.get(type);
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#configure(String,
-	 *      Properties);
-	 */
-	public void configure(MediaResourceType type, Properties config) throws UnknownMediaResourceException {
-		MediaResource mediaResource = resourceManager.getResource(this, type, config);
-		resources.put(type, mediaResource);
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#configure(String, String,
-	 *      Properties);
-	 */
-	public  void configure(MediaResourceType type, Connection connection, Properties config)
-			throws UnknownMediaResourceException {
-		BaseConnection baseConnection=(BaseConnection) connection;
-		
-		try{
-		baseConnection.lockState();
-		if(connection.getState()==ConnectionState.CLOSED)
-		{
-			//FIXME:Add removal operation? Create tasks for that!!!
-			throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
-		}
-		MediaResource mediaResource = resourceManager.getResource(this, type, connection, config);
-
-		if (mediaResource == null) {
-			return;
-		}
-
-		try {
-			mediaResource.configure(config);
-			resources.put(type + "_" + connection.getId(), mediaResource);
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
-			throw new IllegalArgumentException(e.getMessage());
-		}
-		}
-		catch(InterruptedException ie)
-		{
-			//FIXME: How shoyld we handle Interruptedxception?
-		}
-		finally
-		{
-			baseConnection.releaseState();
-		}
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#configure(String, String,
-	 *      Properties);
-	 */
-	public void configure(MediaResourceType type, String connectionID, Properties config)
-			throws UnknownMediaResourceException {
-		Connection connection = this.getConnection(connectionID);
-		if(connection==null)
-		{
-			throw new IllegalArgumentException("Cannt find valid connection");
-		}
-		BaseConnection baseConnection=(BaseConnection) connection;
-		try{
-			baseConnection.lockState();
-			if(connection.getState()==ConnectionState.CLOSED)
-			{
-				//FIXME:Add removal operation? Create tasks for that!!!
-				throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
-			}
-		MediaResource mediaResource = resourceManager.getResource(this, type, connection, config);
-
-		if (mediaResource == null) {
-			return;
-		}
-
-		try {
-			mediaResource.configure(config);
-			resources.put(type + "_" + connection.getId(), mediaResource);
-		} catch (Exception e) {
-			logger.error("Cold not configure resource " + type + ", connection = " + connection, e);
-			throw new IllegalArgumentException(e.getMessage());
-		}
-		}
-		catch(InterruptedException ie)
-		{
-			//FIXME: How shoyld we handle Interruptedxception?
-		}
-		finally
-		{
-			baseConnection.releaseState();
-		}
-	}
-
-	public void prepare(MediaResourceType type, String connectionID, PushBufferStream media)
-			throws UnsupportedFormatException {
-		Connection connection = this.getConnection(connectionID);
-		if(connection==null)
-		{
-			throw new IllegalArgumentException("Cannt find valid connection");
-		}
-		BaseConnection baseConnection=(BaseConnection) connection;
-		try{
-			baseConnection.lockState();
-			if(connection.getState()==ConnectionState.CLOSED)
-			{
-				//FIXME:Add removal operation? Create tasks for that!!!
-				throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
-			}
-		MediaSink res = (MediaSink) resources.get(type + "_" + connectionID);
-		if (res != null) {
-			logger.info("Preparing Sink: " + res);
-			res.prepare(this, media);
-		}
-		}
-		catch(InterruptedException ie)
-		{
-			//FIXME: How shoyld we handle Interruptedxception?
-		}
-		finally
-		{
-			baseConnection.releaseState();
-		}
-	}
-
-	public void addFormat(int pt, Format fmt) {
-		formats.put(pt, fmt);
-	}
-
-	public void removeFormat(Format fmt) {
-		formats.remove(getPayload(fmt));
-	}
-
-	public void setPCMU(int payload) {
-		formats.put(payload, AVProfile.PCMU);
-	}
-
-	public int getPCMU() {
-		return this.getPayload(AVProfile.PCMU);
-	}
-
-	public void setPCMA(int payload) {
-		formats.put(payload, AVProfile.PCMA);
-	}
-
-	public int getPCMA() {
-		return this.getPayload(AVProfile.PCMA);
-	}
-
-	protected int getPayload(Format fmt) {
-		Collection<Integer> list = formats.values();
-		for (Integer payload : list) {
-			Format format = (Format) formats.get(payload);
-			if (fmt.matches(format)) {
-				return payload;
-			}
-		}
-		return -1;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#getPortRange();
-	 */
-	public String getPortRange() {
-		return lowPortNumber + "-" + highPortNumber;
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#setPortRange(String);
-	 */
-	public void setPortRange(String portRange) {
-		String[] tokens = portRange.split("-");
-		lowPortNumber = Integer.parseInt(tokens[0]);
-		highPortNumber = Integer.parseInt(tokens[1]);
-	}
-
-	/**
-	 * Indicates that endpoint has connections.
-	 * 
-	 * @return true if endpoint executing one or more connection and false
-	 *         otherwise.
-	 */
-	public boolean hasConnections() {
-		return this.hasConnections;
-	}
-
-	/**
-	 * Gets connection with specified identifier.
-	 * 
-	 * @param connectionID
-	 *            the identifier of the connection to return
-	 */
-	public BaseConnection getConnection(String connectionID) {
-		return (BaseConnection) connections.get(connectionID);
-	}
-
-	/**
-	 * Gets all connections which are executed by this endpoint.
-	 * 
-	 * @return collection of BaseConnection objects.
-	 */
-	public Collection<BaseConnection> getConnections() {
-		return connections.values();
-	}
-
-	public Object getResource(MediaResourceType type, String connectionID) {
-		return resources.get(type + "_" + connectionID);
-	}
-
-	public Object getResource(MediaResourceType type) {
-		return resources.get(type);
-	}
-
-	/**
-	 * Used for internal connection creation.
-	 * 
-	 * @param endpoint
-	 *            the endpoint which creates connection.
-	 * @param mode
-	 *            the mode of connection been created.
-	 * @return Object implementing connection. *
-	 * @throws org.mobicents.media.server.spi.ResourceUnavailableException
-	 */
-	private Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-		return new BaseConnection(endpoint, mode);
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
-	 */
-	public synchronized Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException,
-			ResourceUnavailableException {
-		hasConnections = true;
-		try {
-			if (connections.size() == maxConnections) {
-				throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
-			}
-
-			// Connection connection = new BaseConnection(this, mode);
-			Connection connection = doCreateConnection(this, mode);
-			connections.put(connection.getId(), connection);
-
-			return connection;
-		} finally {
-			hasConnections = connections.size() > 0;
-		}
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
-	 */
-	public synchronized void deleteConnection(String connectionID) {
-		Connection connection = (Connection) connections.remove(connectionID);
-
-		if (connection != null) {
-			
-			if(connection==null)
-			{
-				throw new IllegalArgumentException("Cannt find valid connection");
-			}
-			BaseConnection baseConnection=(BaseConnection) connection;
-			try{
-				baseConnection.lockState();
-				if(connection.getState()==ConnectionState.CLOSED)
-				{
-					//FIXME:Add removal operation? Create tasks for that!!!
-					throw new IllegalStateException("Connection [" + connection + "] is in closed state!!!");
-				}
-			try {
-				connection.close();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-
-		hasConnections = connections.size() > 0;
-		logger.info("Deleted connection " + connection);
-
-		// clean all resources associated with this connection
-		Set<String> names = resources.keySet();
-		List<String> connectionResources = new ArrayList();
-
-		for (String name : names) {
-			if (name.endsWith(connection.getId())) {
-				connectionResources.add(name);
-				MediaResource mediaResource = (MediaResource) resources.get(name);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Releasing resource: " + mediaResource);
-				}
-				mediaResource.stop();
-				mediaResource.release();
-			}
-		}
-
-		for (String name : connectionResources) {
-			MediaResource mediaResource = (MediaResource) resources.remove(name);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Disposed resource: " + mediaResource);
-			}
-		}
-			}
-			catch(InterruptedException ie)
-			{
-				//FIXME: How shoyld we handle Interruptedxception?
-			}
-			finally
-			{
-				baseConnection.releaseState();
-			}
-		}
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#deleteAllConnections();
-	 */
-	public synchronized void deleteAllConnections() {
-		Iterator list = connections.values().iterator();
-		while (list.hasNext()) {
-			Connection connection = (Connection) list.next();
-			deleteConnection(connection.getId());
-		}
-	}
-
-	/**
-	 * Adds a Listener.
-	 * 
-	 * @param listener
-	 *            the listener instance to add.
-	 */
-	public void addNotifyListener(NotificationListener listener) {
-		listeners.add(listener);
-	}
-
-	/**
-	 * Removes a listener.
-	 * 
-	 * @param listener
-	 *            the listener instance for remove.
-	 */
-	public void removeNotifyListener(NotificationListener listener) {
-		listeners.remove(listener);
-	}
-
-	/**
-	 * Sends specified event to registered listeners.
-	 * 
-	 * @param event
-	 *            the event to be sent.
-	 */
-	public synchronized void sendEvent(NotifyEvent event) {
-		for (NotificationListener listener : listeners) {
-			listener.update(event);
-		}
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#detect(int,
-	 *      NotificationListener, boolean);
-	 */
-	public void subscribe(EventID eventID, NotificationListener listener, boolean persistent) {
-		EventTrigger eventDetector = new EventTrigger(this, eventID, listener, persistent);
-		this.addNotifyListener(eventDetector);
-	}
-
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Endpoint#detect(int,
-	 *      NotificationListener, boolean);
-	 */
-	public void subscribe(EventID eventID, String connectionID, String params[], NotificationListener listener) {
-	}
-
+    private String localName;
+    
+    private String rtpFactoryName;
+    
+    protected HashMap<String, Signal> signals = new HashMap();
+    protected HashMap<String, EventDetector> detectors = new HashMap();
+        
+    private boolean hasConnections;
+    private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
+    private int maxConnections = 0;
+    
+    private ArrayList<NotificationListener> listeners = new ArrayList();
+    protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
+    
+    protected static Timer connectionTimer = new Timer();
+
+    private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
+    
+    public BaseEndpoint(String localName) {
+        this.localName = localName;
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#getLocalName();
+     */
+    public String getLocalName() {
+        return localName;
+    }
+
+    /**
+     * Gets the name of used RTP Factory.
+     * 
+     * @return the JNDI name of the RTP Factory
+     */
+    public String getRtpFactoryName() {
+        return rtpFactoryName;
+    }
+
+    /**
+     * Sets the name of used RTP Factory.
+     * 
+     * @param rtpFactoryName the JNDI name of the RTP Factory.
+     */
+    public void setRtpFactoryName(String rtpFactoryName) {
+        this.rtpFactoryName = rtpFactoryName;
+    }
+
+    /**
+     * Gets the maximum amount of the connections that endpoint can implement.
+     * 
+     * @return the maximum available connections.
+     */
+    public int getMaxConnectionsAvailable() {
+        return maxConnections;
+    }
+
+    /**
+     * Sets the maximum amount of the connections that endpoint can implement.
+     * 
+     * @return the maximum available connections.
+     */
+    public void setMaxConnectionsAvailable(int amount) {
+        this.maxConnections = amount;
+    }
+
+    /**
+     * Indicates that endpoint has connections.
+     * 
+     * @return true if endpoint executing one or more connection and false
+     *         otherwise.
+     */
+    public boolean hasConnections() {
+        return this.hasConnections;
+    }
+
+    /**
+     * Gets connection with specified identifier.
+     * 
+     * @param connectionID
+     *            the identifier of the connection to return
+     */
+    public Connection getConnection(String connectionID) {
+        return (Connection) connections.get(connectionID);
+    }
+
+    /**
+     * Gets all connections which are executed by this endpoint.
+     * 
+     * @return collection of RtpConnectionImpl objects.
+     */
+    public Collection<Connection> getConnections() {
+        return connections.values();
+    }
+
+    /**
+     * Used for internal connection creation.
+     * 
+     * @param endpoint
+     *            the endpoint which creates connection.
+     * @param mode
+     *            the mode of connection been created.
+     * @return Object implementing connection. *
+     * @throws org.mobicents.media.server.spi.ResourceUnavailableException
+     */
+    protected Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+        return new RtpConnectionImpl(endpoint, mode);
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
+     */
+    public synchronized Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException,
+            ResourceUnavailableException {
+        hasConnections = true;
+        try {
+            if (connections.size() == maxConnections) {
+                throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
+            }
+
+            // Connection connection = new RtpConnectionImpl(this, mode);
+            Connection connection = doCreateConnection(this, mode);
+            connections.put(connection.getId(), connection);
+
+            return connection;
+        } finally {
+            hasConnections = connections.size() > 0;
+        }
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
+     */
+    public synchronized Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException,
+            ResourceUnavailableException {
+        hasConnections = true;
+        try {
+            if (connections.size() == maxConnections) {
+                throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
+            }
+
+            Connection connection = new LocalConnectionImpl(this, mode);
+            connections.put(connection.getId(), connection);
+
+            return connection;
+        } finally {
+            hasConnections = connections.size() > 0;
+        }
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
+     */
+    public synchronized void deleteConnection(String connectionID) {
+        BaseConnection connection = (BaseConnection) connections.remove(connectionID);
+
+        if (connection != null) {
+            // disable all signals
+            Signal signal = signals.get(connectionID);
+            connection.getMux().disconnect(signal);
+            signals.remove(connectionID);
+
+            // disable all detectors
+            EventDetector detector = detectors.get(connectionID);
+            connection.getDemux().disconnect(detector);
+            detectors.remove(connectionID);
+            
+            connection.close();
+            logger.info("Deleted connection " + connection);
+        }
+
+        hasConnections = connections.size() > 0;
+    }
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#deleteAllConnections();
+     */
+    public synchronized void deleteAllConnections() {
+        Iterator list = connections.values().iterator();
+        while (list.hasNext()) {
+            Connection connection = (Connection) list.next();
+            deleteConnection(connection.getId());
+        }
+    }
+
+    /**
+     * Adds a Listener.
+     * 
+     * @param listener
+     *            the listener instance to add.
+     */
+    public void addNotifyListener(NotificationListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Removes a listener.
+     * 
+     * @param listener
+     *            the listener instance for remove.
+     */
+    public void removeNotifyListener(NotificationListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void addConnectionListener(ConnectionListener listener) {
+        connectionListeners.add(listener);
+    }
+    
+    public void removeConnectionListener(ConnectionListener listener) {
+        connectionListeners.remove(listener);
+    }
+    
+    /**
+     * Sends specified event to registered listeners.
+     * 
+     * @param event the event to be sent.
+     */
+    public synchronized void sendEvent(NotifyEvent event) {
+        for (NotificationListener listener : listeners) {
+            listener.update(event);
+        }
+    }
+
+    protected String getPackageName(String eventID) {
+        String[] tokens = eventID.split("\\.");
+        
+        if (tokens.length == 1) {
+            return tokens[0];
+        }
+        
+        String s = tokens[0];
+        for (int i = 1; i < tokens.length - 1; i++) {
+            s += "." + tokens[i];
+        }
+        return s;
+    }
+    
+    protected String getEventName(String eventID) {
+        String[] tokens = eventID.split("\\.");        
+        return tokens[tokens.length - 1];
+    }
+    
+    private Signal getSignal(String signalID, Options options) throws UnknownSignalException, FacilityException {
+        try {
+            EventPackage eventPackage = EventPackageFactory.load(this.getPackageName(signalID));
+            return eventPackage.getSignal(getEventName(signalID), options);
+        } catch (ClassNotFoundException e) {
+            logger.error("Wrong package name: ", e);
+            throw new UnknownSignalException(signalID);
+        } catch (Exception e) {
+            logger.error("Unexpected error: ", e);
+            throw new FacilityException(e.getMessage());
+        }
+    }
+
+    private EventDetector getDetector(String eventID, Options options) throws UnknownSignalException, FacilityException {
+        try {
+            EventPackage eventPackage = EventPackageFactory.load(eventID);
+            return eventPackage.getDetector(eventID, options);
+        } catch (ClassNotFoundException e) {
+            throw new UnknownSignalException(eventID);
+        } catch (Exception e) {
+            throw new FacilityException(e.getMessage());
+        }
+    }
+
+    public void play(String signalID, Options options, String connectionID,
+            NotificationListener listener) throws UnknownSignalException, FacilityException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Requested signal ID=" + signalID);
+        }
+        
+        Signal signal = getSignal(signalID, options);
+        System.out.println("**** SIGNAL: " + signal);
+        signal.addListener(listener);
+
+        System.out.println("*** ConnectionID" + connectionID);
+        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+        
+        Signal currentSignal = signals.get(connectionID);
+        if (currentSignal != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Disable current signal:" + currentSignal.getID());
+            }
+            currentSignal.stop();
+            currentSignal.disconnect(connection.getMux());
+        }
+
+        try {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Connecting MUX to signal ID=" + signalID);
+            }
+            connection.getMux().connect(signal);
+            signals.put(connectionID, signal);
+            
+            if (logger.isDebugEnabled()) {
+                logger.debug("Starting signal ID=" + signalID);
+            }
+            signal.start();
+        } catch (Exception e) {
+            logger.error("Could not start signal", e);
+            throw new FacilityException(e.getMessage());
+        }
+    }
+
+    public void play(String signalID, Options options,
+            NotificationListener listener) throws UnknownSignalException, FacilityException {
+    }
+
+    /**
+     * Asks the to detect requested event and report. 
+     *
+     * Such events may include, for example, fax tones, continuity tones, or 
+     * on-hook transition. 
+     * 
+     * @param eventID the identifier of the event.
+     * @param the Call Agent callback interface currently controlling that endpoint.
+     * @persistent true if event is always detected on the endpoint.
+     */
+    public void subscribe(String eventID, Options options, NotificationListener listener)
+        throws UnknownSignalException, FacilityException {
+    }
+
+    /**
+     * Asks the endpoint to detect requested event on a specified connection and report. 
+     *
+     * Such events may include, for example, fax tones, continuity tones, or 
+     * on-hook transition. 
+     * 
+     * @param eventID the identifier of the event.
+     * @param connectionID the identifier of the connection.
+     * @param the Call Agent callback interface currently controlling that endpoint.
+     */
+    public void subscribe(String eventID, Options options, String connectionID,
+            NotificationListener listener) throws UnknownSignalException, FacilityException {
+        EventDetector detector = this.getDetector(eventID, options);
+        detector.addListener(listener);
+
+        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+        try {
+            detector.connect(connection.getDemux());
+            detectors.put(connectionID + eventID.toString(), detector);
+        } catch (IOException e) {
+            throw new FacilityException(e.getMessage());
+        }
+    }
 }

@@ -14,35 +14,12 @@
 
 package org.mobicents.media.server.impl.rtp;
 
-import org.mobicents.media.format.UnsupportedFormatException;
-import org.mobicents.media.protocol.BufferTransferHandler;
-import org.mobicents.media.protocol.PushBufferStream;
+import org.mobicents.media.MediaSink;
 
 /**
  *  interface representing a sending stream within an RTP session.
  *
  * @author Oleg Kulikov
  */
-public interface SendStream extends BufferTransferHandler {
-    /**
-     * Changes the output stream.
-     * The new stream will be sent with same SSRC.
-     *
-     * @param the new output stream.
-     */
-    public void setStream(PushBufferStream stream)  throws UnsupportedFormatException;
-    /**
-     * Starts tranmitting over network.
-     */
-    public void start();
-    
-    /**
-     * Temorary terminates tranmitting over network.
-     */
-    public void stop();
-    
-    /**
-     * Closes this stream.
-     */
-    public void close();
+public interface SendStream extends MediaSink {
 }

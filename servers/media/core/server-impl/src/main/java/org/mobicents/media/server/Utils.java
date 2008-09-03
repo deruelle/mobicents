@@ -13,22 +13,20 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server;
 
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.protocol.FileTypeDescriptor;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public class Utils {
-    
+
     /** Creates a new instance of Utils */
     public Utils() {
     }
-    
+
     /**
      * Creates audio format object from given format description.
      *
@@ -38,19 +36,19 @@ public class Utils {
      */
     public static AudioFormat parseFormat(String formatDesc) {
         String tokens[] = formatDesc.split(",");
-        
+
         if (tokens.length != 4) {
             throw new IllegalArgumentException("Invalid format definition: " + formatDesc);
         }
-        
+
         String encoding = tokens[0];
-        
+
         String srDesc = tokens[1].substring(0, tokens[1].indexOf("Hz"));
         double sampleRate = Double.parseDouble(srDesc.trim());
-        
+
         String szDesc = tokens[2].substring(0, tokens[2].indexOf("-bits"));
         int sampleSize = Integer.parseInt(szDesc.trim());
-        
+
         int channels = 1;
         if (tokens[3].trim().equals("Mono")) {
             channels = 1;
@@ -59,46 +57,28 @@ public class Utils {
         } else {
             throw new IllegalArgumentException("Invalid format description: " + tokens[3]);
         }
-        
+
         return new AudioFormat(encoding, sampleRate, sampleSize, channels);
     }
-    
-    public static String getFileType(String s) {
-        if (s.equals("aiff")) {
-            return FileTypeDescriptor.AIFF;
-        } else if (s.equals("avi")) {
-            return FileTypeDescriptor.MSVIDEO;
-        } else if (s.equals("gsm")) {
-            return FileTypeDescriptor.GSM;
-        } else if (s.equals("mov")) {
-            return FileTypeDescriptor.QUICKTIME;
-        } else if (s.equals("au")) {
-            return FileTypeDescriptor.BASIC_AUDIO;
-        } else if (s.equals("wav")) {
-            return FileTypeDescriptor.WAVE;
-        } else throw new IllegalArgumentException("Media type " + s + " not supported");
-    }
-    public static String doMessage(Throwable t)
-	{
-		StringBuffer sb=new StringBuffer();
-		int tick = 0;
-		Throwable e = t;
-		do {
-			StackTraceElement[] trace = e.getStackTrace();
-			if (tick++ == 0)
-				sb.append(e.getClass().getCanonicalName() + ":"
-						+ e.getLocalizedMessage()+"\n");
-			else
-				sb.append("Caused by: "+e.getClass().getCanonicalName() + ":"
-						+ e.getLocalizedMessage()+"\n");
-			
-			for (StackTraceElement ste : trace)
-				sb.append("\t"+ste+"\n");
 
-			e = e.getCause();
-		} while (e != null);
-		
-		return sb.toString();
-		
-	}
+    public static String doMessage(Throwable t) {
+        StringBuffer sb = new StringBuffer();
+        int tick = 0;
+        Throwable e = t;
+        do {
+            StackTraceElement[] trace = e.getStackTrace();
+            if (tick++ == 0) {
+                sb.append(e.getClass().getCanonicalName() + ":" + e.getLocalizedMessage() + "\n");
+            } else {
+                sb.append("Caused by: " + e.getClass().getCanonicalName() + ":" + e.getLocalizedMessage() + "\n");
+            }
+            for (StackTraceElement ste : trace) {
+                sb.append("\t" + ste + "\n");
+            }
+            e = e.getCause();
+        } while (e != null);
+
+        return sb.toString();
+
+    }
 }

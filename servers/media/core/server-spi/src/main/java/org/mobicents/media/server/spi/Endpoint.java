@@ -16,12 +16,10 @@
 package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
-import java.net.InetAddress;
-import java.util.Properties;
-import java.util.Timer;
-import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.common.*;
-import org.mobicents.media.server.impl.common.events.*;
+//import org.mobicents.media.server.impl.common.events.*;
+import org.mobicents.media.server.spi.events.EventID;
+import org.mobicents.media.server.spi.events.Options;
 /**
  * The basic implementation of the endpoint.
  *
@@ -38,140 +36,13 @@ import org.mobicents.media.server.impl.common.events.*;
 public interface Endpoint extends Serializable {
    
     /**
-     * Timer instance
-     */
-    //public final static Timer TIMER = new Timer();
-
-    /**
      * Gets the local name attribute.
      *
      * @return the local name.
      */
     public String getLocalName();
 
-    /**
-     * Gets the IP address to which endpoint is bound.
-     *
-     * @return the IP address to which this endpoint is bound.
-     */
-    public InetAddress getBindAddress();
 
-    /**
-     * Modify the bind address.
-     *
-     * @param the IP address object.
-     */
-    public void setBindAddress(InetAddress bindAddress);
-
-    /**
-     * Gets packetization period.
-     * 
-     * The packetization period is the period over which encoded voice bits 
-     * are collected for encapsulation in packets.
-     * 
-     * Higher period will reduce VoIP overhead allowing higher channel utilization
-     * 
-     * @return packetion period for media in milliseconds.
-     */
-    public Integer getPacketizationPeriod();
-
-    /**
-     * Modify packetization period.
-     * 
-     * The packetization period is the period over which encoded voice bits 
-     * are collected for encapsulation in packets.
-     * 
-     * Higher period will reduce VoIP overhead allowing higher channel utilization
-     * 
-     * @param period the value of the packetization period in milliseconds.
-     */
-    public void setPacketizationPeriod(Integer period);
-
-    /**
-     * Gets the size of the jitter buffer in milliseconds.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @return the size of the buffer in milliseconds.
-     */
-    public Integer getJitter();
-
-    /**
-     * Modify size of the jitter buffer.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @param jitter the new buffer's size in milliseconds
-     */
-    public void setJitter(Integer jitter);
-
-    /**
-     * Gets the range of the available port used for RTP connections.
-     * 
-     * @return the range of available port in the follwing format: low-high
-     */
-    public String getPortRange();
-
-    /**
-     * Sets the range of the available port used for RTP connections.
-     * 
-     * @param portRange string indicating range in the follwing format: low-high
-     */
-    public void setPortRange(String portRange);
-
-    /**
-     * Configures specified resources with specified parameters.
-     * 
-     * @param resourceName thr name of the resource.
-     * @param config resource parameters.
-     */
-    public void configure(MediaResourceType type, Properties config) throws UnknownMediaResourceException ;
-
-    /**
-     * Configures specified resources with specified parameters for 
-     * specified connection.
-     * 
-     * @param resourceName thr name of the resource.
-     * @param connectionID the identifier of the connection to which media resource
-     * will be applied. 
-     * @param config resource parameters.
-     */
-    public void configure(MediaResourceType type, Connection connection, Properties config) throws UnknownMediaResourceException ;
-    
-    /**
-     * Sets the default configuration to a specified media resource type.
-     * 
-     * @param type the type of media resource.
-     * @param config configuration to be set.
-     */
-    public void setDefaultConfig(MediaResourceType type, Properties config);
-    
-    /**
-     * Gets the default configuration of the specified media resource type
-     * 
-     * @param type the type of the media resource
-     * @return default config.
-     */
-    public Properties getDefaultConfig(MediaResourceType type);
-    
-    public void addFormat(int pt, Format fmt);
-    public void removeFormat(Format fmt);
     
     /**
      * Creates new connection with specified mode.
@@ -181,6 +52,14 @@ public interface Endpoint extends Serializable {
     public Connection createConnection(ConnectionMode mode)
             throws TooManyConnectionsException, ResourceUnavailableException;
 
+    /**
+     * Creates new connection with specified mode.
+     *
+     * @param mode the constant which identifies mode of the connection to be created.
+     */
+    public Connection createLocalConnection(ConnectionMode mode)
+            throws TooManyConnectionsException, ResourceUnavailableException;
+    
     /**
      * Deletes specified connection.
      *
@@ -209,9 +88,12 @@ public interface Endpoint extends Serializable {
      * @param listener the callback interface.
      * @param keepAlive true if keep signal active.
      */
-    public void play(EventID signalID, String[] params, String connectionID,
-            NotificationListener listener, boolean keepAlive, boolean beginRecordingImmediately) throws UnknownSignalException;
+    public void play(String signalID, Options options, String connectionID,
+            NotificationListener listener) throws UnknownSignalException, FacilityException;
 
+    public void play(String signalID, Options options,
+            NotificationListener listener) throws UnknownSignalException, FacilityException;
+    
     /**
      * Asks the to detect requested event and report. 
      *
@@ -222,8 +104,8 @@ public interface Endpoint extends Serializable {
      * @param the Call Agent callback interface currently controlling that endpoint.
      * @persistent true if event is always detected on the endpoint.
      */
-    public void subscribe(EventID eventID, NotificationListener listener,
-            boolean persistent);
+    public void subscribe(String eventID, Options options, NotificationListener listener)
+            throws UnknownSignalException, FacilityException;
 
     /**
      * Asks the endpoint to detect requested event on a specified connection and report. 
@@ -235,77 +117,8 @@ public interface Endpoint extends Serializable {
      * @param connectionID the identifier of the connection.
      * @param the Call Agent callback interface currently controlling that endpoint.
      */
-    public void subscribe(EventID eventID, String connectionID,String params[], 
-            NotificationListener listener);
+    public void subscribe(String eventID, Options options, String connectionID,
+            NotificationListener listener)throws UnknownSignalException, FacilityException;
     
-    /**
-     * Gets the address of the STUN server configured for the endpoint.
-     * 
-     * @return the address of the STUN server
-     */
-    public String getStunServerAddress();
-
-    /**
-     * Sets the address of the STUN server used for this endpoint
-     * 
-     * @param stunServerAddress the address of the STUN server
-     */
-	public void setStunServerAddress(String stunServerAddress);
-
-	/**
-	 * Gets the port of the STUN server configured for this endpoint
-	 * 
-	 * @return
-	 */
-	public int getStunServerPort();
-	
-	/**
-	 * Sets the STUN server port for this endpoint
-	 * 
-	 * @param stunServerPort
-	 */
-	public void setStunServerPort(int stunServerPort);
-	
-	/**
-	 * Do we use stun for this endpoint
-	 * 
-	 * @return
-	 */
-	public boolean isUseStun();
-	
-	/**
-	 * Sets if we want stun for this endpoint
-	 * 
-	 * @param useStun
-	 */
-	public void setUseStun(boolean useStun);
-	
-	/**
-	 * Returns true is port mapping is enabled (port address translation)
-	 * 
-	 * @return
-	 */
-	public boolean isUsePortMapping();
-	
-	/**
-	 * Setter for port address translation
-	 * 
-	 * @param portMapping
-	 */
-	public void setUsePortMapping(boolean portMapping);
-	
-	/**
-	 * The address resolved by STUN
-	 * 
-	 * @return
-	 */
-	public String getPublicAddressFromStun();
-	
-	/**
-	 * The address resolved by STUN
-	 * 
-	 * @param address
-	 */
-	public void setPublicAddressFromStun(String address);
 	
 }

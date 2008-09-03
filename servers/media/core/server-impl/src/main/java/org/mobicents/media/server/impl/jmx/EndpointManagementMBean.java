@@ -16,8 +16,6 @@
 
 package org.mobicents.media.server.impl.jmx;
 
-import java.net.UnknownHostException;
-import java.util.Properties;
 import javax.naming.NamingException;
 import org.jboss.system.ServiceMBean;
 
@@ -39,175 +37,22 @@ public interface EndpointManagementMBean extends ServiceMBean {
      * @param jndiName the new value of the Jndi name.
      */
     public void setJndiName(String jndiName) throws NamingException;   
-    /**
-     * Gets the IP address to which trunk is bound.
-     * All endpoints of the trunk use this address for RTP connection.
-     *
-     * @return the IP address string to which this trunk is bound.
-     */
-    public String getBindAddress();
     
     /**
-     * Modify the bind address.
-     * All endpoints of the trunk use this address for RTP connection.
-     *
-     * @param the IP address string.
+     * Gets the name of used RTP Factory.
+     * 
+     * @return the JNDI name of the RTP Factory
      */
-    public void setBindAddress(String bindAddress) throws UnknownHostException;
-    
-   /**
-    * Gets packetization period.
-    * 
-    * The packetization period is the period over which encoded voice bits 
-    * are collected for encapsulation in packets.
-    * 
-    * Higher period will reduce VoIP overhead allowing higher channel utilization
-    * 
-    * @return packetion period for media in milliseconds.
-    */
-    public Integer getPacketizationPeriod();
+    public String getRtpFactoryName();
     
     /**
-     * Modify packetization period.
+     * Sets the name of used RTP Factory.
      * 
-     * The packetization period is the period over which encoded voice bits 
-     * are collected for encapsulation in packets.
-     * 
-     * Higher period will reduce VoIP overhead allowing higher channel utilization
-     * 
-     * @param period the value of the packetization period in milliseconds.
+     * @param rtpFactoryName the JNDI name of the RTP Factory.
      */
-    public void setPacketizationPeriod(Integer period);
+    public void setRtpFactoryName(String rtpFactoryName);
     
-    /**
-     * Gets the size of the jitter buffer in milliseconds.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @return the size of the buffer in milliseconds.
-     */
-    public Integer getJitter();
-    
-    /**
-     * Modify size of the jitter buffer.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @param jitter the new buffer's size in milliseconds
-     */
-    public void setJitter(Integer jitter);
-    
-    /**
-     * Gets the range of the available port used for RTP connections.
-     * 
-     * @return the range of available port in the follwing format: low-high
-     */
-    public String getPortRange();
-    
-    /**
-     * Sets the range of the available port used for RTP connections.
-     * 
-     * @param portRange string indicating range in the follwing format: low-high
-     */
-    public void setPortRange(String portRange);  
-    
-    public void setPCMA(Boolean enabled);
-    public Boolean getPCMA();
-
-    public void setPCMU(Boolean enabled);
-    public Boolean getPCMU();
-    
-    public void setSpeex(Boolean enabled);
-    public Boolean getSpeex();
-    
-    public void setG729(Boolean enabled);
-    public Boolean getG729();
-    
-    /**
-     * DTMF detector configuration 
-     * 
-     * @param config configuration.
-     */
-    public void setDTMF(Properties config);
-    
-    /**
-     * Gets the current DTMF detector configuration.
-     * 
-     * @return current configuration.
-     */
-    public Properties getDTMF();
     
     public EndpointManagementMBean cloneEndpointManagementMBean();
     
-    /**
-     * Gets the address of the STUN server configured for the endpoint.
-     * 
-     * @return the address of the STUN server
-     */
-    public String getStunServerAddress();
-
-    /**
-     * Sets the address of the STUN server used for this endpoint
-     * 
-     * @param stunServerAddress the address of the STUN server
-     */
-	public void setStunServerAddress(String stunServerAddress);
-
-	/**
-	 * Gets the port of the STUN server configured for this endpoint
-	 * 
-	 * @return
-	 */
-	public int getStunServerPort();
-	
-	/**
-	 * Sets the STUN server port for this endpoint
-	 * 
-	 * @param stunServerPort
-	 */
-	public void setStunServerPort(int stunServerPort);
-	
-	/**
-	 * Do we use stun for this endpoint
-	 * 
-	 * @return
-	 */
-	public boolean isUseStun();
-	
-	/**
-	 * Sets if we want stun for this endpoint
-	 * 
-	 * @param useStun
-	 */
-	public void setUseStun(boolean useStun);
-	
-	/**
-	 * Do we use PAT for this endpoint
-	 * 
-	 * @return
-	 */
-	public boolean isUsePortMapping();
-	
-	/**
-	 * Sets if we want PAT for this endpoint
-	 * 
-	 * @param useStun
-	 */
-	public void setUsePortMapping(boolean usePortMapping);
 }

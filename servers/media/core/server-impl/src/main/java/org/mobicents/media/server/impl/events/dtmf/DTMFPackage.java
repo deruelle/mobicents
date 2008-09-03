@@ -15,29 +15,18 @@ package org.mobicents.media.server.impl.events.dtmf;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.concurrent.Semaphore;
 import org.apache.log4j.Logger;
-import org.mobicents.media.format.UnsupportedFormatException;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.common.MediaResourceState;
-import org.mobicents.media.server.impl.common.MediaResourceType;
-import org.mobicents.media.server.impl.common.dtmf.DTMFType;
-import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.media.server.impl.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.MediaResource;
-import org.mobicents.media.server.spi.MediaSink;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.ResourceStateListener;
-import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.EventID;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class DTMFPackage implements Serializable, ResourceStateListener {
+public class DTMFPackage implements Serializable {
 
     private BaseEndpoint endpoint;
     private Semaphore semaphore = new Semaphore(0);
@@ -49,32 +38,33 @@ public class DTMFPackage implements Serializable, ResourceStateListener {
     }
 
     public void subscribe(EventID eventID, HashMap params, String connectionID, NotificationListener listener) {
-        BaseDtmfDetector detector = (BaseDtmfDetector) this.endpoint.getResource(MediaResourceType.DTMF_DETECTOR,
-                connectionID);
+        /*
+//        BaseDtmfDetector detector = (BaseDtmfDetector) this.endpoint.getResource(MediaResourceType.DTMF_DETECTOR,
+//                connectionID);
 
-        Properties config = endpoint.getDefaultConfig(MediaResourceType.DTMF_DETECTOR);
-        DTMFType detectorMode = DTMFType.valueOf(config.getProperty("detector.mode"));
+//        Properties config = endpoint.getDefaultConfig(MediaResourceType.DTMF_DETECTOR);
+//        DTMFType detectorMode = DTMFType.valueOf(config.getProperty("detector.mode"));
 
         if (params != null) {
             String mask = (String) params.get("dtmf.mask");
             if (mask != null) {
-                detector.setDtmfMask(mask);
+//                detector.setDtmfMask(mask);
             }
         }
 
-        if (detectorMode == DTMFType.INBAND) {
-            if (detector.getState() != MediaResourceState.PREPARED) {
+//        if (detectorMode == DTMFType.INBAND) {
+//            if (detector.getState() != MediaResourceState.PREPARED) {
                 try {
-                    MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connectionID);
-                    sink.addStateListener(this);
-                    if (sink.getState() != MediaResourceState.PREPARED && sink.getState() != MediaResourceState.STARTED) {
+//                    MediaSink sink = (MediaSink) endpoint.getResource(MediaResourceType.AUDIO_SINK, connectionID);
+//                    sink.addStateListener(this);
+//                    if (sink.getState() != MediaResourceState.PREPARED && sink.getState() != MediaResourceState.STARTED) {
                         try {
                             blocked = true;
                             semaphore.acquire();
                         } catch (InterruptedException e) {
                         }
-                    }
-                    detector.prepare(endpoint, sink.newBranch("DTMF"));
+//                    }
+//                    detector.prepare(endpoint, sink.newBranch("DTMF"));
                 } catch (UnsupportedFormatException ex) {
                     logger.error("Could not prepare DTMF detector", ex);
                     NotifyEvent evt = new NotifyEvent(this, EventID.DTMF, EventCause.FACILITY_FAILURE, ex.getMessage());
@@ -82,15 +72,11 @@ public class DTMFPackage implements Serializable, ResourceStateListener {
                     return;
                 }
             }
-        }
+//        }
 
-        detector.start();
-        detector.addListener(listener);
+//        detector.start();
+//        detector.addListener(listener);
+         */ 
     }
 
-    public void onStateChange(MediaResource resource, MediaResourceState state) {
-        if (state == MediaResourceState.PREPARED && blocked) {
-            semaphore.release();
-        }
-    }
 }

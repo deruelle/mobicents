@@ -13,8 +13,15 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+import org.apache.log4j.Logger;
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.CachedBuffersPool;
 
 /**
  * Implements jitter buffer.
@@ -36,26 +43,26 @@ import org.mobicents.media.format.AudioFormat;
  */
 public class JitterBuffer {
 
-    private byte[] buffer;
-    private int pos = 0;
-    private int threshold;
+    private RtpSocket rtpSocket;
     private boolean ready = false;
-    private Format fmt;
     private int jitter;
-    private int seq = -1;
+    private int seq = 0;
     private int period;
-    private int packetSize;
-    
+    private ReentrantLock state = new ReentrantLock();
+    private List<RtpPacket> buffers = Collections.synchronizedList(new ArrayList());
+    private int maxSize;
+    private Logger logger = Logger.getLogger(JitterBuffer.class);
+
     /**
      * Creates new instance of jitter.
      * 
      * @param fmt the format of the received media
      * @param jitter the size of the jitter in milliseconds.
      */
-    public JitterBuffer(Format fmt, int jitter, int period) {
-        this.fmt = fmt;
-        setJitter(jitter);
-        setPeriod(period);
+    public JitterBuffer(RtpSocket rtpSocket, int jitter, int period) {
+        this.rtpSocket = rtpSocket;
+        this.maxSize = 2*jitter / period;
+        this.period = period;
     }
 
     /**
@@ -67,98 +74,90 @@ public class JitterBuffer {
         return jitter;
     }
 
-    /**
-     * Modify jitter's size.
-     * 
-     * @param size the new jitter's size in ms.
-     */
-    public void setJitter(int size) {
-        this.jitter = size;
-        this.threshold = getSizeInBytes(fmt, size);
-        
-        if (buffer == null) {
-            buffer = threshold != 0 ? new byte[3 * this.threshold] : new byte[200];
-        }
-    }
-
-    // HACK: TODO: FIXME: remove these hardcoded values.
     public void setPeriod(int period) {
-    	if(this.fmt.getEncoding().contains("g729")) {
-    		this.period = 20;
-    		this.packetSize = 20;
-    	} else {
-    		this.period = period;
-    		this.packetSize = getSizeInBytes(fmt, period);
-    	}
-    }
-    
-    public boolean isReady() {
-        return pos > threshold;
-    }
-    
-    private int getSizeInBytes(Format fmt, int size) {
-        //samples per millisecond
-        int s = (int) ((AudioFormat) fmt).getSampleRate() / 1000;
-        int sampleSize = ((AudioFormat) fmt).getSampleSizeInBits() / 8;
-
-        return sampleSize != 0 ? (int) s * size / sampleSize : 0;
+        this.period = period;
+        maxSize = jitter / period;
     }
 
-    public void push(int seq, byte[] data) {
-        if (this.seq == seq) {
-            //duplicate packet
-            return;
-        }
-        
-        this.seq = seq;
-        
-        synchronized (this) {
-            if (pos + data.length > buffer.length) {
-                return;
+    /**
+     * Writes media packet to the jitter buffer.
+     * 
+     * @param buffer the media packet.
+     */
+    public void write(RtpPacket rtpPacket) {
+        try {
+            state.lock();
+            //check size of the jitter buffer.
+            //if buffer is full drop to most "top" packet and push
+            //current packet into the jitter buffer
+            if (buffers.size() == this.maxSize) {
+                RtpPacket p = buffers.remove(0);
             }
-//            while (pos + data.length > buffer.length) {
-//                try {
-//                    wait();
-//                } catch (InterruptedException ex) {
-//                }
-//            }
-
-            System.arraycopy(data, 0, buffer, pos, data.length);
-            pos += data.length;
-
-            ready = pos >= threshold;
-            if (ready) {
-                notify();
+            buffers.add(rtpPacket);
+            if (!ready && buffers.size() >= this.maxSize/2) {
+                ready = true;
             }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("--> Write " + rtpPacket + ", buffer holds = " +
+                        buffers.size() * period + " milliseconds");
+            }
+        } finally {
+            state.unlock();
         }
     }
 
-    public byte[] next() throws InterruptedException {
-        return packetSize != 0 ? next(this.packetSize) : next(this.pos);
-    }
+    /**
+     * Reads media packet from jitter buffer.
+     * 
+     * @return media packet.
+     */
+    public Buffer read() {
+        //buffer should be fully populated before first read will be available
+        if (!ready) {
+            return null;
+        }
 
-    public byte[] next(int count) throws InterruptedException {
-        synchronized (this) {
-            if (!ready) {
-                wait(jitter);
+        //read next packet and fill Buffer object.
+        try {
+            state.lock();
+            if (buffers.size() > 0) {
+                //takes top rtp packet
+                RtpPacket rtpPacket = buffers.remove(0);
+
+                //allocate media buffer
+                Buffer buff = CachedBuffersPool.allocate();
+
+                //fill media buffer 
+                buff.setSequenceNumber(seq);
+                buff.setTimeStamp(seq * period);
+                buff.setDuration(period);
+
+                HashMap formats = rtpSocket.getFormats();
+                Format fmt = (Format) formats.get(rtpPacket.getPayloadType());
+
+                buff.setFormat(fmt);
+
+                byte[] data = (byte[]) buff.getData();
+                byte[] payload = rtpPacket.getPayload();
+
+                System.arraycopy(payload, 0, data, 0, payload.length);
+
+                buff.setOffset(0);
+                buff.setLength(payload.length);
+                
+                seq++;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("--> Read " + rtpPacket + " as " + buff + ", buffer holds = " +
+                            buffers.size() * period + " milliseconds");
+                }
+
+                return buff;
             }
 
-            byte[] data = null;
-            int len = Math.min(count, pos);
-            if (len > 0) {
-                data = new byte[len];
-
-                System.arraycopy(buffer, 0, data, 0, len);
-                System.arraycopy(buffer, len, buffer, 0, buffer.length - len);
-                pos -= len;
-
-                notify();
-            } else {
-                data = new byte[count];
-            }
-            
-            ready = false;
-            return data;
+            return null;
+        } finally {
+            state.unlock();
         }
     }
 }
