@@ -88,7 +88,7 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     }
     
     public void update(NotifyEvent event) {
-        EventID eventID = null;
+        EventID eventID = EventID.getEvent(event.getID());
         if (!released) {
             MsNotifyEventImpl evt = new MsNotifyEventImpl(this, eventID, event.getCause(), event.getMessage());
             sendEvent(evt);

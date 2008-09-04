@@ -23,66 +23,66 @@ import org.mobicents.media.server.spi.events.Options;
 import org.mobicents.media.server.spi.events.announcement.AnnParams;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class AnnSignal extends AbstractSignal implements PlayerListener {
 
-    private AudioPlayer player;
-    
-    public AnnSignal(Options options) {
-        player = new AudioPlayer();
-        player.addListener(this);
-        this.options = options;
-    }
-    
-    public String getID() {
-        return "PLAY";
-    }
+	private AudioPlayer player;
 
-    public void connect(MediaSink sink) throws IOException {
-        player.connect(sink);
-    }
+	public AnnSignal(Options options) {
+		player = new AudioPlayer();
+		player.addListener(this);
+		this.options = options;
+	}
 
-    public void disconnect(MediaSink sink) {
-        player.disconnect(sink);
-    }
+	public String getID() {
+		return "PLAY";
+	}
 
-    public void start() {
-        player.setFile((String) options.get(AnnParams.URL));
-        player.start();
-    }
+	public void connect(MediaSink sink) throws IOException {
+		player.connect(sink);
+	}
 
-    public void stop() {
-        player.stop();
-    }
+	public void disconnect(MediaSink sink) {
+		player.disconnect(sink);
+	}
 
-    public Format getFormat() {
-        return null;
-    }
+	public void start() {
+		player.setFile((String) options.get(AnnParams.URL));
+		player.start();
+	}
 
-    public void update(PlayerEvent event) {
-        System.out.println("**** PLAYER " + event.getEventType());
-        NotifyEvent evt = null;
-        switch (event.getEventType()) {
-            case STARTED :
-                //evt = new NotifyEvent(this, "org.mobicents.media.ann.STARTED");
-                break;
-            case END_OF_MEDIA :
-            case STOP_BY_REQUEST :
-                evt = new NotifyEvent(this, "org.mobicents.media.ann.COMPLETE");
-                break;
-            case FACILITY_ERROR :
-                evt = new NotifyEvent(this, "org.mobicents.media.ann.FACILITY_ERROR");
-                break;
-        }
-        if (event != null) {
-            sendEvent(evt);
-        }
-    }
+	public void stop() {
+		player.stop();
+	}
 
-    public Format[] getFormats() {
-        return AudioPlayer.formats;
-    }
+	public Format getFormat() {
+		return null;
+	}
+
+	public void update(PlayerEvent event) {
+		System.out.println("**** PLAYER " + event.getEventType());
+		NotifyEvent evt = null;
+		switch (event.getEventType()) {
+		case STARTED:
+			// evt = new NotifyEvent(this, "org.mobicents.media.ann.STARTED");
+			break;
+		case END_OF_MEDIA:
+		case STOP_BY_REQUEST:
+			evt = new NotifyEvent(this, "org.mobicents.media.ann.COMPLETE");
+			break;
+		case FACILITY_ERROR:
+			evt = new NotifyEvent(this, "org.mobicents.media.ann.FAIL");
+			break;
+		}
+		if (event != null && evt != null) {
+			sendEvent(evt);
+		}
+	}
+
+	public Format[] getFormats() {
+		return AudioPlayer.formats;
+	}
 
 }
