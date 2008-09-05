@@ -34,7 +34,8 @@ import javax.slee.SbbContext;
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.sdp.AVProfile;
+//import org.mobicents.media.server.impl.sdp.AVProfile;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
@@ -98,11 +99,11 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 
 			switch (encodingMethod) {
 			case BearerInformation.ENC_METHOD_A_LAW:
-				endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
+//				endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
 				break;
 
 			case BearerInformation.ENC_METHOD_MU_LAW:
-				endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
+//				endpoint.addFormat(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
 				break;
 
 			default:
