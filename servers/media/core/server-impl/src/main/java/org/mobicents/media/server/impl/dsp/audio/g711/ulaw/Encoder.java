@@ -62,6 +62,20 @@ public class Encoder implements Codec {
         return formats;
     }
 
+    public Format[] getSupportedInputFormats(Format fmt) {
+        Format[] formats = new Format[]{
+            Codec.LINEAR_AUDIO
+        };
+        return formats;
+    }
+
+    public Format[] getSupportedOutputFormats() {
+        Format[] formats = new Format[]{
+            Codec.PCMU
+        };
+        return formats;
+    }
+    
     /**
      * (Non Java-doc)
      * 

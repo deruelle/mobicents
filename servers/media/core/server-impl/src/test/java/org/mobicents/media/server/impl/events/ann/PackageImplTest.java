@@ -12,7 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.server.impl.EventPackageFactory;
 import static org.junit.Assert.*;
-import org.mobicents.media.server.spi.events.EventDetector;
 import org.mobicents.media.server.spi.events.EventPackage;
 import org.mobicents.media.server.spi.events.Options;
 import org.mobicents.media.server.spi.events.Signal;

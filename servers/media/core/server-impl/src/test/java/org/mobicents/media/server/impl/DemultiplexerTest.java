@@ -5,7 +5,6 @@
 
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -46,7 +45,7 @@ public class DemultiplexerTest {
 
     @Before
     public void setUp() {
-        demux = new Demultiplexer();
+        demux = new Demultiplexer(new Format[]{new AudioFormat("F1")});
     }
 
     @After
@@ -73,22 +72,14 @@ public class DemultiplexerTest {
         
         s.start();
         
-        try {
             demux.getInput().connect(s);
             demux.start();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         Sink1 sink1 = new Sink1();
         Sink2 sink2 = new Sink2();
         
-        try {
             demux.connect(sink1);
             demux.connect(sink2);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         try {
             Thread.currentThread().sleep(duration * 1000);
         } catch (Exception e) {
@@ -117,26 +108,14 @@ public class DemultiplexerTest {
         Sink1 sink1 = new Sink1();
         Sink2 sink2 = new Sink2();
 
-        try {
             demux.connect(sink1);        
             assertEquals(1, demux.getBranchCount());
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
 
-        try {
             demux.connect(sink2);        
             assertEquals(2, demux.getBranchCount());  
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
-        try {
             demux.connect(sink2);
             assertEquals(2, demux.getBranchCount());  
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
     }
     
     /**
@@ -147,19 +126,11 @@ public class DemultiplexerTest {
         Sink1 sink1 = new Sink1();
         Sink2 sink2 = new Sink2();
 
-        try {
             demux.connect(sink1);        
             assertEquals(1, demux.getBranchCount());
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
-        try {
             demux.connect(sink2);        
             assertEquals(2, demux.getBranchCount()); 
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         demux.disconnect(sink2);
         assertEquals(1, demux.getBranchCount());
@@ -169,20 +140,8 @@ public class DemultiplexerTest {
     }
 
     @Test
-    public void testGetFormatWithoutSource() {
-        assertEquals(null, demux.getFormats());
-    }
-    
-    @Test
-    public void testGetFormatWithSource() {
-        AudioFormat f = new AudioFormat("test");
-        Source s = new Source(f);
-        
-        try {
-            s.connect(demux.getInput());
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+    public void testGetFormat() {
+        AudioFormat f = new AudioFormat("F1");
         assertEquals(1,demux.getFormats().length);
         assertEquals(f,demux.getFormats()[0]);
     }

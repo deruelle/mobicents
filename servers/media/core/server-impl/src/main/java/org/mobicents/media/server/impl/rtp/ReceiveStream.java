@@ -56,15 +56,8 @@ public class ReceiveStream extends AbstractSource implements Runnable {
         if (frame == null) {
             return;
         }
-
-        //fmt = frame.getFormat();
-
         if (sink == null) {
             return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("<-- Pushing " + frame + " to " + sink);
         }
         sink.receive(frame);
     }

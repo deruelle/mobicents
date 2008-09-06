@@ -11,12 +11,8 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 
@@ -27,27 +23,19 @@ import org.mobicents.media.MediaSource;
 public abstract class AbstractSource implements MediaSource {
 
     protected MediaSink sink;
-    //protected Format fmt;
-    
-    protected ArrayList commonFormats;
-    
+
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.MediaStream#connect(MediaSink).
      */
-    public void connect(MediaSink sink) throws IOException {
-        if (!this.checkFormats(this.getFormats(), sink.getFormats())) {
-            throw new IOException("No common formats");
-        }
+    public void connect(MediaSink sink) {
         this.sink = sink;
         if (((AbstractSink) sink).mediaStream == null) {
             sink.connect(this);
         }
-//        ((AbstractSink) sink).mediaStream = this;
-//        ((AbstractSink) sink).commonFormats = this.commonFormats;
     }
-    
+
     /**
      * (Non Java-doc).
      * 
@@ -56,44 +44,5 @@ public abstract class AbstractSource implements MediaSource {
     public void disconnect(MediaSink sink) {
         this.sink = null;
         ((AbstractSink) sink).mediaStream = null;
-        ((AbstractSink) sink).commonFormats = null;
-    }
-    
-    /**
-     * Seraches common media formats in two lists.
-     * Common formats are stored in <code>comminFormat</code> varibale.
-     * 
-     * @param list1 first list
-     * @param list2 second list
-     * @return true if both lists have common formats.
-     */
-    private boolean checkFormats(Format[] list1, Format[] list2) {
-        commonFormats = new ArrayList();
-        if (list1 == null && list2 == null) {
-            return true;
-        }
-        
-        if (list1 == null) {
-            for (Format f : list2) {
-                commonFormats.add(f);
-            }
-            return true;
-        }
-
-        if (list2 == null) {
-            for (Format f : list1) {
-                commonFormats.add(f);
-            }
-            return true;
-        }
-        
-        for (Format f1 : list1 ) {
-            for (Format f2 : list2) {
-                if (f1.matches(f2)) {
-                    commonFormats.add(f1);
-                }
-            }
-        }
-        return !commonFormats.isEmpty();
     }
 }

@@ -11,22 +11,44 @@
  */
 package org.mobicents.media.server.impl.enp.test;
 
-import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseVirtualEndpoint;
+import org.mobicents.media.server.impl.common.ConnectionState;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class LoopEndpointImpl extends BaseEndpoint {
+public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener{
 
 
     private Echo echo;
     private boolean started = false;
-    
     public LoopEndpointImpl(String localName) {
         super(localName);
         this.setMaxConnectionsAvailable(1);
-        echo = new Echo(this);
+        addConnectionListener(this);
+    }
+
+    public void onStateChange(Connection connection, ConnectionState oldState) {
+        BaseConnection con = (BaseConnection) connection;
+        switch (connection.getState()) {
+            case OPEN :
+//                con.getDemux().connect(new TestSink());
+                con.getMux().connect(con.getDemux());
+                break;
+            case CLOSED :
+                con.getMux().disconnect(con.getDemux());
+                break;
+        }
+    }
+
+    @Override
+    public Endpoint doCreateEndpoint(String localName) {
+        return new LoopEndpointImpl(localName);
     }
 
     

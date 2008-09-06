@@ -22,7 +22,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -47,11 +46,11 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
     //private HashMap receiveStreams = new HashMap();
     //handler for receiver thread
     private Thread receiverThread;
-    private SendStream sendStream;
+    private SendStreamImpl sendStream;
     //registered participants
     protected Peer peer = null;
     //holder for dynamic payloads.
-    private HashMap <Integer, Format> formats = new HashMap();
+    private HashMap <Integer, Format> rtpMap = new HashMap();
     private InetAddress localhost;
     protected int period = 20;
     private int jitter = 60;
@@ -220,8 +219,10 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
         receiverThread.start();
 
         receiveStream = new ReceiveStream(this, period, jitter);
+        
         sendStream = new SendStreamImpl(this);
-        updateFormats();
+        sendStream.formats = new Format[rtpMap.size()];
+        rtpMap.values().toArray(sendStream.formats);
     }
 
     /**
@@ -265,8 +266,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#addFormat(int, Format);
      */
     public void addFormat(int pt, Format format) {
-        formats.put(new Integer(pt), format);
-        updateFormats();
+        rtpMap.put(new Integer(pt), format);
     }
 
     /**
@@ -275,36 +275,26 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#removeFormat(int)
      */
     public void removeFormat(int pt) {
-        Format format = formats.remove(pt);
-        updateFormats();
-        System.out.println("Removed: " + format);
+        rtpMap.remove(pt);
     }
 
-    private void updateFormats() {
-        Collection <Format> fmts = formats.values();
-        Format[] list = new Format[fmts.size()];
-        int i = 0;
-        for (Format fmt: fmts) {
-            list[i++] = fmt;
-        }
-        
-        if (receiveStream != null) {
-            receiveStream.formats = list;
-        }
-        
-        if (sendStream != null) {
-            ((SendStreamImpl)sendStream).formats = list;
-        }
-    }
     /**
      * (Non Java-doc).
      *
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#getFormats();
      */
-    public HashMap getFormats() {
-        return formats;
+    public HashMap getRtpMap() {
+        return rtpMap;
     }
 
+    public void setRtpMap(HashMap rtpMap) {
+        this.rtpMap = rtpMap;
+        if (sendStream != null) {
+            sendStream.formats = new Format[rtpMap.size()];
+            rtpMap.values().toArray(sendStream.formats);
+        }
+    }
+    
     /**
      * Determines payload type for specified format.
      *
@@ -313,9 +303,9 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
      * was not previously registered with addFormat().
      */
     protected int getPayloadType(Format format) {
-        Set<Integer> keys = formats.keySet();
+        Set<Integer> keys = rtpMap.keySet();
         for (Integer k : keys) {
-            Format fmt = (Format) formats.get(k);
+            Format fmt = (Format) rtpMap.get(k);
             if (fmt.matches(format)) {
                 return k.intValue();
             }

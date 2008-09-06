@@ -45,7 +45,9 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 import javax.naming.InitialContext;
+import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
  * 
@@ -55,13 +57,17 @@ public class RtpConnectionImpl extends BaseConnection {
 
     private String localAddress;
     private int localPort;
-    private HashMap audioFormats;
-    private HashMap videoFormats;
+//    private HashMap audioFormats;
+//    private HashMap videoFormats;
     private SessionDescription localSDP;
     private SessionDescription remoteSDP;
     private RtpSocket rtpSocket;
     private SdpFactory sdpFactory = SdpFactory.getInstance();
-    private HashMap codecs;
+  
+    private Processor inDsp;
+    private Processor outDsp;
+    
+//    private HashMap codecs;
     
     /**
      * Creates a new instance of RtpConnectionImpl.
@@ -75,18 +81,16 @@ public class RtpConnectionImpl extends BaseConnection {
         super(endpoint, mode);
         logger = Logger.getLogger(RtpConnectionImpl.class);
 
+
+        //create and initialize RTP socket
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Initializing RTP stack");
         }
-
         initRTPSocket();
-
-        try {
-            inputDsp.getInput().connect(rtpSocket.getReceiveStream());
-        } catch (IOException e) {
-            throw new ResourceUnavailableException(e.getMessage());
-        }
-
+        
+        inDsp = new Processor();
+        outDsp = new Processor();
+        
         setState(ConnectionState.HALF_OPEN);
     }
 
@@ -124,7 +128,7 @@ public class RtpConnectionImpl extends BaseConnection {
             localPort = rtpSocket.getPort();
 
             //obtain rtp formats
-            audioFormats = rtpFactory.getAudioFormats();
+            //audioFormats = rtpFactory.getAudioFormats();
 
             //start rtp receiver and sender
             rtpSocket.start();
@@ -147,34 +151,54 @@ public class RtpConnectionImpl extends BaseConnection {
             //so we get endpoint's specific audio sink and assign it as
             //consumer for RTP receiver stream
             case HALF_OPEN:
+                inDsp.getInput().connect(rtpSocket.getReceiveStream());
+                inDsp.getOutput().connect(demux.getInput());
+                
+                demux.start();
                 break;
 
             //In state=OPEN the remote entity (address and port) is already known.
             //It means that now can be started sender stream, so we are obtaining
             // source stream from the endpoint and starting RTP sender stream.    
             case OPEN:
+                outDsp.getInput().connect(mux.getOutput());
+                outDsp.getOutput().connect(rtpSocket.getSendStream());
+                mux.getOutput().start();
                 break;
 
             //Disconnect input and iutput streams    
             case CLOSED:
                 //disconnect and release mux
-                outputDsp.getOutput().disconnect(rtpSocket.getSendStream());
+                demux.stop();
+                inDsp.getInput().disconnect(rtpSocket.getReceiveStream());
+                inDsp.getOutput().disconnect(demux.getInput());
                 
                 mux.getOutput().stop();
-                mux.getOutput().disconnect(outputDsp.getInput());
-                
-                //disconnect and release demmux
-                inputDsp.getInput().disconnect(rtpSocket.getReceiveStream());
-                
-                demux.stop();
-                demux.getInput().disconnect(inputDsp.getOutput());
-
+                outDsp.getInput().disconnect(mux.getOutput());
+                outDsp.getOutput().disconnect(rtpSocket.getSendStream());
+                       
                 break;
         }
 
         super.setState(newState);
     }
 
+    /**
+     * Checks is format presented in the list.
+     * 
+     * @param fmts the list of formats to check
+     * @param fmt the format instance to check.
+     * @return true if fmt is in list of fmts.
+     */
+    private boolean contains(Format[] fmts, Format fmt) {
+        for (int i = 0; i < fmts.length; i++) {
+            if (fmts[i].matches(fmt)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     /**
      * (Non-Javadoc).
      * 
@@ -214,7 +238,21 @@ public class RtpConnectionImpl extends BaseConnection {
             Vector descriptions = new Vector();
 
             // encode formats
-            HashMap fmts = codecs != null ? codecs : audioFormats;
+            HashMap rtpMap = rtpSocket.getRtpMap();
+            //Format[] supported = endpoint.getSupportedFormats();
+            Format[] supported = inDsp.getInput().getFormats();
+            
+            
+            HashMap fmts = new HashMap();
+            Set <Integer> map = rtpMap.keySet();            
+            
+            for (Integer pt : map) {
+                Format f = (Format) rtpMap.get(pt);
+                if (contains(supported, f)) {
+                    fmts.put(pt, f);
+                }
+            }
+            
             Object[] payloads = getPayloads(fmts).toArray();
 
             int[] formats = new int[payloads.length];
@@ -229,8 +267,8 @@ public class RtpConnectionImpl extends BaseConnection {
             // set attributes for formats
             Vector attributes = new Vector();
             for (int i = 0; i < formats.length; i++) {
-                Format format = (Format) fmts.get(new Integer(formats[i]));
-                attributes.add(sdpFactory.createAttribute("rtpmap", format.toString()));
+                RTPAudioFormat format = (RTPAudioFormat) fmts.get(new Integer(formats[i]));
+                attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
                 if (format.getEncoding().contains("g729")) {
                     g729 = true;
                 }
@@ -308,18 +346,18 @@ public class RtpConnectionImpl extends BaseConnection {
             logger.debug(this + " Offered formats: " + offer);
         }
 
-        codecs = select(audioFormats, offer);
+        HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);
         if (logger.isDebugEnabled()) {
-            logger.debug(this + " Selected formats: " + codecs);
+            logger.debug(this + " Selected formats: " + rtpMap);
         }
 
-        Set<Integer> keys = codecs.keySet();
+        Set<Integer> keys = rtpMap.keySet();
         for (Integer key : keys) {
-            rtpSocket.addFormat(key, (Format) codecs.get(key));
+            rtpSocket.addFormat(key, (Format) rtpMap.get(key));
         }
         // @FIXME
         // DTMF may be negotiated but speech codecs no
-        if (codecs.size() == 0) {
+        if (rtpMap.size() == 0) {
             throw new IOException("Codecs are not negotiated");
         }
 
@@ -333,9 +371,7 @@ public class RtpConnectionImpl extends BaseConnection {
             // silence here
         }
         
-        outputDsp.getOutput().connect(rtpSocket.getSendStream());
-        mux.getOutput().start();
-
+        rtpSocket.setRtpMap(rtpMap);
         setState(ConnectionState.OPEN);
     }
 
@@ -391,17 +427,13 @@ public class RtpConnectionImpl extends BaseConnection {
      * @param offered
      *            the list with the offered codecs.
      */
-    private HashMap select(HashMap supported, HashMap offered) {
+    private HashMap select(Format[] supported, HashMap offered) {
         HashMap formats = new HashMap();
         Set<Integer> offer = offered.keySet();
         for (Integer po : offer) {
             Format ofmt = (Format) offered.get(po);
-            Set<Integer> local = supported.keySet();
-            for (Integer pl : local) {
-                Format sfmt = (Format) supported.get(pl);
-                if (sfmt.matches(ofmt)) {
-                    formats.put(po, ofmt);
-                }
+            if (contains(supported, ofmt)) {
+                formats.put(po, ofmt);
             }
         }
         return formats;

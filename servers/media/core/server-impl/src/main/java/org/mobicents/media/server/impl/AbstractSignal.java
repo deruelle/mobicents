@@ -11,7 +11,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
@@ -27,15 +26,18 @@ import org.mobicents.media.server.spi.events.Signal;
  */
 public abstract class AbstractSignal implements Signal {
 
-    private List <NotificationListener> listeners = new ArrayList();
+    private List<NotificationListener> listeners = new ArrayList();
     protected Options options;
 
     protected void sendEvent(NotifyEvent evt) {
-        for (NotificationListener listener : listeners) {
-            listener.update(evt);
+        synchronized (listeners) {
+            for (NotificationListener listener : listeners) {
+                listener.update(evt);
+            }
         }
+        listeners.clear();
     }
-    
+
     public Options getOptions() {
         return options;
     }
@@ -44,13 +46,15 @@ public abstract class AbstractSignal implements Signal {
         this.options = options;
     }
 
-    
     public void addListener(NotificationListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
     }
 
     public void removeListener(NotificationListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
-
 }

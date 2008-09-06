@@ -86,5 +86,9 @@ public class RTPFormat extends Format {
     
     private static HashMap getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
         return null;
-    }    
+    } 
+    
+    public String toSdp() {
+        return null;
+    }
 }

@@ -36,9 +36,11 @@ import org.mobicents.media.server.impl.clock.Timer;
  */
 public class Multiplexer extends AbstractSink implements Runnable {
 
-    private final static AudioFormat LINEAR =
-            new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1,
-            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 
+            8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     
     private Format[] formats = null;
     
@@ -75,7 +77,7 @@ public class Multiplexer extends AbstractSink implements Runnable {
     }
 
     @Override
-    public void connect(MediaSource source) throws IOException {
+    public void connect(MediaSource source) {
         Input input = new Input();
         //input.connect(source);
         source.connect(input);
@@ -175,12 +177,10 @@ public class Multiplexer extends AbstractSink implements Runnable {
                 Buffer buffer = packets.remove(0);
                 buffer.setSequenceNumber(seq);
                 buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
-                if (output.sink != null && output.sink.isAcceptable(buffer.getFormat())) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("<--Push " + buffer + " to " + output.sink);
-                    }
+                if (output != null && output.sink != null && 
+                        output.sink.isAcceptable(buffer.getFormat())) {
                     output.sink.receive(buffer);
-                }
+                } 
                 seq++;
             }
         }

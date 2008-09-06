@@ -5,7 +5,6 @@
 
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -53,11 +52,7 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(formats);
         TestSink sink = new TestSink(formats);
         
-        try {
             stream.connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, stream);
         assertEquals(stream.sink, sink);
@@ -75,12 +70,8 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(formats);
         TestSink sink = new TestSink(formats);
         
-        try {
             stream.connect(sink);
             stream.disconnect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, null);
         assertEquals(stream.sink, null);
@@ -100,11 +91,7 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(formats1);
         TestSink sink = new TestSink(formats2);
         
-        try {
             stream.connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, stream);
         assertEquals(stream.sink, sink);
@@ -124,19 +111,11 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(formats1);
         TestSink sink = new TestSink(formats2);
         
-        try {
             stream.connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, stream);
         assertEquals(stream.sink, sink);
         
-        assertEquals(1, stream.commonFormats.size());
-        if (!((Format)stream.commonFormats.get(0)).matches(new AudioFormat("F1"))) {
-            fail("Expected " + new AudioFormat("F1"));
-        }
     }
     
     @Test
@@ -153,11 +132,7 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(null);
         TestSink sink = new TestSink(formats2);
         
-        try {
             stream.connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, stream);
         assertEquals(stream.sink, sink);
@@ -177,35 +152,12 @@ public class AbstractSourceTest {
         TestSource stream = new TestSource(formats1);
         TestSink sink = new TestSink(null);
         
-        try {
             stream.connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         assertEquals(sink.mediaStream, stream);
         assertEquals(stream.sink, sink);
     }
 
-    @Test
-    public void testFormatNotNegotiated() throws Exception {
-        Format[] formats1 = new Format[] {
-            new AudioFormat("F1")
-        };
-
-        Format[] formats2 = new Format[] {
-            new AudioFormat("F2"),
-        };
-        
-        TestSource stream = new TestSource(formats1);
-        TestSink sink = new TestSink(formats2);
-        
-        try {
-            stream.connect(sink);
-            fail("IOException expected");
-        } catch (IOException e) {
-        }
-    }    
     
     private class TestSink extends AbstractSink {
 

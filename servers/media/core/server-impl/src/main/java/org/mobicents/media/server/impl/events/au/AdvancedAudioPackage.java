@@ -8,17 +8,29 @@ import java.io.Serializable;
 
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.events.EventDetector;
+import org.mobicents.media.server.spi.events.EventPackage;
+import org.mobicents.media.server.spi.events.Options;
+import org.mobicents.media.server.spi.events.Signal;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class AdvancedAudioPackage implements Serializable {
+public class AdvancedAudioPackage implements EventPackage {
 
     private BaseEndpoint endpoint;
 
     public AdvancedAudioPackage(Endpoint endpoint) {
         this.endpoint = (BaseEndpoint) endpoint;
+    }
+
+    public Signal getSignal(String signalID, Options options) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public EventDetector getDetector(String signalID, Options options) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 /*    public Signal play(EventID signalID, HashMap params, String connectionID, NotificationListener listener,

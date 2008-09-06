@@ -30,9 +30,8 @@ public interface MediaSource extends Serializable {
      * Joins this source with media sink.
      * 
      * @param sink the media sink to join with.
-     * @throw IOException if no common formats between source and sink;
      */
-    public void connect(MediaSink sink) throws IOException;
+    public void connect(MediaSink sink);
     
     /**
      * Drops connection between this source and media sink.

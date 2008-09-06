@@ -14,10 +14,10 @@
 
 package org.mobicents.media.server.impl.events.ann;
 
-import java.io.IOException;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.server.impl.AbstractSignal;
+import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.Options;
 import org.mobicents.media.server.spi.events.announcement.AnnParams;
@@ -28,13 +28,25 @@ import org.mobicents.media.server.spi.events.announcement.AnnParams;
  */
 public class AnnSignal extends AbstractSignal implements PlayerListener {
 
-	private AudioPlayer player;
+    private AudioPlayer player;
+    private Processor dsp;
+    
+    public AnnSignal(Options options) {
+        player = new AudioPlayer();
+        player.addListener(this);
+        dsp = new Processor();
+        this.options = options;
+    }
+    
+    public String getID() {
+        return "PLAY";
+    }
 
-	public AnnSignal(Options options) {
-		player = new AudioPlayer();
-		player.addListener(this);
-		this.options = options;
-	}
+    public void connect(MediaSink sink) {
+        //dsp.getOutput().connect(sink);
+        //dsp.getInput().connect(player);
+        player.connect(sink);
+    }
 
 	public String getID() {
 		return "PLAY";
@@ -53,9 +65,24 @@ public class AnnSignal extends AbstractSignal implements PlayerListener {
 		player.start();
 	}
 
-	public void stop() {
-		player.stop();
-	}
+    public void update(PlayerEvent event) {
+        NotifyEvent evt = null;
+        switch (event.getEventType()) {
+            case STARTED :
+                //evt = new NotifyEvent(this, "org.mobicents.media.ann.STARTED");
+                break;
+            case END_OF_MEDIA :
+            case STOP_BY_REQUEST :
+                evt = new NotifyEvent(this, "org.mobicents.media.ann.COMPLETE");
+                break;
+            case FACILITY_ERROR :
+                evt = new NotifyEvent(this, "org.mobicents.media.ann.FACILITY_ERROR");
+                break;
+        }
+        if (evt != null) {
+            sendEvent(evt);
+        }
+    }
 
 	public Format getFormat() {
 		return null;

@@ -59,6 +59,16 @@ public class Decoder implements Codec {
 		return formats;
 	}
 
+	public Format[] getSupportedInputFormats(Format fmt) {
+		Format[] formats = new Format[] { Codec.G729 };
+		return formats;
+	}
+
+	public Format[] getSupportedOutputFormats() {
+		Format[] formats = new Format[] { Codec.LINEAR_AUDIO };
+		return formats;
+	}
+        
 	public void process(Buffer buffer) {
 
 		byte[] data = (byte[]) buffer.getData();

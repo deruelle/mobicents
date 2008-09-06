@@ -97,6 +97,26 @@ public class Encoder implements Codec {
     /**
      * (Non Java-doc)
      * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     */
+    public Format[] getSupportedInputFormats(Format fmt) {
+        Format[] formats = new Format[]{Codec.LINEAR_AUDIO};
+        return formats;
+    }
+
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     */
+    public Format[] getSupportedOutputFormats() {
+        Format[] formats = new Format[]{Codec.SPEEX};
+        return formats;
+    }
+    
+    /**
+     * (Non Java-doc)
+     * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
@@ -112,6 +132,7 @@ public class Encoder implements Codec {
         
         buffer.setData(res);
         buffer.setOffset(0);
+        buffer.setFormat(Codec.SPEEX);
         buffer.setLength(res.length);
     }
     

@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl.enp.test;
 
-import java.io.IOException;
 import java.io.Serializable;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -58,7 +57,7 @@ public class Echo implements MediaSink, MediaSource, Serializable {
         //mediaProxy.setTransferHandler(handler);
     }
 
-    public void connect(MediaSource source) throws IOException {
+    public void connect(MediaSource source) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

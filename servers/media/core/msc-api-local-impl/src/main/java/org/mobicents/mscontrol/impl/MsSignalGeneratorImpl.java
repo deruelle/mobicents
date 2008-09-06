@@ -88,7 +88,9 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     }
     
     public void update(NotifyEvent event) {
+        System.out.println("*** EVT=" + event.getID());
         EventID eventID = EventID.getEvent(event.getID());
+        System.out.println("*** LOCAL EVT=" + eventID);
         if (!released) {
             MsNotifyEventImpl evt = new MsNotifyEventImpl(this, eventID, event.getCause(), event.getMessage());
             sendEvent(evt);
@@ -194,8 +196,12 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
                 }
             }
 
+            //TODO REBUILD THIS 
             Options options = new Options();
             options.add(AnnParams.URL, params[0]);
+            if (params.length > 1) {
+                options.add("recorder.url", params[1]);
+            }
             try {
                 endpoint.play(signalID.toString(), options, connID, generator);
             } catch (Exception ex) {

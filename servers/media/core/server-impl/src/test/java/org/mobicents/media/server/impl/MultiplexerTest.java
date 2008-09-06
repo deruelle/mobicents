@@ -4,7 +4,6 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -57,29 +56,25 @@ public class MultiplexerTest {
         if (formats != null) {
             fail("Mux output is in the air");
         }
-        
+
         Source1 s1 = new Source1();
         Source2 s2 = new Source2();
 
-        try {
-            mux.connect(s1);
-            mux.connect(s2);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        
+        mux.connect(s1);
+        mux.connect(s2);
+
         AudioFormat f1 = new AudioFormat("F1");
         AudioFormat f2 = new AudioFormat("F2");
-        
+
         formats = mux.getOutput().getFormats();
-        
-        
+
+
         assertEquals(true, hasFormat(f1, formats));
         assertEquals(true, hasFormat(f2, formats));
         assertEquals(2, formats.length);
-        
+
         assertEquals(null, mux.getFormats());
-        
+
         Sink sink = new Sink();
         try {
             mux.getOutput().connect(sink);
@@ -88,19 +83,19 @@ public class MultiplexerTest {
         }
 
         formats = mux.getFormats();
-        
-        
+
+
         assertEquals(true, hasFormat(f1, formats));
         assertEquals(true, hasFormat(f2, formats));
         assertEquals(2, formats.length);
-        
+
     }
-    
+
     private boolean hasFormat(AudioFormat f, Format[] formats) {
         if (formats == null) {
             return false;
         }
-        
+
         for (Format format : formats) {
             if (f.matches(format)) {
                 return true;
@@ -108,13 +103,13 @@ public class MultiplexerTest {
         }
         return false;
     }
-    
+
     @Test
     public void testMux() {
         progress(TEST_DURATION);
         checkMux();
     }
-    
+
     @Test
     public void testSeq() {
         progress(TEST_DURATION);
@@ -163,25 +158,13 @@ public class MultiplexerTest {
         s1.start();
         s2.start();
 
-        try {
-            mux.connect(s1);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        
-        try {
-            mux.connect(s2);
-        }catch (IOException e) {
-            fail(e.getMessage());
-        }
-        
-        try {
-            mux.getOutput().start();
-            mux.getOutput().connect(new Sink());
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        
+        mux.connect(s1);
+
+        mux.connect(s2);
+
+        mux.getOutput().start();
+        mux.getOutput().connect(new Sink());
+
         try {
             Thread.currentThread().sleep(duration * 1000);
         } catch (Exception e) {

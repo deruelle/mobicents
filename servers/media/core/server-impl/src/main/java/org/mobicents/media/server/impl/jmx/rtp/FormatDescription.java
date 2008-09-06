@@ -40,7 +40,17 @@ public class FormatDescription implements Serializable {
             String fmtParams[] = params[1].split(",");
             
             String encodingName = fmtParams[0].trim();
-            int sampleRate = Integer.parseInt(fmtParams[1].trim());
+            
+            if (fmtParams.length == 1) {
+                Format fmt = new RTPAudioFormat(payload, encodingName);
+                map.put(payload, fmt);
+                return map;
+            }
+            
+            int sampleRate = 8000;
+            if (fmtParams.length > 1) {
+                sampleRate = Integer.parseInt(fmtParams[1].trim());
+            }
             
             int sampleSize = 8;
             if (fmtParams.length > 2) {

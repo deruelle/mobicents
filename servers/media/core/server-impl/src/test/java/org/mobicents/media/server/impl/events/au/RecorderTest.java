@@ -11,7 +11,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.format.AudioFormat;
 import static org.junit.Assert.*;
-import org.mobicents.media.server.impl.events.test.SineGenerator;
 
 /**
  *

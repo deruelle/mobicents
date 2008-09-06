@@ -110,11 +110,11 @@ public class RtpSocketImplTest {
     @Test
     public void addFormat() {
         serverSocket.addFormat(1, new AudioFormat("Test"));
-        if (!serverSocket.getFormats().containsKey(1)) {
+        if (!serverSocket.getRtpMap().containsKey(1)) {
             fail("Expected payload number: 1");
         }
 
-        Format f = (Format) serverSocket.getFormats().get(1);
+        Format f = (Format) serverSocket.getRtpMap().get(1);
         if (!f.matches(new AudioFormat("Test"))) {
             fail("Expected format :" + new AudioFormat("Test"));
         }
@@ -126,17 +126,17 @@ public class RtpSocketImplTest {
     @Test
     public void removeFormat() {
         serverSocket.addFormat(1, new AudioFormat("Test"));
-        if (!serverSocket.getFormats().containsKey(1)) {
+        if (!serverSocket.getRtpMap().containsKey(1)) {
             fail("Expected payload number: 1");
         }
 
-        Format f = (Format) serverSocket.getFormats().get(1);
+        Format f = (Format) serverSocket.getRtpMap().get(1);
         if (!f.matches(new AudioFormat("Test"))) {
             fail("Expected format :" + new AudioFormat("Test"));
         }
 
         serverSocket.removeFormat(1);
-        if (serverSocket.getFormats().containsKey(1)) {
+        if (serverSocket.getRtpMap().containsKey(1)) {
             fail("Format not removed");
         }
     }
@@ -155,11 +155,11 @@ public class RtpSocketImplTest {
     @Test
     public void getPayloadType() {
         serverSocket.addFormat(1, new AudioFormat("Test"));
-        if (!serverSocket.getFormats().containsKey(1)) {
+        if (!serverSocket.getRtpMap().containsKey(1)) {
             fail("Expected payload number: 1");
         }
 
-        Format f = (Format) serverSocket.getFormats().get(1);
+        Format f = (Format) serverSocket.getRtpMap().get(1);
         if (!f.matches(new AudioFormat("Test"))) {
             fail("Expected format :" + new AudioFormat("Test"));
         }

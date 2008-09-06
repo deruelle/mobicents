@@ -5,7 +5,6 @@
 
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -72,16 +71,8 @@ public class LocalConnectionImplTest {
         TestEndpoint enp = new TestEndpoint("test");
         try {
             LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV);
-            assertEquals(ConnectionState.NULL, con.getState());
-            
-            con.setState(ConnectionState.HALF_OPEN);
             assertEquals(ConnectionState.HALF_OPEN, con.getState());
-
-            con.setState(ConnectionState.OPEN);
-            assertEquals(ConnectionState.OPEN, con.getState());
-
-            con.setState(ConnectionState.CLOSED);
-            assertEquals(ConnectionState.CLOSED, con.getState());
+            
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -220,11 +211,7 @@ public class LocalConnectionImplTest {
         }
         
         Source src = new Source();
-        try {
             con1.getMux().connect(src);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         Sink sink = new Sink();
         try {
@@ -270,7 +257,7 @@ public class LocalConnectionImplTest {
         private Timer timer = new Timer();
         private int seq;
         
-        private AudioFormat f = new AudioFormat("F1");
+        private AudioFormat f = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
         
         public Source() {
             timer.setListener(this);
@@ -304,7 +291,7 @@ public class LocalConnectionImplTest {
     
     private class Sink extends AbstractSink {
 
-        private AudioFormat f = new AudioFormat("F1");
+        private AudioFormat f = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
 
         public void receive(Buffer buffer) {
             packets.add(buffer);

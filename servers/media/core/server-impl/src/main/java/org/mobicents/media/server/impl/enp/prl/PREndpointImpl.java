@@ -13,25 +13,24 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.enp.prl;
 
-import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
-import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
-    
+public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
+
     private transient Logger logger = Logger.getLogger(PREndpointImpl.class);
-    
+
     /**
      * Creates a new instance of PREndpointImpl
      */
@@ -45,20 +44,20 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         if (this.getConnections().size() == 2) {
             BaseConnection[] connections = new BaseConnection[2];
             this.getConnections().toArray(connections);
-            
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Joining " + connections[0] + " with " + connections[1]);
             }
-            
-            try {
-                connections[0].getMux().connect(connections[1].getDemux());
-                connections[0].getDemux().connect(connections[1].getMux());
-            } catch (IOException e) {
-                logger.error("Could not join connections", e);
-                connection.close();
-            }
+
+            connections[1].getDemux().connect(connections[0].getMux());
+            //connections[1].getDemux().connect(new TestSink());
+            connections[0].getDemux().connect(connections[1].getMux());
+            //connections[0].getDemux().connect(new TestSink());
         }
     }
-    
-    
+
+    @Override
+    public Endpoint doCreateEndpoint(String localName) {
+        return new PREndpointImpl(localName);
+    }
 }

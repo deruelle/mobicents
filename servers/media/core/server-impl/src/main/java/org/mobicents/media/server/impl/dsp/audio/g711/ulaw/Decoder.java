@@ -91,21 +91,46 @@ public class Decoder implements Codec {
     /**
      * (Non Java-doc)
      * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     */
+    public Format[] getSupportedInputFormats(Format fmt) {
+        Format[] formats = new Format[]{
+            Codec.PCMU
+        };
+        return formats;
+    }
+
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     */
+    public Format[] getSupportedOutputFormats() {
+        Format[] formats = new Format[]{
+            Codec.LINEAR_AUDIO
+        };
+        return formats;
+    }
+    
+    /**
+     * (Non Java-doc)
+     * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
-    public void process(Buffer buffer) {
+    public synchronized void process(Buffer buffer) {
         byte[] data = (byte[]) buffer.getData();
         
         int offset = buffer.getOffset();
         int length = buffer.getLength();
-        
         byte[] media = new byte[length - offset];
+        
         System.arraycopy(data, 0, media, 0, media.length);
         
-        byte[] res = process(data);
+        byte[] res = process(data, length - offset);
         
         buffer.setData(res);
         buffer.setOffset(0);
+        buffer.setFormat(Codec.LINEAR_AUDIO);
         buffer.setLength(res.length);
     }
     
@@ -115,10 +140,10 @@ public class Decoder implements Codec {
      * @param media the compressed media.
      * @param uncompressed media.
      */
-    private byte[] process(byte[] media) {
-        byte[] decompressed = new byte[media.length * 2];
+    private synchronized byte[] process(byte[] media, int len) {
+        byte[] decompressed = new byte[len * 2];
         int j = 0;
-        for (int i = 0; i < media.length; i++) {
+        for (int i = 0; i < len; i++) {
             short s = this.ulaw2linear(media[i]);
             decompressed[j++] = (byte) s;
             decompressed[j++] = (byte) (s >> 8);

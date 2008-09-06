@@ -103,7 +103,9 @@ public interface RtpSocket {
      * 
      * @return the map where key is payload number and value id Format object.
      */
-    public HashMap getFormats();
+    public HashMap getRtpMap();
+    
+    public void setRtpMap(HashMap rtpMap);
     
     /**
      * Removes format from list of registered payloads.

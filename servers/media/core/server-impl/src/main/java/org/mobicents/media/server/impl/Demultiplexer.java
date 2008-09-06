@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,18 +38,22 @@ public class Demultiplexer extends AbstractSource {
     private HashMap<MediaSink, Output> branches = new HashMap();
     private final static ExecutorService threadPool = Executors.newCachedThreadPool();
 
+    private Format[] formats;
     private transient Logger logger = Logger.getLogger(Demultiplexer.class);
     
     public AbstractSink getInput() {
         return input;
     }
 
+    public Demultiplexer(Format[] formats) {
+        this.formats = formats;
+    }
+    
     @Override
-    public void connect(MediaSink sink) throws IOException {
+    public void connect(MediaSink sink) {
         synchronized (branches) {
             Output out = new Output();
             branches.put(sink, out);
-            //out.connect(sink);
             sink.connect(out);
         }
     }
@@ -60,7 +63,6 @@ public class Demultiplexer extends AbstractSource {
         synchronized (branches) {
             Output out = (Output) branches.remove(sink);
             if (out != null) {
-                //out.disconnect(sink);
                 sink.disconnect(out);
             }
         }
@@ -99,7 +101,8 @@ public class Demultiplexer extends AbstractSource {
         }
 
         public Format[] getFormats() {
-            return mediaStream != null ?  mediaStream.getFormats() : null;
+            //return mediaStream != null ?  mediaStream.getFormats() : null;
+            return formats;
         }
     }
 
@@ -126,10 +129,9 @@ public class Demultiplexer extends AbstractSource {
         public void run() {
             if (sink != null && !buffers.isEmpty()) {
                 Buffer buffer = buffers.remove(0);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("<-- Push " + buffer + " to " + sink);
+                if (sink.isAcceptable(buffer.getFormat())) {
+                    sink.receive(buffer);
                 }
-                sink.receive(buffer);
             }
         }
 
@@ -139,6 +141,7 @@ public class Demultiplexer extends AbstractSource {
     }
 
     public Format[] getFormats() {
-        return input.getFormats();
+        //return input.getFormats();
+        return formats;
     }
 }

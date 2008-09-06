@@ -13,10 +13,11 @@
  */
 package org.mobicents.media.server.impl.events.dtmf;
 
-import java.util.Properties;
-
-
 import org.apache.log4j.Logger;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.AbstractSink;
 
 /**
  * Implements inband DTMF detector.
@@ -29,82 +30,47 @@ import org.apache.log4j.Logger;
  *
  * @author Oleg Kulikov
  */
-public class InbandDetector extends BaseDtmfDetector {
+public class InbandDetector extends AbstractSink {
 
+    private final static AudioFormat LINEAR = 
+            new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    
+    private final static Format[] FORMATS = new Format[]{LINEAR};
     public final static String[][] events = new String[][]{
-        {"1", "2", "3", "A"}, 
+        {"1", "2", "3", "A"},
         {"4", "5", "6", "B"},
-        {"7", "8", "9", "C"}, 
+        {"7", "8", "9", "C"},
         {"*", "0", "#", "D"}
     };
-    
     /** DTMF tone duration in milliseconds */
     private int TONE_DURATION = 50;
     private double THRESHOLD = 30;
-    
     private int[] lowFreq = new int[]{697, 770, 852, 941};
     private int[] highFreq = new int[]{1209, 1336, 1477, 1633};
-    
     private byte[] localBuffer;
     private int offset = 0;
     private Filter filter = null;
-    
+    private boolean started = false;
+    private BaseDtmfDetector detector;
     private Logger logger = Logger.getLogger(InbandDetector.class);
 
     /**
      * Creates new instance of Detector.
      */
-    public InbandDetector() {
-        super();
+    public InbandDetector(BaseDtmfDetector detector) {
+        this.detector = detector;
+        localBuffer = new byte[16 * TONE_DURATION];
         filter = new Filter();
     }
 
     /**
      * (Non Java-doc).
      * 
-     * @see org.mobicents.media.server.spi.MediaSink#Configure(Properties).
-     */
-    public void configure(Properties config) {
-        if (config != null) {
-            //read duration if present
-            try {
-                TONE_DURATION = Integer.parseInt(config.getProperty("tone.duration"));
-            } catch (Exception e) {
-            }
-            //read threshold if present
-            try {
-                THRESHOLD = 10 * Double.parseDouble(config.getProperty("detector.theshold"));
-            } catch (Exception e) {
-            }
-        }
-        
-        localBuffer = new byte[16 * TONE_DURATION];
-//        setState(MediaResourceState.CONFIGURED);
-    }
-
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.media.server.spi.MediaSink#prepare(Endpoint, PushBufferStream).
-     */
-/*    public void prepare(Endpoint endpoint, PushBufferStream stream) throws UnsupportedFormatException {
-        stream.setTransferHandler(this);
-        if (!stream.getFormat().matches(Codec.LINEAR_AUDIO)) {
-            codec = CodecLocator.getCodec(stream.getFormat(),Codec.LINEAR_AUDIO);
-            if (codec == null) {
-                throw new UnsupportedFormatException(stream.getFormat());
-            }
-            setState(MediaResourceState.PREPARED);
-        }
-    }
-*/
-    /**
-     * (Non Java-doc).
-     * 
      * @see org.mobicents.media.server.spi.MediaSink#start().
      */
     public void start() {
-//        setState(MediaResourceState.STARTED);
+        started = true;
     }
 
     /**
@@ -113,7 +79,7 @@ public class InbandDetector extends BaseDtmfDetector {
      * @see org.mobicents.media.server.spi.MediaSink#stop().
      */
     public void stop() {
-//        setState(MediaResourceState.PREPARED);
+        started = false;
     }
 
     /**
@@ -121,27 +87,9 @@ public class InbandDetector extends BaseDtmfDetector {
      * 
      * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
      */
-    public void transferData(/*PushBufferStream stream */) {
-/*        if (getState() != MediaResourceState.STARTED) {
-            return;
-        }
-
-        Buffer buffer = new Buffer();
-        try {
-            stream.read(buffer);
-        } catch (IOException e) {
-        }
-
-        if (codec != null) {
-            codec.process(buffer);
-        }
-        
+    public void receive(Buffer buffer) {
+        //System.out.println("Receive " + buffer);
         byte[] data = (byte[]) buffer.getData();
-
-//        if (codec != null) {
-//            data = codec.process(data);
-//        }
-
         int len = Math.min(localBuffer.length - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);
         offset += len;
@@ -159,14 +107,13 @@ public class InbandDetector extends BaseDtmfDetector {
 
             double p[] = getPower(lowFreq, signal);
             double P[] = getPower(highFreq, signal);
-            
+
             String tone = getTone(p, P);
-            
             if (tone != null) {
-                digitBuffer.push(tone);
+                detector.digitBuffer.push(tone);
             }
         }
- */ 
+
     }
 
     /**
@@ -179,7 +126,7 @@ public class InbandDetector extends BaseDtmfDetector {
     private double[] getPower(int[] freq, double[] data) {
         double[] power = new double[freq.length];
         for (int i = 0; i < freq.length; i++) {
-            power[i] = filter.getPower(freq[i], data, (double)TONE_DURATION/(double)1000);
+            power[i] = filter.getPower(freq[i], data, (double) TONE_DURATION / (double) 1000);
         }
         return power;
     }
@@ -221,7 +168,7 @@ public class InbandDetector extends BaseDtmfDetector {
             if (r < THRESHOLD) {
                 fd = false;
                 break;
-            } 
+            }
         }
 
         if (!fd) {
@@ -249,14 +196,11 @@ public class InbandDetector extends BaseDtmfDetector {
         return events[fm][Fm];
     }
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.media.server.spi.MediaResource#release().
-     */
-    public void release() {
-        localBuffer = null;
-//        setState(MediaResourceState.NULL);
+    public Format[] getFormats() {
+        return FORMATS;
     }
 
+    public boolean isAcceptable(Format format) {
+        return format.matches(LINEAR);
+    }
 }

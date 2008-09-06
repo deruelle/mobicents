@@ -16,44 +16,29 @@ package org.mobicents.media.server.impl.enp.cnf;
 import java.util.Collection;
 import java.util.HashMap;
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.BaseConnection;
 
-import org.mobicents.media.server.impl.common.ConnectionMode;
+import org.mobicents.media.server.impl.BaseVirtualEndpoint;
+import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.common.ConnectionState;
-import org.mobicents.media.server.impl.enp.cnf.AudioMixer;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class ConfEndpointImpl extends BaseEndpoint implements ConnectionListener {
-
-    protected HashMap audioSources = new HashMap();
-    protected HashMap audioSinks = new HashMap();
+public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
     
     private HashMap mixers = new HashMap();
-
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     
     public ConfEndpointImpl(String localName) {
         super(localName);
         this.setMaxConnectionsAvailable(1000);
+        addConnectionListener(this);
     }
-
-    @Override
-    protected Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-        Connection connection = super.doCreateConnection(endpoint, mode);
-        
-        AudioMixer mixer = new AudioMixer(connection.toString());
-        mixers.put(connection.getId(), mixer);
-        mixer.start();
-        
-        return connection;
-    }    
 
     /**
      * Attaches connection's receiver stream to other connections.
@@ -61,15 +46,13 @@ public class ConfEndpointImpl extends BaseEndpoint implements ConnectionListener
      * @param connection the connection which receiver stream will be attached.
      */
     private void attachReceiver(Connection connection) {
-//        MediaSplitter splitter = intakes.get(connection.getId());
-        //walk over existing connection and create new input stream
-        //on each mixer and assign it MediaHandler for current Primary Sink
+        Demultiplexer demux = ((BaseConnection) connection).getDemux();
         Collection<Connection> connections = this.getConnections();
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
                 AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
                 if (mixer != null) {
-//                    splitter.connect(mixer);
+                    demux.connect(mixer);
                 }
             }
         }
@@ -83,36 +66,38 @@ public class ConfEndpointImpl extends BaseEndpoint implements ConnectionListener
      */
     private void attachSender(Connection connection) {
         Collection<Connection> connections = getConnections();
-        AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
+        AudioMixer mixer = new AudioMixer(connection.getId());
+        mixers.put(connection.getId(), mixer);
         mixer.start();
+        
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
-//                MediaSplitter splitter = intakes.get(conn.getId());
-//                splitter.connect(mixer);
+                ((BaseConnection) connection).getDemux().connect(mixer);
             }
         }
+        
+        ((BaseConnection) connection).getMux().connect(mixer.getOutput());
     }
 
     public void detachReceiver(Connection connection) {
-//        MediaSplitter splitter = intakes.get(connection.getId());
-
+        Demultiplexer demux = ((BaseConnection) connection).getDemux();
         Collection<Connection>connections = getConnections();
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
                     AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-//                    mixer.disconnect(splitter);
+                    demux.disconnect(mixer);
             }
         }
     }
 
     public void detachSender(Connection connection) {
         AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
+        mixer.stop();
         Collection<Connection>connections = getConnections();
         
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
-//                MediaSplitter splitter = intakes.get(conn.getId());
-//                splitter.disconnect(mixer);
+                ((BaseConnection) connection).getDemux().disconnect(mixer);
             }
         }
     }
@@ -144,6 +129,11 @@ public class ConfEndpointImpl extends BaseEndpoint implements ConnectionListener
                 detachSender(connection);
                 break;
         }
+    }
+
+    @Override
+    public Endpoint doCreateEndpoint(String localName) {
+        return new ConfEndpointImpl(localName);
     }
 
 }

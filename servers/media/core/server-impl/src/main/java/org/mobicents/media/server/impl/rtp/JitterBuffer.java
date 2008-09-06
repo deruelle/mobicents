@@ -98,10 +98,6 @@ public class JitterBuffer {
                 ready = true;
             }
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("--> Write " + rtpPacket + ", buffer holds = " +
-                        buffers.size() * period + " milliseconds");
-            }
         } finally {
             state.unlock();
         }
@@ -126,32 +122,27 @@ public class JitterBuffer {
                 RtpPacket rtpPacket = buffers.remove(0);
 
                 //allocate media buffer
-                Buffer buff = CachedBuffersPool.allocate();
+                Buffer buff = new Buffer();//CachedBuffersPool.allocate();
 
                 //fill media buffer 
                 buff.setSequenceNumber(seq);
                 buff.setTimeStamp(seq * period);
                 buff.setDuration(period);
 
-                HashMap formats = rtpSocket.getFormats();
+                HashMap formats = rtpSocket.getRtpMap();
                 Format fmt = (Format) formats.get(rtpPacket.getPayloadType());
 
                 buff.setFormat(fmt);
+                buff.setData(rtpPacket.getPayload());
+                //byte[] data = (byte[]) buff.getData();
+                //byte[] payload = rtpPacket.getPayload();
 
-                byte[] data = (byte[]) buff.getData();
-                byte[] payload = rtpPacket.getPayload();
-
-                System.arraycopy(payload, 0, data, 0, payload.length);
+                //System.arraycopy(payload, 0, data, 0, payload.length);
 
                 buff.setOffset(0);
-                buff.setLength(payload.length);
+                buff.setLength(rtpPacket.getPayload().length);
                 
                 seq++;
-                if (logger.isDebugEnabled()) {
-                    logger.debug("--> Read " + rtpPacket + " as " + buff + ", buffer holds = " +
-                            buffers.size() * period + " milliseconds");
-                }
-
                 return buff;
             }
 

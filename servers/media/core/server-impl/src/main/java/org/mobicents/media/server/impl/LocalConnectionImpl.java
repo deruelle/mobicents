@@ -28,7 +28,6 @@ import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
-
 /**
  * 
  * @author Oleg Kulikov
@@ -51,6 +50,7 @@ public class LocalConnectionImpl extends BaseConnection {
     public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
         logger = Logger.getLogger(LocalConnectionImpl.class);
+        setState(ConnectionState.HALF_OPEN);
     }
 
     @Override
@@ -59,20 +59,24 @@ public class LocalConnectionImpl extends BaseConnection {
         this.state = newState;
 
         switch (state) {
-            case OPEN :
-                if (otherConnection != null && 
-                        otherConnection.getState() != ConnectionState.OPEN) {
-                    otherConnection.setState(ConnectionState.OPEN);
-                    otherConnection.otherConnection = this;
-                }
+            case HALF_OPEN:
+                break;
+            case OPEN:
+                System.out.println("OTHER =" + otherConnection);
+                demux.getInput().connect(otherConnection.mux.getOutput());
+                otherConnection.mux.getOutput().start();
                 break;
             case CLOSED:
-                if (otherConnection != null && 
-                        otherConnection.getState() == ConnectionState.OPEN) {
-                    otherConnection.otherConnection = null;
-                    otherConnection.setState(ConnectionState.CLOSED);
+                if (otherConnection != null) {
+                    otherConnection.mux.getOutput().stop();
+                    demux.getInput().disconnect(otherConnection.mux.getOutput());
                 }
-                otherConnection = null;
+//                if (otherConnection != null && 
+//                        otherConnection.getState() == ConnectionState.OPEN) {
+//                    otherConnection.otherConnection = null;
+//                    otherConnection.setState(ConnectionState.CLOSED);
+//                }
+//                otherConnection = null;
                 break;
 
         }
@@ -87,7 +91,7 @@ public class LocalConnectionImpl extends BaseConnection {
     public Connection getOtherParty() {
         return this.otherConnection;
     }
-    
+
     /**
      * (Non-Javadoc).
      * 
@@ -181,24 +185,19 @@ public class LocalConnectionImpl extends BaseConnection {
                 if (otherConnection == other) {
                     return;
                 }
-                
+
                 this.otherConnection = (LocalConnectionImpl) other;
-//                ((LocalConnectionImpl) other).otherConnection = this;
-                
-                otherConnection.outputDsp.getOutput().connect(this.inputDsp.getInput());
-                otherConnection.mux.getOutput().start();
-
-                otherConnection.inputDsp.getInput().connect(this.outputDsp.getOutput());
-                this.mux.getOutput().start();
                 setState(ConnectionState.OPEN);
-            } else if (otherConnection != null) {
-                otherConnection.mux.getOutput().stop();
-                otherConnection.outputDsp.getOutput().disconnect(this.inputDsp.getInput());
 
-                this.mux.getOutput().stop();
-                otherConnection.inputDsp.getInput().disconnect(this.outputDsp.getOutput());
-                
+                if (otherConnection.getState() != ConnectionState.OPEN) {
+                    otherConnection.setOtherParty(this);
+                }
+            } else if (otherConnection != null) {
                 setState(ConnectionState.CLOSED);
+                if (otherConnection.getState() != ConnectionState.CLOSED) {
+                    otherConnection.close();
+                }
+                otherConnection = null;
             }
         } catch (InterruptedException e) {
             setState(ConnectionState.CLOSED);
@@ -211,12 +210,12 @@ public class LocalConnectionImpl extends BaseConnection {
     public void close() {
         try {
             setOtherParty(null);
-        } catch (IOException e){
+        } catch (IOException e) {
         } finally {
             super.close();
         }
     }
-    
+
     /**
      * Gets the text representation of the connection.
      * 
@@ -230,5 +229,4 @@ public class LocalConnectionImpl extends BaseConnection {
     public void error(Exception e) {
         logger.error("Facility error", e);
     }
-
 }

@@ -50,23 +50,16 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-    
     protected AudioFormat format = LINEAR;
-    protected final static Format[] formats = new Format[] {LINEAR};
-    
+    protected final static Format[] formats = new Format[]{LINEAR};
     private AudioInputStream stream = null;
-    
     private int packetSize;
     private long seq = 0;
-    
     private List<PlayerListener> listeners = Collections.synchronizedList(new ArrayList());
-    
     protected Timer timer;
     private boolean started;
-    
     private String file;
     private QueuedExecutor eventService = new QueuedExecutor();
-
     private transient Logger logger = Logger.getLogger(AudioPlayer.class);
     //protected int packetPeriod;
     public AudioPlayer() {
@@ -95,11 +88,11 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     public void setFile(String file) {
         this.file = file;
     }
-    
+
     public void start() {
         this.start(file);
     }
-    
+
     /**
      * Starts playing audio from specified file.
      * 
@@ -210,6 +203,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
+        started = false;
         PlayerEvent evt = new PlayerEvent(this, PlayerEventType.END_OF_MEDIA, null);
         try {
             eventService.execute(new EventHandler(evt));
@@ -256,9 +250,6 @@ public class AudioPlayer extends AbstractSource implements Runnable {
                 buffer.setSequenceNumber(seq++);
 
                 if (sink != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Push " + buffer + " to " + sink);
-                    }
                     sink.receive(buffer);
                 }
 
@@ -266,6 +257,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         } catch (IOException e) {
             timer.stop();
             started = false;
+            e.printStackTrace();
             failed(e);
         }
     }
@@ -273,5 +265,4 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     public Format[] getFormats() {
         return formats;
     }
-
 }

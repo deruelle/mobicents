@@ -5,7 +5,6 @@
 
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -200,19 +199,11 @@ public class RtpConnectionImplTest {
         assertEquals(ConnectionState.OPEN, con2.getState());
         
         Source src = new Source();
-        try {
             con1.getMux().connect(src);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         Sink sink = new Sink();
         
-        try {
             con2.getDemux().connect(sink);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         
         src.start();
         try {

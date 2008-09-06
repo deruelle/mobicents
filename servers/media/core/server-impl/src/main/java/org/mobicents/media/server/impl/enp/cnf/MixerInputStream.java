@@ -59,10 +59,6 @@ public class MixerInputStream extends AbstractSink {
             return;
         }
         
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " --> receive " + buffer);
-        }
-        
         if (duration + buffer.getDuration() > jitter) {
             //silently discard packet
             CachedBuffersPool.release(buffer);

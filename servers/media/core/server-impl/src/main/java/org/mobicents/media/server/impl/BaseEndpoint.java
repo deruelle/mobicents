@@ -24,9 +24,11 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Connection;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.Timer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
@@ -55,24 +57,28 @@ import org.mobicents.media.server.spi.events.Signal;
  */
 public abstract class BaseEndpoint implements Endpoint {
 
+    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+    private final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+    private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 
+            8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    private final static AudioFormat DTMF = new AudioFormat("telephone-event");
+    
+    private final static Format[] formats = new Format[] {LINEAR, DTMF};;
+    
     private String localName;
-    
     private String rtpFactoryName;
-    
     protected HashMap<String, Signal> signals = new HashMap();
     protected HashMap<String, EventDetector> detectors = new HashMap();
-        
     private boolean hasConnections;
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
     private int maxConnections = 0;
-    
     private ArrayList<NotificationListener> listeners = new ArrayList();
     protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
-    
     protected static Timer connectionTimer = new Timer();
-
     private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
-    
+
     public BaseEndpoint(String localName) {
         this.localName = localName;
     }
@@ -84,6 +90,10 @@ public abstract class BaseEndpoint implements Endpoint {
      */
     public String getLocalName() {
         return localName;
+    }
+
+    public Format[] getSupportedFormats() {
+        return formats;
     }
 
     /**
@@ -221,14 +231,17 @@ public abstract class BaseEndpoint implements Endpoint {
         if (connection != null) {
             // disable all signals
             Signal signal = signals.get(connectionID);
-            connection.getMux().disconnect(signal);
-            signals.remove(connectionID);
+            if (signal != null) {
+                signal.stop();
+                connection.getMux().disconnect(signal);
+                signals.remove(connectionID);
+            }
 
             // disable all detectors
             EventDetector detector = detectors.get(connectionID);
             connection.getDemux().disconnect(detector);
             detectors.remove(connectionID);
-            
+
             connection.close();
             logger.info("Deleted connection " + connection);
         }
@@ -272,11 +285,11 @@ public abstract class BaseEndpoint implements Endpoint {
     public void addConnectionListener(ConnectionListener listener) {
         connectionListeners.add(listener);
     }
-    
+
     public void removeConnectionListener(ConnectionListener listener) {
         connectionListeners.remove(listener);
     }
-    
+
     /**
      * Sends specified event to registered listeners.
      * 
@@ -290,23 +303,23 @@ public abstract class BaseEndpoint implements Endpoint {
 
     protected String getPackageName(String eventID) {
         String[] tokens = eventID.split("\\.");
-        
+
         if (tokens.length == 1) {
             return tokens[0];
         }
-        
+
         String s = tokens[0];
         for (int i = 1; i < tokens.length - 1; i++) {
             s += "." + tokens[i];
         }
         return s;
     }
-    
+
     protected String getEventName(String eventID) {
-        String[] tokens = eventID.split("\\.");        
+        String[] tokens = eventID.split("\\.");
         return tokens[tokens.length - 1];
     }
-    
+
     private Signal getSignal(String signalID, Options options) throws UnknownSignalException, FacilityException {
         try {
             EventPackage eventPackage = EventPackageFactory.load(this.getPackageName(signalID));
@@ -322,8 +335,8 @@ public abstract class BaseEndpoint implements Endpoint {
 
     private EventDetector getDetector(String eventID, Options options) throws UnknownSignalException, FacilityException {
         try {
-            EventPackage eventPackage = EventPackageFactory.load(eventID);
-            return eventPackage.getDetector(eventID, options);
+            EventPackage eventPackage = EventPackageFactory.load(getPackageName(eventID));
+            return eventPackage.getDetector(getEventName(eventID), options);
         } catch (ClassNotFoundException e) {
             throw new UnknownSignalException(eventID);
         } catch (Exception e) {
@@ -336,19 +349,19 @@ public abstract class BaseEndpoint implements Endpoint {
         if (logger.isDebugEnabled()) {
             logger.debug("Requested signal ID=" + signalID);
         }
-        
-        Signal signal = getSignal(signalID, options);
-        System.out.println("**** SIGNAL: " + signal);
-        signal.addListener(listener);
 
-        System.out.println("*** ConnectionID" + connectionID);
-        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+        Signal signal = getSignal(signalID, options);
+        signal.addListener(listener);
         
-        Signal currentSignal = signals.get(connectionID);
+        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+
+        Signal currentSignal = signals.remove(connectionID);
+        
         if (currentSignal != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Disable current signal:" + currentSignal.getID());
             }
+            System.out.println("***** TONE STOPPED AND REMOVED***");
             currentSignal.stop();
             currentSignal.disconnect(connection.getMux());
         }
@@ -359,11 +372,15 @@ public abstract class BaseEndpoint implements Endpoint {
             }
             connection.getMux().connect(signal);
             signals.put(connectionID, signal);
-            
+
             if (logger.isDebugEnabled()) {
                 logger.debug("Starting signal ID=" + signalID);
             }
             signal.start();
+            
+            if (signal instanceof EventDetector) {
+                ((EventDetector) signal).connect(connection.getDemux());
+            }
         } catch (Exception e) {
             logger.error("Could not start signal", e);
             throw new FacilityException(e.getMessage());
@@ -385,7 +402,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @persistent true if event is always detected on the endpoint.
      */
     public void subscribe(String eventID, Options options, NotificationListener listener)
-        throws UnknownSignalException, FacilityException {
+            throws UnknownSignalException, FacilityException {
     }
 
     /**
@@ -402,13 +419,17 @@ public abstract class BaseEndpoint implements Endpoint {
             NotificationListener listener) throws UnknownSignalException, FacilityException {
         EventDetector detector = this.getDetector(eventID, options);
         detector.addListener(listener);
-
+        
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-        try {
-            detector.connect(connection.getDemux());
-            detectors.put(connectionID + eventID.toString(), detector);
-        } catch (IOException e) {
-            throw new FacilityException(e.getMessage());
+        Set <String> keys = detectors.keySet();
+        for (String key: keys) {
+            if (key.startsWith(connectionID)) {
+                EventDetector det = detectors.remove(key);
+                System.out.println("*** DISCONNECTING detector");
+                det.disconnect(connection.getDemux());
+            }
         }
+        detector.connect(connection.getDemux());
+        detectors.put(connectionID + eventID.toString(), detector);
     }
 }

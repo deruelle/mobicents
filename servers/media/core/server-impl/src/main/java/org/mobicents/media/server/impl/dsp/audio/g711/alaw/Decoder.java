@@ -82,6 +82,30 @@ public class Decoder implements Codec {
         }; 
         return formats;
     }
+
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     */
+    public Format[] getSupportedInputFormats(Format fmt) {
+        Format[] formats = new Format[] {
+            Codec.PCMA
+        }; 
+        return formats;
+    }
+    
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     */
+    public Format[] getSupportedOutputFormats() {
+        Format[] formats = new Format[] {
+            Codec.LINEAR_AUDIO
+        }; 
+        return formats;
+    }
     
     /**
      * (Non Java-doc)
@@ -100,6 +124,7 @@ public class Decoder implements Codec {
         byte[] res = process(data);
         
         buffer.setData(res);
+        buffer.setFormat(Codec.LINEAR_AUDIO);
         buffer.setOffset(0);
         buffer.setLength(res.length);
     }

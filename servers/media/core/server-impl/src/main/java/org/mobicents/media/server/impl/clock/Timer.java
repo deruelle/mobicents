@@ -26,7 +26,6 @@ public class Timer {
 
     public final static Quartz quartz = new Quartz();
     private final static ExecutorService threadPool = Executors.newCachedThreadPool();
-    
     private Runnable handler;
     private boolean stopped = true;
     private Semaphore semaphore = new Semaphore(0);
@@ -34,7 +33,7 @@ public class Timer {
     /**
      * Creates new instance of the timer.
      */
-    public Timer() {        
+    public Timer() {
     }
 
     public void setListener(Runnable handler) {
@@ -45,24 +44,28 @@ public class Timer {
      * Starts execution;
      */
     public void start() {
-        stopped = false;
-        quartz.addTimer(this);
+        if (stopped) {
+            stopped = false;
+            quartz.addTimer(this);
+        }
     }
 
     /**
      * Terminates execution.
      */
     public void stop() {
-        quartz.removeTimer(this);
-        stopped = true;
+        if (!stopped) {
+            quartz.removeTimer(this);
+            stopped = true;
+        }
     }
-
 
     /**
      * Heart beat signals.
      */
     public void heartBeat() {
-        if (!stopped && threadPool != null)
-          threadPool.execute(handler);
+        if (!stopped && threadPool != null) {
+            threadPool.execute(handler);
+        }
     }
 }

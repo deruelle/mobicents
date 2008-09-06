@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
@@ -21,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
 import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.impl.common.ConnectionState;
-import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
@@ -43,9 +41,6 @@ public abstract class BaseConnection implements Connection {
     
     protected Multiplexer mux;
     protected Demultiplexer demux;
-    
-    protected Processor inputDsp;
-    protected Processor outputDsp;
     
     private TimerTask closeTask;
     private boolean timerStarted = false;
@@ -71,19 +66,8 @@ public abstract class BaseConnection implements Connection {
         this.endpointName = endpoint.getLocalName();
 
         mux = new Multiplexer();
-        demux = new Demultiplexer();
+        demux = new Demultiplexer(this.endpoint.getSupportedFormats());
 
-        inputDsp = new Processor();
-        outputDsp = new Processor();
-        
-        try {
-            mux.getOutput().connect(outputDsp.getInput());
-            demux.getInput().connect(inputDsp.getOutput());
-            demux.start();
-        } catch (IOException e) {
-            throw new ResourceUnavailableException(e.getMessage());
-        }
-        
         setLifeTime(lifeTime);
         setState(ConnectionState.NULL);
     }
@@ -229,9 +213,6 @@ public abstract class BaseConnection implements Connection {
             timerStarted = false;
             BaseEndpoint.connectionTimer.purge();
         }
-
-        mux.getOutput().disconnect(outputDsp.getInput());
-        demux.getInput().disconnect(inputDsp.getOutput());
 
         this.setState(ConnectionState.CLOSED);
     }

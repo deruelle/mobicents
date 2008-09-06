@@ -276,7 +276,7 @@ public class RtpFactory implements Serializable {
         }
         
         int port = rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
-        rtpSocket.getFormats().putAll(audioFormats);
+        rtpSocket.getRtpMap().putAll(audioFormats);
         if (logger.isDebugEnabled()) {
             logger.debug(this + " Bound RTP socket to " + getBindAddress() + ":" + port);
         }

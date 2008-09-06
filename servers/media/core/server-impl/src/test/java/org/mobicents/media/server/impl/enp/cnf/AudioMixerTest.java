@@ -4,7 +4,6 @@
  */
 package org.mobicents.media.server.impl.enp.cnf;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -62,12 +61,8 @@ public class AudioMixerTest {
     @Test
     public void testConnectDisconnect() {
         Source src = new Source();
-        try {
             mixer.connect(src);
             assertEquals(mixer.getInputCount(), 1);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
         mixer.disconnect(src);
         assertEquals(mixer.getInputCount(), 0);
     }
@@ -97,7 +92,6 @@ public class AudioMixerTest {
         SineGenerator g1 = new SineGenerator(F[1]);
         SineGenerator g2 = new SineGenerator(F[2]);
 
-        try {
             mixer.connect(g0);
             mixer.connect(g1);
             mixer.connect(g2);
@@ -110,9 +104,6 @@ public class AudioMixerTest {
             g0.start();
             g1.start();
             g2.start();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
 
         try {
             Thread.currentThread().sleep(TEST_DURATION);

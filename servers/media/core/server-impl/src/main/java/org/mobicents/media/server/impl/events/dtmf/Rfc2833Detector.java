@@ -13,83 +13,56 @@
  */
 package org.mobicents.media.server.impl.events.dtmf;
 
-import java.util.Properties;
 import org.apache.log4j.Logger;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.AbstractSink;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class Rfc2833Detector extends BaseDtmfDetector {
+public class Rfc2833Detector extends AbstractSink {
 
-    private final static String[] DTMF = new String[]{
+    private final static AudioFormat DTMF = new AudioFormat("telephone-event");
+    private final static Format[] FORMATS = new Format[] {DTMF};
+    
+    private final static String[] TONE = new String[]{
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
     };
+    private BaseDtmfDetector detector;
     private Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
-    public Rfc2833Detector() {
-        super();
+    public Rfc2833Detector(BaseDtmfDetector detector) {
+        this.detector = detector;
     }
 
-    public void configure(Properties config) {
-        //setState(MediaResourceState.CONFIGURED);
-    }
-
-    /*    public void prepare(Endpoint endpoint, PushBufferStream stream) throws UnsupportedFormatException {
-    stream.setTransferHandler(this);
-    logger.info("Set transfer handler");
-    if (getState() == MediaResourceState.STARTING) {
-    setState(MediaResourceState.PREPARED);
-    logger.info("Restarting detector");
-    start();
-    } else {
-    setState(MediaResourceState.PREPARED);
-    logger.info("Detector prepared");
-    }
-    }
-     */
     public void start() {
-        /*      if (getState() == MediaResourceState.PREPARED) {
-        logger.info("DTMF detector started");
-        setState(MediaResourceState.STARTED);
-        } else {
-        logger.info("DTMF detector starting");
-        setState(MediaResourceState.STARTING);
-        }
-         */
     }
 
     public void stop() {
-//        setState(MediaResourceState.PREPARED);
-        logger.debug("Detector stopped");
     }
 
-    /*    public void transferData(PushBufferStream stream) {
-    Buffer buffer = new Buffer();
-    try {
-    stream.read(buffer);
-    } catch (IOException e) {
+    public void receive(Buffer buffer) {
+        byte[] data = (byte[]) buffer.getData();
+
+        String digit = TONE[data[0]];
+        boolean end = (data[1] & 0x7f) != 0;
+
+        detector.digitBuffer.push(digit);
     }
-    
-    logger.info("DTMF packet");
-    if (getState() != MediaResourceState.STARTED) {
-    return;
+
+    @Override
+    public void disconnect(MediaSource source) {
+        super.disconnect(source);
     }
-    
-    
-    byte[] data = (byte[]) buffer.getData();
-    
-    String digit = DTMF[data[0]];
-    boolean end = (data[1] & 0x7f) != 0;
-    
-    if (logger.isDebugEnabled()) {
-    logger.debug("Arrive packet, digit=" + digit + ", end=" + end);
+    public Format[] getFormats() {
+        return FORMATS;
     }
-    
-    digitBuffer.push(digit);
-    }
-     */
-    public void release() {
-//        setState(MediaResourceState.NULL);
+
+    public boolean isAcceptable(Format format) {
+        return DTMF.matches(format);
     }
 }

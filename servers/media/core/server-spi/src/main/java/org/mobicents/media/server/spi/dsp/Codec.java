@@ -42,6 +42,9 @@ public interface Codec {
 	public Format[] getSupportedInputFormats();
 	public Format[] getSupportedOutputFormats(Format fmt);
 
+	public Format[] getSupportedOutputFormats();
+	public Format[] getSupportedInputFormats(Format fmt);
+        
         /**
          * Perform encoding/decoding procedure.
          * 

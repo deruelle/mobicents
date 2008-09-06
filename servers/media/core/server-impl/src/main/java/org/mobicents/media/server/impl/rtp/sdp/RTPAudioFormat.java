@@ -98,8 +98,7 @@ public class RTPAudioFormat extends AudioFormat {
         }
     }
 
-    @Override
-    public String toString() {
+    public String toSdp() {
         String encName = this.getEncoding().toLowerCase();
         StringBuffer buff = new StringBuffer();
         buff.append(payload);
@@ -126,6 +125,6 @@ public class RTPAudioFormat extends AudioFormat {
         }
 
         return buff.toString();
-
     }
+    
 }

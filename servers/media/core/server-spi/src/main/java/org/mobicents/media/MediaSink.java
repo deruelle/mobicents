@@ -45,9 +45,8 @@ public interface MediaSink extends Serializable {
      * The concrete media sink can allow to join with multiple sources
      * 
      * @param source the media source to join with.
-     * @throw IOException if no common formats between source and sink;
      */
-    public void connect(MediaSource source) throws IOException;
+    public void connect(MediaSource source);
     
     /**
      * Breaks connection with media source.

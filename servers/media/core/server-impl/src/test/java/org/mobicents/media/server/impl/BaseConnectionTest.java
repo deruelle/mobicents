@@ -16,7 +16,6 @@ import static org.junit.Assert.*;
 import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 

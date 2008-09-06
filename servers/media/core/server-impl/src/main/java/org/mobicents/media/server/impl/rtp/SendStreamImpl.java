@@ -60,9 +60,6 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
                 ssrc, data,buffer.getOffset(), buffer.getLength());
         try {
             rtpSocket.peer.send(p);
-            if (logger.isDebugEnabled()) {
-                logger.debug("--> send " + data.length + " bytes packet, fmt=" + buffer.getFormat());
-            }
         } catch (IOException e) {
             logger.error("I/O Error", e);
         }

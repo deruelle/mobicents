@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl.enp.cnf;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -99,7 +98,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
     }
     
     @Override
-    public void connect(MediaSource stream) throws IOException {
+    public void connect(MediaSource stream) {
         MixerInputStream input = new MixerInputStream(this, jitter);
         inputs.put(stream, input);
         input.connect(stream);

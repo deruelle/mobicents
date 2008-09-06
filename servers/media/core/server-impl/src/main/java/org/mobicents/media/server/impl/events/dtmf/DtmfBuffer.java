@@ -70,41 +70,4 @@ public class DtmfBuffer {
         
     }
     
-    public static void main(String[] args) throws Exception {
-        //System.out.println("DIGIT BUFFER");
-        DtmfBuffer digitBuffer = new DtmfBuffer(null);
-        //digitBuffer.setMask("[\\d]{2}[*]");
-        digitBuffer.push("1");
-        digitBuffer.push("1");
-        
-        Thread.currentThread().sleep(500);
-        
-        digitBuffer.push("2");
-        digitBuffer.push("2");
-        digitBuffer.push("2");
-        
-        Thread.currentThread().sleep(500);
-        
-//        digitBuffer.push("*");
-//        digitBuffer.push("*");
-//        digitBuffer.push("*");
-        
-        Thread.currentThread().sleep(6000);
-        
-        digitBuffer.push("6");
-        digitBuffer.push("6");
-        
-        Thread.currentThread().sleep(500);
-        
-        digitBuffer.push("7");
-        digitBuffer.push("7");
-        digitBuffer.push("7");
-        
-        Thread.currentThread().sleep(500);
-        
-        digitBuffer.push("*");
-        digitBuffer.push("*");
-        digitBuffer.push("*");
-        
-    }
 }
