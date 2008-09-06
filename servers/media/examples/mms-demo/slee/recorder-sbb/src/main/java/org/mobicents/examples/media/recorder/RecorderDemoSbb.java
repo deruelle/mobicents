@@ -49,174 +49,184 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class RecorderDemoSbb implements Sbb {
 
-	private final static String INFO_MSG = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/recorder.wav";
-	private final static String RECORDER = "test.wav";
-	private final static String IVR_ENDPOINT = "media/endpoint/IVR";
+    private final static String INFO_MSG = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/recorder.wav";
+    private final static String RECORDER = "test.wav";
+    private final static String IVR_ENDPOINT = "media/endpoint/IVR";
+    private SbbContext sbbContext;
+    private MsProvider msProvider;
+    private MediaRaActivityContextInterfaceFactory mediaAcif;
+    private TimerFacility timerFacility;
+    private Logger logger = Logger.getLogger(RecorderDemoSbb.class);
 
-	private SbbContext sbbContext;
-	private MsProvider msProvider;
-	private MediaRaActivityContextInterfaceFactory mediaAcif;
-	private TimerFacility timerFacility;
-	private Logger logger = Logger.getLogger(RecorderDemoSbb.class);
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.examples.media.Demo#startConversation(String,
+     *      ActivityContextInterface).
+     */
+    public void startDemo(String endpointName) {
+        logger.info("Joining " + endpointName + " with " + IVR_ENDPOINT);
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.examples.media.Demo#startConversation(String,
-	 *      ActivityContextInterface).
-	 */
-	public void startDemo(String endpointName) {
-		logger.info("Joining " + endpointName + " with " + IVR_ENDPOINT);
+        MsConnection connection = (MsConnection) getConnectionActivity().getActivity();
+        MsSession session = connection.getSession();
+        MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
 
-		MsConnection connection = (MsConnection) getConnectionActivity().getActivity();
-		MsSession session = connection.getSession();
-		MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
+        ActivityContextInterface linkActivity = null;
+        try {
+            linkActivity = mediaAcif.getActivityContextInterface(link);
+        } catch (UnrecognizedActivityException ex) {
+        }
 
-		ActivityContextInterface linkActivity = null;
-		try {
-			linkActivity = mediaAcif.getActivityContextInterface(link);
-		} catch (UnrecognizedActivityException ex) {
-		}
+        linkActivity.attach(sbbContext.getSbbLocalObject());
+        link.join(endpointName, IVR_ENDPOINT);
 
-		linkActivity.attach(sbbContext.getSbbLocalObject());
-		link.join(endpointName, IVR_ENDPOINT);
+    }
 
-	}
+    public void onIVRConnected(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("Joined IVR connected, Starting announcement and recorder");
+        MsLink link = evt.getSource();
+        setUserEndpoint(link.getEndpoints()[1]);
 
-	public void onIVRConnected(MsLinkEvent evt, ActivityContextInterface aci) {
-		logger.info("Joined IVR connected, Starting announcement and recorder");
-		MsLink link = evt.getSource();
-		setUserEndpoint(link.getEndpoints()[1]);
+        MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
+        try {
+            ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
+            generatorActivity.attach(sbbContext.getSbbLocalObject());
+            System.out.println("*** PLAY/RECORD");
+            generator.apply(EventID.PLAY_RECORD, new String[]{INFO_MSG, RECORDER});
+            // generator.apply(EventID.PLAY, new String[]{INFO_MSG});
+            System.out.println("*** STARTED/RECORD");
+        } catch (UnrecognizedActivityException e) {
+        }
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
-		try {
-			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-			generatorActivity.attach(sbbContext.getSbbLocalObject());
-			System.out.println("*** PLAY/RECORD");
-			generator.apply(EventID.PLAY_RECORD, new String[] { INFO_MSG, RECORDER });
-			// generator.apply(EventID.PLAY, new String[]{INFO_MSG});
-			System.out.println("*** STARTED/RECORD");
-		} catch (UnrecognizedActivityException e) {
-		}
+        try {
+            startTimer(sbbContext.getActivities()[0], 35);
+            logger.info("Timer started");
+        } catch (NamingException e) {
+            logger.error("Unexpected error", e);
+        }
 
-		try {
-			startTimer(sbbContext.getActivities()[0], 35);
-			logger.info("Timer started");
-		} catch (NamingException e) {
-			logger.error("Unexpected error", e);
-		}
+    }
 
-	}
+    public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
+        // disable recorder
+        logger.info("Timer event,play back recorder file");
+        String url = "file://" + System.getProperty("jboss.server.data.dir") + "/" + RECORDER;
 
-	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-		// disable recorder
-		logger.info("Timer event,play back recorder file");
-		String url = "file://" + System.getProperty("jboss.server.data.dir") + "/" + RECORDER;
+        MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
+        generator.apply(EventID.PLAY, getLink(), new String[]{url});
+    }
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
-		generator.apply(EventID.PLAY, new String[] { url });
-	}
+    public void onAnnouncementComplete(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("**** ANNOUNCEMENT COMPLETE ****");
+    }
 
-	public void onAnnouncementComplete(MsLinkEvent evt, ActivityContextInterface aci) {
-		logger.info("**** ANNOUNCEMENT COMPLETE ****");
-	}
+    public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        System.out.println("Finita la commedia");
+        ActivityContextInterface activities[] = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsLink) {
+                ((MsLink) activities[i].getActivity()).release();
+            } else if (activities[i].getActivity() instanceof MsSignalDetector) {
+                ((MsSignalDetector) activities[i].getActivity()).release();
+            }
+        }
 
-	public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-		System.out.println("Finita la commedia");
-		ActivityContextInterface activities[] = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsLink) {
-				((MsLink) activities[i].getActivity()).release();
-			} else if (activities[i].getActivity() instanceof MsSignalDetector) {
-				((MsSignalDetector) activities[i].getActivity()).release();
-			}
-		}
+    }
 
-	}
+    private ActivityContextInterface getConnectionActivity() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
 
-	private ActivityContextInterface getConnectionActivity() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsConnection) {
-				return activities[i];
-			}
-		}
+        return null;
+    }
 
-		return null;
-	}
+    private MsLink getLink() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsLink) {
+                return (MsLink) activities[i].getActivity();
+            }
+        }
 
-	/**
-	 * CMP field accessor
-	 * 
-	 * @return the name of the user's endpoint.
-	 */
-	public abstract String getUserEndpoint();
+        return null;
+    }
+    
+    /**
+     * CMP field accessor
+     * 
+     * @return the name of the user's endpoint.
+     */
+    public abstract String getUserEndpoint();
 
-	/**
-	 * CMP field accessor
-	 * 
-	 * @param endpoint
-	 *            the name of the user's endpoint.
-	 */
-	public abstract void setUserEndpoint(String endpointName);
+    /**
+     * CMP field accessor
+     * 
+     * @param endpoint
+     *            the name of the user's endpoint.
+     */
+    public abstract void setUserEndpoint(String endpointName);
 
-	/**
-	 * Relation to Welcome dialog
-	 * 
-	 * @return child relation object.
-	 */
-	public abstract ChildRelation getAnnouncementSbb();
+    /**
+     * Relation to Welcome dialog
+     * 
+     * @return child relation object.
+     */
+    public abstract ChildRelation getAnnouncementSbb();
 
-	private void startTimer(ActivityContextInterface aci, int duration) throws NamingException {
-		Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-		timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
+    private void startTimer(ActivityContextInterface aci, int duration) throws NamingException {
+        Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+        timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
 
-		TimerOptions options = new TimerOptions(false, 1000 * duration, TimerPreserveMissed.NONE);
-		Address address = new Address(AddressPlan.IP, "127.0.0.1");
-		Date now = new Date();
+        TimerOptions options = new TimerOptions(false, 1000 * duration, TimerPreserveMissed.NONE);
+        Address address = new Address(AddressPlan.IP, "127.0.0.1");
+        Date now = new Date();
 
-		timerFacility.setTimer(aci, address, now.getTime() + 1000 * duration, options);
-	}
+        timerFacility.setTimer(aci, address, now.getTime() + 1000 * duration, options);
+    }
 
-	public void setSbbContext(SbbContext sbbContext) {
-		this.sbbContext = sbbContext;
-		try {
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-			timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
-			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
-			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
-		} catch (Exception e) {
-			logger.error("Could not set SBB context", e);
-		}
-	}
+    public void setSbbContext(SbbContext sbbContext) {
+        this.sbbContext = sbbContext;
+        try {
+            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+            timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
+            msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+            mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
+        } catch (Exception e) {
+            logger.error("Could not set SBB context", e);
+        }
+    }
 
-	public void unsetSbbContext() {
-	}
+    public void unsetSbbContext() {
+    }
 
-	public void sbbCreate() throws CreateException {
-	}
+    public void sbbCreate() throws CreateException {
+    }
 
-	public void sbbPostCreate() throws CreateException {
-	}
+    public void sbbPostCreate() throws CreateException {
+    }
 
-	public void sbbActivate() {
-	}
+    public void sbbActivate() {
+    }
 
-	public void sbbPassivate() {
-	}
+    public void sbbPassivate() {
+    }
 
-	public void sbbLoad() {
-	}
+    public void sbbLoad() {
+    }
 
-	public void sbbStore() {
-	}
+    public void sbbStore() {
+    }
 
-	public void sbbRemove() {
-	}
+    public void sbbRemove() {
+    }
 
-	public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
-	}
+    public void sbbExceptionThrown(Exception arg0, Object arg1, ActivityContextInterface arg2) {
+    }
 
-	public void sbbRolledBack(RolledBackContext arg0) {
-	}
+    public void sbbRolledBack(RolledBackContext arg0) {
+    }
 }

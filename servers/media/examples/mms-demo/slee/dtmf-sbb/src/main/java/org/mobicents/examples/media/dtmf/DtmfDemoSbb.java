@@ -9,15 +9,18 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.examples.media.dtmf;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
+import javax.slee.Address;
+import javax.slee.AddressPlan;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
@@ -25,6 +28,10 @@ import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 
+import javax.slee.facilities.TimerEvent;
+import javax.slee.facilities.TimerFacility;
+import javax.slee.facilities.TimerOptions;
+import javax.slee.facilities.TimerPreserveMissed;
 import org.apache.log4j.Logger;
 import org.mobicents.examples.media.Announcement;
 import org.mobicents.media.server.impl.common.events.EventCause;
@@ -42,181 +49,206 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class DtmfDemoSbb implements Sbb {
 
-	private final static String WELCOME_MSG = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/welcome.wav";
-	private final static String DTMF_0 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf0.wav";
-	private final static String DTMF_1 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf1.wav";
-	private final static String DTMF_2 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf2.wav";
-	private final static String DTMF_3 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf3.wav";
-	private final static String DTMF_4 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf4.wav";
-	private final static String DTMF_5 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf5.wav";
-	private final static String DTMF_6 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf6.wav";
-	private final static String DTMF_7 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf7.wav";
-	private final static String DTMF_8 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf8.wav";
-	private final static String DTMF_9 = "http://"+System.getProperty("jboss.bind.address", "127.0.0.1")+":8080/msdemo/audio/dtmf9.wav";
+    private final static String WELCOME_MSG = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/welcome.wav";
+    private final static String DTMF_0 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf0.wav";
+    private final static String DTMF_1 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf1.wav";
+    private final static String DTMF_2 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf2.wav";
+    private final static String DTMF_3 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf3.wav";
+    private final static String DTMF_4 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf4.wav";
+    private final static String DTMF_5 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf5.wav";
+    private final static String DTMF_6 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf6.wav";
+    private final static String DTMF_7 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf7.wav";
+    private final static String DTMF_8 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf8.wav";
+    private final static String DTMF_9 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf9.wav";
+    private MsProvider msProvider;
+    private TimerFacility timerFacility;
+    private MediaRaActivityContextInterfaceFactory mediaAcif;
+    private SbbContext sbbContext;
+    private Logger logger = Logger.getLogger(DtmfDemoSbb.class);
 
-	private MsProvider msProvider;
-	private MediaRaActivityContextInterfaceFactory mediaAcif;
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.examples.media.Demo#startConversation(String,
+     *      ActivityContextInterface).
+     */
+    public void startDemo(String endpointName) {
+        this.setUserEndpoint(endpointName);
+        logger.info("Playing welcome message: " + WELCOME_MSG);
+        this.play(WELCOME_MSG);
 
-	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(DtmfDemoSbb.class);
+        try {
+            startTimer(5);
+            logger.info("Timer started");
+        } catch (NamingException e) {
+            logger.error("Unexpected error", e);
+        }
+    }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.examples.media.Demo#startConversation(String,
-	 *      ActivityContextInterface).
-	 */
-	public void startDemo(String endpointName) {
-		this.setUserEndpoint(endpointName);
-		logger.info("Playing welcome message: " + WELCOME_MSG);
-		this.play(WELCOME_MSG);
+    public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
+        logger.info("Initializing DTMF detector");
+        this.initDtmfDetector(getConnection());
+    }
 
-		logger.info("Initializing DTMF detector");
-		this.initDtmfDetector(getConnection());
-	}
+    public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
+        EventCause cause = evt.getCause();
+        if (cause == EventCause.DTMF_DIGIT_0) {
+            play(DTMF_0);
+        } else if (cause == EventCause.DTMF_DIGIT_1) {
+            play(DTMF_1);
+        } else if (cause == EventCause.DTMF_DIGIT_2) {
+            play(DTMF_2);
+        } else if (cause == EventCause.DTMF_DIGIT_3) {
+            play(DTMF_3);
+        } else if (cause == EventCause.DTMF_DIGIT_4) {
+            play(DTMF_4);
+        } else if (cause == EventCause.DTMF_DIGIT_5) {
+            play(DTMF_5);
+        } else if (cause == EventCause.DTMF_DIGIT_6) {
+            play(DTMF_6);
+        } else if (cause == EventCause.DTMF_DIGIT_7) {
+            play(DTMF_7);
+        } else if (cause == EventCause.DTMF_DIGIT_8) {
+            play(DTMF_8);
+        } else if (cause == EventCause.DTMF_DIGIT_9) {
+            play(DTMF_9);
+        }
+        
+        try {
+            startTimer(1);
+            logger.info("Timer started");
+        } catch (NamingException e) {
+            logger.error("Unexpected error", e);
+        }
+    }
 
-	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-		this.initDtmfDetector(getConnection());
-		EventCause cause = evt.getCause();
-		if (cause == EventCause.DTMF_DIGIT_0) {
-			play(DTMF_0);
-		} else if (cause == EventCause.DTMF_DIGIT_1) {
-			play(DTMF_1);
-		} else if (cause == EventCause.DTMF_DIGIT_2) {
-			play(DTMF_2);
-		} else if (cause == EventCause.DTMF_DIGIT_3) {
-			play(DTMF_3);
-		} else if (cause == EventCause.DTMF_DIGIT_4) {
-			play(DTMF_4);
-		} else if (cause == EventCause.DTMF_DIGIT_5) {
-			play(DTMF_5);
-		} else if (cause == EventCause.DTMF_DIGIT_6) {
-			play(DTMF_6);
-		} else if (cause == EventCause.DTMF_DIGIT_7) {
-			play(DTMF_7);
-		} else if (cause == EventCause.DTMF_DIGIT_8) {
-			play(DTMF_8);
-		} else if (cause == EventCause.DTMF_DIGIT_9) {
-			play(DTMF_9);
-		}
-	}
+    private void play(String url) {
+        ChildRelation childRelation = this.getAnnouncementSbb();
+        try {
+            Announcement announcement = (Announcement) childRelation.create();
+            this.getConnectionActivityContext().attach(announcement);
+            List sequence = new ArrayList();
+            sequence.add(url);
+            announcement.play(this.getUserEndpoint(), sequence, false);
+        } catch (CreateException e) {
+            logger.error("Unexpected error, Caused by", e);
+            MsConnection connection = getConnection();
+            connection.release();
+        }
+    }
 
-	private void play(String url) {
-		ChildRelation childRelation = this.getAnnouncementSbb();
-		try {
-			Announcement announcement = (Announcement) childRelation.create();
-			this.getConnectionActivityContext().attach(announcement);
-			List sequence = new ArrayList();
-			sequence.add(url);
-			announcement.play(this.getUserEndpoint(), sequence, false);
-		} catch (CreateException e) {
-			logger.error("Unexpected error, Caused by", e);
-			MsConnection connection = getConnection();
-			connection.release();
-		}
-	}
+    @SuppressWarnings("static-access")
+    private void initDtmfDetector(MsConnection connection) {
+        MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
+        try {
+            ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
+            dtmfAci.attach(sbbContext.getSbbLocalObject());
+            dtmfDetector.receive(EventID.DTMF, connection, new String[]{});
+        } catch (UnrecognizedActivityException e) {
+        } 
+    }
 
-	private void initDtmfDetector(MsConnection connection) {
-		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
-		try {
-			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
-			dtmfAci.attach(sbbContext.getSbbLocalObject());
-			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
-		} catch (UnrecognizedActivityException e) {
-		}
-	}
+    public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        ActivityContextInterface activities[] = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsSignalDetector) {
+                ((MsSignalDetector) activities[i].getActivity()).release();
+            }
+        }
 
-	public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-		ActivityContextInterface activities[] = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsSignalDetector) {
-				((MsSignalDetector) activities[i].getActivity()).release();
-			}
-		}
+    }
 
-	}
+    /**
+     * CMP field accessor
+     * 
+     * @return the name of the user's endpoint.
+     */
+    public abstract String getUserEndpoint();
 
-	/**
-	 * CMP field accessor
-	 * 
-	 * @return the name of the user's endpoint.
-	 */
-	public abstract String getUserEndpoint();
+    /**
+     * CMP field accessor
+     * 
+     * @param endpoint
+     *            the name of the user's endpoint.
+     */
+    public abstract void setUserEndpoint(String endpointName);
 
-	/**
-	 * CMP field accessor
-	 * 
-	 * @param endpoint
-	 *            the name of the user's endpoint.
-	 */
-	public abstract void setUserEndpoint(String endpointName);
+    /**
+     * Relation to Welcome dialog
+     * 
+     * @return child relation object.
+     */
+    public abstract ChildRelation getAnnouncementSbb();
 
-	/**
-	 * Relation to Welcome dialog
-	 * 
-	 * @return child relation object.
-	 */
-	public abstract ChildRelation getAnnouncementSbb();
+    private MsConnection getConnection() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return (MsConnection) activities[i].getActivity();
+            }
+        }
+        return null;
+    }
 
-	private MsConnection getConnection() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsConnection) {
-				return (MsConnection) activities[i].getActivity();
-			}
-		}
-		return null;
-	}
+    private ActivityContextInterface getConnectionActivityContext() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+        return null;
+    }
 
-	private ActivityContextInterface getConnectionActivityContext() {
-		ActivityContextInterface[] activities = sbbContext.getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsConnection) {
-				return activities[i];
-			}
-		}
-		return null;
-	}
+    private void startTimer(int duration) throws NamingException {
+        Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+        timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
 
-	public void setSbbContext(SbbContext sbbContext) {
-		this.sbbContext = sbbContext;
-		try {
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
-			mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
-		} catch (Exception ne) {
-			logger.error("Could not set SBB context:", ne);
-		}
-	}
+        TimerOptions options = new TimerOptions(false, 1000 * duration, TimerPreserveMissed.NONE);
+        Address address = new Address(AddressPlan.IP, "127.0.0.1");
+        Date now = new Date();
 
-	public void unsetSbbContext() {
-	}
+        timerFacility.setTimer(this.getConnectionActivityContext(), address, now.getTime() + 1000 * duration, options);
+    }
 
-	public void sbbCreate() throws CreateException {
-	}
+    public void setSbbContext(SbbContext sbbContext) {
+        this.sbbContext = sbbContext;
+        try {
+            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+            msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+            mediaAcif = (MediaRaActivityContextInterfaceFactory) ctx.lookup("slee/resources/media/1.0/acifactory");
+        } catch (Exception ne) {
+            logger.error("Could not set SBB context:", ne);
+        }
+    }
 
-	public void sbbPostCreate() throws CreateException {
-	}
+    public void unsetSbbContext() {
+    }
 
-	public void sbbActivate() {
-	}
+    public void sbbCreate() throws CreateException {
+    }
 
-	public void sbbPassivate() {
-	}
+    public void sbbPostCreate() throws CreateException {
+    }
 
-	public void sbbLoad() {
-	}
+    public void sbbActivate() {
+    }
 
-	public void sbbStore() {
-	}
+    public void sbbPassivate() {
+    }
 
-	public void sbbRemove() {
-	}
+    public void sbbLoad() {
+    }
 
-	public void sbbExceptionThrown(Exception ex, Object arg1, ActivityContextInterface aci) {
-	}
+    public void sbbStore() {
+    }
 
-	public void sbbRolledBack(RolledBackContext context) {
-	}
+    public void sbbRemove() {
+    }
 
+    public void sbbExceptionThrown(Exception ex, Object arg1, ActivityContextInterface aci) {
+    }
+
+    public void sbbRolledBack(RolledBackContext context) {
+    }
 }
