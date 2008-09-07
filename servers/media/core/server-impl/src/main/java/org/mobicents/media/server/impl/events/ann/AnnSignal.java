@@ -38,9 +38,7 @@ public class AnnSignal extends AbstractSignal implements PlayerListener {
         this.options = options;
     }
     
-    public String getID() {
-        return "PLAY";
-    }
+
 
     public void connect(MediaSink sink) {
         //dsp.getOutput().connect(sink);
@@ -52,9 +50,7 @@ public class AnnSignal extends AbstractSignal implements PlayerListener {
 		return "PLAY";
 	}
 
-	public void connect(MediaSink sink) throws IOException {
-		player.connect(sink);
-	}
+
 
 	public void disconnect(MediaSink sink) {
 		player.disconnect(sink);
@@ -65,24 +61,6 @@ public class AnnSignal extends AbstractSignal implements PlayerListener {
 		player.start();
 	}
 
-    public void update(PlayerEvent event) {
-        NotifyEvent evt = null;
-        switch (event.getEventType()) {
-            case STARTED :
-                //evt = new NotifyEvent(this, "org.mobicents.media.ann.STARTED");
-                break;
-            case END_OF_MEDIA :
-            case STOP_BY_REQUEST :
-                evt = new NotifyEvent(this, "org.mobicents.media.ann.COMPLETE");
-                break;
-            case FACILITY_ERROR :
-                evt = new NotifyEvent(this, "org.mobicents.media.ann.FACILITY_ERROR");
-                break;
-        }
-        if (evt != null) {
-            sendEvent(evt);
-        }
-    }
 
 	public Format getFormat() {
 		return null;
@@ -110,6 +88,13 @@ public class AnnSignal extends AbstractSignal implements PlayerListener {
 
 	public Format[] getFormats() {
 		return AudioPlayer.formats;
+	}
+
+
+
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

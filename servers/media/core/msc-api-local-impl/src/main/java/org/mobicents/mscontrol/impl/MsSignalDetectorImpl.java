@@ -149,7 +149,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
                 }
 		endpoint.subscribe(signalID.toString(), new Options(), connectionID, listener);
             } catch (Exception e) {
-                logger.error(e);
+                logger.error("Subscribing to MsSignalDetector failed with error ", e);
             }
         }
     }

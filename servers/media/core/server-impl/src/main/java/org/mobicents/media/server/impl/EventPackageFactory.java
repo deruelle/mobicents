@@ -18,16 +18,17 @@ import java.io.Serializable;
 import org.mobicents.media.server.spi.events.EventPackage;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class EventPackageFactory implements Serializable {
-    public static EventPackage load(String packageName) throws ClassNotFoundException, 
-            InstantiationException, IllegalAccessException {
-        String className = packageName.replace("media", "media.server.impl.events") +  ".PackageImpl";
-        ClassLoader classLoader = EventPackageFactory.class.getClassLoader();
-        Class instance = classLoader.loadClass(className);
-        
-        return (EventPackage) instance.newInstance();
-    }
+
+	public static EventPackage load(String packageName) throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException {
+		String className = packageName.replace("media", "media.server.impl.events") + ".PackageImpl";
+		ClassLoader classLoader = EventPackageFactory.class.getClassLoader();
+		Class instance = classLoader.loadClass(className);
+
+		return (EventPackage) instance.newInstance();
+	}
 }

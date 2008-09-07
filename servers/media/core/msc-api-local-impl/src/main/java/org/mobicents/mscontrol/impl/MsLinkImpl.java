@@ -189,7 +189,9 @@ public class MsLinkImpl implements MsLink {
             try {
                 connections[0].setOtherParty(connections[1]);
                 connections[1].setOtherParty(connections[0]);
-                logger.debug("Join connections [" + connections[0].getId() + "," + connections[0].getId());
+                if(logger.isDebugEnabled()){
+                	logger.debug("Join connections [" + connections[0].getId() + "," + connections[1].getId());
+                }
                 state = MsLinkState.JOINED;
                 sendEvent(MsLinkEventID.LINK_JOINED, MsLinkEventCause.NORMAL, null);
             } catch (IOException e) {

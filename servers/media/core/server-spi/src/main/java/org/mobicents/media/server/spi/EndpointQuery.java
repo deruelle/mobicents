@@ -24,6 +24,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+
 //import org.mobicents.media.server.impl.BaseEndpoint;
 /**
  *
