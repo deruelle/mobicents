@@ -187,7 +187,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 					pool.execute(handler);
 				} else {
 					logger.error("The TransactionHandler not found for TransactionHandle " + tid
-							+ " May be the Tx timed out ");
+							+ " May be the Tx timed out. Event = "+ (JainMgcpResponseEvent) event);
 				}
 				// send event
 				// handler.send((JainMgcpResponseEvent) event);

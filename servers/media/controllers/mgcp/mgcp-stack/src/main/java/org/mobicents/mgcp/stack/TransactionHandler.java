@@ -72,7 +72,7 @@ public abstract class TransactionHandler implements Runnable {
 
 	private static int GENERATOR = 1;
 
-	public final static int TIMEOUT = 5000; // 5secs
+	public final static int LONGTRAN_TIMER_TIMEOUT = 5000; // 5secs
 	/** Is this a transaction on a command sent or received? */
 	private boolean sent;
 	/** Transaction handle sent from application to the MGCP provider. */
@@ -97,46 +97,22 @@ public abstract class TransactionHandler implements Runnable {
 	private Logger logger = Logger.getLogger(TransactionHandler.class);
 	/** Expiration timer */
 	private static Timer timer = new Timer();
-	private TransactionTimerTask timerTask;
+	private LongtranTimerTask longtranTimerTask;
 
 	/** Flag to check if this is Command or Response event * */
 	private boolean isCommand = false;
 
-	private class TransactionTimerTask extends TimerTask {
+	private ReTransmissionTimerTask reTransmissionTimer;
 
-		public void run() {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Transaction localID=" + localTID + " timeout");
-			}
-			try {
-				// the try ensures the static timer will not get a runtime
-				// exception
-				// process tx timeout
-				if (sent) {
-					stack.provider.processTxTimeout(commandEvent);
-				} else {
-					stack.provider.processRxTimeout(commandEvent);
-				}
-				// releases the tx
-				release();
-			} catch (Exception e) {
-				logger.error("Failed to release mgcp transaction localID=" + localTID, e);
-			}
-		}
-	}
+	private THISTTimerTask tHISTTimerTask;
 
-	/**
-	 * Check whether the given return code is a provisional response.
-	 * 
-	 * @param rc
-	 *            the return code
-	 * @return true when the code is provisional
-	 */
-	private static boolean isProvisional(ReturnCode rc) {
-		final int rval = rc.getValue();
+	private int A = 0;
+	private int D = 2;
+	private int N = 2;
 
-		return ((99 < rval) && (rval < 200));
-	}
+	private DatagramPacket sendComandDatagram = null;
+
+	private int countOfCommandRetransmitted = 0;
 
 	/**
 	 * Creates a new instance of TransactionHandle
@@ -154,6 +130,99 @@ public abstract class TransactionHandler implements Runnable {
 		if (logger.isDebugEnabled()) {
 			logger.debug("New mgcp transaction with id localID=" + localTID);
 		}
+	}
+
+	private void processTxTimeout() {
+		try {
+
+			// releases the tx
+			release();
+
+			// the try ensures the static timer will not get a runtime
+			// exception process tx timeout
+			if (sent) {
+				stack.provider.processTxTimeout(commandEvent);
+			} else {
+				// TODO : Send back 406 TxTimedOut to NotifiedEntity
+				stack.provider.processRxTimeout(commandEvent);
+			}
+
+		} catch (Exception e) {
+			logger.error("Failed to release mgcp transaction localID=" + localTID, e);
+		}
+	}
+
+	private class LongtranTimerTask extends TimerTask {
+
+		public void run() {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Transaction localID=" + localTID + " timeout");
+
+				processTxTimeout();
+			}
+		}
+	}
+
+	private class ReTransmissionTimerTask extends TimerTask {
+
+		public void run() {
+			try {
+				// Sending the command
+				countOfCommandRetransmitted++;
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Tx ID = " + localTID + " Sending the Command " + countOfCommandRetransmitted);
+				}
+				stack.send(sendComandDatagram);
+				resetReTransmissionTimer();
+
+			} catch (Exception e) {
+				logger.error("Failed to release mgcp transaction localID=" + localTID, e);
+			}
+		}
+	}
+
+	private class THISTTimerTask extends TimerTask {
+
+		boolean responseSent = false;
+
+		THISTTimerTask(boolean responseSent) {
+			this.responseSent = responseSent;
+		}
+
+		public void run() {
+
+			if (!responseSent) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("T-HIST timeout processTxTimeout ");
+				}
+				try {
+					processTxTimeout();
+				} catch (Exception e) {
+					logger.error("Failed to delete the jainMgcpResponseEvent for txId", e);
+				}
+			} else {
+				Integer key = new Integer(remoteTID);
+				TransactionHandler obj = stack.responseTx.remove(key);
+				if (logger.isDebugEnabled()) {
+					logger.debug("T-HIST timeout deleting Response for Tx = " + remoteTID + " Response = " + obj);
+				}
+				obj = null;
+			}
+		}
+	}
+
+	/**
+	 * Check whether the given return code is a provisional response.
+	 * 
+	 * @param rc
+	 *            the return code
+	 * @return true when the code is provisional
+	 */
+	private static boolean isProvisional(ReturnCode rc) {
+		final int rval = rc.getValue();
+
+		return ((99 < rval) && (rval < 200));
 	}
 
 	/**
@@ -180,11 +249,9 @@ public abstract class TransactionHandler implements Runnable {
 		}
 
 		stack.transactions.remove(Integer.valueOf(localTID));
-
-		if (timerTask != null) {
-			timerTask.cancel();
-			timerTask = null;
-		}
+		cancelTHISTTimerTask();
+		cancelLongtranTimer();
+		cancelReTransmissionTimer();
 	}
 
 	/**
@@ -317,14 +384,16 @@ public abstract class TransactionHandler implements Runnable {
 		// encode event object as MGCP command and send over UDP.
 		String msg = encode(event);
 		byte[] data = msg.getBytes();
-		DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+		sendComandDatagram = new DatagramPacket(data, data.length, address, port);
 
-		resetTimer();
+		resetReTransmissionTimer();
+		resetTHISTTimerTask(false);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Send command event to " + address + ", message\n" + msg);
 		}
-		stack.send(packet);
+		countOfCommandRetransmitted++;
+		stack.send(sendComandDatagram);
 	}
 
 	/**
@@ -336,9 +405,7 @@ public abstract class TransactionHandler implements Runnable {
 	 */
 	private void send(JainMgcpResponseEvent event) {
 
-		if (timerTask != null) {
-			timerTask.cancel();
-		}
+		cancelLongtranTimer();
 
 		// to send response we already should know the address and port
 		// number from which the original request was received
@@ -369,10 +436,15 @@ public abstract class TransactionHandler implements Runnable {
 		 */
 		if (isProvisional(event.getReturnCode())) {
 			// reset timer.
-			resetTimer();
+			resetLongtranTimer();
 		} else {
 			release();
+			
+			stack.responseTx.put(Integer.valueOf(event.getTransactionHandle()), this);
+			resetTHISTTimerTask(true);			
 		}
+
+
 	}
 
 	/**
@@ -403,7 +475,7 @@ public abstract class TransactionHandler implements Runnable {
 		remoteTID = event.getTransactionHandle();
 		event.setTransactionHandle(localTID);
 
-		resetTimer();
+		resetLongtranTimer();
 
 		// fire event
 		stack.provider.processMgcpCommandEvent(event);
@@ -419,11 +491,10 @@ public abstract class TransactionHandler implements Runnable {
 	 */
 	public void receiveResponse(String message) {
 
-		JainMgcpResponseEvent event = null;
+		cancelReTransmissionTimer();
+		cancelLongtranTimer();
 
-		if (timerTask != null) {
-			timerTask.cancel();
-		}
+		JainMgcpResponseEvent event = null;
 
 		try {
 			event = decodeResponse(message);
@@ -441,20 +512,56 @@ public abstract class TransactionHandler implements Runnable {
 		 * tx.
 		 */
 		if (isProvisional(event.getReturnCode())) {
-			// reset timer. TODO: increment delays according RFC
-			resetTimer();
+			resetLongtranTimer();
 		} else {
 			release();
 		}
 	}
 
-	private void resetTimer() {
-		if (timerTask != null) {
-			timerTask.cancel();
-			timerTask = null;
+	private void cancelLongtranTimer() {
+		if (longtranTimerTask != null) {
+			longtranTimerTask.cancel();
+			longtranTimerTask = null;
 		}
-		timerTask = new TransactionTimerTask();
-		timer.schedule(timerTask, TIMEOUT);
+	}
+
+	private void resetLongtranTimer() {
+
+		longtranTimerTask = new LongtranTimerTask();
+		timer.schedule(longtranTimerTask, LONGTRAN_TIMER_TIMEOUT);
+	}
+
+	private void cancelReTransmissionTimer() {
+		if (reTransmissionTimer != null) {
+			reTransmissionTimer.cancel();
+			reTransmissionTimer = null;
+		}
+	}
+
+	private void resetReTransmissionTimer() {
+		cancelReTransmissionTimer();
+		reTransmissionTimer = new ReTransmissionTimerTask();
+		timer.schedule(reTransmissionTimer, calculateReTransmissionTimeout());
+	}
+
+	// TODO : Implement the AAD and ADEV from TCP
+	private int calculateReTransmissionTimeout() {
+		int reTransmissionTimeoutSec = A + N * D;
+		N = N * 2;
+		return reTransmissionTimeoutSec * 1000;
+	}
+
+	private void cancelTHISTTimerTask() {
+		if (tHISTTimerTask != null) {
+			tHISTTimerTask.cancel();
+			tHISTTimerTask = null;
+		}
+	}
+
+	private void resetTHISTTimerTask(boolean responseSent) {
+		cancelTHISTTimerTask();
+		tHISTTimerTask = new THISTTimerTask(responseSent);
+		timer.schedule(tHISTTimerTask, 1000 * 30);
 	}
 
 	/**
