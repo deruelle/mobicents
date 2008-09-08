@@ -66,7 +66,6 @@ public abstract class BaseEndpoint implements Endpoint {
             AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
     private final static AudioFormat DTMF = new AudioFormat("telephone-event");
     private final static Format[] formats = new Format[]{LINEAR, DTMF};
-
     private String localName;
     private String rtpFactoryName;
     protected HashMap<String, Signal> signals = new HashMap();
@@ -364,23 +363,15 @@ public abstract class BaseEndpoint implements Endpoint {
 
         Signal currentSignal = signals.remove(connectionID);
 
-        if (currentSignal != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Disable current signal:" + currentSignal.getID());
-            }
-            System.out.println("***** TONE STOPPED AND REMOVED***");
-            currentSignal.stop();
-            currentSignal.disconnect(connection.getMux());
-        }
+        try {
+            if (currentSignal != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Disable current signal:" + currentSignal.getID());
+                }
 
-		if (currentSignal != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Disable current signal:" + currentSignal.getID());
-			}
-			
-			currentSignal.stop();
-			currentSignal.disconnect(connection.getMux());
-		}
+                currentSignal.stop();
+                currentSignal.disconnect(connection.getMux());
+            }
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Starting signal ID=" + signalID);
