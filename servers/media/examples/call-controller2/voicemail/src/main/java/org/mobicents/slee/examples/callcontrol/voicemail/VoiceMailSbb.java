@@ -12,6 +12,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Date;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -46,6 +47,8 @@ import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
 import javax.slee.facilities.TimerID;
+import javax.slee.facilities.TimerOptions;
+import javax.slee.facilities.TimerPreserveMissed;
 
 import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
@@ -213,26 +216,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	}
 
 	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-		// Timer Event is fired in 2 cases after waiting a number of secs:
-		// * After being waiting to receive DTMF digit and do not receive any.
-		// * After being recording audio from an UA without receiving a BYE
-		// Request.
-		// mediaSession = this.getMediaSession();
-		//
-		// if (this.getSameUser()) {
-		// // In this case we were waiting DTMF digit.
-		// mediaSession.stopSession();
-		// // We have not received any DTMF digit, so we try it again.
-		// URL audioFileURL = getClass().getResource(tryAgain);
-		// mediaSession.createTransmitterReceiver(mediaSession
-		// .getSdpDescription(), audioFileURL, null, true);
-		// } else {
-		// // In this case we were waiting a BYE Request.
-		// mediaSession.stopSession();
-		// // We have not received the BYE, so we send the Request to the UA.
-		// sendByeRequest();
-		// aci.detach(this.getSbbLocalObject());
-		// }
+		this.initDtmfDetector(this.getConnection(), this.getUserEndpoint());
 	}
 
 	public void onConnectionCreated(MsConnectionEvent evt, ActivityContextInterface aci) {
@@ -310,11 +294,11 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				if (fileExist) {
 
 					audioFileURL = getClass().getResource(waitingDTMF);
-					this.initDtmfDetector(evt.getConnection(), endpointName);
+					this.initDtmfDetector(connection, endpointName);
 				} else {
 					audioFileURL = getClass().getResource(novoicemessage);
 				}
-				generator.apply(EventID.PLAY, new String[] { audioFileURL.toString() });
+				generator.apply(EventID.PLAY, connection, new String[] { audioFileURL.toString() });
 
 			} catch (UnrecognizedActivityException e) {
 				e.printStackTrace();
@@ -322,7 +306,6 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 		} else {
 			log.debug("not the same user, start recording after announcement");
-			System.out.println("not the same user, start recording after announcement");
 
 			URL audioFileURL = getClass().getResource(recordAfterTone);
 
@@ -346,7 +329,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			try {
 				ActivityContextInterface dtmfAci = msActivityFactory.getActivityContextInterface(signalGenerator);
 				dtmfAci.attach(this.getSbbLocalObject());
-				signalGenerator.apply(EventID.PLAY_RECORD, params);
+				signalGenerator.apply(EventID.PLAY_RECORD, connection, params);
 			} catch (UnrecognizedActivityException e) {
 				log.error(e.getMessage(), e);
 			}
@@ -401,8 +384,17 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
 		log.info("########## VOICE MAIL SBB: onDTMFEvent ##########");
 		EventCause cause = evt.getCause();
-		checkDtmfDigit(cause);
-		this.initDtmfDetector(this.getConnection(), this.getUserEndpoint());
+		boolean bye = checkDtmfDigit(cause);
+		// this.initDtmfDetector(this.getConnection(), this.getUserEndpoint());
+
+		if (!bye) {
+			try {
+				startTimer(1);
+				log.info("Timer started");
+			} catch (NamingException e) {
+				log.error("Unexpected error", e);
+			}
+		}
 
 	}
 
@@ -414,6 +406,27 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			}
 		}
 		return null;
+	}
+
+	private ActivityContextInterface getConnectionActivityContext() {
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsConnection) {
+				return activities[i];
+			}
+		}
+		return null;
+	}
+
+	private void startTimer(int duration) throws NamingException {
+		Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+		timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
+
+		TimerOptions options = new TimerOptions(false, 1000 * duration, TimerPreserveMissed.NONE);
+		Address address = new Address(AddressPlan.IP, "127.0.0.1");
+		Date now = new Date();
+
+		timerFacility.setTimer(this.getConnectionActivityContext(), address, now.getTime() + 1000 * duration, options);
 	}
 
 	/**
@@ -475,7 +488,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		return recordFilePath;
 	}
 
-	private void checkDtmfDigit(EventCause dtmf) {
+	private boolean checkDtmfDigit(EventCause dtmf) {
 		URL audioFileURL = null;
 
 		boolean bye = false;
@@ -533,7 +546,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				ActivityContextInterface generatorActivity = msActivityFactory.getActivityContextInterface(generator);
 				generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-				generator.apply(EventID.PLAY, new String[] { audioFileURL.toString() });
+				generator.apply(EventID.PLAY, this.getConnection(), new String[] { audioFileURL.toString() });
 
 				// this.initDtmfDetector(getConnection(),
 				// this.getEndpointName());
@@ -541,6 +554,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				e.printStackTrace();
 			}
 		}
+
+		return bye;
 
 	}
 
@@ -645,14 +660,14 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private final String novoicemessage = "audiofiles/NoVoiceMessage.wav";
 
 	private final String USER = "vmail";
-	private final String HOST = "nist.gov";
+	private final String HOST = "127.0.0.1";
 	private final String NON_DIGIT = "NULL";
 	private final String WAV_EXT = ".wav";
 
 	private MsProvider msProvider;
 	private MediaRaActivityContextInterfaceFactory msActivityFactory;
 
-	public final static String ENDPOINT_NAME = "media/trunk/IVR/$";
+	public final static String ENDPOINT_NAME = "media/endpoint/IVR";
 
 	private String route = null;
 
