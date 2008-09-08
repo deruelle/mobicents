@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA4-SNAPSHOT</version>
+		<version>1.0.0.BETA4</version>
 	</parent>
 	
 	<artifactId>mobicents-media-server-test</artifactId>
