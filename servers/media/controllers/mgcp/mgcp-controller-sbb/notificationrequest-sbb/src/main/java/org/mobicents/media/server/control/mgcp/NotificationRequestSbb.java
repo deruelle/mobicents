@@ -155,7 +155,7 @@ public abstract class NotificationRequestSbb implements Sbb {
 						ActivityContextInterface generatorActivity = msActivityFactory
 								.getActivityContextInterface(generator);
 						generatorActivity.attach(sbbContext.getSbbLocalObject());
-						generator.apply(EventID.PLAY, new String[] { announcementUrl });
+						generator.apply(EventID.PLAY, msConnection, new String[] { announcementUrl });
 
 					} catch (UnrecognizedActivityException e) {
 						e.printStackTrace();

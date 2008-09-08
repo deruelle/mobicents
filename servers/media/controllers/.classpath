@@ -59,7 +59,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/external/jspeex/jspeex/0.9.7/jspeex-0.9.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/itu-g729c-codec/1.0.0.BETA4-SNAPSHOT/itu-g729c-codec-1.0.0.BETA4-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-constants/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-constants-1.0.0.BETA4-SNAPSHOT.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-impl/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-impl-1.0.0.BETA4-SNAPSHOT.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-impl/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-impl-1.0.0.BETA4-SNAPSHOT.jar" sourcepath="/MEDIA_CORE_HOME"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-msc-api-local-impl/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-msc-api-local-impl-1.0.0.BETA4-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-msc-api/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-msc-api-1.0.0.BETA4-SNAPSHOT.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-spi/1.0.0.BETA4-SNAPSHOT/mobicents-media-server-spi-1.0.0.BETA4-SNAPSHOT.jar"/>
