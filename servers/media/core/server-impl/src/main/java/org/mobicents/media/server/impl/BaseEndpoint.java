@@ -368,7 +368,7 @@ public abstract class BaseEndpoint implements Endpoint {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Disable current signal:" + currentSignal.getID());
 			}
-			System.out.println("***** TONE STOPPED AND REMOVED***");
+			
 			currentSignal.stop();
 			currentSignal.disconnect(connection.getMux());
 		}
