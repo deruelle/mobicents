@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>msc-parent</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<version>1.0.0.BETA4</version>
+		<version>1.0.0.BETA4-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>msc-ra-DU</artifactId>

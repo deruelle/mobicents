@@ -5,7 +5,7 @@
     <parent>
 	<artifactId>mobicents-media-server-mgcpcontrol</artifactId>
 	<groupId>org.mobicents.servers.media.controllers</groupId>
-	<version>1.0.0.BETA4</version>
+	<version>1.0.0.BETA4-SNAPSHOT</version>
     </parent>
     
     <artifactId>modifyconnection-sbb</artifactId>
