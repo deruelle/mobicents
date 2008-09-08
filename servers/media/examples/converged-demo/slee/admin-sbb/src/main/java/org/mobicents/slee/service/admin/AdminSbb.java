@@ -340,8 +340,9 @@ public abstract class AdminSbb extends CommonSbb {
 		switch (cause) {
 		case DTMF_DIGIT_1:
 			audioFile = (getClass().getResource(orderApproved)).toString();
-			
-			//This piece of code is to integrate with JMS Queue for SalesForce example.
+
+			// This piece of code is to integrate with JMS Queue for SalesForce
+			// example.
 			if (this.getSfDemo()) {
 
 				try {
@@ -458,7 +459,7 @@ public abstract class AdminSbb extends CommonSbb {
 			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			generator.apply(EventID.PLAY, new String[] { audioFile });
+			generator.apply(EventID.PLAY, this.getLink(), new String[] { audioFile });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {
@@ -492,7 +493,7 @@ public abstract class AdminSbb extends CommonSbb {
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			String announcementFile = "file:" + audioFilePath;
-			generator.apply(EventID.PLAY, new String[] { announcementFile });
+			generator.apply(EventID.PLAY, link, new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
 

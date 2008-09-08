@@ -313,7 +313,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 			audioPath.append(this.getCustomEvent().getUserName());
 			audioPath.append(".wav");
 
-			generator.apply(EventID.PLAY, new String[] { audioPath.toString() });
+			generator.apply(EventID.PLAY, link, new String[] { audioPath.toString() });
 
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();

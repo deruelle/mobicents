@@ -103,25 +103,33 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	public void onOrderApproved(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("======== OrderDeliverDateSbb ORDER_APPROVED ========");
 		this.setCustomEvent(event);
-		setTimer(ac);
+		setTimer(ac, 30000);
 	}
 
 	public void onOrderProcessed(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("======== OrderDeliverDateSbb ORDER_PROCESSED ========");
 		this.setCustomEvent(event);
-		setTimer(ac);
+		setTimer(ac, 30000);
 	}
 
 	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-		makeCall();
+		logger.info("Timer fired");
+		String dateAndTime = this.getDateAndTime();
+		if (dateAndTime != null && (dateAndTime.length() > 0)) {
+			logger.info("Timer fired calling initDtmfDetector");
+			this.initDtmfDetector(this.getConnection(), this.getEndpointName());
+		} else {
+			logger.info("Timer fired calling makeCall");
+			makeCall();
+		}
 	}
 
-	private void setTimer(ActivityContextInterface ac) {
+	private void setTimer(ActivityContextInterface ac, int duration) {
 		TimerOptions options = new TimerOptions();
 		options.setPersistent(true);
 
 		// Set the timer on ACI
-		TimerID timerID = this.timerFacility.setTimer(ac, null, System.currentTimeMillis() + 30000, options);
+		TimerID timerID = this.timerFacility.setTimer(ac, null, System.currentTimeMillis() + duration, options);
 
 		this.setTimerID(timerID);
 	}
@@ -279,7 +287,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			String announcementFile = (getClass().getResource(orderDeliveryDate)).toString();
 
-			generator.apply(EventID.PLAY, new String[] { announcementFile });
+			generator.apply(EventID.PLAY, link, new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
 
@@ -448,9 +456,10 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 				ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 				generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-				generator.apply(EventID.PLAY, new String[] { "file:" + audioPath.toString() });
+				generator.apply(EventID.PLAY, this.getLink(), new String[] { "file:" + audioPath.toString() });
 
-				//this.initDtmfDetector(getConnection(), this.getEndpointName());
+				// this.initDtmfDetector(getConnection(),
+				// this.getEndpointName());
 			} catch (UnrecognizedActivityException e) {
 				e.printStackTrace();
 			}
@@ -460,10 +469,11 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 		} else {
 			this.setDateAndTime(dateAndTime);
-			this.initDtmfDetector(getConnection(), this.getEndpointName());
+			this.setTimer(this.getConnectionActivityContext(), 500);
+			//this.initDtmfDetector(getConnection(), this.getEndpointName());
 		}
 	}
-	
+
 	private void initDtmfDetector(MsConnection connection, String endpointName) {
 		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(endpointName);
 		try {
@@ -473,7 +483,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		} catch (UnrecognizedActivityException e) {
 			e.printStackTrace();
 		}
-	}	
+	}
 
 	private MsConnection getConnection() {
 		ActivityContextInterface[] activities = getSbbContext().getActivities();
@@ -485,6 +495,16 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		return null;
 	}
 
+    private ActivityContextInterface getConnectionActivityContext() {
+        ActivityContextInterface[] activities = getSbbContext().getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+        return null;
+    }
+    
 	public InitialEventSelector orderIdSelect(InitialEventSelector ies) {
 		Object event = ies.getEvent();
 		long orderId = 0;
@@ -534,4 +554,5 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	public abstract void setChildSbbLocalObject(CallControlSbbLocalObject childSbbLocalObject);
 
 	public abstract CallControlSbbLocalObject getChildSbbLocalObject();
+
 }

@@ -317,7 +317,7 @@ public abstract class UserSbb extends CommonSbb {
 			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
-			generator.apply(EventID.PLAY, new String[] { this.getAudioFile() });
+			generator.apply(EventID.PLAY, this.getLink(), new String[] { this.getAudioFile() });
 
 			// this.initDtmfDetector(getConnection(), this.getEndpointName());
 		} catch (UnrecognizedActivityException e) {
@@ -352,7 +352,7 @@ public abstract class UserSbb extends CommonSbb {
 			generatorActivity.attach(getSbbContext().getSbbLocalObject());
 
 			String announcementFile = "file:" + this.getAudioFile();
-			generator.apply(EventID.PLAY, new String[] { announcementFile });
+			generator.apply(EventID.PLAY, link, new String[] { announcementFile });
 
 			this.initDtmfDetector(getConnection(), endpointName);
 
