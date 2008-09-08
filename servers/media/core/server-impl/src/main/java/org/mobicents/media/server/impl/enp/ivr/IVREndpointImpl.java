@@ -19,6 +19,10 @@ import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.FacilityException;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.UnknownSignalException;
+import org.mobicents.media.server.spi.events.Options;
 
 /**
  * 
@@ -60,6 +64,22 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
         return enp;
     }
 
-    
+    @Override
+    public void play(String signalID, Options options, String connectionID, NotificationListener listener)
+            throws UnknownSignalException, FacilityException {
+        if (signalID.equals("org.mobicents.media.au.PLAY_RECORD")) {
+            if (recordDir != null) {
+                String param1 = (String) options.get("recorder.url");
+                int index = param1.lastIndexOf("/");
+                if (index > 0) {
+                    String folderStructure = param1.substring(0, index);
 
+                    java.io.File file = new java.io.File(new StringBuffer(recordDir).append("/").append(folderStructure).toString());
+                    boolean fileCreationSuccess = file.mkdirs();
+                }
+                options.add("recorder.url", recordDir + "/" + param1);
+            } 
+        }
+        super.play(signalID, options, connectionID, listener);
+    }
 }

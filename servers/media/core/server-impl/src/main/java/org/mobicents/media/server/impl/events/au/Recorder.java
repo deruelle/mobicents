@@ -207,10 +207,8 @@ public class Recorder extends AbstractSink {
             return;
         }
         
-        System.out.println(f.format(new Date()) + " receive " + buffer.getLength());
         recorderStream.buffers.add(buffer);
         recorderStream.available += (buffer.getLength() - buffer.getOffset());
-        System.out.println(f.format(new Date()) + " receive " + buffer.getLength() + " available=" + recorderStream.available);
         if (recorderStream.blocked) {
             recorderStream.blocked = false;
             recorderStream.semaphore.release();

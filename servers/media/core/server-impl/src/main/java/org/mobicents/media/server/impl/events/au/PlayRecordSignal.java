@@ -34,7 +34,7 @@ public class PlayRecordSignal extends AnnSignal implements EventDetector {
 
     @Override
     public void start() {
-        System.out.println("*** START RECORDING***");
+        System.out.println("*** START RECORDING TO " + (String) options.get("recorder.url"));
         super.start();
         recorder.start((String) options.get("recorder.url"));
     }

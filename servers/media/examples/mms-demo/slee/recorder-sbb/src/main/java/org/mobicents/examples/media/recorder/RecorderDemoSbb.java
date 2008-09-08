@@ -92,7 +92,7 @@ public abstract class RecorderDemoSbb implements Sbb {
             ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
             generatorActivity.attach(sbbContext.getSbbLocalObject());
             System.out.println("*** PLAY/RECORD");
-            generator.apply(EventID.PLAY_RECORD, new String[]{INFO_MSG, RECORDER});
+            generator.apply(EventID.PLAY_RECORD, getLink(), new String[]{INFO_MSG, RECORDER});
             // generator.apply(EventID.PLAY, new String[]{INFO_MSG});
             System.out.println("*** STARTED/RECORD");
         } catch (UnrecognizedActivityException e) {
