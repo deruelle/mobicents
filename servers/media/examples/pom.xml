@@ -78,6 +78,7 @@
 				<configuration>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<resume>false</resume>
+					<preparationGoals>clean install</preparationGoals>
 				</configuration>
 			</plugin>			
 		</plugins>
