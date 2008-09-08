@@ -377,7 +377,7 @@ public abstract class BaseEndpoint implements Endpoint {
                 logger.debug("Starting signal ID=" + signalID);
             }
             signal.start();
-
+            signal.connect(connection.getMux());
             if (signal instanceof EventDetector) {
                 ((EventDetector) signal).connect(connection.getDemux());
             }
