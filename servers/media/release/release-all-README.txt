@@ -1,7 +1,7 @@
 ==========================================================================
 ! Welcome to Mobicents Media server (MMS) - The Open Source Media server !
 ==========================================================================
-This mobicents-media-server-all-1.0.0.BETA3 binary is having
+This mobicents-media-server-all-1.0.0.BETA4 binary is having
 	* Mobicents Media Server
 	* Examples for Mobicents Media Server
 	* Controllers which includes MGCP controller and Media Server Controller which is local (in JVM) controller for MMS
@@ -20,7 +20,7 @@ Mobicents Media Server is open source media server aimed to:
 
 Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
 Mobicents documentation page: http://groups.google.com/group/mobicents-public/web/mobicents-media-server
-Version information: media-server_1.0.0.BETA3
+Version information: media-server_1.0.0.BETA4
 
 
 To install media server
@@ -37,12 +37,11 @@ To undeploy call 'ant undeploy-all'
 Look at link to know more about examples http://groups.google.com/group/mobicents-public/web/mobicents-examples
 
 
-Highlights of 1.0.0.BETA3
+Highlights of 1.0.0.BETA4
 ----------------------------------------------------------------------
-1) Added Speex Codec to MMS
-2) Added STUN Support
-3) Improved the performance by fine tunning the Threads Model
-4) Improved MMS test suite
+1) This release was specificaly targeted on Architecture changes of MMS. 
+2) Added G729 Codec
+3) Improved MMS test suite. More than 100 unit tests added. Also added the load test for Announcement Endpoint
 5) As usual fixed other bugs related to functionality and performance
 
 Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/
