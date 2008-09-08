@@ -27,7 +27,7 @@
 	<dependency>	
 		<artifactId>mobicents-core-jar</artifactId>
 		<groupId>org.mobicents.core</groupId>
-		<version>1.2.0.GA-SNAPSHOT</version>
+		<version>${mobicents.servers.jainslee.version}</version>
 	</dependency>		
 	
 	
