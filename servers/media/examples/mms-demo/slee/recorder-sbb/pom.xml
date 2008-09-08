@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>mms-demo-slee</artifactId>
 		<groupId>org.mobicents.servers.media.examples</groupId>
-		<version>1.0.0.BETA4</version>	
+		<version>1.0.0.BETA5-SNAPSHOT</version>	
     	</parent>
 	
 	<artifactId>mms-demo-recorder-sbb</artifactId>
