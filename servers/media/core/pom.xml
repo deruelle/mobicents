@@ -10,7 +10,7 @@
 
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-media-server-core</artifactId>
-	<version>1.0.0.BETA4</version>
+	<version>1.0.0.BETA5-SNAPSHOT</version>
 
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 
@@ -61,9 +61,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-media-server-core-1.0.0.BETA4</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-media-server-core-1.0.0.BETA4</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/mobicents-media-server-core-1.0.0.BETA4</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 
 	<!--  -->
