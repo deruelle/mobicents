@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>mobicents-media-server-vxml</artifactId>
 		<groupId>org.mobicents.servers.media</groupId>
-		<version>1.0.0.BETA3-SNAPSHOT</version>
+		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>voicexml-services-DU</artifactId>
@@ -31,7 +31,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
-				<version>1.0.0.BETA2-SNAPSHOT</version>
+				<version>${mobicents.tools.mavenplugin.du.version}</version>
 				<extensions>true</extensions>
 				<configuration />
 				<executions>
