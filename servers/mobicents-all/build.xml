@@ -159,6 +159,48 @@
 		<copy file="${mss.release.dir}/sip-servlets-management/build/tmp/sip-servlets-management.war" tofile="${jboss.home}/server/${jboss.config}/deploy/sip-servlets-management.war" />
 
 	</target>
+	
+	<target name="release-sip-servlets-all-and-default">
+		<antcall target="release-sip-servlets">
+			<property name="jboss.config" value="default"/>
+		</antcall>
+		<antcall target="release-sip-servlets">
+			<property name="jboss.config" value="all"/>
+		</antcall>
+		
+		<property name="base.path" value="${mss.release.dir}/sip-servlets-bootstrap/release"></property>
+
+		<!-- Build the distributable example -->
+		<exec failonerror="true" executable="${mvn.executable}" dir="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable">
+			<arg line="clean install"/>
+		</exec>
+		<copy overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
+			tofile="${jboss.home}/server/all/conf/dars/mobicents-dar.properties" />
+				
+				
+		<!-- Set up the all configuration with clustering enabled -->
+		<copy file="${base.path}/../../sip-servlets-impl/docs/failover-server-jboss.xml" 
+			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/server.xml"/>
+		<copy file="${base.path}/context-jboss.xml" 
+			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/context.xml"/>
+		<copy file="${base.path}/../../sip-servlets-impl/docs/jboss-service-all.xml" 
+			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/jboss-service.xml"/>
+		<copy file="${base.path}/webserver-xmbean.xml" 
+			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/webserver-xmbean.xml"/>
+		
+		<!-- The Sip Load Balancer -->
+		<mkdir dir="${jboss.home}/sip-balancer"/>
+		<get src="http://snapshots.jboss.org/maven2/org/mobicents/tools/sip-balancer/1.0-SNAPSHOT/sip-balancer-1.0-20080829.103906-21-jar-with-dependencies.jar" 
+		    dest="${jboss.home}/sip-balancer/sip-balancer-1.0-20080829.103906-21-jar-with-dependencies.jar" 
+		    verbose="true"
+		    usetimestamp="true"/>
+		<get src="http://mobicents.googlecode.com/svn/trunk/tools/sip-balancer/src/test/resources/lb-configuration.properties" 
+		    dest="${jboss.home}/sip-balancer/lb-configuration.properties" 
+		    verbose="true"
+		    usetimestamp="true"/>
+		
+
+	</target>
 
 	<!-- zip source -->
 
