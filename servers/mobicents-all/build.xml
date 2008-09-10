@@ -203,7 +203,9 @@
 		<copy verbose="true" overwrite="false" todir="${jboss.home}/server/all/deploy/">
 		    <fileset dir="${jboss.home}/server/default/deploy/" includes="*media*.sar/**"/>
 		</copy>
-
+		<copy verbose="true" overwrite="false" todir="${jboss.home}/server/all/lib/">
+		    <fileset dir="${jboss.home}/server/default/lib/" includes="*media*.jar/**"/>
+		</copy>
 	</target>
 
 	<!-- zip source -->
