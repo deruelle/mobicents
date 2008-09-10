@@ -19,7 +19,7 @@
 		</classpath>
 	</taskdef>
 
-	<target name="release" depends="get-jboss,unzip-jboss,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets">
+	<target name="release" depends="get-jboss,unzip-jboss,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets-all-and-default">
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
 		<antcall target="zip-release"/>
 		<antcall target="clean"/>
