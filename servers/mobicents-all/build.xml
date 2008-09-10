@@ -143,7 +143,7 @@
 		<echo>Done copying.</echo>
 		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}">
-			<arg line="clean install -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
+			<arg line="clean install -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/sip-servlets-examples/click-to-call">
@@ -176,8 +176,8 @@
 		</exec>
 		<copy overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
 			tofile="${jboss.home}/server/all/conf/dars/mobicents-dar.properties" />
-				
-				
+		<copy file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/target/simple-sip-servlet-distributable-1.0.war" tofile="${base.path}/jboss-${jboss.version}/server/all/deploy/simple-distributable.war" />
+					
 		<!-- Set up the all configuration with clustering enabled -->
 		<copy file="${base.path}/../../sip-servlets-impl/docs/failover-server-jboss.xml" 
 			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/server.xml"/>
@@ -199,6 +199,10 @@
 		    verbose="true"
 		    usetimestamp="true"/>
 		
+		<!-- Copy Media Server from default to all, because of broken release script in the tagges MMS -->
+		<copy verbose="true" overwrite="false" todir="${jboss.home}/server/all/deploy/">
+		    <fileset dir="${jboss.home}/server/default/deploy/" includes="*media*.sar/**"/>
+		</copy>
 
 	</target>
 
