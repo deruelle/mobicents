@@ -132,8 +132,6 @@
 		<!--ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/release/build.xml" target="release-mobicents-all" /-->
 		
 		<!-- this code should be moved to mss release script, to replace current target release-mc-distro -->
-		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets"/>
-		<property name="jboss.config" value="default" />
 		
 		<mkdir dir="${jboss.home}/server/${jboss.config}/conf/dars" />
 		<copy verbose="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/src/site/resources/click2call-dar.properties" toFile="${jboss.home}/server/${jboss.config}/conf/dars/mobicents-dar.properties" />
@@ -161,11 +159,13 @@
 	</target>
 	
 	<target name="release-sip-servlets-all-and-default">
+		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets"/>
+
 		<antcall target="release-sip-servlets">
-			<property name="jboss.config" value="default"/>
+			<param name="jboss.config" value="default"/>
 		</antcall>
 		<antcall target="release-sip-servlets">
-			<property name="jboss.config" value="all"/>
+			<param name="jboss.config" value="all"/>
 		</antcall>
 		
 		<property name="base.path" value="${mss.release.dir}/sip-servlets-bootstrap/release"></property>
