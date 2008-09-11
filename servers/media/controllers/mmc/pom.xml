@@ -7,7 +7,7 @@
 	<groupId>org.mobicents.servers.media.controllers</groupId>
 	<artifactId>mms-tools-mmc</artifactId>
 	<packaging>pom</packaging>
-	<name>Mobicents :: Tools  :: gwt-management-console</name>
+	<name>Mobicents :: Tools :: gwt-management-console</name>
 	<parent>
 		<artifactId>mobicents-media-server-controllers-parent</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
@@ -48,7 +48,6 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			
 			<dependency>
 				<groupId>org.mobicents.servers.media.controllers</groupId>
 				<artifactId>gwt-management-console-rpc</artifactId>
@@ -118,6 +117,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
+				<module>rpc</module>
+				<module>server</module>
+				<module>war</module>
 				<module>setup</module>
 			</modules>
 		</profile>

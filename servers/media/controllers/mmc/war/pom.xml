@@ -1,4 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 	<parent>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
 		<artifactId>mms-tools-mmc</artifactId>
@@ -7,8 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>gwt-management-console-war</artifactId>
 	<packaging>war</packaging>
-	<name>Mobicents :: Tools  :: gwt-management-console-war</name>
-
+	<name>Mobicents :: Tools :: gwt-management-console-war</name>
 	<build>
 		<plugins>
 			<!--  currently gwt supports java 1.4 (client) source -->
@@ -30,11 +33,11 @@
 					<gwtVersion>${gwt.version}</gwtVersion>
 					<logLevel>INFO</logLevel>
 					<compileTargets>
-						<value>org.mobicents.slee.container.management.console.ManagementConsole</value>
+						<value>org.mobicents.media.container.management.console.ManagementConsole</value>
 					</compileTargets>
-					<runTarget>org.mobicents.slee.container.management.console.ManagementConsole/ManagementConsole.html</runTarget>
+					<runTarget>org.mobicents.media.container.management.console.ManagementConsole/ManagementConsole.html</runTarget>
 					<generatorRootClasses>
-						<value>org.mobicents.slee.container.management.console.ManagementConsole</value>
+						<value>org.mobicents.media.container.management.console.ManagementConsole</value>
 					</generatorRootClasses>
 					<overwriteGeneratedClasses>true</overwriteGeneratedClasses>
 
@@ -74,11 +77,9 @@
 				<configuration>
 					<webXml>target/web.xml</webXml>
 				</configuration>
-			</plugin>	
+			</plugin>
 		</plugins>
 	</build>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.servers.media.controllers</groupId>
@@ -92,7 +93,6 @@
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
 			<scope>provided</scope>
-
 		</dependency>
 		<!--  coverage patch (used to generate code coverage data for GwtTestCase based tests, when -Dgwt.coverage.enable=true -->
 		<dependency>
