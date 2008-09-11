@@ -1,0 +1,33 @@
+<assembly xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/xsd/assembly-1.0.0.xsd"
+>
+    <id>with-dependencies</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory></outputDirectory>
+            <outputFileNameMapping></outputFileNameMapping>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+            <unpackOptions>
+                <excludes>
+                    <exclude>/META-INF/**.RSA</exclude>
+                    <exclude>/META-INF/**.DSA</exclude>
+                    <exclude>/META-INF/**.SF</exclude>
+                    <exclude>/META-INF/**.rsa</exclude>
+                    <exclude>/META-INF/**.dsa</exclude>
+                    <exclude>/META-INF/**.sf</exclude>
+                </excludes>
+            </unpackOptions>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>target/classes</directory>
+            <outputDirectory></outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>
