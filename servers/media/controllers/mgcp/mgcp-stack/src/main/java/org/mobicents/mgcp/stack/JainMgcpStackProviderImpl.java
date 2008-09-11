@@ -179,7 +179,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 				// SENDING RESPONSE
 				int tid = event.getTransactionHandle();
 
-				TransactionHandler handler = (TransactionHandler) runningStack.transactions.get(Integer.valueOf(tid));
+				TransactionHandler handler = (TransactionHandler) runningStack.loaclTransactions.get(Integer.valueOf(tid));
 
 				if (handler != null) {
 					handler.setCommand(false);

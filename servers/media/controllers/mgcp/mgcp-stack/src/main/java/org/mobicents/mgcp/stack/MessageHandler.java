@@ -115,8 +115,20 @@ public class MessageHandler implements Runnable {
 				}
 				
 				//TODO:
-				//Check if Tx is currently executing
+				//Check if Tx is currently executing then send provisional response
 				
+				Set<Integer> ongoingTxSet = stack.remoteTxToLocalTxMap.keySet();
+				for(Integer ongoingTx : ongoingTxSet){
+					if( ongoingTx.equals(remoteTxIdIntegere)){
+						if (logger.isDebugEnabled()) {
+							logger.debug("Received Command for ongoing Tx = "+ongoingTx );							
+						}
+						Integer tmpLoaclTID = stack.remoteTxToLocalTxMap.get(ongoingTx);
+						TransactionHandler ongoingTxHandler = stack.loaclTransactions.get(tmpLoaclTID);
+						ongoingTxHandler.sendProvisionalResponse();
+						return;
+					}
+				}
 
 				TransactionHandler handle;
 				if (verb.equalsIgnoreCase("crcx")) {
@@ -146,7 +158,7 @@ public class MessageHandler implements Runnable {
 				// String domainName = address.getHostName();
 				String tid = tokens[1];
 
-				TransactionHandler handler = (TransactionHandler) stack.transactions.get(Integer.valueOf(tid));
+				TransactionHandler handler = (TransactionHandler) stack.loaclTransactions.get(Integer.valueOf(tid));
 				if (handler == null) {
 					logger.warn("Unknown transaction: " + tid);
 					return;

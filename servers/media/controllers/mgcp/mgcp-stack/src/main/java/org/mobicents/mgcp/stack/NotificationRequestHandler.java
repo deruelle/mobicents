@@ -168,4 +168,10 @@ public class NotificationRequestHandler extends TransactionHandler {
 		}
 	}
 
+	@Override
+	protected JainMgcpResponseEvent getProvisionalResponse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

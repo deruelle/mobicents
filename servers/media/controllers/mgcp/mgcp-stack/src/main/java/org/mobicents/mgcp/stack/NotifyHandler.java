@@ -135,4 +135,10 @@ public class NotifyHandler extends TransactionHandler {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
+
+	@Override
+	protected JainMgcpResponseEvent getProvisionalResponse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -74,9 +74,9 @@ public abstract class TransactionHandler implements Runnable {
 
 	public final static int LONGTRAN_TIMER_TIMEOUT = 5000; // 5secs
 	/** Is this a transaction on a command sent or received? */
-	private boolean sent;
+	protected boolean sent;
 	/** Transaction handle sent from application to the MGCP provider. */
-	private int remoteTID;
+	protected int remoteTID;
 	/** Transaction handle sent from MGCP provider to MGCP listener */
 	private int localTID;
 	protected JainMgcpStackImpl stack;
@@ -126,7 +126,7 @@ public abstract class TransactionHandler implements Runnable {
 	public TransactionHandler(JainMgcpStackImpl stack) {
 		this.stack = stack;
 		this.localTID = GENERATOR++;
-		stack.transactions.put(Integer.valueOf(localTID), this);
+		stack.loaclTransactions.put(Integer.valueOf(localTID), this);
 		if (logger.isDebugEnabled()) {
 			logger.debug("New mgcp transaction with id localID=" + localTID);
 		}
@@ -248,7 +248,8 @@ public abstract class TransactionHandler implements Runnable {
 			logger.debug("Released transaction (local id=" + localTID + "), stop timer");
 		}
 
-		stack.transactions.remove(Integer.valueOf(localTID));
+		stack.loaclTransactions.remove(Integer.valueOf(localTID));
+		stack.remoteTxToLocalTxMap.remove(Integer.valueOf(remoteTID));
 		cancelTHISTTimerTask();
 		cancelLongtranTimer();
 		cancelReTransmissionTimer();
@@ -320,6 +321,8 @@ public abstract class TransactionHandler implements Runnable {
 	 * @return jain mgcp response event object.
 	 */
 	protected abstract JainMgcpResponseEvent decodeResponse(String message) throws ParseException;
+	
+	protected abstract JainMgcpResponseEvent getProvisionalResponse();
 
 	public void run() {
 		if (isCommand) {
@@ -327,6 +330,10 @@ public abstract class TransactionHandler implements Runnable {
 		} else {
 			this.send(this.getResponseEvent());
 		}
+	}
+	
+	protected void sendProvisionalResponse(){
+		this.send(getProvisionalResponse());
 	}
 
 	/**
@@ -473,6 +480,8 @@ public abstract class TransactionHandler implements Runnable {
 		// store original transaction handle parameter
 		// and populate with local value
 		remoteTID = event.getTransactionHandle();
+		
+		stack.remoteTxToLocalTxMap.put(new Integer(remoteTID), new Integer(localTID));
 		event.setTransactionHandle(localTID);
 
 		resetLongtranTimer();

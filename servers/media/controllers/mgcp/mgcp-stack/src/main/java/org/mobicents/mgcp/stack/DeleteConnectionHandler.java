@@ -261,6 +261,12 @@ public class DeleteConnectionHandler extends TransactionHandler {
             //not used
         }
     }
+
+	@Override
+	protected JainMgcpResponseEvent getProvisionalResponse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
 

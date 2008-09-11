@@ -53,7 +53,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 	 * received).
 	 * 
 	 */
-	protected ConcurrentHashMap<Integer, TransactionHandler> transactions = new ConcurrentHashMap<Integer, TransactionHandler>();
+	protected ConcurrentHashMap<Integer, TransactionHandler> loaclTransactions = new ConcurrentHashMap<Integer, TransactionHandler>();
+	protected ConcurrentHashMap<Integer, Integer> remoteTxToLocalTxMap = new ConcurrentHashMap<Integer, Integer>();
 	
 	protected ConcurrentHashMap<Integer, TransactionHandler> responseTx = new ConcurrentHashMap<Integer, TransactionHandler>();
 

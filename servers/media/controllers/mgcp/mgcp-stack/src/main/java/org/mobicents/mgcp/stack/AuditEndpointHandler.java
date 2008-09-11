@@ -40,4 +40,10 @@ public class AuditEndpointHandler extends TransactionHandler {
 		return null;
 	}
 
+	@Override
+	protected JainMgcpResponseEvent getProvisionalResponse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

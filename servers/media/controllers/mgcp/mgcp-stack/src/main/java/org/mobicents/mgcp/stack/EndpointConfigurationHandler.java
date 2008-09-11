@@ -184,5 +184,11 @@ public class EndpointConfigurationHandler extends TransactionHandler {
         public void sessionDescription(String sd) throws ParseException {
         }
     }
+
+	@Override
+	protected JainMgcpResponseEvent getProvisionalResponse() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
