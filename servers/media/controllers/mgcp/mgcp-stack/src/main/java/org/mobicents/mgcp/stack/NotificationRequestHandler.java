@@ -21,7 +21,7 @@ import org.mobicents.mgcp.stack.parser.Utils;
 /**
  * @author Oleg Kulikov
  * @author Amit Bhayani
- *
+ * 
  */
 
 public class NotificationRequestHandler extends TransactionHandler {
@@ -170,8 +170,13 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 	@Override
 	protected JainMgcpResponseEvent getProvisionalResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		NotificationRequestResponse provisionalresponse = null;
+		if (!sent) {
+			provisionalresponse = new NotificationRequestResponse(commandEvent.getSource(),
+					ReturnCode.Transaction_Being_Executed);
+		}
+		return provisionalresponse;
+
 	}
 
 }

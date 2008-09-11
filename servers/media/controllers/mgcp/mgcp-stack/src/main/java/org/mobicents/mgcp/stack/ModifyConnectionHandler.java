@@ -273,8 +273,12 @@ public class ModifyConnectionHandler extends TransactionHandler {
 
 	@Override
 	protected JainMgcpResponseEvent getProvisionalResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		ModifyConnectionResponse provisionalresponse = null;
+		if (!sent) {
+			provisionalresponse = new ModifyConnectionResponse(commandEvent.getSource(),
+					ReturnCode.Transaction_Being_Executed);
+		}
+		return provisionalresponse;
 	}
     
 }

@@ -7,6 +7,7 @@ import jain.protocol.ip.mgcp.message.RestartInProgress;
 import jain.protocol.ip.mgcp.message.RestartInProgressResponse;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.RestartMethod;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -135,7 +136,10 @@ public class RestartInProgressHandler extends TransactionHandler {
 
 	@Override
 	protected JainMgcpResponseEvent getProvisionalResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		RestartInProgressResponse provisionalresponse = null;
+		if (!sent) {
+			provisionalresponse = new RestartInProgressResponse(commandEvent.getSource(), ReturnCode.Transaction_Being_Executed);
+		}
+		return provisionalresponse;
 	}
 }
