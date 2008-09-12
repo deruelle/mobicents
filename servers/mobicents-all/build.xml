@@ -174,19 +174,19 @@
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable">
 			<arg line="clean install"/>
 		</exec>
-		<copy overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
+		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
 			tofile="${jboss.home}/server/all/conf/dars/mobicents-dar.properties" />
-		<copy file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/target/simple-sip-servlet-distributable-1.0.war" 
+		<copy verbose="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/target/simple-sip-servlet-distributable-1.0.war" 
 			tofile="${jboss.home}/server/all/deploy/simple-distributable.war" />
 					
 		<!-- Set up the all configuration with clustering enabled -->
-		<copy file="${base.path}/../../sip-servlets-impl/docs/failover-server-jboss.xml" 
+		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-impl/docs/failover-server-jboss.xml" 
 			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/server.xml"/>
-		<copy file="${base.path}/context-jboss.xml" 
+		<copy verbose="true" overwrite="true" file="${base.path}/context-jboss.xml" 
 			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/context.xml"/>
-		<copy file="${base.path}/../../sip-servlets-impl/docs/jboss-service-all.xml" 
+		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-impl/docs/jboss-service-all.xml" 
 			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/jboss-service.xml"/>
-		<copy file="${base.path}/webserver-xmbean.xml" 
+		<copy verbose="true" overwrite="true" file="${base.path}/webserver-xmbean.xml" 
 			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/webserver-xmbean.xml"/>
 		
 		<!-- The Sip Load Balancer -->
