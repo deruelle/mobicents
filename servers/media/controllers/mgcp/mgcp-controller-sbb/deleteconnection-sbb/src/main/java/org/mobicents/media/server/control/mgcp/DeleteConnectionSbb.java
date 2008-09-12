@@ -98,15 +98,18 @@ public abstract class DeleteConnectionSbb implements Sbb {
 
 		this.setTxId(txID);
 		this.setDeleteResponseSent(false);
+		this.setReceivedTransactionID(event.getSource());
 
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 		CallIdentifier callID = event.getCallIdentifier();
-		ConnectionIdentifier connectionID = event.getConnectionIdentifier();
+		ConnectionIdentifier connectionID = event.getConnectionIdentifier();		
 
-		this.setReceivedTransactionID(event.getSource());
-
-		// TODO : Wildcard conventions shall not be used. Send Error Response if
-		// found?
+		String enpointName = endpointID.getLocalEndpointName();
+		if (enpointName.endsWith("/$")) {
+			logger.error("Cannot execute DLCX command for Endpoint which has wild card " + enpointName);
+			sendDeleteResponse(ReturnCode.Endpoint_Unknown);
+			return;
+		}
 
 		if (endpointID != null && callID == null && connectionID == null) {
 			deleteForEndpoint(endpointID);
@@ -127,15 +130,19 @@ public abstract class DeleteConnectionSbb implements Sbb {
 
 	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
 		if (!this.getDeleteResponseSent()) {
-			DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(),
-					ReturnCode.Transaction_Executed_Normally);
-			int txID = this.getTxId();
-
-			response.setTransactionHandle(txID);
-			logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
-			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+			sendDeleteResponse(ReturnCode.Transaction_Executed_Normally);
 			this.setDeleteResponseSent(true);
 		}
+	}
+
+	private void sendDeleteResponse(ReturnCode returnCode) {
+		DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(), returnCode);
+		int txID = this.getTxId();
+
+		response.setTransactionHandle(txID);
+		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+
 	}
 
 	private void deleteForEndpoint(EndpointIdentifier endpointID) {
