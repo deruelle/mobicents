@@ -97,6 +97,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		logger.info("--> DLCX TX ID = " + txID);
 
 		this.setTxId(txID);
+		this.setDeleteResponseSent(false);
 
 		EndpointIdentifier endpointID = event.getEndpointIdentifier();
 		CallIdentifier callID = event.getCallIdentifier();
@@ -125,13 +126,16 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	}
 
 	public void onConnectionDeleted(MsConnectionEvent evt, ActivityContextInterface aci) {
-		DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(),
-				ReturnCode.Transaction_Executed_Normally);
-		int txID = this.getTxId();
+		if (!this.getDeleteResponseSent()) {
+			DeleteConnectionResponse response = new DeleteConnectionResponse(this.getReceivedTransactionID(),
+					ReturnCode.Transaction_Executed_Normally);
+			int txID = this.getTxId();
 
-		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+			response.setTransactionHandle(txID);
+			logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+			this.setDeleteResponseSent(true);
+		}
 	}
 
 	private void deleteForEndpoint(EndpointIdentifier endpointID) {
@@ -224,5 +228,9 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public abstract Object getReceivedTransactionID();
 
 	public abstract void setReceivedTransactionID(Object receivedTransactionID);
+
+	public abstract boolean getDeleteResponseSent();
+
+	public abstract void setDeleteResponseSent(boolean deleteResponseSent);
 
 }

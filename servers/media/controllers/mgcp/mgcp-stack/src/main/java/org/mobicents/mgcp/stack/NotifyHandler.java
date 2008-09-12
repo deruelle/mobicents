@@ -2,8 +2,6 @@ package org.mobicents.mgcp.stack;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
-
-import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
@@ -16,6 +14,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.text.ParseException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
 import org.mobicents.mgcp.stack.parser.Utils;
@@ -25,6 +24,8 @@ public class NotifyHandler extends TransactionHandler {
 	private Notify command;
 	private NotifyResponse response;
 
+	private Logger logger = Logger.getLogger(NotifyHandler.class);
+	
 	public NotifyHandler(JainMgcpStackImpl stack) {
 		super(stack);
 	}
@@ -47,11 +48,14 @@ public class NotifyHandler extends TransactionHandler {
 
 	@Override
 	protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Decoding Notify response = "+message);
+		}
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Something wrong while parsing the NOTIFY Response received",e);
 		}
 
 		return response;

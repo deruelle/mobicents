@@ -13,6 +13,7 @@ import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
+import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.RestartInProgressResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -146,7 +147,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
 				case Constants.CMD_NOTIFY:
 					if (logger.isDebugEnabled()) {
-						logger.debug("Sending Notify object to " + commandEvent.getEndpointIdentifier());
+						logger.debug("Sending Notify object to NotifiedEntity" + ((Notify)commandEvent).getNotifiedEntity());
 					}
 					handle = new NotifyHandler(this.runningStack);
 					break;

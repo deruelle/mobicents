@@ -176,6 +176,9 @@ public abstract class NotificationRequestSbb implements Sbb {
 	}
 
 	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("onAnnouncementComplete");
+		}
 		RequestedEvent[] requestedEvents = this.getRequestedEvents();
 
 		for (RequestedEvent requestedEvent : requestedEvents) {
@@ -183,20 +186,26 @@ public abstract class NotificationRequestSbb implements Sbb {
 			EventName eventName = requestedEvent.getEventName();
 
 			if (eventName.getEventIdentifier().intValue() == MgcpEvent.REPORT_ON_COMPLETION) {
-				Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
-						.getRequestIdentifier(), new EventName[] { eventName });
-
-				notify.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
-
-				notify.setNotifiedEntity(this.getNotifiedEntity());
-
-				JainMgcpEvent[] events = { notify };
-				mgcpProvider.sendMgcpEvents(events);
+				sendNotify(new EventName[] { eventName });
 			}
 		}
 	}
 
 	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("onConnectionTransactionFailed");
+		}
+		this.reportFailure();
+	}
+
+	public void onAnnouncementFailed(MsNotifyEvent evt, ActivityContextInterface aci) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("onAnnouncementFailed");
+		}
+		this.reportFailure();
+	}
+
+	private void reportFailure() {
 		RequestedEvent[] requestedEvents = this.getRequestedEvents();
 
 		for (RequestedEvent requestedEvent : requestedEvents) {
@@ -204,15 +213,21 @@ public abstract class NotificationRequestSbb implements Sbb {
 			EventName eventName = requestedEvent.getEventName();
 
 			if (eventName.getEventIdentifier().intValue() == MgcpEvent.REPORT_FAILURE) {
-				Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
-						.getRequestIdentifier(), new EventName[] { eventName });
-
-				notify.setNotifiedEntity(this.getNotifiedEntity());
-
-				JainMgcpEvent[] events = { notify };
-				mgcpProvider.sendMgcpEvents(events);
+				sendNotify(new EventName[] { eventName });
 			}
 		}
+	}
+
+	private void sendNotify(EventName[] eventNames) {
+		Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
+				.getRequestIdentifier(), eventNames);
+
+		notify.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
+		notify.setNotifiedEntity(this.getNotifiedEntity());
+
+		JainMgcpEvent[] events = { notify };
+		mgcpProvider.sendMgcpEvents(events);
+
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {

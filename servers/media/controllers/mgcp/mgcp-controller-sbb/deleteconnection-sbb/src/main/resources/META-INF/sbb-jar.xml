@@ -23,6 +23,11 @@
 						receivedTransactionID
 					</cmp-field-name>
 				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>
+						deleteResponseSent
+					</cmp-field-name>
+				</cmp-field>				
 			</sbb-abstract-class>
 		</sbb-classes>
 

@@ -198,15 +198,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 			String localEndpointName = msConnection.getEndpoint();
 
-			String domainName = System.getProperty("jboss.bind.address");
+			String domainName = (new StringBuffer().append(System.getProperty("jboss.bind.address")).append(":")
+					.append(mgcpProvider.getJainMgcpStack().getPort())).toString();
 
 			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(localEndpointName, domainName);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Setting SpecificEndPointId to = " + specificEndpointIdentifier.toString());
+			}
 
 			response.setSpecificEndpointIdentifier(specificEndpointIdentifier);
 		}
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
-		
+
 		logger.info(" onConnectionCreated exiting ");
 	}
 
