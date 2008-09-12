@@ -11,13 +11,15 @@ public abstract class MessageFlowHarness extends TestHarness {
 	private static Logger logger = Logger.getLogger("mgcp.test");
 
 	protected static long TRANSACTION_TIMES_OUT_FOR = 31000;
-	
+
 	protected static long STACKS_START_FOR = 1000;
-	
+
 	protected static long STACKS_SHUT_DOWN_FOR = 500;
-	
+
 	// timeout values depend on pc
 	protected static long MESSAGES_ARRIVE_FOR = 2500;
+
+	protected static long RETRANSMISSION_TRANSACTION_TIMES_OUT_FOR = 5000;
 
 	protected InetAddress caIPAddress = null;
 	protected InetAddress mgIPAddress = null;
@@ -45,9 +47,9 @@ public abstract class MessageFlowHarness extends TestHarness {
 	}
 
 	public void tearDown() throws java.lang.Exception {
-		
+
 		System.out.println("CLOSE THE STACK");
-		
+
 		if (caStack != null) {
 			caStack.close();
 			caStack = null;
@@ -57,7 +59,7 @@ public abstract class MessageFlowHarness extends TestHarness {
 			mgStack.close();
 			mgStack = null;
 		}
-		
+
 		// Wait for stack threads to release resources (e.g. port)
 		sleep(STACKS_SHUT_DOWN_FOR);
 	}
@@ -65,15 +67,19 @@ public abstract class MessageFlowHarness extends TestHarness {
 	protected static void waitForTimeout() {
 		sleep(TRANSACTION_TIMES_OUT_FOR);
 	}
-	
+
+	protected static void waitForRetransmissionTimeout() {
+		sleep(RETRANSMISSION_TRANSACTION_TIMES_OUT_FOR);
+	}
+
 	public static void waitForMessage() {
 		sleep(MESSAGES_ARRIVE_FOR);
 	}
 
 	protected static void sleep(long sleepFor) {
-		try{
+		try {
 			Thread.sleep(sleepFor);
-		}catch (InterruptedException ex) {
+		} catch (InterruptedException ex) {
 			// Ignore
 		}
 	}

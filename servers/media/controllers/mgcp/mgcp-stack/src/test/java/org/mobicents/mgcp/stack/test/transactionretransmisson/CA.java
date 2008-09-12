@@ -5,8 +5,10 @@ import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
+import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
@@ -14,6 +16,7 @@ import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.mgcp.stack.test.createconnection.CreateConnectionTest;
 
 public class CA implements JainMgcpExtendedListener {
 
@@ -23,13 +26,14 @@ public class CA implements JainMgcpExtendedListener {
 	private int mgStack = 0;
 	private boolean finalResponseReceived = false;
 	private boolean provisionalResponseReceived = false;
+	private String command;
 
 	public CA(JainMgcpStackProviderImpl caProvider, JainMgcpStackProviderImpl mgwProvider) {
-		this.caProvider = caProvider;
+		this.caProvider = caProvider;		
 		mgStack = mgwProvider.getJainMgcpStack().getPort();
 	}
 
-	public void sendCreateConnection() {
+	public void sendReTransmissionCreateConnection() {
 
 		try {
 			caProvider.addJainMgcpListener(this);
@@ -59,10 +63,35 @@ public class CA implements JainMgcpExtendedListener {
 			TxRetransmissionTest.fail("Unexpected Exception");
 		}
 	}
+	
+	public void sendReTransmissionDeleteConnection() {
+
+		try {
+			caProvider.addJainMgcpListener(this);
+
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/", "127.0.0.1:" + mgStack);
+
+			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier((caProvider.getUniqueCallIdentifier())
+					.toString());
+
+			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
+			deleteConnection.setConnectionIdentifier(connectionIdentifier);
+			deleteConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+			caProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+
+			logger.debug(" DeleteConnection command sent for TxId " + deleteConnection.getTransactionHandle()
+					+ " and ConnectionIdentifier " + connectionIdentifier);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			CreateConnectionTest.fail("Unexpected Exception");
+		}
+	}	
 
 	public void checkState() {
-		TxRetransmissionTest.assertTrue("Expect to receive CRCX Provisional Response", provisionalResponseReceived);
-		TxRetransmissionTest.assertTrue("Expect to receive CRCX Final Response", finalResponseReceived);
+		TxRetransmissionTest.assertTrue("Expect to receive "+command+" Provisional Response", provisionalResponseReceived);
+		TxRetransmissionTest.assertTrue("Expect to receive "+command+" Final Response", finalResponseReceived);
 
 	}
 
@@ -71,13 +100,13 @@ public class CA implements JainMgcpExtendedListener {
 
 	}
 
-	public void transactionRxTimedOut(JainMgcpCommandEvent command) {
-		logger.info("transactionRxTimedOut " + command);
+	public void transactionRxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+		logger.info("transactionRxTimedOut " + jainMgcpCommandEvent);
 
 	}
 
-	public void transactionTxTimedOut(JainMgcpCommandEvent command) {
-		logger.info("transactionTxTimedOut " + command);
+	public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+		logger.info("transactionTxTimedOut " + jainMgcpCommandEvent);
 
 	}
 
@@ -88,6 +117,8 @@ public class CA implements JainMgcpExtendedListener {
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
+		
+		case Constants.RESP_DELETE_CONNECTION:
 		case Constants.RESP_CREATE_CONNECTION:
 
 			if (isProvisional(jainmgcpresponseevent.getReturnCode())) {
@@ -96,7 +127,7 @@ public class CA implements JainMgcpExtendedListener {
 				finalResponseReceived = true;
 			}
 
-			break;
+			break;			
 		default:
 			logger.warn("This RESPONSE is unexpected " + jainmgcpresponseevent);
 			break;
@@ -108,6 +139,14 @@ public class CA implements JainMgcpExtendedListener {
 	private static boolean isProvisional(ReturnCode rc) {
 		final int rval = rc.getValue();
 		return ((99 < rval) && (rval < 200));
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
 }

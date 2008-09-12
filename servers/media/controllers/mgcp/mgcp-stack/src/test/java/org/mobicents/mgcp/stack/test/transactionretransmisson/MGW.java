@@ -1,15 +1,16 @@
 package org.mobicents.mgcp.stack.test.transactionretransmisson;
 
-import java.util.TooManyListenersException;
-
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
+
+import java.util.TooManyListenersException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -20,11 +21,13 @@ public class MGW implements JainMgcpExtendedListener {
 	private static Logger logger = Logger.getLogger(MGW.class);
 	private boolean finalResponseSent = false;
 	private boolean provisionalResponseSent = false;
+	private String command;
 
 	JainMgcpStackProviderImpl mgwProvider;
 
 	public MGW(JainMgcpStackProviderImpl mgwProvider) {
 		this.mgwProvider = mgwProvider;
+		
 		try {
 			this.mgwProvider.addJainMgcpListener(this);
 		} catch (TooManyListenersException e) {
@@ -34,8 +37,8 @@ public class MGW implements JainMgcpExtendedListener {
 	}
 
 	public void checkState() {
-		TxRetransmissionTest.assertTrue("Expect to sent Provisional CRCX Response", provisionalResponseSent);
-		TxRetransmissionTest.assertTrue("Expect to sent Final CRCX Response", finalResponseSent);
+		TxRetransmissionTest.assertTrue("Expect to sent Provisional "+command+" Response", provisionalResponseSent);
+		TxRetransmissionTest.assertTrue("Expect to sent Final "+command+" Response", finalResponseSent);
 	}
 
 	public void transactionEnded(int handle) {
@@ -43,13 +46,13 @@ public class MGW implements JainMgcpExtendedListener {
 
 	}
 
-	public void transactionRxTimedOut(JainMgcpCommandEvent command) {
-		logger.info("transactionRxTimedOut " + command);
+	public void transactionRxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+		logger.info("transactionRxTimedOut " + jainMgcpCommandEvent);
 
 	}
 
-	public void transactionTxTimedOut(JainMgcpCommandEvent command) {
-		logger.info("transactionTxTimedOut " + command);
+	public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+		logger.info("transactionTxTimedOut " + jainMgcpCommandEvent);
 
 	}
 
@@ -69,21 +72,27 @@ public class MGW implements JainMgcpExtendedListener {
 
 			// Let us sleep for 4.5 Sec which will fire the CRCX command again
 			// from CA.
-
-			try {
-				Thread.sleep(4500);
-				// Assuming that stack must have sent provisional response
-				provisionalResponseSent = true;
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sleep();
 
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 
 			finalResponseSent = true;
 
 			break;
+			
+		case Constants.CMD_DELETE_CONNECTION:
+
+			DeleteConnectionResponse deleteConnectionResponse = new DeleteConnectionResponse(jainmgcpcommandevent
+					.getSource(), ReturnCode.Transaction_Executed_Normally);
+
+			deleteConnectionResponse.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			sleep();
+			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnectionResponse });
+
+			finalResponseSent = true;
+
+			break;
+			
 		default:
 			logger.warn("This REQUEST is unexpected " + jainmgcpcommandevent);
 			break;
@@ -95,6 +104,25 @@ public class MGW implements JainMgcpExtendedListener {
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.info("processMgcpResponseEvent " + jainmgcpresponseevent);
 
+	}
+
+	public String getCommand() {
+		return command;
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	
+	private void sleep(){
+		try {
+			Thread.sleep(4500);
+			// Assuming that stack must have sent provisional response
+			provisionalResponseSent = true;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

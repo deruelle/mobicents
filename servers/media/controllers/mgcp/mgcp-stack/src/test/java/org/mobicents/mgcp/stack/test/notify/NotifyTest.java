@@ -1,17 +1,17 @@
-package org.mobicents.mgcp.stack.test.transactionretransmisson;
+package org.mobicents.mgcp.stack.test.notify;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.test.MessageFlowHarness;
 
-public class TxRetransmissionTest extends MessageFlowHarness {
+public class NotifyTest extends MessageFlowHarness {
 
 	private static Logger logger = Logger.getLogger("mgcp.test");
 
 	private CA ca;
 	private MGW mgw;
 
-	public TxRetransmissionTest() {
-		super("TxRetransmissionTest");
+	public NotifyTest() {
+		super("NotifyTest");
 	}
 
 	public void setUp() {
@@ -27,18 +27,9 @@ public class TxRetransmissionTest extends MessageFlowHarness {
 		}
 	}
 
-	public void testReTransmissionCreateConnection() {
-		ca.setCommand("CRCX");
-		mgw.setCommand("CRCX");
-		this.ca.sendReTransmissionCreateConnection();
-		waitForRetransmissionTimeout();
-	}
-
-	public void testReTransmissionDeleteConnection() {
-		ca.setCommand("DLCX");
-		mgw.setCommand("DLCX");
-		this.ca.sendReTransmissionDeleteConnection();
-		waitForRetransmissionTimeout();
+	public void testNotify() {
+		this.ca.sendNotify();
+		waitForMessage();
 	}
 
 	public void tearDown() {
