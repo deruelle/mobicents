@@ -34,7 +34,11 @@ public class DeleteConnectionTest extends MessageFlowHarness {
 	}
 
 	public void tearDown() {
+		try {
+			super.tearDown();
+		} catch (Exception ex) {
 
+		}
 		this.ca.checkState();
 		this.mgw.checkState();
 		logTestCompleted();
