@@ -1,0 +1,141 @@
+/*****************************
+* GWT
+*****************************/
+
+.gwt-TextBox {
+	border: 1px solid #71AFAC;
+	height: 20px;
+}
+
+.gwt-TabPanel {
+	
+}
+
+.gwt-TabPanelBottom {
+	background-color: #A6DDF2;
+	border-bottom: 1px solid #71AFAC;
+	border-right: 1px solid #71AFAC;
+	border-left: 1px solid #71AFAC;
+}
+
+.gwt-TabBar {
+	
+}
+
+.gwt-TabBarFirst {
+	-moz-box-sizing: border-box;
+	border-bottom: 1px solid #71AFAC;
+	border-right: 1px solid #71AFAC;
+}
+
+.gwt-TabBarRest {
+	-moz-box-sizing: border-box;
+	border-bottom: 1px solid #71AFAC;
+}
+
+.gwt-TabBarItem {
+	background-color: #76D2BD;
+	border-top: 1px solid #71AFAC;
+	border-right: 1px solid #71AFAC;
+	border-bottom: 1px solid #71AFAC;
+	font-weight: normal;
+	padding-left: 3px;
+	padding-right: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.gwt-TabBarItem-selected {
+	background-color: #A6DDF2;
+	border-bottom: 1px solid #A6DDF2;
+	font-weight: bold;
+	cursor: default;
+}
+
+.gwt-FileUpload {
+	height: 20px;
+}
+
+.gwt-Button {
+	height: 22px;
+}
+
+gwt-Hyperlink {	
+}
+
+.gwt-MenuBar { 
+	color: #000044;
+	background-color: #8e8eff;
+	border: 1px solid #000088;
+	cursor: default;
+	margin: 0px;
+	padding: 0px;
+ }
+.gwt-MenuBar .gwt-MenuItem {
+	color: #000044;
+	cursor: default;
+	margin: 0px;
+	padding: 2px;
+}
+.gwt-MenuBar .gwt-MenuItem-selected {
+	color: #D2EDF8;
+	background-color: #333399;
+	cursor: default;
+	margin: 0px;
+	padding: 2px;
+}
+
+
+.gwt-StackPanel { 
+	background-color: #A6DDF2;
+	border-bottom: 1px solid #A6DDF2;
+	font-weight: bold;
+	cursor: default;
+	
+}
+.gwt-StackPanel .gwt-StackPanelItem { 
+	background-color: #76D2BD;
+	border-top: 1px solid #71AFAC;
+	border-right: 1px solid #71AFAC;
+	border-bottom: 1px solid #71AFAC;
+	font-weight: normal;
+	padding-left: 3px;
+	padding-right: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	cursor: pointer;
+	cursor: hand;
+ }
+.gwt-StackPanel .gwt-StackPanelItem-selected {
+	
+	background-color: #D5F3DE;
+	border: 1px solid #83DA9E;
+	padding: 2px;
+	font-family: arial, verdana, sans, helvetica, sans-serif;
+	font-weight: normal;
+	padding-left: 3px;
+	padding-right: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	cursor: pointer;
+	cursor: hand;
+ }
+
+
+.gwt-Tree {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.gwt-Tree .gwt-TreeItem {
+	font-size: 80%;
+	cursor: default;
+}
+
+.gwt-Tree .gwt-TreeItem-selected {
+	background-color: #C3D9FF;
+}
+
+
