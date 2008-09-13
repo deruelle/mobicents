@@ -26,7 +26,7 @@
 		<module>mgcp/mgcp-stack</module>
 		<module>mgcp/mgcp-ra</module>
 		<module>mgcp/mgcp-controller-sbb</module>
-		<module>mmc</module>
+		<module>mms-console</module>
 	</modules>
 	
 	<!-- RELEASE STUFF -->
