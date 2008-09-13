@@ -11,7 +11,7 @@
 
 <server>    
     <mbean code="org.mobicents.media.server.impl.jmx.rtp.RTPManager"
-        name="media.mobicents:service=RTP">
+        name="media.mobicents:service=RTPManager,QID=1">
         <attribute name="JndiName">java:media/mobicents/protocol/RTP</attribute>
         <attribute name="BindAddress">${jboss.bind.address}</attribute>
         <attribute name="Jitter">60</attribute>
