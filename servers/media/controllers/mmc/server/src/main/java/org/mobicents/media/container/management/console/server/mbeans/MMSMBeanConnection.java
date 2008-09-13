@@ -38,15 +38,15 @@ import org.mobicents.media.container.management.console.client.ManagementConsole
  * @author Stefano Zappaterra
  * 
  */
-public class SleeMBeanConnection {
+public class MMSMBeanConnection {
 	
-	private SleeManagementMBeanUtils sleeManagementMBeanUtils;
+	private MMSManagementMBeanUtils sleeManagementMBeanUtils;
 
-	public SleeMBeanConnection() throws ManagementConsoleException {
-		sleeManagementMBeanUtils = new SleeManagementMBeanUtils();
+	public MMSMBeanConnection() throws ManagementConsoleException {
+		sleeManagementMBeanUtils = new MMSManagementMBeanUtils();
 	}
 
-	public SleeManagementMBeanUtils getSleeManagementMBeanUtils() {
+	public MMSManagementMBeanUtils getMMSManagementMBeanUtils() {
 		return sleeManagementMBeanUtils;
 	}
 }

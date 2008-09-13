@@ -33,7 +33,7 @@
 package org.mobicents.media.container.management.console.server;
 
 import org.mobicents.media.container.management.console.client.ManagementConsoleException;
-import org.mobicents.media.container.management.console.server.mbeans.SleeMBeanConnection;
+import org.mobicents.media.container.management.console.server.mbeans.MMSMBeanConnection;
 
 /**
  * @author Stefano Zappaterra
@@ -43,11 +43,11 @@ public class ManagementConsole {
 
 	private static ManagementConsole singleton;
 
-	private SleeMBeanConnection sleeConnection;
+	private MMSMBeanConnection sleeConnection;
 
 	
 	private ManagementConsole() throws ManagementConsoleException {
-		sleeConnection = new SleeMBeanConnection();
+		sleeConnection = new MMSMBeanConnection();
 
 	}
 
@@ -64,7 +64,7 @@ public class ManagementConsole {
 		return singleton;
 	}
 
-	public SleeMBeanConnection getSleeConnection() {
+	public MMSMBeanConnection getMMSConnection() {
 		return sleeConnection;
 	}
 

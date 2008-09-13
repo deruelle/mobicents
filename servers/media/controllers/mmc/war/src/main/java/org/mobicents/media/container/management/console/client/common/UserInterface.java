@@ -32,6 +32,8 @@
  */
 package org.mobicents.media.container.management.console.client.common;
 
+import org.mobicents.media.container.management.console.client.common.pages.RTPManagementPage;
+
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -65,7 +67,7 @@ public class UserInterface extends VerticalPanel implements HasHorizontalAlignme
         //smartTabPanel.add(LogManagementPage.getInfo());
 		//smartTabPanel.add(AlarmsPage.getInfo());
 		//smartTabPanel.add(ProfilesPage.getInfo());					
-
+		smartTabPanel.add(RTPManagementPage.getInfo());	
 		add(topPanel);
 		add(smartTabPanel);
 		add(logPanel);
@@ -73,6 +75,7 @@ public class UserInterface extends VerticalPanel implements HasHorizontalAlignme
 		setCellHeight(smartTabPanel, "100%");
 		
 		RootPanel.get().add(this);
+
 	}
 	
 	static public LogPanel getLogPanel() {

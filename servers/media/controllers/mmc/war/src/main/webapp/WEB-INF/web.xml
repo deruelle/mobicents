@@ -17,7 +17,16 @@
 	</servlet>
 	
 	 -->
-	
+	<servlet>
+		<servlet-name>RTPManagementService</servlet-name>
+		<servlet-class>
+			org.mobicents.media.container.management.console.server.rtp.RTPManagementServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RTPManagementService</servlet-name>
+		<url-pattern>/RTPManagementService</url-pattern>
+	</servlet-mapping>
 	<listener>
 		<listener-class>
 			org.mobicents.media.container.management.console.server.ManagementConsoleContextListener

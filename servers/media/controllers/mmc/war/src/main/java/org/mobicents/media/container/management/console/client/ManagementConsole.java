@@ -46,6 +46,6 @@ public class ManagementConsole implements EntryPoint {
 	public void onModuleLoad() {
 		UserInterface.getInstance();
 		
-		Logger.info("Mobicents Management Console ready");
+		Logger.info("Mobicents Media Server Management Console ready");
 	}
 }

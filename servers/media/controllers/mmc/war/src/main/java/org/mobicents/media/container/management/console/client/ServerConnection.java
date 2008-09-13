@@ -32,69 +32,35 @@
  */
 package org.mobicents.media.container.management.console.client;
 
+import org.mobicents.media.container.management.console.client.rtp.RTPManagementService;
+import org.mobicents.media.container.management.console.client.rtp.RTPManagementServiceAsync;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.ServiceDefTarget;
+
 
 /**
- * @author Stefano Zappaterra
  * 
+ * <br><br>Super project:  mobicents-media-server-controllers
+ * <br>12:39:51 2008-09-12	
+ * <br>
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski </a> 
  */
 public class ServerConnection {
 
-	//final static public ComponentsServiceAsync componentsService;
-
-	//final static public DeployableUnitsServiceAsync deployableUnitsService;
-	
-	//final static public SleeStateServiceAsync sleeStateServiceAsync;
-	
-	//final static public ServicesServiceAsync servicesServiceAsync;
-	
-	//final static public UsageServiceAsync usageServiceAsync;
-	
-	//final static public ResourceServiceAsync resourceServiceAsync;
-    
-    //final static public ActivityServiceAsync activityServiceAsync;
-    
-    //final static public SbbEntitiesServiceAsync sbbEntitiesServiceAsync;
+	final static public RTPManagementServiceAsync rtpManagementServiceAsync;
 	
     //final static public LogServiceAsync logServiceAsync;
     
-	//static {
+	static {
 		
-	//	componentsService = (ComponentsServiceAsync) GWT.create(ComponentsService.class);
-	//	ServiceDefTarget componentsEndpoint = (ServiceDefTarget) componentsService;
-	//	componentsEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/ComponentsService");
-		
-	//	deployableUnitsService = (DeployableUnitsServiceAsync) GWT.create(DeployableUnitsService.class);
-	//	ServiceDefTarget deployableUnitsEndpoint = (ServiceDefTarget) deployableUnitsService;
-	//	deployableUnitsEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/DeployableUnitsService");
-	
-	//	sleeStateServiceAsync = (SleeStateServiceAsync) GWT.create(SleeStateService.class);
-	//	ServiceDefTarget sleeStateEndpoint = (ServiceDefTarget) sleeStateServiceAsync;
-	//	sleeStateEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/SleeStateService");
-
-	//	servicesServiceAsync = (ServicesServiceAsync) GWT.create(ServicesService.class);
-	//	ServiceDefTarget servicesEndpoint = (ServiceDefTarget) servicesServiceAsync;
-	//	servicesEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/ServicesService");
-		
-	//	usageServiceAsync = (UsageServiceAsync) GWT.create(UsageService.class);
-	//	ServiceDefTarget usageEndpoint = (ServiceDefTarget) usageServiceAsync;
-	//	usageEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/UsageService");
-		
-	//	resourceServiceAsync = (ResourceServiceAsync) GWT.create(ResourceService.class);
-	//	ServiceDefTarget resourceEndpoint = (ServiceDefTarget) resourceServiceAsync;
-	//	resourceEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/ResourceService");
-        
-    //   activityServiceAsync = (ActivityServiceAsync) GWT.create(ActivityService.class);
-    //    ServiceDefTarget activityEndpoint = (ServiceDefTarget) activityServiceAsync;
-    //   activityEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/ActivityService");
-    //    
-    //    sbbEntitiesServiceAsync = (SbbEntitiesServiceAsync) GWT.create(SbbEntitiesService.class);
-    //    ServiceDefTarget sbbEntitiesEndpoint = (ServiceDefTarget) sbbEntitiesServiceAsync;
-    //    sbbEntitiesEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/SbbEntitiesService");
-    //   
+		rtpManagementServiceAsync=(RTPManagementServiceAsync) GWT.create(RTPManagementService.class);
+		ServiceDefTarget rtpManagementServiceAsyncEndpoint = (ServiceDefTarget) rtpManagementServiceAsync;
+		rtpManagementServiceAsyncEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.media.container.management.console.ManagementConsole", "") + "/RTPManagementService");
     //    logServiceAsync = (LogServiceAsync) GWT.create(LogService.class);
     //    ServiceDefTarget logEndpoint = (ServiceDefTarget) logServiceAsync;
     //    logEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/LogService");
     //    
-	//}
+	}
 	
 }

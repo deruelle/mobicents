@@ -38,18 +38,20 @@ package org.mobicents.media.container.management.console.server;
  *
  */
 public class Logger {
-	private static org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger(ManagementConsole.class);
+	//private static org.jboss.logging.Logger logger = org.jboss.logging.Logger.getLogger(ManagementConsole.class);
 	//private static org.apache.log4j.Logger logger=org.apache.log4j.Logger.getLogger(ManagementConsole.class);
+	private static java.util.logging.Logger logger=java.util.logging.Logger.getLogger(ManagementConsole.class.getCanonicalName());
 	static public void info(String s) {
 		logger.info(s);
 	}
 	
 	static public void error(String s) {
-		logger.error(s);
+		//logger.error(s);
+		logger.severe(s);
 	}
 
 	static public void warn(String s) {
-		logger.warn(s);
+		logger.info(s);
 	}
 
 }
