@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA4-SNAPSHOT</version>
+		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-media-server-test-suite</artifactId>
@@ -16,6 +16,11 @@
 	<name>Mobicents Media Server Test Suite:: ${pom.artifactId}</name>
 
 	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>mobicents-media-server-constants</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
 		<dependency>
 			<artifactId>mobicents-media-server-spi</artifactId>
 			<groupId>${pom.groupId}</groupId>

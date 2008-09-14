@@ -83,8 +83,9 @@ public class EchoLoadTest {
 				Runnable ua = null;
 				switch (testIdentifier) {
 				case EchoLoadTest.ECHO_LOAD_TEST:
-					ua = new UA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
-							provider, this);
+//					ua = new UA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+//							provider, this);
+					ua = new UA();
 					break;
 
 				case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:
@@ -131,8 +132,9 @@ public class EchoLoadTest {
 
 			switch (testIdentifier) {
 			case EchoLoadTest.ECHO_LOAD_TEST:
-				ua = new UA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
-						provider, this);
+//				ua = new UA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+//						provider, this);
+				ua = new UA();
 				break;
 
 			case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:

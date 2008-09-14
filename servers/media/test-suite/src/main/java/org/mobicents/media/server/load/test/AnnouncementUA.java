@@ -9,6 +9,7 @@ import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
+import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConflictingParameterException;
@@ -42,8 +43,8 @@ import javax.sdp.SessionDescription;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.sdp.AVProfile;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
@@ -72,6 +73,8 @@ public class AnnouncementUA implements Runnable {
 
 	private boolean openRTP = false;
 
+	private boolean oc = true;
+
 	public AnnouncementUA(int UACount, InetAddress clientMachineIPAddress, String jbossBindAddress,
 			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest) {
 		this.UACount = UACount;
@@ -88,6 +91,7 @@ public class AnnouncementUA implements Runnable {
 
 	public void run() {
 		logger.info(this.name + "Starting the AnnouncementUA = " + this.name);
+		oc = true;
 
 		try {
 			this.setTaskCompleted(false);
@@ -97,7 +101,7 @@ public class AnnouncementUA implements Runnable {
 
 			CallIdentifier callID = provider.getUniqueCallIdentifier();
 
-			endpointID = new EndpointIdentifier("media/trunk/Announcement/" + this.UACount, jbossBindAddress + ":"
+			endpointID = new EndpointIdentifier("media/trunk/Announcement/$", jbossBindAddress + ":"
 					+ serverMGCPStackPort);
 
 			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
@@ -157,6 +161,17 @@ public class AnnouncementUA implements Runnable {
 				logger.info(name + " Announcement Completed Successfully");
 				// echoLoadTest.addTaskCompletedSuccessfully();
 
+				// Lets test if this is OC or OF
+
+				Notify notify = (Notify) command;
+				EventName[] eventNames = notify.getObservedEvents();
+				for (EventName eventName : eventNames) {
+					if (eventName.getEventIdentifier().intValue() == MgcpEvent.of.intValue()) {
+						logger.warn(name + " Announcement Failed");
+						oc = false;
+					}
+				}
+
 				// Send NotifyResponse
 				NotifyResponse notifyResponse = new NotifyResponse(command.getSource(),
 						ReturnCode.Transaction_Executed_Normally);
@@ -188,13 +203,16 @@ public class AnnouncementUA implements Runnable {
 
 			switch (returnCode.getValue()) {
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-				connectionIdentifier = ((CreateConnectionResponse) responseEvent).getConnectionIdentifier();
+				connectionIdentifier = responseEvent.getConnectionIdentifier();
+				endpointID = responseEvent.getSpecificEndpointIdentifier();
+				
 				logger
 						.debug(name + " TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
-								+ connectionIdentifier);
-				
-				//Before Sending Notification lets Open RTP Session to Play Audio in case 
+								+ connectionIdentifier+ "endpointID = "+endpointID);
 
+				// Before Sending Notification lets Open RTP Session to Play
+				// Audio in case
+				
 				sendNotificationRequestMGCPRequest();
 
 				break;
@@ -210,7 +228,11 @@ public class AnnouncementUA implements Runnable {
 
 		private void processDeleteConnectionResponse(DeleteConnectionResponse responseEvent) {
 			logger.debug(name + " Connection deleted at server, do the clean up here");
-			echoLoadTest.addTaskCompletedSuccessfully();
+			if (oc) {
+				echoLoadTest.addTaskCompletedSuccessfully();
+			} else {
+				echoLoadTest.addTaskCompletedFailure();
+			}
 			cleanUp();
 
 		}
@@ -285,7 +307,7 @@ public class AnnouncementUA implements Runnable {
 
 		private void sendNotificationRequestMGCPRequest() {
 
-			String HELLO_WORLD = "http://" + jbossBindAddress + ":8080/mms-load-test/audio/result"+ UACount +".wav";
+			String HELLO_WORLD = "http://" + jbossBindAddress + ":8080/mms-load-test/audio/result" + UACount + ".wav";
 
 			NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, provider
 					.getUniqueRequestIdentifier());
@@ -369,8 +391,8 @@ public class AnnouncementUA implements Runnable {
 			// set attributes for formats
 			Vector<Attribute> attributes = new Vector<Attribute>();
 			for (int i = 0; i < formats.length; i++) {
-				Format format = (Format) fmts.get(new Integer(formats[i]));
-				attributes.add(sdpFactory.createAttribute("rtpmap", format.toString()));
+				RTPAudioFormat format = (RTPAudioFormat) fmts.get(new Integer(formats[i]));
+				attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
 				if (format.getEncoding().contains("g729"))
 					g729 = true;
 			}
