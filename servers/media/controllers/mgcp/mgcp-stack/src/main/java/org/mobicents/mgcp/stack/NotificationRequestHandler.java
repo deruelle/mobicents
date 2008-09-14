@@ -40,7 +40,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
 			parser.parse(message);
@@ -52,7 +52,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
@@ -64,7 +64,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected String encode(JainMgcpCommandEvent event) {
+	public String encode(JainMgcpCommandEvent event) {
 		NotificationRequest req = (NotificationRequest) event;
 		StringBuffer buffer = new StringBuffer();
 
@@ -97,7 +97,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected String encode(JainMgcpResponseEvent event) {
+	public String encode(JainMgcpResponseEvent event) {
 
 		NotificationRequestResponse response = (NotificationRequestResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
@@ -169,7 +169,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		NotificationRequestResponse provisionalresponse = null;
 		if (!sent) {
 			provisionalresponse = new NotificationRequestResponse(commandEvent.getSource(),

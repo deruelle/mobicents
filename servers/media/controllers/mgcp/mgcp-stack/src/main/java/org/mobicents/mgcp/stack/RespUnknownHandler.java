@@ -14,33 +14,33 @@ public class RespUnknownHandler extends TransactionHandler {
 	}
 	
 	@Override
-	protected JainMgcpCommandEvent decodeCommand(String message)
+	public JainMgcpCommandEvent decodeCommand(String message)
 			throws ParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected JainMgcpResponseEvent decodeResponse(String message)
+	public JainMgcpResponseEvent decodeResponse(String message)
 			throws ParseException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected String encode(JainMgcpCommandEvent event) {
+	public String encode(JainMgcpCommandEvent event) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected String encode(JainMgcpResponseEvent event) {
+	public String encode(JainMgcpResponseEvent event) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		// TODO Auto-generated method stub
 		return null;
 	}

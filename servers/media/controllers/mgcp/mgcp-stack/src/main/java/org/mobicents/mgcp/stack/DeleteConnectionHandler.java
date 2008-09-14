@@ -57,7 +57,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		super(stack, address, port);
 	}
 
-	protected JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Decoding delete connection command");
 		}
@@ -72,7 +72,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		return command;
 	}
 
-	protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Decoding delete connection response command");
 		}
@@ -87,7 +87,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		return response;
 	}
 
-	protected String encode(JainMgcpCommandEvent event) {
+	public String encode(JainMgcpCommandEvent event) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Encoding DeleteConnection object into MGCP delete connection command");
 		}
@@ -126,7 +126,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		return msg;
 	}
 
-	protected String encode(JainMgcpResponseEvent event) {
+	public String encode(JainMgcpResponseEvent event) {
 		DeleteConnectionResponse response = (DeleteConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
@@ -140,7 +140,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		return msg;
 	}
 
-	private class CommandContentHandle implements MgcpContentHandler {
+	public class CommandContentHandle implements MgcpContentHandler {
 
 		public CommandContentHandle() {
 		}
@@ -257,7 +257,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		DeleteConnectionResponse provisionalResponse = null;
 
 		if (!sent) {

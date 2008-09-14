@@ -59,7 +59,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         super(stack, address, port);
     }
     
-    protected JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+    public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
         if (logger.isDebugEnabled()) {
             logger.debug("Decoding modify connection command");
         }
@@ -75,7 +75,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         return command;
     }
     
-    protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+    public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
         if (logger.isDebugEnabled()) {
             logger.debug("Decoding create connection response command");
         }
@@ -91,7 +91,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         return response;
     }
     
-    protected String encode(JainMgcpCommandEvent event) {
+    public String encode(JainMgcpCommandEvent event) {
         if (logger.isDebugEnabled()) {
             logger.debug("Encoding ModifyConnection object into MGCP modify connection command");
         }
@@ -137,7 +137,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         return msg;
     }
     
-    protected String encode(JainMgcpResponseEvent event) {
+    public String encode(JainMgcpResponseEvent event) {
         ModifyConnectionResponse response = (ModifyConnectionResponse) event;
         ReturnCode returnCode = response.getReturnCode();
         
@@ -272,7 +272,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
     }
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		ModifyConnectionResponse provisionalresponse = null;
 		if (!sent) {
 			provisionalresponse = new ModifyConnectionResponse(commandEvent.getSource(),

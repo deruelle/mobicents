@@ -284,7 +284,7 @@ public abstract class TransactionHandler implements Runnable {
 	 *            the command event object.
 	 * @return the encoded MGCP message.
 	 */
-	protected abstract String encode(JainMgcpCommandEvent event);
+	public abstract String encode(JainMgcpCommandEvent event);
 
 	/**
 	 * Encodes response event object into MGCP response message.
@@ -296,7 +296,7 @@ public abstract class TransactionHandler implements Runnable {
 	 *            the response event object.
 	 * @return the encoded MGCP message.
 	 */
-	protected abstract String encode(JainMgcpResponseEvent event);
+	public abstract String encode(JainMgcpResponseEvent event);
 
 	/**
 	 * Decodes MGCP command message into jain mgcp command event object.
@@ -308,7 +308,7 @@ public abstract class TransactionHandler implements Runnable {
 	 *            message
 	 * @return jain mgcp command event object.
 	 */
-	protected abstract JainMgcpCommandEvent decodeCommand(String message) throws ParseException;
+	public abstract JainMgcpCommandEvent decodeCommand(String message) throws ParseException;
 
 	/**
 	 * Decodes MGCP response message into jain mgcp response event object.
@@ -320,9 +320,9 @@ public abstract class TransactionHandler implements Runnable {
 	 *            message
 	 * @return jain mgcp response event object.
 	 */
-	protected abstract JainMgcpResponseEvent decodeResponse(String message) throws ParseException;
+	public abstract JainMgcpResponseEvent decodeResponse(String message) throws ParseException;
 	
-	protected abstract JainMgcpResponseEvent getProvisionalResponse();
+	public abstract JainMgcpResponseEvent getProvisionalResponse();
 
 	public void run() {
 		if (isCommand) {

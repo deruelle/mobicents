@@ -37,7 +37,7 @@ public class RestartInProgressHandler extends TransactionHandler {
     }
 
     @Override
-    protected JainMgcpCommandEvent decodeCommand(String message)
+    public JainMgcpCommandEvent decodeCommand(String message)
             throws ParseException {
         MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
         try {
@@ -49,7 +49,7 @@ public class RestartInProgressHandler extends TransactionHandler {
     }
 
     @Override
-    protected JainMgcpResponseEvent decodeResponse(String message)
+    public JainMgcpResponseEvent decodeResponse(String message)
             throws ParseException {
         MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
         try {
@@ -61,7 +61,7 @@ public class RestartInProgressHandler extends TransactionHandler {
     }
 
     @Override
-    protected String encode(JainMgcpCommandEvent event) {
+    public String encode(JainMgcpCommandEvent event) {
         RestartInProgress rsip = (RestartInProgress) event;
         StringBuffer message = new StringBuffer();
         message.append("RSIP " + event.getTransactionHandle() + " " +
@@ -78,7 +78,7 @@ public class RestartInProgressHandler extends TransactionHandler {
     }
 
     @Override
-    protected String encode(JainMgcpResponseEvent event) {
+    public String encode(JainMgcpResponseEvent event) {
         return event.getReturnCode().getValue() + " " + event.getTransactionHandle() +
                 " " + event.getReturnCode().getComment() + "\n";
     }
@@ -135,7 +135,7 @@ public class RestartInProgressHandler extends TransactionHandler {
     }
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		RestartInProgressResponse provisionalresponse = null;
 		if (!sent) {
 			provisionalresponse = new RestartInProgressResponse(commandEvent.getSource(), ReturnCode.Transaction_Being_Executed);

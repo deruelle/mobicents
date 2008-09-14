@@ -22,7 +22,6 @@ import jain.protocol.ip.mgcp.message.EndpointConfiguration;
 import jain.protocol.ip.mgcp.message.EndpointConfigurationResponse;
 import jain.protocol.ip.mgcp.message.parms.BearerInformation;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
-import jain.protocol.ip.mgcp.message.parms.ReasonCode;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.net.InetAddress;
@@ -54,7 +53,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		super(stack, address, port);
 	}
 
-	protected JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
 			parser.parse(message);
@@ -65,7 +64,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		return command;
 	}
 
-	protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
@@ -75,7 +74,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		return response;
 	}
 
-	protected String encode(JainMgcpCommandEvent event) {
+	public String encode(JainMgcpCommandEvent event) {
 		// encode message header
 		EndpointConfiguration evt = (EndpointConfiguration) event;
 		String msg = "EPCF " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
@@ -85,7 +84,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		return msg;
 	}
 
-	protected String encode(JainMgcpResponseEvent event) {
+	public String encode(JainMgcpResponseEvent event) {
 		EndpointConfigurationResponse response = (EndpointConfigurationResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
@@ -190,7 +189,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		EndpointConfigurationResponse provisionalresponse = null;
 		if (!sent) {
 			provisionalresponse = new EndpointConfigurationResponse(commandEvent.getSource(),

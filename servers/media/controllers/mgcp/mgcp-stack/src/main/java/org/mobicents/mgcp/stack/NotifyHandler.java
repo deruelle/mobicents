@@ -35,7 +35,7 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
 			parser.parse(message);
@@ -47,7 +47,7 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Decoding Notify response = "+message);
 		}
@@ -62,7 +62,7 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected String encode(JainMgcpCommandEvent event) {
+	public String encode(JainMgcpCommandEvent event) {
 		Notify notify = (Notify) event;
 		StringBuffer message = new StringBuffer();
 		message.append("NTFY " + event.getTransactionHandle() + " " + notify.getEndpointIdentifier() + " MGCP 1.0\n");
@@ -80,7 +80,7 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected String encode(JainMgcpResponseEvent event) {
+	public String encode(JainMgcpResponseEvent event) {
 		return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + " "
 				+ event.getReturnCode().getComment() + "\n";
 	}
@@ -136,7 +136,7 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	@Override
-	protected JainMgcpResponseEvent getProvisionalResponse() {
+	public JainMgcpResponseEvent getProvisionalResponse() {
 		NotifyResponse provisionalresponse = null;
 		if (!sent) {
 			provisionalresponse = new NotifyResponse(commandEvent.getSource(), ReturnCode.Transaction_Being_Executed);
