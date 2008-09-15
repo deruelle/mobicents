@@ -44,7 +44,7 @@ public class TestHarness extends TestCase {
 	
 	protected TestResult testResult;
 	
-	protected static Appender console = new ConsoleAppender(new SimpleLayout());
+	//protected static Appender console = new ConsoleAppender(new SimpleLayout());
 	
 	public void init(){
 		try {

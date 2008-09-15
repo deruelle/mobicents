@@ -45,12 +45,4 @@ public class NotifyTest extends MessageFlowHarness {
 
 	}
 
-	public static void assertTrue(String diagnostic, boolean cond) {
-		if (cond) {
-			assertTrue(cond);
-		} else {
-			fail(diagnostic);
-		}
-
-	}
 }

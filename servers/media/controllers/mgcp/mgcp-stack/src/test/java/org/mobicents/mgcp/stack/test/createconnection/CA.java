@@ -13,6 +13,7 @@ import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.mgcp.stack.test.MessageFlowHarness;
 
 public class CA implements JainMgcpExtendedListener {
 

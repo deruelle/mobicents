@@ -200,7 +200,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
             } else if (name.equalsIgnoreCase("L")) {
                 command.setLocalConnectionOptions(Utils.createLocalOptions(value));
             } else if (name.equalsIgnoreCase("N")) {
-                command.setNotifiedEntity(new NotifiedEntity(value));
+            	command.setNotifiedEntity(Utils.decodeNotifiedEntity(value));                
             } else if (name.equalsIgnoreCase("X")) {
                 command.setNotificationRequestParms(
                         new NotificationRequestParms(

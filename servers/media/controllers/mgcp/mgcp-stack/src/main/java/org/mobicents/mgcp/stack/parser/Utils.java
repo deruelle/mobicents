@@ -488,15 +488,16 @@ public class Utils {
 		// ["@"(ConnectionId /"$"/"*")]
 		String tokens[] = value.split("/");
 		if (tokens.length == 1) {
-			return new EventName(PackageName.AllPackages, MgcpEvent.factory(tokens[0]).withParm(param));
+			return new EventName(PackageName.AllPackages, MgcpEvent.factory((tokens[0]).trim()).withParm(param));
 		} else if (tokens.length == 2) {
 			int pos = tokens[1].indexOf('@');
 			if (pos > 0) {
 				String cid = (tokens[1].substring(pos + 1)).trim();
-				return new EventName(PackageName.factory(tokens[0]), MgcpEvent.factory(tokens[1].substring(0, pos))
-						.withParm(param), new ConnectionIdentifier(cid));
+				return new EventName(PackageName.factory((tokens[0]).trim()), MgcpEvent.factory(
+						((tokens[1]).trim()).substring(0, pos)).withParm(param), new ConnectionIdentifier(cid));
 			} else {
-				return new EventName(PackageName.factory(tokens[0]), MgcpEvent.factory(tokens[1]).withParm(param));
+				return new EventName(PackageName.factory(tokens[0].trim()), MgcpEvent.factory(tokens[1].trim())
+						.withParm(param));
 			}
 		} else if (tokens.length == 3) {
 			int pos = tokens[2].indexOf('@');
@@ -504,9 +505,9 @@ public class Utils {
 				throw new ParseException("Invalid token " + tokens[2], 0);
 			}
 
-			String cid = tokens[1].substring(pos + 1);
-			return new EventName(PackageName.factory(tokens[0]), MgcpEvent.factory(tokens[1].substring(0, pos))
-					.withParm(param), new ConnectionIdentifier(cid));
+			String cid = (tokens[1].trim()).substring(pos + 1);
+			return new EventName(PackageName.factory(tokens[0].trim()), MgcpEvent.factory(
+					(tokens[1].trim()).substring(0, pos)).withParm(param), new ConnectionIdentifier(cid));
 		} else {
 			throw new ParseException("Unexpected event name " + value, 0);
 		}
@@ -900,11 +901,16 @@ public class Utils {
 			String tokens1[] = tokens[1].split(":");
 			String domainName = tokens1[0];
 
-			int port = Integer.parseInt(tokens1[1]);
-			
+			// See 3.5 of RFC3435. "by the Call Agents, to the default MGCP port
+			// for gateways, 2427."
+			int port = 2427;
+			if (tokens1.length == 2) {
+				port = Integer.parseInt(tokens1[1]);
+			}
+
 			notifiedEntity = new NotifiedEntity(localName, domainName, port);
-		} catch (Exception ex) {			
-			throw new ParseException("unable to parse the "+value + " Message = "+ex.getMessage(), 0);
+		} catch (Exception ex) {
+			throw new ParseException("unable to parse the " + value + " Message = " + ex.getMessage(), 0);
 		}
 
 		return notifiedEntity;
