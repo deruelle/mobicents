@@ -33,173 +33,114 @@
 package org.mobicents.media.container.management.console.client.common.pages;
 
 import org.mobicents.media.container.management.console.client.ServerConnection;
-import org.mobicents.media.container.management.console.client.common.BrowseContainer;
+import org.mobicents.media.container.management.console.client.common.CardControl;
 import org.mobicents.media.container.management.console.client.common.SmartTabPage;
 import org.mobicents.media.container.management.console.client.common.UserInterface;
-import org.mobicents.media.container.management.console.client.rtp.RTPManagerInfo;
-import org.mobicents.media.container.management.console.client.rtp.XFormat;
+import org.mobicents.media.container.management.console.client.rtp.RTPManagerDetailsCard;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.StackPanel;
 
 /**
  * @author baranowb
- *
+ * 
  */
 public class RTPManagementPage extends SmartTabPage {
 
-	
-	
-	private StackPanel switcher=new StackPanel();
+	private CardControl cardControl = new CardControl();
 
-	private BrowseContainer browseContainer=new BrowseContainer();
-	
-	protected RichTextArea box=new RichTextArea();
-	protected StringBuffer buffer=new StringBuffer();
-	
 	public static SmartTabPageInfo getInfo() {
-        return new SmartTabPageInfo("<image src='images/log.mgmt.1.jpg' /> RTP Management",
-                "RTP Management") {
-            protected SmartTabPage createInstance() {
-                return new RTPManagementPage();
-            }
-        };
-    }
-	
+		return new SmartTabPageInfo("<image src='images/log.mgmt.1.jpg' /> RTP Management", "RTP Management") {
+			protected SmartTabPage createInstance() {
+				return new RTPManagementPage();
+			}
+		};
+	}
+
 	public RTPManagementPage() {
 		super();
-		//initWidget(switcher);
+		// initWidget(switcher);
 		
-		initWidget(box);
+		initWidget(cardControl);
+		
+
 	}
 
 	public void onHide() {
-		// TODO Auto-generated method stub
+
 		super.onHide();
+		this.cardControl.onHide();
 	}
 
 	public void onInit() {
-		//this.switcher.setHeight("100%");
-		//this.switcher.setWidth("100%");
-		//this.switcher.add(logTree, createHeaderHTML("images/log.mgmt.log_configuration.jpg", "Logger Tree"), true);
-		//logTree.onInit();
-		
-		//this.switcher.add(new Hyperlink("CONSOLE",true,null), createHeaderHTML("images/log.mgmt.log_console.jpg", "Console"), true);
-	}
 
+		
+		this.cardControl.onInit();
+		ServerConnection.rtpManagementServiceAsync.listRTPMBeans(new FetchRTPManagersListAsyncCallback(this));
+		
+	}
 
 	public void onShow() {
-		// TODO Auto-generated method stub
+
 		super.onShow();
-		//logTree.onShow();
-		ServerConnection.rtpManagementServiceAsync.listRTPMBeans(new AsyncCallback(){
+		this.cardControl.onShow();
 
-			public void onFailure(Throwable arg0) {
-				box.setText(arg0.getMessage());
-				
-			}
+	}
 
-			public void onSuccess(Object arg0) {
-				String[] test=(String[]) arg0;
-				UserInterface.getLogPanel().info("RETURN:["+test.length+"]");
-				for(int i=0;i<test.length;i++)
-				{
-					String on=test[i];
-					UserInterface.getLogPanel().info("ON["+on+"]");
-					doCall(on);
-					
-					
-				}
-				
-			}});
+	public void resetTo(String objectName)
+	{
 		
 	}
-	private void doCall(String on)
-	{
-		AsyncCallback asyncCallback =new AsyncCB(on);
-		ServerConnection.rtpManagementServiceAsync.getManagerInfo(on, asyncCallback);
+	
+	
+	/**
+	 * Creates an HTML fragment that places an image & caption together, for use
+	 * in a group header.
+	 * 
+	 * @param imageUrl
+	 *            the url of the icon image to be used
+	 * @param caption
+	 *            the group caption
+	 * @return the header HTML fragment
+	 */
+	private String createHeaderHTML(String imageUrl, String caption) {
+		return "<table align='left'><tr>" + "<td><img src='" + imageUrl + "'></td>" + "<td style='vertical-align:middle'><b style='white-space:nowrap'>" + caption + "</b></td>"
+				+ "</tr></table>";
 	}
-	private class AsyncCB implements AsyncCallback
-	{
 
-		String on=null;
-		public AsyncCB(String on) {
+	private class FetchRTPManagersListAsyncCallback implements AsyncCallback {
+		protected RTPManagementPage parent=null;
+		
+		public FetchRTPManagersListAsyncCallback(RTPManagementPage parent) {
 			super();
-			this.on = on;
+			this.parent = parent;
 		}
 
 		public void onFailure(Throwable arg0) {
-			buffer.append("ERRRO["+on+"]:\n"+arg0.getMessage()+"\n");
-			box.setText(buffer.toString());
-			UserInterface.getLogPanel().info("getMGRInfo Error["+arg0.getMessage()+"]");
+			UserInterface.getLogPanel().error("Failed to obtain list of RTP management mbeans due to:\n" + arg0.getMessage());
+
 		}
 
 		public void onSuccess(Object arg0) {
-			UserInterface.getLogPanel().info("getMGRInfo Success[================]");
-			try{
-			RTPManagerInfo info=(RTPManagerInfo)arg0;
-			UserInterface.getLogPanel().info("getMGRInfo Success["+info.getObjectName()+"]");
-			UserInterface.getLogPanel().info("[ON]:["+info.getObjectName()+"]\n");
-			UserInterface.getLogPanel().info("[BIND]:["+info.getBindAddress()+"]\n");
-			UserInterface.getLogPanel().info("[JNDI]:["+info.getJndiName()+"]\n");
-			UserInterface.getLogPanel().info("[STUN_P]:["+info.getPublicAddressFromStun()+"]\n");
-			UserInterface.getLogPanel().info("[STUN]:["+info.getStunServerAddress()+"]\n");
-			UserInterface.getLogPanel().info("[AF]:[");
-			XFormat[] xfs=info.getAudioFormats();
-			if(xfs!=null)
-			for(int i=0;i<xfs.length;i++)
-				if(xfs[i]!=null)
-					UserInterface.getLogPanel().info("rtp:"+xfs[i].getRtpMap()+"- format:"+xfs[i].getFormat());
-				else
-					UserInterface.getLogPanel().info("rtp["+i+"]");
-			else
-				UserInterface.getLogPanel().info(xfs+"");
-			UserInterface.getLogPanel().info("]\n");
-			UserInterface.getLogPanel().info("[VF]:[");
-			xfs=info.getVideoFormats();
-			if(xfs!=null)
-			for(int i=0;i<xfs.length;i++)
-				if(xfs[i]!=null)
-					UserInterface.getLogPanel().info("rtp:"+xfs[i].getRtpMap()+"- format:"+xfs[i].getFormat());
-				else
-					UserInterface.getLogPanel().info("rtp["+i+"]");
-			else
-				UserInterface.getLogPanel().info(xfs+"");
-			UserInterface.getLogPanel().info("]\n");
-			UserInterface.getLogPanel().info("[JITTER]:["+info.getJitter()+"]\n");
-			UserInterface.getLogPanel().info("[PP]:["+info.getPacketizationPeriod()+"]\n");
-			UserInterface.getLogPanel().info("[PR]:["+info.getPortRange()+"]\n");
-			UserInterface.getLogPanel().info("[SSP]:["+info.getStunServerPort()+"]\n");
-			UserInterface.getLogPanel().info("[PORT MAP]:["+info.getUsePortMapping()+"]\n");
-			UserInterface.getLogPanel().info("[U STUN]:["+info.getUseStun()+"]\n");
-
-			box.setText(buffer.toString());
-			box.setVisible(false);
-			box.setVisible(true);
-			}catch(Exception e)
-			{
-				UserInterface.getLogPanel().error(e.getMessage());
-			}
+			String[] list = (String[]) arg0;
+			if (list != null)
+				for (int i = 0; i < list.length; i++) {
+					String name = list[i];
+					//FIXME:Add cards
+					
+					name=name.substring(name.indexOf(":")+1);
+					name=name.substring(name.indexOf("service=RTPManager,")+"service=RTPManager,".length());
+					cardControl.add(new RTPManagerDetailsCard(list[i], parent), "<image align='absbottom' src='images/services.gif' /> "+
+							name , true);
+					
+						
+				}
 			
+			cardControl.setWidth("100%");
+			cardControl.selectTab(0);
 		}
-		
+
 	}
-	
-	/**
-	   * Creates an HTML fragment that places an image & caption together, for use
-	   * in a group header.
-	   * 
-	   * @param imageUrl the url of the icon image to be used
-	   * @param caption the group caption
-	   * @return the header HTML fragment
-	   */
-	  private String createHeaderHTML(String imageUrl, String caption) {
-	    return "<table align='left'><tr>" + "<td><img src='" + imageUrl + "'></td>"
-	      + "<td style='vertical-align:middle'><b style='white-space:nowrap'>"
-	      + caption + "</b></td>" + "</tr></table>";
-	  }
-	
+
 	
 	
 }

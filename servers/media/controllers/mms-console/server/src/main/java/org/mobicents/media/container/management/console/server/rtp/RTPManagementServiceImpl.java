@@ -37,7 +37,7 @@ public String getJndiName(String rtpMBeanObjectName) throws RTPManagementMBeanDo
 }
 
 public RTPManagerInfo getManagerInfo(String rtpMBeanObjectName) throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException {
-	System.out.println("GET MANGER INFO ------------------------------------");
+
 	return utils.getManagerInfo(rtpMBeanObjectName);
 }
 

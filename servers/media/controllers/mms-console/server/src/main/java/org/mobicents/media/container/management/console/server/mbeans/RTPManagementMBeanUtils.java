@@ -1,35 +1,21 @@
 package org.mobicents.media.container.management.console.server.mbeans;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Set;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.mobicents.media.container.management.console.client.rtp.RTPManagementMBeanDoesNotExistException;
 import org.mobicents.media.container.management.console.client.rtp.RTPManagementOperationFailedException;
 import org.mobicents.media.container.management.console.client.rtp.RTPManagementService;
 import org.mobicents.media.container.management.console.client.rtp.RTPManagerInfo;
 import org.mobicents.media.container.management.console.client.rtp.XFormat;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class RTPManagementMBeanUtils implements RTPManagementService {
 
@@ -47,55 +33,13 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 			throw new RTPManagementMBeanDoesNotExistException("RTP Manager MBean [" + rtpMBeanObjectName + "] does not exist!!");
 		}
 
+		
 		try {
 			// FIXME: move to JAXB: for now there are some problems on my
 			// machine - JVM related propably
-			ArrayList<XFormat> xformatList = new ArrayList<XFormat>();
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 			String raw = (String) this.server.invoke(on, "getAudioFormats", null, null);
-			if(raw==null)
-			{
-				return new XFormat[]{};
-			}
-			System.out.println(raw);
-			raw = "<root>" + raw.trim() + "</root>";
-			
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder parser;
-
-			parser = factory.newDocumentBuilder();
-			Document doc = parser.parse(new ByteArrayInputStream(raw.getBytes()));
-			for (int i = 0; i < doc.getDocumentElement().getChildNodes().getLength(); i++) {
-				Node n = doc.getDocumentElement().getChildNodes().item(i);
-				//System.out.println("MASTER["+doc.getDocumentElement().getNodeName()+"] ["+doc.getDocumentElement().getChildNodes().getLength()+"] ["+n.getNodeName()+"]");
-				if (n.getNodeName().equals("payload")) {
-					NodeList list = n.getChildNodes();
-					String rtpmap = null;
-					String format = null;
-					for (int c = 0; c < list.getLength(); c++) {
-						Node fn = list.item(c);
-						//System.out.println("SLAVE["+fn.getNodeName()+"]");
-						if (fn.getNodeName().equals("rtpmap")) {
-							rtpmap = fn.getTextContent();
-						} else if (fn.getNodeName().equals("format")) {
-							format = fn.getTextContent();
-						}
-
-					}
-					System.out.println("RTPM["+rtpmap+"] FORMAT["+format+"]");
-					//if (rtpmap != null && format != null) {
-						XFormat xf = new XFormat(format, rtpmap);
-						xformatList.add(xf);
-						System.out.println("ADDING AF["+xf+"]");
-					//}else
-					//{
-					//	System.out.println("SKIPPING AF");
-					//}
-					rtpmap = null;
-					format = null;
-				}
-			}
-			return xformatList.toArray(new XFormat[xformatList.size()]);
+			return XFormat.fromString(raw);
 
 		} catch (MalformedObjectNameException e) {
 
@@ -117,20 +61,11 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
-
-			e.printStackTrace();
-			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (ParserConfigurationException e) {
-
-			e.printStackTrace();
-			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (SAXException e) {
+		}catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
 		}
-
 	}
 
 	public String getBindAddress(String rtpMBeanObjectName) throws RTPManagementMBeanDoesNotExistException, RTPManagementOperationFailedException {
@@ -161,7 +96,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -196,7 +131,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -231,7 +166,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -266,7 +201,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -306,7 +241,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -341,7 +276,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -376,7 +311,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -411,7 +346,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -423,49 +358,14 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		if (!isValidRTPMGMTMBean(rtpMBeanObjectName)) {
 			throw new RTPManagementMBeanDoesNotExistException("RTP Manager MBean [" + rtpMBeanObjectName + "] does not exist!!");
 		}
-		
+
 		try {
 			// FIXME: move to JAXB: for now there are some problems on my
 			// machine - JVM related propably
 			ArrayList<XFormat> xformatList = new ArrayList<XFormat>();
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 			String raw = (String) this.server.invoke(on, "getVideoFormats", null, null);
-			if(raw==null)
-			{
-				return new XFormat[]{};
-			}
-			raw = "<root>" + raw.trim() + "</root>";
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder parser;
-
-			parser = factory.newDocumentBuilder();
-			Document doc = parser.parse(new ByteArrayInputStream(raw.getBytes()));
-			for (int i = 0; i < doc.getDocumentElement().getChildNodes().getLength(); i++) {
-				Node n = doc.getDocumentElement().getChildNodes().item(i);
-				if (n.getNodeName().equals("payload")) {
-					NodeList list = n.getChildNodes();
-					String rtpmap = null;
-					String format = null;
-					for (int c = 0; c < list.getLength(); c++) {
-						Node fn = list.item(c);
-						if (fn.getNodeName().equals("rtpmap")) {
-							rtpmap = fn.getTextContent();
-						} else if (fn.getNodeName().equals("format")) {
-							format = fn.getTextContent();
-						}
-
-					}
-					//if (rtpmap != null && format != null) {
-						XFormat xf = new XFormat(format, rtpmap);
-						xformatList.add(xf);
-						System.out.println("ADDING VF["+xf+"]");
-					//}
-					rtpmap = null;
-					format = null;
-				}
-			}
-			
-			return xformatList.toArray(new XFormat[xformatList.size()]);
+			return XFormat.fromString(raw);
 
 		} catch (MalformedObjectNameException e) {
 
@@ -487,15 +387,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
-
-			e.printStackTrace();
-			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (ParserConfigurationException e) {
-
-			e.printStackTrace();
-			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (SAXException e) {
+		}catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -530,7 +422,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -565,7 +457,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -637,8 +529,11 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		try {
 
 			String arg = "";
-			for (XFormat xf : formats) {
-				arg += xf;
+			for(int i=0;i<formats.length;i++)
+			{
+				arg+=formats[i];
+				if(i!=formats.length-1)
+					arg+=";";
 			}
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 
@@ -663,7 +558,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -700,7 +595,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -737,7 +632,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -774,7 +669,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -812,7 +707,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -850,7 +745,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -889,7 +784,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -926,7 +821,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -963,7 +858,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -976,10 +871,10 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		}
 		try {
 
-			Object arg = usePortMapping;
+			
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 
-			this.server.invoke(on, "setUsePortMapping", new Object[] { arg }, new String[] { "java.lang.Boolean" });
+			this.server.invoke(on, "setUsePortMapping", new Object[] { usePortMapping.booleanValue() }, new String[] { "boolean" });
 		} catch (MalformedObjectNameException e) {
 
 			e.printStackTrace();
@@ -1000,7 +895,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -1013,10 +908,10 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		}
 		try {
 
-			Object arg = useStun;
+			//Object arg = useStun;
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 
-			this.server.invoke(on, "setUseStun", new Object[] { arg }, new String[] { "java.lang.Boolean" });
+			this.server.invoke(on, "setUseStun", new Object[] { useStun.booleanValue() }, new String[] { "boolean" });
 		} catch (MalformedObjectNameException e) {
 
 			e.printStackTrace();
@@ -1037,7 +932,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -1051,8 +946,11 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		try {
 
 			String arg = "";
-			for (XFormat xf : formats) {
-				arg += xf;
+			for(int i=0;i<formats.length;i++)
+			{
+				arg+=formats[i];
+				if(i!=formats.length-1)
+					arg+=";";
 			}
 			ObjectName on = new ObjectName(rtpMBeanObjectName);
 
@@ -1077,7 +975,7 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
-		} catch (IOException e) {
+		} catch (Exception e) {
 
 			e.printStackTrace();
 			throw new RTPManagementOperationFailedException("RTP Manager MBean [" + rtpMBeanObjectName + "] Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
@@ -1086,10 +984,16 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 	public RTPManagerInfo getManagerInfo(String rtpMBeanObjectName) throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException {
 
+		try{
 		return new RTPManagerInfo(this.getAudioFormats(rtpMBeanObjectName), this.getBindAddress(rtpMBeanObjectName), getJitter(rtpMBeanObjectName),
 				getJndiName(rtpMBeanObjectName), rtpMBeanObjectName, getPacketizationPeriod(rtpMBeanObjectName), getPortRange(rtpMBeanObjectName),
 				getPublicAddressFromStun(rtpMBeanObjectName), getStunServerAddress(rtpMBeanObjectName), getStunServerPort(rtpMBeanObjectName), this
 						.isUsePortMapping(rtpMBeanObjectName), this.isUseStun(rtpMBeanObjectName), this.getVideoFormats(rtpMBeanObjectName));
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			throw new RTPManagementOperationFailedException(e);
+		}
 	}
 
 	public static void main(String[] args) {
