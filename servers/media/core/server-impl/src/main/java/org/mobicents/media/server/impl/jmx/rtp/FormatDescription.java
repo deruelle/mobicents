@@ -30,7 +30,7 @@ public class FormatDescription implements Serializable {
         HashMap map = new HashMap();
         String tokens[] = description.split(";");
         for (int i = 0; i < tokens.length; i++) {
-            if (tokens.length == 0) continue;
+            if (tokens[i].length() == 0) continue;
             String params[] = tokens[i].split("=");
             
             //parse payload 
@@ -44,7 +44,8 @@ public class FormatDescription implements Serializable {
             if (fmtParams.length == 1) {
                 Format fmt = new RTPAudioFormat(payload, encodingName);
                 map.put(payload, fmt);
-                return map;
+
+                continue;
             }
             
             int sampleRate = 8000;
