@@ -49,7 +49,7 @@ public class RTPManagementPage extends SmartTabPage {
 	private CardControl cardControl = new CardControl();
 
 	public static SmartTabPageInfo getInfo() {
-		return new SmartTabPageInfo("<image src='images/log.mgmt.1.jpg' /> RTP Management", "RTP Management") {
+		return new SmartTabPageInfo("<image src='images/resources.entitylinks.gif' /> RTP Management", "RTP Management") {
 			protected SmartTabPage createInstance() {
 				return new RTPManagementPage();
 			}
