@@ -1,7 +1,6 @@
 package org.mobicents.qa.report.sipp;
 
 import java.awt.image.BufferedImage;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -179,26 +177,18 @@ public class Report {
 	try {
 
 	    // Create a CSV reader
-	    CSVReader csv = new CSVReader(new FileReader(filename), ';', '\"', true, false);
+	    OpenCsvReader csv = new OpenCsvReader(new FileReader(filename), ';', '\"');
 
 	    // Get categories
-	    String[] categories = csv.getAllFieldsInLine();
+	    String[] categories = csv.readNext();
 	    if (logger.isDebugEnabled()) {
 		logger.debug("Categories read from CSV: " + Arrays.toString(categories));
 	    }
 
 	    // Get values
-	    List<String[]> values = new ArrayList<String[]>();
-	    int rows = 0;
-	    while (true) {
-		try {
-		    values.add(csv.getAllFieldsInLine());
-		    rows++;
-		} catch (EOFException e) {
-		    logger.debug("End of file reached. " + rows + " rows read.");
-		    break;
-		}
-	    }
+	    List<String[]> values = csv.readAll();
+	    int rows = values.size();
+	    
 	    csv.close();
 
 	    // Get reference categories (elapsed time)
