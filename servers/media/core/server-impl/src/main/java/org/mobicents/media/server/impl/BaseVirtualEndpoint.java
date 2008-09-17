@@ -19,37 +19,40 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.VirtualEndpoint;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public abstract class BaseVirtualEndpoint extends BaseEndpoint implements VirtualEndpoint {
 
-    private static int GEN = 1;
-    private HashMap <String, Endpoint> endpoints = new HashMap();
-    
-    public BaseVirtualEndpoint(String localName) {
-        super(localName);
-    }
-    
-    public Endpoint createEndpoint() {
-        String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
-        Endpoint enp = doCreateEndpoint(localName);
-        endpoints.put(localName, enp);
-        return enp;
-    }
+	private static int GEN = 1;
+	private HashMap<String, Endpoint> endpoints = new HashMap();
 
-    public abstract Endpoint doCreateEndpoint(String localName);
-    
-    @Override
-    public void deleteConnection(String connectionID) {
-        super.deleteConnection(connectionID);
-        if (!this.hasConnections()) {
-            endpoints.remove(this.getLocalName());
-        }
-    }
-    
-    public Endpoint getEndpoint(String localName) {
-        return endpoints.get(localName);
-    }
+	public BaseVirtualEndpoint(String localName) {
+		super(localName);
+	}
+
+	public Endpoint createEndpoint() {
+		String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
+		BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
+
+		enp.setRtpFactoryName(this.getRtpFactoryName());
+
+		endpoints.put(localName, enp);
+		return enp;
+	}
+
+	public abstract Endpoint doCreateEndpoint(String localName);
+
+	@Override
+	public void deleteConnection(String connectionID) {
+		super.deleteConnection(connectionID);
+		if (!this.hasConnections()) {
+			endpoints.remove(this.getLocalName());
+		}
+	}
+
+	public Endpoint getEndpoint(String localName) {
+		return endpoints.get(localName);
+	}
 
 }
