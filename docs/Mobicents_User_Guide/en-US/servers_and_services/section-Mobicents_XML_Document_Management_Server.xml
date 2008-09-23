@@ -1,0 +1,530 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Mobicents_XML_Document_Management_Server">
+	<title>Mobicents XML Document Management Server</title>
+	<para>The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the <ulink
+			url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
+	<section
+		id="section-Installation_of_the_XDM_Server">
+		<title>Installation of the XDM Server</title>
+	<!-- Binary Distribution -->
+		<section
+			id="section-binary-XDM_Server-Installing_Configuring_and_Running">
+			<title>Binary Distribution: Installing, Configuring and Running</title>
+			<para>The XDM Server distribution comes bundled with the JBoss Application Server version 4.2.2 GA, the latest version of the Mobicents JAIN SLEE Server and the SIP and HTTP Servlet resource adapters.</para>
+			<section
+				id="section-binary-XDM_Server-PreInstall_Requirements_and_Prerequisites">
+				<title>Pre-Install Requirements and Prerequisites</title>
+				<para>You should ensure that a few requirements have been met before continuing with the install.</para>
+				<variablelist
+					id="variablelist-binary-XDM_Server-Hardware_Requirements">
+					<title>Hardware Requirements</title>
+					<varlistentry>
+						<term>Sufficient Disk Space</term>
+						<listitem>
+							<para>You must have sufficient disk space in order to install the XDM Server binary release. Once unzipped, version 1.0.0 of the XDM Server binary release requires <emphasis>at least</emphasis> 75 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Anything Java Itself Will Run On</term>
+						<listitem>
+							<para>The Mobicents XML Document Management Server and its bundled servers, JBoss and JAIN SLEE, are all 100% Java. The XDM Server will run on the same hardware that the JBoss Application Server runs on.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<variablelist
+					id="variablelist-binary-XDM_Server-Software_Prerequisites">
+					<title>Software Prerequisites</title>
+					<varlistentry>
+						<term>JDK 1.6 or Higher</term>
+						<listitem>
+							<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.6 or higher is currently required in order to run the Mobicents XDM Server <footnote><para>The requirement for Java 6 might change to Java 5 at some point in the future. Please check the Mobicents website if you are interested in running Mobicents XDM Server on Java 5.</para>
+								</footnote>For instructions on how to install the JDK, refer to the section titled <literal>Java Development Kit: Installing, Configuring and Running</literal> in this chapter: <xref
+									linkend="section-Mobicents_SIP_Presence_Service"/>.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Downloading">
+				<title>Downloading</title>
+				<para>You can download the latest version of the XDM Server from the Mobicents <literal>Downloads</literal> page at <ulink
+						url="www.sourceforge.net/projects/mobicents/downloads"/>. There, you will see several different binary distributions of the Mobicents SIP Presence Service. The following two binary distribution files include the XDM Server; here are the differences between them:</para>
+				<variablelist>
+					<varlistentry>
+						<term>mobicents-sip-presence-integrated-&lt;version&gt;-jboss-4.2.2.GA.zip</term>
+						<listitem>
+							<para>This zip file&#8212;the one with <quote>integrated</quote> in its file name&#8212;contains the SIP Presence Server, the XDM Server, and will contain the Resource List Server once it is available<footnote
+									id="section-binary-XDM_Server-Includes_Necessary_Dependencies"><para>This zip file also includes the necessary dependencies need to run all Presence Service components: the JBoss Application Server version 4.2.2 GA, the latest version of the Mobicents JAIN SLEE Server, and the SIP and HTTP Servlet resource adapters.</para>
+								</footnote>.
+							</para>
+							<para>If you are unsure which binary distribution file you want or need, choose the <emphasis>integrated</emphasis> one.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>mobicents-sip-presence-xdms-&lt;version&gt;-jboss-4.2.2.GA.zip</term>
+						<listitem>
+							<para>This zip file&#8212;the one with <quote>xdms</quote> in its file name&#8212;contains only the XDM Server, and is useful for deploying the XDM separately (such as on a different node) from other Mobicents servers. It does not contain the SIP Presence Server<footnoteref
+									linkend="section-binary-XDM_Server-Includes_Necessary_Dependencies"/>.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<para>The following instructions can be followed regardless of which zip file you download, as long as it is one of the two listed above.</para>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Installing">
+				<title>Installing</title>
+				<para>Once the requirements and prerequisites have been met, and you have downloaded one of the binary distribution zip files, you are ready to install the XDM Server. Follow the instructions below for your platform, whether Linux or Windows.</para>
+				<procedure>
+					<title>Installing the XDM Server Binary Distribution on Linux</title>
+					<step>
+						<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>&lt;downloads&gt;</filename>.</para>
+						<screen>~]# cd &lt;downloads&gt;</screen>
+					</step>
+					<step>
+						<para>In <filename>&lt;downloads&gt;</filename>, create a subdirectory to hold the unzipped XDM Server files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the XDM Server binary distribution you downloaded.</para>
+						<screen>&lt;downloads&gt;]$ mkdir &quot;msps-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Move the downloaded zip file into the directory you just created:</para>
+						<screen>&lt;downloads&gt;]$ mv &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot; &quot;msps-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Move into that directory:</para>
+						<screen>&lt;downloads&gt;]$ cd &quot;msps-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Finally, use Java's <command>jar <option>-xvf</option>
+							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
+						<screen>msps-&lt;version&gt;]$ jar -xvf &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
+									</command> command:</para>
+								<screen>msps-&lt;version&gt;]$ unzip &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+								<tip>
+									<para>You can also use <command>unzip</command>'s <option>-d</option>
+										<filename>
+								<replaceable>&lt;unzip_to_location&gt;</replaceable>
+							</filename> option to extract the zip file's contents to a location other than the current directory.</para>
+								</tip>
+							</step>
+						</stepalternatives>
+					</step>
+					<step>
+						<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
+						<screen>msps-&lt;version&gt;]$ rm &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Installing the XDM Server Binary Distribution on Windows</title>
+					<step>
+						<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the XDM Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>msps-&lt;verison&gt;</filename>.</para>
+					</step>
+					<step>
+						<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, it is also possible to use Java's <command>jar <option>-xvf</option>
+									</command> command to extract the binary distribution files from the zip archive. To use this method instead, first move the downloaded zip file from <filename>My Downloads</filename> to the folder that you just created to hold the XDM Server files.</para>
+							</step>
+							<step>
+								<para>Then, open the Windows Command Prompt and navigate to the folder holding the archive using the <command>cd</command> command:</para>
+								<tip
+									id="tip-binary-XDM_Server-Opening_the_Command_Prompt_from_Windows_Explorer">
+									<title>Opening the Command Prompt from Windows Explorer</title>
+									<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
+								</tip>
+								<screen>C:\Users\Me&gt;cd &quot;My Downloads\msps-&lt;version&gt;&quot;</screen>
+							</step>
+							<step>
+								<para>Finally, use the <command>jar <option>-xvf</option>
+									</command> command to extract the archive contents into the current folder.</para>
+								<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;jar -xvf &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+							</step>
+						</stepalternatives>
+					</step>
+					<step>
+						<para>At this point, you may want to move the folder holding the XDM Server binary files (in this example, the folder named <filename>msps-&lt;version&gt;</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the XDM Server folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
+					</step>
+					<step>
+						<para>You may also want to delete the zip file after extracting its contents in order to free disk space:</para>
+						<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;delete &quot;mobicents-sip-presence-&lt;integrated/xdms&gt;-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Running">
+				<title>Running</title>
+				<para>Once installed, you can run the Mobicents XDM Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the XDM Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the XDM Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
+				<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
+				<para>Detailed instructions are given below, arranged by platform.</para>
+				<procedure>
+					<title>Running the XDM Server on Linux</title>
+					<step>
+						<para>Change your working directory to the XDM Server's topmost directory (the one which you extracted the zip file's contents to):</para>
+						<screen>downloads]$ cd &quot;msps-&lt;version&gt;&quot;</screen>
+					</step>
+					<step
+						performance="optional">
+						<para>(Optional) Ensure that the <filename>jboss-4.2.2.GA/bin/run.sh</filename> start script is executable:</para>
+						<screen>msps-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>
+					</step>
+					<step>
+						<para>Finally, execute the <filename>run.sh</filename> Bourne shell script:</para>
+						<screen>msps-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/run.sh</screen>
+						<stepalternatives>
+							<step>
+								<para>Instead of executing the Bourne shell script to start the server, you may alternatively run the <filename>run.jar</filename> executable Java archive in the <filename>jboss-4.2.2.GA/bin</filename> directory:</para>
+								<screen>msps-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Running the XDM Server on Windows</title>
+					<step>
+						<para>There are several different ways to start the XDM Server on Windows. All of the following methods accomplish the same task.</para>
+						<para>Using Windows Explorer, change your folder to the one in which you unzipped the downloaded zip file, and then to the <filename>jboss-4.2.2.GA\bin</filename> subfolder.</para>
+					</step>
+					<step>
+						<para>Although not the preferred way (see below), it is possible to start the XDM Server by double-clicking on the <filename>run.bat</filename> executable batch file.</para>
+						<stepalternatives>
+							<step>
+								<para>As mentioned above, the best way to start the XDM Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
+										linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
+								<screen>C:\Users\Me\My Downloads&gt; cd &quot;msps-&lt;version&gt;&quot;</screen>
+							</step>
+							<step>
+								<para>Start the XDM Server by running the executable <filename>run.bat</filename> batch file:</para>
+								<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\run.bat</screen>
+								<stepalternatives>
+									<step>
+										<para>It is also possible to start the XDM Server by running the <filename>run.jar</filename> executable Java archive:</para>
+										<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>
+									</step>
+								</stepalternatives>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Stopping">
+				<title>Stopping</title>
+				<para>Just as there are multiple ways to run the XDM Server, there are multiple ways to stop it. Detailed instructions for stopping the XDM Server are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt:</para>
+				<programlisting>[Server] Shutdown complete
+Shutdown complete
+Halting VM</programlisting>
+				<procedure>
+					<title>Stopping the XDM Server on Linux by Issuing a Control Code</title>
+					<step>
+						<para>Assuming that you started the XDM Server as a foreground process in the terminal, the easiest way to stop it is by pressing the <keycombo
+								action="simul"><keycap>Ctrl</keycap>
+						<keycap>c</keycap>
+					</keycombo> key combination in the same terminal in which you started it.
+						</para>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Stopping the XDM Server on Linux by Executing <filename>shutdown.sh</filename> or <filename>shutdown.jar</filename>
+					</title>
+					<step>
+						<para>Another way to shut down the XDM Server is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory. To do so, first change your working directory to the XDM Server's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
+						<screen>downloads]$ cd &quot;msps-&lt;version&gt;&quot;</screen>
+					</step>
+					<step
+						performance="optional">
+						<para>(Optional) Ensure that the jboss-4.2.2.GA/bin/shutdown.sh start script is executable:</para>
+						<screen>msps-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>
+					</step>
+					<step>
+						<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script, and remember to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument:</para>
+						<screen>msps-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>
+						<stepalternatives>
+							<step>
+								<para>Instead of executing the Bourne shell script to stop the server, you may alternatively run the <filename>shutdown.jar</filename> executable Java archive to do so (and remembering, again, to add the <option>-S</option> command line argument):</para>
+								<screen>msps-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Stopping the XDM Server on Windows</title>
+					<step>
+						<para>Stopping the XDM Server on Windows consists in executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>jboss-4.2.2.GA\bin</filename> subfolder of the XDM Server binary distribution. Make sure to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument.</para>
+						<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, you can execute the <filename>shutdown.jar</filename> Java archive by running the <command>java <option>-jar</option>
+									</command> command, and remembering to add the <option>-S</option> option as a command line argument:</para>
+								<screen>C:\Users\Me\My Downloads\msps-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Configuring">
+				<title>Configuring</title>
+				<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
+				<variablelist>
+					<varlistentry>
+						<term>XCAP Root</term>
+						<listitem>
+							<para>The Maven property <literal>xdm.server.xcap.root</literal>, in the <filename>pom.xml</filename> inside the Mobicents Presence Service root directory (in <filename>/trunk/servers/sip-presence</filename> to be exact) defines the relative path to root that is considered the XCAP Root for all XCAP URIs. This value must match the servlet name used in the Mobicents HTTP Servlet resource adapter. The default value is <replaceable>/mobicents</replaceable>.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Dynamic User Provisioning</term>
+						<listitem>
+							<para>The Maven property <literal>dynamicUserProvisioning</literal> in the <filename>pom.xml</filename> inside the Mobicents Presence Service root directory (in <filename>/trunk/servers/sip-presence</filename> to be exact) defines whether the XDM Server should provision the user when a <literal>PUT</literal> request is being processed and the user is not installed for the request's application usage. The default value is true.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Testing">
+				<title>Testing</title>
+				<para></para>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Uninstalling">
+				<title>Uninstalling</title>
+				<para></para>
+			</section>
+		</section>
+	</section>
+	
+	<section
+		id="section-Functional_Architecture_of_the_XDM_Server">
+		<title>Functional Architecture of the XDM Soerver</title>
+		<para>The Mobicents XDM Server includes the following XCAP application usages:</para>
+		<itemizedlist>
+			<listitem>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc5025">IETF Presence Rules (RFC 5025)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://www.openmobilealliance.org/Technical/release_program/Presence_simple_v1_1.aspx">OMA Presence Rules (OMA Presence Simple v1.1 Candidate Release)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4826">IETF Resource Lists</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4826">IETF RLS Services (RFC 4826)</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://tools.ietf.org/html/rfc4825">IETF XCAP-CAPS (RFC 4825)</ulink>
+				</para>
+			</listitem>
+		</itemizedlist>
+		<para>The SIP interface partially implements the XCAP Diff Event IETF draft, version 3. Subscriptions to a single document or usage by an entire application are supported; however, these differing usages do not extend to the single-XML element or attribute value level. Regarding the notifications, the diff-processing subscription parameter, if present, is ignored, and the patching of content is not available at the moment, which means that only the document etags, new and/or old, will be provided.</para>
+		<figure
+			id="figure-sas-XDMS-dia-XDMFunctionalArchitecture.jpg">
+			<title>The Mobicents XML Document Management Server</title>
+			<mediaobject
+				id="mediaobj-sas-XDMS-dia-XDMFunctionalArchitecture.jpg">
+				<imageobject>
+					<imagedata
+						align="center"
+						width="700"
+						fileref="images/sas-XDMS-dia-XDMFunctionalArchitecture.jpg"
+						format="JPG" />
+				</imageobject>
+				<caption>
+					<para>Functional Architecture of the XML Document Management Server</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<para>The XDM Server comprises the following functional elements:</para>
+		<variablelist
+			id="varlist-Functional_Elements_of_the_XDM_Server">
+			<title>Functional Elements of the XDM Server</title>
+			<varlistentry>
+				<term>Data Source</term>
+				<listitem>
+					<para>The XDM Server data source is where all user XML documents are stored. Information related to the server itself is also stored in this element along with the user's provisioned data</para>
+					<para>The data source also handles subscriptions to updates on specific documents, or complete XCAP application usages.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy</term>
+				<listitem>
+					<para>The aggregation proxy is responsible for handling an XDM client's XCAP requests, which includes authentication and authorization of the requester.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor</term>
+				<listitem>
+					<para>This element includes the XCAP Server logic to process an XCAP request and return a proper response.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Event Subscription Control</term>
+				<listitem>
+					<para>This element, using the SIP protocol, is responsible for handling subscriptions to documents managed by the XDM. Its functions include the authentication and authorization of a subscription, attachment to update events on specific documents or application usages, and the sending of notifications when documents change.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>Implementation Architecture of the Mobicents XML Document Management Server</title>
+			<para>The XDM Server is built on top of the Mobicents JAIN SLEE container. This figure depicts the architecture of the XDM Server implementation.</para>
+		</formalpara>
+		<figure
+			id="figure-sas-XDMS-dia-XDMSImplementation.jpg">
+			<title>Mobicents XML Document Management Server</title>
+			<mediaobject
+				id="mediaobj-sas-XDMS-dia-XDMSImplementation.jpg">
+				<imageobject>
+					<imagedata
+						align="center"
+						width="700"
+						fileref="images/sas-XDMS-dia-XDMSImplementation.jpg"
+						format="JPG" />
+				</imageobject>
+				<caption>
+					<para>Implementation Architecture of the XML Document Management Server</para>
+				</caption>
+			</mediaobject>
+		</figure>
+		<variablelist
+			id="varlist-The_Functional_Elements_Which_Compose_the_XML_Document_Management_Server">
+			<title>The Functional Elements Which Compose the XML Document Management Server</title>
+			<varlistentry>
+				<term>Data Source Resource Adapter</term>
+				<listitem>
+					<para>This Resource Adaptor implements the Data Source functional element.</para>
+					<para>The <literal>RA Type</literal> defines two activities objects, <literal>DocumentActivity</literal> and <literal>AppUsageActivity</literal>, both of which are used to fire events that signal that a document, element or attribute was updated.</para>
+					<para>The <literal>RA Type</literal> also defines a Service Building Block (SBB) RA interface to manage the users and documents stored in the XDM Server, and create activities, where events will be fired. The resource adapter will only fire events on activities that exist; that is, the RA won't create activities implicitly if a document is updated.</para>
+					<para>The <literal>RA Type</literal> also provides a base abstract implementation of the resource adapter, making it very simple to change the underlying resource used to store information, which is by default the internal JDBC datasource of the JBoss Application Server.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Cache Resource Adaptor</term>
+				<listitem>
+					<para>This resource adapter stores the XCAP application usages installed in the server.</para>
+					<para>Each <literal>AppUsage</literal> is an object that includes the logic to validate XCAP documents that result from XCAP requests and are expensive to create; this resource adapter  thus provides caching of AppUsages, using a pool model.</para>
+					<para>The resource adapter doesn't possess events or activities.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>AppUsage Service</term>
+				<listitem>
+					<para>XCAP Application Usages are installed through a  JAIN SLEE service, making it possible to add and/or remove application usages while the server is running.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Aggregation Proxy Service</term>
+				<listitem>
+					<para>This JAIN SLEE service implements the aggregation proxy functional element. It handles events fired by the Mobicents HTTP Servlet resource adapter and then uses two child SBBs: the <literal>User Profile Enabler SBB</literal> to retrieve information regarding the user needed for authentication/authorization of the XCAP request, and the <literal>Request Processor SBB</literal>, which handles the XCAP request.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Request Processor SBB</term>
+				<listitem>
+					<para>The <literal>Request Processor SBB</literal> implements the request processor functional element, providing a synchronous SBB interface to process XCAP requests. It uses the <literal>AppUsage Cache</literal> resource adapter to borrow AppUsage objects, and the Data Source resource adapter to retrieve or set documents stored in the server's data source.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>User Profile Enabler SBB (TBD: not available yet)</term>
+				<listitem>
+					<para>This SBB provides a synchronous SBB interface used in JAIN SLEE child relations in order to retrieve user information. Two different implementations of the interface are provided, one considers that the information is stored in the XDM Data Source, another interfaces to a Diameter Sh Server such as IMS HSS.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Diff Subscription Control Service</term>
+				<listitem>
+					<para>This JAIN SLEE Service extends the abstract SIP Event Subscription Control component to handle SIP subscriptions on the xcap-diff event package.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>The implementation architecture figure also contains client-side components:</para>
+		<variablelist
+			id="varlist-Client-Side_Components_of_the_XML_Document_Management_Server_">
+			<title>Client-Side Components of the XML Document Management Server </title>
+			<varlistentry>
+				<term>XCAP Client</term>
+				<listitem>
+					<para>The XCAP client is a simple API to interact with an XCAP Server that internally uses the Apache HTTP Client.</para>
+					<para>The API documentation and example code snippets can be found TBD</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XCAP Client Resource Adaptor</term>
+				<listitem>
+					<para>The XCAP Client Resource Adaptor adapts the XCAP Client API into JAIN SLEE domain. It provides methods to interact with the XCAP server in both syncronous and asyncronous ways.</para>
+					<para>The RA Type description and code snippets using the RA can be found here.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>XDM Client SBB</term>
+				<listitem>
+					<para>The XDMClientSBB is an interface of a JAIN SLEE SBB to be used as a client to the Mobicents XDM Server (and others compliant with same standards), in JAIN SLEE child relations.</para>
+					<para>Two implementations of this interface are provided:</para>
+					<itemizedlist>
+						<listitem>
+							<para>
+								<literal>InternalXDMClientSBB</literal> is intended to be used on applications running in the Mobicents XDM Server JAIN SLEE container, and</para>
+						</listitem>
+						<listitem>
+							<para>
+								<literal>ExternalXDMClientSBB</literal>, which is intended to be used on applications in a different JAIN SLEE container than the Mobicents XDM Server.</para>
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<para>TBD: This version of the documentation is from http://groups.google.com/group/mobicents-public/web/mobicents-xdm-server and the original author is Eduardo Martins, JBoss R&amp;D.</para>
+	</section>
+	<section
+		id="section-Resources_and_Further_Information_about_the_XDM_Server">
+		<title>Resources and Further Information about the XDM Server</title>
+		<para>For further information on the Mobicents XDM Server, here is a list of additional resources:</para>
+		<itemizedlist
+			id="itemlist-Further_Information_on_the_Mobicents_XDM_Server">
+			<listitem>
+				<para>How to Manage the Mobicents XDM Server</para>
+			</listitem>
+			<listitem>
+				<para>How to Create an XCAP App(lication)Usage</para>
+			</listitem>
+			<listitem>
+				<para>Integrating XDM in your JAIN SLEE Apps: Code Snippets for XDM Client SBB Usage</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-api">XCAP Client API Documentation</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>
+					<ulink
+						url="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Type Description and Example Code Snippets</ulink>
+				</para>
+			</listitem>
+			<listitem>
+				<para>Mobicents SIP Presence Service</para>
+			</listitem>
+			<listitem>
+				<para>Want to contribute?</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+</section>

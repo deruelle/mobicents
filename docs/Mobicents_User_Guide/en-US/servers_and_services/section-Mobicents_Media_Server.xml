@@ -1,0 +1,503 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Mobicents_Media_Server">
+	<title>Mobicents Media Server</title>
+	<section
+		id="section-Overview_of_Media_Servers">
+		<title>Overview of Media Servers</title>
+		<formalpara>
+			<title>The Reasoning and Need for Media Servers</title>
+			<para>With the continued progress of globalization, more corporations than ever before have workgroups spread across countries and continents across the world. To support and increase the productivity of remote and telecommuting workgroups, communications companies are considering more cost effective network solutions that combine voice, wireless, data and video functionality. Businesses like these expect that the services they select and eventually implement will have call quality comparable to conventional telephone service, and they expect those services to boost productivity and reduce overall communications costs. Acquiring these desired network services requires connections from the Internet and wireless and wireline networks to Public Switched Telephone Networks (<acronym>PSTN</acronym>s) using a flexible, robust, scalable and cost-effective media gateway. The ability of such gateways to reduce overall communications costs for dispersed workgroups forms the foundation for media services and servers.</para>
+		</formalpara>
+		<formalpara>
+			<title>Media Gateways Bridge Multiple Technologies</title>
+			<para>Today, all communications can be routed through computers. Widespread access to broadband Internet and the ubiquity of Internet Protocol (<acronym>IP</acronym>) enable the convergence of voice, data and video. Media gateways provide the ability to switch voice media between a network and its access point. Using Digital Subscriber Line (<acronym>DSL</acronym>) and fast-Internet cable technology, a media gateway converts, compresses and packetizes voice data for transmission back-and-forth across the Internet backbone for wireline and wireless phones. Media gateways sit at the intersection of the PSTNs and wireless or IP-based networks.</para>
+		</formalpara>
+		<formalpara>
+			<title>The Justification for Media Gateways for VoIP</title>
+			<para>Multiple market demands are pushing companies to converge all of their media services using media gateways with VoIP capabilities. Companies expect such a convergent architecture to:</para>
+		</formalpara>
+		<variablelist>
+			<title>Company Expectations of a Convergent Architecture</title>
+			<varlistentry>
+				<term>Lower Initial Costs</term>
+				<listitem>
+					<para>Capital investment is decreased because low-cost commodity hardware can be used for multiple functions.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Lower Development Costs</term>
+				<listitem>
+					<para>Open system hardware and software standards with well-defined applications mean lower costs, and Application Programmable Interfaces (<acronym>API</acronym>s) accelerate development.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Handle Multiple Media Types</term>
+				<listitem>
+					<para>Companies want <acronym>VoIP</acronym> solutions today, but also need to choose extensible solutions that will handle video in the near future.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Lower the Costs of Deployment and Maintenance</term>
+				<listitem>
+					<para>Standardized, modular systems reduce training costs and maintenance while also improving uptime.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Enable Rapid Time-to-Market</term>
+				<listitem>
+					<para>Early market entry hits the window of opportunity and maximizes revenue.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara>
+			<title>What Is the Mobicents Media Server?</title>
+			<para>The Mobicents Media Gateway is an open source Media Server based on the Java Media Framework and is aimed at:</para>
+		</formalpara>
+		<itemizedlist>
+			<listitem>
+				<para>Delivering competitive, complete, best-of-breed media gateway functionality of the highest quality.</para>
+			</listitem>
+			<listitem>
+				<para>Meeting the demands of converged wireless and wireline networks, DSL and cable broadband access, and fixed-mobile converged <acronym>VoIP</acronym> networks from a single&mdash;and singularly-capable&mdash;media gateway platform.</para>
+			</listitem>
+			<listitem>
+				<para>Increasing flexibility with a media gateway that supports a wide variety of call control protocols and scales to meet the demands of enterprises and small-carrier providers.</para>
+			</listitem>
+		</itemizedlist>
+	</section>
+	<section
+		id="section-Installation_of_the_Mobicents_Media_Server">
+		<title>Installation of the Mobicents Media Server</title>
+		<para>The Mobicents Media Server is a self-contained Java software stack consisting of multiple servers architecturally designed to work together. This server stack includes the JBoss Application Server and the Mobicents JAIN SLEE Server; both of these required servers are included in the Media Server distribution.</para>
+		<para>The Mobicents Media Server is available in both binary and source code distributions. The simplest way to get started with the Media Server is to download the ready-to-run binary distribution. Alternatively, the source code for the Mobicents Media Server can be obtained by checking it out from its repository using the Subversion version control system (<acronym>VCS</acronym>), and then built using the Maven build system. Whereas installing the binary distribution is recommended for most users, obtaining and building the source code is recommended for those who want access to the latest revisions and Media Server capabilities. For more information on installing the Mobicents Media Server from source, go to <xref
+				linkend="section-source-Mobicents-Installing_Configuring_and_Running"/>.</para>
+		
+	<!--Installing the JDK-->
+		<xi:include
+			xmlns:xi="http://www.w3.org/2001/XInclude"
+			href="../modules/section-Installing_the_JDK_Version_5.0.xml" />
+			
+	<!-- Binary Distribution -->
+		<section
+			id="section-binary-Media_Server-Installing_Configuring_and_Running">
+			<title>Binary Distribution: Installing, Configuring and Running</title>
+			<para>The Media Server distribution comes bundled with the JBoss Application Server version 4.2.2 GA, the latest version of the Mobicents JAIN SLEE Server, and all of the resource adapters required to run the various bundled examples.</para>
+			<section
+				id="section-binary-Media_Server-PreInstall_Requirements_and_Prerequisites">
+				<title>Pre-Install Requirements and Prerequisites</title>
+				<para>You should ensure that a few requirements have been met before continuing with the install.</para>
+				<variablelist
+					id="variablelist-binary-Media_Server-Hardware_Requirements">
+					<title>Hardware Requirements</title>
+					<varlistentry>
+						<term>Sufficient Disk Space</term>
+						<listitem>
+							<para>You must have sufficient disk space in order to install the Media Server binary release. Once unzipped, version 1.0.0 of the Media Server binary release requires <emphasis>at least</emphasis> 100 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Anything Java Itself Will Run On</term>
+						<listitem>
+							<para>The Mobicents Media Server and its bundled servers, JBoss and JAIN SLEE, are 100% Java. The Media Server will run on the same hardware that the JBoss Application Server runs on.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+				<variablelist
+					id="variablelist-binary-Media_Server-Software_Prerequisites">
+					<title>Software Prerequisites</title>
+					<varlistentry>
+						<term>JDK 1.5 or Higher</term>
+						<listitem>
+							<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the Mobicents Media Server. For instructions on how to install the JDK, refer to the earlier section, <literal>Java Development Kit: Installing, Configuring and Running</literal>, in this guide. Note that the JBoss Application Server is a runtime dependency of the Media Server and, as mentioned, comes bundled with the binary distribution.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+			</section>
+			<section
+				id="section-binary-Media_Server-Downloading">
+				<title>Downloading</title>
+				<para>You can download the latest version of the Media Server from <ulink
+						url="http://www.mobicents.org/mms-downloads.html"/>. The top row of the table holds the latest version. Click the <literal>Download</literal> link on the right to start the download from Sourceforge.net.</para>
+			</section>
+			<section
+				id="section-binary-Media_Server-Installing">
+				<title>Installing</title>
+				<para>Once the requirements and prerequisites have been met and you have downloaded the binary distribution zip file, you are ready to install the Media Server. Follow the instructions below for your platform, whether Linux or Windows.</para>
+				<procedure>
+					<title>Installing the Media Server Binary Distribution on Linux</title>
+					<step>
+						<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>&lt;downloads&gt;</filename>.</para>
+						<screen>~]# cd &lt;downloads&gt;</screen>
+					</step>
+					<step>
+						<para>In <filename>&lt;downloads&gt;</filename>, create a subdirectory to hold the unzipped Media Server files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the Media Server binary distribution you downloaded.</para>
+						<screen>&lt;downloads&gt;]$ mkdir &quot;mms-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Move the downloaded zip file into the directory you just created:</para>
+						<screen>&lt;downloads&gt;]$ mv &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot; &quot;mms-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Move into that directory:</para>
+						<screen>&lt;downloads&gt;]$ cd &quot;mms-&lt;version&gt;&quot;</screen>
+					</step>
+					<step>
+						<para>Finally, use Java's <command>jar <option>-xvf</option>
+							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
+						<screen>mms-&lt;version&gt;]$ jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
+									</command> command:</para>
+								<screen>mms-&lt;version&gt;]$ unzip &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+								<tip>
+									<para>You can also use <command>unzip</command>'s <option>-d</option>
+										<filename>
+								<replaceable>&lt;unzip_to_location&gt;</replaceable>
+							</filename> option to extract the zip file's contents to a location other than the current directory.</para>
+								</tip>
+							</step>
+						</stepalternatives>
+					</step>
+					<step>
+						<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
+						<screen>mms-&lt;version&gt;]$ rm &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Installing the Media Server Binary Distribution on Windows</title>
+					<step>
+						<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the Media Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mms-&lt;verison&gt;</filename>.</para>
+					</step>
+					<step>
+						<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, it is also possible to use Java's <command>jar <option>-xvf</option>
+									</command> command to extract the binary distribution files from the zip archive. To use this method instead, first move the downloaded zip file from <filename>My Downloads</filename> to the folder that you just created to hold the Media Server files.</para>
+							</step>
+							<step>
+								<para>Then, open the Windows Command Prompt and navigate to the folder holding the archive using the <command>cd</command> command:</para>
+								<tip
+									id="tip-binary-Media_Server-Opening_the_Command_Prompt_from_Windows_Explorer">
+									<title>Opening the Command Prompt from Windows Explorer</title>
+									<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
+								</tip>
+								<screen>C:\Users\Me&gt;cd &quot;My Downloads\mms-&lt;version&gt;&quot;</screen>
+							</step>
+							<step>
+								<para>Finally, use the <command>jar <option>-xvf</option>
+									</command> command to extract the archive contents into the current folder.</para>
+								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+							</step>
+						</stepalternatives>
+					</step>
+					<step>
+						<para>At this point, you may want to move the folder holding the Media Server binary files (in this example, the folder named <filename>mms-&lt;version&gt;</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the Media Server folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
+					</step>
+					<step>
+						<para>You may also want to delete the zip file after extracting its contents in order to free disk space:</para>
+						<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;delete &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-Media_Server-Running">
+				<title>Running</title>
+				<para>Once installed, you can run the Mobicents Media Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the Media Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the Media Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
+				<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
+				<para>Detailed instructions are given below, arranged by platform.</para>
+				<procedure>
+					<title>Running the Media Server on Linux</title>
+					<step>
+						<para>Change your working directory to the Media Server's topmost directory (the one which you extracted the zip file's contents to):</para>
+						<screen>downloads]$ cd &quot;mms-&lt;version&gt;&quot;</screen>
+					</step>
+					<step
+						performance="optional">
+						<para>(Optional) Ensure that the <filename>jboss-4.2.2.GA/bin/run.sh</filename> start script is executable:</para>
+						<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>
+					</step>
+					<step>
+						<para>Finally, execute the <filename>run.sh</filename> Bourne shell script:</para>
+						<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/run.sh</screen>
+						<stepalternatives>
+							<step>
+								<para>Instead of executing the Bourne shell script to start the server, you may alternatively run the <filename>run.jar</filename> executable Java archive in the <filename>jboss-4.2.2.GA/bin</filename> directory:</para>
+								<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Running the Media Server on Windows</title>
+					<step>
+						<para>There are several different ways to start the Media Server on Windows. All of the following methods accomplish the same task.</para>
+						<para>Using Windows Explorer, change your folder to the one in which you unzipped the downloaded zip file, and then to the <filename>jboss-4.2.2.GA\bin</filename> subfolder.</para>
+					</step>
+					<step>
+						<para>Although not the preferred way (see below), it is possible to start the Media Server by double-clicking on the <filename>run.bat</filename> executable batch file.</para>
+						<stepalternatives>
+							<step>
+								<para>As mentioned above, the best way to start the Media Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
+										linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
+								<screen>C:\Users\Me\My Downloads&gt; cd &quot;mms-&lt;version&gt;&quot;</screen>
+							</step>
+							<step>
+								<para>Start the Media Server by running the executable <filename>run.bat</filename> batch file:</para>
+								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\run.bat</screen>
+								<stepalternatives>
+									<step>
+										<para>It is also possible to start the Media Server by running the <filename>run.jar</filename> executable Java archive:</para>
+										<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>
+									</step>
+								</stepalternatives>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-Media_Server-Stopping">
+				<title>Stopping</title>
+				<para>Just as there are multiple ways to run the Media Server, there are multiple ways to stop it. Detailed instructions for stopping the Media Server are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt:</para>
+				<programlisting>[Server] Shutdown complete
+Shutdown complete
+Halting VM</programlisting>
+				<procedure>
+					<title>Stopping the Media Server on Linux by Issuing a Control Code</title>
+					<step>
+						<para>Assuming that you started the Media Server as a foreground process in the terminal, the easiest way to stop it is by pressing the <keycombo
+								action="simul"><keycap>Ctrl</keycap>
+						<keycap>c</keycap>
+					</keycombo> key combination in the same terminal in which you started it.
+						</para>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Stopping the Media Server on Linux by Executing <filename>shutdown.sh</filename> or <filename>shutdown.jar</filename>
+					</title>
+					<step>
+						<para>Another way to shut down the Media Server is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory. To do so, first change your working directory to the Media Server's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
+						<screen>downloads]$ cd &quot;mms-<replaceable>&lt;version&gt;</replaceable>&quot;</screen>
+					</step>
+					<step
+						performance="optional">
+						<para>(Optional) Ensure that the jboss-4.2.2.GA/bin/shutdown.sh start script is executable:</para>
+						<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>
+					</step>
+					<step>
+						<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script, and remember to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument:</para>
+						<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>
+						<stepalternatives>
+							<step>
+								<para>Instead of executing the Bourne shell script to stop the server, you may alternatively run the <filename>shutdown.jar</filename> executable Java archive to do so (and remembering, again, to add the <option>-S</option> command line argument):</para>
+								<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+				<procedure>
+					<title>Stopping the Media Server on Windows</title>
+					<step>
+						<para>Stopping the Media Server on Windows consists in executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>jboss-4.2.2.GA\bin</filename> subfolder of the Media Server binary distribution. Make sure to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument.</para>
+						<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>
+						<stepalternatives>
+							<step>
+								<para>Alternatively, you can execute the <filename>shutdown.jar</filename> Java archive by running the <command>java <option>-jar</option>
+									</command> command, and remembering to add the <option>-S</option> option as a command line argument:</para>
+								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>
+							</step>
+						</stepalternatives>
+					</step>
+				</procedure>
+			</section>
+			<section
+				id="section-binary-Media_Server-Configuring">
+				<title>Configuring</title>
+				<para>The Media Server can be controlled and configured with the Mobicents Management Console, which is started along with the server. For information on configuring the Media Server, refer to <xref
+						linkend="section-MMS_Configuration"/>.</para>
+			</section>
+			<section
+				id="section-binary-Media_Server-Testing">
+				<title>Testing</title>
+				<para>For information on testing the Media Server, refer to <xref
+						linkend="section-Writing_and_Running_Tests_Against_the_Mobicents_Media_Server"/>.</para>
+			</section>
+			<section
+				id="section-binary-Media_Server-Uninstalling">
+				<title>Uninstalling</title>
+				<para>To uninstall the Media Server, simply delete the directory you decompressed the binary distribution archive into.</para>
+			</section>
+		</section>
+		<section
+			id="section-Writing_and_Running_Tests_Against_the_Mobicents_Media_Server">
+			<title>Writing and Running Tests Against the Mobicents Media Server</title>
+			<para>For information about the different kinds of tests that the Mobicents Media Server provides, refer to <ulink
+					url="http://groups.google.com/group/mobicents-public/web/mobicents-ms-tests">Writing and Running Tests Against MMS</ulink>.</para>
+		</section>
+	</section>
+</section>		
+	<!-- Source Distribution -->
+	<!--Commenting out because will use mobicents_target source instructions for the time being, unless users clamor for instructions on building individual servers from source-->
+	<!--<section
+		id="section-source-Media_Server-Installing_Configuring_and_Running">
+		<title>Source Distribution: Installing, Configuring and Running</title>
+		<para>The Mobicents Media Server is also available as a source distribution. You can obtain the Media Server source code using the Subversion version control system, and then easily build and run it.</para>
+		<section
+			id="section-source-Media_Server-PreInstall_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+			<variablelist
+				id="variablelist-source-Media_Server-Hardware_Requirements">
+				<title>Hardware Requirements</title>
+				<varlistentry>
+					<term>Sufficient Disk Space</term>
+					<listitem>
+						<para>You must have sufficient disk space in order to install the Mobicents Media Server source code as well as the JBoss binary distribution. The Mobicents source, once fetched from the development Subversion repository, consumes about ?-? MB of disk space. In addition to this, the JBoss Application Server binary distribution (version 4.2.2 GA), once decompressed, requires approximately 115 MB, meaning that you will need to have <emphasis>at least</emphasis> ? MB of free disk space available. Keep in mind also that disk space requirements will change with subsequent updates to the development repository.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Anything Java Itself Will Run On</term>
+					<listitem>
+						<para>The Mobicents Media Server, JAIN SLEE Server and the JBoss Application Server are 100% Java. The Mobicents Media Server will run on the same hardware that the JBoss Application Server runs on.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist
+				id="variablelist-source-Media_Server-Software_Prerequisites">
+				<title>Software Prerequisites</title>
+				<varlistentry>
+					<term>Java 1.5 or Higher</term>
+					<listitem>
+						<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>A Download Utility</term>
+					<listitem>
+						<para>A way to download files is required. We will use the <command>wget</command> utility in the subsequent sections, but any common web browser will suffice.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>The Subversion Version Control System or Client</term>
+					<listitem>
+						<para>The Subversion Version Control System (<acronym>VCS</acronym>) is required in order to check out the latest Mobicents source code. In addition to the command line client, there are a number of other clients that can be downloaded or installed via your package manager:</para>
+						<itemizedlist
+							id="itemlist-">
+							<listitem>
+								<formalpara>
+									<title>Basic Subversion (the shell client)</title>
+									<para>If you are reasonably proficient on the command line, this is the only client you will need. You can get a binary version for your operating system here: <ulink
+											url="http://subversion.tigris.org/project_packages.html"/>. Note that I will be using the command line (shell) Subversion client throughout this Guide.</para>
+								</formalpara>
+							</listitem>
+							<listitem>
+								<formalpara>
+									<title>The Meld Diff, Merge and Graphical VCS Tool</title>
+									<para>On Linux and UNIX-based operating systems, Meld is the Swiss Army knife of version control tools (<acronym>VCSes</acronym>). It can do 2- and 3-way diffs between files, diffs between directory hierarchies, and also serves as a graphical <acronym>VCS</acronym> front-end for the Subversion Version Control System, as well as Git, Darcs, Mercurial, Bazaar(-NG), Monotone, Perforce and CVS, among possible others. Note that you also need the basic Subversion shell client installed before Meld can function with it. Meld is available from <ulink
+											url="http://meld.sourceforge.net/install.html"/>.</para>
+								</formalpara>
+								<mediaobject
+									id="mediaobj-top-Installation-ss-MeldVCS.png">
+									<imageobject>
+										<imagedata
+											align="right"
+											width="700"
+											fileref="images/top-Installation-ss-MeldVCS.png"
+											format="PNG" />
+									</imageobject>
+									<caption>
+										<para>Checking Subversion repository modifications with Meld</para>
+									</caption>
+								</mediaobject>
+							</listitem>
+							<listitem>
+								<formalpara>
+									<title>TortoiseSVN</title>
+									<para>A graphical Windows Subversion client which integrates with the Explorer file manager. Available from <ulink
+											url="http://tortoisesvn.tigris.org/"/>.</para>
+								</formalpara>
+							</listitem>
+							<listitem>
+								<formalpara>
+									<title>Other Subversion Clients</title>
+									<para>A full list of Subversion clients is available from <ulink
+											url="http://subversion.tigris.org/links.html"/> (look under the <literal>Clients and plugins</literal> subheading).</para>
+								</formalpara>
+							</listitem>
+						</itemizedlist>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Ant, version 1.7.0 or Higher</term>
+					<listitem>
+						<para>The Java-based Ant build tool <quote>for tracking, resolving and managing project dependencies.</quote>, which is available here: <ulink
+								url="http://ant.apache.org/"/>.</para>
+						<note
+							id="note-Both_Ant_and_Maven_Are_Required">
+							<title>Both Ant and Maven Are Required!</title>
+							<para>Both the Ant and Maven build tools are required in order to build the Mobicents Converged Application Server and deploy resource adapters, etc.</para>
+						</note>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Maven, version 2.0.9 or Higher</term>
+					<listitem>
+						<para>The Java-based Maven build and <quote>software project management and comprehension tool</quote>, available here: <ulink
+								url="http://maven.apache.org/"/>.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>A Working Installation of JBoss 4.2 or Higher</term>
+					<listitem>
+						<para>Finally, building the Mobicents Media Server from source requires a working installation of JBoss 4.2. The following section provides instructions on how to download and install the JBoss 4.2.2 GA binary distribution.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		<xi:include
+			xmlns:xi="http://www.w3.org/2001/XInclude"
+			href="../modules/section-Installing_JBoss_AS_Version_4.2.2_GA.xml" />
+		<section
+			id="section-source-Media_Server-Obtaining_the_Source_Code">
+			<title>Obtaining the Source Code</title>
+			<para>For further directions on how to obtain the source code and build the Mobicents Media Server, refer to <ulink
+					url="http://groups.google.com/group/mobicents-public/web/mobicents-ms-binary">Installing and Building the Mobicents Media Server</ulink>.</para>
+		</section>
+		<section
+			id="section-source-Media_Server-Building">
+			<title>Building</title>
+			<para></para>
+		</section>
+		<section
+			id="section-source-Media_Server-Running">
+			<title>Running</title>
+			<para></para>
+		</section>
+		<section
+			id="section-source-Media_Server-Stopping">
+			<title>Stopping</title>
+			<para></para>
+		</section>
+		<section
+			id="section-source-Media_Server-Configuring">
+			<title>Configuring</title>
+			<para></para>
+		</section>
+		<section
+			id="section-source-Media_Server-Testing">
+			<title>Testing</title>
+			<para></para>
+		</section>
+		<section
+			id="section-source-Media_Server-Uninstalling">
+			<title>Uninstalling</title>
+			<para></para>
+		</section>
+	</section>
+</section>-->
+

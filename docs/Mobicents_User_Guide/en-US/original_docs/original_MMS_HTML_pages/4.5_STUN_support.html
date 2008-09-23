@@ -1,0 +1,62 @@
+<p>When MMS is behind a NAT, it may need a STUN server in order to operate correctly.
+Note that you should avoid deploying Media Server behind a NATs, since
+they can introduce significant performance penalty and failures. The
+current implementation works with static NAT (a.k.a. 1-1 NAT, where no
+port mapping occurs), Full Cone NAT and should work with
+Address-Restricted NAT. For more information about STUN NAT
+classification see&nbsp; chapter 5 in <a href="http://www.faqs.org/rfcs/rfc3489.html">this documen</a>t.</p>
+<h2>Configuration</h2>
+<p>Every endpoint in the Media Server can have it's own STUN
+preferences. The STUN options are specified in the jboss-service.xml
+file. This is an example of the Announcement Endpoint with static NAT
+configuration:</p>
+<p><b>&nbsp;&nbsp;</b></p>
+<p><font size="2">&nbsp;&nbsp;&nbsp; &lt;!-- ANNOUNCEMENT ENDPOINT --&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;mbean<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; code="org.mobicents.media.server.impl.ann.AnnEndpointManagement"<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; name="media.mobicents:endpoint=announcement"<br>
+&nbsp;&nbsp;&nbsp; &gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="JndiName"&gt;media/endpoint/Announcement&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="BindAddress"&gt;${jboss.bind.address}&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="Jitter"&gt;60&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="PacketizationPeriod"&gt;20&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="PortRange"&gt;1024-65535&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="PCMA"&gt;true&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="PCMU"&gt;true&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="Speex"&gt;false&lt;/attribute&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="DTMF"&gt;detector.mode=AUTO&lt;/attribute&gt;<br>
+<span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="UseStun"&gt;true&lt;/attribute&gt;</span><br style="color: rgb(255, 0, 0);">
+<span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="StunServerAddress"&gt;stun.ekiga.net&lt;/attribute&gt;</span><br style="color: rgb(255, 0, 0);">
+<span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="StunServerPort"&gt;3478&lt;/attribute&gt;</span><br style="color: rgb(255, 0, 0);">
+<span style="color: rgb(255, 0, 0);">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;attribute name="UsePortMapping"&gt;false&lt;/attribute&gt;</span>
+<br>
+&nbsp;&nbsp;&nbsp; &lt;/mbean&gt;</font></p>
+<p><br>
+</p>
+<p>There are 4 attributes related to STUN configuration:</p>
+<ul>
+<li><b>UseStun</b> - a boolean attribute which enables or disables STUN for the current endpoint<br>
+  </li>
+<li><b>StunServerAddress</b> - a string attribute, which must be the address of a STUN server. In this case <b>stun.ekiga.net</b>.<br>
+  </li>
+<li><b>StunServerPort</b> - a string attribute, must be the port number of the STUN server, <b>3478</b> is the port of the Ekiga server<br>
+  </li>
+<li><b>UsePortMapping</b> - a boolean attribute that specifies
+whether the NAT is mapping the port numbers. A NAT is mapping ports if
+the internal and external ports are NOT guaranteed to be the same for
+every connection through the NAT. In other words - if the client
+established a connection with the NAT at 111.111.111.111:1024, then the
+NAT will establish the second leg of the connection to some different
+(private) address, but on the same port, like 192.168.1.1:1024. If these ports are the same (1024), then your NAT is not mapping the ports and you can set this attribute to <b>false</b>,
+which improves the performance of the NAT traversal, by doing the STUN
+lookup only once at boot-time, instead of doing it everytime a new
+connection is established. NATs that are not mapping port are also known as static NATs.<br>
+  </li>
+</ul>
+<p>&nbsp;</p>
+<p><a href="../web/mobicents-media-server">TOC</a></p>
+<p><a href="/group/mobicents-public/web/mobicents-ms-cfg-conf">Previous</a></p>
+<p><a href="../web/mobicents-ms-pckg-ann">Next</a></p>
+<p></p>
+<p></p>
+<wbr>
