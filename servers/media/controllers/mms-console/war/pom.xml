@@ -94,13 +94,10 @@
 			<artifactId>gwt-user</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!--  coverage patch (used to generate code coverage data for GwtTestCase based tests, when -Dgwt.coverage.enable=true -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwtcoverage</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!--
+			coverage patch (used to generate code coverage data for GwtTestCase based tests, when -Dgwt.coverage.enable=true <dependency> <groupId>com.google.gwt</groupId> <artifactId>gwtcoverage</artifactId>
+			<version>${gwt.version}</version> <scope>provided</scope> </dependency>
+		-->
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-common</artifactId>
