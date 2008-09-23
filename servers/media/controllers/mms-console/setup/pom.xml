@@ -43,7 +43,7 @@
 											<type>war</type>
 											<overWrite>false</overWrite>
 											<outputDirectory> ${project.build.directory} </outputDirectory>
-											<destFileName> mms-management-console.war </destFileName>
+											<destFileName> mms-console.war </destFileName>
 										</artifactItem>
 									</artifactItems>
 								</configuration>
@@ -63,7 +63,7 @@
 									<tasks>
 										<copy
 											overwrite="true"
-											file="target/mms-management-console.war"
+											file="target/mms-console.war"
 											todir="${jboss.home}/server/${node}/deploy" />
 									</tasks>
 								</configuration>
@@ -77,7 +77,7 @@
 								<configuration>
 									<tasks>
 										<delete
-											file="${jboss.home}/server/${node}/deploy/mms-management-console.war" />
+											file="${jboss.home}/server/${node}/deploy/mms-console.war" />
 									</tasks>
 								</configuration>
 							</execution>

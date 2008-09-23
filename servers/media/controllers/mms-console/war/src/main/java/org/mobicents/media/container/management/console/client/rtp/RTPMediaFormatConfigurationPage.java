@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -74,8 +75,10 @@ public class RTPMediaFormatConfigurationPage extends Composite {
 
 		formatsDisplayPanel.setCell(0, 0, predefinedListBox);
 		formatsDisplayPanel.setCell(0, 2, presentFormatsBox);
+		formatsDisplayPanel.setCell(0, 1, new Label(""));
+		formatsDisplayPanel.setCellAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP, HasHorizontalAlignment.ALIGN_CENTER);
 		formatsDisplayPanel.setCellAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP, HasHorizontalAlignment.ALIGN_CENTER);
-		formatsDisplayPanel.setCellAlignment(2, 0, HasVerticalAlignment.ALIGN_TOP, HasHorizontalAlignment.ALIGN_CENTER);
+		formatsDisplayPanel.setCellAlignment(0, 2, HasVerticalAlignment.ALIGN_TOP, HasHorizontalAlignment.ALIGN_CENTER);
 		rootPanel.setWidget(0, 0, formatsDisplayPanel);
 		formatsDisplayPanel.setWidth("100%");
 		formatsDisplayPanel.setHeight("100%");

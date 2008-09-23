@@ -44,7 +44,7 @@
 			
 		-->
 		<!--  This is not visible ;[ -->
-		<gwt.version>${gwt-user.version}</gwt.version>
+		<gwt.version>1.4.60</gwt.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -144,9 +144,6 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-				<module>rpc</module>
-				<module>server</module>
-				<module>war</module>
 				<module>setup</module>
 			</modules>
 		</profile>

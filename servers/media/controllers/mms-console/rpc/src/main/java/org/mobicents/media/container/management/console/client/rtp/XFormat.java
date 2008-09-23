@@ -55,12 +55,13 @@ public class XFormat implements IsSerializable {
 		if(formats==null)
 			return new XFormat[0];
 	
-		//FIXME: its a hack....
+		//FIXME: its a hack.... for issue 350
 		formats=formats.replaceAll(".0 Hz", "");
 		formats=formats.replaceAll("Mono", "1");
 		formats=formats.replaceAll("-bit", "");
 		formats=formats.replaceAll("Stereo", "2");
 		formats=formats.replaceAll(", Unknown Sample Rate", "");
+		formats=formats.replaceAll("\\.0", "");
 		String[] _formats=formats.split(";");
 		
 		XFormat[] result=new XFormat[_formats.length];

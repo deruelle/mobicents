@@ -125,7 +125,7 @@ public class RTPFormatEditPanel extends Composite {
 			
 			
 		}
-		UserInterface.getLogPanel().info("Sending: "+allFormats);
+		
 		XFormat[] xfs=XFormat.fromString(allFormats);
 		action.perform(xfs, page);
 	}

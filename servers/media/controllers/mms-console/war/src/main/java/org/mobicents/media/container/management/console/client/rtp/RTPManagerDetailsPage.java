@@ -59,10 +59,10 @@ public class RTPManagerDetailsPage extends Composite {
 	protected final static XFormat[] predefinedAudioFormats;
 	protected final static XFormat[] predefinedVideoFormats;
 	static {
-		XFormat xf = new XFormat("telephone-event", "101");
+		
 
-		// FIXME:Add more
-		predefinedAudioFormats = new XFormat[] { xf };
+		// FIXME:Speex has PT of 100 as it has not been assigned with static one due to: http://lists.xiph.org/pipermail/speex-dev/2002-November/000049.html
+		predefinedAudioFormats = XFormat.fromString("8 = ALAW, 8000, 8,1;0 = ULAW,8000,8,1;100 = SPEEX,8000, 1;18 = G729,8000,1;99 = telephone-event,8000");
 		predefinedVideoFormats = new XFormat[0];
 	}
 
@@ -148,67 +148,7 @@ public class RTPManagerDetailsPage extends Composite {
 		displayInfoPanel.setCell(2, 2, setButton);
 		displayInfoPanel.setCell(2, 3, refresButton);
 
-		// PACKETIZATION #3
-		refresButton = new Button();
-		setButton = new Button();
-		refresButton.setText("Refresh");
-		setButton.setText("Set");
-		refresButton.addClickListener(refreshListener);
-		setButton.addClickListener(setClickListener);
-		refresButton.setTitle(_PACKETIZATION_PERIOD);
-		setButton.setTitle(_PACKETIZATION_PERIOD);
-		this.packetizationPeriodBox.setText(this.info.getPacketizationPeriod() + "");
-		displayInfoPanel.setCellText(3, 0, _PACKETIZATION_PERIOD);
-		displayInfoPanel.setCell(3, 1, this.packetizationPeriodBox);
-		displayInfoPanel.setCell(3, 2, setButton);
-		displayInfoPanel.setCell(3, 3, refresButton);
-
-		// JITTER #4
-		refresButton = new Button();
-		setButton = new Button();
-		refresButton.setText("Refresh");
-		setButton.setText("Set");
-		refresButton.addClickListener(refreshListener);
-		setButton.addClickListener(setClickListener);
-		refresButton.setTitle(_JIITER);
-		setButton.setTitle(_JIITER);
-		this.jitterBox.setText(this.info.getJitter() + "");
-		displayInfoPanel.setCellText(4, 0, _JIITER);
-		displayInfoPanel.setCell(4, 1, this.jitterBox);
-		displayInfoPanel.setCell(4, 2, setButton);
-		displayInfoPanel.setCell(4, 3, refresButton);
-
-		// LOW PORT #5
-		refresButton = new Button();
-		setButton = new Button();
-		refresButton.setText("Refresh");
-		setButton.setText("Set");
-		refresButton.addClickListener(refreshListener);
-		setButton.addClickListener(setClickListener);
-		refresButton.setTitle(_LOW_PORT);
-		setButton.setTitle(_LOW_PORT);
-		this.lowPortRangeBox.setText(this.info.getPortRange()[0] + "");
-		displayInfoPanel.setCellText(5, 0, _LOW_PORT);
-		displayInfoPanel.setCell(5, 1, this.lowPortRangeBox);
-		displayInfoPanel.setCell(5, 2, setButton);
-		displayInfoPanel.setCell(5, 3, refresButton);
-
-		// HIGH PORT #6
-		refresButton = new Button();
-		setButton = new Button();
-		refresButton.setText("Refresh");
-		setButton.setText("Set");
-		refresButton.addClickListener(refreshListener);
-		setButton.addClickListener(setClickListener);
-		refresButton.setTitle(_HIGH_PORT);
-		setButton.setTitle(_HIGH_PORT);
-		this.highPortRange.setText(this.info.getPortRange()[1] + "");
-		displayInfoPanel.setCellText(6, 0, _HIGH_PORT);
-		displayInfoPanel.setCell(6, 1, this.highPortRange);
-		displayInfoPanel.setCell(6, 2, setButton);
-		displayInfoPanel.setCell(6, 3, refresButton);
-
-		// STUN SERVER ADDRESS #7
+		// STUN SERVER ADDRESS #3
 		refresButton = new Button();
 		setButton = new Button();
 		refresButton.setText("Refresh");
@@ -218,12 +158,13 @@ public class RTPManagerDetailsPage extends Composite {
 		refresButton.setTitle(_STUN_SERVER_ADDRESS);
 		setButton.setTitle(_STUN_SERVER_ADDRESS);
 		this.stunServerAddressBox.setText(this.info.getStunServerAddress());
-		displayInfoPanel.setCellText(7, 0, _STUN_SERVER_ADDRESS);
-		displayInfoPanel.setCell(7, 1, this.stunServerAddressBox);
-		displayInfoPanel.setCell(7, 2, setButton);
-		displayInfoPanel.setCell(7, 3, refresButton);
+		this.stunServerAddressBox.setWidth("100%");
+		displayInfoPanel.setCellText(3, 0, _STUN_SERVER_ADDRESS);
+		displayInfoPanel.setCell(3, 1, this.stunServerAddressBox);
+		displayInfoPanel.setCell(3, 2, setButton);
+		displayInfoPanel.setCell(3, 3, refresButton);
 
-		// STUN SERVER PUBLIC ADDRESS #8
+		// STUN SERVER PUBLIC ADDRESS #4
 		refresButton = new Button();
 		setButton = new Button();
 		refresButton.setText("Refresh");
@@ -232,13 +173,14 @@ public class RTPManagerDetailsPage extends Composite {
 		setButton.addClickListener(setClickListener);
 		refresButton.setTitle(_STUN_PUBLIC_ADDRESS);
 		setButton.setTitle(_STUN_PUBLIC_ADDRESS);
+		this.publicAddressFromStunBox.setWidth("100%");
 		this.publicAddressFromStunBox.setText(this.info.getPublicAddressFromStun());
-		displayInfoPanel.setCellText(8, 0, _STUN_PUBLIC_ADDRESS);
-		displayInfoPanel.setCell(8, 1, this.publicAddressFromStunBox);
-		displayInfoPanel.setCell(8, 2, setButton);
-		displayInfoPanel.setCell(8, 3, refresButton);
+		displayInfoPanel.setCellText(4, 0, _STUN_PUBLIC_ADDRESS);
+		displayInfoPanel.setCell(4, 1, this.publicAddressFromStunBox);
+		displayInfoPanel.setCell(4, 2, setButton);
+		displayInfoPanel.setCell(4, 3, refresButton);
 
-		// STUN SERVER PORT #9
+		// STUN SERVER PORT #5
 		refresButton = new Button();
 		setButton = new Button();
 		refresButton.setText("Refresh");
@@ -248,8 +190,68 @@ public class RTPManagerDetailsPage extends Composite {
 		refresButton.setTitle(_STUN_SERVER_PORT);
 		setButton.setTitle(_STUN_SERVER_PORT);
 		this.stunServerPortBox.setText(this.info.getStunServerPort() + "");
-		displayInfoPanel.setCellText(9, 0, _STUN_SERVER_PORT);
-		displayInfoPanel.setCell(9, 1, this.stunServerPortBox);
+		displayInfoPanel.setCellText(5, 0, _STUN_SERVER_PORT);
+		displayInfoPanel.setCell(5, 1, this.stunServerPortBox);
+		displayInfoPanel.setCell(5, 2, setButton);
+		displayInfoPanel.setCell(5, 3, refresButton);
+
+		// PACKETIZATION #6
+		refresButton = new Button();
+		setButton = new Button();
+		refresButton.setText("Refresh");
+		setButton.setText("Set");
+		refresButton.addClickListener(refreshListener);
+		setButton.addClickListener(setClickListener);
+		refresButton.setTitle(_PACKETIZATION_PERIOD);
+		setButton.setTitle(_PACKETIZATION_PERIOD);
+		this.packetizationPeriodBox.setText(this.info.getPacketizationPeriod() + "");
+		displayInfoPanel.setCellText(6, 0, _PACKETIZATION_PERIOD);
+		displayInfoPanel.setCell(6, 1, this.packetizationPeriodBox);
+		displayInfoPanel.setCell(6, 2, setButton);
+		displayInfoPanel.setCell(6, 3, refresButton);
+
+		// JITTER #7
+		refresButton = new Button();
+		setButton = new Button();
+		refresButton.setText("Refresh");
+		setButton.setText("Set");
+		refresButton.addClickListener(refreshListener);
+		setButton.addClickListener(setClickListener);
+		refresButton.setTitle(_JIITER);
+		setButton.setTitle(_JIITER);
+		this.jitterBox.setText(this.info.getJitter() + "");
+		displayInfoPanel.setCellText(7, 0, _JIITER);
+		displayInfoPanel.setCell(7, 1, this.jitterBox);
+		displayInfoPanel.setCell(7, 2, setButton);
+		displayInfoPanel.setCell(7, 3, refresButton);
+
+		// LOW PORT #8
+		refresButton = new Button();
+		setButton = new Button();
+		refresButton.setText("Refresh");
+		setButton.setText("Set");
+		refresButton.addClickListener(refreshListener);
+		setButton.addClickListener(setClickListener);
+		refresButton.setTitle(_LOW_PORT);
+		setButton.setTitle(_LOW_PORT);
+		this.lowPortRangeBox.setText(this.info.getPortRange()[0] + "");
+		displayInfoPanel.setCellText(8, 0, _LOW_PORT);
+		displayInfoPanel.setCell(8, 1, this.lowPortRangeBox);
+		displayInfoPanel.setCell(8, 2, setButton);
+		displayInfoPanel.setCell(8, 3, refresButton);
+
+		// HIGH PORT #8
+		refresButton = new Button();
+		setButton = new Button();
+		refresButton.setText("Refresh");
+		setButton.setText("Set");
+		refresButton.addClickListener(refreshListener);
+		setButton.addClickListener(setClickListener);
+		refresButton.setTitle(_HIGH_PORT);
+		setButton.setTitle(_HIGH_PORT);
+		this.highPortRange.setText(this.info.getPortRange()[1] + "");
+		displayInfoPanel.setCellText(9, 0, _HIGH_PORT);
+		displayInfoPanel.setCell(9, 1, this.highPortRange);
 		displayInfoPanel.setCell(9, 2, setButton);
 		displayInfoPanel.setCell(9, 3, refresButton);
 
@@ -543,7 +545,7 @@ public class RTPManagerDetailsPage extends Composite {
 				}
 
 				public void onSuccess(Object arg0) {
-					ServerConnection.rtpManagementServiceAsync.getAudioFormats(info.getObjectName(), new AsyncCallback(){
+					ServerConnection.rtpManagementServiceAsync.getAudioFormats(info.getObjectName(), new AsyncCallback() {
 
 						public void onFailure(Throwable t) {
 							// TODO Auto-generated method stub
@@ -554,11 +556,12 @@ public class RTPManagerDetailsPage extends Composite {
 						}
 
 						public void onSuccess(Object o) {
-							XFormat[] xfs=(XFormat[]) o;
+							XFormat[] xfs = (XFormat[]) o;
 							info.setAudioFormats(xfs);
 							page.refreshView(xfs);
-							
-						}});
+
+						}
+					});
 
 				}
 			});
@@ -581,7 +584,7 @@ public class RTPManagerDetailsPage extends Composite {
 				}
 
 				public void onSuccess(Object arg0) {
-					ServerConnection.rtpManagementServiceAsync.getVideoFormats(info.getObjectName(), new AsyncCallback(){
+					ServerConnection.rtpManagementServiceAsync.getVideoFormats(info.getObjectName(), new AsyncCallback() {
 
 						public void onFailure(Throwable t) {
 							// TODO Auto-generated method stub
@@ -592,11 +595,12 @@ public class RTPManagerDetailsPage extends Composite {
 						}
 
 						public void onSuccess(Object o) {
-							XFormat[] xfs=(XFormat[]) o;
+							XFormat[] xfs = (XFormat[]) o;
 							info.setVideoFormats(xfs);
 							page.refreshView(xfs);
-							
-						}});
+
+						}
+					});
 
 				}
 			});
