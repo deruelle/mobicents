@@ -1,7 +1,6 @@
 package org.openxdm.xcap.client.test.subscription;
 
 import static org.junit.Assert.assertTrue;
-
 import gov.nist.javax.sip.Utils;
 
 import java.io.IOException;
@@ -33,7 +32,6 @@ import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
 import javax.sip.header.FromHeader;
-import javax.sip.header.Header;
 import javax.sip.header.HeaderFactory;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.SubscriptionStateHeader;
@@ -49,19 +47,15 @@ import junit.framework.JUnit4TestAdapter;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.log4j.Logger;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openxdm.xcap.client.Response;
-import org.openxdm.xcap.client.XCAPClient;
+import org.openxdm.xcap.client.test.AbstractXDMJunitTest;
 import org.openxdm.xcap.client.test.ServerConfiguration;
-import org.openxdm.xcap.common.appusage.AppUsage;
-import org.openxdm.xcap.common.datasource.DataSource;
 import org.openxdm.xcap.common.key.DocumentUriKey;
 import org.openxdm.xcap.common.key.UserDocumentUriKey;
 import org.openxdm.xcap.common.xcapdiff.DocumentType;
 import org.openxdm.xcap.common.xcapdiff.XcapDiff;
-import org.openxdm.xcap.server.slee.appusage.resourcelists.ResourceListsAppUsage;
 
 /**
  * first puts a new doc through xcap then subscribes it through sip, etag from xcap put response and notify must match.
@@ -69,7 +63,7 @@ import org.openxdm.xcap.server.slee.appusage.resourcelists.ResourceListsAppUsage
  * Finally delete document and a notify with old etag should arrive.
  * Unsubscribe to clean up.
  */
-public class SubscribeDocumentTest implements SipListener {
+public class SubscribeDocumentTest extends AbstractXDMJunitTest implements SipListener {
 	
 	private static Logger logger = Logger.getLogger(SubscribeDocumentTest.class);
 	
@@ -85,12 +79,9 @@ public class SubscribeDocumentTest implements SipListener {
 	}
 	protected Tests testRunning; 
 	
-	protected XCAPClient client = null;
-	protected AppUsage appUsage = new ResourceListsAppUsage(null);
 	protected String subscriberUsername = "eduardo";
 	protected String domain = "openxdm.org";
 	protected String subscriberSipUri = "sip:"+subscriberUsername+"@" + domain;
-	protected String documentName = "index";
 	
 	protected SipProvider sipProvider;
 	protected AddressFactory addressFactory;
@@ -143,9 +134,6 @@ public class SubscribeDocumentTest implements SipListener {
 		
 		// set test state machine
 		testRunning = Tests.test1;
-		
-		// get xcap client
-		client = ServerConfiguration.getXCAPClientInstance();
 		
 		// send put request and get response
 		Response putResponse = client.put(getDocumentUriKey(),appUsage.getMimetype(),getContent());
@@ -458,26 +446,9 @@ public class SubscribeDocumentTest implements SipListener {
 	// ---- TEST setup/cleanup
 	
 	@Before
-	public void runBefore() throws IOException {
+	public void runBefore() throws IOException, InterruptedException {
 			
-		// data source app usage & user provisioning
-		try {
-			// get data source
-			DataSource dataSource = ServerConfiguration.getDataSourceInstance();
-			dataSource.open();
-			// ensure a new user in the app usage
-			try {				
-				dataSource.removeUser(appUsage.getAUID(),subscriberSipUri);				
-			}
-			catch (Exception e) {
-				System.out.println("Unable to remove user, maybe does not exist yet. Exception msg: "+e.getMessage());
-			}
-			dataSource.addUser(appUsage.getAUID(),subscriberSipUri);
-			dataSource.close();
-		}
-		catch (Exception e) {
-			throw new RuntimeException("Unable to complete test data source provisioning. Exception msg: "+e.getMessage());
-		}
+		super.runBefore();
 		
 		try {
 			// init sip stack
@@ -522,13 +493,9 @@ public class SubscribeDocumentTest implements SipListener {
 	
 	@After
 	public void runAfter() throws IOException {
-		if (client != null) {
-			client.shutdown();
-			client = null;
-		}
-		appUsage = null;
-		subscriberSipUri = null;
-		documentName = null;
+		
+		super.runAfter();
+		
 		try {
 			sipProvider.removeSipListener(this);
 			sipStack.deleteSipProvider(sipProvider);

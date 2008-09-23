@@ -15,6 +15,7 @@ import javax.slee.SbbContext;
 import net.java.slee.resource.http.events.HttpServletRequestEvent;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.error.BadRequestException;
 import org.openxdm.xcap.common.error.ConflictException;
 import org.openxdm.xcap.common.error.InternalServerErrorException;

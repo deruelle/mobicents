@@ -14,6 +14,7 @@ import javax.slee.serviceactivity.ServiceActivity;
 import javax.slee.serviceactivity.ServiceActivityFactory;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.openxdm.xcap.common.appusage.AppUsage;
 import org.openxdm.xcap.common.appusage.AppUsageFactory;
 import org.openxdm.xcap.common.error.InternalServerErrorException;

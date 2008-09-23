@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rls-services xmlns="urn:ietf:params:xml:ns:rls-services"
+	xmlns:rl="urn:ietf:params:xml:ns:resource-lists">
+	<service uri="sip:mybuddies@example.com">
+		<resource-list>http://xcap.example.com/resource-lists/users/sip:joe@example.com/index/~~/resource-lists/list%5b@name=%22l1%22%5d</resource-list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+	<service uri="sip:list@example.com">
+		<list name="list">
+			<rl:entry uri="sip:joe@example.com" />
+			<rl:entry uri="sip:sudhir@example.com" />
+		</list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+</rls-services>

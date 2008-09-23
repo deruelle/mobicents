@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rls-services xmlns="urn:ietf:params:xml:ns:rls-services"
+	xmlns:rl="urn:ietf:params:xml:ns:resource-lists">
+	<service uri="sip:nu@example.com">
+		<list name="nu">
+			<rl:entry uri="sip:joe@example.com" />
+			<rl:entry uri="sip:sudhir@example.com" />
+		</list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+</rls-services>

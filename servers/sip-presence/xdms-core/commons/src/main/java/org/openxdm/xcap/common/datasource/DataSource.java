@@ -25,11 +25,13 @@ public interface DataSource {
 	
 	public Document getDocument(DocumentSelector documentSelector) throws InternalServerErrorException;
 
-	public void createDocument(DocumentSelector documentSelector,String eTag, String xml) throws InternalServerErrorException;
+	public void createDocument(DocumentSelector documentSelector,String eTag, String xml, org.w3c.dom.Document document) throws InternalServerErrorException;
 
-	public void updateDocument(DocumentSelector documentSelector,String newETag, String newXml) throws InternalServerErrorException;
+	public void updateDocument(DocumentSelector documentSelector,
+			String oldETag, String newETag, String documentAsString,
+			org.w3c.dom.Document document) throws InternalServerErrorException;
 	
-	public void deleteDocument(DocumentSelector documentSelector) throws InternalServerErrorException;
+	public void deleteDocument(DocumentSelector documentSelector, String oldETag) throws InternalServerErrorException;
 	
 	public String[] getAppUsages() throws InternalServerErrorException;
 	
@@ -51,6 +53,13 @@ public interface DataSource {
 	
 	public void removeUser(String appUsage, String user) throws InternalServerErrorException;
 	
+	/**
+	 * Finds out an existing collection, going backwards in the collection tree from one that doesn't exist 
+	 * @param auid
+	 * @param startingCollection
+	 * @return
+	 * @throws InternalServerErrorException
+	 */
 	public String getExistingCollection(String auid, String startingCollection) throws InternalServerErrorException;
 
 }

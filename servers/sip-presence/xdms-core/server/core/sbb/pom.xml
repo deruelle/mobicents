@@ -12,6 +12,11 @@
 	<dependencies>	
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
+			<artifactId>server-configuration</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
 			<artifactId>server-datasource-ratype</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
@@ -32,12 +37,6 @@
 	
 	<build>
 		<finalName>${mobicents.sip.presence.service.finalName.prefix}xdms-core-sbb-${pom.version}</finalName>
-		<resources>
-			<resource>
-        		<directory>src/main/resources</directory>
-        		<filtering>true</filtering>
-      		</resource>
-      	</resources>
 	</build>
 	
 </project>

@@ -24,7 +24,6 @@ import org.openxdm.xcap.server.etag.IfNoneMatchETagValidator;
 import org.openxdm.xcap.server.result.ReadResult;
 import org.openxdm.xcap.server.result.WriteResult;
 import org.openxdm.xcap.server.slee.RequestProcessorSbbLocalObject;
-import org.openxdm.xcap.server.slee.ServerConfiguration;
 import org.openxdm.xcap.server.slee.resource.datasource.AppUsageActivity;
 import org.openxdm.xcap.server.slee.resource.datasource.AttributeUpdatedEvent;
 import org.openxdm.xcap.server.slee.resource.datasource.DataSourceActivityContextInterfaceFactory;

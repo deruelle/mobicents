@@ -24,13 +24,25 @@
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}.core</groupId>
-			<artifactId>server-datasource-ra-jdbc</artifactId>
+			<artifactId>server-datasource-ra</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
 		<!-- libs -->
 		<dependency>
 			<groupId>${pom.groupId}.core</groupId>
 			<artifactId>commons</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}.core</groupId>
+			<artifactId>server-configuration</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>xcap-client-api</artifactId>
+			<groupId>org.mobicents.servers.sippresence</groupId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>	

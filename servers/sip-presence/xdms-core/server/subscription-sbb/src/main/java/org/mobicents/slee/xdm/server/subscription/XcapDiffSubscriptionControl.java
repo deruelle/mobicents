@@ -10,17 +10,14 @@ import java.util.Map;
 import javax.sip.RequestEvent;
 import javax.sip.header.ContentTypeHeader;
 import javax.sip.message.Response;
-import javax.slee.ChildRelation;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.apache.log4j.Logger;
 import org.mobicents.slee.sipevent.server.subscription.NotifyContent;
 import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
 import org.mobicents.slee.sipevent.server.subscription.pojo.SubscriptionKey;
-import org.mobicents.slee.xdm.server.XDMClientControlParentSbbLocalObject;
+import org.mobicents.slee.xdm.server.ServerConfiguration;
 import org.mobicents.slee.xdm.server.XDMClientControlSbbLocalObject;
 import org.openxdm.xcap.client.appusage.resourcelists.jaxb.EntryType;
 import org.openxdm.xcap.client.appusage.resourcelists.jaxb.ListType;
@@ -35,7 +32,6 @@ import org.openxdm.xcap.common.uri.TerminalSelector;
 import org.openxdm.xcap.common.xcapdiff.DocumentType;
 import org.openxdm.xcap.common.xcapdiff.ObjectFactory;
 import org.openxdm.xcap.common.xcapdiff.XcapDiff;
-import org.openxdm.xcap.server.slee.ServerConfiguration;
 
 /**
  * Logic for {@link XcapDiffSubscriptionControlSbb}

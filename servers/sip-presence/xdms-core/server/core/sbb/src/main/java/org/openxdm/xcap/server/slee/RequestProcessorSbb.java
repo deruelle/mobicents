@@ -538,10 +538,10 @@ public abstract class RequestProcessorSbb implements
 					try {
 						String xml = TextWriter.toString(domDocument);
 						if (attributeSelector == null) {
-							dataSourceSbbInterface.updateElement(documentSelector, nodeSelector, namespaces, document.getETag(), newETag, xml, null, null);
+							dataSourceSbbInterface.updateElement(documentSelector, nodeSelector, namespaces, document.getETag(), newETag, xml, domDocument,null, null);
 						}
 						else {
-							dataSourceSbbInterface.updateAttribute(documentSelector, nodeSelector, attributeSelector, namespaces, document.getETag(), newETag, xml, null);
+							dataSourceSbbInterface.updateAttribute(documentSelector, nodeSelector, attributeSelector, namespaces, document.getETag(), newETag, xml, domDocument,null);
 						}
 						if (isLogDebugEnabled())
 							logAsDebug("document updated in data source");
@@ -1380,14 +1380,14 @@ public abstract class RequestProcessorSbb implements
 						dataSourceSbbInterface.updateAttribute(
 								documentSelector, nodeSelector,
 								attributeSelector, namespaces, document
-										.getETag(), newETag, xml,
+										.getETag(), newETag, xml, domDocument,
 								attributeValue);
 					}
 					else if (nodeSelector != null) {
 						// element update
 						dataSourceSbbInterface.updateElement(documentSelector,
 								nodeSelector, namespaces, document.getETag(),
-								newETag, xml, newElementAsString, newElement);
+								newETag, xml, domDocument, newElementAsString, newElement);
 					} else {
 						// whole doc
 						dataSourceSbbInterface.updateDocument(documentSelector,
@@ -1397,6 +1397,7 @@ public abstract class RequestProcessorSbb implements
 						logAsDebug("document updated in data source");
 				}
 			} catch (Exception e) {
+				logger.error(e);
 				throw new InternalServerErrorException(
 						"Failed to serialize resulting dom document to string");
 			}

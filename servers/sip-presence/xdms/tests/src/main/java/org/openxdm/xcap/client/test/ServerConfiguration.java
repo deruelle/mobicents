@@ -1,12 +1,9 @@
 package org.openxdm.xcap.client.test;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.openxdm.xcap.client.XCAPClient;
 import org.openxdm.xcap.client.XCAPClientImpl;
-import org.openxdm.xcap.common.datasource.DataSource;
-import org.openxdm.xcap.common.error.InternalServerErrorException;
 
 public class ServerConfiguration {
 
@@ -55,17 +52,6 @@ public class ServerConfiguration {
 
 	public static XCAPClient getXCAPClientInstance() throws InterruptedException {
 		return new XCAPClientImpl(SERVER_HOST,SERVER_PORT,SERVER_XCAP_ROOT);
-	}
-	
-	public static DataSource getDataSourceInstance() throws InternalServerErrorException {
-		//return new XMLDBDataSource(SERVER_HOST,SERVER_PORT,SERVER_XCAP_ROOT.substring(1));
-		try {
-			Class.forName("org.hsqldb.jdbcDriver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new JDBCDataSourceClient("jdbc:hsqldb:hsql://"+getServerHost()+":1701");
 	}
 	
 }

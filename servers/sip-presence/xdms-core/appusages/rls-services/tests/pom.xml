@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>appusage-rls-services-parent</artifactId>
+		<groupId>org.mobicents.servers.xdm.core</groupId>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
+	</parent>
+	
+	<artifactId>appusage-rls-services-tests</artifactId>
+				
+	<dependencies>
+		<dependency>
+			<artifactId>xcap-client-api</artifactId>
+			<groupId>org.mobicents.servers.sippresence</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>commons</artifactId>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>appusage-rls-services-server-sbb</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+		</dependency>
+	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+	</profiles>
+</project>

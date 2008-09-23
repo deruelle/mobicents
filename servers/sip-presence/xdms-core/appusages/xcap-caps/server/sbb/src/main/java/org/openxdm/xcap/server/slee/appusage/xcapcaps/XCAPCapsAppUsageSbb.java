@@ -1,20 +1,14 @@
 package org.openxdm.xcap.server.slee.appusage.xcapcaps;
 
-import java.io.PrintWriter;
 import java.net.URL;
 
-import javax.slee.InitialEventSelector;
 import javax.xml.validation.Schema;
-
-import net.java.slee.resource.http.events.HttpServletRequestEvent;
 
 import org.apache.log4j.Logger;
 import org.openxdm.xcap.common.appusage.AppUsageFactory;
 import org.openxdm.xcap.common.error.InternalServerErrorException;
-import org.openxdm.xcap.common.error.NoParentConflictException;
 import org.openxdm.xcap.common.xml.SchemaContext;
 import org.openxdm.xcap.server.slee.AbstractAppUsageSbb;
-import org.openxdm.xcap.server.slee.ServerConfiguration;
 
 /**
  * JAIN SLEE Root Sbb for xcap-caps Xcap application usage.  

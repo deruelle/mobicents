@@ -995,12 +995,15 @@ public abstract class PublicationControlSbb implements Sbb, PublicationControlSb
 		return response;
 	}
 	
+	// --- JPA INITIALIZATION
+	
 	private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("sipevent-publication-pu");
+	
 	private EntityManager getEntityManager() {
-		//return this.persistenceResourceAdaptorSbbInterface.createEntityManager(new HashMap(), "sipevent-publication-pu");
 		return entityManagerFactory.createEntityManager();
 	}
 	
+
 	// ----------- SBB OBJECT's LIFE CYCLE
 	
 	public void sbbActivate() {}

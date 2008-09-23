@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">	
 	<modelVersion>4.0.0</modelVersion>
-	<packaging>pom</packaging>	
 	
 	<parent>
 		<artifactId>server-datasource-parent</artifactId>
@@ -9,10 +8,28 @@
 		<version>1.0.0.BETA3-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>server-datasource-ra-parent</artifactId>
-			
-	<modules>
-		<module>jdbc</module>
-	</modules>
+	<artifactId>server-datasource-ra</artifactId>
+	
+	<dependencies>		
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>server-datasource-ratype</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>server-configuration</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>xcap-client-api</artifactId>
+			<groupId>org.mobicents.servers.sippresence</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+	</dependencies>			
 	
 </project>

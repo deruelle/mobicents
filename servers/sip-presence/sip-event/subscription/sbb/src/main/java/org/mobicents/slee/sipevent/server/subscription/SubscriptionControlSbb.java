@@ -1257,7 +1257,6 @@ public abstract class SubscriptionControlSbb implements Sbb, SubscriptionControl
 	private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("sipevent-subscription-pu");
 	
 	private EntityManager getEntityManager() {
-		//return this.persistenceResourceAdaptorSbbInterface.createEntityManager(new HashMap(), "sipevent-subscription-pu");
 		return entityManagerFactory.createEntityManager();
 	}
 

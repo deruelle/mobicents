@@ -15,4 +15,13 @@
 		<module>server</module>
 	</modules>
 
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>tests</module>
+			</modules>
+		</profile>
+	</profiles>
+
 </project>

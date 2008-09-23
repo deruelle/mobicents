@@ -11,6 +11,7 @@
 	<artifactId>server-parent</artifactId>
 			
 	<modules>
+		<module>configuration</module>
 		<module>appusagecache</module>
 		<module>datasource</module>
 		<module>core</module>
