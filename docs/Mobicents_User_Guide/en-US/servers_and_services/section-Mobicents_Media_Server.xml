@@ -192,7 +192,7 @@
 									<title>Opening the Command Prompt from Windows Explorer</title>
 									<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
 								</tip>
-								<screen>C:\Users\Me&gt;cd &lt;My Downloads\mms-all-1.0.0.BETA3&gt;</screen>
+								<screen>C:\Users\Me&gt;cd &quot;My Downloads\mms-all-1.0.0.BETA3&quot;</screen>
 								<!--<screen>C:\Users\Me&gt;cd &quot;My Downloads\mms-&lt;version&gt;&quot;</screen>-->
 							</step>
 							<step>
@@ -218,25 +218,29 @@
 				<title>Running</title>
 				<para>Once installed, you can run the Mobicents Media Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the Media Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the Media Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
 				<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
-				<para>Detailed instructions are given below, arranged by platform.</para>
+				<para>Detailed instructions are given below, arranged by platform. For clarity, the following sequence of command line instructions uses specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
 				<procedure>
 					<title>Running the Media Server on Linux</title>
 					<step>
 						<para>Change your working directory to the Media Server's topmost directory (the one which you extracted the zip file's contents to):</para>
 						<screen>downloads]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
+						<!--<screen>downloads]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>-->
 					</step>
 					<step
 						performance="optional">
 						<para>(Optional) Ensure that the <filename>jboss-4.2.2.GA/bin/run.sh</filename> start script is executable:</para>
-						<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>
+						<screen>mms-all-1.0.0.BETA3]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>
+						<!--<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>-->
 					</step>
 					<step>
 						<para>Finally, execute the <filename>run.sh</filename> Bourne shell script:</para>
-						<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/run.sh</screen>
+						<screen>mms-all-1.0.0.BETA3]$ ./jboss-4.2.2.GA/bin/run.sh</screen>
+						<!--<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/run.sh</screen>-->
 						<stepalternatives>
 							<step>
 								<para>Instead of executing the Bourne shell script to start the server, you may alternatively run the <filename>run.jar</filename> executable Java archive in the <filename>jboss-4.2.2.GA/bin</filename> directory:</para>
-								<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>
+								<screen>mms-all-1.0.0.BETA3]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>
+								<!--<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>-->
 							</step>
 						</stepalternatives>
 					</step>
@@ -253,15 +257,18 @@
 							<step>
 								<para>As mentioned above, the best way to start the Media Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
 										linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
-								<screen>C:\Users\Me\My Downloads&gt; cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
+										<screen>C:\Users\Me\My Downloads&gt;cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
+								<!--<screen>C:\Users\Me\My Downloads&gt; cd &quot;mms-all-1.0.0.BETA3&quot;</screen>-->
 							</step>
 							<step>
 								<para>Start the Media Server by running the executable <filename>run.bat</filename> batch file:</para>
-								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\run.bat</screen>
+								<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;jboss-4.2.2.GA\bin\run.bat</screen>
+								<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\run.bat</screen>-->
 								<stepalternatives>
 									<step>
 										<para>It is also possible to start the Media Server by running the <filename>run.jar</filename> executable Java archive:</para>
-										<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>
+										<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>
+										<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>-->
 									</step>
 								</stepalternatives>
 							</step>
@@ -273,6 +280,7 @@
 				id="section-binary-Media_Server-Stopping">
 				<title>Stopping</title>
 				<para>Just as there are multiple ways to run the Media Server, there are multiple ways to stop it. Detailed instructions for stopping the Media Server are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt:</para>
+				<para>For clarity, the following sequence of command line instructions uses specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
 				<programlisting>[Server] Shutdown complete
 Shutdown complete
 Halting VM</programlisting>
@@ -291,20 +299,24 @@ Halting VM</programlisting>
 					</title>
 					<step>
 						<para>Another way to shut down the Media Server is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory. To do so, first change your working directory to the Media Server's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
-						<screen>downloads]$ cd &quot;mms-<replaceable>&lt;version&gt;</replaceable>&quot;</screen>
+						<screen>downloads]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
+						<!--<screen>downloads]$ cd &quot;mms-<replaceable>&lt;version&gt;</replaceable>&quot;</screen>-->
 					</step>
 					<step
 						performance="optional">
 						<para>(Optional) Ensure that the jboss-4.2.2.GA/bin/shutdown.sh start script is executable:</para>
-						<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>
+						<screen>mms-all-1.0.0.BETA3]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>
+						<!--<screen>mms-&lt;version&gt;]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>-->
 					</step>
 					<step>
 						<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script, and remember to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument:</para>
-						<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>
+						<screen>mms-all-1.0.0.BETA3]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>
+						<!--<screen>mms-&lt;version&gt;]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>-->
 						<stepalternatives>
 							<step>
 								<para>Instead of executing the Bourne shell script to stop the server, you may alternatively run the <filename>shutdown.jar</filename> executable Java archive to do so (and remembering, again, to add the <option>-S</option> command line argument):</para>
-								<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>
+								<screen>mms-all-1.0.0.BETA3]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>
+								<!--<screen>mms-&lt;version&gt;]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>-->
 							</step>
 						</stepalternatives>
 					</step>
@@ -313,12 +325,14 @@ Halting VM</programlisting>
 					<title>Stopping the Media Server on Windows</title>
 					<step>
 						<para>Stopping the Media Server on Windows consists in executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>jboss-4.2.2.GA\bin</filename> subfolder of the Media Server binary distribution. Make sure to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument.</para>
-						<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>
+						<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>
+						<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>-->
 						<stepalternatives>
 							<step>
 								<para>Alternatively, you can execute the <filename>shutdown.jar</filename> Java archive by running the <command>java <option>-jar</option>
 									</command> command, and remembering to add the <option>-S</option> option as a command line argument:</para>
-								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>
+									<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>
+								<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>-->
 							</step>
 						</stepalternatives>
 					</step>
