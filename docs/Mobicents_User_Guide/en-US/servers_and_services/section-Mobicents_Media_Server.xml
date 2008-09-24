@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
-]>
-<section
+]><section
 	id="section-Mobicents_Media_Server">
 	<title>Mobicents Media Server</title>
 	<section
@@ -72,8 +71,7 @@
 		id="section-Installation_of_the_Mobicents_Media_Server">
 		<title>Installation of the Mobicents Media Server</title>
 		<para>The Mobicents Media Server is a self-contained Java software stack consisting of multiple servers architecturally designed to work together. This server stack includes the JBoss Application Server and the Mobicents JAIN SLEE Server; both of these required servers are included in the Media Server distribution.</para>
-		<para>The Mobicents Media Server is available in both binary and source code distributions. The simplest way to get started with the Media Server is to download the ready-to-run binary distribution. Alternatively, the source code for the Mobicents Media Server can be obtained by checking it out from its repository using the Subversion version control system (<acronym>VCS</acronym>), and then built using the Maven build system. Whereas installing the binary distribution is recommended for most users, obtaining and building the source code is recommended for those who want access to the latest revisions and Media Server capabilities. For more information on installing the Mobicents Media Server from source, go to <xref
-				linkend="section-source-Mobicents-Installing_Configuring_and_Running"/>.</para>
+		<para>The Mobicents Media Server is available in both binary and source code distributions. The simplest way to get started with the Media Server is to download the ready-to-run binary distribution. Alternatively, the source code for the Mobicents Media Server can be obtained by checking it out from its repository using the Subversion version control system (<acronym>VCS</acronym>), and then built using the Maven build system. Whereas installing the binary distribution is recommended for most users, obtaining and building the source code is recommended for those who want access to the latest revisions and Media Server capabilities.</para>
 		
 	<!--Installing the JDK-->
 		<xi:include
@@ -126,33 +124,39 @@
 				id="section-binary-Media_Server-Installing">
 				<title>Installing</title>
 				<para>Once the requirements and prerequisites have been met and you have downloaded the binary distribution zip file, you are ready to install the Media Server. Follow the instructions below for your platform, whether Linux or Windows.</para>
+				<para>For clarity, the following sequence of command line instructions uses specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
 				<procedure>
 					<title>Installing the Media Server Binary Distribution on Linux</title>
 					<step>
-						<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>&lt;downloads&gt;</filename>.</para>
-						<screen>~]# cd &lt;downloads&gt;</screen>
+						<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>downloads</filename>.</para>
+						<screen>~]# cd downloads</screen>
 					</step>
 					<step>
-						<para>In <filename>&lt;downloads&gt;</filename>, create a subdirectory to hold the unzipped Media Server files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the Media Server binary distribution you downloaded.</para>
-						<screen>&lt;downloads&gt;]$ mkdir &quot;mms-&lt;version&gt;&quot;</screen>
+						<para>In <filename>downloads</filename>, create a subdirectory to hold the unzipped Media Server files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the Media Server binary distribution you downloaded.</para>
+						<screen>downloads]$ mkdir &quot;mms-all-1.0.0.BETA3&quot;</screen>
+						<!--<screen>&lt;downloads&gt;]$ mkdir &quot;mms-all-1.0.0.BETA3&quot;</screen>-->
 					</step>
 					<step>
 						<para>Move the downloaded zip file into the directory you just created:</para>
-						<screen>&lt;downloads&gt;]$ mv &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot; &quot;mms-&lt;version&gt;&quot;</screen>
+						<screen>downloads]$ mv &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot; &quot;mms-all-1.0.0.BETA3&quot;</screen>
+						<!--<screen>&lt;downloads&gt;]$ mv &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot; &quot;mms-all-1.0.0.BETA3&quot;</screen>-->
 					</step>
 					<step>
 						<para>Move into that directory:</para>
-						<screen>&lt;downloads&gt;]$ cd &quot;mms-&lt;version&gt;&quot;</screen>
+						<screen>downloads]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
+						<!--<screen>&lt;downloads&gt;]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>-->
 					</step>
 					<step>
 						<para>Finally, use Java's <command>jar <option>-xvf</option>
 							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
-						<screen>mms-&lt;version&gt;]$ jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<screen>mms-all-1.0.0.BETA3]$ jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<!--<screen>mms-&lt;version&gt;]$ jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>-->
 						<stepalternatives>
 							<step>
 								<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
 									</command> command:</para>
-								<screen>mms-&lt;version&gt;]$ unzip &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+								<screen>mms-all-1.0.0.BETA3]$ unzip &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+									<!--<screen>mms-&lt;version&gt;]$ unzip &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>-->
 								<tip>
 									<para>You can also use <command>unzip</command>'s <option>-d</option>
 										<filename>
@@ -164,13 +168,15 @@
 					</step>
 					<step>
 						<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
-						<screen>mms-&lt;version&gt;]$ rm &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<screen>mms-all-1.0.0.BETA3]$ rm &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<!--<screen>mms-&lt;version&gt;]$ rm &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>-->
 					</step>
 				</procedure>
 				<procedure>
 					<title>Installing the Media Server Binary Distribution on Windows</title>
 					<step>
-						<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the Media Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mms-&lt;verison&gt;</filename>.</para>
+						<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into.</para>
+						<para>For clarity, the following sequence of command line instructions uses specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
 					</step>
 					<step>
 						<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
@@ -186,12 +192,14 @@
 									<title>Opening the Command Prompt from Windows Explorer</title>
 									<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
 								</tip>
-								<screen>C:\Users\Me&gt;cd &quot;My Downloads\mms-&lt;version&gt;&quot;</screen>
+								<screen>C:\Users\Me&gt;cd &lt;My Downloads\mms-all-1.0.0.BETA3&gt;</screen>
+								<!--<screen>C:\Users\Me&gt;cd &quot;My Downloads\mms-&lt;version&gt;&quot;</screen>-->
 							</step>
 							<step>
 								<para>Finally, use the <command>jar <option>-xvf</option>
 									</command> command to extract the archive contents into the current folder.</para>
-								<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+									<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;jar -xvf <quote>&quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</quote></screen>
+								<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;jar -xvf &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>-->
 							</step>
 						</stepalternatives>
 					</step>
@@ -200,7 +208,8 @@
 					</step>
 					<step>
 						<para>You may also want to delete the zip file after extracting its contents in order to free disk space:</para>
-						<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;delete &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<screen>C:\Users\Me\My Downloads\mms-all-1.0.0.BETA3&gt;delete &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>
+						<!--<screen>C:\Users\Me\My Downloads\mms-&lt;version&gt;&gt;delete &quot;mobicents-media-server-all-1.0.0.BETA3.zip&quot;</screen>-->
 					</step>
 				</procedure>
 			</section>
@@ -214,7 +223,7 @@
 					<title>Running the Media Server on Linux</title>
 					<step>
 						<para>Change your working directory to the Media Server's topmost directory (the one which you extracted the zip file's contents to):</para>
-						<screen>downloads]$ cd &quot;mms-&lt;version&gt;&quot;</screen>
+						<screen>downloads]$ cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
 					</step>
 					<step
 						performance="optional">
@@ -244,7 +253,7 @@
 							<step>
 								<para>As mentioned above, the best way to start the Media Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
 										linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
-								<screen>C:\Users\Me\My Downloads&gt; cd &quot;mms-&lt;version&gt;&quot;</screen>
+								<screen>C:\Users\Me\My Downloads&gt; cd &quot;mms-all-1.0.0.BETA3&quot;</screen>
 							</step>
 							<step>
 								<para>Start the Media Server by running the executable <filename>run.bat</filename> batch file:</para>
