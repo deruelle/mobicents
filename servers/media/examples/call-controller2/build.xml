@@ -12,23 +12,19 @@
 	</target>
 
 	<target name="deploy-all" depends="init">
-		<exec executable="${executable}" dir="${home}/../../resources/sip/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip/">
 			<arg value="install"/>
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../sip-services/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/examples/sip-services/">
 			<arg value="install"/>
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../sip-services/proxy-without-initial-invite-services-DU/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/examples/sip-services/proxy-without-initial-invite-services-DU/">
 			<arg value="install"/>
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../../../media/">
-			<arg value="install"/>
-		</exec>
-
-		<exec executable="${executable}" dir="${home}/../../resources/media/">
+		<exec executable="${executable}" dir="${home}/../../controllers/msc/">
 			<arg value="install"/>
 		</exec>
 
@@ -42,23 +38,19 @@
 			<arg value="clean"/>
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../../resources/media/">
+		<exec executable="${executable}" dir="${home}/../../controllers/msc/">
 			<arg value="clean"/>
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../../../media/">
-			<arg value="clean"/>
-		</exec>
-
-		<exec executable="${executable}" dir="${home}/../sip-services/proxy-without-initial-invite-services-DU/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/examples/sip-services/proxy-without-initial-invite-services-DU/">
 			<arg value="clean" />
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../sip-services/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/examples/sip-services/">
 			<arg value="clean" />
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../../resources/sip/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip/">
 			<arg value="clean"/>
 		</exec>
 	</target>
