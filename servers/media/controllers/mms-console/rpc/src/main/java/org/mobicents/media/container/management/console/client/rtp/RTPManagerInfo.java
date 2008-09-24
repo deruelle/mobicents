@@ -1,5 +1,7 @@
 package org.mobicents.media.container.management.console.client.rtp;
 
+
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class RTPManagerInfo implements IsSerializable {
@@ -30,6 +32,11 @@ public class RTPManagerInfo implements IsSerializable {
 		return audioFormats;
 	}
 	public void setAudioFormats(XFormat[] audioFormats) {
+		System.out.println("Setting fromats");
+		for(int i=0;i<audioFormats.length;i++)
+		{
+			System.out.println("["+i+"] "+audioFormats[i]);	
+		}
 		this.audioFormats = audioFormats;
 	}
 	public XFormat[] getVideoFormats() {

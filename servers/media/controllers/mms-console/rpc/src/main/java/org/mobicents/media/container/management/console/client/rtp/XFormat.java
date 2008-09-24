@@ -62,6 +62,7 @@ public class XFormat implements IsSerializable {
 		formats=formats.replaceAll("Stereo", "2");
 		formats=formats.replaceAll(", Unknown Sample Rate", "");
 		formats=formats.replaceAll("\\.0", "");
+		formats=formats.trim();
 		String[] _formats=formats.split(";");
 		
 		XFormat[] result=new XFormat[_formats.length];

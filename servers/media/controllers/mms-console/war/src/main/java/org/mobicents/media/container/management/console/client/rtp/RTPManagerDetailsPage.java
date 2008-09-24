@@ -53,16 +53,21 @@ public class RTPManagerDetailsPage extends Composite {
 	protected CheckBox useStunCheckBox = new CheckBox();
 	protected CheckBox usePortMappingCheckBox = new CheckBox();
 
+	protected Hyperlink audioFormatsLink = new Hyperlink("Audio", "Audio");
+	protected Hyperlink videoFormatsLink = new Hyperlink("Video", "Video");
+	protected ClickListener audioFormatsLinkClickListener = null;
+	protected ClickListener videoFormatsLinkClickListener = null;
 	protected final static int _OPERATION_SET = 0;
 	protected final static int _OPERATION_REFRESH = 1;
 
 	protected final static XFormat[] predefinedAudioFormats;
 	protected final static XFormat[] predefinedVideoFormats;
 	static {
-		
 
-		// FIXME:Speex has PT of 100 as it has not been assigned with static one due to: http://lists.xiph.org/pipermail/speex-dev/2002-November/000049.html
-		predefinedAudioFormats = XFormat.fromString("8 = ALAW, 8000, 8,1;0 = ULAW,8000,8,1;100 = SPEEX,8000, 1;18 = G729,8000,1;99 = telephone-event,8000");
+		// FIXME:Speex has PT of 100 as it has not been assigned with static one
+		// due to:
+		// http://lists.xiph.org/pipermail/speex-dev/2002-November/000049.html
+		predefinedAudioFormats = XFormat.fromString("8 = ALAW, 8000, 8, 1;0 = ULAW, 8000, 8, 1;100 = SPEEX, 8000, 1;18 = G729, 8000, 1;99 = telephone-event/8000");
 		predefinedVideoFormats = new XFormat[0];
 	}
 
@@ -301,20 +306,20 @@ public class RTPManagerDetailsPage extends Composite {
 		displayInfoPanel.setColumnWidth(4, "50px");
 		// ListPanel formatPannel=new ListPanel();
 		// formatPannel.setHeader(0,"Media Formats");
-		Hyperlink nameLink = new Hyperlink("Audio", "Audio");
-		nameLink.addClickListener(new DisplayHyperLinkClickListener("Audio", info.getAudioFormats(), predefinedAudioFormats, new PerformAudioFormatsSet()));
+
+		// audioFormatsLink.addClickListener(audioFormatsLinkClickListener);
 		// formatPannel.setCell(0, 0, nameLink);
-		displayInfoPanel.setCell(0, 4, nameLink);
-		nameLink = new Hyperlink("Video", "Video");
-		nameLink.addClickListener(new DisplayHyperLinkClickListener("Video", info.getVideoFormats(), predefinedVideoFormats, new PerformVideoFormatsSet()));
-		displayInfoPanel.setCell(1, 4, nameLink);
+		displayInfoPanel.setCell(0, 4, audioFormatsLink);
+
+		displayInfoPanel.setCell(1, 4, videoFormatsLink);
 
 		for (int i = 2; i < 12; i++) {
 			displayInfoPanel.setCell(i, 4, new DockPanel());
 		}
 
-		// formatPannel.setCell(1, 0, nameLink);
-		// rootPanel.setWidget(0, 1, formatPannel);
+		performAudioFormatsUpdateInLocalInfo(info.getAudioFormats());
+		performVideoFormatsUpdateInLocalInfo(info.getVideoFormats());
+	
 
 	}
 
@@ -534,6 +539,7 @@ public class RTPManagerDetailsPage extends Composite {
 
 		public void perform(final XFormat[] xf, final RTPMediaFormatConfigurationPage page) {
 
+
 			ServerConnection.rtpManagementServiceAsync.setAudioFormats(xf, info.getObjectName(), new AsyncCallback() {
 
 				public void onFailure(Throwable t) {
@@ -545,28 +551,40 @@ public class RTPManagerDetailsPage extends Composite {
 				}
 
 				public void onSuccess(Object arg0) {
-					ServerConnection.rtpManagementServiceAsync.getAudioFormats(info.getObjectName(), new AsyncCallback() {
-
-						public void onFailure(Throwable t) {
-							// TODO Auto-generated method stub
-							if (t instanceof RTPManagementMBeanDoesNotExistException)
-								parent.resetTo(null);
-
-							UserInterface.getLogPanel().error("Failed to retrieve audio formats due to:\n" + t.getMessage());
-						}
-
-						public void onSuccess(Object o) {
-							XFormat[] xfs = (XFormat[]) o;
-							info.setAudioFormats(xfs);
-							page.refreshView(xfs);
-
-						}
-					});
+					performaLocalAudioFormatsUpdate(page);
 
 				}
 			});
 		}
 
+	}
+
+	private void performaLocalAudioFormatsUpdate(final RTPMediaFormatConfigurationPage page) {
+		ServerConnection.rtpManagementServiceAsync.getAudioFormats(info.getObjectName(), new AsyncCallback() {
+
+			public void onFailure(Throwable t) {
+				// TODO Auto-generated method stub
+				if (t instanceof RTPManagementMBeanDoesNotExistException)
+					parent.resetTo(null);
+
+				UserInterface.getLogPanel().error("Failed to retrieve audio formats due to:\n" + t.getMessage());
+			}
+
+			public void onSuccess(Object o) {
+				XFormat[] xfs = (XFormat[]) o;
+				performAudioFormatsUpdateInLocalInfo(xfs);
+				page.refreshView(xfs);
+			}
+		});
+	}
+
+	private void performAudioFormatsUpdateInLocalInfo(XFormat[] infos) {
+
+		this.info.setAudioFormats(infos);
+		if (audioFormatsLinkClickListener != null)
+			audioFormatsLink.removeClickListener(audioFormatsLinkClickListener);
+		audioFormatsLinkClickListener = new DisplayHyperLinkClickListener("Audio", info.getAudioFormats(), predefinedAudioFormats, new PerformAudioFormatsSet());
+		audioFormatsLink.addClickListener(audioFormatsLinkClickListener);
 	}
 
 	private class PerformVideoFormatsSet implements PerformActionClass {
@@ -584,23 +602,7 @@ public class RTPManagerDetailsPage extends Composite {
 				}
 
 				public void onSuccess(Object arg0) {
-					ServerConnection.rtpManagementServiceAsync.getVideoFormats(info.getObjectName(), new AsyncCallback() {
-
-						public void onFailure(Throwable t) {
-							// TODO Auto-generated method stub
-							if (t instanceof RTPManagementMBeanDoesNotExistException)
-								parent.resetTo(null);
-
-							UserInterface.getLogPanel().error("Failed to retrieve video formats due to:\n" + t.getMessage());
-						}
-
-						public void onSuccess(Object o) {
-							XFormat[] xfs = (XFormat[]) o;
-							info.setVideoFormats(xfs);
-							page.refreshView(xfs);
-
-						}
-					});
+					performLocalVideoFormatsUpdate(page);
 
 				}
 			});
@@ -608,4 +610,31 @@ public class RTPManagerDetailsPage extends Composite {
 
 	}
 
+	private void performLocalVideoFormatsUpdate(final RTPMediaFormatConfigurationPage page) {
+		ServerConnection.rtpManagementServiceAsync.getVideoFormats(info.getObjectName(), new AsyncCallback() {
+
+			public void onFailure(Throwable t) {
+				// TODO Auto-generated method stub
+				if (t instanceof RTPManagementMBeanDoesNotExistException)
+					parent.resetTo(null);
+
+				UserInterface.getLogPanel().error("Failed to retrieve video formats due to:\n" + t.getMessage());
+			}
+
+			public void onSuccess(Object o) {
+				XFormat[] xfs = (XFormat[]) o;
+				performVideoFormatsUpdateInLocalInfo(xfs);
+				page.refreshView(xfs);
+
+			}
+		});
+	}
+
+	private void performVideoFormatsUpdateInLocalInfo(XFormat[] xfs) {
+		this.info.setVideoFormats(xfs);
+		if (videoFormatsLinkClickListener != null)
+			videoFormatsLink.removeClickListener(videoFormatsLinkClickListener);
+		videoFormatsLinkClickListener = new DisplayHyperLinkClickListener("Video", info.getVideoFormats(), predefinedVideoFormats, new PerformVideoFormatsSet());
+		videoFormatsLink.addClickListener(videoFormatsLinkClickListener);
+	}
 }

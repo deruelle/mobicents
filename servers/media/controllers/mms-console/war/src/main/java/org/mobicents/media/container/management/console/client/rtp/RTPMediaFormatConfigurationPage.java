@@ -2,6 +2,7 @@ package org.mobicents.media.container.management.console.client.rtp;
 
 import org.mobicents.media.container.management.console.client.common.ControlContainer;
 import org.mobicents.media.container.management.console.client.common.ListPanel;
+import org.mobicents.media.container.management.console.client.common.UserInterface;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
@@ -44,13 +45,13 @@ public class RTPMediaFormatConfigurationPage extends Composite {
 		rootPanel.setHeight("100%");
 		rootPanel.setWidth("100%");
 		initWidget(rootPanel);
+
 		refreshView(info);
 
 	}
 
 	public void refreshView(XFormat[] info) {
 		this.info = info;
-
 		rootPanel.clear();
 		ListPanel formatsDisplayPanel = new ListPanel();
 		formatsDisplayPanel.setHeader(0, "Codecs/Predefined");
