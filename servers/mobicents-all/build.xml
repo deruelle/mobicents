@@ -19,7 +19,7 @@
 		</classpath>
 	</taskdef>
 
-	<target name="release" depends="get-jboss,unzip-jboss,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets-all-and-default">
+	<target name="release" depends="get-jboss,unzip-jboss,copy-frontpage,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets-all-and-default">
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
 		<antcall target="zip-release"/>
 		<antcall target="clean"/>
@@ -209,6 +209,16 @@
 		</copy>
 	</target>
 
+	<!-- copy frontpage -->
+	<target name="copy-frontpage" depends="">
+    <copy verbose="true" overwrite="true" todir="${jboss.home}/server/default/deploy/jboss-web.deployer/ROOT.war/">
+      <fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
+    </copy>
+    <copy verbose="true" overwrite="true" todir="${jboss.home}/server/all/deploy/jboss-web.deployer/ROOT.war/">
+      <fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
+    </copy>
+  </target>
+	
 	<!-- zip source -->
 
 	<target name="build-src-zip" depends="">

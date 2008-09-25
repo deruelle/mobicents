@@ -1,0 +1,1067 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+  <base target="_blank">
+  <title>Welcome to Mobicents :: The Open Source Communication Platform</title>
+  
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+	background: #fff url(bkgrnd_greydots.png) repeat;
+	font-family: "Lucida Grande", "Luxi Sans", "Bitstream Vera Sans", "Trebuchet MS", helvetica, verdana, arial, sans-serif;
+	font-size: small;
+	color: #333;
+	}
+	
+a {
+  text-decoration:none; 
+}
+
+a:link {
+  color: #0066CC;
+}
+
+a:visited {
+  color:#6699CC;
+}
+
+pre {
+  line-height: 0.9em;
+  font-size: small;
+}
+
+tt {
+  font-size: 12px;
+}
+
+.menu-div {
+  float: left;
+  text-align: left;
+  width: 150px;
+  height: auto;
+  border-right: 1px dotted #AAAAAA;
+}
+
+.menu-header {
+  border-top: 1px dotted #AAAAAA;
+  padding: 1px;
+  color: #AAAAAA;
+  width: 90%;
+}
+.menu-item {
+  border-top: 1px dotted #AAAAAA;
+  padding: 1.1px;
+  color: #111111;
+  width: 90%;
+  cursor: pointer;
+}
+.menu-item-group {
+}
+.main-div {
+  position:absolute;
+  top: 1%;
+  left:4%;
+  height: auto;
+  width: 92%;
+  background-color: #FFF;
+  padding-left: 3px;
+  padding-bottom: 5px;
+  padding-top: 3px;
+  padding-right: 3px;
+}
+
+.content-header {
+  font-size: medium;
+  font-weight: bold;
+  border-bottom: 1px dotted #AAAAAA;
+  border-top: 1px dotted #AAAAAA;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.content-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+tbody {
+  font-size: 12px;
+}
+
+.row-header {
+  background-color: rgb(42,73,108);
+  text-align: center;
+  vertical-align: top;
+  color: rgb(255, 255, 255);
+}
+
+.row-odd {
+  background-color: #e8e8e8;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.row-even {
+  background-color: #ffffff;
+  vertical-align: middle;
+  text-align: center;
+}
+</style>
+
+  </head>
+  <body onload="document.getElementById('content').innerHTML = document.getElementById('mobicents').innerHTML">
+    <div class="main-div">
+      &nbsp;<img src="jboss_rh_logo.gif" /><img onClick="document.getElementById('content').innerHTML = document.getElementById('mobicents').innerHTML" src="mobicents_logo.gif" />
+      <div style="text-align: left; margin: 10px;">
+        <div class="menu-div">
+          <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('mobicents').innerHTML"><strong>Mobicents</strong></div>
+          <div class="menu-header" onClick="document.getElementById('servers-items').style.display = 'block'">Servers</div>
+          <div id="servers-items" class="menu-item-group">
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('jainslee-server').innerHTML">JAIN SLEE</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-servlets-server').innerHTML">SIP Servlets</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('media-server').innerHTML">Media</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-presence-server').innerHTML">SIP Presence</div>
+          </div>
+          
+          <div class="menu-header" onClick="document.getElementById('ra-items').style.display = 'block'">Resource Adaptors</div>
+          <div id="ra-items" class="menu-item-group">
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('asterisk-ra').innerHTML">Asterisk</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('diameter-ra').innerHTML">Diameter</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('http-client-ra').innerHTML">HTTP Client</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('http-servlet-ra').innerHTML">HTTP Servlet</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('jcc-ra').innerHTML">JCC</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('media-ra').innerHTML">Media</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('mgcp-ra').innerHTML">MGCP</div>
+            <!--div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('parlay-ra').innerHTML">Parlay</div-->
+            <!--div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('persistence-ra').innerHTML">Persistence</div-->
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('rules-ra').innerHTML">Rules</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-ra').innerHTML">SIP</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('smpp-ra').innerHTML">SMPP</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('tts-ra').innerHTML">TTS</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('xcap-client-ra').innerHTML">XCAP-Client</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('xmpp-ra').innerHTML">XMPP</div>
+          </div>
+          
+          <div class="menu-header" onClick="document.getElementById('examples-items').style.display = 'block'">Examples</div>
+          <div id="examples-items" class="menu-item-group">
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('call-controller-2-example').innerHTML">Call Controller 2</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('click-2-call-example').innerHTML">Click-2-Call</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('converged-demo-example').innerHTML">Converged Demo</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('googletalk-bot-example').innerHTML">Googletalk Bot</div>        
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('media-server-example').innerHTML">Media Server</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-wakeup-example').innerHTML">SIP WakeUp</div>
+          </div>
+        </div>
+        <div id="content" style="text-align: left; padding-left: 170px;">
+        </div>  
+      </div>
+    </div>
+    
+    <!-- Hidden Content -->
+    
+    <div style="display: none;" id="mobicents">
+      <span class="content-header">Welcome to Mobicents - The Open Source Communication Platform</span>
+      <br><br>
+      The Mobicents Communication Platform is the best architecture to create, deploy and manage services and applications integrating voice, video and data across a range of IP and communications networks. It drives convergence in leveraging the four following core capabilities :<br>
+      <ul>
+        <li>Mobicents JAIN-SLEE</li> 
+        <li>Mobicents SIP Servlets</li> 
+        <li>Mobicents Media Server</li>
+        <li>Mobicents SIP Presence Server</li>
+      </ul>               
+      JBoss Microcontainer is the state of the art hosting environment where higher level containers reside. It provides service registration, configuration and dependency management, classloading isolation control, package versioning, deployment, thread pooling and many other fundamental building blocks necessary for highly scalable, fault tolerant middleware servers.<br>
+      <br>
+      <div style="float: left; width: 40%">
+      <span class="content-title">Mobicents Management</span>
+      <ul>
+        <li><a href="/jmx-console/HtmlAdaptor?action=displayMBeans&filter=slee:*">Mobicents JAIN SLEE JMX Console</a></li>
+        <li><a href="/management-console/">Mobicents JAIN SLEE Management Console</a></li>
+        <li><a href="/sip-servlets-management/">Mobicents SIP Servlets Management Console</a></li>
+        <li><a href="/mms-console/">Mobicents Media Server Management Console</a></li>
+      </ul>
+      </div>
+      <div style="float: left;">
+      <span class="content-title">Mobicents Online Resources</span>
+      <ul>
+        <li><a href="http://www.mobicents.org/">Mobicents Home Page</a></li>
+        <li><a href="http://groups.google.com/group/mobicents-public/web/user-guide">Mobicents User Guide</a></li>
+        <li><a href="http://wiki.java.net/bin/view/Communications/MobicentsOpenSLEE">Mobicents Documentation</a></li>
+        <li><a href="http://groups.google.com/group/mobicents-public/web">Mobicents Wiki & Pages</a></li>
+        <li><a href="http://code.google.com/p/mobicents/issues/list">Mobicents Issue Tracker</a></li>
+        <li><a href="http://groups.google.com/group/mobicents-public/topics">Mobicents Public Discussion Group</a></li>
+        <li><a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a></li>
+        <li><a href="https://enterprise.redhat.com/issue-tracker/?module=issues&action=group&gid=3354">Mobicents Customer Support Portal</a></li>
+      </ul>
+      </div>
+      
+    </div>
+    
+    <!-- JAIN SLEE -->
+    
+    <div style="display: none;" id="jainslee-server">
+      <span class="content-header">Mobicents JAIN SLEE Server</span><br><br>
+      Mobicents JAIN SLEE (Service Level Execution Environment) provides a highly scalable event-driven application server with a robust component model and fault tolerant execution environment. Mobicents JAIN-SLEE is the first and only Open Source Platform certified for JSLEE 1.0 compliance. It complements J2EE to enable convergence of voice, video and data in next generation intelligent applications. Web and SIP can be combined together to achieve more sophisticated and natural user experience.<br>
+      <br>
+      Rapid development, deployment and testing tools are important factors for the success of any technology. Mobicents provides an Eclipse based IDE for convenient service creation: <a href="https://eclipslee.dev.java.net/">EclipSLEE</a>.<br>
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="/jmx-console/HtmlAdaptor?action=displayMBeans&filter=slee:*">Mobicents JAIN SLEE JMX Console</a></li>
+      <li><a href="/management-console/">Mobicents JAIN SLEE Management Console</a></li>
+      <li><a href="https://eclipslee.dev.java.net/">EclipSLEE (IDE for JAIN SLEE Service Creation)</a></li>
+      <li><a href="http://www.jainslee.org/">JAIN SLEE Portal</a></li>
+      <li><a href="http://archives.java.sun.com/jain-slee-interest.html">JAIN SLEE Interest list</a></li>
+    </div>
+    
+    <!-- Media Server -->
+    
+    <div style="display: none;" id="media-server">
+      <span class="content-header">Mobicents Media Server</span><br><br>
+      Mobicents Media Server is an open source, based on Java Media Framework implementation aimed to:
+      <ul>
+      <li>Deliver competitive, complete, best-of-breed media gateway functionality featuring highest quality.</li>
+      <li>Meet the demands of converged wireless, wireline, cable broadband access and fixed-mobile converged VoIP networks from a single media gateway platform</li>
+      <li>Increase flexibility with a media gateway that supports wide variety of call control protocols and scales down to meet the demands of enterprises and small carrier providers.</li>
+      <li>React quickly to dynamic market requirements.</li>
+      </ul>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="/mms-console/">Mobicents Media Server Management Console</a></li>
+      <li><a href="http://www.mobicents.org/products_media_server.html">Mobicents Media Server Homepage</a></li>
+    </div>
+    
+    <!-- SIP Presence Server -->
+    
+    <div style="display: none;" id="sip-presence-server">
+      <span class="content-header">Mobicents SIP Presence Server</span><br><br>
+      The Mobicents SIP Presence Service provides presence functionalities to SIP-based networks using standards developed by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).<br>
+      <br>
+      The Mobicents SIP Presence Service is comprised of three separate but interrelated servers:
+      <ul>
+      <li>The Mobicents XDM Server is a functional element of next-generation IP communications networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, static presence information, contact and group lists (also known as “resource lists”), policy data, and many others.</li>
+      <li>The Mobicents SIP Presence Server is an entity that accepts, stores and distributes Presence Information. The SIP Presence Server performs the following functions:
+        <ul>
+          <li>It manages publications from one or multiple Presence Source(s) of a certain Presentity. This includes refreshing Presence Information, replacing existing Presence Information with newly-published information, or removing Presence Information.</li>
+          <li>It manages subscriptions from Watchers to Presence Information and generates notifications about the Presence Information state changes, retrieving the presence authorization rules from the XDM Server.</li>
+          <li>It manages subscriptions from Watcher Information Subscribers to Watcher information and generates notifications about Watcher information state changes.</li>
+        </ul>
+      </li>
+      <li>The Resource List Server (RLS) handles subscriptions to Presence Lists. It creates and manages back-end subscriptions to all resources in the Presence List. The list content is retrieved from the XDM Server.</li>
+      </ul>      
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://hudson.jboss.org/hudson/job/MobicentsDocumentation/lastSuccessfulBuild/artifact/html/chapter-Mobicents_SIP_Presence_Service.html">Mobicents SIP Presence Service Homepage</a></li>
+    </div>
+    
+    <!-- SIP Servlets -->
+    
+    <div style="display: none;" id="sip-servlets-server">
+      <span class="content-header">Mobicents SIP Servlets</span><br><br>
+      Mobicents Sip Servlets delivers a consistent, open platform on which to develop and deploy portable and distributable SIP and Converged JEE services. It is an implementation of the SIP Servlet v1.1 (JSR 289 Spec) on top of Tomcat & Jboss and strive to develop interoperability standards between Sip Servlets and JAIN-SLEE so that applications may exploit the strengths of both. The JAIN-SIP Reference implementation is leveraged as the SIP stack and Mobicents JAIN SLEE is be used as the SLEE implementation.<br> 
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="/sip-servlets-management/">Mobicents SIP Servlets Management Console</a></li>
+      <li><a href="http://www.mobicents.org/products_sip_servlets.html">Mobicents SIP Servlets Homepage</a></li>
+    </div>
+    
+    <!-- XDM Server -->
+    
+    <div style="display: none;" id="xdm-server">
+      <span class="content-header">Mobicents XDM Server</span><br><br>
+      Mobicents XDM Server is the first free and open source implementation of a XML Document Management (XDM) server, as defined in Open Mobile Alliance (OMA) specifications. This functional element of new generation IP communication networks, is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.<br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="#">Related-link-#1</a></li>
+      <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- Asterisk RA -->
+
+    <div style="display: none;" id="asterisk-ra">
+      <span class="content-header">Asterisk Resource Adaptor</span><br><br>
+
+      The Asterisk RA currently works with the Manager Interface of Asterisk, though FastAGI support is also planned eventually. After deployment and activation, it uses the Asterisk-Java library to create a manager connection to an asterisk machine (specified in the asteriskra.properties file). It will then listen for any events or responses originated by asterisk and send them to the SLEE. The RA's SBB Interface consists of one function, sendAction, which is used to send a manager action object to the asterisk machine.<br>
+      <br>
+      All types of manager actions implemented by Asterisk-Java ( in net.sf.asterisk.manager.action) are available; this allows a variety of commands to be sent to the asterisk, such as originating calls, redirecting them, hanging up and so on. In addition, through the use of CommandActions (which encapsulate CLI commands) further functionality is available, in particular regarding asterisk configuration and status; this includes several methods of getting information regarding various aspects (codecs, channels, mappings, dialplan, applications) and also the ability to change some, such as adding or removing extensions 'on the fly'.<br>
+      <br>
+      These various commands allow a number of simple services to be developed, such as redirecting calls or voicemail for example. However, they are not, in general, ideally suited for direct call control in the same manner as would be available through normal FastAGI applications, and the complexity of services that can be developed using just the Manager Interface is limited in this aspect. The main usefulness of the current Asterisk RA lies in the various events it receives, which allow the application server to have a clear picture of what Asterisk is doing by itself, and thus services or applications that use them to monitor this and only intervene when strictly necessary, requiring little to no control of the majority of the call process.<br>
+      <br>
+      An example of this would be collecting statistical data from an asterisk server; another would be a charging service that used the events to get the necessary data (call duration, calling party) and only intervened, for instance, to provide a warning message and hangup the call when the caller's credit ran out in a prepaid scenario.<br>
+
+      <br>     
+      <div class="content-title">Configuration</div>
+      <li>Fill in the IP address, login and password properties in the <tt>asteriskra.properties</tt> file</li>
+      
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/asterisk/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/asterisk/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+      
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://wiki.java.net/bin/view/Communications/MobicentsAsteriskRA">Asterisk RA Wiki Page</a></li>
+    </div>
+
+    <!-- Diameter RA -->
+
+    <div style="display: none;" id="diameter-ra">
+      <span class="content-header">Diameter Resource Adaptor</span><br><br>
+
+      Diameter is descendant of RADIUS. It was designed in way it stays compatibile with RADIUS but can be easly extended with new kind of use cases within AAA scenario and other IMS scenarios. Extensions are called "Applications". Each application introduces new kind of messages, message and AVP codes ( assigned by IANA ), processing logic and so on. Moreover each application has its own code which distinguishes its messages from messages of another application. In addition application code gives means of telling other peers what operations are suported by connecting peer. Diameter is quit simple protocol. Diameter message consists of header and payload. Both consist of AVPs ( Attribute Value Pairs : nameOfAttribute=value). AVP crucial to Base protocol ( and for applications ) has been standarized is related documents ( standarization accepted by IANA ).<br>
+      <br>
+      The Resource Adaptor currently supports BASE application, which defines common part for each application/node. Half of its messages (CER-CEA/DWR-DWA/DPR-DPA) are meant to manage connection between peers. Other half (ACR-ACA/ASR-ASA/STR-STA/ACR-ACA) are used by applications for accounting/authorization purposes and of course session handling (particularly for session termination). Second half does not define stand alone functionality, rather as mentioned before common part.<br>
+      <br>
+      The following applications will be supported in the future:
+      <ul>
+      <li>Sh interface (3GPP Application)</li>
+      <li>Credit-Control Application (CCA)</li>
+      <li>Ro interface (3GPP Application)</li>
+      <li>Rf interface (3GPP Application)</li>
+      </ul>
+      
+      <br>     
+      <div class="content-title">Configuration</div>
+      <li>You can find the stack configuration file at <tt>diameter-base-ra-DU-&lt;version&gt;.jar/base-ra-&lt;version&gt;.jar/org/mobicents/slee/resource/diameter/base/jdiameter-config.xml</tt> file. For an explanation of the parameters please refer to the <a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter-ra">Diameter RA Wiki Page</a></li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter-ra">Diameter RA Wiki Page</a></li>
+      <li><a href="http://wiki.java.net/bin/view/Communications/MobicentsDiameterRA">Legacy Diameter RA Wiki Page</a></li>
+    </div>
+
+    <!-- HTTP Client RA -->
+
+    <div style="display: none;" id="http-client-ra">
+      <span class="content-header">HTTP Client Resource Adaptor</span><br><br>
+
+      The Hyper-Text Transfer Protocol (HTTP) is perhaps the most significant protocol used on the Internet today. Web services, network-enabled appliances and the growth of network computing continue to expand the role of the HTTP protocol beyond user-driven web browsers, while increasing the number of applications that require HTTP support; for example Application developed using SLEE. The Jakarta Commons HttpClient component provides an efficient, up-to-date, and feature-rich package implementing the client side of the most recent HTTP standards and recommendations. Http Client RA provides the client side HTTP standard within the SLEE environment. The Http Client RA uses the popular Apache Commons Http Client library.<br>
+      <br>
+      An SBB can use the HTTP Client RA to make a request and get the Response Synchronously or Asynchronously.<br>
+ 
+      <br>     
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/http-client/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/http-client/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-http-client-ra">HTTP Client RA Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=228634">HTTP Client RA Forum Thread</a></li>
+    </div>
+
+    <!-- HTTP Servlet RA -->
+
+    <div style="display: none;" id="http-servlet-ra">
+      <span class="content-header">HTTP Servlet Resource Adaptor</span><br><br>
+
+      A servlet is used to extend the capabilities of servers that host applications access via a request-response programming model. Although servlets can respond to any type of request, they are commonly used to extend the applications hosted by web servers. The aim of the HTTP Servlet Resource Adaptor is to provide the ease of same request-response programming model in SLEE environment. Http Resource Adaptor is not an replacement for Servlet but is suppose to work in close proximity with Servlet to gain the smooth integration between web application hosted in Web Server and application developed using Service Building Block hosted in SLEE Server.<br>
+      <br>
+      Note: The HTTP Servlet RA is only for processing incoming HttpServletRequest and sending back the HttpServletResponse. If there is a need to create the Request from within the service make use of Http Client RA.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/http-servlet/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/http-servlet/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-http-servlet-ra">HTTP Servlet RA Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/message.jspa?messageID=175704">HTTP Servlet RA Forum Thread</a></li>
+    </div>
+
+    <!-- JCC RA -->
+
+    <div style="display: none;" id="jcc-ra">
+      <span class="content-header">JCC Resource Adaptor</span><br><br>
+
+      The JCC (Java Call Control) API defines a programming interface to next-generation converged networks in terms of an abstract, object-oriented specification. As such it is designed to hide the details of the specifics of the underlying network architecture and protocols from the application programmer to the extent possible. Thus the network may consist of the PSTN, a packet (IP or ATM) network, a wireless network, or a combination of these, without affecting the development of services using the API. The API is also independent of network signaling and transport protocols. Thus the network may be using various call control protocols and technologies, for example, SGCP, MGCP, SIP, H.323, ISUP, DSS1/Q.931, and DSS2/Q.2931, without the explicit knowledge of the application programmer. Indeed, different legs of a call may be using different signaling protocols and be on different underlying networks.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>For instructions on how to configure this Resource Adaptor, please refer to the Section <strong>"Configuring Resource adaptor entity"</strong> of the <a href="http://groups.google.com/group/mobicents-public/web/java-call-control-jcc-resource-adaptorov">JCC RA Wiki Page</a></li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/jcc/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/jcc/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/java-call-control-jcc-resource-adaptorov">JCC RA Wiki Page</a></li>
+    </div>
+
+    <!-- Media RA -->
+
+    <div style="display: none;" id="media-ra">
+      <span class="content-header">Media Resource Adaptor</span><br><br>
+
+      The Simple Media RA API enables audio, video and other time-based media to be added to applications built on JSLEE technology. This API doesn't define interfaces for media processors and is not equivalent to JMF in this sense. It is intended that all media processor related functions are implemented by standalone media gateway. The Simple Media RA API has aim to provide Java API for management of such kind media gateways. The development of the open network APIs using Java represent an important departure from traditional methods by wich the Telco was made more open. In the past, the media gateways were intriduced as standalone elements of the Telco environme that allowed flexible creation of media services outside switches, but typicaly this services were written using specific protocols on specific languages by specialized personnel. The benefits and potential pitfalls of using Java as a language for implementing Telco API have been already widelly discussed.<br>
+      <br>
+      The resource adaptor type name is "media_ratype". The resource adaptor type vendor is "org.mobicents.media". The resource adaptor type version is "1.0".<br>
+      
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>You can configure the host for the Resource Adaptor by editing the property <tt>org.mobicents.LOCAL_HOST</tt> at <tt>msc-ra-DU-&lt;version&gt;.jar\msc-ra-&lt;version&gt;.jar\org\mobicents\slee\resource\media\ra\mediara.properties</tt>.</li>
+      
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/media/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/media/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-media-ra">Media RA Wiki Page</a></li>
+    </div>
+
+    <!-- MGCP RA -->
+
+    <div style="display: none;" id="mgcp-ra">
+      <span class="content-header">MGCP Resource Adaptor</span><br><br>
+
+      Media gateways were introduced to interwork with traditional telephony systems and enable support of large phone-to-phone deployments. In traditional telephone systems, signaling (D-channel) and media (B-channel) are carried separately. In VoIP networks, each needs to be handled by a different type of entities: a Signaling Call State Control Function (CSCF) and a Media Gateway (MGW). Signaling Gateways translate the D-channel data to VoIP-compatible signaling protocols, such as ISUP-over-IP, SIP or H.323, and do not involve media gateway control protocols. Media Gateways provide the bridge for media to seamlessly transit between PSTN and VoIP networks by ferrying media between B-channels and RTP streams.<br>
+      <br>
+      The Media Gateway Control Protocol (MGCP) has been introduced to the IETF (MEGACO working group) for controlling (trunking) gateways that interconnect the Public Switched Telephone Network (PSTN) with packet networks and for controlling (residential) gateways that function as network interfaces for customer premise located equipment (e.g., phones with an RJ-11 jack). MGCP is the result of merging the Simple Gateway Control Protocol (SGCP) and Internet Protocol Device Control (IPDC).<br>
+      <br>
+      The component structure of the media gateway is derived from MGCP concepts but the implementation is designed as independant from any of control protocols. Each control protocol is implemented as set of SBBs in the JSLEE environment. It allows to avoid difficulties with programming concurrency, low level transaction and state management details, connection pooling and other complex-level APIs. In addition, it allows to reuse resource adaptors on both sides: CSCF and Media gateway.<br>
+      <br>
+      The API specified by the JAIN Protocol Expert Group Java Community Process Participants for MGCP are based on the MGCP Internet Drafts and the Cable Labs PacketCableTM Network-Based Call Signaling Protocol Specification. Instead of mapping the standard specifications to a Java interface, the JAIN MGCP API specification abstracts a functional definition into the variant protocol stacks.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>For each Resource Adaptor entity created, a port can be specified by adding a <tt>&lt;Entity-Name&gt;.properties</tt> file to the <tt>mgcp-ra-DU-&lt;version&gt;.jar\META-INF\</tt> folder with a port=&lt;port-number&gt; value (eg: port=2728).</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/mgcp/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/mgcp/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-mgcp-resource-adaptor-v2">MGCP RA v2 Wiki Page</a></li>
+      <li><a href="http://wiki.java.net/bin/view/Communications/MGCPRA">MGCP RA v1 Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=223897">MGCP RA Forum Thread</a></li>
+    </div>
+
+    <!-- Parlay RA -->
+
+    <div style="display: none;" id="parlay-ra">
+      <span class="content-header">Parlay Resource Adaptor</span><br><br>
+      The Parlay Resource Adaptor.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/parlay/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/parlay/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="#">Related-link-#1</a></li>
+      <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- Persistence RA -->
+
+    <div style="display: none;" id="persistence-ra">
+      <span class="content-header">Persistence Resource Adaptor</span><br><br>
+      
+      The Persistence RA makes use of the JPA and works in an asynchronous way.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/persistence/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/persistence/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/persistence-ra-design">Persistence RA Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?threadID=25060">Persistence RA Forum Thread</a></li>
+    </div>
+
+    <!-- Rules RA -->
+
+    <div style="display: none;" id="rules-ra">
+      <span class="content-header">Rules Resource Adaptor</span><br><br>
+
+      The Mobicents Rules Resource Adapter provides a flexible way of scripting call routing logic such as IVR trees without the need for deep Java and JSLEE knowledge. Business rules are often expressed in a text document or spreadsheet by a person with business decision power. The document is then converted by an engineer to a specialized rules base language that can be interpreted by a Rules engine. We will show that it is often possible to use a regular spreadsheet template, which is maintained directly by a business person with minimal technical skills and is directly executed by the Rules RA.<br>
+      <br>
+      The Mobicents Rules RA is not reinventing the wheel. It is based on <a href="http://www.jboss.com/products/rules">JBoss Rules</a>, which is a leading Open Source Production Rules engine. Many of the techniques and best practices we will discuss leverage the JBoss Rules knowledge base. Even though its is not required, it is highly recommended to learn the fundamentals of JBoss Rules, before writing JSLEE applications using the Rules RA. There is a good amount of scientific research in the area of Artificial Intelligence and more specifically Expert Systems that precedes the development of commercial production rules systems like JBoss Rules. It is worth spending the time to understand the background and some of the basic theory behind it. It will help you design efficient rules with high expressive power and simplicity, while avoiding performance pitfalls.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>This Resource Adaptor can be configured by editing the file at <tt>rules-management.sar\META-INF\jboss-service.xml</tt>. From there you can specify to enable scan for rules (<tt>ScanEnabled</tt>) where to do it (<tt>URLs</tt>), if you want to do it recursively (<tt>RecursiveSearch</tt>) and how often you want it to be done (<tt>ScanPeriod</tt>).</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/rules/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/rules/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-rules-ra">Rules RA Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=211322">Rules RA Forum Thread</a></li>
+    </div>
+
+    <!-- SIP RA -->
+
+    <div style="display: none;" id="sip-ra">
+      <span class="content-header">SIP Resource Adaptor</span><br><br>
+
+      Mobicents SIP RA is a Mobicents sub-project aiming at creating a high performance SLEE extension for the SIP protocol.<br>
+      <br>
+      The initial standard SIP RA specification has been proposed by JSR 22 (JAIN SLEE 1.0), where the resource adaptor type name is “JAIN SIP”. The resource adaptor type vendor is “javax.sip”. The resource adaptor type version is “1.1”. Mobicents provides a fully compliant implementation of this specification.<br>
+      <br>
+      Currently there is an active community work towards the next version of the SIP RA, which includes several ehnacements to allow more convenient development of SIP services for a range of applications. The resource adaptor type name is “JSIP v1.2”; resource adaptor type vendor is “net.java.slee.sip”. The resource adaptor type version is “1.2”.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are several places for configuring these Resource Adaptors. Either at <tt>sip[11]-ra-DU-&lt;version&gt;.jar\sip[11]-ra-&lt;version&gt;.jar\META-INF\resource-adaptor-jar.xml</tt> or at <tt>sip[11]-ra-DU-&lt;version&gt;.jar\sip[11]-ra-&lt;version&gt;.jar\org\mobicents\slee\resource\sip[11]\sipra.properties</tt>. For futher details on the properties available for configuration, please refer to the <a href="http://wiki.java.net/bin/view/Communications/SipResourceAdaptor#Configuration">"Configuration"</a> section of the <a href="http://wiki.java.net/bin/view/Communications/SipResourceAdaptor">SIP RA Wiki Page</a>.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/sip[11]/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/sip[11]/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="https://sip-ra.dev.java.net/">Project home page</a></li>
+      <li><a href="http://wiki.java.net/bin/view/Communications/SipResourceAdaptor">SIP RA Wiki Page</a></li>
+    </div>
+
+    <!-- SMPP RA -->
+
+    <div style="display: none;" id="smpp-ra">
+      <span class="content-header">SMPP Resource Adaptor</span><br><br>
+
+      The Short Message Peer to Peer (SMPP) protocol is an open, industry standard protocol designed to provide a flexible data communications interface for transfer of short message data between a Message Center, such as a Short Message Service Centre (SMSC), GSM Unstructured Supplementary Services Data (USSD) Server or other type of Message Centerand a SMS application system, such as a WAP Proxy Server, EMail Gateway or other Messaging Gateway.
+      <br>
+      Using the SMPP protocol, an SMS application system called the 'External Short Message Entity' (ESME) may initiate an application layer connection with an SMSC over a TCP/IP network connection and may then send short messages and receive short messages to and from the SMSC respectively. The ESME may also query, cancel or replace short messages using SMPP. SMPP supports a full featured set of two-way messaging functions such as:
+      <ul>
+          <li>Transmit messages from an ESME to single or multiple destinations via the SMSC</li>
+          <li>An ESME may receive messages via the SMSC from other SME's (e.g. mobile stations).</li>
+          <li>Query the status of a short message stored on the SMSC</li>
+          <li>Cancel or replace a short message stored on the SMSC</li>
+          <li>Send a registered short message (for which a 'delivery receipt' will be returned by the SMSC to the message originator)</li>
+          <li>Schedule the message delivery date and time</li>
+          <li>Select the message mode, i.e. datagram or store and forward</li>
+          <li>Set the delivery priority of the short message</li>
+          <li>Define the data coding type of the short message</li>
+          <li>Set the short message validity period</li>
+          <li>Associate a service type with each message e.g. voice mail notification</li>
+      </ul> 
+      <br>
+      The SMPP Resource adaptor adopts SMSC to the requirements of the SLEE and built on top of the implementation of the SMPP. The source code for the core SMPP stack implementation can be found at http://smppapi.sourceforge.net. The source code of the RA implementation located https://mobicents.dev.java.net/source/browse/mobicents/ra/smppra/. The SMPP RA defines the follwing resource adaptor concepts.<br>
+      <br>
+      The resource adaptor type name is "SMPPResourceAdaptor". The resource adaptor type vendor is "net.java". The resource adaptor type version is "3.4".<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <ul>
+        <li>You can configure the Resource Adaptor by editing <tt>smpp-ra-DU-&lt;version&gt;.jar\smpp-ra-&lt;version&gt;.jar\META-INF\resource-adaptor-jar.xml</tt>. The following properties are available:<br>
+          <ul>
+            <li><strong>host</strong>: The name of the host (or IP-address string) of the SMPP server. Used to establish connection with SMSC in TCP/IP network. <tt>Default: localhost</tt></li>
+            <li><strong>port</strong>: The port number used by SMPP server to establish connection. <tt>Default: 2775</tt></li>
+            <li><strong>systemId</strong>: Used as login name to authenticate connection with SMPP server. <tt>Default: 1</tt></li>
+            <li><strong>systemType</strong>: Identifies the type of system. <tt>Default: ESME</tt></li>
+            <li><strong>password</strong>: Used as password to authenticate connection with SMPP server. <tt>Default: 1</tt></li>
+            <li><strong>addressTon</strong>: The default type of number (TON) that should be on received messages. <tt>Default: 1</tt></li>
+            <li><strong>addressNpi</strong>: The default number plan indicator (NPI) that should be on received messages. <tt>Default: 0</tt></li>
+            <li><strong>addressRange</strong>: For receivers this specifies the range of numbers for which messages are to be received. This is usually a regular expression but may be server implementation dependent. <tt>Default: 0020</tt></li>
+            <li><strong>enquireLinkTimeout</strong>: SMPP link timeout in seconds, used to reconnect. <tt>Default: 30</tt></li>
+          </ul>  
+        </li>
+      </ul>  
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/smpp/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/smpp/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://wiki.java.net/bin/view/Communications/MobicentsSMPPRA">SMPP RA Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=271066">SMPP RA Forum Thread</a></li>
+    </div>
+
+    <!-- TTS RA -->
+
+    <div style="display: none;" id="tts-ra">
+      <span class="content-header">Text-To-Speech (TTS) Resource Adaptor</span><br><br>
+
+      The Mobicents Text To Speech (TTS) Resource Adaptor provides easy-to-use interface to state-of-the-art speech technology. TTS RA makes use of FreeTTS  which is speech synthesis system written entirely in the Java programming language. However FreeTTS supports only a subset of the JSAPI 1.0 javax.speech.synthesis specification.<br>
+      <br> 
+      TTS RA is capable of producing the audio files which can be used by Media Player RA to open outbound RTP media stream and transmit the speech to SIP Client.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/tts/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/tts/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-tts-ra">Text-To-Speech RA PAge</a></li>
+      <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- XCAP Client RA -->
+
+    <div style="display: none;" id="xcap-client-ra">
+      <span class="content-header">XCAP Client Resource Adaptor</span><br><br>
+
+      The RA adapts the XCAP Client API into JAIN SLEE domain, it is recommended that the reader first understands the underlying API, which is documented here.<br>
+      <br>
+      The RA provides means to send XCAP requests to a XCAP Server, such as the Mobicents XDM Server. There can be two different types of usage with this component, sending requests and receiving the Response synchronously, blocking the requester thread until the Response is retrieved, and sending requests and receiving the Response asynchronously, which is preferred by matching the JAIN SLEE model.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <ul>
+        <li>This Resource Adaptor can be configured by editing the file <tt>msps-xcap-client-ra-DU-&lt;version&gt;.jar\msps-xcap-client-ra-ra-&lt;version&gt;.jar\META-INF\resource-adaptor-jar.xml</tt>. The following properties are available:
+        <ul>
+          <li><strong>serverHost</strong>: the host where the XCAP Server is running. <tt>Default: localhost</tt></li>
+          <li><strong>serverPort</strong>: the port where the XCAP Server is listening. <tt>Default: 8080</tt></li>
+          <li><strong>xcapRoot</strong>: the relative path that is the xcap root of the server. <tt>Default: /mobicents</tt></li>
+        </ul>
+      </ul>
+      </li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/xcap-client/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/xcap-client/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/xcap-client-resource-adaptor">XCAP Client RA Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/message.jspa?messageID=205472">XCAP Client RA Forum Thread</a></li>
+    </div>
+
+    <!-- XMPP RA -->
+
+    <div style="display: none;" id="xmpp-ra">
+      <span class="content-header">XMPP Resource Adaptor</span><br><br>
+
+      This is the XMPP Resource Adaptor, using the Smack library. Works in Client and Component Server modes.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      <li>There are no configuration options for this Resource Adaptor.</li>
+
+      <br>
+      <div class="content-title">Deployment</div>
+      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/xmpp/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/xmpp/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=27859">XMPP RA Forum Thread</a></li>
+    </div>
+
+    <!-- Call Controller 2 Example -->
+
+    <div style="display: none;" id="call-controller-2-example">
+      <span class="content-header">Call Controller 2 Example</span><br><br>
+
+      This example application for Mobicents demonstrates:<br>
+      - a design pattern for service composition - Call Blocking, Forwarding and VoiceMail.<br> 
+      - usage of the SIP 1.2 RA with Dialog support<br>
+      - usage of the Media RA and Mobicents Media Server<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      You can define some properties in the VoiceMail SBB:<br>
+      <li><strong>waitingDTMF</strong>: Maximum time (ms) the Voice Mail will wait to receive a DTMF digit. <tt>Default: 5000</tt></li>
+      <li><strong>waitingVoiceMessage</strong>: Maximum time (ms) while the Voice Mail will be storing voice message from the SIP Client. <tt>Default: 60000</tt></li>
+      <li><strong>filesRoute</strong>: Path where the recorded files will reside and is relative to ${jboss.server.data.dir}. <tt>Default: call-controller2/</tt></li>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/call-controller2/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/call-controller2/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/call-controller2/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/call-controller2/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      
+      <br>
+      <div class="content-title">How it works</div>
+      In order to check that the application works we have used Profiles. It will be created a Profile Table called "Controller" and then a Profile for every user. You can see the result in the table below:
+      <table>
+        <tbody>
+          <tr class="row-header">
+            <th colspan="5">
+              <span> <b> Profile Table Name: Controller </b> </span>
+            </th>
+          </tr>
+          <tr class="row-header">
+            <th>
+              <span> <b> Profile Name </b> </span> 
+            </th>
+            <th>
+              <span> <b> Called User (Address) </b> </span>
+            </th>
+            <th>
+              <span> <b> Blocked Addresses (Address[]) </b> </span>
+            </th>
+            <th>
+              <span> <b> Backup Address (Address) </b> </span>
+            </th>
+            <th>
+              <span> <b> Voice Mail State (boolean) </b> </span>
+            </th>
+          </tr>
+          <tr class="row-odd">
+            <td> <b><i>torosvi</i></b> </td>
+            <td> sip:torosvi@127.0.0.1 </td>
+            <td> sip:mobicents@127.0.0.1 <br> sip:hugo@127.0.0.1 </td>
+            <td> - </td>
+            <td> true </td>
+          </tr>
+          <tr class="row-even">
+            <td style="vertical-align: middle;" align="center" bgcolor="#ffffff" valign="top"> <b><i>mobicents</i></b> </td>
+            <td style="vertical-align: middle;" align="center" bgcolor="#ffffff" valign="top"> sip:mobicents@127.0.0.1 </td>
+            <td style="vertical-align: middle;" align="center" bgcolor="#ffffff" valign="top"> - </td>
+            <td style="vertical-align: middle;" align="center" bgcolor="#ffffff" valign="top"> - </td>
+            <td style="vertical-align: middle;" align="center" bgcolor="#ffffff" valign="top"> false </td>
+          </tr>
+          <tr class="row-odd">
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> <b><i>victor</i></b> </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> sip:victor@127.0.0.1 </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> - </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> sip:torosvi@127.0.0.1 </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> false </td>
+          </tr>
+          <tr class="row-even">
+            <td style="vertical-align: top;" align="center" bgcolor="#ffffff" valign="top"> <b><i>vhros2</i></b> </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#ffffff" valign="top"> sip:vhros2@127.0.0.1 </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#ffffff" valign="top"> - </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#ffffff" valign="top"> - </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#ffffff" valign="top"> true </td>
+          </tr>
+          <tr class="row-odd">
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> <b><i>vmail</i></b> </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> sip:vmail@127.0.0.1 </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> - </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> - </td>
+            <td style="vertical-align: top;" align="center" bgcolor="#e8e8e8" valign="top"> true </td>
+          </tr>
+        </tbody>      
+      </table>
+      
+      <br>
+      You are going to need 2 SIP clients. You can install XLite and Sip Communicator if you are going to use only one computer. For example, XLite client address is going to be <strong>sip:mobicents@127.0.0.1</strong> and Sip Communicator client address is going to be <strong>sip:torosvi@127.0.0.1</strong>. Moreover, you'll have to change one of the client user name to check all the possibilties.<br> 
+      <br>
+      Now you can try multiple scenarios, check that calls originated from a blocked caller are effectivelly blocked (eg: mobicents calling torosvi), that a call for a user who is not currently available and that has a Backup Address which is available, are redirected to that address (eg: vhros2 calling victor) and when you call a user which is not available but with voicemail activated, the call gets redirected to the voicemail and you can leave him a message (eg: victor calling torosvi).<br>
+      <br>
+      You can also check your voicemail to listen and delete messages by calling <strong>sip:vmail@127.0.0.1</strong>. Listen to the instructions.<br>
+      <br>
+      See the following <a href="http://groups.google.com/group/mobicents-public/web/jain-slee-example-call-controller-2">page</a> for more detailed usage instructions.<br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/jain-slee-example-call-controller-2">Call Blocking, Forwarding and Voice Mail service Wiki Page</a></li>
+    </div>
+
+    <!-- Click-2-Call Example -->
+
+    <div style="display: none;" id="click-2-call-example">
+      <span class="content-header">Click-2-Call Example</span><br><br>
+
+      This simple example shows how SIP Servlets can be used along with HTTP servlets as a converged application to place calls from a web page. This example consists of the following steps:
+      <ol>
+        <li>Alice and Bob each register a SIP Softphone</li>
+        <li>Alice clicks on the "Call" link to place a call to Bob</li>
+        <li>Alice's phone rings</li>
+        <li>When Alice picks up her phone, Bob's phone rings</li>
+        <li>When Bob answers his phone, the call is connected</li>
+        <li>When one of them hangs up, the other one is also disconnected</li>
+      </ol>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      There are no configuration options for this example.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <strong>From the binary</strong><br>
+      You can find the war file corresponding to this example <a href="http://download.java.net/maven/2/org/mobicents/servlet/sip/example/click-to-call-servlet/1.0/click-to-call-servlet-1.0.war">here</a>.<br>
+      Drop the downloaded war file into your tomcat_home/webapps directory or jboss_home/server/default/deploy directory<br>
+      <br>
+      Get the corresponding <a href="http://www.mobicents.org-a.googlepages.com/click2call-dar.properties">dar configuration file</a>.<br>
+      Drop it in your <tt>tomcat_home/conf/dars</tt> directory or <tt>jboss_home/server/default/conf/dars</tt> directory.<br>
+      To use this dar file for this service, specify in the Service xml tag, darConfigurationFileLocation attribute of the <tt>tomcat_home/conf/server.xml</tt> file or <tt>jboss_home/server/default/deploy/jboss-web.deployer/server.xml</tt>, the following :<br>
+      <tt>conf/dars/click2call-dar.properties</tt><br>
+      <br>
+      You can now run your container (Tomcat or Jboss).<br>
+      <br>
+      <strong>From the source</strong><br>
+      Please check out the speed dial example located under this <a href="http://code.google.com/p/mobicents/source/browse/trunk/servers/sip-servlets/sip-servlets-examples/click-to-call">location</a> from the svn repository. Follow the instructions in the README.txt to build and run the example.<br>
+      <br>
+      The DAR file for this example can be found in the sip servlets impl project under the <a href="http://code.google.com/p/mobicents/source/browse/trunk/servers/sip-servlets/sip-servlets-impl/docs">docs directory</a> Use this as a DAR file (Service tag/darConfigurationFileLocation attribute in the tomcat's server.xml).<br>
+
+      <br>
+      <div class="content-title">How it works</div>
+      Starts Two sip phones.<br>
+      <br>
+      Open up a browser to <a href="/click2call/">Click-2-Call Page</a>. If you have no registered SIP clients you will be asked to register at least two.<br>
+      Configure your SIP clients to use the sip servlets server as a register and proxy. (ip address : 127.0.0.1, port: 5080)<br>
+      By default it will accept any password, see below for instructions on how to enable security and authentication.  After the registration you will see a table where each cell will initiate a call between the corresponding clients.<br>
+      <br>
+      You can also navigate to <a href="/click2call/simplecall.html">Simple Call Page</a>, which is a simplified version that doesn't require registered clients.<br>
+      You will see the index page where you can enter two SIP URIs. Enter the URIs of the two SIP phones you just started and click "Submit".<br>
+      The SIP phones don't have to be registered.<br>
+      <br>
+      After you pick up both phones the RTP session starts.<br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="#">Related-link-#1</a></li>
+      <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- Converged Demo Example -->
+
+    <div style="display: none;" id="converged-demo-example">
+      <span class="content-header">Converged Demo Example</span><br><br>
+
+      The idea for this example is to have a converged application that shows how JEE application can leverage Mobicents to have voice, message and data transfer seamlessly. This example is built using the Seam and JAIN SLEE service deployed on Mobicents and makes use of SIP RA, TTS RA, Persistence RA and Media RA.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      There are no configuration options for this example.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/converged-demo/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/converged-demo/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/converged-demo/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/converged-demo/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+
+      <br>
+      <div class="content-title">How it works</div>
+      <ul>
+        <li>Once User places an order, he/she receives call to confirm for the same.</li>
+        <ul>
+          <li>User presses 1 and order state remains as OPEN and flow continues. If User presses 2 order gets CANCELLED and flow completes</li>
+        </ul>
+        <li>If order is less than 100$ it gets approved automatically as per the rule set by jBPM and User receives call to set delivery date and time.</li>
+        <li>If order is greater than 100$, Admin has to either approve or reject the order.</li>
+        <li>If Admin doesn't log on the site and take necessary action, call is initiated to Admin and Admin preses DTMF to take necessary action</li>
+          <ul>
+            <li>Admin presses 1 and order state changes to PROCESSING and flow continues. If Admin presses 2 order gets CANCELLED and flow completes.</li>
+            <li>User id for Admin is 'manager' and password is 'password'</li>
+          </ul>
+        <li>Once order is approved by Admin, a call is initiated to User to set the date and time for delivery</li>
+          <ul>
+            <li>Please note that for orders greater than 100$ call to User to set delivery date and time is only initiated if Admin logs on to system and approves. This is becuase the logic is tied with jBPM process and I haven't yet taken care that in SBB.</li>
+          </ul>
+        <li>User sets delivery date and time by punching numbers on his/her phone. As soon as this is done user can see the delivery date and time set on 'My Orders' tab and click on 'Show Details' for corresponding order.</li>
+        <li>Once again the ball roles on to Admin, and he/she has to log in the site and mark the order for Shipping</li>
+        <li>As soon as Admin marks the order for Shipping, call is initiated to User to remind him/her date and time when the shipment will arrive.</li>
+      </ul>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="#">Related-link-#1</a></li>
+      <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- Googletalk Bot Example -->
+
+    <div style="display: none;" id="googletalk-bot-example">
+      <span class="content-header">Googletalk Bot Example</span><br><br>
+
+      The Google Talk Bot is a simple SBB example using the XMPP Resource Adaptor in client mode. It demonstrates connection with the Google Talk service. The bot appears as a regular Google Talk user.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      You can configure the example with a custom GoogleTalk user account by editing <tt>google-talk-bot-DU-&lt;version&gt;.jar\google-talk-bot-sbb-&lt;version&gt;.jar\META-INF\sbb-jar.xml</tt> and enter the credentials (defaults provided, which should work), then add this account to your regular GoogleTalk buddy list.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/google-talk-bot/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/google-talk-bot/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/google-talk-bot/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/google-talk-bot/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+
+      <br>
+      <div class="content-title">How it works</div>
+      The bot simply receives IM chat messages from Google Talk users and echoes them back, saying how many chars were in that message. It also responds to a 'time' message with the current time at the server where the SBB is hosted.<br> 
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://wiki.java.net/bin/view/Communications/MobicentsExamplesGoogleTalkBot">GoogleTalk Bot Example Wiki Page</a></li>
+      <li><a href="http://forums.java.net/jive/thread.jspa?messageID=28861">Google Talk Bot Forum discussion</a></li>
+    </div>
+
+    <!-- Media Server Example -->
+
+    <div style="display: none;" id="media-server-example">
+      <span class="content-header">Media Server Example</span><br><br>
+
+      The motive of this example is to demonstrate the capabilities of the Mobicents Media Server (MMS) and Media Server Resource Adaptors (MSC-RA)<br>
+      <br>
+      The example demonstrates usage of:<br>
+          <li>Announcement Endpoint</li>
+          <li>Packet Relay Endpoint</li>
+          <li>Loop Endpoint</li>
+          <li>Conference Endpoint</li>
+          <li>IVR Endpoint</li>
+      <br>
+      To understand each of this Endpoint's look at <a href="http://groups.google.com/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">Media Server documentation</a>.<br> 
+
+      <br>
+      <div class="content-title">Configuration</div>
+      There are no configuration options for this example.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      Make sure you have <tt>&lt;mobicents-root&gt;/jboss-&lt;version&gt;/server/default/deploy/mobicents-media-server-&lt;version&gt;.sar</tt>.<br>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/mms-demo/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/mms-demo/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/mms-demo/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/mms-demo/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+
+      <br>
+      <div class="content-title">How it works</div>
+      Make a call from your SIP Phone to:
+      <ul>
+      <li>1010 : This demonstrates the usage of Loop Endpoint. Everything you say will be repeated back to you.</li> 
+      <li>1011 : This demonstrates the usage of DTMF. Press any digit on your SIP Phone and you'll hear «You have pressed &lt;number&gt;».</li>
+      <li>1012 : This demonstrates the usage of Conference Endpoint. You'll hear a conference with many different birds.</li>
+      </ul>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-mediasrv-example">Media Server Example Wiki Page</a></li>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-ms-acrhmedia-server-architecture">Media Server Architecture</a></li>
+    </div>
+    
+    <!-- SIP WakeUp Example -->
+
+    <div style="display: none;" id="sip-wakeup-example">
+      <span class="content-header">SIP WakeUp Example</span><br><br>
+
+      This example JAIN SLEE service process SIP messages from registered SIP UAs (User Agents; clients; phones) to act as an Wake Up system. It is a simple example but provides usage of JAIN SLEE child relations, timers, null activities, sbb activity context interfaces and JAIN SIP RA code, thus being very useful for begginers.<br>
+      
+      The sender uses a specific MESSAGE format, containing a timeout (1) and wake up message (2) values, and a specific DESTINATION address. Then, when (1) seconds pass, the service will send a message containing (2) back to the UA who triggered the system.<br>
+      
+      The MESSAGE format is &lt;any text string&gt;WAKE UP IN &lt;timer value in seconds&gt;s! MSG: &lt;msg to send back to UA&gt;!&lt;any text string&gt;. In red are the case sensitive tokens used by the service to parse the message. Also note that the spaces between tokens and values are required. A message that does not complaints with this format may produce error behavior in the service.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      There are no configuration options for this example.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/sip-wake-up/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/sip-wake-up/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/sip-wake-up/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/sip-wake-up/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+
+      <br>
+      <div class="content-title">How it works</div>
+      <ul>
+      <li>Setup a SIP UA with whatever user pointing to the Mobicents Server binding address as domain, so the example SIP Services process the registration.</li>
+      <li>Send a message to sip:wakeup@nist.gov containing a body such as WAKE UP IN 10s! MSG: pong!</li>
+      <li>If you have sent the message as last step then reply should be "pong" after 10 seconds.</li> 
+      </ul>
+      This example was tested with Xlite 3 and Sip Comm 1.0.alpha3, to send a message in those clients you need to add a contact sip:wakeup@nist.gov.<br> 
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/jain-slee-sip-wake-up">SIP WakeUp Example Wiki Page</a></li>
+    </div>
+  </body>
+</html>
