@@ -19,7 +19,6 @@ import java.net.UnknownHostException;
 import javax.naming.NamingException;
 import org.jboss.system.ServiceMBean;
 
-import sun.awt.image.ImageWatched.Link;
 
 /**
  * 
