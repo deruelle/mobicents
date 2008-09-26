@@ -43,7 +43,7 @@ public class Timer {
     /**
      * Starts execution;
      */
-    public void start() {
+    public synchronized void start() {
         if (stopped) {
             stopped = false;
             quartz.addTimer(this);
@@ -53,7 +53,7 @@ public class Timer {
     /**
      * Terminates execution.
      */
-    public void stop() {
+    public synchronized void stop() {
         if (!stopped) {
             quartz.removeTimer(this);
             stopped = true;
