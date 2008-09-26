@@ -13,8 +13,13 @@
  */
 package org.mobicents.media.server.impl;
 
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
+import java.util.ArrayList;
+import java.util.List;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.events.NotifyEvent1;
 
 /**
  *
@@ -23,6 +28,8 @@ import org.mobicents.media.MediaSource;
 public abstract class AbstractSource implements MediaSource {
 
     protected MediaSink sink;
+    private List<NotificationListener> listeners = new ArrayList();
+    private QueuedExecutor eventQueue = new QueuedExecutor();
 
     /**
      * (Non Java-doc).
@@ -45,4 +52,31 @@ public abstract class AbstractSource implements MediaSource {
         this.sink = null;
         ((AbstractSink) sink).mediaStream = null;
     }
+
+    public void addListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+    protected void sendEvent(NotifyEvent1 evt) {
+        synchronized (listeners) {
+            for (NotificationListener listener : listeners) {
+                listener.update(evt);
+            }
+        }
+    }
+
+    public void dispose() {
+        synchronized (listeners) {
+            listeners.clear();
+        }
+    }
+
 }

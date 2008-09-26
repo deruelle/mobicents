@@ -13,8 +13,12 @@
  */
 package org.mobicents.media.server.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.events.NotifyEvent1;
 
 /**
  *
@@ -23,6 +27,7 @@ import org.mobicents.media.MediaSource;
 public abstract class AbstractSink implements MediaSink {
 
     protected MediaSource mediaStream;
+    private List<NotificationListener> listeners = new ArrayList();
 
     /**
      * (Non Java-doc).
@@ -45,4 +50,32 @@ public abstract class AbstractSink implements MediaSink {
         this.mediaStream = null;
         ((AbstractSource) mediaStream).sink = null;
     }
+    
+    public void addListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+    
+    protected void sendEvent(NotifyEvent1 evt) {
+        synchronized (listeners) {
+            for (NotificationListener listener : listeners) {
+                listener.update(evt);
+            }
+        }
+        listeners.clear();
+    }
+    
+    public void dispose() {
+        synchronized(listeners) {
+            listeners.clear();
+        }
+    }
+    
 }
