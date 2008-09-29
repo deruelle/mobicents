@@ -208,7 +208,7 @@
 						<stepalternatives>
 							<step>
 								<para>As mentioned above, the best way to start the XDM Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
-										linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
+										linkend="tip-binary-XDM_Server-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
 								<screen>C:\Users\Me\My Downloads&gt; cd &quot;msps-integrated-1.0.0&quot;</screen>
 							</step>
 							<step>
