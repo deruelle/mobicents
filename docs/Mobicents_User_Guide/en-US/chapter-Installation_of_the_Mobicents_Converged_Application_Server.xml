@@ -6,9 +6,11 @@
 	<title>Installation of the Mobicents Converged Application Server</title>
 	<para>The Mobicents Converged Application Server can be installed by downloading the ready-to-go binary distribution, or, alterately, the source code can be obtained using the Subversion version control system (<acronym>VCS</acronym>) and then Mobicents can be built from source. Installing the binary distribution is recommended for most users, and obtaining and building the source code distribution is recommended for those who want access to the latest revisions and capabilities.</para>
 	<!--Installing the JDK-->
-		<xi:include
-			xmlns:xi="http://www.w3.org/2001/XInclude"
-			href="modules/section-Installing_the_JDK_Version_5.0.xml" />
+	<para
+		id="para-chapter-Installation_of_the_Mobicents_Converged_Application_Server-section-Installing_the_JDK_Version_5.0"><!-- Placeholder for XREFs --></para>
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="modules/section-Installing_the_JDK_Version_5.0.xml" />
 		
 	<!-- Binary Distribution -->
 	<section
@@ -65,6 +67,8 @@
 					<term>JDK 1.5 or Higher</term>
 					<listitem>
 						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the Mobicents JAIN SLEE Server. Note that the JBoss Application Server is a runtime dependency of Mobicents and, as mentioned, comes bundled with the binary distribution.</para>
+						<para>For instructions on how to install the JDK, refer to <xref
+								linkend="para-chapter-Installation_of_the_Mobicents_Converged_Application_Server-section-Installing_the_JDK_Version_5.0"/>.</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
@@ -111,6 +115,11 @@
 			id="section-binary-JAIN_SLEE_Server-Installing">
 			<title>Installing</title>
 			<para>Once the requirements and prerequisites have been met and you have downloaded the binary distribution zip file, you are ready to install Mobicents. Follow the instructions below for your platform, whether Linux or Windows.</para>
+			<note
+				id="note-chapter-Installation_of_the_Mobicents_Converged_Application_Server-Use_Version_Numbers_Relevant_to_Your_Installation">
+				<title>Use Version Numbers Relevant to Your Installation!</title>
+				<para>For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
+			</note>
 			<procedure>
 				<title>Installing the Mobicents Binary Distribution on Linux</title>
 				<step>

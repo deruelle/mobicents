@@ -4,13 +4,299 @@
 <section
 	id="section-Mobicents_SIP_Presence_Server">
 	<title>Mobicents SIP Presence Server</title>
+	<para>The Mobicents SIP Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
+	<para>The SIP Presence Server is an entity that accepts, stores and distributes SIP Presence Information.</para>
+	
+	<!-- Installing the JDK -->
+	<para
+		id="para-section-Mobicents_SIP_Presence_Server-section-Installing_the_JDK_Version_5.0"></para>
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="../modules/section-Installing_the_JDK_Version_5.0.xml" />
+		
+	<!-- Binary Installation -->
 	<section
-		id="section-Introduction_to_the_SIP_Presence_Server">
-		<title>Introduction to the SIP Presence Server</title>
-		<para>The Mobicents SIP Presence Server is a free and open source implementation of a SIP Presence Server, as defined by the Internet Engineering Task Force (IETF), the Open Mobile Alliance (OMA), the 3rd Generation Partnership Project (3GPP) and the European Telecommunications Standards Institute (ETSI).</para>
-		<para>The SIP Presence Server is an entity that accepts, stores and distributes SIP Presence Information.</para>
+		id="section-binary-Mobicents_SIP_Presence_Server-Installing_Configuring_and_Running">
+		<title>Binary Installation: Installing, Configuring and Running</title>
+		<para>The SIP Presence Server distribution comes bundled with the JBoss Application Server version 4.2.2 GA, the latest version of the Mobicents JAIN SLEE Server and the SIP and HTTP Servlet resource adapters.</para>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-PreInstall_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para>You should ensure that a few requirements have been met before continuing with the install.</para>
+			<variablelist
+				id="variablelist-binary-Mobicents_SIP_Presence_Server-Hardware_Requirements">
+				<title>Hardware Requirements</title>
+				<varlistentry>
+					<term>Sufficient Disk Space</term>
+					<listitem>
+						<para>You must have sufficient disk space in order to install the SIP Presence Server binary release. Once unzipped, version 1.0.0 of the SIP Presence Server binary release requires <emphasis>at least</emphasis> 75 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Anything Java Itself Will Run On</term>
+					<listitem>
+						<para>The Mobicents SIP Presence Server and its bundled servers, JBoss and JAIN SLEE, are all 100% Java. The SIP Presence Server will run on the same hardware that the JBoss Application Server runs on.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist
+				id="variablelist-binary-Mobicents_SIP_Presence_Server-Software_Prerequisites">
+				<title>Software Prerequisites</title>
+				<varlistentry>
+					<term>JDK 1.5 or Higher</term>
+					<listitem>
+						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the Mobicents SIP Presence Server. Note that the JBoss Application Server is a runtime dependency of the Presence Server and, as mentioned, comes bundled with the binary distribution.</para>
+						<para>For instructions on how to install the JDK, refer to <xref
+								linkend="para-section-Mobicents_SIP_Presence_Server-section-Installing_the_JDK_Version_5.0"/>.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Downloading">
+			<title>Downloading</title>
+			<para>You can download the latest version of the SIP Presence Server from the Mobicents <literal>Downloads</literal> page at <ulink
+					url="http://sourceforge.net/project/showfiles.php?group_id=102670"/>. There, you will see several different binary distributions of the Mobicents SIP Presence Service. Make sure you download the correct binary distribution zip file for the SIP Presence Server:</para>
+			<variablelist>
+				<varlistentry>
+					<term>mobicents-sip-presence-integrated-&lt;version&gt;-jboss-4.2.2.GA.zip</term>
+					<listitem>
+						<para>This zip file&#8212;the one with <emphasis>integrated</emphasis> in its file name&#8212;contains the SIP Presence Server, the XDM Server, and will contain the Resource List Server once it is available<footnote
+								id="section-binary-SIP_Presence_Server-Includes_Necessary_Dependencies"><para>This zip file also includes the necessary dependencies need to run all Presence Service components: the JBoss Application Server version 4.2.2 GA, the latest version of the Mobicents JAIN SLEE Server, and the SIP and HTTP Servlet resource adapters.</para>
+							</footnote>.
+							</para>
+						<important
+							id="important-This_Is_the_Zip_File_You_Want">
+							<title>This Is the Zip File You Want!</title>
+							<para>Whereas the <emphasis>integrated</emphasis> binary distribution contains the Mobicents SIP Presence Server, the others do not! If you are installing the SIP Presence Server, grab the most recent version of the zip file with <emphasis>integrated</emphasis> in it. This means that there is no standalone release containing only the SIP Presence Server instead of, for example, the XDM Server.</para>
+						</important>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>mobicents-sip-presence-xdms-&lt;version&gt;-jboss-4.2.2.GA.zip</term>
+					<listitem>
+						<para>This zip file&#8212;the one with <emphasis>xdms</emphasis> in its file name&#8212;contains only the XDM Server, and is useful for deploying the XDM separately (such as on a different node) from other Mobicents servers. It does not contain the SIP Presence Server&#8212;if you are installing the SIP Presence Server, this is not the zip file you want<footnoteref
+								linkend="section-binary-SIP_Presence_Server-Includes_Necessary_Dependencies"/>.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Installing">
+			<title>Installing</title>
+			<para>Once the requirements and prerequisites have been met, and you have downloaded one of the binary distribution zip files, you are ready to install the SIP Presence Server. Follow the instructions below for your platform, whether Linux or Windows.</para>
+			<note
+				id="note-section-Mobicents_SIP_Presence_Server-Use_Version_Numbers_Relevant_to_Your_Installation">
+				<title>Use Version Numbers Relevant to Your Installation!</title>
+				<para>For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
+			</note>
+			<procedure>
+				<title>Installing the SIP Presence Server Binary Distribution on Linux</title>
+				<step>
+					<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>downloads</filename>.</para>
+					<screen>~]# cd downloads</screen>
+				</step>
+				<step>
+					<para>In <filename>downloads</filename>, create a subdirectory to hold the unzipped SIP Presence Server files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the SIP Presence Server binary distribution you downloaded.</para>
+					<screen>downloads]$ mkdir &quot;msps-integrated-1.0.0&quot;</screen>
+				</step>
+				<step>
+					<para>Move the downloaded zip file into the directory you just created:</para>
+					<screen>downloads]$ mv &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot; &quot;msps-integrated-1.0.0&quot;</screen>
+				</step>
+				<step>
+					<para>Move into that directory:</para>
+					<screen>downloads]$ cd &quot;msps-integrated-1.0.0&quot;</screen>
+				</step>
+				<step>
+					<para>Finally, use Java's <command>jar <option>-xvf</option>
+							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
+					<screen>msps-integrated-1.0.0]$ jar -xvf &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+					<stepalternatives>
+						<step>
+							<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
+									</command> command:</para>
+							<screen>msps-integrated-1.0.0]$ unzip &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+							<tip>
+								<para>You can also use <command>unzip</command>'s <option>-d</option>
+									<filename>
+								<replaceable>&lt;unzip_to_location&gt;</replaceable>
+							</filename> option to extract the zip file's contents to a location other than the current directory.</para>
+							</tip>
+						</step>
+					</stepalternatives>
+				</step>
+				<step>
+					<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
+					<screen>msps-integrated-1.0.0]$ rm &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+				</step>
+			</procedure>
+			<procedure>
+				<title>Installing the SIP Presence Server Binary Distribution on Windows</title>
+				<step>
+					<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the SIP Presence Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>msps-integrated-1.0.0</filename>.</para>
+				</step>
+				<step>
+					<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
+					<stepalternatives>
+						<step>
+							<para>Alternatively, it is also possible to use Java's <command>jar <option>-xvf</option>
+									</command> command to extract the binary distribution files from the zip archive. To use this method instead, first move the downloaded zip file from <filename>My Downloads</filename> to the folder that you just created to hold the SIP Presence Server files.</para>
+						</step>
+						<step>
+							<para>Then, open the Windows Command Prompt and navigate to the folder holding the archive using the <command>cd</command> command:</para>
+							<tip
+								id="tip-binary-SIP_Presence_Server-Opening_the_Command_Prompt_from_Windows_Explorer">
+								<title>Opening the Command Prompt from Windows Explorer</title>
+								<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
+							</tip>
+							<screen>C:\Users\Me&gt;cd &quot;My Downloads\msps-integrated-1.0.0&quot;</screen>
+						</step>
+						<step>
+							<para>Finally, use the <command>jar <option>-xvf</option>
+									</command> command to extract the archive contents into the current folder.</para>
+							<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;jar -xvf &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+						</step>
+					</stepalternatives>
+				</step>
+				<step>
+					<para>At this point, you may want to move the folder holding the SIP Presence Server binary files (in this example, the folder named <filename>msps-integrated-1.0.0</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the SIP Presence Server folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
+				</step>
+				<step>
+					<para>You may also want to delete the zip file after extracting its contents in order to free disk space:</para>
+					<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;delete &quot;mobicents-sip-presence-integrated-1.0.0.BETA2-jboss-4.2.2.GA.zip&quot;</screen>
+				</step>
+			</procedure>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Running">
+			<title>Running</title>
+			<para>Once installed, you can run the Mobicents SIP Presence Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the SIP Presence Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the SIP Presence Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
+			<programlisting><![CDATA[11:23:07,656 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 23s:648ms]]></programlisting>
+			<para>Detailed instructions are given below, arranged by platform.</para>
+			<procedure>
+				<title>Running the SIP Presence Server on Linux</title>
+				<step>
+					<para>Change your working directory to the SIP Presence Server's topmost directory (the one which you extracted the zip file's contents to):</para>
+					<screen>downloads]$ cd &quot;msps-integrated-1.0.0&quot;</screen>
+				</step>
+				<step
+					performance="optional">
+					<para>(Optional) Ensure that the <filename>jboss-4.2.2.GA/bin/run.sh</filename> start script is executable:</para>
+					<screen>msps-integrated-1.0.0]$ chmod +x jboss-4.2.2.GA/bin/run.sh</screen>
+				</step>
+				<step>
+					<para>Finally, execute the <filename>run.sh</filename> Bourne shell script:</para>
+					<screen>msps-integrated-1.0.0]$ ./jboss-4.2.2.GA/bin/run.sh</screen>
+					<stepalternatives>
+						<step>
+							<para>Instead of executing the Bourne shell script to start the server, you may alternatively run the <filename>run.jar</filename> executable Java archive in the <filename>jboss-4.2.2.GA/bin</filename> directory:</para>
+							<screen>msps-integrated-1.0.0]$ java -jar jboss-4.2.2.GA/bin/run.jar</screen>
+						</step>
+					</stepalternatives>
+				</step>
+			</procedure>
+			<procedure>
+				<title>Running the SIP Presence Server on Windows</title>
+				<step>
+					<para>There are several different ways to start the SIP Presence Server on Windows. All of the following methods accomplish the same task.</para>
+					<para>Using Windows Explorer, change your folder to the one in which you unzipped the downloaded zip file, and then to the <filename>jboss-4.2.2.GA\bin</filename> subfolder.</para>
+				</step>
+				<step>
+					<para>Although not the preferred way (see below), it is possible to start the SIP Presence Server by double-clicking on the <filename>run.bat</filename> executable batch file.</para>
+					<stepalternatives>
+						<step>
+							<para>As mentioned above, the best way to start the SIP Presence Server is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\jboss-4.2.2.GA\bin</filename> folder in Windows Explorer (see <xref
+									linkend="tip-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
+							<screen>C:\Users\Me\My Downloads&gt; cd &quot;msps-integrated-1.0.0&quot;</screen>
+						</step>
+						<step>
+							<para>Start the SIP Presence Server by running the executable <filename>run.bat</filename> batch file:</para>
+							<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;jboss-4.2.2.GA\bin\run.bat</screen>
+							<stepalternatives>
+								<step>
+									<para>It is also possible to start the SIP Presence Server by running the <filename>run.jar</filename> executable Java archive:</para>
+									<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;java -jar jboss-4.2.2.GA\bin\run.jar</screen>
+								</step>
+							</stepalternatives>
+						</step>
+					</stepalternatives>
+				</step>
+			</procedure>
+		</section>
+		<section
+			id="section-binary-SIP_Presence_Server-Stopping">
+			<title>Stopping</title>
+			<para>Just as there are multiple ways to run the SIP Presence Server, there are multiple ways to stop it. Detailed instructions for stopping the SIP Presence Server are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt:</para>
+			<programlisting>[Server] Shutdown complete
+Shutdown complete
+Halting VM</programlisting>
+			<procedure>
+				<title>Stopping the SIP Presence Server on Linux by Issuing a Control Code</title>
+				<step>
+					<para>Assuming that you started the SIP Presence Server as a foreground process in the terminal, the easiest way to stop it is by pressing the <keycombo
+							action="simul"><keycap>Ctrl</keycap>
+						<keycap>c</keycap>
+					</keycombo> key combination in the same terminal in which you started it.
+						</para>
+				</step>
+			</procedure>
+			<procedure>
+				<title>Stopping the SIP Presence Server on Linux by Executing <filename>shutdown.sh</filename> or <filename>shutdown.jar</filename>
+				</title>
+				<step>
+					<para>Another way to shut down the SIP Presence Server is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory. To do so, first change your working directory to the SIP Presence Server's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
+					<screen>downloads]$ cd &quot;msps-integrated-1.0.0&quot;</screen>
+				</step>
+				<step
+					performance="optional">
+					<para>(Optional) Ensure that the jboss-4.2.2.GA/bin/shutdown.sh start script is executable:</para>
+					<screen>msps-integrated-1.0.0]$ chmod +x jboss-4.2.2.GA/bin/shutdown.sh</screen>
+				</step>
+				<step>
+					<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script, and remember to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument:</para>
+					<screen>msps-integrated-1.0.0]$ ./jboss-4.2.2.GA/bin/shutdown.sh -S</screen>
+					<stepalternatives>
+						<step>
+							<para>Instead of executing the Bourne shell script to stop the server, you may alternatively run the <filename>shutdown.jar</filename> executable Java archive to do so (and remembering, again, to add the <option>-S</option> command line argument):</para>
+							<screen>msps-integrated-1.0.0]$ java -jar jboss-4.2.2.GA/bin/shutdown.jar -S</screen>
+						</step>
+					</stepalternatives>
+				</step>
+			</procedure>
+			<procedure>
+				<title>Stopping the SIP Presence Server on Windows</title>
+				<step>
+					<para>Stopping the SIP Presence Server on Windows consists in executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>jboss-4.2.2.GA\bin</filename> subfolder of the SIP Presence Server binary distribution. Make sure to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument.</para>
+					<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;jboss-4.2.2.GA\bin\shutdown.bat -S</screen>
+					<stepalternatives>
+						<step>
+							<para>Alternatively, you can execute the <filename>shutdown.jar</filename> Java archive by running the <command>java <option>-jar</option>
+									</command> command, and remembering to add the <option>-S</option> option as a command line argument:</para>
+							<screen>C:\Users\Me\My Downloads\msps-integrated-1.0.0&gt;java -jar jboss-4.2.2.GA\bin\shutdown.jar -S</screen>
+						</step>
+					</stepalternatives>
+				</step>
+			</procedure>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Configuring">
+			<title>Configuring</title>
+			<para></para>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Testing">
+			<title>Testing</title>
+			<para></para>
+		</section>
+		<section
+			id="section-binary-Mobicents_SIP_Presence_Server-Uninstalling">
+			<title>Uninstalling</title>
+			<para>To uninstall the XDM Server, simply delete the directory you decompressed the binary distribution archive into.</para>
+		</section>
 	</section>
-	<section
+	<!--DON'T REMOVE! These are the only existant instructions on how to configure for building from source-->
+	<!--<section
 		id="section-Configuring_Installing_and_Testing_the_SIP_Presence_Server">
 		<title>Configuring, Installing and Testing the SIP Presence Server</title>
 		<formalpara>
@@ -21,7 +307,6 @@
 			<title>Configuration</title>
 			<para>The Mobicents SIP Presence Server can be customized in the following aspects before being built.</para>
 		</formalpara>
-		
 		<formalpara>
 			<title>Customizing the Presence Server</title>
 			<para></para>
@@ -52,10 +337,8 @@
 			<title>Installing the SIP Presence Server Also Installs the XDM Server</title>
 			<para>You should also make sure that all the install requirements of the Mobicents XDM Server are met before attempting to install the Mobicents SIP Presence Server. See <xref
 					linkend="fpara-XDM_Requirements"/>.</para>
-		</important>
-		
-		<!--install-->
-		<formalpara>
+		</important>-->
+		<!--<formalpara>
 			<title>Installing the Mobicents XML Document Management Server</title>
 			<para>How you install the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
@@ -72,10 +355,9 @@
 					<para>TBD: (Fix this with proper instructions): From the source code repository, you can install the XDM Server by doing a mvn install on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
 				</formalpara>
 			</listitem>
-		</itemizedlist>
-		
+		</itemizedlist>-->
 		<!--uninstall-->
-		<formalpara>
+		<!--<formalpara>
 			<title>Uninstalling the Mobicents XML Document Management Server</title>
 			<para>How you uninstall the XDM Server depends on whether you are using the Mobicents binary distribution, or running the source distribution.</para>
 		</formalpara>
@@ -92,13 +374,12 @@
 					<para>TBD: (Fix this with proper instructions): From the source code repository, you can uninstall the XDM Server by doing a mvn clean on the <filename>/trunk/servers/sip-presence/integrated</filename> directory.</para>
 				</formalpara>
 			</listitem>
-		</itemizedlist>
-		
-		<formalpara>
+		</itemizedlist>-->
+		<!--<formalpara>
 			<title>Testing the Mobicents SIP Presence Server</title>
 			<para>A test framework for the Mobicents SIP Presence Server is forthcoming but not available yet.</para>
 		</formalpara>
-	</section>
+	</section>-->
 	<section
 		id="section-Functional_Architecture_of_the_SIP_Presence_Server">
 		<title>Functional Architecture of the SIP Presence Server</title>
@@ -239,4 +520,3 @@
 		</itemizedlist>
 	</section>
 </section>
-
