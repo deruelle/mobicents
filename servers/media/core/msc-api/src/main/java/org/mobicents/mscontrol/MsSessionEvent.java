@@ -18,9 +18,6 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
-import org.mobicents.media.msc.common.events.MsSessionEventCause;
-import org.mobicents.media.msc.common.events.MsSessionEventID;
-
 /**
  * This is the interface for all MsSession-related events.
  * 

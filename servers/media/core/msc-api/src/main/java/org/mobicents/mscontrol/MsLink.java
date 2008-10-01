@@ -18,8 +18,6 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
-import org.mobicents.media.msc.common.MsLinkState;
-
 /**
  * A <code>MsLink</code> represents link between two
  * <code>org.mobicents.media.server.spi.Endpoint</code>
@@ -72,17 +70,13 @@ public interface MsLink extends Serializable {
 	 * 
 	 * @return
 	 */
-	public String[] getEndpoints();
+	public MsEndpoint[] getEndpoints();
 
 	/**
 	 * Drops this link
 	 */
 	public void release();
 
-	/**
-	 * As soon as MsLink is created MsSession call's MsLink.fireMsLinkCreated() to
-	 * fire the Event <code>MsLinkEventID.LINK_CREATED</code>
-	 */
-	public void fireMsLinkCreated();
-	
+        public void addLinkListener(MsLinkListener listener);
+        public void removeLinkListener(MsLinkListener listener);
 }

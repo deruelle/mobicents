@@ -13,7 +13,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
@@ -28,50 +27,35 @@ import java.io.Serializable;
  */
 public interface MsConnectionListener extends Serializable {
 
-	/**
-	 * This method is called when the MsConnectionEventID.CONNECTION_INITIALIZED
-	 * is fired. MsConnection is created by calling
-	 * MsSession.createNetworkConnection() and MsCOnnection
-	 * 
-	 * @param event
-	 */
-	public void connectionInitialized(MsConnectionEvent event);
+    /**
+     * This method is called when the MsConnectionEventID.CONNECTION_CREATED is
+     * fired. Fired when MsConnection.modify(String localDesc, String
+     * remoteDesc) is called and creation of
+     * <code>org.mobicents.media.server.spi.Connection</code> is successful
+     * 
+     * @param event
+     */
+    public void connectionCreated(MsConnectionEvent event);
 
-	/**
-	 * This method is called when the MsConnectionEventID.CONNECTION_CREATED is
-	 * fired. Fired when MsConnection.modify(String localDesc, String
-	 * remoteDesc) is called and creation of
-	 * <code>org.mobicents.media.server.spi.Connection</code> is successful
-	 * 
-	 * @param event
-	 */
-	public void connectionCreated(MsConnectionEvent event);
+    public void connectionFailed(MsConnectionEvent event);
 
-	/**
-	 * This method is called when MsConnectionEventID.CONNECTION_MODIFIED is
-	 * fired. Fired when MsConnection.modify(String localDesc, String
-	 * remoteDesc) is called and modification of
-	 * <code>org.mobicents.media.server.spi.Connection</code> is successful
-	 * 
-	 * @param event
-	 */
-	public void connectionModifed(MsConnectionEvent event);
+    /**
+     * This method is called when MsConnectionEventID.CONNECTION_MODIFIED is
+     * fired. Fired when MsConnection.modify(String localDesc, String
+     * remoteDesc) is called and modification of
+     * <code>org.mobicents.media.server.spi.Connection</code> is successful
+     * 
+     * @param event
+     */
+    public void connectionHalfOpen(MsConnectionEvent event);
 
-	/**
-	 * This method is called when MsConnectionEventID.CONNECTION_DELETED is
-	 * fired. Fired when MsConnection.release() is called.
-	 * 
-	 * @param event
-	 */
-	public void connectionDeleted(MsConnectionEvent event);
+    public void connectionOpen(MsConnectionEvent event);
 
-	/**
-	 * This method is called when MsConnectionEventID.TX_FAILED is fired. Fired
-	 * when creation of <code>org.mobicents.media.server.spi.Connection</code>
-	 * fails when MsConnection.modify(String localDesc, String remoteDesc) is
-	 * called
-	 * 
-	 * @param event
-	 */
-	public void txFailed(MsConnectionEvent event);
+    /**
+     * This method is called when MsConnectionEventID.CONNECTION_DELETED is
+     * fired. Fired when MsConnection.release() is called.
+     * 
+     * @param event
+     */
+    public void connectionDisconnected(MsConnectionEvent event);
 }

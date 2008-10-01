@@ -43,7 +43,7 @@ public interface MsLinkListener extends Serializable {
 	 * 
 	 * @param evt
 	 */
-	public void linkJoined(MsLinkEvent evt);
+	public void linkConnected(MsLinkEvent evt);
 
 	/**
 	 * This method is called when MsLinkEventID.LINK_DROPPED is fired. Fired
@@ -51,7 +51,7 @@ public interface MsLinkListener extends Serializable {
 	 * 
 	 * @param evt
 	 */
-	public void linkDropped(MsLinkEvent evt);
+	public void linkDisconnected(MsLinkEvent evt);
 
 	/**
 	 * This method is called when MsLinkEventID.LINK_FAILED is fired. Fired when

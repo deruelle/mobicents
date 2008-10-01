@@ -18,9 +18,6 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
-import org.mobicents.media.msc.common.events.MsConnectionEventCause;
-import org.mobicents.media.msc.common.events.MsConnectionEventID;
-
 /**
  * The instance of <code>MsConnectionEvent</code> is fired when ever the state
  * of MsConnection changes

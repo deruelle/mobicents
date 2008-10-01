@@ -19,9 +19,6 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 import java.util.List;
 
-import org.mobicents.media.msc.common.MsLinkMode;
-import org.mobicents.media.msc.common.MsSessionState;
-
 /**
  * A <code>MsSession</code> is a transient association of (zero or more)
  * connection for the purposes of engaging in a real-time communications
@@ -136,42 +133,11 @@ public interface MsSession extends Serializable {
 	public void removeSessionListener(MsSessionListener listener);
 
 	/**
-	 * Returns the list of MsSessionListener
-	 * 
-	 * @return
-	 */
-	public List<MsSessionListener> getSessionListeners();
-
-	/**
 	 * Returns the list of MsConnection associated with this MsSession
 	 * 
 	 * @return
 	 */
 	public List<MsConnection> getConnections();
 
-	/**
-	 * Explicitly sets the MsSession state to <code>MsSessionState.IDLE</code>
-	 * and fires <code>MsSessionEventID.SESSION_CREATED</code> event for
-	 * {@link MsSessionListener}
-	 */
-	public void setSessionStateIdle();
-
-	/**
-	 * Removes the instance of MsConnection from list of MsConnection's managed
-	 * by this MsSession If there are no more MsConnection or MsLink's
-	 * associated with this MsSession, it transitions to INVALID state
-	 * 
-	 * @param connection
-	 */
-	public void disassociateNetworkConnection(MsConnection connection);
-
-	/**
-	 * Removes the instance of MsLink from list of MsLink's managed by this
-	 * MsSession If there are no more MsConnection or MsLink's associated with
-	 * this MsSession, it transitions to INVALID state
-	 * 
-	 * @param link
-	 */
-	public void disassociateLink(MsLink link);
 
 }

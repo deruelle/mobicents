@@ -18,8 +18,6 @@ package org.mobicents.mscontrol;
 
 import java.io.Serializable;
 
-import org.mobicents.media.msc.common.MsConnectionState;
-
 /**
  * Represents the actual RTP connection. MsConnection is created by calling
  * <code>MsSession.createNetworkConnection</code>. As soon as MsConnection is
@@ -79,7 +77,7 @@ public interface MsConnection extends Serializable {
 	 * @return the name of the endpoint on the media server or null if
 	 *         connection is not created on media server yet.
 	 */
-	public String getEndpoint();
+	public MsEndpoint getEndpoint();
 
 	/**
 	 * Adds connection listener.
@@ -112,9 +110,4 @@ public interface MsConnection extends Serializable {
 	 */
 	public void release();
 
-	/**
-	 * As soon as Connection is created, MsSession calls this method to fire
-	 * event <code>MsConnectionEventID.CONNECTION_INITIALIZED</code>
-	 */
-	public void fireConnectionInitialized();
 }

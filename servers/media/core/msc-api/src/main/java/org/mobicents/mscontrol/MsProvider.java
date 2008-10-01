@@ -13,10 +13,11 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.mscontrol;
 
+import java.io.Serializable;
 import java.util.List;
+import org.mobicents.mscontrol.events.MsEventFactory;
 
 /**
  * This is the provider class which is used to create the MsSession,
@@ -31,137 +32,99 @@ import java.util.List;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public interface MsProvider {
-	/**
-	 * Add a session listener to all (feature and current) within the domain of
-	 * this provider.
-	 * 
-	 * @param listener
-	 *            object that receives the specified events
-	 */
-	public void addSessionListener(MsSessionListener listener);
+public interface MsProvider extends Serializable {
 
-	/**
-	 * Removes a listener that was previously registered.
-	 * 
-	 * @param listener
-	 *            Listener object.
-	 */
-	public void removeSessionListener(MsSessionListener listener);
+    /**
+     * Add a session listener to all (feature and current) within the domain of
+     * this provider.
+     * 
+     * @param listener
+     *            object that receives the specified events
+     */
+    public void addSessionListener(MsSessionListener listener);
 
-	/**
-	 * Returns the list of MsSessionListners registered with MsProvider
-	 * 
-	 * @return
-	 */
-	public List<MsSessionListener> getSessionListeners();
+    /**
+     * Removes a listener that was previously registered.
+     * 
+     * @param listener
+     *            Listener object.
+     */
+    public void removeSessionListener(MsSessionListener listener);
 
-	/**
-	 * Add a connection listener to all connections under this MsProvider.
-	 * 
-	 * @param MsConnectionListener
-	 *            object that receives the specified events.
-	 */
-	public void addConnectionListener(MsConnectionListener connectionListener);
+    public void addNotificationListener(MsNotificationListener listener);
+    public void removeNotificationListener(MsNotificationListener listener);
 
-	/**
-	 * Returns the List of MsConnectionListener registered with MsProvider
-	 * 
-	 * @return
-	 */
-	public List<MsConnectionListener> getConnectionListeners();
+    /**
+     * Add a connection listener to all connections under this MsProvider.
+     * 
+     * @param MsConnectionListener
+     *            object that receives the specified events.
+     */
+    public void addConnectionListener(MsConnectionListener listener);
+    public void removeConnectionListener(MsConnectionListener listener);
+    
+    /**
+     * Add a resource listener to all resources under this MsProvider.
+     * 
+     * @param MsResourceListener
+     *            object that receives the specified events.
+     */
+    public void addResourceListener(MsResourceListener listener);
 
-	/**
-	 * Add a resource listener to all resources under this MsProvider.
-	 * 
-	 * @param MsResourceListener
-	 *            object that receives the specified events.
-	 */
-	public void addResourceListener(MsResourceListener listener);
+    /**
+     * Add a link listener to all terminations.
+     * 
+     * @param MsLinkListener
+     *            object that receives the specified events.
+     */
+    public void addLinkListener(MsLinkListener listener);
 
-	/**
-	 * Returns List of MsResourceListener registered with MsProvider
-	 * 
-	 * @return
-	 */
-	public List<MsResourceListener> getResourceListeners();
+    /**
+     * Removes link listener
+     * 
+     * @param MsLinkListener
+     *            object that receives the specified events.
+     */
+    public void removeLinkListener(MsLinkListener listener);
 
-	/**
-	 * Add a link listener to all terminations.
-	 * 
-	 * @param MsLinkListener
-	 *            object that receives the specified events.
-	 */
-	public void addLinkListener(MsLinkListener listener);
+    /**
+     * Creates a new instance of the session with no links.
+     * 
+     * @return MsSession object.
+     */
+    public MsSession createSession();
 
-	/**
-	 * Removes link listener
-	 * 
-	 * @param MsLinkListener
-	 *            object that receives the specified events.
-	 */
-	public void removeLinkListener(MsLinkListener listener);
+    public MsEventFactory getEventFactory();
+    /**
+     * Creates a new instance of MsSignalGenerator for given EndpointName
+     * 
+     * @param endpointName
+     * @return
+     */
+    public MsSignalGenerator getSignalGenerator(String endpointName);
 
-	/**
-	 * Returns the List of MsLinkListener registered with MsProvider
-	 * 
-	 * @return
-	 */
-	public List<MsLinkListener> getLinkListeners();
+    /**
+     * Creates a new instance of SignalDetector for given EndpointName
+     * 
+     * @param endpointName
+     * @return
+     */
+    public MsSignalDetector getSignalDetector(String endpointName);
 
-	/**
-	 * Creates a new instance of the session with no links.
-	 * 
-	 * @return MsSession object.
-	 */
-	public MsSession createSession();
+    /**
+     * Get the MsConnection for the msConnectionId passed.
+     * 
+     * @param msConnectionId
+     * @return
+     */
+    public MsConnection getMsConnection(String msConnectionId);
 
-	/**
-	 * Creates a new instance of MsSignalGenerator for given EndpointName
-	 * 
-	 * @param endpointName
-	 * @return
-	 */
-	public MsSignalGenerator getSignalGenerator(String endpointName);
-
-	/**
-	 * Creates a new instance of SignalDetector for given EndpointName
-	 * 
-	 * @param endpointName
-	 * @return
-	 */
-	public MsSignalDetector getSignalDetector(String endpointName);
-
-	/**
-	 * Get the MsConnection for the msConnectionId passed.
-	 * 
-	 * @param msConnectionId
-	 * @return
-	 */
-	public MsConnection getMsConnection(String msConnectionId);
-
-	/**
-	 * Gets List of MsConnection object for given endpointName
-	 * 
-	 * @param endpointName
-	 * @return
-	 */
-	public List<MsConnection> getMsConnections(String endpointName);
-
-	/**
-	 * An application ( that implements MsCallbackHandler ) using MsProvider can
-	 * be called synchronously by setting CallbackHandler here. If the
-	 * application is not interested in callback than it may not set it and
-	 * CallbackHandler will be null;
-	 * 
-	 * @param callbackHandler
-	 */
-	public void setCallbackHandler(MsCallbackHandler callbackHandler);
-
-	/**
-	 * Get the CallbackHandler implementation
-	 * @return
-	 */
-	public MsCallbackHandler getCallbackHandler();
+    /**
+     * Gets List of MsConnection object for given endpointName
+     * 
+     * @param endpointName
+     * @return
+     */
+    public List<MsConnection> getMsConnections(String endpointName);
 
 }
