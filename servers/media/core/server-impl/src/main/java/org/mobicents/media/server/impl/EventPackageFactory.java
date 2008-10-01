@@ -15,7 +15,7 @@
 package org.mobicents.media.server.impl;
 
 import java.io.Serializable;
-import org.mobicents.media.server.spi.events.EventPackage;
+import org.mobicents.media.server.impl.events.EventPackage;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class EventPackageFactory implements Serializable {
 
 	public static EventPackage load(String packageName) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException {
-		String className = packageName.replace("media", "media.server.impl.events") + ".PackageImpl";
+		String className = packageName.replace("media.events", "media.server.impl.events") + ".PackageImpl";
 		ClassLoader classLoader = EventPackageFactory.class.getClassLoader();
 		Class instance = classLoader.loadClass(className);
 

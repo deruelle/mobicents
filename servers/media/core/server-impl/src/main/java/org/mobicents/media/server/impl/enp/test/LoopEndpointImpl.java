@@ -11,11 +11,12 @@
  */
 package org.mobicents.media.server.impl.enp.test;
 
+import java.util.HashMap;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -25,8 +26,6 @@ import org.mobicents.media.server.spi.Endpoint;
 public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener{
 
 
-    private Echo echo;
-    private boolean started = false;
     public LoopEndpointImpl(String localName) {
         super(localName);
         this.setMaxConnectionsAvailable(1);
@@ -49,6 +48,16 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     @Override
     public Endpoint doCreateEndpoint(String localName) {
         return new LoopEndpointImpl(localName);
+    }
+
+    @Override
+    public HashMap initMediaSources() {
+        return new HashMap();
+    }
+
+    @Override
+    public HashMap initMediaSinks() {
+        return new HashMap();
     }
 
     

@@ -13,21 +13,19 @@
  */
 package org.mobicents.media.server.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.Options;
-import org.mobicents.media.server.spi.events.Signal;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class AbstractSignal implements Signal {
+public abstract class AbstractSignal implements Serializable {
 
     private List<NotificationListener> listeners = new ArrayList();
-    protected Options options;
 
     protected void sendEvent(NotifyEvent evt) {
         synchronized (listeners) {
@@ -38,14 +36,9 @@ public abstract class AbstractSignal implements Signal {
         listeners.clear();
     }
 
-    public Options getOptions() {
-        return options;
-    }
-
-    public void setOptions(Options options) {
-        this.options = options;
-    }
-
+    public abstract void apply(BaseConnection connection);
+    public abstract void apply(BaseEndpoint connection);
+    
     public void addListener(NotificationListener listener) {
         synchronized (listeners) {
             listeners.add(listener);

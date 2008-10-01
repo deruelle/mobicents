@@ -15,42 +15,45 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.RequestedEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class BaseConnection implements Connection {
+public abstract class BaseConnection implements Connection, NotificationListener {
 
     protected String id;
     protected BaseEndpoint endpoint;
     protected String endpointName;
-    
     protected ConnectionMode mode;
     protected ConnectionState state = ConnectionState.NULL;
     private int lifeTime = 30;
-    
     protected Multiplexer mux;
     protected Demultiplexer demux;
-    
     private TimerTask closeTask;
     private boolean timerStarted = false;
-    
     private ReentrantLock stateLock = new ReentrantLock();
     private ArrayList<ConnectionListener> listeners = new ArrayList();
-    
+    private ArrayList<RequestedEvent> eventListeners = new ArrayList();
+    private ExecutorService eventQueue = Executors.newSingleThreadExecutor();
     protected transient Logger logger = Logger.getLogger(BaseConnection.class);
 
     private class CloseConnectionTask extends TimerTask {
+
         public void run() {
             logger.info("Connection timer expired, Disconnecting");
             timerStarted = false;
@@ -98,7 +101,7 @@ public abstract class BaseConnection implements Connection {
     public int getLifeTime() {
         return lifeTime;
     }
-    
+
     /**
      * Non Java-doc).
      * 
@@ -115,7 +118,7 @@ public abstract class BaseConnection implements Connection {
         BaseEndpoint.connectionTimer.schedule(closeTask, 60 * lifeTime * 1000);
         timerStarted = true;
     }
-    
+
     /**
      * Generates unique identifier for this connection.
      * 
@@ -162,6 +165,21 @@ public abstract class BaseConnection implements Connection {
     }
 
     /**
+     * Adds listener for the specified event.
+     * 
+     * @param requestedEvent the event to detect or null to diable detection.
+     */
+    public void detect(RequestedEvent requestedEvent) {
+        synchronized (eventListeners) {
+            if (requestedEvent != null) {
+                eventListeners.add(requestedEvent);
+            } else {
+                eventListeners.clear();
+            }
+        }
+    }
+
+    /**
      * (Non-Javadoc).
      * 
      * @see org.mobicents.media.server.spi.Connection#addListener(ConnectionListener)
@@ -182,15 +200,25 @@ public abstract class BaseConnection implements Connection {
     protected void setState(ConnectionState newState) {
         ConnectionState oldState = this.state;
         this.state = newState;
-        
+
         for (ConnectionListener cl : listeners) {
             cl.onStateChange(this, oldState);
         }
-        
+
         for (ConnectionListener cl : endpoint.connectionListeners) {
             cl.onStateChange(this, oldState);
         }
-        
+
+    }
+
+    public void update(NotifyEvent event) {
+        synchronized (eventListeners) {
+            for (RequestedEvent request : this.eventListeners) {
+                if (request.getID().equals(event.getEventID())) {
+                    eventQueue.submit(new EventSender(request.getHandler(), event));
+                }
+            }
+        }
     }
 
     /**
@@ -201,7 +229,7 @@ public abstract class BaseConnection implements Connection {
     protected boolean getLifeTimeTimerState() {
         return timerStarted;
     }
-    
+
     /**
      * Releases all resources requested by this connection.
      * 

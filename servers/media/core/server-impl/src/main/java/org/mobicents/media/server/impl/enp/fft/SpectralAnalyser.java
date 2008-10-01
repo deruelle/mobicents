@@ -14,13 +14,10 @@
 package org.mobicents.media.server.impl.enp.fft;
 
 import org.mobicents.media.Format;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
 /**
@@ -34,23 +31,10 @@ public class SpectralAnalyser extends AbstractSink {
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
     
-    private List<NotificationListener> listeners = new ArrayList();
     private int offset = 0;
     private byte[] localBuffer = new byte[16000];
     private FFT fft = new FFT();
     private Logger logger = Logger.getLogger(SpectralAnalyser.class);
-
-    public void addListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    public void removeListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
 
     public void start() {
     }
@@ -69,12 +53,7 @@ public class SpectralAnalyser extends AbstractSink {
 
     protected void sendEvent(double[] spectra) {
         SpectrumEvent evt = new SpectrumEvent(this, "org.mobicents.media.fft.SPECTRA", spectra);
-        synchronized (listeners) {
-            for (NotificationListener listener : listeners) {
-                listener.update(evt);
-            }
-        }
-  
+        sendEvent(evt);
     }
 
     public void receive(Buffer buffer) {

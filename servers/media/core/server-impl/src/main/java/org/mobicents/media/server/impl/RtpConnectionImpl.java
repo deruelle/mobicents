@@ -35,8 +35,6 @@ import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
@@ -48,6 +46,8 @@ import javax.naming.InitialContext;
 import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 
 /**
  * 
@@ -63,17 +63,15 @@ public class RtpConnectionImpl extends BaseConnection {
     private SessionDescription remoteSDP;
     private RtpSocket rtpSocket;
     private SdpFactory sdpFactory = SdpFactory.getInstance();
-  
     private Processor inDsp;
     private Processor outDsp;
-    
 //    private HashMap codecs;
-    
     /**
      * Creates a new instance of RtpConnectionImpl.
      * 
      * @param endpoint
      *            the endpoint executing this connection.
+     * @param connectionID the identifier of the connection to be created
      * @param mode
      *            the mode of this connection.
      */
@@ -87,10 +85,16 @@ public class RtpConnectionImpl extends BaseConnection {
             logger.debug(this + " Initializing RTP stack");
         }
         initRTPSocket();
-        
+
         inDsp = new Processor();
         outDsp = new Processor();
-        
+
+        inDsp.getOutput().connect(demux.getInput());
+        inDsp.getInput().connect(rtpSocket.getReceiveStream());
+//        rtpSocket.getReceiveStream().connect(new TestSink());
+
+        demux.start();
+
         setState(ConnectionState.HALF_OPEN);
     }
 
@@ -141,7 +145,7 @@ public class RtpConnectionImpl extends BaseConnection {
         }
     }
 
-    @Override
+/*    @Override
     protected void setState(ConnectionState newState) {
         ConnectionState oldState = this.state;
         this.state = newState;
@@ -153,7 +157,7 @@ public class RtpConnectionImpl extends BaseConnection {
             case HALF_OPEN:
                 inDsp.getInput().connect(rtpSocket.getReceiveStream());
                 inDsp.getOutput().connect(demux.getInput());
-                
+
                 demux.start();
                 break;
 
@@ -172,17 +176,17 @@ public class RtpConnectionImpl extends BaseConnection {
                 demux.stop();
                 inDsp.getInput().disconnect(rtpSocket.getReceiveStream());
                 inDsp.getOutput().disconnect(demux.getInput());
-                
+
                 mux.getOutput().stop();
                 outDsp.getInput().disconnect(mux.getOutput());
                 outDsp.getOutput().disconnect(rtpSocket.getSendStream());
-                       
+
                 break;
         }
 
         super.setState(newState);
     }
-
+*/
     /**
      * Checks is format presented in the list.
      * 
@@ -198,7 +202,7 @@ public class RtpConnectionImpl extends BaseConnection {
         }
         return false;
     }
-    
+
     /**
      * (Non-Javadoc).
      * 
@@ -241,18 +245,18 @@ public class RtpConnectionImpl extends BaseConnection {
             HashMap rtpMap = rtpSocket.getRtpMap();
             //Format[] supported = endpoint.getSupportedFormats();
             Format[] supported = inDsp.getInput().getFormats();
-            
-            
+
+
             HashMap fmts = new HashMap();
-            Set <Integer> map = rtpMap.keySet();            
-            
+            Set<Integer> map = rtpMap.keySet();
+
             for (Integer pt : map) {
                 Format f = (Format) rtpMap.get(pt);
                 if (contains(supported, f)) {
                     fmts.put(pt, f);
                 }
             }
-            
+
             Object[] payloads = getPayloads(fmts).toArray();
 
             int[] formats = new int[payloads.length];
@@ -370,8 +374,13 @@ public class RtpConnectionImpl extends BaseConnection {
         } catch (Exception e) {
             // silence here
         }
-        
+
         rtpSocket.setRtpMap(rtpMap);
+
+        outDsp.getOutput().connect(rtpSocket.getSendStream());
+        outDsp.getInput().connect(mux.getOutput());
+        mux.getOutput().start();
+
         setState(ConnectionState.OPEN);
     }
 
@@ -446,8 +455,19 @@ public class RtpConnectionImpl extends BaseConnection {
      */
     @Override
     public void close() {
-        rtpSocket.close();
-        super.close();
+        try {
+            demux.stop();
+            inDsp.getInput().disconnect(rtpSocket.getReceiveStream());
+            inDsp.getOutput().disconnect(demux.getInput());
+
+            mux.getOutput().stop();
+            outDsp.getInput().disconnect(mux.getOutput());
+            outDsp.getOutput().disconnect(rtpSocket.getSendStream());
+
+            rtpSocket.close();
+        } finally {
+            super.close();
+        }
     }
 
     /**
@@ -461,6 +481,6 @@ public class RtpConnectionImpl extends BaseConnection {
     }
 
     public void error(Exception e) {
-        logger.error("Facility error", e);
+        this.endpoint.deleteConnection(id);
     }
 }

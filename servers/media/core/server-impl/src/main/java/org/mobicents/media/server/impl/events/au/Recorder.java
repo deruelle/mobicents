@@ -21,9 +21,6 @@ import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 import org.mobicents.media.Buffer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import javax.sound.sampled.AudioFileFormat;
@@ -31,7 +28,6 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.common.events.RecorderEventType;
 
 /**
  * 
@@ -48,7 +44,6 @@ public class Recorder extends AbstractSink {
     private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8,
             1, AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
     
-    private List<RecorderListener> listeners = new ArrayList();
     private Logger logger = Logger.getLogger(Recorder.class);
     
     private int recordTime = 60;
@@ -93,15 +88,15 @@ public class Recorder extends AbstractSink {
     public void start(String file) {
         try {
             record(file);
-            sendEvent(RecorderEventType.STARTED, "NORMAL");
+            //sendEvent(RecorderEventType.STARTED, "NORMAL");
         } catch (Exception e) {
-            dispose();
+            release();
             logger.error("Could not start recording", e);
-            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+            //sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
         }
     }
 
-    private void dispose() {
+    private void release() {
         try {
             if (file != null) {
                 file.flush();
@@ -114,7 +109,7 @@ public class Recorder extends AbstractSink {
         // this.runner=null;
         } catch (Exception e) {
             logger.error("Could not close recorder file", e);
-            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+//            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
         }
     }
 
@@ -129,49 +124,11 @@ public class Recorder extends AbstractSink {
             }
         }
  */
-        dispose();
-        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
+        release();
+//        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
     }
 
-    protected synchronized void sendEvent(RecorderEventType eventID, String msg) {
-        RecorderEvent evt = new RecorderEvent(this, eventID, msg);
-        try {
-            eventService.execute(new EventHandler(evt));
-        } catch (InterruptedException e) {
-        }
-    }
 
-    public void addListener(RecorderListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    public void removeListener(RecorderListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
-    /**
-     * Implements async event sender
-     */
-    private class EventHandler implements Runnable {
-
-        private RecorderEvent evt;
-
-        public EventHandler(RecorderEvent evt) {
-            this.evt = evt;
-        }
-
-        public void run() {
-            synchronized (listeners) {
-                for (RecorderListener listener : listeners) {
-                    listener.update(evt);
-                }
-            }
-        }
-    }
 
     private class RecorderRunnable implements Runnable {
 
@@ -186,7 +143,7 @@ public class Recorder extends AbstractSink {
                 AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
             } catch (IOException e) {
                 logger.error("Audio stream write error", e);
-                sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+//                sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
                 dispose();
             }
 

@@ -4,14 +4,15 @@
  */
 package org.mobicents.media.server.impl;
 
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 
 /**
@@ -253,6 +254,16 @@ public class BaseEndpointTest {
 
         public TestEndpoint(String localName) {
             super(localName);
+        }
+
+        @Override
+        public HashMap initMediaSources() {
+            return new HashMap();
+        }
+
+        @Override
+        public HashMap initMediaSinks() {
+            return new HashMap();
         }
     }
 }

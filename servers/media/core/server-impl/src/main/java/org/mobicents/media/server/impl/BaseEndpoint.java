@@ -19,14 +19,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Timer;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
@@ -35,13 +32,15 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.events.EventDetector;
-import org.mobicents.media.server.spi.events.EventPackage;
-import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.Options;
-import org.mobicents.media.server.spi.events.Signal;
+import org.mobicents.media.server.impl.events.EventPackage;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.RequestedEvent;
+import org.mobicents.media.server.spi.events.RequestedSignal;
 
 /**
  * The basic implementation of the endpoint.
@@ -68,8 +67,8 @@ public abstract class BaseEndpoint implements Endpoint {
     private final static Format[] formats = new Format[]{LINEAR, DTMF};
     private String localName;
     private String rtpFactoryName;
-    protected HashMap<String, Signal> signals = new HashMap();
-    protected ConcurrentHashMap<String, EventDetector> detectors = new ConcurrentHashMap<String, EventDetector>();
+    private HashMap<String, HashMap> mediaSources = new HashMap();
+    private HashMap<String, HashMap> mediaSinks = new HashMap();
     private boolean hasConnections;
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
     private int maxConnections = 0;
@@ -182,16 +181,25 @@ public abstract class BaseEndpoint implements Endpoint {
      */
     public synchronized Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException,
             ResourceUnavailableException {
-        hasConnections = true;
         try {
             if (connections.size() == maxConnections) {
                 throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
             }
 
-            // Connection connection = new RtpConnectionImpl(this, mode);
             Connection connection = doCreateConnection(this, mode);
             connections.put(connection.getId(), connection);
 
+            HashMap<String, MediaSource> sourceMap = initMediaSources();
+            for (MediaSource source : sourceMap.values()) {
+                source.connect(((BaseConnection) connection).getMux());
+            }
+            mediaSources.put(connection.getId(), sourceMap);
+
+            HashMap<String, MediaSink> sinkMap = initMediaSinks();
+            for (MediaSink sink : sinkMap.values()) {
+                sink.connect(((BaseConnection) connection).getDemux());
+            }
+            mediaSinks.put(connection.getId(), sinkMap);
             return connection;
         } finally {
             hasConnections = connections.size() > 0;
@@ -215,6 +223,18 @@ public abstract class BaseEndpoint implements Endpoint {
                 Connection connection = new LocalConnectionImpl(this, mode);
                 connections.put(connection.getId(), connection);
 
+                HashMap<String, MediaSource> sourceMap = initMediaSources();
+                for (MediaSource source : sourceMap.values()) {
+                    source.connect(((BaseConnection) connection).getMux());
+                    source.addListener((BaseConnection) connection);
+                }
+                mediaSources.put(connection.getId(), sourceMap);
+                HashMap<String, MediaSink> sinkMap = initMediaSinks();
+                for (MediaSink sink : sinkMap.values()) {
+                    sink.connect(((BaseConnection) connection).getDemux());
+                    sink.addListener((BaseConnection) connection);
+                }
+                mediaSinks.put(connection.getId(), sinkMap);
                 return connection;
             }
         } finally {
@@ -229,25 +249,28 @@ public abstract class BaseEndpoint implements Endpoint {
      */
     public void deleteConnection(String connectionID) {
         BaseConnection connection = (BaseConnection) connections.remove(connectionID);
-
-        synchronized (this) {
-            if (connection != null) {
-                // disable all signals
-                Signal signal = signals.get(connectionID);
-                if (signal != null) {
-                    signal.stop();
-                    connection.getMux().disconnect(signal);
-                    signals.remove(connectionID);
-                }
-
-                // disable all detectors
-                EventDetector detector = detectors.get(connectionID);
-                connection.getDemux().disconnect(detector);
-                detectors.remove(connectionID);
-
-                connection.close();
-                logger.info("Deleted connection " + connection);
+        if (connection != null) {
+            connection.detect(null);
+            //clean
+            HashMap map = mediaSources.remove(connection.getId());
+            Collection<MediaSource> gens = map.values();
+            for (MediaSource generator : gens) {
+                generator.stop();
+                generator.disconnect(connection.getMux());
+                generator.dispose();
             }
+            map.clear();
+
+            map = mediaSinks.remove(connection.getId());
+            Collection<MediaSink> dets = map.values();
+            for (MediaSink detector : dets) {
+                detector.disconnect(connection.getDemux());
+                detector.dispose();
+            }
+            map.clear();
+
+            connection.close();
+            logger.info("Deleted connection " + connection);
         }
 
         hasConnections = connections.size() > 0;
@@ -264,6 +287,70 @@ public abstract class BaseEndpoint implements Endpoint {
             Connection connection = (Connection) list.next();
             deleteConnection(connection.getId());
         }
+    }
+
+    /**
+     * Initialized media sources executed by this endpoint.
+     * Specific endpoint should overwrite this method.
+     * 
+     * @return the map of the media sources.
+     */
+    public abstract HashMap initMediaSources();
+
+    /**
+     * Initialized media sinks executed by this endpoint.
+     * Specific endpoint should overwrite this method.
+     * 
+     * @return the map of the media sinks.
+     */
+    public abstract HashMap initMediaSinks();
+
+    /**
+     * Gets the map of the media sources executed by this endpoint and associated
+     * with specified connection.
+     * 
+     * @param connectionID the identifier of the connection.
+     * @return the map where key is an identifier of media source and value is 
+     * a media source instance
+     */
+    public HashMap getMediaSources(String connectionID) {
+        return mediaSources.get(connectionID);
+    }
+
+    /**
+     * Gets the map of the media sinks executed by this endpoint and associated
+     * with specified connection.
+     * 
+     * @param connectionID the identifier of the connection.
+     * @return the map where key is an identifier of media sink and value is 
+     * a media sink instance
+     */
+    public HashMap getMediaSinks(String connectionID) {
+        return mediaSinks.get(connectionID);
+    }
+
+    /**
+     * Gets the specified media source executed by this endpoint and associated
+     * with specified connection.
+     * 
+     * @param id the identifier of the media source
+     * @param connection the connection with which this connection is associated
+     * @return the media source instance.
+     */
+    public MediaSource getMediaSource(Generator id, Connection connection) {
+        return (MediaSource) mediaSources.get(connection.getId()).get(id);
+    }
+
+    /**
+     * Gets the specified media sink executed by this endpoint and associated
+     * with specified connection.
+     * 
+     * @param id the identifier of the media sink
+     * @param connection the connection with which this connection is associated
+     * @return the media source instance.
+     */
+    public MediaSink getMediaSink(Generator id, Connection connection) {
+        return (MediaSink) mediaSinks.get(connection.getId()).get(id);
     }
 
     /**
@@ -301,9 +388,6 @@ public abstract class BaseEndpoint implements Endpoint {
      *            the event to be sent.
      */
     public synchronized void sendEvent(NotifyEvent event) {
-        for (NotificationListener listener : listeners) {
-            listener.update(event);
-        }
     }
 
     protected String getPackageName(String eventID) {
@@ -325,122 +409,38 @@ public abstract class BaseEndpoint implements Endpoint {
         return tokens[tokens.length - 1];
     }
 
-    private Signal getSignal(String signalID, Options options) throws UnknownSignalException, FacilityException {
+    private AbstractSignal getSignal(RequestedSignal signal) throws UnknownSignalException, FacilityException {
         try {
-            EventPackage eventPackage = EventPackageFactory.load(this.getPackageName(signalID));
-            return eventPackage.getSignal(getEventName(signalID), options);
+            EventPackage eventPackage = EventPackageFactory.load(this.getPackageName(signal.getID()));
+            return eventPackage.getSignal(signal);
         } catch (ClassNotFoundException e) {
             logger.error("Wrong package name: ", e);
-            throw new UnknownSignalException(signalID);
+            throw new UnknownSignalException(signal.getID());
         } catch (Exception e) {
             logger.error("Unexpected error: ", e);
             throw new FacilityException(e.getMessage());
         }
     }
 
-    private EventDetector getDetector(String eventID, Options options) throws UnknownSignalException, FacilityException {
-        try {
-            EventPackage eventPackage = EventPackageFactory.load(getPackageName(eventID));
-            return eventPackage.getDetector(getEventName(eventID), options);
-        } catch (ClassNotFoundException e) {
-            throw new UnknownSignalException(eventID);
-        } catch (Exception e) {
-            throw new FacilityException(e.getMessage());
-        }
+
+
+    public void execute(RequestedSignal[] signals, RequestedEvent[] events) {
     }
 
-    public void play(String signalID, Options options, String connectionID, NotificationListener listener)
-            throws UnknownSignalException, FacilityException {
-        System.out.println("Requested signal=" + signalID + ", connection=" + connectionID);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Requested signal ID=" + signalID);
-        }
-
-        Signal signal = getSignal(signalID, options);
-        signal.addListener(listener);
-
+    public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-
-        Signal currentSignal = signals.remove(connectionID);
-
-        try {
-            if (currentSignal != null) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Disable current signal:" + currentSignal.getID());
-                }
-
-                currentSignal.stop();
-                currentSignal.disconnect(connection.getMux());
-            }
-
-            if (logger.isDebugEnabled()) {
-                logger.debug("Starting signal ID=" + signalID);
-            }
-            signal.start();
-            signal.connect(connection.getMux());
-            if (signal instanceof EventDetector) {
-                ((EventDetector) signal).connect(connection.getDemux());
-            }
-        } catch (Exception e) {
-            logger.error("Could not start signal", e);
-            throw new FacilityException(e.getMessage());
+        connection.detect(null);
+        for (int i = 0; i < events.length; i++) {
+            connection.detect(events[i]);
         }
-    }
 
-    public void play(String signalID, Options options, NotificationListener listener) throws UnknownSignalException,
-            FacilityException {
-        System.out.println("REQUESTED EVENT FOR ENDPOINT");
-    }
-
-    /**
-     * Asks the to detect requested event and report.
-     * 
-     * Such events may include, for example, fax tones, continuity tones, or
-     * on-hook transition.
-     * 
-     * @param eventID
-     *            the identifier of the event.
-     * @param the
-     *            Call Agent callback interface currently controlling that
-     *            endpoint.
-     * @persistent true if event is always detected on the endpoint.
-     */
-    public void subscribe(String eventID, Options options, NotificationListener listener)
-            throws UnknownSignalException, FacilityException {
-    }
-
-    /**
-     * Asks the endpoint to detect requested event on a specified connection and
-     * report.
-     * 
-     * Such events may include, for example, fax tones, continuity tones, or
-     * on-hook transition.
-     * 
-     * @param eventID
-     *            the identifier of the event.
-     * @param connectionID
-     *            the identifier of the connection.
-     * @param the
-     *            Call Agent callback interface currently controlling that
-     *            endpoint.
-     */
-    public void subscribe(String eventID, Options options, String connectionID, NotificationListener listener)
-            throws UnknownSignalException, FacilityException {
-        EventDetector detector = this.getDetector(eventID, options);
-        detector.addListener(listener);
-
-        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-        Set<String> keys = detectors.keySet();
-        for (String key : keys) {
-            if (key.startsWith(connectionID)) {
-                EventDetector det = detectors.remove(key);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("*** DISCONNECTING detector");
-                }
-                det.disconnect(connection.getDemux());
+        if (signals.length > 0) {
+            try {
+                AbstractSignal signal = getSignal(signals[0]);
+                signal.apply(connection);
+            } catch (Exception e) {
+                logger.error("Execute signal error", e);
             }
         }
-        detector.connect(connection.getDemux());
-        detectors.put(connectionID + eventID.toString(), detector);
     }
 }

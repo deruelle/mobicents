@@ -15,12 +15,13 @@
  */
 package org.mobicents.media.server.impl.enp.prl;
 
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -45,19 +46,33 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
             BaseConnection[] connections = new BaseConnection[2];
             this.getConnections().toArray(connections);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Joining " + connections[0] + " with " + connections[1]);
-            }
-
-            connections[1].getDemux().connect(connections[0].getMux());
-            //connections[1].getDemux().connect(new TestSink());
-            connections[0].getDemux().connect(connections[1].getMux());
-            //connections[0].getDemux().connect(new TestSink());
+//            if (connections[1] instanceof LocalConnectionImpl) {
+//                System.out.println("!!!!!!! Assigned test sink");
+//                connections[1].getDemux().connect(new TestSink());
+//            } else {
+                connections[1].getDemux().connect(connections[0].getMux());
+//            }
+//            if (connections[0] instanceof LocalConnectionImpl) {
+//                System.out.println("!!!!!!! Assigned test sink");
+//                connections[0].getDemux().connect(new TestSink());
+//            } else {
+                connections[0].getDemux().connect(connections[1].getMux());
+//            }
         }
     }
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
         return new PREndpointImpl(localName);
+    }
+
+    @Override
+    public HashMap initMediaSources() {
+        return new HashMap();
+    }
+
+    @Override
+    public HashMap initMediaSinks() {
+        return new HashMap();
     }
 }

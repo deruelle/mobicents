@@ -5,71 +5,33 @@
 
 package org.mobicents.media.server.impl.events.au;
 
-import org.mobicents.media.Buffer;
-import org.mobicents.media.Format;
-import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.impl.events.ann.AnnSignal;
-import org.mobicents.media.server.impl.events.ann.PlayerEvent;
-import org.mobicents.media.server.spi.events.EventDetector;
-import org.mobicents.media.server.spi.events.Options;
+import org.mobicents.media.server.impl.AbstractSignal;
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.spi.events.RequestedSignal;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class PlayRecordSignal extends AnnSignal implements EventDetector {
+public class PlayRecordSignal extends AbstractSignal {
 
     private Recorder recorder;
     
-    public PlayRecordSignal(Options options) {
-        super(options);
+    public PlayRecordSignal(RequestedSignal signal) {
+        super();
         recorder = new Recorder("wav");
     }
     
-    @Override
-    public String getID() {
-        return "PLAY_RECORD";
-    }
-
 
     @Override
-    public void start() {
-        System.out.println("*** START RECORDING TO " + (String) options.get("recorder.url"));
-        super.start();
-        recorder.start((String) options.get("recorder.url"));
+    public void apply(BaseConnection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void stop() {
-        super.stop();
-        recorder.stop();
-    }
-
-    @Override
-    public void update(PlayerEvent event) {
-        super.update(event);
-    }
-
-    public Object getParameter(String name) {
-        return null;
-    }
-
-    public void setParameter(String name, Object value) {
-    }
-
-    public boolean isAcceptable(Format format) {
-        return true;
-    }
-
-    public void connect(MediaSource source) {
-        recorder.connect(source);
-    }
-
-    public void disconnect(MediaSource source) {
-        recorder.disconnect(source);
-    }
-
-    public void receive(Buffer buffer) {
+    public void apply(BaseEndpoint connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

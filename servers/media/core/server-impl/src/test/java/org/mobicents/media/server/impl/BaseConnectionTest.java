@@ -6,6 +6,7 @@
 package org.mobicents.media.server.impl;
 
 import java.io.IOException;
+import java.util.HashMap;
 import javax.sdp.SdpException;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -13,9 +14,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
@@ -249,6 +250,16 @@ public class BaseConnectionTest {
     private class TestEndpoint extends BaseEndpoint {
         public TestEndpoint(String localName) {
             super(localName);
+        }
+
+        @Override
+        public HashMap initMediaSources() {
+            return new HashMap();
+        }
+
+        @Override
+        public HashMap initMediaSinks() {
+            return new HashMap();
         }
     }
 }

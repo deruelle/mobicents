@@ -13,25 +13,19 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.ann;
+package org.mobicents.media.server.impl.events.announcement;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.Utils;
-import org.mobicents.media.server.impl.common.events.PlayerEventType;
 import org.xiph.speex.spi.SpeexAudioFileReader;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import javax.sound.sampled.AudioFormat.Encoding;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
@@ -39,6 +33,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.spi.events.Announcement;
 
 /**
  *
@@ -55,11 +50,9 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private AudioInputStream stream = null;
     private int packetSize;
     private long seq = 0;
-    private List<PlayerListener> listeners = Collections.synchronizedList(new ArrayList());
     protected Timer timer;
     private boolean started;
     private String file;
-    private QueuedExecutor eventService = new QueuedExecutor();
     private transient Logger logger = Logger.getLogger(AudioPlayer.class);
     //protected int packetPeriod;
     public AudioPlayer() {
@@ -67,23 +60,6 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         timer.setListener(this);
     }
 
-    /**
-     * Adds player state listener.
-     * 
-     * @param listener instance of the listener to be added.
-     */
-    public void addListener(PlayerListener listener) {
-        listeners.add(listener);
-    }
-
-    /**
-     * Removes player state listener.
-     * 
-     * @param listener instance of the listener to be removed.
-     */
-    public void removeListener(PlayerListener listener) {
-        listeners.remove(listener);
-    }
 
     public void setFile(String file) {
         this.file = file;
@@ -114,11 +90,15 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             this.failed(e);
             return;
         }
-
         //speex support
         try {
-            stream = AudioSystem.getAudioInputStream(url);
+            System.out.println("Geting stream " + url);
+            synchronized (this) {
+                stream = AudioSystem.getAudioInputStream(url);
+            }
+            System.out.println("Got stream " + stream);
         } catch (Exception e) {
+            System.out.println("Error " + stream);
             this.failed(e);
             return;
         }
@@ -170,33 +150,25 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player failed.
      */
     protected void failed(Exception e) {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.FACILITY_ERROR, Utils.doMessage(e));
-        try {
-            eventService.execute(new EventHandler(evt));
-        } catch (InterruptedException ex) {
-        }
+        AnnEventImpl evt = new AnnEventImpl(Announcement.FAILED);
+        this.sendEvent(evt);
     }
 
     /**
      * Called when player stopped.
      */
     protected void stopped() {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STOP_BY_REQUEST, null);
-        try {
-            eventService.execute(new EventHandler(evt));
-        } catch (InterruptedException ex) {
-        }
+        System.out.print("SENDING COMPLTED EVENT");
+        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+        this.sendEvent(evt);
     }
 
     /**
      * Called when player started to transmitt audio.
      */
     protected void started() {
-        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.STARTED, null);
-        try {
-            eventService.execute(new EventHandler(evt));
-        } catch (InterruptedException ex) {
-        }
+        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
+        this.sendEvent(evt);
     }
 
     /**
@@ -204,29 +176,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      */
     protected void endOfMedia() {
         started = false;
-        PlayerEvent evt = new PlayerEvent(this, PlayerEventType.END_OF_MEDIA, null);
-        try {
-            eventService.execute(new EventHandler(evt));
-        } catch (InterruptedException ex) {
-        }
-    }
-
-    /**
-     * Implements async event sender
-     */
-    private class EventHandler implements Runnable {
-
-        private PlayerEvent evt;
-
-        public EventHandler(PlayerEvent evt) {
-            this.evt = evt;
-        }
-
-        public void run() {
-            for (PlayerListener listener : listeners) {
-                listener.update(evt);
-            }
-        }
+        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+        this.sendEvent(evt);
     }
 
     public void run() {

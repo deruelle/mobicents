@@ -13,16 +13,16 @@
  */
 package org.mobicents.media.server.impl.enp.ivr;
 
+import java.util.HashMap;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
+import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.au.Recorder;
+import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.FacilityException;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.events.Options;
 
 /**
  * 
@@ -64,8 +64,7 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
         return enp;
     }
 
-    @Override
-    public void play(String signalID, Options options, String connectionID, NotificationListener listener)
+/*    public void play(String signalID, Options options, String connectionID, NotificationListener listener)
             throws UnknownSignalException, FacilityException {
         if (signalID.equals("org.mobicents.media.au.PLAY_RECORD")) {
             if (recordDir != null) {
@@ -81,5 +80,23 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
             } 
         }
         super.play(signalID, options, connectionID, listener);
+    }
+*/
+    @Override
+    public HashMap initMediaSources() {
+        HashMap map = new HashMap();
+        //init audio player
+        map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+        return map;
+    }
+
+    @Override
+    public HashMap initMediaSinks() {
+        HashMap map = new HashMap();
+        //init audio player
+        map.put(Generator.AUDIO_RECORDER, new Recorder(""));
+        map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
+        
+        return map;
     }
 }

@@ -16,10 +16,13 @@
  */
 package org.mobicents.media.server.impl.enp.ann;
 
+import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
+import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.spi.Endpoint;
 
 
@@ -64,4 +67,20 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
     public Endpoint doCreateEndpoint(String localName) {
         return new AnnEndpointImpl(localName);
     }
+
+    @Override
+    public HashMap initMediaSources() {
+        HashMap map = new HashMap();
+        
+        //init audio player
+        map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+        
+        return map;
+    }
+
+    @Override
+    public HashMap initMediaSinks() {
+        return new HashMap();
+    }
+
 }

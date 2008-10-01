@@ -5,6 +5,7 @@
 
 package org.mobicents.media.server.impl.events.ann;
 
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

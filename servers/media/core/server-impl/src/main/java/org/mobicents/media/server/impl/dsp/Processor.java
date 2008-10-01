@@ -24,7 +24,6 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.dsp.Codec;
 
@@ -197,7 +196,7 @@ public class Processor implements Serializable {
             // when processor is configured it creates a map of codecs where
             // for each input format stands a required codec if transcoding really
             // required
-//            if (!(sink instanceof SendStream)) {
+//            if ((sink instanceof SendStream)) {
 //                System.out.println("f=" + buffer.getFormat() + " codec=" + selectedCodecs.get(buffer.getFormat().toString()));
 //                System.out.println(showCodecMap());
 //            }

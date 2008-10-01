@@ -20,9 +20,13 @@ import org.mobicents.media.server.impl.BaseConnection;
 
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Demultiplexer;
-import org.mobicents.media.server.impl.common.ConnectionState;
+import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.au.Recorder;
+import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -40,6 +44,30 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         addConnectionListener(this);
     }
 
+    @Override
+    public Endpoint doCreateEndpoint(String localName) {
+        return new ConfEndpointImpl(localName);
+    }
+
+    @Override
+    public HashMap initMediaSources() {
+        HashMap map = new HashMap();
+        //init audio player
+        map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+        return map;
+    }
+
+    @Override
+    public HashMap initMediaSinks() {
+        HashMap map = new HashMap();
+        //init audio player
+        map.put(Generator.AUDIO_RECORDER, new Recorder(""));
+        map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
+        
+        return map;
+    }
+
+    
     /**
      * Attaches connection's receiver stream to other connections.
      * 
@@ -129,11 +157,6 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
                 detachSender(connection);
                 break;
         }
-    }
-
-    @Override
-    public Endpoint doCreateEndpoint(String localName) {
-        return new ConfEndpointImpl(localName);
     }
 
 }

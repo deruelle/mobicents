@@ -3,13 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.events.announcement;
 
 import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.events.EventPackage;
-import org.mobicents.media.server.impl.events.announcement.AnnSignal;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.announcement.PlayRequestedSignal;
+
 
 /**
  *
@@ -17,6 +17,8 @@ import org.mobicents.media.server.spi.events.announcement.PlayRequestedSignal;
  */
 public class PackageImpl implements EventPackage {
     
+    public PackageImpl() {
+    }
 
     public AbstractSignal getSignal(RequestedSignal requestedSignal) {
         if (requestedSignal.getID().endsWith("PLAY")) {            
@@ -26,3 +28,5 @@ public class PackageImpl implements EventPackage {
     }
 
 }
+
+    

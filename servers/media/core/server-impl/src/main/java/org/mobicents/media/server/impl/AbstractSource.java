@@ -19,7 +19,7 @@ import java.util.List;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.NotifyEvent1;
+import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
@@ -65,7 +65,7 @@ public abstract class AbstractSource implements MediaSource {
         }
     }
 
-    protected void sendEvent(NotifyEvent1 evt) {
+    protected void sendEvent(NotifyEvent evt) {
         synchronized (listeners) {
             for (NotificationListener listener : listeners) {
                 listener.update(evt);

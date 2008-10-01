@@ -11,25 +11,20 @@
  */
 package org.mobicents.media.server.impl.events.dtmf;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.EventDetector;
-import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.dtmf.DtmfEvent;
 
 /**
  * Implements common fatures for DTMF detector.
  * 
  * @author Oleg Kulikov
  */
-public class BaseDtmfDetector extends AbstractSink implements EventDetector {
+public class BaseDtmfDetector extends AbstractSink {
 
     private final static String[] TONE = new String[]{
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
@@ -44,7 +39,6 @@ public class BaseDtmfDetector extends AbstractSink implements EventDetector {
     private InbandDetector inband;
     private Rfc2833Detector rfc2833;
     protected DtmfBuffer digitBuffer;
-    private List<NotificationListener> listeners = new ArrayList();
     private Logger logger = Logger.getLogger(BaseDtmfDetector.class);
 
     public BaseDtmfDetector() {
@@ -69,64 +63,15 @@ public class BaseDtmfDetector extends AbstractSink implements EventDetector {
         digitBuffer.setMask(mask);
     }
 
-    public void addListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    public void removeListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
     protected void sendEvent(String seq) {
-        NotifyEvent evt = new NotifyEvent(this, "org.mobicents.media.dtmf.DTMF", getCause(seq), seq);
-        synchronized (listeners) {
-            for (NotificationListener listener : listeners) {
-                listener.update(evt);
-            }
-
-            listeners.clear();
-        }
-        this.stop();
+        DtmfEvent evt = new DtmfEvent(seq);
+        super.sendEvent(evt);
     }
 
     private void stop() {
         
     }
     
-    private EventCause getCause(String seq) {
-        if (seq.equals("0")) {
-            return EventCause.DTMF_DIGIT_0;
-        } else if (seq.equals("1")) {
-            return EventCause.DTMF_DIGIT_1;
-        } else if (seq.equals("2")) {
-            return EventCause.DTMF_DIGIT_2;
-        } else if (seq.equals("3")) {
-            return EventCause.DTMF_DIGIT_3;
-        } else if (seq.equals("4")) {
-            return EventCause.DTMF_DIGIT_4;
-        } else if (seq.equals("5")) {
-            return EventCause.DTMF_DIGIT_5;
-        } else if (seq.equals("6")) {
-            return EventCause.DTMF_DIGIT_6;
-        } else if (seq.equals("7")) {
-            return EventCause.DTMF_DIGIT_7;
-        } else if (seq.equals("8")) {
-            return EventCause.DTMF_DIGIT_8;
-        } else if (seq.equals("9")) {
-            return EventCause.DTMF_DIGIT_9;
-        } else if (seq.equals("10")) {
-            return EventCause.DTMF_DIGIT_STAR;
-        } else if (seq.equals("11")) {
-            return EventCause.DTMF_DIGIT_NUM;
-        } else {
-            return EventCause.DTMF_SEQ;
-        }
-    }
-
     public Format[] getFormats() {
         return FORMATS;
     }

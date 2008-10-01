@@ -5,11 +5,10 @@
 package org.mobicents.media.server.impl.events.au;
 
 
+import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.spi.events.EventDetector;
-import org.mobicents.media.server.spi.events.EventPackage;
-import org.mobicents.media.server.spi.events.Options;
-import org.mobicents.media.server.spi.events.Signal;
+import org.mobicents.media.server.impl.events.EventPackage;
+import org.mobicents.media.server.spi.events.RequestedSignal;
 
 /**
  * 
@@ -22,11 +21,8 @@ public class PackageImpl implements EventPackage {
     public PackageImpl() {
     }
 
-    public Signal getSignal(String signalID, Options options) {
-        return new PlayRecordSignal(options);
-    }
 
-    public EventDetector getDetector(String signalID, Options options) {
+    public AbstractSignal getSignal(RequestedSignal requestedSignal) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
