@@ -20,16 +20,13 @@ import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
-import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
-import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.Options;
-import org.mobicents.media.server.spi.events.announcement.AnnParams;
+//import org.mobicents.media.server.spi.events.announcement.AnnParams;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsNotifyEvent;
@@ -58,7 +55,6 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     public MsSignalGeneratorImpl(MsProvider provider, String endpointName) {
         this.provider = provider;
         this.endpointName = endpointName;
-        listeners.addAll(provider.getResourceListeners());
     }
 
     public String getID() {
@@ -66,11 +62,12 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     }
 
     public void setResourceStateIdle() {
-        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.DTMF, EventCause.NORMAL,
+/*        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.DTMF, EventCause.NORMAL,
                 "Created new MsSignalGenerator");
         for (MsResourceListener listener : listeners) {
             listener.resourceCreated(evt);
         }
+ */ 
     }
 
     public void apply(EventID signalID, String[] params) {
@@ -88,13 +85,12 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     }
     
     public void update(NotifyEvent event) {
-        System.out.println("*** EVT=" + event.getID());
-        EventID eventID = EventID.getEvent(event.getID());
-        System.out.println("*** LOCAL EVT=" + eventID);
-        if (!released) {
+       // EventID eventID = EventID.getEvent(event.getID());
+/*        if (!released) {
             MsNotifyEventImpl evt = new MsNotifyEventImpl(this, eventID, event.getCause(), event.getMessage());
             sendEvent(evt);
         }
+ */ 
     }
 
     private void sendEvent(MsNotifyEvent evt) {
@@ -114,11 +110,12 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
     public void release() {
         released = true;
 
-        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
+/*        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
                 "Inavlidated MsSignalGenerator");
         for (MsResourceListener listener : listeners) {
             listener.resourceInvalid(evt);
         }
+ */ 
     }
 
     @Override
@@ -144,23 +141,23 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
                 try {
                     endpoint = EndpointQuery.find(endpointName);
                 } catch (NamingException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
+//                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+//                            ex.getMessage());
+//                    sendEvent(error);
                 } catch (ResourceUnavailableException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
+//                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+//                            ex.getMessage());
+//                    sendEvent(error);
                 }
             }
 
-            Options options = new Options();
-            options.add(AnnParams.URL, params[0]);
+            //Options options = new Options();
+            //options.add(AnnParams.URL, params[0]);
             try {
-                endpoint.play(signalID.toString(), options, generator);
+               // endpoint.play(signalID.toString(), options, generator);
             } catch (Exception ex) {
-                MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex.getMessage());
-                sendEvent(error);
+//                MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex.getMessage());
+//                sendEvent(error);
             }
         }
     }
@@ -186,29 +183,30 @@ public class MsSignalGeneratorImpl implements MsSignalGenerator, NotificationLis
                 try {
                     endpoint = EndpointQuery.find(endpointName);
                 } catch (NamingException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
+//                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+//                            ex.getMessage());
+//                    sendEvent(error);
                 } catch (ResourceUnavailableException ex) {
-                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
-                            ex.getMessage());
-                    sendEvent(error);
+//                    MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE,
+//                            ex.getMessage());
+//                    sendEvent(error);
                 }
             }
 
             //TODO REBUILD THIS 
-            Options options = new Options();
-            options.add(AnnParams.URL, params[0]);
+//            Options options = new Options();
+            //options.add(AnnParams.URL, params[0]);
             if (params.length > 1) {
-                options.add("recorder.url", params[1]);
+//                options.add("recorder.url", params[1]);
             }
             try {
-                endpoint.play(signalID.toString(), options, connID, generator);
+//                endpoint.play(signalID.toString(), options, connID, generator);
             } catch (Exception ex) {
-                MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex.getMessage());
-                sendEvent(error);
+//                MsNotifyEvent error = new MsNotifyEventImpl(generator, EventID.FAIL, EventCause.FACILITY_FAILURE, ex.getMessage());
+//                sendEvent(error);
             }
         }
     }
+
 
 }

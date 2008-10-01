@@ -27,6 +27,10 @@
 			<artifactId>mobicents-media-server-spi</artifactId>
 			<version>${pom.version}</version>
 		</dependency>		
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+		</dependency>		
 	</dependencies>
 	
 	<build>

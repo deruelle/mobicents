@@ -19,13 +19,11 @@ import java.rmi.server.UID;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.Options;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
@@ -48,7 +46,6 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     public MsSignalDetectorImpl(MsProvider provider, String endpointName) {
         this.provider = provider;
         this.endpointName = endpointName;
-        listeners.addAll(provider.getResourceListeners());
     }
 
     public String getID() {
@@ -58,20 +55,22 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     public void release() {
         // released = true;
 
-        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
+/*        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.INVALID, EventCause.NORMAL,
                 "Inavlidated MsSignalDetector");
         for (MsResourceListener listener : listeners) {
             listener.resourceInvalid(evt);
         }
+ */ 
     }
 
     public void setResourceStateIdle() {
 
-        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.DTMF, EventCause.NORMAL,
+/*        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, EventID.DTMF, EventCause.NORMAL,
                 "Created new MsSignalDetector");
         for (MsResourceListener listener : listeners) {
             listener.resourceCreated(evt);
         }
+ */ 
     }
 
     public void receive(EventID signalID, boolean persistent) {
@@ -86,12 +85,12 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     }
 
     public void update(NotifyEvent event) {
-        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, 
-                EventID.getEvent(event.getID()), event.getCause(), 
-                event.getMessage());
-        for (MsResourceListener listener : listeners) {
-            listener.update(evt);
-        }
+//        MsNotifyEventImpl evt = new MsNotifyEventImpl(this, 
+//                EventID.getEvent(event.getID()), event.getCause(), 
+//                event.getMessage());
+//        for (MsResourceListener listener : listeners) {
+//            listener.update(evt);
+//        }
     }
 
     public void addResourceListener(MsResourceListener listener) {
@@ -115,9 +114,9 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
         }
 
         public void run() {
-            Options options = new Options();
+            //Options options = new Options();
             try {
-		endpoint.subscribe(signalID.toString(), options, listener);
+		//endpoint.subscribe(signalID.toString(), options, listener);
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -147,10 +146,11 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
                 if (logger.isDebugEnabled()) {
                     logger.debug("Subscribe signalID =" + signalID + ", endpoint=" + endpoint);
                 }
-		endpoint.subscribe(signalID.toString(), new Options(), connectionID, listener);
+//		endpoint.subscribe(signalID.toString(), new Options(), connectionID, listener);
             } catch (Exception e) {
                 logger.error("Subscribing to MsSignalDetector failed with error ", e);
             }
         }
     }
+
 }

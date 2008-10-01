@@ -13,13 +13,12 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.mscontrol.impl;
 
-import org.mobicents.media.msc.common.events.MsSessionEventCause;
-import org.mobicents.media.msc.common.events.MsSessionEventID;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
+import org.mobicents.mscontrol.MsSessionEventCause;
+import org.mobicents.mscontrol.MsSessionEventID;
 import org.mobicents.mscontrol.MsSessionListener;
 
 /**
@@ -30,54 +29,53 @@ import org.mobicents.mscontrol.MsSessionListener;
  */
 public class MsSessionEventImpl implements MsSessionEvent, Runnable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6590082022461848422L;
-	
-	private MsSession session;
-	private MsSessionEventID eventID;
-	private MsSessionEventCause eventCause;
-	private Object causeObject;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6590082022461848422L;
+    private MsSessionImpl session;
+    private MsSessionEventID eventID;
+    private MsSessionEventCause eventCause;
+    private Object causeObject;
 
-	/** Creates a new instance of MsSessionEventImpl */
-	public MsSessionEventImpl(MsSession session, MsSessionEventID eventID, MsSessionEventCause eventCause,
-			Object causeObject) {
-		this.session = session;
-		this.eventID = eventID;
-		this.eventCause = eventCause;
-		this.causeObject = causeObject;
-	}
+    /** Creates a new instance of MsSessionEventImpl */
+    public MsSessionEventImpl(MsSessionImpl session, MsSessionEventID eventID, MsSessionEventCause eventCause,
+            Object causeObject) {
+        this.session = session;
+        this.eventID = eventID;
+        this.eventCause = eventCause;
+        this.causeObject = causeObject;
+    }
 
-	public MsSession getSource() {
-		return session;
-	}
+    public MsSession getSource() {
+        return session;
+    }
 
-	public MsSessionEventID getEventID() {
-		return eventID;
-	}
+    public MsSessionEventID getEventID() {
+        return eventID;
+    }
 
-	public MsSessionEventCause getEventCause() {
-		return this.eventCause;
-	}
+    public MsSessionEventCause getEventCause() {
+        return this.eventCause;
+    }
 
-	public Object getCauseObject() {
-		return this.causeObject;
-	}
+    public Object getCauseObject() {
+        return this.causeObject;
+    }
 
-	public void run() {
-		for (MsSessionListener listener : session.getSessionListeners()) {
-			switch (eventID) {
-			case SESSION_CREATED:
-				listener.sessionCreated(this);
-				break;
-			case SESSION_ACTIVE:
-				listener.sessionActive(this);
-				break;
-			case SESSION_INVALID:
-				listener.sessionInvalid(this);
-				break;
-			}
-		}
-	}
+    public void run() {
+        for (MsSessionListener listener : session.provider.sessionListeners) {
+            switch (eventID) {
+                case SESSION_CREATED:
+                    listener.sessionCreated(this);
+                    break;
+                case SESSION_ACTIVE:
+                    listener.sessionActive(this);
+                    break;
+                case SESSION_INVALID:
+                    listener.sessionInvalid(this);
+                    break;
+            }
+        }
+    }
 }

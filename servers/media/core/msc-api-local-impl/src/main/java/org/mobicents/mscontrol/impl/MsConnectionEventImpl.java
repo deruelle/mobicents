@@ -13,13 +13,12 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.mscontrol.impl;
 
-import org.mobicents.media.msc.common.events.MsConnectionEventCause;
-import org.mobicents.media.msc.common.events.MsConnectionEventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsConnectionEventCause;
+import org.mobicents.mscontrol.MsConnectionEventID;
 import org.mobicents.mscontrol.MsConnectionListener;
 
 /**
@@ -28,55 +27,57 @@ import org.mobicents.mscontrol.MsConnectionListener;
  */
 public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
 
-	private MsConnectionImpl connection;
-	private MsConnectionEventID eventID;
-	private MsConnectionEventCause cause;
-	private String msg;
+    private MsConnectionImpl connection;
+    private MsConnectionEventID eventID;
+    private MsConnectionEventCause cause;
+    private String msg;
 
-	/** Creates a new instance of MsConnectionEventImpl */
-	public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID,
-			MsConnectionEventCause cause, String msg) {
-		this.connection = connection;
-		this.eventID = eventID;
-		this.cause = cause;
-		this.msg = msg;
-	}
+    /** Creates a new instance of MsConnectionEventImpl */
+    public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID,
+            MsConnectionEventCause cause, String msg) {
+        this.connection = connection;
+        this.eventID = eventID;
+        this.cause = cause;
+        this.msg = msg;
+    }
 
-	public MsConnection getConnection() {
-		return connection;
-	}
+    public MsConnection getConnection() {
+        return connection;
+    }
 
-	public MsConnectionEventID getEventID() {
-		return eventID;
-	}
+    public MsConnectionEventID getEventID() {
+        return eventID;
+    }
 
-	public MsConnectionEventCause getCause() {
-		return cause;
-	}
+    public MsConnectionEventCause getCause() {
+        return cause;
+    }
 
-	public String getMessage() {
-		return msg;
-	}
+    public String getMessage() {
+        return msg;
+    }
 
-	public void run() {
-		for (MsConnectionListener listener : connection.listeners) {
-			switch (eventID) {
-			case CONNECTION_INITIALIZED:
-				listener.connectionInitialized(this);
-				break;
-			case CONNECTION_CREATED:
-				listener.connectionCreated(this);
-				break;
-			case CONNECTION_MODIFIED:
-				listener.connectionModifed(this);
-				break;
-			case CONNECTION_DELETED:
-				listener.connectionDeleted(this);
-				break;
-			case TX_FAILED:
-				listener.txFailed(this);
-				break;
-			}
-		}
-	}
+    public void run() {
+        for (MsConnectionListener listener : connection.session.provider.connectionListeners) {
+            System.out.println("**** SENDING CONNECTION EVENT " + eventID + " TO " + listener);
+            switch (eventID) {
+                case CONNECTION_CREATED:
+                    listener.connectionCreated(this);
+                    break;
+                case CONNECTION_HALF_OPEN:
+                    listener.connectionCreated(this);
+                    break;
+                case CONNECTION_OPEN:
+                    listener.connectionOpen(this);
+                    break;
+                case CONNECTION_FAILED:
+                    System.out.println("CONNECTION FAILED");
+                    listener.connectionFailed(this);
+                    break;
+                case CONNECTION_DISCONNECTED:
+                    listener.connectionDisconnected(this);
+                    break;
+            }
+        }
+    }
 }

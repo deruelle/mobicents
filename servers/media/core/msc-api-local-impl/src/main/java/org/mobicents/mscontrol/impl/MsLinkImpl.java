@@ -15,57 +15,65 @@
  */
 package org.mobicents.mscontrol.impl;
 
-import java.io.IOException;
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.rmi.server.UID;
-import java.util.ArrayList;
 
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
-import org.mobicents.media.msc.common.MsLinkMode;
-import org.mobicents.media.msc.common.MsLinkState;
-import org.mobicents.media.msc.common.events.MsLinkEventCause;
-import org.mobicents.media.msc.common.events.MsLinkEventID;
-import org.mobicents.media.server.impl.common.ConnectionMode;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.EndpointQuery;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEventCause;
+import org.mobicents.mscontrol.MsLinkEventID;
 import org.mobicents.mscontrol.MsLinkListener;
+import org.mobicents.mscontrol.MsLinkMode;
+import org.mobicents.mscontrol.MsLinkState;
+import org.mobicents.mscontrol.MsNotificationListener;
+import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsSession;
+import org.mobicents.mscontrol.impl.events.EventParser;
 
 /**
  * 
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class MsLinkImpl implements MsLink {
+public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
     /**
      * 
      */
     private static final long serialVersionUID = 6373269860176309745L;
     private final String id = (new UID()).toString();
-    private MsSession session;
+    protected MsSessionImpl session;
     private MsLinkMode mode;
     private MsLinkState state;
-    protected ArrayList<MsLinkListener> linkListeners = new ArrayList<MsLinkListener>();
     private Connection[] connections = new Connection[2];
     private Logger logger = Logger.getLogger(MsLinkImpl.class);
-    private String endpoints[] = new String[2];
+    private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
+    private QueuedExecutor eventQueue = new QueuedExecutor();
+    private EventParser eventParser = new EventParser();
+    private int permits = 0;
 
     public String getId() {
         return id;
     }
 
     /** Creates a new instance of MsLink */
-    public MsLinkImpl(MsSession session, MsLinkMode mode) {
+    public MsLinkImpl(MsSessionImpl session, MsLinkMode mode) {
         this.session = session;
-        this.linkListeners.addAll(session.getProvider().getLinkListeners());
         this.mode = mode;
+        setState(MsLinkState.IDLE, MsLinkEventCause.NORMAL);
     }
 
     public MsSession getSession() {
@@ -76,25 +84,42 @@ public class MsLinkImpl implements MsLink {
         return this.state;
     }
 
+    private void setState(MsLinkState state, MsLinkEventCause cause) {
+        this.state = state;
+        switch (state) {
+            case IDLE:
+                sendEvent(MsLinkEventID.LINK_CREATED, cause, null);
+                break;
+            case CONNECTED:
+                sendEvent(MsLinkEventID.LINK_CONNECTED, cause, null);
+                break;
+            case FAILED:
+                sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
+                break;
+            case DISCONNECTED:
+                session.removeLink(getId());
+                sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
+                break;
+        }
+    }
+
     protected String getConnectionID(String endpointName) {
         if (endpoints != null) {
-            if (endpoints[0].matches(endpointName)) {
+            if (endpoints[0].server.getLocalName().matches(endpointName)) {
                 return connections[0].getId();
-            } else if (endpoints[1].matches(endpointName)) {
+            } else if (endpoints[1].server.getLocalName().matches(endpointName)) {
                 return connections[1].getId();
             }
         }
         return null;
     }
 
-    public void fireMsLinkCreated() {
-        this.state = MsLinkState.IDLE;
-        sendEvent(MsLinkEventID.LINK_CREATED, MsLinkEventCause.NORMAL, null);
-    }
-
     private void sendEvent(MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
         MsLinkEventImpl evt = new MsLinkEventImpl(this, eventID, cause, msg);
-        new Thread(evt).start();
+        try {
+            eventQueue.execute(evt);
+        } catch (InterruptedException e) {
+        }
     }
 
     /**
@@ -104,134 +129,90 @@ public class MsLinkImpl implements MsLink {
      * @param b the name of the second endpoint.
      */
     public void join(String a, String b) {
-        new Thread(new JoinTx(a, b)).start();
+        Runnable tx = new JoinTx(this, a, b);
+        MsProviderImpl.submit(tx);
     }
 
-    public String[] getEndpoints() {
+    public MsEndpoint[] getEndpoints() {
         return endpoints;
+    }
+
+    public void addLinkListener(MsLinkListener listener) {
+        session.provider.linkListeners.add(listener);
+    }
+
+    public void removeLinkListener(MsLinkListener listener) {
+        session.provider.linkListeners.remove(listener);
     }
 
     /**
      * Drops this link
      */
     public void release() {
-        new Thread(new DropTx()).start();
-        session.disassociateLink(this);
+        DropTx tx = new DropTx();
+        MsProviderImpl.submit(tx);
     }
 
     @Override
     public String toString() {
-        return "MsLink{" + id + "}";
+        return id;
     }
 
     private class JoinTx implements Runnable {
 
         public String epnA;
         public String epnB;
+        private MsLinkImpl link;
 
-        public JoinTx(String epnA, String epnB) {
+        public JoinTx(MsLinkImpl link, String epnA, String epnB) {
+            this.link = link;
             this.epnA = epnA;
             this.epnB = epnB;
         }
 
-        private Connection createConnection(String epn, int end) throws NamingException, ResourceUnavailableException,
-                TooManyConnectionsException {
+        private Connection createConnection(String epn, int end)
+                throws NamingException, ResourceUnavailableException, TooManyConnectionsException {
             Endpoint endpoint = EndpointQuery.lookup(epn);
             return endpoint.createLocalConnection(getMode(end));
         }
 
-        private void execute() {
+        public void run() {
             try {
                 connections[0] = createConnection(epnA, 0);
-                endpoints[0] = connections[0].getEndpoint().getLocalName();
-                logger.debug("Created local connection: " + connections[0].getId());
-            } catch (NamingException e) {
-                logger.warn("TX Failed", e);
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
-                return;
-            } catch (ResourceUnavailableException e) {
-                logger.warn("TX Failed", e);
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
-                return;
-            } catch (TooManyConnectionsException e) {
-                logger.warn("TX Failed", e);
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
-                return;
-            }
+                connections[0].addListener(link);
 
-            try {
+                endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint());
+
                 connections[1] = createConnection(epnB, 1);
-                endpoints[1] = connections[1].getEndpoint().getLocalName();
-                logger.debug("Created local connection: " + connections[1].getId());
-            } catch (NamingException e) {
-                logger.warn("TX Failed", e);
-                connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN, e.getMessage());
-                return;
-            } catch (ResourceUnavailableException e) {
-                connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                logger.warn("TX Failed", e);
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE, e.getMessage());
-                return;
-            } catch (TooManyConnectionsException e) {
-                connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                logger.warn("TX Failed", e);
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
-                return;
-            }
+                connections[1].addListener(link);
 
-            try {
+                endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint());
+
                 connections[0].setOtherParty(connections[1]);
-                connections[1].setOtherParty(connections[0]);
-                if(logger.isDebugEnabled()){
-                	logger.debug("Join connections [" + connections[0].getId() + "," + connections[1].getId());
-                }
-                state = MsLinkState.JOINED;
-                sendEvent(MsLinkEventID.LINK_JOINED, MsLinkEventCause.NORMAL, null);
-            } catch (IOException e) {
-                logger.error("Could not join connections", e);
-                connections[1].getEndpoint().deleteConnection(connections[1].getId());
-                connections[0].getEndpoint().deleteConnection(connections[0].getId());
-                state = MsLinkState.FAILED;
-                sendEvent(MsLinkEventID.LINK_FAILED, MsLinkEventCause.FACILITY_FAILURE, e.getMessage());
-            }
-        }
-
-        public void run() {
-            NDC.push("JOIN TX ID = " + id);
-            try {
-                execute();
-            } finally {
-                NDC.pop();
-                NDC.remove();
+            } catch (NamingException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
+            } catch (ResourceUnavailableException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+            } catch (TooManyConnectionsException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
             }
         }
     }
 
     private class DropTx implements Runnable {
 
-        public void execute() {
-            logger.debug("Releasing connection " + connections[1]);
-            connections[1].getEndpoint().deleteConnection(connections[1].getId());
-            logger.debug("Releasing connection " + connections[0]);
-            connections[0].getEndpoint().deleteConnection(connections[0].getId());
-            state = MsLinkState.INVALID;
-            sendEvent(MsLinkEventID.LINK_DROPPED, MsLinkEventCause.NORMAL, null);
-        }
-
         public void run() {
-            NDC.push("RELEASE TX ID = " + id);
-            try {
-                execute();
-            } finally {
-                NDC.pop();
-                NDC.remove();
+            if (connections[1] != null) {
+                connections[1].getEndpoint().deleteConnection(connections[1].getId());
+            }
+            if (connections[0] != null) {
+                connections[0].getEndpoint().deleteConnection(connections[0].getId());
             }
         }
     }
@@ -244,5 +225,39 @@ public class MsLinkImpl implements MsLink {
                 return end == 0 ? ConnectionMode.SEND_ONLY : ConnectionMode.RECV_ONLY;
         }
         return null;
+    }
+
+    public void onStateChange(Connection connection, ConnectionState oldState) {
+        switch (state) {
+            case IDLE:
+                switch (connection.getState()) {
+                    case OPEN:
+                        permits++;
+                        if (permits == 2) {
+                            setState(MsLinkState.CONNECTED, MsLinkEventCause.NORMAL);
+                        }
+                        break;
+                    case CLOSED:
+                        setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
+                }
+                break;
+
+            case CONNECTED:
+                switch (connection.getState()) {
+                    case HALF_OPEN:
+                    case CLOSED:
+                        permits--;
+                        if (permits == 0) {
+                            setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
+                        }
+                }
+        }
+    }
+
+    public void update(NotifyEvent event) {
+        MsNotifyEvent evt = eventParser.parse(this, event);
+        for (MsNotificationListener listener : session.provider.eventListeners) {
+            listener.update(evt);
+        }
     }
 }
