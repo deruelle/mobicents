@@ -22,9 +22,9 @@ import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.common.ConnectionMode;
-import org.mobicents.media.server.impl.common.ConnectionState;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
@@ -34,194 +34,178 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  */
 public class LocalConnectionImpl extends BaseConnection {
 
-	private SessionDescription localSDP;
-	private SessionDescription remoteSDP;
-	private LocalConnectionImpl otherConnection;
-	private SdpFactory sdpFactory = SdpFactory.getInstance();
+    private SessionDescription localSDP;
+    private SessionDescription remoteSDP;
+    private LocalConnectionImpl otherConnection;
+    private SdpFactory sdpFactory = SdpFactory.getInstance();
 
-	/**
-	 * Creates a new instance of RtpConnectionImpl.
-	 * 
-	 * @param endpoint
-	 *            the endpoint executing this connection.
-	 * @param mode
-	 *            the mode of this connection.
-	 */
-	public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-		super(endpoint, mode);
-		logger = Logger.getLogger(LocalConnectionImpl.class);
-		setState(ConnectionState.HALF_OPEN);
-	}
+    /**
+     * Creates a new instance of RtpConnectionImpl.
+     * 
+     * @param endpoint
+     *            the endpoint executing this connection.
+     * @param connectionID the unique identifier of the connection to be created
+     * @param mode
+     *            the mode of this connection.
+     */
+    public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+        super(endpoint, mode);
+        logger = Logger.getLogger(LocalConnectionImpl.class);
+        setState(ConnectionState.HALF_OPEN);
+    }
 
-	@Override
-	protected void setState(ConnectionState newState) {
-		ConnectionState oldState = this.state;
-		this.state = newState;
+    /**
+     * Gets the reference to a connection joined with this one.
+     * 
+     * @return connection object or null if this connection not joined.
+     */
+    public Connection getOtherParty() {
+        return this.otherConnection;
+    }
 
-		switch (state) {
-		case HALF_OPEN:
-			break;
-		case OPEN:
-			if (logger.isDebugEnabled()) {
-				logger.debug("OTHER =" + otherConnection);
-			}
-			demux.getInput().connect(otherConnection.mux.getOutput());
-			otherConnection.mux.getOutput().start();
-			break;
-		case CLOSED:
-			if (otherConnection != null) {
-				otherConnection.mux.getOutput().stop();
-				demux.getInput().disconnect(otherConnection.mux.getOutput());
-			}
-			// if (otherConnection != null &&
-			// otherConnection.getState() == ConnectionState.OPEN) {
-			// otherConnection.otherConnection = null;
-			// otherConnection.setState(ConnectionState.CLOSED);
-			// }
-			// otherConnection = null;
-			break;
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
+     */
+    public String getLocalDescriptor() {
+        try {
+            super.lockState();
+            if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
+                throw new IllegalStateException("State is " + state);
+            }
 
-		}
-		super.setState(newState);
-	}
+            String userName = "MediaServer";
+            long sessionID = System.currentTimeMillis() & 0xffffff;
+            long sessionVersion = sessionID;
 
-	/**
-	 * Gets the reference to a connection joined with this one.
-	 * 
-	 * @return connection object or null if this connection not joined.
-	 */
-	public Connection getOtherParty() {
-		return this.otherConnection;
-	}
+            String networkType = javax.sdp.Connection.IN;
+            String addressType = "EPN";
+            String address = endpoint.getLocalName();
+            try {
+                localSDP = sdpFactory.createSessionDescription();
+                localSDP.setVersion(sdpFactory.createVersion(0));
+                localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType, address));
+                localSDP.setSessionName(sdpFactory.createSessionName("session"));
+                localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
 
-	/**
-	 * (Non-Javadoc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
-	 */
-	public String getLocalDescriptor() {
-		if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
-			throw new IllegalStateException("State is " + state);
-		}
+            /*
+             * Vector descriptions = new Vector(); // encode formats HashMap
+             * fmts = codecs != null ? codecs : audioFormats; Object[]
+             * payloads = getPayloads(fmts).toArray(); int[] formats = new
+             * int[payloads.length]; for (int i = 0; i < formats.length;
+             * i++) { formats[i] = ((Integer) payloads[i]).intValue(); } //
+             * generate media descriptor MediaDescription md =
+             * sdpFactory.createMediaDescription("audio", 0, 1, "RTP/AVP",
+             * formats); boolean g729 = false; // set attributes for formats
+             * Vector attributes = new Vector(); for (int i = 0; i <
+             * formats.length; i++) { Format format = (Format) fmts.get(new
+             * Integer(formats[i]));
+             * attributes.add(sdpFactory.createAttribute("rtpmap",
+             * format.toString())); if
+             * (format.getEncoding().contains("g729")) { g729 = true; } } if
+             * (g729) { attributes.add(sdpFactory.createAttribute("fmtp",
+             * "18 annexb=no")); } // generate descriptor
+             * md.setAttributes(attributes); descriptions.add(md);
+             * localSDP.setMediaDescriptions(descriptions);
+             */
+            } catch (SdpException e) {
+                logger.error("Could not create descriptor", e);
+            }
+            return localSDP.toString();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            super.releaseState();
+        }
+    }
 
-		String userName = "MediaServer";
-		long sessionID = System.currentTimeMillis() & 0xffffff;
-		long sessionVersion = sessionID;
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#getRemoteDescriptor();
+     */
+    public String getRemoteDescriptor() {
+        return remoteSDP != null ? remoteSDP.toString() : null;
+    }
 
-		String networkType = javax.sdp.Connection.IN;
-		String addressType = "EPN";
-		String address = endpoint.getLocalName();
-		try {
-			localSDP = sdpFactory.createSessionDescription();
-			localSDP.setVersion(sdpFactory.createVersion(0));
-			localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType,
-					address));
-			localSDP.setSessionName(sdpFactory.createSessionName("session"));
-			localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
+    /**
+     * (Non-Javadoc).
+     * 
+     * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
+     */
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException {
+        if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+            throw new IllegalStateException("State is " + state);
+        }
+        setState(ConnectionState.OPEN);
+    }
 
-			/*
-			 * Vector descriptions = new Vector(); // encode formats HashMap
-			 * fmts = codecs != null ? codecs : audioFormats; Object[] payloads =
-			 * getPayloads(fmts).toArray(); int[] formats = new
-			 * int[payloads.length]; for (int i = 0; i < formats.length; i++) {
-			 * formats[i] = ((Integer) payloads[i]).intValue(); } // generate
-			 * media descriptor MediaDescription md =
-			 * sdpFactory.createMediaDescription("audio", 0, 1, "RTP/AVP",
-			 * formats); boolean g729 = false; // set attributes for formats
-			 * Vector attributes = new Vector(); for (int i = 0; i <
-			 * formats.length; i++) { Format format = (Format) fmts.get(new
-			 * Integer(formats[i]));
-			 * attributes.add(sdpFactory.createAttribute("rtpmap",
-			 * format.toString())); if (format.getEncoding().contains("g729")) {
-			 * g729 = true; } } if (g729) {
-			 * attributes.add(sdpFactory.createAttribute("fmtp", "18
-			 * annexb=no")); } // generate descriptor
-			 * md.setAttributes(attributes); descriptions.add(md);
-			 * localSDP.setMediaDescriptions(descriptions);
-			 */
-		} catch (SdpException e) {
-			logger.error("Could not create descriptor", e);
-		}
-		return localSDP.toString();
-	}
+    /**
+     * (Non-Javadoc).
+     * 
+     * @throws InterruptedException
+     * 
+     * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
+     */
+    public void setOtherParty(Connection other) throws IOException {
+        try {
+            this.lockState();
+            if (other == null) {
+                throw new IllegalArgumentException("Other party can not be null");
+            }
 
-	/**
-	 * (Non-Javadoc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Connection#getRemoteDescriptor();
-	 */
-	public String getRemoteDescriptor() {
-		return remoteSDP != null ? remoteSDP.toString() : null;
-	}
+            if (state == ConnectionState.CLOSED) {
+                throw new IllegalStateException("Connection is closed");
+            }
 
-	/**
-	 * (Non-Javadoc).
-	 * 
-	 * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
-	 */
-	public void setRemoteDescriptor(String descriptor) throws SdpException, IOException {
-		if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-			throw new IllegalStateException("State is " + state);
-		}
-		setState(ConnectionState.OPEN);
-	}
+            if (otherConnection == other) {
+                return;
+            }
 
-	/**
-	 * (Non-Javadoc).
-	 * 
-	 * @throws InterruptedException
-	 * 
-	 * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
-	 */
-	public void setOtherParty(Connection other) throws IOException {
-		try {
-			this.lockState();
-			if (other != null) {
-				if (otherConnection == other) {
-					return;
-				}
+            this.otherConnection = (LocalConnectionImpl) other;
+            demux.getInput().connect(otherConnection.mux.getOutput());
+            otherConnection.mux.getOutput().start();
+            demux.start();
+            
+            setState(ConnectionState.OPEN);
+            otherConnection.setOtherParty(this);
+        } catch (InterruptedException e) {
+            close();
+        } catch (Exception e) {
+            logger.error("Could not set other party", e);
+            throw new IOException(e.getMessage());
+        } finally {
+            this.releaseState();
+        }
+    }
 
-				this.otherConnection = (LocalConnectionImpl) other;
-				setState(ConnectionState.OPEN);
+    @Override
+    public void close() {
+        LocalConnectionImpl other = otherConnection;
+        if (otherConnection != null) {
+            otherConnection = null;
+            demux.getInput().disconnect(other.mux.getOutput());
+            other.close();
+        }
+        super.close();
+    }
 
-				if (otherConnection.getState() != ConnectionState.OPEN) {
-					otherConnection.setOtherParty(this);
-				}
-			} else if (otherConnection != null) {
-				setState(ConnectionState.CLOSED);
-				if (otherConnection.getState() != ConnectionState.CLOSED) {
-					otherConnection.close();
-				}
-				otherConnection = null;
-			}
-		} catch (InterruptedException e) {
-			setState(ConnectionState.CLOSED);
-		} finally {
-			this.releaseState();
-		}
-	}
+    /**
+     * Gets the text representation of the connection.
+     * 
+     * @return text representation of the connection.
+     */
+    @Override
+    public String toString() {
+        return "(connectionID=" + id + ", endpoint=" + endpointName + ", state=" + state + ")";
+    }
 
-	@Override
-	public void close() {
-		try {
-			setOtherParty(null);
-		} catch (IOException e) {
-		} finally {
-			super.close();
-		}
-	}
+    public void error(Exception e) {
+        endpoint.deleteConnection(id);
+        logger.error("Facility error", e);
+    }
 
-	/**
-	 * Gets the text representation of the connection.
-	 * 
-	 * @return text representation of the connection.
-	 */
-	@Override
-	public String toString() {
-		return "(connectionID=" + id + ", endpoint=" + endpointName + ", state=" + state + ")";
-	}
-
-	public void error(Exception e) {
-		logger.error("Facility error", e);
-	}
 }
+
