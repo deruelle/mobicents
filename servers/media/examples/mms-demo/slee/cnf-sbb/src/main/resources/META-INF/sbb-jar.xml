@@ -53,7 +53,7 @@
         <event event-direction="Receive" initial-event="False">
             <event-name>AnnouncementComplete</event-name>
             <event-type-ref>
-                <event-type-name>org.mobicents.slee.media.LINK_DROPPED</event-type-name>
+                <event-type-name>org.mobicents.slee.media.LINK_DISCONNECTED</event-type-name>
                 <event-type-vendor>org.mobicents.media</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -96,7 +96,7 @@
         <event event-direction="Receive" initial-event="False">
             <event-name>ConfBridgeCreated</event-name>
             <event-type-ref>
-                <event-type-name>org.mobicents.slee.media.JOIN_COMPLETE</event-type-name>
+                <event-type-name>org.mobicents.slee.media.LINK_CONNECTED</event-type-name>
                 <event-type-vendor>org.mobicents.media</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -105,7 +105,7 @@
         <event event-direction="Receive" initial-event="False">
             <event-name>ConfBridgeFailed</event-name>
             <event-type-ref>
-                <event-type-name>org.mobicents.slee.media.JOIN_FAIL</event-type-name>
+                <event-type-name>org.mobicents.slee.media.LINK_FAILED</event-type-name>
                 <event-type-vendor>org.mobicents.media</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -114,7 +114,7 @@
         <event event-direction="Receive" initial-event="False">
             <event-name>UserDisconnected</event-name>
             <event-type-ref>
-                <event-type-name>org.mobicents.slee.media.CONNECTION_DELETED</event-type-name>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_DISCONNECTED</event-type-name>
                 <event-type-vendor>org.mobicents.media</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>

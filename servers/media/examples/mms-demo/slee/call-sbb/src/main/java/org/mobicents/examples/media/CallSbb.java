@@ -42,6 +42,7 @@ import javax.slee.SbbContext;
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -77,23 +78,22 @@ public abstract class CallSbb implements Sbb {
 
     public void onCallCreated(RequestEvent evt, ActivityContextInterface aci) {
         Request request = evt.getRequest();
-        
+
 
         CallIdHeader callID = (CallIdHeader) request.getHeader(CallIdHeader.NAME);
         FromHeader from = (FromHeader) request.getHeader(FromHeader.NAME);
         ToHeader to = (ToHeader) request.getHeader(ToHeader.NAME);
 
         logger.info("Incoming call " + from + " " + to.getName());
-        
-        String destination =  to.toString();
-		if ((destination.indexOf(LOOP_DEMO) > 0) || (destination.indexOf(DTMF_DEMO) > 0) || 
-                (destination.indexOf(CONF_DEMO) >0) || (destination.indexOf(RECORDER_DEMO) >0)){
-			respond(evt, Response.TRYING);
-		}
-		else{
-			logger.info("MMS Demo can understand only "+LOOP_DEMO+", "+DTMF_DEMO+" and "+CONF_DEMO+" dialed numbers");
-			return;
-		}
+
+        String destination = to.toString();
+        if ((destination.indexOf(LOOP_DEMO) > 0) || (destination.indexOf(DTMF_DEMO) > 0) ||
+                (destination.indexOf(CONF_DEMO) > 0) || (destination.indexOf(RECORDER_DEMO) > 0)) {
+            respond(evt, Response.TRYING);
+        } else {
+            logger.info("MMS Demo can understand only " + LOOP_DEMO + ", " + DTMF_DEMO + " and " + CONF_DEMO + " dialed numbers");
+            return;
+        }
         this.setDestination(destination);
 
         //create Dialog and attach SBB to the Dialog Activity
@@ -110,7 +110,7 @@ public abstract class CallSbb implements Sbb {
         }
 
         respond(evt, Response.RINGING);
-        
+
         MsSession session = msProvider.createSession();
         MsConnection msConnection = session.createNetworkConnection(ENDPOINT_NAME);
 
@@ -126,10 +126,11 @@ public abstract class CallSbb implements Sbb {
 
         logger.info("Creating RTP connection [" + ENDPOINT_NAME + "]");
         String sdp = new String(request.getRawContent());
+        
         msConnection.modify("$", sdp);
     }
 
-    public void onConnectionCreated(MsConnectionEvent evt, ActivityContextInterface aci) {
+    public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
         MsConnection connection = evt.getConnection();
         logger.info("Created RTP connection [" + connection.getEndpoint() + "]");
 
@@ -188,21 +189,53 @@ public abstract class CallSbb implements Sbb {
         }
 
         aci.attach(demo);
-        demo.startDemo(evt.getConnection().getEndpoint());
+        demo.startDemo(evt.getConnection().getEndpoint().getLocalName());
     }
 
+    public void onConnectionDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        System.out.println("********* DISCONNECTED*********");
+    }
+    
+    public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+        MsConnectionEventCause cause = evt.getCause();
+        switch (cause) {
+            case REMOTE_SDP_INVALID :
+                logger.error("Media server:Remote exception is invalid");
+                break;
+            case FACILITY_FAILURE :
+                logger.error("Media server:Facility failure");
+                break;
+            case ENDPOINT_UNKNOWN:
+                logger.error("Media server: Endpoint unknown");
+                break;
+        }
+        
+        ServerTransaction txn = getServerTransaction();
+        if (txn == null) {
+            logger.warn("SIP activity lost, ignore connection failure event");
+            return;
+        }
+        
+        Request request = txn.getRequest();
+        try {
+            Response response = messageFactory.createResponse(Response.SERVER_INTERNAL_ERROR, request);
+            txn.sendResponse(response);
+        } catch (Exception e) {
+        }
+    }
+    
     public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
         logger.info("---- BYE-----");
-        
+
         MsConnection connection = this.getMediaConnection();
         if (connection != null) {
             logger.info("Deleting media conection");
             connection.release();
         }
-        
+
         ServerTransaction tx = evt.getServerTransaction();
         Request request = evt.getRequest();
-        
+
         try {
             Response response = messageFactory.createResponse(Response.OK, request);
             tx.sendResponse(response);
@@ -212,14 +245,14 @@ public abstract class CallSbb implements Sbb {
 
     private MsConnection getMediaConnection() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
-        for (ActivityContextInterface aci: activities) {
+        for (ActivityContextInterface aci : activities) {
             if (aci.getActivity() instanceof MsConnection) {
                 return (MsConnection) aci.getActivity();
             }
         }
         return null;
     }
-    
+
     private void respond(RequestEvent evt, int cause) {
         Request request = evt.getRequest();
         ServerTransaction tx = evt.getServerTransaction();
@@ -249,20 +282,23 @@ public abstract class CallSbb implements Sbb {
     public abstract void setDestination(String destionation);
 
     public abstract ChildRelation getLoopDemoSbb();
+
     public abstract ChildRelation getConfDemoSbb();
+
     public abstract ChildRelation getDtmfDemoSbb();
+
     public abstract ChildRelation getRecorderDemoSbb();
 
     private ServerTransaction getServerTransaction() {
         ActivityContextInterface[] activities = sbbContext.getActivities();
-        for (ActivityContextInterface activity: activities) {
+        for (ActivityContextInterface activity : activities) {
             if (activity.getActivity() instanceof ServerTransaction) {
                 return (ServerTransaction) activity.getActivity();
             }
         }
         return null;
     }
-    
+
     public void setSbbContext(SbbContext sbbContext) {
         this.sbbContext = sbbContext;
         try {

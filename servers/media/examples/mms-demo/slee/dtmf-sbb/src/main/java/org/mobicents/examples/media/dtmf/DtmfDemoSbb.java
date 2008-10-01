@@ -11,9 +11,7 @@
  */
 package org.mobicents.examples.media.dtmf;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,14 +31,26 @@ import javax.slee.facilities.TimerFacility;
 import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
 import org.apache.log4j.Logger;
-import org.mobicents.examples.media.Announcement;
-import org.mobicents.media.server.impl.common.events.EventCause;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsEndpoint;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
+import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSignalDetector;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
@@ -49,6 +59,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class DtmfDemoSbb implements Sbb {
 
+    private final static String IVR_ENDPOINT = "media/endpoint/IVR/$";
     private final static String WELCOME_MSG = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/welcome.wav";
     private final static String DTMF_0 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf0.wav";
     private final static String DTMF_1 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf1.wav";
@@ -73,16 +84,55 @@ public abstract class DtmfDemoSbb implements Sbb {
      *      ActivityContextInterface).
      */
     public void startDemo(String endpointName) {
-        this.setUserEndpoint(endpointName);
-        logger.info("Playing welcome message: " + WELCOME_MSG);
-        this.play(WELCOME_MSG);
+        logger.info("Joining " + endpointName + " with " + IVR_ENDPOINT);
+
+        MsConnection connection = (MsConnection) getConnectionActivity().getActivity();
+        MsSession session = connection.getSession();
+        MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
+
+        ActivityContextInterface linkActivity = null;
+        try {
+            linkActivity = mediaAcif.getActivityContextInterface(link);
+        } catch (UnrecognizedActivityException ex) {
+        }
+
+        linkActivity.attach(sbbContext.getSbbLocalObject());
+        link.join(endpointName, IVR_ENDPOINT);
+    }
+
+    public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
+        //ask dtmf detector
+        MsLink link = evt.getSource();
+        MsEndpoint ivr = link.getEndpoints()[1];
 
         try {
-            startTimer(5);
-            logger.info("Timer started");
-        } catch (NamingException e) {
-            logger.error("Unexpected error", e);
+            MsEventFactory factory = msProvider.getEventFactory();
+            MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+            MsRequestedSignal[] signals = new MsRequestedSignal[]{};
+            MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
+
+            ivr.execute(signals, events, link);
+            play(WELCOME_MSG, link);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+    }
+
+    public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
+    }
+
+    private ActivityContextInterface getConnectionActivity() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsConnection) {
+                return activities[i];
+            }
+        }
+
+        return null;
     }
 
     public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
@@ -91,52 +141,78 @@ public abstract class DtmfDemoSbb implements Sbb {
     }
 
     public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
-        EventCause cause = evt.getCause();
-        if (cause == EventCause.DTMF_DIGIT_0) {
-            play(DTMF_0);
-        } else if (cause == EventCause.DTMF_DIGIT_1) {
-            play(DTMF_1);
-        } else if (cause == EventCause.DTMF_DIGIT_2) {
-            play(DTMF_2);
-        } else if (cause == EventCause.DTMF_DIGIT_3) {
-            play(DTMF_3);
-        } else if (cause == EventCause.DTMF_DIGIT_4) {
-            play(DTMF_4);
-        } else if (cause == EventCause.DTMF_DIGIT_5) {
-            play(DTMF_5);
-        } else if (cause == EventCause.DTMF_DIGIT_6) {
-            play(DTMF_6);
-        } else if (cause == EventCause.DTMF_DIGIT_7) {
-            play(DTMF_7);
-        } else if (cause == EventCause.DTMF_DIGIT_8) {
-            play(DTMF_8);
-        } else if (cause == EventCause.DTMF_DIGIT_9) {
-            play(DTMF_9);
+        MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
+        MsLink link = (MsLink)evt.getSource();
+        String seq = event.getSequence();
+        if (seq.equals("0")) {
+            play(DTMF_0, link);
+        } else if (seq.equals("1")) {
+            play(DTMF_1, link);
+        } else if (seq.equals("2")) {
+            play(DTMF_2, link);
+        } else if (seq.equals("3")) {
+            play(DTMF_3, link);
+        } else if (seq.equals("4")) {
+            play(DTMF_4, link);
+        } else if (seq.equals("5")) {
+            play(DTMF_5, link);
+        } else if (seq.equals("6")) {
+            play(DTMF_6, link);
+        } else if (seq.equals("7")) {
+            play(DTMF_7, link);
+        } else if (seq.equals("8")) {
+            play(DTMF_8, link);
+        } else if (seq.equals("9")) {
+            play(DTMF_9, link);
+        }
+
+    }
+
+    private void play(String url, MsLink link) {
+        MsEventFactory eventFactory = msProvider.getEventFactory();        
+        MsPlayRequestedSignal play = null;
+        try {
+            play = (MsPlayRequestedSignal) 
+                eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+            play.setURL(url);
+            System.out.println("PLAY signal=" + play);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         
+        MsRequestedEvent onCompleted = null;
+        MsRequestedEvent onFailed = null;
+        
         try {
-            startTimer(1);
-            logger.info("Timer started");
-        } catch (NamingException e) {
-            logger.error("Unexpected error", e);
+            onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+            onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+            onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+            onFailed.setEventAction(MsEventAction.NOTIFY);
+        } catch (ClassNotFoundException e) {
         }
+        
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
+        
+        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
     }
 
-    private void play(String url) {
-        ChildRelation childRelation = this.getAnnouncementSbb();
+    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+        MsLink link = (MsLink) evt.getSource();
+        MsEndpoint ivr = link.getEndpoints()[1];
+
         try {
-            Announcement announcement = (Announcement) childRelation.create();
-            this.getConnectionActivityContext().attach(announcement);
-            List sequence = new ArrayList();
-            sequence.add(url);
-            announcement.play(this.getUserEndpoint(), sequence, false);
-        } catch (CreateException e) {
-            logger.error("Unexpected error, Caused by", e);
-            MsConnection connection = getConnection();
-            connection.release();
+            MsEventFactory factory = msProvider.getEventFactory();
+            MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+            MsRequestedSignal[] signals = new MsRequestedSignal[]{};
+            MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
+            ivr.execute(signals, events, link);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
+    
     @SuppressWarnings("static-access")
     private void initDtmfDetector(MsConnection connection) {
         MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
@@ -145,19 +221,27 @@ public abstract class DtmfDemoSbb implements Sbb {
             dtmfAci.attach(sbbContext.getSbbLocalObject());
             dtmfDetector.receive(EventID.DTMF, connection, new String[]{});
         } catch (UnrecognizedActivityException e) {
-        } 
+        }
     }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        ActivityContextInterface activities[] = sbbContext.getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsSignalDetector) {
-                ((MsSignalDetector) activities[i].getActivity()).release();
-            }
+        MsLink link = getLink();
+        System.out.println("Releasing link=" + link);
+        if (link != null) {
+            link.release();
         }
-
     }
 
+    public MsLink getLink() {
+        ActivityContextInterface[] activities = sbbContext.getActivities();
+        for (int i = 0; i < activities.length; i++) {
+            if (activities[i].getActivity() instanceof MsLink) {
+                return (MsLink) activities[i].getActivity();
+            }
+        }
+        return null;
+    }
+    
     /**
      * CMP field accessor
      * 

@@ -24,11 +24,11 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import org.apache.log4j.Logger;
 import org.mobicents.examples.media.Announcement;
-import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -72,7 +72,7 @@ public abstract class ForestSbb implements Sbb {
 
     public void onConfBridgeCreated(MsLinkEvent evt, ActivityContextInterface aci) {
         MsLink link = evt.getSource();
-        String endpointName = link.getEndpoints()[1];
+        String endpointName = link.getEndpoints()[1].getLocalName();
 
         logger.info("Created conference bridge: " + endpointName);
         ActivityContextInterface connectionActivity = this.getConnectionActivity();

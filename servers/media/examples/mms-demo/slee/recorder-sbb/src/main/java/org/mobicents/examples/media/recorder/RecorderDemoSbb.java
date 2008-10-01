@@ -31,12 +31,12 @@ import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.msc.common.MsLinkMode;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSignalDetector;
@@ -85,7 +85,7 @@ public abstract class RecorderDemoSbb implements Sbb {
     public void onIVRConnected(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.info("Joined IVR connected, Starting announcement and recorder");
         MsLink link = evt.getSource();
-        setUserEndpoint(link.getEndpoints()[1]);
+        setUserEndpoint(link.getEndpoints()[1].getLocalName());
 
         MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
         try {
