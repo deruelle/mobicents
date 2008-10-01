@@ -18,5 +18,8 @@ package org.mobicents.media.msc.common;
  * 
  */
 public enum MsLinkState {
-	IDLE, JOINED, FAILED, INVALID
+	IDLE, 
+        CONNECTED, 
+        FAILED, 
+        DISCONNECTED;
 }
