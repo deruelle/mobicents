@@ -12,264 +12,253 @@ import org.mobicents.mscontrol.MsSession;
 
 public class MediaActivityManager {
 
-	private static Logger logger = Logger.getLogger(MediaActivityManager.class);
+    private static Logger logger = Logger.getLogger(MediaActivityManager.class);
+    private ConcurrentHashMap<MsConnectionActivityHandle, MsConnection> msConnectionActivities = new ConcurrentHashMap<MsConnectionActivityHandle, MsConnection>();
+    private ConcurrentHashMap<MsLinkActivityHandle, MsLink> msLinkActivities = new ConcurrentHashMap<MsLinkActivityHandle, MsLink>();
+    private ConcurrentHashMap<MsSessionActivityHandle, MsSession> msSessionActivities = new ConcurrentHashMap<MsSessionActivityHandle, MsSession>();
+    private ConcurrentHashMap<MsResourceActivityHandle, MsResource> msResourceActivities = new ConcurrentHashMap<MsResourceActivityHandle, MsResource>();
+    private ConcurrentHashMap<String, MsConnectionActivityHandle> msConnectionId2ActivityHandleMap = new ConcurrentHashMap<String, MsConnectionActivityHandle>();
+    private ConcurrentHashMap<String, MsLinkActivityHandle> msLinkId2ActivityHandleMap = new ConcurrentHashMap<String, MsLinkActivityHandle>();
+    private ConcurrentHashMap<String, MsSessionActivityHandle> msSessionId2ActivityHandleMap = new ConcurrentHashMap<String, MsSessionActivityHandle>();
+    private ConcurrentHashMap<String, MsResourceActivityHandle> msResourceId2ActivityHandleMap = new ConcurrentHashMap<String, MsResourceActivityHandle>();
 
-	private ConcurrentHashMap<MsConnectionActivityHandle, MsConnection> msConnectionActivities = new ConcurrentHashMap<MsConnectionActivityHandle, MsConnection>();
+    public MsConnectionActivityHandle putMsConnectionActivity(MsConnection activity) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("putMsConnectionActivity(activity=" + activity + ")");
+        }
 
-	private ConcurrentHashMap<MsLinkActivityHandle, MsLink> msLinkActivities = new ConcurrentHashMap<MsLinkActivityHandle, MsLink>();
+        MsConnectionActivityHandle handle = new MsConnectionActivityHandle(activity.getId());
 
-	private ConcurrentHashMap<MsSessionActivityHandle, MsSession> msSessionActivities = new ConcurrentHashMap<MsSessionActivityHandle, MsSession>();
+        msConnectionId2ActivityHandleMap.put(activity.getId(), handle);
+        msConnectionActivities.put(handle, activity);
 
-	private ConcurrentHashMap<MsResourceActivityHandle, MsResource> msResourceActivities = new ConcurrentHashMap<MsResourceActivityHandle, MsResource>();
+        return handle;
+    }
 
-	private ConcurrentHashMap<String, MsConnectionActivityHandle> msConnectionId2ActivityHandleMap = new ConcurrentHashMap<String, MsConnectionActivityHandle>();
+    public MsLinkActivityHandle putMsLinkActivity(MsLink activity) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("putMsLinkActivity(activity=" + activity + ")");
+        }
 
-	private ConcurrentHashMap<String, MsLinkActivityHandle> msLinkId2ActivityHandleMap = new ConcurrentHashMap<String, MsLinkActivityHandle>();
+        MsLinkActivityHandle handle = new MsLinkActivityHandle(activity.getId());
+        msLinkId2ActivityHandleMap.put(activity.getId(), handle);
+        msLinkActivities.put(handle, activity);
 
-	private ConcurrentHashMap<String, MsSessionActivityHandle> msSessionId2ActivityHandleMap = new ConcurrentHashMap<String, MsSessionActivityHandle>();
+        return handle;
+    }
 
-	private ConcurrentHashMap<String, MsResourceActivityHandle> msResourceId2ActivityHandleMap = new ConcurrentHashMap<String, MsResourceActivityHandle>();
+    public MsSessionActivityHandle putMsSessionActivity(MsSession activity) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("putMsSessionActivity(activity=" + activity + ")");
+        }
 
-	public MsConnectionActivityHandle putMsConnectionActivity(MsConnection activity) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("putMsConnectionActivity(activity=" + activity + ")");
-		}
+        MsSessionActivityHandle handle = new MsSessionActivityHandle(activity.getId());
+        msSessionId2ActivityHandleMap.put(activity.getId(), handle);
+        msSessionActivities.put(handle, activity);
 
-		MsConnectionActivityHandle handle = new MsConnectionActivityHandle(activity.getId());
+        return handle;
+    }
 
-		msConnectionId2ActivityHandleMap.put(activity.getId(), handle);
-		msConnectionActivities.put(handle, activity);
+    public MsResourceActivityHandle putMsResourceActivity(MsResource activity) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("putMsResourceActivity(activity=" + activity + ")");
+        }
 
-		return handle;
-	}
+        MsResourceActivityHandle handle = new MsResourceActivityHandle(activity.getID());
+        msResourceId2ActivityHandleMap.put(activity.getID(), handle);
+        msResourceActivities.put(handle, activity);
 
-	public MsLinkActivityHandle putMsLinkActivity(MsLink activity) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("putMsLinkActivity(activity=" + activity + ")");
-		}
+        return handle;
+    }
 
-		MsLinkActivityHandle handle = new MsLinkActivityHandle(activity.getId());
-		msLinkId2ActivityHandleMap.put(activity.getId(), handle);
-		msLinkActivities.put(handle, activity);
+    public MsConnection getMsConnectionActivity(MsConnectionActivityHandle handle) {
 
-		return handle;
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsConnectionActivity(handle=" + handle + ")");
+        }
+        return msConnectionActivities.get(handle);
+    }
 
-	public MsSessionActivityHandle putMsSessionActivity(MsSession activity) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("putMsSessionActivity(activity=" + activity + ")");
-		}
+    public MsLink getMsLinkActivity(MsLinkActivityHandle handle) {
 
-		MsSessionActivityHandle handle = new MsSessionActivityHandle(activity.getId());
-		msSessionId2ActivityHandleMap.put(activity.getId(), handle);
-		msSessionActivities.put(handle, activity);
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsLinkActivity(handle=" + handle + ")");
+        }
+        return msLinkActivities.get(handle);
+    }
 
-		return handle;
-	}
+    public MsSession getMsSessionActivity(MsSessionActivityHandle handle) {
 
-	public MsResourceActivityHandle putMsResourceActivity(MsResource activity) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("putMsResourceActivity(activity=" + activity + ")");
-		}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsSessionActivity(handle=" + handle + ")");
+        }
+        return msSessionActivities.get(handle);
+    }
 
-		MsResourceActivityHandle handle = new MsResourceActivityHandle(activity.getID());
-		msResourceId2ActivityHandleMap.put(activity.getID(), handle);
-		msResourceActivities.put(handle, activity);
+    public MsResource getMsResourceActivity(MsResourceActivityHandle handle) {
 
-		return handle;
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsResourceActivity(handle=" + handle + ")");
+        }
+        return msResourceActivities.get(handle);
+    }
 
-	public MsConnection getMsConnectionActivity(MsConnectionActivityHandle handle) {
+    public MsConnectionActivityHandle getMsConnectionActivityHandle(String msConnectionId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsConnectionActivityHandle(msConnectionId=" + msConnectionId + ")");
+        }
+        return msConnectionId2ActivityHandleMap.get(msConnectionId);
+    }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsConnectionActivity(handle=" + handle + ")");
-		}
-		return msConnectionActivities.get(handle);
-	}
+    public MsLinkActivityHandle getMsLinkActivityHandle(String msLinkId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsLinkActivityHandle(msLinkId=" + msLinkId + ")");
+        }
+        return msLinkId2ActivityHandleMap.get(msLinkId);
+    }
 
-	public MsLink getMsLinkActivity(MsLinkActivityHandle handle) {
+    public MsSessionActivityHandle getMsSessionActivityHandle(String msSessionId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("getMsSessionActivityHandle(msSessionId=" + msSessionId + ")");
+        }
+        return msSessionId2ActivityHandleMap.get(msSessionId);
+    }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsLinkActivity(handle=" + handle + ")");
-		}
-		return msLinkActivities.get(handle);
-	}
+    public MsResourceActivityHandle getMsResourceActivityHandle(String msResourceId) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Session(msSessionId=" + msResourceId + ")");
+        }
+        return msResourceId2ActivityHandleMap.get(msResourceId);
+    }
 
-	public MsSession getMsSessionActivity(MsSessionActivityHandle handle) {
+    public void removeMediaActivity(ActivityHandle handle) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("removeMediaActivity(handle=" + handle + ")");
+        }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsSessionActivity(handle=" + handle + ")");
-		}
-		return msSessionActivities.get(handle);
-	}
+        if (handle instanceof MsConnectionActivityHandle) {
+            MsConnection msConnection = msConnectionActivities.remove(handle);
+            if (msConnection != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("removed MsConnection activity for handle " + handle);
+                }
+                if (msConnectionId2ActivityHandleMap.remove(msConnection.getId()) != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("removed MsConnectionActivityHandle for MsConnection ID " + msConnection.getId());
+                    }
+                }
+            } else {
+                logger.warn("MsConnection Activity for handle " + handle + " not found");
+            }
+        } else if (handle instanceof MsLinkActivityHandle) {
+            MsLink msLink = msLinkActivities.remove(handle);
+            if (msLink != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("removed MsLink activity for handle " + handle);
+                }
+                if (msLinkId2ActivityHandleMap.remove(msLink.getId()) != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("removed MsLinkActivityHandle for MsLink ID " + msLink.getId());
+                    }
+                }
+            } else {
+                logger.warn("MsLink Activity for handle " + handle + " not found");
+            }
+        } else if (handle instanceof MsSessionActivityHandle) {
+            MsSession msSession = msSessionActivities.remove(handle);
+            if (msSession != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("removed MsSession activity for handle " + handle);
+                }
+                if (msSessionId2ActivityHandleMap.remove(msSession.getId()) != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("removed MsSessionActivityHandle for MsSession ID " + msSession.getId());
+                    }
+                }
+            } else {
+                logger.warn("MsSession Activity for handle " + handle + " not found");
+            }
+        } else if (handle instanceof MsResourceActivityHandle) {
+            MsResource msResource = msResourceActivities.remove(handle);
+            if (msResource != null) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("removed MsResource activity for handle " + handle);
+                }
+                if (msResourceId2ActivityHandleMap.remove(msResource.getID()) != null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("removed MsResourceActivityHandle for MsResource ID " + msResource.getID());
+                    }
+                }
+            } else {
+                logger.warn("MsResource Activity for handle " + handle + " not found");
+            }
+        } else {
+            logger.warn("MediaActivityManager not yet implemented for ActivityHandle " + handle);
+        }
+    }
 
-	public MsResource getMsResourceActivity(MsResourceActivityHandle handle) {
+    public boolean containsActivityHandle(ActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsResourceActivity(handle=" + handle + ")");
-		}
-		return msResourceActivities.get(handle);
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("containsActivityHandle(handle=" + handle + ")");
+        }
 
-	public MsConnectionActivityHandle getMsConnectionActivityHandle(String msConnectionId) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsConnectionActivityHandle(msConnectionId=" + msConnectionId + ")");
-		}
-		return msConnectionId2ActivityHandleMap.get(msConnectionId);
-	}
+        if (handle instanceof MsConnectionActivityHandle) {
+            return msConnectionActivities.containsKey((MsConnectionActivityHandle) handle);
 
-	public MsLinkActivityHandle getMsLinkActivityHandle(String msLinkId) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsLinkActivityHandle(msLinkId=" + msLinkId + ")");
-		}
-		return msLinkId2ActivityHandleMap.get(msLinkId);
-	}
+        } else if (handle instanceof MsLinkActivityHandle) {
+            return msLinkActivities.containsKey((MsLinkActivityHandle) handle);
 
-	public MsSessionActivityHandle getMsSessionActivityHandle(String msSessionId) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("getMsSessionActivityHandle(msSessionId=" + msSessionId + ")");
-		}
-		return msSessionId2ActivityHandleMap.get(msSessionId);
-	}
+        } else if (handle instanceof MsSessionActivityHandle) {
+            return msSessionActivities.containsKey((MsSessionActivityHandle) handle);
 
-	public MsResourceActivityHandle getMsResourceActivityHandle(String msResourceId) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Session(msSessionId=" + msResourceId + ")");
-		}
-		return msResourceId2ActivityHandleMap.get(msResourceId);
-	}
+        } else if (handle instanceof MsResourceActivityHandle) {
+            return msResourceActivities.containsKey((MsResourceActivityHandle) handle);
 
-	public void removeMediaActivity(ActivityHandle handle) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("removeMediaActivity(handle=" + handle + ")");
-		}
+        } else {
+            return false;
+        }
+    }
 
-		if (handle instanceof MsConnectionActivityHandle) {
-			MsConnection msConnection = msConnectionActivities.remove(handle);
-			if (msConnection != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("removed MsConnection activity for handle " + handle);
-				}
-				if (msConnectionId2ActivityHandleMap.remove(msConnection.getId()) != null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("removed MsConnectionActivityHandle for MsConnection ID " + msConnection.getId());
-					}
-				}
-			} else {
-				logger.warn("MsConnection Activity for handle " + handle + " not found");
-			}
-		} else if (handle instanceof MsLinkActivityHandle) {
-			MsLink msLink = msLinkActivities.remove(handle);
-			if (msLink != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("removed MsLink activity for handle " + handle);
-				}
-				if (msLinkId2ActivityHandleMap.remove(msLink.getId()) != null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("removed MsLinkActivityHandle for MsLink ID " + msLink.getId());
-					}
-				}
-			} else {
-				logger.warn("MsLink Activity for handle " + handle + " not found");
-			}
-		} else if (handle instanceof MsSessionActivityHandle) {
-			MsSession msSession = msSessionActivities.remove(handle);
-			if (msSession != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("removed MsSession activity for handle " + handle);
-				}
-				if (msSessionId2ActivityHandleMap.remove(msSession.getId()) != null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("removed MsSessionActivityHandle for MsSession ID " + msSession.getId());
-					}
-				}
-			} else {
-				logger.warn("MsSession Activity for handle " + handle + " not found");
-			}
-		} else if (handle instanceof MsResourceActivityHandle) {
-			MsResource msResource = msResourceActivities.remove(handle);
-			if (msResource != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("removed MsResource activity for handle " + handle);
-				}
-				if (msResourceId2ActivityHandleMap.remove(msResource.getID()) != null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("removed MsResourceActivityHandle for MsResource ID " + msResource.getID());
-					}
-				}
-			} else {
-				logger.warn("MsResource Activity for handle " + handle + " not found");
-			}
-		}
+    public Object getActivity(ActivityHandle handle) {
 
-		else {
-			logger.warn("MediaActivityManager not yet implemented for ActivityHandle " + handle);
-		}
-	}
+        if (logger.isDebugEnabled()) {
+            logger.debug("getActivity(handle=" + handle + ")");
+        }
 
-	public boolean containsActivityHandle(ActivityHandle handle) {
+        if (handle instanceof MsConnectionActivityHandle) {
+            return msConnectionActivities.get((MsConnectionActivityHandle) handle);
+        } else if (handle instanceof MsLinkActivityHandle) {
+            return msLinkActivities.get((MsLinkActivityHandle) handle);
+        } else if (handle instanceof MsSessionActivityHandle) {
+            return msSessionActivities.get((MsSessionActivityHandle) handle);
+        } else if (handle instanceof MsResourceActivityHandle) {
+            return msResourceActivities.get((MsResourceActivityHandle) handle);
+        } else {
+            return null;
+        }
+    }
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("containsActivityHandle(handle=" + handle + ")");
-		}
+    public ActivityHandle getActivityHandle(Object activity) {
 
-		if (handle instanceof MsConnectionActivityHandle) {
-			return msConnectionActivities.containsKey((MsConnectionActivityHandle) handle);
+        if (logger.isDebugEnabled()) {
+            logger.debug("getActivityHandle(activity=" + activity + ")");
+        }
 
-		} else if (handle instanceof MsLinkActivityHandle) {
-			return msLinkActivities.containsKey((MsLinkActivityHandle) handle);
-
-		} else if (handle instanceof MsSessionActivityHandle) {
-			return msSessionActivities.containsKey((MsSessionActivityHandle) handle);
-
-		} else if (handle instanceof MsResourceActivityHandle) {
-			return msResourceActivities.containsKey((MsResourceActivityHandle) handle);
-
-		} else {
-			return false;
-		}
-	}
-
-	public Object getActivity(ActivityHandle handle) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("getActivity(handle=" + handle + ")");
-		}
-
-		if (handle instanceof MsConnectionActivityHandle) {
-			return msConnectionActivities.get((MsConnectionActivityHandle) handle);
-		} else if (handle instanceof MsLinkActivityHandle) {
-			return msLinkActivities.get((MsLinkActivityHandle) handle);
-		} else if (handle instanceof MsSessionActivityHandle) {
-			return msSessionActivities.get((MsSessionActivityHandle) handle);
-		} else if (handle instanceof MsResourceActivityHandle) {
-			return msResourceActivities.get((MsResourceActivityHandle) handle);
-		} else {
-			return null;
-		}
-	}
-
-	public ActivityHandle getActivityHandle(Object activity) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("getActivityHandle(activity=" + activity + ")");
-		}
-
-		if (activity instanceof MsConnection) {
-			MsConnection castedActivity = (MsConnection) activity;
-			return msConnectionId2ActivityHandleMap.get(castedActivity.getId());
-		} else if (activity instanceof MsLink) {
-			MsLink castedActivity = (MsLink) activity;
-			return msLinkId2ActivityHandleMap.get(castedActivity.getId());
-		} else if (activity instanceof MsSession) {
-			MsSession castedActivity = (MsSession) activity;
-			return msSessionId2ActivityHandleMap.get(castedActivity.getId());
-		} else if (activity instanceof MsResource) {
-			MsResource castedActivity = (MsResource) activity;
-			return msResourceId2ActivityHandleMap.get(castedActivity.getID());
-		} else {
-			return null;
-		}
-	}
-
+        if (activity instanceof MsConnection) {
+            MsConnection castedActivity = (MsConnection) activity;
+            return msConnectionId2ActivityHandleMap.get(castedActivity.getId());
+        } else if (activity instanceof MsLink) {
+            MsLink castedActivity = (MsLink) activity;
+            return msLinkId2ActivityHandleMap.get(castedActivity.getId());
+        } else if (activity instanceof MsSession) {
+            MsSession castedActivity = (MsSession) activity;
+            return msSessionId2ActivityHandleMap.get(castedActivity.getId());
+        } else if (activity instanceof MsResource) {
+            MsResource castedActivity = (MsResource) activity;
+            return msResourceId2ActivityHandleMap.get(castedActivity.getID());
+        } else {
+            return null;
+        }
+    }
 }
