@@ -14,8 +14,8 @@
 
 package org.mobicents.media;
 
-import java.io.IOException;
 import java.io.Serializable;
+import org.mobicents.media.server.spi.NotificationListener;
 
 /**
  * Abstracts a read interface that pushes data in the form of Buffer objects.
@@ -56,4 +56,10 @@ public interface MediaSource extends Serializable {
      * @return an array of Format objects.
      */
     public Format[] getFormats();    
+    
+    public void addListener(NotificationListener listener);
+    public void removeListener(NotificationListener listener);
+    
+    public void dispose();
+    
 }

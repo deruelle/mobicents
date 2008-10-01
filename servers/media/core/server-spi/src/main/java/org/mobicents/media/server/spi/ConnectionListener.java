@@ -18,8 +18,6 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 
-import org.mobicents.media.server.impl.common.ConnectionState;
-
 /**
  *
  * @author Oleg Kulikov

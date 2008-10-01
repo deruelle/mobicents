@@ -16,10 +16,8 @@
 package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
-import org.mobicents.media.server.impl.common.*;
-//import org.mobicents.media.server.impl.common.events.*;
-import org.mobicents.media.server.spi.events.EventID;
-import org.mobicents.media.server.spi.events.Options;
+import org.mobicents.media.server.spi.events.RequestedEvent;
+import org.mobicents.media.server.spi.events.RequestedSignal;
 /**
  * The basic implementation of the endpoint.
  *
@@ -79,46 +77,7 @@ public interface Endpoint extends Serializable {
      */
     public boolean hasConnections();
 
-    /**
-     * Apples specified signal.
-     *
-     * @param signalID the signal identifier for playing.
-     * @param connectionID the identifier of the connection if signal should be 
-     * applied to connection.
-     * @param listener the callback interface.
-     * @param keepAlive true if keep signal active.
-     */
-    public void play(String signalID, Options options, String connectionID,
-            NotificationListener listener) throws UnknownSignalException, FacilityException;
-
-    public void play(String signalID, Options options,
-            NotificationListener listener) throws UnknownSignalException, FacilityException;
     
-    /**
-     * Asks the to detect requested event and report. 
-     *
-     * Such events may include, for example, fax tones, continuity tones, or 
-     * on-hook transition. 
-     * 
-     * @param eventID the identifier of the event.
-     * @param the Call Agent callback interface currently controlling that endpoint.
-     * @persistent true if event is always detected on the endpoint.
-     */
-    public void subscribe(String eventID, Options options, NotificationListener listener)
-            throws UnknownSignalException, FacilityException;
-
-    /**
-     * Asks the endpoint to detect requested event on a specified connection and report. 
-     *
-     * Such events may include, for example, fax tones, continuity tones, or 
-     * on-hook transition. 
-     * 
-     * @param eventID the identifier of the event.
-     * @param connectionID the identifier of the connection.
-     * @param the Call Agent callback interface currently controlling that endpoint.
-     */
-    public void subscribe(String eventID, Options options, String connectionID,
-            NotificationListener listener)throws UnknownSignalException, FacilityException;
-    
-	
+    public void execute(RequestedSignal[] signals, RequestedEvent[] events);
+    public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID);
 }

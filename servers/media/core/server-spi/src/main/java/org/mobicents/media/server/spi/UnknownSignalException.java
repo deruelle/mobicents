@@ -16,8 +16,6 @@
 
 package org.mobicents.media.server.spi;
 
-import org.mobicents.media.server.spi.events.EventID;
-
 /**
  *
  * @author Oleg Kulikov
@@ -27,7 +25,7 @@ public class UnknownSignalException extends java.lang.Exception {
     /**
      * Creates a new instance of <code>UnknownSignalException</code> without detail message.
      */
-    public UnknownSignalException(EventID signalID) {
+    public UnknownSignalException(String signalID) {
     }
     
     
@@ -35,7 +33,7 @@ public class UnknownSignalException extends java.lang.Exception {
      * Constructs an instance of <code>UnknownSignalException</code> with the specified detail message.
      * @param msg the detail message.
      */
-    public UnknownSignalException(String msg) {
+    public UnknownSignalException(String signalID, String msg) {
         super(msg);
     }
 }

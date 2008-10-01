@@ -20,16 +20,19 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  *
  * @author Oleg Kulikov
  */
-public class SpectrumEvent extends NotifyEvent {
+public class SpectrumEvent implements NotifyEvent {
     
     private double[] spectra;
     
     public SpectrumEvent(Object source, String eventID, double[] spectra) {
-        super(source, eventID);
         this.spectra = spectra;
     }
     
     public double[] getSpectra() {
         return spectra;
+    }
+
+    public String getEventID() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

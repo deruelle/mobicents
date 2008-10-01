@@ -14,8 +14,8 @@
 
 package org.mobicents.media;
 
-import java.io.IOException;
 import java.io.Serializable;
+import org.mobicents.media.server.spi.NotificationListener;
 
 /**
  * Implements the media consumer.
@@ -63,4 +63,9 @@ public interface MediaSink extends Serializable {
      * @param buffer the Buffer object which contains the next portion of media.
      */
     public void receive(Buffer buffer);
+    
+    public void addListener(NotificationListener listener);
+    public void removeListener(NotificationListener listener);
+    
+    public void dispose();
 }

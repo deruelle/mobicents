@@ -18,11 +18,6 @@
 	
 	<dependencies>        
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>mobicents-media-server-constants</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-ri</artifactId>            
 			<version>${jain-sip-ri.version}</version>
