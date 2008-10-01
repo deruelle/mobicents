@@ -40,9 +40,9 @@ import javax.slee.facilities.ActivityContextNamingFacility;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsConnectionEventCause;
 
 /**
  * 
@@ -101,7 +101,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 
 		mediaACI.attach(sbbContext.getSbbLocalObject());
 		MsConnection msConnection = (MsConnection) mediaACI.getActivity();
-		msConnection.modify(msConnection.getEndpoint(), remoteConnectionDescriptor.toString());
+		msConnection.modify(msConnection.getEndpoint().getLocalName(), remoteConnectionDescriptor.toString());
 
 	}
 

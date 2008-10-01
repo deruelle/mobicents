@@ -148,7 +148,7 @@ public abstract class NotificationRequestSbb implements Sbb {
 				String announcementUrl = mgcpEvent.getParms();
 
 				if (msConnection != null) {
-					String endpoint = msConnection.getEndpoint();
+					String endpoint = msConnection.getEndpoint().getLocalName();
 
 					MsSignalGenerator generator = msProvider.getSignalGenerator(endpoint);
 					try {

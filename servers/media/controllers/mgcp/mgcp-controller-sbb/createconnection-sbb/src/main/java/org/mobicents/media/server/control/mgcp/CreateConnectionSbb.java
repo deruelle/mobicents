@@ -42,9 +42,9 @@ import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.msc.common.events.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -196,7 +196,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		if (this.getUseSpecificEndPointId()) {
 
-			String localEndpointName = msConnection.getEndpoint();
+			String localEndpointName = msConnection.getEndpoint().getLocalName();
 
 			String domainName = (new StringBuffer().append(System.getProperty("jboss.bind.address")).append(":")
 					.append(mgcpProvider.getJainMgcpStack().getPort())).toString();
