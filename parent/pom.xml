@@ -643,8 +643,10 @@
 		</pluginRepository>		
 	</pluginRepositories>
 	
-	
-	<build>
+	<profiles>
+		<profile>
+			<id>set-svn-revision</id>
+			<build>
 		<plugins>
 			<plugin>
 			  <groupId>org.codehaus.mojo</groupId>
@@ -663,7 +665,13 @@
 			    <doUpdate>false</doUpdate>
 			  </configuration>
 			</plugin>
-
+			</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
+	<build>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
