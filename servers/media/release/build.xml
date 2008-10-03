@@ -59,7 +59,7 @@
 	<target name="build-mobicents-jain-slee">
 		<echo>Building Mobicents JAIN-SLEE</echo>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../mobicents-jain-slee">
-			<arg line="clean install -Djboss.home=${jboss.home}" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
 		</exec>
 
 		<ant antfile="${ant.file.media.server.release}/../mobicents-jain-slee/release/build.xml" target="build-ras">
@@ -82,39 +82,39 @@
 		<!-- installs MMS into JBoss AS -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../core">
 			<!-- Passing -DJBOSS_HOME=${basedir}/all/tmp is hack. Look at trunk/servers/media/core/server-spi/pom.xml for maven-dependency-plugin.-->
-			<arg line="clean install -Djboss.home=${jboss.home} -DJBOSS_HOME=${jboss.home}" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -DJBOSS_HOME=${jboss.home}" />
 		</exec>
 		<!-- builds and moves media and mgcp RAs to resources -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/mgcp/mgcp-ra">
-			<arg line="clean install -Djboss.home=${release.dir}/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/mgcp/mgcp-ra">
-			<arg line="-o install -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/resources/mgcp -P release" />
+			<arg line="-o install -P set-svn-revision,release -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/resources/mgcp " />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/msc">
-			<arg line="clean install -Djboss.home=${release.dir}/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/msc">
-			<arg line="-o install -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/resources/media -P release" />
+			<arg line="-o install -P set-svn-revision,release -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/resources/media" />
 		</exec>
 		<!-- builds and moves call-controller2, converged-demo and mms-demo to examples -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/call-controller2">
-			<arg line="clean install -Djboss.home=${release.dir}/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/call-controller2">
-			<arg line="-o install -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/call-controller2 -P release" />
+			<arg line="-o install -P set-svn-revision,release -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/call-controller2" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/converged-demo">
-			<arg line="clean install -Djboss.home=${release.dir}/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/converged-demo">
-			<arg line="-o install -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/converged-demo -P release" />
+			<arg line="-o install -P set-svn-revision,release -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/converged-demo" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/mms-demo">
-			<arg line="clean install -Djboss.home=${release.dir}/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
 		</exec>
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples/mms-demo">
-			<arg line="-o install -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/mms-demo -P release" />
+			<arg line="-o install -P set-svn-revision,release -Djboss.home=${release.dir}/tmp -Drelease.dir=${release.dir}/examples/mms-demo" />
 		</exec>
 		<delete dir="${release.dir}/tmp" />
 	</target>
@@ -123,7 +123,7 @@
 		<delete dir="${release.dir.core}" />
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
 			<!-- Passing -DJBOSS_HOME=${basedir}/all/tmp is hack. Look at trunk/servers/media/core/server-spi/pom.xml for maven-dependency-plugin.-->
-			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp" />
 		</exec>
 
 		<copy overwrite="true" todir="${release.dir.core}/server/mobicents-media-server-${release.version}.sar" >
@@ -154,7 +154,7 @@
 		<antcall target="build-mobicents-jain-slee" />
 
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../core">
-			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
 		</exec>
 
 		<copy overwrite="true" todir="${jboss.home}/server/${jboss.config}/deploy/mobicents-media-server-${release.version}.sar" >
@@ -173,18 +173,18 @@
 		
 		<!-- Build the Controllers and then execute the release profile  -->
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../controllers">
-			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
 		</exec>	
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers">
-			<arg line="-o install -Drelease.name=all -Prelease" />
+			<arg line="-o install -P set-svn-revision,release -Drelease.name=all" />
 		</exec>		
 
 		<!-- Build the Examples and then execute the release profile  -->
 		<exec executable="${mvn.executable}" dir="${media.server.release}/../../examples">
-			<arg line="clean install -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
+			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp"/>
 		</exec>	
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../examples">
-			<arg line="-o install -Drelease.name=all -Prelease" />
+			<arg line="-o install -P set-svn-revision,release -Drelease.name=all" />
 		</exec>
 
 		<delete dir="${release.dir.all}/tmp" />
@@ -258,7 +258,7 @@
 	
 	<target name="test">
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../">
-			<arg line="clean install -Drelease.name=all -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp -P release" />
+			<arg line="clean install -P set-svn-revision,release -Drelease.name=all -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${basedir}/all/tmp" />
 		</exec>
 	</target>
 

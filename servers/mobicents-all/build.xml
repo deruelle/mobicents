@@ -143,17 +143,17 @@
 		<echo>Done copying.</echo>
 		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}">
-			<arg line="clean install -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
+			<arg line="clean install -P set-svn-revision -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/sip-servlets-examples/click-to-call">
-			<arg line="clean install" />
+			<arg line="clean install -P set-svn-revision" />
 		</exec>
 
 		<copy file="${mss.release.dir}/sip-servlets-examples/click-to-call/target/click-to-call-servlet-1.0.war" tofile="${jboss.home}/server/${jboss.config}/deploy/click2call.war" />
 
-		<ant dir="${mss.release.dir}/sip-servlets-management/" antfile="build.xml" target="war">
-		</ant>
+		<ant dir="${mss.release.dir}/sip-servlets-management/" antfile="build.xml" target="war"/>
+
 		<copy file="${mss.release.dir}/sip-servlets-management/build/tmp/sip-servlets-management.war" tofile="${jboss.home}/server/${jboss.config}/deploy/sip-servlets-management.war" />
 
 	</target>
@@ -172,7 +172,7 @@
 
 		<!-- Build the distributable example -->
 		<exec failonerror="true" executable="${mvn.executable}" dir="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable">
-			<arg line="clean install"/>
+			<arg line="clean install -P set-svn-revision"/>
 		</exec>
 		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
 			tofile="${jboss.home}/server/all/conf/dars/mobicents-dar.properties" />

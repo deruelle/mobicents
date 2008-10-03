@@ -33,19 +33,19 @@
 
 	<target name="build-xcap-client" description="">
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xcap-client">
-			<arg line="clean install -Djboss.home=${jboss.home} -P maven-release" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -P maven-release" />
 		</exec>
 	</target>
 
 	<target name="build-xdms" description="">
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xdms">
-			<arg line="clean install -Djboss.home=${jboss.home}" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
 		</exec>
 	</target>
 
 	<target name="build-integrated" description="">
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../integrated">
-			<arg line="clean install -Djboss.home=${jboss.home}" />
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
 		</exec>
 	</target>
 
