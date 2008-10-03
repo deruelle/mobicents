@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>3</version>
+		<version>5</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
