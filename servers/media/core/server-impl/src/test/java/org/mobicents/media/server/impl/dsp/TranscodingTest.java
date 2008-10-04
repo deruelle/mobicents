@@ -45,7 +45,7 @@ public class TranscodingTest {
 
     @Before
     public void setUp() {
-        dsp = new Processor();
+        dsp = new Processor("TranscodingTest");
     }
 
     @After

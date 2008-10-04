@@ -135,11 +135,24 @@ public class LocalConnectionImpl extends BaseConnection {
      * 
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
-    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException {
-        if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-            throw new IllegalStateException("State is " + state);
-        }
-        setState(ConnectionState.OPEN);
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException ,ResourceUnavailableException{
+    	try {
+			this.lockState();
+			if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+				throw new IllegalStateException("State is " + state);
+			}
+				if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+						throw new IllegalStateException("State is " + state);
+					}
+				setState(ConnectionState.OPEN);
+    	} catch (InterruptedException e) {
+			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+			e.printStackTrace();
+			//FIXME: baranowb: shouldnt we close here instead?
+			throw new ResourceUnavailableException(e);
+		} finally {
+			this.releaseState();
+		}
     }
 
     /**
@@ -208,4 +221,5 @@ public class LocalConnectionImpl extends BaseConnection {
     }
 
 }
+
 

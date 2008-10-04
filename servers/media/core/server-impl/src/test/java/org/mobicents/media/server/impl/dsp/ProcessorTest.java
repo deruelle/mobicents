@@ -43,7 +43,7 @@ public class ProcessorTest {
 
     @Before
     public void setUp() {
-        dsp = new Processor();
+        dsp = new Processor("TestProcessor");
     }
 
     @After

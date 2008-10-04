@@ -26,152 +26,161 @@ import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 
 /**
- * Combines several signals for transmission over a single medium. 
- * A demultiplexor completes the process by separating multiplexed signals 
- * from a transmission line. Frequently a multiplexor and demultiplexor are 
- * combined into a single device capable of processing both outgoing and 
- * incoming signals. 
+ * Combines several signals for transmission over a single medium. A
+ * demultiplexor completes the process by separating multiplexed signals from a
+ * transmission line. Frequently a multiplexor and demultiplexor are combined
+ * into a single device capable of processing both outgoing and incoming
+ * signals.
  * 
  * @author Oleg Kulikov
  */
 public class Multiplexer extends AbstractSink implements Runnable {
 
-    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 
-            8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-    
-    private Format[] formats = null;
-    
-    private HashMap<MediaSource, Input> inputs = new HashMap();
-    private Output output;
-    private ArrayList<Buffer> packets = new ArrayList();
-    private Timer timer;
-    private int seq = 0;
-    
-    private Logger logger = Logger.getLogger(Multiplexer.class);
-    
-    public Multiplexer() {
-        output = new Output();
-        timer = new Timer();
-        timer.setListener(this);
-    }
+	private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW,
+			8000, 8, 1);
+	private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW,
+			8000, 8, 1);
+	private final static AudioFormat LINEAR = new AudioFormat(
+			AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN,
+			AudioFormat.SIGNED);
+	private final static AudioFormat DTMF = new AudioFormat(
+			"telephone-event/8000");
 
-    public MediaSource getOutput() {
-        return output;
-    }
+	private Format[] formats = null;
 
-    public Format[] getFormats() {
-        return output.sink !=null ? output.sink.getFormats() :  null;
-    }
-    
-    private void print(Format[] fmts) {
-        if (fmts != null) {
-            for (Format f : fmts) {
-                System.out.println(f);
-            }
-        } else {
-            System.out.println("NULL");
-        }
-    }
+	private HashMap<MediaSource, Input> inputs = new HashMap();
+	private Output output;
+	private ArrayList<Buffer> packets = new ArrayList();
+	private Timer timer;
+	private int seq = 0;
 
-    @Override
-    public void connect(MediaSource source) {
-        Input input = new Input();
-        //input.connect(source);
-        source.connect(input);
-        inputs.put(source, input);
-        reassemblyFormats();
-    }
+	public Multiplexer() {
+		output = new Output();
+		timer = new Timer();
+		timer.setListener(this);
+	}
 
-    @Override
-    public void disconnect(MediaSource source) {
-        Input input = inputs.remove(source);
-        if (input != null) {
-            //input.disconnect(source);
-            source.disconnect(input);
-            reassemblyFormats();
-        }
-    }
+	public MediaSource getOutput() {
+		return output;
+	}
 
-    /**
-     * Reassemblies the list of used formats.
-     * This method is called each time when connected/disconnected source
-     */
-    private void reassemblyFormats() {
-        ArrayList list = new ArrayList();
-        Collection<Input> sources = inputs.values();
-        for (Input input : sources) {
-            Format[] fmts = input.mediaStream != null ? input.mediaStream.getFormats() : null;
-            if (fmts != null) {
-                for (Format format : fmts) {
-                    if (!list.contains(format)) {
-                        list.add(format);
-                    }
-                }
-            }
-        }
+	public Format[] getFormats() {
+		return output.sink != null ? output.sink.getFormats() : null;
+	}
 
-        if (list.size() > 0) {
-            formats = new Format[list.size()];
-            list.toArray(formats);
-        } else {
-            formats = null;
-        }
-    //commonFormats = (Format[]) list.toArray();
-    }
+	private void print(Format[] fmts) {
+		if (fmts != null) {
+			for (Format f : fmts) {
+				System.out.println(f);
+			}
+		} else {
+			System.out.println("NULL");
+		}
+	}
 
-    public boolean isAcceptable(Format fmt) {
-        if (output.sink != null) {
-            return output.sink.isAcceptable(fmt);
-        }
-        return true;
-    }
+	@Override
+	public void connect(MediaSource source) {
+		Input input = new Input();
+		// input.connect(source);
+		source.connect(input);
+		inputs.put(source, input);
+		reassemblyFormats();
+	}
 
-    public void receive(Buffer buffer) {
-    }
+	@Override
+	public void disconnect(MediaSource source) {
+		Input input = inputs.remove(source);
+		if (input != null) {
+			// input.disconnect(source);
+			source.disconnect(input);
+			reassemblyFormats();
+		}
+	}
 
-    class Input extends AbstractSink {
+	/**
+	 * Reassemblies the list of used formats. This method is called each time
+	 * when connected/disconnected source
+	 */
+	private void reassemblyFormats() {
+		ArrayList list = new ArrayList();
+		Collection<Input> sources = inputs.values();
+		for (Input input : sources) {
+			Format[] fmts = input.mediaStream != null ? input.mediaStream
+					.getFormats() : null;
+			if (fmts != null) {
+				for (Format format : fmts) {
+					if (!list.contains(format)) {
+						list.add(format);
+					}
+				}
+			}
+		}
 
-        public boolean isAcceptable(Format fmt) {
-            return true;
-        }
+		if (list.size() > 0) {
+			formats = new Format[list.size()];
+			list.toArray(formats);
+		} else {
+			formats = null;
+		}
+		// commonFormats = (Format[]) list.toArray();
+	}
 
-        public void receive(Buffer buffer) {
-            synchronized (packets) {
-//                if (packets.size() > 2 * inputs.size()) {
-//                    packets.remove(0);
-//                }
-//                System.out.println("Append : " + buffer.getFormat());
-                packets.add(buffer);
-            }
-        }
+	public boolean isAcceptable(Format fmt) {
+		try {
+			if (output.sink != null) {
+				return output.sink.isAcceptable(fmt);
+			}
+		} catch (NullPointerException e) {
+			return false;
+		}
 
-        public Format[] getFormats() {
-            return output.sink != null ? output.sink.getFormats() : null;
-        }
-    }
+		return true;
+	}
 
-    class Output extends AbstractSource {
+	public void receive(Buffer buffer) {
+	}
 
-        public Output() {
-        }
+	class Input extends AbstractSink {
 
-        public void start() {
-            timer.start();
-        }
+		public boolean isAcceptable(Format fmt) {
+			return true;
+		}
 
-        public void stop() {
-            timer.stop();
-        }
+		public void receive(Buffer buffer) {
+			synchronized (packets) {
+				// if (packets.size() > 2 * inputs.size()) {
+				// packets.remove(0);
+				// }
+				// System.out.println("Append : " + buffer.getFormat());
+				packets.add(buffer);
+			}
+		}
 
-        public Format[] getFormats() {
-            return formats;
-        }
-    }
+		public Format[] getFormats() {
+			return output.sink != null ? output.sink.getFormats() : null;
+		}
+	}
 
-    public void run() {
+	class Output extends AbstractSource {
+
+		public Output() {
+		}
+
+		public void start() {
+			timer.start();
+		}
+
+		public void stop() {
+			timer.stop();
+		}
+
+		public Format[] getFormats() {
+			return formats;
+		}
+	}
+
+	public void run() {
+    	try{
         synchronized (packets) {
             if (packets.size() > 0) {
                 Buffer buffer = packets.remove(0);
@@ -184,8 +193,11 @@ public class Multiplexer extends AbstractSink implements Runnable {
                 seq++;
             }
         }
+    	}catch(NullPointerException e)
+    	{
+    		logger.info("Multiplexer : receive operation faild :");
+    		Thread.currentThread().stop();
+    	}
     }
-
 }
-
 

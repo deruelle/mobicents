@@ -24,9 +24,15 @@ import org.mobicents.media.server.impl.AbstractSource;
  */
 public class MixerOutput extends AbstractSource {
     protected void push(Buffer buffer) {
-        if (sink != null) {
-            sink.receive(buffer);
-        }
+    	
+        		if(!super.makeReceive(buffer))
+        		{
+        			//FIXME: baranowb : are we eligible to end this?
+        			//It happens in Timer inside AudioMixer
+        			logger.info("MixerOutput : failed receive operation :");
+    				Thread.currentThread().stop();
+        		}
+    
     }
 
     public void start() {

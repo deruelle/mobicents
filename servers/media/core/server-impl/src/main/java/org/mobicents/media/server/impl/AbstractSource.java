@@ -15,11 +15,13 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.mobicents.media.Buffer;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-
+import org.apache.log4j.Logger;
 /**
  *
  * @author Oleg Kulikov
@@ -28,6 +30,8 @@ public abstract class AbstractSource implements MediaSource {
 
     protected MediaSink sink;
     private List<NotificationListener> listeners = new ArrayList();
+	protected  Logger logger=Logger.getLogger(this.getClass());
+
 
     /**
      * (Non Java-doc).
@@ -77,4 +81,49 @@ public abstract class AbstractSource implements MediaSource {
         }
     }
 
+    /**
+     * Makes delivery on connected sink. 
+     * @param buffer
+     * @return <ul><li><b>true</b> - if delivery was success and can repeat </li><li><b>false</b> - delivery failed due to some error, it should not be repeated</li></ul>
+     */
+    protected boolean makeReceive(Buffer buffer)
+    {
+    	//lets give us a slightest chance
+    	if(sink==null)
+    	{
+    		return false;
+    	}else
+    	{
+    	
+    		try{
+    			if (!sink.isAcceptable(buffer.getFormat())) {
+        			if (logger.isDebugEnabled()) {
+        				logger.debug("xxx Discard " + buffer + ", not acceptable");
+        			}
+        			return true;
+        		}
+
+    			sink.receive(buffer);
+    		}catch(NullPointerException npe)
+    		{
+    			logger.info(" Source : delivery failed, possibly out of sync delivery.");
+    			return false;
+    		}catch(RuntimeException re)
+    		{
+    			
+    			if(logger.isDebugEnabled())
+    			{
+    				logger.debug(" Source : delivery failed, due to unknown error",re);
+    			}else
+    			{
+    				logger.info(" Source : delivery failed, due to unknown error");
+    			}
+    			
+    			return false;
+    		}
+    	}
+    	return true;
+    	
+    }
+    
 }

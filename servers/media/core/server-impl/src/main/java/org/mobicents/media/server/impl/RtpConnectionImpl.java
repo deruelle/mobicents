@@ -86,8 +86,8 @@ public class RtpConnectionImpl extends BaseConnection {
         }
         initRTPSocket();
 
-        inDsp = new Processor();
-        outDsp = new Processor();
+        inDsp = new Processor("InputProcess : "+endpointName+" : "+localAddress+"."+localPort);
+        outDsp = new Processor("OutputProcess : "+endpointName+" : "+localAddress+"."+localPort);
 
         inDsp.getOutput().connect(demux.getInput());
         inDsp.getInput().connect(rtpSocket.getReceiveStream());
@@ -209,6 +209,13 @@ public class RtpConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
      */
     public String getLocalDescriptor() {
+    	
+    	try {
+			this.lockState();
+
+			if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
+				throw new IllegalStateException("State is " + state);
+			}
         if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
             throw new IllegalStateException("State is " + state);
         }
@@ -290,7 +297,15 @@ public class RtpConnectionImpl extends BaseConnection {
         } catch (SdpException e) {
             logger.error("Could not create descriptor", e);
         }
-        return localSDP.toString();
+    	} catch (InterruptedException e) {
+			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+			e.printStackTrace();
+			// FIXME: baranowb: shouldnt we close here instead?
+			// throw new ResourceUnavailableException(e);
+		} finally {
+			this.releaseState();
+		}
+		return localSDP.toString();
     }
 
     /**
@@ -329,7 +344,14 @@ public class RtpConnectionImpl extends BaseConnection {
      * 
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
-    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException {
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException,ResourceUnavailableException {
+    	
+    	try {
+			this.lockState();
+
+			if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+				throw new IllegalStateException("State is " + state);
+			}
         if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
             throw new IllegalStateException("State is " + state);
         }
@@ -382,6 +404,14 @@ public class RtpConnectionImpl extends BaseConnection {
         mux.getOutput().start();
 
         setState(ConnectionState.OPEN);
+    	} catch (InterruptedException e) {
+			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+			e.printStackTrace();
+			// FIXME: baranowb: shouldnt we close here instead?
+			throw new ResourceUnavailableException(e);
+		} finally {
+			this.releaseState();
+		}
     }
 
     /**

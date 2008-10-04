@@ -22,9 +22,30 @@ package org.mobicents.media.server.spi;
  */
 public class ResourceUnavailableException extends Exception {
     
-    /** Creates a new instance of ResourceUnavailableException */
-    public ResourceUnavailableException(String message) {
+    /** Creates a new instance of ResourceUnavailableException 
+     * @param e */
+    public ResourceUnavailableException(String message, InterruptedException e) {
         super(message);
     }
+
+	public ResourceUnavailableException() {
+		super();
+
+	}
+
+	public ResourceUnavailableException(String message, Throwable cause) {
+		super(message, cause);
+
+	}
+
+	public ResourceUnavailableException(String message) {
+		super(message);
+
+	}
+
+	public ResourceUnavailableException(Throwable cause) {
+		super(cause);
+
+	}
     
 }

@@ -94,8 +94,9 @@ public interface Connection extends Serializable {
      * The SDP format is used to encode the parameters of the connection.
      *
      * @param remoteDescriptor the SDP descriptor of the remote party.
+     * @throws ResourceUnavailableException 
      */
-    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException;
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException;
 
     /**
      * Joins localy this and other connections.

@@ -62,6 +62,8 @@ public abstract class BaseConnection implements Connection, NotificationListener
     }
 
     public BaseConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+    	//FIXME: baranowb: this is not required in base - as this is the "atomic operation"
+		//try {
         this.id = genID();
         this.mode = mode;
 
@@ -73,6 +75,13 @@ public abstract class BaseConnection implements Connection, NotificationListener
 
         setLifeTime(lifeTime);
         setState(ConnectionState.NULL);
+		//} catch (InterruptedException e) {
+		//	
+		//	e.printStackTrace();
+		//	throw new ResourceUnavailableException("Failed to acquire lock, possibly server is shutting down?");
+		//} finally {
+		//	this.releaseState();
+		//}
     }
 
     /**
@@ -205,9 +214,7 @@ public abstract class BaseConnection implements Connection, NotificationListener
             cl.onStateChange(this, oldState);
         }
 
-        for (ConnectionListener cl : endpoint.connectionListeners) {
-            cl.onStateChange(this, oldState);
-        }
+       
 
     }
 

@@ -44,7 +44,7 @@ public class Processor implements Serializable {
 
     private final static ArrayList<Codec> codecs = new ArrayList();
     private transient Logger logger = Logger.getLogger(Processor.class);
-    
+    protected String resourceName=null;
 
     static {
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Encoder());
@@ -61,9 +61,10 @@ public class Processor implements Serializable {
     
     private HashMap<String, Codec> selectedCodecs = new HashMap();
 
-    public Processor() {
+    public Processor(String resourceName) {
         input = new Input();
         output = new Output();
+        this.resourceName=resourceName;
     }
 
     /**
@@ -123,7 +124,7 @@ public class Processor implements Serializable {
      */
     private class Output extends AbstractSource {        
         protected boolean connected = false;
-
+        protected int failDeliveryCount=0;
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
@@ -187,47 +188,56 @@ public class Processor implements Serializable {
          * @param buffer the buffer to transmit
          */
         protected void transmit(Buffer buffer) {
+        	
+        	//Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
             // Discard packet silently if output handler is not assigned yet
-            if (sink == null || buffer == null ||buffer.getFormat() == null) {
-                return;
-            }
+  
+        		if (super.sink == null || buffer == null ||buffer.getFormat() == null) {
+        			return;
+        		}
 
-            // perform transcoding if it is needed.
-            // when processor is configured it creates a map of codecs where
-            // for each input format stands a required codec if transcoding really
-            // required
-//            if ((sink instanceof SendStream)) {
-//                System.out.println("f=" + buffer.getFormat() + " codec=" + selectedCodecs.get(buffer.getFormat().toString()));
-//                System.out.println(showCodecMap());
-//            }
-            if (selectedCodecs.containsKey(buffer.getFormat().toString())) {
-                Codec codec = selectedCodecs.get(buffer.getFormat().toString());
-                codec.process(buffer);
-            } 
+        		// perform transcoding if it is needed.
+        		// when processor is configured it creates a map of codecs where
+           	 // for each input format stands a required codec if transcoding really
+        		// required
+//         		   if ((sink instanceof SendStream)) {
+//             		   System.out.println("f=" + buffer.getFormat() + " codec=" + selectedCodecs.get(buffer.getFormat().toString()));
+//              	  System.out.println(showCodecMap());
+//           	 }
+        		if (selectedCodecs.containsKey(buffer.getFormat().toString())) {
+        			Codec codec = selectedCodecs.get(buffer.getFormat().toString());
+        			codec.process(buffer);
+        		} 
             
 
-            // Codec can delay media transition if it has not enouph media
-            // to perform its job. 
-            // It means that Processor should check FLAGS after codec's 
-            // work and discard packet if required
-            if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
-                return;
-            }
+        		// Codec can delay media transition if it has not enouph media
+        		// to perform its job. 
+        		// It means that Processor should check FLAGS after codec's 
+        		// work and discard packet if required
+        		if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
+        			return;
+        		}
 
-            //may be a situation when original format can not be trancoded to 
-            //one of the required output. In this case codec map will have no 
-            //entry for this format. also codec may has no entry in case of when 
-            //transcoding is not required. to differentiate these two cases check
-            //if this format is acceptable by the consumer.
-            if (!sink.isAcceptable(buffer.getFormat())) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("xxx Discard " + buffer + ", not acceptable");
-                }
-                return;
-            }
-
-            //deliver packet to the consumer
-            sink.receive(buffer);
+        		//may be a situation when original format can not be trancoded to 
+        		//one of the required output. In this case codec map will have no 
+        		//entry for this format. also codec may has no entry in case of when 
+        		//transcoding is not required. to differentiate these two cases check
+        		//if this format is acceptable by the consumer.
+        		
+        		//deliver packet to the consumer
+        		//sink.receive(buffer);
+        		if(!super.makeReceive(buffer))
+        		{
+        			//This happens/should happen on disconnect. So lets just dump some info
+        			//Two case :
+        			//****input is from RtpSocket.ReceiveStream
+        			//****input is from Output from another Processor
+        			if(logger.isDebugEnabled())
+        			{
+        				logger.debug("Processor : Output : "+resourceName+" :buffer delivery failed. ");
+        			}
+        		}
+        	
             
         }
     }
@@ -244,6 +254,7 @@ public class Processor implements Serializable {
             return contains(formats, format);
         }
 
+        //FIXME: baranowb: why this is synced ?
         public synchronized void receive(Buffer buffer) {
             output.transmit(buffer);
         }

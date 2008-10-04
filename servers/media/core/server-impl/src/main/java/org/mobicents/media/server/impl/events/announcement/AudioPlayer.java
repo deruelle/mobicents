@@ -198,8 +198,13 @@ public class AudioPlayer extends AbstractSource implements Runnable {
                 buffer.setEOM(false);
                 buffer.setSequenceNumber(seq++);
 
-                if (sink != null) {
-                    sink.receive(buffer);
+                //if (sink != null) {
+                    //sink.receive(buffer);
+                //}
+                if(!super.makeReceive(buffer))
+                {
+                	logger.info("AudioPlayer : failed to deliver buffer: Stoping");
+                	this.stop();
                 }
 
             }

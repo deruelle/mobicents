@@ -247,6 +247,8 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 } catch (IOException ex) {
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+                } catch (ResourceUnavailableException ex) {
+                    setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 }
             }
         }

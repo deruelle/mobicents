@@ -15,6 +15,8 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
+
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -28,6 +30,7 @@ public abstract class AbstractSink implements MediaSink {
 
     protected MediaSource mediaStream;
     private List<NotificationListener> listeners = new ArrayList();
+    protected Logger logger=Logger.getLogger(this.getClass());
 
     /**
      * (Non Java-doc).
