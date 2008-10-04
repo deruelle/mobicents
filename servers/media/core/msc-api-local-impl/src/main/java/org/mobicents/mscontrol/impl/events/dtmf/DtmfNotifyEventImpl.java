@@ -27,7 +27,9 @@
 
 package org.mobicents.mscontrol.impl.events.dtmf;
 
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
 
 /**
  *
@@ -35,7 +37,6 @@ import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
  */
 public class DtmfNotifyEventImpl implements MsDtmfNotifyEvent {
 
-    private final static String EVENT_ID = "org.mobicents.slee.media.dtmf.DTMF";
     private String sequence;
     private Object source;
     
@@ -52,8 +53,8 @@ public class DtmfNotifyEventImpl implements MsDtmfNotifyEvent {
         return source;
     }
 
-    public String getEventID() {
-        return EVENT_ID;
+    public MsEventIdentifier getEventID() {
+        return DTMF.TONE;
     }
 
 }

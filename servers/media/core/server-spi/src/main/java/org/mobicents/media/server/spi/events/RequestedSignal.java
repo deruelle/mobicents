@@ -34,5 +34,5 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface RequestedSignal extends Serializable {
-    public String getID();    
+    public EventIdentifier getID();    
 }

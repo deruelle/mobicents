@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol;
 
 import java.io.Serializable;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 
 
 /**
@@ -29,6 +30,6 @@ import java.io.Serializable;
 public interface MsNotifyEvent extends Serializable {
 
 	public Object getSource();
-	public String getEventID();
+	public MsEventIdentifier getEventID();
 
 }

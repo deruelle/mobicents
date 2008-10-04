@@ -11,14 +11,10 @@
  */
 package org.mobicents.examples.media.dtmf;
 
-import java.util.Date;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
-import javax.slee.Address;
-import javax.slee.AddressPlan;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
@@ -26,10 +22,6 @@ import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 
-import javax.slee.facilities.TimerEvent;
-import javax.slee.facilities.TimerFacility;
-import javax.slee.facilities.TimerOptions;
-import javax.slee.facilities.TimerPreserveMissed;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
@@ -72,7 +64,6 @@ public abstract class DtmfDemoSbb implements Sbb {
     private final static String DTMF_8 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf8.wav";
     private final static String DTMF_9 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf9.wav";
     private MsProvider msProvider;
-    private TimerFacility timerFacility;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
     private SbbContext sbbContext;
     private Logger logger = Logger.getLogger(DtmfDemoSbb.class);
@@ -135,14 +126,9 @@ public abstract class DtmfDemoSbb implements Sbb {
         return null;
     }
 
-    public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-        logger.info("Initializing DTMF detector");
-        this.initDtmfDetector(getConnection());
-    }
-
     public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
         MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
-        MsLink link = (MsLink)evt.getSource();
+        MsLink link = (MsLink) evt.getSource();
         String seq = event.getSequence();
         if (seq.equals("0")) {
             play(DTMF_0, link);
@@ -169,32 +155,19 @@ public abstract class DtmfDemoSbb implements Sbb {
     }
 
     private void play(String url, MsLink link) {
-        MsEventFactory eventFactory = msProvider.getEventFactory();        
-        MsPlayRequestedSignal play = null;
-        try {
-            play = (MsPlayRequestedSignal) 
-                eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
-            play.setURL(url);
-            System.out.println("PLAY signal=" + play);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        
-        MsRequestedEvent onCompleted = null;
-        MsRequestedEvent onFailed = null;
-        
-        try {
-            onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
-            onCompleted.setEventAction(MsEventAction.NOTIFY);
+        MsEventFactory eventFactory = msProvider.getEventFactory();
+        MsPlayRequestedSignal play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+        play.setURL(url);
 
-            onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
-            onFailed.setEventAction(MsEventAction.NOTIFY);
-        } catch (ClassNotFoundException e) {
-        }
-        
+        MsRequestedEvent onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+        onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+        MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+        onFailed.setEventAction(MsEventAction.NOTIFY);
+
         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
-        
+
         link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
     }
 
@@ -202,17 +175,14 @@ public abstract class DtmfDemoSbb implements Sbb {
         MsLink link = (MsLink) evt.getSource();
         MsEndpoint ivr = link.getEndpoints()[1];
 
-        try {
-            MsEventFactory factory = msProvider.getEventFactory();
-            MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
-            MsRequestedSignal[] signals = new MsRequestedSignal[]{};
-            MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
-            ivr.execute(signals, events, link);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MsEventFactory factory = msProvider.getEventFactory();
+        MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+        MsRequestedSignal[] signals = new MsRequestedSignal[]{};
+        MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
+        
+        ivr.execute(signals, events, link);
     }
-    
+
     @SuppressWarnings("static-access")
     private void initDtmfDetector(MsConnection connection) {
         MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
@@ -241,7 +211,7 @@ public abstract class DtmfDemoSbb implements Sbb {
         }
         return null;
     }
-    
+
     /**
      * CMP field accessor
      * 
@@ -282,17 +252,6 @@ public abstract class DtmfDemoSbb implements Sbb {
             }
         }
         return null;
-    }
-
-    private void startTimer(int duration) throws NamingException {
-        Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-        timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
-
-        TimerOptions options = new TimerOptions(false, 1000 * duration, TimerPreserveMissed.NONE);
-        Address address = new Address(AddressPlan.IP, "127.0.0.1");
-        Date now = new Date();
-
-        timerFacility.setTimer(this.getConnectionActivityContext(), address, now.getTime() + 1000 * duration, options);
     }
 
     public void setSbbContext(SbbContext sbbContext) {

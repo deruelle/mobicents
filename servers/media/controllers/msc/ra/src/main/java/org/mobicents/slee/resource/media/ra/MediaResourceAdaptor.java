@@ -432,20 +432,20 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
         return sleeEndpoint;
     }
 
+    // -----------------------------------------------------------------------------
+    // NOTIFY events
+    // -----------------------------------------------------------------------------
+    
     public void update(MsNotifyEvent event) {
-        System.out.println("Event=" + event.getEventID() + " source=" + event.getSource());
         Object source = event.getSource();
-        ActivityHandle handle = (ActivityHandle) handlers.get(source.toString());
-        System.out.println("Handle" + handle);
-        
-        fireEvent(event.getEventID(), handle, event);
+        ActivityHandle handle = (ActivityHandle) handlers.get(source.toString());        
+        fireEvent(event.getEventID().getFqn(), handle, event);
     }
 
     // -----------------------------------------------------------------------------
     // Link events
     // -----------------------------------------------------------------------------
     public void linkCreated(MsLinkEvent evt) {
-        System.out.println("Receive evt=" + evt.getEventID());
         MsLink link = evt.getSource();
         MsLinkActivityHandle handle = new MsLinkActivityHandle(link.getId());
         activities.put(handle, link);
@@ -480,7 +480,6 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
     // Connection events
     // -----------------------------------------------------------------------------
     public void connectionCreated(MsConnectionEvent evt) {
-        System.out.println("Receive " + evt.getEventID() + " on " + evt.getConnection());
         MsConnection connection = evt.getConnection();
         MsConnectionActivityHandle handle = new MsConnectionActivityHandle(connection.getId());
         

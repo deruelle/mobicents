@@ -98,6 +98,7 @@ public interface MsProvider extends Serializable {
     /**
      * Creates a new instance of MsSignalGenerator for given EndpointName
      * 
+     * @depricated
      * @param endpointName
      * @return
      */
@@ -106,8 +107,7 @@ public interface MsProvider extends Serializable {
     /**
      * Creates a new instance of SignalDetector for given EndpointName
      * 
-     * @param endpointName
-     * @return
+     * @depricated
      */
     public MsSignalDetector getSignalDetector(String endpointName);
 

@@ -28,6 +28,11 @@
 package org.mobicents.media.server.spi.events;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import org.mobicents.media.server.spi.events.announcement.AnnouncementPkgFactory;
+import org.mobicents.media.server.spi.events.dtmf.DtmfPkgFactory;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
  *
@@ -35,43 +40,35 @@ import java.io.Serializable;
  */
 public class EventFactory implements Serializable {
     
-    private String toCapital(String text) {
-        return text.substring(0, 1).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+    private HashMap<String,PkgFactory> pkgFactories = new HashMap();
+    
+    public EventFactory() {
+        pkgFactories.put(Announcement.PACKAGE_NAME, new AnnouncementPkgFactory());
+        pkgFactories.put(DTMF.PACKAGE_NAME, new DtmfPkgFactory());
     }
     
-    private String className(String eventID, String suffix) {
-        eventID = eventID.replace("media.events", "media.server.spi.events");
-        String tokens[] = eventID.split("\\.");
-        
-        String packageName = "";
-        for (int i = 0; i < tokens.length - 1; i++) {
-            packageName += tokens[i] + ".";
+    public RequestedSignal createRequestedSignal(String packageName, String signalName) {
+        PkgFactory factory = pkgFactories.get(packageName);
+        if (factory == null) {
+            throw new IllegalArgumentException("Unknown package: " + packageName);
         }
-        
-        String cls = toCapital(tokens[tokens.length - 1]) + suffix;
-        return packageName + cls;
+        RequestedSignal s = factory.createRequestedSignal(signalName);
+        if (s == null) {
+            throw new IllegalArgumentException("Unknown signal name: " + signalName);
+        }
+        return s;
     }
-    
-    public RequestedSignal createRequestedSignal(String signalID) throws ClassNotFoundException {
-        String className = this.className(signalID, "RequestedSignal");
-        ClassLoader classLoader = EventFactory.class.getClassLoader();
-        Class cls = classLoader.loadClass(className);
-        try {
-            return (RequestedSignal) cls.newInstance();
-        } catch (Exception e) {
-            return null;
+
+    public RequestedEvent createRequestedEvent(String packageName, String eventName) {
+        PkgFactory factory = pkgFactories.get(packageName);
+        if (factory == null) {
+            throw new IllegalArgumentException("Unknown package: " + packageName);
         }
-    }
-    
-    public RequestedEvent createRequestedEvent(String eventID) throws ClassNotFoundException {
-        String className = this.className(eventID, "RequestedEvent");
-        ClassLoader classLoader = EventFactory.class.getClassLoader();
-        Class cls = classLoader.loadClass(className);
-        try {
-            return (RequestedEvent) cls.newInstance();
-        } catch (Exception e) {
-            return null;
+        RequestedEvent s = factory.createRequestedEvent(eventName);
+        if (s == null) {
+            throw new IllegalArgumentException("Unknown signal name: " + eventName);
         }
+        return s;
     }
     
 }

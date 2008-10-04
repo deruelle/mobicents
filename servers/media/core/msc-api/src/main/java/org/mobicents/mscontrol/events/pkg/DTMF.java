@@ -28,11 +28,13 @@
 package org.mobicents.mscontrol.events.pkg;
 
 import java.io.Serializable;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public interface DTMF extends Serializable {
-    public final static String TONE = "org.mobicents.media.events.dtmf.DTMF";
+    public final static String PACKAGE_NAME = "org.mobicents.media.events.dtmf";
+    public final static MsEventIdentifier TONE = new MsEventID(PACKAGE_NAME,"DTMF");
 }

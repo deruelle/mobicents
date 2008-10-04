@@ -28,7 +28,9 @@
 package org.mobicents.media.server.spi.events.dtmf;
 
 import org.mobicents.media.server.spi.events.AbstractRequestedEvent;
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
  *
@@ -36,42 +38,15 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class DtmfRequestedEvent extends AbstractRequestedEvent {
     
-    private String eventID;
     private String mask;
     
-    public DtmfRequestedEvent(String eventID) {
-        this.eventID = eventID;
-    }
     
-    public String getID() {
-        return eventID;
+    public EventIdentifier getID() {
+        return DTMF.DTMF;
     }
 
     public boolean matches(NotifyEvent event) {
-        if (!(event instanceof DtmfEvent)) {
-            return false;
-        }
-        DtmfEvent dtmfEvent = (DtmfEvent) event;
-        /*switch (eventID) {
-            case DTMF_0    : return dtmfEvent.getSequence().matches("0");
-            case DTMF_1    : return dtmfEvent.getSequence().matches("1");
-            case DTMF_2    : return dtmfEvent.getSequence().matches("2");
-            case DTMF_3    : return dtmfEvent.getSequence().matches("3");
-            case DTMF_4    : return dtmfEvent.getSequence().matches("4");
-            case DTMF_5    : return dtmfEvent.getSequence().matches("5");
-            case DTMF_6    : return dtmfEvent.getSequence().matches("6");
-            case DTMF_7    : return dtmfEvent.getSequence().matches("7");
-            case DTMF_8    : return dtmfEvent.getSequence().matches("8");
-            case DTMF_9    : return dtmfEvent.getSequence().matches("9");
-            case DTMF_STAR : return dtmfEvent.getSequence().matches("*");
-            case DTMF_HASH : return dtmfEvent.getSequence().matches("#");
-            case DTMF_SEQ  : {
-                //TODO collect digit and check seq
-                return false;
-            }
-        }
-         */ 
-        return false;
+        return event.getEventID().equals(DTMF.DTMF);
     }
     
     /**

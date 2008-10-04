@@ -27,12 +27,16 @@
 
 package org.mobicents.mscontrol.events.pkg;
 
+import org.mobicents.mscontrol.events.MsEventIdentifier;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public class MsAnnouncement {
-    public final static String PLAY = "org.mobicents.media.events.announcement.PLAY";
-    public final static String COMPLETED = "org.mobicents.media.events.announcement.COMPLETED";
-    public final static String FAILED = "org.mobicents.media.events.announcement.FAILED";    
+    public final static String PACKAGE_NAME = "org.mobicents.media.events.announcement";
+    
+    public final static MsEventIdentifier PLAY = new MsEventID(PACKAGE_NAME,"PLAY");
+    public final static MsEventIdentifier COMPLETED = new MsEventID(PACKAGE_NAME,"COMPLETED");
+    public final static MsEventIdentifier FAILED = new MsEventID(PACKAGE_NAME,"FAILED");    
 }

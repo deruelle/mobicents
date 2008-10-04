@@ -33,7 +33,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
-import org.mobicents.media.server.spi.events.Announcement;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
  *

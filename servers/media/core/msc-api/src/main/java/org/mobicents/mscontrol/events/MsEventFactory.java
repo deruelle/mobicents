@@ -34,6 +34,6 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface MsEventFactory extends Serializable {
-    public MsRequestedEvent createRequestedEvent(String eventID) throws ClassNotFoundException;
-    public MsRequestedSignal createRequestedSignal(String eventID) throws ClassNotFoundException;
+    public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID);
+    public MsRequestedSignal createRequestedSignal(MsEventIdentifier eventID);
 }

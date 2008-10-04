@@ -34,7 +34,7 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface MsRequestedEvent extends Serializable {
-    public String getID(); 
+    public MsEventIdentifier getID(); 
     
     public MsEventAction getAction();
     public void setEventAction(MsEventAction action);

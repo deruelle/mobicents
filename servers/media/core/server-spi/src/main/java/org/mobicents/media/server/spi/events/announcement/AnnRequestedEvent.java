@@ -28,6 +28,7 @@
 package org.mobicents.media.server.spi.events.announcement;
 
 import org.mobicents.media.server.spi.events.AbstractRequestedEvent;
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -36,14 +37,14 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class AnnRequestedEvent extends AbstractRequestedEvent {
 
-    private String eventID;
+    private EventIdentifier eventID;
     private String url;
     
-    public AnnRequestedEvent(String eventID) {
+    public AnnRequestedEvent(EventIdentifier eventID) {
         this.eventID = eventID;
     }
     
-    public String getID() {
+    public EventIdentifier getID() {
         return eventID;
     }
 

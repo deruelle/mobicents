@@ -219,7 +219,7 @@
 	<event-definition>
 		<description>Play annoucement.</description>
 		<event-type-name>
-			org.mobicents.slee.media.announcement.PLAY
+			org.mobicents.media.events.announcement.PLAY
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -230,7 +230,7 @@
 	<event-definition>
 		<description>Complete annoucement.</description>
 		<event-type-name>
-			org.mobicents.slee.media.announcement.COMPLETED
+			org.mobicents.media.events.announcement.COMPLETED
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -241,7 +241,7 @@
 	<event-definition>
 		<description>Failed annoucement.</description>
 		<event-type-name>
-			org.mobicents.slee.media.announcement.FAILED
+			org.mobicents.media.events.announcement.FAILED
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -254,7 +254,7 @@
 	<event-definition>
 		<description></description>
 		<event-type-name>
-			org.mobicents.slee.media.dtmf.DTMF
+			org.mobicents.media.events.dtmf.DTMF
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -267,7 +267,7 @@
 	<event-definition>
 		<description></description>
 		<event-type-name>
-			org.mobicents.slee.media.au.PLAY
+			org.mobicents.media.events.au.PLAY
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -278,18 +278,18 @@
 	<event-definition>
 		<description></description>
 		<event-type-name>
-			org.mobicents.slee.media.au.PLAY_RECORD
+			org.mobicents.media.events.au.PLAY_RECORD
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
 		<event-class-name>
-			org.mobicents.mscontrol.MsNotifyEvent
+			org.mobicents.media.events.au.MsNotifyEvent
 		</event-class-name>
 	</event-definition>
 	<event-definition>
 		<description>Complete.</description>
 		<event-type-name>
-			org.mobicents.slee.media.au.COMPLETE
+			org.mobicents.media.events.au.COMPLETE
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
@@ -300,7 +300,7 @@
 	<event-definition>
 		<description>Failed.</description>
 		<event-type-name>
-			org.mobicents.slee.media.au.FAILED
+			org.mobicents.media.events.au.FAILED
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>

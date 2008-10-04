@@ -35,7 +35,7 @@ import org.mobicents.media.server.spi.NotificationListener;
  * @author Oleg Kulikov
  */
 public interface RequestedEvent extends Serializable {
-    public String getID();    
+    public EventIdentifier getID();    
     
     public void setHandler(NotificationListener listener);
     public NotificationListener getHandler();

@@ -31,6 +31,7 @@ import java.io.Serializable;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.dtmf.DtmfEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.impl.MsNotifyEventImpl;
 import org.mobicents.mscontrol.impl.events.dtmf.DtmfNotifyEventImpl;
 
@@ -40,10 +41,37 @@ import org.mobicents.mscontrol.impl.events.dtmf.DtmfNotifyEventImpl;
  */
 public class EventParser implements Serializable {
     public MsNotifyEvent parse(Object source, NotifyEvent evt) {
-        if (evt.getEventID().equals(org.mobicents.mscontrol.events.pkg.DTMF.TONE)) {
+        if (evt.getEventID().equals(org.mobicents.media.server.spi.events.pkg.DTMF.DTMF)) {
             DtmfEvent event = (DtmfEvent) evt;
             return new DtmfNotifyEventImpl(source, event.getSequence());
         }
-        return new MsNotifyEventImpl(source, evt.getEventID().replace("media.events", "slee.media"));
+        String packageName = evt.getEventID().getPackageName();
+        String eventName = evt.getEventID().getEventName();
+        
+        return new MsNotifyEventImpl(source, new EventID(packageName, eventName));
+    }
+    
+    private class EventID implements MsEventIdentifier {
+
+        private String packageName;
+        private String eventName;
+        
+        protected EventID(String packageName, String eventName) {
+            this.packageName = packageName;
+            this.eventName = eventName;
+        }
+        
+        public String getPackageName() {
+            return packageName;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+        public String getFqn() {
+            return packageName + "." + eventName;
+        }
+        
     }
 }

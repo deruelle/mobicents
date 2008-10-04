@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.spi.events.test;
 
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -32,7 +33,7 @@ public class SpectrumEvent implements NotifyEvent {
         return spectra;
     }
 
-    public String getEventID() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public EventIdentifier getEventID() {
+        return org.mobicents.media.server.spi.events.pkg.Test.SPECTRA;
     }
 }

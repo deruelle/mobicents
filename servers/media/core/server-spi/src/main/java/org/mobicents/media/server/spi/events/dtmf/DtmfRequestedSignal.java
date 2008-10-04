@@ -27,7 +27,9 @@
 
 package org.mobicents.media.server.spi.events.dtmf;
 
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.RequestedSignal;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
  *
@@ -37,8 +39,8 @@ public class DtmfRequestedSignal implements RequestedSignal {
 
     private String tone;
     
-    public String getID() {
-        return "org.mobicents.media.events.dtmf.DTMF";
+    public EventIdentifier getID() {
+        return DTMF.DTMF;
     }
 
     public void setTone(String tone) {

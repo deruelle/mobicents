@@ -38,9 +38,9 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
 public class PackageImpl implements EventPackage {
 
     public AbstractSignal getSignal(RequestedSignal requestedSignal) {
-        if (requestedSignal.getID().endsWith("CONGESTION")) {
-            return new CongestionSignal();
-        } 
+//        if (requestedSignal.getID().endsWith("CONGESTION")) {
+//            return new CongestionSignal();
+//        } 
         return null;
     }
 

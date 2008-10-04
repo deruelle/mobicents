@@ -25,29 +25,17 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.mscontrol.impl.events.dtmf;
+package org.mobicents.media.server.spi.events.pkg;
 
-import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedSignal;
+import java.io.Serializable;
+import org.mobicents.media.server.spi.events.EventIdentifier;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class DtmfFRequestedSignalImpl implements MsDtmfRequestedSignal {
-
-    private final static String EVENT_ID = "org.mobicents.media.events.dtmf.DTMF";
-    private String tone;
+public interface DTMF extends Serializable {
+    public final static String PACKAGE_NAME = "org.mobicents.media.events.dtmf";
     
-    public void setTone(String tone) {
-        this.tone = tone;
-    }
-
-    public String getTone() {
-        return tone;
-    }
-
-    public String getID() {
-        return EVENT_ID;
-    }
-
+    public final static EventIdentifier DTMF = new EventID(PACKAGE_NAME, "DTMF");
 }

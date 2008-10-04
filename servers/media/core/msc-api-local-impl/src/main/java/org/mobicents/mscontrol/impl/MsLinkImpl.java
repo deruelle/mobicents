@@ -41,6 +41,8 @@ import org.mobicents.mscontrol.MsLinkState;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsSession;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.impl.events.EventParser;
 
 /**
@@ -65,6 +67,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private EventParser eventParser = new EventParser();
     private int permits = 0;
 
+    private PendingQueue[] pendingQueue = new PendingQueue[2];
+    
     public String getId() {
         return id;
     }
@@ -153,6 +157,21 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
         MsProviderImpl.submit(tx);
     }
 
+    private PendingQueue getQueue(String endpointName) {
+        if (endpoints[0].getLocalName().equals(endpointName)) {
+            return pendingQueue[0];
+        }
+        return pendingQueue[1];        
+    }
+    
+    public void append(MsRequestedSignal requestedSignal, String endpointName) {
+        getQueue(endpointName).append(requestedSignal);
+    }
+    
+    public void append(MsRequestedEvent requestedEvent, String endpointName) {
+        getQueue(endpointName).append(requestedEvent);
+    }
+    
     @Override
     public String toString() {
         return id;
@@ -182,11 +201,13 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
                 connections[0].addListener(link);
 
                 endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint());
+                pendingQueue[0] = new PendingQueue(connections[0].getEndpoint(), connections[0].getId());
 
                 connections[1] = createConnection(epnB, 1);
                 connections[1].addListener(link);
 
                 endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint());
+                pendingQueue[1] = new PendingQueue(connections[1].getEndpoint(), connections[1].getId());
 
                 connections[0].setOtherParty(connections[1]);
             } catch (NamingException e) {

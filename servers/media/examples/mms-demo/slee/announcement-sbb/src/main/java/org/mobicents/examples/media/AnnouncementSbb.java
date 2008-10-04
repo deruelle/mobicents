@@ -105,8 +105,8 @@ public abstract class AnnouncementSbb implements Sbb {
 
     public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
         logger.error("Link failed");
-    }    
-    
+    }
+
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
         logger.info("Announcement complete: " + (this.getIndex() - 1));
         MsLink link = this.getLink();
@@ -128,35 +128,27 @@ public abstract class AnnouncementSbb implements Sbb {
     public void playNext(MsLink link) {
         String url = (String) this.getSequence().get(this.getIndex());
         MsEventFactory eventFactory = msProvider.getEventFactory();
-        
+
         MsPlayRequestedSignal play = null;
-        try {
-            play = (MsPlayRequestedSignal) 
-                eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
-            play.setURL(url);
-            System.out.println("PLAY signal=" + play);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        
+        play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+        play.setURL(url);
+        System.out.println("PLAY signal=" + play);
+
         MsRequestedEvent onCompleted = null;
         MsRequestedEvent onFailed = null;
-        
-        try {
-            onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
-            onCompleted.setEventAction(MsEventAction.NOTIFY);
 
-            onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
-            onFailed.setEventAction(MsEventAction.NOTIFY);
-        } catch (ClassNotFoundException e) {
-        }
-        
+        onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+        onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+        onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+        onFailed.setEventAction(MsEventAction.NOTIFY);
+
         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
-        
+
         System.out.println("EXECUTING PLAY");
         link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
-        setIndex(getIndex()+1);
+        setIndex(getIndex() + 1);
     }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {

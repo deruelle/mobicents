@@ -25,15 +25,19 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.spi.events;
+package org.mobicents.media.server.spi.events.pkg;
+
+import org.mobicents.media.server.spi.events.EventIdentifier;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public interface Announcement {
-    public final static String PLAY = "org.mobicents.media.events.announcement.PLAY";
-    public final static String STARTED ="org.mobicents.media.events.announcement.STARTED";
-    public final static String COMPLETED = "org.mobicents.media.events.announcement.COMPLETED";
-    public final static String FAILED = "org.mobicents.media.events.announcement.FAILED";
+    public final static String PACKAGE_NAME = "org.mobicents.media.events.announcement";
+    
+    public final static EventIdentifier PLAY = new EventID(PACKAGE_NAME, "PLAY");
+    public final static EventIdentifier STARTED = new EventID(PACKAGE_NAME, "STARTED");
+    public final static EventIdentifier COMPLETED = new EventID(PACKAGE_NAME, "COMPLETED");
+    public final static EventIdentifier FAILED = new EventID(PACKAGE_NAME, "FAILED");
 }

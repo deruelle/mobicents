@@ -15,7 +15,7 @@
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 
 	<properties>
-		<maven.test.skip>false</maven.test.skip>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
 	<dependencies>

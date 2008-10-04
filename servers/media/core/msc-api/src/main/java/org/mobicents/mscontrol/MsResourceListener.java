@@ -19,14 +19,10 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- *
+ * @deprecated 
  * @author Oleg Kulikov
  * @author Amit Bhayani
  */
 public interface MsResourceListener extends Serializable {
     public void update(MsNotifyEvent notifyEvent);
-    
-    public void resourceCreated(MsNotifyEvent notifyEvent);
-    
-    public void resourceInvalid(MsNotifyEvent notifyEvent);
 }

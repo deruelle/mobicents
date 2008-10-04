@@ -24,12 +24,12 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.mscontrol.impl.events;
 
 import org.mobicents.media.server.spi.events.EventFactory;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 
 /**
@@ -38,29 +38,24 @@ import org.mobicents.mscontrol.events.MsRequestedEvent;
  */
 public class DefaultRequestedEvent extends BaseRequestedEvent implements MsRequestedEvent {
 
-    private String id;
+    private MsEventIdentifier id;
     private MsEventAction action;
-    
-    public String getID() {
+
+    public MsEventIdentifier getID() {
         return id;
     }
-    
-    public void setID(String id) {
+
+    public void setID(MsEventIdentifier id) {
         this.id = id;
     }
-    
+
     @Override
     public RequestedEvent convert() {
         EventFactory factory = new EventFactory();
         RequestedEvent evt;
-        try {
-            evt = factory.createRequestedEvent(id); 
-            return evt;
-        } catch (ClassNotFoundException ex) {
-           return null;
-        }
+        evt = factory.createRequestedEvent(id.getPackageName(), id.getEventName());
+        return evt;
     }
-
 
     public MsEventAction getAction() {
         return action;
@@ -69,5 +64,4 @@ public class DefaultRequestedEvent extends BaseRequestedEvent implements MsReque
     public void setEventAction(MsEventAction action) {
         this.action = action;
     }
-
 }

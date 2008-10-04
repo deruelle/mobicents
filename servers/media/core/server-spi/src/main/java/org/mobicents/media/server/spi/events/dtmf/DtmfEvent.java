@@ -27,7 +27,8 @@
 
 package org.mobicents.media.server.spi.events.dtmf;
 
-import org.mobicents.media.server.spi.events.DTMF;
+import org.mobicents.media.server.spi.events.EventIdentifier;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
@@ -51,8 +52,8 @@ public class DtmfEvent implements NotifyEvent {
         return seq;
     }
 
-    public String getEventID() {
-        return DTMF.TONE;
+    public EventIdentifier getEventID() {
+        return DTMF.DTMF;
     }
 
 }

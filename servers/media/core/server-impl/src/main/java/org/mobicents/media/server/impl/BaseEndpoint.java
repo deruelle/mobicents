@@ -411,11 +411,11 @@ public abstract class BaseEndpoint implements Endpoint {
 
     private AbstractSignal getSignal(RequestedSignal signal) throws UnknownSignalException, FacilityException {
         try {
-            EventPackage eventPackage = EventPackageFactory.load(this.getPackageName(signal.getID()));
+            EventPackage eventPackage = EventPackageFactory.load(signal.getID().getPackageName());
             return eventPackage.getSignal(signal);
         } catch (ClassNotFoundException e) {
             logger.error("Wrong package name: ", e);
-            throw new UnknownSignalException(signal.getID());
+            throw new UnknownSignalException(signal.getID().getFQN());
         } catch (Exception e) {
             logger.error("Unexpected error: ", e);
             throw new FacilityException(e.getMessage());
@@ -429,6 +429,7 @@ public abstract class BaseEndpoint implements Endpoint {
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+        
         connection.detect(null);
         for (int i = 0; i < events.length; i++) {
             connection.detect(events[i]);

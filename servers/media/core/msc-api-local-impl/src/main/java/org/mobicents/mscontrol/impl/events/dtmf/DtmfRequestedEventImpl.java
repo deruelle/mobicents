@@ -24,13 +24,15 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.mscontrol.impl.events.dtmf;
 
+import org.mobicents.media.server.spi.events.EventFactory;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.dtmf.DtmfRequestedEvent;
 import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
 import org.mobicents.mscontrol.impl.events.BaseRequestedEvent;
 
 /**
@@ -42,7 +44,7 @@ public class DtmfRequestedEventImpl extends BaseRequestedEvent implements MsDtmf
     private final static String EVENT_ID = "org.mobicents.media.events.dtmf.DTMF";
     private String pattern;
     private MsEventAction action;
-    
+
     public String getPattern() {
         return pattern;
     }
@@ -51,8 +53,8 @@ public class DtmfRequestedEventImpl extends BaseRequestedEvent implements MsDtmf
         this.pattern = pattern;
     }
 
-    public String getID() {
-        return EVENT_ID;
+    public MsEventIdentifier getID() {
+        return DTMF.TONE;
     }
 
     public MsEventAction getAction() {
@@ -65,9 +67,15 @@ public class DtmfRequestedEventImpl extends BaseRequestedEvent implements MsDtmf
 
     @Override
     public RequestedEvent convert() {
-        DtmfRequestedEvent evt = new DtmfRequestedEvent(EVENT_ID);
-        evt.setDigitMask(pattern);
-        return evt;
+        EventFactory factory = new EventFactory();
+        try {
+            DtmfRequestedEvent evt = (DtmfRequestedEvent) factory.createRequestedEvent(
+                    DTMF.TONE.getPackageName(), DTMF.TONE.getEventName());
+            evt.setDigitMask(pattern);
+            return evt;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-
 }

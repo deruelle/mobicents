@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.util.ArrayList;
 import java.util.List;
 import org.mobicents.media.MediaSink;
@@ -29,7 +28,6 @@ public abstract class AbstractSource implements MediaSource {
 
     protected MediaSink sink;
     private List<NotificationListener> listeners = new ArrayList();
-    private QueuedExecutor eventQueue = new QueuedExecutor();
 
     /**
      * (Non Java-doc).

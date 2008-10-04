@@ -27,66 +27,43 @@
 
 package org.mobicents.mscontrol.impl;
 
+import java.util.HashMap;
 import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
-import org.mobicents.mscontrol.impl.events.DefaultRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
+import org.mobicents.mscontrol.impl.events.MsPackage;
+import org.mobicents.mscontrol.impl.events.announcement.MsAnnouncementPackage;
+import org.mobicents.mscontrol.impl.events.dtmf.DtmfPackage;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public class MsEventFactoryImpl implements MsEventFactory {
-    private String toCapital(String text) {
-        return text.substring(0, 1).toUpperCase() + text.substring(1, text.length()).toLowerCase();
+    
+    private static HashMap<String, MsPackage> packages = new HashMap();
+    static {
+        packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
+        packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());
     }
     
-    private String className(String eventID, String suffix) {
-        eventID = eventID.replace("media.events", "mscontrol.impl.events");
-        String tokens[] = eventID.split("\\.");
-        
-        String packageName = "";
-        for (int i = 0; i < tokens.length - 1; i++) {
-            packageName += tokens[i] + ".";
+    public MsRequestedSignal createRequestedSignal(MsEventIdentifier signalID) {
+        MsPackage pkg = packages.get(signalID.getPackageName());
+        if (pkg != null) {
+            return pkg.createRequestedSignal(signalID);
         }
-        
-        String cls = toCapital(tokens[tokens.length - 1]) + suffix;
-        return packageName + cls;
+        return null;
     }
     
-    public MsRequestedSignal createRequestedSignal(String signalID) throws ClassNotFoundException {
-        String className = this.className(signalID, "RequestedSignalImpl");
-        ClassLoader classLoader = MsEventFactoryImpl.class.getClassLoader();
-        Class cls = classLoader.loadClass(className);
-        try {
-            return (MsRequestedSignal) cls.newInstance();
-        } catch (Exception e) {
-            return null;
+    public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID) {
+        MsPackage pkg = packages.get(eventID.getPackageName());
+        if (pkg != null) {
+            return pkg.createRequestedEvent(eventID);
         }
-    }
-    
-    public MsRequestedEvent createRequestedEvent(String eventID) throws ClassNotFoundException {
-        String className = this.className(eventID, "RequestedEventImpl");
-        ClassLoader classLoader = MsEventFactoryImpl.class.getClassLoader();
-        Class cls = null;
-        try {
-            cls = classLoader.loadClass(className);
-        } catch (ClassNotFoundException e) {
-            cls = classLoader.loadClass("org.mobicents.mscontrol.impl.events.DefaultRequestedEvent");
-        }
-        
-        MsRequestedEvent evt = null; 
-        try {
-            evt = (MsRequestedEvent) cls.newInstance();
-        } catch (Exception e) {
-            return null;
-        }
-        
-        if (evt instanceof DefaultRequestedEvent) {
-            ((DefaultRequestedEvent) evt).setID(eventID);
-        }
-        
-        return evt;
+        return null;        
     }
     
 }

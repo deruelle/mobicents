@@ -27,7 +27,9 @@
 
 package org.mobicents.media.server.spi.events.announcement;
 
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.RequestedSignal;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
  *
@@ -37,8 +39,8 @@ public class PlayRequestedSignal implements RequestedSignal {
 
     private String url;
     
-    public String getID() {
-        return "org.mobicents.media.events.announcement.PLAY";
+    public EventIdentifier getID() {
+        return Announcement.PLAY;
     }
 
     public void setURL(String url) {

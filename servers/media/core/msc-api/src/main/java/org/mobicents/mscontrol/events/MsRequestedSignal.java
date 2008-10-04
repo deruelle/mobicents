@@ -34,6 +34,5 @@ import java.io.Serializable;
  * @author Oleg Kulikov
  */
 public interface MsRequestedSignal extends Serializable {
-    public final static String ANNOUNCEMENT_PLAY = "org.mobicents.media.events.announcement.PLAY";
-    public String getID();
+    public MsEventIdentifier getID();
 }

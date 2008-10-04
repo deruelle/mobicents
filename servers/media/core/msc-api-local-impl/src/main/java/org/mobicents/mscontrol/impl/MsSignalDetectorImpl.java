@@ -25,9 +25,13 @@ import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.mscontrol.MsConnection;
-import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSignalDetector;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
 
 /**
  * 
@@ -37,13 +41,13 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
 
     private Endpoint endpoint;
     private String endpointName;
-    private MsProvider provider;
+    private MsProviderImpl provider;
     private String id = (new UID()).toString();
     private ArrayList<MsResourceListener> listeners = new ArrayList<MsResourceListener>();
     private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
 
     /** Creates a new instance of MsSignalDetectorImpl */
-    public MsSignalDetectorImpl(MsProvider provider, String endpointName) {
+    public MsSignalDetectorImpl(MsProviderImpl provider, String endpointName) {
         this.provider = provider;
         this.endpointName = endpointName;
     }
@@ -52,6 +56,19 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
         return id;
     }
 
+    private void detectDTMF() {
+        try {
+            MsEventFactory factory = provider.getEventFactory();
+            MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+            MsRequestedSignal[] signals = new MsRequestedSignal[]{};
+            MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
+
+            //ivr.execute(signals, events, link);
+            //play(WELCOME_MSG, link);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public void release() {
         // released = true;
 

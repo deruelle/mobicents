@@ -20,7 +20,7 @@ import org.mobicents.media.server.impl.common.events.EventID;
 
 
 /**
- *
+ * @deprecated 
  * @author Oleg Kulikov
  */
 public interface MsSignalGenerator extends MsResource {

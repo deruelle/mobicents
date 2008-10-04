@@ -28,7 +28,9 @@
 package org.mobicents.media.server.spi.events.announcement;
 
 import org.mobicents.media.server.spi.events.AbstractRequestedEvent;
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
  *
@@ -36,14 +38,13 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class CompletedRequestedEvent extends AbstractRequestedEvent {
 
-    private String id = "org.mobicents.media.events.announcement.COMPLETED";
     
-    public String getID() {
-        return id;
+    public EventIdentifier getID() {
+        return Announcement.COMPLETED;
     }
 
     public boolean matches(NotifyEvent event) {
-        return event.getEventID().equals(id);
+        return event.getEventID().equals(Announcement.COMPLETED);
     }
 
 }

@@ -18,7 +18,7 @@ package org.mobicents.mscontrol;
 
 import org.mobicents.media.server.impl.common.events.EventID;
 /**
- *
+ * @deprecated 
  * @author Oleg Kulikov
  */
 public interface MsSignalDetector extends MsResource {

@@ -17,6 +17,7 @@
 package org.mobicents.mscontrol.impl;
 
 import org.mobicents.mscontrol.MsNotifyEvent;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 
 /**
  *
@@ -25,10 +26,10 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 public class MsNotifyEventImpl implements MsNotifyEvent {
     
     private Object  source;
-    private String id;
+    private MsEventIdentifier id;
     
     /** Creates a new instance of MsNotifyEventImpl */
-    public MsNotifyEventImpl(Object source, String id) {
+    public MsNotifyEventImpl(Object source, MsEventIdentifier id) {
         this.source = source;
         this.id = id;
     }
@@ -37,7 +38,7 @@ public class MsNotifyEventImpl implements MsNotifyEvent {
         return source;
     }
     
-    public String getEventID() {
+    public MsEventIdentifier getEventID() {
         return id;
     }
 

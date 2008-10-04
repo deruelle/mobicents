@@ -29,6 +29,7 @@ package org.mobicents.mscontrol.impl.events.announcement;
 import org.mobicents.media.server.spi.events.EventFactory;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.announcement.PlayRequestedSignal;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
@@ -41,7 +42,7 @@ public class PlayRequestedSignalImpl extends BaseRequestedSignal implements MsPl
 
     private String url;
 
-    public String getID() {
+    public MsEventIdentifier getID() {
         return MsAnnouncement.PLAY;
     }
 
@@ -56,13 +57,9 @@ public class PlayRequestedSignalImpl extends BaseRequestedSignal implements MsPl
     @Override
     public RequestedSignal convert() {
         EventFactory factory = new EventFactory();
-        try {
-            PlayRequestedSignal signal = (PlayRequestedSignal) factory.createRequestedSignal(MsAnnouncement.PLAY);
-            signal.setURL(url);
-            return signal;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        PlayRequestedSignal signal = (PlayRequestedSignal) factory.createRequestedSignal(
+                MsAnnouncement.PLAY.getPackageName(), MsAnnouncement.PLAY.getEventName());
+        signal.setURL(url);
+        return signal;
     }
 }
