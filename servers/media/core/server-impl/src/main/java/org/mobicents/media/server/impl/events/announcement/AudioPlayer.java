@@ -92,11 +92,9 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         }
         //speex support
         try {
-            System.out.println("Geting stream " + url);
             synchronized (this) {
                 stream = AudioSystem.getAudioInputStream(url);
             }
-            System.out.println("Got stream " + stream);
         } catch (Exception e) {
             System.out.println("Error " + stream);
             this.failed(e);
