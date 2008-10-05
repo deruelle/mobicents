@@ -4,12 +4,12 @@
 <section
 	id="section-Mobicents_SIP_Servlets_Server">
 	<title>Mobicents SIP Servlets Server</title>
-	<para>Mobicents SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is an implementation of the SIP Servlet v1.1 (JSR 289) specification on top of Tomcat and Jboss containers, and it strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation  is leveraged as the SIP stack, and Mobicents JSLEE is used as the SLEE implementation.</para>
+	<para>Mobicents SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is a <emphasis>certified</emphasis> implementation of the SIP Servlet v1.1 (JSR 289) specification on top of Tomcat and Jboss containers, and it strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation is leveraged as the SIP stack, and Mobicents JSLEE is used as the SLEE implementation.</para>
 	<itemizedlist
 		id="itemlist-Principal_and_new_features_of_SIP_Servlets">
 		<title>Features of the Mobicents SIP Servlets Server</title>
 		<listitem>
-			<para>conformance with the latest SIP Servlet v1.1 (JSR 289) specification</para>
+			<para>the first <emphasis>certified</emphasis> SIP Servlet v1.1 (JSR 289) implementation</para>
 		</listitem>
 		<listitem>
 			<para>a current call rate of 100 calls per second over a 24-hour duration: 8,640,000 total calls</para>
@@ -30,7 +30,7 @@
 			<para>Mobicents Media Server</para>
 		</listitem>
 		<listitem>
-			<para>extensions such as SUBSCRIBE/NOTIFY, among othersothers</para>
+			<para>extensions such as SUBSCRIBE/NOTIFY, among others</para>
 		</listitem>
 	</itemizedlist>
 	
@@ -53,44 +53,76 @@
 		</formalpara>
 		<itemizedlist>
 			<listitem>
-				<para>The <filename>server/default/deploy</filename> directory contains both HTTP and SIP Servlet applications (WAR and SAR files).</para>
+				<para>The <filename>server/default/deploy</filename> directory contains both HTTP and SIP Servlet applications (WAR and SAR2 files).</para>
 			</listitem>
 			<listitem>
 				<para>The <filename>server/default/deploy/jboss-web.deployer</filename> unit has been modified to provide extended classes to the standard JBoss container classes, in order to allow SIP applications to be loaded and the SIP stack to be started.</para>
 			</listitem>
 			<listitem>
-				<para>A <filename>dars</filename> directory containing all of the default applications' router properties files for using the various SIP Servlets applications (which come bundled with the release) has been added to the <filename>server/default/conf</filename> directory.</para>
-				<para>a dars directory containing all the default applications router properties files for using the sip servlets applications bundled with the release, has been added to the server/default/conf</para>
+				<para>The <filename>server/default/deploy/jboss-web.deployer/context.xml</filename> file has been modified to provide the extended manager to be able to manage SIP sessions and SIP application sessions in addition to HTTP sessions.</para>
 			</listitem>
 			<listitem>
-				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added, sorted by directory:</para>
-				<variablelist>
-					<varlistentry>
-						<term>server/default/lib</term>
-						<listitem>
-							<itemizedlist>
-								<listitem>
-									<para>sip-servlets-impl-0.4.1.jar</para>
-								</listitem>
-								<listitem>
-									<para>sip-servlets-spec-1.1.4.jar</para>
-								</listitem>
-								<listitem>
-									<para>jain-sip-api-1.2.1.jar</para>
-								</listitem>
-								<listitem>
-									<para>jain-sip-ri-1.2.1.jar</para>
-								</listitem>
-								<listitem>
-									<para>concurrent-1.3.4.jar</para>
-								</listitem>
-								<listitem>
-									<para>log4j-1.2.14.jar</para>
-								</listitem>
-							</itemizedlist>
-						</listitem>
-					</varlistentry>
-				</variablelist>
+				<para>The <filename>server/default/deploy/jboss-web.deployer/META-INF/jboss-service.xml</filename> file and the <filename>server/default/deploy/jboss-web.deployer/META-INF/webserver-xmbean.xml</filename> file have been modified so that it is now possible for JBoss containers to correctly deploy SIP servlets and converged applications.</para>
+			</listitem>
+			<listitem>
+				<para>A <filename>dars</filename> directory containing all of the default applications' router properties files for using the various SIP Servlets applications (which come bundled with the release) has been added to the <filename>server/default/conf</filename> directory.</para>
+				<para>a <filename>dars</filename> directory containing all the default applications router properties files for using the SIP servlets applications bundled with the release has been added to <filename>server/default/conf</filename>.
+				</para>
+			</listitem>
+			<listitem>
+				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added to the <filename>server/default/deploy/jboss-web.deployer/</filename> directory:</para>
+				<itemizedlist>
+					<listitem>
+						<para>
+							<filename>sip-servlets-impl-0.6.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>sip-servlets-spec-1.1.6.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>sip-servlets-application-router-0.6.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>sip-balancer-1.0-SNAPSHOT.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>jain-sip-api-1.2.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>jain-sip-ri-1.2.83.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>concurrent-1.3.4.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>log4j-1.2.14.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>stun4j-1.0-MOBICENTS.jar</filename>
+						</para>
+					</listitem>
+					<listitem>
+						<para>
+							<filename>dnsjava-2.0.6.jar</filename>
+						</para>
+					</listitem>
+				</itemizedlist>
 			</listitem>
 		</itemizedlist>
 		<section
@@ -103,7 +135,7 @@
 				<varlistentry>
 					<term>Sufficient Disk Space</term>
 					<listitem>
-						<para>You must have sufficient disk space in order to install the SIP Servlets-customized JBoss binary release. Once unzipped, version 0.5 of the SIP Servlets-customized JBoss binary release requires <emphasis>at least</emphasis> 120 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
+						<para>You must have sufficient disk space in order to install the SIP Servlets-customized JBoss binary release. Once unzipped, version 0.6 of the SIP Servlets-customized JBoss binary release requires <emphasis>at least</emphasis> 120 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
@@ -148,25 +180,25 @@
 				</step>
 				<step>
 					<para>In <filename>downloads</filename>, create a subdirectory to hold the unzipped SIP Servlets-customized JBoss files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the SIP Servlets-customized JBoss binary distribution you downloaded.</para>
-					<screen>downloads]$ mkdir &quot;mss-jboss-0.5&quot;</screen>
+					<screen>downloads]$ mkdir &quot;mss-jboss-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Move the downloaded zip file into the directory you just created:</para>
-					<screen>downloads]$ mv &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot; &quot;mss-jboss-0.5&quot;</screen>
+					<screen>downloads]$ mv &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot; &quot;mss-jboss-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Move into that directory:</para>
-					<screen>downloads]$ cd &quot;mss-jboss-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-jboss-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Finally, use Java's <command>jar <option>-xvf</option>
 							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
-					<screen>mss-jboss-0.5]$ jar -xvf &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot;</screen>
+					<screen>mss-jboss-0.6]$ jar -xvf &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot;</screen>
 					<stepalternatives>
 						<step>
 							<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
 									</command> command:</para>
-							<screen>mss-jboss-0.5]$ unzip &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot;</screen>
+							<screen>mss-jboss-0.6]$ unzip &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot;</screen>
 							<tip>
 								<para>You can also use <command>unzip</command>'s <option>-d</option>
 									<filename>
@@ -178,13 +210,13 @@
 				</step>
 				<step>
 					<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
-					<screen>mss-jboss-0.5]$ rm &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot;</screen>
+					<screen>mss-jboss-0.6]$ rm &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot;</screen>
 				</step>
 			</procedure>
 			<procedure>
 				<title>Installing the SIP Servlets-customized JBoss Binary Distribution on Windows</title>
 				<step>
-					<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the SIP Servlets-customized JBoss Application Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mss-jboss-0.5</filename>.</para>
+					<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the SIP Servlets-customized JBoss Application Server binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mss-jboss-0.6</filename>.</para>
 				</step>
 				<step>
 					<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
@@ -200,23 +232,29 @@
 								<title>Opening the Command Prompt from Windows Explorer</title>
 								<para>If you are using Windows Vista®, you can open the Command Prompt directly from Explorer. Hold down the <keycap>Shift</keycap> key and right-click on either a folder, the desktop, or inside a folder. This will cause an <guimenuitem>Open Command Window Here</guimenuitem> context menu item to appear, which can be used to open the Command Prompt with the current working directory set to either the folder you opened, or opened it from.</para>
 							</tip>
-							<screen>C:\Users\Me&gt;cd &quot;My Downloads\mss-jboss-0.5&quot;</screen>
+							<screen>C:\Users\Me&gt;cd &quot;My Downloads\mss-jboss-0.6&quot;</screen>
 						</step>
 						<step>
 							<para>Finally, use the <command>jar <option>-xvf</option>
 									</command> command to extract the archive contents into the current folder.</para>
-							<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;jar -xvf &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot;</screen>
+							<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;jar -xvf &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot;</screen>
 						</step>
 					</stepalternatives>
 				</step>
 				<step>
-					<para>At this point, you may want to move the folder holding the SIP Servlets-customiezed JBoss binary files (in this example, the folder named <filename>mss-jboss-0.5</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the installation folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
+					<para>At this point, you may want to move the folder holding the SIP Servlets-customized JBoss binary files (in this example, the folder named <filename>mss-jboss-0.6</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the installation folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
 				</step>
 				<step>
 					<para>You may also want to delete the zip file after extracting its contents in order to free disk space:</para>
-					<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;delete &quot;mss-0.5-jboss-4.2.2.GA-0808142355.zip&quot;</screen>
+					<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;delete &quot;mss-0.6-jboss-4.2.2.GA-0809301055.zip&quot;</screen>
 				</step>
 			</procedure>
+		</section>
+		<section
+			id="section-binary-SIP_Servlets_Server_with_JBoss-Configuring">
+			<title>Configuring</title>
+			<para>For information on configuring the Mobicents SIP Servlets-customized JBoss Application Server, refer to <ulink
+					url="http://www.mobicents.org/configuration.html"/>. It is not necessary to configure it before running it.</para>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Running">
@@ -224,24 +262,29 @@
 			<para>Once installed, you can run the SIP Servlets-customized JBoss Application Server by executing the one of the startup scripts in the <filename>bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the JBoss Application Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that may arise. In the Linux terminal or Command Prompt, you will be able to tell that the server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
 			<programlisting><![CDATA[17:48:01,247 INFO  [Server] JBoss (MX MicroKernel) [4.2.2.GA (build: SVNTag=JBoss_4_2_2_GA date=200710221139)] Started in 20s:861ms]]></programlisting>
 			<para>Detailed instructions are given below, arranged by platform.</para>
+			<important
+				id="important-If_You_Have_Set_JBOSS_HOME_Before_Update_It">
+				<title>If You Have Set <envar>JBOSS_HOME</envar> Before, Update It!</title>
+				<para>It is essential, if the <envar>JBOSS_HOME</envar> environment variable is set on your system, that it points to the topmost directory of your SIP Servlets-customized JBoss installation (i.e. to the directory in which you unzipped the zip file; the one which has <filename>bin</filename> as a subdirectory). When using the binary SIP Servlets-customized JBoss, you must either not set <envar>JBOSS_HOME</envar> at all (or unset it), or set it to the correct directory.</para>
+			</important>
 			<procedure>
 				<title>Running the SIP Servlets-customized JBoss Application Server on Linux</title>
 				<step>
 					<para>Change your working directory to the SIP Servlets-customized JBoss's topmost directory (the one in which you extracted the zip file's contents to):</para>
-					<screen>downloads]$ cd &quot;mss-jboss-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-jboss-0.6&quot;</screen>
 				</step>
 				<step
 					performance="optional">
 					<para>(Optional) Ensure that the <filename>bin/run.sh</filename> start script is executable:</para>
-					<screen>mss-jboss-0.5]$ chmod +x bin/run.sh</screen>
+					<screen>mss-jboss-0.6]$ chmod +x bin/run.sh</screen>
 				</step>
 				<step>
 					<para>Finally, execute the <filename>run.sh</filename> Bourne shell script:</para>
-					<screen>mss-jboss-0.5]$ ./bin/run.sh</screen>
+					<screen>mss-jboss-0.6]$ ./bin/run.sh</screen>
 					<stepalternatives>
 						<step>
 							<para>Instead of executing the Bourne shell script to start the server, you may alternatively run the <filename>run.jar</filename> executable Java archive in the <filename>bin</filename> directory:</para>
-							<screen>mss-jboss-0.5]$ java -jar bin/run.jar</screen>
+							<screen>mss-jboss-0.6]$ java -jar bin/run.jar</screen>
 						</step>
 					</stepalternatives>
 				</step>
@@ -258,21 +301,27 @@
 						<step>
 							<para>As mentioned above, the best way to start the SIP Servlets-customized JBoss is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\bin</filename> folder in Windows Explorer (see <xref
 									linkend="tip-binary-SIP_Servlets_Server_with_JBoss-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
-							<screen>C:\Users\Me\My Downloads&gt; cd &quot;mss-jboss-0.5&quot;</screen>
+							<screen>C:\Users\Me\My Downloads&gt; cd &quot;mss-jboss-0.6&quot;</screen>
 						</step>
 						<step>
 							<para>Start the JBoss Application Server by running the executable <filename>run.bat</filename> batch file:</para>
-							<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;bin\run.bat</screen>
+							<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;bin\run.bat</screen>
 							<stepalternatives>
 								<step>
 									<para>It is also possible to start the server by running the <filename>run.jar</filename> executable Java archive:</para>
-									<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;java -jar bin\run.jar</screen>
+									<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;java -jar bin\run.jar</screen>
 								</step>
 							</stepalternatives>
 						</step>
 					</stepalternatives>
 				</step>
 			</procedure>
+		</section>
+		<section
+			id="section-binary-SIP_Servlets_Server_with_JBoss-Using">
+			<title>Using</title>
+			<para>Once the server is running, you can access the Mobicents SIP Servlets Management Console by opening your browser and navigating to <ulink
+					url="http://localhost:8080/sip-servlets-management/"/>.</para>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Stopping">
@@ -296,20 +345,20 @@ Halting VM</programlisting>
 				</title>
 				<step>
 					<para>Another way to shut down the JBoss Application Server is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/bin</filename> directory. To do so, first change your working directory to the binary distribution's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
-					<screen>downloads]$ cd &quot;mss-jboss-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-jboss-0.6&quot;</screen>
 				</step>
 				<step
 					performance="optional">
 					<para>(Optional) Ensure that the bin/shutdown.sh start script is executable:</para>
-					<screen>mss-jboss-0.5]$ chmod +x bin/shutdown.sh</screen>
+					<screen>mss-jboss-0.6]$ chmod +x bin/shutdown.sh</screen>
 				</step>
 				<step>
 					<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script, and remember to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument:</para>
-					<screen>mss-jboss-0.5]$ ./bin/shutdown.sh -S</screen>
+					<screen>mss-jboss-0.6]$ ./bin/shutdown.sh -S</screen>
 					<stepalternatives>
 						<step>
 							<para>Instead of executing the Bourne shell script to stop the server, you may alternatively run the <filename>shutdown.jar</filename> executable Java archive to do so (and remembering, again, to add the <option>-S</option> command line argument):</para>
-							<screen>mss-jboss-0.5]$ java -jar bin/shutdown.jar -S</screen>
+							<screen>mss-jboss-0.6]$ java -jar bin/shutdown.jar -S</screen>
 						</step>
 					</stepalternatives>
 				</step>
@@ -318,24 +367,16 @@ Halting VM</programlisting>
 				<title>Stopping the SIP Servlets-customized JBoss Application Server on Windows</title>
 				<step>
 					<para>Stopping the JBoss Application Server on Windows consists in executing either the <filename>shutdown.bat</filename> or the <filename>shutdown.jar</filename> executable file in the <filename>bin</filename> subfolder of the SIP Servlets-customized JBoss binary distribution. Make sure to add the <option>-S</option> option (which is the short option for <option>--shutdown</option>) as a command line argument.</para>
-					<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;bin\shutdown.bat -S</screen>
+					<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;bin\shutdown.bat -S</screen>
 					<stepalternatives>
 						<step>
 							<para>Alternatively, you can execute the <filename>shutdown.jar</filename> Java archive by running the <command>java <option>-jar</option>
 									</command> command, and remembering to add the <option>-S</option> option as a command line argument:</para>
-							<screen>C:\Users\Me\My Downloads\mss-jboss-0.5&gt;java -jar bin\shutdown.jar -S</screen>
+							<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;java -jar bin\shutdown.jar -S</screen>
 						</step>
 					</stepalternatives>
 				</step>
 			</procedure>
-		</section>
-		<section
-			id="section-binary-SIP_Servlets_Server_with_JBoss-Configuring">
-			<title>Configuring</title>
-			<para>For information on configuring the Mobicents SIP Servlets-customized JBoss Application Server, refer to <ulink
-					url="http://www.mobicents.org/configuration.html"/>.</para>
-			<para>Also, once the server is running, you can access the Mobicents SIP Servlets Management Console by opening your browser and navigating to <ulink
-					url="http://localhost:8080/sip-servlets-management/"/>.</para>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Testing">
@@ -366,37 +407,36 @@ Halting VM</programlisting>
 				<para>A <filename>dars</filename> directory containing the default applications' router properties files for using the SIP Servlet Click-to-Call application (which comes bundled with the release) has been added to the <filename>conf</filename> directory.</para>
 			</listitem>
 			<listitem>
-				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added, sorted by directory:</para>
-				<variablelist>
-					<varlistentry>
-						<term>common/lib</term>
-						<listitem>
-							<itemizedlist>
-								<listitem>
-									<para>sip-servlets-spec-1.1.4.jar</para>
-								</listitem>
-								<listitem>
-									<para>jain-sip-api-1.2.1.jar</para>
-								</listitem>
-								<listitem>
-									<para>jain-sip-ri-1.2.1.jar</para>
-								</listitem>
-								<listitem>
-									<para>concurrent-1.3.4.jar</para>
-								</listitem>
-								<listitem>
-									<para>log4j-1.2.14.jar</para>
-								</listitem>
-							</itemizedlist>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>server/lib</term>
-						<listitem>
-							<para>sip-servlets-impl-0.4.1.jar</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
+				<para>Additional JAR files have been added to enable SIP Servlet functionality. Here is a more-or-less complete list of the JAR files added to the <filename>server/default/lib</filename> directory:</para>
+				<itemizedlist>
+					<listitem>
+						<para>sip-servlets-impl-0.6.jar</para>
+					</listitem>
+					<listitem>
+						<para>sip-servlets-spec-1.1.6.jar</para>
+					</listitem>
+					<listitem>
+						<para>sip-balancer-1.0-SNAPSHOT.jar</para>
+					</listitem>
+					<listitem>
+						<para>jain-sip-api-1.2.jar</para>
+					</listitem>
+					<listitem>
+						<para>jain-sip-ri-1.2.83.jar</para>
+					</listitem>
+					<listitem>
+						<para>concurrent-1.3.4.jar</para>
+					</listitem>
+					<listitem>
+						<para>log4j-1.2.14.jar</para>
+					</listitem>
+					<listitem>
+						<para>stun4j-1.0-MOBICENTS.jar</para>
+					</listitem>
+					<listitem>
+						<para>dnsjava-2.0.6.jar</para>
+					</listitem>
+				</itemizedlist>
 			</listitem>
 		</itemizedlist>
 		<section
@@ -454,25 +494,25 @@ Halting VM</programlisting>
 				</step>
 				<step>
 					<para>In <filename>downloads</filename>, create a subdirectory to hold the unzipped SIP Servlet-customized Tomcat files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the SIP Servlet-customized Tomcat binary distribution you downloaded.</para>
-					<screen>downloads]$ mkdir &quot;mss-tomcat-0.5&quot;</screen>
+					<screen>downloads]$ mkdir &quot;mss-tomcat-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Move the downloaded zip file into the directory you just created:</para>
-					<screen>downloads]$ mv &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot; &quot;mss-tomcat-0.5&quot;</screen>
+					<screen>downloads]$ mv &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot; &quot;mss-tomcat-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Move into that directory:</para>
-					<screen>downloads]$ cd &quot;mss-tomcat-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-tomcat-0.6&quot;</screen>
 				</step>
 				<step>
 					<para>Finally, use Java's <command>jar <option>-xvf</option>
 							</command> command to extract the contents of the zip file into the current directory, thus completing the install:</para>
-					<screen>mss-tomcat-0.5]$ jar -xvf &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot;</screen>
+					<screen>mss-tomcat-0.6]$ jar -xvf &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot;</screen>
 					<stepalternatives>
 						<step>
 							<para>Alternatively, if Linux's <command>unzip</command> utility is present on your system or is installable, you can use it in lieu of Java's <command>jar <option>-xvf</option>
 									</command> command:</para>
-							<screen>mss-tomcat-0.5]$ unzip &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot;</screen>
+							<screen>mss-tomcat-0.6]$ unzip &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot;</screen>
 							<tip>
 								<para>You can also use <command>unzip</command>'s <option>-d</option>
 									<filename>
@@ -484,13 +524,13 @@ Halting VM</programlisting>
 				</step>
 				<step>
 					<para>To free disk space, you may want to delete the zip file once you've extracted its contents:</para>
-					<screen>mss-tomcat-0.5]$ rm &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot;</screen>
+					<screen>mss-tomcat-0.6]$ rm &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot;</screen>
 				</step>
 			</procedure>
 			<procedure>
-				<title>Installing the SIP Servlet-customized Tomcat Binary Distribution on Windows</title>
+				<title>Installing the SIP Servlet-Customized Tomcat Binary Distribution on Windows</title>
 				<step>
-					<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the SIP Servlet-customized Tomcat Servlet Container binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mss-tomcat-0.5</filename>.</para>
+					<para>For this example, we'll assume that you downloaded the binary distribution zip file to the <filename>My Downloads</filename> folder. First, using Windows Explorer, create a subfolder in <filename>My Downloads</filename> to extract the zip file's contents into. When you name this folder, it is good practice to include the version number; if you do so, remember to correctly match it with the version of the SIP Servlet-customized Tomcat Servlet Container binary distribution you downloaded. In these instructions, we will refer to this folder as <filename>mss-tomcat-0.6</filename>.</para>
 				</step>
 				<step>
 					<para>Double-click the downloaded zip file, selecting as the destination folder the one you just created to hold the zip file's contents.</para>
@@ -510,42 +550,49 @@ Halting VM</programlisting>
 						<step>
 							<para>Finally, use the <command>jar <option>-xvf</option>
 									</command> command to extract the archive contents into the current folder.</para>
-							<screen>C:\Users\Me\My Downloads\mss-tomcat-0.5&gt;jar -xvf &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot;</screen>
+							<screen>C:\Users\Me\My Downloads\mss-tomcat-0.6&gt;jar -xvf &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot;</screen>
 						</step>
 					</stepalternatives>
 				</step>
 				<step>
-					<para>At this point, you may want to move the folder holding the SIP Servlet-customized Tomcat binary files (in this example, the folder named <filename>mss-tomcat-0.5</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the installation folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
+					<para>At this point, you may want to move the folder holding the SIP Servlet-customized Tomcat binary files (in this example, the folder named <filename>mss-tomcat-0.6</filename>) to another location. This step is not strictly necessary, but it is probably a good idea to move the installation folder from <filename>My Downloads</filename> to a user-defined location for storing runnable programs. Any location will suffice, however.</para>
 				</step>
 				<step>
 					<para>You may want to delete the zip file after extracting its contents in order to free disk space:</para>
-					<screen>C:\Users\Me\My Downloads\mss-tomcat-0.5&gt;delete &quot;mss-0.5-apache-tomcat-6.0.14-0808142355.zip&quot;</screen>
+					<screen>C:\Users\Me\My Downloads\mss-tomcat-0.6&gt;delete &quot;mss-0.6-apache-tomcat-6.0.14-0809301055.zip&quot;</screen>
 				</step>
 			</procedure>
+		</section>
+		<section
+			id="section-Configuring">
+			<title>Configuring</title>
+			<xi:include
+				xmlns:xi="http://www.w3.org/2001/XInclude"
+				href="../modules/fragment-Setting_the_CATALINA_HOME_Environment_Variable.xml" />
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_Tomcat-Running">
 			<title>Running</title>
 			<para>Once installed, you can run the SIP Servlets-customized Tomcat Application Server by executing the one of the startup scripts in the <filename>bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting Tomcat using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that may arise. In the Linux terminal or Command Prompt, you will be able to tell that the server started successfully if the last line of output is similar to the following:</para>
-			<programlisting><![CDATA[Using CATALINA_BASE:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5
-Using CATALINA_HOME:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5
-Using CATALINA_TMPDIR: /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5/temp
+			<programlisting><![CDATA[Using CATALINA_BASE:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6
+Using CATALINA_HOME:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6
+Using CATALINA_TMPDIR: /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6/temp
 Using JRE_HOME:       /etc/java-config-2/current-system-vm]]></programlisting>
 			<para>Detailed instructions are given below, arranged by platform.</para>
 			<procedure>
 				<title>Running the SIP Servlets-customized Tomcat Application Server on Linux</title>
 				<step>
 					<para>Change your working directory to the SIP Servlets-customized Tomcat's topmost directory (the one in which you extracted the zip file's contents to):</para>
-					<screen>downloads]$ cd &quot;mss-tomcat-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-tomcat-0.6&quot;</screen>
 				</step>
 				<step
 					performance="optional">
 					<para>(Optional) Ensure that the <filename>bin/startup.sh</filename> start script is executable:</para>
-					<screen>mss-tomcat-0.5]$ chmod +x bin/startup.sh</screen>
+					<screen>mss-tomcat-0.6]$ chmod +x bin/startup.sh</screen>
 				</step>
 				<step>
 					<para>Finally, execute the <filename>startup.sh</filename> Bourne shell script:</para>
-					<screen>mss-tomcat-0.5]$ ./bin/startup.sh</screen>
+					<screen>mss-tomcat-0.6]$ ./bin/startup.sh</screen>
 				</step>
 			</procedure>
 			<procedure>
@@ -560,54 +607,54 @@ Using JRE_HOME:       /etc/java-config-2/current-system-vm]]></programlisting>
 						<step>
 							<para>As mentioned above, the best way to start the SIP Servlets-customized Tomcat is by using the Command Prompt. Doing it this way will allow you to view all of the server startup details, which will enable you to easily determine whether any problems were encountered during the startup process. You can open the Command Prompt directly from the <filename>&lt;topmost_directory&gt;\bin</filename> folder in Windows Explorer (see <xref
 									linkend="tip-binary-SIP_Servlets_Server_with_JBoss-Opening_the_Command_Prompt_from_Windows_Explorer"/> for details), or you can open the Command Prompt via the <guilabel>Start</guilabel> menu and navigate to the correct folder:</para>
-							<screen>C:\Users\Me\My Downloads&gt; cd &quot;mss-tomcat-0.5&quot;</screen>
+							<screen>C:\Users\Me\My Downloads&gt; cd &quot;mss-tomcat-0.6&quot;</screen>
 						</step>
 						<step>
 							<para>Start the JBoss Application Server by running the executable <filename>startup.bat</filename> batch file:</para>
-							<screen>C:\Users\Me\My Downloads\mss-tomcat-0.5&gt;bin\startup.bat</screen>
+							<screen>C:\Users\Me\My Downloads\mss-tomcat-0.6&gt;bin\startup.bat</screen>
 						</step>
 					</stepalternatives>
 				</step>
 			</procedure>
 		</section>
 		<section
+			id="section-binary-SIP_Servlets_Server_with_Tomcat-Using">
+			<title>Using</title>
+			<para>After startup, you can access the default web applications included with the SIP Servlet-customized Tomcat Servlet Container by opening the following URL in your browser: <ulink
+					url="http://localhost:8080/"/>.</para>
+		</section>
+		<section
 			id="section-binary-SIP_Servlets_Server_with_Tomcat-Stopping">
 			<title>Stopping</title>
 			<para>Just as there are multiple ways to run the SIP Servlets-customized Tomcat Servlet Container, there are multiple ways to stop it. Detailed instructions for stopping the Tomcat Servlet Container are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt (the terminal/Command Prompt output of both running and stopping the SIP Servlet-customized Tomcat Servlet Container is the same):</para>
-			<screen><![CDATA[Using CATALINA_BASE:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5
-Using CATALINA_HOME:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5
-Using CATALINA_TMPDIR: /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.5/temp
+			<screen><![CDATA[Using CATALINA_BASE:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6
+Using CATALINA_HOME:   /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6
+Using CATALINA_TMPDIR: /home/silas/temp/apps/mobicents/sip_servlets_server/mss-tomcat-0.6/temp
 Using JRE_HOME:       /etc/java-config-2/current-system-vm]]></screen>
 			<procedure>
 				<title>Stopping the SIP Servlets-customized Tomcat Servlet Container on Linux by Executing <filename>shutdown.sh</filename>
 				</title>
 				<step>
 					<para>Another way to shut down the Tomcat Servlet Container is by executing the <filename>shutdown.sh</filename> Bourne shell script in the <filename>&lt;topmost_directory&gt;/bin</filename> directory. To do so, first change your working directory to the binary distribution's topmost directory (the one to which you extracted the downloaded zip file's contents):</para>
-					<screen>downloads]$ cd &quot;mss-tomcat-0.5&quot;</screen>
+					<screen>downloads]$ cd &quot;mss-tomcat-0.6&quot;</screen>
 				</step>
 				<step
 					performance="optional">
 					<para>(Optional) Ensure that the bin/shutdown.sh start script is executable:</para>
-					<screen>mss-tomcat-0.5]$ chmod +x bin/shutdown.sh</screen>
+					<screen>mss-tomcat-0.6]$ chmod +x bin/shutdown.sh</screen>
 				</step>
 				<step>
 					<para>Finally, run the <filename>shutdown.sh</filename> executable Bourne shell script</para>
-					<screen>mss-tomcat-0.5]$ ./bin/shutdown.sh</screen>
+					<screen>mss-tomcat-0.6]$ ./bin/shutdown.sh</screen>
 				</step>
 			</procedure>
 			<procedure>
 				<title>Stopping the SIP Servlets-customized Tomcat Servlet Container on Windows</title>
 				<step>
 					<para>Stopping the Tomcat Servlet Container on Windows consists in executing the <filename>shutdown.bat</filename> executable batch script in the <filename>bin</filename> subfolder of the SIP Servlets-customized Tomcat binary distribution:</para>
-					<screen>C:\Users\Me\My Downloads\mss-tomcat-0.5&gt;bin\shutdown.bat</screen>
+					<screen>C:\Users\Me\My Downloads\mss-tomcat-0.6&gt;bin\shutdown.bat</screen>
 				</step>
 			</procedure>
-		</section>
-		<section
-			id="section-binary-SIP_Servlets_Server_with_Tomcat-Configuring">
-			<title>Configuring</title>
-			<para>After startup, you can access the default web applications included with the SIP Servlet-customized Tomcat Servlet Container by opening the following URL in your browser: <ulink
-					url="http://localhost:8080/"/>.</para>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_Tomcat-Testing">

@@ -99,13 +99,13 @@
 	<formalpara
 		condition="formalpara-binary-JBoss_Application_Server-Configuring">
 		<title>Configuring</title>
-		<para>Finally, and before continuing with installing one of the Mobicents servers from source, you must set the <envar>JBOSS_HOME</envar> environment variable. As mentioned, you must set this variable so that when you build one of the Mobicents servers from source, the build system knows where to install the necessary files.</para>
+		<para>Finally, and before continuing with the installatino of one of the Mobicents servers from source, you must set the <envar>JBOSS_HOME</envar> environment variable. As mentioned, you must set this variable so that when you build one of the Mobicents servers from source, the build system knows where to install the necessary files.</para>
 	</formalpara>
 	<procedure>
 		<title>Setting the <envar>JBOSS_HOME</envar> Environment Variable on Linux</title>
 		<step>
 			<para>The <envar>JBOSS_HOME</envar> environment variable must point to the location of your JBoss AS install, i.e. the topmost directory (<filename>jboss-4.2.2.GA</filename>), the one of which <filename>bin</filename> is a subdirectory.</para>
-			<para>Setting this variable in your personal <filename>~/.bashrc</filename> file has the advantage that it will always be set (for you) each time you log in or reboot the system. To do so, open <filename>~/.bashrc</filename> in a text editor (or create the file if it doesn't already exist) and insert the following line anywhere in the file (replace <filename>downloads</filename> below with the actual path to <filename>jboss-4.2.2.GA</filename>):</para>
+			<para>Setting this variable in your personal <filename>~/.bashrc</filename> file has the advantage that it will always be set (for you, as a user) each time you log in or reboot the system. To do so, open <filename>~/.bashrc</filename> in a text editor (or create the file if it doesn't already exist) and insert the following line anywhere in the file:</para>
 			<screen>export JBOSS_HOME=&quot;/home/&lt;username&gt;/&lt;path&gt;/&lt;to&gt;/jboss-4.2.2.GA&quot;</screen>
 			<para>Save and close <filename>.bashrc</filename>.</para>
 		</step>

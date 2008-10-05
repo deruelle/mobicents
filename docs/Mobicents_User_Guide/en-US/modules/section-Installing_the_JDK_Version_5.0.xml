@@ -57,7 +57,7 @@
 	<formalpara
 		condition="formalpara-binary-Java_Development_Kit-Downloading">
 		<title>Downloading</title>
-		<para>You can the Sun JDK 5.0 (Java 2 Development Kit) from Sun's website: <ulink
+		<para>You can download the Sun JDK 5.0 (Java 2 Development Kit) from Sun's website: <ulink
 				url="http://java.sun.com/javase/downloads/index_jdk5.jsp"/>. Click on the <guilabel>Download</guilabel> link next to &quot;JDK 5.0 Update &lt;x&gt;&quot; (where &lt;x&gt; is the latest minor version release number). On the next page, select your language and platform (both architecture&#8212;whether 32- or 64-bit&#8212;and operating system), read and agree to the <literal>Java Development Kit 5.0 License Agreement</literal>, and proceed to the download page.</para>
 	</formalpara>
 	<para>The Sun website will present two download alternatives to you: one is an RPM inside a self-extracting file (for example, <filename>jdk-1_5_0_16-linux-i586-rpm.bin</filename>), and the other is merely a self-extracting file (e.g. <filename>jdk-1_5_0_16-linux-i586.bin</filename>). If you are installing the JDK on Red Hat Enterprise Linux, Fedora, or another RPM-based Linux system, we suggest that you download the self-extracting file containing the RPM package, which will set up and use the SysV service scripts in addition to installing the JDK. We also suggest installing the self-extracting RPM file if you will be running Mobicents in a production environment.</para>

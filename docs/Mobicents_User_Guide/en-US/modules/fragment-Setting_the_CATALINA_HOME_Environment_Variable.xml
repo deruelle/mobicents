@@ -1,0 +1,47 @@
+<?xml version='1.0'?>
+<!DOCTYPE para PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]><!--Note: id attributes have been changed to condition atts because I originally tried to use xpointer to pull this section in, which doesn't work with jdocbook-->
+<para
+	condition="section-binary-fragment-Setting_the_CATALINA_HOME_Environment_Variable">
+	<para>Before running the Mobicents server you are installing, you should consider if you need to set the <envar>CATALINA_HOME</envar> environment variable. Setting it (or re-setting it) will always work. Whether or not you <emphasis>need</emphasis> to set <envar>CATALINA_HOME</envar> depends on the following factors:</para>
+	<itemizedlist>
+		<listitem>
+			<para>If you are installing a binary Mobicents server and <envar>CATALINA_HOME</envar> is not set on your system, then you do not need to set it, but doing so will do no harm.</para>
+		</listitem>
+		<listitem>
+			<para>If you are installing a binary Mobicents server and <envar>CATALINA_HOME</envar> is (already) set on your system, then you need to make sure it points to the location of the new Mobicents server.</para>
+		</listitem>
+		<listitem>
+			<para>If you are installing a Mobicents server from source which uses the Tomcat servlet container, then you <emphasis>must</emphasis> set <envar>CATALINA_HOME</envar>.</para>
+		</listitem>
+	</itemizedlist>
+	<para>The following instructions detail how to set <envar>CATALINA_HOME</envar> on both Linux and Windows.</para>
+	<procedure
+		condition="procedure-Setting_the_CATALINA_HOME_Environment_Variable_on_Linux">
+		<title>Setting the <envar>CATALINA_HOME</envar> Environment Variable on Linux</title>
+		<step>
+			<para>The <envar>CATALINA_HOME</envar> environment variable must point to the location of Tomcat, i.e. the topmost directory of your Mobicents SIP Servlet-customized Tomcat installation, the one of which <filename>bin</filename> is a subdirectory.</para>
+			<para>Setting this variable in your personal <filename>~/.bashrc</filename> file has the advantage that it will always be set (for you, as a user) each time you log in or reboot the system. To do so, open <filename>~/.bashrc</filename> in a text editor (or create the file if it doesn't already exist) and insert the following line anywhere in the file, taking care to substitute <filename>&lt;mobicents_server&gt;</filename> for the topmost directory of the Mobicents server you just installed):</para>
+			<screen>export CATALINA_HOME=&quot;/home/&lt;username&gt;/&lt;path&gt;/&lt;to&gt;/&lt;mobicents_server&gt;&quot;</screen>
+			<para>Save and close <filename>.bashrc</filename>.</para>
+		</step>
+		<step>
+			<para>You can&#8212;and should&#8212;<command>source</command> your <filename>.bashrc</filename> file to make your change take effect for the current session:</para>
+			<screen>~]$ source ~/.bashrc</screen>
+		</step>
+		<step>
+			<para>Finally, make sure that <envar>CATALINA_HOME</envar> has been set correctly (i.e. leads to the right directory), and has taken effect in the current session.</para>
+			<para>The following command will show the path to the directory pointed to by <envar>CATALINA_HOME</envar>:</para>
+			<screen>~]$ echo $CATALINA_HOME</screen>
+			<para>To be absolutely sure, change your directory to the one pointed to by <envar>CATALINA_HOME</envar>:</para>
+			<screen>~]$ cd $CATALINA_HOME &amp;&amp; pwd</screen>
+		</step>
+	</procedure>
+	<procedure
+		condition="procedure-Setting_the_CATALINA_HOME_Environment_Variable_on_Windows">
+		<title>Setting the <envar>CATALINA_HOME</envar> Environment Variable on Windows</title>
+		<step>
+			<para>The <envar>CATALINA_HOME</envar> environment variable must point to the location of Tomcat, i.e. the topmost directory of your Mobicents SIP Servlet-customized Tomcat installation, the one of which <filename>bin</filename> is a subdirectory.</para>
+		</step>
+	</procedure>
+</para>
