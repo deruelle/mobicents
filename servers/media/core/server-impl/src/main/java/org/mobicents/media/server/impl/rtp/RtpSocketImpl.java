@@ -87,7 +87,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
         this.jitter = jitter;
         this.stunServerAddress = stunServerAddress;
         this.stunServerPort = stunServerPort;
-        this.useStun = true;
+        this.useStun = true; // If we are using this constructor we are stunning
         this.usePortMapping = usePortMapping;
         this.publicAddressFromStun = knownPublicAddressFromStun;
     }
@@ -109,16 +109,17 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
                         socket.disconnect();
                         socket.close();
                         socket = null;
-                        mapStun(port, bindAddress.getHostName());
+                        if(mapStun(port, bindAddress.getHostName())) bound = true;
                         socket = new DatagramSocket(bindAddress);
                     } else {
                         // publicAddressFromStun is already set
                         this.publicPortFromStun = port;
+                        bound = true;
                     }
                 }
                 socket.setSoTimeout(100);
-                bound = true;
             } catch (SocketException e) {
+            	logger.info("Failed to use STUN with local port " + port);
                 port++;
                 if (port > highPort) {
                     throw e;
@@ -175,7 +176,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
         return publicPortFromStun;
     }
 
-    public void mapStun(int localPort, String localAddress) {
+    public boolean mapStun(int localPort, String localAddress) {
         try {
             if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
                 logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
@@ -205,7 +206,9 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
             }
         } catch (Throwable t) {
             logger.error("Stun lookup has failed: " + t.getMessage());
+            return false;
         }
+        return true;
 
     }
 

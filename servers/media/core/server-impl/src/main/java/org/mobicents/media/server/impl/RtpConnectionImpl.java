@@ -272,9 +272,10 @@ public class RtpConnectionImpl extends BaseConnection {
             }
 
             // generate media descriptor
-            MediaDescription md = sdpFactory.createMediaDescription("audio", localPort, 1, "RTP/AVP", formats);
+            MediaDescription md = sdpFactory.createMediaDescription("audio", audioPort, 1, "RTP/AVP", formats);
 
             boolean g729 = false;
+            int g729payloadType = -1; // g729 payload type is usually 18
             // set attributes for formats
             Vector attributes = new Vector();
             for (int i = 0; i < formats.length; i++) {
@@ -282,11 +283,13 @@ public class RtpConnectionImpl extends BaseConnection {
                 attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
                 if (format.getEncoding().contains("g729")) {
                     g729 = true;
+                    g729payloadType = format.getPayload(); // should be 18
                 }
             }
 
+            // This options forces the remote g728 side to avoid using annexb, which is not supported right now
             if (g729) {
-                attributes.add(sdpFactory.createAttribute("fmtp", "18 annexb=no"));
+                attributes.add(sdpFactory.createAttribute("fmtp", g729payloadType + " annexb=no"));
             }
 
             // generate descriptor

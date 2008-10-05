@@ -14,11 +14,17 @@
 
 package org.mobicents.media.server.impl.jmx.rtp;
 
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import net.java.stun4j.StunAddress;
+import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
+import net.java.stun4j.client.StunDiscoveryReport;
+
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
@@ -310,6 +316,13 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
     @Override
     public void startService() throws Exception {
         logger.info("Deploying RTP manager: " + this.getName());
+        if(!this.usePortMapping) {
+        	int randomPort = 9000;
+        	boolean emptyPortFound = false;
+        	for(int q = 0; q <= 10; q++) {
+        		if(mapStun(randomPort+q*1003, bindAddress)) break;
+        	} 
+        }
         rtpFactory = new RtpFactory();
         rtpFactory.setBindAddress(bindAddress);
         rtpFactory.setJitter(jitter);
@@ -365,6 +378,40 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
         } catch (NamingException e) {
             logger.error("Failed to unbind endpoint", e);
         }
+    }
+    
+    private boolean mapStun(int localPort, String localAddress) {
+        try {
+            if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
+                logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+                this.publicAddressFromStun = localAddress;
+            } else {
+                StunAddress localStunAddress = new StunAddress(localAddress,
+                        localPort);
+
+                StunAddress serverStunAddress = new StunAddress(
+                        stunServerAddress, stunServerPort);
+
+                NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
+                        localStunAddress, serverStunAddress);
+                addressDiscovery.start();
+                StunDiscoveryReport report = addressDiscovery.determineAddress();
+                if (report.getPublicAddress() != null) {
+                    this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress().getHostAddress();
+                //TODO set a timer to retry the binding and provide a callback to update the global ip address and port
+                } else {
+                    useStun = false;
+                    logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+                }
+                logger.info("Stun report = " + report);
+                addressDiscovery.shutDown();
+            }
+        } catch (Throwable t) {
+            logger.error("Stun lookup has failed: " + t.getMessage());
+            return false;
+        }
+        return true;
+
     }
     
 }
