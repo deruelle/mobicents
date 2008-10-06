@@ -100,9 +100,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
-            	//baranowb
-                //((BaseConnection) connection).getDemux().connect(mixer);
-            	((BaseConnection) conn).getDemux().connect(mixer);
+                ((BaseConnection) connection).getDemux().connect(mixer);
             }
         }
         
