@@ -157,7 +157,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
         List<MsConnection> msConnectionList = new ArrayList<MsConnection>();
         for (MsSession e : sessions) {
             for (MsConnection c : e.getConnections()) {
-                if (c.getEndpoint().equals(endpointName)) {
+                if (c.getEndpoint().getLocalName().equals(endpointName)) {
                     msConnectionList.add(c);
                 }
             }
