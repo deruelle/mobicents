@@ -9,7 +9,7 @@
 	<version>1.0.0.BETA5-SNAPSHOT</version>
     </parent>
     
-    <artifactId>mgcp-demo-services-DU</artifactId>
+    <artifactId>zmgcp-demo-services-DU</artifactId>
    
     <name>MGCP :: ${pom.artifactId}</name>
     
