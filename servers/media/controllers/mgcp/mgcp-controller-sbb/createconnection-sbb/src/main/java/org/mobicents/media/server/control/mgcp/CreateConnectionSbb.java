@@ -30,10 +30,13 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
 import javax.slee.CreateException;
+import javax.slee.NotAttachedException;
 import javax.slee.RolledBackContext;
+import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.TransactionRequiredLocalException;
+import javax.slee.UnrecognizedEventException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.FacilityException;
 import javax.slee.facilities.NameAlreadyBoundException;
@@ -138,6 +141,27 @@ public abstract class CreateConnectionSbb implements Sbb {
 		ConnectionDescriptor remoteConnectionDescriptor = event.getRemoteConnectionDescriptor();
 
 		if (remoteConnectionDescriptor != null) {
+			String[] eventsToBeMasked = { "ConnectionHalfOpen" };
+			try {
+				sbbContext.maskEvent(eventsToBeMasked, aci);
+			} catch (TransactionRequiredLocalException e) {				
+				e.printStackTrace();
+			} catch (NullPointerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnrecognizedEventException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SLEEException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotAttachedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			remoteSDP = remoteConnectionDescriptor.toString();
 		}
 
@@ -167,10 +191,21 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	}
 
+	public void onConnectionHalfOpen(MsConnectionEvent event, ActivityContextInterface aci) {
+		logger.info(" onConnectionHalfOpen called ");
+		sendConnectionResponse(event, aci);
+		logger.info(" onConnectionHalfOpen exiting ");
+
+	}
+
 	public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
 
 		logger.info(" onConnectionCreated called ");
+		sendConnectionResponse(evt, aci);
+		logger.info(" onConnectionCreated exiting ");
+	}
 
+	private void sendConnectionResponse(MsConnectionEvent evt, ActivityContextInterface aci) {
 		MsConnection msConnection = evt.getConnection();
 
 		// MGCP only accepts hexadecimal string X-(
@@ -211,8 +246,6 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
-
-		logger.info(" onConnectionCreated exiting ");
 	}
 
 	private void bindMediaActivityContextInterface(ActivityContextInterface aci,
