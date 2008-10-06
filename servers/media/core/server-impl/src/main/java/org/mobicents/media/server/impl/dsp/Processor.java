@@ -24,7 +24,6 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -41,10 +40,10 @@ public class Processor implements Serializable {
 
     private Input input;
     private Output output;
-
     private final static ArrayList<Codec> codecs = new ArrayList();
     private transient Logger logger = Logger.getLogger(Processor.class);
-    protected String resourceName=null;
+    protected String resourceName = null;
+    
 
     static {
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Encoder());
@@ -57,14 +56,14 @@ public class Processor implements Serializable {
 
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Encoder());
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
-    };
-    
+    }
+    ;
     private HashMap<String, Codec> selectedCodecs = new HashMap();
 
     public Processor(String resourceName) {
         input = new Input();
         output = new Output();
-        this.resourceName=resourceName;
+        this.resourceName = resourceName;
     }
 
     /**
@@ -122,9 +121,11 @@ public class Processor implements Serializable {
     /**
      * Implements output of the processor.
      */
-    private class Output extends AbstractSource {        
+    private class Output extends AbstractSource {
+
         protected boolean connected = false;
-        protected int failDeliveryCount=0;
+        protected int failDeliveryCount = 0;
+
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
@@ -143,7 +144,7 @@ public class Processor implements Serializable {
             //analyze each consumer format
             Format[] cunsumerFormats = sink.getFormats();
             ArrayList extFormats = new ArrayList();
-            
+
             for (Format f : cunsumerFormats) {
                 extFormats.add(f);
                 for (Codec codec : codecs) {
@@ -160,14 +161,14 @@ public class Processor implements Serializable {
                     //we are obtaining all formats to wich this codec can transform
                     //the original format f
                     Format[] out = codec.getSupportedInputFormats(f);
-                    
+
                     for (Format of : out) {
                         extFormats.add(of);
                         selectedCodecs.put(of.toString(), codec);
                     }
                 }
             }
-            
+
             input.formats = new Format[extFormats.size()];
             extFormats.toArray(input.formats);
         }
@@ -188,57 +189,45 @@ public class Processor implements Serializable {
          * @param buffer the buffer to transmit
          */
         protected void transmit(Buffer buffer) {
-        	
-        	//Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
-            // Discard packet silently if output handler is not assigned yet
-  
-        		if (super.sink == null || buffer == null ||buffer.getFormat() == null) {
-        			return;
-        		}
 
-        		// perform transcoding if it is needed.
-        		// when processor is configured it creates a map of codecs where
-           	 // for each input format stands a required codec if transcoding really
-        		// required
+            //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
+            // Discard packet silently if output handler is not assigned yet
+
+            if (super.sink == null || buffer == null || buffer.getFormat() == null) {
+                return;
+            }
+
+            // perform transcoding if it is needed.
+            // when processor is configured it creates a map of codecs where
+            // for each input format stands a required codec if transcoding really
+            // required
 //         		   if ((sink instanceof SendStream)) {
 //             		   System.out.println("f=" + buffer.getFormat() + " codec=" + selectedCodecs.get(buffer.getFormat().toString()));
 //              	  System.out.println(showCodecMap());
 //           	 }
-        		if (selectedCodecs.containsKey(buffer.getFormat().toString())) {
-        			Codec codec = selectedCodecs.get(buffer.getFormat().toString());
-        			codec.process(buffer);
-        		} 
-            
+            if (selectedCodecs.containsKey(buffer.getFormat().toString())) {
+                Codec codec = selectedCodecs.get(buffer.getFormat().toString());
+                codec.process(buffer);
+            }
 
-        		// Codec can delay media transition if it has not enouph media
-        		// to perform its job. 
-        		// It means that Processor should check FLAGS after codec's 
-        		// work and discard packet if required
-        		if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
-        			return;
-        		}
 
-        		//may be a situation when original format can not be trancoded to 
-        		//one of the required output. In this case codec map will have no 
-        		//entry for this format. also codec may has no entry in case of when 
-        		//transcoding is not required. to differentiate these two cases check
-        		//if this format is acceptable by the consumer.
-        		
-        		//deliver packet to the consumer
-        		//sink.receive(buffer);
-        		if(!super.makeReceive(buffer))
-        		{
-        			//This happens/should happen on disconnect. So lets just dump some info
-        			//Two case :
-        			//****input is from RtpSocket.ReceiveStream
-        			//****input is from Output from another Processor
-        			if(logger.isDebugEnabled())
-        			{
-        				logger.debug("Processor : Output : "+resourceName+" :buffer delivery failed. ");
-        			}
-        		}
-        	
-            
+            // Codec can delay media transition if it has not enouph media
+            // to perform its job. 
+            // It means that Processor should check FLAGS after codec's 
+            // work and discard packet if required
+            if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
+                return;
+            }
+
+            //may be a situation when original format can not be trancoded to 
+            //one of the required output. In this case codec map will have no 
+            //entry for this format. also codec may has no entry in case of when 
+            //transcoding is not required. to differentiate these two cases check
+            //if this format is acceptable by the consumer.
+
+            //deliver packet to the consumer
+            sink.receive(buffer);
+
         }
     }
 

@@ -19,6 +19,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.CachedBuffersPool;
 
 /**
  *
@@ -62,6 +63,8 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
             rtpSocket.peer.send(p);
         } catch (IOException e) {
             logger.error("I/O Error", e);
+        } finally {
+            CachedBuffersPool.release(buffer);
         }
     }
 

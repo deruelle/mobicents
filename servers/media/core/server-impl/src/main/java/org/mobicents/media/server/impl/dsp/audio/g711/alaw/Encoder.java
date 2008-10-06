@@ -15,6 +15,7 @@ package org.mobicents.media.server.impl.dsp.audio.g711.alaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -44,7 +45,8 @@ public class Encoder implements Codec {
         7, 7, 7, 7, 7, 7, 7, 7
     };
 
-
+    private byte[] temp = new byte[1200];
+    
     /**
      * (Non Java-doc)
      * 
@@ -99,7 +101,12 @@ public class Encoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
+        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
+        buffer.setOffset(0);
+        buffer.setLength(len);
+        buffer.setFormat(PCMA);
+        /*byte[] data = (byte[]) buffer.getData();
         
         int offset = buffer.getOffset();
         int length = buffer.getLength();
@@ -113,6 +120,17 @@ public class Encoder implements Codec {
         buffer.setOffset(0);
         buffer.setFormat(Codec.PCMA);
         buffer.setLength(res.length);
+         */
+    }
+    
+    private int process(byte[] src, int len, byte[] res) {
+        int j = 0;
+        int count = len / 2;
+        for (int i = 0; i < count; i++) {
+            short sample = (short) (((src[j++] & 0xff) | (src[j++]) << 8));
+            res[i] = linearToALawSample(sample);
+        }
+        return count;
     }
     
     /**

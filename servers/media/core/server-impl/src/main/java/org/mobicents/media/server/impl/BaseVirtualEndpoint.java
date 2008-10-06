@@ -47,8 +47,10 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 	public void deleteConnection(String connectionID) {
 		super.deleteConnection(connectionID);
 		if (!this.hasConnections()) {
+                    System.out.println("Removed endpoint=" + this.getLocalName());
 			endpoints.remove(this.getLocalName());
 		}
+                System.out.println("endpoints: " + endpoints);
 	}
 
 	public Endpoint getEndpoint(String localName) {

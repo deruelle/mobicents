@@ -43,6 +43,7 @@ import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsSession;
+import org.mobicents.mscontrol.impl.events.EventParser;
 
 /**
  * 
@@ -61,6 +62,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
     private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
     private QueuedExecutor eventQueue = new QueuedExecutor();
+    private EventParser eventParser = new EventParser();
     /**
      * Creates a new instance of MsConnectionImpl
      * 
@@ -263,8 +265,10 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     }
 
     public void update(NotifyEvent event) {
-        for (MsNotificationListener listener : eventListeners) {
-            MsNotifyEvent evt = new MsNotifyEventImpl(this, null);
+        System.out.println("MsConnection: receive event");
+        MsNotifyEvent evt = eventParser.parse(this, event);
+        for (MsNotificationListener listener : session.provider.eventListeners) {
+            System.out.println("MsConnectio nSending event to "  + listener);
             listener.update(evt);
         }
     }

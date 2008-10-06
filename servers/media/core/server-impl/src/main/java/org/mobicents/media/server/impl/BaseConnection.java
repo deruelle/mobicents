@@ -219,9 +219,11 @@ public abstract class BaseConnection implements Connection, NotificationListener
     }
 
     public void update(NotifyEvent event) {
+        System.out.println("Event=" + event.getEventID().getFQN());
         synchronized (eventListeners) {
             for (RequestedEvent request : this.eventListeners) {
                 if (request.getID().equals(event.getEventID())) {
+                    System.out.println("Sending event=" + event.getEventID() + " to " + request.getHandler());
                     eventQueue.submit(new EventSender(request.getHandler(), event));
                 }
             }

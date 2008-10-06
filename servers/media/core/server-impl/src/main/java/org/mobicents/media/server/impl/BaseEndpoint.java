@@ -195,12 +195,14 @@ public abstract class BaseEndpoint implements Endpoint {
             HashMap<String, MediaSource> sourceMap = initMediaSources();
             for (MediaSource source : sourceMap.values()) {
                 source.connect(((BaseConnection) connection).getMux());
+                    source.addListener((BaseConnection) connection);
             }
             mediaSources.put(connection.getId(), sourceMap);
 
             HashMap<String, MediaSink> sinkMap = initMediaSinks();
             for (MediaSink sink : sinkMap.values()) {
                 sink.connect(((BaseConnection) connection).getDemux());
+                    sink.addListener((BaseConnection) connection);
             }
             mediaSinks.put(connection.getId(), sinkMap);
             return connection;
@@ -432,17 +434,22 @@ public abstract class BaseEndpoint implements Endpoint {
     }
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
+        System.out.println("Connection ID=" + connectionID);
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
+        System.out.println("Connection =" + connection);
         
         connection.detect(null);
         for (int i = 0; i < events.length; i++) {
+            System.out.println("Detectting event= " + events[i].getID().getEventName() + ", handler=" + events[i].getHandler());
             connection.detect(events[i]);
         }
+        System.out.println("Listeners ready =");
 
         if (signals.length > 0) {
             try {
                 AbstractSignal signal = getSignal(signals[0]);
                 signal.apply(connection);
+        System.out.println("Play signal =" + signal);
             } catch (Exception e) {
                 logger.error("Execute signal error", e);
             }

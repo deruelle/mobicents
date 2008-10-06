@@ -63,7 +63,8 @@ public class MsEndpointImpl implements MsEndpoint {
     }
     
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsConnection connection) {
-        MsProviderImpl.submit(new Tx(signals, events, connection.getId(), null));
+        String connectionID = ((MsConnectionImpl) connection).connection.getId();
+        MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsConnectionImpl) connection));
     }
     
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link) {

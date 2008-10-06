@@ -53,13 +53,15 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     protected Timer timer;
     private boolean started;
     private String file;
+    private long time;
     private transient Logger logger = Logger.getLogger(AudioPlayer.class);
+    private Thread worker;
+    private int count = 0;
     //protected int packetPeriod;
     public AudioPlayer() {
         this.timer = new Timer();
         timer.setListener(this);
     }
-
 
     public void setFile(String file) {
         this.file = file;
@@ -116,6 +118,10 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 
         this.timer.start();
         this.started = true;
+        //worker = new Thread(this);
+        //worker.setName("Audio Player");
+        //worker.setPriority(Thread.MAX_PRIORITY);
+        //worker.start();
         this.started();
     }
 
@@ -139,8 +145,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     public void stop() {
         timer.stop();
         if (started) {
-            this.stopped();
             started = false;
+            this.stopped();
         }
     }
 
@@ -156,7 +162,6 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player stopped.
      */
     protected void stopped() {
-        System.out.print("SENDING COMPLTED EVENT");
         AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
         this.sendEvent(evt);
     }
@@ -178,10 +183,28 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         this.sendEvent(evt);
     }
 
-    public void run() {
+    private int readPacket(byte[] packet) throws IOException {
+        int offset = 0;
+        while (offset < packetSize) {
+            int len = stream.read(packet, offset, packetSize - offset);
+            if (len == -1) {
+                return -1;
+            }
+            offset += len;
+        }
+        return packetSize;
+    }
+
+    private void doProcess() {
         byte[] packet = new byte[packetSize];
         try {
-            int len = stream.read(packet);
+            //int len = stream.read(packet);
+            int len = readPacket(packet);
+//            long now = System.currentTimeMillis();
+//            if (now - time > 25) {
+//                System.out.println("Delay= " + (now - time));
+//            }
+//            time = now;
             if (len == -1) {
                 timer.stop();
                 if (started) {
@@ -198,22 +221,37 @@ public class AudioPlayer extends AbstractSource implements Runnable {
                 buffer.setEOM(false);
                 buffer.setSequenceNumber(seq++);
 
-                //if (sink != null) {
-                    //sink.receive(buffer);
-                //}
-                if(!super.makeReceive(buffer))
-                {
-                	logger.info("AudioPlayer : failed to deliver buffer: Stoping");
-                	this.stop();
+                if (sink != null) {
+                    sink.receive(buffer);
                 }
 
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             timer.stop();
             started = false;
             e.printStackTrace();
             failed(e);
         }
+    }
+
+    @SuppressWarnings("static-access")
+    public void run() {
+/*        while (started) {
+            if (count == 2) {
+                count = 0;
+                doProcess();
+            } else {
+                count++;
+                try {
+                    Thread.currentThread().sleep(10);
+                } catch (InterruptedException e) {
+                    started = false;
+                }
+            }
+
+        }
+ */
+        doProcess();
     }
 
     public Format[] getFormats() {

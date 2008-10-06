@@ -61,14 +61,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
         }
         
         
-        //sink.receive(frame);
-        if(!super.makeReceive(frame))
-        {
-        	logger.info("ReciveStream : Failed to receive frame : stoping");
-        	//return;
-        	//FIXME: baranowb : Is this ok?
-        	this.stop(); 
-        }
+        sink.receive(frame);
     }
 
     public void start() {

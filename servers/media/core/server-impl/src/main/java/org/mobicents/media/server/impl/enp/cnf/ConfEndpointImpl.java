@@ -127,7 +127,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
-                ((BaseConnection) connection).getDemux().disconnect(mixer);
+                ((BaseConnection) conn).getDemux().disconnect(mixer);
             }
         }
     }

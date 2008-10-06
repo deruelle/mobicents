@@ -35,7 +35,6 @@ public class MsEndpointLocal implements MsEndpoint {
     }
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link) {
-        System.out.println("MSEndpointLocal: execute on endpoint=" + endpoint);
         endpoint.execute(signals, events, ((MsLinkLocal)link).link);
     }
 

@@ -11,36 +11,49 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.server.impl.clock.Quartz;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public class CachedBuffersPool implements Serializable {
+
+    private final static int SIZE = 2400;
+    private final static int MAX_CAPACITY = 100;
     
-    private static ArrayList <Buffer> buffers = new ArrayList();
-    
-    public static synchronized Buffer allocate() {
-        if (buffers.size() > 0) {
-            //System.out.println("TAKE FROM POOL");
-            return buffers.remove(0);
+    private static ArrayList<Buffer> buffers = new ArrayList();
+    private static ReentrantLock state = new ReentrantLock();
+
+    public static Buffer allocate() {
+        state.lock();
+        try {
+            if (buffers.size() > 0) {
+                return buffers.remove(0);
+            }
+
+            Buffer buffer = new Buffer();
+            buffer.setData(new byte[SIZE]);
+
+            return buffer;
+        } finally {
+            state.unlock();
         }
-        
-        Buffer buffer = new Buffer();
-        buffer.setData(new byte[Quartz.HEART_BEAT * 8 * 2] );
-        
-        return buffer;
     }
-    
+
     public static synchronized void release(Buffer buffer) {
-            //System.out.println("!!!!!RELEASED");
-        buffers.add(buffer);
+        state.lock();
+        try {
+            if (buffers.size() < MAX_CAPACITY) {
+                buffers.add(buffer);
+            }
+        } finally {
+            state.unlock();
+        }
     }
 }

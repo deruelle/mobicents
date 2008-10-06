@@ -13,11 +13,9 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
@@ -36,168 +34,174 @@ import org.mobicents.media.server.impl.clock.Timer;
  */
 public class Multiplexer extends AbstractSink implements Runnable {
 
-	private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW,
-			8000, 8, 1);
-	private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW,
-			8000, 8, 1);
-	private final static AudioFormat LINEAR = new AudioFormat(
-			AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN,
-			AudioFormat.SIGNED);
-	private final static AudioFormat DTMF = new AudioFormat(
-			"telephone-event/8000");
+    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW,
+            8000, 8, 1);
+    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW,
+            8000, 8, 1);
+    private final static AudioFormat LINEAR = new AudioFormat(
+            AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN,
+            AudioFormat.SIGNED);
+    private final static AudioFormat DTMF = new AudioFormat(
+            "telephone-event/8000");
+    private Format[] formats = null;
+    private HashMap<MediaSource, Input> inputs = new HashMap();
+    private Output output;
+    private ArrayList<Buffer> packets = new ArrayList();
+    private Timer timer;
+    private int seq = 0;
+    private Thread worker;
+    private boolean started = true;
 
-	private Format[] formats = null;
+    public Multiplexer() {
+        output = new Output();
+        timer = new Timer();
+        timer.setListener(this);
+    }
 
-	private HashMap<MediaSource, Input> inputs = new HashMap();
-	private Output output;
-	private ArrayList<Buffer> packets = new ArrayList();
-	private Timer timer;
-	private int seq = 0;
+    public MediaSource getOutput() {
+        return output;
+    }
 
-	public Multiplexer() {
-		output = new Output();
-		timer = new Timer();
-		timer.setListener(this);
-	}
+    public Format[] getFormats() {
+        return output.sink != null ? output.sink.getFormats() : null;
+    }
 
-	public MediaSource getOutput() {
-		return output;
-	}
+    private void print(Format[] fmts) {
+        if (fmts != null) {
+            for (Format f : fmts) {
+                System.out.println(f);
+            }
+        } else {
+            System.out.println("NULL");
+        }
+    }
 
-	public Format[] getFormats() {
-		return output.sink != null ? output.sink.getFormats() : null;
-	}
+    @Override
+    public void connect(MediaSource source) {
+        Input input = new Input();
+        // input.connect(source);
+        source.connect(input);
+        inputs.put(source, input);
+        reassemblyFormats();
+    }
 
-	private void print(Format[] fmts) {
-		if (fmts != null) {
-			for (Format f : fmts) {
-				System.out.println(f);
-			}
-		} else {
-			System.out.println("NULL");
-		}
-	}
+    @Override
+    public void disconnect(MediaSource source) {
+        Input input = inputs.remove(source);
+        if (input != null) {
+            // input.disconnect(source);
+            source.disconnect(input);
+            reassemblyFormats();
+        }
+    }
 
-	@Override
-	public void connect(MediaSource source) {
-		Input input = new Input();
-		// input.connect(source);
-		source.connect(input);
-		inputs.put(source, input);
-		reassemblyFormats();
-	}
+    /**
+     * Reassemblies the list of used formats. This method is called each time
+     * when connected/disconnected source
+     */
+    private void reassemblyFormats() {
+        ArrayList list = new ArrayList();
+        Collection<Input> sources = inputs.values();
+        for (Input input : sources) {
+            Format[] fmts = input.mediaStream != null ? input.mediaStream.getFormats() : null;
+            if (fmts != null) {
+                for (Format format : fmts) {
+                    if (!list.contains(format)) {
+                        list.add(format);
+                    }
+                }
+            }
+        }
 
-	@Override
-	public void disconnect(MediaSource source) {
-		Input input = inputs.remove(source);
-		if (input != null) {
-			// input.disconnect(source);
-			source.disconnect(input);
-			reassemblyFormats();
-		}
-	}
+        if (list.size() > 0) {
+            formats = new Format[list.size()];
+            list.toArray(formats);
+        } else {
+            formats = null;
+        }
+    // commonFormats = (Format[]) list.toArray();
+    }
 
-	/**
-	 * Reassemblies the list of used formats. This method is called each time
-	 * when connected/disconnected source
-	 */
-	private void reassemblyFormats() {
-		ArrayList list = new ArrayList();
-		Collection<Input> sources = inputs.values();
-		for (Input input : sources) {
-			Format[] fmts = input.mediaStream != null ? input.mediaStream
-					.getFormats() : null;
-			if (fmts != null) {
-				for (Format format : fmts) {
-					if (!list.contains(format)) {
-						list.add(format);
-					}
-				}
-			}
-		}
+    public boolean isAcceptable(Format fmt) {
+        try {
+            if (output.sink != null) {
+                return output.sink.isAcceptable(fmt);
+            }
+        } catch (NullPointerException e) {
+            return false;
+        }
 
-		if (list.size() > 0) {
-			formats = new Format[list.size()];
-			list.toArray(formats);
-		} else {
-			formats = null;
-		}
-		// commonFormats = (Format[]) list.toArray();
-	}
+        return true;
+    }
 
-	public boolean isAcceptable(Format fmt) {
-		try {
-			if (output.sink != null) {
-				return output.sink.isAcceptable(fmt);
-			}
-		} catch (NullPointerException e) {
-			return false;
-		}
+    public void receive(Buffer buffer) {
+    }
 
-		return true;
-	}
+    class Input extends AbstractSink {
 
-	public void receive(Buffer buffer) {
-	}
+        public boolean isAcceptable(Format fmt) {
+            return true;
+        }
 
-	class Input extends AbstractSink {
+        public void receive(Buffer buffer) {
+            deliver(buffer);
+            //synchronized (packets) {
+                // if (packets.size() > 2 * inputs.size()) {
+                // packets.remove(0);
+                // }
+                // System.out.println("Append : " + buffer.getFormat());
+//                packets.add(buffer);
+//            }
+        }
 
-		public boolean isAcceptable(Format fmt) {
-			return true;
-		}
+        public Format[] getFormats() {
+            return output.sink != null ? output.sink.getFormats() : null;
+        }
+    }
 
-		public void receive(Buffer buffer) {
-			synchronized (packets) {
-				// if (packets.size() > 2 * inputs.size()) {
-				// packets.remove(0);
-				// }
-				// System.out.println("Append : " + buffer.getFormat());
-				packets.add(buffer);
-			}
-		}
+    class Output extends AbstractSource {
 
-		public Format[] getFormats() {
-			return output.sink != null ? output.sink.getFormats() : null;
-		}
-	}
+        public Output() {
+        }
 
-	class Output extends AbstractSource {
+        public void start() {
+            //timer.start();
+        }
 
-		public Output() {
-		}
+        public void stop() {
+            //timer.stop();
+        }
 
-		public void start() {
-			timer.start();
-		}
+        public Format[] getFormats() {
+            return formats;
+        }
+    }
 
-		public void stop() {
-			timer.stop();
-		}
+    public void deliver(Buffer buffer) {
+        buffer.setSequenceNumber(seq);
+        buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
+        if (output != null && output.sink != null) {
+            output.sink.receive(buffer);
+        }
+        seq++;
+    }
 
-		public Format[] getFormats() {
-			return formats;
-		}
-	}
-
-	public void run() {
-    	try{
+    public void run() {
         synchronized (packets) {
             if (packets.size() > 0) {
                 Buffer buffer = packets.remove(0);
                 buffer.setSequenceNumber(seq);
                 buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
-                if (output != null && output.sink != null && 
-                        output.sink.isAcceptable(buffer.getFormat())) {
+//                    if (output != null && output.sink != null &&
+//                            output.sink.isAcceptable(buffer.getFormat())) {
+//                        output.sink.receive(buffer);
+//                    }
+                if (output != null && output.sink != null) {
                     output.sink.receive(buffer);
-                } 
+                }
                 seq++;
             }
         }
-    	}catch(NullPointerException e)
-    	{
-    		logger.info("Multiplexer : receive operation faild :");
-    		Thread.currentThread().stop();
-    	}
     }
 }
 

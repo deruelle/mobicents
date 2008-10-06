@@ -11,7 +11,6 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.enp.cnf;
 
 import org.mobicents.media.Buffer;
@@ -23,16 +22,11 @@ import org.mobicents.media.server.impl.AbstractSource;
  * @author Oleg Kulikov
  */
 public class MixerOutput extends AbstractSource {
+
     protected void push(Buffer buffer) {
-    	
-        		if(!super.makeReceive(buffer))
-        		{
-        			//FIXME: baranowb : are we eligible to end this?
-        			//It happens in Timer inside AudioMixer
-        			logger.info("MixerOutput : failed receive operation :");
-    				Thread.currentThread().stop();
-        		}
-    
+        if (sink != null) {
+            sink.receive(buffer);
+        }
     }
 
     public void start() {

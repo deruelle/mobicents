@@ -123,10 +123,10 @@ public class RtpPacket implements Serializable {
         bout.write((byte) ((ssrc & 0x0000FF00) >> 8));
         bout.write((byte) ((ssrc & 0x000000FF)));
 
-        try {
-            bout.write(payload);
-        } catch (IOException e) {
-        }
+//        try {
+            bout.write(payload, offset, length);
+//        } catch (IOException e) {
+//        }
 
         return bout.toByteArray();
     }
