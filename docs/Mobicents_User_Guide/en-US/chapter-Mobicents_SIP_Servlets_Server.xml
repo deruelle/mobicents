@@ -1,11 +1,36 @@
 <?xml version='1.0'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<chapter id="chapter-Mobicents_SIP_Servlets_Server">
+<chapter
+	id="chapter-Mobicents_SIP_Servlets_Server">
 	<title>Mobicents SIP Servlets Server</title>
 	<para></para>
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
 		href="servers_and_services/section-Mobicents_SIP_Servlets_Server.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/servers_and_services/section-Mobicents_SIP_Servlets_Load_Balancer.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-Mobicents_SIP_Servlets_Clustering_Support.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="servers_and_services/section-Mobicents_SIP_Servlets_Failover_Support" />
 </chapter>
+<Connector
+	port="5080"
+	ipAddress="127.0.0.1"
+	protocol="org.mobicents.servlet.sip.startup.SipProtocolHandler"
+	signalingTransport="udp"
+	threadPoolSize="64"
+	isReentrantListener="true"
+	useStun="false"
+	stunServerAddress="stun01.sipphone.com"
+	stunServerPort="3478"
+	logLevel="DEBUG"
+	debugLog="logs/debuglog.txt"
+	serverLog="logs/serverlog.txt"
+	sipStackName="SIP-Servlet-Tomcat-Server"
+	sipPathName="gov.nist"/>
 
