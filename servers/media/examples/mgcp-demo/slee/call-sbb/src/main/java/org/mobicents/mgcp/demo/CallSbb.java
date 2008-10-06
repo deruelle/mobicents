@@ -61,7 +61,7 @@ public abstract class CallSbb implements Sbb {
 	}
 
 	public void onInvite(RequestEvent evt, ActivityContextInterface aci) {
-		Request request = evt.getRequest();	
+		Request request = evt.getRequest();
 
 		FromHeader from = (FromHeader) request.getHeader(FromHeader.NAME);
 		ToHeader to = (ToHeader) request.getHeader(ToHeader.NAME);
@@ -81,10 +81,12 @@ public abstract class CallSbb implements Sbb {
 		} else if (destination.indexOf(RQNT_DEMO) > 0) {
 			ChildRelation relation = getRQNTSbbChild();
 			forwardEvent(relation, aci, evt);
+		} else {
+			logger.info("MGCP Demo can understand only " + CRCX_CONNECTIONID_DEMO + ", " + CRCX_ENDPOINTID_DEMO
+					+ " and " + MDCX_DEMO + " dialed numbers");
 		}
-		logger.info("MGCP Demo can understand only "+CRCX_CONNECTIONID_DEMO+", "+CRCX_ENDPOINTID_DEMO+" and "+MDCX_DEMO+" dialed numbers");
 		return;
-//		respond(evt, Response.RINGING);
+		// respond(evt, Response.RINGING);
 	}
 
 	private void forwardEvent(ChildRelation relation, ActivityContextInterface aci, RequestEvent evt) {
@@ -129,7 +131,7 @@ public abstract class CallSbb implements Sbb {
 	public abstract ChildRelation getCRCXEndpointSbbChild();
 
 	public abstract ChildRelation getMDCXSbbChild();
-	
+
 	public abstract ChildRelation getRQNTSbbChild();
 
 	public void unsetSbbContext() {
