@@ -11,7 +11,7 @@
 		<version>1.0.0.BETA5-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mgcp-control-services-DU</artifactId>
+	<artifactId>zmgcp-control-services-DU</artifactId>
 
 	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>
 
