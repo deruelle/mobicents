@@ -64,7 +64,7 @@
     <mbean
         code="org.mobicents.media.server.impl.jmx.enp.ivr.IVREndpointManagement"
         name="media.mobicents:endpoint=ivr">
-        <attribute name="JndiName">media/endpoint/IVR</attribute>
+        <attribute name="JndiName">media/trunk/IVR</attribute>
         <attribute name="RtpFactoryName">java:media/mobicents/protocol/RTP</attribute>
         <attribute name="MediaType">audio.x_wav</attribute>
         <attribute name="RecordDir">${jboss.server.data.dir}</attribute>
