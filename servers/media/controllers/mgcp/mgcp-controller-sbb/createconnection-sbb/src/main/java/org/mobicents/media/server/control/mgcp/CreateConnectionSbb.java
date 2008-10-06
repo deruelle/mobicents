@@ -167,7 +167,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	}
 
-	public void onConnectionCreated(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
 
 		logger.info(" onConnectionCreated called ");
 
@@ -253,7 +253,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
 		logger.warn("ConnectionTransactionFailed");
 
 		MsConnectionEventCause msConnectionEventCause = evt.getCause();

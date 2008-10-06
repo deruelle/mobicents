@@ -120,7 +120,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
-	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
 		logger.warn("ConnectionTransactionFailed");
 
 		MsConnectionEventCause msConnectionEventCause = evt.getCause();

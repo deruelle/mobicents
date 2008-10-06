@@ -56,7 +56,7 @@
 			<event-name>AnnouncementComplete</event-name>
 			<event-type-ref>
 				<event-type-name>
-					org.mobicents.slee.media.announcement.COMPLETE
+					org.mobicents.media.events.announcement.COMPLETED
 				</event-type-name>
 				<event-type-vendor>
 					org.mobicents.media
@@ -66,10 +66,10 @@
 		</event>
 
 		<event event-direction="Receive" initial-event="False">
-			<event-name>ConnectionTransactionFailed</event-name>
+			<event-name>ConnectionFailed</event-name>
 			<event-type-ref>
 				<event-type-name>
-					org.mobicents.slee.media.CONNECTION_TX_FAILED
+					org.mobicents.slee.media.CONNECTION_FAILED
 				</event-type-name>
 				<event-type-vendor>
 					org.mobicents.media
@@ -82,7 +82,7 @@
 			<event-name>AnnouncementFailed</event-name>
 			<event-type-ref>
 				<event-type-name>
-					org.mobicents.slee.media.announcement.FAIL
+					org.mobicents.media.events.announcement.FAILED
 				</event-type-name>
 				<event-type-vendor>
 					org.mobicents.media

@@ -43,18 +43,14 @@
 			<initial-event-select variable="ActivityContext" />
 		</event>
 
-		<event event-direction="Receive" initial-event="False">
-			<event-name>ConnectionDeleted</event-name>
-			<event-type-ref>
-				<event-type-name>
-					org.mobicents.slee.media.CONNECTION_DELETED
-				</event-type-name>
-				<event-type-vendor>
-					org.mobicents.media
-				</event-type-vendor>
-				<event-type-version>1.0</event-type-version>
-			</event-type-ref>
-		</event>
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ConnectionDisconnected</event-name>
+            <event-type-ref>
+                <event-type-name>org.mobicents.slee.media.CONNECTION_DISCONNECTED</event-type-name>
+                <event-type-vendor>org.mobicents.media</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+        </event>
 
 		<resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>

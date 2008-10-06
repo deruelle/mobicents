@@ -36,18 +36,21 @@ import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
-import javax.slee.UnrecognizedActivityException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
-import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.runtime.facilities.ActivityContextNamingFacilityImpl;
 
@@ -149,17 +152,42 @@ public abstract class NotificationRequestSbb implements Sbb {
 
 				if (msConnection != null) {
 					String endpoint = msConnection.getEndpoint().getLocalName();
+					
+					MsEventFactory eventFactory = msProvider.getEventFactory();
+					
+			        MsPlayRequestedSignal play = null;
+			        play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+			        play.setURL(announcementUrl);
+			        
+			        MsRequestedEvent onCompleted = null;
+			        MsRequestedEvent onFailed = null;
 
-					MsSignalGenerator generator = msProvider.getSignalGenerator(endpoint);
-					try {
-						ActivityContextInterface generatorActivity = msActivityFactory
-								.getActivityContextInterface(generator);
-						generatorActivity.attach(sbbContext.getSbbLocalObject());
-						generator.apply(EventID.PLAY, msConnection, new String[] { announcementUrl });
+			        onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+			        onCompleted.setEventAction(MsEventAction.NOTIFY);
 
-					} catch (UnrecognizedActivityException e) {
-						e.printStackTrace();
-					}
+			        onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+			        onFailed.setEventAction(MsEventAction.NOTIFY);
+
+			        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
+			        MsRequestedEvent[] msrequestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
+
+			        System.out.println("EXECUTING PLAY");	
+			        
+			        msConnection.getEndpoint().execute(requestedSignals, msrequestedEvents, msConnection);
+
+					// MsSignalGenerator generator =
+					// msProvider.getSignalGenerator(endpoint);
+					// try {
+					// ActivityContextInterface generatorActivity =
+					// msActivityFactory
+					// .getActivityContextInterface(generator);
+					// generatorActivity.attach(sbbContext.getSbbLocalObject());
+					// generator.apply(EventID.PLAY, msConnection, new String[]
+					// { announcementUrl });
+					//
+					// } catch (UnrecognizedActivityException e) {
+					//						e.printStackTrace();
+					//					}
 				}
 
 				break;
@@ -191,7 +219,7 @@ public abstract class NotificationRequestSbb implements Sbb {
 		}
 	}
 
-	public void onConnectionTransactionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("onConnectionTransactionFailed");
 		}
