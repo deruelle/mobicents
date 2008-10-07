@@ -101,7 +101,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
                 sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
                 break;
             case DISCONNECTED:
-                session.removeLink(getId());
+                session.removeLink(this);
                 sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
                 break;
         }

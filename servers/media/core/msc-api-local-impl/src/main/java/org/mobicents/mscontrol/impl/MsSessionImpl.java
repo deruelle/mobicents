@@ -165,15 +165,15 @@ public class MsSessionImpl implements MsSession {
         return this.connections;
     }
     
-    protected void removeConnection(String connectionID) {
-        connections.remove(connectionID);
+    protected void removeConnection(MsConnection msConnection) {
+        connections.remove(msConnection);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
         }
     }
     
-    protected void removeLink(String linkID) {
-        links.remove(linkID);
+    protected void removeLink(MsLink link) {
+        links.remove(link);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
         }

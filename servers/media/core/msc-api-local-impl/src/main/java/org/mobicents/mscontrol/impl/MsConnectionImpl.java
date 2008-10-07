@@ -187,7 +187,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                 setState(MsConnectionState.CLOSED, cause);
                 break;
             case CLOSED:
-                session.removeConnection(getId());
+                session.removeConnection(this);
                 sendEvent(MsConnectionEventID.CONNECTION_DISCONNECTED, cause, null);
         }
     }
