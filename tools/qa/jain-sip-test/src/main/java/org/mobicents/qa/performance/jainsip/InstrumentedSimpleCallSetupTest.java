@@ -61,7 +61,7 @@ public class InstrumentedSimpleCallSetupTest implements SipListener {
 	properties.setProperty("gov.nist.javax.sip.DEBUG_LOG", "debuglog.txt");
 	properties.setProperty("gov.nist.javax.sip.SERVER_LOG", "stack_log.txt");
 	properties.setProperty("javax.sip.AUTOMATIC_DIALOG_SUPPORT", "false");
-	properties.setProperty("gov.nist.javax.sip.THREAD_POOL_SIZE", "32");
+	properties.setProperty("gov.nist.javax.sip.THREAD_POOL_SIZE", "64");
 	properties.setProperty("gov.nist.javax.sip.REENTRANT_LISTENER", "true");
 	properties.setProperty("gov.nist.javax.sip.TRACE_LEVEL", debug ? "32" : "0");
 
@@ -200,8 +200,9 @@ public class InstrumentedSimpleCallSetupTest implements SipListener {
 	SimpleCallSetupTestFileUtils.extract("download-and-compile-sipp.sh", ".");
 	SimpleCallSetupTestFileUtils.executize(".");
 
+	new NoRateGovernor(inspector, new SippController(ip, control));
 	// new FixedRateGovernor(inspector, new SippController(ip, control), 100);
-	new LinearRateGovernor(inspector, new SippController(ip, control), 10, 1);
+	// new LinearRateGovernor(inspector, new SippController(ip, control), 10, 1);
 	// new ExponentialLinearRateGovernor(inspector, new SippController(ip, control), 4, 1.2, 1);
 	// new MyFirstHeuristicsGovernor(inspector, new SippController(ip, control));
     }
