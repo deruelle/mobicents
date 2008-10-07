@@ -216,7 +216,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * 
      * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
      */
-    public Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException,
+    public synchronized Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException,
             ResourceUnavailableException {
         // hasConnections = true;
         try {
@@ -253,7 +253,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * 
      * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
      */
-    public void deleteConnection(String connectionID) {
+    public synchronized void deleteConnection(String connectionID) {
         BaseConnection connection = (BaseConnection) connections.remove(connectionID);
         if (connection != null) {
             connection.detect(null);
