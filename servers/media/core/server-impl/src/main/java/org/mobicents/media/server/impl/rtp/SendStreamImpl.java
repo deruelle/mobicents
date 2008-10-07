@@ -45,6 +45,7 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
     private Logger logger = Logger.getLogger(SendStreamImpl.class);
     
     public SendStreamImpl(RtpSocketImpl rtpSocket) {
+    	super("SendStreamImpl");
         this.rtpSocket = rtpSocket;
         packetizer = new RtpPacketizer();
     }

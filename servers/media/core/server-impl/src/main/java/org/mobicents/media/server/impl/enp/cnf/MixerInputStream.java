@@ -36,6 +36,7 @@ public class MixerInputStream extends AbstractSink {
     private Logger logger = Logger.getLogger(MixerInputStream.class);
     
     public MixerInputStream(AudioMixer mixer, int jitter) {
+    	super("MixerInputStream");
         this.mixer = mixer;
         this.jitter = jitter;
     }

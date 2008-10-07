@@ -283,6 +283,7 @@ public class RtpConnectionImplTest {
         private AudioFormat f = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
         public Source() {
+        	super("rtpConnectionImplTest.Source");
             timer.setListener(this);
         }
 
@@ -316,6 +317,10 @@ public class RtpConnectionImplTest {
     }
 
     private class Sink extends AbstractSink {
+    	
+    	public Sink(){
+    		super("RtpConnectionImplTest.Sink");
+    	}
 
         private AudioFormat f = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 

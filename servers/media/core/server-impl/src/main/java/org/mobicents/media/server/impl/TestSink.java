@@ -14,6 +14,10 @@ import org.mobicents.media.format.AudioFormat;
  * @author Oleg Kulikov
  */
 public class TestSink extends AbstractSink {
+	
+	public TestSink(){
+		super("TestSink");
+	}
 
     private Format[] formats = new Format[] {
         new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED)

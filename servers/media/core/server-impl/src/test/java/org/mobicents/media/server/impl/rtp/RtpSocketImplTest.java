@@ -243,6 +243,7 @@ public class RtpSocketImplTest {
         private Timer timer = new Timer();
         
         public Sender() {
+        	super("RtpSocketImplTest.Source");
             timer.setListener(this);
         }
         
@@ -277,6 +278,10 @@ public class RtpSocketImplTest {
     }
 
     private class Receiver extends AbstractSink {
+    	
+    	public Receiver(){
+    		super("RtpSocketImplTest.Receiver");
+    	}
 
         public void receive(Buffer buffer) {
             packets.add(buffer);

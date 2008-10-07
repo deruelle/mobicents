@@ -46,6 +46,7 @@ public class Demultiplexer extends AbstractSource {
     }
 
     public Demultiplexer(Format[] formats) {
+    	super("Demultiplexer");
         this.formats = formats;
     }
     
@@ -79,6 +80,10 @@ public class Demultiplexer extends AbstractSource {
     }
 
     private class Input extends AbstractSink {
+    	
+    	public Input(){
+    		super("Demultiplexer.Input");
+    	}
 
         public boolean isAcceptable(Format fmt) {
             return true;
@@ -107,6 +112,10 @@ public class Demultiplexer extends AbstractSource {
     }
 
     private class Output extends AbstractSource implements Runnable {
+    	
+    	public Output(){
+    		super("Demultiplexer.Output");
+    	}
 
         private ArrayList <Buffer> buffers = new ArrayList();
         

@@ -16,12 +16,12 @@ package org.mobicents.media.server.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mobicents.media.Buffer;
+import org.apache.log4j.Logger;
+import org.jboss.util.id.UID;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -29,9 +29,23 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractSource implements MediaSource {
 
+    protected Logger logger = Logger.getLogger(this.getClass());
+    
     protected MediaSink sink;
     private List<NotificationListener> listeners = new ArrayList();
-    protected Logger logger = Logger.getLogger(this.getClass());
+	private String id = null;
+	private String name = null;
+
+	public AbstractSource(String name) {
+		this.id = (new UID()).toString();
+		this.name = name;
+
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
 
     /**
      * (Non Java-doc).
@@ -91,5 +105,11 @@ public abstract class AbstractSource implements MediaSource {
             listeners.clear();
         }
     }
+    
+	@Override
+	public String toString() {
+		return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
+
+	}
 
 }

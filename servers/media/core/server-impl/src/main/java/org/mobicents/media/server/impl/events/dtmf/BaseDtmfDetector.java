@@ -42,6 +42,7 @@ public class BaseDtmfDetector extends AbstractSink {
     private Logger logger = Logger.getLogger(BaseDtmfDetector.class);
 
     public BaseDtmfDetector() {
+    	super("BaseDtmfDetector");
         digitBuffer = new DtmfBuffer(this);
         inband = new InbandDetector(this);
         rfc2833 = new Rfc2833Detector(this);

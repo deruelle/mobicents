@@ -59,6 +59,7 @@ public class InbandDetector extends AbstractSink {
      * Creates new instance of Detector.
      */
     public InbandDetector(BaseDtmfDetector detector) {
+    	super("InbandDetector");
         this.detector = detector;
         localBuffer = new byte[16 * TONE_DURATION];
         filter = new Filter();

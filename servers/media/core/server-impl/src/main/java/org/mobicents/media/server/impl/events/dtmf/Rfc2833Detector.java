@@ -36,6 +36,7 @@ public class Rfc2833Detector extends AbstractSink {
     private Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
     public Rfc2833Detector(BaseDtmfDetector detector) {
+    	super("Rfc2833Detector");
         this.detector = detector;
     }
 

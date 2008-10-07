@@ -53,6 +53,7 @@ public class Multiplexer extends AbstractSink implements Runnable {
     private boolean started = true;
 
     public Multiplexer() {
+    	super("Multiplexer");
         output = new Output();
         timer = new Timer();
         timer.setListener(this);
@@ -138,6 +139,10 @@ public class Multiplexer extends AbstractSink implements Runnable {
     }
 
     class Input extends AbstractSink {
+    	
+    	public Input(){
+    		super("Multiplexer.Input");
+    	}
 
         public boolean isAcceptable(Format fmt) {
             return true;
@@ -160,9 +165,10 @@ public class Multiplexer extends AbstractSink implements Runnable {
     }
 
     class Output extends AbstractSource {
-
-        public Output() {
-        }
+    	
+       	public Output(){
+    		super("Multiplexer.Output");
+    	}
 
         public void start() {
             //timer.start();

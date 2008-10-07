@@ -21,92 +21,92 @@ import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class SpectralAnalyser extends AbstractSink {
 
-    private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN,
-            AudioFormat.SIGNED);
-    
-    private int offset = 0;
-    private byte[] localBuffer = new byte[16000];
-    private FFT fft = new FFT();
-    private Logger logger = Logger.getLogger(SpectralAnalyser.class);
+	public SpectralAnalyser() {
+		super("SpectralAnalyser");
+	}
 
-    public void start() {
-    }
+	private final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
-    public void stop() {
-    }
+	private int offset = 0;
+	private byte[] localBuffer = new byte[16000];
+	private FFT fft = new FFT();
+	private Logger logger = Logger.getLogger(SpectralAnalyser.class);
 
+	public void start() {
+	}
 
-    private double[] mod(Complex[] x) {
-        double[] res = new double[x.length];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = Math.sqrt(x[i].re() * x[i].re() + x[i].im() * x[i].im());
-        }
-        return res;
-    }
+	public void stop() {
+	}
 
-    protected void sendEvent(double[] spectra) {
-        SpectrumEvent evt = new SpectrumEvent(this, "org.mobicents.media.fft.SPECTRA", spectra);
-        sendEvent(evt);
-    }
+	private double[] mod(Complex[] x) {
+		double[] res = new double[x.length];
+		for (int i = 0; i < res.length; i++) {
+			res[i] = Math.sqrt(x[i].re() * x[i].re() + x[i].im() * x[i].im());
+		}
+		return res;
+	}
 
-    public void receive(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
-        int len = Math.min(16000 - offset, data.length);
-        System.arraycopy(data, 0, localBuffer, offset, len);
-        offset += len;
+	protected void sendEvent(double[] spectra) {
+		SpectrumEvent evt = new SpectrumEvent(this, "org.mobicents.media.fft.SPECTRA", spectra);
+		sendEvent(evt);
+	}
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
-        }
+	public void receive(Buffer buffer) {
+		byte[] data = (byte[]) buffer.getData();
+		int len = Math.min(16000 - offset, data.length);
+		System.arraycopy(data, 0, localBuffer, offset, len);
+		offset += len;
 
-        // buffer full?
-        if (offset == 16000) {
-            double[] media = new double[8000];
-            int j = 0;
-            for (int i = 0; i < media.length; i++) {
-                media[i] = (localBuffer[j++] & 0xff) | (localBuffer[j++] << 8);
-            }
+		if (logger.isDebugEnabled()) {
+			logger.debug("append " + len + " bytes to the local buffer, buff size=" + offset);
+		}
 
-            //resampling
-            Complex[] signal = new Complex[8192];
-            double k = (double) (media.length - 1) / (double) (signal.length);
+		// buffer full?
+		if (offset == 16000) {
+			double[] media = new double[8000];
+			int j = 0;
+			for (int i = 0; i < media.length; i++) {
+				media[i] = (localBuffer[j++] & 0xff) | (localBuffer[j++] << 8);
+			}
 
-            for (int i = 0; i < signal.length; i++) {
-                int p = (int) (k * i);
-                int q = (int) (k * i) + 1;
+			// resampling
+			Complex[] signal = new Complex[8192];
+			double k = (double) (media.length - 1) / (double) (signal.length);
 
-                double K = (media[q] - media[p]) * media.length;
-                double dx = (double) i / (double) signal.length - (double) p / (double) media.length;
-                signal[i] = new Complex(media[p] + K * dx, 0);
-            }
-            localBuffer = new byte[16000];
-            offset = 0;
+			for (int i = 0; i < signal.length; i++) {
+				int p = (int) (k * i);
+				int q = (int) (k * i) + 1;
 
-            Complex[] sp = fft.fft(signal);
-            double[] res = mod(sp);
-            sendEvent(res);
-        }
-    }
+				double K = (media[q] - media[p]) * media.length;
+				double dx = (double) i / (double) signal.length - (double) p / (double) media.length;
+				signal[i] = new Complex(media[p] + K * dx, 0);
+			}
+			localBuffer = new byte[16000];
+			offset = 0;
 
+			Complex[] sp = fft.fft(signal);
+			double[] res = mod(sp);
+			sendEvent(res);
+		}
+	}
 
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.MediaSink.isAcceptable(Format).
-     */
-    public boolean isAcceptable(Format fmt) {
-        return fmt.matches(LINEAR_AUDIO);
-    }
+	/**
+	 * (Non Java-doc.)
+	 * 
+	 * @see org.mobicents.media.MediaSink.isAcceptable(Format).
+	 */
+	public boolean isAcceptable(Format fmt) {
+		return fmt.matches(LINEAR_AUDIO);
+	}
 
-    public Format[] getFormats() {
-        return new Format[] {LINEAR_AUDIO};
-    }
+	public Format[] getFormats() {
+		return new Format[] { LINEAR_AUDIO };
+	}
 
 }

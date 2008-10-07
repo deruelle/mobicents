@@ -133,6 +133,10 @@ public class ReceiveStreamTest {
     }
 
     public class Sink extends AbstractSink {
+    	
+    	public Sink(){
+    		super("ReceiveStreamTest.Sink");
+    	}
 
         private AudioFormat f = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
         

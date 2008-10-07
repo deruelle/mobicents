@@ -154,10 +154,12 @@ public class DemultiplexerTest {
         private AudioFormat f = new AudioFormat("F1");
         
         public Source() {
+        	super("DemultiplexerTest.Source");
             timer.setListener(this);
         }
         
         public Source(AudioFormat f) {
+        	super("DemultiplexerTest.Source");
             timer.setListener(this);
             this.f = f;
         }
@@ -189,6 +191,10 @@ public class DemultiplexerTest {
     }
     
     private class Sink1 extends AbstractSink {
+    	
+    	public Sink1(){
+    		super("DemultiplexerTest.Sink1");
+    	}
 
         private AudioFormat f = new AudioFormat("F1");
 
@@ -208,6 +214,10 @@ public class DemultiplexerTest {
 
     private class Sink2 extends AbstractSink {
 
+    	public Sink2(){
+    		super("DemultiplexerTest.Sink2");
+    	}
+    	
         private AudioFormat f = new AudioFormat("F1");
 
         public void receive(Buffer buffer) {

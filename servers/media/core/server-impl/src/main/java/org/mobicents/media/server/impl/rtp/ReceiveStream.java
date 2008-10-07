@@ -35,6 +35,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
 
     /** Creates a new instance of ReceiveStream */
     public ReceiveStream(RtpSocket rtpSocket, int period, int jitter) {
+    	super("ReceiveStream");
         this.period = period;
 
         jitterBuffer = new JitterBuffer(rtpSocket, jitter, period);

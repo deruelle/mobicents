@@ -43,6 +43,7 @@ public class SineGenerator extends AbstractSource implements Runnable {
     
     /** Creates a new instance of Generator */
     public SineGenerator(int freq) {
+    	super("SineGenerator");
         data = new byte[(int)
                 LINEAR_AUDIO.getSampleRate() * 
                 LINEAR_AUDIO.getSampleSizeInBits()/8];

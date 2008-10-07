@@ -69,6 +69,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
      * @param fmt format of the output stream.
      */
     public AudioMixer(String name) {
+    	super("AudioMixer");
         this.timer = new Timer();
         this.name = name;
         this.mixerOutput = new MixerOutput();

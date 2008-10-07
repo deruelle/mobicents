@@ -49,6 +49,7 @@ public class CongestionToneGen extends AbstractSource {
     private int seq = 0;
 
     public CongestionToneGen() {
+    	super("CongestionToneGen");
         double A = Short.MAX_VALUE / 2;
         int k = 0;
         for (int i = 0; i < 160; i++) {

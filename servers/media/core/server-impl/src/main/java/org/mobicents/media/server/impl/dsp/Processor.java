@@ -122,6 +122,10 @@ public class Processor implements Serializable {
      * Implements output of the processor.
      */
     private class Output extends AbstractSource {
+    	
+    	public Output(){
+    		super("Processor.Output");
+    	}
 
         protected boolean connected = false;
         protected int failDeliveryCount = 0;
@@ -235,6 +239,10 @@ public class Processor implements Serializable {
      * Implements output of the processor.
      */
     private class Input extends AbstractSink {
+    	
+    	public Input(){
+    		super("Processor.Input");
+    	}
 
         protected Format[] formats;
         protected boolean connected = false;

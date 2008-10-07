@@ -268,6 +268,7 @@ public class LocalConnectionImplTest {
         private AudioFormat f = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
         
         public Source() {
+        	super("LocalConnectionImplTest.Source");
             timer.setListener(this);
         }
         
@@ -299,6 +300,10 @@ public class LocalConnectionImplTest {
     
     private class Sink extends AbstractSink {
 
+    	public Sink(){
+    		super("LocalConnectionImpl.Sink");
+    	}
+    	
         private AudioFormat f = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
 
         public void receive(Buffer buffer) {

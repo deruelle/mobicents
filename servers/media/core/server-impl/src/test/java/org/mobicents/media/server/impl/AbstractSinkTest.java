@@ -165,6 +165,7 @@ public class AbstractSinkTest {
         private Format[] formats;
 
         public TestSink(Format[] formats) {
+        	super("AbstractSinkTest.TestSink");
             this.formats = formats;
         }
 
@@ -186,6 +187,7 @@ public class AbstractSinkTest {
         private Format[] formats;
 
         public TestSource(Format[] formats) {
+        	super("AbstractSinkTest.TestSource");
             this.formats = formats;
         }
 

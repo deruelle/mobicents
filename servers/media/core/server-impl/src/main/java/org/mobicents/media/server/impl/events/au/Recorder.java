@@ -56,9 +56,11 @@ public class Recorder extends AbstractSink {
     private SimpleDateFormat f = new SimpleDateFormat("hh:mm:ss,SSS");
     // private RecorderRunnable runner=null;
     public Recorder(String mediaType) {
+    	super("Recorder");
     }
 
     public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
+    	super("Recorder");
         this.recordTime = recordTime;
     }
 

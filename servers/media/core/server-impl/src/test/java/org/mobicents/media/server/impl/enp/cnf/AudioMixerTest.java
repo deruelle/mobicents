@@ -144,6 +144,10 @@ public class AudioMixerTest {
     }
 
     private class Source extends AbstractSource {
+    	
+    	public Source(){
+    		super("AudioMixerTest.Source");
+    	}
 
         public void start() {
             throw new UnsupportedOperationException("Not supported yet.");

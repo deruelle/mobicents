@@ -16,24 +16,22 @@
 package org.mobicents.media.server.impl.events.announcement;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-
-import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
-import org.xiph.speex.spi.SpeexAudioFileReader;
-
 import javax.sound.sampled.AudioFormat.Encoding;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
+import org.xiph.speex.spi.SpeexAudioFileReader;
 
 /**
  *
@@ -59,6 +57,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private int count = 0;
     //protected int packetPeriod;
     public AudioPlayer() {
+    	super("AudioPlayer");
         this.timer = new Timer();
         timer.setListener(this);
     }

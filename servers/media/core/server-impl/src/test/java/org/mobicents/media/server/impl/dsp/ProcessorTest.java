@@ -83,6 +83,10 @@ public class ProcessorTest {
     }
 
     private class TestSink extends AbstractSink {
+    	
+    	public TestSink(){
+    		super("ProcessorTest.Sink");
+    	}
 
         public Format[] getFormats() {
             return new Format[]{LINEAR, DTMF};

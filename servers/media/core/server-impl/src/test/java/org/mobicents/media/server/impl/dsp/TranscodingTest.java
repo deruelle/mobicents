@@ -166,6 +166,7 @@ public class TranscodingTest {
         private Format[] f;
         
         public TestSink(Format[] f) {
+        	super("TranscodingTest.TestSink");
             this.f= f;
         }
         

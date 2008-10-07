@@ -44,6 +44,7 @@ public class MeanderGenerator extends AbstractSource implements Runnable {
     private boolean isSilence = false;
     
     public MeanderGenerator() {
+    	super("MeanderGenerator");
         sizeInBytes = (int) ((LINEAR_AUDIO.getSampleRate() / 1000) *
                 (LINEAR_AUDIO.getSampleSizeInBits() / 8) * Quartz.HEART_BEAT);
         
