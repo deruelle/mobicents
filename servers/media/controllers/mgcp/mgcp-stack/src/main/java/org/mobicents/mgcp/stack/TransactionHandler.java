@@ -513,9 +513,7 @@ public abstract class TransactionHandler implements Runnable {
 
 		// restore original transaction handle parameter
 		event.setTransactionHandle(remoteTID);
-		// fire event
-		stack.provider.processMgcpResponseEvent(event, commandEvent);
-
+		
 		/*
 		 * Just reset timer in case of provisional response. Otherwise, release
 		 * tx.
@@ -523,6 +521,8 @@ public abstract class TransactionHandler implements Runnable {
 		if (isProvisional(event.getReturnCode())) {
 			resetLongtranTimer();
 		} else {
+			// fire event only if non provisional response
+			stack.provider.processMgcpResponseEvent(event, commandEvent);
 			release();
 		}
 	}
