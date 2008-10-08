@@ -201,18 +201,17 @@ public class AnnouncementUA implements Runnable {
 			logger.debug(name + " processCreateConnectionResponse() ");
 			ReturnCode returnCode = responseEvent.getReturnCode();
 
+			endpointID = responseEvent.getSpecificEndpointIdentifier();
+
 			switch (returnCode.getValue()) {
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
 				connectionIdentifier = responseEvent.getConnectionIdentifier();
-				endpointID = responseEvent.getSpecificEndpointIdentifier();
-				
-				logger
-						.debug(name + " TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
-								+ connectionIdentifier+ "endpointID = "+endpointID);
+				logger.debug(name + " TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + connectionIdentifier
+						+ "endpointID = " + endpointID);
 
 				// Before Sending Notification lets Open RTP Session to Play
 				// Audio in case
-				
+
 				sendNotificationRequestMGCPRequest();
 
 				break;
@@ -244,7 +243,7 @@ public class AnnouncementUA implements Runnable {
 
 				// Let us sleep here for few secs
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
