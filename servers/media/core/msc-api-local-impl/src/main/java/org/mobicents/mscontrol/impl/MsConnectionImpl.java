@@ -204,7 +204,6 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 			// send event and imidiately trnasit to CLOSED state
 			sendEvent(MsConnectionEventID.CONNECTION_FAILED, cause, null);
 			setState(MsConnectionState.CLOSED, cause);
-			eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
 			break;
 		case CLOSED:
 			session.removeConnection(this);
