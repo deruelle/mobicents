@@ -18,139 +18,168 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 
 /**
- * Combines several signals for transmission over a single medium. 
- * A demultiplexor completes the process by separating multiplexed signals 
- * from a transmission line. Frequently a multiplexor and demultiplexor are 
- * combined into a single device capable of processing both outgoing and 
- * incoming signals. 
+ * Combines several signals for transmission over a single medium. A
+ * demultiplexor completes the process by separating multiplexed signals from a
+ * transmission line. Frequently a multiplexor and demultiplexor are combined
+ * into a single device capable of processing both outgoing and incoming
+ * signals.
  * 
  * @author Oleg Kulikov
  */
 public class Demultiplexer extends AbstractSource {
+	
+	private transient Logger logger = Logger.getLogger(Demultiplexer.class);
 
-    private Input input = new Input();
-    private HashMap<MediaSink, Output> branches = new HashMap();
-    private final static ExecutorService threadPool = Executors.newCachedThreadPool();
+	private Input input = new Input();
+	private HashMap<MediaSink, Output> branches = new HashMap();
+	private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
 
-    private Format[] formats;
-    private transient Logger logger = Logger.getLogger(Demultiplexer.class);
-    
-    public AbstractSink getInput() {
-        return input;
-    }
+	private Format[] formats;	
 
-    public Demultiplexer(Format[] formats) {
-    	super("Demultiplexer");
-        this.formats = formats;
-    }
-    
-    @Override
-    public void connect(MediaSink sink) {
-        synchronized (branches) {
-            Output out = new Output();
-            branches.put(sink, out);
-            sink.connect(out);
-        }
-    }
+	public AbstractSink getInput() {
+		return input;
+	}
 
-    @Override
-    public void disconnect(MediaSink sink) {
-        synchronized (branches) {
-            Output out = (Output) branches.remove(sink);
-            if (out != null) {
-                sink.disconnect(out);
-            }
-        }
-    }
+	public Demultiplexer(Format[] formats) {
+		super("Demultiplexer");
+		this.formats = formats;
+		
+	}
 
-    public int getBranchCount() {
-        return branches.size();
-    }
-    
-    public void start() {
-    }
+	@Override
+	public void connect(MediaSink sink) {
+		synchronized (branches) {
+			Output out = new Output();
+			branches.put(sink, out);
+			sink.connect(out);
+		}
+	}
 
-    public void stop() {
-    }
+	@Override
+	public void disconnect(MediaSink sink) {
+		synchronized (branches) {
+			Output out = (Output) branches.remove(sink);
+			if (out != null) {
+				sink.disconnect(out);
+			}
+		}
+	}
 
-    private class Input extends AbstractSink {
-    	
-    	public Input(){
-    		super("Demultiplexer.Input");
-    	}
+	public int getBranchCount() {
+		return branches.size();
+	}
 
-        public boolean isAcceptable(Format fmt) {
-            return true;
-        }
+	public void start() {
+	}
 
-        public void receive(Buffer buffer) {
-            synchronized (branches) {
-                boolean transffered = false;
-                Collection<Output> streams = branches.values();
-                for (Output stream : streams) {
-                    transffered = true;
-                    stream.push((Buffer) buffer.clone());
-                    threadPool.submit(stream);
-                }
+	public void stop() {
+	}
 
-                if (!transffered) {
-                    CachedBuffersPool.release(buffer);
-                }
-            }
-        }
+	private class Input extends AbstractSink {
 
-        public Format[] getFormats() {
-            //return mediaStream != null ?  mediaStream.getFormats() : null;
-            return formats;
-        }
-    }
+		public Input() {
+			super("Demultiplexer.Input");
+		}
 
-    private class Output extends AbstractSource implements Runnable {
-    	
-    	public Output(){
-    		super("Demultiplexer.Output");
-    	}
+		public boolean isAcceptable(Format fmt) {
+			return true;
+		}
 
-        private ArrayList <Buffer> buffers = new ArrayList();
-        
-        protected void push(Buffer buffer) {
-            synchronized(buffers) {
-                buffers.add(buffer);
-            }
-        }
+		public void receive(Buffer buffer) {
+			synchronized (branches) {
+				boolean transffered = false;
+				Collection<Output> streams = branches.values();
+				for (Output stream : streams) {
+					transffered = true;
+					stream.push((Buffer) buffer.clone());
+					demuxThreadPool.submit(stream);
+				}
 
-        protected boolean isAcceptable(Format fmt) {
-            return sink != null ? sink.isAcceptable(fmt) : true;
-        }
-        
-        public void start() {
-        }
+				if (!transffered) {
+					CachedBuffersPool.release(buffer);
+				}
+			}
+		}
 
-        public void stop() {
-        }
+		public Format[] getFormats() {
+			// return mediaStream != null ? mediaStream.getFormats() : null;
+			return formats;
+		}
+	}
 
-        public void run() {
-            if (sink != null && !buffers.isEmpty()) {
-                Buffer buffer = buffers.remove(0);
-                if (sink.isAcceptable(buffer.getFormat())) {
-                    sink.receive(buffer);
-                }
-            }
-        }
+	private class Output extends AbstractSource implements Runnable {
 
-        public Format[] getFormats() {
-            return input.getFormats();
-        }
-    }
+		public Output() {
+			super("Demultiplexer.Output");
+		}
 
-    public Format[] getFormats() {
-        //return input.getFormats();
-        return formats;
-    }
+		private ArrayList<Buffer> buffers = new ArrayList();
+
+		protected void push(Buffer buffer) {
+			synchronized (buffers) {
+				buffers.add(buffer);
+			}
+		}
+
+		protected boolean isAcceptable(Format fmt) {
+			return sink != null ? sink.isAcceptable(fmt) : true;
+		}
+
+		public void start() {
+		}
+
+		public void stop() {
+		}
+
+		public void run() {
+			if (sink != null && !buffers.isEmpty()) {
+				Buffer buffer = buffers.remove(0);
+				if (sink.isAcceptable(buffer.getFormat())) {
+					sink.receive(buffer);
+				}
+			}
+		}
+
+		public Format[] getFormats() {
+			return input.getFormats();
+		}
+	}
+
+	public Format[] getFormats() {
+		// return input.getFormats();
+		return formats;
+	}
+
+	private static class ThreadFactoryImpl implements ThreadFactory {
+
+		final ThreadGroup group;
+		static final AtomicInteger demuxPoolNumber = new AtomicInteger(1);
+		final AtomicInteger threadNumber = new AtomicInteger(1);
+		final String namePrefix;
+
+		ThreadFactoryImpl() {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "Demultiplexer-CachedThreadPool-" + demuxPoolNumber.getAndIncrement() + "thread-";
+		}
+
+		public Thread newThread(Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+			if (t.isDaemon())
+				t.setDaemon(false);
+			if (t.getPriority() != Thread.NORM_PRIORITY)
+				t.setPriority(Thread.NORM_PRIORITY);
+			return t;
+		}
+
+	}
 }

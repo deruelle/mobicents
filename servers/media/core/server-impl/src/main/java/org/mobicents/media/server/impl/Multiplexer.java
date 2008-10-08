@@ -49,8 +49,8 @@ public class Multiplexer extends AbstractSink implements Runnable {
     private ArrayList<Buffer> packets = new ArrayList();
     private Timer timer;
     private int seq = 0;
-    private Thread worker;
-    private boolean started = true;
+
+    
 
     public Multiplexer() {
     	super("Multiplexer");

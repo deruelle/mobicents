@@ -24,14 +24,15 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.java.stun4j.StunAddress;
 import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
 import net.java.stun4j.client.StunDiscoveryReport;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -39,6 +40,8 @@ import org.apache.log4j.Logger;
  */
 public class RtpSocketImpl implements RtpSocket, Runnable {
 
+	private Logger logger = Logger.getLogger(RtpSocketImpl.class);
+	
     private ArrayList<RtpSocketListener> listeners = new ArrayList();
     private DatagramSocket socket;
     private int port;
@@ -62,7 +65,9 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
     private int stunServerPort;
     private boolean usePortMapping = true;
     private ReceiveStream receiveStream;
-    private Logger logger = Logger.getLogger(RtpSocketImpl.class);
+    public static final AtomicInteger rtpSocketThreadNumber = new AtomicInteger(1);
+    public static final String rtpSocketThreadNamePrefix = "RtpSocketImpl-";
+    
 
     /**
      * Creates a new instance of RtpSocketImpl
@@ -133,7 +138,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
         } catch (UnknownHostException e) {
         }
 
-        receiverThread = new Thread(this);
+        receiverThread = new Thread(this, rtpSocketThreadNamePrefix + rtpSocketThreadNumber.getAndIncrement());
         receiverThread.setPriority(Thread.MAX_PRIORITY);
 
         return port;

@@ -53,7 +53,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private String file;
     private long time;
     private transient Logger logger = Logger.getLogger(AudioPlayer.class);
-    private Thread worker;
+    
     private int count = 0;
     //protected int packetPeriod;
     public AudioPlayer() {

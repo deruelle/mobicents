@@ -15,7 +15,6 @@
  */
 package org.mobicents.mscontrol.impl;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +28,10 @@ import org.mobicents.mscontrol.MsSessionEventCause;
 import org.mobicents.mscontrol.MsSessionEventID;
 import org.mobicents.mscontrol.MsSessionListener;
 import org.mobicents.mscontrol.MsSessionState;
+
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
+import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
+import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 
 /**
  * 
@@ -48,13 +51,26 @@ public class MsSessionImpl implements MsSession {
     private MsSessionState state;
 
     protected QueuedExecutor eventQueue = new QueuedExecutor();
+    private ThreadFactory threadFactory;
     
     /**
      * Creates a new instance of MsSessionImpl
      */
     public MsSessionImpl(MsProviderImpl provider) {
         this.provider = provider;
-        setState(MsSessionState.IDLE, MsSessionEventCause.SESSION_CREATED, this);
+		threadFactory = new ThreadFactory() {
+
+			SecurityManager s = System.getSecurityManager();
+			ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			final SynchronizedInt i = new SynchronizedInt(0);
+
+			public Thread newThread(final Runnable runnable) {
+				return new Thread(group, runnable, "MsLinkImpl-QueuedExecutor-Thread-" + i.increment());
+			}
+		};
+
+		eventQueue.setThreadFactory(threadFactory);
+        setState(MsSessionState.IDLE, MsSessionEventCause.SESSION_CREATED, this);        
     }
 
     public String getId() {
@@ -138,6 +154,7 @@ public class MsSessionImpl implements MsSession {
                 case INVALID:
                     provider.sessions.remove(this);
                     sendEvent(MsSessionEventID.SESSION_INVALID, eventCause, causeObject);
+                    eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
                     break;
             }
         }
