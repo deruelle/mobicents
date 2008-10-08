@@ -96,7 +96,7 @@ public abstract class TransactionHandler implements Runnable {
 	/** Logger instance */
 	private Logger logger = Logger.getLogger(TransactionHandler.class);
 	/** Expiration timer */
-	private static Timer timer = new Timer();
+	protected static Timer transactionHandlerTimer = new Timer("TransactionHandlerTimer");
 	private LongtranTimerTask longtranTimerTask;
 
 	/** Flag to check if this is Command or Response event * */
@@ -537,7 +537,7 @@ public abstract class TransactionHandler implements Runnable {
 	private void resetLongtranTimer() {
 
 		longtranTimerTask = new LongtranTimerTask();
-		timer.schedule(longtranTimerTask, LONGTRAN_TIMER_TIMEOUT);
+		transactionHandlerTimer.schedule(longtranTimerTask, LONGTRAN_TIMER_TIMEOUT);
 	}
 
 	private void cancelReTransmissionTimer() {
@@ -550,7 +550,7 @@ public abstract class TransactionHandler implements Runnable {
 	private void resetReTransmissionTimer() {
 		cancelReTransmissionTimer();
 		reTransmissionTimer = new ReTransmissionTimerTask();
-		timer.schedule(reTransmissionTimer, calculateReTransmissionTimeout());
+		transactionHandlerTimer.schedule(reTransmissionTimer, calculateReTransmissionTimeout());
 	}
 
 	// TODO : Implement the AAD and ADEV from TCP
@@ -570,7 +570,7 @@ public abstract class TransactionHandler implements Runnable {
 	private void resetTHISTTimerTask(boolean responseSent) {
 		cancelTHISTTimerTask();
 		tHISTTimerTask = new THISTTimerTask(responseSent);
-		timer.schedule(tHISTTimerTask, 1000 * 30);
+		transactionHandlerTimer.schedule(tHISTTimerTask, 1000 * 30);
 	}
 
 	/**

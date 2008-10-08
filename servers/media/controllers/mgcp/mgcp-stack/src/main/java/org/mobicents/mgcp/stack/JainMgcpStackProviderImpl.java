@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TooManyListenersException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -49,10 +50,11 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 	// ends
 	protected Set<JainMgcpExtendedListener> jainMobicentsListeners = new HashSet<JainMgcpExtendedListener>();
 
-	private ExecutorService pool = Executors.newCachedThreadPool();
+	private ExecutorService pool;
 
 	public JainMgcpStackProviderImpl(JainMgcpStackImpl runningStack) {
 		super();
+		pool = Executors.newCachedThreadPool(new ThreadFactoryImpl());
 		this.runningStack = runningStack;
 	}
 
@@ -147,7 +149,8 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
 				case Constants.CMD_NOTIFY:
 					if (logger.isDebugEnabled()) {
-						logger.debug("Sending Notify object to NotifiedEntity" + ((Notify)commandEvent).getNotifiedEntity());
+						logger.debug("Sending Notify object to NotifiedEntity"
+								+ ((Notify) commandEvent).getNotifiedEntity());
 					}
 					handle = new NotifyHandler(this.runningStack);
 					break;
@@ -180,7 +183,8 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 				// SENDING RESPONSE
 				int tid = event.getTransactionHandle();
 
-				TransactionHandler handler = (TransactionHandler) runningStack.loaclTransactions.get(Integer.valueOf(tid));
+				TransactionHandler handler = (TransactionHandler) runningStack.loaclTransactions.get(Integer
+						.valueOf(tid));
 
 				if (handler != null) {
 					handler.setCommand(false);
@@ -188,7 +192,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 					pool.execute(handler);
 				} else {
 					logger.error("The TransactionHandler not found for TransactionHandle " + tid
-							+ " May be the Tx timed out. Event = "+ (JainMgcpResponseEvent) event);
+							+ " May be the Tx timed out. Event = " + (JainMgcpResponseEvent) event);
 				}
 				// send event
 				// handler.send((JainMgcpResponseEvent) event);
@@ -329,5 +333,28 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 			}
 		}
 		return new RequestIdentifier(Long.toHexString(current));
+	}
+
+	private class ThreadFactoryImpl implements ThreadFactory {
+
+		final ThreadGroup group;
+		final AtomicInteger threadNumber = new AtomicInteger(1);
+		final String namePrefix;
+
+		ThreadFactoryImpl() {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "JainMgcpStackProviderImpl-CachedThreadPool-" + "thread-";
+		}
+
+		public Thread newThread(Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+			if (t.isDaemon())
+				t.setDaemon(false);
+			if (t.getPriority() != Thread.NORM_PRIORITY)
+				t.setPriority(Thread.NORM_PRIORITY);
+			return t;
+		}
+
 	}
 }

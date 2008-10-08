@@ -109,7 +109,8 @@ public class MessageHandler implements Runnable {
 							logger.debug("Received Command for which stack has already sent response Tx = "+completedTx );
 						}
 						TransactionHandler completedTxHandler = stack.responseTx.get(completedTx);
-						(new Thread(completedTxHandler)).start();
+						JainMgcpStackImpl.jainMgcpStackImplPool.execute(completedTxHandler);
+						//(new Thread(completedTxHandler)).start();
 						return;
 					}
 				}

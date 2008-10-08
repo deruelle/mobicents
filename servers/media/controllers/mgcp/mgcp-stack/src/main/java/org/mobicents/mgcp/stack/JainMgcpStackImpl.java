@@ -29,6 +29,8 @@ import java.net.SocketException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 
@@ -44,7 +46,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 	private DatagramSocket socket;
 	private boolean stopped = true;
 	private Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
-	private ExecutorService pool = Executors.newFixedThreadPool(5);
+	protected static final ExecutorService jainMgcpStackImplPool = Executors.newFixedThreadPool(50,new JainMgcpStackImpl.ThreadFactoryImpl());
 
 	// For now we have only one provider/delete prvider method wont work.
 	protected JainMgcpStackProviderImpl provider;
@@ -64,7 +66,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 	// rTransactions = new ConcurrentHashMap<ReceivedTransactionID,
 	// TransactionHandler>();
 	/** Creates a new instance of JainMgcpStackImpl */
-	public JainMgcpStackImpl(InetAddress localAddress, int port) {
+	public JainMgcpStackImpl(InetAddress localAddress, int port) {		
 		this.port = port;
 		if (socket == null) {
 			while (true) {
@@ -87,6 +89,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Starting main thread " + this);
 		}
+		
 		this.provider = new JainMgcpStackProviderImpl(this);
 		start();
 	}
@@ -99,7 +102,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 		try {
 			logger.debug("Closing socket");
 			socket.close();
-			pool.shutdown();
+			jainMgcpStackImplPool.shutdown();
 		} catch (Exception e) {
 			logger.warn("Could not gracefully close socket", e);
 		}
@@ -181,11 +184,34 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 
 			MessageHandler handler = new MessageHandler(this, data, packet.getAddress(), packet.getPort());
 
-			pool.execute(handler);
+			jainMgcpStackImplPool.execute(handler);
 		}
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("MGCP stack stopped gracefully");
 		}
 	}
+	
+	static class ThreadFactoryImpl implements ThreadFactory {
+
+		final ThreadGroup group;
+		final AtomicInteger threadNumber = new AtomicInteger(1);
+		final String namePrefix;
+
+		ThreadFactoryImpl() {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "JainMgcpStackImpl-FixedThreadPool-" +"thread-";
+		}
+
+		public Thread newThread(Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 5);
+			if (t.isDaemon())
+				t.setDaemon(false);
+			if (t.getPriority() != Thread.NORM_PRIORITY)
+				t.setPriority(Thread.NORM_PRIORITY);
+			return t;
+		}
+
+	}	
 }
