@@ -78,7 +78,7 @@ public class PublicationKey implements Serializable {
     }
 
     public String toString() {
-        return "publicationKey:eTag="+eTag+",entity="+entity+",eventPackage="+eventPackage;
+        return "publicationKey: eTag="+eTag+",entity="+entity+",eventPackage="+eventPackage;
     }
 
 }

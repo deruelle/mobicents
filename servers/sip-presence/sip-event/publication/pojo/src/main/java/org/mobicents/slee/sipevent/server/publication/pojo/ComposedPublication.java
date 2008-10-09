@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.JAXBElement;
 
@@ -17,6 +19,9 @@ import javax.xml.bind.JAXBElement;
  */
 @Entity
 @Table(name = "COMPOSEDPUBLICATIONS")
+@NamedQueries({
+	@NamedQuery(name="selectComposedPublicationFromEntityAndEventPackage",query="SELECT p FROM ComposedPublication p WHERE p.composedPublicationKey.entity = :entity AND  p.composedPublicationKey.eventPackage = :eventPackage")
+	})
 public class ComposedPublication implements Serializable {
 
 	/**

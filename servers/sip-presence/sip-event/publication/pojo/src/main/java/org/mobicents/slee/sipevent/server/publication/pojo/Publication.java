@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.slee.facilities.TimerID;
 import javax.xml.bind.JAXBElement;
@@ -18,6 +20,11 @@ import javax.xml.bind.JAXBElement;
  */
 @Entity
 @Table(name = "PUBLICATIONS")
+@NamedQueries({
+	@NamedQuery(name="selectPublicationFromEntityAndEventPackage",query="SELECT p FROM Publication p WHERE p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
+	@NamedQuery(name="selectPublicationFromKey",query="SELECT p FROM Publication p WHERE p.publicationKey.eTag = :eTag AND p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
+	@NamedQuery(name="selectPublicationFromTimerID",query="SELECT p FROM Publication p WHERE p.timerID = :timerID")
+	})
 public class Publication implements Serializable {
 
 	/**
@@ -134,6 +141,6 @@ public class Publication implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "Publication: resource="+publicationKey.getEntity()+",eventPackage="+publicationKey.getEventPackage();
+		return "publication: entity="+publicationKey.getEntity()+",eventPackage="+publicationKey.getEventPackage()+",eTag="+publicationKey.getETag();
 	}
 }

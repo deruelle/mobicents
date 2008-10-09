@@ -4,9 +4,9 @@
 	<property environment="sys" />
 
 	<property name="release.dir" value="${ant.file.mobicents.release}/../target" />
-	<property name="mobicents.jainslee.version" value="1.2.0.CR1" />
+	<property name="mobicents.jainslee.version" value="1.2.0.GA" />
 	<property name="jboss.version" value="4.2.2.GA" />
-	<property name="release.version" value="1.0.0.BETA2" />
+	<property name="release.version" value="1.0.0.BETA3" />
 	<property name="mobicents.distro.zip.path" value="mobicents-jainslee-server-${mobicents.jainslee.version}.zip" />
 	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/" />
 	<property name="jboss.config" value="default" />
@@ -309,18 +309,15 @@
 	</target>
 
 	<target name="build-mobicents-jain-slee" depends="get-mobicents-jain-slee,unzip-mobicents-jainslee">
-		<!-- -->
-		<copy todir="${jboss.home}/server/${jboss.config}/deploy" file="${ant.file.mobicents.release}/../../xdms/tests/hsqldb-scripts/hsqldb-ds.xml" />
 		<copy toFile="${jboss.home}/mobicents-jainslee-server-src.zip" file="${jboss.home}/../sources.zip" />
-		<ant antfile="${jboss.home}/../resources/sip/build.xml" target="deploy" inheritall="true" />
+		<ant antfile="${jboss.home}/../resources/sip11/build.xml" target="deploy" inheritall="true" />
 		<ant antfile="${jboss.home}/../resources/http-servlet/build.xml" target="deploy" inheritall="true" />
-
 	</target>
 
 	<available file="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" property="got.mobicents-jain-slee" />
 	<target name="get-mobicents-jain-slee" unless="got.mobicents-jain-slee">
 		<echo>Downloading Mobicents JAIN SLEE Server</echo>
-		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-1.2.0.CR1-jboss-4.2.2.GA.zip" />
+		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-1.2.0.GA-jboss-4.2.2.GA.zip" />
 	</target>
 
 </project>

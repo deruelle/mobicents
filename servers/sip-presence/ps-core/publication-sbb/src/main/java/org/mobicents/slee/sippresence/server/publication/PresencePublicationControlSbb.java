@@ -1,56 +1,95 @@
 package org.mobicents.slee.sippresence.server.publication;
 
 import java.io.StringReader;
-import java.text.ParseException;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sip.address.URI;
 import javax.sip.header.ContentTypeHeader;
 import javax.sip.header.Header;
+import javax.sip.header.HeaderFactory;
 import javax.sip.message.Request;
+import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
+import javax.slee.CreateException;
+import javax.slee.RolledBackContext;
+import javax.slee.SLEEException;
+import javax.slee.Sbb;
+import javax.slee.SbbContext;
+import javax.slee.TransactionRequiredLocalException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
+import org.mobicents.slee.sipevent.server.publication.ImplementedPublicationControlSbbLocalObject;
 import org.mobicents.slee.sipevent.server.publication.pojo.ComposedPublication;
 import org.mobicents.slee.sipevent.server.publication.pojo.Publication;
-import org.mobicents.slee.sipevent.server.publication.PublicationControlSbb;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbbLocalObject;
 import org.mobicents.slee.sippresence.pojo.pidf.Presence;
 
 /**
- * Publication control sbb for a SIP Presence Server.
+ * Publication control implementation child sbb that transforms the sip event
+ * framework in the PUBLISH interface of a SIP Presence Server.
+ * 
  * @author eduardomartins
- *
+ * 
  */
-public abstract class PresencePublicationControlSbb extends PublicationControlSbb {
+public abstract class PresencePublicationControlSbb implements Sbb, ImplementedPublicationControlSbbLocalObject {
 	 	
 	private static Logger logger = Logger.getLogger(PresencePublicationControlSbb.class);
-	private final String[] eventPackages = {"presence"};
+	private final static String[] eventPackages = {"presence"};
 	
-	public abstract ChildRelation getChildRelation();
+	/**
+	 * SbbObject's sbb context
+	 */
+	private SbbContext sbbContext;
+	
+	/**
+	 * SbbObject's context setting
+	 */
+	public void setSbbContext(SbbContext sbbContext) {
+		this.sbbContext=sbbContext;
+	}
 
-	protected Logger getLogger() {
-		return logger;
+	private HeaderFactory headerFactory;
+	private HeaderFactory getHeaderFactory() throws NamingException {
+		if (headerFactory == null) {
+			headerFactory = ((SleeSipProvider) new InitialContext().lookup("java:comp/env/slee/resources/jainsip/1.2/provider")).getHeaderFactory();
+		}
+		return headerFactory;
 	}
 	
-	protected String getContactAddressString() {
+	public abstract ChildRelation getChildRelation();
+	public abstract SubscriptionControlSbbLocalObject getChildSbbCMP();
+	public abstract void setChildSbbCMP(SubscriptionControlSbbLocalObject value);
+	private SubscriptionControlSbbLocalObject getChildSbb() throws TransactionRequiredLocalException, SLEEException, CreateException {
+		SubscriptionControlSbbLocalObject childSbb = getChildSbbCMP();
+		if (childSbb == null) {
+			childSbb = (SubscriptionControlSbbLocalObject) getChildRelation().create();
+			setChildSbbCMP(childSbb);
+		}
+		return childSbb;
+	}
+	
+	public String getContactAddressString() {
 		return "Presence Agent <sip:127.0.0.1:5060>";
 	}
 	
-	protected String[] getEventPackages() {
+	public String[] getEventPackages() {
 		return eventPackages;
 	}
 	
-	protected void notifySubscribers(ComposedPublication composedPublication) {		
+	public void notifySubscribers(ComposedPublication composedPublication) {		
 		try {
-			SubscriptionControlSbbLocalObject childSbb = (SubscriptionControlSbbLocalObject) getChildRelation().create();
+			SubscriptionControlSbbLocalObject childSbb = getChildSbb();
 			ContentTypeHeader contentTypeHeader = 
 				(composedPublication.getContentType() == null || composedPublication.getContentSubType() == null) ?
-						null : headerFactory.createContentTypeHeader(composedPublication.getContentType(), composedPublication.getContentSubType());
+						null : getHeaderFactory().createContentTypeHeader(composedPublication.getContentType(), composedPublication.getContentSubType());
 			if (composedPublication.getDocument() != null && composedPublication.getUnmarshalledContent() == null) {
 				// content needs to unmarshalled
 				StringReader stringReader = new StringReader(composedPublication.getDocument());
@@ -59,12 +98,11 @@ public abstract class PresencePublicationControlSbb extends PublicationControlSb
 			}
 			childSbb.notifySubscribers(composedPublication.getComposedPublicationKey().getEntity(), composedPublication.getComposedPublicationKey().getEventPackage(), composedPublication.getUnmarshalledContent(), contentTypeHeader);
 		} catch (Exception e) {
-			getLogger().error("failed to notify subscribers for "+composedPublication.getComposedPublicationKey(),e);
+			logger.error("failed to notify subscribers for "+composedPublication.getComposedPublicationKey(),e);
 		}
 	}
 	
-	@Override
-	protected boolean authorizePublication(Request request,
+	public boolean authorizePublication(String requestEntity,
 			JAXBElement unmarshalledContent) {
 		// returns true if request uri matches entity (stripped from pres: prefix if found) inside pidf doc
 		String entity = ((JAXBElement<Presence>)unmarshalledContent).getValue().getEntity();
@@ -72,27 +110,24 @@ public abstract class PresencePublicationControlSbb extends PublicationControlSb
 			if (entity.startsWith("pres:") && entity.length() > 5) {
 				entity = entity.substring(5);
 			}
-			return entity.equals(request.getRequestURI().toString());
+			return entity.equals(requestEntity);
 		}
 		return false;
 	}
 	
-	@Override
-	protected boolean acceptsContentType(String eventPackage,
+	public boolean acceptsContentType(String eventPackage,
 			ContentTypeHeader contentTypeHeader) {
 		// FIXME 
 		return true;
 	}
 	
-	@Override
-	protected Header getAcceptsHeader(String eventPackage) {
+	public Header getAcceptsHeader(String eventPackage) {
 		// FIXME
 		if (eventPackage.equals("presence")) {
 			try {
-				return headerFactory.createAcceptHeader("application","pidf+xml");
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return getHeaderFactory().createAcceptHeader("application","pidf+xml");
+			} catch (Exception e) {
+				logger.error(e);
 			}
 		}
 		return null;
@@ -115,25 +150,25 @@ public abstract class PresencePublicationControlSbb extends PublicationControlSb
 		}
 	}
 	
-	protected Unmarshaller getUnmarshaller() {
+	public Unmarshaller getUnmarshaller() {
 		try {
 			return jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
-			getLogger().error("failed to create unmarshaller",e);
+			logger.error("failed to create unmarshaller",e);
 			return null;
 		}
 	}
 	
-	protected Marshaller getMarshaller() {
+	public Marshaller getMarshaller() {
 		try {
 			return jaxbContext.createMarshaller();
 		} catch (JAXBException e) {
-			getLogger().error("failed to create unmarshaller",e);
+			logger.error("failed to create unmarshaller",e);
 			return null;
 		}
 	}
 	
-	protected ComposedPublication combinePublication(Publication publication,
+	public ComposedPublication combinePublication(Publication publication,
 			ComposedPublication composedPublication) {
 		// for now don't compose, maintain only newest state
 		composedPublication.setDocument(publication.getDocument());
@@ -143,7 +178,31 @@ public abstract class PresencePublicationControlSbb extends PublicationControlSb
 		return composedPublication;
 	}
 	
-	protected boolean isResponsibleForResource(URI uri) {
+	public boolean isResponsibleForResource(URI uri) {
 		return true;
 	}
+	
+	// ----------- SBB OBJECT's LIFE CYCLE
+	
+	public void sbbActivate() {}
+	
+	public void sbbCreate() throws CreateException {}
+	
+	public void sbbExceptionThrown(Exception arg0, Object arg1,
+			ActivityContextInterface arg2) {}
+	
+	public void sbbLoad() {}
+	
+	public void sbbPassivate() {}
+	
+	public void sbbPostCreate() throws CreateException {}
+	
+	public void sbbRemove() {}
+	
+	public void sbbRolledBack(RolledBackContext arg0) {}
+	
+	public void sbbStore() {}
+	
+	public void unsetSbbContext() { this.sbbContext = null; }
+	
 }

@@ -12,6 +12,7 @@
 
 	<modules>
 		<module>pojo</module>
+		<module>sbb-local-object</module>
 		<module>sbb</module>	
 	</modules>	
 	

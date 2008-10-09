@@ -27,7 +27,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Post</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.POST</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.POST</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -37,7 +37,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Get</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.GET</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.GET</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -47,7 +47,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Head</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.HEAD</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.HEAD</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -57,7 +57,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Put</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.PUT</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.PUT</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -68,7 +68,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Delete</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.DELETE</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.DELETE</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -78,7 +78,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Options</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.OPTIONS</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.OPTIONS</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>
@@ -88,7 +88,7 @@
         <event initial-event="True" event-direction="Receive">
             <event-name>Trace</event-name>
             <event-type-ref>
-                <event-type-name>net.java.slee.resource.http.events.incoming.TRACE</event-type-name>
+                <event-type-name>net.java.slee.resource.http.events.incoming.request.TRACE</event-type-name>
                 <event-type-vendor>net.java.slee</event-type-vendor>
                 <event-type-version>1.0</event-type-version>
             </event-type-ref>

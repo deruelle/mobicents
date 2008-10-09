@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.sip.Dialog;
 import javax.sip.RequestEvent;
 import javax.sip.header.ContentTypeHeader;
 import javax.sip.message.Response;
@@ -42,13 +43,19 @@ public class XcapDiffSubscriptionControl {
 
 	private static final String[] xcapDiffEventPackages = {"xcap-diff"};
 	
+	private XcapDiffSubscriptionControlSbbLocalObject sbb;
+	
+	public XcapDiffSubscriptionControl(XcapDiffSubscriptionControlSbbLocalObject sbb) {
+		this.sbb = sbb;
+	}
+	
 	public static String[] getEventPackages() {
 		return xcapDiffEventPackages;
 	}
 	
-	private static ContentTypeHeader xcapDiffContentTypeHeader = null;
+	private ContentTypeHeader xcapDiffContentTypeHeader = null;
 	
-	public static ContentTypeHeader getXcapDiffContentTypeHeader(XcapDiffSubscriptionControlSbbLocalObject sbb) {
+	public ContentTypeHeader getXcapDiffContentTypeHeader() {
 		if (xcapDiffContentTypeHeader == null) {
 			try {
 				xcapDiffContentTypeHeader = sbb.getHeaderFactory().createContentTypeHeader("application", "xcap-diff+xml");
@@ -60,7 +67,7 @@ public class XcapDiffSubscriptionControl {
 		return xcapDiffContentTypeHeader;
 	}
 	
-	public static void isSubscriberAuthorized(XcapDiffSubscriptionControlSbbLocalObject sbb, RequestEvent event,
+	public void isSubscriberAuthorized(RequestEvent event,
 			String subscriber, String notifier, String eventPackage,
 			String eventId, int expires) {
 		
@@ -126,7 +133,8 @@ public class XcapDiffSubscriptionControl {
 			}
 			
 			// create subscriptions object 
-			SubscriptionKey key = new SubscriptionKey(event.getServerTransaction().getDialog().getDialogId(),"xcap-diff",eventId);
+			Dialog dialog = event.getServerTransaction().getDialog();
+			SubscriptionKey key = new SubscriptionKey(dialog.getCallId().getCallId(),dialog.getRemoteTag(),"xcap-diff",eventId);
 			Subscriptions subscriptions = new Subscriptions(key,appUsagesToSubscribe,documentsToSubscribe);
 			// get subscriptions map cmp
 			Map subscriptionsMap = sbb.getSubscriptionsMap();
@@ -149,7 +157,12 @@ public class XcapDiffSubscriptionControl {
 			subscriptionsMap.put(key, subscriptions);
 			sbb.setSubscriptionsMap(subscriptionsMap);			
 			// let's subscribe all documents and/or app usages
-			XDMClientControlSbbLocalObject xdm = sbb.getXDMChildSbb();
+			XDMClientControlSbbLocalObject xdm = null;
+			try {
+				xdm = sbb.getXDMClientControlSbb();
+			} catch (Exception e) {
+				logger.error("failed to get xdm client sbb",e);
+			}
 			for(DocumentSelector documentSelector : documentsToSubscribe) {
 				if (!documentSelectorsAlreadySubscribed.contains(documentSelector) && !appUsagesAlreadySubscribed.contains(documentSelector.getAUID())) {
 					// app usages already subscribed does not match this document selector's app usage,
@@ -167,23 +180,23 @@ public class XcapDiffSubscriptionControl {
 			}
 			
 			// continue new subscription process
-			sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.OK);
+			sbb.getParentSbbCMP().newSipSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.OK);
 		} catch (JAXBException e) {
 			logger.error("failed to parse resource-lists in initial subscribe",e);
 			if (stringReader != null) {
 				stringReader.close();
 			}
-			sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.FORBIDDEN);
+			sbb.getParentSbbCMP().newSipSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.FORBIDDEN);
 		}
 		
 	}
 
-	public static void removingSubscription(XcapDiffSubscriptionControlSbbLocalObject sbb,Subscription subscription) {
+	public void removingSubscription(Subscription subscription) {
 		
 		// get subscriptions map and remove subscription terminating
 		Map subscriptionsMap = sbb.getSubscriptionsMap();
 		if (subscriptionsMap != null) {
-		Subscriptions subscriptions = (Subscriptions)subscriptionsMap.remove(subscription.getSubscriptionKey());
+		Subscriptions subscriptions = (Subscriptions)subscriptionsMap.remove(subscription.getKey());
 		
 		// build set of other documents and app usages already subscribed by this entity
 		HashSet<DocumentSelector> documentSelectorsSubscribedByOthers = new HashSet<DocumentSelector>();
@@ -199,7 +212,12 @@ public class XcapDiffSubscriptionControl {
 		}
 		
 		// now unsubscribe each that was subscribed only by the subscription terminating
-		XDMClientControlSbbLocalObject xdm = sbb.getXDMChildSbb();
+		XDMClientControlSbbLocalObject xdm = null;
+		try {
+			xdm = sbb.getXDMClientControlSbb();
+		} catch (Exception e) {
+			logger.error("failed to get xdm client sbb",e);
+		}
 		for(DocumentSelector ds : subscriptions.getDocumentSelectors()) {
 			if (!documentSelectorsSubscribedByOthers.contains(ds)) {
 				// safe to unsubscribe this document 
@@ -218,10 +236,10 @@ public class XcapDiffSubscriptionControl {
 		}
 	}
 
-	public static NotifyContent getNotifyContent(XcapDiffSubscriptionControlSbbLocalObject sbb,Subscription subscription) {
+	public NotifyContent getNotifyContent(Subscription subscription) {
 		// let's gather all content this subscription
 		Map subscriptionsMap = sbb.getSubscriptionsMap();
-		Subscriptions subscriptions = (Subscriptions)subscriptionsMap.get(subscription.getSubscriptionKey());
+		Subscriptions subscriptions = (Subscriptions)subscriptionsMap.get(subscription.getKey());
 		if (subscriptions != null) {
 			HashMap<DocumentSelector,String> documentEtags = new HashMap<DocumentSelector, String>();
 			// let's process first app usages
@@ -274,7 +292,7 @@ public class XcapDiffSubscriptionControl {
 				xcapDiff.getDocumentOrElementOrAttribute().add(documentType);
 			}
 			
-			return new NotifyContent(xcapDiff,getXcapDiffContentTypeHeader(sbb));
+			return new NotifyContent(xcapDiff,getXcapDiffContentTypeHeader());
 			
 		}
 		else {
@@ -283,11 +301,11 @@ public class XcapDiffSubscriptionControl {
 		}
 	}
 	
-	public static Object filterContentPerSubscriber(XcapDiffSubscriptionControlSbbLocalObject sbb, String subscriber, String notifier, String eventPackage, Object unmarshalledContent) {
+	public Object filterContentPerSubscriber(String subscriber, String notifier, String eventPackage, Object unmarshalledContent) {
 		return unmarshalledContent;
 	}
 
-	public static void documentUpdated(XcapDiffSubscriptionControlSbbLocalObject sbb, DocumentSelector documentSelector,
+	public void documentUpdated(DocumentSelector documentSelector,
 			String oldETag, String newETag, String documentAsString) {
 		XcapDiff xcapDiff = null;
 		// for all subscriptions in this entity that have interest on the document
@@ -320,14 +338,14 @@ public class XcapDiffSubscriptionControl {
 					xcapDiff = buildDocumentXcapDiff(documentSelector, newETag, oldETag);
 				}
 				// tell underlying sip event framework to notify subscriber
-				sbb.notifySubscriber(s.getKey(), xcapDiff, getXcapDiffContentTypeHeader(sbb));
+				sbb.getParentSbbCMP().notifySubscriber(s.getKey(), xcapDiff, getXcapDiffContentTypeHeader());
 			}	
 		}
 			
 		}
 	}
 	
-	private static XcapDiff buildDocumentXcapDiff(DocumentSelector documentSelector, String newETag, String oldETag) {
+	private XcapDiff buildDocumentXcapDiff(DocumentSelector documentSelector, String newETag, String oldETag) {
 		// build notify content
 		XcapDiff xcapDiff = new XcapDiff();
 		xcapDiff.setXcapRoot(ServerConfiguration.SCHEME_AND_AUTHORITY_URI+ServerConfiguration.XCAP_ROOT+"/");

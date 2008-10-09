@@ -7,15 +7,15 @@ This module is a full SIP Presence Service, including servers:
 
 ----> REQUIREMENTS:
 
-The XDMS and PS depends on the Mobicents Http-Servlet and SIP RAs.
+The XDMS and PS depends on the Mobicents Http-Servlet and SIP 11 RAs.
 You need to deploy those RAs prior to the installation of  
 the servers. 
 File dependencies.xml can deploy/undeploy those components, use:
 
-* "ant -f dependencies.xml deploy" to hard deploy SIP and HTTP-SERVLET RAs to Mobicents AS
-* "ant -f dependencies.xml deploy-jmx" to deploy SIP and HTTP-SERVLET RAs to Mobicents AS, via JMX
-* "ant -f dependencies.xml undeploy" to hard undeploy SIP and HTTP-SERVLET RAs from Mobicents AS
-* "ant -f dependencies.xml undeploy-jmx" to undeploy SIP and HTTP-SERVLET RAs from Mobicents AS, via JMX
+* "ant -f dependencies.xml deploy" to hard deploy SIP11 and HTTP-SERVLET RAs to Mobicents AS
+* "ant -f dependencies.xml deploy-jmx" to deploy SIP11 and HTTP-SERVLET RAs to Mobicents AS, via JMX
+* "ant -f dependencies.xml undeploy" to hard undeploy SIP11 and HTTP-SERVLET RAs from Mobicents AS
+* "ant -f dependencies.xml undeploy-jmx" to undeploy SIP11 and HTTP-SERVLET RAs from Mobicents AS, via JMX
 
 IMPORTANT, at the moment the XDM Server is not compatible with JDK 1.6!
 

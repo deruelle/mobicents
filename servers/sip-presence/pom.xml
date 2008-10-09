@@ -34,7 +34,7 @@
 		<presence.server.notifier.presrules.auid>org.openmobilealliance.pres-rules</presence.server.notifier.presrules.auid>
 		<presence.server.notifier.presrules.documentName>pres-rules</presence.server.notifier.presrules.documentName>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
-		<mobicents.servers.jainslee.version>1.2.0.CR1</mobicents.servers.jainslee.version>
+		<mobicents.servers.jainslee.version>1.2.0.GA</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>1.0.0.BETA2</mobicents.tools.mavenplugin.du.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 		<!-- don't change -->
@@ -61,14 +61,9 @@
 				<version>${mobicents.servers.jainslee.version}</version>
 			</dependency>
 			<dependency>
-				<artifactId>sip-ra</artifactId>
+				<artifactId>sip11-ra</artifactId>
 				<groupId>org.mobicents.resources</groupId>
 				<version>${mobicents.servers.jainslee.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>hsqldb</groupId>
-				<artifactId>hsqldb</artifactId>
-				<version>${hsqldb.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
@@ -142,6 +137,7 @@
 			<modules>
 				<module>xdms</module>
 				<module>integrated</module>
+				<module>examples/internal-publisher</module>
 			</modules>
             <build>
 				<plugins>

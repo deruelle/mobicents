@@ -18,9 +18,15 @@ public class SubscriptionKey implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6638892043798746768L;
-	@Column(name = "PK_DIALOG_ID", nullable = false)
-    private String dialogId;
-    @Column(name = "PK_EVENT_PACKAGE", nullable = false)
+	
+	public static final String NO_CALL_ID = " ";
+	public static final String NO_REMOTE_TAG = " ";
+	
+	@Column(name = "PK_CALL_ID", nullable = false)
+    private String callId;
+	@Column(name = "PK_REMOTE_TAG", nullable = false)
+    private String remoteTag;
+	@Column(name = "PK_EVENT_PACKAGE", nullable = false)
     private String eventPackage;
     @Column(name = "PK_EVENT_ID", nullable = false)
     private String eventId;
@@ -28,18 +34,28 @@ public class SubscriptionKey implements Serializable {
     public SubscriptionKey() {
     }
 
-    public SubscriptionKey(String dialogId, String eventPackage, String eventId) {
-        this.dialogId = dialogId;
+    public SubscriptionKey(String callId, String remoteTag, String eventPackage, String eventId) {
+        
+    	this.callId = callId;
+    	this.remoteTag = remoteTag;
         this.eventPackage = eventPackage;
         setEventId(eventId);
     }
 
-    public String getDialogId() {
-		return dialogId;
+    public String getCallId() {
+		return callId;
 	}
     
-    public void setDialogId(String dialogId) {
-		this.dialogId = dialogId;
+    public String getRemoteTag() {
+		return remoteTag;
+	}
+    
+    public void setCallId(String callId) {
+		this.callId = callId;
+	}
+    
+    public void setRemoteTag(String remoteTag) {
+		this.remoteTag = remoteTag;
 	}
     
     /**
@@ -91,9 +107,10 @@ public class SubscriptionKey implements Serializable {
     
     public boolean equals(Object obj) {
         if (obj != null && obj.getClass() == this.getClass()) {
-            SubscriptionKey other = (SubscriptionKey) obj;
-            return this.dialogId.equals(other.dialogId) &&
-                    this.eventPackage.equals(other.eventPackage) &&
+        	SubscriptionKey other = (SubscriptionKey) obj;
+            return this.callId.equals(other.callId) &&
+            	this.remoteTag.equals(other.remoteTag) &&    
+            	this.eventPackage.equals(other.eventPackage) &&
                     this.eventId.equals(other.eventId);
         }
         else {
@@ -103,15 +120,19 @@ public class SubscriptionKey implements Serializable {
 
     public int hashCode() {
         int result;
-        result = dialogId.hashCode();
+        result = callId.hashCode();
+        result = 31 * result + remoteTag.hashCode();
         result = 31 * result + eventPackage.hashCode();
         result = 31 * result + eventId.hashCode();
         return result;
     }
 
     public String toString() {
-        return "subscriptionKey:dialogId="+dialogId+",eventPackage="+eventPackage+",eventId="+eventId;
+        return "SubscriptionKey: callId="+callId+",remoteTag="+remoteTag+",eventPackage="+eventPackage+",eventId="+eventId;
     }
 
+    public boolean isInternalSubscription() {
+    	// no need to test both call id and remote tag
+		return callId.equals(SubscriptionKey.NO_CALL_ID);
+	}
 }
-

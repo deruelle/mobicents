@@ -17,6 +17,11 @@
 			<artifactId>server-subscription-control-sbb</artifactId>
 			<version>${pom.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.sipevent</groupId>
+			<artifactId>sip-event-subscription-control-sbb</artifactId>
+			<version>${pom.version}</version>			
+		</dependency>		
 		<!-- libs -->
 		<!-- sip event & related libs -->
 		<dependency>
@@ -37,7 +42,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.servers.sipevent</groupId>
-			<artifactId>sip-event-subscription-control-sbb</artifactId>
+			<artifactId>sip-event-subscription-control-sbb-local-object</artifactId>
 			<version>${pom.version}</version>	
 			<scope>runtime</scope>		
 		</dependency>

@@ -1,10 +1,14 @@
 package org.mobicents.slee.sipevent.server.subscription.pojo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.slee.facilities.TimerID;
 
@@ -23,6 +27,11 @@ import javax.slee.facilities.TimerID;
  */
 @Entity
 @Table(name = "SUBSCRIPTIONS")
+@NamedQueries({
+	@NamedQuery(name="selectSubscriptionFromTimerID",query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
+	@NamedQuery(name="selectSubscriptionsFromNotifierAndEventPackage",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
+	@NamedQuery(name="selectDialogSubscriptions",query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
+	})
 public class Subscription implements Serializable {
 
 	/**
@@ -34,7 +43,7 @@ public class Subscription implements Serializable {
 	 * the subscription key
 	 */   
 	@EmbeddedId
-	protected SubscriptionKey subscriptionKey;
+	protected SubscriptionKey key;
 		
 	/**
 	 * the subscriber
@@ -119,7 +128,7 @@ public class Subscription implements Serializable {
 	}
 	
 	public Subscription(SubscriptionKey key, String subscriber, String notifier, Status status, String subscriberDisplayName, int expires) {
-		this.subscriptionKey = key;
+		this.key = key;
 		this.subscriber = subscriber;
 		this.notifier = notifier;
 		this.status = status;
@@ -194,13 +203,13 @@ public class Subscription implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return subscriptionKey.hashCode();
+		return key.hashCode();
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass() == this.getClass()) {
-			return ((Subscription)obj).subscriptionKey.equals(this.subscriptionKey);
+			return ((Subscription)obj).key.equals(this.key);
 		}
 		else {
 			return false;
@@ -209,12 +218,12 @@ public class Subscription implements Serializable {
 
 	// -- GETTERS AND SETTERS
 	
-	public SubscriptionKey getSubscriptionKey() {
-		return subscriptionKey;
+	public SubscriptionKey getKey() {
+		return key;
 	}
 
-	public void setSubscriptionKey(SubscriptionKey key) {
-		this.subscriptionKey = key;
+	public void setKey(SubscriptionKey key) {
+		this.key = key;
 	}
 
 	public String getSubscriber() {
@@ -303,6 +312,29 @@ public class Subscription implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "subscription: subscriber="+subscriber+",notifier="+notifier+",eventPackage="+subscriptionKey.getEventPackage()+",eventId="+subscriptionKey.getRealEventId()+",status="+status;
+		return "subscription: subscriber="+subscriber+",notifier="+notifier+",eventPackage="+key.getEventPackage()+",eventId="+key.getRealEventId()+",status="+status;
 	}
+	
+	/*
+	 * loads subscription pojo from persistence
+	 */
+	public static Subscription getSubscription(EntityManager entityManager,
+			String callId, String remoteTag, String eventPackage, String eventId) {
+		return (Subscription) entityManager.find(Subscription.class,
+				new SubscriptionKey(callId, remoteTag, eventPackage, eventId));
+	}
+	
+	/**
+	 * retrieves subscriptions associated with the specified dialog
+	 * @param entityManager
+	 * @param dialog
+	 * @return
+	 */
+	public static List getDialogSubscriptions(EntityManager entityManager, String callId, String remoteTag) {
+		return entityManager.createNamedQuery("selectDialogSubscriptions")
+		.setParameter("callId",callId)
+		.setParameter("remoteTag",remoteTag)
+		.getResultList();
+	}
+
 }

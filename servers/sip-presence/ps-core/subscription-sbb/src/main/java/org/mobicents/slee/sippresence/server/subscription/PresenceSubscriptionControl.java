@@ -28,16 +28,29 @@ import org.openxdm.xcap.common.uri.DocumentSelector;
 import org.openxdm.xcap.common.uri.ParseException;
 import org.openxdm.xcap.common.uri.Parser;
 
+/**
+ * Logic for the sip presence subscription control, which complements the SIP Event generic logic. 
+ * @author martins
+ *
+ */
 public class PresenceSubscriptionControl {
 
 	private static Logger logger = Logger.getLogger(PresenceSubscriptionControl.class);
 	private static final String[] eventPackages = {"presence"};
 	
+	private PresenceSubscriptionControlSbbLocalObject sbb;
+
+	
+	public PresenceSubscriptionControl(
+			PresenceSubscriptionControlSbbLocalObject sbb) {
+		this.sbb = sbb;
+	}
+
 	public static String[] getEventPackages() {
 		return eventPackages;
 	}
 	
-	public static void isSubscriberAuthorized(PresenceSubscriptionControlSbbLocalObject sbb, RequestEvent event, String subscriber,
+	public void isSubscriberAuthorized(RequestEvent event, String subscriber,
 			String notifier, String eventPackage, String eventId, int expires, String presRulesAUID, String presRulesDocumentName) {
 		
 		// get current combined rule from cmp
@@ -65,42 +78,50 @@ public class PresenceSubscriptionControl {
 			// get pres-rules doc on xdm 
 			DocumentSelector documentSelector = getDocumentSelector(notifier,presRulesAUID,presRulesDocumentName);
 			if (documentSelector == null) {
-				sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.FORBIDDEN);
+				sbb.getParentSbbCMP().newSipSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.FORBIDDEN);
 			}
 			else {
 				// we need to go to the xdm, reply accepted for subscription state be pending
 				combinedRules.put(cmpKey, new OMAPresRule());
 				sbb.setCombinedRules(combinedRules);
-				sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.ACCEPTED);
+				sbb.getParentSbbCMP().newSipSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, Response.ACCEPTED);
 				// ask for pres-rules doc
-				sbb.getXDMChildSbb().get(new DocumentUriKey(documentSelector));
+				try {
+					sbb.getXDMClientControlSbb().get(new DocumentUriKey(documentSelector));
+				} catch (Exception e) {
+					logger.error("failed to get xdm client sbb",e);
+				}
 			}
 		}
 		else {
 			// great, we already had the doc, send response code to the abstract subscription control
-			sbb.newSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, combinedRule.getSubHandling().getResponseCode());
+			sbb.getParentSbbCMP().newSipSubscriptionAuthorization(event, subscriber, notifier, eventPackage, eventId, expires, combinedRule.getSubHandling().getResponseCode());
 		}
 	
 	}
 	
-	public static void removingSubscription(PresenceSubscriptionControlSbbLocalObject sbb, Subscription subscription, String presRulesAUID, String presRulesDocumentName) {
+	public void removingSubscription(Subscription subscription, String presRulesAUID, String presRulesDocumentName) {
 		// get combined rules cmp
 		Map combinedRules = sbb.getCombinedRules();
 		if (combinedRules != null) {
 			// remove subscription from map
-			if(combinedRules.remove(new PresRuleCMPKey(subscription.getSubscriber(),subscription.getNotifier(),subscription.getSubscriptionKey().getEventPackage(),subscription.getSubscriptionKey().getRealEventId())) != null) {
+			if(combinedRules.remove(new PresRuleCMPKey(subscription.getSubscriber(),subscription.getNotifier(),subscription.getKey().getEventPackage(),subscription.getKey().getRealEventId())) != null) {
 				// check if subscription to pres-rules still needed
 				boolean subscriptionNeeded = false;
 				for(Object k:combinedRules.keySet()) {
 					PresRuleCMPKey presRuleCMPKey = (PresRuleCMPKey)k;
-					if (presRuleCMPKey.getNotifier().equals(subscription.getNotifier()) && presRuleCMPKey.getEventPackage().equals(subscription.getSubscriptionKey().getEventPackage())) {
+					if (presRuleCMPKey.getNotifier().equals(subscription.getNotifier()) && presRuleCMPKey.getEventPackage().equals(subscription.getKey().getEventPackage())) {
 						subscriptionNeeded = true;
 						break;
 					}
 				}
 				if (!subscriptionNeeded) {
 					DocumentSelector documentSelector = getDocumentSelector(subscription.getNotifier(),presRulesAUID,presRulesDocumentName);
-					sbb.getXDMChildSbb().unsubscribeDocument(documentSelector);
+					try {
+						sbb.getXDMClientControlSbb().unsubscribeDocument(documentSelector);
+					} catch (Exception e) {
+						logger.error("failed to get xdm client sbb",e);
+					}
 				}
 			}
 		}
@@ -109,7 +130,7 @@ public class PresenceSubscriptionControl {
 	/**
 	 * async get response from xdm client
 	 */
-	public static void getResponse(PresenceSubscriptionControlSbbLocalObject sbb,XcapUriKey key, int responseCode, String mimetype,
+	public void getResponse(XcapUriKey key, int responseCode, String mimetype,
 		String content) {
 		
 		DocumentSelector documentSelector = null;
@@ -133,7 +154,7 @@ public class PresenceSubscriptionControl {
 		
 		if (responseCode == 200) {
 			// just simulate a document update
-			documentUpdated(sbb,documentSelector,null,null,content);			
+			documentUpdated(documentSelector,null,null,content);			
 		}
 		else {
 			logger.warn("did not found pres-rules in doc at "+key.getResourceSelector());
@@ -151,17 +172,22 @@ public class PresenceSubscriptionControl {
 						combinedRule.setProvideAllServices(true);
 						combinedRule.setSubHandling(SubHandlingAction.allow);
 						// notify auth changed
-						sbb.authorizationChanged(cmpKey.getSubscriber(),notifier,"presence",combinedRule.getSubHandling().getResponseCode());
+						sbb.getParentSbbCMP().authorizationChanged(cmpKey.getSubscriber(),notifier,"presence",combinedRule.getSubHandling().getResponseCode());
 					}
 				}
 				sbb.setCombinedRules(combinedRules);
 			}			
 		}
+		
 		// subscribe to changes in this pres-rules doc
-		sbb.getXDMChildSbb().subscribeDocument(documentSelector);
+		try {
+			sbb.getXDMClientControlSbb().subscribeDocument(documentSelector);
+		} catch (Exception e) {
+			logger.error("failed to get xdm client sbb",e);
+		}
 	}
 	
-	public static void documentUpdated(PresenceSubscriptionControlSbbLocalObject sbb, DocumentSelector documentSelector,String oldETag,String newETag,String documentAsString) {
+	public void documentUpdated(DocumentSelector documentSelector,String oldETag,String newETag,String documentAsString) {
 		
 		if (!documentSelector.getAUID().equals("org.openmobilealliance.pres-rules") && !documentSelector.getAUID().equals("pres-rules")) {
 			// not a pres-rules doc, maybe it's coming here because of integrated servers using xdm client
@@ -171,7 +197,7 @@ public class PresenceSubscriptionControl {
 		String notifier = getUser(documentSelector);	
 		
 		// unmarshall doc
-		Ruleset ruleset = unmarshallRuleset(sbb,documentAsString);
+		Ruleset ruleset = unmarshallRuleset(documentAsString);
 		if (ruleset == null) {
 			logger.error("rcvd ruleset update from xdm client but unmarshalling of ruleset failed, ignoring update");
 			return;
@@ -192,7 +218,7 @@ public class PresenceSubscriptionControl {
 				combinedRules.put(cmpKey, newCombinedRule);
 				// check permission changed
 				if (oldCombinedRule.getSubHandling().getResponseCode() != newCombinedRule.getSubHandling().getResponseCode()) {
-					sbb.authorizationChanged(cmpKey.getSubscriber(), notifier, "presence",newCombinedRule.getSubHandling().getResponseCode());
+					sbb.getParentSbbCMP().authorizationChanged(cmpKey.getSubscriber(), notifier, "presence",newCombinedRule.getSubHandling().getResponseCode());
 				}
 			}
 		}
@@ -204,8 +230,13 @@ public class PresenceSubscriptionControl {
 	/**
 	 * interface used by rules processor to get sphere for a notifier
 	 */
-	public static String getSphere(PresenceSubscriptionControlSbbLocalObject sbb,String notifier) {
-		ComposedPublication composedPublication = sbb.getPublicationChildSbb().getComposedPublication(notifier, "presence");
+	public String getSphere(String notifier) {
+		ComposedPublication composedPublication = null;
+		try {
+			composedPublication = sbb.getPublicationChildSbb().getComposedPublication(notifier, "presence");
+		} catch (Exception e) {
+			logger.error("failed to get xdm client sbb",e);
+		}
 		if (composedPublication != null && composedPublication.getUnmarshalledContent().getValue() instanceof Presence) {
 			Presence presence = (Presence) composedPublication.getUnmarshalledContent().getValue();
 			for (Object anyObject :presence.getAny()){
@@ -245,9 +276,9 @@ public class PresenceSubscriptionControl {
 		return null;
 	}
 	
-	public static NotifyContent getNotifyContent(PresenceSubscriptionControlSbbLocalObject sbb, Subscription subscription) {
+	public NotifyContent getNotifyContent(Subscription subscription) {
 		try {	
-			ComposedPublication composedPublication = sbb.getPublicationChildSbb().getComposedPublication(subscription.getNotifier(), subscription.getSubscriptionKey().getEventPackage());
+			ComposedPublication composedPublication = sbb.getPublicationChildSbb().getComposedPublication(subscription.getNotifier(), subscription.getKey().getEventPackage());
 			if (composedPublication != null) {
 				return new NotifyContent(composedPublication.getUnmarshalledContent(),sbb.getHeaderFactory().createContentTypeHeader(composedPublication.getContentType(),composedPublication.getContentSubType()));
 			}
@@ -258,12 +289,12 @@ public class PresenceSubscriptionControl {
 		return null;
 	}
 	
-	public static Object filterContentPerSubscriber(PresenceSubscriptionControlSbbLocalObject sbb,String subscriber, String notifier, String eventPackage, Object unmarshalledContent) {
+	public Object filterContentPerSubscriber(String subscriber, String notifier, String eventPackage, Object unmarshalledContent) {
 		// TODO apply transformations, including polite-block (see pres-rules specs)
 		return unmarshalledContent;
 	}
 	
-	private static Ruleset unmarshallRuleset(PresenceSubscriptionControlSbbLocalObject sbb,String documentAsString) {
+	private Ruleset unmarshallRuleset(String documentAsString) {
 		// unmarshall doc
 		StringReader stringReader = new StringReader(documentAsString);
 		try {
@@ -284,7 +315,7 @@ public class PresenceSubscriptionControl {
 	 * @param user
 	 * @return
 	 */
-	private static DocumentSelector getDocumentSelector(String user, String presRulesAUID, String presRulesDocumentName) {
+	private DocumentSelector getDocumentSelector(String user, String presRulesAUID, String presRulesDocumentName) {
 		return new DocumentSelector(presRulesAUID,"users/"+user,presRulesDocumentName);
 	}
 	
@@ -293,9 +324,8 @@ public class PresenceSubscriptionControl {
 	 * @param documentSelector
 	 * @return
 	 */
-	private static String getUser(DocumentSelector documentSelector) {
+	private String getUser(DocumentSelector documentSelector) {
 		return documentSelector.getDocumentParent().substring("users/".length());
 	}
-	
-	
+
 }

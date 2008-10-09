@@ -12,7 +12,8 @@
 
 	<modules>
 		<module>pojo</module>
-		<module>sbb</module>	
+		<module>sbb</module>
+		<module>sbb-local-object</module>	
 	</modules>	
 	
 </project>

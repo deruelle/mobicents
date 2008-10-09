@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>publication-parent</artifactId>
+		<groupId>org.mobicents.servers.sipevent</groupId>
+		<version>1.0.0.BETA3-SNAPSHOT</version>
+	</parent>
+		
+	<artifactId>sip-event-publication-control-sbb-local-object</artifactId>
+				
+	<dependencies>
+		<dependency>
+			<artifactId>sip-event-publication-control-pojo</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>sip11-ra</artifactId>
+			<groupId>org.mobicents.resources</groupId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<finalName>${mobicents.sip.presence.service.finalName.prefix}sip-event-pub-sbblo-${pom.version}</finalName>
+	</build>
+	
+</project>

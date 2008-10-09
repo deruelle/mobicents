@@ -6,20 +6,24 @@
     
         <description/>
        
-        <sbb-name>SipPresencePublicationControlSbb</sbb-name>
+       <!-- needs to have this sbb id so the sip evet framework picks it as child -->
+        <sbb-name>ImplementedPublicationControlSbb</sbb-name>
         <sbb-vendor>org.mobicents</sbb-vendor>
         <sbb-version>1.0</sbb-version>
 
 		<sbb-ref>
-       		<sbb-name>IntegratedSubscriptionControlSbb</sbb-name>
-        	<sbb-vendor>org.mobicents</sbb-vendor>
+       		<sbb-name>SipSubscriptionControlSbb</sbb-name>
+       		<sbb-vendor>org.mobicents</sbb-vendor>
         	<sbb-version>1.0</sbb-version>
         	<sbb-alias>childSbb</sbb-alias>
        </sbb-ref>
        
         <sbb-classes>
-            <sbb-abstract-class reentrant="False">
+            <sbb-abstract-class reentrant="True">
                 <sbb-abstract-class-name>org.mobicents.slee.sippresence.server.publication.PresencePublicationControlSbb</sbb-abstract-class-name>    
+                <cmp-field>
+                	<cmp-field-name>childSbbCMP</cmp-field-name>
+                </cmp-field>
                 <get-child-relation-method>                	
                 	<sbb-alias-ref>childSbb</sbb-alias-ref>
                 	<get-child-relation-method-name>getChildRelation</get-child-relation-method-name>
@@ -27,57 +31,10 @@
                 </get-child-relation-method>                   
 	        </sbb-abstract-class>
 	        <sbb-local-interface>
-            	<sbb-local-interface-name>org.mobicents.slee.sipevent.server.publication.PublicationControlSbbLocalObject</sbb-local-interface-name>
+            	<sbb-local-interface-name>org.mobicents.slee.sipevent.server.publication.ImplementedPublicationControlSbbLocalObject</sbb-local-interface-name>
             </sbb-local-interface>	   
         </sbb-classes>            
      
-     	<event event-direction="Receive" initial-event="True">
-            <event-name>Publish</event-name>
-            <event-type-ref>
-                <event-type-name>javax.sip.message.Request.PUBLISH</event-type-name>
-                <event-type-vendor>javax.sip</event-type-vendor>
-                <event-type-version>1.1</event-type-version>
-            </event-type-ref>
-            <initial-event-select variable="ActivityContext" />
-        </event>
-        
-        <!-- event event-direction="Receive" initial-event="True">
-            <event-name>Options</event-name>
-            <event-type-ref>
-                <event-type-name>javax.sip.message.Request.OPTIONS</event-type-name>
-                <event-type-vendor>javax.sip</event-type-vendor>
-                <event-type-version>1.1</event-type-version>
-            </event-type-ref>
-            <initial-event-select variable="ActivityContext" />
-        </event-->
-        
-        <event event-direction="Receive" initial-event="False">
-            <event-name>TimerEvent</event-name>
-            <event-type-ref>
-                <event-type-name>javax.slee.facilities.TimerEvent</event-type-name>
-                <event-type-vendor>javax.slee</event-type-vendor>
-                <event-type-version>1.0</event-type-version>
-            </event-type-ref>
-        </event>
-       
-       <event event-direction="Receive" initial-event="True">
-            <event-name>ServiceStartedEvent</event-name>
-            <event-type-ref>
-                <event-type-name>javax.slee.serviceactivity.ServiceStartedEvent</event-type-name>
-                <event-type-vendor>javax.slee</event-type-vendor>
-                <event-type-version>1.0</event-type-version>
-            </event-type-ref>
-            <initial-event-select variable="ActivityContext"/>
-        </event>
-        <event event-direction="Receive" initial-event="False">
-            <event-name>ActivityEndEvent</event-name>
-            <event-type-ref>
-        		<event-type-name>javax.slee.ActivityEndEvent</event-type-name>
-				<event-type-vendor> javax.slee </event-type-vendor>
-				<event-type-version> 1.0 </event-type-version>
-			</event-type-ref>
-		</event>
-		
         <resource-adaptor-type-binding>
 			<resource-adaptor-type-ref>
 				<resource-adaptor-type-name>
