@@ -16,6 +16,7 @@
 package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
+
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 /**
@@ -30,6 +31,7 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
  * server is an example of a virtual Endpoint.
  *
  * @author Oleg Kulikov.
+ * @author amit.bhayani
  */
 public interface Endpoint extends Serializable {
    
@@ -80,4 +82,36 @@ public interface Endpoint extends Serializable {
     
     public void execute(RequestedSignal[] signals, RequestedEvent[] events);
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID);
+    
+	/**
+	 * Register NotificationListener to listen for <code>MsNotifyEvent</code>
+	 * which are fired due to events detected by Endpoints like DTMF. Use above
+	 * execute methods to register for event passing appropriate
+	 * <code>RequestedEvent</code>
+	 * 
+	 * @param listener
+	 */
+	public void addNotificationListener(NotificationListener listener);
+
+	/**
+	 * Remove the NotificationListener
+	 * 
+	 * @param listener
+	 */
+	public void removeNotificationListener(NotificationListener listener);
+
+	/**
+	 * Register <code>ConnectionListener</code> to listen for changes in MsConnection state
+	 * handled by this Endpoint
+	 * 
+	 * @param listener
+	 */
+	public void addConnectionListener(ConnectionListener listener);
+
+	/**
+	 * Removes the ConnectionListener
+	 * 
+	 * @param listener
+	 */
+	public void removeConnectionListener(ConnectionListener listener);
 }

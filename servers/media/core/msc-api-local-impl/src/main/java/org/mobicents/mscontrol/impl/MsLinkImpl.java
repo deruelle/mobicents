@@ -55,16 +55,16 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
  */
 public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
-	/**
-	 * 
-	 */
+	private Logger logger = Logger.getLogger(MsLinkImpl.class);
+	
+
 	private static final long serialVersionUID = 6373269860176309745L;
 	private final String id = (new UID()).toString();
 	protected MsSessionImpl session;
 	private MsLinkMode mode;
 	private MsLinkState state;
 	private Connection[] connections = new Connection[2];
-	private Logger logger = Logger.getLogger(MsLinkImpl.class);
+	
 	private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
 	private QueuedExecutor eventQueue = new QueuedExecutor();
 	private ThreadFactory threadFactory;
@@ -221,13 +221,13 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 				connections[0] = createConnection(epnA, 0);
 				connections[0].addListener(link);
 
-				endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint());
+				endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint(), session.getProvider());
 				pendingQueue[0] = new PendingQueue(connections[0].getEndpoint(), connections[0].getId());
 
 				connections[1] = createConnection(epnB, 1);
 				connections[1].addListener(link);
 
-				endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint());
+				endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint(), session.getProvider());
 				pendingQueue[1] = new PendingQueue(connections[1].getEndpoint(), connections[1].getId());
 
 				connections[0].setOtherParty(connections[1]);

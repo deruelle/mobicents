@@ -30,10 +30,18 @@ package org.mobicents.mscontrol.events;
 import java.io.Serializable;
 
 /**
- *
+ * Application may ask to be notified about certain events occurring in an
+ * endpoint (e.g., DTMF) by including the name of the event in a
+ * <code>MsEventIdentifier</code> parameter and calling createRequestedEvent
+ * 
+ * A Call Agent may also request certain signals to be applied to an endpoint
+ * (e.g., Play Announcement) by supplying the name of the event in a <code>MsEventIdentifier</code>
+ * parameter and calling createRequestedSignal
+ * 
  * @author Oleg Kulikov
  */
 public interface MsEventFactory extends Serializable {
-    public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID);
-    public MsRequestedSignal createRequestedSignal(MsEventIdentifier eventID);
+	public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID);
+
+	public MsRequestedSignal createRequestedSignal(MsEventIdentifier eventID);
 }

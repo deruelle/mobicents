@@ -32,8 +32,11 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsNotificationListener;
+import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.impl.events.BaseRequestedEvent;
@@ -42,12 +45,15 @@ import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public class MsEndpointImpl implements MsEndpoint {
     protected Endpoint server;
+    private MsProvider msprovider;
     
-    protected MsEndpointImpl(Endpoint endpoint) {
+    protected MsEndpointImpl(Endpoint endpoint, MsProvider msProvider) {
         this.server = endpoint;
+        this.msprovider = msProvider;
     }
     
     public String getLocalName() {
@@ -57,6 +63,26 @@ public class MsEndpointImpl implements MsEndpoint {
     protected Endpoint getEndpoint() {
         return server;
     }
+    
+	public void addConnectionListener(MsConnectionListener listener) {
+		 this.msprovider.addConnectionListener(listener);
+		
+	}
+
+	public void addNotificationListener(MsNotificationListener listener) {
+		this.msprovider.addNotificationListener(listener);
+		
+	}
+
+	public void removeConnectionListener(MsConnectionListener listener) {
+		this.msprovider.removeConnectionListener(listener);
+		
+	}
+
+	public void removeNotificationListener(MsNotificationListener listener) {
+		this.msprovider.removeNotificationListener(listener);
+		
+	}    
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events) {
         MsProviderImpl.submit(new Tx(signals, events, null, null));
@@ -99,4 +125,6 @@ public class MsEndpointImpl implements MsEndpoint {
             server.execute(s, evt, connectionID);            
         }
     }
+
+
 }

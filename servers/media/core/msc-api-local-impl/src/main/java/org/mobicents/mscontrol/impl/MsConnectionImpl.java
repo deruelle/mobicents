@@ -227,7 +227,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 
 		public void run() {
 			try {
-				endpoint = new MsEndpointImpl(EndpointQuery.lookup(endpointName));
+				endpoint = new MsEndpointImpl(EndpointQuery.lookup(endpointName), session.getProvider());
 				endpointName = endpoint.server.getLocalName();
 
 				logger.debug("Media server returns endpoint: " + endpoint.server.getLocalName());

@@ -365,7 +365,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @param listener
      *            the listener instance to add.
      */
-    public void addNotifyListener(NotificationListener listener) {
+    public void addNotificationListener(NotificationListener listener) {
         listeners.add(listener);
     }
 
@@ -375,7 +375,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @param listener
      *            the listener instance for remove.
      */
-    public void removeNotifyListener(NotificationListener listener) {
+    public void removeNotificationListener(NotificationListener listener) {
         listeners.remove(listener);
     }
 

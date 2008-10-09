@@ -30,12 +30,17 @@ package org.mobicents.mscontrol.events;
 import java.io.Serializable;
 
 /**
- *
+ * Application interested in Events from Endpoints or applying Signals to
+ * Endpoints need's to pass the instance of <code>MsEventIdentifier</code>
+ * 
+ * The PackageName passed should be supported by Endpoint
+ * 
  * @author Oleg Kulikov
  */
 public interface MsEventIdentifier extends Serializable {
-    public String getPackageName();
-    public String getEventName();
-    
-    public String getFqn();
+	public String getPackageName();
+
+	public String getEventName();
+
+	public String getFqn();
 }

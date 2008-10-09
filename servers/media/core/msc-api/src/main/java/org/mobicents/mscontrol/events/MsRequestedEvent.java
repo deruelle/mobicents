@@ -30,12 +30,14 @@ package org.mobicents.mscontrol.events;
 import java.io.Serializable;
 
 /**
- *
+ * Specifies the requested Action on Endpoint.
+ * 
  * @author Oleg Kulikov
  */
 public interface MsRequestedEvent extends Serializable {
-    public MsEventIdentifier getID(); 
-    
-    public MsEventAction getAction();
-    public void setEventAction(MsEventAction action);
+	public MsEventIdentifier getID();
+
+	public MsEventAction getAction();
+
+	public void setEventAction(MsEventAction action);
 }
