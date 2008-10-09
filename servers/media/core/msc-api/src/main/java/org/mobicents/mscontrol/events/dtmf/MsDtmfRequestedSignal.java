@@ -30,10 +30,30 @@ package org.mobicents.mscontrol.events.dtmf;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 
 /**
- *
+ * Instance of <code>MsDtmfRequestedSignal</code> is passed to endpoint to
+ * request endpoint to generate DTMF signal and pass it on to the user-agent
+ * 
+ * <p>
+ * <blockquote>
+ * 
+ * <pre>
+ * MsEventFactory eventFactory = msProvider.getEventFactory();
+ * 
+ * MsRequestedSignal dtmf = eventFactory.createRequestedSignal(DTMF.TONE);
+ * dtmf.setTone(&quot;1&quot;);
+ * MsRequestedSignal[] signals = new MsRequestedSignal[] { dtmf };
+ * MsRequestedEvent[] events = new MsRequestedEvent[];
+ * 
+ * msEndpoint.execute(signals, events, connection);
+ * </pre>
+ * 
+ * </blockquote>
+ * </p>
+ * 
  * @author Oleg Kulikov
  */
 public interface MsDtmfRequestedSignal extends MsRequestedSignal {
-    public void setTone(String pattern);
-    public String getTone();
+	public void setTone(String pattern);
+
+	public String getTone();
 }

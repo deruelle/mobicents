@@ -28,15 +28,21 @@
 package org.mobicents.mscontrol.events;
 
 /**
+ * <p>
  * These are the list of Actions that Endoint is suppose to follow when Call
  * Agent executes RequestedEvent on Endpoint.
- * 
- * <code>NOTIFY</code>Endpoint Notifies the event immediately to Call Agent
- * 
- * <code>IGNORE</code>As the name suggests Endpoint simply ignores this event
- * 
- * <code>COLLECT</code>Endpoint accumulates these events and then fires
- * accumulated event when some precondition is matched
+ * </p>
+ * <ul>
+ * <li> <code>NOTIFY</code>Endpoint Notifies the event immediately to Call
+ * Agent </li>
+ * <br/>
+ * <li> <code>IGNORE</code>As the name suggests Endpoint simply ignores this
+ * event </li>
+ * <br/>
+ * <li> <code>COLLECT</code>Endpoint accumulates these events and then fires
+ * accumulated event when some precondition is matched </li>
+ * <br/>
+ * </ul>
  * 
  * @author Oleg Kulikov
  */

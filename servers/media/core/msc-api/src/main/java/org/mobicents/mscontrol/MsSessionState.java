@@ -1,17 +1,20 @@
 package org.mobicents.mscontrol;
 
 /**
- * IDLE state indicates the Session has zero connections or links. ACTIVE state
- * indicates the Session has one or more connections or links. INVALID state
- * indicates the Session has lost all of its connections or links.
+ * <ul>
+ * <li><code>IDLE</code> state indicates the Session has zero connections or
+ * links.</li>
+ * <br/>
+ * <li> <code>ACTIVE</code> state indicates the Session has one or more
+ * connections or links.</li>
+ * <br/>
+ * <li> <code>INVALID</code> state indicates the Session has lost all of its
+ * connections or links.</li>
+ * <br/>
+ * </ul>
  */
 public enum MsSessionState {
 
-	/**
-	 * IDLE state indicates the Session has zero connections or links. ACTIVE
-	 * state indicates the Session has one or more connections or links. INVALID
-	 * state indicates the Session has lost all of its connections or links.
-	 */
 	IDLE, ACTIVE, INVALID;
 
 }

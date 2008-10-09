@@ -30,10 +30,32 @@ package org.mobicents.mscontrol.events.ann;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 
 /**
- *
+ * Instance of <code>MsPlayRequestedSignal</code> is passed to endpoint to
+ * play an announcement
+ * 
+ * <p>
+ * <blockquote>
+ * 
+ * <pre>
+ * MsEventFactory eventFactory = msProvider.getEventFactory();
+ * 
+ * MsPlayRequestedSignal play = null;
+ * play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+ * play.setURL(url);
+ * 
+ * MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+ * MsRequestedEvent[] requestedEvents = new MsRequestedEvent[];
+ * 
+ * msEndpoint.execute(requestedSignals, requestedEvents, link);
+ * </pre>
+ * 
+ * </blockquote>
+ * </p>
+ * 
  * @author Oleg Kulikov
  */
 public interface MsPlayRequestedSignal extends MsRequestedSignal {
-    public String getURL();
-    public void setURL(String url);
+	public String getURL();
+
+	public void setURL(String url);
 }

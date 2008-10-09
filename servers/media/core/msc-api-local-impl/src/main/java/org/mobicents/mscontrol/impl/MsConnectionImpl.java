@@ -201,7 +201,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 			sendEvent(MsConnectionEventID.CONNECTION_OPEN, cause, null);
 			break;
 		case FAILED:
-			// send event and imidiately trnasit to CLOSED state
+			// send event and immediately transit to CLOSED state
 			sendEvent(MsConnectionEventID.CONNECTION_FAILED, cause, null);
 			setState(MsConnectionState.CLOSED, cause);
 			break;

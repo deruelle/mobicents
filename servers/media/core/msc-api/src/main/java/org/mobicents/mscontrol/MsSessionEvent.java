@@ -27,24 +27,24 @@ import java.io.Serializable;
 public interface MsSessionEvent extends Serializable {
 
 	/**
-	 * Returns the MsSession object associated with this event.
+	 * Returns the {@link MsSession} object associated with this event.
 	 * 
 	 * @return the MsSession object associated with this event.
 	 */
 	public MsSession getSource();
 
 	/**
-	 * Returns the id of event.
+	 * Returns the {@link MsSessionEventID} of event.
 	 * 
 	 * @return the id of event
 	 */
 	public MsSessionEventID getEventID();
 
 	/**
-	 * Returns the cause of event. Cause is COnnection created or dropped or
+	 * Returns the cause of event. Cause is Connection created or dropped or
 	 * Link created or dropped
 	 * 
-	 * @return
+	 * @return instance of MsSessionEventCause
 	 */
 	public MsSessionEventCause getEventCause();
 
@@ -52,7 +52,7 @@ public interface MsSessionEvent extends Serializable {
 	 * When the session fires Event for STATE, it passes the Connection or Link
 	 * Object which caused this state change
 	 * 
-	 * @return
+	 * @return The {@link MsConnection} or {@link MsLink} object
 	 */
 	public Object getCauseObject();
 }

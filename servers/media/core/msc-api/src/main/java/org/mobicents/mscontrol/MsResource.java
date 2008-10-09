@@ -19,14 +19,14 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- * 
+ * @deprecated
  * @author Oleg Kulikov
  */
 public interface MsResource extends Serializable {
 	/**
 	 * Returns the ID of this MsResource
 	 * 
-	 * @return
+	 * @return unique identifier of MsResource
 	 */
 	public String getID();
 

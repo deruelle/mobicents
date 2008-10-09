@@ -30,10 +30,37 @@ package org.mobicents.mscontrol.events.dtmf;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 
 /**
- *
+ * Instance of <code>MsDtmfRequestedSignal</code> is passed to endpoint to
+ * request endpoint to fire DTMF (captured by endpoint) to listening application
+ * (that implements {@link org.mobicents.mscontrol.MsNotificationListener})
+ * 
+ * <p>
+ * <blockquote>
+ * 
+ * <pre>
+ * 
+ * MsEventFactory factory = msProvider.getEventFactory();
+ * MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+ * MsRequestedSignal[] signals = new MsRequestedSignal[] {};
+ * MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
+ * 
+ * msEndpoint.execute(signals, events, connection);
+ * </pre>
+ * 
+ * </blockquote>
+ * </p>
+ * 
  * @author Oleg Kulikov
  */
 public interface MsDtmfRequestedEvent extends MsRequestedEvent {
-    public String getPattern();
-    public void setPattern(String pattern);
+	public String getPattern();
+
+	/**
+	 * Application can pass the pattern to be matched by Endpoint. Only if the
+	 * pattern matches endpoint will fire DTMF events containing matched pattern
+	 * of DTMF
+	 * 
+	 * @param pattern
+	 */
+	public void setPattern(String pattern);
 }

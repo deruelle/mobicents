@@ -20,40 +20,45 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * <p>
  * A <code>MsSession</code> is a transient association of (zero or more)
  * connection for the purposes of engaging in a real-time communications
  * interchange.
- * 
+ * </p>
+ * <p>
  * The session and its associated connection objects describe the control and
  * media flows taking place in a communication network. The
  * <code>MsProvider</code> adjusts the session, connection and link objects to
  * reflect the results of the combined command actions.
- * 
+ * </p>
+ * <p>
  * Applications create instances of a MsSession object with the
  * <code>MsProvider.createSession()</code> method, which returns a MsSession
- * object that has zero connections and is in the IDLE state. The
- * <code>MsSession</code> maintains a reference to its
- * <code>MsProvider for the 
- * life of that <code>MsSession</code> object. The <code>MsProvider</code> 
- * object instance does not change throughout the lifetime of the 
- * <code>MsSession</code> object. The <code>MsProvider</code> associated with a 
- * <code>MsSession</code> is obtained via the getProvider() method. 
- *
+ * object that has zero connections and is in the IDLE state.
+ * </p>
+ * The <code>MsSession</code> maintains a reference to its
+ * <code>MsProvider</code> for the life of that <code>MsSession</code>
+ * object. The <code>MsProvider</code> object instance does not change
+ * throughout the lifetime of the <code>MsSession</code> object. The
+ * <code>MsProvider</code> associated with a <code>MsSession</code> is
+ * obtained via the <code>getProvider()</code> method.
+ * 
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public interface MsSession extends Serializable {
 
 	/**
 	 * Get the unique id of this session
 	 * 
-	 * @return
+	 * @return the unique identifier of this session
 	 */
 	public String getId();
 
 	/**
 	 * Retrieves the provider handling this session object. The Provider
-	 * reference does not change once the MsSession object has been created,
-	 * despite the state of the MsSession object.
+	 * reference does not change once the <code>MsSession</code> object has
+	 * been created, despite the state of the MsSession object.
 	 * 
 	 * @return MsProvider object managing this call.
 	 */
@@ -61,7 +66,7 @@ public interface MsSession extends Serializable {
 
 	/**
 	 * Retrieves the state of the session. The state will be either IDLE, ACTIVE
-	 * or INVALID.
+	 * or INVALID. Look at {@link MsSessionState}
 	 * 
 	 * @return enum representing the state of the session.
 	 */
@@ -69,15 +74,40 @@ public interface MsSession extends Serializable {
 
 	/**
 	 * Creates a new network connection and attaches it to this session. The
-	 * MsConnection object is associated with an endpoint name corresponding to
-	 * the string given as an input parameter.
+	 * {@link MsConnection} object is associated with an endpoint name
+	 * corresponding to the string given as an input parameter.
 	 * 
 	 * Note that following this operation the returned MsConnection object must
 	 * still be "modified" which can be accomplished using the
-	 * MsConnection.modify(...)
+	 * <code>MsConnection.modify(...)</code>
 	 * 
 	 * @param endpointName
-	 *            specifies the identifier of the media server endpoint.
+	 *            <p>
+	 *            specifies the identifier of the media server endpoint. If you
+	 *            want connection to be created on new Endpoint then pass
+	 *            wildcard '$' with endpointName. For example
+	 *            <code>'media/trunk/Announcement/$'</code>. Once connection
+	 *            is created, calling <code>connection.getEndpoint()</code>
+	 *            will return instance of {@link MsEndpoint} and calling
+	 *            <code>getLocalName()</code> on this returned
+	 *            <code>MsEndpoint</code> will give the actual endpoint name,
+	 *            for example '<code>media/trunk/Announcement/enp-1</code>'
+	 *            </p>
+	 *            <p>
+	 *            It's also possible to create connection on already known
+	 *            endpoint for example
+	 *            <p>
+	 *            <blockquote>
+	 * 
+	 * <pre>
+	 * MsSession session;
+	 * ...
+	 * MsConnection msConnection = session.createNetworkConnection(&quot;media/trunk/Conference/enp-3&quot;);
+	 * </pre>
+	 * 
+	 * </blockquote>
+	 * </p>
+	 * </p>
 	 */
 	public MsConnection createNetworkConnection(String endpointName);
 
@@ -110,6 +140,7 @@ public interface MsSession extends Serializable {
 	 *            <li>MsLinkMode.HALF_DUPLEX</li>
 	 *            <li>MsLinkMode.DUPLEX</li>
 	 *            </ul>
+	 *            Look at {@link MsLinkMode}
 	 * @return MsLink object managing this link.
 	 */
 	public MsLink createLink(MsLinkMode mode);
@@ -133,11 +164,10 @@ public interface MsSession extends Serializable {
 	public void removeSessionListener(MsSessionListener listener);
 
 	/**
-	 * Returns the list of MsConnection associated with this MsSession
+	 * Returns the list of {@link MsConnection} associated with this MsSession
 	 * 
-	 * @return
+	 * @return List of <code>MsConnection</code> contained in this session
 	 */
 	public List<MsConnection> getConnections();
-
 
 }

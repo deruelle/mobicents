@@ -38,13 +38,14 @@ public interface MsLink extends Serializable {
 	/**
 	 * Gets the Link ID
 	 * 
-	 * @return
+	 * @return the unique identifier of this <code>MsLink</code> 
 	 */
 	public String getId();
-	
+
 	/**
 	 * Returns the state of MsLink
-	 * @return
+	 * 
+	 * @return Instance of {@link MsLinkState}
 	 */
 	public MsLinkState getState();
 
@@ -68,7 +69,7 @@ public interface MsLink extends Serializable {
 	/**
 	 * Returns back the Endpoints names that this link is trying to join
 	 * 
-	 * @return
+	 * @return MsEndpoint[]. Array has precisely two Endpoints that this Link is connecting
 	 */
 	public MsEndpoint[] getEndpoints();
 
@@ -77,6 +78,7 @@ public interface MsLink extends Serializable {
 	 */
 	public void release();
 
-        public void addLinkListener(MsLinkListener listener);
-        public void removeLinkListener(MsLinkListener listener);
+	public void addLinkListener(MsLinkListener listener);
+
+	public void removeLinkListener(MsLinkListener listener);
 }

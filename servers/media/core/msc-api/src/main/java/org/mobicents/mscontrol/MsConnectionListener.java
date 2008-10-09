@@ -18,44 +18,63 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- * The class interested in receiving the MsConnectionEvent should implement this
- * interface. When ever there is change in state of MsConnection, instance of
- * MsConnectionEvent is fired.
+ * The class interested in receiving the {@link MsConnectionEvent} should
+ * implement this interface. When ever there is change in state of
+ * {@link MsConnection}, instance of <code>MsConnectionEvent</code> is fired.
  * 
  * @author Oleg Kulikov
  * @author amit.bhayani
  */
 public interface MsConnectionListener extends Serializable {
 
-    /**
-     * This method is called when the MsConnectionEventID.CONNECTION_CREATED is
-     * fired. Fired when MsConnection.modify(String localDesc, String
-     * remoteDesc) is called and creation of
-     * <code>org.mobicents.media.server.spi.Connection</code> is successful
-     * 
-     * @param event
-     */
-    public void connectionCreated(MsConnectionEvent event);
+	/**
+	 * This method is called when the
+	 * <code>MsConnectionEventID.CONNECTION_CREATED</code> is fired. At this
+	 * stage the state of <code>MsConnection</code> is <code>IDLE</code>.
+	 * Look at <code>CONNECTION_CREATED</code> of {@link MsConnectionEventID}
+	 * 
+	 * @param event
+	 */
+	public void connectionCreated(MsConnectionEvent event);
 
-    public void connectionFailed(MsConnectionEvent event);
+	/**
+	 * This method is called when the
+	 * <code>MsConnectionEventID.CONNECTION_FAILED</code> is fired. At this
+	 * stage the state of <code>MsConnection</code> is <code>FAILED</code>Look
+	 * at <code>CONNECTION_FAILED</code> of {@link MsConnectionEventID}
+	 * 
+	 * @param event
+	 */
+	public void connectionFailed(MsConnectionEvent event);
 
-    /**
-     * This method is called when MsConnectionEventID.CONNECTION_MODIFIED is
-     * fired. Fired when MsConnection.modify(String localDesc, String
-     * remoteDesc) is called and modification of
-     * <code>org.mobicents.media.server.spi.Connection</code> is successful
-     * 
-     * @param event
-     */
-    public void connectionHalfOpen(MsConnectionEvent event);
+	/**
+	 * This method is called when
+	 * <code>MsConnectionEventID.CONNECTION_HALF_OPEN</code> is fired. At this
+	 * stage the state of <code>MsConnection</code> is <code>HALF_OPEN</code>Look
+	 * at <code>CONNECTION_HALF_OPEN</code> of {@link MsConnectionEventID}
+	 * 
+	 * @param event
+	 */
+	public void connectionHalfOpen(MsConnectionEvent event);
 
-    public void connectionOpen(MsConnectionEvent event);
+	/**
+	 * This method is called when
+	 * <code>MsConnectionEventID.CONNECTION_OPEN</code> is fired. At this
+	 * stage the state of <code>MsConnection</code> is <code>OPEN</code>Look
+	 * at <code>CONNECTION_OPEN</code> of {@link MsConnectionEventID}
+	 * 
+	 * @param event
+	 */
+	public void connectionOpen(MsConnectionEvent event);
 
-    /**
-     * This method is called when MsConnectionEventID.CONNECTION_DELETED is
-     * fired. Fired when MsConnection.release() is called.
-     * 
-     * @param event
-     */
-    public void connectionDisconnected(MsConnectionEvent event);
+	/**
+	 * This method is called when
+	 * <code>MsConnectionEventID.CONNECTION_DISCONNECTED</code> is fired. At
+	 * this stage the state of <code>MsConnection</code> is
+	 * <code>CLOSED</code>. Look at <code>CONNECTION_DISCONNECTED</code> of
+	 * {@link MsConnectionEventID}
+	 * 
+	 * @param event
+	 */
+	public void connectionDisconnected(MsConnectionEvent event);
 }

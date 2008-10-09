@@ -20,29 +20,30 @@ import java.io.Serializable;
 
 /**
  * The instance of <code>MsConnectionEvent</code> is fired when ever the state
- * of MsConnection changes
+ * of {@link MsConnection} changes
  * 
  * @author Oleg Kulikov
  */
 public interface MsConnectionEvent extends Serializable {
 
 	/**
-	 * Returnns the underlying MsConnection object which has changed its state
+	 * Returns the underlying {@link MsConnection} object which has changed its
+	 * state
 	 * 
 	 * @return MsConnection
 	 */
 	public MsConnection getConnection();
 
 	/**
-	 * Returns the MsConnectionEventID that represents the state change of
-	 * MsConnection
+	 * Returns the {@link MsConnectionEventID} that represents the state change
+	 * of <code>MsConnection</code>
 	 * 
 	 * @return MsConnectionEventID
 	 */
 	public MsConnectionEventID getEventID();
 
 	/**
-	 * Returns the cause for MsConnectionEventID to be fired
+	 * Returns the cause for <code>MsConnectionEventID</code> to be fired
 	 * 
 	 * @return MsConnectionEventCause
 	 */
@@ -50,6 +51,7 @@ public interface MsConnectionEvent extends Serializable {
 
 	/**
 	 * Returns the message associated with event
+	 * 
 	 * @return String
 	 */
 	public String getMessage();

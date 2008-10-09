@@ -6,25 +6,25 @@ package org.mobicents.mscontrol;
  * 
  * <ul>
  * <li><code>NORMAL</code> Represents the MsLinkEvent is fired because the
- * operation is successful. For example join or release of MsLink is successful</li>
+ * operation is successful. For example join or release of MsLink is successful</li><br/>
  * 
  * <li><code>FACILITY_FAILURE</code> Represents the MsLinkEvent is fired
  * because join operation failed. For example Endpoint already has reached its
- * upper limit on number of Connections it can handle</li>
+ * upper limit on number of Connections it can handle</li><br/>
  * 
  * <li><code>ENDPOINT_UNKNOWN</code> Represents the MsLinkEvent is fired
  * because join operation failed. For example lookup of Endpoint failed and
- * endpoint name passed is not correct</li>
+ * endpoint name passed is not correct</li><br/>
  * 
  * <li><code>RESOURCE_UNAVAILABLE</code> Represents the MsLinkEvent is fired
  * because join operation failed. For example creationg of Scoket failed while
- * creating the Connection</li>
+ * creating the Connection</li><br/>
  * 
  * <li><code>REMOTE_SDP_INVALID</code> Represents the MsLinkEvent is fired
- * because join operation failed. For example SDP is invalid</li>
+ * because join operation failed. For example SDP is invalid</li><br/>
  * 
  * <li><code>REMOTE_SDP_MISSING</code> Represents the MsLinkEvent is fired
- * because join operation failed. For example SDP is null</li>
+ * because join operation failed. For example SDP is null</li><br/>
  * 
  * @author Oleg Kulikov
  * 

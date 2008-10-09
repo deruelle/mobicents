@@ -30,9 +30,11 @@ package org.mobicents.mscontrol.events;
 import java.io.Serializable;
 
 /**
- *
+ * Used to apply the requested signal on endpoint. For example playing an
+ * announcement
+ * 
  * @author Oleg Kulikov
  */
 public interface MsRequestedSignal extends Serializable {
-    public MsEventIdentifier getID();
+	public MsEventIdentifier getID();
 }

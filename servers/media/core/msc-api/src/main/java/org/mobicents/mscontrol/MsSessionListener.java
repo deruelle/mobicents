@@ -19,33 +19,38 @@ package org.mobicents.mscontrol;
 import java.io.Serializable;
 
 /**
- * This interface reports all changes to the <code>MsSession</code> object.
- *
+ * The class interested in receiving the {@link MsSessionEvent} should implement
+ * this interface. When ever there is change in state of {@link MsLink},
+ * instance of {@link MsLinkEvent} is fired.
+ * 
  * @author Oleg Kulikov
  */
 public interface MsSessionListener extends Serializable {
-    /**
-     * Indicates that the state of the <code>MsSession</code> object has 
-     * changed to <code>MsSession.IDLE</code>. This is when the MsSession is created
-     *
-     * param evt the <code>MsSessionEvent</code> with eventID 
-     * <code>MsSessionEventEvent.SESSION_IDLE</code>.
-     */
-    public void sessionCreated(MsSessionEvent evt);
-    /**
-     * Indicates that the state of the <code>MsSession</code> object has 
-     * changed to <code>MsSession.ACTIVE</code>.
-     *
-     * param evt the <code>MsSessionEvent</code> with eventID 
-     * <code>MsSessionEventEvent.SESSION_ACTIVE</code>.
-     */
-    public void sessionActive(MsSessionEvent evt);
-    /**
-     * Indicates that the state of the <code>MsSession</code> object has 
-     * changed to <code>MsSession.INVALID</code>.
-     *
-     * param evt the <code>MsSessionEvent</code> with eventID 
-     * <code>MsSessionEventEvent.SESSION_INVALID</code>.
-     */
-    public void sessionInvalid(MsSessionEvent evt);
+	/**
+	 * Indicates that the state of the <code>MsSession</code> object has
+	 * changed to <code>MsSessionState.IDLE</code>. This is when the
+	 * MsSession is created
+	 * 
+	 * param evt the <code>MsSessionEvent</code> with eventID
+	 * <code>MsSessionEventID.SESSION_IDLE</code>.
+	 */
+	public void sessionCreated(MsSessionEvent evt);
+
+	/**
+	 * Indicates that the state of the <code>MsSession</code> object has
+	 * changed to <code>MsSession.ACTIVE</code>.
+	 * 
+	 * param evt the <code>MsSessionEvent</code> with eventID
+	 * <code>MsSessionEventID.SESSION_ACTIVE</code>.
+	 */
+	public void sessionActive(MsSessionEvent evt);
+
+	/**
+	 * Indicates that the state of the <code>MsSession</code> object has
+	 * changed to <code>MsSession.INVALID</code>.
+	 * 
+	 * param evt the <code>MsSessionEvent</code> with eventID
+	 * <code>MsSessionEventID.SESSION_INVALID</code>.
+	 */
+	public void sessionInvalid(MsSessionEvent evt);
 }

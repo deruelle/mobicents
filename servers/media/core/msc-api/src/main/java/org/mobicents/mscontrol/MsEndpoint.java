@@ -33,17 +33,20 @@ import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 
 /**
+ * <p>
  * Media Server contain endpoints on which the Call-Agent/Application can
  * create, modify and delete connections in order to establish and control media
  * sessions with other multimedia endpoints. <code>MsEndpoint</code>
  * represents the Endpoint in media server. Once the <code>MsConnection</code>
  * is created, application can get reference to <code>MsEndpoint</code> by
  * calling <code>MsConnection.getEndpoint()</code>.
- * 
+ * </p>
+ * <p>
  * Endpoints in media server is broadly divided in two categories 1)
- * <code>VirtualEndpoint</code> for example Announcement Endpoint, IVR Endpoint, Packet
- * Relay Endpoint etc and 2) PhysicalEndpoint like Fax line, DS0, TDM etc
- * 
+ * <code>VirtualEndpoint</code> for example Announcement Endpoint, IVR
+ * Endpoint, Packet Relay Endpoint etc and 2) PhysicalEndpoint like Fax line,
+ * DS0, TDM etc
+ * </p>
  * Reference of <code>MsEndpoint</code> is useful to detect the events like
  * DTMF or apply signal like Play Announcement on <code>MsConnection</code> or
  * <code>MsLink</code>
@@ -56,13 +59,14 @@ public interface MsEndpoint extends Serializable {
 	/**
 	 * Returns the fully qualified Endpoint Name
 	 * 
-	 * @return
+	 * @return The endpoint name specific to this <code>MsEndpoint</code>.
+	 *         For example '<code>media/trunk/IVR/enp-3</code>'
 	 */
 	public String getLocalName();
 
 	/**
 	 * Call this method to Generate event or request Signal on Endpoint
-	 * directly. Mainly used for Physical Endpoint directly. directly.
+	 * directly. Mainly used for Physical Endpoint.
 	 * 
 	 * @param signals
 	 *            array of MsRequestedSignal to be applied on Endpoint
@@ -73,7 +77,7 @@ public interface MsEndpoint extends Serializable {
 
 	/**
 	 * Call this method to Generate event or request Signal on MsConnection in
-	 * Endpoint directly.
+	 * Endpoint.
 	 * 
 	 * @param signals
 	 *            array of MsRequestedSignal to be applied on Endpoint
@@ -86,21 +90,21 @@ public interface MsEndpoint extends Serializable {
 
 	/**
 	 * Call this method to Generate event or request Signal on MsLink in Endpint
-	 * directly.
+	 * 
 	 * 
 	 * @param signals
 	 *            array of MsRequestedSignal to be applied on Endpoint
 	 * @param events
 	 *            array of MsRequestedEvent to be detected on Endpoint
-	 * @param connection
-	 *            MsConnection on which events/signals need to be applied
+	 * @param link
+	 *            {@link MsLink} on which events/signals need to be applied
 	 */
 	public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link);
 
 	/**
 	 * Register MsNotificationListener to listen for <code>MsNotifyEvent</code>
 	 * which are fired due to events detected by Endpoints like DTMF. Use above
-	 * execute methods to register for event passing appropriate
+	 * execute methods to register for event, passing appropriate
 	 * <code>MsRequestedEvent</code>
 	 * 
 	 * @param listener

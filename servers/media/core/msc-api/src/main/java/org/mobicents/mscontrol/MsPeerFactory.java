@@ -16,8 +16,8 @@
 package org.mobicents.mscontrol;
 
 /**
- * Factory class to get the MsPeer instance which is used to create the
- * MsProvider
+ * Factory class to get the {@link MsPeer} instance which is used to create the
+ * {@link MsProvider}
  * 
  * @author Oleg Kulikov
  */

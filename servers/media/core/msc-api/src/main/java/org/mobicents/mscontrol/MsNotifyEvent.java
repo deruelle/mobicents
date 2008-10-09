@@ -23,7 +23,7 @@ import org.mobicents.mscontrol.events.MsEventIdentifier;
 /**
  * MsNotify uses system wide defined constants for eventID and eventCause -
  * reason for that to happen is that MsNotifyEvent conveys information passed
- * throw signaling from and to MS
+ * throw signaling from and to Media Server
  * 
  * @author Oleg Kulikov
  */

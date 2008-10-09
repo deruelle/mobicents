@@ -4,13 +4,17 @@ package org.mobicents.mscontrol;
  * <code>MsLinkState</code> represents the state of MsLink.
  * <ul>
  * <li>IDLE : When the MsLink is created</li>
- * <li>JOINED : When the MsLink.join() is called and creating of link is
- * successful the state is set to JOINED</li>
+ * <br/>
+ * <li>CONNECTED : When the <code>MsLink.join(endpointA, endpointB)</code> is
+ * called and creating of link is successful the state is set to <code>CONNECTED</code></li>
+ * <br/>
  * 
- * <li>FAILED : When the MsLink.join() is called and creation of link fails the
- * state is set to FAILED</li>
+ * <li>FAILED : When the <code>MsLink.join(endpointA, endpointB)</code> is
+ * called and creation of link fails the state is set to <code>FAILED</code></li>
+ * <br/>
  * 
- * <li>INVALID : When the MsLink.release() is called state is INVALID</li>
+ * <li>DISCONNECTED : When the <code>MsLink.release()</code> is called state
+ * is <code>DISCONNECTED</code></li>
  * 
  * </ul>
  * 
@@ -18,8 +22,5 @@ package org.mobicents.mscontrol;
  * 
  */
 public enum MsLinkState {
-	IDLE, 
-        CONNECTED, 
-        FAILED, 
-        DISCONNECTED;
+	IDLE, CONNECTED, FAILED, DISCONNECTED;
 }
