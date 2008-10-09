@@ -119,10 +119,10 @@ public class MultiplexerTest {
 		int c2 = getPacketNum(new AudioFormat("F2"));
 
 		System.out.println("Expected " + count1 + ", received " + c1);
-		if (Math.abs(c1 - count1 / 2) > 2) {
+		if (Math.abs(c1 - count1) > 2) {
 			fail("Received packets for format F1 " + c1 + ", expected=" + count1);
 		}
-		if (Math.abs(c2 - count2 / 2) > 2) {
+		if (Math.abs(c2 - count2) > 2) {
 			fail("Received packets for format F2 " + c1 + ", expected=" + count1);
 		}
 	}
