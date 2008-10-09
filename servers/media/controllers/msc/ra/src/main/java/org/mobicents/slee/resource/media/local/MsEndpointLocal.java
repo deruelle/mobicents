@@ -6,8 +6,10 @@
 package org.mobicents.slee.resource.media.local;
 
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 
@@ -37,5 +39,25 @@ public class MsEndpointLocal implements MsEndpoint {
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link) {
         endpoint.execute(signals, events, ((MsLinkLocal)link).link);
     }
+
+	public void addConnectionListener(MsConnectionListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void addNotificationListener(MsNotificationListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removeConnectionListener(MsConnectionListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void removeNotificationListener(MsNotificationListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
