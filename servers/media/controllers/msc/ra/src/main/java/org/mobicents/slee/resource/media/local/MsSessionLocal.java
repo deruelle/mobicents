@@ -22,6 +22,7 @@ import org.mobicents.mscontrol.MsSessionState;
 /**
  *
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public class MsSessionLocal implements MsSession {
     private MsSession session;
@@ -88,11 +89,11 @@ public class MsSessionLocal implements MsSession {
     }
 
     public void addSessionListener(MsSessionListener listener) {
-        provider.addSessionListener(listener);
+    	throw new SecurityException("addSessionListener is unsupported. Use event handlers of SBB");
     }
 
     public void removeSessionListener(MsSessionListener listener) {
-        provider.removeSessionListener(listener);
+    	throw new SecurityException("removeSessionListener is unsupported.");
     }
 
     public List<MsConnection> getConnections() {

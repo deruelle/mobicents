@@ -12,6 +12,7 @@ import org.mobicents.mscontrol.MsConnectionListener;
 /**
  * 
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public class MsConnectionEventProxy implements MsConnectionListener {
 
@@ -26,10 +27,7 @@ public class MsConnectionEventProxy implements MsConnectionListener {
 		MsConnectionLocal connection = new MsConnectionLocal(session, event.getConnection());
 		session.connections.put(connection.getId(), connection);
 		MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-		for (MsConnectionListener listener : provider.connectionListeners) {
-			System.out.println("PROXY: Sending " + evt.getEventID() + " to " + listener);
-			listener.connectionCreated(evt);
-		}
+		this.provider.ra.connectionCreated(evt);
 		session.connectionActivityCreated();
 	}
 
@@ -37,27 +35,21 @@ public class MsConnectionEventProxy implements MsConnectionListener {
 		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
 		MsConnection connection = (MsConnection) session.connections.get(event.getConnection().getId());
 		MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-		for (MsConnectionListener listener : provider.connectionListeners) {
-			listener.connectionFailed(evt);
-		}
+		this.provider.ra.connectionFailed(evt);
 	}
 
 	public void connectionHalfOpen(MsConnectionEvent event) {
 		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
 		MsConnection connection = (MsConnection) session.connections.get(event.getConnection().getId());
 		MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-		for (MsConnectionListener listener : provider.connectionListeners) {
-			listener.connectionHalfOpen(evt);
-		}
+		this.provider.ra.connectionHalfOpen(evt);
 	}
 
 	public void connectionOpen(MsConnectionEvent event) {
 		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
 		MsConnection connection = (MsConnection) session.connections.get(event.getConnection().getId());
 		MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-		for (MsConnectionListener listener : provider.connectionListeners) {
-			listener.connectionOpen(evt);
-		}
+		this.provider.ra.connectionOpen(evt);
 	}
 
 	public void connectionDisconnected(MsConnectionEvent event) {
@@ -71,8 +63,6 @@ public class MsConnectionEventProxy implements MsConnectionListener {
 			connection = event.getConnection();
 		}
 		MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-		for (MsConnectionListener listener : provider.connectionListeners) {
-			listener.connectionDisconnected(evt);
-		}
+		this.provider.ra.connectionDisconnected(evt);
 	}
 }

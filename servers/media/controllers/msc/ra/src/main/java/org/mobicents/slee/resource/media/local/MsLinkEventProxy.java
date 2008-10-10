@@ -12,6 +12,7 @@ import org.mobicents.mscontrol.MsLinkListener;
 /**
  * 
  * @author Oleg Kulikov
+ * @author amit.bhayani
  */
 public class MsLinkEventProxy implements MsLinkListener {
 
@@ -27,9 +28,7 @@ public class MsLinkEventProxy implements MsLinkListener {
 		session.links.put(link.getId(), link);
 
 		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		for (MsLinkListener listener : provider.linkListeners) {
-			listener.linkCreated(event);
-		}
+		this.provider.ra.linkCreated(event);
 		session.linkActivityCreated();
 	}
 
@@ -37,9 +36,7 @@ public class MsLinkEventProxy implements MsLinkListener {
 		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
 		MsLink link = (MsLink) session.links.get(evt.getSource().getId());
 		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		for (MsLinkListener listener : provider.linkListeners) {
-			listener.linkConnected(event);
-		}
+		this.provider.ra.linkConnected(event);
 	}
 
 	public void linkDisconnected(MsLinkEvent evt) {
@@ -54,18 +51,14 @@ public class MsLinkEventProxy implements MsLinkListener {
 		}
 
 		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		for (MsLinkListener listener : provider.linkListeners) {
-			listener.linkDisconnected(event);
-		}
+		this.provider.ra.linkDisconnected(event);
 	}
 
 	public void linkFailed(MsLinkEvent evt) {
 		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
 		MsLink link = (MsLink) session.links.get(evt.getSource().getId());
 		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		for (MsLinkListener listener : provider.linkListeners) {
-			listener.linkFailed(event);
-		}
+		this.provider.ra.linkFailed(event);
 	}
 
 }
