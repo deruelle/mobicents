@@ -33,7 +33,7 @@ public class CA implements JainMgcpExtendedListener {
 	private JainMgcpStackProviderImpl caProvider;
 	private int mgStack = 0;
 	private boolean finalResponseReceived = false;
-	private boolean provisionalResponseReceived = false;
+	private boolean provisionalResponseReceived = true;
 	private String command;
 
 	public CA(JainMgcpStackProviderImpl caProvider, JainMgcpStackProviderImpl mgwProvider) {

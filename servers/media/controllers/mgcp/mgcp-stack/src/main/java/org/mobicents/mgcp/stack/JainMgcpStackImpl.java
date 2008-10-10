@@ -46,7 +46,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack {
 	private DatagramSocket socket;
 	private boolean stopped = true;
 	private Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
-	protected static final ExecutorService jainMgcpStackImplPool = Executors.newFixedThreadPool(50,new JainMgcpStackImpl.ThreadFactoryImpl());
+	protected ExecutorService jainMgcpStackImplPool = Executors.newFixedThreadPool(50,new JainMgcpStackImpl.ThreadFactoryImpl());
 
 	// For now we have only one provider/delete prvider method wont work.
 	protected JainMgcpStackProviderImpl provider;
