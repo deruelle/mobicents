@@ -152,7 +152,7 @@ public interface MsProvider extends Serializable {
 	 * onFailed.setEventAction(MsEventAction.NOTIFY);
 	 * 
 	 * MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
-	 * MsRequestedEvent[] requestedEvents = newlink MsRequestedEvent[] { onCompleted, onFailed };
+	 * MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
 	 * 
 	 * msEndpoint.execute(requestedSignals, requestedEvents, connection);
 	 * </pre>
