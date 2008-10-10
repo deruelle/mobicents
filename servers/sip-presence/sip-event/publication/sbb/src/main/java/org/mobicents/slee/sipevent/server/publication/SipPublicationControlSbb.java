@@ -23,11 +23,9 @@ import javax.slee.ActivityEndEvent;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
-import javax.slee.TransactionRequiredLocalException;
 import javax.slee.serviceactivity.ServiceActivity;
 import javax.slee.serviceactivity.ServiceActivityFactory;
 import javax.slee.serviceactivity.ServiceStartedEvent;
@@ -88,10 +86,15 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 	public abstract ChildRelation getPublicationControlChildRelation();
 	public abstract PublicationControlSbbLocalObject getPublicationControlChildSbbCMP();
 	public abstract void setPublicationControlChildSbbCMP(PublicationControlSbbLocalObject value);
-	private PublicationControlSbbLocalObject getPublicationControlChildSbb() throws TransactionRequiredLocalException, SLEEException, CreateException {
+	private PublicationControlSbbLocalObject getPublicationControlChildSbb() {
 		PublicationControlSbbLocalObject childSbb = getPublicationControlChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (PublicationControlSbbLocalObject) getPublicationControlChildRelation().create();
+			try {
+				childSbb = (PublicationControlSbbLocalObject) getPublicationControlChildRelation().create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb",e);
+				return null;
+			}
 			setPublicationControlChildSbbCMP(childSbb);
 			childSbb.setParentSbb((PublicationClientControlParentSbbLocalObject)this.sbbContext.getSbbLocalObject());
 		}
@@ -133,12 +136,9 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 		}
 		
 		// get child sbb that handles all the publication logic
-		PublicationControlSbbLocalObject childSbb = null;
-		try	{
-			childSbb = getPublicationControlChildSbb();						
-		}
-		catch (Exception e) {
-			logger.error("Failed to get child sbb",e);
+		PublicationControlSbbLocalObject childSbb = getPublicationControlChildSbb();						
+		
+		if (childSbb == null) { 
 			try {
 				// create response
 				Response response = messageFactory.createResponse(Response.SERVER_INTERNAL_ERROR,event.getRequest());
@@ -330,7 +330,10 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 	public void onActivityEndEvent(ActivityEndEvent event, ActivityContextInterface aci) {
 		// shutdown internal interface
 		try {
-			getPublicationControlChildSbb().shutdown();
+			PublicationControlSbbLocalObject childSbb = getPublicationControlChildSbb();
+			if (childSbb != null) {
+				childSbb.shutdown();
+			}
 			// stop mbean
 			configuration.stopService();
 		} catch (Exception e) {
@@ -401,13 +404,12 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 	}
 	
 	private void sendErrorResponse(Object requestId, int error) {
-		try {
-			RequestEvent event = (RequestEvent) requestId;
-			sendErrorResponse(error,event.getRequest(), event.getServerTransaction(), ((EventHeader) event.getRequest().getHeader(
-					EventHeader.NAME)).getEventType(), getPublicationControlChildSbb());
-		} catch (Exception e) {
-			logger.error("Failed to send error response",e);
-		}
+
+		RequestEvent event = (RequestEvent) requestId;
+		sendErrorResponse(error, event.getRequest(), event
+				.getServerTransaction(), ((EventHeader) event.getRequest()
+				.getHeader(EventHeader.NAME)).getEventType(),
+				getPublicationControlChildSbb());
 	}
 	
 	/*
@@ -421,7 +423,7 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 			// create response
 			Response response = messageFactory.createResponse(responseCode,request);
 			// add headers if needed
-			if (responseCode == Response.BAD_EVENT) {
+			if (responseCode == Response.BAD_EVENT && childSbb != null) {
 				String allowEventsHeader = "";
 				boolean first = true;
 				for (String acceptedEventPackage : childSbb.getEventPackages()) {
@@ -437,8 +439,9 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 			}
 			else if (responseCode == Response.INTERVAL_TOO_BRIEF)
 				response.addHeader(headerFactory.createMinExpiresHeader(getConfiguration().getMinExpires()));
-			else if (responseCode == Response.UNSUPPORTED_MEDIA_TYPE) 
-				response.addHeader(childSbb.getAcceptsHeader(eventPackage));		
+			else if (responseCode == Response.UNSUPPORTED_MEDIA_TYPE && childSbb != null) {
+				response.addHeader(childSbb.getAcceptsHeader(eventPackage));				
+			}
 
 			serverTransaction.sendResponse(response);
 			if (logger.isDebugEnabled()) {

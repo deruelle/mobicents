@@ -42,8 +42,6 @@ public abstract class AbstractAppUsageSbb implements javax.slee.Sbb {
 	 * Called when an sbb object is instantied and enters the pooled state.
 	 */
 	public void setSbbContext(SbbContext context) {
-		if (logger.isDebugEnabled())
-			logger.debug("setSbbContext(context=" + context.toString() + ")");
 		this.sbbContext = context;
 		try {
 			myEnv = (Context) new InitialContext().lookup("java:comp/env");
@@ -58,44 +56,28 @@ public abstract class AbstractAppUsageSbb implements javax.slee.Sbb {
 	}
 
 	public void unsetSbbContext() {
-		if (logger.isDebugEnabled())
-			logger.debug("unsetSbbContext()");
 		this.sbbContext = null;
 	}
 
 	public void sbbCreate() throws javax.slee.CreateException {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbCreate()");
 	}
 
 	public void sbbPostCreate() throws javax.slee.CreateException {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbPostCreate()");
 	}
 
 	public void sbbActivate() {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbActivate()");
 	}
 
 	public void sbbPassivate() {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbPassivate()");
 	}
 
 	public void sbbRemove() {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbRemove()");
 	}
 
 	public void sbbLoad() {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbLoad()");
 	}
 
 	public void sbbStore() {
-		if (logger.isDebugEnabled())
-			logger.debug("sbbStore()");
 	}
 
 	public void sbbExceptionThrown(Exception exception, Object event,
@@ -123,7 +105,7 @@ public abstract class AbstractAppUsageSbb implements javax.slee.Sbb {
 
 	protected RequestProcessorSbbLocalObject getRequestProcessor()
 			throws InternalServerErrorException {
-		// TODO use CMP to store the child sbb, will break compatibility with
+		// TODO use CMP to store the child sbb, that will break compatibility with
 		// app usages
 		// get the child relation
 		ChildRelation childRelation = getRequestProcessorChildRelation();

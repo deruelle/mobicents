@@ -157,13 +157,16 @@ public abstract class XcapDiffSubscriptionControlSbb implements Sbb,
 	public abstract void setXDMClientControlChildSbbCMP(
 			XDMClientControlSbbLocalObject value);
 
-	public XDMClientControlSbbLocalObject getXDMClientControlSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException {
+	public XDMClientControlSbbLocalObject getXDMClientControlSbb() {
 		XDMClientControlSbbLocalObject childSbb = getXDMClientControlChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (XDMClientControlSbbLocalObject) getXDMClientControlChildRelation()
-					.create();
+			try {
+				childSbb = (XDMClientControlSbbLocalObject) getXDMClientControlChildRelation()
+						.create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb",e);
+				return null;
+			}
 			setXDMClientControlChildSbbCMP(childSbb);
 			childSbb
 					.setParentSbb((XDMClientControlParentSbbLocalObject) this.sbbContext

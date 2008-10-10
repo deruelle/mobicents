@@ -9,6 +9,8 @@
   <classpathentry kind="src" path="integrated/deployable-unit/src/main/resources"/>
   <classpathentry kind="src" path="integrated/subscription-sbb/src/main/java"/>
   <classpathentry kind="src" path="integrated/subscription-sbb/src/main/resources"/>
+  <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/resources"/>
+  <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/jaxb-pojos/src/main/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/resources"/>

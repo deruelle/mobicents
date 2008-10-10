@@ -18,10 +18,8 @@ import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.slee.TransactionRequiredLocalException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
@@ -119,13 +117,16 @@ public abstract class PublicationControlSbb implements Sbb,
 	public abstract void setImplementedChildSbbCMP(
 			ImplementedPublicationControlSbbLocalObject value);
 
-	private ImplementedPublicationControlSbbLocalObject getImplementedChildSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException {
+	private ImplementedPublicationControlSbbLocalObject getImplementedChildSbb() {
 		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (ImplementedPublicationControlSbbLocalObject) getImplementedSbbChildRelation()
-					.create();
+			try {
+				childSbb = (ImplementedPublicationControlSbbLocalObject) getImplementedSbbChildRelation()
+						.create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb", e);
+				return null;
+			}
 			setImplementedChildSbbCMP(childSbb);
 		}
 		return childSbb;
@@ -624,53 +625,35 @@ public abstract class PublicationControlSbb implements Sbb,
 
 	public boolean acceptsContentType(String eventPackage,
 			ContentTypeHeader contentTypeHeader) {
-		try {
-			return getImplementedChildSbb().acceptsContentType(eventPackage,
-					contentTypeHeader);
-		} catch (Exception e) {
-			logger.error(e);
-			return false;
-		}
+		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbb();
+		return childSbb != null ? childSbb.acceptsContentType(eventPackage,
+				contentTypeHeader) : false;
 	}
 
 	public Header getAcceptsHeader(String eventPackage) {
-		try {
-			return getImplementedChildSbb().getAcceptsHeader(eventPackage);
-		} catch (Exception e) {
-			logger.error(e);
-			return null;
-		}
+		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbb();
+		return childSbb != null ? childSbb.getAcceptsHeader(eventPackage)
+				: null;
 	}
 
 	private static final String[] emptyArray = new String[0];
 
 	public String[] getEventPackages() {
-		try {
-			return getImplementedChildSbb().getEventPackages();
-		} catch (Exception e) {
-			logger.error(e);
-			return emptyArray;
-		}
+		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbb();
+		return childSbb != null ? childSbb.getEventPackages() : emptyArray;
 	}
 
 	public boolean isResponsibleForResource(URI uri) {
-		try {
-			return getImplementedChildSbb().isResponsibleForResource(uri);
-		} catch (Exception e) {
-			logger.error(e);
-			return false;
-		}
+		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbb();
+		return childSbb != null ? childSbb.isResponsibleForResource(uri)
+				: false;
 	}
 
 	public boolean authorizePublication(String entity,
 			JAXBElement unmarshalledContent) {
-		try {
-			return getImplementedChildSbb().authorizePublication(entity,
-					unmarshalledContent);
-		} catch (Exception e) {
-			logger.error(e);
-			return false;
-		}
+		ImplementedPublicationControlSbbLocalObject childSbb = getImplementedChildSbb();
+		return childSbb != null ? childSbb.authorizePublication(entity,
+				unmarshalledContent) : false;
 	}
 
 	// ----------- AUX METHODS

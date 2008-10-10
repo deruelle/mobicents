@@ -51,4 +51,9 @@ public interface PublicationControlSbbLocalObject extends
 	 * 
 	 */
 	public boolean isResponsibleForResource(URI uri);
+	
+	/**
+	 * Shutdown the interface to the sip event server
+	 */
+	public void shutdown();
 }

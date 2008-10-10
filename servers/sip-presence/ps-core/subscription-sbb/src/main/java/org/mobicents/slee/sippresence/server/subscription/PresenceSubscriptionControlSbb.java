@@ -10,10 +10,8 @@ import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.slee.TransactionRequiredLocalException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -149,13 +147,16 @@ public abstract class PresenceSubscriptionControlSbb implements Sbb,
 	public abstract void setPublicationControlChildSbbCMP(
 			PublicationControlSbbLocalObject value);
 
-	public PublicationControlSbbLocalObject getPublicationChildSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException {
+	public PublicationControlSbbLocalObject getPublicationChildSbb() {
 		PublicationControlSbbLocalObject childSbb = getPublicationControlChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (PublicationControlSbbLocalObject) getPublicationControlChildRelation()
-					.create();
+			try {
+				childSbb = (PublicationControlSbbLocalObject) getPublicationControlChildRelation()
+						.create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb", e);
+				return null;
+			}
 			setPublicationControlChildSbbCMP(childSbb);
 		}
 		return childSbb;
@@ -169,13 +170,16 @@ public abstract class PresenceSubscriptionControlSbb implements Sbb,
 	public abstract void setXDMClientControlChildSbbCMP(
 			XDMClientControlSbbLocalObject value);
 
-	public XDMClientControlSbbLocalObject getXDMClientControlSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException {
+	public XDMClientControlSbbLocalObject getXDMClientControlSbb() {
 		XDMClientControlSbbLocalObject childSbb = getXDMClientControlChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (XDMClientControlSbbLocalObject) getXDMClientControlChildRelation()
-					.create();
+			try {
+				childSbb = (XDMClientControlSbbLocalObject) getXDMClientControlChildRelation()
+						.create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb", e);
+				return null;
+			}
 			setXDMClientControlChildSbbCMP(childSbb);
 			childSbb
 					.setParentSbb((XDMClientControlParentSbbLocalObject) this.sbbContext

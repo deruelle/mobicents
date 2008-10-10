@@ -18,8 +18,18 @@ import org.openxdm.xcap.common.uri.DocumentSelector;
 public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 
 	/**
-	 * Sets the parent sbb to be used on call backs originated from messages
-	 * received by the XDM
+	 * Used to set the call back sbb local object in the sbb implementing this
+	 * interface. Must be used whenever a new object of this interface is
+	 * created.
+	 * 
+	 * An example:
+	 * 
+	 * ChildRelation childRelation = getChildRelation();
+	 * XDMClientControlSbbLocalObject childSbb =
+	 * (XDMClientControlSbbLocalObject) childRelation.create();
+	 * childSbb.setParentSbb(
+	 * (XDMClientControlParentSbbLocalObject)this.getSbbContext().getSbbLocalObject());
+	 * 
 	 * 
 	 * @param parent
 	 */

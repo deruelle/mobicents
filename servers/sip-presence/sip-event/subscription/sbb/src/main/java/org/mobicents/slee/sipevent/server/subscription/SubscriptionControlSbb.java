@@ -22,10 +22,8 @@ import javax.slee.Address;
 import javax.slee.ChildRelation;
 import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
-import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
-import javax.slee.TransactionRequiredLocalException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
@@ -187,13 +185,16 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	public abstract void setImplementedControlChildSbbCMP(
 			ImplementedSubscriptionControlSbbLocalObject value);
 
-	public ImplementedSubscriptionControlSbbLocalObject getImplementedControlChildSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException {
+	public ImplementedSubscriptionControlSbbLocalObject getImplementedControlChildSbb() {
 		ImplementedSubscriptionControlSbbLocalObject childSbb = getImplementedControlChildSbbCMP();
 		if (childSbb == null) {
-			childSbb = (ImplementedSubscriptionControlSbbLocalObject) getImplementedControlChildRelation()
-					.create();
+			try {
+				childSbb = (ImplementedSubscriptionControlSbbLocalObject) getImplementedControlChildRelation()
+						.create();
+			} catch (Exception e) {
+				logger.error("Failed to create child sbb",e);
+				return null;
+			}
 			setImplementedControlChildSbbCMP(childSbb);
 			childSbb
 					.setParentSbb((ImplementedSubscriptionControlParentSbbLocalObject) this.sbbContext
@@ -329,14 +330,8 @@ public abstract class SubscriptionControlSbb implements Sbb,
 				logger.info("Timer expired for " + subscription);
 			}
 
-			ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-			try {
-				childSbb = getImplementedControlChildSbb();
-			} catch (Exception e) {
-				logger.error("Failed to get child sipSubscriptionHandler.sbb",
-						e);
-				return;
-			}
+			ImplementedSubscriptionControlSbbLocalObject childSbb = getImplementedControlChildSbb();
+			
 			// check subscription status
 			if (subscription.getStatus().equals(Subscription.Status.waiting)) {
 				// change subscription status
@@ -464,14 +459,8 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	public void notifySubscribers(String notifier, String eventPackage,
 			Object content, ContentTypeHeader contentTypeHeader) {
 
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = getImplementedControlChildSbb();
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
-			return;
-		}
-
+		ImplementedSubscriptionControlSbbLocalObject childSbb = getImplementedControlChildSbb();
+		
 		// create jpa entity manager
 		EntityManager entityManager = getEntityManager();
 
@@ -506,14 +495,8 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	public void notifySubscriber(SubscriptionKey key, Object content,
 			ContentTypeHeader contentTypeHeader) {
 
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = getImplementedControlChildSbb();
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
-			return;
-		}
-
+		ImplementedSubscriptionControlSbbLocalObject childSbb = getImplementedControlChildSbb();
+		
 		// create jpa entity manager
 		EntityManager entityManager = getEntityManager();
 
@@ -636,13 +619,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 				if (logger.isInfoEnabled()) {
 					logger.info("Status changed for " + subscription);
 				}
-				ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-				try {
-					childSbb = getImplementedControlChildSbb();
-				} catch (Exception e) {
-					logger.error("Failed to get child sbb", e);
-					return;
-				}
+				ImplementedSubscriptionControlSbbLocalObject childSbb = getImplementedControlChildSbb();
 				// notify subscriber
 				if (dialog == null) {
 					// internal subscription
@@ -700,54 +677,20 @@ public abstract class SubscriptionControlSbb implements Sbb,
 			int expires, String content, String contentType,
 			String contentSubtype) {
 
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = getImplementedControlChildSbb();
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
-			getParentSbbCMP().subscribeError(subscriber, notifier,
-					eventPackage, subscriptionId,
-					Response.SERVER_INTERNAL_ERROR);
-			return;
-		}
-
 		EntityManager entityManager = getEntityManager();
 
 		getInternalSubscriptionHandler().getNewInternalSubscriptionHandler()
 				.newInternalSubscription(subscriber, subscriberDisplayName,
 						notifier, eventPackage, subscriptionId, expires,
 						content, contentType, contentSubtype, entityManager,
-						childSbb);
+						getImplementedControlChildSbb());
 
 		entityManager.flush();
 		entityManager.close();
 	}
 
-	public void newInternalSubscriptionAuthorization(String subscriber,
-			String subscriberDisplayName, String notifier,
-			SubscriptionKey subscriptionKey, int expires, int responseCode,
-			EntityManager entityManager,
-			ImplementedSubscriptionControlSbbLocalObject childSbb) {
-
-		getInternalSubscriptionHandler().getNewInternalSubscriptionHandler()
-				.newInternalSubscriptionAuthorization(subscriber,
-						subscriberDisplayName, notifier, subscriptionKey,
-						expires, responseCode, entityManager, childSbb);
-	}
-
 	public void resubscribe(String subscriber, String notifier,
 			String eventPackage, String subscriptionId, int expires) {
-
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = getImplementedControlChildSbb();
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
-			getParentSbbCMP().resubscribeError(subscriber, notifier,
-					eventPackage, subscriptionId,
-					Response.SERVER_INTERNAL_ERROR);
-			return;
-		}
 
 		EntityManager entityManager = getEntityManager();
 
@@ -755,7 +698,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 				.getRefreshInternalSubscriptionHandler()
 				.refreshInternalSubscription(subscriber, notifier,
 						eventPackage, subscriptionId, expires, entityManager,
-						childSbb);
+						getImplementedControlChildSbb());
 
 		entityManager.flush();
 		entityManager.close();
@@ -764,22 +707,11 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	public void unsubscribe(String subscriber, String notifier,
 			String eventPackage, String subscriptionId) {
 
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = getImplementedControlChildSbb();
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
-			getParentSbbCMP().unsubscribeError(subscriber, notifier,
-					eventPackage, subscriptionId,
-					Response.SERVER_INTERNAL_ERROR);
-			return;
-		}
-
 		EntityManager entityManager = getEntityManager();
 
 		getInternalSubscriptionHandler().getRemoveInternalSubscriptionHandler()
 				.removeInternalSubscription(subscriber, notifier, eventPackage,
-						subscriptionId, entityManager, childSbb);
+						subscriptionId, entityManager, getImplementedControlChildSbb());
 
 		entityManager.flush();
 		entityManager.close();

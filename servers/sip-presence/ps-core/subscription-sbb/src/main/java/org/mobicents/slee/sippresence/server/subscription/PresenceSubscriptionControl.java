@@ -100,12 +100,8 @@ public class PresenceSubscriptionControl {
 						subscriberDisplayName, notifier, key, expires,
 						Response.ACCEPTED);
 				// ask for pres-rules doc
-				try {
-					sbb.getXDMClientControlSbb().get(
-							new DocumentUriKey(documentSelector));
-				} catch (Exception e) {
-					logger.error("failed to get xdm client sbb", e);
-				}
+				sbb.getXDMClientControlSbb().get(
+						new DocumentUriKey(documentSelector));
 			}
 		} else {
 			// great, we already had the doc, send response code to the abstract
@@ -161,12 +157,8 @@ public class PresenceSubscriptionControl {
 					DocumentSelector documentSelector = getDocumentSelector(
 							subscription.getNotifier(), presRulesAUID,
 							presRulesDocumentName);
-					try {
-						sbb.getXDMClientControlSbb().unsubscribeDocument(
-								documentSelector);
-					} catch (Exception e) {
-						logger.error("failed to get xdm client sbb", e);
-					}
+					sbb.getXDMClientControlSbb().unsubscribeDocument(
+							documentSelector);
 				}
 			}
 		}
@@ -236,11 +228,8 @@ public class PresenceSubscriptionControl {
 		}
 
 		// subscribe to changes in this pres-rules doc
-		try {
-			sbb.getXDMClientControlSbb().subscribeDocument(documentSelector);
-		} catch (Exception e) {
-			logger.error("failed to get xdm client sbb", e);
-		}
+		sbb.getXDMClientControlSbb().subscribeDocument(documentSelector);
+
 	}
 
 	public void documentUpdated(DocumentSelector documentSelector,
@@ -300,13 +289,9 @@ public class PresenceSubscriptionControl {
 	 * interface used by rules processor to get sphere for a notifier
 	 */
 	public String getSphere(String notifier) {
-		ComposedPublication composedPublication = null;
-		try {
-			composedPublication = sbb.getPublicationChildSbb()
-					.getComposedPublication(notifier, "presence");
-		} catch (Exception e) {
-			logger.error("failed to get xdm client sbb", e);
-		}
+
+		ComposedPublication composedPublication = sbb.getPublicationChildSbb()
+				.getComposedPublication(notifier, "presence");
 		if (composedPublication != null
 				&& composedPublication.getUnmarshalledContent().getValue() instanceof Presence) {
 			Presence presence = (Presence) composedPublication

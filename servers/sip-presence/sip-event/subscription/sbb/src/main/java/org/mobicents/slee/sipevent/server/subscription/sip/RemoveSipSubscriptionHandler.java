@@ -116,19 +116,14 @@ public class RemoveSipSubscriptionHandler {
 					logger.info("Removing " + subscription.getKey()
 							+ " data due to error on notify response.");
 				}
-				try {
-					sipSubscriptionHandler.sbb.removeSubscriptionData(
-							entityManager, subscription, dialog,
-							sipSubscriptionHandler.sbb
-									.getActivityContextNamingfacility().lookup(
-											subscription.getKey().toString()),
-							sipSubscriptionHandler.sbb
-									.getImplementedControlChildSbb());
-					entityManager.flush();
-				} catch (Exception e) {
-					logger.error(
-							"Failed to retrieve the implemented child sbb", e);
-				}
+				sipSubscriptionHandler.sbb.removeSubscriptionData(
+						entityManager, subscription, dialog,
+						sipSubscriptionHandler.sbb
+						.getActivityContextNamingfacility().lookup(
+								subscription.getKey().toString()),
+								sipSubscriptionHandler.sbb
+								.getImplementedControlChildSbb());
+				entityManager.flush();
 			}
 		}
 		entityManager.close();

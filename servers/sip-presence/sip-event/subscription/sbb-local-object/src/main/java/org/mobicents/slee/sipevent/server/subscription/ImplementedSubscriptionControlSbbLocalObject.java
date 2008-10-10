@@ -10,9 +10,20 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 		SbbLocalObject {
 
 	/**
-	 * Stores the parent sbb local object used for callbacks.
+	 * Used to set the call back sbb local object in the sbb implementing this
+	 * interface. Must be used whenever a new object of this interface is
+	 * created.
 	 * 
-	 * @param sbbLocalObject
+	 * An example:
+	 * 
+	 * ChildRelation childRelation = getChildRelation();
+	 * ImplementedSubscriptionControlSbbLocalObject childSbb =
+	 * (ImplementedSubscriptionControlSbbLocalObject) childRelation.create();
+	 * childSbb.setParentSbb(
+	 * (ImplementedSubscriptionControlParentSbbLocalObject)this.getSbbContext().getSbbLocalObject());
+	 * 
+	 * 
+	 * @param parent
 	 */
 	public void setParentSbb(
 			ImplementedSubscriptionControlParentSbbLocalObject sbbLocalObject);

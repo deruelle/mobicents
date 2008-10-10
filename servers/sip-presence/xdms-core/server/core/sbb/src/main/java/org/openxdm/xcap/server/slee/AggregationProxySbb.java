@@ -119,6 +119,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 						.create();
 			} catch (Exception e) {
 				logger.error("Failed to create child sbb", e);
+				return null;
 			}
 			setRequestProcessorSbbLocalObjectCMP(childSbb);
 		}

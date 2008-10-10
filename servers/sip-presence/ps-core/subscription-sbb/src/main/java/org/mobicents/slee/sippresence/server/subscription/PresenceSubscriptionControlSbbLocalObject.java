@@ -3,9 +3,6 @@ package org.mobicents.slee.sippresence.server.subscription;
 import java.util.Map;
 
 import javax.sip.header.HeaderFactory;
-import javax.slee.CreateException;
-import javax.slee.SLEEException;
-import javax.slee.TransactionRequiredLocalException;
 import javax.xml.bind.Unmarshaller;
 
 import org.mobicents.slee.sipevent.server.publication.PublicationControlSbbLocalObject;
@@ -30,15 +27,11 @@ public interface PresenceSubscriptionControlSbbLocalObject extends
 
 	public ImplementedSubscriptionControlParentSbbLocalObject getParentSbbCMP();
 
-	public XDMClientControlSbbLocalObject getXDMClientControlSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException;
+	public XDMClientControlSbbLocalObject getXDMClientControlSbb();
 
-	public PublicationControlSbbLocalObject getPublicationChildSbb()
-			throws TransactionRequiredLocalException, SLEEException,
-			CreateException;
-	
+	public PublicationControlSbbLocalObject getPublicationChildSbb();
+
 	public HeaderFactory getHeaderFactory();
-	
+
 	public Unmarshaller getUnmarshaller();
 }

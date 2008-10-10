@@ -16,10 +16,8 @@ import javax.sip.header.UserAgentHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
-import javax.slee.SbbLocalObject;
 
 import org.apache.log4j.Logger;
-import org.mobicents.slee.sipevent.server.subscription.ImplementedSubscriptionControlParentSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.ImplementedSubscriptionControlSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbb;
 import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
@@ -79,14 +77,9 @@ public class SipSubscriptionHandler {
 	public void processRequest(RequestEvent event, ActivityContextInterface aci) {
 
 		// get child sbb that handles all the publication logic
-		SbbLocalObject sbbLocalObject = sbb.getSbbContext().getSbbLocalObject();
-		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try {
-			childSbb = sbb.getImplementedControlChildSbb();
-			childSbb
-					.setParentSbb((ImplementedSubscriptionControlParentSbbLocalObject) sbbLocalObject);
-		} catch (Exception e) {
-			logger.error("Failed to get child sbb", e);
+		ImplementedSubscriptionControlSbbLocalObject childSbb = sbb
+				.getImplementedControlChildSbb();
+		if (childSbb == null) {
 			try {
 				// create response
 				Response response = sbb.getMessageFactory().createResponse(

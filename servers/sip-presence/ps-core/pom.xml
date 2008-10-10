@@ -13,7 +13,8 @@
 	<modules>		
 		<module>jaxb-pojos</module>	
 		<module>publication-sbb</module>
-		<module>subscription-sbb</module>	
+		<module>subscription-sbb</module>
+		<module>internal-client</module>	
 	</modules>
 	
 	<properties>

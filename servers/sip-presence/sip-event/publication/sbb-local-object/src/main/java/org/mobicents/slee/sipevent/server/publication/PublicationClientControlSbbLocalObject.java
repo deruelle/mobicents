@@ -12,9 +12,20 @@ import javax.slee.SbbLocalObject;
 public interface PublicationClientControlSbbLocalObject extends SbbLocalObject {
 
 	/**
-	 * Stores the parent sbb local object used for callbacks.
+	 * Used to set the call back sbb local object in the sbb implementing this
+	 * interface. Must be used whenever a new object of this interface is
+	 * created.
 	 * 
-	 * @param parentSbb
+	 * An example:
+	 * 
+	 * ChildRelation childRelation = getChildRelation();
+	 * PublicationClientControlSbbLocalObject childSbb =
+	 * (PublicationClientControlSbbLocalObject) childRelation.create();
+	 * childSbb.setParentSbb(
+	 * (PublicationClientControlParentSbbLocalObject)this.getSbbContext().getSbbLocalObject());
+	 * 
+	 * 
+	 * @param parent
 	 */
 	public void setParentSbb(
 			PublicationClientControlParentSbbLocalObject parentSbb);
@@ -31,8 +42,7 @@ public interface PublicationClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param contentType
 	 * @param contentSubType
 	 * @param expires
-	 *            the time in seconds, which the publication is valid, use -1 if
-	 *            publication should not expire
+	 *            the time in seconds, which the publication is valid
 	 */
 	public void newPublication(Object requestId, String entity,
 			String eventPackage, String document, String contentType,
@@ -49,8 +59,7 @@ public interface PublicationClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param eventPackage
 	 * @param eTag
 	 * @param expires
-	 *            the time in seconds, which the publication is valid, use -1 if
-	 *            publication should not expire
+	 *            the time in seconds, which the publication is valid
 	 */
 	public void refreshPublication(Object requestId, String entity,
 			String eventPackage, String eTag, int expires);
@@ -69,8 +78,7 @@ public interface PublicationClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param contentType
 	 * @param contentSubType
 	 * @param expires
-	 *            the time in seconds, which the publication is valid, use -1 if
-	 *            publication should not expire
+	 *            the time in seconds, which the publication is valid
 	 */
 	public void modifyPublication(Object requestId, String entity,
 			String eventPackage, String eTag, String document,
@@ -90,8 +98,4 @@ public interface PublicationClientControlSbbLocalObject extends SbbLocalObject {
 	public void removePublication(Object requestId, String entity,
 			String eventPackage, String eTag);
 
-	/**
-	 * Shutdown the interface to the sip event server
-	 */
-	public void shutdown();
 }

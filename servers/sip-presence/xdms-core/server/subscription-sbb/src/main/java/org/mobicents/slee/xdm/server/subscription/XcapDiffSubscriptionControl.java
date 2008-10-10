@@ -187,12 +187,8 @@ public class XcapDiffSubscriptionControl {
 			subscriptionsMap.put(key, subscriptions);
 			sbb.setSubscriptionsMap(subscriptionsMap);
 			// let's subscribe all documents and/or app usages
-			XDMClientControlSbbLocalObject xdm = null;
-			try {
-				xdm = sbb.getXDMClientControlSbb();
-			} catch (Exception e) {
-				logger.error("failed to get xdm client sbb", e);
-			}
+			XDMClientControlSbbLocalObject xdm = sbb.getXDMClientControlSbb();
+
 			for (DocumentSelector documentSelector : documentsToSubscribe) {
 				if (!documentSelectorsAlreadySubscribed
 						.contains(documentSelector)
@@ -255,12 +251,7 @@ public class XcapDiffSubscriptionControl {
 
 			// now unsubscribe each that was subscribed only by the subscription
 			// terminating
-			XDMClientControlSbbLocalObject xdm = null;
-			try {
-				xdm = sbb.getXDMClientControlSbb();
-			} catch (Exception e) {
-				logger.error("failed to get xdm client sbb", e);
-			}
+			XDMClientControlSbbLocalObject xdm = sbb.getXDMClientControlSbb();
 			for (DocumentSelector ds : subscriptions.getDocumentSelectors()) {
 				if (!documentSelectorsSubscribedByOthers.contains(ds)) {
 					// safe to unsubscribe this document
