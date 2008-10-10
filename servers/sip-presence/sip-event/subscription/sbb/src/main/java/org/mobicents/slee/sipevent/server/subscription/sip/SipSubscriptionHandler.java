@@ -26,82 +26,83 @@ import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
 
 /**
  * Handler for SIP SUBSCRIBE events.
+ * 
  * @author martins
- *
+ * 
  */
 public class SipSubscriptionHandler {
-	
+
 	private static Logger logger = Logger
-	.getLogger(SubscriptionControlSbb.class);
-	
+			.getLogger(SubscriptionControlSbb.class);
+
 	protected SubscriptionControlSbb sbb;
 	private NewSipSubscriptionHandler newSipSubscriptionHandler;
 	private RefreshSipSubscriptionHandler refreshSipSubscriptionHandler;
 	private RemoveSipSubscriptionHandler removeSipSubscriptionHandler;
 	private SipSubscriberNotificationHandler sipSubscriberNotificationHandler;
-	
+
 	public SipSubscriptionHandler(SubscriptionControlSbb sbb) {
 		this.sbb = sbb;
 		newSipSubscriptionHandler = new NewSipSubscriptionHandler(this);
 		refreshSipSubscriptionHandler = new RefreshSipSubscriptionHandler(this);
 		removeSipSubscriptionHandler = new RemoveSipSubscriptionHandler(this);
-		sipSubscriberNotificationHandler = new SipSubscriberNotificationHandler(this);
+		sipSubscriberNotificationHandler = new SipSubscriberNotificationHandler(
+				this);
 	}
-	
+
 	// --- GETTERS
-	
+
 	public NewSipSubscriptionHandler getNewSipSubscriptionHandler() {
 		return newSipSubscriptionHandler;
 	}
-	
+
 	public RefreshSipSubscriptionHandler getRefreshSipSubscriptionHandler() {
 		return refreshSipSubscriptionHandler;
 	}
-	
+
 	public RemoveSipSubscriptionHandler getRemoveSipSubscriptionHandler() {
 		return removeSipSubscriptionHandler;
 	}
-	
+
 	public SipSubscriberNotificationHandler getSipSubscriberNotificationHandler() {
 		return sipSubscriberNotificationHandler;
 	}
-	
+
 	// --- LOGIC
-	
+
 	/**
 	 * SIP SUBSCRIBE event processing
 	 * 
 	 * @param event
 	 * @param aci
 	 */
-	public void processRequest(RequestEvent event,
-			ActivityContextInterface aci) {
-		
+	public void processRequest(RequestEvent event, ActivityContextInterface aci) {
+
 		// get child sbb that handles all the publication logic
 		SbbLocalObject sbbLocalObject = sbb.getSbbContext().getSbbLocalObject();
 		ImplementedSubscriptionControlSbbLocalObject childSbb = null;
-		try	{
-			childSbb = sbb.getImplementedControlChildSbb();			
-			childSbb.setParentSbb((ImplementedSubscriptionControlParentSbbLocalObject)sbbLocalObject);
-		}
-		catch (Exception e) {
-			logger.error("Failed to get child sbb",e);
+		try {
+			childSbb = sbb.getImplementedControlChildSbb();
+			childSbb
+					.setParentSbb((ImplementedSubscriptionControlParentSbbLocalObject) sbbLocalObject);
+		} catch (Exception e) {
+			logger.error("Failed to get child sbb", e);
 			try {
 				// create response
-				Response response = sbb.getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR,event.getRequest());
+				Response response = sbb.getMessageFactory().createResponse(
+						Response.SERVER_INTERNAL_ERROR, event.getRequest());
 				event.getServerTransaction().sendResponse(response);
 				if (logger.isDebugEnabled()) {
-					logger.debug("Response sent:\n"+response.toString());
+					logger.debug("Response sent:\n" + response.toString());
 				}
-			}
-			catch (Exception f) {
-				logger.error("Can't send error response!",f);
+			} catch (Exception f) {
+				logger.error("Can't send error response!", f);
 			}
 			return;
 		}
 
 		EntityManager entityManager = sbb.getEntityManager();
-		
+
 		// if exists remove UserAgent header
 		if (event.getRequest().getHeader(UserAgentHeader.NAME) != null)
 			event.getRequest().removeHeader(UserAgentHeader.NAME);
@@ -116,7 +117,7 @@ public class SipSubscriptionHandler {
 		if (eventHeader != null) {
 			// check event package
 			String eventPackage = eventHeader.getEventType();
-			if (acceptsEventPackage(eventPackage,childSbb)) {
+			if (acceptsEventPackage(eventPackage, childSbb)) {
 
 				// process expires header
 				ExpiresHeader expiresHeader = event.getRequest().getExpires();
@@ -142,12 +143,18 @@ public class SipSubscriptionHandler {
 						Dialog dialog = event.getDialog();
 						if (dialog == null) {
 							// no dialog means it's a new subscription for sure
-							newSipSubscriptionHandler.newSipSubscription(event, aci, eventPackage,
-									eventHeader.getEventId(), expires, entityManager, childSbb);
+							newSipSubscriptionHandler.newSipSubscription(event,
+									aci, eventPackage,
+									eventHeader.getEventId(), expires,
+									entityManager, childSbb);
 						} else {
-							String eventId = eventHeader.getEventId();							
+							String eventId = eventHeader.getEventId();
 							// trying to create or refresh a subscription
-							Subscription subscription = Subscription.getSubscription(entityManager, dialog.getCallId().getCallId(),dialog.getRemoteTag(), eventPackage, eventId);
+							Subscription subscription = Subscription
+									.getSubscription(entityManager, dialog
+											.getCallId().getCallId(), dialog
+											.getRemoteTag(), eventPackage,
+											eventId);
 							if (subscription != null) {
 								// subscription exists
 								if (subscription.getStatus().equals(
@@ -155,106 +162,123 @@ public class SipSubscriptionHandler {
 										|| subscription.getStatus().equals(
 												Subscription.Status.pending)) {
 									// subscription status permits refresh
-									refreshSipSubscriptionHandler.refreshSipSubscription(event, aci, expires, subscription, entityManager, childSbb);
+									refreshSipSubscriptionHandler
+											.refreshSipSubscription(event, aci,
+													expires, subscription,
+													entityManager, childSbb);
 								} else {
 									// subscription status does not permits
 									// refresh
 									sendResponse(
 											Response.CONDITIONAL_REQUEST_FAILED,
 											event.getRequest(), event
-											.getServerTransaction(),childSbb);
+													.getServerTransaction(),
+											childSbb);
 								}
 							} else {
 								// subscription does not exists
-								newSipSubscriptionHandler.newSipSubscription(event, aci, eventPackage,
-										eventHeader.getEventId(), expires, entityManager, childSbb);
-							}							
+								newSipSubscriptionHandler.newSipSubscription(
+										event, aci, eventPackage, eventHeader
+												.getEventId(), expires,
+										entityManager, childSbb);
+							}
 						}
 					} else {
 						// expires is > 0 but < min expires, respond (Interval
 						// Too Brief) with Min-Expires = MINEXPIRES
 						sendResponse(Response.INTERVAL_TOO_BRIEF, event
-								.getRequest(), event.getServerTransaction(),childSbb);
+								.getRequest(), event.getServerTransaction(),
+								childSbb);
 					}
 				}
 
 				else if (expires == 0) {
 					Dialog dialog = event.getDialog();
 					if (dialog != null) {
-						String eventId = eventHeader.getEventId();					
+						String eventId = eventHeader.getEventId();
 						// trying to remove a subscription
-						Subscription subscription = Subscription.getSubscription(entityManager, dialog.getCallId().getCallId(),dialog.getRemoteTag(), eventPackage, eventId);
+						Subscription subscription = Subscription
+								.getSubscription(entityManager, dialog
+										.getCallId().getCallId(), dialog
+										.getRemoteTag(), eventPackage, eventId);
 						if (subscription != null) {
 							if (subscription.getStatus().equals(
-									Subscription.Status.active) || subscription
-									.getStatus().equals(
+									Subscription.Status.active)
+									|| subscription.getStatus().equals(
 											Subscription.Status.pending)) {
 								// subscription exists and status permits remove
-								try {				
-									Response response = sbb.getMessageFactory().createResponse(Response.OK, event.getRequest());
+								try {
+									Response response = sbb.getMessageFactory()
+											.createResponse(Response.OK,
+													event.getRequest());
 									response = addContactHeader(response);
-									response.addHeader(sbb.getHeaderFactory().createExpiresHeader(expires));
-									event.getServerTransaction().sendResponse(response);
+									response.addHeader(sbb.getHeaderFactory()
+											.createExpiresHeader(expires));
+									event.getServerTransaction().sendResponse(
+											response);
 									if (logger.isDebugEnabled()) {
-										logger.debug("Response sent:\n"+response.toString());					
+										logger.debug("Response sent:\n"
+												+ response.toString());
 									}
+								} catch (Exception e) {
+									logger.error("Can't send RESPONSE", e);
 								}
-								catch (Exception e) {
-									logger.error("Can't send RESPONSE",e);			
-								}							
 								// remove subscription
-								removeSipSubscriptionHandler.removeSipSubscription(aci,subscription,entityManager,childSbb);
+								removeSipSubscriptionHandler
+										.removeSipSubscription(aci,
+												subscription, entityManager,
+												childSbb);
 							} else {
 								// subscription does exists but status does
 								// not permits removal
 								sendResponse(
 										Response.CONDITIONAL_REQUEST_FAILED,
 										event.getRequest(), event
-										.getServerTransaction(),childSbb);
+												.getServerTransaction(),
+										childSbb);
 							}
-						}
-						else {
-							// subscription does not exists, one shot subscription request, not supported
-							sendResponse(
-									Response.CONDITIONAL_REQUEST_FAILED,
+						} else {
+							// subscription does not exists, one shot
+							// subscription request, not supported
+							sendResponse(Response.CONDITIONAL_REQUEST_FAILED,
 									event.getRequest(), event
-									.getServerTransaction(),childSbb);
+											.getServerTransaction(), childSbb);
 						}
-					}
-					else {
-						// dialog does not exists, one shot subscription request, not supported
-						sendResponse(
-								Response.CONDITIONAL_REQUEST_FAILED,
-								event.getRequest(), event
-								.getServerTransaction(),childSbb);
+					} else {
+						// dialog does not exists, one shot subscription
+						// request, not supported
+						sendResponse(Response.CONDITIONAL_REQUEST_FAILED, event
+								.getRequest(), event.getServerTransaction(),
+								childSbb);
 					}
 				} else {
 					// expires can't be negative
 					sendResponse(Response.BAD_REQUEST, event.getRequest(),
-							event.getServerTransaction(),childSbb);
+							event.getServerTransaction(), childSbb);
 				}
 			} else {
 				// wrong event package, send bad event type error
 				sendResponse(Response.BAD_EVENT, event.getRequest(), event
-						.getServerTransaction(),childSbb);
+						.getServerTransaction(), childSbb);
 			}
 		} else {
 			// subscribe does not have a event header
 			sendResponse(Response.BAD_REQUEST, event.getRequest(), event
-					.getServerTransaction(),childSbb);
+					.getServerTransaction(), childSbb);
 		}
-		
+
 		entityManager.flush();
 		entityManager.close();
-		
+
 	}
-	
+
 	/*
 	 * Sends a response with the specified status code, adding additional
 	 * headers if needed
 	 */
 	public void sendResponse(int responseCode, Request request,
-			ServerTransaction serverTransaction, ImplementedSubscriptionControlSbbLocalObject childSbb) {
+			ServerTransaction serverTransaction,
+			ImplementedSubscriptionControlSbbLocalObject childSbb) {
 		try {
 			// create response
 			Response response = sbb.getMessageFactory().createResponse(
@@ -265,17 +289,19 @@ public class SipSubscriptionHandler {
 				boolean first = true;
 				for (String acceptedEventPackage : childSbb.getEventPackages()) {
 					if (first) {
-						allowEventsHeader += acceptedEventPackage + "," + acceptedEventPackage + ".winfo";
+						allowEventsHeader += acceptedEventPackage + ","
+								+ acceptedEventPackage + ".winfo";
+					} else {
+						allowEventsHeader += "," + acceptedEventPackage + ","
+								+ acceptedEventPackage + ".winfo";
 					}
-					else {
-						allowEventsHeader += ","+acceptedEventPackage + "," + acceptedEventPackage + ".winfo";
-					}					
 				}
-				response
-						.addHeader(sbb.getHeaderFactory().createAllowEventsHeader(allowEventsHeader));
+				response.addHeader(sbb.getHeaderFactory()
+						.createAllowEventsHeader(allowEventsHeader));
 			} else if (responseCode == Response.INTERVAL_TOO_BRIEF) {
-				response.addHeader(sbb.getHeaderFactory().createMinExpiresHeader(
-						sbb.getConfiguration().getMinExpires()));
+				response.addHeader(sbb.getHeaderFactory()
+						.createMinExpiresHeader(
+								sbb.getConfiguration().getMinExpires()));
 			}
 			// 2xx response to SUBSCRIBE need a Contact
 			response = addContactHeader(response);
@@ -286,35 +312,36 @@ public class SipSubscriptionHandler {
 		} catch (Exception e) {
 			logger.error("Can't send response!", e);
 		}
-	}	
-	
+	}
+
 	/*
 	 * Adds subscription agent contact header to SIP response
 	 */
 	public Response addContactHeader(Response response) throws ParseException {
-		
+
 		if (response.getHeader(ContactHeader.NAME) != null) {
 			response.removeHeader(ContactHeader.NAME);
 		}
-		ListeningPoint listeningPoint = sbb.getSipProvider()
-		.getListeningPoint("udp");
-		Address address = sbb.getAddressFactory()
-		.createAddress(sbb.getConfiguration().getContactAddressDisplayName() + " <sip:"
-				+ listeningPoint.getIPAddress() + ">");
+		ListeningPoint listeningPoint = sbb.getSipProvider().getListeningPoint(
+				"udp");
+		Address address = sbb.getAddressFactory().createAddress(
+				sbb.getConfiguration().getContactAddressDisplayName()
+						+ " <sip:" + listeningPoint.getIPAddress() + ">");
 		((SipURI) address.getURI()).setPort(listeningPoint.getPort());
 		response.addHeader(sbb.getHeaderFactory().createContactHeader(address));
 
 		return response;
 	}
-	
+
 	/**
 	 * verifies if the specified event packaged is accepted
 	 */
-	public boolean acceptsEventPackage(String eventPackage, ImplementedSubscriptionControlSbbLocalObject childSbb) {
-		if (eventPackage != null) {			
-			for(String acceptedEventPackage : childSbb.getEventPackages()) {
+	public boolean acceptsEventPackage(String eventPackage,
+			ImplementedSubscriptionControlSbbLocalObject childSbb) {
+		if (eventPackage != null) {
+			for (String acceptedEventPackage : childSbb.getEventPackages()) {
 				if (eventPackage.equals(acceptedEventPackage)
-					|| eventPackage.equals(acceptedEventPackage + ".winfo")) {
+						|| eventPackage.equals(acceptedEventPackage + ".winfo")) {
 					return true;
 				}
 			}

@@ -127,8 +127,12 @@ public class SubscriptionKey implements Serializable {
         return result;
     }
 
+    private transient String toString = null;
     public String toString() {
-        return "SubscriptionKey: callId="+callId+",remoteTag="+remoteTag+",eventPackage="+eventPackage+",eventId="+eventId;
+    	if (toString == null) {
+    		toString = "SubscriptionKey:callId="+callId+",remoteTag="+remoteTag+",eventPackage="+eventPackage+",eventId="+eventId;
+    	}
+        return toString; 
     }
 
     public boolean isInternalSubscription() {

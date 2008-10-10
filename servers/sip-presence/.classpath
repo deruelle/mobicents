@@ -3,6 +3,9 @@
   <classpathentry kind="src" path="examples/internal-publisher/du/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/java"/>
   <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/resources"/>
+  <classpathentry kind="src" path="examples/internal-subscriber/du/src/main/resources"/>
+  <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/java"/>
+  <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/resources"/>
   <classpathentry kind="src" path="integrated/deployable-unit/src/main/resources"/>
   <classpathentry kind="src" path="integrated/subscription-sbb/src/main/java"/>
   <classpathentry kind="src" path="integrated/subscription-sbb/src/main/resources"/>
@@ -16,6 +19,8 @@
   <classpathentry kind="src" path="sip-event/publication/sbb/src/main/java"/>
   <classpathentry kind="src" path="sip-event/publication/sbb/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/publication/sbb-local-object/src/main/java"/>
+  <classpathentry kind="src" path="sip-event/subscription/event/src/main/java"/>
+  <classpathentry kind="src" path="sip-event/subscription/event/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/resources"/>

@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sip.RequestEvent;
 import javax.sip.header.HeaderFactory;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
@@ -27,6 +26,7 @@ import org.mobicents.slee.sipevent.server.publication.PublicationControlSbbLocal
 import org.mobicents.slee.sipevent.server.subscription.ImplementedSubscriptionControlParentSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.NotifyContent;
 import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
+import org.mobicents.slee.sipevent.server.subscription.pojo.SubscriptionKey;
 import org.mobicents.slee.sippresence.server.subscription.PresenceSubscriptionControl;
 import org.mobicents.slee.xdm.server.XDMClientControlParentSbbLocalObject;
 import org.mobicents.slee.xdm.server.XDMClientControlSbbLocalObject;
@@ -38,42 +38,51 @@ import org.openxdm.xcap.common.uri.NodeSelector;
 import org.openxdm.xcap.server.slee.resource.datasource.DataSourceSbbInterface;
 
 /**
- * Implemented Subscription control child sbb for an integrated XCAP Diff and SIP Presence Server.
+ * Implemented Subscription control child sbb for an integrated XCAP Diff and
+ * SIP Presence Server.
+ * 
  * @author eduardomartins
- *
+ * 
  */
-public abstract class IntegratedSubscriptionControlSbb implements Sbb,IntegratedSubscriptionControlSbbLocalObject {
+public abstract class IntegratedSubscriptionControlSbb implements Sbb,
+		IntegratedSubscriptionControlSbbLocalObject {
 
-	private static Logger logger = Logger.getLogger(IntegratedSubscriptionControlSbb.class);
-	
+	private static Logger logger = Logger
+			.getLogger(IntegratedSubscriptionControlSbb.class);
+
 	private static final String[] eventPackages = initEventPackages();
+
 	private static String[] initEventPackages() {
-		int xcapDiffArrayLenght = XcapDiffSubscriptionControl.getEventPackages().length;
-		int presenceArrayLenght = PresenceSubscriptionControl.getEventPackages().length;
+		int xcapDiffArrayLenght = XcapDiffSubscriptionControl
+				.getEventPackages().length;
+		int presenceArrayLenght = PresenceSubscriptionControl
+				.getEventPackages().length;
 		int resultArrayLenght = xcapDiffArrayLenght + presenceArrayLenght;
 		String[] result = new String[resultArrayLenght];
-		for(int i=0;i<presenceArrayLenght;i++) {
-			result[i]=PresenceSubscriptionControl.getEventPackages()[i];
+		for (int i = 0; i < presenceArrayLenght; i++) {
+			result[i] = PresenceSubscriptionControl.getEventPackages()[i];
 		}
-		for(int i=0;i<xcapDiffArrayLenght;i++) {
-			result[i+presenceArrayLenght]=XcapDiffSubscriptionControl.getEventPackages()[i];
+		for (int i = 0; i < xcapDiffArrayLenght; i++) {
+			result[i + presenceArrayLenght] = XcapDiffSubscriptionControl
+					.getEventPackages()[i];
 		}
 		return result;
 	}
-	
+
 	private DataSourceSbbInterface dataSourceSbbInterface;
 	private String presRulesAUID;
 	private String presRulesDocumentName;
-	
+
 	/**
 	 * JAIN-SIP provider & factories
 	 * 
 	 * @return
 	 */
-	//private SipActivityContextInterfaceFactory sipActivityContextInterfaceFactory;
+	// private SipActivityContextInterfaceFactory
+	// sipActivityContextInterfaceFactory;
 	protected SleeSipProvider sipProvider;
-	//private AddressFactory addressFactory;
-	//private MessageFactory messageFactory;
+	// private AddressFactory addressFactory;
+	// private MessageFactory messageFactory;
 	protected HeaderFactory headerFactory;
 
 	/**
@@ -87,105 +96,129 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 		try {
 			Context context = (Context) new InitialContext()
 					.lookup("java:comp/env");
-			//sipActivityContextInterfaceFactory = (SipActivityContextInterfaceFactory) context
-			//	.lookup("slee/resources/jainsip/1.2/acifactory");
+			// sipActivityContextInterfaceFactory =
+			// (SipActivityContextInterfaceFactory) context
+			// .lookup("slee/resources/jainsip/1.2/acifactory");
 			sipProvider = (SleeSipProvider) context
 					.lookup("slee/resources/jainsip/1.2/provider");
-			//addressFactory = sipProvider.getAddressFactory();
+			// addressFactory = sipProvider.getAddressFactory();
 			headerFactory = sipProvider.getHeaderFactory();
-			//messageFactory = sipProvider.getMessageFactory();
+			// messageFactory = sipProvider.getMessageFactory();
 			presRulesAUID = (String) context.lookup("presRulesAUID");
-			presRulesDocumentName = (String) context.lookup("presRulesDocumentName");
-			dataSourceSbbInterface = (DataSourceSbbInterface) context.lookup("slee/resources/xdm/datasource/sbbrainterface");
+			presRulesDocumentName = (String) context
+					.lookup("presRulesDocumentName");
+			dataSourceSbbInterface = (DataSourceSbbInterface) context
+					.lookup("slee/resources/xdm/datasource/sbbrainterface");
 		} catch (NamingException e) {
 			logger.error("Can't set sbb context.", e);
-		}		
+		}
 	}
-	
+
 	// ------------ ImplementedSubscriptionControlSbbLocalObject
-	
+
 	public abstract ImplementedSubscriptionControlParentSbbLocalObject getParentSbbCMP();
+
 	public abstract void setParentSbbCMP(
 			ImplementedSubscriptionControlParentSbbLocalObject sbbLocalObject);
+
 	public void setParentSbb(
 			ImplementedSubscriptionControlParentSbbLocalObject sbbLocalObject) {
-		setParentSbbCMP(sbbLocalObject);		
+		setParentSbbCMP(sbbLocalObject);
 	}
-	
+
 	public String[] getEventPackages() {
 		return eventPackages;
 	}
-	
+
 	private boolean contains(String[] array, String eventPackage) {
-		for(String s:array) {
+		for (String s : array) {
 			if (s.equals(eventPackage)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	public void isSubscriberAuthorized(RequestEvent event,
-			String subscriber, String notifier, String eventPackage,
-			String eventId, int expires) {
-		
-		if (contains(PresenceSubscriptionControl.getEventPackages(),eventPackage)) {
-			new PresenceSubscriptionControl(this).isSubscriberAuthorized(event, subscriber, notifier, eventPackage, eventId, expires,presRulesAUID,presRulesDocumentName);
-		}
-		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),eventPackage)) {
-			new XcapDiffSubscriptionControl(this).isSubscriberAuthorized(event, subscriber, notifier, eventPackage, eventId, expires);
+
+	public void isSubscriberAuthorized(String subscriber,
+			String subscriberDisplayName, String notifier, SubscriptionKey key,
+			int expires, String content, String contentType,
+			String contentSubtype) {
+
+		if (contains(PresenceSubscriptionControl.getEventPackages(), key
+				.getEventPackage())) {
+			new PresenceSubscriptionControl(this).isSubscriberAuthorized(
+					subscriber, subscriberDisplayName, notifier, key, expires,
+					content, contentType, contentSubtype, presRulesAUID,
+					presRulesDocumentName);
+		} else if (contains(XcapDiffSubscriptionControl.getEventPackages(), key
+				.getEventPackage())) {
+			new XcapDiffSubscriptionControl(this).isSubscriberAuthorized(
+					subscriber, subscriberDisplayName, notifier, key, expires,
+					content, contentType, contentSubtype);
 		}
 	}
-	
+
 	public void removingSubscription(Subscription subscription) {
-		if (contains(PresenceSubscriptionControl.getEventPackages(),subscription.getKey().getEventPackage())) {
-			new PresenceSubscriptionControl(this).removingSubscription(subscription, presRulesAUID, presRulesDocumentName);
-		}
-		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),subscription.getKey().getEventPackage())) {
-			new XcapDiffSubscriptionControl(this).removingSubscription(subscription);
+		if (contains(PresenceSubscriptionControl.getEventPackages(),
+				subscription.getKey().getEventPackage())) {
+			new PresenceSubscriptionControl(this).removingSubscription(
+					subscription, presRulesAUID, presRulesDocumentName);
+		} else if (contains(XcapDiffSubscriptionControl.getEventPackages(),
+				subscription.getKey().getEventPackage())) {
+			new XcapDiffSubscriptionControl(this)
+					.removingSubscription(subscription);
 		}
 	}
 
 	public NotifyContent getNotifyContent(Subscription subscription) {
-		if (contains(PresenceSubscriptionControl.getEventPackages(),subscription.getKey().getEventPackage())) {
-			return new PresenceSubscriptionControl(this).getNotifyContent(subscription);
-		}
-		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),subscription.getKey().getEventPackage())) {
-			return new XcapDiffSubscriptionControl(this).getNotifyContent(subscription);
-		}
-		else {
+		if (contains(PresenceSubscriptionControl.getEventPackages(),
+				subscription.getKey().getEventPackage())) {
+			return new PresenceSubscriptionControl(this)
+					.getNotifyContent(subscription);
+		} else if (contains(XcapDiffSubscriptionControl.getEventPackages(),
+				subscription.getKey().getEventPackage())) {
+			return new XcapDiffSubscriptionControl(this)
+					.getNotifyContent(subscription);
+		} else {
 			return null;
 		}
 	}
-	
-	public Object filterContentPerSubscriber(String subscriber, String notifier, String eventPackage, Object unmarshalledContent) {
-		if (contains(PresenceSubscriptionControl.getEventPackages(),eventPackage)) {
-			return new PresenceSubscriptionControl(this).filterContentPerSubscriber(subscriber,notifier,eventPackage,unmarshalledContent);
-		}
-		else if (contains(XcapDiffSubscriptionControl.getEventPackages(),eventPackage)) {
-			return new XcapDiffSubscriptionControl(this).filterContentPerSubscriber(subscriber,notifier,eventPackage,unmarshalledContent);
-		}
-		else {
-			logger.warn("filterContentPerSubscriber() invoked with unknown event package");
+
+	public Object filterContentPerSubscriber(String subscriber,
+			String notifier, String eventPackage, Object unmarshalledContent) {
+		if (contains(PresenceSubscriptionControl.getEventPackages(),
+				eventPackage)) {
+			return new PresenceSubscriptionControl(this)
+					.filterContentPerSubscriber(subscriber, notifier,
+							eventPackage, unmarshalledContent);
+		} else if (contains(XcapDiffSubscriptionControl.getEventPackages(),
+				eventPackage)) {
+			return new XcapDiffSubscriptionControl(this)
+					.filterContentPerSubscriber(subscriber, notifier,
+							eventPackage, unmarshalledContent);
+		} else {
+			logger
+					.warn("filterContentPerSubscriber() invoked with unknown event package");
 			return null;
-		}		
+		}
 	}
-	
+
 	public Marshaller getMarshaller() {
 		try {
 			return jaxbContext.createMarshaller();
 		} catch (JAXBException e) {
-			logger.error("failed to create marshaller",e);
+			logger.error("failed to create marshaller", e);
 			return null;
 		}
 	}
-	
+
 	// ------------ PresenceSubscriptionControlSbbLocalObject
-	
+
 	// --- PUBLICATION CHILD SBB
 	public abstract ChildRelation getPublicationControlChildRelation();
 
 	public abstract PublicationControlSbbLocalObject getPublicationControlChildSbbCMP();
+
 	public abstract void setPublicationControlChildSbbCMP(
 			PublicationControlSbbLocalObject value);
 
@@ -200,11 +233,12 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 		}
 		return childSbb;
 	}
-	
+
 	// --- XDM CLIENT CHILD SBB
 	public abstract ChildRelation getXDMClientControlChildRelation();
 
 	public abstract XDMClientControlSbbLocalObject getXDMClientControlChildSbbCMP();
+
 	public abstract void setXDMClientControlChildSbbCMP(
 			XDMClientControlSbbLocalObject value);
 
@@ -216,50 +250,59 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 			childSbb = (XDMClientControlSbbLocalObject) getXDMClientControlChildRelation()
 					.create();
 			setXDMClientControlChildSbbCMP(childSbb);
-			childSbb.setParentSbb((XDMClientControlParentSbbLocalObject)this.sbbContext.getSbbLocalObject());
+			childSbb
+					.setParentSbb((XDMClientControlParentSbbLocalObject) this.sbbContext
+							.getSbbLocalObject());
 		}
 		return childSbb;
 	}
-	
+
 	// --- CMPs
 	public abstract void setSubscriptionsMap(Map rules);
+
 	public abstract Map getSubscriptionsMap();
+
 	public abstract void setCombinedRules(Map rules);
+
 	public abstract Map getCombinedRules();
-	
+
 	public DataSourceSbbInterface getDataSourceSbbInterface() {
 		return dataSourceSbbInterface;
 	}
-	
+
 	public HeaderFactory getHeaderFactory() {
 		return headerFactory;
 	}
-	
+
 	public Unmarshaller getUnmarshaller() {
 		try {
 			return jaxbContext.createUnmarshaller();
 		} catch (JAXBException e) {
-			logger.error("failed to create unmarshaller",e);
+			logger.error("failed to create unmarshaller", e);
 			return null;
 		}
 	}
-	
+
 	// ------------ XDMClientControlParentSbbLocalObject
-	
+
 	/**
 	 * async get response from xdm client
 	 */
 	public void getResponse(XcapUriKey key, int responseCode, String mimetype,
-		String content, String tag) {
-		new PresenceSubscriptionControl(this).getResponse(key, responseCode, mimetype, content);
+			String content, String tag) {
+		new PresenceSubscriptionControl(this).getResponse(key, responseCode,
+				mimetype, content);
 	}
-	
+
 	/**
 	 * a pres-rules doc subscribed was updated
 	 */
-	public void documentUpdated(DocumentSelector documentSelector,String oldETag,String newETag,String documentAsString) {
-		new PresenceSubscriptionControl(this).documentUpdated(documentSelector, oldETag, newETag, documentAsString);
-		new XcapDiffSubscriptionControl(this).documentUpdated(documentSelector, oldETag, newETag, documentAsString);
+	public void documentUpdated(DocumentSelector documentSelector,
+			String oldETag, String newETag, String documentAsString) {
+		new PresenceSubscriptionControl(this).documentUpdated(documentSelector,
+				oldETag, newETag, documentAsString);
+		new XcapDiffSubscriptionControl(this).documentUpdated(documentSelector,
+				oldETag, newETag, documentAsString);
 	}
 
 	// atm only processing update per doc "granularity"
@@ -267,17 +310,18 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 			NodeSelector nodeSelector, AttributeSelector attributeSelector,
 			Map<String, String> namespaces, String oldETag, String newETag,
 			String documentAsString, String attributeValue) {
-		documentUpdated(documentSelector, oldETag, newETag, documentAsString);	
+		documentUpdated(documentSelector, oldETag, newETag, documentAsString);
 	}
+
 	public void elementUpdated(DocumentSelector documentSelector,
 			NodeSelector nodeSelector, Map<String, String> namespaces,
 			String oldETag, String newETag, String documentAsString,
 			String elementAsString) {
 		documentUpdated(documentSelector, oldETag, newETag, documentAsString);
 	}
-	
+
 	// unused methods from xdm client sbb
-	
+
 	public void deleteResponse(XcapUriKey key, int responseCode, String tag) {
 		throw new UnsupportedOperationException();
 	}
@@ -285,7 +329,7 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 	public void putResponse(XcapUriKey key, int responseCode, String tag) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	// ---------- PublishedSphereSource
 	/**
 	 * interface used by rules processor to get sphere for a notifier
@@ -293,33 +337,34 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 	public String getSphere(String notifier) {
 		return new PresenceSubscriptionControl(this).getSphere(notifier);
 	}
-	
+
 	// --------- JAXB
-	
+
 	/*
 	 * JAXB context is thread safe
 	 */
 	private static final JAXBContext jaxbContext = initJAXBContext();
+
 	private static JAXBContext initJAXBContext() {
 		try {
-			return JAXBContext.newInstance(
-					"org.mobicents.slee.sippresence.pojo.pidf" +
-					":org.mobicents.slee.sippresence.pojo.rpid" +
-					":org.mobicents.slee.sippresence.pojo.datamodel" +
-					":org.mobicents.slee.sippresence.pojo.commonschema"+
-					":org.openxdm.xcap.client.appusage.presrules.jaxb.commonpolicy" +
-					":org.openxdm.xcap.client.appusage.presrules.jaxb" +
-					":org.openxdm.xcap.client.appusage.omapresrules.jaxb"+
-					":org.openxdm.xcap.common.xcapdiff" +
-					":org.openxdm.xcap.client.appusage.resourcelists.jaxb");
+			return JAXBContext
+					.newInstance("org.mobicents.slee.sippresence.pojo.pidf"
+							+ ":org.mobicents.slee.sippresence.pojo.rpid"
+							+ ":org.mobicents.slee.sippresence.pojo.datamodel"
+							+ ":org.mobicents.slee.sippresence.pojo.commonschema"
+							+ ":org.openxdm.xcap.client.appusage.presrules.jaxb.commonpolicy"
+							+ ":org.openxdm.xcap.client.appusage.presrules.jaxb"
+							+ ":org.openxdm.xcap.client.appusage.omapresrules.jaxb"
+							+ ":org.openxdm.xcap.common.xcapdiff"
+							+ ":org.openxdm.xcap.client.appusage.resourcelists.jaxb");
 		} catch (JAXBException e) {
 			logger.error("failed to create jaxb context");
 			return null;
 		}
 	}
-	
-// ----------- SBB OBJECT's LIFE CYCLE
-	
+
+	// ----------- SBB OBJECT's LIFE CYCLE
+
 	public void sbbActivate() {
 	}
 
@@ -330,13 +375,13 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,Integrated
 			ActivityContextInterface arg2) {
 	}
 
-	public void sbbLoad() {		
+	public void sbbLoad() {
 	}
 
 	public void sbbPassivate() {
 	}
 
-	public void sbbPostCreate() throws CreateException {		
+	public void sbbPostCreate() throws CreateException {
 	}
 
 	public void sbbRemove() {

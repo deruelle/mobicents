@@ -5,7 +5,9 @@ import gov.nist.javax.sip.Utils;
 import javax.persistence.EntityManager;
 import javax.sip.Dialog;
 import javax.sip.RequestEvent;
+import javax.sip.ServerTransaction;
 import javax.sip.address.Address;
+import javax.sip.header.ContentTypeHeader;
 import javax.sip.header.FromHeader;
 import javax.sip.header.ToHeader;
 import javax.sip.message.Response;
@@ -63,10 +65,11 @@ public class NewSipSubscriptionHandler {
 		String notifier = toHeader.getAddress().getURI().toString();
 
 		// create dialog if does not exists
-		if (event.getDialog() == null) {
+		Dialog dialog = event.getDialog();
+		if (dialog == null) {
 			try {
-				sipSubscriptionHandler.sbb.getSipProvider().getNewDialog(
-						event.getServerTransaction());
+				dialog = sipSubscriptionHandler.sbb.getSipProvider()
+						.getNewDialog(event.getServerTransaction());
 			} catch (Exception e) {
 				logger.error("Can't create dialog", e);
 				// cleanup
@@ -87,17 +90,32 @@ public class NewSipSubscriptionHandler {
 				return;
 			}
 		}
+
+		SubscriptionKey key = new SubscriptionKey(dialog.getCallId()
+				.getCallId(), dialog.getRemoteTag(), eventPackage, eventId);
 		// ask authorization
 		if (eventPackage.endsWith(".winfo")) {
 			// winfo package, only accept subscriptions when subscriber and
 			// notifier are the same
-			newSipSubscriptionAuthorization(event, subscriber, notifier,
-					eventPackage, eventId, expires, (subscriber
-							.equals(notifier) ? Response.OK
+			newSipSubscriptionAuthorization(event.getServerTransaction(), aci,
+					subscriber, fromAddress.getDisplayName(), notifier, key,
+					expires, (subscriber.equals(notifier) ? Response.OK
 							: Response.FORBIDDEN), entityManager, childSbb);
 		} else {
-			childSbb.isSubscriberAuthorized(event, subscriber, notifier,
-					eventPackage, eventId, expires);
+			String content = null;
+			String contentType = null;
+			String contentSubtype = null;
+			ContentTypeHeader contentTypeHeader = (ContentTypeHeader) event
+					.getRequest().getHeader(ContentTypeHeader.NAME);
+			if (contentTypeHeader != null) {
+				contentType = contentTypeHeader.getContentType();
+				contentSubtype = contentTypeHeader.getContentSubType();
+				content = new String(event.getRequest().getRawContent());
+			}
+
+			childSbb.isSubscriberAuthorized(subscriber, fromAddress
+					.getDisplayName(), notifier, key, expires, content,
+					contentType, contentSubtype);
 		}
 	}
 
@@ -114,19 +132,21 @@ public class NewSipSubscriptionHandler {
 	 * @param entityManager
 	 * @param childSbb
 	 */
-	public void newSipSubscriptionAuthorization(RequestEvent event,
-			String subscriber, String notifier, String eventPackage,
-			String eventId, int expires, int responseCode,
-			EntityManager entityManager,
+	public void newSipSubscriptionAuthorization(
+			ServerTransaction serverTransaction,
+			ActivityContextInterface serverTransactionACI, String subscriber,
+			String subscriberDisplayName, String notifier, SubscriptionKey key,
+			int expires, int responseCode, EntityManager entityManager,
 			ImplementedSubscriptionControlSbbLocalObject childSbb) {
 
-		Dialog dialog = event.getServerTransaction().getDialog();
+		Dialog dialog = serverTransaction.getDialog();
 		ActivityContextInterface dialogAci = null;
 
 		// send response
 		try {
 			Response response = sipSubscriptionHandler.sbb.getMessageFactory()
-					.createResponse(responseCode, event.getRequest());
+					.createResponse(responseCode,
+							serverTransaction.getRequest());
 			if (responseCode == Response.ACCEPTED
 					|| responseCode == Response.OK) {
 				ToHeader responseToHeader = (ToHeader) response
@@ -139,21 +159,26 @@ public class NewSipSubscriptionHandler {
 						.getSipActivityContextInterfaceFactory()
 						.getActivityContextInterface((DialogActivity) dialog);
 				dialogAci.attach(sbbLocalObject);
+				if (serverTransactionACI != null) {
+					serverTransactionACI.detach(sbbLocalObject);
+				}
 				// finish and send response
 				response = sipSubscriptionHandler.addContactHeader(response);
 				response.addHeader(sipSubscriptionHandler.sbb
 						.getHeaderFactory().createExpiresHeader(expires));
-				event.getServerTransaction().sendResponse(response);
+				serverTransaction.sendResponse(response);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Response sent:\n" + response.toString());
 				}
 			} else {
 				response = sipSubscriptionHandler.addContactHeader(response);
-				event.getServerTransaction().sendResponse(response);
-				logger.info("Subscription: subscriber=" + subscriber
-						+ ",notifier=" + notifier + ",eventPackage="
-						+ eventPackage + " not authorized (" + responseCode
-						+ ")");
+				serverTransaction.sendResponse(response);
+				if (logger.isInfoEnabled()) {
+					logger.info("Subscription: subscriber=" + subscriber
+							+ ",notifier=" + notifier + ",eventPackage="
+							+ key.getEventPackage() + " not authorized ("
+							+ responseCode + ")");
+				}
 				if (logger.isDebugEnabled()) {
 					logger.debug("Response sent:\n" + response.toString());
 				}
@@ -166,9 +191,9 @@ public class NewSipSubscriptionHandler {
 				Response response = sipSubscriptionHandler.sbb
 						.getMessageFactory().createResponse(
 								Response.SERVER_INTERNAL_ERROR,
-								event.getRequest());
+								serverTransaction.getRequest());
 				response = sipSubscriptionHandler.addContactHeader(response);
-				event.getServerTransaction().sendResponse(response);
+				serverTransaction.sendResponse(response);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Response sent:\n" + response.toString());
 				}
@@ -179,16 +204,10 @@ public class NewSipSubscriptionHandler {
 		}
 
 		// create subscription, initial status depends on authorization
-		String subscriberDisplayName = ((FromHeader) event.getRequest()
-				.getHeader(FromHeader.NAME)).getAddress().getDisplayName();
-		SubscriptionKey subscriptionKey = new SubscriptionKey(dialog
-				.getCallId().getCallId(), dialog.getRemoteTag(), eventPackage,
-				eventId);
 		Subscription.Status initialStatus = responseCode == Response.ACCEPTED ? Subscription.Status.pending
 				: Subscription.Status.active;
-		Subscription subscription = new Subscription(subscriptionKey,
-				subscriber, notifier, initialStatus, subscriberDisplayName,
-				expires);
+		Subscription subscription = new Subscription(key, subscriber, notifier,
+				initialStatus, subscriberDisplayName, expires);
 
 		// notify subscriber
 		try {
@@ -207,7 +226,7 @@ public class NewSipSubscriptionHandler {
 		// bind name for dialog aci
 		try {
 			sipSubscriptionHandler.sbb.getActivityContextNamingfacility().bind(
-					dialogAci, subscriptionKey.toString());
+					dialogAci, key.toString());
 		} catch (Exception e) {
 			logger.error("failed to bind a name to dialog's aci", e);
 		}
@@ -216,6 +235,8 @@ public class NewSipSubscriptionHandler {
 		sipSubscriptionHandler.sbb.setSubscriptionTimerAndPersistSubscription(
 				entityManager, subscription, expires + 1, dialogAci);
 
-		logger.info("Created " + subscription);
+		if (logger.isInfoEnabled()) {
+			logger.info("Created " + subscription);
+		}
 	}
 }

@@ -288,7 +288,9 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 
 	public void onOptions(RequestEvent requestEvent, ActivityContextInterface aci) {
 		
-		logger.info("options event received but server does not supports it");
+		if (logger.isInfoEnabled()) {
+			logger.info("options event received but server does not supports it");
+		}
 		aci.detach(this.sbbContext.getSbbLocalObject());
 		/*
 		 * A client may probe the ESC for the support of PUBLISH using the

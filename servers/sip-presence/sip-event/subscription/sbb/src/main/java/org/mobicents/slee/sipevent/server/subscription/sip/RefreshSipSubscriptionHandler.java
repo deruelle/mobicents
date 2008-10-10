@@ -80,8 +80,10 @@ public class RefreshSipSubscriptionHandler {
 		sipSubscriptionHandler.sbb.setSubscriptionTimerAndPersistSubscription(
 				entityManager, subscription, expires + 1, aci);
 
-		logger.info("Refreshed " + subscription + " for " + expires
-				+ " seconds");
+		if (logger.isInfoEnabled()) {
+			logger.info("Refreshed " + subscription + " for " + expires
+					+ " seconds");
+		}
 	}
 
 }

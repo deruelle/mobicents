@@ -15,7 +15,10 @@
         </sbb-ref>
         <sbb-classes>
             <sbb-abstract-class reentrant="False">
-                <sbb-abstract-class-name>org.openxdm.xcap.server.slee.AggregationProxySbb</sbb-abstract-class-name>                       
+                <sbb-abstract-class-name>org.openxdm.xcap.server.slee.AggregationProxySbb</sbb-abstract-class-name>
+                <cmp-field>
+	        		<cmp-field-name>requestProcessorSbbLocalObjectCMP</cmp-field-name>
+	        	</cmp-field>                       
                 <get-child-relation-method>                	
                 	<sbb-alias-ref>requestProcessorSbb</sbb-alias-ref>
                 	<get-child-relation-method-name>getRequestProcessorChildRelation</get-child-relation-method-name>

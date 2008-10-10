@@ -27,6 +27,15 @@ public class PresRuleCMPKey implements Serializable {
 		}
 	}
 	
+	public String getEventId() {
+		if (eventId == "<") {
+			return null;
+		}
+		else {
+			return eventId;
+		}
+	}
+	
 	public String getEventPackage() {
 		return eventPackage;
 	}
@@ -53,5 +62,11 @@ public class PresRuleCMPKey implements Serializable {
 		else {
 			return false;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return "PresRuleCMPKey: subscriber="+subscriber+",notifier="+notifier+",eventPackage="+eventPackage+",eventId="+eventId;
 	}
 }

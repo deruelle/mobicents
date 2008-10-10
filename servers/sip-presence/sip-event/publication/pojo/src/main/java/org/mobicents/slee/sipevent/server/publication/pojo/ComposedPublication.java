@@ -18,7 +18,7 @@ import javax.xml.bind.JAXBElement;
  *
  */
 @Entity
-@Table(name = "COMPOSEDPUBLICATIONS")
+@Table(name = "MOBICENTS_SIPEVENT_COMPOSEDPUBLICATIONS")
 @NamedQueries({
 	@NamedQuery(name="selectComposedPublicationFromEntityAndEventPackage",query="SELECT p FROM ComposedPublication p WHERE p.composedPublicationKey.entity = :entity AND  p.composedPublicationKey.eventPackage = :eventPackage")
 	})

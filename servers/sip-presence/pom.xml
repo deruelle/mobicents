@@ -138,6 +138,7 @@
 				<module>xdms</module>
 				<module>integrated</module>
 				<module>examples/internal-publisher</module>
+				<module>examples/internal-subscriber</module>
 			</modules>
             <build>
 				<plugins>

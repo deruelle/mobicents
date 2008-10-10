@@ -58,23 +58,36 @@ public class WInfoSubscriptionHandler {
 					Subscription winfoSubscription = (Subscription) it.next();
 					if (winfoSubscription.getStatus().equals(
 							Subscription.Status.active)) {
-						if (winfoSubscription.getKey().isInternalSubscription()) {
-							// internal subscription
-							// TODO
-						} else {
-							// sip subscription
-							try {
-								// get subscription dialog
-								ActivityContextInterface winfoDialogAci = sbb
-										.getActivityContextNamingfacility()
-										.lookup(
-												winfoSubscription.getKey()
-														.toString());
-								if (winfoDialogAci != null) {
-									Dialog winfoDialog = (Dialog) winfoDialogAci
+
+						try {
+							// get subscription aci
+							ActivityContextInterface winfoAci = sbb
+									.getActivityContextNamingfacility().lookup(
+											winfoSubscription.getKey()
+													.toString());
+							if (winfoAci != null) {
+								// increment subscription version
+								winfoSubscription.incrementVersion();
+								// get winfo notify content and content type
+								// header
+								String partialWInfoContent = getPartialWatcherInfoContent(
+										winfoSubscription, subscription);
+								ContentTypeHeader winfoContentHeader = getWatcherInfoContentHeader();
+								if (winfoSubscription.getKey()
+										.isInternalSubscription()) {
+									// internal subscription
+									sbb
+											.getInternalSubscriptionHandler()
+											.getInternalSubscriberNotificationHandler()
+											.notifyInternalSubscriber(entityManager,
+													subscription,
+													partialWInfoContent,
+													winfoContentHeader,
+													winfoAci, childSbb);
+								} else {
+									// sip subscription
+									Dialog winfoDialog = (Dialog) winfoAci
 											.getActivity();
-									// increment subscription version
-									winfoSubscription.incrementVersion();
 									// create notify
 									Request notify = sbb
 											.getSipSubscribeHandler()
@@ -82,11 +95,8 @@ public class WInfoSubscriptionHandler {
 											.createNotify(winfoDialog,
 													winfoSubscription);
 									// add content
-									notify.setContent(
-											getPartialWatcherInfoContent(
-													winfoSubscription,
-													subscription),
-											getWatcherInfoContentHeader());
+									notify.setContent(partialWInfoContent,
+											winfoContentHeader);
 									// send notify in dialog related with
 									// subscription
 									winfoDialog.sendRequest(sbb
@@ -96,32 +106,31 @@ public class WInfoSubscriptionHandler {
 										logger.debug("Request sent:\n"
 												+ notify.toString());
 									}
-									// persist subscription
-									entityManager.persist(winfoSubscription);
-								} else {
-									// dialog is gone, cleanup subscription
-									logger
-											.warn("Unable to find dialog aci to notify subscription "
-													+ winfoSubscription
-															.getKey()
-													+ ". Removing subscription data");
-									sbb.getSipSubscribeHandler()
-											.getRemoveSipSubscriptionHandler()
-											.removeSipSubscriptionData(
-													entityManager,
-													winfoSubscription, null,
-													null, childSbb);
 								}
-							} catch (Exception e) {
-								logger.error(
-										"failed to notify winfo subscriber", e);
+								// persist subscription
+								entityManager.persist(winfoSubscription);
+							} else {
+								// aci is gone, cleanup subscription
+								logger
+										.warn("Unable to find subscription aci to notify subscription "
+												+ winfoSubscription.getKey()
+												+ ". Removing subscription data");
+								sbb
+										.removeSubscriptionData(
+												entityManager,
+												winfoSubscription, null, null,
+												childSbb);
 							}
+						} catch (Exception e) {
+							logger
+									.error("failed to notify winfo subscriber",
+											e);
 						}
-
 					}
+
 				}
-				entityManager.flush();
 			}
+			entityManager.flush();
 		}
 	}
 

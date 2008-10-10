@@ -26,7 +26,7 @@ import javax.slee.facilities.TimerID;
  *
  */
 @Entity
-@Table(name = "SUBSCRIPTIONS")
+@Table(name = "MOBICENTS_SIPEVENT_SUBSCRIPTIONS")
 @NamedQueries({
 	@NamedQuery(name="selectSubscriptionFromTimerID",query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
 	@NamedQuery(name="selectSubscriptionsFromNotifierAndEventPackage",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),

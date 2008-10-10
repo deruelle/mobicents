@@ -19,10 +19,9 @@ import javax.xml.bind.JAXBElement;
  *
  */
 @Entity
-@Table(name = "PUBLICATIONS")
+@Table(name = "MOBICENTS_SIPEVENT_PUBLICATIONS")
 @NamedQueries({
 	@NamedQuery(name="selectPublicationFromEntityAndEventPackage",query="SELECT p FROM Publication p WHERE p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
-	@NamedQuery(name="selectPublicationFromKey",query="SELECT p FROM Publication p WHERE p.publicationKey.eTag = :eTag AND p.publicationKey.entity = :entity AND p.publicationKey.eventPackage = :eventPackage"),
 	@NamedQuery(name="selectPublicationFromTimerID",query="SELECT p FROM Publication p WHERE p.timerID = :timerID")
 	})
 public class Publication implements Serializable {

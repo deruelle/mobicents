@@ -23,6 +23,9 @@
                 <cmp-field>
 	                <cmp-field-name>parentSbbCMP</cmp-field-name>
 	        	</cmp-field>
+	        	<cmp-field>
+	        		<cmp-field-name>requestProcessorSbbLocalObjectCMP</cmp-field-name>
+	        	</cmp-field>
 	        	<get-child-relation-method>                	
                 	<sbb-alias-ref>requestProcessorSbb</sbb-alias-ref>
                 	<get-child-relation-method-name>getRequestProcessorChildRelation</get-child-relation-method-name>

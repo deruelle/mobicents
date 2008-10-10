@@ -72,9 +72,8 @@ public class SipSubscriberNotificationHandler {
 				logger.warn("Unable to find dialog aci to notify subscription "
 						+ subscription.getKey()
 						+ ". Removing subscription data");
-				sipSubscriptionHandler.getRemoveSipSubscriptionHandler()
-						.removeSipSubscriptionData(entityManager, subscription,
-								null, null, childSbb);
+				sipSubscriptionHandler.sbb.removeSubscriptionData(
+						entityManager, subscription, null, null, childSbb);
 			}
 
 		} catch (Exception e) {

@@ -9,7 +9,7 @@
         <service-version>1.0</service-version>
         <root-sbb>
             <description/>
-            <sbb-name>SipSubscriptionControlSbb</sbb-name>
+            <sbb-name>SubscriptionControlSbb</sbb-name>
             <sbb-vendor>org.mobicents</sbb-vendor>
             <sbb-version>1.0</sbb-version>
         </root-sbb>

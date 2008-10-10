@@ -7,18 +7,29 @@ import org.openxdm.xcap.common.resource.AttributeResource;
 import org.openxdm.xcap.common.resource.ElementResource;
 import org.openxdm.xcap.common.uri.DocumentSelector;
 
+/**
+ * Client interface to interact with an XDM Server. IF used by an sbb in a child
+ * relation, then that sbb's local object must implement
+ * {@link XDMClientControlParentSbbLocalObject}.
+ * 
+ * @author martins
+ * 
+ */
 public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 
 	/**
-	 * Sets the parent sbb to be used on call backs originated from messages received by the XDM
+	 * Sets the parent sbb to be used on call backs originated from messages
+	 * received by the XDM
+	 * 
 	 * @param parent
 	 */
 	public void setParentSbb(XDMClientControlParentSbbLocalObject parentSbb);
-	
+
 	// --- get/put/delete interface methods
-	
+
 	/**
-	 * Retrieves the XML resource from the XCAP server, for the specified key. Response is async.
+	 * Retrieves the XML resource from the XCAP server, for the specified key.
+	 * Response is async.
 	 */
 	public void get(XcapUriKey key);
 
@@ -29,8 +40,8 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param key
 	 * @param mimetype
 	 *            the mimetype of the content to put, for document each XCAP App
-	 *            Usage defines their own mimetype, but for elements and attributes
-	 *            you can use {@link ElementResource} and
+	 *            Usage defines their own mimetype, but for elements and
+	 *            attributes you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
 	 */
@@ -44,8 +55,8 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param eTag
 	 * @param mimetype
 	 *            the mimetype of the content to put, for document each XCAP App
-	 *            Usage defines their own mimetype, but for elements and attributes
-	 *            you can use {@link ElementResource} and
+	 *            Usage defines their own mimetype, but for elements and
+	 *            attributes you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
 	 */
@@ -61,13 +72,13 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * @param eTag
 	 * @param mimetype
 	 *            the mimetype of the content to put, for document each XCAP App
-	 *            Usage defines their own mimetype, but for elements and attributes
-	 *            you can use {@link ElementResource} and
+	 *            Usage defines their own mimetype, but for elements and
+	 *            attributes you can use {@link ElementResource} and
 	 *            {@link AttributeResource} static MIMETYPE fields.
 	 * @param content
 	 */
-	public void putIfNoneMatch(XcapUriKey key, String eTag,
-			String mimetype, byte[] content);
+	public void putIfNoneMatch(XcapUriKey key, String eTag, String mimetype,
+			byte[] content);
 
 	/**
 	 * Deletes the content related the specified XCAP URI key.
@@ -90,34 +101,40 @@ public interface XDMClientControlSbbLocalObject extends SbbLocalObject {
 	 * ETag does not matches the current one on the server.
 	 * 
 	 * @param key
-	 * @param eTag 
+	 * @param eTag
 	 */
 	public void deleteIfNoneMatch(XcapUriKey key, String eTag);
 
 	// --- subscribe/unsubscribe interface methods
-	
+
 	/**
 	 * Subscribes changes on a XML document, stored on the XDM.
+	 * 
 	 * @param key
 	 */
-	public void subscribeDocument(DocumentSelector documentSelector); 
-	
+	public void subscribeDocument(DocumentSelector documentSelector);
+
 	/**
 	 * Unsubscribes changes on a XML document, stored on the XDM.
+	 * 
 	 * @param key
 	 */
-	public void unsubscribeDocument(DocumentSelector documentSelector); 
-	
+	public void unsubscribeDocument(DocumentSelector documentSelector);
+
 	/**
-	 * Subscribes changes on XML documents of the specified app usage, stored on the XDM.
+	 * Subscribes changes on XML documents of the specified app usage, stored on
+	 * the XDM.
+	 * 
 	 * @param auid
 	 */
 	public void subscribeAppUsage(String auid);
-	
+
 	/**
-	 * Unsubscribes changes on XML documents of the specified app usage, stored on the XDM.
+	 * Unsubscribes changes on XML documents of the specified app usage, stored
+	 * on the XDM.
+	 * 
 	 * @param auid
 	 */
 	public void unsubscribeAppUsage(String auid);
-	
+
 }

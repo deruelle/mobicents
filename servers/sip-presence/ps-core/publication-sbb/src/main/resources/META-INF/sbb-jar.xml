@@ -12,7 +12,7 @@
         <sbb-version>1.0</sbb-version>
 
 		<sbb-ref>
-       		<sbb-name>SipSubscriptionControlSbb</sbb-name>
+       		<sbb-name>SubscriptionControlSbb</sbb-name>
        		<sbb-vendor>org.mobicents</sbb-vendor>
         	<sbb-version>1.0</sbb-version>
         	<sbb-alias>childSbb</sbb-alias>

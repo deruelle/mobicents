@@ -45,53 +45,56 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 	 * Called when an sbb object is instantied and enters the pooled state.
 	 */
 	public void setSbbContext(SbbContext context) {
-		if (logger.isDebugEnabled()) logger.debug("setSbbContext(context=" + context.toString() + ")");
+		if (logger.isDebugEnabled())
+			logger.debug("setSbbContext(context=" + context.toString() + ")");
 		this.sbbContext = context;
 	}
 
 	public void unsetSbbContext() {
-		if (logger.isDebugEnabled()) logger.debug("unsetSbbContext()");
+
 		this.sbbContext = null;
 	}
 
 	public void sbbCreate() throws javax.slee.CreateException {
-		if (logger.isDebugEnabled()) logger.debug("sbbCreate()");
+
 	}
 
 	public void sbbPostCreate() throws javax.slee.CreateException {
-		if (logger.isDebugEnabled()) logger.debug("sbbPostCreate()");
+
 	}
 
 	public void sbbActivate() {
-		if (logger.isDebugEnabled()) logger.debug("sbbActivate()");
+
 	}
 
 	public void sbbPassivate() {
-		if (logger.isDebugEnabled()) logger.debug("sbbPassivate()");
+
 	}
 
 	public void sbbRemove() {
-		if (logger.isDebugEnabled()) logger.debug("sbbRemove()");
+
 	}
 
 	public void sbbLoad() {
-		if (logger.isDebugEnabled()) logger.debug("sbbLoad()");
+
 	}
 
 	public void sbbStore() {
-		if (logger.isDebugEnabled()) logger.debug("sbbStore()");
+
 	}
 
 	public void sbbExceptionThrown(Exception exception, Object event,
 			ActivityContextInterface activity) {
-		if (logger.isDebugEnabled()) logger.debug("sbbExceptionThrown(exception=" + exception.toString()
-				+ ",event=" + event.toString() + ",activity="
-				+ activity.toString() + ")");
+		if (logger.isDebugEnabled())
+			logger.debug("sbbExceptionThrown(exception=" + exception.toString()
+					+ ",event=" + event.toString() + ",activity="
+					+ activity.toString() + ")");
 	}
 
 	public void sbbRolledBack(RolledBackContext sbbRolledBack) {
-		if (logger.isDebugEnabled()) logger.debug("sbbRolledBack(sbbRolledBack=" + sbbRolledBack.toString()
-				+ ")");
+		if (logger.isDebugEnabled())
+			logger.debug("sbbRolledBack(sbbRolledBack="
+					+ sbbRolledBack.toString() + ")");
 	}
 
 	protected SbbContext getSbbContext() {
@@ -103,23 +106,23 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 	public abstract ChildRelation getRequestProcessorChildRelation();
 
-	protected RequestProcessorSbbLocalObject getRequestProcessor()
-			throws InternalServerErrorException {
-		// get the child relation
-		ChildRelation childRelation = getRequestProcessorChildRelation();
-		// creates the child sbb if does not exist
-		if (childRelation.isEmpty()) {
+	public abstract void setRequestProcessorSbbLocalObjectCMP(
+			RequestProcessorSbbLocalObject value);
+
+	public abstract RequestProcessorSbbLocalObject getRequestProcessorSbbLocalObjectCMP();
+
+	protected RequestProcessorSbbLocalObject getRequestProcessor() {
+		RequestProcessorSbbLocalObject childSbb = getRequestProcessorSbbLocalObjectCMP();
+		if (childSbb == null) {
 			try {
-				return (RequestProcessorSbbLocalObject) childRelation.create();
+				childSbb = (RequestProcessorSbbLocalObject) getRequestProcessorChildRelation()
+						.create();
 			} catch (Exception e) {
-				logger.error("unable to create the child sbb.", e);
-				throw new InternalServerErrorException("");
+				logger.error("Failed to create child sbb", e);
 			}
+			setRequestProcessorSbbLocalObjectCMP(childSbb);
 		}
-		else {
-			// return the child sbb
-			return (RequestProcessorSbbLocalObject) childRelation.iterator().next();
-		}
+		return childSbb;
 	}
 
 	public void onDelete(HttpServletRequestEvent event,
@@ -130,7 +133,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 		HttpServletRequest request = event.getRequest();
 		HttpServletResponse response = event.getResponse();
-		
+
 		try {
 
 			PrintWriter responseWriter = response.getWriter();
@@ -171,20 +174,28 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 			} catch (ParseException e) {
 				NotFoundException ne = new NotFoundException();
-				if (logger.isDebugEnabled()) logger.debug("invalid xcap uri, replying , replying "+ne.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("invalid xcap uri, replying , replying "
+							+ ne.getResponseStatus());
 				response.setStatus(ne.getResponseStatus());
 
 			} catch (NotFoundException e) {
-				if (logger.isDebugEnabled()) logger.debug("doc/elem/attrib not found, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("doc/elem/attrib not found, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (ConflictException e) {
-				if (logger.isDebugEnabled()) logger.debug("conflict exception, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("conflict exception, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 				responseWriter.print(e.getResponseContent());
 
 			} catch (MethodNotAllowedException e) {
-				if (logger.isDebugEnabled()) logger.debug("method not allowed, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("method not allowed, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 				// add all exception headers
 				Map<String, String> exceptionHeaders = e.getResponseHeaders();
@@ -196,20 +207,25 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				}
 
 			} catch (PreconditionFailedException e) {
-				if (logger.isDebugEnabled()) logger.debug("precondition failed on etags, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("precondition failed on etags, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (InternalServerErrorException e) {
-				logger.warn("internal server error: "+e.getMessage()+", replying "+e.getResponseStatus());
+				logger.warn("internal server error: " + e.getMessage()
+						+ ", replying " + e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (BadRequestException e) {
-				if (logger.isDebugEnabled()) logger.debug("bad request, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("bad request, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 			}
 			// send to client
 			responseWriter.close();
-			
+
 		} catch (Exception e) {
 			logger.error("Error processing onDelete()", e);
 		}
@@ -234,8 +250,9 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				// create jxcap resource selector from request's uri & query
 				// string
 				ResourceSelector resourceSelector = Parser
-						.parseResourceSelector(ServerConfiguration.XCAP_ROOT, request.getRequestURI(),
-								request.getQueryString());
+						.parseResourceSelector(ServerConfiguration.XCAP_ROOT,
+								request.getRequestURI(), request
+										.getQueryString());
 				// read result from data source
 				ReadResult result = getRequestProcessor().get(resourceSelector);
 				// get data object from result
@@ -250,12 +267,15 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 			} catch (ParseException e) {
 				NotFoundException ne = new NotFoundException();
-				logger.warn("invalid xcap uri, replying "+ne.getResponseStatus());
+				logger.warn("invalid xcap uri, replying "
+						+ ne.getResponseStatus());
 				response.setStatus(ne.getResponseStatus());
 
 			} catch (NotFoundException e) {
-			
-				if (logger.isDebugEnabled()) logger.debug("doc/elem/attrib not found, replying "+e.getResponseStatus());
+
+				if (logger.isDebugEnabled())
+					logger.debug("doc/elem/attrib not found, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (InternalServerErrorException e) {
@@ -263,7 +283,9 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				response.setStatus(e.getResponseStatus());
 
 			} catch (BadRequestException e) {
-				if (logger.isDebugEnabled()) logger.debug("bad request, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("bad request, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 			}
 			// send to client
@@ -283,7 +305,7 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 
 		HttpServletRequest request = event.getRequest();
 		HttpServletResponse response = event.getResponse();
-		
+
 		try {
 
 			PrintWriter responseWriter = response.getWriter();
@@ -293,8 +315,9 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				// create resource selector from request's uri & query
 				// string
 				ResourceSelector resourceSelector = Parser
-						.parseResourceSelector(ServerConfiguration.XCAP_ROOT, request
-								.getRequestURI(), request.getQueryString());
+						.parseResourceSelector(ServerConfiguration.XCAP_ROOT,
+								request.getRequestURI(), request
+										.getQueryString());
 
 				// check conditional request headers
 				// get ifMatch eTag
@@ -323,33 +346,43 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 			} catch (ParseException e) {
 				// invalid resource selector
 				BadRequestException bre = new BadRequestException();
-				if (logger.isDebugEnabled()) logger.debug("invalid xcap uri, replying "+bre.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("invalid xcap uri, replying "
+							+ bre.getResponseStatus());
 				response.setStatus(bre.getResponseStatus());
 
 			} catch (IOException e) {
 				InternalServerErrorException ie = new InternalServerErrorException(
 						e.getMessage());
-				logger.warn("internal server error: "+e.getMessage()+", replying "+ie.getResponseStatus());
+				logger.warn("internal server error: " + e.getMessage()
+						+ ", replying " + ie.getResponseStatus());
 				response.setStatus(ie.getResponseStatus());
 
 			} catch (NoParentConflictException e) {
-					// add base uri
-					e.setSchemeAndAuthorityURI(ServerConfiguration.SCHEME_AND_AUTHORITY_URI);
-					// add query string if exists
-					if (request.getQueryString() != null) {
-						e.setQueryComponent(request.getQueryString());
-					}
-					if (logger.isDebugEnabled()) logger.debug("no parent conflict exception, replying "+e.getResponseStatus());
-					response.setStatus(e.getResponseStatus());
-					responseWriter.print(e.getResponseContent());
-					
+				// add base uri
+				e
+						.setSchemeAndAuthorityURI(ServerConfiguration.SCHEME_AND_AUTHORITY_URI);
+				// add query string if exists
+				if (request.getQueryString() != null) {
+					e.setQueryComponent(request.getQueryString());
+				}
+				if (logger.isDebugEnabled())
+					logger.debug("no parent conflict exception, replying "
+							+ e.getResponseStatus());
+				response.setStatus(e.getResponseStatus());
+				responseWriter.print(e.getResponseContent());
+
 			} catch (ConflictException e) {
-				if (logger.isDebugEnabled()) logger.debug("conflict exception, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("conflict exception, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 				responseWriter.print(e.getResponseContent());
 
 			} catch (MethodNotAllowedException e) {
-				if (logger.isDebugEnabled()) logger.debug("method not allowed, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("method not allowed, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 				// add all exception headers
 				Map<String, String> exceptionHeaders = e.getResponseHeaders();
@@ -361,21 +394,28 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				}
 
 			} catch (UnsupportedMediaTypeException e) {
-				if (logger.isDebugEnabled()) logger.debug("unsupported media exception, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("unsupported media exception, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (InternalServerErrorException e) {
-				logger.warn("internal server error: "+e.getMessage()+", replying "+e.getResponseStatus());
+				logger.warn("internal server error: " + e.getMessage()
+						+ ", replying " + e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (PreconditionFailedException e) {
-				if (logger.isDebugEnabled()) logger.debug("precondition failed on etags, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("precondition failed on etags, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
 
 			} catch (BadRequestException e) {
-				if (logger.isDebugEnabled()) logger.debug("invalid xcap uri, replying "+e.getResponseStatus());
+				if (logger.isDebugEnabled())
+					logger.debug("invalid xcap uri, replying "
+							+ e.getResponseStatus());
 				response.setStatus(e.getResponseStatus());
-			}			
+			}
 			// send to client
 			responseWriter.close();
 
