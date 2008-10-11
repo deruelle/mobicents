@@ -32,6 +32,7 @@
  */
 package org.mobicents.media.container.management.console.client.common;
 
+import org.mobicents.media.container.management.console.client.common.pages.EndpointManagementPage;
 import org.mobicents.media.container.management.console.client.common.pages.RTPManagementPage;
 
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -68,6 +69,7 @@ public class UserInterface extends VerticalPanel implements HasHorizontalAlignme
 		//smartTabPanel.add(AlarmsPage.getInfo());
 		//smartTabPanel.add(ProfilesPage.getInfo());					
 		smartTabPanel.add(RTPManagementPage.getInfo());	
+		smartTabPanel.add(EndpointManagementPage.getInfo());
 		add(topPanel);
 		add(smartTabPanel);
 		add(logPanel);

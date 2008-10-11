@@ -27,6 +27,16 @@
 		<servlet-name>RTPManagementService</servlet-name>
 		<url-pattern>/RTPManagementService</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>EndpointManagementService</servlet-name>
+		<servlet-class>
+			org.mobicents.media.container.management.console.server.endpoint.EndpointManagementServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EndpointManagementService</servlet-name>
+		<url-pattern>/EndpointManagementService</url-pattern>
+	</servlet-mapping>
 	<listener>
 		<listener-class>
 			org.mobicents.media.container.management.console.server.ManagementConsoleContextListener

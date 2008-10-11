@@ -62,7 +62,15 @@
 	height: 22px;
 }
 
-gwt-Hyperlink {	
+.gwt-Hyperlink a{	
+	text-decoration: underline;
+	
+}
+.gwt-Hyperlink a:HOVER{	
+	text-decoration: underline;
+	text-shadow: black;
+	cursor: pointer;
+	font-weight: bold;
 }
 
 .gwt-MenuBar { 

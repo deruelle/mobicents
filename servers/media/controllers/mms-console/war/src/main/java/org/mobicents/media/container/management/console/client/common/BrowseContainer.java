@@ -114,10 +114,12 @@ public class BrowseContainer extends Composite {
 	}
 	
 	private void refresh() {
+
 		rootPanel.clear();
 		refreshLinks();
 		refreshTitle();
 		refreshPanel();
+
 	}
 	
 	private void refreshLinks() {
@@ -191,12 +193,16 @@ public class BrowseContainer extends Composite {
 			Label title = new Label(((BrowseLink) links.get(links.size() - 1)).getTitle());
 			title.setStyleName("common-BrowseContainer-title");
 			rootPanel.add(title);
+			rootPanel.setCellHeight(title, "5%");
+			rootPanel.setCellWidth(title, "5%");
 		}
 	}
 	
 	private void refreshPanel() {
 		if (panels.size() > 0 && panels.get(panels.size() - 1) != null)
+		{
 			rootPanel.add((Widget) panels.get(panels.size() - 1));
+		}
 	}
 
 	protected void select(int index) {
@@ -212,6 +218,17 @@ public class BrowseContainer extends Composite {
 		refresh();
 	}
 
+	public void select(Widget w)
+	{
+		if(panels.contains(w))
+		{
+			this.select(panels.indexOf(w));
+		}else
+		{
+			UserInterface.getLogPanel().error("Can not do selection in BrowseContainer on Widget that is not present!!");
+		}
+	}
+	
 	public void back() {
 		if (panels.size() <= 1)
 			return;

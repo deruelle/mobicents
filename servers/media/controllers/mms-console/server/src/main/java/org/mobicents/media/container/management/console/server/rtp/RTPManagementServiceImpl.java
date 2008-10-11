@@ -125,4 +125,9 @@ public void setVideoFormats(XFormat[] formats, String rtpMBeanObjectName) throws
 	utils.setVideoFormats(formats, rtpMBeanObjectName);
 }
  
+public String[] getAvailableRTPManagersJNDIName()throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException
+{
+	return utils.getAvailableRTPManagersJNDIName();
+}
+
 }

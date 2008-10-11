@@ -32,6 +32,8 @@
  */
 package org.mobicents.media.container.management.console.client;
 
+import org.mobicents.media.container.management.console.client.endpoint.EndpointManagementService;
+import org.mobicents.media.container.management.console.client.endpoint.EndpointManagementServiceAsync;
 import org.mobicents.media.container.management.console.client.rtp.RTPManagementService;
 import org.mobicents.media.container.management.console.client.rtp.RTPManagementServiceAsync;
 
@@ -49,7 +51,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 public class ServerConnection {
 
 	final static public RTPManagementServiceAsync rtpManagementServiceAsync;
-	
+	final static public EndpointManagementServiceAsync endpointManagementServiceAsync;
     //final static public LogServiceAsync logServiceAsync;
     
 	static {
@@ -57,6 +59,14 @@ public class ServerConnection {
 		rtpManagementServiceAsync=(RTPManagementServiceAsync) GWT.create(RTPManagementService.class);
 		ServiceDefTarget rtpManagementServiceAsyncEndpoint = (ServiceDefTarget) rtpManagementServiceAsync;
 		rtpManagementServiceAsyncEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.media.container.management.console.ManagementConsole", "") + "/RTPManagementService");
+		
+		
+		
+		
+		
+		endpointManagementServiceAsync=(EndpointManagementServiceAsync) GWT.create(EndpointManagementService.class);
+		ServiceDefTarget endpointManagementServiceAsyncEndpoint = (ServiceDefTarget) endpointManagementServiceAsync;
+		endpointManagementServiceAsyncEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.media.container.management.console.ManagementConsole", "") + "/EndpointManagementService");
     //    logServiceAsync = (LogServiceAsync) GWT.create(LogService.class);
     //    ServiceDefTarget logEndpoint = (ServiceDefTarget) logServiceAsync;
     //    logEndpoint.setServiceEntryPoint(GWT.getModuleBaseURL().replaceAll("org.mobicents.slee.container.management.console.ManagementConsole", "") + "/LogService");

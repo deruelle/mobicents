@@ -36,9 +36,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
 import javax.naming.InitialContext;
-import javax.slee.management.SleeProvider;
-import javax.slee.management.SleeProviderFactory;
-import javax.slee.management.SleeState;
+
 
 import org.mobicents.media.container.management.console.client.ManagementConsoleException;
 
@@ -55,24 +53,14 @@ public class MMSManagementMBeanUtils {
 	private MBeanServerConnection mbeanServer;
 	private ObjectName rtpMGMTRegex=null;
 	private RTPManagementMBeanUtils rtpManagementMBeanUtils = null;
-
+	private EndpointManagementMBeanUtils endpointManagementUtils=null;
 	
-	// private DeploymentMBeanUtils deploymentMBeanUtils;
 
-	// private ServiceManagementMBeanUtils serviceManagementMBeanUtils;
-
-	// private ProfileProvisioningMBeanUtils profileProvisioningMBeanUtils;
-
-	// private ResourceManagementMBeanUtils resourceManagementMBeanUtils;
-
-	// private ActivityManagementMBeanUtils activityManagementMBeanUtils;
-
-	// private SbbEntitiesMBeanUtils sbbEntitiesMBeanUtils;
-
-	// private LogManagementMBeanUtils logManagementMBeanUtils;
 
 	public MMSManagementMBeanUtils() throws ManagementConsoleException {
 		try {
+			
+			
 			InitialContext ctx;
 			ctx = new InitialContext();
 
@@ -80,48 +68,28 @@ public class MMSManagementMBeanUtils {
 
 			this.rtpMGMTRegex=new ObjectName("mobicents.media:service=RTPManager,QID=1");
 			this.rtpManagementMBeanUtils=new RTPManagementMBeanUtils(this.rtpMGMTRegex,this.mbeanServer);
+			ObjectName annObjectName=new ObjectName("media.mobicents:endpoint=announcement");
+			ObjectName ivrObjectName=new ObjectName("media.mobicents:endpoint=ivr");
+			ObjectName pktObjectName=new ObjectName("media.mobicents:endpoint=packet-relay");
+			ObjectName confObjectName=new ObjectName("media.mobicents:endpoint=conf");
+			this.endpointManagementUtils=new EndpointManagementMBeanUtils(mbeanServer,ivrObjectName,confObjectName,annObjectName,pktObjectName);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ManagementConsoleException(MMSManagementMBeanUtils.doMessage(e));
 		}
 
-		// deploymentMBeanUtils = new DeploymentMBeanUtils(mbeanServer,
-		// sleeManagementMBean);
-
-		// serviceManagementMBeanUtils = new ServiceManagementMBeanUtils(
-		// mbeanServer, sleeManagementMBean);
-
-		// profileProvisioningMBeanUtils = new ProfileProvisioningMBeanUtils(
-		// mbeanServer, sleeManagementMBean);
-
-		// resourceManagementMBeanUtils = new ResourceManagementMBeanUtils(
-		// mbeanServer, sleeManagementMBean);
-
-		// activityManagementMBeanUtils = new ActivityManagementMBeanUtils(
-		// mbeanServer, sleeManagementMBean);
-
-		// sbbEntitiesMBeanUtils = new SbbEntitiesMBeanUtils(mbeanServer,
-		// sleeManagementMBean);
-
-		// logManagementMBeanUtils = new LogManagementMBeanUtils(mbeanServer,
-		// sleeManagementMBean);
+		
 	}
 
-	// public DeploymentMBeanUtils getDeploymentMBeanUtils() {
-	// return deploymentMBeanUtils;
-	// }
 
-	// public ActivityManagementMBeanUtils getActivityManagementMBeanUtils() {
-	// return activityManagementMBeanUtils;
-	// }
-
-	// public ServiceManagementMBeanUtils getServiceManagementMBeanUtils() {
-	// return serviceManagementMBeanUtils;
-	// }
 	
 	public RTPManagementMBeanUtils getRtpManagementMBeanUtils() {
 		return rtpManagementMBeanUtils;
+	}
+
+	public EndpointManagementMBeanUtils getEndpointManagementUtils() {
+		return endpointManagementUtils;
 	}
 
 	public static String doMessage(Throwable t) {

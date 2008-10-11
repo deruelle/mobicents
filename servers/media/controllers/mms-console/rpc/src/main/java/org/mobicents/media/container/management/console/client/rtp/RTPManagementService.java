@@ -248,4 +248,6 @@ public interface RTPManagementService extends RemoteService{
 	public void setVideoFormats(XFormat[] formats, String rtpMBeanObjectName) throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException;
 	
 	
+	public String[] getAvailableRTPManagersJNDIName()throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException;
+	
 }

@@ -74,6 +74,11 @@
 			<artifactId>jaxb-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mobicents.servers.media</groupId>
+			<artifactId>mobicents-media-server-impl</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<!-- 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>

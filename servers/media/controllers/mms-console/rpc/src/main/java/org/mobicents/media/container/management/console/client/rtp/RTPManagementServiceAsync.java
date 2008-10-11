@@ -243,4 +243,6 @@ public interface RTPManagementServiceAsync {
 	 * 
 	 */
 	public void setVideoFormats(XFormat[] formats, String rtpMBeanObjectName,AsyncCallback callback);
+	
+	public void getAvailableRTPManagersJNDIName(AsyncCallback callback);
 }

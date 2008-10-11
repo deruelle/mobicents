@@ -996,6 +996,22 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		}
 	}
 
+	
+	public String[] getAvailableRTPManagersJNDIName()throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException
+	{
+		String[] objectNames=listRTPMBeans();
+		ArrayList<String> jndiNames=new ArrayList<String>();
+		
+		for(String objectName:objectNames)
+		{
+			jndiNames.add(this.getJndiName(objectName));
+		}
+		
+		return jndiNames.toArray(new String[jndiNames.size()]);
+	}
+	
+	
+	
 	public static void main(String[] args) {
 
 		String t = "<root><payload>" + "           <rtpmap>8</rtpmap>" + "           <format>H261/90000</format>" + "       </payload>" + "       <payload>"
