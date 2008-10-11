@@ -60,6 +60,36 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         return new HashMap();
     }
 
+	public int getConnectionsCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public long getCreationTime() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public boolean getGatherPerformanceFlag() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public long getNumberOfBytes() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public long getPacketsCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setGatherPerformanceFlag(boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
     
 
 }

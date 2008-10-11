@@ -220,6 +220,22 @@ public class LocalConnectionImpl extends BaseConnection {
         logger.error("Facility error", e);
     }
 
+	public String getOtherEnd() throws IllegalArgumentException {
+		try{
+			
+			if(otherConnection!=null)
+			{
+				return otherConnection.getEndpoint().getLocalName();
+			}
+		}catch(NullPointerException e)
+		{
+			
+		}
+		return null;
+	}
+
+    
+    
 }
 
 

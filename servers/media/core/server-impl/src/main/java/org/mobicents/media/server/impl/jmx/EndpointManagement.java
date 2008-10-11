@@ -25,6 +25,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -34,7 +35,7 @@ import org.mobicents.media.server.spi.Endpoint;
 public abstract class EndpointManagement extends ServiceMBeanSupport
         implements EndpointManagementMBean {
 
-    private Endpoint endpoint;
+    protected Endpoint endpoint;
     private String jndiName;    
     private String rtpFactoryName;    
     private Properties dtmfConfig;
@@ -192,4 +193,143 @@ public abstract class EndpointManagement extends ServiceMBeanSupport
         unbind(jndiName);
         logger.info("Stopped Endpoint MBean " + this.getJndiName());
     }
+
+    // #########################
+    // # MANAGEMENT OPERATIONS #
+    // #########################
+    
+    private EndpointLocalManagement getEndpoint(String endpointName) throws IllegalArgumentException
+    {
+    	EndpointLocalManagement[] locals=((EndpointLocalManagement)endpoint).getEndpoints();
+    	for(EndpointLocalManagement l:locals)
+    	{
+    		if(l.getLocalName().equals(endpointName))
+    			return l;
+    	}
+    	throw new IllegalArgumentException("Endpoint with name: "+endpointName+", is not available/present.");
+    }
+    
+	public int getConnectionsCount(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getConnectionsCount();
+	}
+
+	public long getCreationTime(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getCreationTime();
+	}
+
+	public boolean getGatherPerformanceFlag(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getGatherPerformanceFlag();
+	}
+
+	public long getNumberOfBytes(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getNumberOfBytes();
+	}
+
+	public long getPacketsCount(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getPacketsCount();
+	}
+
+	public void setGatherPerformanceFlag(boolean flag, String endpointName)
+			throws IllegalArgumentException {
+		getEndpoint(endpointName).setGatherPerformanceFlag(flag);
+		
+	}
+
+	public String[] getEndpointNames() throws IllegalArgumentException {
+		
+		return ((EndpointLocalManagement)endpoint).getEndpointNames();
+		
+	}
+
+	public long getConnectionCreationTime(String endpoint, String connectionId)
+			throws IllegalArgumentException {
+		
+		return getEndpoint(endpoint).getConnectionCreationTime(connectionId);
+		
+	}
+
+	public String[] getConnectionIds(String endpointName)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getConnectionIds();
+	}
+
+	public String getConnectionLocalSDP(String endpoint, String connectionId)
+			throws IllegalArgumentException {
+		return getEndpoint(endpoint).getConnectionLocalSDP(connectionId);
+	}
+
+	public String getConnectionRemoteSDP(String endpoint, String connectionId)
+			throws IllegalArgumentException {
+		return getEndpoint(endpoint).getConnectionRemoteSDP(connectionId);
+	}
+
+	public long getNumberOfPackets(String endpoint, String connectionId)
+			throws IllegalArgumentException {
+		return getEndpoint(endpoint).getNumberOfPackets(connectionId);
+	}
+
+	public String getOtherEnd(String endpoint, String connectionId)
+			throws IllegalArgumentException {
+		
+		return getEndpoint(endpoint).getOtherEnd(connectionId);
+	}
+
+	public String getConnectionMode(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getConnectionMode(connectionId);
+		}
+
+	public String getConnectionState(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		return getEndpoint(endpointName).getConnectionState(connectionId);
+	}
+	public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException
+	{
+		return getEndpoint(endpointName).getRTPFacotryJNDIName();
+	}
+
+	public void setGatherPerformanceData(String endpointName, boolean value)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm=getEndpoint(endpointName);
+		elm.setGatherPerformanceFlag(value);
+	}
+	
+	public void setRTPFacotryJNDIName(String endpointName,String jndiName)  throws IllegalArgumentException
+	{
+		EndpointLocalManagement elm=getEndpoint(endpointName);
+		elm.setRTPFacotryJNDIName(jndiName);
+	}
+    
+	public void destroyConnection(String name,
+			String connectionId)   throws IllegalArgumentException
+			{
+				BaseEndpoint elm=(BaseEndpoint) getEndpoint(name);
+				try{
+					elm.deleteConnection(connectionId);
+				}catch(Exception e)
+				{
+					e.printStackTrace();
+					throw new IllegalArgumentException("Connection does not exist?");
+				}
+			}
+
+	public void destroyEndpoint(String name)  throws IllegalArgumentException
+	{
+		BaseEndpoint elm=(BaseEndpoint) getEndpoint(name);
+		try{
+			//This is weird....
+			elm.deleteAllConnections();
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			throw new IllegalArgumentException("Connection does not exist?");
+		}
+	}
+	
+	
 }

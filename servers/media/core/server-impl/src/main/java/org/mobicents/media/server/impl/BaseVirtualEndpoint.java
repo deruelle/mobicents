@@ -15,6 +15,10 @@
 package org.mobicents.media.server.impl;
 
 import java.util.HashMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.VirtualEndpoint;
 
@@ -25,7 +29,7 @@ import org.mobicents.media.server.spi.VirtualEndpoint;
 public abstract class BaseVirtualEndpoint extends BaseEndpoint implements VirtualEndpoint {
 
 	private static int GEN = 1;
-	private HashMap<String, Endpoint> endpoints = new HashMap();
+	private HashMap<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
 
 	public BaseVirtualEndpoint(String localName) {
 		super(localName);
@@ -45,16 +49,43 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 
 	@Override
 	public void deleteConnection(String connectionID) {
+
 		super.deleteConnection(connectionID);
 		if (!this.hasConnections()) {
                     System.out.println("Removed endpoint=" + this.getLocalName());
 			endpoints.remove(this.getLocalName());
 		}
-                System.out.println("endpoints: " + endpoints);
+              
 	}
 
 	public Endpoint getEndpoint(String localName) {
 		return endpoints.get(localName);
 	}
 
+	
+	public String[] getEndpointsNames() {
+		
+		SortedSet<String> s=new TreeSet<String>();
+		s.addAll(endpoints.keySet());
+		return s.toArray(new String[s.size()]);
+	}
+
+	public EndpointLocalManagement[] getEndpoints() {
+		
+		
+		EndpointLocalManagement[] value=this.endpoints.values().toArray(new EndpointLocalManagement[this.endpoints.values().size()]);
+
+		return value;
+	}
+
+
+	public String[] getEndpointNames() {
+		return this.endpoints.keySet().toArray(new String[this.endpoints.keySet().size()]);
+	}	
+
+	public String toString()
+	{
+		return this.getClass().getSimpleName()+":"+endpoints;
+	}
+	
 }

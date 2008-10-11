@@ -16,6 +16,7 @@
 package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.UnknownSignalException;
 import org.mobicents.media.server.impl.events.EventPackage;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 
 import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import org.mobicents.media.MediaSink;
@@ -56,29 +58,35 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
  * 
  * @author Oleg Kulikov.
  */
-public abstract class BaseEndpoint implements Endpoint {
+public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement{
 
-    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-    private final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
-    private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+    protected final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    protected final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    protected final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+    protected final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+    protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    private final static AudioFormat DTMF = new AudioFormat("telephone-event");
-    private final static Format[] formats = new Format[]{LINEAR, DTMF};
-    private String localName;
-    private String rtpFactoryName;
-    private HashMap<String, HashMap> mediaSources = new HashMap();
-    private HashMap<String, HashMap> mediaSinks = new HashMap();
-    private boolean hasConnections;
-    private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
-    private int maxConnections = 0;
-    private ArrayList<NotificationListener> listeners = new ArrayList();
+    protected final static AudioFormat DTMF = new AudioFormat("telephone-event");
+    protected final static Format[] formats = new Format[]{LINEAR, DTMF};
+    protected String localName;
+    protected String rtpFactoryName;
+    protected HashMap<String, HashMap> mediaSources = new HashMap();
+    protected HashMap<String, HashMap> mediaSinks = new HashMap();
+    protected boolean hasConnections;
+    protected ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
+    protected int maxConnections = 0;
+    protected ArrayList<NotificationListener> listeners = new ArrayList();
     protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
     protected ConnectionStateGuard guard=new ConnectionStateGuard(connectionListeners);
     protected static Timer connectionTimer = new Timer();
-    private transient Logger logger = Logger.getLogger(BaseEndpoint.class);
-
+    protected transient Logger logger = Logger.getLogger(this.getClass());
+    
+    // ----------- SOME MGMT info
+    protected long creationTime=System.currentTimeMillis();
+    protected boolean gatherStatistics=false;
+    protected long packets=0;
+    protected long numberOfBytes=0;
+    
     public BaseEndpoint(String localName) {
         this.localName = localName;
     }
@@ -481,4 +489,116 @@ public abstract class BaseEndpoint implements Endpoint {
     	
     }
     
+    
+    // ###############################
+    // # MANAGEMENT FUNCTIONS        #
+    // ###############################
+    
+    public int getConnectionsCount() {
+		
+		return connections.keySet().size();
+	}
+
+	public long getCreationTime() {
+		
+		return creationTime;
+	}
+
+	public boolean getGatherPerformanceFlag() {
+	
+		return gatherStatistics;
+	}
+
+	public long getNumberOfBytes() {
+		
+		return numberOfBytes;
+	}
+
+	public long getPacketsCount() {
+		
+		return packets;
+	}
+
+	public void setGatherPerformanceFlag(boolean flag) {
+		//FIXME
+		gatherStatistics=flag;
+	}
+
+	public long getConnectionCreationTime(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getConnectionCreationTime();
+	}
+
+	public String[] getConnectionIds() {
+		
+		String[] tmp=(String[]) this.connections.keySet().toArray(new String[this.connections.keySet().size()]);
+
+		return tmp;
+	}
+
+	public String getConnectionLocalSDP(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getLocalDescriptor();
+	}
+
+	public String getConnectionRemoteSDP(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getRemoteDescriptor();
+	}
+
+
+
+	public long getNumberOfPackets(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getNumberOfPackets();
+	}
+
+	public String getOtherEnd(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getOtherEnd();
+	}
+    
+	public String getConnectionState(String connectionId) throws IllegalArgumentException
+	{
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getState().toString();
+	}
+	public String getConnectionMode(String connectionId) throws IllegalArgumentException
+	{
+		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
+		if(connection==null)
+			throw new IllegalArgumentException("Connection does not exist.");
+		return connection.getMode().toString();
+	}
+    
+	public String getRTPFacotryJNDIName()
+	{
+		return this.rtpFactoryName;
+	}
+
+	public void setRTPFacotryJNDIName(String jndiName)
+			throws IllegalArgumentException {
+		this.setRtpFactoryName(jndiName);
+		
+	}
+	
+	
+	
 }

@@ -18,6 +18,8 @@ package org.mobicents.media.server.impl.jmx;
 
 import javax.naming.NamingException;
 import org.jboss.system.ServiceMBean;
+import org.mobicents.media.server.impl.BaseEndpoint;
+
 
 /**
  *
@@ -54,5 +56,35 @@ public interface EndpointManagementMBean extends ServiceMBean {
     
     
     public EndpointManagementMBean cloneEndpointManagementMBean();
+    
+    
+    // #########################
+    // # MANAGEMENT OPERATIONS #
+    // #########################
+    public int getConnectionsCount(String endpointName) throws IllegalArgumentException;
+	public long getCreationTime(String endpointName) throws IllegalArgumentException;
+	public long getPacketsCount(String endpointName) throws IllegalArgumentException;
+	public long getNumberOfBytes(String endpointName) throws IllegalArgumentException;
+	public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException;
+	public void setGatherPerformanceFlag(boolean flag,String endpointName) throws IllegalArgumentException;
+	public boolean getGatherPerformanceFlag(String endpointName) throws IllegalArgumentException;
+	public String[] getEndpointNames() throws IllegalArgumentException;
+	public String[] getConnectionIds(String endpointName) throws IllegalArgumentException;
+	public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException;
+	public void setRTPFacotryJNDIName(String endpointName,String jndiName)  throws IllegalArgumentException;
+	public void destroyConnection(String name,	String connectionId)   throws IllegalArgumentException;
+	public void destroyEndpoint(String name)  throws IllegalArgumentException;
+	
+
+    // ######################################
+    // # MANAGEMENT OPERATIONS: Connections #
+    // ######################################	
+	public long getConnectionCreationTime(String endpoint,String connectionId) throws IllegalArgumentException;
+	public String getConnectionLocalSDP(String endpoint,String connectionId) throws IllegalArgumentException;
+	public String getConnectionRemoteSDP(String endpoint,String connectionId) throws IllegalArgumentException;
+	public String getOtherEnd(String endpoint,String connectionId) throws IllegalArgumentException;
+	public long getNumberOfPackets(String endpoint,String connectionId) throws IllegalArgumentException;
+	public String getConnectionState(String endpointName, String connectionId) throws IllegalArgumentException;
+	public String getConnectionMode(String endpointName, String connectionId) throws IllegalArgumentException;
     
 }

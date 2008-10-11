@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
+import org.mobicents.media.server.local.management.ConnectionLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -36,7 +37,7 @@ import org.mobicents.media.server.spi.events.RequestedEvent;
  * 
  * @author Oleg Kulikov
  */
-public abstract class BaseConnection implements Connection, NotificationListener {
+public abstract class BaseConnection implements Connection, NotificationListener , ConnectionLocalManagement{
 
 	protected String id;
 	protected BaseEndpoint endpoint;
@@ -53,6 +54,8 @@ public abstract class BaseConnection implements Connection, NotificationListener
 	private ArrayList<RequestedEvent> eventListeners = new ArrayList();
 	private ExecutorService eventQueue = Executors.newSingleThreadExecutor(new BaseConnection.ThreadFactoryImpl());
 	protected transient Logger logger = Logger.getLogger(BaseConnection.class);
+	private long connectionCreationTime = System.currentTimeMillis();
+	private long packets;
 
 	private class CloseConnectionTask extends TimerTask {
 
@@ -292,4 +295,18 @@ public abstract class BaseConnection implements Connection, NotificationListener
 		}
 
 	}
+	
+	
+	public long getConnectionCreationTime() throws IllegalArgumentException {
+		
+		return connectionCreationTime;
+	}
+
+	public long getNumberOfPackets() throws IllegalArgumentException {
+		
+		return packets;
+	}
+
+
+	
 }

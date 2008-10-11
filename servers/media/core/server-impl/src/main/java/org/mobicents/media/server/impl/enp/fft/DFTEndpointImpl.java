@@ -4,6 +4,7 @@ import java.io.File;
 
 import java.util.HashMap;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 
 public class DFTEndpointImpl extends BaseEndpoint {
@@ -63,6 +64,18 @@ public class DFTEndpointImpl extends BaseEndpoint {
     public HashMap initMediaSinks() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
+	public EndpointLocalManagement[] getEndpoints() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String[] getEndpointNames() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }

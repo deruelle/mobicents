@@ -46,6 +46,7 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
             BaseConnection[] connections = new BaseConnection[2];
             this.getConnections().toArray(connections);
 
+           
 //            if (connections[1] instanceof LocalConnectionImpl) {
 //                System.out.println("!!!!!!! Assigned test sink");
 //                connections[1].getDemux().connect(new TestSink());
@@ -75,4 +76,6 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
     public HashMap initMediaSinks() {
         return new HashMap();
     }
+
+	
 }

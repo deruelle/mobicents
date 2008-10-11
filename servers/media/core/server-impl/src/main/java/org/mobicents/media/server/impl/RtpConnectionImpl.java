@@ -516,4 +516,14 @@ public class RtpConnectionImpl extends BaseConnection {
     public void error(Exception e) {
         this.endpoint.deleteConnection(id);
     }
+
+	public String getOtherEnd() throws IllegalArgumentException {
+		
+		return "Remote";
+	}
+    
+    
+    
+    
+    
 }

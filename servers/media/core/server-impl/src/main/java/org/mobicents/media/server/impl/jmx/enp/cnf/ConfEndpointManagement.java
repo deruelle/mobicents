@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
 import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.VirtualEndpoint;
 
 /**
  *
@@ -30,6 +31,7 @@ public class ConfEndpointManagement extends EndpointManagement
 
     @Override
     public Endpoint createEndpoint() throws Exception {
+    	
         return new ConfEndpointImpl(this.getJndiName());
     }
 
@@ -44,4 +46,12 @@ public class ConfEndpointManagement extends EndpointManagement
         }
         return clone;
     }
+
+	public void makeEndpoint() {
+		try{
+		((VirtualEndpoint)super.endpoint).createEndpoint();
+		}catch(Exception e)
+		{}
+		
+	}
 }
