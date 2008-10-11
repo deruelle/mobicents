@@ -62,9 +62,9 @@
 											file="${basedir}/release/build.xml" todir="${release.dir}">
 											<filterset>
 												<filter
-													token="JBOSS_VERSION" value="jboss-${jboss.version}" />
+													token="JBOSS.PATH" value="${jboss.path}" />
 												<filter
-													token="JBOSS_NODE" value="${node}" />
+													token="JBOSS.CONFIG" value="${node}" />
 											</filterset>
 										</copy>
 									</tasks>

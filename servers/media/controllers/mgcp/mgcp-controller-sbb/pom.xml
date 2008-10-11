@@ -54,8 +54,10 @@
 										<copy overwrite="true" file="${basedir}/services-du/target/build.xml" tofile="${release.dir}/du-management.xml" />
 										<copy overwrite="true" file="${basedir}/release/build.xml" todir="${release.dir}">
 											<filterset>
-												<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
-												<filter token="JBOSS_NODE" value="${node}" />
+                                                <!-- The extra ../ is due to the ${release.dir} property defined above being bigger
+                                                     than the other ${release.dir} properties defined in the controllers folder -->
+												<filter token="JBOSS.PATH" value="../${jboss.path}" />
+												<filter token="JBOSS.CONFIG" value="${node}" />
 											</filterset>
 										</copy>
 									</tasks>

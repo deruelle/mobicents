@@ -49,8 +49,8 @@
 										<copy overwrite="true" file="${basedir}/du/target/build.xml" tofile="${release.dir}/du-management.xml" />
 										<copy overwrite="true" file="${basedir}/release/build.xml" todir="${release.dir}">
                       <filterset>
-                        <filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
-                        <filter token="JBOSS_NODE" value="${node}" />
+                        <filter token="JBOSS.PATH" value="${jboss.path}" />
+                        <filter token="JBOSS.CONFIG" value="${node}" />
                       </filterset>
 										</copy>
 									</tasks>

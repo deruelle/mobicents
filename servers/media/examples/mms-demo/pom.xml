@@ -49,7 +49,7 @@
 										<copy overwrite="true" file="${basedir}/slee/services-du/target/build.xml" tofile="${release.dir}/du-management.xml" />
 										<copy overwrite="true" file="${basedir}/release/build.xml" todir="${release.dir}">
 											<filterset>
-												<filter token="JBOSS_VERSION" value="jboss-${jboss.version}" />
+												<filter token="JBOSS.PATH" value="${jboss.path}" />
 												<filter token="JBOSS.CONFIG" value="${node}" />
 											</filterset>
 										</copy>
