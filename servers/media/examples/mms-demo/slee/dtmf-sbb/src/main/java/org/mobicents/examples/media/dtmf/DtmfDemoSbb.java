@@ -51,7 +51,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class DtmfDemoSbb implements Sbb {
 
-    private final static String IVR_ENDPOINT = "media/endpoint/IVR/$";
+    private final static String IVR_ENDPOINT = "media/trunk/IVR/$";
     private final static String WELCOME_MSG = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/welcome.wav";
     private final static String DTMF_0 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf0.wav";
     private final static String DTMF_1 = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/dtmf1.wav";

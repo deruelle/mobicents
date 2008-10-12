@@ -26,18 +26,24 @@ import javax.slee.facilities.TimerEvent;
 import javax.slee.facilities.TimerFacility;
 import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
+import javax.slee.nullactivity.NullActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
-import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
-import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -46,6 +52,11 @@ import org.mobicents.slee.service.events.CustomEvent;
 import org.mobicents.slee.util.Session;
 import org.mobicents.slee.util.SessionAssociation;
 
+/**
+ * 
+ * @author amit.bhayani
+ * 
+ */
 public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 	private Logger logger = Logger.getLogger(OrderDeliverDateSbb.class);
@@ -96,7 +107,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		logger.info("======== OrderDeliverDateSbb ORDER_CANCELLED ========");
 		if (this.getTimerID() != null) {
 			timerFacility.cancelTimer(this.getTimerID());
-			ac.detach(getSbbContext().getSbbLocalObject());
+		}
+		ActivityContextInterface[] activities = getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof NullActivity) {
+				activities[i].detach(this.getSbbContext().getSbbLocalObject());
+			}
 		}
 	}
 
@@ -113,15 +129,12 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	}
 
 	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-		logger.info("Timer fired");
-		String dateAndTime = this.getDateAndTime();
-		if (dateAndTime != null && (dateAndTime.length() > 0)) {
-			logger.info("Timer fired calling initDtmfDetector");
-			this.initDtmfDetector(this.getConnection(), this.getEndpointName());
-		} else {
-			logger.info("Timer fired calling makeCall");
-			makeCall();
-		}
+		logger.info("Timer fired calling makeCall");
+
+		// Detach NullActivity
+		aci.detach(this.getSbbContext().getSbbLocalObject());
+		makeCall();
+
 	}
 
 	private void setTimer(ActivityContextInterface ac, int duration) {
@@ -244,7 +257,7 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 	}
 
-	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+	public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("-----onLinkReleased-----");
 
 		if (this.getSendBye()) {
@@ -260,41 +273,35 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 		}
 	}
 
-	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+	public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("--------onLinkCreated------------");
+
 		MsLink link = evt.getSource();
-		String announcementEndpoint = link.getEndpoints()[1];
+		MsEndpoint endpoint = link.getEndpoints()[1];
 
-		String endpointName = null;
-		if (this.getEndpointName() == null) {
-			this.setEndpointName(link.getEndpoints()[0]);
-		}
+		MsEventFactory eventFactory = msProvider.getEventFactory();
 
-		if (this.getAnnouncementEndpointName() == null) {
-			this.setAnnouncementEndpointName(announcementEndpoint);
-		}
+		MsPlayRequestedSignal play = null;
+		play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
 
-		endpointName = this.getEndpointName();
+		String announcementFile = (getClass().getResource(orderDeliveryDate)).toString();
+		play.setURL(announcementFile);
 
-		logger.info("endpoint name: " + endpointName);
-		logger.info("Announcement endpoint: " + announcementEndpoint);
+		MsRequestedEvent onCompleted = null;
+		MsRequestedEvent onFailed = null;
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
+		onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+		onCompleted.setEventAction(MsEventAction.NOTIFY);
 
-		try {
-			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+		onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+		onFailed.setEventAction(MsEventAction.NOTIFY);
 
-			String announcementFile = (getClass().getResource(orderDeliveryDate)).toString();
+		MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) eventFactory.createRequestedEvent(DTMF.TONE);
 
-			generator.apply(EventID.PLAY, link, new String[] { announcementFile });
+		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed, dtmf };
 
-			this.initDtmfDetector(getConnection(), endpointName);
-
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
-		}
-
+		endpoint.execute(requestedSignals, requestedEvents, link);
 	}
 
 	public MsLink getLink() {
@@ -309,45 +316,39 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
 		logger.info("DTMF received");
-		EventCause cause = evt.getCause();
+
+		MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
+		MsLink link = (MsLink) evt.getSource();
+		MsEndpoint endpoint = link.getEndpoints()[1];
+		String seq = event.getSequence();
 
 		boolean success = false;
 
 		String dateAndTime = this.getDateAndTime();
 
-		switch (cause) {
-		case DTMF_DIGIT_0:
+		if ("0".equals(seq)) {
 			dateAndTime = dateAndTime + "0";
-			break;
-		case DTMF_DIGIT_1:
+		} else if ("1".equals(seq)) {
+
 			dateAndTime = dateAndTime + "1";
-			break;
-		case DTMF_DIGIT_2:
+		} else if ("2".equals(seq)) {
 			dateAndTime = dateAndTime + "2";
-			break;
-		case DTMF_DIGIT_3:
+		} else if ("3".equals(seq)) {
 			dateAndTime = dateAndTime + "3";
-			break;
-		case DTMF_DIGIT_4:
+		} else if ("4".equals(seq)) {
 			dateAndTime = dateAndTime + "4";
-			break;
-		case DTMF_DIGIT_5:
+		} else if ("5".equals(seq)) {
 			dateAndTime = dateAndTime + "5";
-			break;
-		case DTMF_DIGIT_6:
+		} else if ("6".equals(seq)) {
 			dateAndTime = dateAndTime + "6";
-			break;
-		case DTMF_DIGIT_7:
+		} else if ("7".equals(seq)) {
 			dateAndTime = dateAndTime + "7";
-			break;
-		case DTMF_DIGIT_8:
+		} else if ("8".equals(seq)) {
 			dateAndTime = dateAndTime + "8";
-			break;
-		case DTMF_DIGIT_9:
+		} else if ("9".equals(seq)) {
 			dateAndTime = dateAndTime + "9";
-			break;
-		default:
-			break;
+		} else {
+			logger.warn("Couldn't understand DTMF = " + seq);
 		}
 
 		// TODO: Add logic to check if date and time is valid. We assume that
@@ -450,61 +451,42 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 
 			ttsSession.textToAudioFile(stringBuffer.toString());
 
-			MsSignalGenerator generator = msProvider.getSignalGenerator(this.getAnnouncementEndpointName());
+			MsEventFactory eventFactory = msProvider.getEventFactory();
 
-			try {
-				ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-				generatorActivity.attach(getSbbContext().getSbbLocalObject());
+			MsPlayRequestedSignal play = null;
+			play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+			play.setURL("file:" + audioPath.toString());
 
-				generator.apply(EventID.PLAY, this.getLink(), new String[] { "file:" + audioPath.toString() });
+			MsRequestedEvent onCompleted = null;
+			MsRequestedEvent onFailed = null;
 
-				// this.initDtmfDetector(getConnection(),
-				// this.getEndpointName());
-			} catch (UnrecognizedActivityException e) {
-				e.printStackTrace();
-			}
+			onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+			onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+			onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+			onFailed.setEventAction(MsEventAction.NOTIFY);
+
+			MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
+
+			endpoint.execute(requestedSignals, requestedEvents, link);
 
 			success = true;
 			this.setSendBye(success);
 
 		} else {
 			this.setDateAndTime(dateAndTime);
-			this.setTimer(this.getConnectionActivityContext(), 500);
-			//this.initDtmfDetector(getConnection(), this.getEndpointName());
+
+			MsEventFactory factory = msProvider.getEventFactory();
+			MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+			MsRequestedSignal[] signals = new MsRequestedSignal[] {};
+			MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
+
+			endpoint.execute(signals, events, link);
+
 		}
 	}
 
-	private void initDtmfDetector(MsConnection connection, String endpointName) {
-		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(endpointName);
-		try {
-			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
-			dtmfAci.attach(getSbbContext().getSbbLocalObject());
-			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private MsConnection getConnection() {
-		ActivityContextInterface[] activities = getSbbContext().getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsConnection) {
-				return (MsConnection) activities[i].getActivity();
-			}
-		}
-		return null;
-	}
-
-    private ActivityContextInterface getConnectionActivityContext() {
-        ActivityContextInterface[] activities = getSbbContext().getActivities();
-        for (int i = 0; i < activities.length; i++) {
-            if (activities[i].getActivity() instanceof MsConnection) {
-                return activities[i];
-            }
-        }
-        return null;
-    }
-    
 	public InitialEventSelector orderIdSelect(InitialEventSelector ies) {
 		Object event = ies.getEvent();
 		long orderId = 0;
@@ -524,14 +506,6 @@ public abstract class OrderDeliverDateSbb extends CommonSbb {
 	}// child relation
 
 	public abstract ChildRelation getCallControlSbbChild();
-
-	public abstract void setEndpointName(String endPoint);
-
-	public abstract String getEndpointName();
-
-	public abstract void setAnnouncementEndpointName(String endPoint);
-
-	public abstract String getAnnouncementEndpointName();
 
 	public abstract void setCustomEvent(CustomEvent customEvent);
 

@@ -165,6 +165,9 @@ public abstract class RQNTSbb implements Sbb {
 		Request request = txn.getRequest();
 
 		ReturnCode status = event.getReturnCode();
+		
+		this.setEndpointName(event.getSpecificEndpointIdentifier().getLocalEndpointName());
+		System.out.println("***&& "+this.getEndpointName());
 
 		switch (status.getValue()) {
 		case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
@@ -190,7 +193,7 @@ public abstract class RQNTSbb implements Sbb {
 			}
 			ContactHeader contact = headerFactory.createContactHeader(contactAddress);
 
-			EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
+			EndpointIdentifier endpointID = new EndpointIdentifier(this.getEndpointName(), JBOSS_BIND_ADDRESS + ":2729");
 
 			NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, mgcpProvider
 					.getUniqueRequestIdentifier());
@@ -249,7 +252,7 @@ public abstract class RQNTSbb implements Sbb {
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
+		EndpointIdentifier endpointID = new EndpointIdentifier(this.getEndpointName(), JBOSS_BIND_ADDRESS + ":2729");
 		DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
 
 		deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
@@ -322,6 +325,10 @@ public abstract class RQNTSbb implements Sbb {
 	public abstract String getRemoteSdp();
 
 	public abstract void setRemoteSdp(String remoteSdp);
+	
+	public abstract String getEndpointName();
+
+	public abstract void setEndpointName(String endpointName);	
 
 	public void unsetSbbContext() {
 	}

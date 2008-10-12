@@ -35,15 +35,20 @@ import javax.slee.nullactivity.NullActivity;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
-import org.mobicents.media.server.impl.common.events.EventCause;
-import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
-import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
+import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
+import org.mobicents.mscontrol.events.pkg.DTMF;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -106,6 +111,9 @@ public abstract class UserSbb extends CommonSbb {
 	public void onOrderPlaced(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("UserSbb: " + this + ": received an ORDER_PLACED event. OrderId = " + event.getOrderId()
 				+ ". ammount = " + event.getAmmount() + ". Customer Name = " + event.getCustomerName());
+
+		// Detach from NullActivity
+		ac.detach(this.getSbbContext().getSbbLocalObject());
 
 		this.setCustomEvent(event);
 
@@ -232,7 +240,7 @@ public abstract class UserSbb extends CommonSbb {
 
 	}
 
-	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+	public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("-----onLinkReleased-----");
 
 		if (this.getSendBye()) {
@@ -250,18 +258,19 @@ public abstract class UserSbb extends CommonSbb {
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
 		logger.info("DTMF received");
-		EventCause cause = evt.getCause();
-		handleDtmf(cause);
+		MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
+		MsLink link = (MsLink) evt.getSource();
+		String seq = event.getSequence();
+		handleDtmf(seq, link);
 	}
 
-	public void handleDtmf(EventCause cause) {
+	public void handleDtmf(String cause, MsLink link) {
 
 		EntityManager mgr = null;
 		Order order = null;
 		boolean successful = false;
 
-		switch (cause) {
-		case DTMF_DIGIT_1:
+		if ("1".equals(cause)) {
 
 			this.setAudioFile((getClass().getResource(orderConfirmed)).toString());
 
@@ -277,8 +286,7 @@ public abstract class UserSbb extends CommonSbb {
 
 			successful = true;
 
-			break;
-		case DTMF_DIGIT_2:
+		} else if ("2".equals(cause)) {
 			this.setAudioFile((getClass().getResource(orderCancelled)).toString());
 
 			mgr = emf.createEntityManager();
@@ -304,61 +312,61 @@ public abstract class UserSbb extends CommonSbb {
 			} catch (UnrecognizedActivityException unreActExc) {
 				unreActExc.printStackTrace();
 			}
-			break;
-		default:
+		} else {
 			this.setAudioFile((getClass().getResource(orderReConfirm)).toString());
-			break;
+
 		}
 		this.setSendBye(successful);
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(this.getAnnouncementEndpointName());
+		MsEventFactory eventFactory = msProvider.getEventFactory();
 
-		try {
-			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+		MsPlayRequestedSignal play = null;
+		play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+		play.setURL(this.getAudioFile());
 
-			generator.apply(EventID.PLAY, this.getLink(), new String[] { this.getAudioFile() });
+		MsRequestedEvent onCompleted = null;
+		MsRequestedEvent onFailed = null;
 
-			// this.initDtmfDetector(getConnection(), this.getEndpointName());
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
-		}
+		onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+		onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+		onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+		onFailed.setEventAction(MsEventAction.NOTIFY);
+
+		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
+		link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
 
 	}
 
-	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-		logger.info("--------onLinkCreated------------");
+	public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
+		logger.info("--------onLinkConnected------------");
 		MsLink link = evt.getSource();
-		String announcementEndpoint = link.getEndpoints()[1];
+		MsEndpoint endpoint = link.getEndpoints()[1];
 
-		String endpointName = null;
-		if (this.getEndpointName() == null) {
-			this.setEndpointName(link.getEndpoints()[0]);
-		}
+		MsEventFactory eventFactory = msProvider.getEventFactory();
 
-		if (this.getAnnouncementEndpointName() == null) {
-			this.setAnnouncementEndpointName(announcementEndpoint);
-		}
+		MsPlayRequestedSignal play = null;
+		play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
 
-		endpointName = this.getEndpointName();
+		String announcementFile = "file:" + this.getAudioFile();
+		play.setURL(announcementFile);
 
-		logger.info("endpoint name: " + endpointName);
-		logger.info("Announcement endpoint: " + announcementEndpoint);
+		MsRequestedEvent onCompleted = null;
+		MsRequestedEvent onFailed = null;
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
+		onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+		onCompleted.setEventAction(MsEventAction.NOTIFY);
 
-		try {
-			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+		onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+		onFailed.setEventAction(MsEventAction.NOTIFY);
 
-			String announcementFile = "file:" + this.getAudioFile();
-			generator.apply(EventID.PLAY, link, new String[] { announcementFile });
+		MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) eventFactory.createRequestedEvent(DTMF.TONE);
 
-			this.initDtmfDetector(getConnection(), endpointName);
+		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed, dtmf };
 
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
-		}
+		endpoint.execute(requestedSignals, requestedEvents, link);
 
 	}
 
@@ -372,26 +380,6 @@ public abstract class UserSbb extends CommonSbb {
 		return null;
 	}
 
-	private MsConnection getConnection() {
-		ActivityContextInterface[] activities = getSbbContext().getActivities();
-		for (int i = 0; i < activities.length; i++) {
-			if (activities[i].getActivity() instanceof MsConnection) {
-				return (MsConnection) activities[i].getActivity();
-			}
-		}
-		return null;
-	}
-
-	private void initDtmfDetector(MsConnection connection, String endpointName) {
-		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(endpointName);
-		try {
-			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
-			dtmfAci.attach(getSbbContext().getSbbLocalObject());
-			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
-		} catch (UnrecognizedActivityException e) {
-		}
-	}
-
 	// child relation
 	public abstract ChildRelation getCallControlSbbChild();
 
@@ -402,14 +390,6 @@ public abstract class UserSbb extends CommonSbb {
 	public abstract void setSendBye(boolean isBye);
 
 	public abstract boolean getSendBye();
-
-	public abstract void setEndpointName(String endPoint);
-
-	public abstract String getEndpointName();
-
-	public abstract void setAnnouncementEndpointName(String endPoint);
-
-	public abstract String getAnnouncementEndpointName();
 
 	public abstract void setAudioFile(String endPoint);
 

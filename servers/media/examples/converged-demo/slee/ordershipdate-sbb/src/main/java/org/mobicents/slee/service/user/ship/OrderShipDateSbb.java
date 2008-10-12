@@ -25,12 +25,17 @@ import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
-import org.mobicents.media.server.impl.common.events.EventID;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
-import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.tts.ratype.TTSSession;
 import org.mobicents.slee.service.callcontrol.CallControlSbbLocalObject;
@@ -81,6 +86,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	public void onOrderShipped(CustomEvent event, ActivityContextInterface ac) {
 		logger.info("======== OrderShipDateSbb ORDER_SHIPPED ========");
+		ac.detach(this.getSbbContext().getSbbLocalObject());
 		makeCall(event, ac);
 	}
 
@@ -278,7 +284,7 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	}
 
-	public void onLinkReleased(MsLinkEvent evt, ActivityContextInterface aci) {
+	public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("-----onLinkReleased-----");
 		getChildSbbLocalObject().sendBye();
 
@@ -292,32 +298,38 @@ public abstract class OrderShipDateSbb extends CommonSbb {
 
 	}
 
-	public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
+	public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
 		logger.info("--------onLinkCreated------------");
+
 		MsLink link = evt.getSource();
-		String announcementEndpoint = link.getEndpoints()[1];
+		MsEndpoint endpoint = link.getEndpoints()[1];
 
-		String endpointName = link.getEndpoints()[0];
-		logger.info("endpoint name: " + endpointName);
-		logger.info("Announcement endpoint: " + announcementEndpoint);
+		MsEventFactory eventFactory = msProvider.getEventFactory();
 
-		MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
+		MsPlayRequestedSignal play = null;
+		play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
 
-		try {
-			ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-			generatorActivity.attach(getSbbContext().getSbbLocalObject());
+		StringBuffer audioPath = new StringBuffer("file:");
+		audioPath.append(audioFilePath);
+		audioPath.append("/");
+		audioPath.append(this.getCustomEvent().getUserName());
+		audioPath.append(".wav");
 
-			StringBuffer audioPath = new StringBuffer("file:");
-			audioPath.append(audioFilePath);
-			audioPath.append("/");
-			audioPath.append(this.getCustomEvent().getUserName());
-			audioPath.append(".wav");
+		play.setURL(audioPath.toString());
 
-			generator.apply(EventID.PLAY, link, new String[] { audioPath.toString() });
+		MsRequestedEvent onCompleted = null;
+		MsRequestedEvent onFailed = null;
 
-		} catch (UnrecognizedActivityException e) {
-			e.printStackTrace();
-		}
+		onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+		onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+		onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+		onFailed.setEventAction(MsEventAction.NOTIFY);
+
+		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
+
+		endpoint.execute(requestedSignals, requestedEvents, link);
 
 	}
 

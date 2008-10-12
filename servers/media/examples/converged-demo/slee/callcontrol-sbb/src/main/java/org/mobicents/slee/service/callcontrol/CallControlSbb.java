@@ -63,7 +63,7 @@ import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.msc.common.MsLinkMode;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
@@ -90,7 +90,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 	public final static String ENDPOINT_NAME = "media/trunk/PacketRelay/$";
 
-	public final static String ANNOUNCEMENT_ENDPOINT = "media/trunk/Announcement/$";
+	public final static String IVR_ENDPOINT = "media/trunk/IVR/$";
 
 	private SbbContext sbbContext; // This SBB's SbbContext
 
@@ -182,14 +182,6 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		simpleCallFlowState.execute(event);
 	}
 
-	// public void onAckEvent(RequestEvent event, ActivityContextInterface aci)
-	// {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received: ACK");
-	// }
-	// executeRequestState(event);
-	// }
-
 	public void onByeEvent(RequestEvent event, ActivityContextInterface aci) {
 
 		log.info("************Received BYEEEE**************");
@@ -209,27 +201,8 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		} catch (InvalidArgumentException invalidArgEx) {
 			invalidArgEx.printStackTrace();
 		}
-
-		// executeRequestState(event);
 	}
 
-	// public void onCancelEvent(RequestEvent event, ActivityContextInterface
-	// aci) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received CANCEL");
-	// }
-	// executeRequestState(event);
-	// }
-
-	// public void onServerErrorRespEvent(ResponseEvent event,
-	// ActivityContextInterface aci) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received server error response : "
-	// + event.getResponse().getStatusCode());
-	// }
-	// executeResponseState(event);
-	// }
-	//
 	public void onClientErrorRespEvent(ResponseEvent event,
 			ActivityContextInterface aci) {
 		if (log.isDebugEnabled()) {
@@ -238,16 +211,6 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		}
 		executeResponseState(event);
 	}
-
-	//
-	// public void onGlobalFailureRespEvent(ResponseEvent event,
-	// ActivityContextInterface aci) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received global failure event : "
-	// + event.getResponse().getStatusCode());
-	// }
-	// executeResponseState(event);
-	// }
 
 	public void onSuccessRespEvent(ResponseEvent event,
 			ActivityContextInterface aci) {
@@ -258,32 +221,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		executeResponseState(event);
 	}
 
-	// public void onInfoRespEvent(ResponseEvent event,
-	// ActivityContextInterface aci) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received informational response event : "
-	// + event.getResponse().getStatusCode());
-	// }
-	// executeResponseState(event);
-	// }
-
-	/*
-	 * Timeouts
-	 */
-	// public void onTransactionTimeoutEvent(TimeoutEvent event,
-	// ActivityContextInterface ac) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received timeout event");
-	// }
-	// }
-	//
-	// public void onRetransmitTimeoutEvent(TimeoutEvent event,
-	// ActivityContextInterface ac) {
-	// if (log.isDebugEnabled()) {
-	// log.debug("Received retransmit timeout event");
-	// }
-	// }
-	public void onConnectionCreated(MsConnectionEvent evt,
+	public void onConnectionOpen(MsConnectionEvent evt,
 			ActivityContextInterface aci) {
 		log.info("--------------onConnectionCreated--------------");
 		MsConnection connection = evt.getConnection();
@@ -310,7 +248,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 		linkActivity.attach(getParentCmp());
 
-		link.join(connection.getEndpoint(), ANNOUNCEMENT_ENDPOINT);
+		link.join(connection.getEndpoint().getLocalName(), IVR_ENDPOINT);
 	}
 
 	private void releaseMediaConnectionAndDialog() {
