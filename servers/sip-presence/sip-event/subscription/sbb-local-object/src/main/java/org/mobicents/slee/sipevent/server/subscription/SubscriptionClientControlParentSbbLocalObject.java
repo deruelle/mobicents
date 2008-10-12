@@ -99,15 +99,15 @@ public interface SubscriptionClientControlParentSbbLocalObject extends
 	 * @param notifier
 	 * @param eventPackage
 	 * @param subscriptionId
-	 * @param event
 	 * @param status
+	 * @param terminationReason if occurs an unexpected change that terminates the subscription a reason code will be provided
 	 * @param document
 	 * @param contentType
 	 * @param contentSubtype
 	 */
 	public void notifyEvent(String subscriber, String notifier,
 			String eventPackage, String subscriptionId,
-			Subscription.Event event, Subscription.Status status,
+			Subscription.Event terminationReason, Subscription.Status status,
 			String content, String contentType, String contentSubtype);
 
 }

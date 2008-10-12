@@ -37,7 +37,7 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 		SubscriptionClientControlParentSbbLocalObject {
 
 	String subscriber = "sip:internal-subscriber@127.0.0.1";
-	String notifier = "sip:internal-publisher@127.0.0.1";
+	String notifier = "sip:user@127.0.0.1";
 	String eventPackage = "presence";
 	int expires = 60;
 
@@ -137,15 +137,15 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 	}
 
 	public void notifyEvent(String subscriber, String notifier,
-			String eventPackage, String subscriptionId, Event event,
+			String eventPackage, String subscriptionId, Event terminationReason,
 			Status status, String content, String contentType,
 			String contentSubtype) {
 		String notification = "\nNOTIFY EVENT:" + "\n+-- Subscriber: "
 				+ subscriber + "\n+-- Notifier: " + notifier
 				+ "\n+-- EventPackage: " + eventPackage
-				+ "\n+-- SubscriptionId: " + subscriptionId
-				+ "\n+-- Last event on subscription: " + event
+				+ "\n+-- SubscriptionId: " + subscriptionId				
 				+ "\n+-- Subscription status: " + status
+				+ "\n+-- Subscription terminationReason: " + terminationReason
 				+ "\n+-- Content Type: " + contentType + '/' + contentSubtype
 				+ "\n+-- Content:\n\n" + content;
 		log4j.info(notification);

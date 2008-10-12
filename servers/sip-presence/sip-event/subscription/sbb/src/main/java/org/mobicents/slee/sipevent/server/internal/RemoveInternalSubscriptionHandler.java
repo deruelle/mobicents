@@ -79,9 +79,9 @@ public class RemoveInternalSubscriptionHandler {
 		internalSubscriptionHandler.sbb.getTimerFacility().cancelTimer(
 				subscription.getTimerID());
 
-		// change subscription state, simulate a timeout after a refresh of 0
-		// secs
-		subscription.changeStatus(Subscription.Event.timeout);
+		// change subscription state
+		subscription.setStatus(Subscription.Status.terminated);
+		subscription.setLastEvent(null);
 
 		// notify subscriber
 		internalSubscriptionHandler.getInternalSubscriberNotificationHandler()

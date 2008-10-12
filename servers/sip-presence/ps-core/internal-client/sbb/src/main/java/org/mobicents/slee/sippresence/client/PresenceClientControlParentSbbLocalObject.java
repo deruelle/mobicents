@@ -174,17 +174,17 @@ public interface PresenceClientControlParentSbbLocalObject extends
 	 * @param notifier
 	 * @param eventPackage
 	 * @param subscriptionId
-	 * @param lastEvent
-	 *            last event that changed the subscription status
 	 * @param status
 	 *            the subscription status
+	 * @param terminationReason
+	 *            if the subscription was unexpectedly terminated the event that caused it will be provided 
 	 * @param document
 	 * @param contentType
 	 * @param contentSubtype
 	 */
 	public void notifyEvent(String subscriber, String notifier,
 			String eventPackage, String subscriptionId,
-			Subscription.Event lastEvent, Subscription.Status status,
+			Subscription.Event terminationReason, Subscription.Status status,
 			String content, String contentType, String contentSubtype);
 
 }

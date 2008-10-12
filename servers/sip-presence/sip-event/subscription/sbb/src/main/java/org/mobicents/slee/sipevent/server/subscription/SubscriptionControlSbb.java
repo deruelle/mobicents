@@ -372,7 +372,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 		// notify the parent
 		getParentSbbCMP().notifyEvent(event.getSubscriber(),
 				event.getNotifier(), event.getEventPackage(),
-				event.getSubscriptionId(), event.getSubscriptionEvent(),
+				event.getSubscriptionId(), event.getTerminationReason(),
 				event.getSubscriptionStatus(), event.getContent(),
 				event.getContentType(), event.getContentSubtype());
 		// if subscription terminated then we remove the null aci

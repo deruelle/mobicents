@@ -208,7 +208,9 @@ public class SipSubscriberNotificationHandler {
 				 * "terminated", the notifier SHOULD also include a "reason"
 				 * parameter.
 				 */
-				ssh.setReasonCode(subscription.getLastEvent().toString());
+				if(subscription.getLastEvent() != null) { 
+					ssh.setReasonCode(subscription.getLastEvent().toString());
+				}
 			}
 			notify.addHeader(ssh);
 		} catch (Exception e) {

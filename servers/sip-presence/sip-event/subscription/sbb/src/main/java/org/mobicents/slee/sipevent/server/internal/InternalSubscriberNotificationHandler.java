@@ -59,11 +59,22 @@ public class InternalSubscriberNotificationHandler {
 				contentType = contentTypeHeader.getContentType();
 				contentSubtype = contentTypeHeader.getContentSubType();
 			}
+	
+			// if subscription status is waiting notify terminated status
+			Subscription.Status status = subscription.getStatus();
+			if (status.equals(Subscription.Status.waiting)) {
+				status = Subscription.Status.terminated;
+			}
+			// put last event if subscription terminated
+			Subscription.Event lastEvent = null;
+			if (status.equals(Subscription.Status.terminated)) {
+				lastEvent = subscription.getLastEvent();
+			}
 			InternalNotifyEvent internalNotifyEvent = new InternalNotifyEvent(
 				subscription.getSubscriber(), subscription.getNotifier(),
 				subscription.getKey().getEventPackage(), subscription.getKey()
-						.getRealEventId(), subscription.getLastEvent(),
-				subscription.getStatus(), content, contentType, contentSubtype);
+						.getRealEventId(), lastEvent,
+				status, content, contentType, contentSubtype);
 
 		internalSubscriptionHandler.sbb.fireInternalNotifyEvent(
 				internalNotifyEvent, subscriptionACI, null);

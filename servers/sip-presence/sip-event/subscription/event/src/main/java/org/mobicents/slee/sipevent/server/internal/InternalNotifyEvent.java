@@ -20,7 +20,7 @@ public class InternalNotifyEvent {
 	private final String eventPackage;
 	private final String subscriptionId;
 
-	private final Subscription.Event subscriptionEvent;
+	private final Subscription.Event terminationReason;
 	private final Subscription.Status subscriptionStatus;
 
 	private final String content;
@@ -29,14 +29,14 @@ public class InternalNotifyEvent {
 
 	public InternalNotifyEvent(String subscriber, String notifier,
 			String eventPackage, String subscriptionId,
-			Subscription.Event subscriptionEvent,
+			Subscription.Event terminationReason,
 			Subscription.Status subscriptionStatus, String content,
 			String contentType, String contentSubtype) {
 		this.subscriber = subscriber;
 		this.notifier = notifier;
 		this.eventPackage = eventPackage;
 		this.subscriptionId = subscriptionId;
-		this.subscriptionEvent = subscriptionEvent;
+		this.terminationReason = terminationReason;
 		this.subscriptionStatus = subscriptionStatus;
 		this.content = content;
 		this.contentType = contentType;
@@ -67,8 +67,8 @@ public class InternalNotifyEvent {
 		return subscriber;
 	}
 
-	public Subscription.Event getSubscriptionEvent() {
-		return subscriptionEvent;
+	public Subscription.Event getTerminationReason() {
+		return terminationReason;
 	}
 
 	public String getSubscriptionId() {
@@ -102,8 +102,8 @@ public class InternalNotifyEvent {
 			"\n+-- Notifier: " + notifier +
 			"\n+-- EventPackage: " + eventPackage +
 			"\n+-- SubscriptionId: " + subscriptionId +
-			"\n+-- Last event on subscription: " + subscriptionEvent +
 			"\n+-- Subscription status: " + subscriptionStatus +
+			"\n+-- Subscription termination reason: " + terminationReason +
 			"\n+-- Content Type: " + contentType + '/' + contentSubtype +
 			"\n+-- Content:\n\n" + content;
 		}

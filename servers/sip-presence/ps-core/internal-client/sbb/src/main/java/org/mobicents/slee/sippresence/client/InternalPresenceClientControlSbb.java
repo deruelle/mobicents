@@ -13,6 +13,8 @@ import org.mobicents.slee.sipevent.server.publication.PublicationClientControlPa
 import org.mobicents.slee.sipevent.server.publication.PublicationClientControlSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionClientControlParentSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionClientControlSbbLocalObject;
+import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription.Event;
+import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription.Status;
 
 public abstract class InternalPresenceClientControlSbb implements Sbb,
 		InternalPresenceClientControlSbbLocalObject {
@@ -233,6 +235,16 @@ public abstract class InternalPresenceClientControlSbb implements Sbb,
 				eventPackage, subscriptionId, error);
 	}
 
+	public void notifyEvent(String subscriber, String notifier,
+			String eventPackage, String subscriptionId,
+			Event terminationReason, Status status, String content,
+			String contentType, String contentSubtype) {
+		
+		getParentSbbCMP().notifyEvent(subscriber, notifier, eventPackage,
+				subscriptionId, terminationReason, status, content,
+				contentType, contentSubtype);
+	}
+	
 	// CHILD RELATIONS AND CMP FIELDs
 
 	public abstract void setParentSbbCMP(

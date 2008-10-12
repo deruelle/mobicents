@@ -48,9 +48,9 @@ public class RemoveSipSubscriptionHandler {
 		sipSubscriptionHandler.sbb.getTimerFacility().cancelTimer(
 				subscription.getTimerID());
 
-		// change subscription state, simulate a timeout after a refresh of 0
-		// secs
-		subscription.changeStatus(Subscription.Event.timeout);
+		// change subscription state
+		subscription.setStatus(Subscription.Status.terminated);
+		subscription.setLastEvent(null);
 
 		// get dialog from aci
 		Dialog dialog = (Dialog) aci.getActivity();

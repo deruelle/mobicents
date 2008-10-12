@@ -33,7 +33,7 @@
 
 	<target name="build-xcap-client" description="">
 		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../xcap-client">
-			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -P maven-release" />
+			<arg line="clean install -P set-svn-revision,maven-release -Djboss.home=${jboss.home}" />
 		</exec>
 	</target>
 
@@ -49,6 +49,15 @@
 		</exec>
 	</target>
 
+	<target name="build-examples" description="">
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../examples/internal-publisher">
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
+		</exec>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../../examples/internal-subscriber">
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
+		</exec>
+	</target>
+	
 	<target name="release-xdms">
 		<antcall target="build-mobicents-jain-slee" />
 		<antcall target="build-xdms" inheritall="false">
@@ -67,6 +76,10 @@
 	<target name="release-integrated">
 		<antcall target="build-mobicents-jain-slee" />
 		<antcall target="build-integrated" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${jboss.home}" />
+		</antcall>
+		<antcall target="build-examples" inheritall="false">
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
@@ -196,6 +209,18 @@
 		<antcall target="release-component">
 			<param name="source.dir" value="${ant.file.mobicents.release}/../../integrated/deployable-unit" />
 			<param name="dest.dir" value="${release.dir}/sip-presence/integrated/deployable-unit" />
+		</antcall>
+		<antcall target="build-examples" inheritall="false">
+			<param name="mvn.executable" value="${mvn.executable}" />
+			<param name="jboss.home" value="${release.dir}/tmp" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../examples/internal-publisher/du" />
+			<param name="dest.dir" value="${release.dir}/sip-presence/examples/internal-publisher" />
+		</antcall>
+		<antcall target="release-component">
+			<param name="source.dir" value="${ant.file.mobicents.release}/../../examples/internal-subscriber/du" />
+			<param name="dest.dir" value="${release.dir}/sip-presence/examples/internal-subscriber" />
 		</antcall>
 		<copy overwrite="true" file="${ant.file.mobicents.release}/../release-build.xml" toFile="${release.dir}/sip-presence/build.xml">
 			<filterset>
