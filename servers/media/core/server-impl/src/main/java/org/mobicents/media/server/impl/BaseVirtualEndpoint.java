@@ -29,10 +29,11 @@ import org.mobicents.media.server.spi.VirtualEndpoint;
 public abstract class BaseVirtualEndpoint extends BaseEndpoint implements VirtualEndpoint {
 
 	private static int GEN = 1;
-	private HashMap<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
+	protected HashMap<String, Endpoint> endpoints = null;
 
-	public BaseVirtualEndpoint(String localName) {
+	public BaseVirtualEndpoint(String localName, HashMap<String, Endpoint> endpointMap) {
 		super(localName);
+		this.endpoints=endpointMap;
 	}
 
 	public Endpoint createEndpoint() {

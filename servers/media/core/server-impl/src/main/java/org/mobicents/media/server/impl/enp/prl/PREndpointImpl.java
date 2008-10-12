@@ -34,9 +34,10 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
 
     /**
      * Creates a new instance of PREndpointImpl
+     * @param endpointsMap 
      */
-    public PREndpointImpl(String localName) {
-        super(localName);
+    public PREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(2);
         addConnectionListener(this);
     }
@@ -64,7 +65,7 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new PREndpointImpl(localName);
+        return new PREndpointImpl(localName,super.endpoints);
     }
 
     @Override

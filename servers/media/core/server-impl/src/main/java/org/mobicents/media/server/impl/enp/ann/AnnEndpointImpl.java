@@ -49,9 +49,10 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
      * Creates a new instance of AnnEndpointImpl
      * 
      * @param localName the local name of the endpoint.
+     * @param endpointsMap 
      */
-    public AnnEndpointImpl(String localName) {
-        super(localName);
+    public AnnEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1);
         
         logger = Logger.getLogger(AnnEndpointImpl.class);
@@ -65,7 +66,7 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new AnnEndpointImpl(localName);
+        return new AnnEndpointImpl(localName,super.endpoints);
     }
 
     @Override

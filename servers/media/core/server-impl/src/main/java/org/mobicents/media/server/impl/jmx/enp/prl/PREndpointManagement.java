@@ -15,6 +15,8 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.prl;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.prl.*;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
@@ -29,10 +31,10 @@ public class PREndpointManagement extends EndpointManagement
         implements PREndpointManagementMBean {
 
     private transient Logger logger = Logger.getLogger(PREndpointManagement.class);
-
+    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     /** Creates a new instance of PREndpointManagement */
     public Endpoint createEndpoint() throws Exception {
-        return new PREndpointImpl(this.getJndiName());
+        return new PREndpointImpl(this.getJndiName(),endpointsMap);
     }
 
     public EndpointManagementMBean cloneEndpointManagementMBean() {

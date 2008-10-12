@@ -26,8 +26,8 @@ import org.mobicents.media.server.spi.Endpoint;
 public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener{
 
 
-    public LoopEndpointImpl(String localName) {
-        super(localName);
+    public LoopEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1);
         addConnectionListener(this);
     }
@@ -47,7 +47,7 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new LoopEndpointImpl(localName);
+        return new LoopEndpointImpl(localName,super.endpoints);
     }
 
     @Override

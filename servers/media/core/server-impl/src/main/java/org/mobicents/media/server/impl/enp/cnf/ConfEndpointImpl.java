@@ -38,15 +38,15 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     private HashMap mixers = new HashMap();
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     
-    public ConfEndpointImpl(String localName) {
-        super(localName);
+    public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1000);
         addConnectionListener(this);
     }
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new ConfEndpointImpl(localName);
+        return new ConfEndpointImpl(localName,super.endpoints);
     }
 
     @Override

@@ -15,6 +15,8 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.ann;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.ann.*;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
@@ -30,7 +32,7 @@ public class AnnEndpointManagement extends EndpointManagement
         implements AnnEndpointManagementMBean {
 
     private Logger logger = Logger.getLogger(AnnEndpointManagement.class);
-
+    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     /**
      * Creates a new instance of AnnEndpointManagement
      */
@@ -39,7 +41,7 @@ public class AnnEndpointManagement extends EndpointManagement
 
     @Override
     public Endpoint createEndpoint() throws Exception {
-        AnnEndpointImpl endpoint = new AnnEndpointImpl(getJndiName());
+        AnnEndpointImpl endpoint = new AnnEndpointImpl(getJndiName(),endpointsMap);
         return endpoint;
     }
 

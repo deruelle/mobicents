@@ -13,6 +13,8 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.cnf;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.cnf.ConfEndpointImpl;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
@@ -28,11 +30,11 @@ public class ConfEndpointManagement extends EndpointManagement
         implements ConfEndpointManagementMBean {
 
     private Logger logger = Logger.getLogger(ConfEndpointManagement.class);
-
+    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     @Override
     public Endpoint createEndpoint() throws Exception {
     	
-        return new ConfEndpointImpl(this.getJndiName());
+        return new ConfEndpointImpl(this.getJndiName(),endpointsMap);
     }
 
     @Override

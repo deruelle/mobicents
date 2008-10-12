@@ -1,5 +1,7 @@
 package org.mobicents.media.server.impl.jmx.enp.fft;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.fft.*;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
@@ -11,7 +13,6 @@ public class DFTEndpointManagement extends EndpointManagement implements
         DFTEndpointManagementMBean {
 
     private Logger logger = Logger.getLogger(PREndpointManagement.class);
-
     @Override
     public Endpoint createEndpoint() throws Exception {
         // TODO Auto-generated method stub

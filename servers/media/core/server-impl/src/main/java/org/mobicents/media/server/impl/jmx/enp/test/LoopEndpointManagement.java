@@ -13,6 +13,8 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.test;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.test.*;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
@@ -26,9 +28,9 @@ import org.mobicents.media.server.spi.Endpoint;
 public class LoopEndpointManagement extends EndpointManagement implements LoopEndpointManagementMBean {
 
     private Logger logger = Logger.getLogger(LoopEndpointManagement.class);
-
+    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     public Endpoint createEndpoint() throws Exception {
-        LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName());
+        LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName(),endpointsMap);
         return endpoint;
     }
 

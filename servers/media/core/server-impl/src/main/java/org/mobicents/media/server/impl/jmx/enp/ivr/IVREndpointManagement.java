@@ -15,6 +15,8 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.ivr;
 
+import java.util.HashMap;
+
 import org.mobicents.media.server.impl.enp.ivr.*;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.enp.ann.AnnEndpointManagement;
@@ -32,7 +34,7 @@ public class IVREndpointManagement extends AnnEndpointManagement
     private Logger logger = Logger.getLogger(IVREndpointManagement.class);
     private String recordDir;
     private String mediaType;
-
+    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     /** Creates a new instance of IVREndpointManagement */
     public IVREndpointManagement() {
     }
@@ -62,7 +64,7 @@ public class IVREndpointManagement extends AnnEndpointManagement
 
     @Override
     public Endpoint createEndpoint() throws Exception {
-        IVREndpointImpl endpoint = new IVREndpointImpl(getJndiName());
+        IVREndpointImpl endpoint = new IVREndpointImpl(getJndiName(),endpointsMap);
         return endpoint;
     }
 

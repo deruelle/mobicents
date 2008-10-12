@@ -35,9 +35,10 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
     protected String recordDir = null;
     private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
 
-    /** Creates a new instance of IVREndpointImpl */
-    public IVREndpointImpl(String localName) {
-        super(localName);
+    /** Creates a new instance of IVREndpointImpl 
+     * @param endpointsMap */
+    public IVREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1);
     }
 
@@ -58,7 +59,7 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        IVREndpointImpl enp = new IVREndpointImpl(localName);
+        IVREndpointImpl enp = new IVREndpointImpl(localName, super.endpoints);
         enp.setRecordDir(recordDir);
         enp.setMediaType(localName);
         return enp;
