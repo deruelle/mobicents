@@ -4,10 +4,27 @@
 	<property environment="sys"/>
 
 	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
+	<property name="release.name" value="mobicents-all"/>
+    <property name="release.version" value="1.2.0.CR2"/>
+	
 	<property name="jboss.version" value="4.2.2.GA"/>
-	<property name="release.version" value="1.2.0.CR2"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
-	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/"/>
+	<property name="jboss.download.url" value="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
+    <property name="jboss.home.relative.path" value="jboss-${jboss.version}/"/>
+	<property name="jboss.home" value="${release.dir}/${jboss.home.relative.path}/"/>
+	
+    <property name="jbcp.release.dir" value="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
+    <property name="jbcp.release.name" value="JBCP"/>
+    <property name="jbcp.release.version" value="1.2.0.CR2"/>
+
+    <property name="jbcp.ra.dirs" value="xmpp,http-servlet,sip,sip11,diameter/base,http-client,tts"/>
+    <property name="jbcp.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
+	
+	<property name="eap.version" value="eap-4.3"/>
+	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP02.zip"/>
+	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP02/zip/${eap.distro.zip.path}" />
+    <property name="eap.home.relative.path" value="jboss-${eap.version}/jboss-as"/>
+	<property name="eap.home" value="${jbcp.release.dir}/${eap.home.relative.path}"/>
 
 	<condition property="mvn.executable" value="${sys.M2_HOME}\bin\mvn.bat" else="mvn">
 		<os family="windows"/>
@@ -25,18 +42,36 @@
 		<antcall target="clean"/>
 	</target>
 
+    <target name="release-jbcp">
+        <ant antfile="${ant.file.mobicents.all.release}" target="release">
+             <property name="release.dir" value="${jbcp.release.dir}"/>
+            <property name="release.name" value="${jbcp.release.name}"/>
+             <property name="release.version" value="${jbcp.release.version}"/>
+
+            <property name="ra.dirs" value="${jbcp.ra.dirs}"/>
+            <property name="example.dirs" value="${jbcp.example.dirs}"/>
+
+            <property name="jboss.version" value="${eap.version}"/>
+            <property name="jboss.distro.zip.path" value="${eap.distro.zip.path}"/>
+            <property name="jboss.download.url" value="${eap.download.url}" />
+            <property name="jboss.home" value="${eap.home}"/>
+            <property name="jboss.home.relative.path" value="${eap.home.relative.path}"/>
+        </ant>
+    </target>
+	
 	<!-- get, unzip and clean jboss -->
 
 	<available file="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" property="got.jboss" />
 	<target name="get-jboss" unless="got.jboss">
 		<echo>Downloading JBoss AS</echo>
-		<get dest="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" src="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
+		<get dest="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" src="${jboss.download.url}" />
 	</target>
 
 	<target name="unzip-jboss">
 		<delete dir="${jboss.home}" failonerror="true" />
 		<unzip src="${jboss.distro.zip.path}" dest="${release.dir}" />
-		<delete dir="${jboss.home}/server/minimal" />
+		<delete dir="${jboss.home}/server/minimal" failonerror="false"/>
+        <delete dir="${jboss.home}/server/production" failonerror="false"/>
 	</target>
 
 	<!-- get servers -->
@@ -73,10 +108,12 @@
 	<target name="release-jain-slee">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 			<property name="jboss.config" value="all" />
 		</ant>
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
@@ -105,11 +142,13 @@
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
 			<property name="jboss.home" value="${jboss.home.converted}"/>
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 			<property name="jboss.config" value="all" />
 		</ant>
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
 			<property name="jboss.home" value="${jboss.home.converted}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
@@ -117,12 +156,12 @@
 	<target name="release-sip-presence">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
-			<property name="release.build.jboss.home" value="${home}../jboss-${jboss.version}" />
+			<property name="release.build.jboss.home" value="${home}../${jboss.home.relative.path}" />
 			<property name="jboss.config" value="all" />
 		</ant>
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
-			<property name="release.build.jboss.home" value="${home}../jboss-${jboss.version}"/>
+			<property name="release.build.jboss.home" value="${home}../${jboss.home.relative.path}"/>
 			<property name="jboss.config" value="default" />
 		</ant>
 	</target>
@@ -143,7 +182,7 @@
 		<echo>Done copying.</echo>
 		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}">
-			<arg line="clean install -P set-svn-revision -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
+			<arg line="clean install -P set-svn-revision,jboss-distro -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
 		</exec>
 
 		<exec executable="${mvn.executable}" dir="${mss.release.dir}/sip-servlets-examples/click-to-call">
@@ -222,21 +261,21 @@
 	<!-- zip source -->
 
 	<target name="build-src-zip" depends="">
-		<property name="src.zip.filename" value="mobicents-all-src.zip" />
-		<mkdir dir="${release.dir}/mobicents-all-src" />
+		<property name="src.zip.filename" value="${release.name}-src.zip" />
+		<mkdir dir="${release.dir}/${release.name}-src" />
 		<for param="dir.name">
 			<dirset dir="${ant.file.mobicents.all.release}/../target/servers"
 				includes="**/src/main/java"
 				 />
 			<sequential>
 				<echo>Packaging src for @{dir.name}</echo>
-				<copy todir="${release.dir}/mobicents-all-src" includeEmptyDirs="yes">
+				<copy todir="${release.dir}/${release.name}-src" includeEmptyDirs="yes">
 					<fileset dir="@{dir.name}" />
 				</copy>
 			</sequential>
 		</for>
-		<zip destfile="${release.dir}/${src.zip.filename}" basedir="${release.dir}/mobicents-all-src" />
-		<delete dir="${release.dir}/mobicents-all-src" />
+		<zip destfile="${release.dir}/${src.zip.filename}" basedir="${release.dir}/${release.name}-src" />
+		<delete dir="${release.dir}/${release.name}-src" />
 	</target>
 
 	<!-- zip release -->
@@ -244,10 +283,10 @@
 	<target name="zip-release" depends="set-zip-filename">
 		<fixcrlf srcdir="${jboss.home}/bin" includes="*.sh" eol="lf" eof="remove" />
 		<zip destfile="${ant.file.mobicents.all.release}/../${zip.filename}" filesonly="false">
-			<zipfileset dir="${jboss.home}/bin" filemode="755" prefix="jboss-${jboss.version}/bin">
+			<zipfileset dir="${jboss.home}/bin" filemode="755" prefix="${jboss.home.relative.path}/bin">
 				<include name="*.sh" />
 			</zipfileset>
-			<zipfileset dir="${jboss.home}/bin" prefix="jboss-${jboss.version}/bin">
+			<zipfileset dir="${jboss.home}/bin" prefix="${jboss.home.relative.path}/bin">
 				<exclude name="*.sh" />
 			</zipfileset>
 			<zipfileset dir="${release.dir}" prefix="" excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**" />
@@ -255,7 +294,7 @@
 	</target>
 
 	<target name="set-zip-filename" depends="set-time-stamp">
-		<property name="zip-filename-prefix" value="mobicents-all-${release.version}-jboss-${jboss.version}" />
+		<property name="zip-filename-prefix" value="${release.name}-${release.version}-jboss-${jboss.version}" />
 		<condition property="zip.filename" value="${zip-filename-prefix}-${time.stamp}.zip" else="${zip-filename-prefix}.zip">
 			<isset property="time.stamp" />
 		</condition>
