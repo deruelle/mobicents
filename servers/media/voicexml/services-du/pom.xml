@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>mobicents-media-server-vxml</artifactId>
 		<groupId>org.mobicents.servers.media</groupId>
-		<version>1.0.0.BETA5-SNAPSHOT</version>
+		<version>1.0.0.CR1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>voicexml-services-DU</artifactId>

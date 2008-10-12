@@ -114,7 +114,7 @@ public abstract class PromptSbb implements Sbb {
     
     public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
         logger.info("Catch dtmf tone");
-        EventCause cause = evt.getCause();
+        EventCause cause = null; //= evt.getCause();
         if (cause == EventCause.DTMF_DIGIT_0) {
                 setInputValue("0");
         } else if (cause == EventCause.DTMF_DIGIT_1) {

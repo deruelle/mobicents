@@ -171,7 +171,7 @@ public abstract class CallSbb implements Sbb {
         try {
             VXMLDocument document = (VXMLDocument) relation.create();
 		aci.attach(document);
-            document.start("http://localhost:8080/vxml/hello-world.vxml", connection.getEndpoint());
+            document.start("http://localhost:8080/vxml/hello-world.vxml", connection.getEndpoint().getLocalName());
         } catch (Exception e) {
             logger.error("Could not start VXML engine", e);
         }
