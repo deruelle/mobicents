@@ -1,16 +1,12 @@
 package org.mobicents.media.container.management.console.server.mbeans;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
 import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.naming.InitialContext;
 
 import org.mobicents.media.container.management.console.client.ManagementConsoleException;
 import org.mobicents.media.container.management.console.client.endpoint.ConnectionInfo;
@@ -20,9 +16,6 @@ import org.mobicents.media.container.management.console.client.endpoint.Endpoint
 import org.mobicents.media.container.management.console.client.endpoint.EndpointType;
 import org.mobicents.media.container.management.console.client.endpoint.NoSuchConnectionException;
 import org.mobicents.media.container.management.console.client.endpoint.NoSuchEndpointException;
-import org.mobicents.media.container.management.console.client.rtp.RTPManagementMBeanDoesNotExistException;
-import org.mobicents.media.container.management.console.client.rtp.RTPManagementOperationFailedException;
-import org.mobicents.media.server.local.management.EndpointLocalManagement;
 
 public class EndpointManagementMBeanUtils implements EndpointManagementService {
 

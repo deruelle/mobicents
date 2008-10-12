@@ -8,7 +8,7 @@
 		<artifactId>
 			mobicents-media-server-controllers-parent
 		</artifactId>
-		<version>1.0.0.BETA5-SNAPSHOT</version>
+		<version>1.0.0.CR1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>jsr309-ri</artifactId>
