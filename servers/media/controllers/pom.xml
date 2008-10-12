@@ -26,6 +26,7 @@
 		<module>mgcp/mgcp-stack</module>
 		<module>mgcp/mgcp-ra</module>
 		<module>mgcp/mgcp-controller-sbb</module>
+		<module>mms-console</module>
 		<!-- It fails due to some glitch, dunno why it happens as from mms-console module level it works!!! -->
 		<!--  module>mms-console</module -->
 	</modules>
