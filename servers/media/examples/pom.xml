@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.BETA5-SNAPSHOT</version>	
+		<version>1.0.0.CR1-SNAPSHOT</version>	
 	</parent>
 	
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
 	<groupId>org.mobicents.servers.media.examples</groupId>
-	<version>1.0.0.BETA5-SNAPSHOT</version>	
+	<version>1.0.0.CR1-SNAPSHOT</version>	
 	
 	<packaging>pom</packaging>
 	
@@ -17,7 +17,7 @@
 	
 	<properties>
 		<mobicents.media.server.controllers.version>
-			1.0.0.BETA5-SNAPSHOT
+			1.0.0.CR1-SNAPSHOT
 		</mobicents.media.server.controllers.version>		
 	</properties>	
 	

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mms-demo-parent</artifactId>
 	<groupId>org.mobicents.servers.media.examples</groupId>
-	<version>1.0.0.BETA5-SNAPSHOT</version>	
+	<version>1.0.0.CR1-SNAPSHOT</version>	
     </parent>
     
     <artifactId>mms-demo-utility</artifactId>
