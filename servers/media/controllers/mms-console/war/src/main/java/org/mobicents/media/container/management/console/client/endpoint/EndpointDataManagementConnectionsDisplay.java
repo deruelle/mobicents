@@ -71,7 +71,7 @@ public class EndpointDataManagementConnectionsDisplay extends Composite {
 		this.info=info;
 		if(info==null)
 		{
-			//FIXME: make BrowseContainer go up
+			onErrorAction.performAction();
 		}			
 
 		connectionList.emptyTable();
@@ -167,8 +167,14 @@ public class EndpointDataManagementConnectionsDisplay extends Composite {
 		}
 
 		public void onSuccess(Object arg0) {
-			refreshDataAction.performAction();
-			
+			if(info.getConnections()==1)
+			{
+				onErrorAction.performAction();
+			}
+			else
+			{
+				refreshDataAction.performAction();
+			}
 		}
 		
 	}
