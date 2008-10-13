@@ -198,6 +198,18 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 		return id;
 	}
 
+	private boolean isSevered()
+	{
+		if(this.connections[0]!=null && this.connections[1]!=null)
+		{
+			return (this.connections[0].getState()==ConnectionState.CLOSED) && (this.connections[1].getState()==ConnectionState.CLOSED);
+		}
+		else
+		{
+			return this.connections[0]!=null? (this.connections[0].getState()==ConnectionState.CLOSED):(this.connections[1].getState()==ConnectionState.CLOSED);
+		}
+	}
+	
 	private class JoinTx implements Runnable {
 
 		public String epnA;
@@ -292,7 +304,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 				}
 				break;
 			case CLOSED:
-				setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
+				if(isSevered())
+					setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
 			}
 			break;
 

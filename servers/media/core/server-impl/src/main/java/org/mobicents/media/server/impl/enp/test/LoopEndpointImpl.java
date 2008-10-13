@@ -29,20 +29,29 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     public LoopEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
         super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1);
-        addConnectionListener(this);
+        //addConnectionListener(this);
     }
 
     public void onStateChange(Connection connection, ConnectionState oldState) {
         BaseConnection con = (BaseConnection) connection;
-        switch (connection.getState()) {
-            case OPEN :
+        
+        try{
+        	switch (connection.getState()) {
+            	case OPEN :
 //                con.getDemux().connect(new TestSink());
-                con.getMux().connect(con.getDemux());
-                break;
-            case CLOSED :
-                con.getMux().disconnect(con.getDemux());
-                break;
-        }
+                	con.getMux().connect(con.getDemux());
+                	break;
+            	case CLOSED :
+                	con.getMux().disconnect(con.getDemux());
+                	break;
+        	}
+        }catch(Exception e)
+        {
+       		e.printStackTrace();
+       	}
+        
+        super.onStateChange(connection, oldState);
+        
     }
 
     @Override
