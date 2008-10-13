@@ -11,7 +11,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.au;
+package org.mobicents.media.server.impl.events.audio;
 
 import java.io.IOException;
 import java.io.InputStream;

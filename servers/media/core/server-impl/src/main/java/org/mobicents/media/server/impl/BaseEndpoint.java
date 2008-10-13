@@ -16,7 +16,6 @@
 package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -458,24 +457,18 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
     }
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-        System.out.println("Connection ID=" + connectionID);
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-        System.out.println("Connection =" + connection);
         
         connection.detect(null);
         for (int i = 0; i < events.length; i++) {
-            System.out.println("Detectting event= " + events[i].getID().getEventName() + ", handler=" + events[i].getHandler());
             connection.detect(events[i]);
         }
-        System.out.println("Listeners ready =");
 
         if (signals.length > 0) {
             try {
                 AbstractSignal signal = getSignal(signals[0]);
                 signal.apply(connection);
-        System.out.println("Play signal =" + signal);
             } catch (Exception e) {
-                logger.error("Execute signal error", e);
             }
         }
     }

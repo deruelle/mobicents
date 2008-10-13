@@ -92,6 +92,10 @@ public abstract class AbstractSink implements MediaSink {
 		synchronized (listeners) {
 			listeners.clear();
 		}
+                if (this.mediaStream != null) {
+                    ((AbstractSource) mediaStream).sink = null;
+                }
+                mediaStream = null;
 	}
 
 	@Override

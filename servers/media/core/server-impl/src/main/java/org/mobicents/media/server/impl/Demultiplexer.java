@@ -36,150 +36,155 @@ import org.mobicents.media.MediaSink;
  * @author Oleg Kulikov
  */
 public class Demultiplexer extends AbstractSource {
-	
-	private transient Logger logger = Logger.getLogger(Demultiplexer.class);
 
-	private Input input = new Input();
-	private HashMap<MediaSink, Output> branches = new HashMap();
-	private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
+    private transient Logger logger = Logger.getLogger(Demultiplexer.class);
+    private Input input = new Input();
+    private HashMap<String, Output> branches = new HashMap();
+    private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
+    private Format[] formats;
 
-	private Format[] formats;	
+    public AbstractSink getInput() {
+        return input;
+    }
 
-	public AbstractSink getInput() {
-		return input;
-	}
+    public Demultiplexer(Format[] formats) {
+        super("Demultiplexer");
+        this.formats = formats;
 
-	public Demultiplexer(Format[] formats) {
-		super("Demultiplexer");
-		this.formats = formats;
-		
-	}
+    }
 
-	@Override
-	public void connect(MediaSink sink) {
-		synchronized (branches) {
-			Output out = new Output();
-			branches.put(sink, out);
-			sink.connect(out);
-		}
-	}
+    @Override
+    public void connect(MediaSink sink) {
+        synchronized (branches) {
+            Output out = new Output();
+            branches.put(((AbstractSink) sink).getId(), out);
+            sink.connect(out);
+        }
+    }
 
-	@Override
-	public void disconnect(MediaSink sink) {
-		synchronized (branches) {
-			Output out = (Output) branches.remove(sink);
-			if (out != null) {
-				sink.disconnect(out);
-			}
-		}
-	}
+    @Override
+    public void disconnect(MediaSink sink) {
+        synchronized (branches) {
+            Output out = (Output) branches.remove(((AbstractSink) sink).getId());
+            if (out != null) {
+                sink.disconnect(out);
+                out.dispose();
+            }
+        }
+    }
 
-	public int getBranchCount() {
-		return branches.size();
-	}
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.branches.clear();
+    }
 
-	public void start() {
-	}
+    public int getBranchCount() {
+        return branches.size();
+    }
 
-	public void stop() {
-	}
+    public void start() {
+    }
 
-	private class Input extends AbstractSink {
+    public void stop() {
+    }
 
-		public Input() {
-			super("Demultiplexer.Input");
-		}
+    private class Input extends AbstractSink {
 
-		public boolean isAcceptable(Format fmt) {
-			return true;
-		}
+        public Input() {
+            super("Demultiplexer.Input");
+        }
 
-		public void receive(Buffer buffer) {
-			synchronized (branches) {
-				boolean transffered = false;
-				Collection<Output> streams = branches.values();
-				for (Output stream : streams) {
-					transffered = true;
-					stream.push((Buffer) buffer.clone());
-					demuxThreadPool.submit(stream);
-				}
+        public boolean isAcceptable(Format fmt) {
+            return true;
+        }
 
-				if (!transffered) {
-					CachedBuffersPool.release(buffer);
-				}
-			}
-		}
+        public void receive(Buffer buffer) {
+            synchronized (branches) {
+                boolean transffered = false;
+                Collection<Output> streams = branches.values();
+                for (Output stream : streams) {
+                    transffered = true;
+                    stream.push((Buffer) buffer.clone());
+                    demuxThreadPool.submit(stream);
+                }
 
-		public Format[] getFormats() {
-			// return mediaStream != null ? mediaStream.getFormats() : null;
-			return formats;
-		}
-	}
+                if (!transffered) {
+                    CachedBuffersPool.release(buffer);
+                }
+            }
+        }
 
-	private class Output extends AbstractSource implements Runnable {
+        public Format[] getFormats() {
+            // return mediaStream != null ? mediaStream.getFormats() : null;
+            return formats;
+        }
+    }
 
-		public Output() {
-			super("Demultiplexer.Output");
-		}
+    private class Output extends AbstractSource implements Runnable {
 
-		private ArrayList<Buffer> buffers = new ArrayList();
+        public Output() {
+            super("Demultiplexer.Output");
+        }
+        private ArrayList<Buffer> buffers = new ArrayList();
 
-		protected void push(Buffer buffer) {
-			synchronized (buffers) {
-				buffers.add(buffer);
-			}
-		}
+        protected void push(Buffer buffer) {
+            synchronized (buffers) {
+                buffers.add(buffer);
+            }
+        }
 
-		protected boolean isAcceptable(Format fmt) {
-			return sink != null ? sink.isAcceptable(fmt) : true;
-		}
+        protected boolean isAcceptable(Format fmt) {
+            return sink != null ? sink.isAcceptable(fmt) : true;
+        }
 
-		public void start() {
-		}
+        public void start() {
+        }
 
-		public void stop() {
-		}
+        public void stop() {
+        }
 
-		public void run() {
-			if (sink != null && !buffers.isEmpty()) {
-				Buffer buffer = buffers.remove(0);
-				if (sink.isAcceptable(buffer.getFormat())) {
-					sink.receive(buffer);
-				}
-			}
-		}
+        public void run() {
+            if (sink != null && !buffers.isEmpty()) {
+                Buffer buffer = buffers.remove(0);
+                if (sink.isAcceptable(buffer.getFormat())) {
+                    sink.receive(buffer);
+                }
+            }
+        }
 
-		public Format[] getFormats() {
-			return input.getFormats();
-		}
-	}
+        public Format[] getFormats() {
+            return input.getFormats();
+        }
+    }
 
-	public Format[] getFormats() {
-		// return input.getFormats();
-		return formats;
-	}
+    public Format[] getFormats() {
+        // return input.getFormats();
+        return formats;
+    }
 
-	private static class ThreadFactoryImpl implements ThreadFactory {
+    private static class ThreadFactoryImpl implements ThreadFactory {
 
-		final ThreadGroup group;
-		static final AtomicInteger demuxPoolNumber = new AtomicInteger(1);
-		final AtomicInteger threadNumber = new AtomicInteger(1);
-		final String namePrefix;
+        final ThreadGroup group;
+        static final AtomicInteger demuxPoolNumber = new AtomicInteger(1);
+        final AtomicInteger threadNumber = new AtomicInteger(1);
+        final String namePrefix;
 
-		ThreadFactoryImpl() {
-			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			namePrefix = "Demultiplexer-CachedThreadPool-" + demuxPoolNumber.getAndIncrement() + "thread-";
-		}
+        ThreadFactoryImpl() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "Demultiplexer-CachedThreadPool-" + demuxPoolNumber.getAndIncrement() + "thread-";
+        }
 
-		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-			if (t.isDaemon())
-				t.setDaemon(false);
-			if (t.getPriority() != Thread.NORM_PRIORITY)
-				t.setPriority(Thread.NORM_PRIORITY);
-			return t;
-		}
-
-	}
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
+    }
 }

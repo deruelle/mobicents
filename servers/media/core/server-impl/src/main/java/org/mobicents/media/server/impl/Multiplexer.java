@@ -44,7 +44,7 @@ public class Multiplexer extends AbstractSink implements Runnable {
     private final static AudioFormat DTMF = new AudioFormat(
             "telephone-event/8000");
     private Format[] formats = null;
-    private HashMap<MediaSource, Input> inputs = new HashMap();
+    private HashMap<String, Input> inputs = new HashMap();
     private Output output;
     private ArrayList<Buffer> packets = new ArrayList();
     private Timer timer;
@@ -82,20 +82,25 @@ public class Multiplexer extends AbstractSink implements Runnable {
         Input input = new Input();
         // input.connect(source);
         source.connect(input);
-        inputs.put(source, input);
+        inputs.put(((AbstractSource)source).getId(), input);
         reassemblyFormats();
     }
 
     @Override
     public void disconnect(MediaSource source) {
-        Input input = inputs.remove(source);
+        Input input = inputs.remove(((AbstractSource)source).getId());
         if (input != null) {
-            // input.disconnect(source);
             source.disconnect(input);
+            input.dispose();
             reassemblyFormats();
         }
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        inputs.clear();
+    }
     /**
      * Reassemblies the list of used formats. This method is called each time
      * when connected/disconnected source

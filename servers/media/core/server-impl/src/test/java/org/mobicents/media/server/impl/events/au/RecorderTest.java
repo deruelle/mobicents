@@ -4,6 +4,7 @@
  */
 
 package org.mobicents.media.server.impl.events.au;
+import org.mobicents.media.server.impl.events.audio.Recorder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

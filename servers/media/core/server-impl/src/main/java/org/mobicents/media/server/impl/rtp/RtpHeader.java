@@ -25,29 +25,42 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.spi.events.audio;
+package org.mobicents.media.server.impl.rtp;
 
-import org.mobicents.media.server.spi.events.EventIdentifier;
-import org.mobicents.media.server.spi.events.RequestedSignal;
-import org.mobicents.media.server.spi.events.pkg.Audio;
+import java.io.Serializable;
 
 /**
  *
- * @author kulikov
+ * @author Oleg Kulikov
  */
-public class RecordRequestedSignal implements RequestedSignal {
+public class RtpHeader implements Serializable {
+    private int version = 2;
+    private boolean padding = false;
+    private boolean extensions = false;
+    private int cc = 0;
+    private boolean marker = false;
+    private int payloadType;
+    private int seqNumber;
+    private int timestamp;
+    private long ssrc;
 
-    private String file;
+    public RtpHeader(byte payloadType, int seqNumber, int timestamp, long ssrc) {
+        this.payloadType = payloadType;
+        this.seqNumber = seqNumber;
+        this.timestamp = timestamp;
+        this.ssrc = ssrc;
+    }
     
-    public EventIdentifier getID() {
-        return Audio.RECORD;
+    public int getPayloadType() {
+        return payloadType;
     }
 
-    public String getFile() {
-        return file;
+    public int getSeqNumber() {
+        return this.seqNumber;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
     }
     
-    public void setFile(String file) {
-        this.file = file;
-    }
 }

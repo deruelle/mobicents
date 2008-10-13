@@ -104,6 +104,9 @@ public abstract class AbstractSource implements MediaSource {
         synchronized (listeners) {
             listeners.clear();
         }
+        if (this.sink != null) {
+            ((AbstractSink) sink).mediaStream = null;
+        }
     }
     
 	@Override

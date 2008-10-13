@@ -22,7 +22,7 @@ import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.au.Recorder;
+import org.mobicents.media.server.impl.events.audio.Recorder;
 import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
