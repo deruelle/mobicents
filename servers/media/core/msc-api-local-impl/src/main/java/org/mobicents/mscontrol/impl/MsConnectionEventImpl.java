@@ -65,7 +65,7 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
                     listener.connectionCreated(this);
                     break;
                 case CONNECTION_HALF_OPEN:
-                    listener.connectionCreated(this);
+                    listener.connectionHalfOpen(this);
                     break;
                 case CONNECTION_OPEN:
                     listener.connectionOpen(this);
