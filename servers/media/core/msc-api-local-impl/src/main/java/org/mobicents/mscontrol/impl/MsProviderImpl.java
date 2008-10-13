@@ -15,6 +15,7 @@
  */
 package org.mobicents.mscontrol.impl;
 
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
 	protected ArrayList<MsSession> sessions = new ArrayList<MsSession>();
 	protected static ExecutorService pool = Executors.newFixedThreadPool(25, new ThreadFactoryImpl());
-
+        private static QueuedExecutor eventQueue = new QueuedExecutor();
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
 		
@@ -173,6 +174,13 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		pool.submit(task);
 	}
 
+        protected static synchronized void sendEvent(Runnable event) {
+            try {
+                eventQueue.execute(event);
+            } catch (InterruptedException e) {
+            }
+        }
+        
 	static class ThreadFactoryImpl implements ThreadFactory {
 
 		final ThreadGroup group;

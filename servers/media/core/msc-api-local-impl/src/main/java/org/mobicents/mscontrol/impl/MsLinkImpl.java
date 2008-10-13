@@ -55,276 +55,264 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
  */
 public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
-	protected  Logger logger = Logger.getLogger(this.getClass());
-	
+    protected Logger logger = Logger.getLogger(this.getClass());
+    private static final long serialVersionUID = 6373269860176309745L;
+    private final String id = (new UID()).toString();
+    protected MsSessionImpl session;
+    private MsLinkMode mode;
+    private MsLinkState state;
+    private Connection[] connections = new Connection[2];
+    private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
+    private QueuedExecutor eventQueue = new QueuedExecutor();
+    private ThreadFactory threadFactory;
+    private EventParser eventParser = new EventParser();
+    private int permits = 0;
+    private PendingQueue[] pendingQueue = new PendingQueue[2];
 
-	private static final long serialVersionUID = 6373269860176309745L;
-	private final String id = (new UID()).toString();
-	protected MsSessionImpl session;
-	private MsLinkMode mode;
-	private MsLinkState state;
-	private Connection[] connections = new Connection[2];
-	
-	private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
-	private QueuedExecutor eventQueue = new QueuedExecutor();
-	private ThreadFactory threadFactory;
-	private EventParser eventParser = new EventParser();
-	private int permits = 0;
-	
-	private PendingQueue[] pendingQueue = new PendingQueue[2];
+    public String getId() {
+        return id;
+    }
 
-	public String getId() {
-		return id;
-	}
+    /** Creates a new instance of MsLink */
+    public MsLinkImpl(MsSessionImpl session, MsLinkMode mode) {
+        this.session = session;
+        this.mode = mode;
 
-	/** Creates a new instance of MsLink */
-	public MsLinkImpl(MsSessionImpl session, MsLinkMode mode) {
-		this.session = session;
-		this.mode = mode;
+        threadFactory = new ThreadFactory() {
 
-		threadFactory = new ThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            final SynchronizedInt i = new SynchronizedInt(0);
 
-			SecurityManager s = System.getSecurityManager();
-			ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			final SynchronizedInt i = new SynchronizedInt(0);
+            public Thread newThread(final Runnable runnable) {
+                return new Thread(group, runnable, "MsLinkImpl-QueuedExecutor-Thread-" + i.increment());
+            }
+        };
 
-			public Thread newThread(final Runnable runnable) {
-				return new Thread(group, runnable, "MsLinkImpl-QueuedExecutor-Thread-" + i.increment());
-			}
-		};
+        eventQueue.setThreadFactory(threadFactory);
+        setState(MsLinkState.IDLE, MsLinkEventCause.NORMAL);
+    }
 
-		eventQueue.setThreadFactory(threadFactory);
-		setState(MsLinkState.IDLE, MsLinkEventCause.NORMAL);
-	}
+    public MsSession getSession() {
+        return session;
+    }
 
-	public MsSession getSession() {
-		return session;
-	}
+    public MsLinkState getState() {
+        return this.state;
+    }
 
-	public MsLinkState getState() {
-		return this.state;
-	}
+    private void setState(MsLinkState state, MsLinkEventCause cause) {
+        this.state = state;
+        switch (state) {
+            case IDLE:
+                sendEvent(MsLinkEventID.LINK_CREATED, cause, null);
+                break;
+            case CONNECTED:
+                sendEvent(MsLinkEventID.LINK_CONNECTED, cause, null);
+                break;
+            case FAILED:
+                sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
+                eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
+                break;
+            case DISCONNECTED:
+                session.removeLink(this);
+                sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
+                eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
+                break;
+        }
+    }
 
-	private void setState(MsLinkState state, MsLinkEventCause cause) {
-		this.state = state;
-		switch (state) {
-		case IDLE:
-			sendEvent(MsLinkEventID.LINK_CREATED, cause, null);
-			break;
-		case CONNECTED:
-			sendEvent(MsLinkEventID.LINK_CONNECTED, cause, null);
-			break;
-		case FAILED:
-			sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
-			eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
-			break;
-		case DISCONNECTED:
-			session.removeLink(this);
-			sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
-			eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
-			break;
-		}
-	}
+    protected String getConnectionID(String endpointName) {
+        if (endpoints != null) {
+            if (endpoints[0].server.getLocalName().matches(endpointName)) {
+                return connections[0].getId();
+            } else if (endpoints[1].server.getLocalName().matches(endpointName)) {
+                return connections[1].getId();
+            }
+        }
+        return null;
+    }
 
-	protected String getConnectionID(String endpointName) {
-		if (endpoints != null) {
-			if (endpoints[0].server.getLocalName().matches(endpointName)) {
-				return connections[0].getId();
-			} else if (endpoints[1].server.getLocalName().matches(endpointName)) {
-				return connections[1].getId();
-			}
-		}
-		return null;
-	}
+    private void sendEvent(MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
+        MsLinkEventImpl evt = new MsLinkEventImpl(this, eventID, cause, msg);
+        MsProviderImpl.sendEvent(evt);
+    }
 
-	private void sendEvent(MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
-		MsLinkEventImpl evt = new MsLinkEventImpl(this, eventID, cause, msg);
-		try {
-			eventQueue.execute(evt);
-		} catch (InterruptedException e) {
-		}
-	}
+    /**
+     * Joins specified endpoints.
+     * 
+     * @param a
+     *            the name of the first endpoint.
+     * @param b
+     *            the name of the second endpoint.
+     */
+    public void join(String a, String b) {
+        Runnable tx = new JoinTx(this, a, b);
+        MsProviderImpl.submit(tx);
+    }
 
-	/**
-	 * Joins specified endpoints.
-	 * 
-	 * @param a
-	 *            the name of the first endpoint.
-	 * @param b
-	 *            the name of the second endpoint.
-	 */
-	public void join(String a, String b) {
-		Runnable tx = new JoinTx(this, a, b);
-		MsProviderImpl.submit(tx);
-	}
+    public MsEndpoint[] getEndpoints() {
+        return endpoints;
+    }
 
-	public MsEndpoint[] getEndpoints() {
-		return endpoints;
-	}
+    public void addLinkListener(MsLinkListener listener) {
+        session.provider.linkListeners.add(listener);
+    }
 
-	public void addLinkListener(MsLinkListener listener) {
-		session.provider.linkListeners.add(listener);
-	}
+    public void removeLinkListener(MsLinkListener listener) {
+        session.provider.linkListeners.remove(listener);
+    }
 
-	public void removeLinkListener(MsLinkListener listener) {
-		session.provider.linkListeners.remove(listener);
-	}
+    /**
+     * Drops this link
+     */
+    public void release() {
+        DropTx tx = new DropTx();
+        MsProviderImpl.submit(tx);
+    }
 
-	/**
-	 * Drops this link
-	 */
-	public void release() {
-		DropTx tx = new DropTx();
-		MsProviderImpl.submit(tx);
-	}
+    private PendingQueue getQueue(String endpointName) {
+        if (endpoints[0].getLocalName().equals(endpointName)) {
+            return pendingQueue[0];
+        }
+        return pendingQueue[1];
+    }
 
-	private PendingQueue getQueue(String endpointName) {
-		if (endpoints[0].getLocalName().equals(endpointName)) {
-			return pendingQueue[0];
-		}
-		return pendingQueue[1];
-	}
+    public void append(MsRequestedSignal requestedSignal, String endpointName) {
+        getQueue(endpointName).append(requestedSignal);
+    }
 
-	public void append(MsRequestedSignal requestedSignal, String endpointName) {
-		getQueue(endpointName).append(requestedSignal);
-	}
+    public void append(MsRequestedEvent requestedEvent, String endpointName) {
+        getQueue(endpointName).append(requestedEvent);
+    }
 
-	public void append(MsRequestedEvent requestedEvent, String endpointName) {
-		getQueue(endpointName).append(requestedEvent);
-	}
+    @Override
+    public String toString() {
+        return id;
+    }
 
-	@Override
-	public String toString() {
-		return id;
-	}
+    private boolean isSevered() {
+        if (this.connections[0] != null && this.connections[1] != null) {
+            return (this.connections[0].getState() == ConnectionState.CLOSED) && (this.connections[1].getState() == ConnectionState.CLOSED);
+        } else {
+            return this.connections[0] != null ? (this.connections[0].getState() == ConnectionState.CLOSED) : (this.connections[1].getState() == ConnectionState.CLOSED);
+        }
+    }
 
-	private boolean isSevered()
-	{
-		if(this.connections[0]!=null && this.connections[1]!=null)
-		{
-			return (this.connections[0].getState()==ConnectionState.CLOSED) && (this.connections[1].getState()==ConnectionState.CLOSED);
-		}
-		else
-		{
-			return this.connections[0]!=null? (this.connections[0].getState()==ConnectionState.CLOSED):(this.connections[1].getState()==ConnectionState.CLOSED);
-		}
-	}
-	
-	private class JoinTx implements Runnable {
+    private class JoinTx implements Runnable {
 
-		public String epnA;
-		public String epnB;
-		private MsLinkImpl link;
+        public String epnA;
+        public String epnB;
+        private MsLinkImpl link;
 
-		public JoinTx(MsLinkImpl link, String epnA, String epnB) {
-			this.link = link;
-			this.epnA = epnA;
-			this.epnB = epnB;
-		}
+        public JoinTx(MsLinkImpl link, String epnA, String epnB) {
+            this.link = link;
+            this.epnA = epnA;
+            this.epnB = epnB;
+        }
 
-		private Connection createConnection(String epn, int end) throws NamingException, ResourceUnavailableException,
-				TooManyConnectionsException {
-			Endpoint endpoint = EndpointQuery.lookup(epn);
-			return endpoint.createLocalConnection(getMode(end));
-		}
+        private Connection createConnection(String epn, int end) throws NamingException, ResourceUnavailableException,
+                TooManyConnectionsException {
+            Endpoint endpoint = EndpointQuery.lookup(epn);
+            return endpoint.createLocalConnection(getMode(end));
+        }
 
-		public void run() {
-			try {
-				connections[0] = createConnection(epnA, 0);
-				connections[0].addListener(link);
+        public void run() {
+            try {
+                connections[0] = createConnection(epnA, 0);
+                connections[0].addListener(link);
 
-				endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint(), session.getProvider());
-				pendingQueue[0] = new PendingQueue(connections[0].getEndpoint(), connections[0].getId());
+                endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint(), session.getProvider());
+                pendingQueue[0] = new PendingQueue(connections[0].getEndpoint(), connections[0].getId());
 
-				connections[1] = createConnection(epnB, 1);
-				connections[1].addListener(link);
+                connections[1] = createConnection(epnB, 1);
+                connections[1].addListener(link);
 
-				endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint(), session.getProvider());
-				pendingQueue[1] = new PendingQueue(connections[1].getEndpoint(), connections[1].getId());
+                endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint(), session.getProvider());
+                pendingQueue[1] = new PendingQueue(connections[1].getEndpoint(), connections[1].getId());
 
-				connections[0].setOtherParty(connections[1]);
-			} catch (NamingException e) {
-				e.printStackTrace();
-				setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
-			} catch (ResourceUnavailableException e) {
-				e.printStackTrace();
-				setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
-			} catch (TooManyConnectionsException e) {
-				e.printStackTrace();
-				setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
-			} catch (Exception e) {
-				e.printStackTrace();
-				setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
-			}
-		}
-	}
+                connections[0].setOtherParty(connections[1]);
+            } catch (NamingException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
+            } catch (ResourceUnavailableException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+            } catch (TooManyConnectionsException e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
+            }
+        }
+    }
 
-	private class DropTx implements Runnable {
+    private class DropTx implements Runnable {
 
-		public void run() {
-			try{
-				if (connections[1] != null) {
-					connections[1].getEndpoint().deleteConnection(connections[1].getId());
-				}
-			}catch(Exception e)
-			{
-				logger.info("Error on connection remove, index: 1",e);
-			}
-			
-			try{
-				if (connections[0] != null) {
-					connections[0].getEndpoint().deleteConnection(connections[0].getId());
-				}
-			}catch(Exception e)
-			{
-				logger.info("Error on connection remove, index: 0",e);
-			}
-		}
-	}
+        public void run() {
+            try {
+                if (connections[1] != null) {
+                    connections[1].getEndpoint().deleteConnection(connections[1].getId());
+                }
+            } catch (Exception e) {
+                logger.info("Error on connection remove, index: 1", e);
+            }
 
-	private ConnectionMode getMode(int end) {
-		switch (mode) {
-		case FULL_DUPLEX:
-			return ConnectionMode.SEND_RECV;
-		case HALF_DUPLEX:
-			return end == 0 ? ConnectionMode.SEND_ONLY : ConnectionMode.RECV_ONLY;
-		}
-		return null;
-	}
+            try {
+                if (connections[0] != null) {
+                    connections[0].getEndpoint().deleteConnection(connections[0].getId());
+                }
+            } catch (Exception e) {
+                logger.info("Error on connection remove, index: 0", e);
+            }
+        }
+    }
 
-	public void onStateChange(Connection connection, ConnectionState oldState) {
-		switch (state) {
-		
-		case IDLE:
-			switch (connection.getState()) {
-			case OPEN:
-				permits++;
-				if (permits == 2) {
-					setState(MsLinkState.CONNECTED, MsLinkEventCause.NORMAL);
-				}
-				break;
-			case CLOSED:
-				if(isSevered())
-					setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
-			}
-			break;
+    private ConnectionMode getMode(int end) {
+        switch (mode) {
+            case FULL_DUPLEX:
+                return ConnectionMode.SEND_RECV;
+            case HALF_DUPLEX:
+                return end == 0 ? ConnectionMode.SEND_ONLY : ConnectionMode.RECV_ONLY;
+        }
+        return null;
+    }
 
-		case CONNECTED:
-			switch (connection.getState()) {
-			case HALF_OPEN:
-			case CLOSED:
-				permits--;
-				if (permits == 0) {
-					setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
-				}
-			}
-		}
-	}
+    public void onStateChange(Connection connection, ConnectionState oldState) {
+        switch (state) {
 
-	public void update(NotifyEvent event) {
-		MsNotifyEvent evt = eventParser.parse(this, event);
-		for (MsNotificationListener listener : session.provider.eventListeners) {
-			listener.update(evt);
-		}
-	}
+            case IDLE:
+                switch (connection.getState()) {
+                    case OPEN:
+                        permits++;
+                        if (permits == 2) {
+                            setState(MsLinkState.CONNECTED, MsLinkEventCause.NORMAL);
+                        }
+                        break;
+                    case CLOSED:
+                        if (isSevered()) {
+                            setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
+                        }
+                }
+                break;
+
+            case CONNECTED:
+                switch (connection.getState()) {
+                    case HALF_OPEN:
+                    case CLOSED:
+                        permits--;
+                        if (permits == 0) {
+                            setState(MsLinkState.DISCONNECTED, MsLinkEventCause.NORMAL);
+                        }
+                }
+        }
+    }
+
+    public void update(NotifyEvent event) {
+        MsNotifyEvent evt = eventParser.parse(this, event);
+        for (MsNotificationListener listener : session.provider.eventListeners) {
+            listener.update(evt);
+        }
+    }
 }

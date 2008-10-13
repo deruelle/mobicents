@@ -129,10 +129,7 @@ public class MsSessionImpl implements MsSession {
      */
     private void sendEvent(MsSessionEventID eventID, MsSessionEventCause eventCause, Object causeObject) {
         MsSessionEventImpl evt = new MsSessionEventImpl(this, eventID, eventCause, causeObject);
-        try {
-            eventQueue.execute(evt);
-        } catch (InterruptedException e) {
-        }
+        MsProviderImpl.sendEvent(evt);
     }
 
     /**
