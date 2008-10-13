@@ -14,7 +14,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
@@ -25,7 +28,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  * @author Oleg Kulikov
  */
 public class BaseConnectionTest {
-
+	private ConnectionListener cListener=new HollowConnectionListener();
     public BaseConnectionTest() {
     }
 
@@ -227,7 +230,7 @@ public class BaseConnectionTest {
 
     private class TestConnection extends BaseConnection {
         public TestConnection (Endpoint enp, ConnectionMode mode) throws ResourceUnavailableException {
-            super(enp, mode);
+            super(enp, mode,cListener);
         }
 
         public String getLocalDescriptor() {
@@ -245,6 +248,11 @@ public class BaseConnectionTest {
         public void setOtherParty(Connection other) throws IOException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+		public String getOtherEnd() throws IllegalArgumentException {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
     
     private class TestEndpoint extends BaseEndpoint {
@@ -261,5 +269,15 @@ public class BaseConnectionTest {
         public HashMap initMediaSinks() {
             return new HashMap();
         }
+
+		public String[] getEndpointNames() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public EndpointLocalManagement[] getEndpoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

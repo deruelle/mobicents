@@ -55,7 +55,7 @@ import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
  */
 public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
-	private Logger logger = Logger.getLogger(MsLinkImpl.class);
+	protected  Logger logger = Logger.getLogger(this.getClass());
 	
 
 	private static final long serialVersionUID = 6373269860176309745L;
@@ -70,7 +70,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 	private ThreadFactory threadFactory;
 	private EventParser eventParser = new EventParser();
 	private int permits = 0;
-
+	
 	private PendingQueue[] pendingQueue = new PendingQueue[2];
 
 	public String getId() {
@@ -250,11 +250,22 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 	private class DropTx implements Runnable {
 
 		public void run() {
-			if (connections[1] != null) {
-				connections[1].getEndpoint().deleteConnection(connections[1].getId());
+			try{
+				if (connections[1] != null) {
+					connections[1].getEndpoint().deleteConnection(connections[1].getId());
+				}
+			}catch(Exception e)
+			{
+				logger.info("Error on connection remove, index: 1",e);
 			}
-			if (connections[0] != null) {
-				connections[0].getEndpoint().deleteConnection(connections[0].getId());
+			
+			try{
+				if (connections[0] != null) {
+					connections[0].getEndpoint().deleteConnection(connections[0].getId());
+				}
+			}catch(Exception e)
+			{
+				logger.info("Error on connection remove, index: 0",e);
 			}
 		}
 	}
@@ -271,6 +282,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
 	public void onStateChange(Connection connection, ConnectionState oldState) {
 		switch (state) {
+		
 		case IDLE:
 			switch (connection.getState()) {
 			case OPEN:

@@ -17,7 +17,11 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
+
 import static org.junit.Assert.*;
+
+import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
@@ -32,7 +36,7 @@ public class LocalConnectionImplTest {
     
     private int count;
     private ArrayList packets;
-    
+    private ConnectionListener cListener=new HollowConnectionListener();
     
     public LocalConnectionImplTest() {
     }
@@ -58,7 +62,7 @@ public class LocalConnectionImplTest {
     public void testGetEndpoint() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             assertEquals(enp, con.getEndpoint());
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
@@ -71,7 +75,7 @@ public class LocalConnectionImplTest {
     public void testSetState() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             assertEquals(ConnectionState.HALF_OPEN, con.getState());
             
         } catch (ResourceUnavailableException e) {
@@ -91,8 +95,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -119,8 +123,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -158,8 +162,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -196,8 +200,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -258,6 +262,16 @@ public class LocalConnectionImplTest {
         public HashMap initMediaSinks() {
             return new HashMap();
         }
+
+		public String[] getEndpointNames() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public EndpointLocalManagement[] getEndpoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
     
     private class Source extends AbstractSource implements Runnable {
@@ -319,5 +333,7 @@ public class LocalConnectionImplTest {
         }
         
     }
+    
+  
     
 }

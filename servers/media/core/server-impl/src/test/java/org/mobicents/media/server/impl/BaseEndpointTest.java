@@ -11,6 +11,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
@@ -265,5 +267,15 @@ public class BaseEndpointTest {
         public HashMap initMediaSinks() {
             return new HashMap();
         }
+
+		public String[] getEndpointNames() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public EndpointLocalManagement[] getEndpoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

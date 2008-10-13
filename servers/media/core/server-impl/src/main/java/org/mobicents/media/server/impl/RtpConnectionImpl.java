@@ -39,6 +39,7 @@ import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
@@ -75,8 +76,8 @@ public class RtpConnectionImpl extends BaseConnection {
      * @param mode
      *            the mode of this connection.
      */
-    public RtpConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-        super(endpoint, mode);
+    public RtpConnectionImpl(Endpoint endpoint, ConnectionMode mode, ConnectionListener initial) throws ResourceUnavailableException {
+        super(endpoint, mode, initial);
         logger = Logger.getLogger(RtpConnectionImpl.class);
 
 

@@ -21,8 +21,11 @@ import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.TooManyConnectionsException;
 
 /**
  *
@@ -39,11 +42,52 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
     public PREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
         super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(2);
-        addConnectionListener(this);
+        //addConnectionListener(this);
     }
 
-    public void onStateChange(Connection connection, ConnectionState oldState) {
-        if (this.getConnections().size() == 2) {
+    
+
+    @Override
+	public synchronized Connection createConnection(ConnectionMode mode)
+			throws TooManyConnectionsException, ResourceUnavailableException {
+		
+    	
+    	
+    	Connection c=super.createConnection(mode);
+    	
+    	 if (this.getConnections().size() == 2) {
+             BaseConnection[] connections = new BaseConnection[2];
+             this.getConnections().toArray(connections);
+
+            
+//             if (connections[1] instanceof LocalConnectionImpl) {
+//                 System.out.println("!!!!!!! Assigned test sink");
+//                 connections[1].getDemux().connect(new TestSink());
+//             } else {
+                 connections[1].getDemux().connect(connections[0].getMux());
+//             }
+//             if (connections[0] instanceof LocalConnectionImpl) {
+//                 System.out.println("!!!!!!! Assigned test sink");
+//                 connections[0].getDemux().connect(new TestSink());
+//             } else {
+                 connections[0].getDemux().connect(connections[1].getMux());
+//             }
+         }
+    	
+		return c;
+		
+	}
+
+
+
+	@Override
+	public synchronized Connection createLocalConnection(ConnectionMode mode)
+			throws TooManyConnectionsException, ResourceUnavailableException {
+	
+		
+		Connection c=super.createLocalConnection(mode);
+    	
+   	 if (this.getConnections().size() == 2) {
             BaseConnection[] connections = new BaseConnection[2];
             this.getConnections().toArray(connections);
 
@@ -61,9 +105,14 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
                 connections[0].getDemux().connect(connections[1].getMux());
 //            }
         }
-    }
+   	
+		return c;
 
-    @Override
+	}
+
+
+
+	@Override
     public Endpoint doCreateEndpoint(String localName) {
         return new PREndpointImpl(localName,super.endpoints);
     }

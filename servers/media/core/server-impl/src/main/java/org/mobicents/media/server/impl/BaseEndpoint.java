@@ -58,7 +58,7 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
  * 
  * @author Oleg Kulikov.
  */
-public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement{
+public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement,ConnectionListener{
 
     protected final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
     protected final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
@@ -77,7 +77,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
     protected int maxConnections = 0;
     protected ArrayList<NotificationListener> listeners = new ArrayList();
     protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
-    protected ConnectionStateGuard guard=new ConnectionStateGuard(connectionListeners);
+    protected ConnectionStateGuard endpointConnectioStateGuard=new ConnectionStateGuard(connectionListeners);
     protected static Timer connectionTimer = new Timer();
     protected transient Logger logger = Logger.getLogger(this.getClass());
     
@@ -89,6 +89,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
     
     public BaseEndpoint(String localName) {
         this.localName = localName;
+        this.addConnectionListener(this);
     }
 
     /**
@@ -181,7 +182,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
      * @throws org.mobicents.media.server.spi.ResourceUnavailableException
      */
     protected Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-        return new RtpConnectionImpl(endpoint, mode);
+        return new RtpConnectionImpl(endpoint, mode, this.endpointConnectioStateGuard);
     }
 
     /**
@@ -197,7 +198,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
             }
 
             Connection connection = doCreateConnection(this, mode);
-            connection.addListener(guard);
+            
             connections.put(connection.getId(), connection);
 
             HashMap<String, MediaSource> sourceMap = initMediaSources();
@@ -233,8 +234,8 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
             }
 
             synchronized (this) {
-                Connection connection = new LocalConnectionImpl(this, mode);
-                connection.addListener(guard);
+                Connection connection = new LocalConnectionImpl(this, mode,this.endpointConnectioStateGuard);
+                
                 connections.put(connection.getId(), connection);
 
                 HashMap<String, MediaSource> sourceMap = initMediaSources();
@@ -262,34 +263,49 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
      * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
      */
     public synchronized void deleteConnection(String connectionID) {
-        BaseConnection connection = (BaseConnection) connections.remove(connectionID);
-        if (connection != null) {
-            connection.detect(null);
-            //clean
-            HashMap map = mediaSources.remove(connection.getId());
-            Collection<MediaSource> gens = map.values();
-            for (MediaSource generator : gens) {
-                generator.stop();
-                generator.disconnect(connection.getMux());
-                generator.dispose();
-            }
-            map.clear();
+        deleteConnection(connectionID, false);
+    }
+    public synchronized void deleteConnection(String connectionID,boolean onClosedState) {
+    	
+    	
+    	if(onClosedState)
+    	{
+    		BaseConnection connection = (BaseConnection) connections.remove(connectionID);
+    		if (connection != null) {
+    			connection.detect(null);
+            	//clean
+            	HashMap map = mediaSources.remove(connection.getId());
+            	Collection<MediaSource> gens = map.values();
+            	for (MediaSource generator : gens) {
+                	generator.stop();
+                	generator.disconnect(connection.getMux());
+                	generator.dispose();
+            	}
+            	map.clear();
 
-            map = mediaSinks.remove(connection.getId());
-            Collection<MediaSink> dets = map.values();
-            for (MediaSink detector : dets) {
-                detector.disconnect(connection.getDemux());
-                detector.dispose();
-            }
-            map.clear();
+            	map = mediaSinks.remove(connection.getId());
+            	Collection<MediaSink> dets = map.values();
+            	for (MediaSink detector : dets) {
+                	detector.disconnect(connection.getDemux());
+                	detector.dispose();
+            	}
+            	map.clear();
+            
+       
+            	connection.close();
+            	logger.info("Deleted connection " + connection);
+    		}
+    	}else
+    	{
+    		BaseConnection connection = (BaseConnection) connections.get(connectionID);
+    		if (connection != null) {
 
-            connection.close();
-            logger.info("Deleted connection " + connection);
-        }
-
+            	connection.close();
+            	logger.info("Deleted connection " + connection);
+    		}
+    	}
         hasConnections = connections.size() > 0;
     }
-
     /**
      * (Non Java-doc).
      * 
@@ -464,6 +480,28 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
         }
     }
 
+    public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
+        switch (connection.getState()) {
+            //endpoint can receive media, so all existing mixers should
+            //be registered as secondary sources for primary source.   
+            case HALF_OPEN:
+             
+         
+                break;
+            case OPEN:
+             
+  
+                break;
+            case CLOSED:
+             
+                
+                deleteConnection(connection.getId(),true);
+                break;
+        }
+    }
+    
+    
+    
     private class ConnectionStateGuard implements ConnectionListener
     {
 

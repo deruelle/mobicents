@@ -33,7 +33,7 @@ import org.mobicents.media.server.spi.Endpoint;
  *
  * @author Oleg Kulikov
  */
-public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
+public class ConfEndpointImpl extends BaseVirtualEndpoint {
     
     private HashMap mixers = new HashMap();
     private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
@@ -41,7 +41,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
         super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1000);
-        addConnectionListener(this);
+        //addConnectionListener(this);
     }
 
     @Override
@@ -155,6 +155,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
                     logger.debug("localName=" + getLocalName() + ", Detaching sender");
                 }
                 detachSender(connection);
+                deleteConnection(connection.getId(),true);
                 break;
         }
     }

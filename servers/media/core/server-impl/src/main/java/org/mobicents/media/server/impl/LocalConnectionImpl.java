@@ -23,6 +23,7 @@ import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
@@ -48,8 +49,8 @@ public class LocalConnectionImpl extends BaseConnection {
      * @param mode
      *            the mode of this connection.
      */
-    public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-        super(endpoint, mode);
+    public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode, ConnectionListener initial) throws ResourceUnavailableException {
+        super(endpoint, mode, initial);
         logger = Logger.getLogger(LocalConnectionImpl.class);
         setState(ConnectionState.HALF_OPEN);
     }

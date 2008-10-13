@@ -16,7 +16,11 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
+
 import static org.junit.Assert.*;
+
+import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
@@ -30,7 +34,7 @@ public class RtpConnectionImplTest {
     public final static int TEST_DURATION = 20;
     private int count;
     private ArrayList packets;
-
+    private ConnectionListener cListener=new HollowConnectionListener();
     public RtpConnectionImplTest() {
     }
 
@@ -58,7 +62,7 @@ public class RtpConnectionImplTest {
     public void testSetState() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             assertEquals(ConnectionState.HALF_OPEN, con.getState());
 
             con.setState(ConnectionState.OPEN);
@@ -78,7 +82,7 @@ public class RtpConnectionImplTest {
     public void testGetLocalDescriptor() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             String sdp = con.getLocalDescriptor();
 
             if (sdp.indexOf("v=0") == -1) {
@@ -124,7 +128,7 @@ public class RtpConnectionImplTest {
 
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             con.setRemoteDescriptor(sdp);
             assertEquals(ConnectionState.OPEN, con.getState());
         } catch (ResourceUnavailableException e) {
@@ -144,8 +148,8 @@ public class RtpConnectionImplTest {
         RtpConnectionImpl con2 = null;
 
         try {
-            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -177,8 +181,8 @@ public class RtpConnectionImplTest {
         RtpConnectionImpl con2 = null;
 
         try {
-            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV);
-            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV);
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -246,7 +250,7 @@ public class RtpConnectionImplTest {
 
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
             con.setRemoteDescriptor(sdp);
 
             assertEquals(ConnectionState.OPEN, con.getState());
@@ -274,6 +278,16 @@ public class RtpConnectionImplTest {
         public HashMap initMediaSinks() {
             return new HashMap();
         }
+
+		public String[] getEndpointNames() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public EndpointLocalManagement[] getEndpoints() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 
     private class Source extends AbstractSource implements Runnable {

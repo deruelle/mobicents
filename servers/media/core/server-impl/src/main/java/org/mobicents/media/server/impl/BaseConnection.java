@@ -68,7 +68,7 @@ public abstract class BaseConnection implements Connection, NotificationListener
 		}
 	}
 
-	public BaseConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+	public BaseConnection(Endpoint endpoint, ConnectionMode mode, ConnectionListener initial) throws ResourceUnavailableException {
 		// FIXME: baranowb: this is not required in base - as this is the
 		// "atomic operation"
 		// try {
@@ -81,6 +81,7 @@ public abstract class BaseConnection implements Connection, NotificationListener
 		mux = new Multiplexer();
 		demux = new Demultiplexer(this.endpoint.getSupportedFormats());
 
+		this.addListener(initial);
 		setLifeTime(lifeTime);
 		setState(ConnectionState.NULL);
 		// } catch (InterruptedException e) {
@@ -217,9 +218,15 @@ public abstract class BaseConnection implements Connection, NotificationListener
 	}
 
 	protected void setState(ConnectionState newState) {
+		
+		if(newState==this.state)
+		{
+			return;
+		}
 		ConnectionState oldState = this.state;
 		this.state = newState;
-
+		
+		
 		for (ConnectionListener cl : listeners) {
 			cl.onStateChange(this, oldState);
 		}
