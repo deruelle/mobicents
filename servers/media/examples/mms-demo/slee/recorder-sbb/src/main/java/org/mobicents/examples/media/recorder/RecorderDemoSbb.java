@@ -31,16 +31,23 @@ import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkMode;
+import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.mscontrol.MsSignalGenerator;
+import org.mobicents.mscontrol.events.MsEventAction;
+import org.mobicents.mscontrol.events.MsEventFactory;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.audio.MsRecordRequestedSignal;
+import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
+import org.mobicents.mscontrol.events.pkg.MsAudio;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
 /**
@@ -51,7 +58,7 @@ public abstract class RecorderDemoSbb implements Sbb {
 
     private final static String INFO_MSG = "http://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":8080/msdemo/audio/recorder.wav";
     private final static String RECORDER = "test.wav";
-    private final static String IVR_ENDPOINT = "media/endpoint/IVR";
+    private final static String IVR_ENDPOINT = "media/trunk/IVR";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
@@ -87,38 +94,71 @@ public abstract class RecorderDemoSbb implements Sbb {
         MsLink link = evt.getSource();
         setUserEndpoint(link.getEndpoints()[1].getLocalName());
 
-        MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
+        play(INFO_MSG, link);
         try {
-            ActivityContextInterface generatorActivity = mediaAcif.getActivityContextInterface(generator);
-            generatorActivity.attach(sbbContext.getSbbLocalObject());
-            System.out.println("*** PLAY/RECORD");
-            generator.apply(EventID.PLAY_RECORD, getLink(), new String[]{INFO_MSG, RECORDER});
-            // generator.apply(EventID.PLAY, new String[]{INFO_MSG});
-            System.out.println("*** STARTED/RECORD");
-        } catch (UnrecognizedActivityException e) {
-        }
-
-        try {
-            startTimer(sbbContext.getActivities()[0], 35);
+            startTimer(aci, 35);
             logger.info("Timer started");
         } catch (NamingException e) {
             logger.error("Unexpected error", e);
         }
 
     }
+    
+    private void play(String url, MsLink link) {
+        MsEventFactory eventFactory = msProvider.getEventFactory();
+        MsPlayRequestedSignal play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+        play.setURL(url);
+
+        MsRequestedEvent onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+        onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+        MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+        onFailed.setEventAction(MsEventAction.NOTIFY);
+
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
+
+        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
+    }
+
+    public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+        MsLink link = (MsLink) evt.getSource();
+        MsEndpoint ivr = link.getEndpoints()[1];
+
+        MsEventFactory eventFactory = msProvider.getEventFactory();
+        MsRecordRequestedSignal record = (MsRecordRequestedSignal) eventFactory.createRequestedSignal(MsAudio.RECORD);
+        record.setFile(RECORDER);
+
+
+        MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAudio.FAILED);
+        onFailed.setEventAction(MsEventAction.NOTIFY);
+
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{record};
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onFailed};
+
+        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
+        
+        ivr.execute(requestedSignals, requestedEvents, link);
+    }
+    
 
     public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
         // disable recorder
+        MsLink link = (MsLink) aci.getActivity();
         logger.info("Timer event,play back recorder file");
         String url = "file://" + System.getProperty("jboss.server.data.dir") + "/" + RECORDER;
 
-        MsSignalGenerator generator = msProvider.getSignalGenerator(getUserEndpoint());
-        generator.apply(EventID.PLAY, getLink(), new String[]{url});
+        MsEventFactory eventFactory = msProvider.getEventFactory();
+        MsPlayRequestedSignal play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+        play.setURL(url);
+
+
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{};
+
+        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
     }
 
-    public void onAnnouncementComplete(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("**** ANNOUNCEMENT COMPLETE ****");
-    }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
         System.out.println("Finita la commedia");
@@ -126,9 +166,7 @@ public abstract class RecorderDemoSbb implements Sbb {
         for (int i = 0; i < activities.length; i++) {
             if (activities[i].getActivity() instanceof MsLink) {
                 ((MsLink) activities[i].getActivity()).release();
-            } else if (activities[i].getActivity() instanceof MsSignalDetector) {
-                ((MsSignalDetector) activities[i].getActivity()).release();
-            }
+            } 
         }
 
     }
