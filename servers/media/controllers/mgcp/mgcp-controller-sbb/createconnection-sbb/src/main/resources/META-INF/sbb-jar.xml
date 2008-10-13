@@ -21,6 +21,9 @@
 					</cmp-field-name>
 				</cmp-field>
 				<cmp-field>
+					<cmp-field-name>sendCreateConnectionResponse</cmp-field-name>
+				</cmp-field>				
+				<cmp-field>
 					<cmp-field-name>txId</cmp-field-name>
 				</cmp-field>
 				<cmp-field>

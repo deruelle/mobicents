@@ -103,6 +103,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 		CallIdentifier callIdentifier = event.getCallIdentifier();
 
 		this.setReceivedTransactionID(event.getSource());
+		this.setSendCreateConnectionResponse(true);
 
 		int txID = event.getTransactionHandle();
 
@@ -141,6 +142,11 @@ public abstract class CreateConnectionSbb implements Sbb {
 		ConnectionDescriptor remoteConnectionDescriptor = event.getRemoteConnectionDescriptor();
 
 		if (remoteConnectionDescriptor != null) {
+			
+			this.setSendCreateConnectionResponse(false);
+			
+			// Masking will work when aci is same on which HALF_OPEN event is
+			// fired
 			String[] eventsToBeMasked = { "ConnectionHalfOpen" };
 			try {
 				sbbContext.maskEvent(eventsToBeMasked, aci);
@@ -193,7 +199,9 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	public void onConnectionHalfOpen(MsConnectionEvent event, ActivityContextInterface aci) {
 		logger.info(" onConnectionHalfOpen called ");
-		sendConnectionResponse(event, aci);
+		if (this.getSendCreateConnectionResponse()) {
+			sendConnectionResponse(event, aci);
+		}
 		logger.info(" onConnectionHalfOpen exiting ");
 
 	}
@@ -371,5 +379,9 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public abstract Object getReceivedTransactionID();
 
 	public abstract void setReceivedTransactionID(Object receivedTransactionID);
+
+	public abstract boolean getSendCreateConnectionResponse();
+
+	public abstract void setSendCreateConnectionResponse(boolean sendCreateConnectionResponse);
 
 }
