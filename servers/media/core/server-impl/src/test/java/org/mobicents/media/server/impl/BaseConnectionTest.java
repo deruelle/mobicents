@@ -230,7 +230,7 @@ public class BaseConnectionTest {
 
     private class TestConnection extends BaseConnection {
         public TestConnection (Endpoint enp, ConnectionMode mode) throws ResourceUnavailableException {
-            super(enp, mode,cListener);
+            super(enp, mode);
         }
 
         public String getLocalDescriptor() {

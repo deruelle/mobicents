@@ -62,7 +62,7 @@ public class LocalConnectionImplTest {
     public void testGetEndpoint() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV);
             assertEquals(enp, con.getEndpoint());
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
@@ -75,7 +75,7 @@ public class LocalConnectionImplTest {
     public void testSetState() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            LocalConnectionImpl con = new LocalConnectionImpl(enp, ConnectionMode.SEND_RECV);
             assertEquals(ConnectionState.HALF_OPEN, con.getState());
             
         } catch (ResourceUnavailableException e) {
@@ -95,8 +95,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -123,8 +123,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -162,8 +162,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -200,8 +200,8 @@ public class LocalConnectionImplTest {
         LocalConnectionImpl con2 = null;
         
         try {
-            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new LocalConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new LocalConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }

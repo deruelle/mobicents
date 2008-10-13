@@ -62,7 +62,7 @@ public class RtpConnectionImplTest {
     public void testSetState() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
             assertEquals(ConnectionState.HALF_OPEN, con.getState());
 
             con.setState(ConnectionState.OPEN);
@@ -82,7 +82,7 @@ public class RtpConnectionImplTest {
     public void testGetLocalDescriptor() {
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
             String sdp = con.getLocalDescriptor();
 
             if (sdp.indexOf("v=0") == -1) {
@@ -128,7 +128,7 @@ public class RtpConnectionImplTest {
 
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
             con.setRemoteDescriptor(sdp);
             assertEquals(ConnectionState.OPEN, con.getState());
         } catch (ResourceUnavailableException e) {
@@ -148,8 +148,8 @@ public class RtpConnectionImplTest {
         RtpConnectionImpl con2 = null;
 
         try {
-            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -181,8 +181,8 @@ public class RtpConnectionImplTest {
         RtpConnectionImpl con2 = null;
 
         try {
-            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV,cListener);
-            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV,cListener);
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_RECV);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_RECV);
         } catch (ResourceUnavailableException e) {
             fail(e.getMessage());
         }
@@ -250,7 +250,7 @@ public class RtpConnectionImplTest {
 
         TestEndpoint enp = new TestEndpoint("test");
         try {
-            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV,cListener);
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
             con.setRemoteDescriptor(sdp);
 
             assertEquals(ConnectionState.OPEN, con.getState());
