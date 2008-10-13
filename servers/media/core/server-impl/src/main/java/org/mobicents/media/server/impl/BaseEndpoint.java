@@ -292,7 +292,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
             	map.clear();
             
        
-            	connection.close();
+            	//connection.close();
             	logger.info("Deleted connection " + connection);
     		}
     	}else
