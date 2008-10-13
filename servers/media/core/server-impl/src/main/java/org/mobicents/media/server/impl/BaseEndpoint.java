@@ -57,7 +57,7 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
  * 
  * @author Oleg Kulikov.
  */
-public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement,ConnectionListener{
+public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement {
 
     protected final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
     protected final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
@@ -72,23 +72,20 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
     protected HashMap<String, HashMap> mediaSources = new HashMap();
     protected HashMap<String, HashMap> mediaSinks = new HashMap();
     protected boolean hasConnections;
-    protected ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
+    private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
     protected int maxConnections = 0;
     protected ArrayList<NotificationListener> listeners = new ArrayList();
     protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
-    protected ConnectionStateGuard endpointConnectioStateGuard=new ConnectionStateGuard(connectionListeners);
+    protected ConnectionStateGuard endpointConnectioStateGuard = new ConnectionStateGuard(connectionListeners);
     protected static Timer connectionTimer = new Timer();
-    protected transient Logger logger = Logger.getLogger(this.getClass());
-    
-    // ----------- SOME MGMT info
-    protected long creationTime=System.currentTimeMillis();
-    protected boolean gatherStatistics=false;
-    protected long packets=0;
-    protected long numberOfBytes=0;
-    
+    protected transient Logger logger = Logger.getLogger(this.getClass());    // ----------- SOME MGMT info
+    protected long creationTime = System.currentTimeMillis();
+    protected boolean gatherStatistics = false;
+    protected long packets = 0;
+    protected long numberOfBytes = 0;
+
     public BaseEndpoint(String localName) {
         this.localName = localName;
-        this.addConnectionListener(this);
     }
 
     /**
@@ -181,7 +178,7 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
      * @throws org.mobicents.media.server.spi.ResourceUnavailableException
      */
     protected Connection doCreateConnection(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-        return new RtpConnectionImpl(endpoint, mode, this.endpointConnectioStateGuard);
+        return new RtpConnectionImpl(endpoint, mode);
     }
 
     /**
@@ -197,20 +194,20 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
             }
 
             Connection connection = doCreateConnection(this, mode);
-            
+
             connections.put(connection.getId(), connection);
 
             HashMap<String, MediaSource> sourceMap = initMediaSources();
             for (MediaSource source : sourceMap.values()) {
                 source.connect(((BaseConnection) connection).getMux());
-                    source.addListener((BaseConnection) connection);
+                source.addListener((BaseConnection) connection);
             }
             mediaSources.put(connection.getId(), sourceMap);
 
             HashMap<String, MediaSink> sinkMap = initMediaSinks();
             for (MediaSink sink : sinkMap.values()) {
                 sink.connect(((BaseConnection) connection).getDemux());
-                    sink.addListener((BaseConnection) connection);
+                sink.addListener((BaseConnection) connection);
             }
             mediaSinks.put(connection.getId(), sinkMap);
             return connection;
@@ -233,8 +230,8 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
             }
 
             synchronized (this) {
-                Connection connection = new LocalConnectionImpl(this, mode,this.endpointConnectioStateGuard);
-                
+                Connection connection = new LocalConnectionImpl(this, mode);
+
                 connections.put(connection.getId(), connection);
 
                 HashMap<String, MediaSource> sourceMap = initMediaSources();
@@ -262,49 +259,34 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
      * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
      */
     public synchronized void deleteConnection(String connectionID) {
-        deleteConnection(connectionID, false);
-    }
-    public synchronized void deleteConnection(String connectionID,boolean onClosedState) {
-    	
-    	
-    	if(onClosedState)
-    	{
-    		BaseConnection connection = (BaseConnection) connections.remove(connectionID);
-    		if (connection != null) {
-    			connection.detect(null);
-            	//clean
-            	HashMap map = mediaSources.remove(connection.getId());
-            	Collection<MediaSource> gens = map.values();
-            	for (MediaSource generator : gens) {
-                	generator.stop();
-                	generator.disconnect(connection.getMux());
-                	generator.dispose();
-            	}
-            	map.clear();
+        BaseConnection connection = (BaseConnection) connections.remove(connectionID);
+        if (connection != null) {
+            connection.detect(null);
+            //clean
+            HashMap map = mediaSources.remove(connection.getId());
+            Collection<MediaSource> gens = map.values();
+            for (MediaSource generator : gens) {
+                generator.stop();
+                generator.disconnect(connection.getMux());
+                generator.dispose();
+            }
+            map.clear();
 
-            	map = mediaSinks.remove(connection.getId());
-            	Collection<MediaSink> dets = map.values();
-            	for (MediaSink detector : dets) {
-                	detector.disconnect(connection.getDemux());
-                	detector.dispose();
-            	}
-            	map.clear();
-            
-       
-            	//connection.close();
-            	logger.info("Deleted connection " + connection);
-    		}
-    	}else
-    	{
-    		BaseConnection connection = (BaseConnection) connections.get(connectionID);
-    		if (connection != null) {
+            map = mediaSinks.remove(connection.getId());
+            Collection<MediaSink> dets = map.values();
+            for (MediaSink detector : dets) {
+                detector.disconnect(connection.getDemux());
+                detector.dispose();
+            }
+            map.clear();
 
-            	connection.close();
-            	logger.info("Deleted connection " + connection);
-    		}
-    	}
+
+            connection.close();
+            logger.info("Deleted connection " + connection);
+        }
         hasConnections = connections.size() > 0;
     }
+
     /**
      * (Non Java-doc).
      * 
@@ -451,14 +433,12 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
         }
     }
 
-
-
     public void execute(RequestedSignal[] signals, RequestedEvent[] events) {
     }
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-        
+
         connection.detect(null);
         for (int i = 0; i < events.length; i++) {
             connection.detect(events[i]);
@@ -473,163 +453,132 @@ public abstract class BaseEndpoint implements Endpoint , EndpointLocalManagement
         }
     }
 
-    public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
-        switch (connection.getState()) {
-            //endpoint can receive media, so all existing mixers should
-            //be registered as secondary sources for primary source.   
-            case HALF_OPEN:
-             
-         
-                break;
-            case OPEN:
-             
-  
-                break;
-            case CLOSED:
-             
-                
-                deleteConnection(connection.getId(),true);
-                break;
+    private class ConnectionStateGuard implements ConnectionListener {
+
+        protected ArrayList<ConnectionListener> connectionListeners = null;
+
+        public ConnectionStateGuard(ArrayList<ConnectionListener> connectionListeners) {
+            super();
+            this.connectionListeners = connectionListeners;
+        }
+
+        public void onStateChange(Connection connection,
+                ConnectionState oldState) {
+            synchronized (connectionListeners) {
+                for (ConnectionListener cl : connectionListeners) {
+                    cl.onStateChange(connection, oldState);
+                }
+            }
         }
     }
-    
-    
-    
-    private class ConnectionStateGuard implements ConnectionListener
-    {
-
-    	 protected ArrayList<ConnectionListener> connectionListeners =null;
-    	 
-    	 
-		public ConnectionStateGuard(
-				ArrayList<ConnectionListener> connectionListeners) {
-			super();
-			this.connectionListeners = connectionListeners;
-		}
-
-
-		public void onStateChange(Connection connection,
-				ConnectionState oldState) {
-			synchronized(connectionListeners)
-			{
-				for (ConnectionListener cl : connectionListeners) {
-					cl.onStateChange(connection, oldState);
-				}
-			}	
-		}
-    	
-    }
-    
-    
     // ###############################
     // # MANAGEMENT FUNCTIONS        #
     // ###############################
-    
     public int getConnectionsCount() {
-		
-		return connections.keySet().size();
-	}
 
-	public long getCreationTime() {
-		
-		return creationTime;
-	}
+        return connections.keySet().size();
+    }
 
-	public boolean getGatherPerformanceFlag() {
-	
-		return gatherStatistics;
-	}
+    public long getCreationTime() {
 
-	public long getNumberOfBytes() {
-		
-		return numberOfBytes;
-	}
+        return creationTime;
+    }
 
-	public long getPacketsCount() {
-		
-		return packets;
-	}
+    public boolean getGatherPerformanceFlag() {
 
-	public void setGatherPerformanceFlag(boolean flag) {
-		//FIXME
-		gatherStatistics=flag;
-	}
+        return gatherStatistics;
+    }
 
-	public long getConnectionCreationTime(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getConnectionCreationTime();
-	}
+    public long getNumberOfBytes() {
 
-	public String[] getConnectionIds() {
-		
-		String[] tmp=(String[]) this.connections.keySet().toArray(new String[this.connections.keySet().size()]);
+        return numberOfBytes;
+    }
 
-		return tmp;
-	}
+    public long getPacketsCount() {
 
-	public String getConnectionLocalSDP(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getLocalDescriptor();
-	}
+        return packets;
+    }
 
-	public String getConnectionRemoteSDP(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getRemoteDescriptor();
-	}
+    public void setGatherPerformanceFlag(boolean flag) {
+        //FIXME
+        gatherStatistics = flag;
+    }
 
+    public long getConnectionCreationTime(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getConnectionCreationTime();
+    }
 
+    public String[] getConnectionIds() {
 
-	public long getNumberOfPackets(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getNumberOfPackets();
-	}
+        String[] tmp = (String[]) this.connections.keySet().toArray(new String[this.connections.keySet().size()]);
 
-	public String getOtherEnd(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getOtherEnd();
-	}
-    
-	public String getConnectionState(String connectionId) throws IllegalArgumentException
-	{
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getState().toString();
-	}
-	public String getConnectionMode(String connectionId) throws IllegalArgumentException
-	{
-		BaseConnection connection=(BaseConnection) this.connections.get(connectionId);
-		if(connection==null)
-			throw new IllegalArgumentException("Connection does not exist.");
-		return connection.getMode().toString();
-	}
-    
-	public String getRTPFacotryJNDIName()
-	{
-		return this.rtpFactoryName;
-	}
+        return tmp;
+    }
 
-	public void setRTPFacotryJNDIName(String jndiName)
-			throws IllegalArgumentException {
-		this.setRtpFactoryName(jndiName);
-		
-	}
-	
-	
-	
+    public String getConnectionLocalSDP(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getLocalDescriptor();
+    }
+
+    public String getConnectionRemoteSDP(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getRemoteDescriptor();
+    }
+
+    public long getNumberOfPackets(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getNumberOfPackets();
+    }
+
+    public String getOtherEnd(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getOtherEnd();
+    }
+
+    public String getConnectionState(String connectionId) throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getState().toString();
+    }
+
+    public String getConnectionMode(String connectionId) throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getMode().toString();
+    }
+
+    public String getRTPFacotryJNDIName() {
+        return this.rtpFactoryName;
+    }
+
+    public void setRTPFacotryJNDIName(String jndiName)
+            throws IllegalArgumentException {
+        this.setRtpFactoryName(jndiName);
+
+    }
 }

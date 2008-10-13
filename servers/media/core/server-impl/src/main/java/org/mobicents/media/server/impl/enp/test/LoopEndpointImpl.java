@@ -23,40 +23,37 @@ import org.mobicents.media.server.spi.Endpoint;
  *
  * @author Oleg Kulikov
  */
-public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener{
-
+public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
 
     public LoopEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-        super(localName,endpointsMap);
+        super(localName, endpointsMap);
         this.setMaxConnectionsAvailable(1);
-        //addConnectionListener(this);
+        addConnectionListener(this);
     }
 
     public void onStateChange(Connection connection, ConnectionState oldState) {
         BaseConnection con = (BaseConnection) connection;
-        
-        try{
-        	switch (connection.getState()) {
-            	case OPEN :
+
+        try {
+            switch (connection.getState()) {
+                case OPEN:
 //                con.getDemux().connect(new TestSink());
-                	con.getMux().connect(con.getDemux());
-                	break;
-            	case CLOSED :
-                	con.getMux().disconnect(con.getDemux());
-                	break;
-        	}
-        }catch(Exception e)
-        {
-       		e.printStackTrace();
-       	}
-        
-        super.onStateChange(connection, oldState);
-        
+                    con.getMux().connect(con.getDemux());
+                    break;
+                case CLOSED:
+                    con.getMux().disconnect(con.getDemux());
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new LoopEndpointImpl(localName,super.endpoints);
+        return new LoopEndpointImpl(localName, super.endpoints);
     }
 
     @Override
@@ -69,36 +66,32 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         return new HashMap();
     }
 
-	public int getConnectionsCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int getConnectionsCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public long getCreationTime() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public long getCreationTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public boolean getGatherPerformanceFlag() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public boolean getGatherPerformanceFlag() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public long getNumberOfBytes() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public long getNumberOfBytes() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public long getPacketsCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public long getPacketsCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	public void setGatherPerformanceFlag(boolean flag) {
-		// TODO Auto-generated method stub
-		
-	}
-
-    
-
+    public void setGatherPerformanceFlag(boolean flag) {
+        // TODO Auto-generated method stub
+    }
 }

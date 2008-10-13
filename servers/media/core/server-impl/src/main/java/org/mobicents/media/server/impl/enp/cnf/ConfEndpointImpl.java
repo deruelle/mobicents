@@ -15,7 +15,6 @@ package org.mobicents.media.server.impl.enp.cnf;
 
 import java.util.Collection;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
 
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
@@ -33,15 +32,15 @@ import org.mobicents.media.server.spi.Endpoint;
  *
  * @author Oleg Kulikov
  */
-public class ConfEndpointImpl extends BaseVirtualEndpoint {
+public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
     
     private HashMap mixers = new HashMap();
-    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
+//    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     
     public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
         super(localName,endpointsMap);
         this.setMaxConnectionsAvailable(1000);
-        //addConnectionListener(this);
+        this.addConnectionListener(this);
     }
 
     @Override
@@ -61,7 +60,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint {
     public HashMap initMediaSinks() {
         HashMap map = new HashMap();
         //init audio player
-        map.put(Generator.AUDIO_RECORDER, new Recorder(""));
+        //map.put(Generator.AUDIO_RECORDER, new Recorder(""));
         map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
         
         return map;
@@ -155,7 +154,6 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint {
                     logger.debug("localName=" + getLocalName() + ", Detaching sender");
                 }
                 detachSender(connection);
-                deleteConnection(connection.getId(),true);
                 break;
         }
     }

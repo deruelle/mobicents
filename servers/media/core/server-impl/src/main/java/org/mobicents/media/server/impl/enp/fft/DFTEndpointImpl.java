@@ -5,55 +5,51 @@ import java.io.File;
 import java.util.HashMap;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
-import org.mobicents.media.server.spi.Connection;
 
 public class DFTEndpointImpl extends BaseEndpoint {
 
-	private String testName = null;
-	private File dumpDir = null;
+    private String testName = null;
+    private File dumpDir = null;
+    private int[] sineFrequencies = null;
+    private int sineDuration = -1;
 
-	private int[] sineFrequencies = null;
-	private int sineDuration = -1;
+    public DFTEndpointImpl(String localName) {
+        super(localName);
+        this.setMaxConnectionsAvailable(1);
 
+    }
 
-	public DFTEndpointImpl(String localName) {
-		super(localName);
-		this.setMaxConnectionsAvailable(1);
+    public String getTestName() {
+        return testName;
+    }
 
-	}
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
 
+    public File getDumpDir() {
+        return dumpDir;
+    }
 
-	public String getTestName() {
-		return testName;
-	}
+    public void setDumpDir(File dumpDir) {
+        this.dumpDir = dumpDir;
+    }
 
-	public void setTestName(String testName) {
-		this.testName = testName;
-	}
+    public int[] getSineFrequencies() {
+        return sineFrequencies;
+    }
 
-	public File getDumpDir() {
-		return dumpDir;
-	}
+    public void setSineFrequencies(int[] sineFrequencies) {
+        this.sineFrequencies = sineFrequencies;
+    }
 
-	public void setDumpDir(File dumpDir) {
-		this.dumpDir = dumpDir;
-	}
+    public int getSineDuration() {
+        return sineDuration;
+    }
 
-	public int[] getSineFrequencies() {
-		return sineFrequencies;
-	}
-
-	public void setSineFrequencies(int[] sineFrequencies) {
-		this.sineFrequencies = sineFrequencies;
-	}
-
-	public int getSineDuration() {
-		return sineDuration;
-	}
-
-	public void setSineDuration(int sineDuration) {
-		this.sineDuration = sineDuration;
-	}
+    public void setSineDuration(int sineDuration) {
+        this.sineDuration = sineDuration;
+    }
 
     @Override
     public HashMap initMediaSources() {
@@ -65,17 +61,13 @@ public class DFTEndpointImpl extends BaseEndpoint {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public EndpointLocalManagement[] getEndpoints() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public EndpointLocalManagement[] getEndpoints() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	public String[] getEndpointNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
+    public String[] getEndpointNames() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

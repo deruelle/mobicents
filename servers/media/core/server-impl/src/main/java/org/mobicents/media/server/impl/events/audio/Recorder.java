@@ -39,29 +39,27 @@ public class Recorder extends AbstractSink {
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-    
     private String mediaType;
     private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8,
             1, AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
-    
     private Logger logger = Logger.getLogger(Recorder.class);
-    
     private int recordTime = 60;
+    private String recordDir = "";
     private FileOutputStream file;
     private Thread recorderThread = null;
-    
     private RecorderStream recorderStream;
     private QueuedExecutor eventService = new QueuedExecutor();
 
-    private SimpleDateFormat f = new SimpleDateFormat("hh:mm:ss,SSS");
     // private RecorderRunnable runner=null;
-    public Recorder(String mediaType) {
-    	super("Recorder");
+    public Recorder(String mediaType, String recordDir) {
+        super("Recorder");
+        this.recordDir = recordDir;
     }
 
-    public Recorder(AudioFileFormat.Type mediaType, int recordTime) {
-    	super("Recorder");
+    public Recorder(AudioFileFormat.Type mediaType, int recordTime, String recordDir) {
+        super("Recorder");
         this.recordTime = recordTime;
+        this.recordDir = recordDir;
     }
 
     /**
@@ -74,7 +72,7 @@ public class Recorder extends AbstractSink {
             //System.out.println("Recorder thread == " + recorderThread);
             dispose();
         }
-        
+
         recorderStream = new RecorderStream();
         javax.sound.sampled.AudioFormat fmt = new javax.sound.sampled.AudioFormat(
                 8000, 16, 1, true, false);
@@ -82,6 +80,15 @@ public class Recorder extends AbstractSink {
                 fmt, 8000 * recordTime);
         // AudioInputStream audioStream =
         // AudioSystem.getAudioInputStream(recorderStream);
+        int index = uri.lastIndexOf("/");
+        if (index > 0) {
+            String folderStructure = uri.substring(0, index);
+
+            java.io.File file = new java.io.File(new StringBuffer(recordDir).append("/").append(folderStructure).toString());
+            boolean fileCreationSuccess = file.mkdirs();
+        }
+        uri = recordDir + "/" + uri;
+        System.out.println("RECORDING TO " + uri);
         file = new FileOutputStream(uri);
         this.recorderThread = new Thread(new RecorderRunnable(audioStream));
         this.recorderThread.start();
@@ -90,11 +97,11 @@ public class Recorder extends AbstractSink {
     public void start(String file) {
         try {
             record(file);
-            //sendEvent(RecorderEventType.STARTED, "NORMAL");
+        //sendEvent(RecorderEventType.STARTED, "NORMAL");
         } catch (Exception e) {
             release();
             logger.error("Could not start recording", e);
-            //sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+        //sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
         }
     }
 
@@ -116,21 +123,19 @@ public class Recorder extends AbstractSink {
     }
 
     public void stop() {
-/*        while (recorderStream.available > 0) {
-            synchronized(this) {
-                try {
-                    wait(20);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+        /*        while (recorderStream.available > 0) {
+        synchronized(this) {
+        try {
+        wait(20);
+        } catch (InterruptedException e) {
+        e.printStackTrace();
         }
- */
+        }
+        }
+         */
         release();
 //        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
     }
-
-
 
     private class RecorderRunnable implements Runnable {
 
@@ -165,7 +170,7 @@ public class Recorder extends AbstractSink {
         if (recorderStream == null) {
             return;
         }
-        
+
         recorderStream.buffers.add(buffer);
         recorderStream.available += (buffer.getLength() - buffer.getOffset());
         if (recorderStream.blocked) {

@@ -95,7 +95,7 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
     public HashMap initMediaSinks() {
         HashMap map = new HashMap();
         //init audio player
-        map.put(Generator.AUDIO_RECORDER, new Recorder(""));
+        map.put(Generator.AUDIO_RECORDER, new Recorder("", this.recordDir));
         map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
         
         return map;

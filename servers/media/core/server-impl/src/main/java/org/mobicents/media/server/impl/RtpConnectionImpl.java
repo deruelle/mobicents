@@ -76,8 +76,8 @@ public class RtpConnectionImpl extends BaseConnection {
      * @param mode
      *            the mode of this connection.
      */
-    public RtpConnectionImpl(Endpoint endpoint, ConnectionMode mode, ConnectionListener initial) throws ResourceUnavailableException {
-        super(endpoint, mode, initial);
+    public RtpConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+        super(endpoint, mode);
         logger = Logger.getLogger(RtpConnectionImpl.class);
 
 
