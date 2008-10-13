@@ -90,7 +90,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 		};
 
 		eventQueue.setThreadFactory(threadFactory);
-		
+
 		setState(MsConnectionState.IDLE, MsConnectionEventCause.NORMAL);
 
 	}
@@ -238,16 +238,22 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 					connection.setRemoteDescriptor(remoteSdp);
 				}
 			} catch (NamingException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN);
 			} catch (ResourceUnavailableException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
 			} catch (TooManyConnectionsException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
 			} catch (SdpException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
 			} catch (IOException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
 			} catch (Exception e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
 				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
 			}
 		}
