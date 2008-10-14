@@ -4,7 +4,7 @@
 <section
 	condition="section-binary-Java_Development_Kit-Installing_Configuring_and_Running">
 	<title>Java Development Kit: Installing, Configuring and Running</title>
-	<para>Mobicents is written in Java; therefore, before running any Mobicents server, you must have a working Java Runtime Environment (<acronym>JRE</acronym>) or Java Development Kit (<acronym>JDK</acronym>) installed on your system. In addition, the JRE or JDK you are using to run Mobicents must be version 1.5 (<abbrev>a.k.a.</abbrev> <quote>Java 5</quote>) or higher<footnote><para>At this point in time, it is possible to run most Mobicents servers, such as the JAIN SLEE Server, using a Java 6 JRE or JDK. Be aware, however, that not all Mobicents servers currently work with Java 6 (notably, the Mobicents XML Document Management Server does not). We suggest checking the Mobicents web site, forums or discussion pages if you need to inquire about the status of running a particular server with Java 6.</para>
+	<para>Mobicents is written in Java; therefore, before running any Mobicents server, you must have a working Java Runtime Environment (<acronym>JRE</acronym>) or Java Development Kit (<acronym>JDK</acronym>) installed on your system. In addition, the JRE or JDK you are using to run Mobicents must be version 5 or higher<footnote><para>At this point in time, it is possible to run most Mobicents servers, such as the JAIN SLEE Server, using a Java 6 JRE or JDK. Be aware, however, that presently the Mobicents XML Document Management Server does not. We suggest checking the Mobicents web site, forums or discussion pages if you need to inquire about the status of running the Mobicents XML Document Management Server with Java 6.</para>
 		</footnote>.</para>
 	<formalpara>
 		<title>Should I Install the JRE or JDK?</title>
@@ -22,7 +22,7 @@
 			<para>64-bit memory addressing gives virtually unlimited (1 exabyte) heap allocation. However large heaps affect garbage collection. </para>
 		</listitem>
 		<listitem>
-			<para>Applications that run with more than 1.5GB of RAM (including free space for garbage collection optimization) should utilize the 64-bit JVM. </para>
+			<para>Applications that run with more than 1.5 GB of RAM (including free space for garbage collection optimization) should utilize the 64-bit JVM. </para>
 		</listitem>
 		<listitem>
 			<para>Applications that run on a 32-bit JVM and do not require more than minimal heap sizes will gain nothing from a 64-bit JVM. Barring memory issues, 64-bit hardware with the same relative clock speed and architecture is not likely to run Java applications faster than their 32-bit cousin. </para>
@@ -136,7 +136,7 @@ There are 3 programs which provide 'java'.
 
 
 Enter to keep the current selection[+], or type selection number:]]></screen>
-				<para>In our case, we want to use the Sun JDK, version 1.5, that we downloaded and installed, to run the <command>java</command> executable. In the <command>alternatives</command> information printout above, a <quote>plus</quote> (<quote><literal>+</literal>
+				<para>In our case, we want to use the Sun JDK, version 5, that we downloaded and installed, to run the <command>java</command> executable. In the <command>alternatives</command> information printout above, a <quote>plus</quote> (<quote><literal>+</literal>
 					</quote>) next to a number indicates the one currently being used. As per <command>alternatives</command>' instructions, pressing <keycap>Enter</keycap> will simply keep the current JVM, or you can enter the number corresponding to the JVM you would prefer to use.</para>
 				<para>Repeat the procedure above for the <command>javac</command> command and the <literal>java_sdk_1.5.0</literal> environment variable, <emphasis>as the root user</emphasis>:</para>
 				<screen>~]$ /usr/sbin/alternatives --config javac</screen>
@@ -147,7 +147,7 @@ Enter to keep the current selection[+], or type selection number:]]></screen>
 	<formalpara
 		condition="formalpara-binary-Java_Development_Kit-Testing">
 		<title>Testing</title>
-		<para>Finally, to make sure that you are using the correct JDK or Java version (1.5 or higher), and that the java executable is in your <envar>PATH</envar>, run the <command>java <option>-version</option>
+		<para>Finally, to make sure that you are using the correct JDK or Java version (5 or higher), and that the java executable is in your <envar>PATH</envar>, run the <command>java <option>-version</option>
 			</command> command in the terminal from your home directory:</para>
 	</formalpara>
 	<screen>~]$ java -version

@@ -149,9 +149,9 @@
 				id="variablelist-binary-SIP_Servlets_Server_with_JBoss-Software_Prerequisites">
 				<title>Software Prerequisites</title>
 				<varlistentry>
-					<term>JDK 1.5 or Higher</term>
+					<term>JDK 5 or Higher</term>
 					<listitem>
-						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is currently required in order to run the SIP Servlets-customized JBoss binary distribution. For instructions on how to install the JDK, refer to <xref
+						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5 or higher is currently required in order to run the SIP Servlets-customized JBoss binary distribution. For instructions on how to install the JDK, refer to <xref
 								linkend="para-section-Mobicents_SIP_Servlets_Server-section-Installing_the_JDK_Version_5.0"/>.</para>
 					</listitem>
 				</varlistentry>
@@ -173,7 +173,7 @@
 				<para>For clarity, the command line instructions presented in this chapter use specific version numbers and directory names. Remember to replace them with version numbers and file names relevant to those you are actually working with.</para>
 			</note>
 			<procedure>
-				<title>Installing the SIP Servlets-customized JBoss Binary Distribution on Linux</title>
+				<title>Installing the SIP Servlets-Customized JBoss Binary Distribution on Linux</title>
 				<step>
 					<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>downloads</filename>.</para>
 					<screen>~]# cd downloads</screen>
@@ -462,9 +462,9 @@ Halting VM</programlisting>
 				id="variablelist-binary-SIP_Servlets_Server_with_Tomcat-Software_Prerequisites">
 				<title>Software Prerequisites</title>
 				<varlistentry>
-					<term>JDK 1.5 or Higher</term>
+					<term>JDK 5 or Higher</term>
 					<listitem>
-						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the SIP Servlet-customized Tomcat Servlet Container.</para>
+						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5 or higher is required in order to run the SIP Servlet-customized Tomcat Servlet Container.</para>
 						<para>For instructions on how to install the JDK, refer to <xref
 								linkend="para-section-Mobicents_SIP_Servlets_Server-section-Installing_the_JDK_Version_5.0"/>.</para>
 					</listitem>
@@ -566,6 +566,7 @@ Halting VM</programlisting>
 		<section
 			id="section-Configuring">
 			<title>Configuring</title>
+			<para>Basic configuration consists in setting the <envar>CATALINA_HOME</envar> environment variable.</para>
 			<xi:include
 				xmlns:xi="http://www.w3.org/2001/XInclude"
 				href="../modules/fragment-Setting_the_CATALINA_HOME_Environment_Variable.xml" />
@@ -594,10 +595,6 @@ Using JRE_HOME:       /etc/java-config-2/current-system-vm]]></programlisting>
 					<para>Finally, execute the <filename>startup.sh</filename> Bourne shell script:</para>
 					<screen>mss-tomcat-0.6]$ ./bin/startup.sh</screen>
 				</step>
-				<step>
-					<para>After starting the server successfully, you can access the default web applications included with the SIP Servlet-customized Tomcat Servlet Container by opening the following URL in your browser: <ulink
-							url="http://localhost:8080/"/>.</para>
-				</step>
 			</procedure>
 			<procedure>
 				<title>Running the SIP Servlets-customized Tomcat Application Server on Windows</title>
@@ -619,16 +616,14 @@ Using JRE_HOME:       /etc/java-config-2/current-system-vm]]></programlisting>
 						</step>
 					</stepalternatives>
 				</step>
-				<step>
-					<para>After starting the server successfully, you can access the default web applications included with the SIP Servlet-customized Tomcat Servlet Container by opening the following URL in your browser: <ulink
-							url="http://localhost:8080/"/>.</para>
-				</step>
 			</procedure>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_Tomcat-Using">
 			<title>Using</title>
-			
+			<para>The SIP Servlets-customized Tomcat container can be further customized by adding SIP Connectors and configuring the application router. The following sections provide information on how to configure Tomcat in these ways.</para>
+			<para>In addition, after starting the SIP Servlets server successfully, you can access the default web applications included with the SIP Servlet-customized Tomcat Servlet Container by opening the following URL in your browser: <ulink
+					url="http://localhost:8080/"/>.</para>
 			<section
 				id="section-SIP_Connectors">
 				<title>SIP Connectors</title>

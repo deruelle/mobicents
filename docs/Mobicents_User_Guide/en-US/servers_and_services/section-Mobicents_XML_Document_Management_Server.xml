@@ -46,18 +46,18 @@
 					id="variablelist-binary-XDM_Server-Software_Prerequisites">
 					<title>Software Prerequisites</title>
 					<varlistentry>
-						<term>JDK 1.5<footnoteref
+						<term>JDK 5<footnoteref
 								linkend="footnote-Java_1.5_is_Required"/>
 						</term>
 						<listitem>
-							<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5<footnote
-									id="footnote-Java_1.5_is_Required"><para>The Mobicents XDM Server does not currently run on Java 1.6&#8212;a JDK or JRE version 1.5 is required.</para>
+							<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5<footnote
+									id="footnote-Java_5_is_Required"><para>The Mobicents XDM Server does not currently run on Java 1.6&#8212;a JDK or JRE version 5 is required.</para>
 								</footnote>
  is required in order to run the Mobicents XML Document Server. Note that the JBoss Application Server is a runtime dependency of the XDM Server and, as mentioned, comes bundled with the binary distribution.</para>
 							<important
 								id="important-You_Must_Currently_Use_JDK_1.5_Not_1.6">
-								<title>You Must Currently Use JDK 1.5, Not 1.6!</title>
-								<para>Currently, the Mobicents XDM Server only runs when using JDK (or JRE) version 1.5. It will not run on JDK 1.6. Refer to the XDM Server section of the <ulink
+								<title>You Must Currently Use JDK 5, Not 6!</title>
+								<para>Currently, the Mobicents XDM Server only runs when using JDK (or JRE) version 5. It will not run on JDK 6. Refer to the XDM Server section of the <ulink
 										url="http://www.mobicents.org">Mobicents web site</ulink> or <ulink
 										url="http://groups.google.com/group/mobicents-public/web">public discussion forums</ulink> if you have any questions about the current status of the XDM Server and JDK 1.6.</para>
 							</important>

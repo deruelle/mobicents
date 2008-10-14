@@ -64,9 +64,9 @@
 				id="variablelist-binary-Mobicents_Converged_AS-Software_Prerequisites">
 				<title>Software Prerequisites</title>
 				<varlistentry>
-					<term>JDK 1.5 or Higher</term>
+					<term>JDK 5 or Higher</term>
 					<listitem>
-						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 1.5 or higher is required in order to run the Mobicents JAIN SLEE Server. Note that the JBoss Application Server is a runtime dependency of Mobicents and, as mentioned, comes bundled with the binary distribution.</para>
+						<para>A working installation of the Java Development Kit (<acronym>JDK</acronym>) version 5 or higher is required in order to run the Mobicents JAIN SLEE Server. Note that the JBoss Application Server is a runtime dependency of Mobicents and, as mentioned, comes bundled with the binary distribution.</para>
 						<para>For instructions on how to install the JDK, refer to <xref
 								linkend="para-chapter-Installation_of_the_Mobicents_Converged_Application_Server-section-Installing_the_JDK_Version_5.0"/>.</para>
 					</listitem>
@@ -372,9 +372,9 @@ Halting VM</programlisting>
 				id="variablelist-source-JAIN_SLEE_Server-Software_Prerequisites">
 				<title>Software Prerequisites</title>
 				<varlistentry>
-					<term>Java 1.5 or Higher</term>
+					<term>Java 5 or Higher</term>
 					<listitem>
-						<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
+						<para>A working installation of Java 5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>

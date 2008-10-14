@@ -26,7 +26,7 @@
 					<para>You must have sufficient disk space in order to install the Mobicents binary release. Once unzipped, version 1.20 (<literal>BETA3</literal>) of the Mobicents binary release requires about 150 MB of free disk space. Keep in mind that disk space requirements may change from release to release.</para>
 				</listitem>
 				<listitem>
-					<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
+					<para>A working installation of Java 5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -210,9 +210,9 @@
 					</listitem>
 				</varlistentry>
 				<varlistentry>
-					<term>Java 1.5 or Higher</term>
+					<term>Java 5 or Higher</term>
 					<listitem>
-						<para>A working installation of Java 1.5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
+						<para>A working installation of Java 5 or higher is required in order to run Mobicents and the JBoss Application Server.</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
