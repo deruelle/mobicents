@@ -15,19 +15,21 @@
  */
 package org.mobicents.media.server.impl.events.audio;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
-import java.text.SimpleDateFormat;
-import org.mobicents.media.Buffer;
-import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+
 import org.apache.log4j.Logger;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 
 /**
  * 
@@ -35,151 +37,145 @@ import org.mobicents.media.server.impl.AbstractSink;
  */
 public class Recorder extends AbstractSink {
 
-    private final static AudioFormat LINEAR = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN,
-            AudioFormat.SIGNED);
-    private String mediaType;
-    private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8,
-            1, AudioFormat.BIG_ENDIAN, AudioFormat.SIGNED);
-    private Logger logger = Logger.getLogger(Recorder.class);
-    private int recordTime = 60;
-    private String recordDir = "";
-    private FileOutputStream file;
-    private Thread recorderThread = null;
-    private RecorderStream recorderStream;
-    private QueuedExecutor eventService = new QueuedExecutor();
+	private Logger logger = Logger.getLogger(Recorder.class);
 
-    // private RecorderRunnable runner=null;
-    public Recorder(String mediaType, String recordDir) {
-        super("Recorder");
-        this.recordDir = recordDir;
-    }
+	private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+	private String mediaType;
+	private Format audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 8, 1, AudioFormat.BIG_ENDIAN,
+			AudioFormat.SIGNED);
 
-    public Recorder(AudioFileFormat.Type mediaType, int recordTime, String recordDir) {
-        super("Recorder");
-        this.recordTime = recordTime;
-        this.recordDir = recordDir;
-    }
+	private int recordTime = 60;
+	private String recordDir = "";
+	private FileOutputStream file;
+	private Thread recorderThread = null;
+	private RecorderStream recorderStream;
+	private QueuedExecutor eventService = new QueuedExecutor();
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
-     */
-    private void record(String uri) throws Exception {
-        if (recorderThread != null) {
-            //System.out.println("Recorder thread == " + recorderThread);
-            dispose();
-        }
+	// private RecorderRunnable runner=null;
+	public Recorder(String mediaType, String recordDir) {
+		super("Recorder");
+		this.recordDir = recordDir;
+	}
 
-        recorderStream = new RecorderStream();
-        javax.sound.sampled.AudioFormat fmt = new javax.sound.sampled.AudioFormat(
-                8000, 16, 1, true, false);
-        AudioInputStream audioStream = new AudioInputStream(recorderStream,
-                fmt, 8000 * recordTime);
-        // AudioInputStream audioStream =
-        // AudioSystem.getAudioInputStream(recorderStream);
-        int index = uri.lastIndexOf("/");
-        if (index > 0) {
-            String folderStructure = uri.substring(0, index);
+	public Recorder(AudioFileFormat.Type mediaType, int recordTime, String recordDir) {
+		super("Recorder");
+		this.recordTime = recordTime;
+		this.recordDir = recordDir;
+	}
 
-            java.io.File file = new java.io.File(new StringBuffer(recordDir).append("/").append(folderStructure).toString());
-            boolean fileCreationSuccess = file.mkdirs();
-        }
-        uri = recordDir + "/" + uri;
-        System.out.println("RECORDING TO " + uri);
-        file = new FileOutputStream(uri);
-        this.recorderThread = new Thread(new RecorderRunnable(audioStream));
-        this.recorderThread.start();
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.server.spi.ivr.IVREndpoint#record(URL)
+	 */
+	private void record(String uri) throws Exception {
+		if (recorderThread != null) {
+			dispose();
+		}
 
-    public void start(String file) {
-        try {
-            record(file);
-        //sendEvent(RecorderEventType.STARTED, "NORMAL");
-        } catch (Exception e) {
-            release();
-            logger.error("Could not start recording", e);
-        //sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
-        }
-    }
+		recorderStream = new RecorderStream();
+		javax.sound.sampled.AudioFormat fmt = new javax.sound.sampled.AudioFormat(8000, 16, 1, true, false);
+		AudioInputStream audioStream = new AudioInputStream(recorderStream, fmt, 8000 * recordTime);
+		// AudioInputStream audioStream =
+		// AudioSystem.getAudioInputStream(recorderStream);
+		int index = uri.lastIndexOf("/");
+		if (index > 0) {
+			String folderStructure = uri.substring(0, index);
 
-    private void release() {
-        try {
-            if (file != null) {
-                file.flush();
-                file.close();
-            }
+			java.io.File file = new java.io.File(new StringBuffer(recordDir).append("/").append(folderStructure)
+					.toString());
+			boolean fileCreationSuccess = file.mkdirs();
+		}
+		uri = recordDir + "/" + uri;
+		if (logger.isDebugEnabled()) {
+			logger.debug("RECORDING TO " + uri);
+		}
+		file = new FileOutputStream(uri);
+		this.recorderThread = new Thread(new RecorderRunnable(audioStream));
+		this.recorderThread.start();
+	}
 
-            if (recorderThread != null) {
-                this.recorderThread = null;
-            }
-        // this.runner=null;
-        } catch (Exception e) {
-            logger.error("Could not close recorder file", e);
-//            sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
-        }
-    }
+	public void start(String file) {
+		try {
+			record(file);
+			// sendEvent(RecorderEventType.STARTED, "NORMAL");
+		} catch (Exception e) {
+			release();
+			logger.error("Could not start recording", e);
+			// sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+		}
+	}
 
-    public void stop() {
-        /*        while (recorderStream.available > 0) {
-        synchronized(this) {
-        try {
-        wait(20);
-        } catch (InterruptedException e) {
-        e.printStackTrace();
-        }
-        }
-        }
-         */
-        release();
-//        sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
-    }
+	private void release() {
+		try {
+			if (file != null) {
+				file.flush();
+				file.close();
+			}
 
-    private class RecorderRunnable implements Runnable {
+			if (recorderThread != null) {
+				this.recorderThread = null;
+			}
+			// this.runner=null;
+		} catch (Exception e) {
+			logger.error("Could not close recorder file", e);
+			// sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+		}
+	}
 
-        AudioInputStream audioStream = null;
+	public void stop() {
+		/*
+		 * while (recorderStream.available > 0) { synchronized(this) { try {
+		 * wait(20); } catch (InterruptedException e) { e.printStackTrace(); } } }
+		 */
+		release();
+		// sendEvent(RecorderEventType.STOP_BY_REQUEST, "NORMAL");
+	}
 
-        public RecorderRunnable(AudioInputStream audioStream) {
-            this.audioStream = audioStream;
-        }
+	private class RecorderRunnable implements Runnable {
 
-        public void run() {
-            try {
-                AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
-            } catch (IOException e) {
-                logger.error("Audio stream write error", e);
-//                sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
-                dispose();
-            }
+		AudioInputStream audioStream = null;
 
-        }
-    }
+		public RecorderRunnable(AudioInputStream audioStream) {
+			this.audioStream = audioStream;
+		}
 
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.MediaSink.isAcceptable(Format).
-     */
-    public boolean isAcceptable(Format fmt) {
-        return fmt.matches(LINEAR);
-    }
+		public void run() {
+			try {
+				AudioSystem.write(audioStream, AudioFileFormat.Type.WAVE, file);
+			} catch (IOException e) {
+				logger.error("Audio stream write error", e);
+				// sendEvent(RecorderEventType.FACILITY_ERROR, e.getMessage());
+				dispose();
+			}
 
-    public void receive(Buffer buffer) {
-        if (recorderStream == null) {
-            return;
-        }
+		}
+	}
 
-        recorderStream.buffers.add(buffer);
-        recorderStream.available += (buffer.getLength() - buffer.getOffset());
-        if (recorderStream.blocked) {
-            recorderStream.blocked = false;
-            recorderStream.semaphore.release();
-        }
-    }
+	/**
+	 * (Non Java-doc.)
+	 * 
+	 * @see org.mobicents.media.MediaSink.isAcceptable(Format).
+	 */
+	public boolean isAcceptable(Format fmt) {
+		return fmt.matches(LINEAR);
+	}
 
-    public Format[] getFormats() {
-        return new Format[]{LINEAR};
-    }
+	public void receive(Buffer buffer) {
+		if (recorderStream == null) {
+			return;
+		}
+
+		recorderStream.buffers.add(buffer);
+		recorderStream.available += (buffer.getLength() - buffer.getOffset());
+		if (recorderStream.blocked) {
+			recorderStream.blocked = false;
+			recorderStream.semaphore.release();
+		}
+	}
+
+	public Format[] getFormats() {
+		return new Format[] { LINEAR };
+	}
 }

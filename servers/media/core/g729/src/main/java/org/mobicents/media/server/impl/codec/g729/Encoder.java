@@ -75,7 +75,7 @@ public class Encoder {
 			while (f_speech.read(tmp) == LD8KConstants.L_FRAME * 2) {
 				sp16 = Util.byteArrayToShortArray(tmp);
 				frame++;
-				System.out.println(" Frame: r" + frame);
+				
 
 				new_speech = new float[sp16.length];
 				for (i = 0; i < LD8KConstants.L_FRAME; i++)

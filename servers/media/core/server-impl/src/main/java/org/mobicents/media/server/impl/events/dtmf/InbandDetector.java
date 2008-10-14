@@ -89,7 +89,7 @@ public class InbandDetector extends AbstractSink {
      * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
      */
     public void receive(Buffer buffer) {
-        //System.out.println("Receive " + buffer);
+        
         byte[] data = (byte[]) buffer.getData();
         int len = Math.min(localBuffer.length - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);

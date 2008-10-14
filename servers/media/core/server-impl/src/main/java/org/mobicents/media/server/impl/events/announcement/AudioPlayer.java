@@ -38,6 +38,8 @@ import org.xiph.speex.spi.SpeexAudioFileReader;
  * @author Oleg Kulikov
  */
 public class AudioPlayer extends AbstractSource implements Runnable {
+	
+	private transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
     protected final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
@@ -52,7 +54,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private boolean started;
     private String file;
     private long time;
-    private transient Logger logger = Logger.getLogger(AudioPlayer.class);
+    
     
     private int count = 0;
     //protected int packetPeriod;
@@ -97,7 +99,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
                 stream = AudioSystem.getAudioInputStream(url);
             }
         } catch (Exception e) {
-            System.out.println("Error " + stream);
+            logger.error("Error " + stream, e);
             this.failed(e);
             return;
         }

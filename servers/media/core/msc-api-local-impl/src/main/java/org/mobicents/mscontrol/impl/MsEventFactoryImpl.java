@@ -28,6 +28,8 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
@@ -41,33 +43,36 @@ import org.mobicents.mscontrol.impl.events.audio.MsAudioPackage;
 import org.mobicents.mscontrol.impl.events.dtmf.DtmfPackage;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class MsEventFactoryImpl implements MsEventFactory {
-    
-    private static HashMap<String, MsPackage> packages = new HashMap();
-    static {
-        packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
-        packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());
-        packages.put(MsAudio.PACKAGE_NAME, new MsAudioPackage());
-    }
-    
-    public MsRequestedSignal createRequestedSignal(MsEventIdentifier signalID) {
-        MsPackage pkg = packages.get(signalID.getPackageName());
-        System.out.println("Signal ID = " + signalID.getFqn() +", package=" + pkg);
-        if (pkg != null) {
-            return pkg.createRequestedSignal(signalID);
-        }
-        return null;
-    }
-    
-    public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID) {
-        MsPackage pkg = packages.get(eventID.getPackageName());
-        if (pkg != null) {
-            return pkg.createRequestedEvent(eventID);
-        }
-        return null;        
-    }
-    
+
+	private static Logger logger = Logger.getLogger(MsEventFactoryImpl.class);
+	private static HashMap<String, MsPackage> packages = new HashMap();
+	static {
+		packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
+		packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());
+		packages.put(MsAudio.PACKAGE_NAME, new MsAudioPackage());
+	}
+
+	public MsRequestedSignal createRequestedSignal(MsEventIdentifier signalID) {
+		MsPackage pkg = packages.get(signalID.getPackageName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Signal ID = " + signalID.getFqn() + ", package=" + pkg);
+		}
+		if (pkg != null) {
+			return pkg.createRequestedSignal(signalID);
+		}
+		return null;
+	}
+
+	public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID) {
+		MsPackage pkg = packages.get(eventID.getPackageName());
+		if (pkg != null) {
+			return pkg.createRequestedEvent(eventID);
+		}
+		return null;
+	}
+
 }

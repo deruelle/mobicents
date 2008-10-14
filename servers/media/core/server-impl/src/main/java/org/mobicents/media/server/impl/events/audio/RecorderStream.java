@@ -21,95 +21,94 @@ import java.util.concurrent.Semaphore;
 import org.mobicents.media.Buffer;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class RecorderStream extends InputStream {
 
-    protected List<Buffer> buffers = new CopyOnWriteArrayList();
-    protected int available = 0;
-    protected Semaphore semaphore = new Semaphore(0);
-    protected boolean blocked = false;
-    private boolean eom = false;
-    
-    public RecorderStream()  {
-    }
+	protected List<Buffer> buffers = new CopyOnWriteArrayList();
+	protected int available = 0;
+	protected Semaphore semaphore = new Semaphore(0);
+	protected boolean blocked = false;
+	private boolean eom = false;
 
-    @Override
-    public int available() {
-        return available;
-    }
+	public RecorderStream() {
+	}
 
-    @Override
-    public int read() throws IOException {
-        //System.out.println("Read byte");
-        if (eom) {
-            //System.out.println("******EOM*****");
-            return -1;
-        }
+	@Override
+	public int available() {
+		return available;
+	}
 
-        if (buffers.isEmpty()) {
-            blocked = true;
-            try {
-                //System.out.println("read(): block");
-                semaphore.acquire();
-                //System.out.println("read(): unblock");
-            } catch (InterruptedException e) {
-                return -1;
-            }
-        }
+	@Override
+	public int read() throws IOException {
 
-        byte[] buff = new byte[1];
-        int count = readBytes(buff);
+		if (eom) {
 
-        //System.out.println("read bytes=" + count + ", value=" + (buff[0] & 0xff) + ", available=" + available);
-        return count == -1 ? -1 : buff[0] & 0xff;
-    }
+			return -1;
+		}
 
-    @Override
-    public int read(byte[] buff) {
-        //System.out.println("Read buffer");
-        if (buffers.isEmpty()) {
-            blocked = true;
-            try {
-                semaphore.acquire();
-            } catch (InterruptedException e) {
-                return -1;
-            }
-        }
-        return readBytes(buff);
-    }
+		if (buffers.isEmpty()) {
+			blocked = true;
+			try {
 
-    private int readBytes(byte[] buff) {
-        if (buffers.isEmpty()) {
-            return -1;
-        }
+				semaphore.acquire();
 
-        int count = 0;
-        while (count < buff.length && !buffers.isEmpty()) {
-            Buffer buffer = buffers.get(0);
-            byte[] data = (byte[]) buffer.getData();
+			} catch (InterruptedException e) {
+				return -1;
+			}
+		}
 
-            int remainder = buff.length - count;
-            int len = Math.min(remainder, buffer.getLength() - buffer.getOffset());
+		byte[] buff = new byte[1];
+		int count = readBytes(buff);
 
-            System.arraycopy(data, buffer.getOffset(), buff, count, len);
-            count += len;
+		return count == -1 ? -1 : buff[0] & 0xff;
+	}
 
-            buffer.setOffset(buffer.getOffset() + len);
-            if (buffer.getOffset() == buffer.getLength()) {
-                buffers.remove(0);
-            }
-            
-            if (buffer.isEOM()) {
-                eom = true;
-                //break;
-            }
+	@Override
+	public int read(byte[] buff) {
 
-        }
+		if (buffers.isEmpty()) {
+			blocked = true;
+			try {
+				semaphore.acquire();
+			} catch (InterruptedException e) {
+				return -1;
+			}
+		}
+		return readBytes(buff);
+	}
 
-        available -= count;
-        return count;
-    }
+	private int readBytes(byte[] buff) {
+		if (buffers.isEmpty()) {
+			return -1;
+		}
+
+		int count = 0;
+		while (count < buff.length && !buffers.isEmpty()) {
+			Buffer buffer = buffers.get(0);
+			byte[] data = (byte[]) buffer.getData();
+
+			int remainder = buff.length - count;
+			int len = Math.min(remainder, buffer.getLength() - buffer.getOffset());
+
+			System.arraycopy(data, buffer.getOffset(), buff, count, len);
+			count += len;
+
+			buffer.setOffset(buffer.getOffset() + len);
+			if (buffer.getOffset() == buffer.getLength()) {
+				buffers.remove(0);
+			}
+
+			if (buffer.isEOM()) {
+				eom = true;
+				// break;
+			}
+
+		}
+
+		available -= count;
+		return count;
+	}
 
 }

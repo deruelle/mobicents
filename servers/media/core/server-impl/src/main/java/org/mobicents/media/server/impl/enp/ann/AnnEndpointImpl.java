@@ -31,7 +31,7 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class AnnEndpointImpl extends BaseVirtualEndpoint {
     
-    //private transient Logger logger;
+    private transient Logger logger = Logger.getLogger(AnnEndpointImpl.class);
     
     /**
      * Creates a new instance of AnnEndpointImpl

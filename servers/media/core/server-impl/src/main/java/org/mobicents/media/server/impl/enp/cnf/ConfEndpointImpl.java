@@ -15,13 +15,13 @@ package org.mobicents.media.server.impl.enp.cnf;
 
 import java.util.Collection;
 import java.util.HashMap;
-import org.mobicents.media.server.impl.BaseConnection;
 
+import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.audio.Recorder;
 import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
@@ -33,6 +33,8 @@ import org.mobicents.media.server.spi.Endpoint;
  * @author Oleg Kulikov
  */
 public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
+	
+	private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     
     private HashMap mixers = new HashMap();
 //    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);

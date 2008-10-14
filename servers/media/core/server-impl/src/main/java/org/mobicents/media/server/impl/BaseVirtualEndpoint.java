@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.VirtualEndpoint;
@@ -26,62 +27,64 @@ import org.mobicents.media.server.spi.VirtualEndpoint;
  * @author Oleg Kulikov
  */
 public abstract class BaseVirtualEndpoint extends BaseEndpoint implements VirtualEndpoint {
+	private static Logger logger = Logger.getLogger(BaseVirtualEndpoint.class);
+	private static int GEN = 1;
+	protected HashMap<String, Endpoint> endpoints = null;
 
-    private static int GEN = 1;
-    protected HashMap<String, Endpoint> endpoints = null;
+	public BaseVirtualEndpoint(String localName, HashMap<String, Endpoint> endpointMap) {
+		super(localName);
+		this.endpoints = endpointMap;
+	}
 
-    public BaseVirtualEndpoint(String localName, HashMap<String, Endpoint> endpointMap) {
-        super(localName);
-        this.endpoints = endpointMap;
-    }
+	public Endpoint createEndpoint() {
+		String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
+		BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
 
-    public Endpoint createEndpoint() {
-        String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
-        BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
+		enp.setRtpFactoryName(this.getRtpFactoryName());
 
-        enp.setRtpFactoryName(this.getRtpFactoryName());
+		endpoints.put(localName, enp);
+		return enp;
+	}
 
-        endpoints.put(localName, enp);
-        return enp;
-    }
+	public abstract Endpoint doCreateEndpoint(String localName);
 
-    public abstract Endpoint doCreateEndpoint(String localName);
+	@Override
+	public void deleteConnection(String connectionID) {
 
-    @Override
-    public void deleteConnection(String connectionID) {
+		super.deleteConnection(connectionID);
+		if (!this.hasConnections()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Removed endpoint=" + this.getLocalName());
+			}
+			endpoints.remove(this.getLocalName());
+		}
 
-        super.deleteConnection(connectionID);
-        if (!this.hasConnections()) {
-            System.out.println("Removed endpoint=" + this.getLocalName());
-            endpoints.remove(this.getLocalName());
-        }
+	}
 
-    }
+	public Endpoint getEndpoint(String localName) {
+		return endpoints.get(localName);
+	}
 
-    public Endpoint getEndpoint(String localName) {
-        return endpoints.get(localName);
-    }
+	public String[] getEndpointsNames() {
 
-    public String[] getEndpointsNames() {
+		SortedSet<String> s = new TreeSet<String>();
+		s.addAll(endpoints.keySet());
+		return s.toArray(new String[s.size()]);
+	}
 
-        SortedSet<String> s = new TreeSet<String>();
-        s.addAll(endpoints.keySet());
-        return s.toArray(new String[s.size()]);
-    }
+	public EndpointLocalManagement[] getEndpoints() {
 
-    public EndpointLocalManagement[] getEndpoints() {
+		EndpointLocalManagement[] value = this.endpoints.values().toArray(
+				new EndpointLocalManagement[this.endpoints.values().size()]);
 
+		return value;
+	}
 
-        EndpointLocalManagement[] value = this.endpoints.values().toArray(new EndpointLocalManagement[this.endpoints.values().size()]);
+	public String[] getEndpointNames() {
+		return this.endpoints.keySet().toArray(new String[this.endpoints.keySet().size()]);
+	}
 
-        return value;
-    }
-
-    public String[] getEndpointNames() {
-        return this.endpoints.keySet().toArray(new String[this.endpoints.keySet().size()]);
-    }
-
-    public String toString() {
-        return this.getClass().getSimpleName() + ":" + endpoints;
-    }
+	public String toString() {
+		return this.getClass().getSimpleName() + ":" + endpoints;
+	}
 }

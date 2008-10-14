@@ -15,6 +15,7 @@
  */
 package org.mobicents.mscontrol.impl;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionEventCause;
@@ -27,57 +28,63 @@ import org.mobicents.mscontrol.MsConnectionListener;
  */
 public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
 
-    private MsConnectionImpl connection;
-    private MsConnectionEventID eventID;
-    private MsConnectionEventCause cause;
-    private String msg;
+	private static Logger logger = Logger.getLogger(MsConnectionEventImpl.class);
 
-    /** Creates a new instance of MsConnectionEventImpl */
-    public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID,
-            MsConnectionEventCause cause, String msg) {
-        this.connection = connection;
-        this.eventID = eventID;
-        this.cause = cause;
-        this.msg = msg;
-    }
+	private MsConnectionImpl connection;
+	private MsConnectionEventID eventID;
+	private MsConnectionEventCause cause;
+	private String msg;
 
-    public MsConnection getConnection() {
-        return connection;
-    }
+	/** Creates a new instance of MsConnectionEventImpl */
+	public MsConnectionEventImpl(MsConnectionImpl connection, MsConnectionEventID eventID,
+			MsConnectionEventCause cause, String msg) {
+		this.connection = connection;
+		this.eventID = eventID;
+		this.cause = cause;
+		this.msg = msg;
+	}
 
-    public MsConnectionEventID getEventID() {
-        return eventID;
-    }
+	public MsConnection getConnection() {
+		return connection;
+	}
 
-    public MsConnectionEventCause getCause() {
-        return cause;
-    }
+	public MsConnectionEventID getEventID() {
+		return eventID;
+	}
 
-    public String getMessage() {
-        return msg;
-    }
+	public MsConnectionEventCause getCause() {
+		return cause;
+	}
 
-    public void run() {
-        for (MsConnectionListener listener : connection.session.provider.connectionListeners) {
-            System.out.println("**** SENDING CONNECTION EVENT " + eventID + " TO " + listener);
-            switch (eventID) {
-                case CONNECTION_CREATED:
-                    listener.connectionCreated(this);
-                    break;
-                case CONNECTION_HALF_OPEN:
-                    listener.connectionHalfOpen(this);
-                    break;
-                case CONNECTION_OPEN:
-                    listener.connectionOpen(this);
-                    break;
-                case CONNECTION_FAILED:
-                    System.out.println("CONNECTION FAILED");
-                    listener.connectionFailed(this);
-                    break;
-                case CONNECTION_DISCONNECTED:
-                    listener.connectionDisconnected(this);
-                    break;
-            }
-        }
-    }
+	public String getMessage() {
+		return msg;
+	}
+
+	public void run() {
+		for (MsConnectionListener listener : connection.session.provider.connectionListeners) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("**** SENDING CONNECTION EVENT " + eventID + " TO " + listener);
+			}
+			switch (eventID) {
+			case CONNECTION_CREATED:
+				listener.connectionCreated(this);
+				break;
+			case CONNECTION_HALF_OPEN:
+				listener.connectionHalfOpen(this);
+				break;
+			case CONNECTION_OPEN:
+				listener.connectionOpen(this);
+				break;
+			case CONNECTION_FAILED:
+				if (logger.isDebugEnabled()) {
+					logger.debug("CONNECTION FAILED");
+				}
+				listener.connectionFailed(this);
+				break;
+			case CONNECTION_DISCONNECTED:
+				listener.connectionDisconnected(this);
+				break;
+			}
+		}
+	}
 }

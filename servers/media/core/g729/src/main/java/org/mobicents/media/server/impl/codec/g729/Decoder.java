@@ -78,7 +78,7 @@ public class Decoder {
 	   {
 		  serial = Util.byteArrayToShortArray(tmp);
 	      frame++;
-	      System.out.println(" Frame: "+frame);
+	      
 
 	      Bits.bits2prm_ld8k( serial,2, parm,1);
 

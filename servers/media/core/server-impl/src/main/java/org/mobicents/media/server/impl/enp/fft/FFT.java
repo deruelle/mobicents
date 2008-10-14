@@ -1,6 +1,6 @@
 package org.mobicents.media.server.impl.enp.fft;
 
-import org.mobicents.media.server.impl.enp.fft.*;
+import org.apache.log4j.Logger;
 
 /*******************************************************************************
  * Compilation: javac FFT.java Execution: java FFT N Dependencies: Complex.java
@@ -17,6 +17,8 @@ import org.mobicents.media.server.impl.enp.fft.*;
  ******************************************************************************/
 
 public class FFT {
+	
+	private static Logger logger = Logger.getLogger(FFT.class);
 
 	// compute the FFT of x[], assuming its length is a power of 2
 	public Complex[] fft(Complex[] x) {
@@ -86,12 +88,12 @@ public class FFT {
 	 */
 
 	public static void show(Complex[] x, String title) {
-		System.out.println(title);
-		System.out.println("-------------------");
+		logger.debug(title);
+		logger.debug("-------------------");
 		for (int i = 0; i < x.length; i++) {
-			System.out.println(x[i]);
+			logger.debug(x[i]);
 		}
-		System.out.println();
+		logger.debug("");
 	}
 
 }
