@@ -8,8 +8,8 @@ This module is a full SIP Presence Service, including servers:
 
 ----> REQUIREMENTS:
 
-The XDMS and PS depends on the Mobicents Http-Servlet and SIP RAs.
-Of course, you need to deploy those RAs prior to the installation of  
+The XDMS and PS depends on the Mobicents Http-Servlet and SIP11 RAs.
+You need to deploy those RAs prior to the installation of  
 the servers.
 
 IMPORTANT, at the moment the XDM is not compatible with JDK 1.6!

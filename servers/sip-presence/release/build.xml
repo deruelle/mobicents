@@ -4,7 +4,7 @@
 	<property environment="sys" />
 
 	<property name="release.dir" value="${ant.file.mobicents.release}/../target" />
-	<property name="mobicents.jainslee.version" value="1.2.0.GA" />
+	<property name="mobicents.jainslee.version" value="1.2.1.GA" />
 	<property name="jboss.version" value="4.2.2.GA" />
 	<property name="release.version" value="1.0.0.BETA3" />
 	<property name="mobicents.distro.zip.path" value="mobicents-jainslee-server-${mobicents.jainslee.version}.zip" />
@@ -57,7 +57,7 @@
 			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home}" />
 		</exec>
 	</target>
-	
+
 	<target name="release-xdms">
 		<antcall target="build-mobicents-jain-slee" />
 		<antcall target="build-xdms" inheritall="false">
@@ -65,9 +65,9 @@
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
 		<antcall target="build-with-mobicents-src-zip" />
-		<delete dir="." includes="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}-*.zip" />
+		<delete dir="." includes="mobicents-sip-presence-xdms-${release.version}-*.zip" />
 		<antcall target="zip-jboss">
-			<param name="zip.filename" value="mobicents-sip-presence-xdms-${release.version}-jboss-${jboss.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mobicents-sip-presence-xdms-${release.version}-${time.stamp}.zip" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
 		<delete dir="${jboss.home}" failonerror="true" />
@@ -84,9 +84,10 @@
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
 		<antcall target="build-with-mobicents-src-zip" />
-		<delete dir="." includes="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}-*.zip" />
+		<delete dir="." includes="mobicents-sip-presence-integrated-${release.version}-*.zip" />
+		<copy overwrite="true" file="${ant.file.mobicents.release}/../msps-integrated-server-README.txt" todir="${jboss.home}" />
 		<antcall target="zip-jboss">
-			<param name="zip.filename" value="mobicents-sip-presence-integrated-${release.version}-jboss-${jboss.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mobicents-sip-presence-integrated-${release.version}-${time.stamp}.zip" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
 		<delete dir="${jboss.home}" failonerror="true" />
@@ -137,7 +138,7 @@
 				<filter token="JBOSS.HOME" value="${release.build.jboss.home}" />
 			</filterset>
 		</copy>
-		<copy file="${ant.file.mobicents.release}/../mobicents-all-readme.txt" toFile="${release.dir}/sip-presence/readme.txt" overwrite="true" />
+		<copy file="${ant.file.mobicents.release}/../mobicents-all-README.txt" toFile="${release.dir}/sip-presence/README.txt" overwrite="true" />
 		<delete dir="${release.dir}/sip-presence/xcap-client/ra" />
 		<delete dir="${release.dir}/tmp" />
 	</target>
@@ -147,7 +148,12 @@
 		<antcall target="build-without-mobicents-jain-slee-src-zip" />
 		<!-- TODO copy readme & licenses -->
 		<delete dir="." includes="mobicents-sip-presence-${release.version}-*.zip" />
+		<copy file="${ant.file.mobicents.release}/../standalone-README.txt" toFile="${release.dir}/sip-presence/README.txt" overwrite="true" />
 		<zip destfile="${ant.file.mobicents.release}/../mobicents-sip-presence-${release.version}-${time.stamp}.zip" basedir="${release.dir}/sip-presence" />
+		<antcall target="checksum">
+			<param name="source.file" value="${ant.file.mobicents.release}/../mobicents-sip-presence-${release.version}-${time.stamp}.zip" />
+			<param name="algorithm" value="sha1" />
+		</antcall>
 		<delete dir="${release.dir}/tmp" />
 		<delete dir="${release.dir}/sip-presence" />
 	</target>
@@ -276,6 +282,7 @@
 				<include name="*.properties" />
 			</fileset>
 		</copy>
+		<copy overwrite="true" failonerror="false" file="${source.dir}/../readme.txt" todir="${dest.dir}" />
 		<copy overwrite="true" file="${dest.dir}/build.xml" tofile="${dest.dir}/du-management.xml" />
 		<copy overwrite="true" file="${ant.file.mobicents.release}/../component-build.xml" toFile="${dest.dir}/build.xml">
 			<filterset>
@@ -304,6 +311,10 @@
 			</zipfileset>
 			<zipfileset dir="${jboss.home}" prefix="" excludes="**/bin/** **/server/*/data/** **/server/*/log/** **/server/*/tmp/** **/server/*/work/** **/server/tmp/**" />
 		</zip>
+		<antcall target="checksum">
+			<param name="source.file" value="${ant.file.mobicents.release}/../${zip.filename}"/>
+			<param name="algorithm" value="sha1" />
+		</antcall>
 	</target>
 
 	<target name="build-src-zip">
@@ -328,6 +339,11 @@
 		</copy>
 
 		<zip destfile="${ant.file.mobicents.release}/../${zip.filename}" basedir="${release.dir}/src" />
+		<antcall target="checksum">
+			<param name="source.file" value="${ant.file.mobicents.release}/../${zip.filename}" />
+			<param name="algorithm" value="sha1" />
+		</antcall>
+
 		<delete dir="${release.dir}/src" />
 
 		<defaultexcludes default="true" />
@@ -342,7 +358,10 @@
 	<available file="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" property="got.mobicents-jain-slee" />
 	<target name="get-mobicents-jain-slee" unless="got.mobicents-jain-slee">
 		<echo>Downloading Mobicents JAIN SLEE Server</echo>
-		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-1.2.0.GA-jboss-4.2.2.GA.zip" />
+		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-${mobicents.jainslee.version}-jboss-${jboss.version}.zip" />
 	</target>
 
+	<target name="checksum">
+		<checksum file="${source.file}" algorithm="${algorithm}" fileext=".${algorithm}" forceOverwrite="yes" />
+	</target>
 </project>

@@ -34,13 +34,14 @@ import org.mobicents.slee.sipevent.server.publication.PublicationClientControlSb
 public abstract class InternalPublisherExampleSbb implements javax.slee.Sbb,
 		PublicationClientControlParentSbbLocalObject {
 
-	String entity = "sip:internal-publisher@127.0.0.1";
+	String presenceDomain = System.getProperty("bind.address","127.0.0.1");
+	String entity = "sip:internal-publisher@" + presenceDomain;
 	String eventPackage = "presence";
 	String contentType = "application";
 	String contentSubType = "pidf+xml";
 	String document = 
 		"<?xml version='1.0' encoding='UTF-8'?>" +
-		"<presence xmlns='urn:ietf:params:xml:ns:pidf' xmlns:dm='urn:ietf:params:xml:ns:pidf:data-model' xmlns:rpid='urn:ietf:params:xml:ns:pidf:rpid' xmlns:c='urn:ietf:params:xml:ns:pidf:cipid' entity='sip:internal-publisher@127.0.0.1'>" +
+		"<presence xmlns='urn:ietf:params:xml:ns:pidf' xmlns:dm='urn:ietf:params:xml:ns:pidf:data-model' xmlns:rpid='urn:ietf:params:xml:ns:pidf:rpid' xmlns:c='urn:ietf:params:xml:ns:pidf:cipid' entity='sip:internal-publisher@"+presenceDomain+"'>" +
 			"<tuple id='t54bb0569'><status><basic>open</basic></status></tuple>" +
 			"<dm:person id='p65f3307a'>" +
 				"<rpid:activities><rpid:busy/></rpid:activities>" +

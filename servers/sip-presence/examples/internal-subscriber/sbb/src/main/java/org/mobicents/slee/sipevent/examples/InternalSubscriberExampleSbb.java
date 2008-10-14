@@ -36,8 +36,9 @@ import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription.Status;
 public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 		SubscriptionClientControlParentSbbLocalObject {
 
-	String subscriber = "sip:internal-subscriber@127.0.0.1";
-	String notifier = "sip:user@127.0.0.1";
+	String presenceDomain = System.getProperty("bind.address","127.0.0.1");
+	String subscriber = "sip:internal-subscriber@"+presenceDomain;
+	String notifier = "sip:user@"+presenceDomain;
 	String eventPackage = "presence";
 	int expires = 60;
 

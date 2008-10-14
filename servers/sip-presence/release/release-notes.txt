@@ -4,7 +4,8 @@ Release Notes
 -------------------------------------------------------------------------------
 Mobicents SIP Presence Service is composed by Mobicents XDM and Presence Servers, on this release you can find:
 * Mobicents XDM Server standalone installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-xdms-<version>.zip)
-* Mobicents XDM Server and Mobicents SIP Presence Servers integrated installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-integrated-<version>.zip)
+* Mobicents XDM Server and Mobicents SIP Presence Servers integrated installed in JBboss AS + Mobicents JAIN SLEE Server, plus two example
+presence aware JAIN SLEE applications pre-deployed (mobicents-sip-presence-integrated-<version>.zip)
 * Mobicents SIP Presence Service binary package that you can use to install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>.zip)
 * Mobicents SIP Presence Service source project that you can use to build and install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>-src.zip)
 
@@ -13,7 +14,7 @@ Where to download from?
 The distribution can be found on SourceForge.net.
 URL: https://sourceforge.net/project/showfiles.php?group_id=102670&package_id=287660&release_id=619669
 
-SVN tag: mobicents-sip-presence-service-1.0.0.BETA2
+SVN tag: mobicents-sip-presence-service-1.0.0.BETA3
 
 Source repositories:
 -------------------------------------------------------------------------------
