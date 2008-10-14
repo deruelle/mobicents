@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>5</version>
+		<version>6</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
@@ -21,7 +21,7 @@
 		</release.name>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS  -->
 		<mobicents.servers.jainslee.version>
-			1.2.0.GA
+			1.2.1.GA
 		</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>
 			1.0.0.BETA2
