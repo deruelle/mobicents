@@ -50,23 +50,23 @@ import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
 
-import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.events.MsEventAction;
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.audio.MsRecordRequestedSignal;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfNotifyEvent;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
 import org.mobicents.mscontrol.events.pkg.DTMF;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
+import org.mobicents.mscontrol.events.pkg.MsAudio;
 import org.mobicents.slee.examples.callcontrol.common.SubscriptionProfileSbb;
 import org.mobicents.slee.examples.callcontrol.profile.CallControlProfileCMP;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -279,18 +279,15 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		this.setUserEndpoint(endpointName);
 
 		MsEventFactory eventFactory = msProvider.getEventFactory();
+		URL audioFileURL = null;
 
 		if (getSameUser()) {
 
 			log.info("same user, lets play the voice mail");
-
-			MsPlayRequestedSignal play = (MsPlayRequestedSignal) eventFactory
-					.createRequestedSignal(MsAnnouncement.PLAY);
-
 			String audioFile = getAudioFileString();
 			File file = null;
 			boolean fileExist = false;
-			URL audioFileURL = null;
+
 			try {
 				file = new File(audioFile);
 				fileExist = file.exists();
@@ -303,49 +300,25 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			} else {
 				audioFileURL = getClass().getResource(novoicemessage);
 			}
-			play.setURL(audioFileURL.toString());
-
-			MsRequestedEvent onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
-			onCompleted.setEventAction(MsEventAction.NOTIFY);
-
-			MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
-			onFailed.setEventAction(MsEventAction.NOTIFY);
-
-			MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
-			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
-
-			connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
 
 		} else {
 			log.debug("not the same user, start recording after announcement");
-
-			URL audioFileURL = getClass().getResource(recordAfterTone);
-
-			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
-			String fileName = ((SipURI) toHeader.getAddress().getURI()).getUser() + WAV_EXT;
-
-			String recordFilePath = null;
-
-			if (route != null) {
-				recordFilePath = route + fileName;
-			} else {
-				recordFilePath = fileName;
-			}
-
-			String[] params = new String[2];
-			params[0] = audioFileURL.toString();
-			params[1] = recordFilePath;
-
-			MsSignalGenerator signalGenerator = msProvider.getSignalGenerator(endpointName);
-
-			try {
-				ActivityContextInterface dtmfAci = msActivityFactory.getActivityContextInterface(signalGenerator);
-				dtmfAci.attach(this.getSbbLocalObject());
-				signalGenerator.apply(EventID.PLAY_RECORD, connection, params);
-			} catch (UnrecognizedActivityException e) {
-				log.error(e.getMessage(), e);
-			}
+			audioFileURL = getClass().getResource(recordAfterTone);
 		}
+
+		MsPlayRequestedSignal play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+		play.setURL(audioFileURL.toString());
+
+		MsRequestedEvent onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+		onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+		MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+		onFailed.setEventAction(MsEventAction.NOTIFY);
+
+		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
+
+		connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
 
 	}
 
@@ -384,16 +357,44 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
 		log.info("########## VOICE MAIL SBB: onAnnouncementComplete ##########");
-
 		MsConnection connection = (MsConnection) evt.getSource();
 		MsEndpoint ivr = connection.getEndpoint();
+		if (this.getSameUser()) {
 
-		MsEventFactory factory = msProvider.getEventFactory();
-		MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
-		MsRequestedSignal[] signals = new MsRequestedSignal[] {};
-		MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
+			MsEventFactory factory = msProvider.getEventFactory();
+			MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+			MsRequestedSignal[] signals = new MsRequestedSignal[] {};
+			MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
 
-		ivr.execute(signals, events, connection);
+			ivr.execute(signals, events, connection);
+		} else {
+			ServerTransaction txn = getServerTransaction();
+			Request request = txn.getRequest();
+
+			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
+			String fileName = ((SipURI) toHeader.getAddress().getURI()).getUser() + WAV_EXT;
+
+			String recordFilePath = null;
+
+			if (route != null) {
+				recordFilePath = route + fileName;
+			} else {
+				recordFilePath = fileName;
+			}
+
+			MsEventFactory eventFactory = msProvider.getEventFactory();
+			MsRecordRequestedSignal record = (MsRecordRequestedSignal) eventFactory
+					.createRequestedSignal(MsAudio.RECORD);
+			record.setFile(recordFilePath);
+
+			MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAudio.FAILED);
+			onFailed.setEventAction(MsEventAction.NOTIFY);
+
+			MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { record };
+			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onFailed };
+
+			ivr.execute(requestedSignals, requestedEvents, connection);
+		}
 	}
 
 	public void onDtmf(MsNotifyEvent evt, ActivityContextInterface aci) {
@@ -402,10 +403,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
 		MsConnection connection = (MsConnection) evt.getSource();
 		String seq = event.getSequence();
-
 		boolean bye = checkDtmfDigit(seq);
-		// this.initDtmfDetector(this.getConnection(), this.getUserEndpoint());
-
 	}
 
 	private MsConnection getConnection() {
@@ -566,7 +564,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
 			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
 
-			System.out.println("EXECUTING PLAY");
+			log.debug("EXECUTING PLAY");
 			MsConnection connection = this.getConnection();
 			connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
 
@@ -684,7 +682,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private MsProvider msProvider;
 	private MediaRaActivityContextInterfaceFactory msActivityFactory;
 
-	public final static String ENDPOINT_NAME = "media/endpoint/IVR";
+	public final static String ENDPOINT_NAME = "media/trunk/IVR/$";
 
 	private String route = null;
 

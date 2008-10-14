@@ -135,8 +135,6 @@ public abstract class RecorderDemoSbb implements Sbb {
 
         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{record};
         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onFailed};
-
-        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
         
         ivr.execute(requestedSignals, requestedEvents, link);
     }
