@@ -230,6 +230,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                 logger.debug("Media server returns endpoint: " + endpoint.server.getLocalName());
                 endpoint.server.addConnectionListener(localConnection);
                 connection = endpoint.server.createConnection(ConnectionMode.SEND_RECV);
+                setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
                 //connection.addListener(localConnection);
                 if (remoteSdp != null) {
                     connection.setRemoteDescriptor(remoteSdp);
