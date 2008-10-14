@@ -14,12 +14,12 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 		
-		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/jain-slee</jainslee.connectionURL>
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-jainslee-server-1.2.1.GA</jainslee.connectionURL>
 		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/core</media.core.connectionURL>
 		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/controllers</media.controllers.connectionURL>
 		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/examples</media.examples.connectionURL>
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
-		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA2</sippresence.connectionURL>
+		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA3</sippresence.connectionURL>
 		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.6</sipservlets.connectionURL>
 	</properties>
 	
