@@ -44,7 +44,7 @@ public class RecorderTest {
 
     @Test
     public void testGetFormats() {
-        Recorder r = new Recorder("");
+        Recorder r = new Recorder("", "");
         AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR,8000, 16, 1,
                 AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
         assertEquals(1, r.getFormats().length);
