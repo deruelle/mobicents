@@ -7,15 +7,10 @@ import javax.slee.EventTypeID;
 import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
-import javax.naming.*;
-import javax.slee.*;
-import javax.slee.connection.*;
 
-import org.jboss.seam.ScopeType;
+import org.apache.log4j.Logger;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-
-import org.mobicents.slee.connector.server.RemoteSleeService;
 import org.mobicents.slee.service.events.CustomEvent;
 
 /**
@@ -27,6 +22,8 @@ import org.mobicents.slee.service.events.CustomEvent;
 
 @Name("afterOrderProcessed")
 public class AfterOrderProcessedAction {
+	
+	private static Logger logger = Logger.getLogger(AfterOrderProcessedAction.class); 
 	@In
 	String customerfullname;
 
@@ -43,11 +40,10 @@ public class AfterOrderProcessedAction {
 	String userName;
 
 	public void fireOrderProcessedEvent() {
-		System.out
-				.println("*************** Fire ORDER_PROCESSED  ***************************");
-		System.out.println("First Name = " + customerfullname);
-		System.out.println("Phone = " + cutomerphone);
-		System.out.println("orderId = " + orderId);
+		logger.info("*************** Fire ORDER_PROCESSED  ***************************");
+		logger.info("First Name = " + customerfullname);
+		logger.info("Phone = " + cutomerphone);
+		logger.info("orderId = " + orderId);
 
 		try {
 

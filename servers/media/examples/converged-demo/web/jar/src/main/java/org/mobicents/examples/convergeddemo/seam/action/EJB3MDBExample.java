@@ -21,102 +21,83 @@ import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
 
+import org.apache.log4j.Logger;
 import org.mobicents.slee.connector.server.RemoteSleeService;
 import org.mobicents.slee.service.events.CustomEvent;
 
 /**
  * A MDB3 EJB example.
- *
+ * 
  * @author <a href="mailto:ovidiu@feodorov.com">Ovidiu Feodorov</a>
  * @version <tt>$Revision: 2868 $</tt>
-
+ * 
  * $Id: EJB3MDBExample.java 2868 2007-07-10 20:22:16Z timfox $
  */
-@MessageDriven(activationConfig =
-{
-      @ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
-      @ActivationConfigProperty(propertyName="destination", propertyValue="queue/A"),
-      @ActivationConfigProperty(propertyName="DLQMaxResent", propertyValue="10")
-})
-public class EJB3MDBExample implements MessageListener
-{
-   public void onMessage(Message m)
-   {
-      businessLogic(m);
-   }
+@MessageDriven(activationConfig = {
+		@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+		@ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/A"),
+		@ActivationConfigProperty(propertyName = "DLQMaxResent", propertyValue = "10") })
+public class EJB3MDBExample implements MessageListener {
+	private static Logger logger = Logger.getLogger(EJB3MDBExample.class);
 
-   private void businessLogic(Message m)
-   {
-      Connection conn = null;
-      Session session = null;
-	RemoteSleeService service=null;
-
-      try
-      {
-         TextMessage tm = (TextMessage)m;
-
-         String text = tm.getText();
-         System.out.println("message " + text + " received");
-
-	String[] mssArr = text.split(",");
-	for(int i=0; i < mssArr.length; i++){
-		System.out.println(mssArr[i]);
+	public void onMessage(Message m) {
+		businessLogic(m);
 	}
-         
-	 System.out.println("************************** EJB3MDBExample -> Start **************************");
-	
 
-            InitialContext ctx=new InitialContext();
-		SleeConnectionFactory factory = (SleeConnectionFactory)ctx.lookup("java:/MobicentsConnectionFactory");
+	private void businessLogic(Message m) {
+		Connection conn = null;
+		Session session = null;
+		RemoteSleeService service = null;
 
-		SleeConnection conn1 = null;
-		conn1 = factory.getConnection();
+		try {
+			TextMessage tm = (TextMessage) m;
 
-		
-		
-		//BigDecimal amount = BigDecimal.valueOf(45l, 0) ;
-		//amount = 45.66;
+			String text = tm.getText();
+			logger.info("message " + text + " received");
 
-		long orderId = Long.parseLong(mssArr[0]);
-		
-		BigDecimal amount = new BigDecimal(mssArr[1]);
+			String[] mssArr = text.split(",");
+			for (int i = 0; i < mssArr.length; i++) {
+				logger.info(mssArr[i]);
+			}
 
-		CustomEvent customEvent = new CustomEvent(orderId, amount, mssArr[2], mssArr[3], mssArr[4]);
-		
-		EventTypeID requestType = conn1.getEventTypeID("org.mobicents.slee.service.sfdemo.ORDER_PLACED","org.mobicents","1.0");
+			logger.info("************************** EJB3MDBExample -> Start **************************");
 
-		// Fire an asynchronous event
-                ExternalActivityHandle handle = conn1.createActivityHandle();
+			InitialContext ctx = new InitialContext();
+			SleeConnectionFactory factory = (SleeConnectionFactory) ctx.lookup("java:/MobicentsConnectionFactory");
 
-		conn1.fireEvent(customEvent, requestType, handle, null);
+			SleeConnection conn1 = null;
+			conn1 = factory.getConnection();
 
-	
-	System.out.println("************************** MDBExample -> End **************************");
+			// BigDecimal amount = BigDecimal.valueOf(45l, 0) ;
+			// amount = 45.66;
 
+			long orderId = Long.parseLong(mssArr[0]);
 
+			BigDecimal amount = new BigDecimal(mssArr[1]);
 
-      }
-      catch(Exception e)
-      {
-         e.printStackTrace();
-         System.out.println("The Message Driven Bean failed!");
-      }
-      finally
-      {
-         if (conn != null)
-         {
-            try
-            {
-               conn.close();
-            }
-            catch(Exception e)
-            {
-               System.out.println("Could not close the connection!" +e);
-            }
-         }
-      }
-   }
+			CustomEvent customEvent = new CustomEvent(orderId, amount, mssArr[2], mssArr[3], mssArr[4]);
+
+			EventTypeID requestType = conn1.getEventTypeID("org.mobicents.slee.service.sfdemo.ORDER_PLACED",
+					"org.mobicents", "1.0");
+
+			// Fire an asynchronous event
+			ExternalActivityHandle handle = conn1.createActivityHandle();
+
+			conn1.fireEvent(customEvent, requestType, handle, null);
+
+			logger.info("************************** MDBExample -> End **************************");
+
+		} catch (Exception e) {
+
+			logger.error("The Message Driven Bean failed!", e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (Exception e) {
+					logger.error("Could not close the connection!" , e);
+				}
+			}
+		}
+	}
 }
-
-
-

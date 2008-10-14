@@ -112,7 +112,7 @@ public abstract class ForestSbb implements Sbb {
     }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        System.out.println("Finita la commedia");
+        logger.info("Finita la commedia");
         ActivityContextInterface activities[] = sbbContext.getActivities();
         for (int i = 0; i < activities.length; i++) {
             if (activities[i].getActivity() instanceof MsLink) {

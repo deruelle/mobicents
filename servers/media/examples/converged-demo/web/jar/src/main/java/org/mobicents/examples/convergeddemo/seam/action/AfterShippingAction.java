@@ -8,6 +8,7 @@ import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
 
+import org.apache.log4j.Logger;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.mobicents.slee.service.events.CustomEvent;
@@ -19,6 +20,9 @@ import org.mobicents.slee.service.events.CustomEvent;
  */
 @Name("afterShipping")
 public class AfterShippingAction {
+	
+	private static Logger logger = Logger.getLogger(AfterShippingAction.class);
+	
 	@In
 	String customerfullname;
 
@@ -35,11 +39,10 @@ public class AfterShippingAction {
 	String userName;
 
 	public void orderShipped() {
-		System.out
-				.println("*************** Fire ORDER_SHIPPED  ***************************");
-		System.out.println("First Name = " + customerfullname);
-		System.out.println("Phone = " + cutomerphone);
-		System.out.println("orderId = " + orderId);
+		logger.info("*************** Fire ORDER_SHIPPED  ***************************");
+		logger.info("First Name = " + customerfullname);
+		logger.info("Phone = " + cutomerphone);
+		logger.info("orderId = " + orderId);
 
 		try {
 

@@ -8,6 +8,7 @@ import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
 
+import org.apache.log4j.Logger;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -16,7 +17,8 @@ import org.mobicents.slee.service.events.CustomEvent;
 
 @Name("beforeOrderProcessed")
 public class BeforeOrderProcessedAction {
-
+	private static Logger logger = Logger.getLogger(BeforeOrderProcessedAction.class);
+	
 	@In
 	String customerfullname;
 	
@@ -36,12 +38,11 @@ public class BeforeOrderProcessedAction {
 	ExternalActivityHandle handle;
 
 	public void fireBeforeOrderProcessedEvent() {
-		System.out
-				.println("***************Fire BEFORE_ORDER_PROCESSED . Custom event to call user to set date ***************************");
-		System.out.println("Customer Name = " + customerfullname);
-		System.out.println("Phone = " + cutomerphone);
-		System.out.println("orderId = " + orderId);
-		System.out.println("Amount = " + amount);
+		logger.info("***************Fire BEFORE_ORDER_PROCESSED . Custom event to call user to set date ***************************");
+		logger.info("Customer Name = " + customerfullname);
+		logger.info("Phone = " + cutomerphone);
+		logger.info("orderId = " + orderId);
+		logger.info("Amount = " + amount);
 
 		try {
 

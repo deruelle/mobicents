@@ -196,7 +196,7 @@ public abstract class DtmfDemoSbb implements Sbb {
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
         MsLink link = getLink();
-        System.out.println("Releasing link=" + link);
+        logger.info("Releasing link=" + link);
         if (link != null) {
             link.release();
         }

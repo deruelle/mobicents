@@ -23,7 +23,7 @@ public class ProfileCreator {
 		
 		if (!createdProfiles) {
 		// TODO change this code to be an exmaple of how to create Slee Profiles from an external java app
-		System.out.println("Creating profiles ------------------------------------");
+		log.info("Creating profiles ------------------------------------");
 		try {
 			
 			String jbossBindAddress = System.getProperty("jboss.bind.address");
@@ -76,13 +76,13 @@ public class ProfileCreator {
 		
 		ObjectName profileObjectName = (ObjectName) sci.invokeOperation("-createProfile",
 				profileTableName, profileName, null);
-		System.out.println("*** AddressProfile " + profileName + " created: " + profileObjectName);
+		log.info("*** AddressProfile " + profileName + " created: " + profileObjectName);
 		if (!(Boolean) adaptor.getAttribute(profileObjectName, "ProfileWriteable")) {
 			Object[] o = new Object[] {};
 			adaptor.invoke(profileObjectName, "editProfile", o, new String[] {});
-			System.out.println("*** Setting profile editable.");
+			log.info("*** Setting profile editable.");
 		} else {
-			System.out.println("********* Profile is editable.");
+			log.info("********* Profile is editable.");
 		}
 		// Setting and Committing
 		Address userAddress = new Address(AddressPlan.SIP, callee);
@@ -94,9 +94,9 @@ public class ProfileCreator {
 		adaptor.setAttribute(profileObjectName, blockedAttr);
 		adaptor.setAttribute(profileObjectName, backupAttr);
 		adaptor.setAttribute(profileObjectName, voicemailAttr);
-		System.out.println("*** Profile modifications are not committed yet.");
+		log.info("*** Profile modifications are not committed yet.");
 		adaptor.invoke(profileObjectName, "commitProfile", new Object[] {},new String[] {});
-		System.out.println("*** Profile modifications are committed.");
+		log.info("*** Profile modifications are committed.");
 	}
 	
 }

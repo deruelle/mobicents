@@ -621,8 +621,8 @@ public class SipUtilsImpl implements SipUtils {
 				}
 			}
 
-			System.out.println("********* New Request *******************");
-			System.out.println(newRequest);
+			log.debug("********* New Request *******************");
+			log.debug(newRequest);
 
 			// Return the new request with the proper authorization header.
 			return newRequest;

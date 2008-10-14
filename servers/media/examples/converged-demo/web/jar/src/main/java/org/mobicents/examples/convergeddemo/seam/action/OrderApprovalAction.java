@@ -8,12 +8,15 @@ import javax.slee.connection.ExternalActivityHandle;
 import javax.slee.connection.SleeConnection;
 import javax.slee.connection.SleeConnectionFactory;
 
+import org.apache.log4j.Logger;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.mobicents.slee.service.events.CustomEvent;
 
 @Name("orderApprovalAction")
 public class OrderApprovalAction {
+	
+	private static Logger logger = Logger.getLogger(OrderApprovalAction.class);
 	
 	@In
 	String customerfullname;
@@ -35,11 +38,10 @@ public class OrderApprovalAction {
 	
 	public void fireOrderApprovedEvent() {
 
-		System.out
-				.println("*************** Fire ORDER_APPROVED  ***************************");
-		System.out.println("First Name = " + customerfullname);
-		System.out.println("Phone = " + cutomerphone);
-		System.out.println("orderId = " + orderId);
+		logger.info("*************** Fire ORDER_APPROVED  ***************************");
+		logger.info("First Name = " + customerfullname);
+		logger.info("Phone = " + cutomerphone);
+		logger.info("orderId = " + orderId);
 		
 		try {
 
@@ -69,12 +71,11 @@ public class OrderApprovalAction {
 	}
 
 	public void fireOrderRejectedEvent() {
-		System.out
-				.println("*************** Fire ORDER_REJECTED  ***************************");
-		System.out.println("First Name = " + customerfullname);
-		System.out.println("Phone = " + cutomerphone);
-		System.out.println("orderId = " + orderId);
-		System.out.println("adminExternalActivityHandle = " + adminExternalActivityHandle);
+		logger.info("*************** Fire ORDER_REJECTED  ***************************");
+		logger.info("First Name = " + customerfullname);
+		logger.info("Phone = " + cutomerphone);
+		logger.info("orderId = " + orderId);
+		logger.info("adminExternalActivityHandle = " + adminExternalActivityHandle);
 
 		try {
 

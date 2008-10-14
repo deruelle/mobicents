@@ -520,7 +520,7 @@ public abstract class AdminSbb extends CommonSbb {
 		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
 		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed, dtmf };
 
-		System.out.println("EXECUTING PLAY");
+		logger.debug("EXECUTING PLAY");
 		endpoint.execute(requestedSignals, requestedEvents, link);
 
 	}

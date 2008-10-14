@@ -167,7 +167,7 @@ public abstract class RQNTSbb implements Sbb {
 		ReturnCode status = event.getReturnCode();
 		
 		this.setEndpointName(event.getSpecificEndpointIdentifier().getLocalEndpointName());
-		System.out.println("***&& "+this.getEndpointName());
+		logger.info("***&& "+this.getEndpointName());
 
 		switch (status.getValue()) {
 		case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:

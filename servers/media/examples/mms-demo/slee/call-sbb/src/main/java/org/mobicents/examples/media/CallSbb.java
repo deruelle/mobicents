@@ -193,7 +193,7 @@ public abstract class CallSbb implements Sbb {
     }
 
     public void onConnectionDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        System.out.println("********* DISCONNECTED*********");
+        logger.info("********* DISCONNECTED*********");
     }
     
     public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {

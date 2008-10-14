@@ -132,7 +132,7 @@ public abstract class AnnouncementSbb implements Sbb {
         MsPlayRequestedSignal play = null;
         play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
         play.setURL(url);
-        System.out.println("PLAY signal=" + play);
+        logger.info("PLAY signal=" + play);
 
         MsRequestedEvent onCompleted = null;
         MsRequestedEvent onFailed = null;
@@ -146,7 +146,7 @@ public abstract class AnnouncementSbb implements Sbb {
         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
 
-        System.out.println("EXECUTING PLAY");
+        logger.info("EXECUTING PLAY");
         link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
         setIndex(getIndex() + 1);
     }
@@ -160,7 +160,7 @@ public abstract class AnnouncementSbb implements Sbb {
         }
 
         MsLink link = getLink();
-        System.out.println("Releasing link=" + link);
+        logger.info("Releasing link=" + link);
         if (link != null) {
             link.release();
         }
