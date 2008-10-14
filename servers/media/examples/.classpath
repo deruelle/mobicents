@@ -77,7 +77,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.2/servlet-api-2.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-api/1.2/jain-sip-api-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.83/jain-sip-ri-1.2.83.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.85/jain-sip-ri-1.2.85.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/slee/jain-slee/1.1.draft/jain-slee-1.1.draft.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-cache/1.4.1.SP3/jboss-cache-1.4.1.SP3.jar"/>
@@ -105,13 +105,13 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/seam/jboss-seam-ui/2.0.0.GA/jboss-seam-ui-2.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/seam/jboss-seam/2.0.0.GA/jboss-seam-2.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jbpm/jbpm-jpdl/3.2.1/jbpm-jpdl-3.2.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.0.GA/mobicents-core-jar-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-common/1.2.0.GA/sip-services-common-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-location-sbb/1.2.0.GA/sip-services-location-sbb-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-events/1.2.0.GA/sip-events-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ra/1.2.0.GA/sip-ra-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ratype/1.2.0.GA/sip-ratype-1.2.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/tts-ratype/1.2.0.GA/tts-ratype-1.2.0.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.1.GA/mobicents-core-jar-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-common/1.2.1.GA/sip-services-common-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/examples/sip-services-location-sbb/1.2.1.GA/sip-services-location-sbb-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-events/1.2.1.GA/sip-events-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ra/1.2.1.GA/sip-ra-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/sip-ratype/1.2.1.GA/sip-ratype-1.2.1.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/resources/tts-ratype/1.2.1.GA/tts-ratype-1.2.1.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/mgcp-ratype/1.0.0.CR1-SNAPSHOT/mgcp-ratype-1.0.0.CR1-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/controllers/msc-ratype/1.0.0.CR1-SNAPSHOT/msc-ratype-1.0.0.CR1-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/mobicents-media-server-constants/1.0.0.CR1-SNAPSHOT/mobicents-media-server-constants-1.0.0.CR1-SNAPSHOT.jar"/>
