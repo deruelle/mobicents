@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsLinkListener;
@@ -30,10 +31,12 @@ import org.mobicents.slee.resource.media.ra.MediaResourceAdaptor;
  */
 public class MsProviderLocal implements MsProvider, MsSessionListener {
 
+	private static Logger logger = Logger.getLogger(MsProviderLocal.class);
+
 	private MsProvider provider;
 	protected MediaResourceAdaptor ra;
 	protected ConcurrentHashMap sessions = new ConcurrentHashMap();
-	
+
 	private ReentrantLock block = new ReentrantLock();
 	private Condition sessionActivityCreated = block.newCondition();
 
@@ -44,11 +47,11 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
 		provider.addSessionListener(this);
 		provider.addConnectionListener(new MsConnectionEventProxy(this));
 		provider.addLinkListener(new MsLinkEventProxy(this));
-		
+
 		provider.addResourceListener(ra);
 	}
 
-	public void addSessionListener(MsSessionListener listener) {		
+	public void addSessionListener(MsSessionListener listener) {
 		throw new SecurityException("addSessionListener is unsupported. Use event handlers of SBB");
 	}
 
@@ -90,13 +93,14 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
 			MsSession session = provider.createSession();
 			while (!sessions.containsKey(session.getId())) {
 				try {
-					System.out.println("AWAIT****");
+
 					sessionActivityCreated.await();
-					System.out.println("RELEASEd****");
+
 				} catch (InterruptedException e) {
+					logger.error("Intrupt exception while waiting for MsSession Activity to be created", e);
 				}
 			}
-			System.out.println("UNLOCK****");
+
 			return (MsSession) sessions.get(session.getId());
 		} finally {
 			block.unlock();
@@ -128,7 +132,7 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
 			MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
 			this.ra.sessionCreated(event);
 
-			System.out.println("SIGNAL****");
+			//System.out.println("SIGNAL****");
 			sessionActivityCreated.signalAll();
 		} finally {
 			block.unlock();

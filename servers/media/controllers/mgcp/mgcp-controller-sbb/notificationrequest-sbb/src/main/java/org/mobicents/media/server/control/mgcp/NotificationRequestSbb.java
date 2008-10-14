@@ -169,9 +169,7 @@ public abstract class NotificationRequestSbb implements Sbb {
 			        onFailed.setEventAction(MsEventAction.NOTIFY);
 
 			        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
-			        MsRequestedEvent[] msrequestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
-
-			        System.out.println("EXECUTING PLAY");	
+			        MsRequestedEvent[] msrequestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};	
 			        
 			        msConnection.getEndpoint().execute(requestedSignals, msrequestedEvents, msConnection);
 
