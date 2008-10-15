@@ -208,6 +208,7 @@ public class RtpConnectionImpl extends BaseConnection {
 
                 // encode formats
                 HashMap rtpMap = rtpSocket.getRtpMap();
+                System.out.println("RTP MAP=" + rtpMap);
                 //Format[] supported = endpoint.getSupportedFormats();
                 Format[] supported = inDsp.getInput().getFormats();
 
@@ -338,10 +339,11 @@ public class RtpConnectionImpl extends BaseConnection {
                 logger.debug(this + " Selected formats: " + rtpMap);
             }
 
-            Set<Integer> keys = rtpMap.keySet();
-            for (Integer key : keys) {
-                rtpSocket.addFormat(key, (Format) rtpMap.get(key));
-            }
+            //Set<Integer> keys = rtpMap.keySet();
+            //for (Integer key : keys) {
+            //    rtpSocket.addFormat(key, (Format) rtpMap.get(key));
+            //}
+            narrow(rtpMap);
             // @FIXME
             // DTMF may be negotiated but speech codecs no
             if (rtpMap.size() == 0) {
@@ -358,7 +360,7 @@ public class RtpConnectionImpl extends BaseConnection {
                 // silence here
             }
 
-            rtpSocket.setRtpMap(rtpMap);
+            //rtpSocket.setRtpMap(rtpMap);
 
             outDsp.getOutput().connect(rtpSocket.getSendStream());
             outDsp.getInput().connect(mux.getOutput());
@@ -375,6 +377,31 @@ public class RtpConnectionImpl extends BaseConnection {
         }
     }
 
+    private boolean contains(Format fmt, HashMap<Integer, Format> map) {
+        Collection<Format> formats = map.values();
+        for (Format format : formats) {
+            if (fmt.matches(format)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void narrow(HashMap<Integer, Format> selected) {
+        HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
+        Set <Integer> keys = selected.keySet();
+        for (Integer key: keys) {
+            Set<Integer> payloads = rtpMap.keySet();
+            Format fmt = selected.get(key);
+            for (Integer p : payloads) {
+                Format f = rtpMap.get(p) ;
+                if (f.matches(fmt)) {
+                    rtpSocket.addFormat(key, fmt);
+                }
+            }
+        }
+    }
+    
     /**
      * Gets packetization period encoded in session descriptor.
      * 
