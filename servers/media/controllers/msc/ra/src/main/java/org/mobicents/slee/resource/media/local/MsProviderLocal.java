@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsLinkListener;
@@ -31,132 +30,120 @@ import org.mobicents.slee.resource.media.ra.MediaResourceAdaptor;
  */
 public class MsProviderLocal implements MsProvider, MsSessionListener {
 
-	private static Logger logger = Logger.getLogger(MsProviderLocal.class);
+    private MsProvider provider;
+    protected MediaResourceAdaptor ra;
+    protected ConcurrentHashMap sessions = new ConcurrentHashMap();
+    private ReentrantLock block = new ReentrantLock();
+    private Condition sessionActivityCreated = block.newCondition();
 
-	private MsProvider provider;
-	protected MediaResourceAdaptor ra;
-	protected ConcurrentHashMap sessions = new ConcurrentHashMap();
+    public MsProviderLocal(MsProvider provider, MediaResourceAdaptor ra) {
+        this.provider = provider;
+        this.ra = ra;
+        provider.addNotificationListener(ra);
+        provider.addSessionListener(this);
+        provider.addConnectionListener(new MsConnectionEventProxy(this));
+        provider.addLinkListener(new MsLinkEventProxy(this));
 
-	private ReentrantLock block = new ReentrantLock();
-	private Condition sessionActivityCreated = block.newCondition();
+        provider.addResourceListener(ra);
+    }
 
-	public MsProviderLocal(MsProvider provider, MediaResourceAdaptor ra) {
-		this.provider = provider;
-		this.ra = ra;
-		provider.addNotificationListener(ra);
-		provider.addSessionListener(this);
-		provider.addConnectionListener(new MsConnectionEventProxy(this));
-		provider.addLinkListener(new MsLinkEventProxy(this));
+    public void addSessionListener(MsSessionListener listener) {
+        throw new SecurityException("addSessionListener is unsupported. Use event handlers of SBB");
+    }
 
-		provider.addResourceListener(ra);
-	}
+    public void removeSessionListener(MsSessionListener listener) {
+        throw new SecurityException("removeSessionListener is unsupported.");
+    }
 
-	public void addSessionListener(MsSessionListener listener) {
-		throw new SecurityException("addSessionListener is unsupported. Use event handlers of SBB");
-	}
+    public void addNotificationListener(MsNotificationListener listener) {
+        throw new SecurityException("addNotificationListener is unsupported. Use event handlers of SBB");
+    }
 
-	public void removeSessionListener(MsSessionListener listener) {
-		throw new SecurityException("removeSessionListener is unsupported.");
-	}
+    public void removeNotificationListener(MsNotificationListener listener) {
+        throw new SecurityException("removeNotificationListener is unsupported.");
+    }
 
-	public void addNotificationListener(MsNotificationListener listener) {
-		throw new SecurityException("addNotificationListener is unsupported. Use event handlers of SBB");
-	}
+    public void addConnectionListener(MsConnectionListener connectionListener) {
+        throw new SecurityException("addConnectionListener is unsupported. Use event handlers of SBB");
+    }
 
-	public void removeNotificationListener(MsNotificationListener listener) {
-		throw new SecurityException("removeNotificationListener is unsupported.");
-	}
+    public void removeConnectionListener(MsConnectionListener listener) {
+        throw new SecurityException("removeConnectionListener is unsupported.");
+    }
 
-	public void addConnectionListener(MsConnectionListener connectionListener) {
-		throw new SecurityException("addConnectionListener is unsupported. Use event handlers of SBB");
-	}
+    public void addResourceListener(MsResourceListener listener) {
+        throw new SecurityException("addResourceListener is unsupported. Use event handlers of SBB");
+    }
 
-	public void removeConnectionListener(MsConnectionListener listener) {
-		throw new SecurityException("removeConnectionListener is unsupported.");
-	}
+    public void addLinkListener(MsLinkListener listener) {
+        throw new SecurityException("addLinkListener is unsupported. Use event handlers of SBB");
+    }
 
-	public void addResourceListener(MsResourceListener listener) {
-		throw new SecurityException("addResourceListener is unsupported. Use event handlers of SBB");
-	}
+    public void removeLinkListener(MsLinkListener listener) {
+        throw new SecurityException("removeLinkListener is unsupported.");
+    }
 
-	public void addLinkListener(MsLinkListener listener) {
-		throw new SecurityException("addLinkListener is unsupported. Use event handlers of SBB");
-	}
+    public MsSession createSession() {
+        block.lock();
+        try {
+            MsSession session = provider.createSession();
+            while (!sessions.containsKey(session.getId())) {
+                try {
+                    sessionActivityCreated.await();
+                } catch (InterruptedException e) {
+                }
+            }
+            return (MsSession) sessions.get(session.getId());
+        } finally {
+            block.unlock();
+        }
+    }
 
-	public void removeLinkListener(MsLinkListener listener) {
-		throw new SecurityException("removeLinkListener is unsupported.");
-	}
+    public MsSignalGenerator getSignalGenerator(String endpointName) {
+        return provider.getSignalGenerator(endpointName);
+    }
 
-	public MsSession createSession() {
-		block.lock();
-		try {
-			MsSession session = provider.createSession();
-			while (!sessions.containsKey(session.getId())) {
-				try {
+    public MsSignalDetector getSignalDetector(String endpointName) {
+        return provider.getSignalDetector(endpointName);
+    }
 
-					sessionActivityCreated.await();
+    public MsConnection getMsConnection(String msConnectionId) {
+        return provider.getMsConnection(msConnectionId);
+    }
 
-				} catch (InterruptedException e) {
-					logger.error("Intrupt exception while waiting for MsSession Activity to be created", e);
-				}
-			}
+    public List<MsConnection> getMsConnections(String endpointName) {
+        return provider.getMsConnections(endpointName);
+    }
 
-			return (MsSession) sessions.get(session.getId());
-		} finally {
-			block.unlock();
-		}
-	}
+    public void sessionCreated(MsSessionEvent evt) {
+        block.lock();
+        try {
+            MsSessionLocal session = new MsSessionLocal(evt.getSource(), this);
+            sessions.put(session.getId(), session);
 
-	public MsSignalGenerator getSignalGenerator(String endpointName) {
-		return provider.getSignalGenerator(endpointName);
-	}
+            MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
+            this.ra.sessionCreated(event);
 
-	public MsSignalDetector getSignalDetector(String endpointName) {
-		return provider.getSignalDetector(endpointName);
-	}
+            sessionActivityCreated.signal();
+        } finally {
+            block.unlock();
+        }
+    }
 
-	public MsConnection getMsConnection(String msConnectionId) {
-		return provider.getMsConnection(msConnectionId);
-	}
+    public void sessionActive(MsSessionEvent evt) {
+        MsSession session = (MsSession) sessions.get(evt.getSource().getId());
+        MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
+        this.ra.sessionActive(event);
+    }
 
-	public List<MsConnection> getMsConnections(String endpointName) {
-		return provider.getMsConnections(endpointName);
-	}
+    public void sessionInvalid(MsSessionEvent evt) {
+        MsSession session = (MsSession) sessions.remove(evt.getSource().getId());
+        MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
+        this.ra.sessionInvalid(event);
 
-	public void sessionCreated(MsSessionEvent evt) {
-		block.lock();
-		try {
-			MsSessionLocal session = new MsSessionLocal(evt.getSource(), this);
-			sessions.put(session.getId(), session);
+    }
 
-			MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
-			this.ra.sessionCreated(event);
-
-			//System.out.println("SIGNAL****");
-			sessionActivityCreated.signalAll();
-		} finally {
-			block.unlock();
-		}
-	}
-
-	public void sessionActive(MsSessionEvent evt) {
-		MsSession session = (MsSession) sessions.get(evt.getSource().getId());
-		MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
-		this.ra.sessionActive(event);
-	}
-
-	public void sessionInvalid(MsSessionEvent evt) {
-		MsSession session = (MsSession) sessions.remove(evt.getSource().getId());
-		MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
-		this.ra.sessionInvalid(event);
-
-	}
-
-	private void resume() {
-		sessionActivityCreated.signalAll();
-	}
-
-	public MsEventFactory getEventFactory() {
-		return provider.getEventFactory();
-	}
+    public MsEventFactory getEventFactory() {
+        return provider.getEventFactory();
+    }
 }
