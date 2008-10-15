@@ -20,7 +20,8 @@
         <attribute name="AudioFormats">
             8   = ALAW, 8000, 8, 1;
             0   = ULAW, 8000, 8, 1;
-            101 = telephone-event
+		97   = SPEEX, 8000, 8, 1;            
+		101 = telephone-event
         </attribute>    
     </mbean>
     
