@@ -330,6 +330,7 @@ public class RtpConnectionImpl extends BaseConnection {
 
             // negotiate codecs
             HashMap offer = RTPFormat.getFormats(remoteSDP);
+            rtpSocket.getSendStream().setFormats(offer.values());
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Offered formats: " + offer);
             }
