@@ -29,9 +29,6 @@ import org.mobicents.mscontrol.MsSessionEventID;
 import org.mobicents.mscontrol.MsSessionListener;
 import org.mobicents.mscontrol.MsSessionState;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 
 /**
  * 
@@ -50,27 +47,12 @@ public class MsSessionImpl implements MsSession {
     protected ArrayList<MsConnection> connections = new ArrayList<MsConnection>();
     private MsSessionState state;
 
-    protected QueuedExecutor eventQueue = new QueuedExecutor();
-    private ThreadFactory threadFactory;
-    
     /**
      * Creates a new instance of MsSessionImpl
      */
     public MsSessionImpl(MsProviderImpl provider) {
         this.provider = provider;
-		threadFactory = new ThreadFactory() {
-
-			SecurityManager s = System.getSecurityManager();
-			ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			final SynchronizedInt i = new SynchronizedInt(0);
-
-			public Thread newThread(final Runnable runnable) {
-				return new Thread(group, runnable, "MsLinkImpl-QueuedExecutor-Thread-" + i.increment());
-			}
-		};
-
-		eventQueue.setThreadFactory(threadFactory);
-        setState(MsSessionState.IDLE, MsSessionEventCause.SESSION_CREATED, this);        
+        setState(MsSessionState.IDLE, MsSessionEventCause.SESSION_CREATED, this);
     }
 
     public String getId() {
@@ -151,7 +133,6 @@ public class MsSessionImpl implements MsSession {
                 case INVALID:
                     provider.sessions.remove(this);
                     sendEvent(MsSessionEventID.SESSION_INVALID, eventCause, causeObject);
-                    eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
                     break;
             }
         }
@@ -178,20 +159,21 @@ public class MsSessionImpl implements MsSession {
     public List<MsConnection> getConnections() {
         return this.connections;
     }
-    
+
     protected void removeConnection(MsConnection msConnection) {
         connections.remove(msConnection);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
         }
     }
-    
+
     protected void removeLink(MsLink link) {
         links.remove(link);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
         }
     }
+
     /**
      * Return the string representation of the session.
      * 
@@ -200,7 +182,6 @@ public class MsSessionImpl implements MsSession {
      */
     @Override
     public String toString() {
-        return "MsSessionImpl[" + id + "]";
+        return id;
     }
-
 }
