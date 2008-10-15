@@ -124,16 +124,12 @@ public abstract class CallSbb implements Sbb {
             return;
         }
 
-        logger.info("Creating RTP connection [" + ENDPOINT_NAME + "]");
         String sdp = new String(request.getRawContent());
         
         msConnection.modify("$", sdp);
     }
 
     public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
-        MsConnection connection = evt.getConnection();
-        logger.info("Created RTP connection [" + connection.getEndpoint() + "]");
-
         MsConnection msConnection = evt.getConnection();
         String sdp = msConnection.getLocalDescriptor();
 
@@ -188,12 +184,12 @@ public abstract class CallSbb implements Sbb {
             return;
         }
 
+        logger.info("Starting demo application");
         aci.attach(demo);
         demo.startDemo(evt.getConnection().getEndpoint().getLocalName());
     }
 
     public void onConnectionDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        logger.info("********* DISCONNECTED*********");
     }
     
     public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
@@ -225,11 +221,10 @@ public abstract class CallSbb implements Sbb {
     }
     
     public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-        logger.info("---- BYE-----");
+        logger.info("Call successfully completed");
 
         MsConnection connection = this.getMediaConnection();
         if (connection != null) {
-            logger.info("Deleting media conection");
             connection.release();
         }
 
