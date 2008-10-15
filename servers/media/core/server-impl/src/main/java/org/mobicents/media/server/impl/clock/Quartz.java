@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 
 /**
  * Used as quartz controller for timekeeping.
@@ -35,12 +39,16 @@ public class Quartz implements Serializable {
 
     private java.util.Timer q = new java.util.Timer();
     private TimerTask sync = new Sync();
-
+    
+    private ScheduledExecutorService quartz = Executors.newScheduledThreadPool(150);
+    
     protected boolean testMode = false;
     protected long errors = 0;
     private long time;
     private long now;
     private long dur;
+    
+    protected Condition heartBeat;
     
     /**
      * Creates new instance of Quartz.
