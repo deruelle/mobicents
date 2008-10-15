@@ -26,7 +26,6 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
-import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.FacilityException;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -76,7 +75,6 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     protected int maxConnections = 0;
     protected ArrayList<NotificationListener> listeners = new ArrayList();
     protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
-    protected ConnectionStateGuard endpointConnectioStateGuard = new ConnectionStateGuard(connectionListeners);
     protected static Timer connectionTimer = new Timer();
     protected transient Logger logger = Logger.getLogger(this.getClass());    // ----------- SOME MGMT info
     protected long creationTime = System.currentTimeMillis();
@@ -282,7 +280,6 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
 
 
             connection.close();
-            logger.info("Deleted connection " + connection);
         }
         hasConnections = connections.size() > 0;
     }
@@ -449,28 +446,11 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
                 AbstractSignal signal = getSignal(signals[0]);
                 signal.apply(connection);
             } catch (Exception e) {
+                logger.error("Unexpected error", e);
             }
         }
     }
 
-    private class ConnectionStateGuard implements ConnectionListener {
-
-        protected ArrayList<ConnectionListener> connectionListeners = null;
-
-        public ConnectionStateGuard(ArrayList<ConnectionListener> connectionListeners) {
-            super();
-            this.connectionListeners = connectionListeners;
-        }
-
-        public void onStateChange(Connection connection,
-                ConnectionState oldState) {
-            synchronized (connectionListeners) {
-                for (ConnectionListener cl : connectionListeners) {
-                    cl.onStateChange(connection, oldState);
-                }
-            }
-        }
-    }
     // ###############################
     // # MANAGEMENT FUNCTIONS        #
     // ###############################
