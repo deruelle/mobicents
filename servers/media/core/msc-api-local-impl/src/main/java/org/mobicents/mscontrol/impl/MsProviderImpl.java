@@ -54,7 +54,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected ArrayList<MsLinkListener> linkListeners = new ArrayList<MsLinkListener>();
 	protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
 	protected ArrayList<MsSession> sessions = new ArrayList<MsSession>();
-	protected static ExecutorService pool = Executors.newFixedThreadPool(25, new ThreadFactoryImpl());
+	protected static ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
         private static QueuedExecutor eventQueue = new QueuedExecutor();
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
