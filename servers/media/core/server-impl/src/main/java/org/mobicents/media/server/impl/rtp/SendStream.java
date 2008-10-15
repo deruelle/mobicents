@@ -14,6 +14,8 @@
 
 package org.mobicents.media.server.impl.rtp;
 
+import java.util.Collection;
+import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 
 /**
@@ -22,4 +24,5 @@ import org.mobicents.media.MediaSink;
  * @author Oleg Kulikov
  */
 public interface SendStream extends MediaSink {
+    public void setFormats(Collection<Format> fmts);
 }

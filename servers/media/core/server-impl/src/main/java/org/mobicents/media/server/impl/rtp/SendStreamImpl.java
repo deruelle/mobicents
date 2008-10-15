@@ -14,6 +14,7 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
+import java.util.Collection;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -87,5 +88,10 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
 
     public Format[] getFormats() {
         return formats;
+    }
+    
+    public void setFormats(Collection<Format> fmts) {
+        formats = new Format[fmts.size()];
+        fmts.toArray(formats);
     }
 }
