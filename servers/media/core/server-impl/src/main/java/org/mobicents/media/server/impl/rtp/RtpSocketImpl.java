@@ -125,7 +125,6 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
                 socket.setSoTimeout(100);
                 bound = true;
             } catch (SocketException e) {
-            	logger.info("Failed to create Socket at local port " + port + "  "+ e.getMessage());
                 port++;
                 if (port > highPort) {
                     throw e;

@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.media.server.impl.events.test;
 
 import java.util.ArrayList;
@@ -28,9 +27,8 @@ public class SineGeneratorTest {
     private final static int F = 50;
     private final static int TEST_DURATION = 10000;
     private final static int ERROR = 5;
-    
     private ArrayList spectra = new ArrayList();
-    
+
     public SineGeneratorTest() {
     }
 
@@ -53,12 +51,12 @@ public class SineGeneratorTest {
     @Test
     public void testGetFormats() {
         SineGenerator g = new SineGenerator(F);
-        AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR,8000, 16, 1,
+        AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
                 AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
         assertEquals(1, g.getFormats().length);
         assertEquals(LINEAR, g.getFormats()[0]);
     }
-    
+
     /**
      * Test of start method, of class SineGenerator.
      */
@@ -67,53 +65,49 @@ public class SineGeneratorTest {
     public void testGenerator() throws Exception {
         SineGenerator g = new SineGenerator(F);
         SpectralAnalyser a = new SpectralAnalyser();
-        
+
         a.addListener(new Registrator());
-        a.connect(g); 
-        
+        a.connect(g);
+
         g.start();
-        
+
         try {
             Thread.currentThread().sleep(TEST_DURATION);
         } catch (InterruptedException e) {
             fail("Interrupted");
             return;
         }
-        
+
         g.stop();
-        
-        if (spectra.size() ==0) {
+
+        if (spectra.size() == 0) {
             fail("Empty");
         }
-        
-        synchronized(spectra) {
-        for (Object s : spectra ) {
-            double[] ss = (double[])s;
-            int[] ext = Utils.getFreq(ss);
-            boolean res = Utils.checkFreq(ext, new int[]{F}, ERROR);
-            if (!res) {
-                fail(Utils.getReason());
+
+        synchronized (spectra) {
+            for (Object s : spectra) {
+                double[] ss = (double[]) s;
+                int[] ext = Utils.getFreq(ss);
+                boolean res = Utils.checkFreq(ext, new int[]{F}, ERROR);
+                if (!res) {
+                    fail(Utils.getReason());
+                }
+
             }
-            
-        }
         }
     }
 
-
-    
     private class Registrator implements NotificationListener {
 
         public void update(NotifyEvent event) {
-//            System.out.println("Add spectra:");
-            double[] s = ((SpectrumEvent)event).getSpectra();
+            double[] s = ((SpectrumEvent) event).getSpectra();
 //            for (int i = 0; i < s.length; i++) {
 //                System.out.print(s[i] + " ");
 //            }
 //            System.out.println();
-            synchronized(spectra) {
+            synchronized (spectra) {
                 spectra.add(s);
             }
         }
-        
     }
 }

@@ -25,51 +25,45 @@ import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
- * 
+ *
  * @author Oleg Kulikov
  */
 public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
 
-	private transient Logger logger = Logger.getLogger(PREndpointImpl.class);
+    private transient Logger logger = Logger.getLogger(PREndpointImpl.class);
 
-	/**
-	 * Creates a new instance of PREndpointImpl
-	 * 
-	 * @param endpointsMap
-	 */
-	public PREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-		super(localName, endpointsMap);
-		this.setMaxConnectionsAvailable(2);
-		this.addConnectionListener(this);
-	}
+    /**
+     * Creates a new instance of PREndpointImpl
+     * @param endpointsMap 
+     */
+    public PREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+        super(localName, endpointsMap);
+        this.setMaxConnectionsAvailable(2);
+        this.addConnectionListener(this);
+    }
 
-	@Override
-	public Endpoint doCreateEndpoint(String localName) {
-		return new PREndpointImpl(localName, super.endpoints);
-	}
+    @Override
+    public Endpoint doCreateEndpoint(String localName) {
+        return new PREndpointImpl(localName, super.endpoints);
+    }
 
-	@Override
-	public HashMap initMediaSources() {
-		return new HashMap();
-	}
+    @Override
+    public HashMap initMediaSources() {
+        return new HashMap();
+    }
 
-	@Override
-	public HashMap initMediaSinks() {
-		return new HashMap();
-	}
+    @Override
+    public HashMap initMediaSinks() {
+        return new HashMap();
+    }
 
-	public void onStateChange(Connection connection, ConnectionState state) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("*** PACKET RELAY, Connection state changed " + connection);
-		}
-		if (connection.getState() == ConnectionState.OPEN && this.getConnections().size() == 2) {
-			BaseConnection[] connections = new BaseConnection[2];
-			this.getConnections().toArray(connections);
-			if (logger.isDebugEnabled()) {
-				logger.debug("JOINING " + connections[1] + " WITH " + connections[0]);
-			}
-			connections[1].getDemux().connect(connections[0].getMux());
-			connections[0].getDemux().connect(connections[1].getMux());
-		}
-	}
+    public void onStateChange(Connection connection, ConnectionState state) {
+        if (connection.getState() == ConnectionState.OPEN && this.getConnections().size() == 2) {
+            BaseConnection[] connections = new BaseConnection[2];
+            this.getConnections().toArray(connections);
+
+            connections[1].getDemux().connect(connections[0].getMux());
+            connections[0].getDemux().connect(connections[1].getMux());
+        }
+    }
 }
