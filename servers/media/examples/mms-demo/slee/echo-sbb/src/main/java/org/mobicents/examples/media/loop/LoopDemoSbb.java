@@ -44,6 +44,7 @@ public abstract class LoopDemoSbb implements Sbb {
      * @see org.mobicents.examples.media.Demo#startConversation(String, ActivityContextInterface).
      */
     public void startDemo(String endpointName) {
+        logger.info("Playing announcement message");
         this.setUserEndpoint(endpointName);
         ChildRelation childRelation = this.getAnnouncementSbb();
         try {
@@ -63,10 +64,10 @@ public abstract class LoopDemoSbb implements Sbb {
     }
 
     public void onAnnouncementComplete(MsLinkEvent evt, ActivityContextInterface aci) {
+        logger.info("Starting echo test");
         try {
             ChildRelation childRelation = this.getLoopbackSbb();
             Conversation loopback = (Conversation) childRelation.create();
-            logger.info("Starting loopback");
             sbbContext.getActivities()[0].attach(loopback);
             loopback.startConversation(this.getUserEndpoint());
         } catch (CreateException e) {

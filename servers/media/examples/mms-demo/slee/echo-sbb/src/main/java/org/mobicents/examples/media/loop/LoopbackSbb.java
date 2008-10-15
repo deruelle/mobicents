@@ -51,8 +51,6 @@ public abstract class LoopbackSbb implements Sbb {
      *            the user's activity context interface.
      */
     public void startConversation(String endpointName) {
-        logger.info("Joining " + endpointName + " with " + LOOP_ENDPOINT);
-
         MsConnection connection = (MsConnection) sbbContext.getActivities()[0].getActivity();
         MsSession session = connection.getSession();
         MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
@@ -68,7 +66,6 @@ public abstract class LoopbackSbb implements Sbb {
     }
 
     public void onLinkCreated(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Link created, Endpoint=" + evt.getSource().getEndpoints()[1]);
     }
 
     public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
@@ -76,6 +73,7 @@ public abstract class LoopbackSbb implements Sbb {
     }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
+        logger.info("Echo test completed");
         MsLink link = getLink();
         if (link != null) {
             link.release();
