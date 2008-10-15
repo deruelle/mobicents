@@ -15,7 +15,6 @@
  */
 package org.mobicents.mscontrol.impl;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsLinkListener;
@@ -36,6 +36,8 @@ import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.events.MsEventFactory;
 
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
+
 /**
  * 
  * @author Oleg Kulikov
@@ -43,6 +45,8 @@ import org.mobicents.mscontrol.events.MsEventFactory;
  * 
  */
 public class MsProviderImpl implements MsProvider, Serializable {
+	
+	private static Logger logger = Logger.getLogger(MsProviderImpl.class);
 
 	/**
 	 * 
@@ -178,6 +182,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
             try {
                 eventQueue.execute(event);
             } catch (InterruptedException e) {
+            	logger.error("Firing of event failed "+event, e);
             }
         }
         

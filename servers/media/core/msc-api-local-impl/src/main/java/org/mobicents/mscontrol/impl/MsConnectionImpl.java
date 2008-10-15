@@ -251,10 +251,13 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                 try {
                     connection.setRemoteDescriptor(remoteSdp);
                 } catch (SdpException ex) {
+                	logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 } catch (IOException ex) {
+                	logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
                 } catch (ResourceUnavailableException ex) {
+                	logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 }
             }

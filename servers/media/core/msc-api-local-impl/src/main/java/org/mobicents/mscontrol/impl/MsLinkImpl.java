@@ -214,16 +214,16 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
                 connections[0].setOtherParty(connections[1]);
             } catch (NamingException e) {
-                e.printStackTrace();
+            	logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
             } catch (ResourceUnavailableException e) {
-                e.printStackTrace();
+            	logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
             } catch (TooManyConnectionsException e) {
-                e.printStackTrace();
+            	logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
             } catch (Exception e) {
-                e.printStackTrace();
+            	logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
             }
         }

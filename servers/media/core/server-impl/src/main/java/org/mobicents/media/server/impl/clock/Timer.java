@@ -41,8 +41,9 @@ public class Timer implements Runnable {
     public void start() {
         if (stopped) {
             worker = new Thread(this, "MediaTimer");
-            worker.start();
             stopped = false;
+            worker.start();
+            
         }
     }
 

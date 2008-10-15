@@ -114,7 +114,7 @@ public class LocalConnectionImpl extends BaseConnection {
             }
             return localSDP.toString();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+        	 logger.error("Could not create descriptor", e);
             return null;
         } finally {
             super.releaseState();
@@ -185,6 +185,7 @@ public class LocalConnectionImpl extends BaseConnection {
             setState(ConnectionState.OPEN);
             otherConnection.setOtherParty(this);
         } catch (InterruptedException e) {
+        	logger.error("Could not set other party", e);
             close();
         } catch (Exception e) {
             logger.error("Could not set other party", e);
@@ -229,7 +230,7 @@ public class LocalConnectionImpl extends BaseConnection {
 			}
 		}catch(NullPointerException e)
 		{
-			
+			logger.error("Could not get other end", e);
 		}
 		return null;
 	}

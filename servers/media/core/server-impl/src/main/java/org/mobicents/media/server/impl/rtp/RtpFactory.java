@@ -18,6 +18,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
@@ -27,6 +28,8 @@ import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
  * @author Oleg Kulikov
  */
 public class RtpFactory implements Serializable {
+	
+ 
 
     private InetAddress bindAddress;
     private Integer packetizationPeriod;
@@ -45,6 +48,7 @@ public class RtpFactory implements Serializable {
         try {
             bindAddress = InetAddress.getLocalHost();
         } catch (Exception e) {
+        	logger.error("Failed to get the IP address for host", e);
         }
         lowPortNumber = 1024;
         highPortNumber = 65535;

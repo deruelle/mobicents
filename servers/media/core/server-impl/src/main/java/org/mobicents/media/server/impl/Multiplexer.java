@@ -134,6 +134,7 @@ public class Multiplexer extends AbstractSink implements Runnable {
                 return output.sink.isAcceptable(fmt);
             }
         } catch (NullPointerException e) {
+        	logger.error("Format not supported", e);
             return false;
         }
 
