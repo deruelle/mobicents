@@ -44,9 +44,6 @@ import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.impl.events.EventParser;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
-import EDU.oswego.cs.dl.util.concurrent.ThreadFactory;
 
 /**
  * 
@@ -63,8 +60,6 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private MsLinkState state;
     private Connection[] connections = new Connection[2];
     private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
-    private QueuedExecutor eventQueue = new QueuedExecutor();
-    private ThreadFactory threadFactory;
     private EventParser eventParser = new EventParser();
     private int permits = 0;
     private PendingQueue[] pendingQueue = new PendingQueue[2];
@@ -78,18 +73,6 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
         this.session = session;
         this.mode = mode;
 
-        threadFactory = new ThreadFactory() {
-
-            SecurityManager s = System.getSecurityManager();
-            ThreadGroup group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            final SynchronizedInt i = new SynchronizedInt(0);
-
-            public Thread newThread(final Runnable runnable) {
-                return new Thread(group, runnable, "MsLinkImpl-QueuedExecutor-Thread-" + i.increment());
-            }
-        };
-
-        eventQueue.setThreadFactory(threadFactory);
         setState(MsLinkState.IDLE, MsLinkEventCause.NORMAL);
     }
 
@@ -112,12 +95,10 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
                 break;
             case FAILED:
                 sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
-                eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
                 break;
             case DISCONNECTED:
                 session.removeLink(this);
                 sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
-                eventQueue.shutdownAfterProcessingCurrentlyQueuedTasks();
                 break;
         }
     }
