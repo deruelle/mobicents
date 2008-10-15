@@ -1,0 +1,16 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	condition="section-binary-SIP_Serlets_Server-SIP_Servlets_Server_Logging">
+	<title>SIP Serlets Server Logging</title>
+	<para>There are two separate levels of logging:</para>
+	<itemizedlist>
+		<listitem>
+			<para>Logging at the container level, which can be configured using the <filename>log4j.xml</filename> configuration file, which is usually located in the container's <filename>lib</filename> directory.</para>
+		</listitem>
+		<listitem>
+			<para>Logging of the NIST SIP stack, which is configured in the <literal>Connector</literal> element of the container's <filename>server.xml</filename> configuration file.</para>
+		</listitem>
+	</itemizedlist>
+</section>
