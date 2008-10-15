@@ -24,7 +24,6 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.mscontrol.impl;
 
 import org.mobicents.media.server.spi.Endpoint;
@@ -48,83 +47,83 @@ import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
  * @author amit.bhayani
  */
 public class MsEndpointImpl implements MsEndpoint {
+
     protected Endpoint server;
     private MsProvider msprovider;
-    
+
     protected MsEndpointImpl(Endpoint endpoint, MsProvider msProvider) {
         this.server = endpoint;
         this.msprovider = msProvider;
     }
-    
+
     public String getLocalName() {
         return server.getLocalName();
     }
-    
+
     protected Endpoint getEndpoint() {
         return server;
     }
-    
-	public void addConnectionListener(MsConnectionListener listener) {
-		 this.msprovider.addConnectionListener(listener);
-		
-	}
 
-	public void addNotificationListener(MsNotificationListener listener) {
-		this.msprovider.addNotificationListener(listener);
-		
-	}
+    public void addConnectionListener(MsConnectionListener listener) {
+        this.msprovider.addConnectionListener(listener);
 
-	public void removeConnectionListener(MsConnectionListener listener) {
-		this.msprovider.removeConnectionListener(listener);
-		
-	}
+    }
 
-	public void removeNotificationListener(MsNotificationListener listener) {
-		this.msprovider.removeNotificationListener(listener);
-		
-	}    
+    public void addNotificationListener(MsNotificationListener listener) {
+        this.msprovider.addNotificationListener(listener);
+
+    }
+
+    public void removeConnectionListener(MsConnectionListener listener) {
+        this.msprovider.removeConnectionListener(listener);
+
+    }
+
+    public void removeNotificationListener(MsNotificationListener listener) {
+        this.msprovider.removeNotificationListener(listener);
+
+    }
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events) {
         MsProviderImpl.submit(new Tx(signals, events, null, null));
     }
-    
+
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsConnection connection) {
         String connectionID = ((MsConnectionImpl) connection).connection.getId();
         MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsConnectionImpl) connection));
     }
-    
+
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link) {
         String connectionID = ((MsLinkImpl) link).getConnectionID(getLocalName());
-        MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsLinkImpl)link));
+        MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsLinkImpl) link));
     }
-    
+
     private class Tx implements Runnable {
+
         private MsRequestedSignal[] signals;
         private MsRequestedEvent[] events;
         private String connectionID;
         private NotificationListener listener;
-        
+
         protected Tx(MsRequestedSignal[] signals, MsRequestedEvent[] events, String connectionID, NotificationListener listener) {
             this.events = events;
             this.signals = signals;
             this.connectionID = connectionID;
             this.listener = listener;
         }
-        
+
         public void run() {
             RequestedSignal[] s = new RequestedSignal[signals.length];
             for (int i = 0; i < signals.length; i++) {
-                s[i] = ((BaseRequestedSignal)signals[i]).convert();
+                s[i] = ((BaseRequestedSignal) signals[i]).convert();
             }
-            
+
             RequestedEvent[] evt = new RequestedEvent[events.length];
             for (int i = 0; i < events.length; i++) {
                 evt[i] = ((BaseRequestedEvent) events[i]).convert();
                 evt[i].setHandler(listener);
             }
-            server.execute(s, evt, connectionID);            
+            server.execute(s, evt, connectionID);
         }
     }
-
-
 }
