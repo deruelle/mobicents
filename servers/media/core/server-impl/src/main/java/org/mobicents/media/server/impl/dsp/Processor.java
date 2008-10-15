@@ -24,6 +24,7 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.SendStream;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
