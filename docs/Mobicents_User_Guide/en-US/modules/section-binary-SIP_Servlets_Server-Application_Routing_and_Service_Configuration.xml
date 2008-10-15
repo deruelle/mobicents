@@ -1,0 +1,54 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	condition="section-binary-SIP_Servlets_Server-Application_Routing_and_Service_Configuration">
+	<title>Application Routing and Service Configuration</title>
+	<para>The application router is called by the container&#8212;whether JBoss or Tomcat&#8212;to select a SIP Servlet application to service an initial request. It embodies the logic used to choose which applications to invoke. An application router is required for a container to function, but it is a separate logical entity from the container. The application router is solely responsible for application selection and must not implement application logic. For example, the application router cannot modify a request or send a response.</para>
+	<para>For more information about the application router, refer to the following sections of the JSR 289 specification: Application Router Packaging and Deployment, Application Selection Process, and Appendix C.
+			</para>
+	<para>In order to configure the application router, you should edit the <literal>Service</literal> element in the container's <filename>server.xml</filename> configuration file:</para>
+	<example
+		condition="example-Configuring_the_Service_Element_in_the_Containers_server.xml">
+	<title>Configuring the Service Element in the Container's server.xml</title>
+<programlisting
+			condition="proglist-Configuring_the_Service_Element_in_the_Containers_server.xml"
+			linenumbering="numbered"
+			role="XML"><![CDATA[<Service
+	name="Sip-Servlets"
+	className="org.mobicents.servlet.sip.startup.SipStandardService"
+	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
+	sipApplicationRouterClassName="org.mobicents.servlet.sip.router.DefaultApplicationRouter"
+	darConfigurationFileLocation="file:///home/silas/workspaces/mobicents-sip-servlets/sip-servlets-examples/reinvite-demo/reinvite-dar.properties">
+]]></programlisting>
+</example>
+	<para>Provided here is a description of the SIP Service element's attributes:</para>
+	<variablelist>
+		<varlistentry>
+			<term>className</term>
+			<listitem>
+				<para>This attribute specifies that the servlet container is a <emphasis>converged</emphasis> (i.e. SIP + HTTP) servlet container. This attribute can also be used to handle load-balancing and failover.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>sipApplicationDispatcherClassName</term>
+			<listitem>
+				<para>This attribute specifies the class name of the <literal>org.mobicents.servlet.sip.core.SipApplicationDispatcher</literal> implementation to use. The routing algorithm and application selection process is performed in that class.</para>
+			</listitem>
+		</varlistentry>
+				<!-- Evidently removed...
+				<varlistentry>
+					<term>sipApplicationRouterClassName</term>
+					<listitem>
+						<para>sipApplicationRouterClassName : (removed starting from 0.5 version since the JSR 289 PFD-2 defines a mechanism to package and load an application router) This attribute specifies the class name of the javax.servlet.sip.SipApplicationRouter implementation. This allows to plug any Application Router to change the application selection logic.</para>
+					</listitem>
+				</varlistentry>-->
+		<varlistentry>
+			<term>darConfigurationFileLocation</term>
+			<listitem>
+				<para>The default application router file location. This is used by the default application router to determine the application selection logic. Refer to Appendix C of the JSR 289 specification for more details.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>
+

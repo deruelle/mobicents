@@ -1,0 +1,121 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	condition="section-binary-SIP_Servlets_Server-SIP_Connectors">
+	<title>SIP Connectors</title>
+	<para>You can add SIP Connectors in the same way that you add HTTP Connectors: by adding a <literal>Connector</literal> element under the <literal>Service</literal> element in the container's <filename>server.xml</filename> configuration file.</para>
+	<para>For example, to add a SIP Connector on the IP address <literal>127.0.0.1</literal>, on port <literal>5080</literal>, using the UDP transport protocol, you should insert the following XML element:</para>
+	<example
+		condition="example-Adding_a_SIP_Connector_to_server.xml">
+        <title>Adding a SIP Connector to server.xml</title>
+<programlisting
+			condition="proglist-Adding_a_SIP_Connector_to_server.xml"
+			linenumbering="numbered"
+			role="XML"><![CDATA[<Connector
+        port="5080"
+        ipAddress="127.0.0.1"
+        protocol="org.mobicents.servlet.sip.startup.SipProtocolHandler"
+        signalingTransport="udp"
+        threadPoolSize="64"
+        isReentrantListener="true"
+        useStun="false"
+        stunServerAddress="stun01.sipphone.com"
+        stunServerPort="3478"
+        logLevel="DEBUG"
+        debugLog="logs/debuglog.txt"
+        serverLog="logs/serverlog.txt"
+        sipStackName="Sip-Servlet-Server"
+        sipPathName="gov.nist"/>
+]]></programlisting>
+</example>
+	<para>Provided here are descriptions of the SIP Connector element's attributes:</para>
+	<variablelist>
+		<varlistentry>
+			<term>port</term>
+			<listitem>
+				<para>The number of the port on which the container will be able to receive SIP messages.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>ipAdress</term>
+			<listitem>
+				<para>The IP address at which the container will be able to receive SIP messages.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>protocol</term>
+			<listitem>
+				<para>This attribute specifies that this is a SIP Connector and not an HTTP Connector. There is no need to change this property.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>signalingTransport</term>
+			<listitem>
+				<para>the transport on which the container will be ab/le to receive SIP messages: <quote>udp</quote> for example</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>threadPoolSize</term>
+			<listitem>
+				<para>This attribute is for concurrency control on the number of simultaneous active threads in the NIST SIP stack. Refer to the <ulink
+						url="http://www.cs.fiu.edu/~ege/JAIN/api/">NIST SIP stack Javadoc API documentation</ulink> for more information.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>isReentrantListener</term>
+			<listitem>
+				<para>If the listener is re-entrant, then the SIP stack manages a thread pool and synchronously calls the listener from the same thread which read the message. Refer to the <ulink
+						url="http://www.cs.fiu.edu/~ege/JAIN/api/">NIST SIP stack Javadoc API documentation</ulink> for more information.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>useStun</term>
+			<listitem>
+				<para>Setting this attribute to <quote>true</quote> enables STUN support for this Connector. If you set it to <quote>true</quote>, ensure that the <literal>ipAddress</literal> attribute is <emphasis>not</emphasis> set to <literal>127.0.0.1</literal>. This attribute defaults to <quote>false</quote>. Refer to the documentation on STUN support for more information regarding STUN support.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>stunServerAddress</term>
+			<listitem>
+				<para>Set this to the STUN server address that will be used to discover the public IP address of this SIP Connector. This attribute is only required if the <literal>useStun</literal> attribute is set to <quote>true</quote>. Refer to the documentation on STUN support for more information regarding STUN support.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>stunServerPort</term>
+			<listitem>
+				<para>This attribute should be set to the STUN server port of the STUN server used in the <literal>stunServerAddress</literal> attribute. You should rarely need to change this attribute; also, it is only needed if the <literal>useStun</literal> attribute is set to <quote>true</quote>. Refer to the documentation on STUN support for more information regarding STUN support.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>logLevel</term>
+			<listitem>
+				<para>The log level of the underlying JAIN SIP stack.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>debugLog</term>
+			<listitem>
+				<para>The debug log location of the underlying JAIN SIP stack.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>serverLog</term>
+			<listitem>
+				<para>The server log location of the underlying JAIN SIP stack.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>sipStackName</term>
+			<listitem>
+				<para>The name of the underlying JAIN SIP sack.</para>
+			</listitem>
+		</varlistentry>
+		<varlistentry>
+			<term>sipPathName</term>
+			<listitem>
+				<para>The JAIN SIP stack implementation to use. You will probably never need to change the value of this attribute. It defaults to the famous NIST SIP stack. If you ever do change this value, you should remember to insert the JAIN SIP JAR implementation in the container's <filename>lib</filename> directory.</para>
+			</listitem>
+		</varlistentry>
+	</variablelist>
+</section>
