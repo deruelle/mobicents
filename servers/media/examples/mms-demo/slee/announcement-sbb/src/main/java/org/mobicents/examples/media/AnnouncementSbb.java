@@ -65,7 +65,6 @@ public abstract class AnnouncementSbb implements Sbb {
         // ActivityContextInterface connectionActivity =
         // sbbContext.getActivities()[0];
         ActivityContextInterface connectionActivity = this.getUserActivity();
-        logger.info("Joining " + userEndpoint + " with " + ANNOUNCEMENT_ENDPOINT);
 
         MsConnection connection = (MsConnection) connectionActivity.getActivity();
         MsSession session = connection.getSession();
@@ -86,16 +85,11 @@ public abstract class AnnouncementSbb implements Sbb {
     public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
         MsLink link = evt.getSource();
         String announcementEndpoint = link.getEndpoints()[1].getLocalName();
-
-        logger.info("Announcement endpoint: " + announcementEndpoint);
         this.setAnnouncementEndpoint(announcementEndpoint);
-
         playNext(link);
     }
 
     public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
-        logger.info("Link release completed");
-
         ActivityContextInterface connectionAci = getUserActivity();
         if (connectionAci != null && !connectionAci.isEnding()) {
             connectionAci.detach(sbbContext.getSbbLocalObject());
@@ -108,16 +102,13 @@ public abstract class AnnouncementSbb implements Sbb {
     }
 
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
-        logger.info("Announcement complete: " + (this.getIndex() - 1));
         MsLink link = this.getLink();
         if (this.getIndex() < this.getSequence().size()) {
-            logger.info("Playing announcement[" + this.getIndex() + "]");
             playNext(link);
             return;
         }
 
         if (this.getIndex() == this.getSequence().size() && !this.getKeepAlive()) {
-            logger.info("Releasing link");
             link.release();
         } else {
             this.setIndex(0);
@@ -132,7 +123,6 @@ public abstract class AnnouncementSbb implements Sbb {
         MsPlayRequestedSignal play = null;
         play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
         play.setURL(url);
-        logger.info("PLAY signal=" + play);
 
         MsRequestedEvent onCompleted = null;
         MsRequestedEvent onFailed = null;
@@ -146,21 +136,12 @@ public abstract class AnnouncementSbb implements Sbb {
         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};
 
-        logger.info("EXECUTING PLAY");
         link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
         setIndex(getIndex() + 1);
     }
 
     public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
-        logger.info("Disconnecting from " + getAnnouncementEndpoint());
-        MsResource resource = getResource();
-
-        if (resource != null) {
-            resource.release();
-        }
-
         MsLink link = getLink();
-        logger.info("Releasing link=" + link);
         if (link != null) {
             link.release();
         }
