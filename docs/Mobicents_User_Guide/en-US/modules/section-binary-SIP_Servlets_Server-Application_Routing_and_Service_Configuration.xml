@@ -18,7 +18,6 @@
 	name="Sip-Servlets"
 	className="org.mobicents.servlet.sip.startup.SipStandardService"
 	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
-	sipApplicationRouterClassName="org.mobicents.servlet.sip.router.DefaultApplicationRouter"
 	darConfigurationFileLocation="file:///home/silas/workspaces/mobicents-sip-servlets/sip-servlets-examples/reinvite-demo/reinvite-dar.properties">
 ]]></programlisting>
 </example>
@@ -36,13 +35,6 @@
 				<para>This attribute specifies the class name of the <literal>org.mobicents.servlet.sip.core.SipApplicationDispatcher</literal> implementation to use. The routing algorithm and application selection process is performed in that class.</para>
 			</listitem>
 		</varlistentry>
-				<!-- Evidently removed...
-				<varlistentry>
-					<term>sipApplicationRouterClassName</term>
-					<listitem>
-						<para>sipApplicationRouterClassName : (removed starting from 0.5 version since the JSR 289 PFD-2 defines a mechanism to package and load an application router) This attribute specifies the class name of the javax.servlet.sip.SipApplicationRouter implementation. This allows to plug any Application Router to change the application selection logic.</para>
-					</listitem>
-				</varlistentry>-->
 		<varlistentry>
 			<term>darConfigurationFileLocation</term>
 			<listitem>
