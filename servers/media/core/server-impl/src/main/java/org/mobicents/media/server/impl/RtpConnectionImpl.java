@@ -87,8 +87,8 @@ public class RtpConnectionImpl extends BaseConnection {
         }
         initRTPSocket();
 
-        inDsp = new Processor("InputProcess : "+endpointName+" : "+localAddress+"."+localPort);
-        outDsp = new Processor("OutputProcess : "+endpointName+" : "+localAddress+"."+localPort);
+        inDsp = new Processor("InputProcess : " + endpointName + " : " + localAddress + "." + localPort);
+        outDsp = new Processor("OutputProcess : " + endpointName + " : " + localAddress + "." + localPort);
 
         inDsp.getOutput().connect(demux.getInput());
         inDsp.getInput().connect(rtpSocket.getReceiveStream());
@@ -108,7 +108,6 @@ public class RtpConnectionImpl extends BaseConnection {
         String jndiName = endpoint.getRtpFactoryName();
         if (jndiName != null) {
             InitialContext ic = new InitialContext();
-            logger.info("Lookup RTPFactory[" + endpoint.getRtpFactoryName() + "]");
             return (RtpFactory) ic.lookup(endpoint.getRtpFactoryName());
         } else {
             return new RtpFactory();
@@ -146,48 +145,6 @@ public class RtpConnectionImpl extends BaseConnection {
         }
     }
 
-/*    @Override
-    protected void setState(ConnectionState newState) {
-        ConnectionState oldState = this.state;
-        this.state = newState;
-
-        switch (state) {
-            //In state = HALF_OPEN connection is able to receive media
-            //so we get endpoint's specific audio sink and assign it as
-            //consumer for RTP receiver stream
-            case HALF_OPEN:
-                inDsp.getInput().connect(rtpSocket.getReceiveStream());
-                inDsp.getOutput().connect(demux.getInput());
-
-                demux.start();
-                break;
-
-            //In state=OPEN the remote entity (address and port) is already known.
-            //It means that now can be started sender stream, so we are obtaining
-            // source stream from the endpoint and starting RTP sender stream.    
-            case OPEN:
-                outDsp.getInput().connect(mux.getOutput());
-                outDsp.getOutput().connect(rtpSocket.getSendStream());
-                mux.getOutput().start();
-                break;
-
-            //Disconnect input and iutput streams    
-            case CLOSED:
-                //disconnect and release mux
-                demux.stop();
-                inDsp.getInput().disconnect(rtpSocket.getReceiveStream());
-                inDsp.getOutput().disconnect(demux.getInput());
-
-                mux.getOutput().stop();
-                outDsp.getInput().disconnect(mux.getOutput());
-                outDsp.getOutput().disconnect(rtpSocket.getSendStream());
-
-                break;
-        }
-
-        super.setState(newState);
-    }
-*/
     /**
      * Checks is format presented in the list.
      * 
@@ -210,106 +167,106 @@ public class RtpConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
      */
     public String getLocalDescriptor() {
-    	
-    	try {
-			this.lockState();
-
-			if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
-				throw new IllegalStateException("State is " + state);
-			}
-        if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
-            throw new IllegalStateException("State is " + state);
-        }
-
-        String userName = "MediaServer";
-        long sessionID = System.currentTimeMillis() & 0xffffff;
-        long sessionVersion = sessionID;
-
-        String networkType = javax.sdp.Connection.IN;
-        String addressType = javax.sdp.Connection.IP4;
-        String address = null;
-
-        RtpSocketImpl rtpSocketImpl = (RtpSocketImpl) this.rtpSocket;
-
-        int audioPort = 0;
-        if (!rtpSocketImpl.isUseStun()) {
-            address = localAddress;
-            audioPort = rtpSocket.getPort();
-        } else {
-            address = rtpSocketImpl.getPublicAddressFromStun();
-            audioPort = rtpSocketImpl.getPublicPortFromStun();
-        }
 
         try {
-            localSDP = sdpFactory.createSessionDescription();
-            localSDP.setVersion(sdpFactory.createVersion(0));
-            localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType, address));
-            localSDP.setSessionName(sdpFactory.createSessionName("session"));
-            localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
+            this.lockState();
 
-            Vector descriptions = new Vector();
+            if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
+                throw new IllegalStateException("State is " + state);
+            }
+            if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
+                throw new IllegalStateException("State is " + state);
+            }
 
-            // encode formats
-            HashMap rtpMap = rtpSocket.getRtpMap();
-            //Format[] supported = endpoint.getSupportedFormats();
-            Format[] supported = inDsp.getInput().getFormats();
+            String userName = "MediaServer";
+            long sessionID = System.currentTimeMillis() & 0xffffff;
+            long sessionVersion = sessionID;
+
+            String networkType = javax.sdp.Connection.IN;
+            String addressType = javax.sdp.Connection.IP4;
+            String address = null;
+
+            RtpSocketImpl rtpSocketImpl = (RtpSocketImpl) this.rtpSocket;
+
+            int audioPort = 0;
+            if (!rtpSocketImpl.isUseStun()) {
+                address = localAddress;
+                audioPort = rtpSocket.getPort();
+            } else {
+                address = rtpSocketImpl.getPublicAddressFromStun();
+                audioPort = rtpSocketImpl.getPublicPortFromStun();
+            }
+
+            try {
+                localSDP = sdpFactory.createSessionDescription();
+                localSDP.setVersion(sdpFactory.createVersion(0));
+                localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType, address));
+                localSDP.setSessionName(sdpFactory.createSessionName("session"));
+                localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
+
+                Vector descriptions = new Vector();
+
+                // encode formats
+                HashMap rtpMap = rtpSocket.getRtpMap();
+                //Format[] supported = endpoint.getSupportedFormats();
+                Format[] supported = inDsp.getInput().getFormats();
 
 
-            HashMap fmts = new HashMap();
-            Set<Integer> map = rtpMap.keySet();
+                HashMap fmts = new HashMap();
+                Set<Integer> map = rtpMap.keySet();
 
-            for (Integer pt : map) {
-                Format f = (Format) rtpMap.get(pt);
-                if (contains(supported, f)) {
-                    fmts.put(pt, f);
+                for (Integer pt : map) {
+                    Format f = (Format) rtpMap.get(pt);
+                    if (contains(supported, f)) {
+                        fmts.put(pt, f);
+                    }
                 }
-            }
 
-            Object[] payloads = getPayloads(fmts).toArray();
+                Object[] payloads = getPayloads(fmts).toArray();
 
-            int[] formats = new int[payloads.length];
-            for (int i = 0; i < formats.length; i++) {
-                formats[i] = ((Integer) payloads[i]).intValue();
-            }
-
-            // generate media descriptor
-            MediaDescription md = sdpFactory.createMediaDescription("audio", audioPort, 1, "RTP/AVP", formats);
-
-            boolean g729 = false;
-            int g729payloadType = -1; // g729 payload type is usually 18
-            // set attributes for formats
-            Vector attributes = new Vector();
-            for (int i = 0; i < formats.length; i++) {
-                RTPAudioFormat format = (RTPAudioFormat) fmts.get(new Integer(formats[i]));
-                attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
-                if (format.getEncoding().contains("g729")) {
-                    g729 = true;
-                    g729payloadType = format.getPayload(); // should be 18
+                int[] formats = new int[payloads.length];
+                for (int i = 0; i < formats.length; i++) {
+                    formats[i] = ((Integer) payloads[i]).intValue();
                 }
+
+                // generate media descriptor
+                MediaDescription md = sdpFactory.createMediaDescription("audio", audioPort, 1, "RTP/AVP", formats);
+
+                boolean g729 = false;
+                int g729payloadType = -1; // g729 payload type is usually 18
+                // set attributes for formats
+                Vector attributes = new Vector();
+                for (int i = 0; i < formats.length; i++) {
+                    RTPAudioFormat format = (RTPAudioFormat) fmts.get(new Integer(formats[i]));
+                    attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
+                    if (format.getEncoding().contains("g729")) {
+                        g729 = true;
+                        g729payloadType = format.getPayload(); // should be 18
+                    }
+                }
+
+                // This options forces the remote g728 side to avoid using annexb, which is not supported right now
+                if (g729) {
+                    attributes.add(sdpFactory.createAttribute("fmtp", g729payloadType + " annexb=no"));
+                }
+
+                // generate descriptor
+                md.setAttributes(attributes);
+                descriptions.add(md);
+
+                localSDP.setMediaDescriptions(descriptions);
+            } catch (SdpException e) {
+                logger.error("Could not create descriptor", e);
             }
-
-            // This options forces the remote g728 side to avoid using annexb, which is not supported right now
-            if (g729) {
-                attributes.add(sdpFactory.createAttribute("fmtp", g729payloadType + " annexb=no"));
-            }
-
-            // generate descriptor
-            md.setAttributes(attributes);
-            descriptions.add(md);
-
-            localSDP.setMediaDescriptions(descriptions);
-        } catch (SdpException e) {
-            logger.error("Could not create descriptor", e);
+        } catch (InterruptedException e) {
+            logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+            e.printStackTrace();
+        // FIXME: baranowb: shouldnt we close here instead?
+        // throw new ResourceUnavailableException(e);
+        } finally {
+            this.releaseState();
         }
-    	} catch (InterruptedException e) {
-			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
-			e.printStackTrace();
-			// FIXME: baranowb: shouldnt we close here instead?
-			// throw new ResourceUnavailableException(e);
-		} finally {
-			this.releaseState();
-		}
-		return localSDP.toString();
+        return localSDP.toString();
     }
 
     /**
@@ -348,74 +305,74 @@ public class RtpConnectionImpl extends BaseConnection {
      * 
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
-    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException,ResourceUnavailableException {
-    	
-    	try {
-			this.lockState();
-
-			if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-				throw new IllegalStateException("State is " + state);
-			}
-        if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-            throw new IllegalStateException("State is " + state);
-        }
-
-        remoteSDP = sdpFactory.createSessionDescription(descriptor);
-
-        // add peer to RTP socket
-        InetSocketAddress peer = getPeer(remoteSDP);
-        rtpSocket.setPeer(peer.getAddress(), peer.getPort());
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Set peer: " + peer);
-        }
-
-        // negotiate codecs
-        HashMap offer = RTPFormat.getFormats(remoteSDP);
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Offered formats: " + offer);
-        }
-
-        HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Selected formats: " + rtpMap);
-        }
-
-        Set<Integer> keys = rtpMap.keySet();
-        for (Integer key : keys) {
-            rtpSocket.addFormat(key, (Format) rtpMap.get(key));
-        }
-        // @FIXME
-        // DTMF may be negotiated but speech codecs no
-        if (rtpMap.size() == 0) {
-            throw new IOException("Codecs are not negotiated");
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Codecs are negotiated");
-        }
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
 
         try {
-            rtpSocket.setPeriod(getPacketizationPeriod(remoteSDP));
-        } catch (Exception e) {
-            // silence here
+            this.lockState();
+
+            if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+                throw new IllegalStateException("State is " + state);
+            }
+            if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+                throw new IllegalStateException("State is " + state);
+            }
+
+            remoteSDP = sdpFactory.createSessionDescription(descriptor);
+
+            // add peer to RTP socket
+            InetSocketAddress peer = getPeer(remoteSDP);
+            rtpSocket.setPeer(peer.getAddress(), peer.getPort());
+
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Set peer: " + peer);
+            }
+
+            // negotiate codecs
+            HashMap offer = RTPFormat.getFormats(remoteSDP);
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Offered formats: " + offer);
+            }
+
+            HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Selected formats: " + rtpMap);
+            }
+
+            Set<Integer> keys = rtpMap.keySet();
+            for (Integer key : keys) {
+                rtpSocket.addFormat(key, (Format) rtpMap.get(key));
+            }
+            // @FIXME
+            // DTMF may be negotiated but speech codecs no
+            if (rtpMap.size() == 0) {
+                throw new IOException("Codecs are not negotiated");
+            }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Codecs are negotiated");
+            }
+
+            try {
+                rtpSocket.setPeriod(getPacketizationPeriod(remoteSDP));
+            } catch (Exception e) {
+                // silence here
+            }
+
+            rtpSocket.setRtpMap(rtpMap);
+
+            outDsp.getOutput().connect(rtpSocket.getSendStream());
+            outDsp.getInput().connect(mux.getOutput());
+            mux.getOutput().start();
+
+            setState(ConnectionState.OPEN);
+        } catch (InterruptedException e) {
+            logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+            e.printStackTrace();
+            // FIXME: baranowb: shouldnt we close here instead?
+            throw new ResourceUnavailableException(e);
+        } finally {
+            this.releaseState();
         }
-
-        rtpSocket.setRtpMap(rtpMap);
-
-        outDsp.getOutput().connect(rtpSocket.getSendStream());
-        outDsp.getInput().connect(mux.getOutput());
-        mux.getOutput().start();
-
-        setState(ConnectionState.OPEN);
-    	} catch (InterruptedException e) {
-			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
-			e.printStackTrace();
-			// FIXME: baranowb: shouldnt we close here instead?
-			throw new ResourceUnavailableException(e);
-		} finally {
-			this.releaseState();
-		}
     }
 
     /**
@@ -518,13 +475,8 @@ public class RtpConnectionImpl extends BaseConnection {
         this.endpoint.deleteConnection(id);
     }
 
-	public String getOtherEnd() throws IllegalArgumentException {
-		
-		return "Remote";
-	}
-    
-    
-    
-    
-    
+    public String getOtherEnd() throws IllegalArgumentException {
+
+        return "Remote";
+    }
 }
