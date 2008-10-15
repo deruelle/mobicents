@@ -15,7 +15,6 @@
  */
 package org.mobicents.mscontrol.impl;
 
-import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkEventCause;
@@ -28,62 +27,57 @@ import org.mobicents.mscontrol.MsLinkListener;
  */
 public class MsLinkEventImpl implements MsLinkEvent, Runnable {
 
-	private static Logger logger = Logger.getLogger(MsLinkEventImpl.class);
+    private MsLinkImpl source;
+    private MsLinkEventID eventID;
+    private MsLinkEventCause cause;
+    private String msg;
 
-	private MsLinkImpl source;
-	private MsLinkEventID eventID;
-	private MsLinkEventCause cause;
-	private String msg;
+    /** Creates a new instance of MsTerminationEventImpl */
+    public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause) {
+        this.source = source;
+        this.eventID = eventID;
+        this.cause = cause;
+    }
 
-	/** Creates a new instance of MsTerminationEventImpl */
-	public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause) {
-		this.source = source;
-		this.eventID = eventID;
-		this.cause = cause;
-	}
+    public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
+        this.source = source;
+        this.eventID = eventID;
+        this.cause = cause;
+        this.msg = msg;
+    }
 
-	public MsLinkEventImpl(MsLinkImpl source, MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
-		this.source = source;
-		this.eventID = eventID;
-		this.cause = cause;
-		this.msg = msg;
-	}
+    public MsLink getSource() {
+        return source;
+    }
 
-	public MsLink getSource() {
-		return source;
-	}
+    public MsLinkEventID getEventID() {
+        return eventID;
+    }
 
-	public MsLinkEventID getEventID() {
-		return eventID;
-	}
+    public MsLinkEventCause getCause() {
+        return cause;
+    }
 
-	public MsLinkEventCause getCause() {
-		return cause;
-	}
+    public String getMessage() {
+        return msg;
+    }
 
-	public String getMessage() {
-		return msg;
-	}
-
-	public void run() {
-		for (MsLinkListener listener : source.session.provider.linkListeners) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Sending event=" + eventID + " to " + listener);
-			}
-			switch (eventID) {
-			case LINK_CREATED:
-				listener.linkCreated(this);
-				break;
-			case LINK_CONNECTED:
-				listener.linkConnected(this);
-				break;
-			case LINK_DISCONNECTED:
-				listener.linkDisconnected(this);
-				break;
-			case LINK_FAILED:
-				listener.linkFailed(this);
-				break;
-			}
-		}
-	}
+    public void run() {
+        for (MsLinkListener listener : source.session.provider.linkListeners) {
+            switch (eventID) {
+                case LINK_CREATED:
+                    listener.linkCreated(this);
+                    break;
+                case LINK_CONNECTED:
+                    listener.linkConnected(this);
+                    break;
+                case LINK_DISCONNECTED:
+                    listener.linkDisconnected(this);
+                    break;
+                case LINK_FAILED:
+                    listener.linkFailed(this);
+                    break;
+            }
+        }
+    }
 }
