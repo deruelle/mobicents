@@ -90,6 +90,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         try {
             url = new URL(file);
         } catch (IOException e) {
+        	logger.error("IOException in file "+ file, e);
             this.failed(e);
             return;
         }
