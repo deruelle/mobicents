@@ -218,6 +218,11 @@ public class BrowseContainer extends Composite {
 		refresh();
 	}
 
+	/**
+	 * 
+	 * Selects widget widget if its present in chain (goes up in chain of links)
+	 * @param w
+	 */
 	public void select(Widget w)
 	{
 		if(panels.contains(w))

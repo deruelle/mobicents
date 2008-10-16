@@ -79,11 +79,10 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 
 	private void updateGatherDataView(boolean value) {
 
-		UserInterface.getLogPanel().info("SETTING : "+value);
+		
 		for (int i = 0; i < this.gatherDataListBox.getItemCount(); i++) {
 			boolean v = Boolean.valueOf(gatherDataListBox.getValue(i))
 					.booleanValue();
-			UserInterface.getLogPanel().info("SETTING2 :"+gatherDataListBox.getValue(i)+": "+v);	
 			if (v == value) {
 				
 				gatherDataListBox.setSelectedIndex(i);

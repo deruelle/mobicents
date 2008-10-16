@@ -49,11 +49,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ControlledTabedBar extends TabPanel implements CommonControl {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.mobicents.slee.container.management.console.client.common.CommonControl#onHide()
-	 */
 
 	private int selected = -1;
 
