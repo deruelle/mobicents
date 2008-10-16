@@ -38,19 +38,18 @@ public class Timer implements Runnable {
     /**
      * Starts execution;
      */
-    public void start() {
+    public synchronized void start() {
         if (stopped) {
             worker = new Thread(this, "MediaTimer");
             stopped = false;
-            worker.start();
-            
+            worker.start();            
         }
     }
 
     /**
      * Terminates execution.
      */
-    public void stop() {
+    public synchronized void stop() {
         if (!stopped) {
             stopped = true;
         }
