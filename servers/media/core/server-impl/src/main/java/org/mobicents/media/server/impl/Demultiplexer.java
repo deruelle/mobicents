@@ -16,12 +16,7 @@ package org.mobicents.media.server.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
@@ -37,10 +32,9 @@ import org.mobicents.media.MediaSink;
  */
 public class Demultiplexer extends AbstractSource {
 
-    private transient Logger logger = Logger.getLogger(Demultiplexer.class);
     private Input input = new Input();
     private HashMap<String, Output> branches = new HashMap();
-    private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
+    //private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
     private Format[] formats;
 
     public AbstractSink getInput() {
@@ -106,7 +100,8 @@ public class Demultiplexer extends AbstractSource {
                 for (Output stream : streams) {
                     transffered = true;
                     stream.push((Buffer) buffer.clone());
-                    demuxThreadPool.submit(stream);
+                    stream.run();
+                    //demuxThreadPool.submit(stream);
                 }
 
                 if (!transffered) {
@@ -163,28 +158,4 @@ public class Demultiplexer extends AbstractSource {
         return formats;
     }
 
-    private static class ThreadFactoryImpl implements ThreadFactory {
-
-        final ThreadGroup group;
-        static final AtomicInteger demuxPoolNumber = new AtomicInteger(1);
-        final AtomicInteger threadNumber = new AtomicInteger(1);
-        final String namePrefix;
-
-        ThreadFactoryImpl() {
-            SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-            namePrefix = "Demultiplexer-CachedThreadPool-" + demuxPoolNumber.getAndIncrement() + "thread-";
-        }
-
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-            if (t.isDaemon()) {
-                t.setDaemon(false);
-            }
-            if (t.getPriority() != Thread.NORM_PRIORITY) {
-                t.setPriority(Thread.NORM_PRIORITY);
-            }
-            return t;
-        }
-    }
 }
