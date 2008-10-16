@@ -22,7 +22,7 @@ public class Timer implements Runnable {
 
     public final static Quartz quartz = new Quartz();
     private Runnable handler;
-    private boolean stopped = true;
+    private volatile boolean stopped = true;
     private Thread worker;
     
     /**
@@ -38,7 +38,7 @@ public class Timer implements Runnable {
     /**
      * Starts execution;
      */
-    public synchronized void start() {
+    public void start() {
         if (stopped) {
             worker = new Thread(this, "MediaTimer");
             stopped = false;
@@ -49,7 +49,10 @@ public class Timer implements Runnable {
     /**
      * Terminates execution.
      */
-    public synchronized void stop() {
+    public void stop() {
+    	if(worker != null){
+    		worker.interrupt();
+    	}
         if (!stopped) {
             stopped = true;
         }
