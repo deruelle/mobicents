@@ -6,6 +6,7 @@
 	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="release.name" value="mobicents-all"/>
     <property name="release.version" value="1.2.0.CR2"/>
+	<property name="release.configurations" value="default,all"/>
 	
 	<property name="jboss.version" value="4.2.2.GA"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
@@ -19,7 +20,8 @@
 
     <property name="jbcp.ra.dirs" value="xmpp,http-servlet,sip,sip11,diameter/base,http-client,tts"/>
     <property name="jbcp.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
-	
+    <property name="jbcp.configurations" value="default,all,production"/>
+		
 	<property name="eap.version" value="eap-4.3"/>
 	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP02.zip"/>
 	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP02/zip/${eap.distro.zip.path}" />
@@ -36,17 +38,34 @@
 		</classpath>
 	</taskdef>
 
-	<target name="release" depends="get-jboss,unzip-jboss,copy-frontpage,get-servers,build-src-zip,release-jain-slee,release-media,release-sip-presence,release-sip-servlets-all-and-default">
+	<target name="release" depends="get-jboss,unzip-jboss,get-servers">
+		<for delimiter="," param="jboss.node" list="${release.configurations}">
+			<sequential>
+				<echo>[Populating '@{jboss.node}' jboss.node]</echo>
+				<antcall target="release-in-node">
+					<param name="jboss.node" value="@{jboss.node}"/>
+				</antcall>
+			</sequential>
+		</for>
+		
+		<antcall target="release-sip-load-balancer" />
+		
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
+		<antcall target="copy-frontpage"/>
+		
+		<antcall target="build-src-zip" />
 		<antcall target="zip-release"/>
 		<antcall target="clean"/>
 	</target>
+	
+	<target name="release-in-node" depends="release-jain-slee,release-media,release-sip-presence,release-sip-servlets" />
 
     <target name="release-jbcp">
         <ant antfile="${ant.file.mobicents.all.release}" target="release">
-             <property name="release.dir" value="${jbcp.release.dir}"/>
+            <property name="release.dir" value="${jbcp.release.dir}"/>
             <property name="release.name" value="${jbcp.release.name}"/>
-             <property name="release.version" value="${jbcp.release.version}"/>
+            <property name="release.version" value="${jbcp.release.version}"/>
+            <property name="release.configurations" value="${jbcp.configurations}"/>
 
             <property name="ra.dirs" value="${jbcp.ra.dirs}"/>
             <property name="example.dirs" value="${jbcp.example.dirs}"/>
@@ -70,8 +89,13 @@
 	<target name="unzip-jboss">
 		<delete dir="${jboss.home}" failonerror="true" />
 		<unzip src="${jboss.distro.zip.path}" dest="${release.dir}" />
-		<delete dir="${jboss.home}/server/minimal" failonerror="false"/>
-        <delete dir="${jboss.home}/server/production" failonerror="false"/>
+
+		<propertyregex input="${release.configurations}" regexp="(\w+)" global="true" replace="**/\1/**" property="used.configurations" />
+		<echo>Included configurations: ${release.configurations} -&gt; Excludes list: ${used.configurations}</echo>
+		
+		<delete includeemptydirs="true" failonerror="false" verbose="false">
+			<fileset dir="${jboss.home}/server" excludes="${used.configurations}" />
+		</delete>
 	</target>
 
 	<!-- get servers -->
@@ -85,6 +109,7 @@
 			<available file="${ant.file.mobicents.all.release}/../target/servers/media/release/.svn/entries" />
 			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-presence/.svn/entries" />
 			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-load-balancer/.svn/entries" />
 		</and>
 	</condition>
 	<target name="get-servers" depends="checkout-servers,update-servers" />
@@ -109,47 +134,17 @@
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
             <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
-			<property name="jboss.config" value="all" />
-		</ant>
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
-			<property name="release.dir" value="${release.dir}" />
-            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
-			<property name="jboss.config" value="default" />
+			<property name="jboss.config" value="${jboss.node}" />
 		</ant>
 	</target>
 
 	<target name="release-media">
-		<!-- tmp stuff, some scripts in the mms tagged must be replaced to make the release work -->
-		<!--copy file="${ant.file.mobicents.all.release}/../tmp/media/release/build.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml"
-			overwrite="true"/>
-		<copy file="${ant.file.mobicents.all.release}/../tmp/media/controllers/mgcp/mgcp-ra/pom.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/controllers/mgcp/mgcp-ra/pom.xml"
-			overwrite="true"/>
-		<copy file="${ant.file.mobicents.all.release}/../tmp/media/controllers/msc/pom.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/controllers/msc/pom.xml"
-			overwrite="true"/>
-		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/call-controller2/pom.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/call-controller2/pom.xml"
-			overwrite="true"/>
-		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/converged-demo/pom.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/converged-demo/pom.xml"
-			overwrite="true"/>
-		<copy file="${ant.file.mobicents.all.release}/../tmp/media/examples/mms-demo/pom.xml"
-			tofile="${ant.file.mobicents.all.release}/../target/servers/media/examples/mms-demo/pom.xml"
-			overwrite="true"/-->
 		<property name="jboss.home.converted" location="${jboss.home}"/>
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}"/>
 			<property name="jboss.home" value="${jboss.home.converted}"/>
             <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
-			<property name="jboss.config" value="all" />
-		</ant>
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/media/release/build.xml" target="release-mobicents-all">
-			<property name="release.dir" value="${release.dir}" />
-			<property name="jboss.home" value="${jboss.home.converted}" />
-            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
-			<property name="jboss.config" value="default" />
+			<property name="jboss.config" value="${jboss.node}" />
 		</ant>
 	</target>
 
@@ -157,106 +152,39 @@
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
 			<property name="release.build.jboss.home" value="${home}../${jboss.home.relative.path}" />
-			<property name="jboss.config" value="all" />
-		</ant>
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
-			<property name="release.dir" value="${release.dir}"/>
-			<property name="release.build.jboss.home" value="${home}../${jboss.home.relative.path}"/>
-			<property name="jboss.config" value="default" />
+			<property name="jboss.config" value="${jboss.node}" />
 		</ant>
 	</target>
 
 	<target name="release-sip-servlets">
-
-		<!--ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/release/build.xml" target="release-mobicents-all" /-->
-		
-		<!-- this code should be moved to mss release script, to replace current target release-mc-distro -->
-		
-		<mkdir dir="${jboss.home}/server/${jboss.config}/conf/dars" />
-		<copy verbose="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/src/site/resources/click2call-dar.properties" toFile="${jboss.home}/server/${jboss.config}/conf/dars/mobicents-dar.properties" />
-
-		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/server-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/server.xml" />
-		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/context-jboss.xml" tofile="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/context.xml" />
-		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/jboss-service.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
-		<copy verbose="true" overwrite="true" failonerror="true" file="${mss.release.dir}/sip-servlets-bootstrap/release/webserver-xmbean.xml" todir="${jboss.home}/server/${jboss.config}/deploy/jboss-web.deployer/META-INF" />
-		<echo>Done copying.</echo>
 		<property name="jboss.home.converted" location="${jboss.home}"/>
-		<exec executable="${mvn.executable}" dir="${mss.release.dir}">
-			<arg line="clean install -P set-svn-revision,jboss-distro -Dnode=${jboss.config} -Pjboss-distro -DJBOSS_HOME=${jboss.home.converted}" />
-		</exec>
-
-		<exec executable="${mvn.executable}" dir="${mss.release.dir}/sip-servlets-examples/click-to-call">
-			<arg line="clean install -P set-svn-revision" />
-		</exec>
-
-		<copy file="${mss.release.dir}/sip-servlets-examples/click-to-call/target/click-to-call-servlet-1.0.war" tofile="${jboss.home}/server/${jboss.config}/deploy/click2call.war" />
-
-		<ant dir="${mss.release.dir}/sip-servlets-management/" antfile="build.xml" target="war"/>
-
-		<copy file="${mss.release.dir}/sip-servlets-management/build/tmp/sip-servlets-management.war" tofile="${jboss.home}/server/${jboss.config}/deploy/sip-servlets-management.war" />
-
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/sip-servlets-bootstrap/release/build.xml" target="release-jboss-node">
+			<property name="jboss.home" value="${jboss.home.converted}"/>
+			<property name="jboss.config" value="${jboss.node}" />
+		</ant>
 	</target>
 	
-	<target name="release-sip-servlets-all-and-default">
-		<property name="mss.release.dir" value="${ant.file.mobicents.all.release}/../target/servers/sip-servlets"/>
-
-		<antcall target="release-sip-servlets">
-			<param name="jboss.config" value="default"/>
-		</antcall>
-		<antcall target="release-sip-servlets">
-			<param name="jboss.config" value="all"/>
-		</antcall>
-		
-		<property name="base.path" value="${mss.release.dir}/sip-servlets-bootstrap/release"></property>
-
-		<!-- Build the distributable example -->
-		<exec failonerror="true" executable="${mvn.executable}" dir="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable">
-			<arg line="clean install -P set-svn-revision"/>
+	<target name="release-sip-load-balancer">
+		<echo>Building Mobicents SIP Load Balancer</echo>
+		<exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.mobicents.all.release}/../target/servers/sip-load-balancer">
+			<arg line="install -P set-svn-revision" />
 		</exec>
-		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/distributable-simple-dar.properties" 
-			tofile="${jboss.home}/server/all/conf/dars/mobicents-dar.properties" />
-		<copy verbose="true" file="${base.path}/../../sip-servlets-examples/simple-sip-servlet-distributable/target/simple-sip-servlet-distributable-1.0.war" 
-			tofile="${jboss.home}/server/all/deploy/simple-distributable.war" />
-					
-		<!-- Set up the all configuration with clustering enabled -->
-		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-impl/docs/failover-server-jboss.xml" 
-			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/server.xml"/>
-		<copy verbose="true" overwrite="true" file="${base.path}/context-jboss.xml" 
-			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/context.xml"/>
-		<copy verbose="true" overwrite="true" file="${base.path}/../../sip-servlets-impl/docs/jboss-service-all.xml" 
-			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/jboss-service.xml"/>
-		<copy verbose="true" overwrite="true" file="${base.path}/webserver-xmbean.xml" 
-			tofile="${jboss.home}/server/all/deploy/jboss-web.deployer/META-INF/webserver-xmbean.xml"/>
-		
-		<!-- The Sip Load Balancer -->
-		<mkdir dir="${jboss.home}/sip-balancer"/>
-		<get src="http://snapshots.jboss.org/maven2/org/mobicents/tools/sip-balancer/1.0-SNAPSHOT/sip-balancer-1.0-20080829.103906-21-jar-with-dependencies.jar" 
-		    dest="${jboss.home}/sip-balancer/sip-balancer-1.0-20080829.103906-21-jar-with-dependencies.jar" 
-		    verbose="true"
-		    usetimestamp="true"/>
-		<get src="http://mobicents.googlecode.com/svn/trunk/tools/sip-balancer/src/test/resources/lb-configuration.properties" 
-		    dest="${jboss.home}/sip-balancer/lb-configuration.properties" 
-		    verbose="true"
-		    usetimestamp="true"/>
-		
-		<!-- Copy Media Server from default to all, because of broken release script in the tagges MMS -->
-		<copy verbose="true" overwrite="false" todir="${jboss.home}/server/all/deploy/">
-		    <fileset dir="${jboss.home}/server/default/deploy/" includes="*media*.sar/**"/>
+		<copy tofile="${jboss.home}/sip-balancer/sip-balancer-jar-with-dependencies.jar">
+			<fileset dir="${ant.file.mobicents.all.release}/../target/servers/sip-load-balancer/target/" includes="sip-balancer-*-jar-with-dependencies.jar" />
 		</copy>
-		<copy verbose="true" overwrite="false" todir="${jboss.home}/server/all/lib/">
-		    <fileset dir="${jboss.home}/server/default/lib/" includes="*media*.jar/**"/>
-		</copy>
+		<copy file="${ant.file.mobicents.all.release}/../target/servers/sip-load-balancer/src/test/resources/lb-configuration.properties"
+			tofile="${jboss.home}/sip-balancer/lb-configuration.properties" />
 	</target>
 
 	<!-- copy frontpage -->
 	<target name="copy-frontpage" depends="">
-    <copy verbose="true" overwrite="true" todir="${jboss.home}/server/default/deploy/jboss-web.deployer/ROOT.war/">
-      <fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
-    </copy>
-    <copy verbose="true" overwrite="true" todir="${jboss.home}/server/all/deploy/jboss-web.deployer/ROOT.war/">
-      <fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
-    </copy>
-  </target>
+		<copy verbose="true" overwrite="true" todir="${jboss.home}/server/default/deploy/jboss-web.deployer/ROOT.war/">
+			<fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
+		</copy>
+		<copy verbose="true" overwrite="true" todir="${jboss.home}/server/all/deploy/jboss-web.deployer/ROOT.war/">
+			<fileset dir="${ant.file.mobicents.release}/../ROOT.WAR/" includes="*/**"/>
+		</copy>
+	</target>
 	
 	<!-- zip source -->
 

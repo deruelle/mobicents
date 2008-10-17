@@ -21,6 +21,7 @@
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
 		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA3</sippresence.connectionURL>
 		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/sip-servlets/release-0.6</sipservlets.connectionURL>
+        <sip.loadbalancer.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/tools/sip-balancer</sip.loadbalancer.connectionURL>
 	</properties>
 	
 	<profiles>
@@ -173,6 +174,26 @@
 							<password>${checkout.password}</password>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>sip-loadbalancer-checkout</id>
+                        <goals>
+                            <goal>checkout</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                            <checkoutDirectory>
+                                ${checkout.basedir}/sip-load-balancer
+                            </checkoutDirectory>
+                            <connectionUrl>
+                                ${sip.loadbalancer.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
 		</plugins>
@@ -320,6 +341,25 @@
 							<password>${checkout.password}</password>
 						</configuration>
 					</execution>
+                    <execution>
+                        <id>sip-load-balancer-update</id>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <basedir>
+                                ${checkout.basedir}/sip-load-balancer
+                            </basedir>
+                            <scmVersion>HEAD</scmVersion>
+                            <scmVersionType>revision</scmVersionType>
+                            <connectionUrl>
+                                ${sip.loadbalancer.connectionURL}
+                            </connectionUrl>
+                            <username>${checkout.username}</username>
+                            <password>${checkout.password}</password>
+                        </configuration>
+                    </execution>
 				</executions>
 			</plugin>
 		</plugins>
