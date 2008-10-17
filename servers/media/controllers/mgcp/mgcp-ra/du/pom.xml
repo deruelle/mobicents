@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>mgcp-parent</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<version>1.0.0.CR1</version>
+		<version>1.0.0.CR2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mgcp-ra-DU</artifactId>
