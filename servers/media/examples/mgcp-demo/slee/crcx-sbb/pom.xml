@@ -5,7 +5,7 @@
     <parent>
 	    <artifactId>mgcp-demo-parent</artifactId>
 	    <groupId>org.mobicents.servers.media.examples</groupId>
-	    <version>1.0.0.CR1</version>
+	    <version>1.0.0.CR2-SNAPSHOT</version>
     </parent>
     
     <artifactId>mgcp-demo-crcx-sbb</artifactId>
