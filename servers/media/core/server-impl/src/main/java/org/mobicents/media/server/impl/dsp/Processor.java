@@ -59,7 +59,7 @@ public class Processor implements Serializable {
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
     }
     ;
-    private HashMap<String, Codec> selectedCodecs = new HashMap();
+    private HashMap<String, Codec> selectedCodecs = new HashMap<String, Codec>();
 
     public Processor(String resourceName) {
         input = new Input();

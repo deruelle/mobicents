@@ -16,245 +16,247 @@ package org.mobicents.media.server.impl.enp.cnf;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class AudioMixer extends AbstractSink implements Serializable {
 
-    private String name;
-    
-    protected final static AudioFormat LINEAR = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN,
-            AudioFormat.SIGNED);
-    
-    protected final static Format[] formats = new Format[] {
-        LINEAR
-    };
-    
-    private Runnable mixer;
-    protected Timer timer;
-    private HashMap inputs = new HashMap();
-    private boolean started = false;
-    private AudioFormat fmt = LINEAR;
-    private int packetSize;
-    private int packetPeriod = Quartz.HEART_BEAT;
-    private int jitter = 3 * Quartz.HEART_BEAT;
-    private int seq;
-    
-    private MixerOutput mixerOutput;
-    
-    private double targetGain = 1;
-    private double currentGain = 1;
-    private static double maxStepDown = 1. / 22; // 51 samples transition from gain 1 to gain 0
-    private static double maxStepUp = 1. / 4000; // 3000 samples transition from gain 1 to gain 0
-    private transient Logger logger = Logger.getLogger(AudioMixer.class);
+	private String name;
 
-    /** 
-     * Creates a new instance of AudioMixer.
-     * 
-     * @param packetPeriod packetization period in milliseconds. 
-     * @param fmt format of the output stream.
-     */
-    public AudioMixer(String name) {
-    	super("AudioMixer");
-        this.timer = new Timer();
-        this.name = name;
-        this.mixerOutput = new MixerOutput();
-        this.init();
-    }
+	protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
-    /**
-     * Initializes audio mixer.
-     * 
-     * @throws javax.media.format.UnsupportedFormatException
-     */
-    private void init() {
-        this.packetSize = 16 * packetPeriod;
-    }
+	protected final static Format[] formats = new Format[] { LINEAR };
 
-    /**
-     * Gets the numbers of input streams used for mixing.
-     * 
-     * @return the numbers of streams.
-     */
-    public int size() {
-        return inputs.size();
-    }
+	private Runnable mixer;
+	protected Timer timer;
+	private ConcurrentHashMap<MediaSource, MixerInputStream> inputs = new ConcurrentHashMap<MediaSource, MixerInputStream>();
+	private boolean started = false;
+	private AudioFormat fmt = LINEAR;
+	private int packetSize;
+	private int packetPeriod = Quartz.HEART_BEAT;
+	private int jitter = 3 * Quartz.HEART_BEAT;
+	private int seq;
 
-    public MediaSource getOutput() {
-        return mixerOutput;
-    }
-    
-    @Override
-    public void connect(MediaSource stream) {
-        MixerInputStream input = new MixerInputStream(this, jitter);
-        inputs.put(stream, input);
-        input.connect(stream);
-    }
-    
-    @Override
-    public void disconnect(MediaSource stream) {
-        MixerInputStream input = (MixerInputStream) inputs.remove(stream);
-        if (input != null) {
-            input.disconnect(stream);
-        }
-    }
-    
-    public int getInputCount() {
-        return inputs.size();
-    }
-    /**
-     * Starts mixer.
-     */
-    public void start() {
-        if (!started) {
-            started = true;
-            mixer = new Mixer();
-            timer.setListener(mixer);
-            timer.start();
-        }
-    }
+	private MixerOutput mixerOutput;
 
-    /**
-     * Terminates mixer.
-     */
-    public void stop() {
-        if (started) {
-            started = false;
-            timer.stop();
-        }
-    }
+	private double targetGain = 1;
+	private double currentGain = 1;
+	private static double maxStepDown = 1. / 22; // 51 samples transition
+													// from gain 1 to gain 0
+	private static double maxStepUp = 1. / 4000; // 3000 samples transition
+													// from gain 1 to gain 0
+	private transient Logger logger = Logger.getLogger(AudioMixer.class);
 
-    @Override
-    public String toString() {
-        return "AudioMixer[" + name + "]";
-    }
+	/**
+	 * Creates a new instance of AudioMixer.
+	 * 
+	 * @param packetPeriod
+	 *            packetization period in milliseconds.
+	 * @param fmt
+	 *            format of the output stream.
+	 */
+	public AudioMixer(String name) {
+		super("AudioMixer");
+		this.timer = new Timer();
+		this.name = name;
+		this.mixerOutput = new MixerOutput();
+		this.init();
+	}
 
-    /**
-     * Implements mixing procedure for a buffer of audio.
-     */
-    private class Mixer implements Runnable {
+	/**
+	 * Initializes audio mixer.
+	 * 
+	 * @throws javax.media.format.UnsupportedFormatException
+	 */
+	private void init() {
+		this.packetSize = 16 * packetPeriod;
+	}
 
-        public short[] byteToShortArray(byte[] input) {
-            short[] output = new short[input.length >> 1];
-            for (int q = 0; q < input.length; q += 2) {
-                short f = (short) (((input[q + 1]) << 8) | (input[q] & 0xff));
-                output[q >> 1] = f;
-            }
-            return output;
-        }
+	/**
+	 * Gets the numbers of input streams used for mixing.
+	 * 
+	 * @return the numbers of streams.
+	 */
+	public int size() {
+		return inputs.size();
+	}
 
-        public byte[] mix(ArrayList<byte[]> input) {
-            int numSamples = packetSize >> 1;
-            short[][] inputs = new short[input.size()][];
-            for (int q = 0; q < input.size(); q++) {
-                inputs[q] = byteToShortArray(input.get(q));
-            }
+	public MediaSource getOutput() {
+		return mixerOutput;
+	}
 
-            int[] mixed = new int[numSamples];
+	@Override
+	public void connect(MediaSource stream) {
+		MixerInputStream input = new MixerInputStream(this, jitter);
+		inputs.put(stream, input);
+		input.connect(stream);
+	}
 
-            for (int q = 0; q < numSamples; q++) {
-                for (int w = 0; w < input.size(); w++) {
-                    mixed[q] += inputs[w][q];
-                }
-            }
+	@Override
+	public void disconnect(MediaSource stream) {
+		MixerInputStream input = (MixerInputStream) inputs.remove(stream);
+		if (input != null) {
+			input.disconnect(stream);
+		}
+	}
 
-            int numExceeding = 0;
-            int maxExcess = 0;
+	public int getInputCount() {
+		return inputs.size();
+	}
 
-            for (int q = 0; q < numSamples; q++) {
-                int excess = 0;
-                int overflow = mixed[q] - Short.MAX_VALUE;
-                int underflow = mixed[q] - Short.MIN_VALUE;
+	/**
+	 * Starts mixer.
+	 */
+	public void start() {
+		if (!started) {
+			started = true;
+			mixer = new Mixer();
+			timer.setListener(mixer);
+			timer.start();
+		}
+	}
 
-                if (overflow > 0) {
-                    excess = overflow;
-                } else if (underflow < 0) {
-                    excess = -underflow;
-                }
+	/**
+	 * Terminates mixer.
+	 */
+	public void stop() {
+		if (started) {
+			started = false;
+			timer.stop();
+		}
+	}
 
-                if (excess > 0) {
-                    numExceeding++;
-                }
-                maxExcess = Math.max(maxExcess, excess);
-            }
+	@Override
+	public String toString() {
+		return "AudioMixer[" + name + "]";
+	}
 
-            if (numExceeding > numSamples >> 5) {
-                targetGain = (float) (Short.MAX_VALUE) / (float) (Short.MAX_VALUE + maxExcess + 2000);
-            } else {
-                targetGain = 1;
-            }
+	/**
+	 * Implements mixing procedure for a buffer of audio.
+	 */
+	private class Mixer implements Runnable {
 
-            byte[] data = new byte[packetSize];
-            int l = 0;
-            for (int q = 0; q < numSamples; q++) {
-                mixed[q] *= currentGain;
-                if (targetGain - currentGain >= maxStepUp) {
-                    currentGain += maxStepUp;
-                } else if (currentGain - targetGain > maxStepDown) {
-                    currentGain -= maxStepDown;
-                }
-                short s = (short) (mixed[q]);
-                data[l++] = (byte) (s);
-                data[l++] = (byte) (s >> 8);
-            }
-            return data;
-        }
+		public short[] byteToShortArray(byte[] input) {
+			short[] output = new short[input.length >> 1];
+			for (int q = 0; q < input.length; q += 2) {
+				short f = (short) (((input[q + 1]) << 8) | (input[q] & 0xff));
+				output[q >> 1] = f;
+			}
+			return output;
+		}
 
-        public synchronized void run() {
-            Collection<MixerInputStream> buffers = inputs.values();
-            ArrayList<byte[]> frames = new ArrayList();
-            for (MixerInputStream buffer : buffers) {
-                if (buffer.isReady()) {
-                    frames.add(buffer.read(packetPeriod));
-                }
-            }
+		public byte[] mix(ArrayList<byte[]> input) {
+			int numSamples = packetSize >> 1;
+			short[][] inputs = new short[input.size()][];
+			for (int q = 0; q < input.size(); q++) {
+				inputs[q] = byteToShortArray(input.get(q));
+			}
 
-            byte[] data = mix(frames);
-            push(data);
-        }
-    }
+			int[] mixed = new int[numSamples];
 
-    private void push(byte[] data) {
-        Buffer buffer = CachedBuffersPool.allocate();
-        buffer.setData(data);
-        buffer.setOffset(0);
-        buffer.setLength(data.length);
-        buffer.setDuration(packetPeriod);
-        buffer.setTimeStamp(packetPeriod * seq);
-        buffer.setSequenceNumber(seq++);
+			for (int q = 0; q < numSamples; q++) {
+				for (int w = 0; w < input.size(); w++) {
+					mixed[q] += inputs[w][q];
+				}
+			}
 
-        buffer.setFormat(fmt);
-//        if (codec != null) {
-//            codec.process(buffer);
-//        }
+			int numExceeding = 0;
+			int maxExcess = 0;
 
-        mixerOutput.push(buffer);
-    }
+			for (int q = 0; q < numSamples; q++) {
+				int excess = 0;
+				int overflow = mixed[q] - Short.MAX_VALUE;
+				int underflow = mixed[q] - Short.MIN_VALUE;
 
-    public boolean isAcceptable(Format fmt) {
-        return fmt.matches(LINEAR);
-    }
+				if (overflow > 0) {
+					excess = overflow;
+				} else if (underflow < 0) {
+					excess = -underflow;
+				}
 
-    public void receive(Buffer buffer) {
-        throw new UnsupportedOperationException();
-    }
+				if (excess > 0) {
+					numExceeding++;
+				}
+				maxExcess = Math.max(maxExcess, excess);
+			}
 
-    public Format[] getFormats() {
-        return formats;
-    }
+			if (numExceeding > numSamples >> 5) {
+				targetGain = (float) (Short.MAX_VALUE) / (float) (Short.MAX_VALUE + maxExcess + 2000);
+			} else {
+				targetGain = 1;
+			}
+
+			byte[] data = new byte[packetSize];
+			int l = 0;
+			for (int q = 0; q < numSamples; q++) {
+				mixed[q] *= currentGain;
+				if (targetGain - currentGain >= maxStepUp) {
+					currentGain += maxStepUp;
+				} else if (currentGain - targetGain > maxStepDown) {
+					currentGain -= maxStepDown;
+				}
+				short s = (short) (mixed[q]);
+				data[l++] = (byte) (s);
+				data[l++] = (byte) (s >> 8);
+			}
+			return data;
+		}
+
+		public synchronized void run() {
+			Collection<MixerInputStream> buffers = inputs.values();
+			ArrayList<byte[]> frames = new ArrayList();
+			for (MixerInputStream buffer : buffers) {
+				if (buffer.isReady()) {
+					frames.add(buffer.read(packetPeriod));
+				}
+			}
+
+			byte[] data = mix(frames);
+			push(data);
+		}
+	}
+
+	private void push(byte[] data) {
+		Buffer buffer = CachedBuffersPool.allocate();
+		buffer.setData(data);
+		buffer.setOffset(0);
+		buffer.setLength(data.length);
+		buffer.setDuration(packetPeriod);
+		buffer.setTimeStamp(packetPeriod * seq);
+		buffer.setSequenceNumber(seq++);
+
+		buffer.setFormat(fmt);
+		// if (codec != null) {
+		// codec.process(buffer);
+		// }
+
+		mixerOutput.push(buffer);
+	}
+
+	public boolean isAcceptable(Format fmt) {
+		return fmt.matches(LINEAR);
+	}
+
+	public void receive(Buffer buffer) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Format[] getFormats() {
+		return formats;
+	}
 
 }

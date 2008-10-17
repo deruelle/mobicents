@@ -110,6 +110,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             try {
                 stream = speexAudioFileReader.getAudioInputStream(url);
             } catch (Exception e) {
+            	logger.error("Using SpeexAudioFileReader. Error  " + stream, e);
                 this.failed(e);
                 return;
             }
