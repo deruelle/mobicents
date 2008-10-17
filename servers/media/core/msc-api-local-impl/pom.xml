@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.CR1</version>
+		<version>1.0.0.CR2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>mobicents-media-server-msc-api-local-impl</artifactId>
