@@ -9,7 +9,7 @@
 	
 	<artifactId>mobicents-media-server-controllers-parent</artifactId>
 	<groupId>org.mobicents.servers.media.controllers</groupId>
-	<version>1.0.0.CR1-SNAPSHOT</version>
+	<version>1.0.0.CR1</version>
 	
 	<packaging>pom</packaging>
 	
@@ -17,7 +17,7 @@
 
 	<properties>
 		<mobicents.media.server.core.version>
-			1.0.0.CR1-SNAPSHOT
+			1.0.0.CR1
 		</mobicents.media.server.core.version>		
 	</properties>
 	
