@@ -6,14 +6,12 @@
 	<title>Mobicents XML Document Management Server</title>
 	<para>The Mobicents XML Document Management Server (XDMS) is part of the Mobicents SIP Presence Service; it is the first free and open source implementation of an XML Document Management Server as defined in the <ulink
 			url="Open Mobile Alliance (OMA) XML Document Management v1.1 specification"/>. This functional element of next-generation IP communication networks is responsible for handling the management of user XML documents stored on the network side, such as presence authorization rules, contact and group lists (also known as resource lists), static presence information, and much more.</para>
-			
 	<!-- Installing the JDK -->
 	<para
 		id="para-section-Mobicents_XML_Document_Management_Server-section-Installing_the_JDK_Version_5.0"></para>
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
 		href="../modules/section-Installing_the_JDK_Version_5.0.xml" />
-	
 	<section
 		id="section-Installation_of_the_XDM_Server">
 		<title>Installation of the XDM Server</title>
@@ -182,6 +180,28 @@
 				</procedure>
 			</section>
 			<section
+				id="section-binary-XDM_Server-Configuring">
+				<title>Configuring (and Setting JBOSS_HOME)</title>
+				<para>Configuring the Mobicents XML Document Management Server consists in setting the <envar>JBOSS_HOME</envar> environment variable.</para>
+				<xi:include
+					xmlns:xi="http://www.w3.org/2001/XInclude"
+					href="../modules/fragment-Setting_the_JBOSS_HOME_Environment_Variable.xml" />
+				<!--<variablelist>
+					<varlistentry>
+						<term>XCAP Root</term>
+						<listitem>
+							<para>Inside the Mobicents Presence Service root directory (<filename>/trunk/servers/sip-presence</filename>) <filename>pom.xml</filename>, you can set the <literal>xdm.server.xcap.root</literal> Maven property. This property defines the relative path to root that is to be considered the XCAP root for all XCAP URIs. This value must match the servlet name used in the Mobicents HTTP Servlet resource adapter. The default value is <replaceable>/mobicents</replaceable>.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Dynamic User Provisioning</term>
+						<listitem>
+							<para>Inside the Mobicents Presence Service root directory (<filename>/trunk/servers/sip-presence</filename>) pom.xml, you can set the <literal>dynamicUserProvisioning</literal> Maven property. This property defines whether the XDM Server should provision the user when a <literal>PUT</literal> request is being processed and the user is not installed for the request's application usage. The default value is true.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>-->
+			</section>
+			<section
 				id="section-binary-XDM_Server-Running">
 				<title>Running</title>
 				<para>Once installed, you can run the Mobicents XDM Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the XDM Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the XDM Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 23s:648ms</quote>):</para>
@@ -236,6 +256,11 @@
 						</stepalternatives>
 					</step>
 				</procedure>
+			</section>
+			<section
+				id="section-binary-XDM_Server-Using">
+				<title>Using</title>
+				<para></para>
 			</section>
 			<section
 				id="section-binary-XDM_Server-Stopping">
@@ -293,25 +318,6 @@ Halting VM</programlisting>
 				</procedure>
 			</section>
 			<section
-				id="section-binary-XDM_Server-Configuring">
-				<title>Configuring</title>
-				<para>Note that you do not need to touch or configure anything in order to deploy the server.</para>
-				<!--<variablelist>
-					<varlistentry>
-						<term>XCAP Root</term>
-						<listitem>
-							<para>Inside the Mobicents Presence Service root directory (<filename>/trunk/servers/sip-presence</filename>) <filename>pom.xml</filename>, you can set the <literal>xdm.server.xcap.root</literal> Maven property. This property defines the relative path to root that is to be considered the XCAP root for all XCAP URIs. This value must match the servlet name used in the Mobicents HTTP Servlet resource adapter. The default value is <replaceable>/mobicents</replaceable>.</para>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>Dynamic User Provisioning</term>
-						<listitem>
-							<para>Inside the Mobicents Presence Service root directory (<filename>/trunk/servers/sip-presence</filename>) pom.xml, you can set the <literal>dynamicUserProvisioning</literal> Maven property. This property defines whether the XDM Server should provision the user when a <literal>PUT</literal> request is being processed and the user is not installed for the request's application usage. The default value is true.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>-->
-			</section>
-			<section
 				id="section-binary-XDM_Server-Testing">
 				<title>Testing</title>
 				<para></para>
@@ -323,7 +329,6 @@ Halting VM</programlisting>
 			</section>
 		</section>
 	</section>
-	
 	<section
 		id="section-Functional_Architecture_of_the_XDM_Server">
 		<title>Functional Architecture of the XDM Server</title>

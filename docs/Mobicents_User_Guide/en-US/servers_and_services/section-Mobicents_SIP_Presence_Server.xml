@@ -281,8 +281,11 @@ Halting VM</programlisting>
 		</section>
 		<section
 			id="section-binary-Mobicents_SIP_Presence_Server-Configuring">
-			<title>Configuring</title>
-			<para></para>
+			<title>Configuring (and Setting JBOSS_HOME)</title>
+			<para>Configuring the Mobicents SIP Presence Server consists in setting the <envar>JBOSS_HOME</envar> environment variable.</para>
+			<xi:include
+				xmlns:xi="http://www.w3.org/2001/XInclude"
+				href="../modules/fragment-Setting_the_JBOSS_HOME_Environment_Variable.xml" />
 		</section>
 		<section
 			id="section-binary-Mobicents_SIP_Presence_Server-Testing">

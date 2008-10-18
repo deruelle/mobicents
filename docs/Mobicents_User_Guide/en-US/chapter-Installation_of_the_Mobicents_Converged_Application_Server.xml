@@ -199,6 +199,14 @@
 			</procedure>
 		</section>
 		<section
+			id="section-binary-JAIN_SLEE_Server-Configuring">
+			<title>Configuring (and Setting JBOSS_HOME)</title>
+			<para>Configuring the Mobicents JAIN SLEE Server consists in setting the <envar>JBOSS_HOME</envar> environment variable.</para>
+			<xi:include
+				xmlns:xi="http://www.w3.org/2001/XInclude"
+				href="modules/fragment-Setting_the_JBOSS_HOME_Environment_Variable.xml" />
+		</section>
+		<section
 			id="section-binary-JAIN_SLEE_Server-Running">
 			<title>Running</title>
 			<para>Once installed, you can run the Mobicents JAIN SLEE Server by executing the one of the startup scripts in the <filename>&lt;topmost_directory&gt;/jboss-4.2.2.GA/bin</filename> directory (on Linux or Windows), or by double-clicking the <filename>run.bat</filename> executable batch file in that same directory (on Windows only). However, we suggest always starting the JAIN SLEE Server using the terminal or Command Prompt because you are then able to read&#8212;and act upon&#8212;any startup messages, and possibly debug any problems that might arise. In the Linux terminal or Command Prompt, you will be able to tell that the JAIN SLEE Server started successfully if the last line of output is similar to the following (ending with <quote>Started in 25s:527ms</quote>):</para>
@@ -258,6 +266,12 @@
 			</procedure>
 		</section>
 		<section
+			id="section-binary-JAIN_SLEE_Server-Using">
+			<title>Using</title>
+			<para>The JAIN SLEE Server can be observed and controlled using the Mobicents Management Console, which is started along with the server. For information on configuring the JAIN SLEE Server with the Management Console, refer to <xref
+					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
+		</section>
+		<section
 			id="section-binary-JAIN_SLEE_Server-Stopping">
 			<title>Stopping</title>
 			<para> Just as there are multiple ways to run the JAIN SLEE Server, there are multiple ways to stop it. Detailed instructions for stopping the JAIN SLEE Server are given below, arranged by platform. Note that if you properly stop the server, you will see the following three lines as the last output in the Linux terminal or Command Prompt:</para>
@@ -313,12 +327,6 @@ Halting VM</programlisting>
 			</procedure>
 		</section>
 		<section
-			id="section-binary-JAIN_SLEE_Server-Configuring">
-			<title>Configuring</title>
-			<para>The JAIN SLEE Server can be controlled and configured with the Mobicents Management Console, which is started along with the server. For information on configuring the JAIN SLEE Server with the Management Console, refer to <xref
-					linkend="chapter-Working_with_the_Mobicents_Management_Console"/>.</para>
-		</section>
-		<section
 			id="section-binary-JAIN_SLEE_Server-Testing">
 			<title>Testing</title>
 			<para></para>
@@ -329,12 +337,12 @@ Halting VM</programlisting>
 			<para>To uninstall the JAIN SLEE Server, simply delete the directory you decompressed the binary distribution archive into.</para>
 		</section>
 	</section>
-	<!-- Source Distribution -->
-	<section
+</chapter>
+	<!--<section
 		id="section-source-JAIN_SLEE_Server-Installing_Configuring_and_Running">
 		<title>Source Distribution: Installing, Configuring and Running</title>
 		<para>The Mobicents JAIN SLEE Server source distribution comprises the following components:</para>
-		<!--<itemizedlist>
+		<itemizedlist>
 			<listitem>
 				<para>the JBoss Application Server, version 4.2.2 GA</para>
 			</listitem>
@@ -347,8 +355,7 @@ Halting VM</programlisting>
 			<listitem>
 				<para>the Mobicents SIP Servlets Server</para>
 			</listitem>
-		</itemizedlist>-->
-		<section
+		</itemizedlist>--><!--<section
 			id="section-source-JAIN_SLEE_Server-PreInstall_Requirements_and_Prerequisites">
 			<title>Pre-Install Requirements and Prerequisites</title>
 			<para></para>
@@ -468,7 +475,7 @@ Halting VM</programlisting>
 			<title>Obtaining the Source Code</title>
 			<para></para>
 		</section>
-		<section
+		<sectioninstalling<
 			id="section-source-JAIN_SLEE_Server-Building">
 			<title>Building</title>
 			<para></para>
@@ -485,7 +492,7 @@ Halting VM</programlisting>
 		</section>
 		<section
 			id="section-source-JAIN_SLEE_Server-Configuring">
-			<title>Configuring</title>
+			<title>Configuring (and Setting JBOSS_HOME)</title>
 			<para></para>
 		</section>
 		<section
@@ -499,4 +506,5 @@ Halting VM</programlisting>
 			<para></para>
 		</section>
 	</section>
-</chapter>
+</chapter>-->
+

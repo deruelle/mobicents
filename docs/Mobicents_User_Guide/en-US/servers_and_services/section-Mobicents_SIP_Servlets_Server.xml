@@ -252,7 +252,7 @@
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Configuring">
-			<title>Configuring</title>
+			<title>Configuring (and Setting JBOSS_HOME)</title>
 			<para>Configuring the SIP Servlets-customized JBoss Application Server consists in setting the <envar>JBOSS_HOME</envar> environment variable, and then, optionally, either running the JBoss Application Server (in which case you should jump to <xref
 					linkend="section-binary-SIP_Servlets_Server_with_JBoss-Running"/> while remembering to return to this section later), or further customizing the JBoss container, which is detailed in the immediately-following sections. Those sections detail how the SIP Servlets-customized JBoss Application Server can be further customized by adding SIP Connectors and configuring the application router.</para>
 			<xi:include
@@ -572,7 +572,7 @@ Halting VM</programlisting>
 		</section>
 		<section
 			id="section-Configuring">
-			<title>Configuring</title>
+			<title>Configuring (and Setting CATALINA_HOME)</title>
 			<para>Configuring the SIP Servlets-customized Tomcat Container consists in setting the <envar>CATALINA_HOME</envar> environment variable, and then, optionally, either running the SIP Servlets-customized Tomcat (in which case you should jump to <xref
 					linkend="section-binary-SIP_Servlets_Server_with_JBoss-Running"/>, while remembering to return to this section later), or further customizing the Tomcat container, which is detailed in the immediately-following sections. Those sections detail how the SIP Servlets-customized Tomcat Container can be further customized by adding SIP Connectors and configuring the application router.</para>
 			<xi:include
