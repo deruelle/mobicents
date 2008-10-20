@@ -37,7 +37,7 @@ public class ProfileCreator {
 			
 			String controllerProfileSpecID = "ProfileSpecificationID[CallControlProfileCMP#org.mobicents#0.1]";
 			String profileTableName = "CallControl";
-			String domain = "127.0.0.1";
+			String domain = System.getProperty("jboss.bind.address","127.0.0.1");
 						
 			// create profile table
 			sci.invokeOperation("-createProfileTable", controllerProfileSpecID,
