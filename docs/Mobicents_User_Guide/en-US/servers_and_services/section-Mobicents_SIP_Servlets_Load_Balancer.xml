@@ -14,7 +14,7 @@
 		<title>Implementation of the Mobicents SIP Servlets Load Balancer</title>
 		<para>Individual instances of Mobicents SIP Servlet Servers, which may run atop either the JBoss Application Server or the Tomcat Servlet Container (the server pool may also be comprise of a mixture of the two), are responsible for contacting the Load Balancer and sending their health status as well as heartbeats to it. These node are obtained from a list of Mobicents SIP Servlets Servers, which is created at runtime.</para>
 	</formalpara>
-	<para>The SIP Load Balancer first receives SIP requests from endpoints on a port that is specified in a configuration file. The SIP Load Balancer, using a round-robin algorithm, then selects a node to which it forwards the SIP requests, using a different port. The SIP Load Balancer will forward all same-session requests to the node first selected to initiate the session, as long as that node is healthy and available.</para>
+	<para>The SIP Load Balancer first receives SIP requests from endpoints on a port that is specified in its Configuration Properties configuration file. The SIP Load Balancer, using a round-robin algorithm, then selects a node to which it forwards the SIP requests, using a different port. The SIP Load Balancer will forward all same-session requests to the node first selected to initiate the session, as long as that node is healthy and available.</para>
 		<!-- original
 		<para>The Mobicents SIP Load Balancer receives SIP requests from endpoints on a port that is specified in a configuration file. It then selects nodes to serve the SIP requests using a round-robin algorithm for load-balancing. The nodes are obtained from a list of Mobicents SIP Servlets nodes which is created at runtime. The different nodes are responsible for contacting the load balancer and sending to it both heartbeats and health status.</para>
 	<para>The Mobicents SIP Load Balancer then forwards the SIP requests through a different port to the selected node. It maintains the <quote>stickiness</quote> of requests in a session to a single node as long as the serving node is healthy and available.</para>-->
@@ -89,7 +89,7 @@
 		<section
 			id="section-binary-SIP_Load_Balancer-Configuring">
 			<title>Configuring</title>
-			<para>Configuring the SIP Load Balancer and the two SIP Servlets-enabled Server nodes is not difficult. For the sake of these instructions, we are going to assume that you are setting up a single SIP Load Balancer (we'll call it <quote>SLB</quote> for short) with two SIP Servlets Server nodes, one based on the JBoss Application Server (<quote>JSS-Node</quote>, short for <quote>JBoss Servlets Server Node</quote>) and the other based on the Tomcat Servlet Container (<quote>TSS-Node</quote>). (You should be able to easily adapt the following instructions if you are using a single container type, which is likely.) Given this setup, here is the complete process that you would follow to set up the Mobicents SIP Load Balancer:</para>
+			<para>Configuring the SIP Load Balancer and the two SIP Servlets-enabled Server nodes is not difficult. For the sake of these instructions, we are going to assume that you are setting up a single SIP Load Balancer (we'll call it <quote>SLB</quote> for short) with two SIP Servlets Server nodes, one based on the JBoss Application Server (<quote>JSS-Node</quote>, short for <quote>JBoss Servlets Server Node</quote>) and the other based on the Tomcat Servlet Container (<quote>TSS-Node</quote>). (You should be able to easily adapt the following instructions if you are using a single container type.) Given this setup, here is the complete process that you would follow to set up the Mobicents SIP Load Balancer:</para>
 			<procedure
 				id="procedure-Configuring_the_Mobicents_SIP_Load_Balancer_and_Servlet_Server_Nodes">
 				<title>Configuring the Mobicents SIP Load Balancer and Servlet Server Nodes</title>
@@ -135,7 +135,7 @@ gov.nist.javax.sip.REENTRANT_LISTENER = true<![CDATA[
 							</listitem>
 						</varlistentry>
 					</variablelist>
-					<para>The rest of the keys and properties in the Configuration Properties file can be used tune the JAIN SIP stack, but do not need to be changed for our purposes. If you wish to tune the stack using these properties, refer to the JAIN SIP JavaDoc on the <literal>SipStack</literal> and <literal>SipStackImpl</literal> classes for further information on them.</para>
+					<para>The rest of the keys and properties in the Configuration Properties file can be used to tune the JAIN SIP stack, but do not need to be changed for our purposes. If you wish to tune the stack using these properties, refer to the JAIN SIP JavaDoc on the <literal>SipStack</literal> and <literal>SipStackImpl</literal> classes for further information on them.</para>
 				</step>
 				<step>
 					<para>Configure the <filename>server.xml</filename> configuration files for all of your Servlet container nodes according to the following scheme:</para>
@@ -189,7 +189,7 @@ Oct 21, 2008 1:10:59 AM org.mobicents.tools.sip.balancer.NodeRegisterImpl startS
 INFO: Node expiration task created
 Oct 21, 2008 1:10:59 AM org.mobicents.tools.sip.balancer.NodeRegisterImpl startServer
 INFO: Node registry started</screen>
-					<para>In the output above, you can see the IP address on which the SIP Load Balancer is listening, as well as on which external and internal ports it is paying attention to.</para>
+					<para>In the output above, you can see the IP address on which the SIP Load Balancer is listening, as well as on which external and internal ports it is paying attention.</para>
 				</step>
 				<step>
 					<para>All well and good so far, but we're still in need of a pair of SIP Servlet Server nodes&#8212;or ten. Your nodes can run atop either the JBoss Application Server or the Tomcat Servlet Container. You should have already installed the binary distributions for type (or types) of SIP Servlets Server you will run as client nodes of the SIP Load Balancer (see <xref
@@ -197,9 +197,9 @@ INFO: Node registry started</screen>
 						</footnote>, nearly-unchanged, to configure the client nodes. Because you will have more than one client node, you should assign different ports for each of them to listen on for HTTP and/or SIP connections. Here is the relevant portion of the <filename>server.xml</filename> configuration file where you should change the value for each new node you add to the cluster:</para>
 					<example
 						id="example-Changing_the_SIP_Connector_Port_for_Servlet_Server_Nodes">
-	<title>Changing the SIP Connector Port for Servlet Server Nodes</title>
+	<title>Changing the SIP Connector Port for Servlet Server Nodes in server.xml</title>
 <programlisting
-							id="proglist-Changing_the_SIP_Connector_Port_for_Servlet_Server_Nodes"
+							id="proglist-Changing_the_SIP_Connector_Port_for_Servlet_Server_Nodes_in_server.xml"
 							linenumbering="numbered"
 							role="XML"><![CDATA[<!-- Define a SIP Connector -->
     <Connector port="5080" 
