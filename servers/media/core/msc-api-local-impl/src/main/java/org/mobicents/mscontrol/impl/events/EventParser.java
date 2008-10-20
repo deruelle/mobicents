@@ -24,7 +24,6 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.mscontrol.impl.events;
 
 import java.io.Serializable;
@@ -40,6 +39,7 @@ import org.mobicents.mscontrol.impl.events.dtmf.DtmfNotifyEventImpl;
  * @author Oleg Kulikov
  */
 public class EventParser implements Serializable {
+
     public MsNotifyEvent parse(Object source, NotifyEvent evt) {
         if (evt.getEventID().equals(org.mobicents.media.server.spi.events.pkg.DTMF.DTMF)) {
             DtmfEvent event = (DtmfEvent) evt;
@@ -47,20 +47,20 @@ public class EventParser implements Serializable {
         }
         String packageName = evt.getEventID().getPackageName();
         String eventName = evt.getEventID().getEventName();
-        
+
         return new MsNotifyEventImpl(source, new EventID(packageName, eventName));
     }
-    
+
     private class EventID implements MsEventIdentifier {
 
         private String packageName;
         private String eventName;
-        
+
         protected EventID(String packageName, String eventName) {
             this.packageName = packageName;
             this.eventName = eventName;
         }
-        
+
         public String getPackageName() {
             return packageName;
         }
@@ -72,6 +72,16 @@ public class EventParser implements Serializable {
         public String getFqn() {
             return packageName + "." + eventName;
         }
-        
+
+        @Override
+        public boolean equals(Object other) {
+            return (other instanceof MsEventIdentifier) &&
+                    ((MsEventIdentifier) other).getFqn().equals(this.getFqn());
+        }
+
+        @Override
+        public int hashCode() {
+            return (packageName + "." + eventName).hashCode();
+        }
     }
 }
