@@ -20,7 +20,7 @@
 		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/examples</media.examples.connectionURL>
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
 		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA3</sippresence.connectionURL>
-		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/svn/trunk/servers/sip-servlets</sipservlets.connectionURL>
+		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets/</sipservlets.connectionURL>
         <sip.loadbalancer.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/tools/sip-balancer</sip.loadbalancer.connectionURL>
 	</properties>
 	
