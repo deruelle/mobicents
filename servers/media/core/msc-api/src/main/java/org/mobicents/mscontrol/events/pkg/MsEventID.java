@@ -63,9 +63,6 @@ public class MsEventID implements MsEventIdentifier {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.packageName != null ? this.packageName.hashCode() : 0);
-        hash = 67 * hash + (this.eventName != null ? this.eventName.hashCode() : 0);
-        return hash;
+        return (packageName + "." + eventName).hashCode();
     }
 }
