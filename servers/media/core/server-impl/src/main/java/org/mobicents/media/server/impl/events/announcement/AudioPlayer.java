@@ -255,6 +255,10 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         }
  */
         doProcess();
+        try {
+            stream.close();
+        } catch (IOException e) {
+        }
     }
 
     public Format[] getFormats() {
