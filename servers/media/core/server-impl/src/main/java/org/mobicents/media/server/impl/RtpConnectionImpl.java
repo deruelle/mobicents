@@ -389,6 +389,8 @@ public class RtpConnectionImpl extends BaseConnection {
     }
     
     private void narrow(HashMap<Integer, Format> selected) {
+        HashMap newRtpMap = new HashMap();
+        
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
         Set <Integer> keys = selected.keySet();
         for (Integer key: keys) {
@@ -397,10 +399,13 @@ public class RtpConnectionImpl extends BaseConnection {
             for (Integer p : payloads) {
                 Format f = rtpMap.get(p) ;
                 if (f.matches(fmt)) {
-                    rtpSocket.addFormat(key, fmt);
+                    newRtpMap.put(key, f);
                 }
             }
         }
+        
+        rtpSocket.getRtpMap().clear();
+        rtpSocket.getRtpMap().putAll(newRtpMap);        
     }
     
     /**

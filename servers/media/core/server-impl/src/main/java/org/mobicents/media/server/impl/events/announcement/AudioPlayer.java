@@ -213,6 +213,11 @@ public class AudioPlayer extends AbstractSource implements Runnable {
                 if (started) {
                     this.endOfMedia();
                 }
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+                
             } else {
                 Buffer buffer = CachedBuffersPool.allocate();
                 buffer.setData(packet);
@@ -232,6 +237,10 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         } catch (Exception e) {
             timer.stop();
             started = false;
+            try {
+                stream.close();
+            } catch (IOException ex) {
+            }
             e.printStackTrace();
             failed(e);
         }
@@ -255,10 +264,6 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         }
  */
         doProcess();
-        try {
-            stream.close();
-        } catch (IOException e) {
-        }
     }
 
     public Format[] getFormats() {

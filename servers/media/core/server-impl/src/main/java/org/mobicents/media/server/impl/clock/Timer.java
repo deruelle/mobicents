@@ -25,6 +25,8 @@ public class Timer implements Runnable {
     private volatile boolean stopped = true;
     private Thread worker;
     
+    private long lastTick;
+    
     /**
      * Creates new instance of the timer.
      */
@@ -42,6 +44,7 @@ public class Timer implements Runnable {
         if (stopped) {
             worker = new Thread(this, "MediaTimer");
             stopped = false;
+            lastTick = System.currentTimeMillis();
             worker.start();            
         }
     }
@@ -65,9 +68,13 @@ public class Timer implements Runnable {
     }
 
     @SuppressWarnings("static-access")
-    private void await() {
+    private void await(long t1, long t2) {
+        long delay = Quartz.HEART_BEAT - (t2 - t1);
+        if (delay < 0) {
+            delay = 0;
+        }        
         try {
-            Thread.currentThread().sleep(Quartz.HEART_BEAT);
+            Thread.currentThread().sleep(delay);
         } catch (InterruptedException e) {
             stopped = true;
         }
@@ -75,10 +82,12 @@ public class Timer implements Runnable {
     
     public void run() {
         while (!stopped) {
+            long t1 = System.currentTimeMillis();
             if (handler != null) {
                 handler.run();
             }
-            await();
+            long t2 = System.currentTimeMillis();
+            await(t1, t2);
         }
     }
 }
