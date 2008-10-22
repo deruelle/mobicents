@@ -6,6 +6,14 @@
 	<title>MMS Control API</title>
 	<para></para>
 	<para>The main objective of the Media Server Control API is to provide multimedia application developers with a Media Server abstraction interface.</para>
+	
+	<note
+		id="note-The_JavaDoc_for_the_MMS_Control_API">
+		<title>The JavaDoc for the MMS Control API</title>
+		<para>The JavaDoc documentation for the Mobicents Media Server Control API is available here: <ulink
+				url="available at http://hudson.jboss.org/hudson/job/MobicentsDocumentation/lastSuccessfulBuild/artifact/msc-api/apidocs/index.html"/>.</para>
+	</note>
+	
 	<section
 		id="section-Basic_Components_of_the_MMS_API">
 		<title>Basic Components of the MMS API</title>
@@ -57,7 +65,11 @@
 					<literal>MsSignalGenerator</literal>
 				</term>
 				<listitem>
-					<para>Represents the media resource which is responsible for generating media.</para>
+					<caution>
+						<title>Deprecated</title>
+						<para>You should use <literal>MsRequestedEvent</literal> instead.</para>
+					</caution>
+					<para>Represents the media resource which is responsible for generating media. </para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -65,7 +77,23 @@
 					<literal>MsSignalDetector</literal>
 				</term>
 				<listitem>
-					<para>Represents the media resource responsible for detecting media.</para>
+					<caution>
+						<title>Deprecated</title>
+						<para>You should use <literal>MsRequestedEvent</literal> instead.</para>
+					</caution>
+					<para>Represents the media resource which is responsible for generating media.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>MsRequestedEvent</term>
+				<listitem>
+					<para>The application requests for the detection of certain events like DTMF on an endpoint using this API.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>MsRequestedSignal</term>
+				<listitem>
+					<para>The application requests to applying signals on endpoints, such as the Play-on-Announcement endpoint, using this API.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -84,12 +112,12 @@
 			</caption>
 		</mediaobject>
 		<para>
-			<literal>MsProvider</literal> can be used to create the <literal>MsSession</literal> object as well as the <literal>SignalGenerator</literal> and <literal>SignalDetector</literal> objects.</para>
+			<literal>MsProvider</literal> can be used to create the <literal>MsSession</literal> object and to create the instance of <literal>MsEventFactory</literal>.</para>
 		<para>
 				<literal>MsSession</literal> is a transient association of zero or more connections for the purposes of engaging in a real-time communication exchange. The session and its associated connection objects describe the control and media flows taking place in a communication network. Applications create instances of an <literal>MsSession</literal> object with the <function>MsProvider.createSession()</function> method, which returns an <literal>MsSession</literal> object that has zero connections and is in the <literal>IDLE</literal> state. The <literal>MsProvider</literal> object instance does not change throughout the lifetime of the <literal>MsSession</literal> object. The <literal>MsProvider</literal> object associated with an <literal>MsSession</literal> object is obtained via the <function>getProvider()</function> method.</para>
-		<para>Applications create instances of <literal>MsConnection</literal> objects with the <function>MsSession.createNetworkConnection(String endpointName)</function> method. The Application calls <function>MsConnection.modify(String localDesc, String remoteDesc)</function> passing the local SDP and remote SDP. <literal>MsConnection</literal> at this time will find out the corresponding EndPoint, using JNDI, and using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of <literal>Connection</literal>. This <literal>Connection</literal> creates an instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data does not yet begin.</para>
-		<para>Applications create instances of <literal>MsLink</literal> objects with the <function>MsSession.createLink(MsLinkMode mode)</function> method. The application calls the <function>MsLink.join(String endpointName1, String endpointName2)</function>, passing the endpoint names of the two local endpoints to be joined. At this point, the <literal>MsLink</literal> object will find out the corresponding <literal>EndPoint</literal>s, using JNDI, and by using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of the <literal>Connection</literal> object. This <literal>Connection</literal> creates the instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data does not yet begin. As soon as <literal>Connection</literal>s are created for both <literal>EndPoint</literal>s, <function>setOtherParty(Connection other)</function> is called on each <literal>Connection</literal> passing the other <literal>Connection</literal>, which starts the data transfer between the two <literal>Connection</literal>s.</para>
-		<para>The application creates instances of <literal>MsSignalGenerator</literal> using <function>MsProvider.getSignalGenerator(endpointname)</function>, passing <literal>endPointName</literal>. The application calls <function>MsGenerator.apply(Announcement.PLAY, new String[] {Audio file URL})</function> to play the audio file. At this point <literal>MsGenerator</literal> looks up the <literal>EndPoint</literal> corresponding to the endpointname passed, and simply calls play on it to start the transmission of audio via RTP.</para>
+		<para>Applications create instances of <literal>MsConnection</literal> objects with the <function>MsSession.createNetworkConnection(String endpointName)</function> method. At this stage <literal>MsConnection</literal> is in the <literal>IDLE</literal> state. The Application calls <function>MsConnection.modify(String localDesc, String remoteDesc)</function> passing the local SDP and remote SDP. <literal>MsConnection</literal> at this time will find out the corresponding EndPoint, using JNDI, and using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of <literal>Connection</literal>. This <literal>Connection</literal> creates an instance of <literal>RtpSocketAdaptorImpl</literal>, which opens up the socket for RTP data transfer. However, the transfer of data does not yet begin, and the state of <literal>MsConnection</literal> is <literal>HALF_OPEN</literal>. At this stage, Connection can only accept RTP packets as it has no knowledge of a peer to which to send RTP packets. If <methodname>remoteDesc</methodname> is not null, at this stage it will be applied to Connection, and now the state of <literal>MsConnection</literal> is <literal>OPEN</literal> as it knows peer SDP, and can recieve as well as send RTP packets. Once <methodname>MsConnection.release()</methodname> is called, all of the resources of <literal>MsConnection</literal> are released and it transforms to the <literal>CLOSED</literal> state. <literal>MsConnection</literal> is unusable in the <literal>CLOSED</literal> state and gets garbage-collected.</para>
+		<para>Applications create instances of <literal>MsLink</literal> objects with the <function>MsSession.createLink(MsLinkMode mode)</function> method. At this stage, <literal>MsLink</literal> is in the IDLE state. The application calls the <function>MsLink.join(String endpointName1, String endpointName2)</function>, passing the endpoint names of the two local endpoints to be joined. At this point, the <literal>MsLink</literal> object will find out the corresponding <literal>EndPoint</literal>s, using JNDI, and by using the <literal>endPointName</literal> passed to it. It will then call <function>createConnection(int mode)</function> to create an instance of the <literal>Connection</literal> object. The connections are local connections and hence no network resources are acquired (Sockets). As soon as <literal>Connection</literal>s are created for both <literal>EndPoint</literal>s, <function>setOtherParty(Connection other)</function> is called on each <literal>Connection</literal> passing the other <literal>Connection</literal>, which starts the data transfer between the two <literal>Connection</literal>s. At this stage, <literal>MsLink</literal> changes to the <literal>CONNECTED</literal> state. As soon as the application calls <methodname>MsLink.release()</methodname>, <methodname>release()</methodname> is called on the connection of respective endpoints. As soon as both of the connections are released, <literal>MsLink</literal> changes to <literal>DISCONNECTED</literal> and becomes unsuable. Soon after this, <literal>MsLink</literal> gets garbage-collected.</para>
+		<para>The application may ask to be notified about certain events occurring in an endpoint (e.g., DTMF), or the application may also request certain signals to be applied to an endpoint (e.g., Play an Announcement). To achieve this, the application needs to get an instance of <literal>MsEventFactory</literal> by calling <methodname>MsProvider.getEventFactory()</methodname> and create an instance of <literal>MsRequestedEvent</literal> to request for the notification of events or to create an instance of <literal>MsRequestedEvent</literal> to apply signals at endpoints. The application needs to pass the corresponding <literal>MsEventIdentifier</literal> as a parameter to <methodname>MsEventFactory.createRequestedEvent(MsEventIdentifier eventID)</methodname> or <methodname>MsEventFactory.createRequestedSignal(MsEventIdentifier eventID)</methodname>. The examples below will clarify this</para>
 	</section>
 	<section
 		id="section-Basic_API_Patterns_Listeners">
@@ -136,7 +164,7 @@
 	<section
 		id="section-Events">
 		<title>Events</title>
-		<para>Each of the listeners defined above listen to different types of events fired by the API.</para>
+		<para>Each of the listeners defined above listen to different types of events fired by the server.</para>
 		<formalpara>
 			<title>Events related to <literal>MsSession</literal>
 			</title>
@@ -182,19 +210,9 @@
 					</row>
 					<row>
 						<entry>
-							<literal>SESSION_CREATED</literal>
-						</entry>
-						<entry>Fired when <function>MsProvider.createSession()</function> is called and a new <literal>MsSession</literal>
-        is created</entry>
-						<entry>
-							<function>public void sessionCreated(<literal>MsSessionEvent</literal> evt)</function>
-						</entry>
-					</row>
-					<row>
-						<entry>
 							<literal>SESSION_ACTIVE</literal>
 						</entry>
-						<entry>When the <literal>MsConnection</literal> or <literal>MsLink</literal> is created on <literal>MsSession</literal> for the first time, it transitions to <literal>ACTIVE</literal> state and <literal>SESSION_ACTIVE</literal> is fired. After this the state remains <literal>ACTIVE</literal> even if the application creates more <literal>MsConnection</literal>s or <literal>MsLink</literal>s.</entry>
+						<entry>When the <literal>MsConnection</literal> or <literal>MsLink</literal> is created on <literal>MsSession</literal> for the first time, it transitions to <literal>ACTIVE</literal> state and <literal>SESSION_ACTIVE</literal> is fired. Afterwards, this the state remains <literal>ACTIVE</literal> even if the application creates more <literal>MsConnections</literal> or <literal>MsLinks</literal>.</entry>
 						<entry>
 							<function>public void sessionActive(<literal>MsSessionEvent</literal> evt)</function>
 						</entry>
@@ -250,20 +268,18 @@
 				<tbody>
 					<row>
 						<entry>
-							<literal>CONNECTION_INITIALIZED</literal>
+							<literal>CONNECTION_CREATED</literal>
 						</entry>
-						<entry>As soon as new <literal>MsConnection</literal> is created by calling <function>MsSession.createNetworkConnection(String endpointName)</function>,  <literal>CONNECTION_INITIALIZED</literal> is fired.</entry>
+						<entry>Fired as soon as the creation of <literal>MsConnection</literal> is successful. <literal>MsConnection</literal> is not holding any resources yet.</entry>
 						<entry>
-							<function>public void connectionInitialized(<literal>MsConnection</literal>Event event)</function>
+							<function>public void connectionCreated(<literal>MsConnection</literal>Event event)</function>
 						</entry>
 					</row>
 					<row>
 						<entry>
-							<literal>CONNECTION_CREATED</literal>
+							<literal>CONNECTION_HALF_OPEN</literal>
 						</entry>
-						<entry>As soon as the RTP connection created by calling <function>MsConnection.modify(String localDesc, String remoteDesc)</function> is successful, <literal>CONNECTION_CREATED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated with it and, if there is no endpoint, then this is creation of RTP connection request</entry>
-						<entry>public void connectionCreated(<literal>MsConnection</literal>Event event)<remark>TBD: fix this last sentence: meaning unsure</remark>
-						</entry>
+						<entry>Fired as soon as the modification of <literal>MsConnection</literal> is successful. At this stage the RTP socket is open in the Media Server to receive a stream, but has no idea about remote SDP. The application may call <methodname>MsConnection.modify(localDesc, null)</methodname>, passing <constant>null</constant> for remote SDP if the remote SDP is not known yet, and then later call modify again with the actual SDP once its known</entry>
 					</row>
 					<row>
 						<entry>
@@ -271,25 +287,36 @@
 						</entry>
 						<entry>As soon as <literal>MsConnection</literal> is successfully modified, by calling <function>MsConnection.modify(String localDesc, String remoteDesc)</function>, <literal>CONNECTION_MODIFIED</literal> is fired. When <function>modify()</function> is called, <literal>MsConnection</literal> checks to see whether there is an endpoint associated it and, if so, then this means it is a modification request.</entry>
 						<entry>
-							<function>public void connectionModifed(<literal>MsConnection</literal>Event event)</function>
+							<function>public void connectionHalfOpen(MsConnectionEvent event);</function>
 						</entry>
 					</row>
 					<row>
 						<entry>
-							<literal>CONNECTION_DELETED</literal>
+							<literal>CONNECTION_OPEN</literal>
 						</entry>
-						<entry>As soon as <literal>MsConnection</literal> is successfully released,  (<function>MsConnection.release()</function>) <literal>CONNECTION_DELETED</literal> is fired.</entry>
+						<entry>Fired as soon as the modification of <literal>MsConnection</literal> is successful and the SDP passed by the Call Agent is successfully applied to an RTP Connection. At this stage, there is a flow of RTP packets from the User Agent to the Media Server and vice versa. Its possible that the application may call <methodname>MsConnection.modify(localDesc, remoteDesc)</methodname>, passing the <methodname>remoteDesc(remote SDP)</methodname>
+						</entry>
 						<entry>
-							<function>public void connectionDeleted(<literal>MsConnection</literal>Event event)</function>
+							<methodname>public void connectionOpen(MsConnectionEvent event);</methodname>
 						</entry>
 					</row>
 					<row>
 						<entry>
-							<literal>@Deprecated TX_FAILED</literal>
+							<literal>CONNECTION_DISCONNECTED</literal>
 						</entry>
-						<entry>Whenever the creation of a new RTP connection or the modification of an existing <literal>MsConnection</literal> fails, <literal>TX_FAILED</literal> is fired.</entry>
+						<entry>As soon as <literal>MsConnection</literal> is successfully released, <literal>MsConnection.release()</literal>
+							<literal>CONNECTION_DISCONNECTED</literal> is fired.</entry>
 						<entry>
-							<function>public void txFailed(<literal>MsConnection</literal>Event event)</function>
+							<function>public void connectionDisconnected(MsConnectionEvent event);</function>
+						</entry>
+					</row>
+					<row>
+						<entry>
+							<literal>CONNECTION_FAILED</literal>
+						</entry>
+						<entry>Fired as soon as the creation of <literal>MsConnection</literal> fails for reasons specified in <literal>MsConnectionEventCause</literal>. Immediately after <literal>CONNECTION_FAILED</literal>, <literal>CONNECTION_DISCONNECTED</literal> will be fired, giving the lister a chance to perform clean up.</entry>
+						<entry>
+							<methodname>public void connectionFailed(MsConnectionEvent event);</methodname>
 						</entry>
 					</row>
 				</tbody>
@@ -340,20 +367,20 @@
 					</row>
 					<row>
 						<entry>
-							<literal>LINK_JOINED</literal>
+							<literal>LINK_CONNECTED</literal>
 						</entry>
 						<entry>Fired as soon as the <function>join(String a, String b)</function> operation of <literal>MsLink</literal> is successful.</entry>
 						<entry>
-							<function>public void linkJoined(MsLinkEvent evt)</function>
+							<function>public void linkConnected(MsLinkEvent evt);</function>
 						</entry>
 					</row>
 					<row>
 						<entry>
-							<literal>LINK_DROPPED</literal>
+							<literal>LINK_DISCONNECTED</literal>
 						</entry>
 						<entry>Fired as soon as the <function>release()</function> operation of <literal>MsLink</literal> is successful.</entry>
 						<entry>
-							<function>public void linkDropped(MsLinkEvent evt)</function>
+							<function>public void linkDisconnected(MsLinkEvent evt);</function>
 						</entry>
 					</row>
 					<row>
@@ -475,15 +502,15 @@
 					<literal>IDLE</literal>
 				</term>
 				<listitem>
-					<para> This state indicates that the <literal>MsLink</literal> has been created and has no endpoints associated with it</para>
+					<para> This state indicates that the <literal>MsLink</literal> has been created and has no endpoints associated with it.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>
-					<literal>JOINED</literal>
+					<literal>CONNECTED</literal>
 				</term>
 				<listitem>
-					<para> This state indicates that the connections from both endpoints have been created and that data transfer has started.</para>
+					<para>This state indicates that the connections from both endpoints have been created and that data transfer has started.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -496,7 +523,7 @@
 			</varlistentry>
 			<varlistentry>
 				<term>
-					<literal>INVALID</literal>
+					<literal>DISCONNECTED</literal>
 				</term>
 				<listitem>
 					<para>This state indicates that <literal>MsLink</literal> has closed the connections of both endpoints and is not usable anymore.</para>
@@ -579,28 +606,21 @@
 <programlisting
 				id="proglist-Example_Code"
 				linenumbering="numbered"
-				role="Java"><![CDATA[
-package org.mobicents.mscontrol;
-
-import org.mobicents.media.msc.common.MsLinkMode;
-import org.mobicents.media.server.impl.common.events.EventID;
-import org.mobicents.mscontrol.impl.MsProviderImpl;
-
-/**
+				role="Java"><![CDATA[/**
  * This is just a psuedocode to show how to use the MSC Api. This example uses
- * the Packet Relay Endpoint and Announcement Endpoint as follows
+ * the Announcement Endpoint to play an announcement
  *
- * user agent <----> RTP Connection <---- (one side) Packet Relay Endpoint (other side) <-----> MsLink  <----> Announcement Endpoint
+ * user agent <----> RTP Connection <--- Announcement Endpoint
  *
  * @author amit bhayani
  *
  */
-public class MyMSCTest implements <literal>MsSessionListener</literal>, <literal>MsConnection</literal>Listener, MsLinkListener {
+public class AnnouncementExample implements MsSessionListener, MsConnectionListener {
 
-    private <literal>MsSession</literal> session;
     private MsProvider msProvider;
+    private MsSession msSession;
 
-    public void startMedia() {
+    public void startMedia(String remoteDesc) {
 
         // Creating the provider
         MsProvider provider = new MsProviderImpl();
@@ -608,99 +628,233 @@ public class MyMSCTest implements <literal>MsSessionListener</literal>, <literal
         // Registering the Listeners
         provider.addSessionListener(this);
         provider.addConnectionListener(this);
-        provider.addLinkListener(this);
+   
 
         // Creating the Session
-        session = provider.createSession();
+        msSession = provider.createSession();
 
         // Creating the connection passing the Endpoint Name. Here we are
-        // creating Packet Relay Endpoint which has only two connections. One is
-        // connected to user agent and other we can connect to Announcement Endpoint
-        <literal>MsConnection</literal> connection = session.createNetworkConnection("media/trunk/PacketRelay/$");
+        // creating Announcement Endpoint which will be connected to User Agent
+        // (remoteDesc is SDP of remote end)
+        MsConnection msCOnnection = msSession.createNetworkConnection("media/trunk/Announcement/$");
 
         // Get the Remote SDP here and pass it to connection. If creation of
         // connection is successful connectionCreated method will be called
-        connection.modify("$", remoteDesc);
+        msCOnnection.modify("$", remoteDesc);
     }
 
-    public void sessionActive(<literal>MsSessionEvent</literal> evt) {
-
-    }
-
-    public void sessionCreated(<literal>MsSessionEvent</literal> evt) {
-
-    }
-
-    public void sessionInvalid(<literal>MsSessionEvent</literal> evt) {
-
-    }
-
-    public void connectionCreated(<literal>MsConnection</literal>Event event) {
-
-        // Since the Endpoint name passed was having '$' MS would have picked
-        // the endpoint that is free and hence we need the actual name here
-        String userEndpoint = event.getConnection().getEndpoint();
-
-        MsLink link = session.createLink(MsLinkMode.FULL_DUPLEX);
-        link.join(userEndpoint, "media/trunk/Announcement/$");
-
-    }
-
-    public void connectionDeleted(<literal>MsConnection</literal>Event event) {
-
-    }
-
-    public void connectionInitialized(<literal>MsConnection</literal>Event event) {
+    public void sessionActive(MsSessionEvent evt) {
         // TODO Auto-generated method stub
 
     }
 
-    public void connectionModifed(<literal>MsConnection</literal>Event event) {
+    public void sessionCreated(MsSessionEvent evt) {
         // TODO Auto-generated method stub
 
     }
 
-    public void txFailed(<literal>MsConnection</literal>Event event) {
+    public void sessionInvalid(MsSessionEvent evt) {
         // TODO Auto-generated method stub
 
     }
 
-    public void linkCreated(MsLinkEvent evt) {
+    public void connectionCreated(MsConnectionEvent event) {
+        MsConnection connection = event.getConnection();
+        MsEndpoint endpoint = connection.getEndpoint();
+
+        // This is the actualname, could be something like
+        // 'media/trunk/Announcement/enp-1'
+        String endpointName = endpoint.getLocalName();
+       
+        // URL to play audio file.
+        String url= "http://something/mobicents.wav";
+       
+         MsEventFactory eventFactory = msProvider.getEventFactory();
+         
+         MsPlayRequestedSignal play = null;
+         play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
+         play.setURL(url);
+         
+         // Let us request for Announcement Complete event or Failure in case
+            // if it happens
+         MsRequestedEvent onCompleted = null;
+         MsRequestedEvent onFailed = null;
+         
+         onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
+         onCompleted.setEventAction(MsEventAction.NOTIFY);
+         
+         onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
+         onFailed.setEventAction(MsEventAction.NOTIFY);
+         
+         MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+         MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
+         
+         endpoint.execute(requestedSignals, requestedEvents, connection);
 
     }
 
-    public void linkDropped(MsLinkEvent evt) {
+    public void connectionDisconnected(MsConnectionEvent event) {
         // TODO Auto-generated method stub
 
     }
 
-    public void linkFailed(MsLinkEvent evt) {
+    public void connectionFailed(MsConnectionEvent event) {
         // TODO Auto-generated method stub
 
     }
 
-    public void linkJoined(MsLinkEvent evt) {
-        // Get the MsLink when link between Packet Relay Endpoint and
-        // Announcement Endpoint is created
-        MsLink link = evt.getSource();
-
-        // Get the Announcement Endpoint Name as we used '$'
-        String announcementEndpoint = link.getEndpoints()[1];
-
-        // let us create MsSignalGenerator for Announcement Endpoint to play
-        // Announcement
-        MsSignalGenerator generator = msProvider.getSignalGenerator(announcementEndpoint);
-
-        // This is hosted audio file, it can be a local file on your machine
-        // For example for windows file://c:/mobicents/loopinfo.wav" for linux
-        // file://user/home/loopinfo.wav"
-        String url = "http://localhost:8080/msdemo/audio/loopinfo.wav";
-
-        // Pass the URL of audio file to be played
-        generator.apply(EventID.PLAY, new String[] { url });
+    public void connectionHalfOpen(MsConnectionEvent event) {
+        // TODO Auto-generated method stub
 
     }
-}]]></programlisting>
+
+    public void connectionOpen(MsConnectionEvent event) {
+        // TODO Auto-generated method stub
+
+    }
+
+
+}
+
+Example 1.1. Example Code
+
+ 
+Example 2
+
+Example that shows how to listen for DTMF. For simplicity removed all imports and other code
+
+
+public class IVRExample implements MsSessionListener, MsConnectionListener, MsNotificationListener {
+
+...
+
+
+    public void startMedia(String remoteDesc) {
+
+        // Creating the provider
+        MsProvider provider = new MsProviderImpl();
+
+        // Registering the Listeners
+        provider.addSessionListener(this);
+        provider.addConnectionListener(this);
+
+        provider.addNotificationListener(this);
+
+        // Creating the Session
+        msSession = provider.createSession();
+
+        // Creating the connection passing the Endpoint Name. Here we are
+        // creating Announcement Endpoint which will be connected to User Agent
+        // (remoteDesc is SDP of remote end)
+        MsConnection msConnection = msSession.createNetworkConnection("media/trunk/IVR/$");
+
+        // Get the Remote SDP here and pass it to connection. If creation of
+        // connection is successful connectionCreated method will be called
+        msConnection.modify("$", remoteDesc);
+    }
+
+
+..
+
+..
+
+.....
+
+
+    public void connectionCreated(MsConnectionEvent event) {
+        MsConnection connection = event.getConnection();
+        MsEndpoint endpoint = connection.getEndpoint();
+
+        // This is the actualname, could be something like
+        // 'media/trunk/Announcement/enp-1'
+        String endpointName = endpoint.getLocalName();
+
+        MsEventFactory factory = msProvider.getEventFactory();
+        MsDtmfRequestedEvent dtmf = (MsDtmfRequestedEvent) factory.createRequestedEvent(DTMF.TONE);
+        MsRequestedSignal[] signals = new MsRequestedSignal[] {};
+        MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
+
+        endpoint.execute(signals, events, connection);
+
+    }
+
+
+..
+
+.......
+
+
+    public void update(MsNotifyEvent evt) {
+        MsEventIdentifier identifier = evt.getEventID();
+        if (identifier.equals(DTMF.TONE)) {
+            MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
+            String seq = event.getSequence();
+          
+            if (seq.equals("0")) {
+             
+            } else if (seq.equals("1")) {
+             
+            } else if (seq.equals("2")) {
+             
+            } else if (seq.equals("3")) {
+             
+            } else if (seq.equals("4")) {
+             
+            } else if (seq.equals("5")) {
+             
+            } else if (seq.equals("6")) {
+             
+            } else if (seq.equals("7")) {
+             
+            } else if (seq.equals("8")) {
+             
+            } else if (seq.equals("9")) {
+             
+            }
+        }
+
+    }
+
+}
+
+
+Example 3
+
+Example that shows how DTMF signal can be applied to Endpoint
+
+
+     MsEventFactory eventFactory = msProvider.getEventFactory();                                                                                
+                                                                                                                                                 
+ MsRequestedSignal dtmf = eventFactory.createRequestedSignal(DTMF.TONE);                                                                         
+ dtmf.setTone("1");                                                                                                                              
+ MsRequestedSignal[] signals = new MsRequestedSignal[] { dtmf };                                                                                
+ MsRequestedEvent[] events = new MsRequestedEvent[];                                                                                            
+                                                                                                                                                 
+ msEndpoint.execute(signals, events, connection);
+
+
+Example 4
+
+Example that shows how to begin recording and listen for FAILED event
+ 
+
+        String RECORDER = "file://home/user/recordedfile.wav";
+
+        MsEventFactory eventFactory = msProvider.getEventFactory();
+
+        MsRecordRequestedSignal record = (MsRecordRequestedSignal) eventFactory.createRequestedSignal(MsAudio.RECORD);
+        record.setFile(RECORDER);
+
+        MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAudio.FAILED);
+        onFailed.setEventAction(MsEventAction.NOTIFY);
+
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { record };
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onFailed };
+
+        endpoint.execute(requestedSignals, requestedEvents, connection);
+ 
+ 
+Note that passing empty MsRequestedSignal[] and MsRequestedEvent[] will nullify all previous MsRequestedSignal and MsRequestedEvent]]></programlisting>
 </example>
 	</section>
 </section>
