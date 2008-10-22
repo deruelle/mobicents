@@ -18,6 +18,7 @@ package org.mobicents.mscontrol.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -52,12 +53,12 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -2166483960453025777L;
-	protected ArrayList<MsSessionListener> sessionListeners = new ArrayList<MsSessionListener>();
-	protected ArrayList<MsConnectionListener> connectionListeners = new ArrayList<MsConnectionListener>();
-	protected ArrayList<MsResourceListener> resourceListeners = new ArrayList<MsResourceListener>();
-	protected ArrayList<MsLinkListener> linkListeners = new ArrayList<MsLinkListener>();
-	protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
-	protected ArrayList<MsSession> sessions = new ArrayList<MsSession>();
+	protected CopyOnWriteArrayList<MsSessionListener> sessionListeners = new CopyOnWriteArrayList<MsSessionListener>();
+	protected CopyOnWriteArrayList<MsConnectionListener> connectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
+	protected CopyOnWriteArrayList<MsResourceListener> resourceListeners = new CopyOnWriteArrayList<MsResourceListener>();
+	protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
+	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList();
+	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
 	protected static ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
         private static QueuedExecutor eventQueue = new QueuedExecutor();
 	/** Creates a new instance of MsProviderImpl */
