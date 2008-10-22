@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
@@ -41,7 +42,7 @@ public class RtpFactory implements Serializable {
     private boolean useStun = false;
     private boolean usePortMapping = true;
     private String publicAddressFromStun = null;
-    private HashMap audioFormats;
+    private HashMap<Integer, Format> audioFormats;
     private transient Logger logger = Logger.getLogger(RtpFactory.class);
     
     public RtpFactory() {
@@ -55,7 +56,7 @@ public class RtpFactory implements Serializable {
         packetizationPeriod = 20;
         jitter = 80;
         
-        audioFormats = new HashMap();
+        audioFormats = new HashMap<Integer, Format>();
         audioFormats.put(0, new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
         audioFormats.put(8, new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1));
     }
@@ -250,7 +251,7 @@ public class RtpFactory implements Serializable {
      * 
      * @return map where key is payload number and value is Format object.
      */
-    public HashMap getAudioFormats() {
+    public HashMap<Integer, Format> getAudioFormats() {
         return audioFormats;
     }
     
@@ -259,7 +260,7 @@ public class RtpFactory implements Serializable {
      * 
      * @param audioFormats a map where key is payload number and value is Format object.
      */
-    public void setAudioFormats(HashMap formats) {
+    public void setAudioFormats(HashMap<Integer, Format> formats) {
         this.audioFormats = formats;
     }
     

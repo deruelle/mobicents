@@ -37,12 +37,12 @@ public class RTPFormat extends Format {
         super(encodingName);
     }
     
-    public static synchronized HashMap getFormats(SessionDescription sdp) throws SdpParseException, SdpException {
-        HashMap formats = new HashMap();
+    public static synchronized HashMap<Integer, Format> getFormats(SessionDescription sdp) throws SdpParseException, SdpException {
+        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Enumeration mediaDescriptions = sdp.getMediaDescriptions(false).elements();
         while (mediaDescriptions.hasMoreElements()) {
             MediaDescription md = (MediaDescription) mediaDescriptions.nextElement();
-            HashMap fmts = getFormats(md);
+            HashMap<Integer, Format> fmts = getFormats(md);
             if (fmts != null) {
                 formats.putAll(fmts);
             }
@@ -50,7 +50,7 @@ public class RTPFormat extends Format {
         return formats;
     }
     
-    private static HashMap getFormats(MediaDescription md) throws SdpParseException, SdpException {
+    private static HashMap<Integer, Format> getFormats(MediaDescription md) throws SdpParseException, SdpException {
         Media media = md.getMedia();
         if (media.getMediaType().equals(AVProfile.AUDIO)) {
             return getAudioFormats(md);
@@ -59,8 +59,8 @@ public class RTPFormat extends Format {
         } else return null;
     }
     
-    private static HashMap getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
-        HashMap formats = new HashMap();
+    private static HashMap<Integer, Format> getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
+        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Media media = md.getMedia();
         
         Enumeration payloads = media.getMediaFormats(false).elements();
@@ -84,7 +84,7 @@ public class RTPFormat extends Format {
         return formats;
     }
     
-    private static HashMap getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
+    private static HashMap<Integer, Format> getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
         return null;
     } 
     

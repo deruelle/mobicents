@@ -53,7 +53,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
     //registered participants
     protected Peer peer = null;
     //holder for dynamic payloads.
-    private HashMap <Integer, Format> rtpMap = new HashMap();
+    private HashMap <Integer, Format> rtpMap = new HashMap<Integer, Format>();
     private InetAddress localhost;
     protected int period = 20;
     private int jitter = 60;
@@ -291,11 +291,11 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
      *
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#getFormats();
      */
-    public HashMap getRtpMap() {
+    public HashMap<Integer, Format> getRtpMap() {
         return rtpMap;
     }
 
-    public void setRtpMap(HashMap rtpMap) {
+    public void setRtpMap(HashMap<Integer, Format> rtpMap) {
         this.rtpMap = rtpMap;
         if (sendStream != null) {
             sendStream.formats = new Format[rtpMap.size()];

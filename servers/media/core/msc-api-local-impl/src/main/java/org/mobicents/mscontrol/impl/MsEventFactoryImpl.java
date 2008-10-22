@@ -46,7 +46,7 @@ import org.mobicents.mscontrol.impl.events.dtmf.DtmfPackage;
  */
 public class MsEventFactoryImpl implements MsEventFactory {
     
-    private static HashMap<String, MsPackage> packages = new HashMap();
+    private static HashMap<String, MsPackage> packages = new HashMap<String, MsPackage>();
     static {
         packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
         packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());

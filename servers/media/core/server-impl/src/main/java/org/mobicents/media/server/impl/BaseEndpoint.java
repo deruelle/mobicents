@@ -68,8 +68,8 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     protected final static Format[] formats = new Format[]{LINEAR, DTMF};
     protected String localName;
     protected String rtpFactoryName;
-    protected HashMap<String, HashMap> mediaSources = new HashMap();
-    protected HashMap<String, HashMap> mediaSinks = new HashMap();
+    protected HashMap<String, HashMap> mediaSources = new HashMap<String, HashMap>();
+    protected HashMap<String, HashMap> mediaSinks = new HashMap<String, HashMap>();
     protected boolean hasConnections;
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
     protected int maxConnections = 0;

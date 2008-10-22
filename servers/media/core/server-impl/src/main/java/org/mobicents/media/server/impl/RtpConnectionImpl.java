@@ -207,10 +207,11 @@ public class RtpConnectionImpl extends BaseConnection {
                 Vector descriptions = new Vector();
 
                 // encode formats
-                HashMap rtpMap = rtpSocket.getRtpMap();
+                HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
                 System.out.println("RTP MAP=" + rtpMap);
                 //Format[] supported = endpoint.getSupportedFormats();
                 Format[] supported = inDsp.getInput().getFormats();
+
 
                 HashMap fmts = new HashMap();
                 Set<Integer> map = rtpMap.keySet();
@@ -340,13 +341,13 @@ public class RtpConnectionImpl extends BaseConnection {
             }
 
             // negotiate codecs
-            HashMap offer = RTPFormat.getFormats(remoteSDP);
+            HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
             rtpSocket.getSendStream().setFormats(offer.values());
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Offered formats: " + offer);
             }
 
-            HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);
+            HashMap<Integer, Format> rtpMap = select(inDsp.getInput().getFormats(), offer);
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Selected formats: " + rtpMap);
             }
@@ -403,11 +404,9 @@ public class RtpConnectionImpl extends BaseConnection {
     }
     
     private void narrow(HashMap<Integer, Format> selected) {
-        HashMap<Integer, Format> newRtpMap = new HashMap();
+        HashMap<Integer, Format> newRtpMap = new HashMap<Integer, Format>();
         
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
-        //newRtpMap.putAll(rtpMap);
-        
         Set <Integer> keys = selected.keySet();
         for (Integer key: keys) {
             Set<Integer> payloads = rtpMap.keySet();
@@ -480,8 +479,8 @@ public class RtpConnectionImpl extends BaseConnection {
      * @param offered
      *            the list with the offered codecs.
      */
-    private HashMap select(Format[] supported, HashMap offered) {
-        HashMap formats = new HashMap();
+    private HashMap<Integer, Format> select(Format[] supported, HashMap<Integer, Format> offered) {
+        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Set<Integer> offer = offered.keySet();
         for (Integer po : offer) {
             Format ofmt = (Format) offered.get(po);

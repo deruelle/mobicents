@@ -26,8 +26,13 @@ import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
  */
 public class FormatDescription implements Serializable {
 
-    public HashMap parse(String description) {
-        HashMap map = new HashMap();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 220438899785296125L;
+
+	public HashMap<Integer, Format> parse(String description) {
+        HashMap<Integer, Format> map = new HashMap<Integer, Format>();
         String tokens[] = description.split(";");
         for (int i = 0; i < tokens.length; i++) {
             if (tokens[i].length() == 0) continue;
@@ -74,7 +79,7 @@ public class FormatDescription implements Serializable {
         return map;
     }
     
-    public String getDescription(HashMap formats) {
+    public String getDescription(HashMap<Integer, Format> formats) {
         String s ="";
         Set<Integer> payloads = formats.keySet();
         for (Integer payload : payloads) {
@@ -92,9 +97,11 @@ public class FormatDescription implements Serializable {
         String desc="8 = ALAW, 8000, 8, 1;\n" +
             "0 = ULAW, 8000, 8, 1;";
         FormatDescription fd = new FormatDescription();
-        HashMap fmts = fd.parse(desc);
+        HashMap<Integer, Format> fmts = fd.parse(desc);
         System.out.println(fmts);
         
         System.out.println(fd.getDescription(fmts));
+        
+        //RTPAudioFormat rTPAudioFormat = fmts.get(0);
     }
 }
