@@ -26,18 +26,18 @@ public class AudioFormat extends Format {
 	public static final String LINEAR = "LINEAR";
 	public static final String ULAW = "ULAW";
 	public static final String ULAW_RTP = "ULAW/rtp";
-	public static final String ALAW = "alaw"; // strange that this is lower
+	public static final String ALAW = "ALAW"; // strange that this is lower
 	// case and ULAW is not...
-	public static final String SPEEX = "speex";
+	public static final String SPEEX = "SPEEX";
 	public static final String IMA4 = "ima4";
 	public static final String IMA4_MS = "ima4/ms";
 	public static final String MSADPCM = "msadpcm";
 	public static final String DVI = "dvi";
 	public static final String G723 = "g723";
 	public static final String G728 = "g728";
-	public static final String G729 = "g729";
+	public static final String G729 = "G729";
 	public static final String G729A = "g729a";
-	public static final String GSM = "gsm";
+	public static final String GSM = "GSM";
 	public static final String GSM_MS = "gsm/ms";
 	public static final String MAC3 = "MAC3";
 	public static final String MAC6 = "MAC6";
