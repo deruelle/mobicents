@@ -68,9 +68,10 @@ public class RTPAudioFormat extends AudioFormat {
             return 8 * duration;
         } else if (this.getEncoding().equalsIgnoreCase("g729")) {
             return duration;
-        } return 0;
+        }
+        return 0;
     }
-    
+
     public static RTPAudioFormat parseFormat(String rtpmap) {
         String tokens[] = rtpmap.toLowerCase().split(" ");
 
@@ -111,20 +112,20 @@ public class RTPAudioFormat extends AudioFormat {
         } else {
             buff.append(encName);
         }
-        buff.append("/");
-
         double sr = getSampleRate();
-        if ((sr - (int) sr) < 1E-6) {
-            buff.append((int) sr);
-        } else {
-            buff.append(sr);
-        }
+        if (sr > 0) {
+            buff.append("/");
 
+            if ((sr - (int) sr) < 1E-6) {
+                buff.append((int) sr);
+            } else {
+                buff.append(sr);
+            }
+        }
         if (getChannels() > 1) {
             buff.append("/" + getChannels());
         }
 
         return buff.toString();
     }
-    
 }

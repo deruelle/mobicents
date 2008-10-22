@@ -212,12 +212,12 @@ public class RtpConnectionImpl extends BaseConnection {
                 //Format[] supported = endpoint.getSupportedFormats();
                 Format[] supported = inDsp.getInput().getFormats();
 
-
                 HashMap fmts = new HashMap();
                 Set<Integer> map = rtpMap.keySet();
 
                 for (Integer pt : map) {
                     Format f = (Format) rtpMap.get(pt);
+                    System.out.println("Checking format: " + f + ", class=" + f.getClass().getCanonicalName());
                     if (contains(supported, f)) {
                         fmts.put(pt, f);
                     }
@@ -234,7 +234,11 @@ public class RtpConnectionImpl extends BaseConnection {
                 MediaDescription md = sdpFactory.createMediaDescription("audio", audioPort, 1, "RTP/AVP", formats);
 
                 boolean g729 = false;
+                boolean dtmf = false;
+                
                 int g729payloadType = -1; // g729 payload type is usually 18
+                int dtmfPayload = -1;
+                
                 // set attributes for formats
                 Vector attributes = new Vector();
                 for (int i = 0; i < formats.length; i++) {
@@ -244,13 +248,19 @@ public class RtpConnectionImpl extends BaseConnection {
                         g729 = true;
                         g729payloadType = format.getPayload(); // should be 18
                     }
+                    if (format.getEncoding().equals("telephone-event/8000")) {
+                        dtmf = true;
+                        dtmfPayload = format.getPayload();
+                    }
                 }
 
                 // This options forces the remote g728 side to avoid using annexb, which is not supported right now
                 if (g729) {
                     attributes.add(sdpFactory.createAttribute("fmtp", g729payloadType + " annexb=no"));
                 }
-
+                if (dtmf) {
+                    attributes.add(sdpFactory.createAttribute("fmtp", dtmfPayload + " 0-15"));
+                }
                 // generate descriptor
                 md.setAttributes(attributes);
                 descriptions.add(md);
@@ -267,6 +277,7 @@ public class RtpConnectionImpl extends BaseConnection {
         } finally {
             this.releaseState();
         }
+        System.out.println("Local SDP: " + localSDP.toString());
         return localSDP.toString();
     }
 
@@ -345,6 +356,9 @@ public class RtpConnectionImpl extends BaseConnection {
             //    rtpSocket.addFormat(key, (Format) rtpMap.get(key));
             //}
             narrow(rtpMap);
+                HashMap map = rtpSocket.getRtpMap();
+                System.out.println("*** RTP MAP=" + map);
+            
             // @FIXME
             // DTMF may be negotiated but speech codecs no
             if (rtpMap.size() == 0) {
@@ -389,9 +403,11 @@ public class RtpConnectionImpl extends BaseConnection {
     }
     
     private void narrow(HashMap<Integer, Format> selected) {
-        HashMap newRtpMap = new HashMap();
+        HashMap<Integer, Format> newRtpMap = new HashMap();
         
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
+        //newRtpMap.putAll(rtpMap);
+        
         Set <Integer> keys = selected.keySet();
         for (Integer key: keys) {
             Set<Integer> payloads = rtpMap.keySet();
@@ -404,8 +420,12 @@ public class RtpConnectionImpl extends BaseConnection {
             }
         }
         
-        rtpSocket.getRtpMap().clear();
-        rtpSocket.getRtpMap().putAll(newRtpMap);        
+        
+        keys = newRtpMap.keySet();
+        for (Integer key : keys) {
+            Format f = newRtpMap.get(key);
+            rtpSocket.addFormat(key, f);
+        }
     }
     
     /**

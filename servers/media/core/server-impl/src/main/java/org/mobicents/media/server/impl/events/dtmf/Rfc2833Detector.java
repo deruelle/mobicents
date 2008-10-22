@@ -26,7 +26,7 @@ import org.mobicents.media.server.impl.AbstractSink;
  */
 public class Rfc2833Detector extends AbstractSink {
 
-    private final static AudioFormat DTMF = new AudioFormat("telephone-event");
+    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     private final static Format[] FORMATS = new Format[] {DTMF};
     
     private final static String[] TONE = new String[]{
