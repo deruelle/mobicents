@@ -342,29 +342,39 @@ public class RtpConnectionImpl extends BaseConnection {
 
             // negotiate codecs
             HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
-            rtpSocket.getSendStream().setFormats(offer.values());
+            //System.out.print("Offer: " + offer);
+            
+            HashMap rtpMap = rtpSocket.getRtpMap();
+            HashMap subset = this.subset(offer, rtpMap);
+            //System.out.print("Subset: " + subset);
+            
+            if (subset.isEmpty()) {
+                throw new IOException("Codecs are not negotiated");
+            }
+            
+            this.updateRtpMap(subset);
+            rtpSocket.getSendStream().setFormats(subset.values());
+            
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Offered formats: " + offer);
             }
-
-            HashMap<Integer, Format> rtpMap = select(inDsp.getInput().getFormats(), offer);
-            if (logger.isDebugEnabled()) {
-                logger.debug(this + " Selected formats: " + rtpMap);
-            }
+            
+            
+//            HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);
+//            if (logger.isDebugEnabled()) {
+//                logger.debug(this + " Selected formats: " + rtpMap);
+//            }
 
             //Set<Integer> keys = rtpMap.keySet();
             //for (Integer key : keys) {
             //    rtpSocket.addFormat(key, (Format) rtpMap.get(key));
             //}
-            narrow(rtpMap);
+//            narrow(rtpMap);
                 HashMap map = rtpSocket.getRtpMap();
-                System.out.println("*** RTP MAP=" + map);
+                //System.out.println("*** RTP MAP=" + map);
             
             // @FIXME
             // DTMF may be negotiated but speech codecs no
-            if (rtpMap.size() == 0) {
-                throw new IOException("Codecs are not negotiated");
-            }
 
             if (logger.isDebugEnabled()) {
                 logger.debug(this + " Codecs are negotiated");
@@ -381,7 +391,7 @@ public class RtpConnectionImpl extends BaseConnection {
             outDsp.getOutput().connect(rtpSocket.getSendStream());
             outDsp.getInput().connect(mux.getOutput());
             mux.getOutput().start();
-
+            //System.out.println("CODEC MAP" + outDsp.showCodecMap());
             setState(ConnectionState.OPEN);
         } catch (InterruptedException e) {
             logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
@@ -393,6 +403,40 @@ public class RtpConnectionImpl extends BaseConnection {
         }
     }
 
+    private HashMap subset(HashMap<Integer, Format> remote, HashMap<Integer, Format> local) {
+        HashMap<Integer, Format> subset = new HashMap();
+        for (Integer k : remote.keySet()) {
+            Format rf = remote.get(k);
+            for (Integer l : local.keySet()) {
+                Format lf = local.get(l);
+                if (lf.matches(rf)) {
+                    subset.put(k, rf);
+                }
+            }
+        }
+        return subset;
+    }
+    
+    private void updateRtpMap(HashMap<Integer, Format> offer) {
+        HashMap<Integer, Integer> updates = new HashMap();
+        HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
+        for (Integer k : rtpMap.keySet()) {
+            Format rf = rtpMap.get(k);
+            for (Integer l : offer.keySet()) {
+                Format lf = offer.get(l);
+                if (lf.matches(rf) && !(k.equals(l))) {
+                    updates.put(l, k);
+                }
+            }
+        }
+        
+        for (Integer l : updates.keySet()) {
+            Integer k = updates.get(l);
+            Format f = rtpMap.remove(l);
+            rtpMap.put(k, f);
+        }
+    }
+    
     private boolean contains(Format fmt, HashMap<Integer, Format> map) {
         Collection<Format> formats = map.values();
         for (Format format : formats) {
