@@ -15,6 +15,7 @@
  */
 package org.mobicents.mscontrol.impl;
 
+import java.util.Collection;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionEventCause;
@@ -57,8 +58,8 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
         return msg;
     }
 
-    public void run() {
-        for (MsConnectionListener listener : connection.session.provider.connectionListeners) {
+    private void update(Collection<MsConnectionListener> listeners) {
+        for (MsConnectionListener listener : listeners) {
             switch (eventID) {
                 case CONNECTION_CREATED:
                     listener.connectionCreated(this);
@@ -77,5 +78,9 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
                     break;
             }
         }
+    }
+    public void run() {
+        update(connection.session.provider.connectionListeners);
+        update(connection.listeners);
     }
 }

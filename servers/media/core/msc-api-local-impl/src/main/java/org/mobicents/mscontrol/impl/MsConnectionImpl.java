@@ -59,6 +59,8 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     protected Connection connection;
     private MsEndpointImpl endpoint;
     protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
+    protected ArrayList<MsConnectionListener> listeners = new ArrayList();
+    
     private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
     private EventParser eventParser = new EventParser();
 
@@ -123,7 +125,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#addConectionListener(MsConnectionListener);
      */
     public void addConnectionListener(MsConnectionListener listener) {
-        session.provider.connectionListeners.add(listener);
+        listeners.add(listener);
     }
 
     /**
@@ -132,7 +134,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#removeConectionListener(MsConnectionListener);
      */
     public void removeConnectionListener(MsConnectionListener listener) {
-        session.provider.connectionListeners.remove(listener);
+        listeners.remove(listener);
     }
 
     public void addNotificationListener(MsNotificationListener listener) {
