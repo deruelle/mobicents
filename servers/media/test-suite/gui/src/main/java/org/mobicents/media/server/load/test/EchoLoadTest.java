@@ -12,7 +12,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.load.test.gui.RunnableImpl;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
@@ -43,6 +44,11 @@ public class EchoLoadTest {
 	private int taskCompletedFailure = 0;
 
 	private int testIdentifier = 0;
+
+	private String format;
+
+	// Set default format to PCMU
+	private RTPAudioFormat rtpAudioFormat = AVProfile.PCMU;
 
 	public EchoLoadTest(int testIdentifier) {
 		this.testIdentifier = testIdentifier;
@@ -83,14 +89,15 @@ public class EchoLoadTest {
 				Runnable ua = null;
 				switch (testIdentifier) {
 				case EchoLoadTest.ECHO_LOAD_TEST:
-//					ua = new UA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
-//							provider, this);
+					// ua = new UA(count, clientMachineIPAddress,
+					// jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+					// provider, this);
 					ua = new UA();
 					break;
 
 				case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:
 					ua = new AnnouncementUA(count, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort,
-							provider, this);
+							provider, this, this.rtpAudioFormat);
 					break;
 				}
 
@@ -132,21 +139,22 @@ public class EchoLoadTest {
 
 			switch (testIdentifier) {
 			case EchoLoadTest.ECHO_LOAD_TEST:
-//				ua = new UA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
-//						provider, this);
+				// ua = new UA(numberOfUA, clientMachineIPAddress,
+				// jbossBindAddress, serverMGCPStackPort, audioFileToPlay,
+				// provider, this);
 				ua = new UA();
 				break;
 
 			case EchoLoadTest.ANNOUNCEMENT_LOAD_TEST:
 				ua = new AnnouncementUA(numberOfUA, clientMachineIPAddress, jbossBindAddress, serverMGCPStackPort,
-						provider, this);
+						provider, this, this.rtpAudioFormat);
 				break;
 			}
-			
+
 			final ScheduledFuture<?> future = getScheduler().scheduleWithFixedDelay(ua, 0, 1, TimeUnit.SECONDS);
 
 			listOfFuture.add(future);
-			
+
 		} catch (CreateProviderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -273,5 +281,22 @@ public class EchoLoadTest {
 
 	public void setClientMGCPStackPort(int clientMGCPStackPort) {
 		this.clientMGCPStackPort = clientMGCPStackPort;
+	}
+
+	public String getFormat() {
+		return format;
+	}
+
+	public void setFormat(String format) {
+		this.format = format;
+
+		// TODO : Remove this hard coding
+		if ("G711 A-law".equals(this.format)) {
+			this.rtpAudioFormat = AVProfile.PCMA;
+		} else if ("G711 U-law".equals(this.format)) {
+			this.rtpAudioFormat = AVProfile.PCMU;
+		} else if ("Speex nb".equals(this.format)) {
+			this.rtpAudioFormat = AVProfile.SPEEX_NB;
+		}
 	}
 }

@@ -74,9 +74,11 @@ public class AnnouncementUA implements Runnable {
 	private boolean openRTP = false;
 
 	private boolean oc = true;
+	
+	private RTPAudioFormat format;
 
 	public AnnouncementUA(int UACount, InetAddress clientMachineIPAddress, String jbossBindAddress,
-			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest) {
+			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest, RTPAudioFormat format) {
 		this.UACount = UACount;
 		this.name = "AnnouncementUA" + UACount;
 
@@ -87,6 +89,7 @@ public class AnnouncementUA implements Runnable {
 		this.provider = provider;
 
 		this.echoLoadTest = echoLoadTest;
+		this.format = format;
 	}
 
 	public void run() {
@@ -373,8 +376,8 @@ public class AnnouncementUA implements Runnable {
 
 			// encode formats
 			HashMap fmts = new HashMap();
-			fmts.put(AVProfile.getPayload(AVProfile.PCMA), AVProfile.PCMA);
-			fmts.put(AVProfile.getPayload(AVProfile.PCMU), AVProfile.PCMU);
+			fmts.put(AVProfile.getPayload(this.format), this.format);
+			
 
 			Object[] payloads = getPayloads(fmts).toArray();
 
@@ -407,6 +410,7 @@ public class AnnouncementUA implements Runnable {
 		} catch (SdpException e) {
 			logger.error("Could not create descriptor", e);
 		}
+		logger.debug(" SDP = "+localSDP.toString());
 		return localSDP.toString();
 	}
 
@@ -442,7 +446,7 @@ public class AnnouncementUA implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		AnnouncementUA ua = new AnnouncementUA(1, clientMachineIPAddress, "127.0.0.1", 2729, null, null);
+		AnnouncementUA ua = new AnnouncementUA(1, clientMachineIPAddress, "127.0.0.1", 2729, null, null, AVProfile.PCMU);
 
 		System.out.println("getLocalDescriptor = " + ua.getLocalDescriptor(1));
 		// ua.run();
