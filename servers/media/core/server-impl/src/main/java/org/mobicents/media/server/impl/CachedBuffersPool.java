@@ -19,41 +19,60 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.mobicents.media.Buffer;
 
 /**
- *
+ * This acts as pool for {@link org.mobicents.media.Buffer}
+ * 
  * @author Oleg Kulikov
  */
 public class CachedBuffersPool implements Serializable {
 
-    private final static int SIZE = 2400;
-    private final static int MAX_CAPACITY = 100;
-    
-    private static ArrayList<Buffer> buffers = new ArrayList();
-    private static ReentrantLock state = new ReentrantLock();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5608451491729785004L;
 
-    public static Buffer allocate() {
-        state.lock();
-        try {
-            if (buffers.size() > 0) {
-                return buffers.remove(0);
-            }
+	private final static int SIZE = 2400;
+	private final static int MAX_CAPACITY = 100;
 
-            Buffer buffer = new Buffer();
-            buffer.setData(new byte[SIZE]);
+	private static ArrayList<Buffer> buffers = new ArrayList<Buffer>();
+	private static ReentrantLock state = new ReentrantLock();
 
-            return buffer;
-        } finally {
-            state.unlock();
-        }
-    }
+	/**
+	 * If there are any <code>Buffer</code> available in buffers ArrayList,
+	 * this method will take out the first available Buffer and return. If there
+	 * are no available Buffer, it creates new and returns
+	 * 
+	 * @return Buffer from pool
+	 */
+	public static Buffer allocate() {
+		state.lock();
+		try {
+			if (buffers.size() > 0) {
+				return buffers.remove(0);
+			}
 
-    public static synchronized void release(Buffer buffer) {
-        state.lock();
-        try {
-            if (buffers.size() < MAX_CAPACITY) {
-                buffers.add(buffer);
-            }
-        } finally {
-            state.unlock();
-        }
-    }
+			Buffer buffer = new Buffer();
+			buffer.setData(new byte[SIZE]);
+
+			return buffer;
+		} finally {
+			state.unlock();
+		}
+	}
+
+	/**
+	 * This method adds the <code>Buffer</code> to buffer ArrayList. If the
+	 * list is already full, this will just ignore the Buffer
+	 * 
+	 * @param buffer
+	 */
+	public static synchronized void release(Buffer buffer) {
+		state.lock();
+		try {
+			if (buffers.size() < MAX_CAPACITY) {
+				buffers.add(buffer);
+			}
+		} finally {
+			state.unlock();
+		}
+	}
 }
