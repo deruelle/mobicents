@@ -675,7 +675,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private final String novoicemessage = "audiofiles/NoVoiceMessage.wav";
 
 	private final String USER = "vmail";
-	private final String HOST = "127.0.0.1";
+	private final String HOST = System.getProperty("jboss.bind.address", "127.0.0.1");
 	private final String NON_DIGIT = "NULL";
 	private final String WAV_EXT = ".wav";
 
