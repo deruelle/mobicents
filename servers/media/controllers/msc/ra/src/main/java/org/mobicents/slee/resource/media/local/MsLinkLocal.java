@@ -9,6 +9,7 @@ import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsLinkState;
+import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsSession;
 
 /**
@@ -66,6 +67,14 @@ public class MsLinkLocal implements MsLink {
 
     public void removeLinkListener(MsLinkListener listener) {
         session.getProvider().removeLinkListener(listener);
+    }
+
+    public void addNotificationListener(MsNotificationListener listener) {
+		throw new SecurityException("method is unsupported.");
+    }
+
+    public void removeNotificationListener(MsNotificationListener listener) {
+		throw new SecurityException("method is unsupported.");
     }
 
 }

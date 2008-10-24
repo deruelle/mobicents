@@ -9,6 +9,7 @@ import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsConnectionState;
 import org.mobicents.mscontrol.MsEndpoint;
+import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsSession;
 
 /**
@@ -70,4 +71,12 @@ public class MsConnectionLocal implements MsConnection {
 	public String toString() {
 		return connection.toString();
 	}
+
+    public void addNotificationListener(MsNotificationListener listener) {
+		throw new SecurityException("method is unsupported.");
+    }
+
+    public void removeNotificationListener(MsNotificationListener listener) {
+		throw new SecurityException("method is unsupported.");
+    }
 }
