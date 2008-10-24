@@ -107,6 +107,9 @@ public interface MsConnection extends Serializable {
 	 */
 	public void removeConnectionListener(MsConnectionListener listener);
 
+        public void addNotificationListener(MsNotificationListener listener);
+        public void removeNotificationListener(MsNotificationListener listener);
+        
 	/**
 	 * Creates or modify network connection on the media server side.
 	 * 

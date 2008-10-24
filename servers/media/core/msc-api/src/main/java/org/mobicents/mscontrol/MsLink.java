@@ -81,4 +81,8 @@ public interface MsLink extends Serializable {
 	public void addLinkListener(MsLinkListener listener);
 
 	public void removeLinkListener(MsLinkListener listener);
+        
+        public void addNotificationListener(MsNotificationListener listener);
+        public void removeNotificationListener(MsNotificationListener listener);
+        
 }
