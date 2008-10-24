@@ -15,6 +15,7 @@
  */
 package org.mobicents.mscontrol.impl;
 
+import java.util.Collection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkEventCause;
@@ -62,8 +63,8 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
         return msg;
     }
 
-    public void run() {
-        for (MsLinkListener listener : source.session.provider.linkListeners) {
+    private void update(Collection <MsLinkListener> listeners) {
+        for (MsLinkListener listener : listeners) {
             switch (eventID) {
                 case LINK_CREATED:
                     listener.linkCreated(this);
@@ -79,5 +80,9 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
                     break;
             }
         }
+    }
+    public void run() {
+        update(source.session.provider.linkListeners);
+        update(source.listeners);
     }
 }

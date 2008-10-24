@@ -17,6 +17,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.rmi.server.UID;
 
+import java.util.ArrayList;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
@@ -63,7 +64,9 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private EventParser eventParser = new EventParser();
     private int permits = 0;
     private PendingQueue[] pendingQueue = new PendingQueue[2];
-
+    protected ArrayList<MsLinkListener> listeners = new ArrayList();
+    protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
+    
     public String getId() {
         return id;
     }
@@ -137,13 +140,20 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     }
 
     public void addLinkListener(MsLinkListener listener) {
-        session.provider.linkListeners.add(listener);
+        listeners.add(listener);
     }
 
     public void removeLinkListener(MsLinkListener listener) {
-        session.provider.linkListeners.remove(listener);
+        listeners.remove(listener);
     }
 
+    public void addNotificationListener(MsNotificationListener listener) {
+        eventListeners.add(listener);
+    }
+    public void removeNotificationListener(MsNotificationListener listener) {
+        eventListeners.remove(listener);
+    }
+    
     /**
      * Drops this link
      */
@@ -293,6 +303,9 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     public void update(NotifyEvent event) {
         MsNotifyEvent evt = eventParser.parse(this, event);
         for (MsNotificationListener listener : session.provider.eventListeners) {
+            listener.update(evt);
+        }
+        for (MsNotificationListener listener : eventListeners) {
             listener.update(evt);
         }
     }

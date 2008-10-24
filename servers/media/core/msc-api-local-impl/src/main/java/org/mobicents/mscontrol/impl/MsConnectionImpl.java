@@ -135,6 +135,13 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
         session.provider.connectionListeners.remove(listener);
     }
 
+    public void addNotificationListener(MsNotificationListener listener) {
+        eventListeners.add(listener);
+    }
+    public void removeNotificationListener(MsNotificationListener listener) {
+        eventListeners.remove(listener);
+    }
+    
     /**
      * (Non Java-doc).
      * 
@@ -274,10 +281,11 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     }
 
     public void update(NotifyEvent event) {
-        System.out.println("MsConnection: receive event");
         MsNotifyEvent evt = eventParser.parse(this, event);
         for (MsNotificationListener listener : session.provider.eventListeners) {
-            System.out.println("MsConnectio nSending event to " + listener);
+            listener.update(evt);
+        }
+        for (MsNotificationListener listener : eventListeners) {
             listener.update(evt);
         }
     }
