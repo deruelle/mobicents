@@ -28,7 +28,12 @@ import org.mobicents.mscontrol.MsLinkListener;
  */
 public class MsLinkEventImpl implements MsLinkEvent, Runnable {
 
-    private MsLinkImpl source;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3952630702449890912L;
+	
+	private MsLinkImpl source;
     private MsLinkEventID eventID;
     private MsLinkEventCause cause;
     private String msg;
@@ -83,6 +88,6 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
     }
     public void run() {
         update(source.session.provider.linkListeners);
-        update(source.listeners);
+        update(source.linkLocalLinkListeners);
     }
 }

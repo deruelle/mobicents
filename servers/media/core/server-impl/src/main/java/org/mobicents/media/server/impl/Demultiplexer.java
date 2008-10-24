@@ -32,8 +32,13 @@ import org.mobicents.media.MediaSink;
  */
 public class Demultiplexer extends AbstractSource {
 
-    private Input input = new Input();
-    private HashMap<String, Output> branches = new HashMap();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3391642385740571114L;
+	
+	private Input input = new Input();
+    private HashMap<String, Output> branches = new HashMap<String, Output>();
     //private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
     private Format[] formats;
 

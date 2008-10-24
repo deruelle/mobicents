@@ -344,6 +344,10 @@ public class RtpConnectionImpl extends BaseConnection {
             HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
             //System.out.print("Offer: " + offer);
             
+            if (logger.isDebugEnabled()) {
+                logger.debug(this + " Offered formats: " + offer);
+            }            
+            
             HashMap rtpMap = rtpSocket.getRtpMap();
             HashMap subset = this.subset(offer, rtpMap);
             //System.out.print("Subset: " + subset);
@@ -355,9 +359,7 @@ public class RtpConnectionImpl extends BaseConnection {
             this.updateRtpMap(subset);
             rtpSocket.getSendStream().setFormats(subset.values());
             
-            if (logger.isDebugEnabled()) {
-                logger.debug(this + " Offered formats: " + offer);
-            }
+ 
             
             
 //            HashMap rtpMap = select(inDsp.getInput().getFormats(), offer);

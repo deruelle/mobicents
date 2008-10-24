@@ -129,7 +129,7 @@ public class JitterBuffer {
                 buff.setTimeStamp(seq * period);
                 buff.setDuration(period);
 
-                HashMap formats = rtpSocket.getRtpMap();
+                HashMap<Integer, Format> formats = rtpSocket.getRtpMap();
                 Format fmt = (Format) formats.get(rtpPacket.getPayloadType());
 
                 buff.setFormat(fmt);

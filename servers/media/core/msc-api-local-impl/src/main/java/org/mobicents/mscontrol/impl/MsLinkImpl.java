@@ -16,8 +16,8 @@
 package org.mobicents.mscontrol.impl;
 
 import java.rmi.server.UID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import java.util.ArrayList;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
@@ -53,8 +53,10 @@ import org.mobicents.mscontrol.impl.events.EventParser;
  */
 public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
-    protected Logger logger = Logger.getLogger(this.getClass());
     private static final long serialVersionUID = 6373269860176309745L;
+    
+    protected Logger logger = Logger.getLogger(this.getClass());
+
     private final String id = (new UID()).toString();
     protected MsSessionImpl session;
     private MsLinkMode mode;
@@ -64,8 +66,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private EventParser eventParser = new EventParser();
     private int permits = 0;
     private PendingQueue[] pendingQueue = new PendingQueue[2];
-    protected ArrayList<MsLinkListener> listeners = new ArrayList();
-    protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
+    protected CopyOnWriteArrayList<MsLinkListener> linkLocalLinkListeners = new CopyOnWriteArrayList<MsLinkListener>();
+    protected CopyOnWriteArrayList<MsNotificationListener> linkLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
     
     public String getId() {
         return id;
@@ -140,18 +142,18 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     }
 
     public void addLinkListener(MsLinkListener listener) {
-        listeners.add(listener);
+    	linkLocalLinkListeners.add(listener);
     }
 
     public void removeLinkListener(MsLinkListener listener) {
-        listeners.remove(listener);
+    	linkLocalLinkListeners.remove(listener);
     }
 
     public void addNotificationListener(MsNotificationListener listener) {
-        eventListeners.add(listener);
+    	linkLocalNotificationListeners.add(listener);
     }
     public void removeNotificationListener(MsNotificationListener listener) {
-        eventListeners.remove(listener);
+    	linkLocalNotificationListeners.remove(listener);
     }
     
     /**
@@ -305,7 +307,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
         for (MsNotificationListener listener : session.provider.eventListeners) {
             listener.update(evt);
         }
-        for (MsNotificationListener listener : eventListeners) {
+        for (MsNotificationListener listener : linkLocalNotificationListeners) {
             listener.update(evt);
         }
     }

@@ -17,7 +17,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
 import java.rmi.server.UID;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.naming.NamingException;
 import javax.sdp.SdpException;
@@ -51,17 +51,24 @@ import org.mobicents.mscontrol.impl.events.EventParser;
  */
 public class MsConnectionImpl implements MsConnection, ConnectionListener, NotificationListener {
 
-    private String id = (new UID()).toString();
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7869810097365002045L;
+	
+	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
+	
+	private String id = (new UID()).toString();
     private MsConnectionState state;
     private String remoteSdp;
     protected MsSessionImpl session;
     private String endpointName;
     protected Connection connection;
     private MsEndpointImpl endpoint;
-    protected ArrayList<MsNotificationListener> eventListeners = new ArrayList();
-    protected ArrayList<MsConnectionListener> listeners = new ArrayList();
+    protected CopyOnWriteArrayList<MsNotificationListener> connLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
+    protected CopyOnWriteArrayList<MsConnectionListener> connLocalConnectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
     
-    private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
+    
     private EventParser eventParser = new EventParser();
 
     /**
@@ -125,7 +132,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#addConectionListener(MsConnectionListener);
      */
     public void addConnectionListener(MsConnectionListener listener) {
-        listeners.add(listener);
+    	connLocalConnectionListeners.add(listener);
     }
 
     /**
@@ -134,14 +141,14 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#removeConectionListener(MsConnectionListener);
      */
     public void removeConnectionListener(MsConnectionListener listener) {
-        listeners.remove(listener);
+    	connLocalConnectionListeners.remove(listener);
     }
 
     public void addNotificationListener(MsNotificationListener listener) {
-        eventListeners.add(listener);
+    	connLocalNotificationListeners.add(listener);
     }
     public void removeNotificationListener(MsNotificationListener listener) {
-        eventListeners.remove(listener);
+    	connLocalNotificationListeners.remove(listener);
     }
     
     /**
@@ -287,7 +294,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
         for (MsNotificationListener listener : session.provider.eventListeners) {
             listener.update(evt);
         }
-        for (MsNotificationListener listener : eventListeners) {
+        for (MsNotificationListener listener : connLocalNotificationListeners) {
             listener.update(evt);
         }
     }

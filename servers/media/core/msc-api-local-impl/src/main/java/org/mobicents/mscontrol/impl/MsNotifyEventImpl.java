@@ -25,7 +25,12 @@ import org.mobicents.mscontrol.events.MsEventIdentifier;
  */
 public class MsNotifyEventImpl implements MsNotifyEvent {
     
-    private Object  source;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5899563273313400237L;
+	
+	private Object  source;
     private MsEventIdentifier id;
     
     /** Creates a new instance of MsNotifyEventImpl */

@@ -25,7 +25,12 @@ import org.mobicents.media.server.impl.clock.Timer;
  */
 public class ReceiveStream extends AbstractSource implements Runnable {
 
-    private int period;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2277812497480986797L;
+	
+	private int period;
     private JitterBuffer jitterBuffer;
     private Timer timer = new Timer();
     private Buffer frame;
@@ -61,7 +66,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
             return;
         }
         
-        
+        //The sink for ReceiveStream is Processor.Input
         sink.receive(frame);
     }
 

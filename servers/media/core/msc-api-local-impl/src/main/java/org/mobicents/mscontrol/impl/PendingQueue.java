@@ -25,14 +25,19 @@ import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
  * @author Oleg Kulikov
  */
 public class PendingQueue implements Serializable {
-    private final static int DELAY = 500;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3919993537673967279L;
+	
+	private final static int DELAY = 500;
     
     private Timer timer = new Timer();
     private TimerTask sender;    
     private boolean timerStarted;
     
-    private ArrayList<MsRequestedSignal> requestedSignals = new ArrayList();
-    private ArrayList<MsRequestedEvent> requestedEvents = new ArrayList();
+    private ArrayList<MsRequestedSignal> requestedSignals = new ArrayList<MsRequestedSignal>();
+    private ArrayList<MsRequestedEvent> requestedEvents = new ArrayList<MsRequestedEvent>();
     
     private Endpoint endpoint;
     private String connectionID;

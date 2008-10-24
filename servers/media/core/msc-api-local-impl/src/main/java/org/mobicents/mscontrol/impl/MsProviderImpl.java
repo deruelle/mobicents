@@ -57,7 +57,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected CopyOnWriteArrayList<MsConnectionListener> connectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
 	protected CopyOnWriteArrayList<MsResourceListener> resourceListeners = new CopyOnWriteArrayList<MsResourceListener>();
 	protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
-	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList();
+	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
 	protected static ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
         private static QueuedExecutor eventQueue = new QueuedExecutor();
