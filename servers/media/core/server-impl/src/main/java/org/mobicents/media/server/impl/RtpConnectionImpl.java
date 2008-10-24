@@ -208,7 +208,7 @@ public class RtpConnectionImpl extends BaseConnection {
 
                 // encode formats
                 HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
-                System.out.println("RTP MAP=" + rtpMap);
+                //System.out.println("RTP MAP=" + rtpMap);
                 //Format[] supported = endpoint.getSupportedFormats();
                 Format[] supported = inDsp.getInput().getFormats();
 
@@ -218,7 +218,7 @@ public class RtpConnectionImpl extends BaseConnection {
 
                 for (Integer pt : map) {
                     Format f = (Format) rtpMap.get(pt);
-                    System.out.println("Checking format: " + f + ", class=" + f.getClass().getCanonicalName());
+                    //System.out.println("Checking format: " + f + ", class=" + f.getClass().getCanonicalName());
                     if (contains(supported, f)) {
                         fmts.put(pt, f);
                     }
@@ -278,7 +278,7 @@ public class RtpConnectionImpl extends BaseConnection {
         } finally {
             this.releaseState();
         }
-        System.out.println("Local SDP: " + localSDP.toString());
+        //System.out.println("Local SDP: " + localSDP.toString());
         return localSDP.toString();
     }
 
@@ -420,7 +420,7 @@ public class RtpConnectionImpl extends BaseConnection {
     }
     
     private void updateRtpMap(HashMap<Integer, Format> offer) {
-        HashMap<Integer, Integer> updates = new HashMap();
+        HashMap<Integer, Integer> updates = new HashMap<Integer, Integer>();
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
         for (Integer k : rtpMap.keySet()) {
             Format rf = rtpMap.get(k);
@@ -434,8 +434,9 @@ public class RtpConnectionImpl extends BaseConnection {
         
         for (Integer l : updates.keySet()) {
             Integer k = updates.get(l);
-            Format f = rtpMap.remove(l);
-            rtpMap.put(k, f);
+            Format f = rtpMap.remove(k);
+            ((RTPAudioFormat)f).setPayload(l);
+            rtpMap.put(l, f);
         }
     }
     

@@ -18,114 +18,135 @@ package org.mobicents.media.server.impl.rtp.sdp;
 import org.mobicents.media.format.AudioFormat;
 
 /**
- *
- * @author Oleg Kulikov
+ * This represents the RTP Audio Format. The difference being RTPAudioFormat
+ * also carries the pay-load. For example look at SDP <br/>
+ * <p>
+ * <blockquote>
+ * 
+ * <pre>
+ * m=audio 8010 RTP/AVP 0 8 97 
+ * a=rtpmap:0 PCMU/8000 
+ * a=rtpmap:8 PCMA/8000
+ * a=rtpmap:97 speex/8000 
+ * a=ptime:20 	
+ * </pre>
+ * 
+ * </blockquote>
+ * </p>
+ * 
+ * <br/>
+ * 
+ * here pay-load is 0 for PCMU, 8 for PCMA and 97 for speex
+ * 
  */
 public class RTPAudioFormat extends AudioFormat {
 
-    private int payload;
+	private int payload;
 
-    /** Creates a new instance of RTPAudioFormat */
-    public RTPAudioFormat(int payload, String encodingName) {
-        super(encodingName);
-        this.payload = payload;
-    }
+	/** Creates a new instance of RTPAudioFormat */
+	public RTPAudioFormat(int payload, String encodingName) {
+		super(encodingName);
+		this.payload = payload;
+	}
 
-    public RTPAudioFormat(int payload, String encodingName, double sampleRate,
-            int bits, int chans) {
-        super(encodingName, sampleRate, bits, chans);
-        this.payload = payload;
-    }
+	public RTPAudioFormat(int payload, String encodingName, double sampleRate, int bits, int chans) {
+		super(encodingName, sampleRate, bits, chans);
+		this.payload = payload;
+	}
 
-    public int getPayload() {
-        return payload;
-    }
+	public int getPayload() {
+		return payload;
+	}
 
-    private static int getBits(String enc) {
-        if (enc.equals("pcm")) {
-            return 8;
-        } else if (enc.equals("gsm")) {
-            return 13;
-        } else if (enc.equals("dvi")) {
-            return 4;
-        } else {
-            return 8;
-        }
-    }
+	public void setPayload(int payload) {
+		this.payload = payload;
+	}
 
-    /**
-     * Calculates packet size in bytes.
-     * 
-     * @param duration the duration of the packet in milliseconds
-     * @return packet size in bytes.
-     */
-    public int getPacketSize(int duration) {
-        if (this.getEncoding().equalsIgnoreCase("alaw")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("ulaw")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("speex")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("g729")) {
-            return duration;
-        }
-        return 0;
-    }
+	private static int getBits(String enc) {
+		if (enc.equals("pcm")) {
+			return 8;
+		} else if (enc.equals("gsm")) {
+			return 13;
+		} else if (enc.equals("dvi")) {
+			return 4;
+		} else {
+			return 8;
+		}
+	}
 
-    public static RTPAudioFormat parseFormat(String rtpmap) {
-        String tokens[] = rtpmap.toLowerCase().split(" ");
+	/**
+	 * Calculates packet size in bytes.
+	 * 
+	 * @param duration
+	 *            the duration of the packet in milliseconds
+	 * @return packet size in bytes.
+	 */
+	public int getPacketSize(int duration) {
+		if (this.getEncoding().equalsIgnoreCase("alaw")) {
+			return 8 * duration;
+		} else if (this.getEncoding().equalsIgnoreCase("ulaw")) {
+			return 8 * duration;
+		} else if (this.getEncoding().equalsIgnoreCase("speex")) {
+			return 8 * duration;
+		} else if (this.getEncoding().equalsIgnoreCase("g729")) {
+			return duration;
+		}
+		return 0;
+	}
 
-        //split params
-        int p = Integer.parseInt(tokens[0]);
-        tokens = tokens[1].split("/");
+	public static RTPAudioFormat parseFormat(String rtpmap) {
+		String tokens[] = rtpmap.toLowerCase().split(" ");
 
-        String encodingName = tokens[0];
-        double clockRate = Double.parseDouble(tokens[1]);
+		// split params
+		int p = Integer.parseInt(tokens[0]);
+		tokens = tokens[1].split("/");
 
-        int chans = 1;
-        if (tokens.length == 3) {
-            chans = Integer.parseInt(tokens[2]);
-        }
+		String encodingName = tokens[0];
+		double clockRate = Double.parseDouble(tokens[1]);
 
+		int chans = 1;
+		if (tokens.length == 3) {
+			chans = Integer.parseInt(tokens[2]);
+		}
 
-        if (encodingName.equals("pcmu")) {
-            return new RTPAudioFormat(p, AudioFormat.ULAW, clockRate, 8, chans);
-        } else if (encodingName.equals("pcma")) {
-            return new RTPAudioFormat(p, AudioFormat.ALAW, clockRate, 8, chans);
-        } else if (encodingName.equals("telephone-event")) {
-            return new DtmfFormat(p, "telephone-event");
-        } else {
-            return new RTPAudioFormat(p, encodingName, clockRate, getBits(encodingName), chans);
-        }
-    }
+		if (encodingName.equals("pcmu")) {
+			return new RTPAudioFormat(p, AudioFormat.ULAW, clockRate, 8, chans);
+		} else if (encodingName.equals("pcma")) {
+			return new RTPAudioFormat(p, AudioFormat.ALAW, clockRate, 8, chans);
+		} else if (encodingName.equals("telephone-event")) {
+			return new DtmfFormat(p, "telephone-event");
+		} else {
+			return new RTPAudioFormat(p, encodingName, clockRate, getBits(encodingName), chans);
+		}
+	}
 
-    public String toSdp() {
-        String encName = this.getEncoding().toLowerCase();
-        StringBuffer buff = new StringBuffer();
-        buff.append(payload);
-        buff.append(" ");
+	public String toSdp() {
+		String encName = this.getEncoding().toLowerCase();
+		StringBuffer buff = new StringBuffer();
+		buff.append(payload);
+		buff.append(" ");
 
-        if (encName.equals("alaw")) {
-            buff.append("pcma");
-        } else if (encName.equals("ulaw")) {
-            buff.append("pcmu");
-        } else {
-            buff.append(encName);
-        }
-        double sr = getSampleRate();
-        if (sr > 0) {
-            buff.append("/");
+		if (encName.equals("alaw")) {
+			buff.append("pcma");
+		} else if (encName.equals("ulaw")) {
+			buff.append("pcmu");
+		} else {
+			buff.append(encName);
+		}
+		double sr = getSampleRate();
+		if (sr > 0) {
+			buff.append("/");
 
-            if ((sr - (int) sr) < 1E-6) {
-                buff.append((int) sr);
-            } else {
-                buff.append(sr);
-            }
-        }
-        if (getChannels() > 1) {
-            buff.append("/" + getChannels());
-        }
+			if ((sr - (int) sr) < 1E-6) {
+				buff.append((int) sr);
+			} else {
+				buff.append(sr);
+			}
+		}
+		if (getChannels() > 1) {
+			buff.append("/" + getChannels());
+		}
 
-        return buff.toString();
-    }
+		return buff.toString();
+	}
 }
