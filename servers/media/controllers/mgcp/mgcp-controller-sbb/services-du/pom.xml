@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>mobicents-media-server-mgcpcontrol</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<version>1.0.0.CR2</version>
+		<version>1.0.0.CR3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>zmgcp-control-services-DU</artifactId>
