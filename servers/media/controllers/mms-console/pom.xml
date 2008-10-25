@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mobicents.servers.media.controllers</groupId>
@@ -6,15 +7,19 @@
 	<packaging>pom</packaging>
 	<name>Mobicents :: Tools :: gwt-management-console</name>
 	<parent>
-		<artifactId>mobicents-media-server-controllers-parent</artifactId>
+		<artifactId>
+			mobicents-media-server-controllers-parent
+		</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<version>1.0.0.CR1-SNAPSHOT</version>
+		<version>1.0.0.CR2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>gwt-maven-plugins</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<repositories>
@@ -25,7 +30,9 @@
 		</repository>
 		<repository>
 			<id>gwt-maven</id>
-			<url>http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/</url>
+			<url>
+				http://gwt-maven.googlecode.com/svn/trunk/mavenrepo/
+			</url>
 		</repository>
 	</repositories>
 	<properties>
@@ -44,17 +51,23 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.mobicents.servers.media.controllers</groupId>
+				<groupId>
+					org.mobicents.servers.media.controllers
+				</groupId>
 				<artifactId>gwt-management-console-rpc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.mobicents.servers.media.controllers</groupId>
+				<groupId>
+					org.mobicents.servers.media.controllers
+				</groupId>
 				<artifactId>gwt-management-console-server</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.mobicents.servers.media.controllers</groupId>
+				<groupId>
+					org.mobicents.servers.media.controllers
+				</groupId>
 				<artifactId>gwt-management-console-war</artifactId>
 				<version>${project.version}</version>
 			</dependency>
