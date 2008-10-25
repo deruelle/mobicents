@@ -9,7 +9,7 @@
 	
 	<artifactId>mobicents-media-server-controllers-parent</artifactId>
 	<groupId>org.mobicents.servers.media.controllers</groupId>
-	<version>1.0.0.CR2-SNAPSHOT</version>
+	<version>1.0.0.CR2</version>
 	
 	<packaging>pom</packaging>
 	
@@ -46,9 +46,9 @@
 	</profiles>	
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/trunk</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-media-server-controllers-1.0.0.CR2</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/mobicents-media-server-controllers-1.0.0.CR2</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tags/mobicents-media-server-controllers-1.0.0.CR2</url>
 	</scm>
 	
 	<build>
