@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="media.server.release" default="release" basedir=".">
 
-	<property name="release.version" value="1.0.0.CR2-SNAPSHOT" />
+	<property name="release.version" value="1.0.0.CR3-SNAPSHOT" />
 	
 	<property name="release.dir" location="${ant.file.media.server.release}/../target/release" />
 	<property name="release.dir.core" location="${ant.file.media.server.release}/../core" />
