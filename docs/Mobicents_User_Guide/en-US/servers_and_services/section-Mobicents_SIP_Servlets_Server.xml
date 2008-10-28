@@ -497,7 +497,7 @@ Halting VM</programlisting>
 				<title>Installing the SIP Servlet-customized Tomcat Binary Distribution on Linux</title>
 				<step>
 					<para>First, move to the directory to which you downloaded the binary distribution zip file. For this example, we'll assume you're currently in your home directory, and that you downloaded the zip file to a subdirectory of it, referred to as <filename>downloads</filename>.</para>
-					<screen>~]# cd downloads</screen>
+					<screen>~]$ cd downloads</screen>
 				</step>
 				<step>
 					<para>In <filename>downloads</filename>, create a subdirectory to hold the unzipped SIP Servlet-customized Tomcat files. It is good practice to include the version number in this directory name; if you do so, remember to correctly match it with the version of the SIP Servlet-customized Tomcat binary distribution you downloaded.</para>
