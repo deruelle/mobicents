@@ -59,15 +59,7 @@ public class UserInterface extends VerticalPanel implements HasHorizontalAlignme
 		TopPanel topPanel = new TopPanel();
 
 		SmartTabPanel smartTabPanel = new SmartTabPanel();
-		//smartTabPanel.add(SleePage.getInfo());
-		//smartTabPanel.add(DeployableUnitsPage.getInfo());
-		//smartTabPanel.add(ComponentsPage.getInfo());
-		//smartTabPanel.add(ServicesPage.getInfo());
-		//smartTabPanel.add(ResourceAdaptorsPage.getInfo());
-        //smartTabPanel.add(ActivityPage.getInfo());
-        //smartTabPanel.add(LogManagementPage.getInfo());
-		//smartTabPanel.add(AlarmsPage.getInfo());
-		//smartTabPanel.add(ProfilesPage.getInfo());					
+						
 		smartTabPanel.add(RTPManagementPage.getInfo());	
 		smartTabPanel.add(EndpointManagementPage.getInfo());
 		add(topPanel);

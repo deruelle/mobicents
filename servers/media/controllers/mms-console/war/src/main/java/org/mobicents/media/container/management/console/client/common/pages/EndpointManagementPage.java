@@ -3,6 +3,7 @@ package org.mobicents.media.container.management.console.client.common.pages;
 import org.mobicents.media.container.management.console.client.common.BrowseContainer;
 import org.mobicents.media.container.management.console.client.common.ControlledTabedBar;
 import org.mobicents.media.container.management.console.client.common.SmartTabPage;
+import org.mobicents.media.container.management.console.client.common.UserInterface;
 import org.mobicents.media.container.management.console.client.endpoint.EndpointListPanel;
 import org.mobicents.media.container.management.console.client.endpoint.EndpointType;
 
@@ -34,6 +35,7 @@ public class EndpointManagementPage extends SmartTabPage{
 		
 		for(int i=0;i<viewTypes.length;i++)
 		{
+		
 			this.endpointTypesDisplay.add(new EndpointListPanel(tmp,endpointTypesDisplay, this.display,viewTypes[i]), viewTypes[i].getType());
 		}
 		

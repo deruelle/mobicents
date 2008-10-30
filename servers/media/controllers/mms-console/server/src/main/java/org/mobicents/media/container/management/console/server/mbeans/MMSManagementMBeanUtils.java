@@ -72,7 +72,8 @@ public class MMSManagementMBeanUtils {
 			ObjectName ivrObjectName=new ObjectName("media.mobicents:endpoint=ivr");
 			ObjectName pktObjectName=new ObjectName("media.mobicents:endpoint=packet-relay");
 			ObjectName confObjectName=new ObjectName("media.mobicents:endpoint=conf");
-			this.endpointManagementUtils=new EndpointManagementMBeanUtils(mbeanServer,ivrObjectName,confObjectName,annObjectName,pktObjectName);
+			ObjectName loopObjectName=new ObjectName("media.mobicents:endpoint=loopback");
+			this.endpointManagementUtils=new EndpointManagementMBeanUtils(mbeanServer,ivrObjectName,confObjectName,annObjectName,pktObjectName,loopObjectName);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

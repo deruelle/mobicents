@@ -18,12 +18,17 @@ public class EndpointDataManagementPanel extends Composite{
 	protected String endpointName;
 	protected ActionPerform onRefreshAction=null;
 	protected ActionPerform onErrorAction=null;
+	protected boolean isVirtual=false;
 	//DataPresentation
 	EndpointDataManagementTopInfoPanel topPanel=null;
 	EndpointDataManagementConnectionsDisplay centerPanel=null;
 	
 	public EndpointDataManagementPanel(BrowseContainer display,
-			EndpointType type, String endpointName, ActionPerform onErrorAction) {
+			EndpointType type, String endpointName,ActionPerform onErrorAction) {
+	this(display, type, endpointName, false, onErrorAction);
+	}
+	public EndpointDataManagementPanel(BrowseContainer display,
+			EndpointType type, String endpointName, boolean isVirtual,ActionPerform onErrorAction) {
 		super();
 		this.display = display;
 		this.type = type;
