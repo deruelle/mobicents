@@ -128,7 +128,7 @@
 			org.mobicents.mscontrol.MsConnectionEvent
 		</event-class-name>
 	</event-definition>
-        
+
 	<event-definition>
 		<description>
 			This event is fired when Connection is deleted.
@@ -249,6 +249,17 @@
 			org.mobicents.mscontrol.MsNotifyEvent
 		</event-class-name>
 	</event-definition>
+	<event-definition>
+		<description>Announcement Package Not Supported</description>
+		<event-type-name>
+			org.mobicents.media.events.announcement.PACKAGE_NOT_SUPPORTED
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>
 
 	<!-- DTMF EVENTS -->
 	<event-definition>
@@ -262,6 +273,54 @@
 			org.mobicents.mscontrol.MsNotifyEvent
 		</event-class-name>
 	</event-definition>
+	<event-definition>
+		<description>DTMF Package Not Supported</description>
+		<event-type-name>
+			org.mobicents.media.events.dtmf.PACKAGE_NOT_SUPPORTED
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>
+
+	<!--  Audio Events -->
+	<event-definition>
+		<description>Recording Started</description>
+		<event-type-name>
+			org.mobicents.media.events.audio.RECORD
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>
+
+	<event-definition>
+		<description>Recording Failed</description>
+		<event-type-name>
+			org.mobicents.media.events.audio.FAILED
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>
+	
+	<event-definition>
+		<description>Audio Package Not Supported</description>
+		<event-type-name>
+			org.mobicents.media.events.audio.PACKAGE_NOT_SUPPORTED
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>	
 
 	<!-- IVR EVENTS -->
 	<event-definition>
@@ -308,5 +367,4 @@
 			org.mobicents.mscontrol.MsNotifyEvent
 		</event-class-name>
 	</event-definition>
-
 </event-jar>
