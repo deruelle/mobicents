@@ -28,7 +28,7 @@ public class TestPackage implements Serializable {
     private BaseEndpoint endpoint;
     private Semaphore semaphore = new Semaphore(0);
     private boolean blocked = false;
-    private Logger logger = Logger.getLogger(TestPackage.class);
+    private transient Logger logger = Logger.getLogger(TestPackage.class);
 
     public TestPackage(Endpoint endpoint) {
         this.endpoint = (BaseEndpoint) endpoint;

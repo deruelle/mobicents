@@ -27,7 +27,7 @@ import org.mobicents.media.server.spi.VirtualEndpoint;
  * @author Oleg Kulikov
  */
 public abstract class BaseVirtualEndpoint extends BaseEndpoint implements VirtualEndpoint {
-	private static Logger logger = Logger.getLogger(BaseVirtualEndpoint.class);
+	private transient static Logger logger = Logger.getLogger(BaseVirtualEndpoint.class);
 	private static int GEN = 1;
 	protected HashMap<String, Endpoint> endpoints = null;
 

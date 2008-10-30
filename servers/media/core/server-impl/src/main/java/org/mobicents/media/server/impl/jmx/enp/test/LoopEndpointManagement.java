@@ -27,7 +27,7 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class LoopEndpointManagement extends EndpointManagement implements LoopEndpointManagementMBean {
 
-    private Logger logger = Logger.getLogger(LoopEndpointManagement.class);
+    private transient Logger logger = Logger.getLogger(LoopEndpointManagement.class);
     private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     public Endpoint createEndpoint() throws Exception {
         LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName(),endpointsMap);

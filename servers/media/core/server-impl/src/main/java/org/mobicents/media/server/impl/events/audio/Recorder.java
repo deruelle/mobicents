@@ -37,7 +37,7 @@ import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
  */
 public class Recorder extends AbstractSink {
 
-	private Logger logger = Logger.getLogger(Recorder.class);
+	private transient Logger logger = Logger.getLogger(Recorder.class);
 
 	private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
 			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
@@ -50,7 +50,7 @@ public class Recorder extends AbstractSink {
 	private FileOutputStream file;
 	private Thread recorderThread = null;
 	private RecorderStream recorderStream;
-	private QueuedExecutor eventService = new QueuedExecutor();
+	private transient QueuedExecutor eventService = new QueuedExecutor();
 
 	// private RecorderRunnable runner=null;
 	public Recorder(String mediaType, String recordDir) {

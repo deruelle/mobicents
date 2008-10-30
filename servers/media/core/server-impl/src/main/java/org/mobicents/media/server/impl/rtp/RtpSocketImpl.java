@@ -14,6 +14,7 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -38,9 +39,9 @@ import org.mobicents.media.MediaSource;
  *
  * @author Oleg Kulikov
  */
-public class RtpSocketImpl implements RtpSocket, Runnable {
+public class RtpSocketImpl implements RtpSocket, Runnable  {
 
-	private Logger logger = Logger.getLogger(RtpSocketImpl.class);
+	private transient Logger logger = Logger.getLogger(RtpSocketImpl.class);
 	
     private ArrayList<RtpSocketListener> listeners = new ArrayList();
     private DatagramSocket socket;
@@ -48,7 +49,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable {
     private boolean stopped = false;
     //private HashMap receiveStreams = new HashMap();
     //handler for receiver thread
-    private Thread receiverThread;
+    private transient Thread receiverThread;
     private SendStreamImpl sendStream;
     //registered participants
     protected Peer peer = null;

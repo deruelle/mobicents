@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.impl.rtp;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ import org.mobicents.media.MediaSource;
  *
  * @author Oleg Kulikov
  */
-public interface RtpSocket {
+public interface RtpSocket extends Serializable {
     /**
      * Binds the RTP socket adapator to a specified address using any available
      * port number between minimum and maximum alllowed number.

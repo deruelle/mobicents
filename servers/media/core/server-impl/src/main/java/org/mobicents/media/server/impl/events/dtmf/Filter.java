@@ -16,6 +16,8 @@
 
 package org.mobicents.media.server.impl.events.dtmf;
 
+import java.io.Serializable;
+
 /**
  * The Goertzel Algorithm is a DFT in disguise, with some numerical tricks to 
  * eliminate complex number arithmetic, roughly doubling the efficiency. 
@@ -27,7 +29,7 @@ package org.mobicents.media.server.impl.events.dtmf;
  *
  * @author Oleg Kulikov
  */
-public class Filter {
+public class Filter implements Serializable {
     
     /** 
      * Creates a new instance of the Goertzel Filter. 

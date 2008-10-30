@@ -43,7 +43,7 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
     protected Format[] formats;
     
     private RtpSocketImpl rtpSocket;
-    private Logger logger = Logger.getLogger(SendStreamImpl.class);
+    private transient Logger logger = Logger.getLogger(SendStreamImpl.class);
     
     public SendStreamImpl(RtpSocketImpl rtpSocket) {
     	super("SendStreamImpl");

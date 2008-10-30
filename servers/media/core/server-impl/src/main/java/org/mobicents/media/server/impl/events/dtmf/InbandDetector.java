@@ -53,7 +53,7 @@ public class InbandDetector extends AbstractSink {
     private Filter filter = null;
     private boolean started = false;
     private BaseDtmfDetector detector;
-    private Logger logger = Logger.getLogger(InbandDetector.class);
+    private transient Logger logger = Logger.getLogger(InbandDetector.class);
 
     /**
      * Creates new instance of Detector.

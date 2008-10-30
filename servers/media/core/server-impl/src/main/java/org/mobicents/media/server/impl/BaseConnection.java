@@ -42,18 +42,27 @@ public abstract class BaseConnection implements Connection, NotificationListener
     protected String id;
     protected BaseEndpoint endpoint;
     protected String endpointName;
+    
     protected ConnectionMode mode;
     protected ConnectionState state = ConnectionState.NULL;
+    
     private int lifeTime = 30;
-    protected Multiplexer mux;
-    protected Demultiplexer demux;
-    private TimerTask closeTask;
+    
+    protected transient Multiplexer mux;
+    protected transient Demultiplexer demux;
+    
     private boolean timerStarted = false;
+    
     private ReentrantLock stateLock = new ReentrantLock();
+    
     private ArrayList<ConnectionListener> listeners = new ArrayList();
     private ArrayList<RequestedEvent> eventListeners = new ArrayList();
-    private ExecutorService eventQueue = Executors.newSingleThreadExecutor(new BaseConnection.ThreadFactoryImpl());
+    
+    private transient ExecutorService eventQueue = Executors.newSingleThreadExecutor(new BaseConnection.ThreadFactoryImpl());
+    
     protected transient Logger logger = Logger.getLogger(BaseConnection.class);
+    private transient TimerTask closeTask;
+    
     private long connectionCreationTime = System.currentTimeMillis();
     private long packets;
 

@@ -64,18 +64,27 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     protected final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
     protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    
     protected final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     protected final static Format[] formats = new Format[]{LINEAR, DTMF};
+    
     protected String localName;
     protected String rtpFactoryName;
-    protected HashMap<String, HashMap> mediaSources = new HashMap<String, HashMap>();
-    protected HashMap<String, HashMap> mediaSinks = new HashMap<String, HashMap>();
+    
+    protected transient HashMap<String, HashMap> mediaSources = new HashMap<String, HashMap>();
+    protected transient HashMap<String, HashMap> mediaSinks = new HashMap<String, HashMap>();
+    
     protected boolean hasConnections;
+    
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
+    
     protected int maxConnections = 0;
-    protected ArrayList<NotificationListener> listeners = new ArrayList();
-    protected ArrayList<ConnectionListener> connectionListeners = new ArrayList();
-    protected static Timer connectionTimer = new Timer();
+    
+    protected transient ArrayList<NotificationListener> listeners = new ArrayList();
+    protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList();
+    
+    protected transient static Timer connectionTimer = new Timer();
+    
     protected transient Logger logger = Logger.getLogger(this.getClass());    // ----------- SOME MGMT info
     protected long creationTime = System.currentTimeMillis();
     protected boolean gatherStatistics = false;

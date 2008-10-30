@@ -36,7 +36,7 @@ public class SpectralAnalyser extends AbstractSink {
 	private int offset = 0;
 	private byte[] localBuffer = new byte[16000];
 	private FFT fft = new FFT();
-	private Logger logger = Logger.getLogger(SpectralAnalyser.class);
+	private transient Logger logger = Logger.getLogger(SpectralAnalyser.class);
 
 	public void start() {
 	}

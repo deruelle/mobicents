@@ -39,7 +39,6 @@ import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
@@ -60,12 +59,14 @@ public class RtpConnectionImpl extends BaseConnection {
     private int localPort;
 //    private HashMap audioFormats;
 //    private HashMap videoFormats;
-    private SessionDescription localSDP;
-    private SessionDescription remoteSDP;
-    private RtpSocket rtpSocket;
-    private SdpFactory sdpFactory = SdpFactory.getInstance();
-    private Processor inDsp;
-    private Processor outDsp;
+    private String localDescriptor;
+    private String remoteDescriptor;
+    
+    private transient RtpSocket rtpSocket;
+    private transient SdpFactory sdpFactory = SdpFactory.getInstance();
+    private transient Processor inDsp;
+    private transient Processor outDsp;
+    
 //    private HashMap codecs;
     /**
      * Creates a new instance of RtpConnectionImpl.
@@ -167,7 +168,7 @@ public class RtpConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
      */
     public String getLocalDescriptor() {
-
+        SessionDescription localSDP = null;
         try {
             this.lockState();
 
@@ -279,7 +280,8 @@ public class RtpConnectionImpl extends BaseConnection {
             this.releaseState();
         }
         //System.out.println("Local SDP: " + localSDP.toString());
-        return localSDP.toString();
+        this.localDescriptor = localSDP.toString();
+        return localDescriptor;
     }
 
     /**
@@ -288,7 +290,7 @@ public class RtpConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#getRemoteDescriptor();
      */
     public String getRemoteDescriptor() {
-        return remoteSDP != null ? remoteSDP.toString() : null;
+        return remoteDescriptor; 
     }
 
     /**
@@ -319,7 +321,8 @@ public class RtpConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
     public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
-
+        this.remoteDescriptor = descriptor;
+        SessionDescription remoteSDP = null;
         try {
             this.lockState();
 

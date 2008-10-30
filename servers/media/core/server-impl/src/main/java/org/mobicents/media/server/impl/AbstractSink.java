@@ -29,7 +29,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public abstract class AbstractSink implements MediaSink {
 
-	protected Logger logger = Logger.getLogger(this.getClass());
+	protected transient Logger logger = Logger.getLogger(this.getClass());
 
 	protected MediaSource mediaStream;
 	private List<NotificationListener> listeners = new ArrayList();

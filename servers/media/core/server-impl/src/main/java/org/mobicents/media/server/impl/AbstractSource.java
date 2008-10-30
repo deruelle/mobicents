@@ -29,7 +29,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public abstract class AbstractSource implements MediaSource {
 
-    protected Logger logger = Logger.getLogger(this.getClass());
+    protected transient Logger logger = Logger.getLogger(this.getClass());
     
     protected MediaSink sink;
     private List<NotificationListener> listeners = new ArrayList();

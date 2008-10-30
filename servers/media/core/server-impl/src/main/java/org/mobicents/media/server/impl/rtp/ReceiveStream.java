@@ -36,7 +36,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
     private Buffer frame;
     protected Format[] formats;
     
-    private Logger logger = Logger.getLogger(ReceiveStream.class);
+    private transient Logger logger = Logger.getLogger(ReceiveStream.class);
 
     /** Creates a new instance of ReceiveStream */
     public ReceiveStream(RtpSocket rtpSocket, int period, int jitter) {

@@ -12,7 +12,7 @@ import org.mobicents.media.server.spi.Endpoint;
 public class DFTEndpointManagement extends EndpointManagement implements
         DFTEndpointManagementMBean {
 
-    private Logger logger = Logger.getLogger(PREndpointManagement.class);
+    private transient Logger logger = Logger.getLogger(PREndpointManagement.class);
     @Override
     public Endpoint createEndpoint() throws Exception {
         // TODO Auto-generated method stub

@@ -13,17 +13,19 @@
  */
 package org.mobicents.media.server.impl.clock;
 
+import java.io.Serializable;
+
 /**
  * Provides repited execution at a reqular time intervals.
  * 
  * @author Oleg Kulikov
  */
-public class Timer implements Runnable {
+public class Timer implements Serializable, Runnable {
 
     public final static Quartz quartz = new Quartz();
     private Runnable handler;
     private volatile boolean stopped = true;
-    private Thread worker;
+    private transient Thread worker;
     
     private long lastTick;
     

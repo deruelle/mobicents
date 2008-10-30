@@ -31,7 +31,7 @@ import org.mobicents.media.server.spi.Endpoint;
 public class IVREndpointManagement extends AnnEndpointManagement
         implements IVREndpointManagementMBean {
 
-    private Logger logger = Logger.getLogger(IVREndpointManagement.class);
+    private transient Logger logger = Logger.getLogger(IVREndpointManagement.class);
     private String recordDir;
     private String mediaType;
     private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();

@@ -12,6 +12,7 @@
 
 package org.mobicents.media.server.impl.events.dtmf;
 
+import java.io.Serializable;
 import org.apache.log4j.Logger;
 
 /**
@@ -19,7 +20,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Oleg Kulikov
  */
-public class DtmfBuffer {
+public class DtmfBuffer implements Serializable {
     public final static int TIMEOUT = 5000;
     public final static int SILENCE = 500;
     
@@ -31,7 +32,7 @@ public class DtmfBuffer {
     private long lastActivity = System.currentTimeMillis();
     private String lastSymbol;
     
-    private Logger logger = Logger.getLogger(DtmfBuffer.class);
+    private transient Logger logger = Logger.getLogger(DtmfBuffer.class);
     
     public DtmfBuffer(BaseDtmfDetector detector) {
         this.detector = detector;

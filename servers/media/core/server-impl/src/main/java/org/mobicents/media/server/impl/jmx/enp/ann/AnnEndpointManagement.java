@@ -31,7 +31,7 @@ import org.mobicents.media.server.spi.Endpoint;
 public class AnnEndpointManagement extends EndpointManagement
         implements AnnEndpointManagementMBean {
 
-    private Logger logger = Logger.getLogger(AnnEndpointManagement.class);
+    private transient Logger logger = Logger.getLogger(AnnEndpointManagement.class);
     private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     /**
      * Creates a new instance of AnnEndpointManagement

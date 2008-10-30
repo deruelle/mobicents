@@ -33,7 +33,7 @@ public class Rfc2833Detector extends AbstractSink {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
     };
     private BaseDtmfDetector detector;
-    private Logger logger = Logger.getLogger(Rfc2833Detector.class);
+    private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
     public Rfc2833Detector(BaseDtmfDetector detector) {
     	super("Rfc2833Detector");

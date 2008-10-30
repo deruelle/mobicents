@@ -13,6 +13,7 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ import org.mobicents.media.server.impl.CachedBuffersPool;
  *
  * @author Oleg Kulikov
  */
-public class JitterBuffer {
+public class JitterBuffer implements Serializable {
 
     private RtpSocket rtpSocket;
     private boolean ready = false;
@@ -51,7 +52,7 @@ public class JitterBuffer {
     private ReentrantLock state = new ReentrantLock();
     private List<RtpPacket> buffers = Collections.synchronizedList(new ArrayList());
     private int maxSize;
-    private Logger logger = Logger.getLogger(JitterBuffer.class);
+    private transient Logger logger = Logger.getLogger(JitterBuffer.class);
 
     /**
      * Creates new instance of jitter.

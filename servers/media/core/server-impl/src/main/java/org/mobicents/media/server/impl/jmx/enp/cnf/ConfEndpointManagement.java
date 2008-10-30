@@ -28,7 +28,7 @@ import org.mobicents.media.server.spi.VirtualEndpoint;
  */
 public class ConfEndpointManagement extends EndpointManagement implements ConfEndpointManagementMBean {
 
-	private Logger logger = Logger.getLogger(ConfEndpointManagement.class);
+	private transient Logger logger = Logger.getLogger(ConfEndpointManagement.class);
 	private HashMap<String, Endpoint> endpointsMap = new HashMap<String, Endpoint>();
 
 	@Override

@@ -52,7 +52,7 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 	private HashMap<Integer, Format> audioFormats;
 	
 	private RtpFactory rtpFactory;
-	private Logger logger = Logger.getLogger(RTPManager.class);
+	private transient Logger logger = Logger.getLogger(RTPManager.class);
 
 	/**
 	 * (Non Java-doc).
