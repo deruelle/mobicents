@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.spi.dsp;
 
+import java.io.Serializable;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -22,7 +23,7 @@ import org.mobicents.media.format.AudioFormat;
  * 
  * @author Oleg Kulikov
  */
-public interface Codec {
+public interface Codec extends Serializable {
 	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(
                 AudioFormat.LINEAR, 8000, 16, 1,
 		AudioFormat.LITTLE_ENDIAN, 

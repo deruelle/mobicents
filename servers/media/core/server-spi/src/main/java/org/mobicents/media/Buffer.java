@@ -1,5 +1,7 @@
 package org.mobicents.media;
 
+import java.io.Serializable;
+
 /**
  * Standard JMF class -- see <a href="http://java.sun.com/products/java-media/jmf/2.1.1/apidocs/javax/media/Buffer.html" target="_blank">this class in the JMF Javadoc</a>.
  * Coding complete.
@@ -11,7 +13,7 @@ package org.mobicents.media;
  * @author Ken Larson
  *
  */
-public class Buffer {
+public class Buffer implements Serializable {
 
     protected long timeStamp = -1L;
     protected long duration = -1L;
