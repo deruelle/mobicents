@@ -117,7 +117,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 		}
 
 		if (evt.getLocalConnectionOptions() != null) {
-			msg += Utils.encodeLocalConnectionOptions(evt.getLocalConnectionOptions());
+			msg += utils.encodeLocalConnectionOptions(evt.getLocalConnectionOptions());
 		}
 
 		if (evt.getSecondEndpointIdentifier() != null) {
@@ -125,7 +125,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
-			msg += Utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
+			msg += utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
 		}
 
 		if (evt.getRemoteConnectionDescriptor() != null) {
@@ -179,7 +179,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 			String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = Utils.decodeEndpointIdentifier(tokens[2].trim());
+			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
 			command = new CreateConnection(getObjectSource(tid), new CallIdentifier("0"), endpoint,
 					ConnectionMode.Inactive);
@@ -197,14 +197,14 @@ public class CreateConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(Utils.createBearerInformation(value));
+				command.setBearerInformation(utils.createBearerInformation(value));
 			} else if (name.equalsIgnoreCase("c")) {
 				command.setCallIdentifier(new CallIdentifier(value));
 			}
 			if (name.equalsIgnoreCase("L")) {
-				command.setLocalConnectionOptions(Utils.createLocalOptions(value));
+				command.setLocalConnectionOptions(utils.createLocalOptions(value));
 			} else if (name.equalsIgnoreCase("m")) {
-				command.setMode(Utils.createConnectionMode(value));
+				command.setMode(utils.createConnectionMode(value));
 			} else if (name.equalsIgnoreCase("N")) {
 				command.setNotifiedEntity(new NotifiedEntity(value));
 			} else if (name.equalsIgnoreCase("X")) {
@@ -212,14 +212,14 @@ public class CreateConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("D")) {
 				command.getNotificationRequestParms().setDigitMap(new DigitMap(value));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.getNotificationRequestParms().setRequestedEvents(Utils.decodeRequestedEvents(value));
+				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEvents(value));
 			} else if (name.equalsIgnoreCase("S")) {
-				command.getNotificationRequestParms().setSignalRequests(Utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {
-				command.getNotificationRequestParms().setDetectEvents(Utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setDetectEvents(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("Z")) {
 				try {
-					command.setSecondEndpointIdentifier(Utils.createEndpointIdentifier(value));
+					command.setSecondEndpointIdentifier(utils.createEndpointIdentifier(value));
 				} catch (ConflictingParameterException e) {
 				}
 			}
@@ -257,7 +257,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new CreateConnectionResponse(stack, Utils.decodeReturnCode(Integer.parseInt(tokens[0])),
+			response = new CreateConnectionResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])),
 					new ConnectionIdentifier("00"));
 			response.setTransactionHandle(tid);
 		}
@@ -277,9 +277,9 @@ public class CreateConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("I2")) {
 				response.setSecondConnectionIdentifier(new ConnectionIdentifier(value));
 			} else if (name.equalsIgnoreCase("Z")) {
-				response.setSpecificEndpointIdentifier(Utils.createEndpointIdentifier(value));
+				response.setSpecificEndpointIdentifier(utils.createEndpointIdentifier(value));
 			} else if (name.equalsIgnoreCase("Z2")) {
-				response.setSecondEndpointIdentifier(Utils.createEndpointIdentifier(value));
+				response.setSecondEndpointIdentifier(utils.createEndpointIdentifier(value));
 			}
 		}
 

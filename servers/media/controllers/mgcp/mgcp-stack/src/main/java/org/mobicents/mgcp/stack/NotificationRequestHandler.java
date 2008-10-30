@@ -81,15 +81,15 @@ public class NotificationRequestHandler extends TransactionHandler {
 		}
 
 		if (req.getSignalRequests() != null) {
-			buffer.append("S:" + Utils.encodeEventNames(req.getSignalRequests()) + "\n");
+			buffer.append("S:" + utils.encodeEventNames(req.getSignalRequests()) + "\n");
 		}
 
 		if (req.getRequestedEvents() != null) {
-			buffer.append("R:" + Utils.encodeRequestedEvents(req.getRequestedEvents()) + "\n");
+			buffer.append("R:" + utils.encodeRequestedEvents(req.getRequestedEvents()) + "\n");
 		}
 
 		if (req.getDetectEvents() != null) {
-			buffer.append("T:" + Utils.encodeEventNames(req.getDetectEvents()) + "\n");
+			buffer.append("T:" + utils.encodeEventNames(req.getDetectEvents()) + "\n");
 		}
 
 		return buffer.toString();
@@ -122,7 +122,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 			String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = Utils.decodeEndpointIdentifier(tokens[2].trim());
+			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
 			command = new NotificationRequest(getObjectSource(tid), endpoint, new RequestIdentifier("0"));
 			command.setTransactionHandle(tid);
@@ -130,15 +130,15 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("N")) {
-				command.setNotifiedEntity(Utils.decodeNotifiedEntity(value));
+				command.setNotifiedEntity(utils.decodeNotifiedEntity(value));
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setRequestIdentifier(new RequestIdentifier(value));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.setRequestedEvents(Utils.decodeRequestedEvents(value));
+				command.setRequestedEvents(utils.decodeRequestedEvents(value));
 			} else if (name.equalsIgnoreCase("S")) {
-				command.setSignalRequests(Utils.decodeEventNames(value));
+				command.setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {
-				command.setDetectEvents(Utils.decodeEventNames(value));
+				command.setDetectEvents(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("D")) {
 				command.setDigitMap(new DigitMap(value));
 			}
@@ -155,7 +155,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new NotificationRequestResponse(stack, Utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new NotificationRequestResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

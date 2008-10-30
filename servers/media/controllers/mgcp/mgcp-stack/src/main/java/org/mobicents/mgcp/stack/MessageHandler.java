@@ -34,6 +34,8 @@ public class MessageHandler implements Runnable {
 	private InetAddress address;
 	private int port;
 	private static Logger logger = Logger.getLogger(MessageHandler.class);
+	
+	private Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
 
 	/** Creates a new instance of MessageHandler */
 	public MessageHandler(JainMgcpStackImpl stack, byte[] data, InetAddress address, int port) {
@@ -69,7 +71,10 @@ public class MessageHandler implements Runnable {
 	}
 
 	public boolean isRequest(String header) {
-		return header.matches("[\\w]{4}(\\s|\\S)*");
+		System.out.println("header = "+header);        
+        Matcher m = p.matcher(header);
+        return m.matches();		
+		//return header.matches("[\\w]{4}(\\s|\\S)*");
 	}
 
 	public void run() {

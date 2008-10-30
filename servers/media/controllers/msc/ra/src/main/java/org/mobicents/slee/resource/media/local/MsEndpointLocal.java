@@ -61,4 +61,8 @@ public class MsEndpointLocal implements MsEndpoint {
 
 	}
 
+	public String[] getSupportedPackages() {		
+		return this.endpoint.getSupportedPackages();
+	}
+
 }

@@ -68,7 +68,7 @@ public class Utils {
 	 *            the fully qualified name of the endpoint.
 	 * @return EndpointIdentifier object.
 	 */
-	public static EndpointIdentifier createEndpointIdentifier(String name) {
+	public EndpointIdentifier createEndpointIdentifier(String name) {
 		String tokens[] = name.split("@");
 		return new EndpointIdentifier(tokens[0], tokens[1]);
 	}
@@ -80,7 +80,7 @@ public class Utils {
 	 *            the text value of the connection mode.
 	 * @return the ConnectionMode object.
 	 */
-	public static ConnectionMode createConnectionMode(String mode) {
+	public ConnectionMode createConnectionMode(String mode) {
 		if (mode.equals("sendrecv")) {
 			return ConnectionMode.SendRecv;
 		} else if (mode.equalsIgnoreCase("sendonly")) {
@@ -110,7 +110,7 @@ public class Utils {
 	 *            the text value of the object.
 	 * @return BearerInformation object.
 	 */
-	public static BearerInformation createBearerInformation(String text) throws ParseException {
+	public BearerInformation createBearerInformation(String text) throws ParseException {
 		// BearerInformation =BearerAttribute 0*(","0*(WSP)BearerAttribute)
 		// BearerAttribute =("e"":"BearerEncoding)
 		// (BearerExtensionName [":"BearerExtensionValue ])
@@ -141,7 +141,7 @@ public class Utils {
 	 *            the text value.
 	 * @return array of LocalOptionValue objects.
 	 */
-	public static LocalOptionValue[] createLocalOptions(String text) throws ParseException {
+	public LocalOptionValue[] createLocalOptions(String text) throws ParseException {
 		// LocalConnectionOptions =LocalOptionValue 0*(WSP)
 		// 0*(","0*(WSP)LocalOptionValue 0*(WSP))
 
@@ -162,7 +162,7 @@ public class Utils {
 	 *            the text value of the LocalOptionValue object.
 	 * @return LocalOption object.
 	 */
-	public static LocalOptionValue createLocalOption(String text) throws ParseException {
+	public LocalOptionValue createLocalOption(String text) throws ParseException {
 		// LocalOptionValue =("p"":"packetizationPeriod)
 		// /("a"":"compressionAlgorithm)
 		// /("b"":"bandwidth)
@@ -218,7 +218,7 @@ public class Utils {
 	 *            the text value of the compression algoritm.
 	 * @return CompressionAlgorithm object.
 	 */
-	public static CompressionAlgorithm createCompressionAlgorithm(String value) throws ParseException {
+	public CompressionAlgorithm createCompressionAlgorithm(String value) throws ParseException {
 		// compressionAlgorithm =algorithmName 0*(";"algorithmName)
 		return new CompressionAlgorithm(value.split(";"));
 	}
@@ -230,7 +230,7 @@ public class Utils {
 	 *            the text view of the PacketizationPeriod object.
 	 * @return PacketizationPeriod object.
 	 */
-	public static PacketizationPeriod createPacketizationPeriod(String value) throws ParseException {
+	public PacketizationPeriod createPacketizationPeriod(String value) throws ParseException {
 		// packetizationPeriod =1*4(DIGIT)["-"1*4(DIGIT)]
 		int pos = value.indexOf('-');
 		if (pos < 0) {
@@ -258,7 +258,7 @@ public class Utils {
 	 *            the text view of the Bandwidth object.
 	 * @return Bandwidth object.
 	 */
-	public static Bandwidth createBandwidth(String value) throws ParseException {
+	public Bandwidth createBandwidth(String value) throws ParseException {
 		// bandwidth =1*4(DIGIT)["-"1*4(DIGIT)]
 		int pos = value.indexOf('-');
 		if (pos < 0) {
@@ -286,7 +286,7 @@ public class Utils {
 	 *            the text value of the EchoCancellation.
 	 * @return EchoCancellation object.
 	 */
-	public static EchoCancellation decodeEchoCancellation(String value) throws ParseException {
+	public EchoCancellation decodeEchoCancellation(String value) throws ParseException {
 		// echoCancellation ="on"/"off"
 		if (value.equalsIgnoreCase("on")) {
 			return EchoCancellation.EchoCancellationOn;
@@ -304,7 +304,7 @@ public class Utils {
 	 *            the text value of the GainControl.
 	 * @return GainControl object.
 	 */
-	public static GainControl decodeGainControl(String value) throws ParseException {
+	public GainControl decodeGainControl(String value) throws ParseException {
 		// gainControl ="auto"/["-"] 1**4(DIGIT)
 		if (value.equalsIgnoreCase("auto")) {
 			return new GainControl();
@@ -324,7 +324,7 @@ public class Utils {
 	 *            the text value of the SilenceSuppression.
 	 * @return SilenceSuppression object.
 	 */
-	public static SilenceSuppression decodeSilenceSuppression(String value) throws ParseException {
+	public SilenceSuppression decodeSilenceSuppression(String value) throws ParseException {
 		// silenceSuppression ="on"/"off"
 		if (value.equalsIgnoreCase("on")) {
 			return SilenceSuppression.SilenceSuppressionOn;
@@ -342,7 +342,7 @@ public class Utils {
 	 *            the text value of the TypeOfService.
 	 * @return TypeOfService object.
 	 */
-	public static TypeOfService decodeTypeOfService(String value) throws ParseException {
+	public TypeOfService decodeTypeOfService(String value) throws ParseException {
 		// typeOfService =1*2(HEXDIG);1 hex only for capabilities
 		try {
 			return new TypeOfService((byte) Integer.parseInt(value));
@@ -358,7 +358,7 @@ public class Utils {
 	 *            the text value of the ResourceReservation.
 	 * @return ResourceReservation object.
 	 */
-	public static ResourceReservation decodeResourceReservation(String value) throws ParseException {
+	public ResourceReservation decodeResourceReservation(String value) throws ParseException {
 		// resourceReservation ="g"/"cl"/"be"
 		if (value.equalsIgnoreCase("g")) {
 			return ResourceReservation.Guaranteed;
@@ -378,7 +378,7 @@ public class Utils {
 	 *            the text value of the EncryptionMethod.
 	 * @return EncryptionMethod object.
 	 */
-	public static EncryptionMethod decodeEncryptionMethod(String value) throws ParseException {
+	public EncryptionMethod decodeEncryptionMethod(String value) throws ParseException {
 		// encryptiondata =("clear"":"encryptionKey )
 		// /("base64"":"encodedEncryptionKey )
 		// /("uri"":"URItoObtainKey )
@@ -409,7 +409,7 @@ public class Utils {
 	 *            the text value of the TypeOfNetwork.
 	 * @return TypeOfNetwork object.
 	 */
-	public static TypeOfNetwork decodeTypeOfNetwork(String value) throws ParseException {
+	public TypeOfNetwork decodeTypeOfNetwork(String value) throws ParseException {
 		// typeOfNetwork ="IN"/"ATM"/"LOCAL"/OtherTypeOfNetwork
 		if (value.equalsIgnoreCase("in")) {
 			return TypeOfNetwork.In;
@@ -422,7 +422,7 @@ public class Utils {
 		}
 	}
 
-	public static RestartMethod decodeRestartMethod(String value) throws ParseException {
+	public RestartMethod decodeRestartMethod(String value) throws ParseException {
 		// RestartMethod = "graceful" / "forced" / "restart" / "disconnected"
 		// / "cancel-graceful" / extensionRestartMethod
 		// extensionRestartMethod = PackageExtensionRM
@@ -444,7 +444,7 @@ public class Utils {
 		}
 	}
 
-	public static RequestedEvent[] decodeRequestedEvents(String value) throws ParseException {
+	public RequestedEvent[] decodeRequestedEvents(String value) throws ParseException {
 		// RequestedEvents =requestedEvent 0*(","0*(WSP)requestedEvent)
 		String[] tokens = value.split(",");
 		RequestedEvent[] events = new RequestedEvent[tokens.length];
@@ -456,7 +456,7 @@ public class Utils {
 		return events;
 	}
 
-	public static RequestedEvent decodeRequestedEvent(String value) throws ParseException {
+	public RequestedEvent decodeRequestedEvent(String value) throws ParseException {
 		// requestedEvent =(eventName ["("requestedActions ")"])
 		// /(eventName "("requestedActions ")" "("eventParameters ")")
 		int pos1 = value.indexOf('(');
@@ -481,7 +481,7 @@ public class Utils {
 
 	}
 
-	public static EventName decodeEventName(String value, String param) throws ParseException {
+	public EventName decodeEventName(String value, String param) throws ParseException {
 		// eventName =[(packageName /"*")"/"]
 		// (eventId /"all"/eventRange
 		// /"*"/"#");for DTMF
@@ -513,7 +513,7 @@ public class Utils {
 		}
 	}
 
-	public static RequestedAction[] decodeRequestedActions(String value) throws ParseException {
+	public RequestedAction[] decodeRequestedActions(String value) throws ParseException {
 		// requestedActions =requestedAction 0*(","0*(WSP)requestedAction)
 		String tokens[] = value.split(",");
 		RequestedAction[] actions = new RequestedAction[tokens.length];
@@ -523,7 +523,7 @@ public class Utils {
 		return actions;
 	}
 
-	public static RequestedAction decodeRequestedAction(String value) throws ParseException {
+	public RequestedAction decodeRequestedAction(String value) throws ParseException {
 		// requestedAction ="N"/"A"/"D"/"S"/"I"/"K"
 		// /"E""("EmbeddedRequest ")"
 		// /ExtensionAction
@@ -551,7 +551,7 @@ public class Utils {
 		}
 	}
 
-	public static EmbeddedRequest decodeEmbeddedRequest(String value) throws ParseException {
+	public EmbeddedRequest decodeEmbeddedRequest(String value) throws ParseException {
 		// EmbeddedRequest =("R""("EmbeddedRequestList ")"
 		// [","0*(WSP)"S""("EmbeddedSignalRequest ")"]
 		// [","0*(WSP)"D""("EmbeddedDigitMap ")"])
@@ -588,7 +588,7 @@ public class Utils {
 		return new EmbeddedRequest(requestedEvents, signalEvents, digitMap);
 	}
 
-	public static EventName[] decodeEventNames(String value) throws ParseException {
+	public EventName[] decodeEventNames(String value) throws ParseException {
 		String tokens[] = value.split(",");
 		EventName[] events = new EventName[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
@@ -607,7 +607,7 @@ public class Utils {
 		return events;
 	}
 
-	public static String encodeEventNames(EventName[] events) {
+	public String encodeEventNames(EventName[] events) {
 		String s = "";
 		boolean first = true;
 		for (EventName e : events) {
@@ -634,12 +634,12 @@ public class Utils {
 	 *            the name of the given endpoint.
 	 * @return EdnpointIdentifier object.
 	 */
-	public static EndpointIdentifier decodeEndpointIdentifier(String name) {
+	public EndpointIdentifier decodeEndpointIdentifier(String name) {
 		String[] s = name.split("@");
 		return new EndpointIdentifier(s[0], s[1]);
 	}
 
-	public static ReturnCode decodeReturnCode(int code) throws ParseException {
+	public ReturnCode decodeReturnCode(int code) throws ParseException {
 		switch (code) {
 		case ReturnCode.CAS_SIGNALING_PROTOCOL_ERROR:
 			return ReturnCode.CAS_Signaling_Protocol_Error;
@@ -724,7 +724,7 @@ public class Utils {
 		}
 	}
 
-	public static String encodeLocalConnectionOptions(LocalOptionValue[] options) {
+	public String encodeLocalConnectionOptions(LocalOptionValue[] options) {
 		String msg = "L:";
 		for (int i = 0; i < options.length - 1; i++) {
 			String s = options[i].toString();
@@ -735,7 +735,7 @@ public class Utils {
 		return msg;
 	}
 
-	public static String encodeNotificationRequestParms(NotificationRequestParms parms) {
+	public String encodeNotificationRequestParms(NotificationRequestParms parms) {
 		String msg = "X:" + parms.getRequestIdentifier() + "\n";
 		if (parms.getSignalRequests() != null) {
 			msg += "S:" + encodeEventNames(parms.getSignalRequests()) + "\n";
@@ -752,7 +752,7 @@ public class Utils {
 		return msg;
 	}
 
-	public static String encodeRequestedEvent(RequestedEvent evt) {
+	public String encodeRequestedEvent(RequestedEvent evt) {
 		String s = evt.getEventName().getPackageName() + "/" + evt.getEventName().getEventIdentifier().getName();
 
 		if (evt.getEventName().getConnectionIdentifier() != null) {
@@ -773,7 +773,7 @@ public class Utils {
 		return s;
 	}
 
-	public static String encodeRequestedEvents(RequestedEvent[] evts) {
+	public String encodeRequestedEvents(RequestedEvent[] evts) {
 		String s = "";
 		for (int i = 0; i < evts.length; i++) {
 			s += encodeRequestedEvent(evts[i]);
@@ -784,7 +784,7 @@ public class Utils {
 		return s;
 	}
 
-	public static String encodeRequestedActions(RequestedAction[] actions) {
+	public String encodeRequestedActions(RequestedAction[] actions) {
 		String s = "";
 		String d = "";
 		for (int i = 0; i < actions.length; i++) {
@@ -794,11 +794,11 @@ public class Utils {
 		return s;
 	}
 
-	public static String encodeRequestedAction(RequestedAction action) {
+	public String encodeRequestedAction(RequestedAction action) {
 		return action.toString();
 	}
 
-	public static String encodeConnectionParm(ConnectionParm parm) {
+	public String encodeConnectionParm(ConnectionParm parm) {
 		int type = parm.getConnectionParmType();
 		if (type == RegularConnectionParm.JITTER) {
 			return "JI=" + parm.getConnectionParmValue();
@@ -821,7 +821,7 @@ public class Utils {
 
 	}
 
-	public static ConnectionParm decodeConnectionParm(String parm) {
+	public ConnectionParm decodeConnectionParm(String parm) {
 		String[] tokens = parm.split("=");
 
 		String name = tokens[0].trim();
@@ -846,7 +846,7 @@ public class Utils {
 		}
 	}
 
-	public static String encodeConnectionParms(ConnectionParm[] parms) {
+	public String encodeConnectionParms(ConnectionParm[] parms) {
 		String s = "";
 		for (int i = 0; i < parms.length - 1; i++) {
 			s += encodeConnectionParm(parms[i]) + ",";
@@ -856,7 +856,7 @@ public class Utils {
 		return s;
 	}
 
-	public static ConnectionParm[] decodeConnectionParms(String value) {
+	public ConnectionParm[] decodeConnectionParms(String value) {
 		String tokens[] = value.split(",");
 		ConnectionParm[] parms = new ConnectionParm[tokens.length];
 
@@ -867,7 +867,7 @@ public class Utils {
 		return parms;
 	}
 
-	public static ReasonCode decodeReasonCode(String value) {
+	public ReasonCode decodeReasonCode(String value) {
 		String[] tokens = value.split("\\s");
 
 		int code = Integer.parseInt(tokens[0]);
@@ -891,7 +891,7 @@ public class Utils {
 		return reasonCode;
 	}
 
-	public static NotifiedEntity decodeNotifiedEntity(String value) throws ParseException {
+	public NotifiedEntity decodeNotifiedEntity(String value) throws ParseException {
 		NotifiedEntity notifiedEntity = null;
 
 		try {

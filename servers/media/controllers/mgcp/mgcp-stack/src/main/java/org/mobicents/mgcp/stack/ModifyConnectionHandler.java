@@ -114,7 +114,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         }
         
         if (evt.getLocalConnectionOptions() != null) {
-            msg += Utils.encodeLocalConnectionOptions(
+            msg += utils.encodeLocalConnectionOptions(
                     evt.getLocalConnectionOptions());
         }
         
@@ -123,7 +123,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         }
         
         if (evt.getNotificationRequestParms() != null) {
-            msg += Utils.encodeNotificationRequestParms(
+            msg += utils.encodeNotificationRequestParms(
                     evt.getNotificationRequestParms());
         }
         
@@ -171,7 +171,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
             String version = tokens[3].trim() + " " + tokens[4].trim();
             
             int tid = Integer.parseInt(transactionID);
-            EndpointIdentifier endpoint = Utils.decodeEndpointIdentifier(tokens[2].trim());
+            EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
             
             command = new ModifyConnection(
             		getObjectSource(tid),
@@ -190,30 +190,30 @@ public class ModifyConnectionHandler extends TransactionHandler {
          */
         public void param(String name, String value) throws ParseException {
             if (name.equalsIgnoreCase("B")) {
-                command.setBearerInformation(Utils.createBearerInformation(value));
+                command.setBearerInformation(utils.createBearerInformation(value));
             } else if (name.equalsIgnoreCase("c")) {
                 command.setCallIdentifier(new CallIdentifier(value));
             } else if (name.equalsIgnoreCase("I")) {
                 command.setConnectionIdentifier(new ConnectionIdentifier(value));
             } else if (name.equalsIgnoreCase("m")) {
-                command.setMode(Utils.createConnectionMode(value));
+                command.setMode(utils.createConnectionMode(value));
             } else if (name.equalsIgnoreCase("L")) {
-                command.setLocalConnectionOptions(Utils.createLocalOptions(value));
+                command.setLocalConnectionOptions(utils.createLocalOptions(value));
             } else if (name.equalsIgnoreCase("N")) {
-            	command.setNotifiedEntity(Utils.decodeNotifiedEntity(value));                
+            	command.setNotifiedEntity(utils.decodeNotifiedEntity(value));                
             } else if (name.equalsIgnoreCase("X")) {
                 command.setNotificationRequestParms(
                         new NotificationRequestParms(
                         new RequestIdentifier(value)));
             } else if (name.equalsIgnoreCase("R")) {
                 command.getNotificationRequestParms().setRequestedEvents(
-                        Utils.decodeRequestedEvents(value));
+                		utils.decodeRequestedEvents(value));
             } else if (name.equalsIgnoreCase("S")) {
                 command.getNotificationRequestParms().setSignalRequests(
-                        Utils.decodeEventNames(value));
+                		utils.decodeEventNames(value));
             } else if (name.equalsIgnoreCase("T")) {
                 command.getNotificationRequestParms().setDetectEvents(
-                        Utils.decodeEventNames(value));
+                		utils.decodeEventNames(value));
             }
         }
         
@@ -245,7 +245,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
             int tid = Integer.parseInt(tokens[1]);
             
             response = new ModifyConnectionResponse(stack,
-                    Utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+            		utils.decodeReturnCode(Integer.parseInt(tokens[0])));
             response.setTransactionHandle(tid);
         }
         

@@ -112,11 +112,11 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		}
 
 		if (evt.getConnectionParms() != null) {
-			msg += "P:" + Utils.encodeConnectionParms(evt.getConnectionParms()) + "\n";
+			msg += "P:" + utils.encodeConnectionParms(evt.getConnectionParms()) + "\n";
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
-			msg += Utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
+			msg += utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
 		}
 
 		if (evt.getReasonCode() != null) {
@@ -160,7 +160,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = Utils.decodeEndpointIdentifier(tokens[2].trim());
+			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
 			command = new DeleteConnection(getObjectSource(tid), endpoint);
 			command.setTransactionHandle(tid);
@@ -177,7 +177,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(Utils.createBearerInformation(value));
+				command.setBearerInformation(utils.createBearerInformation(value));
 			} else if (name.equalsIgnoreCase("c")) {
 				command.setCallIdentifier(new CallIdentifier(value));
 			} else if (name.equalsIgnoreCase("I")) {
@@ -185,15 +185,15 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setNotificationRequestParms(new NotificationRequestParms(new RequestIdentifier(value)));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.getNotificationRequestParms().setRequestedEvents(Utils.decodeRequestedEvents(value));
+				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEvents(value));
 			} else if (name.equalsIgnoreCase("S")) {
-				command.getNotificationRequestParms().setSignalRequests(Utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {
-				command.getNotificationRequestParms().setDetectEvents(Utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setDetectEvents(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("P")) {
-				command.setConnectionParms(Utils.decodeConnectionParms(value));
+				command.setConnectionParms(utils.decodeConnectionParms(value));
 			} else if (name.equalsIgnoreCase("E")) {
-				command.setReasonCode(Utils.decodeReasonCode(value));
+				command.setReasonCode(utils.decodeReasonCode(value));
 			}
 		}
 
@@ -225,7 +225,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new DeleteConnectionResponse(stack, Utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new DeleteConnectionResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

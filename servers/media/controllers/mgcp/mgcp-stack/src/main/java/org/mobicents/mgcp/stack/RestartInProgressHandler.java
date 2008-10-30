@@ -93,7 +93,7 @@ public class RestartInProgressHandler extends TransactionHandler {
             String version = tokens[3].trim() + " " + tokens[4].trim();
 
             int tid = Integer.parseInt(transactionID);
-            EndpointIdentifier endpoint = Utils.decodeEndpointIdentifier(tokens[2].trim());
+            EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
             command = new RestartInProgress(getObjectSource(tid), endpoint, RestartMethod.Restart);
             command.setTransactionHandle(tid);
@@ -101,11 +101,11 @@ public class RestartInProgressHandler extends TransactionHandler {
 
         public void param(String name, String value) throws ParseException {
             if (name.equalsIgnoreCase("RM")) {
-                command.setRestartMethod(Utils.decodeRestartMethod(value));
+                command.setRestartMethod(utils.decodeRestartMethod(value));
             } else if (name.equalsIgnoreCase("RD")) {
                 command.setRestartDelay(Integer.parseInt(value));
             } else if (name.equalsIgnoreCase("E")) {
-                command.setReasonCode(Utils.decodeReasonCode(value));
+                command.setReasonCode(utils.decodeReasonCode(value));
             }
         }
 
@@ -121,7 +121,7 @@ public class RestartInProgressHandler extends TransactionHandler {
 
             int tid = Integer.parseInt(tokens[1]);
             response = new RestartInProgressResponse(stack,
-                    Utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+            		utils.decodeReturnCode(Integer.parseInt(tokens[0])));
             response.setTransactionHandle(tid);
         }
         // TODO: Add support for [NotifiedEntity] and [PackageList]

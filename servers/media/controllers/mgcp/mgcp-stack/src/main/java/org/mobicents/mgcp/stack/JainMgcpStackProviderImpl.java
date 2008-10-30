@@ -25,13 +25,12 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.TooManyListenersException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
+
+import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
 
 public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
@@ -50,11 +49,14 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 	// ends
 	protected Set<JainMgcpExtendedListener> jainMobicentsListeners = new HashSet<JainMgcpExtendedListener>();
 
-	private ExecutorService pool;
+	private QueuedExecutor eventQueue = null;
+
+	//private ExecutorService pool;
 
 	public JainMgcpStackProviderImpl(JainMgcpStackImpl runningStack) {
 		super();
-		pool = Executors.newCachedThreadPool(new ThreadFactoryImpl());
+		eventQueue = new QueuedExecutor();
+		//pool = Executors.newCachedThreadPool(new ThreadFactoryImpl());
 		this.runningStack = runningStack;
 	}
 
@@ -86,8 +88,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 		}
 	}
 
-	public void sendMgcpEvents(JainMgcpEvent[] events) throws IllegalArgumentException {
-
+	public synchronized void  sendMgcpEvents(JainMgcpEvent[] events) throws IllegalArgumentException {		
 		for (JainMgcpEvent event : events) {
 
 			if (event instanceof JainMgcpCommandEvent) {
@@ -175,7 +176,11 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 				handle.setCommand(true);
 				handle.setCommandEvent(commandEvent);
 
-				pool.execute(handle);
+				try {
+					eventQueue.execute(handle);
+				} catch (InterruptedException e) {					
+					logger.error("Error when sending the Comand "+commandEvent, e);
+				}
 				// handle.send(commandEvent);
 
 			} else {
@@ -189,7 +194,11 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 				if (handler != null) {
 					handler.setCommand(false);
 					handler.setResponseEvent((JainMgcpResponseEvent) event);
-					pool.execute(handler);
+					try {
+						eventQueue.execute(handler);
+					} catch (InterruptedException e) {
+						logger.error("Error when sending the Response "+event, e);
+					}
 				} else {
 					logger.error("The TransactionHandler not found for TransactionHandle " + tid
 							+ " May be the Tx timed out. Event = " + (JainMgcpResponseEvent) event);
@@ -335,26 +344,28 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 		return new RequestIdentifier(Long.toHexString(current));
 	}
 
-	private class ThreadFactoryImpl implements ThreadFactory {
-
-		final ThreadGroup group;
-		final AtomicInteger threadNumber = new AtomicInteger(1);
-		final String namePrefix;
-
-		ThreadFactoryImpl() {
-			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			namePrefix = "JainMgcpStackProviderImpl-CachedThreadPool-" + "thread-";
-		}
-
-		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-			if (t.isDaemon())
-				t.setDaemon(false);
-			if (t.getPriority() != Thread.NORM_PRIORITY)
-				t.setPriority(Thread.NORM_PRIORITY);
-			return t;
-		}
-
-	}
+	// private class ThreadFactoryImpl implements ThreadFactory {
+	//
+	// final ThreadGroup group;
+	// final AtomicInteger threadNumber = new AtomicInteger(1);
+	// final String namePrefix;
+	//
+	// ThreadFactoryImpl() {
+	// SecurityManager s = System.getSecurityManager();
+	// group = (s != null) ? s.getThreadGroup() :
+	// Thread.currentThread().getThreadGroup();
+	// namePrefix = "JainMgcpStackProviderImpl-CachedThreadPool-" + "thread-";
+	// }
+	//
+	// public Thread newThread(Runnable r) {
+	// Thread t = new Thread(group, r, namePrefix +
+	// threadNumber.getAndIncrement(), 0);
+	// if (t.isDaemon())
+	// t.setDaemon(false);
+	// if (t.getPriority() != Thread.NORM_PRIORITY)
+	// t.setPriority(Thread.NORM_PRIORITY);
+	// return t;
+	//		}
+	//
+	//	}
 }
