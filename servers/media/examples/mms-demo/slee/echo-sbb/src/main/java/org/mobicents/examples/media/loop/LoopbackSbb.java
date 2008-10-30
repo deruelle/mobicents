@@ -36,7 +36,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
  */
 public abstract class LoopbackSbb implements Sbb {
 
-    public final static String LOOP_ENDPOINT = "media/test/trunk/Loopback";
+    public final static String LOOP_ENDPOINT = "media/test/trunk/Loopback/$";
     private SbbContext sbbContext;
     private MsProvider msProvider;
     private MediaRaActivityContextInterfaceFactory mediaAcif;
