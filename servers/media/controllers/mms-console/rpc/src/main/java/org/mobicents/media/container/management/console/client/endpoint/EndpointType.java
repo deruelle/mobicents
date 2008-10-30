@@ -10,13 +10,13 @@ public class EndpointType implements IsSerializable{
 	public static final EndpointType PCKT_RELAY=new EndpointType("PACKET RELAY");
 	public static final EndpointType IVR=new EndpointType("IVR");
 	public static final EndpointType ANNOUNCEMENT=new EndpointType("ANNOUNCEMENT");
-	//public static final EndpointType LOOPBACK=new EndpointType("LOOPBACK");
+	public static final EndpointType LOOPBACK=new EndpointType("LOOPBACK");
 	
 	public static final EndpointType[] defined;
 	static
 	{
-		//EndpointType[] tmp=new EndpointType[]{ANNOUNCEMENT,CONF,IVR,PCKT_RELAY,LOOPBACK};
-		EndpointType[] tmp=new EndpointType[]{ANNOUNCEMENT,CONF,IVR,PCKT_RELAY};
+		EndpointType[] tmp=new EndpointType[]{ANNOUNCEMENT,CONF,IVR,PCKT_RELAY,LOOPBACK};
+		//EndpointType[] tmp=new EndpointType[]{ANNOUNCEMENT,CONF,IVR,PCKT_RELAY};
 		defined=tmp;
 		
 	}
