@@ -184,7 +184,7 @@ public abstract class CallSbb implements Sbb {
             return;
         }
 
-        logger.info("Starting demo application");
+        logger.info("Starting demo application, sdp=\n" + sdp);
         aci.attach(demo);
         demo.startDemo(evt.getConnection().getEndpoint().getLocalName());
     }
