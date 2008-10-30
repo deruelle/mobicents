@@ -29,9 +29,8 @@ public class MainOpenRTP extends javax.swing.JDialog {
     /** Creates new form MainOpenRTP */
     public MainOpenRTP(java.awt.Frame parent, String clientIP) {
         super(parent);
-        initComponents();
         this.clientIP = clientIP;
-
+        initComponents();
     }
 
 
@@ -52,7 +51,8 @@ public class MainOpenRTP extends javax.swing.JDialog {
         jLabel1.setText(resourceMap.getString("jLabel1.text")); // NOI18N
         jLabel1.setName("jLabel1"); // NOI18N
 
-        jTextFieldRTPAddress.setText(resourceMap.getString("jTextFieldRTPAddress.text")); // NOI18N
+        System.out.println("Setting Jboss bind addresss "+this.clientIP);
+        jTextFieldRTPAddress.setText(this.clientIP); // NOI18N
         jTextFieldRTPAddress.setName("jTextFieldRTPAddress"); // NOI18N
 
         jLabel2.setText(resourceMap.getString("jLabel2.text")); // NOI18N

@@ -109,12 +109,10 @@ public class EchoLoadTest {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			} catch (CreateProviderException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -182,13 +180,26 @@ public class EchoLoadTest {
 	}
 
 	public void cancel() {
-		for (ScheduledFuture<?> future : listOfFuture) {
-			boolean result = future.cancel(false);
-			System.out.println("Future " + future + " cancel result = " + result);
-		}
+
 		getScheduler().shutdown();
 
-		// TODO : Should we wait for sometime before closing the MGCP Stack?
+		int arrayIndex = 0;
+		for (ScheduledFuture<?> future : listOfFuture) {
+			future.cancel(false);
+			arrayIndex++;
+		}
+
+		// Lets wait for all canceled task to complete first before stopping the
+		// MGCP Stack. 2 min is enough delay?
+		try {
+			System.out.println("Waiting for 2 min before closing stack. CLEANING!");
+			Thread.sleep(1000 * 60 * 2);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("Stopping Stack now");
+
 		for (JainMgcpStackImpl stack : listOfJainMgcpStackImpl) {
 			stack.close();
 		}

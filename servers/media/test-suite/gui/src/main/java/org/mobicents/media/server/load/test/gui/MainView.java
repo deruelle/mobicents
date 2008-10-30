@@ -524,7 +524,7 @@ private void jButtonOpenRTPActionPerformed(java.awt.event.ActionEvent evt) {//GE
     public void showOpenRTP() {
         if (openRTP == null) {
             JFrame mainFrame = Main.getApplication().getMainFrame();
-            openRTP = new MainOpenRTP(mainFrame, jTextFieldTestIP.getText());
+            openRTP = new MainOpenRTP(mainFrame, this.test.getJbossBindAddress());
             openRTP.setLocationRelativeTo(mainFrame);
         }
         Main.getApplication().show(openRTP);
@@ -602,11 +602,13 @@ private void jButtonOpenRTPActionPerformed(java.awt.event.ActionEvent evt) {//GE
 
         jTextFieldUACount.setEditable(false);
         jTextFieldJBossBindAdd.setEditable(false);
-        jTextFieldTestIP.setEnabled(false);
+        jTextFieldTestIP.setEditable(false);
         jTextFieldServerMGCPPort.setEditable(false);
 
         jTextFieldAudioFilePlay.setEditable(false);
-        jTextFieldAudioFileRecord.setEditable(false);       
+        jTextFieldAudioFileRecord.setEditable(false);  
+        jTextFieldClientMGCPPort.setEditable(false);
+        jComboBoxClientCodec.setEnabled(false);
 
         test = new EchoLoadTest(testIdentifier);
 
@@ -638,20 +640,21 @@ private void jButtonOpenRTPActionPerformed(java.awt.event.ActionEvent evt) {//GE
     }// GEN-LAST:event_jButtonStartActionPerformed
 
     private void jButtonStopActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_jButtonStopActionPerformed
-        // TODO add your handling code here:
-
-        myPeriodicTask.cancel(false);
+        
         System.out.println("Stop the test here baby");
 
         jTextFieldUACount.setEditable(true);
         jTextFieldJBossBindAdd.setEditable(true);
-        jTextFieldTestIP.setEnabled(true);
+        jTextFieldTestIP.setEditable(true);
         jTextFieldServerMGCPPort.setEditable(true);
 
         jTextFieldAudioFilePlay.setEditable(true);
         jTextFieldAudioFileRecord.setEditable(true);
+        jTextFieldClientMGCPPort.setEditable(true);
+        jComboBoxClientCodec.setEnabled(true);
 
         test.cancel();
+        myPeriodicTask.cancel(false);
 
         jButtonStart.setEnabled(true);
         jButtonStop.setEnabled(false);

@@ -301,7 +301,7 @@ public class AnnouncementUA implements Runnable {
 
 		private void sendDeleteConnectionMGCPRequest() {
 			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
-			deleteConnection.setConnectionIdentifier(connectionIdentifier);
+			//deleteConnection.setConnectionIdentifier(connectionIdentifier);
 			deleteConnection.setTransactionHandle(provider.getUniqueTransactionHandler());
 
 			provider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
@@ -442,8 +442,7 @@ public class AnnouncementUA implements Runnable {
 		InetAddress clientMachineIPAddress = null;
 		try {
 			clientMachineIPAddress = InetAddress.getByName("127.0.0.1");
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+		} catch (UnknownHostException e) {		
 			e.printStackTrace();
 		}
 		AnnouncementUA ua = new AnnouncementUA(1, clientMachineIPAddress, "127.0.0.1", 2729, null, null, AVProfile.PCMU);
