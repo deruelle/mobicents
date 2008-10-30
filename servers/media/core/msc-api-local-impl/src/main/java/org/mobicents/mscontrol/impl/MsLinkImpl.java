@@ -55,7 +55,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
     private static final long serialVersionUID = 6373269860176309745L;
     
-    protected Logger logger = Logger.getLogger(this.getClass());
+    protected transient Logger logger = Logger.getLogger(this.getClass());
 
     private final String id = (new UID()).toString();
     protected MsSessionImpl session;

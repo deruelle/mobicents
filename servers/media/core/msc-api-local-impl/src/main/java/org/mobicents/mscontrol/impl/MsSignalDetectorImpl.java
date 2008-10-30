@@ -44,7 +44,7 @@ public class MsSignalDetectorImpl implements MsSignalDetector, NotificationListe
     private MsProviderImpl provider;
     private String id = (new UID()).toString();
     private ArrayList<MsResourceListener> listeners = new ArrayList<MsResourceListener>();
-    private Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
+    private transient Logger logger = Logger.getLogger(MsSignalDetectorImpl.class);
 
     /** Creates a new instance of MsSignalDetectorImpl */
     public MsSignalDetectorImpl(MsProviderImpl provider, String endpointName) {

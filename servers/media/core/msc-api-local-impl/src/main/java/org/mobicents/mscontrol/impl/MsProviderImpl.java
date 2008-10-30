@@ -47,7 +47,7 @@ import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
  */
 public class MsProviderImpl implements MsProvider, Serializable {
 	
-	private static Logger logger = Logger.getLogger(MsProviderImpl.class);
+	private transient static Logger logger = Logger.getLogger(MsProviderImpl.class);
 
 	/**
 	 * 
@@ -59,8 +59,8 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
 	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
-	protected static ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
-        private static QueuedExecutor eventQueue = new QueuedExecutor();
+	protected static transient ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
+        private static transient QueuedExecutor eventQueue = new QueuedExecutor();
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
 		
