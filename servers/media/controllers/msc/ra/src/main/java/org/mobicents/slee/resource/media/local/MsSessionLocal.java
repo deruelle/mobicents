@@ -8,6 +8,7 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.mobicents.mscontrol.MsConnection;
@@ -27,8 +28,8 @@ public class MsSessionLocal implements MsSession {
 
     private MsSession session;
     private MsProviderLocal provider;
-    protected ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
-    protected ConcurrentReaderHashMap links = new ConcurrentReaderHashMap();
+    protected ConcurrentHashMap connections = new ConcurrentHashMap();
+    protected ConcurrentHashMap links = new ConcurrentHashMap();
     private ReentrantLock blockState = new ReentrantLock();
     private Condition connectionActivityCreated = blockState.newCondition();
     private Condition linkActivityCreated = blockState.newCondition();
