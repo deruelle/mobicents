@@ -70,4 +70,8 @@ public class DFTEndpointImpl extends BaseEndpoint {
         // TODO Auto-generated method stub
         return null;
     }
+
+	public String[] getSupportedPackages() {		
+		return new String[]{};
+	}
 }

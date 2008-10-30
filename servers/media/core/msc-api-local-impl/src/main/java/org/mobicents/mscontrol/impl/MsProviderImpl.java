@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
+import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsProvider;
@@ -167,7 +168,8 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		List<MsConnection> msConnectionList = new ArrayList<MsConnection>();
 		for (MsSession e : sessions) {
 			for (MsConnection c : e.getConnections()) {
-				if (c.getEndpoint().getLocalName().equals(endpointName)) {
+				MsEndpoint endpoint = c.getEndpoint();
+				if (endpoint!=null && endpoint.getLocalName().equals(endpointName)) {
 					msConnectionList.add(c);
 				}
 			}

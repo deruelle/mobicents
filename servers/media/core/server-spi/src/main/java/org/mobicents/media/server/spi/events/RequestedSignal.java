@@ -29,10 +29,15 @@ package org.mobicents.media.server.spi.events;
 
 import java.io.Serializable;
 
+import org.mobicents.media.server.spi.NotificationListener;
+
 /**
  *
  * @author Oleg Kulikov
  */
 public interface RequestedSignal extends Serializable {
     public EventIdentifier getID();    
+    
+    public void setHandler(NotificationListener listener);
+    public NotificationListener getHandler();    
 }

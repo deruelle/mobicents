@@ -66,4 +66,8 @@ public class PREndpointImpl extends BaseVirtualEndpoint implements ConnectionLis
             connections[0].getDemux().connect(connections[1].getMux());
         }
     }
+
+	public String[] getSupportedPackages() {
+		return new String[]{};
+	}
 }

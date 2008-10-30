@@ -279,5 +279,10 @@ public class BaseConnectionTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		public String[] getSupportedPackages() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

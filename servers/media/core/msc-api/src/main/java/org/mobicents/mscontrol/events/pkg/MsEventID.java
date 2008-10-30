@@ -38,7 +38,7 @@ public class MsEventID implements MsEventIdentifier {
     private String packageName;
     private String eventName;
     
-    protected MsEventID(String packageName, String eventName) {
+    public MsEventID(String packageName, String eventName) {
         this.packageName = packageName;
         this.eventName = eventName;
     }

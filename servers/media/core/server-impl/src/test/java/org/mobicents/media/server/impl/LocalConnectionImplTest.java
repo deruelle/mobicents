@@ -272,6 +272,11 @@ public class LocalConnectionImplTest {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		public String[] getSupportedPackages() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
     
     private class Source extends AbstractSource implements Runnable {

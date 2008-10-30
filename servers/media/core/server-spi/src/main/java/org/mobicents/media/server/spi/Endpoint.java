@@ -114,4 +114,10 @@ public interface Endpoint extends Serializable {
 	 * @param listener
 	 */
 	public void removeConnectionListener(ConnectionListener listener);
+	
+	/**
+	 * This method gives the array of Supported Packages for given Endpoint.
+	 * @return String[]
+	 */
+	public String[] getSupportedPackages();
 }

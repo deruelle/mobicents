@@ -22,6 +22,7 @@ import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 
 /**
@@ -66,6 +67,12 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
     public HashMap initMediaSinks() {
         return new HashMap();
     }
+
+
+	public String[] getSupportedPackages() {
+		String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME};
+		return supportedpackages;
+	}
 
 
 }

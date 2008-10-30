@@ -37,7 +37,7 @@ public final class EventID implements EventIdentifier {
     private String packageName;
     private String eventName;
      
-    protected EventID(String packageName, String eventName) {
+    public EventID(String packageName, String eventName) {
         this.packageName = packageName;
         this.eventName = eventName;
     }

@@ -132,4 +132,13 @@ public interface MsEndpoint extends Serializable {
 	 * @param listener
 	 */
 	public void removeConnectionListener(MsConnectionListener listener);
+	
+	/**
+	 * This method gives the array of Supported Packages for given Endpoint.
+	 * 
+	 * @return String[]
+	 */
+	public String[] getSupportedPackages();	
+	
+	
 }

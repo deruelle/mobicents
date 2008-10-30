@@ -160,6 +160,10 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         }
     }
 
+	public String[] getSupportedPackages() {		
+		return new String[]{};
+	}
+
 	
 
 }

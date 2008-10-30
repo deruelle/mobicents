@@ -23,25 +23,28 @@ import java.util.Timer;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.events.EventPackage;
+import org.mobicents.media.server.impl.events.PackageNotSupportedEventImpl;
+import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.FacilityException;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.impl.events.EventPackage;
-import org.mobicents.media.server.local.management.EndpointLocalManagement;
-
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-import org.mobicents.media.MediaSink;
-import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.events.EventIdentifier;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
+import org.mobicents.media.server.spi.events.pkg.EventID;
+
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 
 /**
  * The basic implementation of the endpoint.
@@ -80,8 +83,8 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     
     protected int maxConnections = 0;
     
-    protected transient ArrayList<NotificationListener> listeners = new ArrayList();
-    protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList();
+    protected transient ArrayList<NotificationListener> listeners = new ArrayList<NotificationListener>();
+    protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList<ConnectionListener>();
     
     protected transient static Timer connectionTimer = new Timer();
     
@@ -443,6 +446,61 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     }
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
+    	
+    	
+		boolean supports = false;
+		String packageName = null;
+
+		String[] supportedPackages = this.getSupportedPackages();
+
+		// if (supportedPackages == null || (supportedPackages != null &&
+		// supportedPackages.length == 0)) {
+		// throw new PackageNotSupportedException(this.getLocalName() + "
+		// doesn't support any packages");
+		// }
+
+		for (int i = 0; i < events.length; i++) {
+
+			supports = false;
+			packageName = events[i].getID().getPackageName();
+		
+			for (String s : supportedPackages) {
+
+				if (s.equals(packageName)) {
+					supports = true;
+					break;
+				}
+			}
+			if (!supports) {
+				logger.error(this.getLocalName() + "doesn't support package " + packageName);
+				EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+				NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+				events[i].getHandler().update(notifyEvent);
+				return;
+			}
+
+		}
+
+		// TODO : Supported only one signal for now
+		RequestedSignal requestedSignal = signals[0];
+		supports = false;
+		packageName = requestedSignal.getID().getPackageName();
+
+		for (String s : supportedPackages) {
+			if (s.equals(packageName)) {
+				supports = true;
+				break;
+			}
+		}
+
+		if (!supports) {
+			logger.error(this.getLocalName() + "doesn't support package " + packageName);
+			EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+			NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+			requestedSignal.getHandler().update(notifyEvent);
+			return;
+		}    	
+    	
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
 
         connection.detect(null);

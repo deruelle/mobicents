@@ -116,6 +116,7 @@ public class MsEndpointImpl implements MsEndpoint {
             RequestedSignal[] s = new RequestedSignal[signals.length];
             for (int i = 0; i < signals.length; i++) {
                 s[i] = ((BaseRequestedSignal) signals[i]).convert();
+                s[i].setHandler(listener);
             }
 
             RequestedEvent[] evt = new RequestedEvent[events.length];
@@ -126,4 +127,8 @@ public class MsEndpointImpl implements MsEndpoint {
             server.execute(s, evt, connectionID);
         }
     }
+    
+	public String[] getSupportedPackages() {
+		return this.server.getSupportedPackages();
+	}
 }

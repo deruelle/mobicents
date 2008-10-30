@@ -27,27 +27,27 @@
 
 package org.mobicents.media.server.spi.events.audio;
 
+import org.mobicents.media.server.spi.events.AbstractRequestedSignal;
 import org.mobicents.media.server.spi.events.EventIdentifier;
-import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.pkg.Audio;
 
 /**
- *
+ * 
  * @author kulikov
  */
-public class RecordRequestedSignal implements RequestedSignal {
+public class RecordRequestedSignal extends AbstractRequestedSignal {
 
-    private String file;
-    
-    public EventIdentifier getID() {
-        return Audio.RECORD;
-    }
+	private String file;
 
-    public String getFile() {
-        return file;
-    }
-    
-    public void setFile(String file) {
-        this.file = file;
-    }
+	public EventIdentifier getID() {
+		return Audio.RECORD;
+	}
+
+	public String getFile() {
+		return file;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
 }

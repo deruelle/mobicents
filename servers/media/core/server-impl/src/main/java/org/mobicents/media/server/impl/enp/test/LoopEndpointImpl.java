@@ -94,4 +94,8 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     public void setGatherPerformanceFlag(boolean flag) {
         // TODO Auto-generated method stub
     }
+
+	public String[] getSupportedPackages() {
+		return new String[]{};
+	}
 }

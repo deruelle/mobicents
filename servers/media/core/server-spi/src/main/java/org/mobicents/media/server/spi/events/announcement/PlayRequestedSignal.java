@@ -27,27 +27,27 @@
 
 package org.mobicents.media.server.spi.events.announcement;
 
+import org.mobicents.media.server.spi.events.AbstractRequestedSignal;
 import org.mobicents.media.server.spi.events.EventIdentifier;
-import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class PlayRequestedSignal implements RequestedSignal {
+public class PlayRequestedSignal extends AbstractRequestedSignal {
 
-    private String url;
-    
-    public EventIdentifier getID() {
-        return Announcement.PLAY;
-    }
+	private String url;
 
-    public void setURL(String url) {
-        this.url = url;
-    }
-    
-    public String getURL() {
-        return url;
-    }
+	public EventIdentifier getID() {
+		return Announcement.PLAY;
+	}
+
+	public void setURL(String url) {
+		this.url = url;
+	}
+
+	public String getURL() {
+		return url;
+	}
 }

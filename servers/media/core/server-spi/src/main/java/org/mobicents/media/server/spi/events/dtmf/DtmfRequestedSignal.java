@@ -27,15 +27,15 @@
 
 package org.mobicents.media.server.spi.events.dtmf;
 
+import org.mobicents.media.server.spi.events.AbstractRequestedSignal;
 import org.mobicents.media.server.spi.events.EventIdentifier;
-import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class DtmfRequestedSignal implements RequestedSignal {
+public class DtmfRequestedSignal extends AbstractRequestedSignal {
 
     private String tone;
     
