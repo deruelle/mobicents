@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.TooManyListenersException;
 import java.util.Vector;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.sdp.Attribute;
 import javax.sdp.MediaDescription;
@@ -54,9 +56,9 @@ public class AnnouncementUA implements Runnable {
 
 	private boolean taskCompleted = false;
 
-	private String name = "null";
+	private volatile String name = "null";
 
-	private int UACount = 0;
+	private volatile int UACount = 0;
 	private InetAddress clientMachineIPAddress;
 
 	private String jbossBindAddress;
@@ -64,21 +66,25 @@ public class AnnouncementUA implements Runnable {
 
 	private JainMgcpStackProviderImpl provider = null;
 
-	private EndpointIdentifier endpointID = null;
-	private ConnectionIdentifier connectionIdentifier = null;
+	private volatile EndpointIdentifier endpointID = null;
+	private volatile ConnectionIdentifier connectionIdentifier = null;
 
-	private EchoLoadTest echoLoadTest;
+	private volatile EchoLoadTest echoLoadTest;
 
 	private JainMgcpListnerImpl listenerImpl = null;
 
 	private boolean openRTP = false;
 
-	private boolean oc = true;
-	
-	private RTPAudioFormat format;
+	private volatile boolean oc = true;
+
+	private volatile RTPAudioFormat format;
+
+	private volatile ReentrantLock blockState = new ReentrantLock();
+	private volatile Condition taskCompletedCond = blockState.newCondition();
 
 	public AnnouncementUA(int UACount, InetAddress clientMachineIPAddress, String jbossBindAddress,
-			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest, RTPAudioFormat format) {
+			int serverMGCPStackPort, JainMgcpStackProviderImpl provider, EchoLoadTest echoLoadTest,
+			RTPAudioFormat format) {
 		this.UACount = UACount;
 		this.name = "AnnouncementUA" + UACount;
 
@@ -93,10 +99,12 @@ public class AnnouncementUA implements Runnable {
 	}
 
 	public void run() {
-		logger.info(this.name + "Starting the AnnouncementUA = " + this.name);
-		oc = true;
+		blockState.lock();
 
 		try {
+			logger.info(this.name + "Starting the AnnouncementUA = " + this.name);
+			oc = true;
+
 			this.setTaskCompleted(false);
 
 			listenerImpl = new JainMgcpListnerImpl();
@@ -124,9 +132,11 @@ public class AnnouncementUA implements Runnable {
 			while (!isTaskCompleted()) {
 
 				try {
-					Thread.sleep(3000);
+					taskCompletedCond.await();
+
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+					// ignore
 				}
 			}
 
@@ -135,6 +145,8 @@ public class AnnouncementUA implements Runnable {
 			logger.error("TooManyListenersException ", tmlex);
 		} catch (ConflictingParameterException e) {
 			logger.error("ConflictingParameterException ", e);
+		} finally {
+			blockState.unlock();
 		}
 
 	}
@@ -186,6 +198,13 @@ public class AnnouncementUA implements Runnable {
 				// cleanUp();
 
 				// Send DeleteConnection
+				// This is work arround for activity end exception at server
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				sendDeleteConnectionMGCPRequest();
 
 				// sendNotificationRequestMGCPRequest();
@@ -301,7 +320,7 @@ public class AnnouncementUA implements Runnable {
 
 		private void sendDeleteConnectionMGCPRequest() {
 			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
-			//deleteConnection.setConnectionIdentifier(connectionIdentifier);
+			// deleteConnection.setConnectionIdentifier(connectionIdentifier);
 			deleteConnection.setTransactionHandle(provider.getUniqueTransactionHandler());
 
 			provider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
@@ -346,6 +365,14 @@ public class AnnouncementUA implements Runnable {
 		provider.removeJainMgcpListener(listenerImpl);
 		listenerImpl = null;
 		setTaskCompleted(true);
+
+		blockState.lock();
+		try {
+			this.taskCompletedCond.signalAll();
+		} finally {
+			blockState.unlock();
+		}
+
 	}
 
 	private String getLocalDescriptor(int port) {
@@ -377,7 +404,6 @@ public class AnnouncementUA implements Runnable {
 			// encode formats
 			HashMap fmts = new HashMap();
 			fmts.put(AVProfile.getPayload(this.format), this.format);
-			
 
 			Object[] payloads = getPayloads(fmts).toArray();
 
@@ -410,7 +436,7 @@ public class AnnouncementUA implements Runnable {
 		} catch (SdpException e) {
 			logger.error("Could not create descriptor", e);
 		}
-		logger.debug(" SDP = "+localSDP.toString());
+		logger.debug(" SDP = " + localSDP.toString());
 		return localSDP.toString();
 	}
 
@@ -442,12 +468,11 @@ public class AnnouncementUA implements Runnable {
 		InetAddress clientMachineIPAddress = null;
 		try {
 			clientMachineIPAddress = InetAddress.getByName("127.0.0.1");
-		} catch (UnknownHostException e) {		
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		AnnouncementUA ua = new AnnouncementUA(1, clientMachineIPAddress, "127.0.0.1", 2729, null, null, AVProfile.PCMU);
 
-		System.out.println("getLocalDescriptor = " + ua.getLocalDescriptor(1));
 		// ua.run();
 	}
 
