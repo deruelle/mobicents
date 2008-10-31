@@ -18,6 +18,7 @@ package org.mobicents.media.server.spi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -42,6 +43,13 @@ public class EndpointQuery {
 
 	protected static Logger logger = Logger.getLogger(EndpointQuery.class.getCanonicalName());
 
+	/**
+	 * This matches xxxxxxxxxxxx/end-y<br>
+	 * where x is any character, y is any number of digits
+	 */
+	protected static final String exactNameRegex = ".*enp-\\d*$";
+	protected static final String trunkNameRegex = ".*\\$$";
+
 	public static synchronized Endpoint findAny(String name) throws NamingException, ResourceUnavailableException {
 		InitialContext ic = new InitialContext();
 
@@ -64,51 +72,61 @@ public class EndpointQuery {
 					return endpoint;
 				}
 			} else {
-				logger.info("Wrong class[" + obj.getClass() + "], it doesnt implement [" + Endpoint.class
-						+ "], if it does, its a class loader issue!!!");
+				logger.info("Wrong class[" + obj.getClass() + "], it doesnt implement [" + Endpoint.class + "], if it does, its a class loader issue!!!");
 			}
 		}
 
 		throw new ResourceUnavailableException("Endpoint unknown or in use[" + name + "]");
 	}
 
-	public static synchronized Collection findAll(String name) throws NamingException {
-		InitialContext ic = new InitialContext();
-		ArrayList endpoints = new ArrayList();
+	public static synchronized Collection findAll(String name) throws NamingException, ResourceUnavailableException {
 
-		Context ctx = (Context) ic.lookup(name);
+		try {
+			InitialContext ic = new InitialContext();
+			ArrayList endpoints = new ArrayList();
 
-		NamingEnumeration list = ctx.listBindings("");
-		while (list.hasMore()) {
-			Binding binding = (Binding) list.next();
+			Context ctx = (Context) ic.lookup(name);
 
-			String bindingName = binding.getName();
-			Endpoint endpoint = (Endpoint) binding.getObject();
-			endpoints.add(endpoint);
+			NamingEnumeration list = ctx.listBindings("");
+			while (list.hasMore()) {
+				Binding binding = (Binding) list.next();
+
+				String bindingName = binding.getName();
+				Endpoint endpoint = (Endpoint) binding.getObject();
+				endpoints.add(endpoint);
+			}
+
+			return endpoints;
+		} catch (ClassCastException cce) {
+			throw new ResourceUnavailableException(cce);
 		}
-
-		return endpoints;
 	}
 
 	public static synchronized Endpoint find(String name) throws NamingException, ResourceUnavailableException {
 		InitialContext ic = new InitialContext();
 
-		EndpointName enpName = new EndpointName(name);
-		Object f = ic.lookup(enpName.getContextName());
-		if (f instanceof VirtualEndpoint) {
-			return ((VirtualEndpoint) f).getEndpoint(name);
+		if (Pattern.matches(exactNameRegex, name)) {
+			EndpointName enpName = new EndpointName(name);
+			Object f = ic.lookup(enpName.getContextName());
+			if (f instanceof VirtualEndpoint) {
+				return ((VirtualEndpoint) f).getEndpoint(name);
+			} else {
+				throw new ResourceUnavailableException("Name: " + name + " doesnt point to VirtualEndpoint, actual object class: " + f.getClass().getCanonicalName() + "!!!");
+			}
+		} else {
+			throw new ResourceUnavailableException("Name: " + name + " is not an endpoint name!!!");
 		}
 
-		Endpoint endpoint = (Endpoint) ic.lookup(name);
-		return endpoint;
 	}
 
 	public static Endpoint lookup(String name) throws NamingException, ResourceUnavailableException {
-		if (name.endsWith("/$")) {
+		if (Pattern.matches(trunkNameRegex, name)) {
 			name = name.substring(0, name.indexOf("/$"));
 			return findAny(name);
-		} else {
+		} else if (Pattern.matches(exactNameRegex, name)) {
 			return find(name);
+		} else {
+			throw new ResourceUnavailableException("Name: " + name + " is neither trunk name nor an endpoint name!!!");
 		}
 	}
 }
