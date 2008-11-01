@@ -67,27 +67,18 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     protected final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
     protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    
     protected final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     protected final static Format[] formats = new Format[]{LINEAR, DTMF};
-    
     protected String localName;
     protected String rtpFactoryName;
-    
     protected transient HashMap<String, HashMap> mediaSources = new HashMap<String, HashMap>();
     protected transient HashMap<String, HashMap> mediaSinks = new HashMap<String, HashMap>();
-    
     protected boolean hasConnections;
-    
     private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
-    
     protected int maxConnections = 0;
-    
     protected transient ArrayList<NotificationListener> listeners = new ArrayList<NotificationListener>();
     protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList<ConnectionListener>();
-    
     protected transient static Timer connectionTimer = new Timer();
-    
     protected transient Logger logger = Logger.getLogger(this.getClass());    // ----------- SOME MGMT info
     protected long creationTime = System.currentTimeMillis();
     protected boolean gatherStatistics = false;
@@ -446,61 +437,60 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     }
 
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-    	
-    	
-		boolean supports = false;
-		String packageName = null;
+        boolean supports = false;
+        String packageName = null;
 
-		String[] supportedPackages = this.getSupportedPackages();
+        String[] supportedPackages = this.getSupportedPackages();
 
-		// if (supportedPackages == null || (supportedPackages != null &&
-		// supportedPackages.length == 0)) {
-		// throw new PackageNotSupportedException(this.getLocalName() + "
-		// doesn't support any packages");
-		// }
+        // if (supportedPackages == null || (supportedPackages != null &&
+        // supportedPackages.length == 0)) {
+        // throw new PackageNotSupportedException(this.getLocalName() + "
+        // doesn't support any packages");
+        // }
+        System.out.println("Events length=" + events.length);
+        for (int i = 0; i < events.length; i++) {
 
-		for (int i = 0; i < events.length; i++) {
+            supports = false;
+            packageName = events[i].getID().getPackageName();
 
-			supports = false;
-			packageName = events[i].getID().getPackageName();
-		
-			for (String s : supportedPackages) {
+            for (String s : supportedPackages) {
+                if (s.equals(packageName)) {
+                    supports = true;
+                    break;
+                }
+            }
+            if (!supports) {
+                logger.error(this.getLocalName() + "doesn't support package " + packageName);
+                EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+                NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+                events[i].getHandler().update(notifyEvent);
+                return;
+            }
 
-				if (s.equals(packageName)) {
-					supports = true;
-					break;
-				}
-			}
-			if (!supports) {
-				logger.error(this.getLocalName() + "doesn't support package " + packageName);
-				EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-				NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-				events[i].getHandler().update(notifyEvent);
-				return;
-			}
+        }
 
-		}
+        // TODO : Supported only one signal for now
+        RequestedSignal requestedSignal = null;
+        if (signals.length > 0) {
+            requestedSignal = signals[0];
+            supports = false;
+            packageName = requestedSignal.getID().getPackageName();
 
-		// TODO : Supported only one signal for now
-		RequestedSignal requestedSignal = signals[0];
-		supports = false;
-		packageName = requestedSignal.getID().getPackageName();
+            for (String s : supportedPackages) {
+                if (s.equals(packageName)) {
+                    supports = true;
+                    break;
+                }
+            }
 
-		for (String s : supportedPackages) {
-			if (s.equals(packageName)) {
-				supports = true;
-				break;
-			}
-		}
-
-		if (!supports) {
-			logger.error(this.getLocalName() + "doesn't support package " + packageName);
-			EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-			NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-			requestedSignal.getHandler().update(notifyEvent);
-			return;
-		}    	
-    	
+            if (!supports) {
+                logger.error(this.getLocalName() + "doesn't support package " + packageName);
+                EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+                NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+                requestedSignal.getHandler().update(notifyEvent);
+                return;
+            }
+        }
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
 
         connection.detect(null);
@@ -508,7 +498,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
             connection.detect(events[i]);
         }
 
-        if (signals.length > 0) {
+        if (requestedSignal != null) {
             try {
                 AbstractSignal signal = getSignal(signals[0]);
                 signal.apply(connection);
