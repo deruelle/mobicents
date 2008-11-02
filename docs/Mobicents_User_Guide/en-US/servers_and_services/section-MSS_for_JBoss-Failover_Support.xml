@@ -2,8 +2,9 @@
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
 <section
-	id="section-Mobicents_SIP_Servlets_Failover_Support.xml">
-	<title>Mobicents SIP Servlets Failover Support</title>
+	id="section-MSS_for_JBoss-Failover_Support">
+	<title>MSS for JBoss: Failover Support</title>
 	<para></para>
 </section>
+
 
