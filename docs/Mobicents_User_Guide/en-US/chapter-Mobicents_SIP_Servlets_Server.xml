@@ -13,9 +13,6 @@
 		href="servers_and_services/section-Mobicents_SIP_Servlets_Load_Balancer.xml" />
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="servers_and_services/section-Mobicents_SIP_Servlets_Clustering_Support.xml" />
-	<xi:include
-		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="servers_and_services/section-Mobicents_SIP_Servlets_Failover_Support.xml" />
+		href="servers_and_services/section-Clustering_and_Failover_Support_for_SIP-Servletized_JBoss_AS_Nodes.xml" />
 </chapter>
 

@@ -7,12 +7,12 @@
 	<para>The Mobicents SIP load balancer is used to balance the load of SIP-related services in order to achieve performance scalability and high-availability of SIP services. It is a very simple proxy that is useful in SIP-based <acronym>VoIP</acronym> installations where there are multiple ingress proxy servers. The Mobicents SIP load balancer permits the pooling of these servers, thereby eliminating the need to balance user demands for connectivity through a complicated provisioning algorithm.</para>
 	<para>All users can send their <literal>INVITE</literal>s and <literal>REGISTER</literal>s to the same SIP URI, and the Load Balancer will assign ingress proxy servers dynamically to each transaction. In this way, the traffic load is balanced over a pool of proxy servers based on the real-time demand for services.</para>
 	<para>The Mobicents SIP load balancer distributes requests across the healthy and available instances in the cluster to increase the throughput of the overall system. It can also fail-over mid-call requests from unhealthy and/or inaccessible instances to healthy and available instances.</para>
-	<para>The Mobicents SIP load balancer implementation, its installation, configuration and an example application, are detailed below. More information on the SIP load balancer can be found here: <ulink
+	<para>The Mobicents SIP load balancer implementation, its installation, configuration and an 	 example application, are detailed below. More information on the SIP load balancer can be found here: <ulink
 			url="http://groups.google.com/group/mobicents-public/web/mobicents-sip-balancer">Mobicents SIP High-Availability and Clustering</ulink>.</para>
 	<formalpara
 		id="formalpara-Mobicents_SIP_Servlets_Load_Balancer-Implementation">
 		<title>Implementation of the Mobicents SIP Servlets Load Balancer</title>
-		<para>Individual instances of Mobicents SIP Servlet Servers, which may run atop either the JBoss Application Server or the Tomcat Servlet Container (the server pool may also be comprise of a mixture of the two), are responsible for contacting the Load Balancer and sending their health status as well as heartbeats to it. These node are obtained from a list of Mobicents SIP Servlets Servers, which is created at runtime.</para>
+		<para>Individual instances of Mobicents SIP Servlet Servers, which may run atop either the JBoss Application Server or the Tomcat Servlet Container (the server pool may also be comprise of a mixture of the two), are responsible for contacting the load balancer and sending their health status as well as heartbeats to it. In fact, only by healthy nodes sending their status and heartbeats to the SIP load balancer does the load balancer recognize that they are available nodes to forward SIP requests to.</para>  
 	</formalpara>
 	<para>The SIP load balancer first receives SIP requests from endpoints on a port that is specified in its Configuration Properties configuration file. The SIP load balancer, using a round-robin algorithm, then selects a node to which it forwards the SIP requests, using a different port. The SIP load balancer will forward all same-session requests to the node first selected to initiate the session, as long as that node is healthy and available.</para>
 		<!-- original
@@ -36,7 +36,8 @@
 				<varlistentry>
 					<term>A SIP Servlet-Enabled JBoss Application Server or Tomcat Servlet Container</term>
 					<listitem>
-						<para>Running the SIP load balancer requires at least one SIP Servlets Server as a client node, although you obviously cannot test or do anything interesting with your setup until you start at least two nodes. Therefore, before playing around with the SIP load balancer, we should make sure we've installed a SIP Servlets Server first. The Mobicents SIP load balancer will work with a SIP Servlets-enabled JBoss Application Server <emphasis>or</emphasis> a SIP Servlets-enabled Tomcat Container. Keep in mind, however, that only SIP Servlets-enabled JBoss Application Servers can be clustered for performance, reliability and failover purposes.</para>
+						<para>Running the SIP load balancer requires at least one SIP Servlets Server as a client node, although you obviously cannot test or do anything interesting with your setup until you start at least two nodes. Therefore, before playing around with the SIP load balancer, we should make sure we've installed a SIP Servlets Server first. The Mobicents SIP load balancer will work with a SIP Servlets-enabled JBoss Application Server <emphasis>or</emphasis> a SIP Servlets-enabled Tomcat Container.</para>
+						<para>However, if you intend to cluster multiple nodes for performance, reliability and failover purposes, then you will want to install and set up SIP Servlets-enabled JBoss AS nodes, because only they can be clustered, and not SIP-Servletized Tomcat Containers.</para>
 						<itemizedlist>
 							<listitem>
 								<para>To install a SIP Servlet-enabled JBoss Application Server, follow the instructions here: <xref
@@ -63,7 +64,7 @@
 								url="http://snapshots.jboss.org/maven2/org/mobicents/tools/sip-balancer/1.0-SNAPSHOT//sip-balancer-1.0-20080829.103906-21-jar-with-dependencies.jar">Mobicents SIP load balancer executable JAR file</ulink>.</para>
 					</listitem>
 				</varlistentry>
-				<varlistentry>
+				<varlistentry id="varlistentry-binary-SIP_Load_Balancer-Configuration_Properties_File">
 					<term>The SIP load balancer Configuration Properties file</term>
 					<listitem>
 						<para>In addition, you must download the default <ulink
@@ -89,12 +90,12 @@
 		<section
 			id="section-binary-SIP_Load_Balancer-Configuring">
 			<title>Configuring</title>
-			<para>Configuring the SIP load balancer and the two SIP Servlets-enabled Server nodes is not difficult. For the sake of these instructions, we are going to assume that you are setting up a single SIP load balancer (we'll call it <quote>SLB</quote> for short) with two SIP Servlets Server nodes, one based on the JBoss Application Server (<quote>JSS-Node</quote>, short for <quote>JBoss Servlets Server Node</quote>) and the other based on the Tomcat Servlet Container (<quote>TSS-Node</quote>). (You should be able to easily adapt the following instructions if you are using a single container type.) Given this setup, here is the complete process that you would follow to set up the Mobicents SIP load balancer:</para>
+			<para>Configuring the SIP load balancer and the two SIP Servlets-enabled Server nodes is not difficult.</para>
 			<procedure
 				id="procedure-Configuring_the_Mobicents_SIP_Load_Balancer_and_Servlet_Server_Nodes">
 				<title>Configuring the Mobicents SIP Load Balancer and Servlet Server Nodes</title>
 				<step>
-					<para>First, configure the SIP load balancer's Configuration Properties file by substituting valid values for your personal setup. Descriptions of essential values to be customized are given below.</para>
+					<para>First, configure the SIP load balancer's Configuration Properties file which you downloaded by substituting valid values for your personal setup. Here is a sample <filename>lb.properties</filename> file; descriptions of the important lines are provided beneath.</para>
 					<example
 						id="example-Complete_Sample_lb.properties_File">
 	<title>Complete Sample lb.properties File</title>
