@@ -1,9 +1,9 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<section
-	id="section-Clustering_and_Failover_Support_for_SIP-Servletized_JBoss_AS_Nodes">
-	<title>Clustering and Failover Support for SIP-Servletized JBoss AS Nodes</title>
+
+<section id="section-MSS_for_JBoss_Clustering_and_Failover_Support">
+	<title>MSS for JBoss Clustering and Failover Support</title>
 	<para>Mobicents supports the clustering of SIP Servlets Servers for performance, reliability and failover purposes. Note that only SIP Servlets-customized JBoss Application Servers can be used as cluster nodes: there is no support for SIP Servlets-enabled Tomcat Containers.</para>
 	<para>As the Mobicents SIP Servlets Server employs the JBoss Application Server as its servlet container and takes advantage of its capabilities, including clustering and failover, it is also helpful to be familiar with the basics of JBoss Clustering, which are documented in the <ulink
 			url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Clustering_Guide/beta422/html/index.html">JBoss Application Server Clustering Guide</ulink>.</para>

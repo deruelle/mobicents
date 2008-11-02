@@ -4,7 +4,7 @@
 <section
 	id="section-Mobicents_SIP_Servlets_Server">
 	<title>Mobicents SIP Servlets Server</title>
-	<para>Mobicents SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (JEE) services. The Mobicents SIP Servlets Server is a <emphasis>certified</emphasis> implementation of the SIP Servlet v1.1 (JSR 289) specification that runs on top of either the JBoss Application Server or the Tomcat Servlet Container.</para>
+	<para>Mobicents SIP (Session Initiation Protocol) Servlets deliver a consistent, open platform on which to develop and deploy portable and distributed SIP and Converged Java Enterprise Edition (J2EE) services. The Mobicents SIP Servlets Server is a <emphasis>certified</emphasis> implementation of the SIP Servlet v1.1 (JSR 289) specification that runs on top of either the JBoss Application Server or the Tomcat Servlet Container.</para>
 	<para>Mobicents SIP Servlets for JBoss (MSS for JBoss) strives to develop interoperability standards between SIP Servlets and the Java Service Logic Execution Environment (JSLEE) so that applications can exploit the strengths of both. The JAIN-SIP Reference Implementation is leveraged as the SIP stack, and the Mobicents JAIN SLEE Server is used as the SLEE implementation.</para>
 	<itemizedlist
 		id="itemlist-Principal_and_new_features_of_SIP_Servlets">
@@ -166,7 +166,7 @@
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Downloading">
 			<title>Downloading</title>
 			<para>You can download the latest version of MSS for JBoss from <ulink
-					url="http://www.mobicents.org/mss-downloads.html"/>. The top row of the table holds the latest version. Note that each version of the Mobicents SIP Servlets Server is comprised of two separate binary distribution files: one which is MSS for JBoss, and the other which is MSS for Tomcat. Download Mobicents SIP Servlets Server for JBoss and continue with the following instructions.</para>
+					url="http://www.mobicents.org/mss-downloads.html"/>. The top row of the table holds the latest version. Note that each version of the Mobicents SIP Servlets Server is comprised of two separate binary distribution files: one which is MSS for JBoss, and the other which is MSS for Tomcat. Download Mobiceesnts SIP Servlets Server for JBoss and continue with the following instructions.</para>
 		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Installing">
