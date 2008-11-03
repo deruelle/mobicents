@@ -1,9 +1,8 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<section
-	id="section-Mobicents_SIP_Servlets_Load_Balancer">
-	<title>Mobicents SIP Servlets Load Balancer</title>
+<section id="section-MSS_Load_Balancer">
+	<title>MSS Load Balancer</title>
 	<para>Telecommunication applications demand High Availability (HA), fault-tolerance, scalability and performance. The Mobicents SIP load balancer is an essential component in achieving these ends, and is the central element in a cluster of SIP Servlets Servers.</para>
 	<mediaobject
 		id="mediaobj-sas-MSSSIPLoadBalancer-dia-StarNetworkTopology.jpg">

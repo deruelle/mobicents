@@ -7,7 +7,7 @@
 	<para></para>
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="section-Mobicents_SIP_Servlets_Load_Balancer.xml" />
+		href="section-MSS_Load_Balancer.xml" />
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
 		href="section-MSS_for_JBoss-Clustering_Support.xml" />
