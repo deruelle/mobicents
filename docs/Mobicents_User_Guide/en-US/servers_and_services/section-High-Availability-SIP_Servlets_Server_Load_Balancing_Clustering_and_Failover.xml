@@ -1,0 +1,19 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-High-Availability-SIP_Servlets_Server_Load_Balancing_Clustering_and_Failover">
+	<title>High-Availability: SIP Servlets Server Load Balancing, Clustering and Failover</title>
+	<para></para>
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="section-Mobicents_SIP_Servlets_Load_Balancer.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="section-MSS_for_JBoss-Clustering_Support.xml" />
+	<xi:include
+		xmlns:xi="http://www.w3.org/2001/XInclude"
+		href="section-MSS_for_JBoss-Failover_Support.xml" />
+</section>
+
+
