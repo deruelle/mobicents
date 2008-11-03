@@ -10,7 +10,7 @@
 		href="servers_and_services/section-Mobicents_SIP_Servlets_Server.xml" />
 	<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
-		href="section-High-Availability-SIP_Servlets_Server_Load_Balancing_Clustering_and_Failover.xml" />
+		href="servers_and_services/section-High-Availability-SIP_Servlets_Server_Load_Balancing_Clustering_and_Failover.xml" />
 	<!--<xi:include
 		xmlns:xi="http://www.w3.org/2001/XInclude"
 		href="servers_and_services/section-Mobicents_SIP_Servlets_Load_Balancer.xml" />
