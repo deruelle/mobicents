@@ -94,8 +94,14 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
      */
     private void attachSender(Connection connection) {
         Collection<Connection> connections = getConnections();
-        AudioMixer mixer = new AudioMixer(connection.getId());
+        AudioMixer mixer = new AudioMixer(connection.getId());        
         mixers.put(connection.getId(), mixer);
+        
+        //detach player from MUX and attach to Mixer.
+        AudioPlayer player = (AudioPlayer) this.getMediaSource(Generator.AUDIO_PLAYER, connection);
+        player.disconnect(((BaseConnection) connection).getMux());
+        mixer.connect(player);
+        
         mixer.start();
 
         for (Connection conn : connections) {
@@ -121,6 +127,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     public void detachSender(Connection connection) {
         AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
         mixer.stop();
+               
         Collection<Connection> connections = getConnections();
 
         for (Connection conn : connections) {
