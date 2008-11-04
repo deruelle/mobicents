@@ -93,10 +93,10 @@ public class RtpConnectionImpl extends BaseConnection {
 
         inDsp.getOutput().connect(demux.getInput());
         inDsp.getInput().connect(rtpSocket.getReceiveStream());
-//        rtpSocket.getReceiveStream().connect(new TestSink());
 
-        demux.start();
-
+        if (getMode() == ConnectionMode.RECV_ONLY || getMode() == ConnectionMode.SEND_RECV) {
+            demux.start();
+        }
         setState(ConnectionState.HALF_OPEN);
     }
 
@@ -395,7 +395,10 @@ public class RtpConnectionImpl extends BaseConnection {
 
             outDsp.getOutput().connect(rtpSocket.getSendStream());
             outDsp.getInput().connect(mux.getOutput());
-            mux.getOutput().start();
+            
+            if (getMode() == ConnectionMode.SEND_ONLY || getMode() == ConnectionMode.SEND_RECV) {
+                mux.getOutput().start();
+            }
             //System.out.println("CODEC MAP" + outDsp.showCodecMap());
             setState(ConnectionState.OPEN);
         } catch (InterruptedException e) {

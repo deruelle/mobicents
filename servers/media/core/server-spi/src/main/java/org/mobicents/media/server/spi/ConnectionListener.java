@@ -24,4 +24,5 @@ import java.io.Serializable;
  */
 public interface ConnectionListener extends Serializable {
     public void onStateChange(Connection connection,ConnectionState oldState);
+    public void onModeChange(Connection connection, ConnectionMode oldMode);
 }

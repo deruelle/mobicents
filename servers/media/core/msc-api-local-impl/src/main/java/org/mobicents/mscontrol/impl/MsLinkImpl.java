@@ -311,4 +311,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
             listener.update(evt);
         }
     }
+
+    public void onModeChange(Connection connection, ConnectionMode oldMode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

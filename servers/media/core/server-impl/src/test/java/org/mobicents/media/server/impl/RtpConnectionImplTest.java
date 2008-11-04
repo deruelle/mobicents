@@ -34,7 +34,9 @@ public class RtpConnectionImplTest {
     public final static int TEST_DURATION = 20;
     private int count;
     private ArrayList packets;
-    private ConnectionListener cListener=new HollowConnectionListener();
+    private ConnectionListener cListener=new HollowConnectionListener(this);
+    protected boolean modeChanged = false;
+    
     public RtpConnectionImplTest() {
     }
 
@@ -136,6 +138,19 @@ public class RtpConnectionImplTest {
         }
     }
 
+    @Test
+    public void testModeChanged() throws Exception {
+        TestEndpoint enp = new TestEndpoint("test");
+        try {
+            RtpConnectionImpl con = new RtpConnectionImpl(enp, ConnectionMode.SEND_RECV);
+            con.addListener(cListener);
+            con.setMode(ConnectionMode.RECV_ONLY);
+            assertEquals(true, modeChanged);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+    }
+    
     /**
      * Test of setOtherParty method, of class LocalConnectionImpl.
      */
@@ -214,11 +229,315 @@ public class RtpConnectionImplTest {
         } catch (Exception e) {
             fail(e.getMessage());
         }
-
-        //this.checkSeq();
+        
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+        
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();
+        
+        this.checkSeq();
 
     }
 
+    @Test
+    @SuppressWarnings("static-access")
+    public void testHalfDuplex() {
+        TestEndpoint enp1 = new TestEndpoint("test/1");
+        TestEndpoint enp2 = new TestEndpoint("test/2");
+
+        RtpConnectionImpl con1 = null;
+        RtpConnectionImpl con2 = null;
+
+        try {
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_ONLY);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.RECV_ONLY);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+
+        try {
+            String sdp1 = con1.getLocalDescriptor();
+            String sdp2 = con2.getLocalDescriptor();
+
+            con1.setRemoteDescriptor(sdp2);
+            con2.setRemoteDescriptor(sdp1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        assertEquals(ConnectionState.OPEN, con1.getState());
+        assertEquals(ConnectionState.OPEN, con2.getState());
+
+        Source src = new Source();
+        con1.getMux().connect(src);
+        
+        Sink sink = new Sink();
+        con2.getDemux().connect(sink);
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+        
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();
+        
+        this.checkSeq();
+
+    }
+
+    @Test
+    @SuppressWarnings("static-access")
+    public void testHalfDuplex2() {
+        TestEndpoint enp1 = new TestEndpoint("test/1");
+        TestEndpoint enp2 = new TestEndpoint("test/2");
+
+        RtpConnectionImpl con1 = null;
+        RtpConnectionImpl con2 = null;
+
+        try {
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.RECV_ONLY);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_ONLY);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+
+        try {
+            String sdp1 = con1.getLocalDescriptor();
+            String sdp2 = con2.getLocalDescriptor();
+
+            con1.setRemoteDescriptor(sdp2);
+            con2.setRemoteDescriptor(sdp1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        assertEquals(ConnectionState.OPEN, con1.getState());
+        assertEquals(ConnectionState.OPEN, con2.getState());
+
+        Source src = new Source();
+        con1.getMux().connect(src);
+//        con1.getMux().getOutput().start();
+        
+        Sink sink = new Sink();
+        con2.getDemux().connect(sink);
+//        con2.getDemux().start();
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+
+        assertEquals(0, packets.size());
+
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();        
+    }
+
+    @Test
+    @SuppressWarnings("static-access")
+    public void testHalfDuplex3() {
+        TestEndpoint enp1 = new TestEndpoint("test/1");
+        TestEndpoint enp2 = new TestEndpoint("test/2");
+
+        RtpConnectionImpl con1 = null;
+        RtpConnectionImpl con2 = null;
+
+        try {
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_ONLY);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.SEND_ONLY);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+
+        try {
+            String sdp1 = con1.getLocalDescriptor();
+            String sdp2 = con2.getLocalDescriptor();
+
+            con1.setRemoteDescriptor(sdp2);
+            con2.setRemoteDescriptor(sdp1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        assertEquals(ConnectionState.OPEN, con1.getState());
+        assertEquals(ConnectionState.OPEN, con2.getState());
+
+        Source src = new Source();
+        con1.getMux().connect(src);
+//        con1.getMux().getOutput().start();
+        
+        Sink sink = new Sink();
+        con2.getDemux().connect(sink);
+//        con2.getDemux().start();
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+
+        assertEquals(0, packets.size());
+
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();        
+    }
+    
+    @Test
+    @SuppressWarnings("static-access")
+    public void testHalfDuplex4() {
+        TestEndpoint enp1 = new TestEndpoint("test/1");
+        TestEndpoint enp2 = new TestEndpoint("test/2");
+
+        RtpConnectionImpl con1 = null;
+        RtpConnectionImpl con2 = null;
+
+        try {
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.SEND_ONLY);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.RECV_ONLY);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+
+        try {
+            String sdp1 = con1.getLocalDescriptor();
+            String sdp2 = con2.getLocalDescriptor();
+
+            con1.setRemoteDescriptor(sdp2);
+            con2.setRemoteDescriptor(sdp1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        assertEquals(ConnectionState.OPEN, con1.getState());
+        assertEquals(ConnectionState.OPEN, con2.getState());
+
+        Source src = new Source();
+        con1.getMux().connect(src);
+        
+        Sink sink = new Sink();
+        con2.getDemux().connect(sink);
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        src.stop();
+                
+        this.checkSeq();        
+        con1.setMode(ConnectionMode.RECV_ONLY);
+        packets.clear();
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        
+        
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+        
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();
+        
+        if (packets.size() > 10) {
+            fail("Only few packet can arrive, but in fact: " + packets.size());
+        }
+        
+    }
+
+    @Test
+    @SuppressWarnings("static-access")
+    public void testHalfDuplex5() {
+        TestEndpoint enp1 = new TestEndpoint("test/1");
+        TestEndpoint enp2 = new TestEndpoint("test/2");
+
+        RtpConnectionImpl con1 = null;
+        RtpConnectionImpl con2 = null;
+
+        try {
+            con1 = new RtpConnectionImpl(enp1, ConnectionMode.RECV_ONLY);
+            con2 = new RtpConnectionImpl(enp2, ConnectionMode.RECV_ONLY);
+        } catch (ResourceUnavailableException e) {
+            fail(e.getMessage());
+        }
+
+        try {
+            String sdp1 = con1.getLocalDescriptor();
+            String sdp2 = con2.getLocalDescriptor();
+
+            con1.setRemoteDescriptor(sdp2);
+            con2.setRemoteDescriptor(sdp1);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        assertEquals(ConnectionState.OPEN, con1.getState());
+        assertEquals(ConnectionState.OPEN, con2.getState());
+
+        Source src = new Source();
+        con1.getMux().connect(src);
+        
+        Sink sink = new Sink();
+        con2.getDemux().connect(sink);
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+
+        src.stop();
+        assertEquals(0, packets.size());
+        
+        con1.setMode(ConnectionMode.SEND_ONLY);
+        packets.clear();
+        
+        src.start();
+        try {
+            Thread.currentThread().sleep(TEST_DURATION * 1000);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+        
+        
+        src.stop();
+        con1.getMux().disconnect(src);
+        con2.getDemux().disconnect(sink); 
+        
+        enp1.deleteAllConnections();
+        enp2.deleteAllConnections();
+        
+        this.checkSeq();        
+        
+    }
+    
     private void checkSeq() {
         if (packets.size() == 0) {
             fail("Empty buffer");

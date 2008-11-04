@@ -114,7 +114,7 @@ public class LocalConnectionImpl extends BaseConnection {
             }
             return localSDP.toString();
         } catch (InterruptedException e) {
-        	 logger.error("Could not create descriptor", e);
+            logger.error("Could not create descriptor", e);
             return null;
         } finally {
             super.releaseState();
@@ -135,24 +135,24 @@ public class LocalConnectionImpl extends BaseConnection {
      * 
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
-    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException ,ResourceUnavailableException{
-    	try {
-			this.lockState();
-			if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-				throw new IllegalStateException("State is " + state);
-			}
-				if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
-						throw new IllegalStateException("State is " + state);
-					}
-				setState(ConnectionState.OPEN);
-    	} catch (InterruptedException e) {
-			logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
-			e.printStackTrace();
-			//FIXME: baranowb: shouldnt we close here instead?
-			throw new ResourceUnavailableException(e);
-		} finally {
-			this.releaseState();
-		}
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
+        try {
+            this.lockState();
+            if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+                throw new IllegalStateException("State is " + state);
+            }
+            if (state != ConnectionState.HALF_OPEN && state != ConnectionState.OPEN) {
+                throw new IllegalStateException("State is " + state);
+            }
+            setState(ConnectionState.OPEN);
+        } catch (InterruptedException e) {
+            logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+            e.printStackTrace();
+            //FIXME: baranowb: shouldnt we close here instead?
+            throw new ResourceUnavailableException(e);
+        } finally {
+            this.releaseState();
+        }
     }
 
     /**
@@ -179,13 +179,17 @@ public class LocalConnectionImpl extends BaseConnection {
 
             this.otherConnection = (LocalConnectionImpl) other;
             demux.getInput().connect(otherConnection.mux.getOutput());
-            otherConnection.mux.getOutput().start();
-            demux.start();
+            if (otherConnection.getMode() == ConnectionMode.SEND_ONLY || otherConnection.getMode() == ConnectionMode.SEND_RECV) {
+                otherConnection.mux.getOutput().start();
+            }
             
+            if (getMode() == ConnectionMode.RECV_ONLY || getMode() == ConnectionMode.SEND_RECV) {
+                demux.start();
+            }    
             setState(ConnectionState.OPEN);
             otherConnection.setOtherParty(this);
         } catch (InterruptedException e) {
-        	logger.error("Could not set other party", e);
+            logger.error("Could not set other party", e);
             close();
         } catch (Exception e) {
             logger.error("Could not set other party", e);
@@ -221,22 +225,17 @@ public class LocalConnectionImpl extends BaseConnection {
         logger.error("Facility error", e);
     }
 
-	public String getOtherEnd() throws IllegalArgumentException {
-		try{
-			
-			if(otherConnection!=null)
-			{
-				return otherConnection.getEndpoint().getLocalName();
-			}
-		}catch(NullPointerException e)
-		{
-			logger.error("Could not get other end", e);
-		}
-		return null;
-	}
+    public String getOtherEnd() throws IllegalArgumentException {
+        try {
 
-    
-    
+            if (otherConnection != null) {
+                return otherConnection.getEndpoint().getLocalName();
+            }
+        } catch (NullPointerException e) {
+            logger.error("Could not get other end", e);
+        }
+        return null;
+    }
 }
 
 

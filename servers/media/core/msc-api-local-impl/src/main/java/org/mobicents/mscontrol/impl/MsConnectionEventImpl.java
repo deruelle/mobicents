@@ -29,11 +29,10 @@ import org.mobicents.mscontrol.MsConnectionListener;
 public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -9045553401518447000L;
-	
-	private MsConnectionImpl connection;
+     * 
+     */
+    private static final long serialVersionUID = -9045553401518447000L;
+    private MsConnectionImpl connection;
     private MsConnectionEventID eventID;
     private MsConnectionEventCause cause;
     private String msg;
@@ -81,9 +80,13 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
                 case CONNECTION_DISCONNECTED:
                     listener.connectionDisconnected(this);
                     break;
+                case MODE_CHANGED :
+                    listener.connectionModeChanged(this);
+                    break;
             }
         }
     }
+
     public void run() {
         update(connection.session.provider.connectionListeners);
         update(connection.connLocalConnectionListeners);

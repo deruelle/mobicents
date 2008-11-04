@@ -25,6 +25,7 @@ import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -33,21 +34,20 @@ import org.mobicents.media.server.spi.Endpoint;
  * @author Oleg Kulikov
  */
 public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
-	
-	private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
-    
+
+    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     private HashMap mixers = new HashMap();
-//    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     
+//    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
     public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-        super(localName,endpointsMap);
+        super(localName, endpointsMap);
         this.setMaxConnectionsAvailable(1000);
         this.addConnectionListener(this);
     }
 
     @Override
     public Endpoint doCreateEndpoint(String localName) {
-        return new ConfEndpointImpl(localName,super.endpoints);
+        return new ConfEndpointImpl(localName, super.endpoints);
     }
 
     @Override
@@ -64,11 +64,10 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         //init audio player
         //map.put(Generator.AUDIO_RECORDER, new Recorder(""));
         map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
-        
+
         return map;
     }
 
-    
     /**
      * Attaches connection's receiver stream to other connections.
      * 
@@ -98,23 +97,23 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         AudioMixer mixer = new AudioMixer(connection.getId());
         mixers.put(connection.getId(), mixer);
         mixer.start();
-        
+
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
                 ((BaseConnection) conn).getDemux().connect(mixer);
             }
         }
-        
+
         ((BaseConnection) connection).getMux().connect(mixer.getOutput());
     }
 
     public void detachReceiver(Connection connection) {
         Demultiplexer demux = ((BaseConnection) connection).getDemux();
-        Collection<Connection>connections = getConnections();
+        Collection<Connection> connections = getConnections();
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
-                    AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-                    demux.disconnect(mixer);
+                AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
+                demux.disconnect(mixer);
             }
         }
     }
@@ -122,8 +121,8 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     public void detachSender(Connection connection) {
         AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
         mixer.stop();
-        Collection<Connection>connections = getConnections();
-        
+        Collection<Connection> connections = getConnections();
+
         for (Connection conn : connections) {
             if (!conn.getId().equals(connection.getId())) {
                 ((BaseConnection) conn).getDemux().disconnect(mixer);
@@ -160,10 +159,10 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
         }
     }
 
-	public String[] getSupportedPackages() {		
-		return new String[]{};
-	}
+    public String[] getSupportedPackages() {
+        return new String[]{};
+    }
 
-	
-
+    public void onModeChange(Connection connection, ConnectionMode oldMode) {
+    }
 }

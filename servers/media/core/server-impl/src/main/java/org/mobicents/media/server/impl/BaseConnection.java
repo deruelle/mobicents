@@ -159,8 +159,33 @@ public abstract class BaseConnection implements Connection, NotificationListener
      * @see org.mobicents.media.server.spi.Connection#setMode(int);
      */
     public void setMode(ConnectionMode mode) {
+        if (mode == this.mode) {
+            return;
+        }
+        
+        ConnectionMode oldMode = this.mode;        
         this.mode = mode;
-    // @todo rebuilt send/recv streams.
+        
+        if (mode == ConnectionMode.RECV_ONLY) {
+            getMux().getOutput().stop();
+            getDemux().start();
+        } else if (mode == ConnectionMode.SEND_ONLY) {
+            getDemux().stop();
+            System.out.println("MUX started by mode change");
+            getMux().getOutput().start();
+        } else {
+            getMux().getOutput().start();
+            getDemux().start();
+        }
+        
+        for (ConnectionListener cl : endpoint.connectionListeners) {
+            cl.onModeChange(this, oldMode);
+        }
+        
+        for (ConnectionListener cl : listeners) {
+            cl.onModeChange(this, oldMode);
+        }
+        
     }
 
     /**

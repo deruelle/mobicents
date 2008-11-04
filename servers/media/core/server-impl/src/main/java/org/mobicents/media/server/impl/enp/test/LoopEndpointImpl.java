@@ -16,6 +16,7 @@ import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -98,4 +99,7 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 	public String[] getSupportedPackages() {
 		return new String[]{};
 	}
+
+    public void onModeChange(Connection connection, ConnectionMode oldMode) {
+    }
 }

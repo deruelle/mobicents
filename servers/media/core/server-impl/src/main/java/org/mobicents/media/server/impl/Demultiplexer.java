@@ -33,15 +33,15 @@ import org.mobicents.media.MediaSink;
 public class Demultiplexer extends AbstractSource {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3391642385740571114L;
-	
-	private Input input = new Input();
+     * 
+     */
+    private static final long serialVersionUID = -3391642385740571114L;
+    private Input input = new Input();
     private HashMap<String, Output> branches = new HashMap<String, Output>();
     //private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
     private Format[] formats;
-
+    private boolean started = false;
+    
     public AbstractSink getInput() {
         return input;
     }
@@ -83,9 +83,11 @@ public class Demultiplexer extends AbstractSource {
     }
 
     public void start() {
+        started = true;
     }
 
     public void stop() {
+        started = false;
     }
 
     private class Input extends AbstractSink {
@@ -99,6 +101,9 @@ public class Demultiplexer extends AbstractSource {
         }
 
         public void receive(Buffer buffer) {
+            if (!started) {
+                return;
+            }
             synchronized (branches) {
                 boolean transffered = false;
                 Collection<Output> streams = branches.values();
@@ -106,7 +111,7 @@ public class Demultiplexer extends AbstractSource {
                     transffered = true;
                     stream.push((Buffer) buffer.clone());
                     stream.run();
-                    //demuxThreadPool.submit(stream);
+                //demuxThreadPool.submit(stream);
                 }
 
                 if (!transffered) {
@@ -162,5 +167,4 @@ public class Demultiplexer extends AbstractSource {
         // return input.getFormats();
         return formats;
     }
-
 }

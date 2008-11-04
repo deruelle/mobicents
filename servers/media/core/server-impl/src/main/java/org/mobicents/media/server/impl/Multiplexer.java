@@ -172,16 +172,18 @@ public class Multiplexer extends AbstractSink implements Runnable {
 
     class Output extends AbstractSource {
     	
+        private boolean stopped = true;
+        
        	public Output(){
     		super("Multiplexer.Output");
     	}
 
         public void start() {
-            //timer.start();
+            stopped = false;
         }
 
         public void stop() {
-            //timer.stop();
+            stopped = true;
         }
 
         public Format[] getFormats() {
@@ -190,9 +192,9 @@ public class Multiplexer extends AbstractSink implements Runnable {
     }
 
     public synchronized void deliver(Buffer buffer) {
-        buffer.setSequenceNumber(seq);
-        buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
-        if (output != null && output.sink != null) {
+        if (output != null && !output.stopped && output.sink != null) {
+            buffer.setSequenceNumber(seq);
+            buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
             output.sink.receive(buffer);
         }
         seq++;

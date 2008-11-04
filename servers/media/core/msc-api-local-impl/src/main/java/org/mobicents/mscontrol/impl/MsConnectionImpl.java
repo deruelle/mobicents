@@ -43,7 +43,6 @@ import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.impl.events.EventParser;
 
-
 /**
  * 
  * @author Oleg Kulikov
@@ -52,13 +51,11 @@ import org.mobicents.mscontrol.impl.events.EventParser;
 public class MsConnectionImpl implements MsConnection, ConnectionListener, NotificationListener {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 7869810097365002045L;
-	
-	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
-	
-	private String id = (new UID()).toString();
+     * 
+     */
+    private static final long serialVersionUID = 7869810097365002045L;
+    private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
+    private String id = (new UID()).toString();
     private MsConnectionState state;
     private String remoteSdp;
     protected MsSessionImpl session;
@@ -67,8 +64,6 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     private MsEndpointImpl endpoint;
     protected CopyOnWriteArrayList<MsNotificationListener> connLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
     protected CopyOnWriteArrayList<MsConnectionListener> connLocalConnectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
-    
-    
     private EventParser eventParser = new EventParser();
 
     /**
@@ -132,7 +127,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#addConectionListener(MsConnectionListener);
      */
     public void addConnectionListener(MsConnectionListener listener) {
-    	connLocalConnectionListeners.add(listener);
+        connLocalConnectionListeners.add(listener);
     }
 
     /**
@@ -141,16 +136,17 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
      * @see org.mobicents.mscontrol.MsConnection#removeConectionListener(MsConnectionListener);
      */
     public void removeConnectionListener(MsConnectionListener listener) {
-    	connLocalConnectionListeners.remove(listener);
+        connLocalConnectionListeners.remove(listener);
     }
 
     public void addNotificationListener(MsNotificationListener listener) {
-    	connLocalNotificationListeners.add(listener);
+        connLocalNotificationListeners.add(listener);
     }
+
     public void removeNotificationListener(MsNotificationListener listener) {
-    	connLocalNotificationListeners.remove(listener);
+        connLocalNotificationListeners.remove(listener);
     }
-    
+
     /**
      * (Non Java-doc).
      * 
@@ -267,13 +263,13 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                 try {
                     connection.setRemoteDescriptor(remoteSdp);
                 } catch (SdpException ex) {
-                	logger.error("Setting remote SDP failed", ex);
+                    logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 } catch (IOException ex) {
-                	logger.error("Setting remote SDP failed", ex);
+                    logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
                 } catch (ResourceUnavailableException ex) {
-                	logger.error("Setting remote SDP failed", ex);
+                    logger.error("Setting remote SDP failed", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 }
             }
@@ -317,5 +313,9 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
                 setState(MsConnectionState.CLOSED, MsConnectionEventCause.NORMAL);
                 break;
         }
+    }
+
+    public void onModeChange(Connection connection, ConnectionMode oldMode) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
