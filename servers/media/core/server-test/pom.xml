@@ -15,9 +15,39 @@
 	
 	<dependencies>
 		<dependency>
-			<artifactId>mobicents-media-server-msc-api</artifactId>
+			<artifactId>mobicents-media-server-spi</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
+			<scope>provided</scope>
+		</dependency>	
+		<dependency>
+			<artifactId>mobicents-media-server-msc-api</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>			
+		</dependency>	
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<artifactId>mobicents-media-server-msc-api-local-impl</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>${pom.groupId}</groupId>
+					<artifactId>mobicents-media-server-spi</artifactId>					
+				</exclusion>
+				<exclusion>
+					<groupId>concurrent</groupId>
+					<artifactId>concurrent</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -28,6 +58,23 @@
 			<groupId>cactus</groupId>
 			<artifactId>cactus</artifactId>
 			<version>${cactus.version}</version>            
+		</dependency>	
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.2</version>
+		</dependency>
+		<dependency>
+			<groupId>aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>1.5.3</version>
 		</dependency>		
 	</dependencies>
 	

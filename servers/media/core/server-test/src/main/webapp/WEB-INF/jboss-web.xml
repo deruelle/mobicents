@@ -1,0 +1,7 @@
+<jboss-web>
+	<class-loading> 
+		<loader-repository> 
+			com.example:archive=unique-archive-name 
+		</loader-repository> 
+   </class-loading>
+</jboss-web>
