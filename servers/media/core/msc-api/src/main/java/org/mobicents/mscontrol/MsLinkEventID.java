@@ -25,5 +25,10 @@ package org.mobicents.mscontrol;
  * </ul>
  */
 public enum MsLinkEventID {
-	LINK_CREATED, LINK_CONNECTED, LINK_DISCONNECTED, LINK_FAILED;
+	LINK_CREATED, 
+        LINK_CONNECTED, 
+        LINK_DISCONNECTED, 
+        LINK_FAILED,
+        MODE_FULL_DUPLEX,
+        MODE_HALF_DUPLEX
 }

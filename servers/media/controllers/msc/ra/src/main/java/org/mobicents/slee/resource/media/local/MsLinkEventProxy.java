@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.slee.resource.media.local;
 
 import org.mobicents.mscontrol.MsLink;
@@ -16,49 +15,62 @@ import org.mobicents.mscontrol.MsLinkListener;
  */
 public class MsLinkEventProxy implements MsLinkListener {
 
-	private MsProviderLocal provider;
+    private MsProviderLocal provider;
 
-	protected MsLinkEventProxy(MsProviderLocal provider) {
-		this.provider = provider;
-	}
+    protected MsLinkEventProxy(MsProviderLocal provider) {
+        this.provider = provider;
+    }
 
-	public void linkCreated(MsLinkEvent evt) {
-		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
-		MsLink link = new MsLinkLocal(session, evt.getSource());
-		session.links.put(link.getId(), link);
+    public void linkCreated(MsLinkEvent evt) {
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
+        MsLink link = new MsLinkLocal(session, evt.getSource());
+        session.links.put(link.getId(), link);
 
-		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		this.provider.ra.linkCreated(event);
-		session.linkActivityCreated();
-	}
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.linkCreated(event);
+        session.linkActivityCreated();
+    }
 
-	public void linkConnected(MsLinkEvent evt) {
-		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
-		MsLink link = (MsLink) session.links.get(evt.getSource().getId());
-		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		this.provider.ra.linkConnected(event);
-	}
+    public void linkConnected(MsLinkEvent evt) {
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
+        MsLink link = (MsLink) session.links.get(evt.getSource().getId());
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.linkConnected(event);
+    }
 
-	public void linkDisconnected(MsLinkEvent evt) {
-		String eventSessionId = evt.getSource().getSession().getId();
-		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(eventSessionId);
-		MsLink link = null;
-		if (session != null) {
-			link = (MsLink) session.links.remove(evt.getSource().getId());
-		} else {
-			// Probably the session is already killed and hence it could be null
-			link = evt.getSource();
-		}
+    public void linkDisconnected(MsLinkEvent evt) {
+        String eventSessionId = evt.getSource().getSession().getId();
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(eventSessionId);
+        MsLink link = null;
+        if (session != null) {
+            link = (MsLink) session.links.remove(evt.getSource().getId());
+        } else {
+            // Probably the session is already killed and hence it could be null
+            link = evt.getSource();
+        }
 
-		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		this.provider.ra.linkDisconnected(event);
-	}
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.linkDisconnected(event);
+    }
 
-	public void linkFailed(MsLinkEvent evt) {
-		MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
-		MsLink link = (MsLink) session.links.get(evt.getSource().getId());
-		MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
-		this.provider.ra.linkFailed(event);
-	}
+    public void linkFailed(MsLinkEvent evt) {
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
+        MsLink link = (MsLink) session.links.get(evt.getSource().getId());
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.linkFailed(event);
+    }
 
+    public void modeHalfDuplex(MsLinkEvent evt) {
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
+        MsLink link = (MsLink) session.links.get(evt.getSource().getId());
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.modeHalfDuplex(event);
+    }
+
+    public void modeFullDuplex(MsLinkEvent evt) {
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(evt.getSource().getSession().getId());
+        MsLink link = (MsLink) session.links.get(evt.getSource().getId());
+        MsLinkEventLocal event = new MsLinkEventLocal(evt, link);
+        this.provider.ra.modeFullDuplex(event);
+    }
 }

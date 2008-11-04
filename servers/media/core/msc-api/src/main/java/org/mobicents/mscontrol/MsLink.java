@@ -73,6 +73,9 @@ public interface MsLink extends Serializable {
 	 */
 	public MsEndpoint[] getEndpoints();
 
+        public MsLinkMode getMode();
+        public void setMode(MsLinkMode mode);
+        
 	/**
 	 * Drops this link
 	 */

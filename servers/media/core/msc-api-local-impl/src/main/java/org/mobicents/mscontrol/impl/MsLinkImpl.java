@@ -45,7 +45,6 @@ import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.impl.events.EventParser;
 
-
 /**
  * 
  * @author Oleg Kulikov
@@ -54,9 +53,7 @@ import org.mobicents.mscontrol.impl.events.EventParser;
 public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
 
     private static final long serialVersionUID = 6373269860176309745L;
-    
     protected transient Logger logger = Logger.getLogger(this.getClass());
-
     private final String id = (new UID()).toString();
     protected MsSessionImpl session;
     private MsLinkMode mode;
@@ -68,7 +65,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private PendingQueue[] pendingQueue = new PendingQueue[2];
     protected CopyOnWriteArrayList<MsLinkListener> linkLocalLinkListeners = new CopyOnWriteArrayList<MsLinkListener>();
     protected CopyOnWriteArrayList<MsNotificationListener> linkLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
-    
+
     public String getId() {
         return id;
     }
@@ -87,6 +84,25 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
     public MsLinkState getState() {
         return this.state;
+    }
+
+    public MsLinkMode getMode() {
+        return mode;
+    }
+
+    public void setMode(MsLinkMode mode) {
+        this.mode = mode;
+        if (state == MsLinkState.CONNECTED) {
+            if (mode == MsLinkMode.FULL_DUPLEX) {
+                connections[0].setMode(ConnectionMode.SEND_RECV);
+                connections[1].setMode(ConnectionMode.SEND_RECV);
+                sendEvent(MsLinkEventID.MODE_FULL_DUPLEX, MsLinkEventCause.NORMAL, null);
+            } else {
+                connections[0].setMode(ConnectionMode.SEND_ONLY);
+                connections[1].setMode(ConnectionMode.RECV_ONLY);
+                sendEvent(MsLinkEventID.MODE_HALF_DUPLEX, MsLinkEventCause.NORMAL, null);
+            }
+        }
     }
 
     private void setState(MsLinkState state, MsLinkEventCause cause) {
@@ -142,20 +158,21 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     }
 
     public void addLinkListener(MsLinkListener listener) {
-    	linkLocalLinkListeners.add(listener);
+        linkLocalLinkListeners.add(listener);
     }
 
     public void removeLinkListener(MsLinkListener listener) {
-    	linkLocalLinkListeners.remove(listener);
+        linkLocalLinkListeners.remove(listener);
     }
 
     public void addNotificationListener(MsNotificationListener listener) {
-    	linkLocalNotificationListeners.add(listener);
+        linkLocalNotificationListeners.add(listener);
     }
+
     public void removeNotificationListener(MsNotificationListener listener) {
-    	linkLocalNotificationListeners.remove(listener);
+        linkLocalNotificationListeners.remove(listener);
     }
-    
+
     /**
      * Drops this link
      */
@@ -226,16 +243,16 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
                 connections[0].setOtherParty(connections[1]);
             } catch (NamingException e) {
-            	logger.error("Joining of endpoint for Link failed", e);
+                logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
             } catch (ResourceUnavailableException e) {
-            	logger.error("Joining of endpoint for Link failed", e);
+                logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
             } catch (TooManyConnectionsException e) {
-            	logger.error("Joining of endpoint for Link failed", e);
+                logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
             } catch (Exception e) {
-            	logger.error("Joining of endpoint for Link failed", e);
+                logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
             }
         }
@@ -313,6 +330,5 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     }
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

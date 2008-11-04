@@ -29,11 +29,10 @@ import org.mobicents.mscontrol.MsLinkListener;
 public class MsLinkEventImpl implements MsLinkEvent, Runnable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3952630702449890912L;
-	
-	private MsLinkImpl source;
+     * 
+     */
+    private static final long serialVersionUID = -3952630702449890912L;
+    private MsLinkImpl source;
     private MsLinkEventID eventID;
     private MsLinkEventCause cause;
     private String msg;
@@ -68,7 +67,7 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
         return msg;
     }
 
-    private void update(Collection <MsLinkListener> listeners) {
+    private void update(Collection<MsLinkListener> listeners) {
         for (MsLinkListener listener : listeners) {
             switch (eventID) {
                 case LINK_CREATED:
@@ -83,9 +82,17 @@ public class MsLinkEventImpl implements MsLinkEvent, Runnable {
                 case LINK_FAILED:
                     listener.linkFailed(this);
                     break;
+                case MODE_HALF_DUPLEX :
+                    listener.modeHalfDuplex(this);
+                    break;
+                case MODE_FULL_DUPLEX :
+                    listener.modeFullDuplex(this);
+                    break;
+                    
             }
         }
     }
+
     public void run() {
         update(source.session.provider.linkListeners);
         update(source.linkLocalLinkListeners);

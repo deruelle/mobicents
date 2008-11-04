@@ -8,6 +8,7 @@ package org.mobicents.slee.resource.media.local;
 import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkListener;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsLinkState;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsSession;
@@ -38,6 +39,14 @@ public class MsLinkLocal implements MsLink {
         return link.getState();
     }
 
+    public MsLinkMode getMode() {
+        return link.getMode();
+    }
+
+    public void setMode(MsLinkMode mode) {
+        link.setMode(mode);
+    }
+    
     public MsSession getSession() {
         return session;
     }
@@ -76,5 +85,6 @@ public class MsLinkLocal implements MsLink {
     public void removeNotificationListener(MsNotificationListener listener) {
 		throw new SecurityException("method is unsupported.");
     }
+
 
 }

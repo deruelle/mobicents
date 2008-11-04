@@ -107,4 +107,7 @@ public interface MsLinkListener extends Serializable {
 	 * @param evt
 	 */
 	public void linkFailed(MsLinkEvent evt);
+        
+        public void modeHalfDuplex(MsLinkEvent evt);
+        public void modeFullDuplex(MsLinkEvent evt);
 }

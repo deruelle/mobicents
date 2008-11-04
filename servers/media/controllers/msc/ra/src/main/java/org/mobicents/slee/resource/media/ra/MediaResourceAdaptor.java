@@ -483,6 +483,18 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
         this.fireEvent("org.mobicents.slee.media.LINK_FAILED", handle, evt);
     }
 
+    public void modeHalfDuplex(MsLinkEvent evt) {
+        MsLink link = evt.getSource();
+        ActivityHandle handle = (ActivityHandle) handlers.get(link.getId());
+        this.fireEvent("org.mobicents.slee.media.LINK_MODE_HALF_DUPLEX", handle, evt);
+    }
+
+    public void modeFullDuplex(MsLinkEvent evt) {
+        MsLink link = evt.getSource();
+        ActivityHandle handle = (ActivityHandle) handlers.get(link.getId());
+        this.fireEvent("org.mobicents.slee.media.LINK_MODE_FULL_DUPLEX", handle, evt);
+    }
+    
     // -----------------------------------------------------------------------------
     // Connection events
     // -----------------------------------------------------------------------------
@@ -580,5 +592,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
     public void resourceInvalid(MsNotifyEvent notifyEvent) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+
 
 }
