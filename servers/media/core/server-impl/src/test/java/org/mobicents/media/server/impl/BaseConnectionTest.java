@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.media.server.impl;
 
 import java.io.IOException;
@@ -28,7 +27,9 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  * @author Oleg Kulikov
  */
 public class BaseConnectionTest {
-	private ConnectionListener cListener=new HollowConnectionListener();
+
+    //private ConnectionListener cListener = new HollowConnectionListener(null);
+
     public BaseConnectionTest() {
     }
 
@@ -158,7 +159,7 @@ public class BaseConnectionTest {
         TestEndpoint enp = new TestEndpoint("test");
         try {
             TestConnection con = new TestConnection(enp, ConnectionMode.SEND_RECV);
-            if (con.getMux()== null) {
+            if (con.getMux() == null) {
                 fail("Mux should be not null");
             }
         } catch (Exception e) {
@@ -174,7 +175,7 @@ public class BaseConnectionTest {
         TestEndpoint enp = new TestEndpoint("test");
         try {
             TestConnection con = new TestConnection(enp, ConnectionMode.SEND_RECV);
-            if (con.getDemux()== null) {
+            if (con.getDemux() == null) {
                 fail("Demux should be not null");
             }
         } catch (Exception e) {
@@ -229,7 +230,8 @@ public class BaseConnectionTest {
     }
 
     private class TestConnection extends BaseConnection {
-        public TestConnection (Endpoint enp, ConnectionMode mode) throws ResourceUnavailableException {
+
+        public TestConnection(Endpoint enp, ConnectionMode mode) throws ResourceUnavailableException {
             super(enp, mode);
         }
 
@@ -249,13 +251,14 @@ public class BaseConnectionTest {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
-		public String getOtherEnd() throws IllegalArgumentException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String getOtherEnd() throws IllegalArgumentException {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
-    
+
     private class TestEndpoint extends BaseEndpoint {
+
         public TestEndpoint(String localName) {
             super(localName);
         }
@@ -270,19 +273,19 @@ public class BaseConnectionTest {
             return new HashMap();
         }
 
-		public String[] getEndpointNames() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String[] getEndpointNames() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		public EndpointLocalManagement[] getEndpoints() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public EndpointLocalManagement[] getEndpoints() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		public String[] getSupportedPackages() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        public String[] getSupportedPackages() {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 }

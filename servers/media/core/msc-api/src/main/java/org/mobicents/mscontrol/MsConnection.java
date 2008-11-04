@@ -118,6 +118,9 @@ public interface MsConnection extends Serializable {
 	 */
 	public void modify(String localDesc, String remoteDesc);
 
+        public void setMode(MsConnectionMode mode);
+        public MsConnectionMode getMode();
+        
 	/**
 	 * Deletes related connection from media server. If the corresponding
 	 * MsSession has only this MsConnection left then the state of

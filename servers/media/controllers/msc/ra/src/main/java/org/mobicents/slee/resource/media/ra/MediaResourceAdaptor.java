@@ -525,6 +525,24 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
         }
     }
 
+    public void connectionModeRecvOnly(MsConnectionEvent evt) {
+        MsConnection connection = evt.getConnection();
+        ActivityHandle handle = (ActivityHandle) handlers.get(connection.getId());
+        this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_RECV_ONLY", handle, evt);
+    }
+
+    public void connectionModeSendOnly(MsConnectionEvent evt) {
+        MsConnection connection = evt.getConnection();
+        ActivityHandle handle = (ActivityHandle) handlers.get(connection.getId());
+        this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_SEND_ONLY", handle, evt);
+    }
+
+    public void connectionModeSendRecv(MsConnectionEvent evt) {
+        MsConnection connection = evt.getConnection();
+        ActivityHandle handle = (ActivityHandle) handlers.get(connection.getId());
+        this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_SEND_RECV", handle, evt);
+    }
+    
     // -----------------------------------------------------------------------------
     // Session events
     // -----------------------------------------------------------------------------
@@ -562,4 +580,5 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
     public void resourceInvalid(MsNotifyEvent notifyEvent) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
 }

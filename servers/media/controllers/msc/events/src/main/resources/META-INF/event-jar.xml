@@ -143,6 +143,45 @@
 		</event-class-name>
 	</event-definition>
 
+	<event-definition>
+		<description>
+			This event is fired when Connection mode is changed to Recv_Only.
+		</description>
+		<event-type-name>
+			org.mobicents.slee.media.CONNECTION_MODE_RECV_ONLY
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsConnectionEvent
+		</event-class-name>
+	</event-definition>
+	<event-definition>
+		<description>
+			This event is fired when Connection mode is changed to Send_Only.
+		</description>
+		<event-type-name>
+			org.mobicents.slee.media.CONNECTION_MODE_SEND_ONLY
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsConnectionEvent
+		</event-class-name>
+	</event-definition>
+	<event-definition>
+		<description>
+			This event is fired when Connection mode is changed to Send_Recv.
+		</description>
+		<event-type-name>
+			org.mobicents.slee.media.CONNECTION_MODE_SEND_RECV
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsConnectionEvent
+		</event-class-name>
+	</event-definition>
 
 	<!-- LINK EVENTS -->
 	<event-definition>

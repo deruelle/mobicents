@@ -45,5 +45,7 @@ public enum MsConnectionEventID {
         CONNECTION_OPEN, 
         CONNECTION_FAILED, 
         CONNECTION_DISCONNECTED,
-        MODE_CHANGED
+        MODE_SEND_RECV,
+        MODE_SEND_ONLY,
+        MODE_RECV_ONLY,
 }

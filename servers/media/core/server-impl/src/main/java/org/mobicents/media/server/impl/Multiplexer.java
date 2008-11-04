@@ -192,6 +192,7 @@ public class Multiplexer extends AbstractSink implements Runnable {
     }
 
     public synchronized void deliver(Buffer buffer) {
+        //System.out.println("Recv p=" + buffer.getSequenceNumber() + ", stopped=" + output.stopped);
         if (output != null && !output.stopped && output.sink != null) {
             buffer.setSequenceNumber(seq);
             buffer.setTimeStamp(seq * Quartz.HEART_BEAT);

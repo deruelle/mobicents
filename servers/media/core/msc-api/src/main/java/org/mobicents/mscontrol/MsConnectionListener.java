@@ -78,5 +78,7 @@ public interface MsConnectionListener extends Serializable {
 	 */
 	public void connectionDisconnected(MsConnectionEvent event);
         
-        public void connectionModeChanged(MsConnectionEvent event);
+        public void connectionModeRecvOnly(MsConnectionEvent event);
+        public void connectionModeSendOnly(MsConnectionEvent event);
+        public void connectionModeSendRecv(MsConnectionEvent event);
 }

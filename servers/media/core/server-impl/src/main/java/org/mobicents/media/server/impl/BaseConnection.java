@@ -171,7 +171,6 @@ public abstract class BaseConnection implements Connection, NotificationListener
             getDemux().start();
         } else if (mode == ConnectionMode.SEND_ONLY) {
             getDemux().stop();
-            System.out.println("MUX started by mode change");
             getMux().getOutput().start();
         } else {
             getMux().getOutput().start();

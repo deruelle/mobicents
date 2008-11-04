@@ -36,6 +36,7 @@ import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsConnectionEventID;
 import org.mobicents.mscontrol.MsConnectionListener;
+import org.mobicents.mscontrol.MsConnectionMode;
 import org.mobicents.mscontrol.MsConnectionState;
 import org.mobicents.mscontrol.MsEndpoint;
 import org.mobicents.mscontrol.MsNotificationListener;
@@ -57,6 +58,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
     private String id = (new UID()).toString();
     private MsConnectionState state;
+    private MsConnectionMode mode = MsConnectionMode.SEND_RECV;
     private String remoteSdp;
     protected MsSessionImpl session;
     private String endpointName;
@@ -158,6 +160,17 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
         MsProviderImpl.submit(tx);
     }
 
+    public MsConnectionMode getMode() {
+        return mode;
+    }
+    
+    public void setMode(MsConnectionMode mode) {
+        this.mode = mode;
+        if (state != MsConnectionState.IDLE) {
+            MsProviderImpl.submit(new ModifyModeTx(this));
+        }
+    }
+
     /**
      * (Non Java-doc).
      * 
@@ -222,7 +235,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 
                 logger.debug("Media server returns endpoint: " + endpoint.server.getLocalName());
                 endpoint.server.addConnectionListener(localConnection);
-                connection = endpoint.server.createConnection(ConnectionMode.SEND_RECV);
+                connection = endpoint.server.createConnection(getConnectionMode(mode));
                 setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
                 //connection.addListener(localConnection);
                 if (remoteSdp != null) {
@@ -276,6 +289,19 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
         }
     }
 
+    private class ModifyModeTx implements Runnable {
+
+        private MsConnectionImpl localConnection;
+
+        public ModifyModeTx(MsConnectionImpl localConnection) {
+            this.localConnection = localConnection;
+        }
+
+        public void run() {
+            connection.setMode(getConnectionMode(mode));
+        }
+    }
+
     private class DeleteTx implements Runnable {
 
         public void run() {
@@ -316,6 +342,25 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
     }
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (this.connection != connection) {
+            return;
+        }
+        if (connection.getMode() == ConnectionMode.RECV_ONLY) {
+            sendEvent(MsConnectionEventID.MODE_RECV_ONLY, MsConnectionEventCause.NORMAL, "");
+        } else if (connection.getMode() == ConnectionMode.SEND_ONLY) {
+            sendEvent(MsConnectionEventID.MODE_SEND_ONLY, MsConnectionEventCause.NORMAL, "");
+        } else {
+            sendEvent(MsConnectionEventID.MODE_SEND_RECV, MsConnectionEventCause.NORMAL, "");
+        }
+    }
+
+    private ConnectionMode getConnectionMode(MsConnectionMode mode) {
+        if (mode == MsConnectionMode.RECV_ONLY) {
+            return ConnectionMode.RECV_ONLY;
+        } else if (mode == MsConnectionMode.SEND_ONLY) {
+            return ConnectionMode.SEND_ONLY;
+        } else {
+            return ConnectionMode.SEND_RECV;
+        }
     }
 }

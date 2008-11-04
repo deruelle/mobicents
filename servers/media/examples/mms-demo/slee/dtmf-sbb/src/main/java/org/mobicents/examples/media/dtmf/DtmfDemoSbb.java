@@ -92,6 +92,7 @@ public abstract class DtmfDemoSbb implements Sbb {
     }
 
     public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
+        System.out.println("LINK CONNECTED");
         //ask dtmf detector
         MsLink link = evt.getSource();
         MsEndpoint ivr = link.getEndpoints()[1];
@@ -103,6 +104,7 @@ public abstract class DtmfDemoSbb implements Sbb {
             MsRequestedEvent[] events = new MsRequestedEvent[]{dtmf};
 
             ivr.execute(signals, events, link);
+        System.out.println("PLAY ANNOUNCEMENT< DETECT DTMF");
             play(WELCOME_MSG, link);
         } catch (Exception e) {
             e.printStackTrace();

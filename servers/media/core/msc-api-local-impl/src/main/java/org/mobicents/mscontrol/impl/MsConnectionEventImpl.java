@@ -80,8 +80,14 @@ public class MsConnectionEventImpl implements MsConnectionEvent, Runnable {
                 case CONNECTION_DISCONNECTED:
                     listener.connectionDisconnected(this);
                     break;
-                case MODE_CHANGED :
-                    listener.connectionModeChanged(this);
+                case MODE_RECV_ONLY :
+                    listener.connectionModeRecvOnly(this);
+                    break;
+                case MODE_SEND_ONLY :
+                    listener.connectionModeSendOnly(this);
+                    break;
+                case MODE_SEND_RECV :
+                    listener.connectionModeSendRecv(this);
                     break;
             }
         }

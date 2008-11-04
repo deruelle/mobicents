@@ -595,7 +595,7 @@ public class LocalConnectionImplTest {
 
         public void run() {
             Buffer buffer = new Buffer();
-            buffer.setSequenceNumber(seq);
+            buffer.setSequenceNumber(seq++);
             buffer.setTimeStamp(seq*Quartz.HEART_BEAT);
             buffer.setFormat(f);
             

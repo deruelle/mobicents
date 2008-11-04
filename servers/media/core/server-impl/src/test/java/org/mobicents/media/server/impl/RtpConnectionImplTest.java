@@ -516,10 +516,9 @@ public class RtpConnectionImplTest {
         src.stop();
         assertEquals(0, packets.size());
         
-        con1.setMode(ConnectionMode.SEND_ONLY);
-        packets.clear();
-        
+        con1.setMode(ConnectionMode.SEND_ONLY);        
         src.start();
+        
         try {
             Thread.currentThread().sleep(TEST_DURATION * 1000);
         } catch (Exception e) {
@@ -639,7 +638,7 @@ public class RtpConnectionImplTest {
             buffer.setOffset(0);
             buffer.setLength(320);
             buffer.setDuration(Quartz.HEART_BEAT);
-            buffer.setSequenceNumber(seq);
+            buffer.setSequenceNumber(seq++);
             buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
             buffer.setFormat(f);
 
