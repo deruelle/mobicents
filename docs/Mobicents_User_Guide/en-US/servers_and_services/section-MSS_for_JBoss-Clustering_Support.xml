@@ -87,7 +87,7 @@
 		<param-value>org.jboss.web.jsf.integration.injection.JBossInjectionProvider</param-value>
 	</context-param>]]></programlisting>
 </example>
-			<para>For further information on enabling session replication in your MSS for JBoss Server, refer to <ulink
+			<para>This one configuration change is sufficient for enabling clustering capabilities in MSS for JBoss servers. For further information on session replication and clustering with JBoss, refer to <ulink
 					url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Clustering_Guide/beta422/html/clustering-http-app.html">Enabling session replication in your application</ulink> in the <ulink
 					url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Getting_Started_Guide/beta422/html/index.html">JBoss Application Server Getting Started Guide</ulink>.</para>
 		</section>
@@ -106,7 +106,7 @@
 			</formalpara>
 			<screen>C:\Users\Me\My Downloads\mss-jboss-0.6&gt;bin\run.bat -c all</screen>
 		</section>
-		<section
+		<!--<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Using">
 			<title>Using</title>
 			<para></para>
@@ -115,16 +115,16 @@
 			id="section-binary-SIP_Servlets_Server_Cluster-Stopping">
 			<title>Stopping</title>
 			<para></para>
-		</section>
+		</section>-->
 		<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Testing">
 			<title>Testing</title>
 			<para></para>
 		</section>
-		<section
+		<!--<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Uninstalling">
 			<title>Uninstalling</title>
 			<para></para>
-		</section>
+		</section>-->
 	</section>
 </section>

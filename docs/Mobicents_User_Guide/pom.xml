@@ -44,11 +44,11 @@
                         <directory>src/main/css</directory>
                     </cssResource>-->
 					<formats>
-						<format>
+						<!--<format>
 							<formatName>pdf</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-pdf.xsl</stylesheetResource>
 							<finalName>Mobicents_User_Guide.pdf</finalName>
-						</format><!-- -->
+						</format>-->
 						<format>
 							<formatName>html</formatName>
 							<stylesheetResource>classpath:/xslt/org/jboss/main-html.xsl</stylesheetResource>

@@ -1,0 +1,110 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-The_Diameter_Event-Changing_Service">
+	<title>The Diameter Event-Changing Service</title>
+	<para>The Diameter Event-Changing Service is based on the Location Service, which performs call-charging at a fixed rate. Upon the initiation of a call, a debit of €10.00 occurs. In the cases of a call being rejected or the caller disconnecting (hanging up) before an answer is received, the caller's account is refunded.</para>
+	<para>Provided here is a step-by-step description of the procedure as performed by the application and container:</para>
+		
+	<procedure
+		id="procedure-Diameter_Event-Changing_Service_Step-By-Step">
+		<title>Diameter Event-Changing Service Step-By-Step</title>
+		<step>
+			<!--* Alice makes a call to sip:receiver@sip-servlets.com. The INVITE is received by the servlet container which sends the debit request to the Charging Server and invokes the location service-->
+			<para>A user, Alice, makes a call to <literal>sip:receiver@sip-servlets.com</literal>. The <literal>INVITE</literal> is received by the servlet container, which sends a request to debit Alice's account to the Charging Server. The servlet container then invokes the location service.</para>
+		</step>
+		<step>
+			  <!--* The location service determines, using non-SIP means, where the callee (receiver) is registered with two locations, identified by, say, two SIP URIs (sip:receiver@127.0.0.1:5090 and sip:receiver@127.0.0.1:6090).-->
+			<para>the Location Service determines, without using the SIP protocol itself, where the callee&#8212;or receiver&#8212;is registered. The callee may be registered at two locations identified by two SIP URIs: <literal>sip:receiver@127.0.0.1:5090</literal> and <literal>sip:receiver@127.0.0.1:6090</literal>.</para>
+		</step>
+		<step>
+			<!--* The service proxies to those two destinations in parallel, without record-routing, and without the supervised mode.-->
+			<para>The Location Service proxies to those two destinations simultaneously, without record-routing and without using supervised mode.</para>
+		</step>
+		<step>
+			<!--* Once one of the destinations return 200 (OK), the other branch is cancelled by the container.-->
+			<para>One of the destinations returns <literal>200 (OK)</literal>, and so the container cancels the other.</para>
+		</step>
+		<step>
+			<!--* The 200 is forwarded upstream to Alice and the call setup is completed as per usual.-->
+			<para>The <literal>200 (OK)</literal> is forwarded upstream to Alice and the call setup is carried out as usual.</para>
+		</step>
+		<step>
+			<!--* If none of the destinations accepts the call, a Diameter Accounting-Request for refund is sent to the Diameter Charging Server in order to credit the 10.0 euros debited.-->
+			<para>If neither or none of the registered destinations accepts the call, a Diameter Accounting-Request for refund is sent to the Diameter Charging Server in order to debit the already-credited €10.00</para>
+		</step>
+	</procedure>
+
+	<!-- Diameter Event-Changing Service -->
+	<section
+		id="section-binary-Diameter_Event-Changing_Service--Installing_Configuring_and_Running">
+		<title>Diameter Event-Changing Service: Installing, Configuring and Running</title>
+		<para></para>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Pre-Install_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+		</formalpara>
+		<!-- <variablelist
+			id="variablelist-binary-Diameter_Event-Changing_Service-Hardware_Requirements">
+			<title>Hardware Requirements</title>
+			<varlistentry>
+				<term>Sufficient Disk Space</term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist> -->
+		<variablelist
+			id="variablelist-binary-Diameter_Event-Changing_Service-Software_Prerequisites">
+			<title>Software Prerequisites</title>
+			<varlistentry>
+				<term></term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Downloading">
+			<title>Downloading</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Installing">
+			<title>Installing</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Configuring">
+			<title>Configuring</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Running">
+			<title>Running</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Using">
+			<title>Using</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Stopping">
+			<title>Stopping</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Testing">
+			<title>Testing</title>
+			<para></para>
+		</formalpara>
+		<formalpara
+			id="formalpara-binary-Diameter_Event-Changing_Service-Uninstalling">
+			<title>Uninstalling</title>
+			<para></para>
+		</formalpara>
+	</section>
+</section>
