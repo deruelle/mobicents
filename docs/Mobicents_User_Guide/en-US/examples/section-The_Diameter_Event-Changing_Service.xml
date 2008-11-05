@@ -158,8 +158,70 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Using">
 			<title>Using</title>
-			<para></para>
+			<para>Using the Event-Changing service means, firstly, inserting some parameters into the Charging Emulator, and then, by using two SIP (soft)phones, calling one with the other. The following sequential instructions show you how.</para>
 		</formalpara>
+		<tip
+			id="tip-SIP_(Soft)Phone?_Which?">
+			<title>SIP (Soft)Phone? Which?</title>
+			<para>The Mobicents team recommends one of the following SIP phones, and has found that they work well: the 3CX Phone, teh SJ Phone or the WengoPhone.</para>
+		</tip>
+		<procedure
+			id="procedure-Using_the_Diameter_Event-Changing_Service">
+			<title>Using the Diameter Event-Changing Service</title>
+			<step>
+				<title>Configure the Ericsson SDK Charging Emulator</title>
+				<para>Once you have started the Charging Emulator, you should configure it exactly as portrayed in the screenshot.</para>
+				<mediaobject
+					id="mediaobject-ex-DiameterEventChanging-ss-ChargingEmulatorConfig.png">
+					<imageobject>
+						<imagedata
+							align="center"
+							fileref="images/ex-DiameterEventChanging-ss-ChargingEmulatorConfig.png"
+							format="PNG" />
+					</imageobject>
+					<caption>
+						<para>Configuring the Charging Emulator</para>
+					</caption>
+				</mediaobject>
+				<orderedlist>
+					<listitem>
+						<para>Set the <literal>Peer Id</literal> to: <userinput>aaa://127.0.0.1:21812</userinput>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Set the <literal>Realm</literal> to: <userinput>mobicents.org</userinput>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Set the <literal>Host IP</literal> to: <userinput>127.0.0.1</userinput>
+						</para>
+					</listitem>
+				</orderedlist>
+			</step>
+			<step>
+				<para>Start two SIP (soft)phones. You should set the first phone up with the following parameters: <userinput>sip:receiver@sip-servlets</userinput> on IP address <userinput>127.0.0.1</userinput> on port <userinput>5090</userinput>. The other phone can be set up any way you like.</para>
+			</step>
+			<step>
+				<para>From the second, <quote>any-configuration</quote> phone, make a call to <literal>sip:receiver@sip-servlets.com</literal>. Upon doing so, the other phone should ring or signal that it is being contacted	.</para>
+			</step>
+			<step>
+				<para>You should see there is one first request, right after the invite and before the other party accept/reject the call, sent to the Charging Emulator, that's when the debit is made. In case the call is rejected, or the caller gives up, there's a new Diameter Request sent which will be the refund of the unused value. In case the call is accepted, nothing else will happen, related to Diameter.</para>
+				<para>You can see the user balance in the emulator: in the menu Config > Account > Click on "00001000-Klas Svensson" and watch the balance. Stretch the window down to see the history.</para>
+				<mediaobject
+					id="mediaobj-ex-DiameterEventChanging-ss-ChargingAccountConfig.png">
+					<imageobject>
+						<imagedata
+							align="center"
+							fileref="images/ex-DiameterEventChanging-ss-ChargingAccountConfig.png"
+							format="PNG" />
+					</imageobject>
+					<caption>
+						<para>Configuring Accounts in the Charging Emulator</para>
+					</caption>
+				</mediaobject>
+				<para>Please note that this is not the most correct way to do charging, as Diameter provides other means such as unit reservation, but only as purpose of a demo, where you can see debit and refund working. Also, this is a fixed price call, no matter what the duration. You can also have it using time-based charging.</para>
+			</step>
+		</procedure>
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Stopping">
 			<title>Stopping</title>
