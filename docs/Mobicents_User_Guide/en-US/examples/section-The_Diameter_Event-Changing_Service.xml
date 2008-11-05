@@ -5,8 +5,8 @@
 	id="section-The_Diameter_Event-Changing_Service">
 	<title>The Diameter Event-Changing Service</title>
 	<para>The Diameter Event-Changing Service is based on the Location Service, which performs call-charging at a fixed rate. Upon the initiation of a call, a debit of €10.00 occurs. In the cases of a call being rejected or the caller disconnecting (hanging up) before an answer is received, the caller's account is refunded.</para>
+	<para>Note that an MSS for JBoss installation is required to run this example; it will not work with MSS for Tomcat.</para>
 	<para>Provided here is a step-by-step description of the procedure as performed by the application and container:</para>
-		
 	<procedure
 		id="procedure-Diameter_Event-Changing_Service_Step-By-Step">
 		<title>Diameter Event-Changing Service Step-By-Step</title>
@@ -40,7 +40,7 @@
 	<section
 		id="section-binary-Diameter_Event-Changing_Service--Installing_Configuring_and_Running">
 		<title>Diameter Event-Changing Service: Installing, Configuring and Running</title>
-		<para></para>
+		<para>Preparing your MSS for JBoss server to run the Diameter Event-Changing example requires downloading a WAR archive, a DAR archive, the Ericsson Charging Emulator, setting an attribute in JBoss's <filename>server.xml</filename> configuration file, and then running JBoss AS. Detailed instructions follow.</para>
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Pre-Install_Requirements_and_Prerequisites">
 			<title>Pre-Install Requirements and Prerequisites</title>
@@ -60,9 +60,10 @@
 			id="variablelist-binary-Diameter_Event-Changing_Service-Software_Prerequisites">
 			<title>Software Prerequisites</title>
 			<varlistentry>
-				<term></term>
+				<term>One MSS for JBoss Installation</term>
 				<listitem>
-					<para></para>
+					<para>For instructions on installing MSS for JBoss, go to <xref
+							linkend="section-binary-SIP_Servlets_Server_with_JBoss-Installing_Configuring_and_Running"/>.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -71,21 +72,89 @@
 			<title>Downloading</title>
 			<para></para>
 		</formalpara>
+		<procedure
+			id="procedure-binary-Diameter_Event-Changing_Example">
+				<!--<title>Diameter Event-Changing Example</title>-->
+			<step>
+				<para>First, download the Web Application Archive (<acronym>WAR</acronym>) file corresponding to this example, the current version of which is named <filename>diameter-event-charging-1.0.war</filename>, from <ulink
+						url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/diameter-event-charging/1.0/"/>.</para>
+			</step>
+			<step>
+				<para>Secondly, download the correspnoding Disk ARchive (<acronym>DAR</acronym>) configuration file here: <filename></filename>, from <ulink
+						url="http://www.mobicents.org/diametereventcharging-dar.properties"/>.</para>
+			</step>
+			<step>
+				<para>Finally, you will need to download the Ericsson Charging Emulator, version 1.0, from <ulink
+						url="http://www.ericsson.com/mobilityworld/developerszonedown/downloads/tools/charging_solutions/ChargingSDK-1_0_D31E.zip"/>.</para>
+			</step>
+		</procedure>
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Installing">
 			<title>Installing</title>
 			<para></para>
 		</formalpara>
+		<procedure
+			id="procedure-binary-Diameter_Event-Changing_Example">
+				<!--<title>Diameter Event-Changing Example</title>-->
+			<step>
+				<para>Place the <filename>diameter-event-charging-1.0.war</filename> WAR archive into the <filename>jboss_home/server/&lt;profile&gt;/deploy</filename> directory, where <filename>&lt;deploy&gt;</filename> is your Configuration Profile, whether <quote>default</quote> or <quote>all</quote> (the latter if you are using MSS for JBoss's clustering capabilities).</para>
+			</step>
+			<step>
+				<para>Place the <filename>diametereventcharging-dar.properties</filename> DAR file in your <filename><envar>$JBOSS_HOME</envar>/server/&lt;profile&gt;/conf/dars</filename> directory.</para>
+			</step>
+			<step>
+				<para>Finally, open the terminal, move into the directory to which you downloaded the Ericsson Charging SDK (for the sake of this example, we will call this directory <filename>charging_sdk</filename>), and then unzip the downloaded zip file (you can use Java's <command>jar <option>-xvf</option>
+					</command> command for this:</para>
+				<screen>~]$ cd charging_sdk
+charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
+				<para>Alternatively, you can use Linux's <command>unzip</command> command to do the dirty work:</para>
+				<screen>charging_sdk]$ unzip ChargingSDK-1_0_D31E.zip</screen>
+			</step>
+		</procedure>
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Configuring">
 			<title>Configuring</title>
-			<para></para>
+			<para>To configure the server for the Event-Changing example, simply open the <filename>server.xml</filename> configuration file in your server's <filename><envar>$JBOSS_HOME</envar>/server/&lt;profile&gt;/deploy/jboss-web.deployer/</filename> directory, and edit the value of the <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element so that it is <quote><literal>conf/dars/mobicents-dar.properties</literal>
+				</quote>. For example:</para>
 		</formalpara>
+		<example
+			id="example-Editing_the_darConfigurationFileLocation_Attribute_of_the_Service_Tag">
+	<title>Editing the <literal>darConfigurationFileLocation</literal> Attribute of the Service Tag</title>
+<programlisting
+				id="proglist-Editing_the_darConfigurationFileLocation_Attribute_of_the_Service_Tag"
+				linenumbering="numbered"
+				role="XML">...
+
+&lt;Service name=&quot;jboss.web&quot; 
+      className=&quot;org.mobicents.servlet.sip.startup.SipStandardService&quot; 
+  		sipApplicationDispatcherClassName=&quot;org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl&quot;
+  		sipApplicationRouterClassName=&quot;org.mobicents.servlet.sip.router.DefaultApplicationRouter&quot;
+  		darConfigurationFileLocation=&quot;conf/dars/mobicents-dar.properties&quot;&gt;
+
+...<![CDATA[
+]]></programlisting>
+</example>
+		<!--<para>Your server is now set up to run the Event-Changing example.</para>-->
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Running">
 			<title>Running</title>
 			<para></para>
 		</formalpara>
+		
+		<procedure
+			id="procedure-Diameter_Event-Changing_Service">
+			<title>Diameter Event-Changing Service</title>
+			<step>
+				<para>First, you should run your MSS for JBoss server. For instructions on doing so, refer to <xref
+						linkend="section-binary-SIP_Servlets_Server_with_JBoss-Running"/>.</para>
+			</step>
+			<step>
+				<para>Then, run the Ericsson Charging Emulator. Open a terminal, change the working directory to the location of the unzipped Charging Emulator files (in <filename>ChargingSDK-1_0_D31E</filename> or a similarly-named directory), and run it with the <command>java -jar <filename>PPSDiamEmul.jar</filename>
+					</command> command:</para>
+				<screen>~]$ java -jar PPSDiamEmul.jar</screen>
+			</step>
+		</procedure>
+		
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Using">
 			<title>Using</title>
