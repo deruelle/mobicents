@@ -32,6 +32,7 @@ import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.FacilityException;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -617,5 +618,36 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
             throws IllegalArgumentException {
         this.setRtpFactoryName(jndiName);
 
+    }
+    
+    public void notifyEndpoint(Connection connection, ConnectionState oldState)
+    {
+    	//synchronized (this.connectionListeners) {
+		//	for(ConnectionListener cl: this.connectionListeners)
+		//	{
+		//		cl.onStateChange(connection, oldState);
+		//	}
+		//}
+    	//FIXME: this is not synced, but from point of view of endpoint, its safe since endpoint is always at index 0 and we wont get ConurrentMod exception
+    	for(int index=0;index<connectionListeners.size();index++)
+    	{
+    		connectionListeners.get(index).onStateChange(connection, oldState);
+    	}
+    	
+    }
+    
+    public void notifyEndpoint(Connection connection, ConnectionMode oldMode)
+    {
+    	//synchronized (this.connectionListeners) {
+		//	for(ConnectionListener cl: this.connectionListeners)
+		//	{
+		//		cl.onStateChange(connection, oldState);
+		//	}
+		//}
+    	//FIXME: this is not synced, but from point of view of endpoint, its safe since endpoint is always at index 0 and we wont get ConurrentMod exception
+    	for(int index=0;index<connectionListeners.size();index++)
+    	{
+    		connectionListeners.get(index).onModeChange(connection, oldMode);
+    	}
     }
 }

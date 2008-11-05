@@ -177,9 +177,11 @@ public abstract class BaseConnection implements Connection, NotificationListener
             getDemux().start();
         }
         
-        for (ConnectionListener cl : endpoint.connectionListeners) {
-            cl.onModeChange(this, oldMode);
-        }
+        endpoint.notifyEndpoint(this, oldMode);
+        
+        //for (ConnectionListener cl : endpoint.connectionListeners) {
+        //    cl.onModeChange(this, oldMode);
+        //}
         
         for (ConnectionListener cl : listeners) {
             cl.onModeChange(this, oldMode);
@@ -248,10 +250,8 @@ public abstract class BaseConnection implements Connection, NotificationListener
         this.state = newState;
 
 
-        for (ConnectionListener cl : endpoint.connectionListeners) {
-            cl.onStateChange(this, oldState);
-        }
-        
+ 
+        endpoint.notifyEndpoint(this, oldState);
         for (ConnectionListener cl : listeners) {
             cl.onStateChange(this, oldState);
         }
