@@ -202,11 +202,9 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 				<para>Start two SIP (soft)phones. You should set the first phone up with the following parameters: <userinput>sip:receiver@sip-servlets</userinput> on IP address <userinput>127.0.0.1</userinput> on port <userinput>5090</userinput>. The other phone can be set up any way you like.</para>
 			</step>
 			<step>
-				<para>From the second, <quote>any-configuration</quote> phone, make a call to <literal>sip:receiver@sip-servlets.com</literal>. Upon doing so, the other phone should ring or signal that it is being contacted	.</para>
-			</step>
-			<step>
-				<para>You should see there is one first request, right after the invite and before the other party accept/reject the call, sent to the Charging Emulator, that's when the debit is made. In case the call is rejected, or the caller gives up, there's a new Diameter Request sent which will be the refund of the unused value. In case the call is accepted, nothing else will happen, related to Diameter.</para>
-				<para>You can see the user balance in the emulator: in the menu Config > Account > Click on "00001000-Klas Svensson" and watch the balance. Stretch the window down to see the history.</para>
+				<para>Before making a call, open the <menuchoice><guimenu>Config</guimenu>
+						<guimenuitem>Options</guimenuitem>
+					</menuchoice> dialog window, as shown in the image.</para>
 				<mediaobject
 					id="mediaobj-ex-DiameterEventChanging-ss-ChargingAccountConfig.png">
 					<imageobject>
@@ -219,10 +217,19 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 						<para>Configuring Accounts in the Charging Emulator</para>
 					</caption>
 				</mediaobject>
-				<para>Please note that this is not the most correct way to do charging, as Diameter provides other means such as unit reservation, but only as purpose of a demo, where you can see debit and refund working. Also, this is a fixed price call, no matter what the duration. You can also have it using time-based charging.</para>
+				<!--<para>You can see the user balance in the emulator: in the menu Config > Account > Click on "00001000-Klas Svensson" and watch the balance. Stretch the window down to see the history.</para>-->
+				<para>In the <guilabel>Account Configuration</guilabel> window of the Charging Emulator, you can see the user's balances. Select a user to watch the balance. You can also stretch the window lengthwise to view the user's transaction history.</para>
+			</step>
+			<step>
+				<para>Time to call! From the second, <quote>any-configuration</quote> phone, make a call to <literal>sip:receiver@sip-servlets.com</literal>. Upon doing so, the other phone should ring or signal that it is being contacted	.</para>
+			</step>
+			<step>
+			<!--<para>You should see there is one first request, right after the invite and before the other party accept/reject the call, sent to the Charging Emulator, that's when the debit is made. In case the call is rejected, or the caller gives up, there's a new Diameter Request sent which will be the refund of the unused value. In case the call is accepted, nothing else will happen, related to Diameter.</para>-->
+			<para>You should be able to see a request&#8212;immediately following the invite and before the other party (i.e. you) accepts or rejects the call&#8212;sent to the Charging Emulator. That is when the debit of the user's account is made. In the case that the call is rejected, or the caller gives up, a second, new Diameter request is sent to refund the initial amount charged by the call. On the other hand, if the call is accepted, nothing else related to Diameter happens, and no second request takes place.</para>
+			<para>Please not that this is not the truly-correct way to do charging, as Diameter provides other means, such as unit reservation. However, for the purpose of a demonstration it is sufficient to show the debit and follow-up credit working. Also, this is a fixed-price call, regardless of the duration. Charging can, of course, be configured so that it is time-based.</para>
 			</step>
 		</procedure>
-		<formalpara
+		<!--<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Stopping">
 			<title>Stopping</title>
 			<para></para>
@@ -236,6 +243,6 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 			id="formalpara-binary-Diameter_Event-Changing_Service-Uninstalling">
 			<title>Uninstalling</title>
 			<para></para>
-		</formalpara>
+		</formalpara>-->
 	</section>
 </section>
