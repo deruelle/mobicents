@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
 import org.mobicents.mscontrol.MsEndpoint;
+import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsProvider;
@@ -47,7 +48,7 @@ import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
  * 
  */
 public class MsProviderImpl implements MsProvider, Serializable {
-	
+
 	private transient static Logger logger = Logger.getLogger(MsProviderImpl.class);
 
 	/**
@@ -61,10 +62,11 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
 	protected static transient ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
-        private static transient QueuedExecutor eventQueue = new QueuedExecutor();
+	private static transient QueuedExecutor eventQueue = new QueuedExecutor();
+
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
-		
+
 	}
 
 	public MsSession createSession() {
@@ -169,7 +171,7 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		for (MsSession e : sessions) {
 			for (MsConnection c : e.getConnections()) {
 				MsEndpoint endpoint = c.getEndpoint();
-				if (endpoint!=null && endpoint.getLocalName().equals(endpointName)) {
+				if (endpoint != null && endpoint.getLocalName().equals(endpointName)) {
 					msConnectionList.add(c);
 				}
 			}
@@ -177,18 +179,33 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		return msConnectionList;
 	}
 
+	public List<MsLink> getMsLinks(String endpointName) {
+		List<MsLink> msLinkList = new ArrayList<MsLink>();
+		for (MsSession e : sessions) {
+			for (MsLink c : e.getLinks()) {
+				MsEndpoint[] endpoint = c.getEndpoints();
+
+				if ((endpoint[0] != null && endpoint[0].getLocalName().equals(endpointName))
+						|| (endpoint[1] != null && endpoint[1].getLocalName().equals(endpointName))) {
+					msLinkList.add(c);
+				}
+			}
+		}
+		return msLinkList;
+	}
+
 	protected static synchronized void submit(Runnable task) {
 		pool.submit(task);
 	}
 
-        protected static synchronized void sendEvent(Runnable event) {
-            try {
-                eventQueue.execute(event);
-            } catch (InterruptedException e) {
-            	logger.error("Firing of event failed "+event, e);
-            }
-        }
-        
+	protected static synchronized void sendEvent(Runnable event) {
+		try {
+			eventQueue.execute(event);
+		} catch (InterruptedException e) {
+			logger.error("Firing of event failed " + event, e);
+		}
+	}
+
 	static class ThreadFactoryImpl implements ThreadFactory {
 
 		final ThreadGroup group;

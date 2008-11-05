@@ -207,5 +207,12 @@ public interface MsProvider extends Serializable {
 	 * @return List of <code>MsConnection</code>
 	 */
 	public List<MsConnection> getMsConnections(String endpointName);
+	
+	/**
+	 * Gets List of MsLink object for given endpointName
+	 * @param endpointName Endpoint name
+	 * @return List of <code>MsLink</code>
+	 */
+	public List<MsLink> getMsLinks(String endpointName);
 
 }

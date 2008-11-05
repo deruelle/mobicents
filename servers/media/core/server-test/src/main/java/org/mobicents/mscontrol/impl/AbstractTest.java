@@ -22,7 +22,7 @@ public abstract class AbstractTest extends TestCase {
 	MsProvider msProvider = null;
 	MsConnection msConnection = null;
 	MsLink msLink = null;
-	MsEndpoint confEndpoitn = null;
+	MsEndpoint msEndpoint = null;
 	MsSession msSession = null;
 
 	public AbstractTest(String name) {

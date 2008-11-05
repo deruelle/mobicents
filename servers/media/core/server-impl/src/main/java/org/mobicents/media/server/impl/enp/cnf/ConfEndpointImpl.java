@@ -28,6 +28,7 @@ import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
  *
@@ -167,7 +168,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
     }
 
     public String[] getSupportedPackages() {
-        return new String[]{};
+        return new String[]{Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
     }
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {

@@ -263,9 +263,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     }
     
     private void clean(){
-    	if(connections[0] != null ){
-    		connections[0].close();
-    	}
+    	release();
     	session.removeLink(this);
     }
 

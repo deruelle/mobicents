@@ -9,9 +9,13 @@ import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
+import org.mobicents.mscontrol.MsEndpoint;
+import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsLinkEventCause;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsLinkMode;
+import org.mobicents.mscontrol.MsLinkState;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
 
@@ -31,7 +35,6 @@ public class ZMsProviderImplTest extends AbstractTest {
 	public static Test suite() {
 		return new TestSuite(ZMsProviderImplTest.class);
 	}
-
 
 	public void testSessionListener() {
 		testPassed = true;
@@ -103,17 +106,17 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 			public void connectionModeRecvOnly(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 
 			public void connectionModeSendOnly(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 
 			public void connectionModeSendRecv(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 		});
 		assertNotNull(msConnection);
@@ -143,22 +146,24 @@ public class ZMsProviderImplTest extends AbstractTest {
 			public void connectionDisconnected(MsConnectionEvent event) {
 				message = "testGetMsConnections : MsConnectionListenerImpl.connectionDisconnected called. Expected testPassed = false";
 				testPassed = false;
-				
-				//TODO : This is failing.
-//
-//				logger.info("Cleaning connection msConnection2 " + msConnection2.getId());
-//				// Clean up of other two connections
-//				msConnection2.release();
-//
-//				logger.info("Cleaning connection msConnection3 " + msConnection3.getId());
-//				msConnection3.release();
-//				
-//				try {
-//					Thread.sleep(1000);
-//				} catch (InterruptedException e) {					
-//					e.printStackTrace();
-//				}
-				
+
+				// TODO : This is failing.
+				//
+				// logger.info("Cleaning connection msConnection2 " +
+				// msConnection2.getId());
+				// // Clean up of other two connections
+				// msConnection2.release();
+				//
+				// logger.info("Cleaning connection msConnection3 " +
+				// msConnection3.getId());
+				// msConnection3.release();
+				//				
+				// try {
+				// Thread.sleep(1000);
+				// } catch (InterruptedException e) {
+				// e.printStackTrace();
+				// }
+
 			}
 
 			public void connectionFailed(MsConnectionEvent event) {
@@ -171,14 +176,14 @@ public class ZMsProviderImplTest extends AbstractTest {
 			public void connectionHalfOpen(MsConnectionEvent event) {
 				testPassed = false;
 				message = "testGetMsConnections : MsConnectionListenerImpl.connectionHalfOpen called. Expected testPassed = false";
-				confEndpoitn = event.getConnection().getEndpoint();
-				assertNotNull(confEndpoitn);
+				msEndpoint = event.getConnection().getEndpoint();
+				assertNotNull(msEndpoint);
 
-				msConnection2 = msSession.createNetworkConnection(confEndpoitn.getLocalName());
+				msConnection2 = msSession.createNetworkConnection(msEndpoint.getLocalName());
 				assertNotNull(msConnection2);
 				msConnection2.modify("$", null);
 
-				msConnection3 = msSession.createNetworkConnection(confEndpoitn.getLocalName());
+				msConnection3 = msSession.createNetworkConnection(msEndpoint.getLocalName());
 				assertNotNull(msConnection3);
 				msConnection3.addConnectionListener(new MsConnectionListener() {
 
@@ -199,12 +204,12 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 					public void connectionHalfOpen(MsConnectionEvent event) {
 						message = "testGetMsConnections : MsConnectionListenerImpl.connectionHalfOpen called. Expected testPassed = true";
-						List<MsConnection> list = msProvider.getMsConnections(confEndpoitn.getLocalName());
+						List<MsConnection> list = msProvider.getMsConnections(msEndpoint.getLocalName());
 						assertNotNull(list);
 
 						for (MsConnection c : list) {
 							assertNotNull(c);
-							logger.info("The connection ID = " + c.getId());							
+							logger.info("The connection ID = " + c.getId());
 						}
 						testPassed = true;
 					}
@@ -216,17 +221,17 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 					public void connectionModeRecvOnly(MsConnectionEvent event) {
 						testPassed = false;
-						
+
 					}
 
 					public void connectionModeSendOnly(MsConnectionEvent event) {
 						testPassed = false;
-						
+
 					}
 
 					public void connectionModeSendRecv(MsConnectionEvent event) {
 						testPassed = false;
-						
+
 					}
 				});
 				msConnection3.modify("$", null);
@@ -239,20 +244,128 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 			public void connectionModeRecvOnly(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 
 			public void connectionModeSendOnly(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 
 			public void connectionModeSendRecv(MsConnectionEvent event) {
 				testPassed = false;
-				
+
 			}
 		});
 		msConnection.modify("$", null);
+	}
+
+	public void testGetMsLinks() {
+		msSession = msProvider.createSession();
+		msLink = msSession.createLink(MsLinkMode.FULL_DUPLEX);
+		msLink.addLinkListener(new MsLinkListener() {
+
+			MsLink msLink2 = null;
+			MsLink msLink3 = null;
+
+			public void linkConnected(MsLinkEvent evt) {
+				message = "testLinkCreated : MsLinkListenerImpl.linkConnected called. Expected testPassed = false";
+				testPassed = false;
+				assertEquals(MsLinkEventCause.NORMAL, evt.getCause());
+
+				MsEndpoint[] msEndpoints = evt.getSource().getEndpoints();
+				msEndpoint = msEndpoints[1];
+
+				logger.info("Conference endpoint name = " + msEndpoint.getLocalName());
+
+				msLink2 = msSession.createLink(MsLinkMode.FULL_DUPLEX);
+				msLink2.join("media/trunk/Announcement/$", msEndpoint.getLocalName());
+
+				msLink3 = msSession.createLink(MsLinkMode.FULL_DUPLEX);
+				msLink3.addLinkListener(new MsLinkListener() {
+
+					public void linkConnected(MsLinkEvent evt) {
+
+						List<MsLink> listLinks = msProvider.getMsLinks(msEndpoint.getLocalName());
+						for (MsLink c : listLinks) {
+							assertNotNull(c);
+							logger.info("The Link ID = " + c.getId());
+						}
+						testPassed = true;
+					}
+
+					public void linkCreated(MsLinkEvent evt) {
+						testPassed = false;
+
+					}
+
+					public void linkDisconnected(MsLinkEvent evt) {
+						testPassed = false;
+					}
+
+					public void linkFailed(MsLinkEvent evt) {
+						testPassed = false;
+
+					}
+
+					public void modeFullDuplex(MsLinkEvent evt) {
+						testPassed = false;
+
+					}
+
+					public void modeHalfDuplex(MsLinkEvent evt) {
+						testPassed = false;
+
+					}
+
+				});
+				msLink3.join("media/trunk/Announcement/$", msEndpoint.getLocalName());
+
+			}
+
+			public void linkCreated(MsLinkEvent evt) {
+				message = "testLinkCreated : MsLinkListenerImpl.linkCreated called. Expected testPassed = false";
+				testPassed = false;
+
+			}
+
+			public void linkDisconnected(MsLinkEvent evt) {
+				message = "testLinkCreated : MsLinkListenerImpl.linkDisconnected called. Expected testPassed = false";
+				testPassed = false;
+
+				logger.info("Releasing MsLink2");
+				msLink2.release();
+				logger.info("Releasing MsLink3");
+				msLink3.release();
+
+				// Let us sleep for 2 more secs for cleaning
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			public void linkFailed(MsLinkEvent evt) {
+				message = "testLinkCreated : MsLinkListenerImpl.linkFailed called. Expected testPassed = false";
+				testPassed = false;
+			}
+
+			public void modeFullDuplex(MsLinkEvent evt) {
+				testPassed = false;
+
+			}
+
+			public void modeHalfDuplex(MsLinkEvent evt) {
+				testPassed = false;
+
+			}
+		});
+		assertNotNull(msLink);
+		assertEquals(MsLinkState.IDLE, msLink.getState());
+
+		msLink.join("media/trunk/Announcement/$", "media/trunk/Conference/$");
 	}
 
 	private class ProviderMsSessionListener implements MsSessionListener {
@@ -309,17 +422,17 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 		public void connectionModeRecvOnly(MsConnectionEvent event) {
 			testPassed = false;
-			
+
 		}
 
 		public void connectionModeSendOnly(MsConnectionEvent event) {
 			testPassed = false;
-			
+
 		}
 
 		public void connectionModeSendRecv(MsConnectionEvent event) {
 			testPassed = false;
-			
+
 		}
 
 	}
@@ -349,12 +462,12 @@ public class ZMsProviderImplTest extends AbstractTest {
 
 		public void modeFullDuplex(MsLinkEvent evt) {
 			testPassed = false;
-			
+
 		}
 
 		public void modeHalfDuplex(MsLinkEvent evt) {
 			testPassed = false;
-			
+
 		}
 
 	}
