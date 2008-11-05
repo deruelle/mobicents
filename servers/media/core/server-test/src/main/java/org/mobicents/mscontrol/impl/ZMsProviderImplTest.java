@@ -203,8 +203,8 @@ public class ZMsProviderImplTest extends AbstractTest {
 						assertNotNull(list);
 
 						for (MsConnection c : list) {
-							logger.info("The connection ID = " + c.getId());
 							assertNotNull(c);
+							logger.info("The connection ID = " + c.getId());							
 						}
 						testPassed = true;
 					}

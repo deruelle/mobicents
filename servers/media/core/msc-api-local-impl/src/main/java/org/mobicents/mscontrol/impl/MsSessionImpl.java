@@ -159,6 +159,10 @@ public class MsSessionImpl implements MsSession {
     public List<MsConnection> getConnections() {
         return this.connections;
     }
+    
+    public List<MsLink> getLinks(){
+    	return this.links;
+    }
 
     protected void removeConnection(MsConnection msConnection) {
         connections.remove(msConnection);

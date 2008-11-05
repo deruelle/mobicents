@@ -25,13 +25,25 @@
  * Boston, MA  02110-1301  USA
  */
 
-
 package org.mobicents.mscontrol;
 
 /**
- *
+ * <code>MsConnectionMode</code> represents the direction of stream of
+ * MsConnection.
+ * <ul>
+ * <li>SEND_RECV : The stream (RTP Packets) can flow out and flow in MsConnection</li>
+ * <br/>
+ * <li>SEND_ONLY : The stream can only flow out of MsConnection</li>
+ * <br/>
+ * 
+ * <li>RECV_ONLY : The stream can only flow in MsConnection</li>
+ * <br/>
+ * 
+ * 
+ * </ul>
+ * 
  * @author kulikov
  */
 public enum MsConnectionMode {
-    SEND_RECV, SEND_ONLY, RECV_ONLY
+	SEND_RECV, SEND_ONLY, RECV_ONLY
 }

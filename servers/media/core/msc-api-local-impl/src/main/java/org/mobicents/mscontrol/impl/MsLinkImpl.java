@@ -117,9 +117,9 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
             case FAILED:
                 sendEvent(MsLinkEventID.LINK_FAILED, cause, null);
                 break;
-            case DISCONNECTED:
-                session.removeLink(this);
+            case DISCONNECTED:               
                 sendEvent(MsLinkEventID.LINK_DISCONNECTED, cause, null);
+                session.removeLink(this);
                 break;
         }
     }
@@ -245,17 +245,28 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
             } catch (NamingException e) {
                 logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
+                clean();
             } catch (ResourceUnavailableException e) {
                 logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+                clean();
             } catch (TooManyConnectionsException e) {
                 logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);
+                clean();
             } catch (Exception e) {
                 logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.FACILITY_FAILURE);
+                clean();
             }
         }
+    }
+    
+    private void clean(){
+    	if(connections[0] != null ){
+    		connections[0].close();
+    	}
+    	session.removeLink(this);
     }
 
     private class DropTx implements Runnable {

@@ -170,4 +170,11 @@ public interface MsSession extends Serializable {
 	 */
 	public List<MsConnection> getConnections();
 
+	/**
+	 * Returns the list of {@link MsLink} associated with this MsSession
+	 * 
+	 * @return List of <code>MsLink</code> contained in this session
+	 */
+	public List<MsLink> getLinks();
+
 }

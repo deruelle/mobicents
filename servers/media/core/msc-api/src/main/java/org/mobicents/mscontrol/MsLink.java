@@ -38,7 +38,7 @@ public interface MsLink extends Serializable {
 	/**
 	 * Gets the Link ID
 	 * 
-	 * @return the unique identifier of this <code>MsLink</code> 
+	 * @return the unique identifier of this <code>MsLink</code>
 	 */
 	public String getId();
 
@@ -69,23 +69,72 @@ public interface MsLink extends Serializable {
 	/**
 	 * Returns back the Endpoints names that this link is trying to join
 	 * 
-	 * @return MsEndpoint[]. Array has precisely two Endpoints that this Link is connecting
+	 * @return MsEndpoint[]. Array has precisely two Endpoints that this Link is
+	 *         connecting
 	 */
 	public MsEndpoint[] getEndpoints();
 
-        public MsLinkMode getMode();
-        public void setMode(MsLinkMode mode);
-        
+	/**
+	 * Get the <code>MsLinkMode</code> of this MsLink
+	 * 
+	 * @return MsLinkMode
+	 */
+	public MsLinkMode getMode();
+
+	/**
+	 * While creating the MsLink, application passes the <code>MsLinkMode</code>.
+	 * At any time if MsLinkMode needs to be changed this method is called
+	 * passing appropriate MsLinkMode. If the link is already in same mode as
+	 * that of passed, nothing happens.
+	 * 
+	 * @param mode
+	 *            MsLinkMode
+	 */
+	public void setMode(MsLinkMode mode);
+
 	/**
 	 * Drops this link
 	 */
 	public void release();
 
+	/**
+	 * Adds link listener at MsLink level. The registered listener will be
+	 * called for state change of this MsLink only. <br/> The order is such that
+	 * <code>MsLinkListener</code> registered at <code>MsProvider</code>
+	 * will be called before <code>MsLinkListener</code> at MsLink level
+	 * 
+	 * @param listener
+	 *            the listener object.
+	 */
 	public void addLinkListener(MsLinkListener listener);
 
+	/**
+	 * Removes connection listener.
+	 * 
+	 * @param listener
+	 *            the listener object was added previously.
+	 */
 	public void removeLinkListener(MsLinkListener listener);
-        
-        public void addNotificationListener(MsNotificationListener listener);
-        public void removeNotificationListener(MsNotificationListener listener);
-        
+
+	/**
+	 * Add the <code>MsNotificationListener</code> at MsLink level. The
+	 * registered listener will be called for state change of this MsLink only.
+	 * <br/> The order is such that <code>MsNotificationListener</code>
+	 * registered at <code>MsProvider</code> will be called before
+	 * <code>MsNotificationListener</code> at MsLink level
+	 * 
+	 * @param listener
+	 *            Instance of MsNotificationListener to be registered
+	 */
+	public void addNotificationListener(MsNotificationListener listener);
+
+	/**
+	 * Remove the instance of MsNotificationListener to no longer receive the
+	 * events for state change of MsLink
+	 * 
+	 * @param listener
+	 *            Instance of MsNotificationListener to be de-registered
+	 */
+	public void removeNotificationListener(MsNotificationListener listener);
+
 }

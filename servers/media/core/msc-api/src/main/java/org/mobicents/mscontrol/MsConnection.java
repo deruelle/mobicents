@@ -92,7 +92,11 @@ public interface MsConnection extends Serializable {
 	public MsEndpoint getEndpoint();
 
 	/**
-	 * Adds connection listener.
+	 * Adds connection listener at MsConnection level. The registered listener
+	 * will be called for state change of this MsConnection only. <br/> The
+	 * order is such that <code>MsConnectionListener</code> registered at
+	 * <code>MsProvider</code> will be called before
+	 * <code>MsConnectionListener</code> at MsConnection level
 	 * 
 	 * @param listener
 	 *            the listener object.
@@ -107,9 +111,27 @@ public interface MsConnection extends Serializable {
 	 */
 	public void removeConnectionListener(MsConnectionListener listener);
 
-        public void addNotificationListener(MsNotificationListener listener);
-        public void removeNotificationListener(MsNotificationListener listener);
-        
+	/**
+	 * Add the <code>MsNotificationListener</code> at MsConnection level. The
+	 * registered listener will be called for state change of this MsConnection
+	 * only. <br/> The order is such that <code>MsNotificationListener</code>
+	 * registered at <code>MsProvider</code> will be called before
+	 * <code>MsNotificationListener</code> at MsConnection level
+	 * 
+	 * @param listener
+	 *            Instance of MsNotificationListener to be registered
+	 */
+	public void addNotificationListener(MsNotificationListener listener);
+
+	/**
+	 * Remove the instance of MsNotificationListener to no longer receive the
+	 * events for state change of MsConnection
+	 * 
+	 * @param listener
+	 *            Instance of MsNotificationListener to be de-registered
+	 */
+	public void removeNotificationListener(MsNotificationListener listener);
+
 	/**
 	 * Creates or modify network connection on the media server side.
 	 * 
@@ -118,9 +140,27 @@ public interface MsConnection extends Serializable {
 	 */
 	public void modify(String localDesc, String remoteDesc);
 
-        public void setMode(MsConnectionMode mode);
-        public MsConnectionMode getMode();
-        
+	/**
+	 * By default the <code>MsConnection</code> starts in
+	 * <code>MsConnectionMode.SEND_RECV</code> mode.
+	 * 
+	 * <br/>
+	 * 
+	 * Modes can be changed any time to <code>SEND_ONLY</code> or
+	 * <code>RECV_ONLY</code> by calling this method
+	 * 
+	 * @param mode
+	 *            The mode to set
+	 */
+	public void setMode(MsConnectionMode mode);
+
+	/**
+	 * Get the current mode of MsConnection
+	 * 
+	 * @return <code>MsConnectionMode</code>
+	 */
+	public MsConnectionMode getMode();
+
 	/**
 	 * Deletes related connection from media server. If the corresponding
 	 * MsSession has only this MsConnection left then the state of
