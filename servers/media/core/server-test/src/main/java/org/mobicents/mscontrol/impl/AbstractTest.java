@@ -17,13 +17,13 @@ import org.mobicents.mscontrol.MsSession;
  */
 public abstract class AbstractTest extends TestCase {
 
-	boolean testPassed = false;
-	String message = null;
-	MsProvider msProvider = null;
-	MsConnection msConnection = null;
-	MsLink msLink = null;
-	MsEndpoint msEndpoint = null;
-	MsSession msSession = null;
+	protected boolean testPassed = false;
+	protected String message = null;
+	protected MsProvider msProvider = null;
+	protected MsConnection msConnection = null;
+	protected MsLink msLink = null;
+	protected MsEndpoint msEndpoint = null;
+	protected MsSession msSession = null;
 
 	public AbstractTest(String name) {
 		super(name);
