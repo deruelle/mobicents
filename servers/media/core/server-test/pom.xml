@@ -79,7 +79,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<finalName>${pom.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

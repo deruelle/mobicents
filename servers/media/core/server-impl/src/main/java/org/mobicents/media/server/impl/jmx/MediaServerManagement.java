@@ -15,12 +15,12 @@ import org.mobicents.media.server.impl.Version;
 // TODO Handle option to Start, Stop MediaServer gracefully
 public class MediaServerManagement extends ServiceMBeanSupport implements MediaServerManagementMBean {
 
-	private ObjectName annTrunkManagementMBean;
-	private ObjectName confTrunkManagementMBean;
-	private ObjectName dftEndpointManagementMBean;
-	private ObjectName ivrTrunkManagementMBean;
-	private ObjectName loopTrunkManagementMBean;
-	private ObjectName prTrunkManagementMBean;
+	private ObjectName rtpManagerMBean;
+	private ObjectName annEndpointManagementMBean;
+	private ObjectName prEndpointManagementMBean;
+	private ObjectName loopEndpointManagementMBean;
+	private ObjectName confEndpointManagementMBean;
+	private ObjectName ivrEndpointManagementMBean;
 
 	public MediaServerManagement() {
 		super(MediaServerManagementMBean.class);
@@ -45,57 +45,54 @@ public class MediaServerManagement extends ServiceMBeanSupport implements MediaS
 		return Version.instance.toString();
 	}
 
-	public ObjectName getAnnTrunkManagementMBean() {
-		return this.annTrunkManagementMBean;
+	public ObjectName getRtpManagerMBean() {
+		return rtpManagerMBean;
 	}
 
-	public ObjectName getConfTrunkManagementMBean() {
-		return this.confTrunkManagementMBean;
+	public void setRtpManagerMBean(ObjectName rtpManagerMBean) {
+		this.rtpManagerMBean = rtpManagerMBean;
 	}
 
-	public ObjectName getDFTEndpointManagementMBean() {
-		return this.dftEndpointManagementMBean;
+	public ObjectName getAnnEndpointManagementMBean() {
+		return annEndpointManagementMBean;
 	}
 
-	public ObjectName getIVRTrunkManagementMBean() {
-		return this.ivrTrunkManagementMBean;
+	public void setAnnEndpointManagementMBean(ObjectName annEndpointManagementMBean) {
+		this.annEndpointManagementMBean = annEndpointManagementMBean;
 	}
 
-	public ObjectName getLoopTrunkManagementMBean() {
-		return this.loopTrunkManagementMBean;
+	public ObjectName getPrEndpointManagementMBean() {
+		return prEndpointManagementMBean;
 	}
 
-	public ObjectName getPRTrunkManagementMBean() {
-		return this.prTrunkManagementMBean;
+	public void setPrEndpointManagementMBean(ObjectName prEndpointManagementMBean) {
+		this.prEndpointManagementMBean = prEndpointManagementMBean;
 	}
 
-	public void setAnnTrunkManagementMBean(ObjectName annTrunkManagementMBean) {
-		this.annTrunkManagementMBean = annTrunkManagementMBean;
+	public ObjectName getLoopEndpointManagementMBean() {
+		return loopEndpointManagementMBean;
 	}
 
-	public void setConfTrunkManagementMBean(ObjectName confTrunkManagementMBean) {
-		this.confTrunkManagementMBean = confTrunkManagementMBean;
-
+	public void setLoopEndpointManagementMBean(ObjectName loopEndpointManagementMBean) {
+		this.loopEndpointManagementMBean = loopEndpointManagementMBean;
 	}
 
-	public void setDFTEndpointManagementMBean(ObjectName dftEndpointManagementMBean) {
-		this.dftEndpointManagementMBean = dftEndpointManagementMBean;
-
+	public ObjectName getConfEndpointManagementMBean() {
+		return confEndpointManagementMBean;
 	}
 
-	public void setIVRTrunkManagementMBean(ObjectName ivrTrunkManagementMBean) {
-		this.ivrTrunkManagementMBean = ivrTrunkManagementMBean;
-
+	public void setConfEndpointManagementMBean(ObjectName confEndpointManagementMBean) {
+		this.confEndpointManagementMBean = confEndpointManagementMBean;
 	}
 
-	public void setLoopTrunkManagementMBean(ObjectName loopTrunkManagementMBean) {
-		this.loopTrunkManagementMBean = loopTrunkManagementMBean;
-
+	public ObjectName getIvrEndpointManagementMBean() {
+		return ivrEndpointManagementMBean;
 	}
 
-	public void setPRTrunkManagementMBean(ObjectName prTrunkManagementMBean) {
-		this.prTrunkManagementMBean = prTrunkManagementMBean;
-
+	public void setIvrEndpointManagementMBean(ObjectName ivrEndpointManagementMBean) {
+		this.ivrEndpointManagementMBean = ivrEndpointManagementMBean;
 	}
+
+
 
 }

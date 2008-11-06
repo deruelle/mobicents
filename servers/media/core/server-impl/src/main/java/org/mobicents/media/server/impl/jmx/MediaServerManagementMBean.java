@@ -17,28 +17,28 @@ public interface MediaServerManagementMBean extends ServiceMBean {
 
 	public String getVersion();
 
-	public ObjectName getAnnTrunkManagementMBean();
+	public ObjectName getRtpManagerMBean();
 
-	public void setAnnTrunkManagementMBean(ObjectName annTrunkManagementMBean);
+	public void setRtpManagerMBean(ObjectName rtpManagerMBean);
 
-	public ObjectName getPRTrunkManagementMBean();
+	public ObjectName getAnnEndpointManagementMBean();
 
-	public void setPRTrunkManagementMBean(ObjectName prTrunkManagementMBean);
+	public void setAnnEndpointManagementMBean(ObjectName annEndpointManagementMBean);
 
-	public ObjectName getLoopTrunkManagementMBean();
+	public ObjectName getPrEndpointManagementMBean();
 
-	public void setLoopTrunkManagementMBean(ObjectName loopTrunkManagementMBean);
+	public void setPrEndpointManagementMBean(ObjectName prEndpointManagementMBean);
 
-	public ObjectName getConfTrunkManagementMBean();
+	public ObjectName getLoopEndpointManagementMBean();
 
-	public void setConfTrunkManagementMBean(ObjectName confTrunkManagementMBean);
+	public void setLoopEndpointManagementMBean(ObjectName loopEndpointManagementMBean);
 
-	public ObjectName getIVRTrunkManagementMBean();
+	public ObjectName getConfEndpointManagementMBean();
 
-	public void setIVRTrunkManagementMBean(ObjectName ivrTrunkManagementMBean);
+	public void setConfEndpointManagementMBean(ObjectName confEndpointManagementMBean);
 
-	public ObjectName getDFTEndpointManagementMBean();
+	public ObjectName getIvrEndpointManagementMBean();
 
-	public void setDFTEndpointManagementMBean(ObjectName dftEndpointManagementMBean);
+	public void setIvrEndpointManagementMBean(ObjectName ivrEndpointManagementMBean);
 
 }
