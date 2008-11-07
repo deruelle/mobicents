@@ -28,8 +28,8 @@ public class MsSessionLocal implements MsSession {
 
     private MsSession session;
     private MsProviderLocal provider;
-    protected ConcurrentHashMap connections = new ConcurrentHashMap();
-    protected ConcurrentHashMap links = new ConcurrentHashMap();
+    protected ConcurrentHashMap<String, MsConnection> connections = new ConcurrentHashMap<String, MsConnection>();
+    protected ConcurrentHashMap<String, MsLink> links = new ConcurrentHashMap<String, MsLink>();
     private ReentrantLock blockState = new ReentrantLock();
     private Condition connectionActivityCreated = blockState.newCondition();
     private Condition linkActivityCreated = blockState.newCondition();
@@ -103,6 +103,15 @@ public class MsSessionLocal implements MsSession {
         }
         return list;
     }
+    
+	public List<MsLink> getLinks() {
+        Collection<MsLink> values = links.values();
+        ArrayList<MsLink> list = new ArrayList<MsLink>();
+        for (MsLink link : values) {
+            list.add(link);
+        }
+        return list;
+	}    
 
     public void connectionActivityCreated() {
         blockState.lock();
@@ -126,4 +135,6 @@ public class MsSessionLocal implements MsSession {
     public String toString() {
         return session.toString();
     }
+
+
 }

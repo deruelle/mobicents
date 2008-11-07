@@ -11,6 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
+import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkListener;
 import org.mobicents.mscontrol.MsNotificationListener;
 import org.mobicents.mscontrol.MsProvider;
@@ -114,6 +115,10 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     public List<MsConnection> getMsConnections(String endpointName) {
         return provider.getMsConnections(endpointName);
     }
+    
+	public List<MsLink> getMsLinks(String endpointName) {
+        return provider.getMsLinks(endpointName);
+	}    
 
     public void sessionCreated(MsSessionEvent evt) {
         block.lock();
@@ -146,4 +151,6 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     public MsEventFactory getEventFactory() {
         return provider.getEventFactory();
     }
+
+
 }
