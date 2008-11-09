@@ -56,16 +56,15 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 			return new EndpointShortInfo[0];
 		}
 
-		System.out.println(" TYPE: " + type + " ON: " + beanName);
+		
 		ArrayList<EndpointShortInfo> infos = new ArrayList<EndpointShortInfo>();
 		String[] names;
 		try {
 			names = (String[]) this.server.invoke(beanName, "getEndpointNames", null, null);
-			System.out.println(" TYPE: " + type + " ON: " + beanName + "  NAMES: " + names);
-			System.out.println(" TYPE: " + type + " ON: " + beanName + "  NAMES: " + names.length);
+
 			for (int i = 0; i < names.length; i++) {
 				String name = names[i];
-				System.out.println(" TYPE: " + type + " ON: " + beanName + "  NAME: " + name);
+	
 				try {
 
 					Object value = null;
@@ -218,35 +217,32 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 			return null;
 		}
 
-		ArrayList<EndpointShortInfo> infos = new ArrayList<EndpointShortInfo>();
+		
+		//ArrayList<EndpointShortInfo> infos = new ArrayList<EndpointShortInfo>();
 		String[] names;
 		try {
-			names = (String[]) this.server.invoke(beanName, "getEndpointNames", null, null);
-
-			for (int i = 0; i < names.length; i++) {
-				String name = names[i];
-				try {
+			
 
 					// EndpointLocalManagement _managed=managedEndpoints[i];
 					Object value = null;
 					String[] paramTypes = new String[] { "java.lang.String" };
-					Object[] paramValues = new Object[] { name };
+					Object[] paramValues = new Object[] { endpointName };
 
-					EndpointFullInfo inf = info;
+			
 
-					inf.setName(name);
+					info.setName(endpointName);
 					value = this.server.invoke(beanName, "getConnectionsCount", paramValues, paramTypes);
-					inf.setConnections(((Integer) value).intValue());
+					info.setConnections(((Integer) value).intValue());
 					value = this.server.invoke(beanName, "getCreationTime", paramValues, paramTypes);
-					inf.setCreationTime(((Long) value).longValue());
+					info.setCreationTime(((Long) value).longValue());
 					value = this.server.invoke(beanName, "getGatherPerformanceFlag", paramValues, paramTypes);
-					inf.setGetherPerformance(((Boolean) value).booleanValue());
-					inf.setType(type);
+					info.setGetherPerformance(((Boolean) value).booleanValue());
+					info.setType(type);
 
 					value = this.server.invoke(beanName, "getNumberOfBytes", paramValues, paramTypes);
-					inf.setNumberOfBytes(((Long) value).longValue());
+					info.setNumberOfBytes(((Long) value).longValue());
 					value = this.server.invoke(beanName, "getPacketsCount", paramValues, paramTypes);
-					inf.setPackets(((Long) value).longValue());
+					info.setPackets(((Long) value).longValue());
 					String[] connectionIds = (String[]) this.server.invoke(beanName, "getConnectionIds", paramValues, paramTypes);
 					ArrayList<ConnectionInfo> connectionInfos = new ArrayList<ConnectionInfo>();
 
@@ -257,11 +253,11 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 
 						}
 					}
-					inf.setConnectionsInfo(connectionInfos.toArray(new ConnectionInfo[connectionInfos.size()]));
+					info.setConnectionsInfo(connectionInfos.toArray(new ConnectionInfo[connectionInfos.size()]));
 					value = this.server.invoke(beanName, "getRTPFacotryJNDIName", paramValues, paramTypes);
-					inf.setRtpFactoryJNDIName((String) value);
+					info.setRtpFactoryJNDIName((String) value);
 					// infos.add(inf);
-
+				
 				} catch (NullPointerException e) {
 
 					e.printStackTrace();
@@ -283,13 +279,8 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 					e.printStackTrace();
 					throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "]  Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
 				}
-			}
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "] does not exist or failed to fetch endpoint names!!!!\n"
-					+ MMSManagementMBeanUtils.doMessage(e));
-		}
+			
+		
 		return info;
 
 	}
@@ -487,6 +478,62 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "]  Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
 		}
 
+	}
+
+	public EndpointFullInfo getEndpointTrunkInfo(EndpointType type) throws ManagementConsoleException, NoSuchEndpointException, NoSuchConnectionException {
+		
+		ObjectName beanName = null;
+		try {
+
+
+			// Class equality does not work.
+			if (type.toString().equals(EndpointType.ANNOUNCEMENT.toString())) {
+				beanName = annObjectName;
+			} else if (type.toString().equals(EndpointType.CONF.toString())) {
+				beanName = confObjectName;
+			} else if (type.toString().equals(EndpointType.IVR.toString())) {
+				beanName = ivrObjectName;
+			} else if (type.toString().equals(EndpointType.PCKT_RELAY.toString())) {
+				beanName = pktObjectName;
+			} else if (type.toString().equals(EndpointType.LOOPBACK.toString())) {
+				beanName = loopObjectName;
+
+			} else {
+				throw new NoSuchEndpointException("Wrong endpoint type: " + type);
+			}
+
+			String[] paramTypes = new String[] {  };
+			Object[] paramValues = new Object[] {  };
+			Object value=null;
+			value=this.server.invoke(beanName, "getTrunkName", paramValues, paramTypes);
+			String trunkName=(String) value;
+			EndpointFullInfo trunkInfo=getEndpointInfo(trunkName, type);
+			trunkInfo.setChildrenInfo(this.getEndpointsShortInfo(type));
+			
+			return trunkInfo;
+		} catch (NullPointerException e) {
+
+			e.printStackTrace();
+			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "]  Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
+		} catch (InstanceNotFoundException e) {
+
+			e.printStackTrace();
+			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "] does not exist!!!!\n" + MMSManagementMBeanUtils.doMessage(e));
+		} catch (MBeanException e) {
+
+			e.printStackTrace();
+			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "] does not exist!!!!\n" + MMSManagementMBeanUtils.doMessage(e));
+		} catch (ReflectionException e) {
+
+			e.printStackTrace();
+			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "]  Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
+		} catch (Exception e) {
+
+			e.printStackTrace();
+			throw new ManagementConsoleException("Endpoint Manager MBean [" + beanName + "]  Failed due:\n" + MMSManagementMBeanUtils.doMessage(e));
+		}
+		
+		
 	}
 
 }

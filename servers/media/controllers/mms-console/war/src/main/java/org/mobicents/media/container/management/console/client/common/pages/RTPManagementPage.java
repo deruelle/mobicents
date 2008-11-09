@@ -49,7 +49,7 @@ public class RTPManagementPage extends SmartTabPage {
 	private CardControl cardControl = new CardControl();
 
 	public static SmartTabPageInfo getInfo() {
-		return new SmartTabPageInfo("<image src='images/resources.entitylinks.gif' /> RTP Management", "RTP Management") {
+		return new SmartTabPageInfo("<image src='images/rtp.management.gif' /> RTP Management", "RTP Management") {
 			protected SmartTabPage createInstance() {
 				return new RTPManagementPage();
 			}
@@ -129,7 +129,7 @@ public class RTPManagementPage extends SmartTabPage {
 					
 					name=name.substring(name.indexOf(":")+1);
 					name=name.substring(name.indexOf("service=RTPManager,")+"service=RTPManager,".length());
-					cardControl.add(new RTPManagerDetailsCard(list[i], parent), "<image align='absbottom' src='images/services.gif' /> "+
+					cardControl.add(new RTPManagerDetailsCard(list[i], parent), "<image align='absbottom' src='images/rtp.manager.gif' /> "+
 							name , true);
 					
 						

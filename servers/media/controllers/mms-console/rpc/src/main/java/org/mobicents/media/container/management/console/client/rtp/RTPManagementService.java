@@ -250,4 +250,15 @@ public interface RTPManagementService extends RemoteService{
 	
 	public String[] getAvailableRTPManagersJNDIName()throws RTPManagementOperationFailedException, RTPManagementMBeanDoesNotExistException;
 	
+	/**
+	 * gets predefined audio formats uspported by mms, see console.properties
+	 * @return
+	 */
+	public String getPredefinedAudioFormats();
+	/**
+	 * gets predefined video formats uspported by mms, see console.properties
+	 * @return
+	 */
+	public String getPredefinedVideoFormats();
+	
 }

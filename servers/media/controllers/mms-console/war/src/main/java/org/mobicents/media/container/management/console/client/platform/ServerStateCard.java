@@ -30,27 +30,34 @@
  * 02110-1301 USA, or see the FSF site:
  * http://www.fsf.org.
  */
-package org.mobicents.media.container.management.console.client;
+package org.mobicents.media.container.management.console.client.platform;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 
-/**
- * @author Stefano Zappaterra
- *
- */
-public abstract class ServerCallback implements AsyncCallback {
-	
-	protected Widget widget;
-	
-	public ServerCallback(Widget widget) {
-		this.widget = widget;
+import org.mobicents.media.container.management.console.client.common.Card;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class ServerStateCard extends Card {
+
+	private VerticalPanel rootPanel = new VerticalPanel();
+
+	private ServerStatePanel sleeStatePanel;
+
+	public ServerStateCard() {
+		super();
+		initWidget(rootPanel);
 	}
 
-	public void onFailure(Throwable caught) {
-		Logger.error(caught.getMessage());
+	public void onHide() {
+		sleeStatePanel.stopUpdating();
 	}
 
-	public void onSuccess(Object result) {
+	public void onInit() {
+		sleeStatePanel = new ServerStatePanel();
+		rootPanel.add(sleeStatePanel);
+	}
+
+	public void onShow() {
+		sleeStatePanel.startUpdating();
 	}
 }

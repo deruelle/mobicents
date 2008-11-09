@@ -54,6 +54,7 @@ public class MMSManagementMBeanUtils {
 	private ObjectName rtpMGMTRegex=null;
 	private RTPManagementMBeanUtils rtpManagementMBeanUtils = null;
 	private EndpointManagementMBeanUtils endpointManagementUtils=null;
+	private VirtualEndpointManagementUtils virtualEndpointManagementUtils;
 	
 
 
@@ -74,7 +75,8 @@ public class MMSManagementMBeanUtils {
 			ObjectName confObjectName=new ObjectName("media.mobicents:endpoint=conf");
 			ObjectName loopObjectName=new ObjectName("media.mobicents:endpoint=loopback");
 			this.endpointManagementUtils=new EndpointManagementMBeanUtils(mbeanServer,ivrObjectName,confObjectName,annObjectName,pktObjectName,loopObjectName);
-			
+			ObjectName platformManagerName=new ObjectName("media.mobicents:service=MediaServerManagement");
+			this.virtualEndpointManagementUtils=new VirtualEndpointManagementUtils(mbeanServer,platformManagerName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ManagementConsoleException(MMSManagementMBeanUtils.doMessage(e));
@@ -93,6 +95,11 @@ public class MMSManagementMBeanUtils {
 		return endpointManagementUtils;
 	}
 
+	
+	public VirtualEndpointManagementUtils getVirtualEndpointManagementUtils() {
+		// TODO Auto-generated method stub
+		return this.virtualEndpointManagementUtils;
+	}
 	public static String doMessage(Throwable t) {
 		StringBuffer sb = new StringBuffer();
 		int tick = 0;
@@ -113,5 +120,9 @@ public class MMSManagementMBeanUtils {
 		return sb.toString();
 
 	}
+
+
+
+	
 
 }

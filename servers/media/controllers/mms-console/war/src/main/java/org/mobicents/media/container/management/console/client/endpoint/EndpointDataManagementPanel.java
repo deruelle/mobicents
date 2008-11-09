@@ -9,92 +9,85 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 
-public class EndpointDataManagementPanel extends Composite{
+public class EndpointDataManagementPanel extends Composite {
 
-	
-	protected BrowseContainer display=null;
-	protected DockPanel dataDisplay=new DockPanel();
+	protected BrowseContainer display = null;
+	protected DockPanel dataDisplay = new DockPanel();
 	protected EndpointType type;
 	protected String endpointName;
-	protected ActionPerform onRefreshAction=null;
-	protected ActionPerform onErrorAction=null;
-	protected boolean isVirtual=false;
-	//DataPresentation
-	EndpointDataManagementTopInfoPanel topPanel=null;
-	EndpointDataManagementConnectionsDisplay centerPanel=null;
-	
-	public EndpointDataManagementPanel(BrowseContainer display,
-			EndpointType type, String endpointName,ActionPerform onErrorAction) {
-	this(display, type, endpointName, false, onErrorAction);
+	protected ActionPerform onRefreshAction = null;
+	protected ActionPerform onErrorAction = null;
+	protected boolean isVirtual = false;
+	// DataPresentation
+	EndpointDataManagementTopInfoPanel topPanel = null;
+	EndpointDataManagementConnectionsDisplay centerPanel = null;
+
+	public EndpointDataManagementPanel(BrowseContainer display, EndpointType type, String endpointName, ActionPerform onErrorAction) {
+		this(display, type, endpointName, false, onErrorAction);
 	}
-	public EndpointDataManagementPanel(BrowseContainer display,
-			EndpointType type, String endpointName, boolean isVirtual,ActionPerform onErrorAction) {
+
+	public EndpointDataManagementPanel(BrowseContainer display, EndpointType type, String endpointName, boolean isVirtual, ActionPerform onErrorAction) {
 		super();
 		this.display = display;
 		this.type = type;
 		this.endpointName = endpointName;
 		initWidget(dataDisplay);
-		
-		this.onErrorAction=onErrorAction;
-		this.onRefreshAction=new RefreshAction();
-			
-			
-		this.topPanel=new EndpointDataManagementTopInfoPanel(this.onRefreshAction,this.onErrorAction);	
-		this.centerPanel=new EndpointDataManagementConnectionsDisplay(this.onRefreshAction,this.onErrorAction);
-		
-		dataDisplay.setWidth("100%");
-		//dataDisplay.setHeight("100%");
-		
-		
+		this.isVirtual=isVirtual;
+		this.onErrorAction = onErrorAction;
+		this.onRefreshAction = new RefreshAction();
+
+		this.topPanel = new EndpointDataManagementTopInfoPanel(this.onRefreshAction, this.isVirtual,this.onErrorAction);
+
 		dataDisplay.add(topPanel, dataDisplay.NORTH);
 		dataDisplay.setCellWidth(topPanel, "100%");
-		
+
 		dataDisplay.setCellVerticalAlignment(topPanel, HasVerticalAlignment.ALIGN_TOP);
-		
-		dataDisplay.add(centerPanel, dataDisplay.CENTER);
-		dataDisplay.setCellWidth(centerPanel, "100%");
-		dataDisplay.setCellVerticalAlignment(centerPanel, HasVerticalAlignment.ALIGN_TOP);
+
+		// dataDisplay.setHeight("100%");
+
+		if (!this.isVirtual) {
+			this.centerPanel = new EndpointDataManagementConnectionsDisplay(this.onRefreshAction, this.onErrorAction);
+			dataDisplay.add(centerPanel, dataDisplay.CENTER);
+			dataDisplay.setCellWidth(centerPanel, "100%");
+			dataDisplay.setCellVerticalAlignment(centerPanel, HasVerticalAlignment.ALIGN_TOP);
+		}
+
 		this.onRefreshAction.performAction();
-		
+
+		dataDisplay.setWidth("100%");
 
 	}
-	private void populateWithData(EndpointFullInfo info)
-	{
+
+	private void populateWithData(EndpointFullInfo info) {
 
 		topPanel.populateWithData(info);
-
-		centerPanel.populateWithData(info);
-	
+		if (!this.isVirtual) {
+			centerPanel.populateWithData(info);
+		}
 	}
-	
-	private class RefreshAction extends ActionPerform
-	{
 
-		
+	private class RefreshAction extends ActionPerform {
+
 		public void performAction() {
 			ServerConnection.endpointManagementServiceAsync.getEndpointInfo(endpointName, type, new RefreshCallback());
-			
+
 		}
-		
+
 	}
-	
-	private class RefreshCallback implements AsyncCallback
-	{
 
-		
+	private class RefreshCallback implements AsyncCallback {
+
 		public void onFailure(Throwable arg0) {
-			UserInterface.getLogPanel().error("Failed to refresh due to:\n"+arg0.getMessage());
+			UserInterface.getLogPanel().error("Failed to refresh due to:\n" + arg0.getMessage());
 			onErrorAction.performAction();
-			
+
 		}
 
-		
 		public void onSuccess(Object o) {
 			populateWithData((EndpointFullInfo) o);
-			
+
 		}
-		
+
 	}
-	
-	
+
 }

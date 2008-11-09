@@ -82,5 +82,10 @@ public class EndpointManagementServiceImpl extends RemoteServiceServlet
 			throws ManagementConsoleException, NoSuchEndpointException {
 		utils.destroyEndpoint(name, type);
 	}
+
+	public EndpointFullInfo getEndpointTrunkInfo(EndpointType type) throws ManagementConsoleException, NoSuchEndpointException, NoSuchConnectionException {
+		
+		return utils.getEndpointTrunkInfo(type);
+	}
 	
 }

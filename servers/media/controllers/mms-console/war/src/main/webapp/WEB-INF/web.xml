@@ -37,6 +37,16 @@
 		<servlet-name>EndpointManagementService</servlet-name>
 		<url-pattern>/EndpointManagementService</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>PlatformManagementService</servlet-name>
+		<servlet-class>
+			org.mobicents.media.container.management.console.server.platform.PlatformManagementServiceImpl
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>PlatformManagementService</servlet-name>
+		<url-pattern>/PlatformManagementService</url-pattern>
+	</servlet-mapping>
 	<listener>
 		<listener-class>
 			org.mobicents.media.container.management.console.server.ManagementConsoleContextListener

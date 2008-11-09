@@ -245,4 +245,16 @@ public interface RTPManagementServiceAsync {
 	public void setVideoFormats(XFormat[] formats, String rtpMBeanObjectName,AsyncCallback callback);
 	
 	public void getAvailableRTPManagersJNDIName(AsyncCallback callback);
+	
+	/**
+	 * gets predefined audio formats uspported by mms, see console.properties
+	 * @return
+	 */
+	public void getPredefinedAudioFormats(AsyncCallback callback);
+	/**
+	 * gets predefined video formats uspported by mms, see console.properties
+	 * @return
+	 */
+	public void getPredefinedVideoFormats(AsyncCallback callback);
+	
 }

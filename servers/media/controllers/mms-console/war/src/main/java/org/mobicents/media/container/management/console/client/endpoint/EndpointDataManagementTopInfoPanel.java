@@ -1,5 +1,6 @@
 package org.mobicents.media.container.management.console.client.endpoint;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.mobicents.media.container.management.console.client.ServerConnection;
@@ -19,24 +20,25 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	protected ListBox rtpFactoryNameListBox = new ListBox();
 	protected ListBox gatherDataListBox = new ListBox();
 	protected Button destroyButton = new Button("Destroy");
-	protected ActionPerform refreshDataAction;
+	protected ActionPerform onRefreshDataAction;
 	protected ActionPerform onErrorAction;
+	protected boolean isVirtual;
 
-	public EndpointDataManagementTopInfoPanel(ActionPerform refreshAction,
-			ActionPerform onErrorAction) {
+	public EndpointDataManagementTopInfoPanel(ActionPerform onRefreshDataAction, boolean isVirtual, ActionPerform onErrorAction) {
 		super();
-		this.refreshDataAction = refreshAction;
+		this.onRefreshDataAction = onRefreshDataAction;
 		this.onErrorAction = onErrorAction;
+		this.isVirtual = isVirtual;
 
 		this.setWidth("100%");
 		// this.setHeight("100%");
 
 		this.gatherDataListBox.addItem("Yes", new Boolean(true).toString());
 		this.gatherDataListBox.addItem("No", new Boolean(false).toString());
-		this.gatherDataListBox
-				.addChangeListener(new GatherDataChangeListener());
-		this.rtpFactoryNameListBox
-				.addChangeListener(new ChangeRTPManagerChangeListener());
+		this.gatherDataListBox.addChangeListener(new GatherDataChangeListener());
+		this.rtpFactoryNameListBox.addChangeListener(new ChangeRTPManagerChangeListener());
+		destroyButton.addClickListener(new DestroyEndpointButtonClickListener());
+
 	}
 
 	public void populateWithData(EndpointFullInfo info) {
@@ -49,10 +51,18 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 		setCellText(4, 0, "Created:");
 		setColumnWidth(0, "10%");
 
-		setCellText(0, 2, "Connections:");
+		if (!this.isVirtual) {
+			setCellText(0, 2, "Connections:");
+			setCellText(0, 3, "" + info.getConnections());
+			setCellText(3, 2, "Destroy:");
+		} else {
+			setCellText(0, 2, "Endpoints count:");
+			setCellText(0, 3, "" + (info.getChildrenInfo() == null ? 0 : info.getChildrenInfo().length));
+			setCellText(3, 2, "Destroy children:");
+		}
 		setCellText(1, 2, "Packets:");
 		setCellText(2, 2, "Data:");
-		setCellText(3, 2, "Destroy:");
+		
 		setColumnWidth(2, "10%");
 
 		setColumnWidth(1, "55%");
@@ -68,23 +78,19 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 		setCellText(1, 3, "" + info.getPackets());
 		setCellText(2, 3, "" + (info.getNumberOfBytes() / (8 * 1024 * 1024)));
 		setCell(3, 3, destroyButton);
-		destroyButton
-				.addClickListener(new DestroyEndpointButtonClickListener());
+
 		updateGatherDataView(info.isGetherPerformance());
 		updateRTPList(info.getRtpFactoryJNDIName());
-		ServerConnection.rtpManagementServiceAsync
-				.getAvailableRTPManagersJNDIName(new PopulateRTPManagersListBoxCallBack());
+		ServerConnection.rtpManagementServiceAsync.getAvailableRTPManagersJNDIName(new PopulateRTPManagersListBoxCallBack());
 
 	}
 
 	private void updateGatherDataView(boolean value) {
 
-		
 		for (int i = 0; i < this.gatherDataListBox.getItemCount(); i++) {
-			boolean v = Boolean.valueOf(gatherDataListBox.getValue(i))
-					.booleanValue();
+			boolean v = Boolean.valueOf(gatherDataListBox.getValue(i)).booleanValue();
 			if (v == value) {
-				
+
 				gatherDataListBox.setSelectedIndex(i);
 				return;
 			}
@@ -108,9 +114,7 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	private class PopulateRTPManagersListBoxCallBack implements AsyncCallback {
 
 		public void onFailure(Throwable t) {
-			UserInterface.getLogPanel().error(
-					"Failed to get RTP managers list due to:\n"
-							+ t.getMessage());
+			UserInterface.getLogPanel().error("Failed to get RTP managers list due to:\n" + t.getMessage());
 
 		}
 
@@ -133,12 +137,9 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 
 		public void onChange(Widget w) {
 			ListBox lb = (ListBox) w;
-			boolean value = Boolean.valueOf(lb.getValue(lb.getSelectedIndex()))
-					.booleanValue();
-			UserInterface.getLogPanel().info("SENDING:"+value);
-			ServerConnection.endpointManagementServiceAsync
-					.setGatherPerformanceData(info.getName(), info.getType(),
-							value, new GatherDataSetAsyncCallback());
+			boolean value = Boolean.valueOf(lb.getValue(lb.getSelectedIndex())).booleanValue();
+			
+			ServerConnection.endpointManagementServiceAsync.setGatherPerformanceData(info.getName(), info.getType(), value, new GatherDataSetAsyncCallback());
 
 		}
 
@@ -148,15 +149,12 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 
 		public void onFailure(Throwable t) {
 
-			UserInterface.getLogPanel().error(
-					"Failed to set gather data due to:\n" + t.getMessage());
+			UserInterface.getLogPanel().error("Failed to set gather data due to:\n" + t.getMessage());
 
 		}
 
 		public void onSuccess(Object o) {
-			boolean value = Boolean.valueOf(
-					gatherDataListBox.getValue(gatherDataListBox
-							.getSelectedIndex())).booleanValue();
+			boolean value = Boolean.valueOf(gatherDataListBox.getValue(gatherDataListBox.getSelectedIndex())).booleanValue();
 			info.setGetherPerformance(value);
 
 		}
@@ -167,9 +165,7 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 		public void onChange(Widget w) {
 			ListBox lb = (ListBox) w;
 			String jndiName = lb.getValue(lb.getSelectedIndex());
-			ServerConnection.endpointManagementServiceAsync
-					.setRTPFactoryJNDIName(info.getName(), info.getType(),
-							jndiName, new ChangeRTPManagerAsyncCallback());
+			ServerConnection.endpointManagementServiceAsync.setRTPFactoryJNDIName(info.getName(), info.getType(), jndiName, new ChangeRTPManagerAsyncCallback());
 		}
 
 	}
@@ -177,17 +173,14 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	private class ChangeRTPManagerAsyncCallback implements AsyncCallback {
 
 		public void onFailure(Throwable t) {
-			UserInterface.getLogPanel().error(
-					"Failed to set new RTPManager due: \n" + t.getMessage());
+			UserInterface.getLogPanel().error("Failed to set new RTPManager due: \n" + t.getMessage());
 
-			ServerConnection.rtpManagementServiceAsync
-					.getAvailableRTPManagersJNDIName(new PopulateRTPManagersListBoxCallBack());
+			ServerConnection.rtpManagementServiceAsync.getAvailableRTPManagersJNDIName(new PopulateRTPManagersListBoxCallBack());
 
 		}
 
 		public void onSuccess(Object o) {
-			String jndiName = rtpFactoryNameListBox
-					.getValue(rtpFactoryNameListBox.getSelectedIndex());
+			String jndiName = rtpFactoryNameListBox.getValue(rtpFactoryNameListBox.getSelectedIndex());
 			updateRTPList(jndiName);
 		}
 
@@ -196,9 +189,35 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	private class DestroyEndpointButtonClickListener implements ClickListener {
 
 		public void onClick(Widget arg0) {
-			ServerConnection.endpointManagementServiceAsync.destroyEndpoint(
-					info.getName(), info.getType(),
-					new DestroyActionAsyncCallback());
+			if (!isVirtual) {
+				ServerConnection.endpointManagementServiceAsync.destroyEndpoint(info.getName(), info.getType(), new DestroyActionAsyncCallback());
+			} else {
+				EndpointShortInfo[] children = info.getChildrenInfo();
+				if (children != null && children.length > 0) {
+					for (int i = 0; i < children.length; i++) {
+						EndpointShortInfo childInfo = children[i];
+						if (i == children.length - 1) {
+							ServerConnection.endpointManagementServiceAsync.destroyEndpoint(childInfo.getName(), childInfo.getType(), new DestroyActionAsyncCallback());
+						} else {
+							ServerConnection.endpointManagementServiceAsync.destroyEndpoint(childInfo.getName(), childInfo.getType(), new AsyncCallback() {
+
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+
+								}
+
+								public void onSuccess(Object result) {
+									// TODO Auto-generated method stub
+
+								}
+							});
+						}
+					}
+				} else {
+					onRefreshDataAction.performAction();
+				}
+
+			}
 
 		}
 
@@ -207,13 +226,20 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	private class DestroyActionAsyncCallback implements AsyncCallback {
 
 		public void onFailure(Throwable arg0) {
-			onErrorAction.performAction();
+			if (!isVirtual) {
+				onErrorAction.performAction();
+			} else {
+				onRefreshDataAction.performAction();
+			}
 
 		}
 
 		public void onSuccess(Object arg0) {
-			onErrorAction.performAction();
-
+			if (!isVirtual) {
+				onErrorAction.performAction();
+			} else {
+				onRefreshDataAction.performAction();
+			}
 		}
 
 	}

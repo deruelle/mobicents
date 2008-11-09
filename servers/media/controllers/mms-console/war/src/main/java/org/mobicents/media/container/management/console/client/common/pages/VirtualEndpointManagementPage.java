@@ -13,23 +13,24 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 
 
-public class EndpointManagementPage extends SmartTabPage{
+public class VirtualEndpointManagementPage extends SmartTabPage{
 
 	
 	protected BrowseContainer display=new BrowseContainer();
 	protected ControlledTabedBar endpointTypesDisplay=new ControlledTabedBar();
 	protected EndpointType[] viewTypes=EndpointType.defined;
 	public static SmartTabPageInfo getInfo() {
-		return new SmartTabPageInfo("<image src='images/endpoints.live.gif' /> Endpoint Management", "Endpoint Management") {
+		return new SmartTabPageInfo("<image src='images/endpoints.virtual.gif' /> VEndpoint Management", "Virtual Endpoint Management") {
 			protected SmartTabPage createInstance() {
-				return new EndpointManagementPage();
+				return new VirtualEndpointManagementPage();
 			}
 		};
 	}
 
-	public EndpointManagementPage() {
+	public VirtualEndpointManagementPage() {
 		super();
 		initWidget(this.display);
 		
@@ -51,10 +52,8 @@ public class EndpointManagementPage extends SmartTabPage{
 			hp.setCellWidth(img, "100%");
 			hp.setCellWidth(l, "100%");
 			hp.setWidth("100%");
-			this.endpointTypesDisplay.add(new EndpointListPanel(tmp,endpointTypesDisplay, this.display,viewTypes[i]),hp );
+			this.endpointTypesDisplay.add(new VirtualEndpointListPanel(tmp,endpointTypesDisplay, this.display,viewTypes[i]),hp );
 		}
-		
-		
 		
 		tmp.add(endpointTypesDisplay, tmp.CENTER);
 		tmp.setCellHeight(endpointTypesDisplay, "100%");

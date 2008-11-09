@@ -6,6 +6,7 @@ import org.mobicents.media.container.management.console.client.ServerConnection;
 import org.mobicents.media.container.management.console.client.common.BrowseContainer;
 import org.mobicents.media.container.management.console.client.common.ControlContainer;
 import org.mobicents.media.container.management.console.client.common.ListPanel;
+import org.mobicents.media.container.management.console.client.common.ServerCallback;
 import org.mobicents.media.container.management.console.client.common.UserInterface;
 import org.mobicents.media.container.management.console.client.common.pages.RTPManagementPage;
 
@@ -60,16 +61,10 @@ public class RTPManagerDetailsPage extends Composite {
 	protected final static int _OPERATION_SET = 0;
 	protected final static int _OPERATION_REFRESH = 1;
 
-	protected final static XFormat[] predefinedAudioFormats;
-	protected final static XFormat[] predefinedVideoFormats;
-	static {
+	protected  XFormat[] predefinedAudioFormats;
+	protected  XFormat[] predefinedVideoFormats;
 
-		// FIXME:Speex has PT of 100 as it has not been assigned with static one
-		// due to:
-		// http://lists.xiph.org/pipermail/speex-dev/2002-November/000049.html
-		predefinedAudioFormats = XFormat.fromString("8 = ALAW, 8000, 8, 1;0 = ULAW, 8000, 8, 1;100 = SPEEX, 8000, 1;18 = G729, 8000, 1;99 = telephone-event/8000");
-		predefinedVideoFormats = new XFormat[0];
-	}
+	protected Object formatsLock=new Object();
 
 	public RTPManagerDetailsPage(BrowseContainer display, RTPManagerInfo info, RTPManagementPage parent) {
 		super();
@@ -78,7 +73,16 @@ public class RTPManagerDetailsPage extends Composite {
 		this.info = info;
 		this.parent = parent;
 		super.initWidget(rootPanel);
-		this.refreshData(null, info);
+		this.initFormats();
+		
+	}
+
+	private void initFormats() {
+
+		ServerConnection.rtpManagementServiceAsync.getPredefinedAudioFormats(new GetAudioFormatsAsyncCallback(this));
+		ServerConnection.rtpManagementServiceAsync.getPredefinedVideoFormats(new GetVideoFormatsAsyncCallback(this));
+	
+		
 	}
 
 	protected void refreshData(String objectName, RTPManagerInfo info) {
@@ -86,6 +90,23 @@ public class RTPManagerDetailsPage extends Composite {
 
 			// FIXME: Do AsyncCallback?
 			return;
+		}
+
+
+		
+		synchronized (formatsLock) {
+			try{
+			
+				if(predefinedAudioFormats==null || predefinedVideoFormats==null)
+				{
+					initFormats();
+				}
+				
+				
+			}catch(Exception e)
+			{
+				UserInterface.getLogPanel().error("Failed to obtain refresh data due to: "+e.getMessage());
+			}
 		}
 
 		this.info = info;
@@ -316,10 +337,11 @@ public class RTPManagerDetailsPage extends Composite {
 		for (int i = 2; i < 12; i++) {
 			displayInfoPanel.setCell(i, 4, new DockPanel());
 		}
-
-		performAudioFormatsUpdateInLocalInfo(info.getAudioFormats());
-		performVideoFormatsUpdateInLocalInfo(info.getVideoFormats());
 	
+		performAudioFormatsUpdateInLocalInfo(info.getAudioFormats());
+	
+		performVideoFormatsUpdateInLocalInfo(info.getVideoFormats());
+			
 
 	}
 
@@ -637,4 +659,81 @@ public class RTPManagerDetailsPage extends Composite {
 		videoFormatsLinkClickListener = new DisplayHyperLinkClickListener("Video", info.getVideoFormats(), predefinedVideoFormats, new PerformVideoFormatsSet());
 		videoFormatsLink.addClickListener(videoFormatsLinkClickListener);
 	}
+	
+	
+	private class GetAudioFormatsAsyncCallback extends ServerCallback
+	{
+
+		public GetAudioFormatsAsyncCallback(Widget widget) {
+			super(widget);
+		
+		}
+
+		public void onSuccess(Object result) {
+	
+			synchronized (formatsLock) {
+				try{
+					
+					if(result==null)
+					{
+						UserInterface.getLogPanel().error("Failed to obtain Audio formats");
+						predefinedAudioFormats=new XFormat[0];
+					}else
+					{
+						predefinedAudioFormats=XFormat.fromString((String) result);
+					}
+					
+					if(predefinedAudioFormats!=null && predefinedVideoFormats!=null)
+					{
+						refreshData(null, info);
+					}
+					
+				
+				}catch(Exception e)
+				{
+					UserInterface.getLogPanel().error("Failed to obtain Audio formats due to: "+e.getMessage());
+				}
+			}
+			
+		}
+		
+	}
+	
+	private class GetVideoFormatsAsyncCallback extends ServerCallback
+	{
+
+		public GetVideoFormatsAsyncCallback(Widget widget) {
+			super(widget);
+	
+		}
+
+		public void onSuccess(Object result) {
+			
+			synchronized (formatsLock) {
+				try{
+					
+					if(result==null)
+					{
+						UserInterface.getLogPanel().error("Failed to obtain Video formats");
+						predefinedVideoFormats=new XFormat[0];
+					}else
+					{
+						predefinedVideoFormats=XFormat.fromString((String) result);
+					}
+					
+					if(predefinedAudioFormats!=null && predefinedVideoFormats!=null)
+					{
+						refreshData(null, info);
+					}
+					
+				}catch(Exception e)
+				{
+					UserInterface.getLogPanel().error("Failed to obtain Video formats due to: "+e.getMessage());
+				}
+			}
+			
+		}
+		
+	}
+	
 }

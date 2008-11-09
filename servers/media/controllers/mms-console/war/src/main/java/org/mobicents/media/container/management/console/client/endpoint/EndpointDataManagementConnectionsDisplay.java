@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -34,6 +35,9 @@ public class EndpointDataManagementConnectionsDisplay extends Composite {
 	protected BrowseContainer display=null;
 	protected ActionPerform refreshDataAction;
 	protected ActionPerform onErrorAction;
+	
+	protected final static String imageUrl="images/endpoints.connections.jpg";
+	
 	public EndpointDataManagementConnectionsDisplay(ActionPerform refreshAction,ActionPerform onErrorAction) {
 		super();
 		this.refreshDataAction=refreshAction;
@@ -45,7 +49,8 @@ public class EndpointDataManagementConnectionsDisplay extends Composite {
 		
 		this.dataDisplay.setHeight("100%");
 		this.dataDisplay.setWidth("100%");
-		Label ll=new Label("ADD HEADER");
+		//Label ll=new Label("ADD HEADER");
+		Image ll=new Image(imageUrl);
 		this.dataDisplay.add(ll, this.dataDisplay.NORTH);
 		this.dataDisplay.setCellHeight(ll, "20px");
 		this.dataDisplay.setCellWidth(ll, "100%");

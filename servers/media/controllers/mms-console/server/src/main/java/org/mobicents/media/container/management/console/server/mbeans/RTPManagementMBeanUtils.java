@@ -1,6 +1,7 @@
 package org.mobicents.media.container.management.console.server.mbeans;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.management.InstanceNotFoundException;
@@ -21,7 +22,9 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 
 	protected MBeanServerConnection server = null;
 	protected ObjectName rptMgmtRegexName = null;
-
+	protected final static String propsFileName="console.properties";
+	
+	
 	public RTPManagementMBeanUtils(ObjectName rptMgmtRegexName, MBeanServerConnection beanServerConnection) {
 		super();
 		this.rptMgmtRegexName = rptMgmtRegexName;
@@ -1040,6 +1043,56 @@ public class RTPManagementMBeanUtils implements RTPManagementService {
 		// e.printStackTrace();
 		// }
 
+	}
+
+	public String getPredefinedAudioFormats() {
+		
+		
+		//For some reason this class is not in repo, props cant be loaded....
+		//Properties props=new Properties();
+		//try{
+
+		//	System.out.println("TEST : "+RTPManagementMBeanUtils.class.getClassLoader().getResourceAsStream(propsFileName));
+		//  props.load(RTPManagementMBeanUtils.class.getClassLoader().getResourceAsStream(propsFileName));
+	
+		//	String value=null;
+			
+		//	value=props.getProperty("formats.audio");
+		//	return value;
+			
+			
+		//}catch(Exception e)
+		//{
+		//	e.printStackTrace();
+			
+		//}
+		
+		return null;
+	}
+
+	public String getPredefinedVideoFormats() {
+		
+		//For some reason this class is not in repo, props cant be loaded....
+		//Properties props=new Properties();
+		//try{
+
+		//	System.out.println("TEST : "+RTPManagementMBeanUtils.class.getClassLoader().getResourceAsStream(propsFileName));
+			
+		//	props.load(RTPManagementMBeanUtils.class.getClassLoader().getResourceAsStream(propsFileName));
+		
+		//	String value=null;
+			
+		//	value=props.getProperty("formats.video");
+		//	return value;
+			
+		
+		//}catch(Exception e)
+		//{
+		//	e.printStackTrace();
+			
+		//}
+		
+		return null;
 	}
 
 }

@@ -8,13 +8,15 @@ import org.mobicents.media.container.management.console.client.rtp.XFormat;
 import org.mobicents.media.container.management.console.server.ManagementConsole;
 import org.mobicents.media.container.management.console.server.mbeans.RTPManagementMBeanUtils;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class RTPManagementServiceImpl extends RemoteServiceServlet implements RTPManagementService{
 
 protected final static ManagementConsole console=ManagementConsole.getInstance();
 protected RTPManagementMBeanUtils utils=null;
-
+protected final static String predefinedAudioFormatsString="8 = ALAW, 8000, 8, 1;0 = ULAW, 8000, 8, 1;100 = SPEEX, 8000, 1;18 = G729, 8000, 1;99 = telephone-event/8000";	
+protected final static String predefinedViedoFormatsString=null;
 public RTPManagementServiceImpl() {
 	super();
 	this.utils=console.getMMSConnection().getMMSManagementMBeanUtils().getRtpManagementMBeanUtils();
@@ -129,5 +131,31 @@ public String[] getAvailableRTPManagersJNDIName()throws RTPManagementOperationFa
 {
 	return utils.getAvailableRTPManagersJNDIName();
 }
+
+/**
+ * gets predefined audio formats uspported by mms, see console.properties
+ * @return
+ */
+public String getPredefinedAudioFormats()
+{
+	String ret=utils.getPredefinedAudioFormats();
+	if(ret==null)
+		return predefinedAudioFormatsString;
+	else
+		return ret;
+}
+/**
+ * gets predefined video formats uspported by mms, see console.properties
+ * @return
+ */
+public String getPredefinedVideoFormats()
+{
+	String ret=utils.getPredefinedVideoFormats();
+	if(ret==null)
+		return predefinedViedoFormatsString;
+	else
+		return ret;
+	
+	}
 
 }

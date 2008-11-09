@@ -1,5 +1,7 @@
 package org.mobicents.media.container.management.console.client.endpoint;
 
+import java.util.ArrayList;
+
 import org.mobicents.media.container.management.console.client.rtp.XFormat;
 
 public class EndpointFullInfo extends EndpointShortInfo {
@@ -8,7 +10,12 @@ public class EndpointFullInfo extends EndpointShortInfo {
 	protected ConnectionInfo[] connectionsInfo = null;
 	protected XFormat[] audioCodecs = null;
 	protected XFormat[] videoCodes = null;
-
+	/**
+	 * gwt.typeArgs <org.mobicents.media.container.management.console.client.endpoint.EndpointFullInfo>
+	 */
+	protected EndpointShortInfo[] childrenInfo=null;
+	
+	
 	public EndpointFullInfo() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -58,6 +65,15 @@ public class EndpointFullInfo extends EndpointShortInfo {
 	public void setVideoCodes(XFormat[] videoCodes) {
 		this.videoCodes = videoCodes;
 	}
+
+	public EndpointShortInfo[] getChildrenInfo() {
+		return childrenInfo;
+	}
+
+	public void setChildrenInfo(EndpointShortInfo[] childrenInfo) {
+		this.childrenInfo = childrenInfo;
+	}
+
 
 	
 	

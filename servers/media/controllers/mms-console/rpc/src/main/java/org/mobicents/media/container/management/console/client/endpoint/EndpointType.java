@@ -5,12 +5,12 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class EndpointType implements IsSerializable{
 
 	protected String type=null;
-	
-	public static final EndpointType CONF=new EndpointType("CONF");
-	public static final EndpointType PCKT_RELAY=new EndpointType("PACKET RELAY");
-	public static final EndpointType IVR=new EndpointType("IVR");
-	public static final EndpointType ANNOUNCEMENT=new EndpointType("ANNOUNCEMENT");
-	public static final EndpointType LOOPBACK=new EndpointType("LOOPBACK");
+	protected String imageName=null;
+	public static final EndpointType CONF=new EndpointType("CONF","endpoints.conf.gif");
+	public static final EndpointType PCKT_RELAY=new EndpointType("PACKETRELAY","endpoints.pr.png");
+	public static final EndpointType IVR=new EndpointType("IVR","endpoints.ivr.gif");
+	public static final EndpointType ANNOUNCEMENT=new EndpointType("ANNOUNCEMENT","endpoints.ann.gif");
+	public static final EndpointType LOOPBACK=new EndpointType("LOOPBACK","endpoints.loop.gif");
 	
 	public static final EndpointType[] defined;
 	static
@@ -24,16 +24,22 @@ public class EndpointType implements IsSerializable{
 	
 	public EndpointType() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
-
-	public EndpointType(String type) {
-		super();
-		this.type = type;
-	}
 
 	
+
+	
+	public EndpointType(String type, String imageName) {
+		super();
+		this.type = type;
+		this.imageName = imageName;
+	}
+
+
+
+
+
 	public String toString() {
 		
 		return "EndpointType : "+type;
@@ -44,6 +50,10 @@ public class EndpointType implements IsSerializable{
 		return type;
 	}
 	
+	public String getImageName()
+	{
+		return this.imageName;
+	}
 	
 	
 }

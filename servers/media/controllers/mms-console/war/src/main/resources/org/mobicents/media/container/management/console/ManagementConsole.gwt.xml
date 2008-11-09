@@ -8,7 +8,7 @@
 	<stylesheet src="css/style.css"/>
 	<stylesheet src="css/gwt.css"/>
 	<stylesheet src="css/common.css"/>
-	<stylesheet src="css/sleestate.css"/>
+	<stylesheet src="css/serverstate.css"/>
 	<!-- stylesheet src="css/components.css"/ -->
 	<!-- stylesheet src="css/deployableunits.css"/ -->
 	<!-- stylesheet src="css/services.css"/ -->
