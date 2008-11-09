@@ -5,4 +5,6 @@ public interface VirtualEndpoint {
 	public Endpoint createEndpoint();
 	public Endpoint getEndpoint(String name);
 	public String[] getEndpointsNames();
+	public void start();
+	public void stop();
 }

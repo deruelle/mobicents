@@ -26,15 +26,17 @@
     </mbean>
     
     <!-- Media Server Management MBean -->
-    <mbean code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
-        name="media.mobicents:service=MediaServerManagement">
-	    <depends optional-attribute-name="RtpManagerMBean">media.mobicents:service=RTPManager,QID=1</depends>
-	    <depends optional-attribute-name="AnnEndpointManagementMBean">media.mobicents:endpoint=announcement</depends>
-	    <depends optional-attribute-name="PrEndpointManagementMBean">media.mobicents:endpoint=packet-relay</depends>
-	    <depends optional-attribute-name="LoopEndpointManagementMBean">media.mobicents:endpoint=loopback</depends>
-	    <depends optional-attribute-name="ConfEndpointManagementMBean">media.mobicents:endpoint=conf</depends>
-	    <depends optional-attribute-name="IvrEndpointManagementMBean">media.mobicents:endpoint=ivr</depends>
-    </mbean>
+	<mbean code="org.mobicents.media.server.impl.jmx.MediaServerManagement"
+		name="media.mobicents:service=MediaServerManagement">
+		<depends optional-attribute-name="IvrEndpointManagementMBean">media.mobicents:endpoint=ivr</depends>
+		<depends optional-attribute-name="ConfEndpointManagementMBean">media.mobicents:endpoint=conf</depends>
+		<depends optional-attribute-name="LoopEndpointManagementMBean">media.mobicents:endpoint=loopback</depends>
+		<depends optional-attribute-name="PrEndpointManagementMBean">media.mobicents:endpoint=packet-relay</depends>
+		<depends optional-attribute-name="AnnEndpointManagementMBean">media.mobicents:endpoint=announcement</depends>
+
+		<!-- Any non standard endpoint with mgmt mbean shoult be specified as below -->
+		<!--  <depends optional-attribute-name="DependencyMBean">media.mobicents:endpoint=PSTNx</depends>  -->
+	</mbean>
     
     <!-- ANNOUNCEMENT  -->
     <mbean code="org.mobicents.media.server.impl.jmx.enp.ann.AnnEndpointManagement"

@@ -17,6 +17,7 @@ public interface MediaServerManagementMBean extends ServiceMBean {
 
 	public String getVersion();
 
+	
 	public ObjectName getRtpManagerMBean();
 
 	public void setRtpManagerMBean(ObjectName rtpManagerMBean);
@@ -40,5 +41,23 @@ public interface MediaServerManagementMBean extends ServiceMBean {
 	public ObjectName getIvrEndpointManagementMBean();
 
 	public void setIvrEndpointManagementMBean(ObjectName ivrEndpointManagementMBean);
+	
+	public String getPlatformStateAsString();
+	public ServerState getPlatformState();
+	
+	/**
+	 * Moves platform into STOPING state. In this state it does not allow to create any more endpoints. It awaits for endpoints to die. Once they terminate
+	 * platform state shifts to STOPED
+	 */
+	public void stopPlatform();
+	/**
+	 * Moves platform into runnign state. Allows endpoints to be created.
+	 */
+	public void startPlatform();
+	/**
+	 * Moves platform to STOPED state - terminates any processing that may be in progress.
+	 */
+	public void tearDownPlatform();
+	public void setDependencyMBean(ObjectName name);
 
 }

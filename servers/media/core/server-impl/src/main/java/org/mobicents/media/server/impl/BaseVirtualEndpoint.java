@@ -30,20 +30,26 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 	private transient static Logger logger = Logger.getLogger(BaseVirtualEndpoint.class);
 	private static int GEN = 1;
 	protected HashMap<String, Endpoint> endpoints = null;
-
+	protected boolean start=true;
 	public BaseVirtualEndpoint(String localName, HashMap<String, Endpoint> endpointMap) {
 		super(localName);
 		this.endpoints = endpointMap;
 	}
 
 	public Endpoint createEndpoint() {
-		String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
-		BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
+		if(start)
+		{	
+			String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
+			BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
 
-		enp.setRtpFactoryName(this.getRtpFactoryName());
+			enp.setRtpFactoryName(this.getRtpFactoryName());
 
-		endpoints.put(localName, enp);
-		return enp;
+			endpoints.put(localName, enp);
+			return enp;
+		}else
+		{
+			throw new IllegalStateException("Cant create endpoints while in stoped state!!");
+		}
 	}
 
 	public abstract Endpoint doCreateEndpoint(String localName);
@@ -87,4 +93,18 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 	public String toString() {
 		return this.getClass().getSimpleName() + ":" + endpoints;
 	}
+
+	public void start() {
+		this.start=true;
+		
+	}
+
+	public void stop() {
+		this.start=false;
+		
+	}
+
+	
+	
+	
 }

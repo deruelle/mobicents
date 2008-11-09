@@ -69,12 +69,13 @@ public interface EndpointManagementMBean extends ServiceMBean {
 	public void setGatherPerformanceFlag(boolean flag,String endpointName) throws IllegalArgumentException;
 	public boolean getGatherPerformanceFlag(String endpointName) throws IllegalArgumentException;
 	public String[] getEndpointNames() throws IllegalArgumentException;
+	public int getEndpointsCount() throws IllegalArgumentException;
 	public String[] getConnectionIds(String endpointName) throws IllegalArgumentException;
 	public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException;
 	public void setRTPFacotryJNDIName(String endpointName,String jndiName)  throws IllegalArgumentException;
 	public void destroyConnection(String name,	String connectionId)   throws IllegalArgumentException;
 	public void destroyEndpoint(String name)  throws IllegalArgumentException;
-	
+	public String getTrunkName();
 
     // ######################################
     // # MANAGEMENT OPERATIONS: Connections #
@@ -87,4 +88,13 @@ public interface EndpointManagementMBean extends ServiceMBean {
 	public String getConnectionState(String endpointName, String connectionId) throws IllegalArgumentException;
 	public String getConnectionMode(String endpointName, String connectionId) throws IllegalArgumentException;
     
+	// #########################
+    // # START/STOP part       #
+    // #########################
+	
+	public void startPlatform();
+	public void stopPlatform();
+	public void tearDownPlatform();
+	
+	
 }
