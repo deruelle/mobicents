@@ -171,7 +171,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 			remoteSDP = remoteConnectionDescriptor.toString();
 		}
 
-		msConnection.modify(endPointName, remoteSDP);
+		msConnection.modify(null, remoteSDP);
 
 		// TODO : Check for SecondEndpointIdentifier - Local Connection
 
