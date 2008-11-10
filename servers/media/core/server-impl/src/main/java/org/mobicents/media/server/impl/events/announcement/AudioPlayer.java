@@ -18,6 +18,8 @@ package org.mobicents.media.server.impl.events.announcement;
 import java.io.IOException;
 import java.net.URL;
 
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat.Encoding;
@@ -30,6 +32,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 import org.xiph.speex.spi.SpeexAudioFileReader;
 
@@ -37,10 +40,9 @@ import org.xiph.speex.spi.SpeexAudioFileReader;
  *
  * @author Oleg Kulikov
  */
-public class AudioPlayer extends AbstractSource implements Runnable {
-	
-	private transient Logger logger = Logger.getLogger(AudioPlayer.class);
+public class AudioPlayer extends AbstractSource implements TimerTask {
 
+    private transient Logger logger = Logger.getLogger(AudioPlayer.class);
     protected final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
@@ -50,16 +52,16 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private AudioInputStream stream = null;
     private int packetSize;
     private long seq = 0;
-    protected Timer timer;
-    private boolean started;
+    protected volatile Timer timer;
+    private volatile boolean started;
     private String file;
-    private long time;
-    
-    
-    private int count = 0;
+    private boolean eom = false;
+    private ReentrantLock state = new ReentrantLock();
+    private Condition playerStarted = state.newCondition();
+    private Condition playerStopped = state.newCondition();
     //protected int packetPeriod;
     public AudioPlayer() {
-    	super("AudioPlayer");
+        super("AudioPlayer");
         this.timer = new Timer();
         timer.setListener(this);
     }
@@ -69,7 +71,21 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     }
 
     public void start() {
-        this.start(file);
+        state.lock();
+        try {
+            seq = 0;
+            start(file);
+
+            while (!started) {
+                try {
+                    playerStarted.await();
+                } catch (InterruptedException e) {
+                    timer.stop();
+                }
+            }
+        } finally {
+            state.unlock();
+        }
     }
 
     /**
@@ -85,12 +101,15 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * @throws javax.media.CannotRealizeException
      */
     public void start(String file) {
+        if (started) {
+            return;
+        }
 
         URL url = null;
         try {
             url = new URL(file);
         } catch (IOException e) {
-        	logger.error("IOException in file "+ file, e);
+            logger.error("IOException in file " + file, e);
             this.failed(e);
             return;
         }
@@ -110,7 +129,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             try {
                 stream = speexAudioFileReader.getAudioInputStream(url);
             } catch (Exception e) {
-            	logger.error("Using SpeexAudioFileReader. Error  " + stream, e);
+                logger.error("Using SpeexAudioFileReader. Error  " + stream, e);
                 this.failed(e);
                 return;
             }
@@ -119,13 +138,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         AudioFormat fmt = new AudioFormat(getEncoding(stream.getFormat().getEncoding()), stream.getFormat().getFrameRate(), stream.getFormat().getFrameSize() * 8, stream.getFormat().getChannels());
         packetSize = (int) ((fmt.getSampleRate() / 1000) * (fmt.getSampleSizeInBits() / 8) * Quartz.HEART_BEAT);
 
-        this.timer.start();
-        this.started = true;
-        //worker = new Thread(this);
-        //worker.setName("Audio Player");
-        //worker.setPriority(Thread.MAX_PRIORITY);
-        //worker.start();
-        this.started();
+        timer.start();
+        eom = false;
     }
 
     private String getEncoding(Encoding encoding) {
@@ -146,10 +160,17 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Terminates player.
      */
     public void stop() {
-        timer.stop();
-        if (started) {
-            started = false;
-            this.stopped();
+        state.lock();
+        try {
+            timer.stop();
+            while (started) {
+                try {
+                    playerStopped.await();
+                } catch (InterruptedException e) {
+                }
+            }
+        } finally {
+            state.unlock();
         }
     }
 
@@ -162,19 +183,18 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     }
 
     /**
-     * Called when player stopped.
-     */
-    protected void stopped() {
-        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
-        this.sendEvent(evt);
-    }
-
-    /**
      * Called when player started to transmitt audio.
      */
-    protected void started() {
-        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
-        this.sendEvent(evt);
+    public void started() {
+        state.lock();
+        try {
+            started = true;
+            AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
+            this.sendEvent(evt);
+            playerStarted.signalAll();
+        } finally {
+            state.unlock();
+        }
     }
 
     /**
@@ -201,23 +221,19 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private void doProcess() {
         byte[] packet = new byte[packetSize];
         try {
-            //int len = stream.read(packet);
             int len = readPacket(packet);
-//            long now = System.currentTimeMillis();
-//            if (now - time > 25) {
-//                System.out.println("Delay= " + (now - time));
-//            }
-//            time = now;
             if (len == -1) {
                 timer.stop();
+
                 if (started) {
-                    this.endOfMedia();
+                    eom = true;
                 }
+
                 try {
                     stream.close();
                 } catch (IOException e) {
                 }
-                
+
             } else {
                 Buffer buffer = CachedBuffersPool.allocate();
                 buffer.setData(packet);
@@ -231,10 +247,12 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 
                 if (sink != null) {
                     sink.receive(buffer);
+//                    System.out.println("packet out");
                 }
 
             }
         } catch (Exception e) {
+            System.out.println("Error:" + e.getMessage());
             timer.stop();
             started = false;
             try {
@@ -246,27 +264,25 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         }
     }
 
-    @SuppressWarnings("static-access")
     public void run() {
-/*        while (started) {
-            if (count == 2) {
-                count = 0;
-                doProcess();
-            } else {
-                count++;
-                try {
-                    Thread.currentThread().sleep(10);
-                } catch (InterruptedException e) {
-                    started = false;
-                }
-            }
-
-        }
- */
         doProcess();
     }
 
     public Format[] getFormats() {
         return formats;
+    }
+
+    public void ended() {
+        state.lock();
+        try {
+            started = false;
+            if (eom) {
+                AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+                this.sendEvent(evt);
+            }
+            playerStopped.signalAll();
+        } finally {
+            state.unlock();
+        }
     }
 }

@@ -21,12 +21,13 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class SineGenerator extends AbstractSource implements Runnable {
+public class SineGenerator extends AbstractSource implements TimerTask {
 
     private byte[] data;
     
@@ -97,6 +98,12 @@ public class SineGenerator extends AbstractSource implements Runnable {
 
     public Format[] getFormats() {
         return formats;
+    }
+
+    public void started() {
+    }
+
+    public void ended() {
     }
 
     

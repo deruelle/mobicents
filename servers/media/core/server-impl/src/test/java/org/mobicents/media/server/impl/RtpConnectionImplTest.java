@@ -16,6 +16,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
 
 import static org.junit.Assert.*;
@@ -613,7 +614,7 @@ public class RtpConnectionImplTest {
 		}
     }
 
-    private class Source extends AbstractSource implements Runnable {
+    private class Source extends AbstractSource implements TimerTask {
 
         private Timer timer = new Timer();
         private int seq;
@@ -650,6 +651,12 @@ public class RtpConnectionImplTest {
 
         public Format[] getFormats() {
             return new Format[]{f};
+        }
+
+        public void started() {
+        }
+
+        public void ended() {
         }
     }
 

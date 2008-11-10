@@ -31,6 +31,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
@@ -76,7 +77,7 @@ public class CongestionToneGen extends AbstractSource {
         int div = (int)(seq / PERIOD);
         return seq - (div * PERIOD) == 0;
     }
-    private class Generator implements Runnable {
+    private class Generator implements TimerTask {
 
         public void run() {
             if (sink != null) {
@@ -95,6 +96,12 @@ public class CongestionToneGen extends AbstractSource {
                 buffer.setSequenceNumber(seq);
                 buffer.setTimeStamp(20 * seq);
             }
+        }
+
+        public void started() {
+        }
+
+        public void ended() {
         }
     }
 }

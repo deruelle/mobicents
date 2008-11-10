@@ -17,6 +17,7 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
@@ -119,7 +120,7 @@ public class ReceiveStreamTest {
         System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);
     }
 
-    public class Sender implements Runnable {
+    public class Sender implements TimerTask {
 
         private int seq = 0;
 
@@ -129,6 +130,12 @@ public class ReceiveStreamTest {
                     new Integer(seq).toString().getBytes());
             stream.push(p);
             seq++;
+        }
+
+        public void started() {
+        }
+
+        public void ended() {
         }
     }
 

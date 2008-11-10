@@ -18,12 +18,13 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class ReceiveStream extends AbstractSource implements Runnable {
+public class ReceiveStream extends AbstractSource implements TimerTask {
 
     /**
 	 * 
@@ -75,5 +76,11 @@ public class ReceiveStream extends AbstractSource implements Runnable {
 
     public Format[] getFormats() {
         return formats;
+    }
+
+    public void started() {
+    }
+
+    public void ended() {
     }
 }

@@ -20,6 +20,7 @@ import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -237,7 +238,7 @@ public class RtpSocketImplTest {
         
     }
 
-    private class Sender extends AbstractSource implements Runnable {
+    private class Sender extends AbstractSource implements TimerTask {
 
         private int seq = 0;
         private Timer timer = new Timer();
@@ -273,6 +274,12 @@ public class RtpSocketImplTest {
 
         public Format[] getFormats() {
             return null;//new Format[] {PCMA};
+        }
+
+        public void started() {
+        }
+
+        public void ended() {
         }
         
     }

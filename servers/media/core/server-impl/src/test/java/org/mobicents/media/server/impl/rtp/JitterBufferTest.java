@@ -14,6 +14,7 @@ import static org.junit.Assert.*;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
@@ -156,7 +157,7 @@ public class JitterBufferTest {
         System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);
     }
 
-    public class Sender implements Runnable {
+    public class Sender implements TimerTask {
 
         private int seq = 0;
 
@@ -167,9 +168,15 @@ public class JitterBufferTest {
             jitterBuffer.write(p);
             seq++;
         }
+
+        public void started() {
+        }
+
+        public void ended() {
+        }
     }
 
-    public class Receiver implements Runnable {
+    public class Receiver implements TimerTask {
         
         @SuppressWarnings("static-access")
         public void run() {
@@ -177,6 +184,12 @@ public class JitterBufferTest {
             if (buffer != null) {
                 packets.add(buffer);
             }
+        }
+
+        public void started() {
+        }
+
+        public void ended() {
         }
     }
 }
