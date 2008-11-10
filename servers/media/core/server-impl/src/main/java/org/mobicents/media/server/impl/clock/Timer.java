@@ -23,7 +23,9 @@ import java.io.Serializable;
 public class Timer implements Serializable, Runnable {
 
     public final static Quartz quartz = new Quartz();
-    private Runnable handler;
+    
+    private TimerTask handler;
+    
     private volatile boolean stopped = true;
     private transient Thread worker;
     
@@ -35,7 +37,7 @@ public class Timer implements Serializable, Runnable {
     public Timer() {
     }
 
-    public void setListener(Runnable handler) {
+    public void setListener(TimerTask handler) {
         this.handler = handler;
     }
 
@@ -45,6 +47,7 @@ public class Timer implements Serializable, Runnable {
     public void start() {
         if (stopped) {
             worker = new Thread(this, "MediaTimer");
+            worker.setPriority(Thread.MAX_PRIORITY);
             stopped = false;
             lastTick = System.currentTimeMillis();
             worker.start();            
@@ -83,6 +86,10 @@ public class Timer implements Serializable, Runnable {
     }
     
     public void run() {
+        if (handler != null) {
+            handler.started();
+        }
+        
         while (!stopped) {
             long t1 = System.currentTimeMillis();
             if (handler != null) {
@@ -91,5 +98,10 @@ public class Timer implements Serializable, Runnable {
             long t2 = System.currentTimeMillis();
             await(t1, t2);
         }
+        
+        if (handler != null) {
+            handler.ended();
+        }
+        
     }
 }
