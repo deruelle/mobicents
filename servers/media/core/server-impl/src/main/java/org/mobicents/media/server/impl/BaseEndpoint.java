@@ -448,7 +448,6 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         // throw new PackageNotSupportedException(this.getLocalName() + "
         // doesn't support any packages");
         // }
-        System.out.println("Events length=" + events.length);
         for (int i = 0; i < events.length; i++) {
 
             supports = false;
@@ -492,13 +491,21 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
                 return;
             }
         }
+        
         BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
 
+        //disbale all previous detected event
         connection.detect(null);
         for (int i = 0; i < events.length; i++) {
             connection.detect(events[i]);
         }
 
+        //disbale all previous signals
+        Collection<AbstractSource> sources = getMediaSources(connection.getId()).values();
+        for (AbstractSource source: sources) {
+            source.stop();
+        }
+        
         if (requestedSignal != null) {
             try {
                 AbstractSignal signal = getSignal(signals[0]);
