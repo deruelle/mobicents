@@ -22,6 +22,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  * Combines several signals for transmission over a single medium. A
@@ -32,7 +33,7 @@ import org.mobicents.media.server.impl.clock.Timer;
  * 
  * @author Oleg Kulikov
  */
-public class Multiplexer extends AbstractSink implements Runnable {
+public class Multiplexer extends AbstractSink implements TimerTask {
 
     private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW,
             8000, 8, 1);
@@ -217,6 +218,12 @@ public class Multiplexer extends AbstractSink implements Runnable {
                 seq++;
             }
         }
+    }
+
+    public void started() {
+    }
+
+    public void ended() {
     }
 }
 
