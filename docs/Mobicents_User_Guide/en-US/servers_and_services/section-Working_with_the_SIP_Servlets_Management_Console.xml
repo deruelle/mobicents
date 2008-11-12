@@ -1,0 +1,34 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-Working_with_the_SIP_Servlets_Management_Console">
+	<title>Working with the SIP Servlets Management Console</title>
+	<para>Once you have installed and started either an MSS for JBoss or MSS for Tomcat instance, you can access the SIP Servlets Management Console by opening your browser and navigating to <ulink
+			url="http://localhost:8080/sip-servlets-management/"/>.</para>
+	<mediaobject
+		id="mediaobj-sas-MSSSManagementConsole-ss-ManagementConsole.png">
+		<imageobject>
+			<imagedata
+				align="center"
+				fileref="images/sas-MSSSManagementConsole-ss-ManagementConsole.png"
+				format="PNG" />
+		</imageobject>
+		<caption>
+			<para>http://localhost:8080/sip-servlets-management: The SIP Servlets Management Console</para>
+		</caption>
+	</mediaobject>
+	<para>Helpful Information on how to use the SIP Servlets Management Console is available immediately from within the AJAX application itself: simply click on the <guilabel>Help</guilabel> link on the top main menu bar, and a <guilabel>Default Application Router Help</guilabel> popup will appear. This help box can be repositioned and resized by dragging.</para>
+	<mediaobject
+		id="mediaobj-sas-MSSSManagementConsole-ss-Help.png">
+		<imageobject>
+			<imagedata
+				align="center"
+				fileref="images/sas-MSSSManagementConsole-ss-Help.png"
+				format="PNG" />
+		</imageobject>
+		<caption>
+			<para>SIP Servlets Management Console: Default Application Router Help</para>
+		</caption>
+	</mediaobject>
+</section>

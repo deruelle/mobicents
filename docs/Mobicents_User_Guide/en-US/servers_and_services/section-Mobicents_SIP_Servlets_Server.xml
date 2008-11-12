@@ -332,7 +332,7 @@
 		<section
 			id="section-binary-SIP_Servlets_Server_with_JBoss-Using">
 			<title>Using</title>
-			<para>Once the server is running, you can access the Mobicents SIP Servlets Management Console by opening your browser and navigating to <ulink
+			<para>Once the server is running, you can access the SIP Servlets Management Console by opening your browser and navigating to <ulink
 					url="http://localhost:8080/sip-servlets-management/"/>.</para>
 		</section>
 		<section
