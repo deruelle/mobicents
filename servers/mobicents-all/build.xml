@@ -8,7 +8,7 @@
     <property name="release.version" value="1.2.0.CR2"/>
 	<property name="release.configurations" value="default,all"/>
 	
-	<property name="jboss.version" value="4.2.2.GA"/>
+	<property name="jboss.version" value="4.2.3.GA"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
 	<property name="jboss.download.url" value="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
     <property name="jboss.home.relative.path" value="jboss-${jboss.version}/"/>
@@ -23,8 +23,8 @@
     <property name="jbcp.configurations" value="default,all,production"/>
 		
 	<property name="eap.version" value="eap-4.3"/>
-	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP02.zip"/>
-	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP02/zip/${eap.distro.zip.path}" />
+	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP03.zip"/>
+	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP03/zip/${eap.distro.zip.path}" />
     <property name="eap.home.relative.path" value="jboss-${eap.version}/jboss-as"/>
 	<property name="eap.home" value="${jbcp.release.dir}/${eap.home.relative.path}"/>
 
@@ -48,6 +48,7 @@
 			</sequential>
 		</for>
 		
+		<antcall target="release-jain-slee-common" />
 		<antcall target="release-sip-load-balancer" />
 		
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
@@ -58,7 +59,7 @@
 		<antcall target="clean"/>
 	</target>
 	
-	<target name="release-in-node" depends="release-jain-slee,release-media,release-sip-presence,release-sip-servlets" />
+	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-presence,release-sip-servlets" />
 
     <target name="release-jbcp">
         <ant antfile="${ant.file.mobicents.all.release}" target="release">
@@ -80,6 +81,7 @@
 	
 	<!-- get, unzip and clean jboss -->
 
+	<!-- this will fail for eap if jboss as is downloaded and eap isn't -->
 	<available file="${ant.file.mobicents.all.release}/../${jboss.distro.zip.path}" property="got.jboss" />
 	<target name="get-jboss" unless="got.jboss">
 		<echo>Downloading JBoss AS</echo>
@@ -129,13 +131,35 @@
 	</target>
 
 	<!-- release servers -->
-
-	<target name="release-jain-slee">
-		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="release-mobicents-all">
+	
+	<target name="release-jain-slee-common">
+		<property name="jain-slee.target.release.dir" location="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/target"/>
+		
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="build-ras">
+			<property name="release.dir" value="${release.dir}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
+		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="build-examples">
+			<property name="release.dir" value="${release.dir}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
+		</ant>
+		<copydir dest="${release.dir}/resources" src="${jain-slee.target.release.dir}/resources" />
+		<copydir dest="${release.dir}/examples" src="${jain-slee.target.release.dir}/examples" />
+		<delete dir="${jain-slee.target.release.dir}/resources" />
+		<delete dir="${jain-slee.target.release.dir}/examples" />
+	</target>
+	
+	<target name="release-jain-slee-in-node">
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="build-core">
 			<property name="release.dir" value="${release.dir}" />
             <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 			<property name="jboss.config" value="${jboss.node}" />
 		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/jain-slee/release/build.xml" target="copy-extra-jbossas-files">
+			<property name="release.dir" value="${release.dir}" />
+            <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
+			<property name="jboss.config" value="${jboss.node}" />
+	</ant>
 	</target>
 
 	<target name="release-media">
