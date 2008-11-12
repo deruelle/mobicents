@@ -30,6 +30,7 @@ public class Timer implements Serializable, Runnable {
     private transient Thread worker;
     
     private long lastTick;
+    private long next;
     
     /**
      * Creates new instance of the timer.
@@ -85,18 +86,39 @@ public class Timer implements Serializable, Runnable {
         }
     }
     
+    @SuppressWarnings("static-access")
+    private void await() {
+        long now = System.currentTimeMillis();
+        long dif = next - now;
+        
+        if (dif < 0) {
+            dif = 0;
+        }
+        
+        try {
+            Thread.currentThread().sleep(dif);
+        } catch (InterruptedException e) {
+            stopped = true;
+        }
+        
+        next += Quartz.HEART_BEAT;
+    }
+    
     public void run() {
+        next = System.currentTimeMillis() + Quartz.HEART_BEAT;
+        
         if (handler != null) {
             handler.started();
         }
         
         while (!stopped) {
-            long t1 = System.currentTimeMillis();
+//            long t1 = System.currentTimeMillis();
             if (handler != null) {
                 handler.run();
             }
-            long t2 = System.currentTimeMillis();
-            await(t1, t2);
+//            long t2 = System.currentTimeMillis();
+//            await(t1, t2);
+            await();
         }
         
         if (handler != null) {
