@@ -223,7 +223,7 @@ public abstract class TransactionHandler implements Runnable {
 	 *            the return code
 	 * @return true when the code is provisional
 	 */
-	private static boolean isProvisional(ReturnCode rc) {
+	private boolean isProvisional(ReturnCode rc) {
 		final int rval = rc.getValue();
 
 		return ((99 < rval) && (rval < 200));
@@ -522,7 +522,7 @@ public abstract class TransactionHandler implements Runnable {
 		 * Just reset timer in case of provisional response. Otherwise, release
 		 * tx.
 		 */
-		if (isProvisional(event.getReturnCode())) {
+		if (this.isProvisional(event.getReturnCode())) {
 			resetLongtranTimer();
 		} else {
 			// fire event only if non provisional response
