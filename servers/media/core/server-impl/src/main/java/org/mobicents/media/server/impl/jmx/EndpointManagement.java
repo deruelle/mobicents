@@ -344,7 +344,7 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 	}
 
 	public void tearDownPlatform() {
-		this.stop();
+		this.stopPlatform();
 		for(String name: this.getEndpointNames())
 		{
 			this.destroyEndpoint(name);
