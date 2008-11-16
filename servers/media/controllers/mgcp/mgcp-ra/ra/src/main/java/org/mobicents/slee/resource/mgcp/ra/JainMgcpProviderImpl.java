@@ -119,12 +119,10 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 			boolean insertedActivity = false;
 			activity = new MgcpEndpointActivityImpl(ra, endpointIdentifier);
 			try {
-				ra.getMgcpActivityManager().putMgcpEndpointActivity(handle,
-						activity);
+				ra.getMgcpActivityManager().putMgcpEndpointActivity(activity);
 				insertedActivity = true;
-				ra.getSleeEndpoint().activityStarted(
-						new MgcpEndpointActivityHandle(activity
-								.getEndpointIdentifier().toString()));
+			
+				ra.getSleeEndpoint().activityStarted(handle);
 				return activity;
 			} catch (Exception e) {
 				logger.error("Failed to start activity", e);

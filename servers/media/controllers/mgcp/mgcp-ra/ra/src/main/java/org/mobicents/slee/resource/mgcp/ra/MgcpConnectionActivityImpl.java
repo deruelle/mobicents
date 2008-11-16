@@ -15,6 +15,8 @@ public class MgcpConnectionActivityImpl implements MgcpConnectionActivity {
 	private EndpointIdentifier endpointIdentifier;
 	private final Integer transactionHandle;
 	private MgcpResourceAdaptor ra;
+	
+	private MgcpConnectionActivityHandle activityHandle=null;
 	/**
 	 * TODO
 	 */
@@ -35,6 +37,7 @@ public class MgcpConnectionActivityImpl implements MgcpConnectionActivity {
 		this.connectionIdentifier = connectionIdentifier;
 		this.endpointIdentifier = endpointIdentifier;
 		this.ra = ra;
+		this.activityHandle=new MgcpConnectionActivityHandle(id);
 	}
 	
 	/**
@@ -92,4 +95,10 @@ public class MgcpConnectionActivityImpl implements MgcpConnectionActivity {
 		ra.endActivity(new MgcpConnectionActivityHandle(id));		
 	}
 
+	public MgcpConnectionActivityHandle getActivityHandle() {
+		return activityHandle;
+	}
+
+	
+	
 }

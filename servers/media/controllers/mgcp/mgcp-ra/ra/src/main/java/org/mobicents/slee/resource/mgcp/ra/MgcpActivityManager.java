@@ -38,7 +38,8 @@ public class MgcpActivityManager {
 			logger.debug(this.getMgcpRaEntityName()+" : putMgcpConnectionActivity(activity=" + activity + ")");
 		}
 
-		MgcpConnectionActivityHandle handle = new MgcpConnectionActivityHandle(activity.getId());
+		//MgcpConnectionActivityHandle handle = new MgcpConnectionActivityHandle(activity.getId());
+		MgcpConnectionActivityHandle handle=activity.getActivityHandle();
 		if (activity.getConnectionIdentifier() != null) {
 			connectionIdentifier2ActivityHandleMap.put(activity.getConnectionIdentifier(), handle);
 			if (logger.isDebugEnabled()) {
@@ -146,13 +147,14 @@ public class MgcpActivityManager {
 
 	// --------- ENDPOINT ACTIVITY MANAGEMENT
 
-	public void putMgcpEndpointActivity(MgcpEndpointActivityHandle handle, MgcpEndpointActivityImpl activity) {
+	//public void putMgcpEndpointActivity(MgcpEndpointActivityHandle handle, MgcpEndpointActivityImpl activity) {
+	public void putMgcpEndpointActivity( MgcpEndpointActivityImpl activity) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(this.getMgcpRaEntityName()+" : putMgcpEndpointActivity(activity=" + activity + ")");
 		}
 
-		endpointActivities.put(handle, activity);
+		endpointActivities.put(activity.getActivityHandle(), activity);
 	}
 
 	public MgcpEndpointActivityImpl getMgcpEndpointActivity(MgcpEndpointActivityHandle handle) {
@@ -256,14 +258,16 @@ public class MgcpActivityManager {
 
 		if (activity instanceof MgcpConnectionActivityImpl) {
 			MgcpConnectionActivityImpl castedActivity = (MgcpConnectionActivityImpl) activity;
-			if (castedActivity.getConnectionIdentifier() != null) {
-				return connectionIdentifier2ActivityHandleMap.get(castedActivity.getConnectionIdentifier());
-			} else {
-				return transactionHandle2ActivityHandleMap.get(castedActivity.getTransactionHandle());
-			}
+			//if (castedActivity.getConnectionIdentifier() != null) {
+			//	return connectionIdentifier2ActivityHandleMap.get(castedActivity.getConnectionIdentifier());
+			//} else {
+			//	return transactionHandle2ActivityHandleMap.get(castedActivity.getTransactionHandle());
+			//}
+			return castedActivity.getActivityHandle();
 		} else if (activity instanceof MgcpEndpointActivityImpl) {
-			MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(((MgcpEndpointActivityImpl) activity)
-					.getEndpointIdentifier().toString());
+			//MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(((MgcpEndpointActivityImpl) activity)
+			//		.getEndpointIdentifier().toString());
+			MgcpEndpointActivityHandle handle = ((MgcpEndpointActivityImpl) activity).getActivityHandle();
 			if (endpointActivities.containsKey(handle)) {
 				return handle;
 			} else {

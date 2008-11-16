@@ -698,9 +698,10 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 		MgcpConnectionActivityHandle handle = mgcpActivityManager.getMgcpConnectionActivityHandle(connectionIdentifier,
 				endpointIdentifier, transactionHandle);
 		if (handle == null) {
-			MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(connectionIdentifier,
-					endpointIdentifier, this);
-			handle = mgcpActivityManager.putMgcpConnectionActivity(activity);
+			//MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(connectionIdentifier,
+			//		endpointIdentifier, this);
+			MgcpConnectionActivity newConnectionActivity =this.mgcpProvider.getConnectionActivity(connectionIdentifier,endpointIdentifier);
+			handle = (MgcpConnectionActivityHandle) mgcpActivityManager.getActivityHandle(newConnectionActivity);
 		}
 		// fire event
 		fireEvent(eventName, handle, eventObject);
@@ -724,9 +725,13 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 	 */
 	private void processCreateConnectionMgcpEvent(CreateConnection createConnection) {
 		// fire on new connection activity
-		MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(createConnection.getTransactionHandle(),
-				createConnection.getEndpointIdentifier(), this);
-		MgcpConnectionActivityHandle handle = mgcpActivityManager.putMgcpConnectionActivity(activity);
+		//MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(createConnection.getTransactionHandle(),
+		//		createConnection.getEndpointIdentifier(), this);
+		//MgcpConnectionActivityHandle handle = mgcpActivityManager.putMgcpConnectionActivity(activity);
+		MgcpConnectionActivity newConnectionActivity =this.mgcpProvider.getConnectionActivity(createConnection.getTransactionHandle(),createConnection.getEndpointIdentifier());
+		MgcpConnectionActivityHandle handle = (MgcpConnectionActivityHandle) mgcpActivityManager.getActivityHandle(newConnectionActivity);
+		
+		
 		fireEvent("net.java.slee.resource.mgcp.CREATE_CONNECTION", handle, createConnection);
 	}
 
@@ -740,7 +745,8 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 		// fire on endpoint activity
 		MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(endpointIdentifier.toString());
 		if (!mgcpActivityManager.containsMgcpEndpointActivityHandle(handle)) {
-			mgcpActivityManager.putMgcpEndpointActivity(handle, new MgcpEndpointActivityImpl(this, endpointIdentifier));
+			//mgcpActivityManager.putMgcpEndpointActivity(handle, new MgcpEndpointActivityImpl(this, endpointIdentifier));
+			handle=(MgcpEndpointActivityHandle) this.mgcpActivityManager.getActivityHandle( this.mgcpProvider.getEndpointActivity(endpointIdentifier));
 		}
 		fireEvent(eventName, handle, eventObject);
 

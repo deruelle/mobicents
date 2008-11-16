@@ -9,6 +9,8 @@ public class MgcpEndpointActivityImpl implements MgcpEndpointActivity {
 	private final EndpointIdentifier endpointIdentifier;
 	
 	private final MgcpResourceAdaptor ra;
+
+	private MgcpEndpointActivityHandle activityHandle;
 	
 	/**
 	 * TODO
@@ -16,6 +18,8 @@ public class MgcpEndpointActivityImpl implements MgcpEndpointActivity {
 	public MgcpEndpointActivityImpl(MgcpResourceAdaptor ra, EndpointIdentifier endpointIdentifier) {
 		this.ra = ra;
 		this.endpointIdentifier = endpointIdentifier;
+		this.activityHandle=new MgcpEndpointActivityHandle(endpointIdentifier.toString());
+		
 	}
 	
 	/**
@@ -45,5 +49,9 @@ public class MgcpEndpointActivityImpl implements MgcpEndpointActivity {
 	
 	public void release() {
 		ra.endActivity(new MgcpEndpointActivityHandle(endpointIdentifier.toString()));
+	}
+	
+	public MgcpEndpointActivityHandle getActivityHandle() {
+		return activityHandle;
 	}
 }
