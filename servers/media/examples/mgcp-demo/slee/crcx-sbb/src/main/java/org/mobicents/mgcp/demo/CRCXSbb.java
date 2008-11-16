@@ -70,7 +70,7 @@ public abstract class CRCXSbb implements Sbb {
 	private static int CALL_ID_GEN = 1;
 	private static int GEN = 1;
 
-	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback";
+	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/$";
 
 	public final static String JBOSS_BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
 
@@ -136,6 +136,7 @@ public abstract class CRCXSbb implements Sbb {
 		try {
 			connectionActivity = mgcpProvider.getConnectionActivity(txID, endpointID);
 			ActivityContextInterface epnAci = mgcpAcif.getActivityContextInterface(connectionActivity);
+			logger.info("END 111: "+connectionActivity.getEndpointIdentifier());
 			epnAci.attach(sbbContext.getSbbLocalObject());
 		} catch (FactoryException ex) {
 			ex.printStackTrace();
@@ -144,14 +145,14 @@ public abstract class CRCXSbb implements Sbb {
 		} catch (UnrecognizedActivityException ex) {
 			ex.printStackTrace();
 		}
-
+		logger.info("SENDING MGCP");
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 	}
 
 	public void onCreateConnectionResponse(CreateConnectionResponse event, ActivityContextInterface aci)
 			throws ParseException {
 		logger.info("Receive CRCX response: " + event.getTransactionHandle());
-
+		
 		ServerTransaction txn = getServerTransaction();
 		Request request = txn.getRequest();
 
@@ -202,20 +203,24 @@ public abstract class CRCXSbb implements Sbb {
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
-		DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
-
-		deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
-
-		int txID = GEN++;
-
-		deleteConnection.setTransactionHandle(txID);
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
-
-		ServerTransaction tx = evt.getServerTransaction();
-		Request request = evt.getRequest();
-
 		try {
+			MgcpConnectionActivity activity=getMgcpConnectionActivity();
+
+			//EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
+		
+			DeleteConnection deleteConnection = new DeleteConnection(this, activity.getEndpointIdentifier());
+
+			deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
+
+			int txID = GEN++;
+
+			deleteConnection.setTransactionHandle(txID);
+			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+
+			ServerTransaction tx = evt.getServerTransaction();
+			Request request = evt.getRequest();
+
+		
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
@@ -253,6 +258,16 @@ public abstract class CRCXSbb implements Sbb {
 		return null;
 	}
 
+	private MgcpConnectionActivity getMgcpConnectionActivity() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (ActivityContextInterface activity : activities) {
+			if (activity.getActivity() instanceof MgcpConnectionActivity) {
+				return (MgcpConnectionActivity) activity.getActivity();
+			}
+		}
+		return null;
+	}
+	
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {

@@ -75,7 +75,7 @@ public abstract class CRCXEndpointSbb implements Sbb {
 	
 	public final static String JBOSS_BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
 
-	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback";
+	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/$";
 
 	private SbbContext sbbContext;
 
@@ -205,25 +205,27 @@ public abstract class CRCXEndpointSbb implements Sbb {
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS+":2729");
-		DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
+		
+		try{
+		//EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS+":2729");
+			EndpointIdentifier endpointID = getMgcpConnectionActivity().getEndpointIdentifier();
+			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
 
-		int txID = GEN++;
+			int txID = GEN++;
 
-		deleteConnection.setTransactionHandle(txID);
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+			deleteConnection.setTransactionHandle(txID);
+			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
 
 		// Since DLCX is for Endpoint, we need to explicitly clean the
 		// MgcpConnectionActivity for each of the CRCX
-		MgcpConnectionActivity mgcpConnectionActivity = mgcpProvider.getConnectionActivity(new ConnectionIdentifier(
+			MgcpConnectionActivity mgcpConnectionActivity = mgcpProvider.getConnectionActivity(new ConnectionIdentifier(
 				this.getConnectionIdentifier()), endpointID);
 		
-		mgcpConnectionActivity.release();
+			mgcpConnectionActivity.release();
 		
-		ServerTransaction tx = evt.getServerTransaction();
-		Request request = evt.getRequest();
+			ServerTransaction tx = evt.getServerTransaction();
+			Request request = evt.getRequest();
 
-		try {
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
@@ -257,6 +259,16 @@ public abstract class CRCXEndpointSbb implements Sbb {
 		for (ActivityContextInterface activity : activities) {
 			if (activity.getActivity() instanceof Dialog) {
 				return (Dialog) activity.getActivity();
+			}
+		}
+		return null;
+	}
+	
+	private MgcpConnectionActivity getMgcpConnectionActivity() {
+		ActivityContextInterface[] activities = sbbContext.getActivities();
+		for (ActivityContextInterface activity : activities) {
+			if (activity.getActivity() instanceof MgcpConnectionActivity) {
+				return (MgcpConnectionActivity) activity.getActivity();
 			}
 		}
 		return null;
