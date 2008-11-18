@@ -1,7 +1,8 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 ]>
-<section id="section-MSS_for_JBoss-Clustering_Support">
+<section
+	id="section-MSS_for_JBoss-Clustering_Support">
 	<title>MSS for JBoss: Clustering Support</title>
 	<para>Mobicents supports the clustering of SIP Servlets-enabled JBoss Application Servers for performance, reliability and failover purposes. Note that only MSS for JBoss Servers can be used as cluster nodes; MSS for Tomcat Containers are not supported.</para>
 	<para>As the SIP Servlets Server employs JBoss AS as its servlet container and takes advantage of its capabilities, including clustering and failover, familiarity with the basics of JBoss Clustering is helpful. Refer to this chapter in the Clustering Guide for background or if you wish to dig further: <ulink
@@ -65,7 +66,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
 	version="2.4">
-
   <!-- ======================== Introduction ============================== -->
   <!-- This document defines default values for *all* web applications      -->
   <!-- loaded into this instance of Tomcat.  As each application is         -->
@@ -75,13 +75,10 @@
   <!--                                                                      -->
   <!-- WARNING:  Do not configure application-specific resources here!      -->
   <!-- They should go in the "/WEB-INF/web.xml" file in your application.   -->
-
   <!-- =========== Common Context Params ================================== -->
   <!-- JBossInjectionProvider provides resource injection for managed beans. -->
   <!-- See JSF 1.2 spec section 5.4 for details.                             -->
-  
   <distributable/>
-  
 	<context-param>
 		<param-name>com.sun.faces.injectionProvider</param-name>
 		<param-value>org.jboss.web.jsf.integration.injection.JBossInjectionProvider</param-value>
@@ -110,21 +107,44 @@
 			id="section-binary-SIP_Servlets_Server_Cluster-Using">
 			<title>Using</title>
 			<para></para>
-		</section>
+		</section>-->
 		<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Stopping">
 			<title>Stopping</title>
-			<para></para>
-		</section>-->
+			<para>Individual nodes in the cluster should be stopped one-by-one, followed by the SIP load balancer. Refer to:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Stopping the SIP load balancer: <xref
+							linkend="section-binary-SIP_Load_Balancer-Stopping"/>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Stopping MSS for JBoss: <xref
+							linkend="section-binary-SIP_Servlets_Server_with_JBoss-Stopping"/>
+					</para>
+				</listitem>
+				<listitem>
+					<para>Stopping MSS for Tomcat: <xref
+							linkend="section-binary-SIP_Servlets_Server_with_Tomcat-Stopping"/>
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
 		<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Testing">
 			<title>Testing</title>
-			<para></para>
+			<para>To test your MSS for JBoss cluster setup for mid-call failover, refer to:</para>
+			<itemizedlist>
+				<listitem>
+					<xref
+						linkend="section-MSS_for_JBoss-Failover_Support"/>
+				</listitem>
+			</itemizedlist>
 		</section>
-		<!--<section
+		<section
 			id="section-binary-SIP_Servlets_Server_Cluster-Uninstalling">
 			<title>Uninstalling</title>
-			<para></para>
-		</section>-->
+			<para>Uninstalling a SIP Servlets Cluster would entail deleting the Mobicents SIP Servlets Servers directories, the SIP Load Balancer directory, and possibly unsetting the <envar>JBOSS_HOME</envar> environment variable.</para>
+		</section>
 	</section>
 </section>
