@@ -31,146 +31,153 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
 
-    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
-    private HashMap mixers = new HashMap();
-    
-//    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
-    public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-        super(localName, endpointsMap);
-        this.setMaxConnectionsAvailable(1000);
-        this.addConnectionListener(this);
-    }
+	private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
+	private HashMap mixers = new HashMap();
 
-    @Override
-    public Endpoint doCreateEndpoint(String localName) {
-        return new ConfEndpointImpl(localName, super.endpoints);
-    }
+	// private transient Logger logger =
+	// Logger.getLogger(ConfEndpointImpl.class);
+	public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
+		super(localName, endpointsMap);
+		this.setMaxConnectionsAvailable(1000);
+		this.addConnectionListener(this);
+	}
 
-    @Override
-    public HashMap initMediaSources() {
-        HashMap map = new HashMap();
-        //init audio player
-        map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
-        return map;
-    }
+	@Override
+	public Endpoint doCreateEndpoint(String localName) {
+		return new ConfEndpointImpl(localName, super.endpoints);
+	}
 
-    @Override
-    public HashMap initMediaSinks() {
-        HashMap map = new HashMap();
-        //init audio player
-        //map.put(Generator.AUDIO_RECORDER, new Recorder(""));
-        map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
+	@Override
+	public HashMap initMediaSources() {
+		HashMap map = new HashMap();
+		// init audio player
+		map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+		return map;
+	}
 
-        return map;
-    }
+	@Override
+	public HashMap initMediaSinks() {
+		HashMap map = new HashMap();
+		// init audio player
+		// map.put(Generator.AUDIO_RECORDER, new Recorder(""));
+		map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
 
-    /**
-     * Attaches connection's receiver stream to other connections.
-     * 
-     * @param connection the connection which receiver stream will be attached.
-     */
-    private void attachReceiver(Connection connection) {
-        Demultiplexer demux = ((BaseConnection) connection).getDemux();
-        Collection<Connection> connections = this.getConnections();
-        for (Connection conn : connections) {
-            if (!conn.getId().equals(connection.getId())) {
-                AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-                if (mixer != null) {
-                    demux.connect(mixer);
-                }
-            }
-        }
-    }
+		return map;
+	}
 
-    /**
-     * Attach receiver streams from "otrher" connections to current mixer.
-     * Register mixer as secondary source for current primary source.
-     * 
-     * @param connection the connection which mixer will be used to attach to.
-     */
-    private void attachSender(Connection connection) {
-        Collection<Connection> connections = getConnections();
-        AudioMixer mixer = new AudioMixer(connection.getId());        
-        mixers.put(connection.getId(), mixer);
-        
-        //detach player from MUX and attach to Mixer.
-        AudioPlayer player = (AudioPlayer) this.getMediaSource(Generator.AUDIO_PLAYER, connection);
-        player.disconnect(((BaseConnection) connection).getMux());
-        mixer.connect(player);
-        
-        mixer.start();
+	/**
+	 * Attaches connection's receiver stream to other connections.
+	 * 
+	 * @param connection
+	 *            the connection which receiver stream will be attached.
+	 */
+	private void attachReceiver(Connection connection) {
+		Demultiplexer demux = ((BaseConnection) connection).getDemux();
+		Collection<Connection> connections = this.getConnections();
+		for (Connection conn : connections) {
+			if (!conn.getId().equals(connection.getId())) {
+				AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
+				if (mixer != null) {
+					demux.connect(mixer);
+				}
+			}
+		}
+	}
 
-        for (Connection conn : connections) {
-            if (!conn.getId().equals(connection.getId())) {
-                ((BaseConnection) conn).getDemux().connect(mixer);
-            }
-        }
+	/**
+	 * Attach receiver streams from "otrher" connections to current mixer.
+	 * Register mixer as secondary source for current primary source.
+	 * 
+	 * @param connection
+	 *            the connection which mixer will be used to attach to.
+	 */
+	private void attachSender(Connection connection) {
+		Collection<Connection> connections = getConnections();
+		AudioMixer mixer = new AudioMixer(connection.getId());
+		mixers.put(connection.getId(), mixer);
 
-        ((BaseConnection) connection).getMux().connect(mixer.getOutput());
-    }
+		// detach player from MUX and attach to Mixer.
+		AudioPlayer player = (AudioPlayer) this.getMediaSource(Generator.AUDIO_PLAYER, connection);
+		player.disconnect(((BaseConnection) connection).getMux());
+		mixer.connect(player);
 
-    public void detachReceiver(Connection connection) {
-        Demultiplexer demux = ((BaseConnection) connection).getDemux();
-        Collection<Connection> connections = getConnections();
-        for (Connection conn : connections) {
-            if (!conn.getId().equals(connection.getId())) {
-                AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-                demux.disconnect(mixer);
-            }
-        }
-    }
+		mixer.start();
 
-    public void detachSender(Connection connection) {
-        AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
-        mixer.stop();
-               
-        Collection<Connection> connections = getConnections();
+		for (Connection conn : connections) {
+			if (!conn.getId().equals(connection.getId())) {
+				((BaseConnection) conn).getDemux().connect(mixer);
+			}
+		}
 
-        for (Connection conn : connections) {
-            if (!conn.getId().equals(connection.getId())) {
-                ((BaseConnection) conn).getDemux().disconnect(mixer);
-            }
-        }
-    }
+		((BaseConnection) connection).getMux().connect(mixer.getOutput());
+	}
 
-    public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
-        switch (connection.getState()) {
-            //endpoint can receive media, so all existing mixers should
-            //be registered as secondary sources for primary source.   
-            case HALF_OPEN:
-                if (logger.isDebugEnabled()) {
-                    logger.debug("localName=" + getLocalName() + ", Attaching receiver");
-                }
-                attachReceiver(connection);
-                break;
-            case OPEN:
-                if (logger.isDebugEnabled()) {
-                    logger.debug("localName=" + getLocalName() + ", Attaching sender");
-                }
-                attachSender(connection);
-                break;
-            case CLOSED:
-                if (logger.isDebugEnabled()) {
-                    logger.debug("localName=" + getLocalName() + ", Detaching receiver");
-                }
-                detachReceiver(connection);
-                if (logger.isDebugEnabled()) {
-                    logger.debug("localName=" + getLocalName() + ", Detaching sender");
-                }
-                detachSender(connection);
-                break;
-        }
-    }
+	public void detachReceiver(Connection connection) {
+		Demultiplexer demux = ((BaseConnection) connection).getDemux();
+		Collection<Connection> connections = getConnections();
+		for (Connection conn : connections) {
+			if (!conn.getId().equals(connection.getId())) {
+				AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
+				if (mixer != null) {
+					demux.disconnect(mixer);
+				}
+			}
+		}
+	}
 
-    public String[] getSupportedPackages() {
-        return new String[]{Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
-    }
+	public void detachSender(Connection connection) {
+		AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
+		if (mixer != null) {
+			mixer.stop();
 
-    public void onModeChange(Connection connection, ConnectionMode oldMode) {
-    }
+			Collection<Connection> connections = getConnections();
+
+			for (Connection conn : connections) {
+				if (!conn.getId().equals(connection.getId())) {
+					((BaseConnection) conn).getDemux().disconnect(mixer);
+				}
+			}
+		}
+	}
+
+	public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
+		switch (connection.getState()) {
+		// endpoint can receive media, so all existing mixers should
+		// be registered as secondary sources for primary source.
+		case HALF_OPEN:
+			if (logger.isDebugEnabled()) {
+				logger.debug("localName=" + getLocalName() + ", Attaching receiver");
+			}
+			attachReceiver(connection);
+			break;
+		case OPEN:
+			if (logger.isDebugEnabled()) {
+				logger.debug("localName=" + getLocalName() + ", Attaching sender");
+			}
+			attachSender(connection);
+			break;
+		case CLOSED:
+			if (logger.isDebugEnabled()) {
+				logger.debug("localName=" + getLocalName() + ", Detaching receiver");
+			}
+			detachReceiver(connection);
+			if (logger.isDebugEnabled()) {
+				logger.debug("localName=" + getLocalName() + ", Detaching sender");
+			}
+			detachSender(connection);
+			break;
+		}
+	}
+
+	public String[] getSupportedPackages() {
+		return new String[] { Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME };
+	}
+
+	public void onModeChange(Connection connection, ConnectionMode oldMode) {
+	}
 }
