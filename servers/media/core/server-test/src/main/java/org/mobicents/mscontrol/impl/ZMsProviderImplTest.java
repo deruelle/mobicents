@@ -72,7 +72,7 @@ public class ZMsProviderImplTest extends AbstractTest {
 		testPassed = true;
 		msSession = msProvider.createSession();
 		assertNotNull(msSession);
-		MsConnection msConnection = msSession.createNetworkConnection("media/trunk/Announcement/$");
+		msConnection = msSession.createNetworkConnection("media/trunk/Announcement/$");
 		msConnection.addConnectionListener(new MsConnectionListener() {
 
 			public void connectionCreated(MsConnectionEvent event) {
@@ -146,23 +146,19 @@ public class ZMsProviderImplTest extends AbstractTest {
 			public void connectionDisconnected(MsConnectionEvent event) {
 				message = "testGetMsConnections : MsConnectionListenerImpl.connectionDisconnected called. Expected testPassed = false";
 				testPassed = false;
+				
+				 logger.info("Cleaning connection msConnection2 " + msConnection2.getId());
+				// Clean up of other two connections
+				msConnection2.release();
 
-				// TODO : This is failing.
-				//
-				// logger.info("Cleaning connection msConnection2 " +
-				// msConnection2.getId());
-				// // Clean up of other two connections
-				// msConnection2.release();
-				//
-				// logger.info("Cleaning connection msConnection3 " +
-				// msConnection3.getId());
-				// msConnection3.release();
-				//				
-				// try {
-				// Thread.sleep(1000);
-				// } catch (InterruptedException e) {
-				// e.printStackTrace();
-				// }
+				logger.info("Cleaning connection msConnection3 " + msConnection3.getId());
+				msConnection3.release();
+
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				 }
 
 			}
 
