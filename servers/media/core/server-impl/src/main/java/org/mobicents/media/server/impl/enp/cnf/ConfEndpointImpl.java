@@ -118,19 +118,21 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 	}
 
 	public void detachReceiver(Connection connection) {
+		// Mixer exist only when ConnectionState is OPEN
+
 		Demultiplexer demux = ((BaseConnection) connection).getDemux();
 		Collection<Connection> connections = getConnections();
 		for (Connection conn : connections) {
-			if (!conn.getId().equals(connection.getId())) {
+			if (!(conn.getState().equals(ConnectionState.HALF_OPEN)) && !conn.getId().equals(connection.getId())) {
 				AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-				if (mixer != null) {
-					demux.disconnect(mixer);
-				}
+				demux.disconnect(mixer);
 			}
+
 		}
 	}
 
 	public void detachSender(Connection connection) {
+		// Mixer exist only when ConnectionState is OPEN
 		AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
 		if (mixer != null) {
 			mixer.stop();
@@ -143,6 +145,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 				}
 			}
 		}
+
 	}
 
 	public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
