@@ -281,7 +281,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		MsEventFactory eventFactory = msProvider.getEventFactory();
 		URL audioFileURL = null;
 
-		if (getSameUser()) {
+		if (this.getSameUser()) {
 
 			log.info("same user, lets play the voice mail");
 			String audioFile = getAudioFileString();
@@ -355,6 +355,10 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		}
 	}
 
+	public void onAnnouncementFailed(MsNotifyEvent evt, ActivityContextInterface aci) {
+		log.error("Announcement Failed");
+		
+	}
 	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
 		log.info("########## VOICE MAIL SBB: onAnnouncementComplete ##########");
 		MsConnection connection = (MsConnection) evt.getSource();
