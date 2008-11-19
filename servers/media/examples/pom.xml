@@ -86,7 +86,7 @@
 					<resume>false</resume>
 					<preparationGoals>clean install</preparationGoals>
 					<tagBase>
-						https://mobicents.googlecode.com/svn/tags/servers/media/core
+						https://mobicents.googlecode.com/svn/tags/servers/media/examples
 					</tagBase>
 				</configuration>
 			</plugin>
