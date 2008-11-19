@@ -1,35 +1,37 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.CR3</version>	
+		<version>1.0.0.CR3</version>
 	</parent>
-	
+
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
 	<groupId>org.mobicents.servers.media.examples</groupId>
-	<version>1.0.0.CR4-SNAPSHOT</version>	
-	
+	<version>1.0.0.CR4-SNAPSHOT</version>
+
 	<packaging>pom</packaging>
-	
+
 	<name>Mobicents Media Server Examples :: ${pom.artifactId}</name>
-	
+
 	<properties>
 		<mobicents.media.server.controllers.version>
 			1.0.0.CR3
-		</mobicents.media.server.controllers.version>		
-	</properties>	
-	
+		</mobicents.media.server.controllers.version>
+	</properties>
+
 	<modules>
 		<module>mgcp-demo</module>
 		<module>mms-demo</module>
 		<module>call-controller2</module>
 		<module>converged-demo</module>
 	</modules>
-	
+
 	<!-- RELEASE STUFF -->
-	
+
 	<profiles>
 		<profile>
 			<id>maven-release</id>
@@ -40,14 +42,18 @@
 				<module>converged-demo</module>
 			</modules>
 		</profile>
-	</profiles>	
-	
+	</profiles>
+
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media</developerConnection>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media
+		</developerConnection>
 		<url>http://mobicents.googlecode.com/svn/trunk</url>
-	</scm>	
-	
+	</scm>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -71,7 +77,7 @@
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
@@ -79,8 +85,11 @@
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<resume>false</resume>
 					<preparationGoals>clean install</preparationGoals>
+					<tagBase>
+						https://mobicents.googlecode.com/svn/tags/servers/media/core
+					</tagBase>
 				</configuration>
-			</plugin>			
+			</plugin>
 		</plugins>
 	</build>
 
@@ -104,6 +113,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-	</repositories>		
-	
+	</repositories>
+
 </project>
