@@ -10,10 +10,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
-import org.mobicents.media.server.load.test.EchoLoadTest;
 
 /**
  * The main class of the application.

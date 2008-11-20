@@ -81,28 +81,32 @@
 			<artifactId>swing-worker</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mobicents.external.fmj</groupId>
 			<artifactId>fmj</artifactId>
 			<version>1.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.external.fmj</groupId>
 			<artifactId>mp3spi</artifactId>
 			<version>1.9.4</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.external.fmj</groupId>
 			<artifactId>tritonus_share</artifactId>
 			<version>1.0</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.mobicents.external.fmj</groupId>
 			<artifactId>vorbisspi</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.mobicents.external.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>1.8</version>
+		</dependency>
 	</dependencies>
 
 
@@ -329,7 +333,7 @@
 										swing-layout.jar
 									</destFileName>
 								</artifactItem>
-								
+
 								<artifactItem>
 									<groupId>
 										org.mobicents.external.appframework
@@ -347,32 +351,26 @@
 										swing-worker.jar
 									</destFileName>
 								</artifactItem>
-								
+
 								<artifactItem>
 									<groupId>
 										org.mobicents.external.fmj
 									</groupId>
-									<artifactId>
-										fmj
-									</artifactId>
+									<artifactId>fmj</artifactId>
 									<version>1.0</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>
 										${project.build.directory}
 									</outputDirectory>
-									<destFileName>
-										fmj.jar
-									</destFileName>
-								</artifactItem>	
-								
+									<destFileName>fmj.jar</destFileName>
+								</artifactItem>
+
 								<artifactItem>
 									<groupId>
 										org.mobicents.external.fmj
 									</groupId>
-									<artifactId>
-										mp3spi
-									</artifactId>
+									<artifactId>mp3spi</artifactId>
 									<version>1.9.4</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
@@ -382,8 +380,8 @@
 									<destFileName>
 										mp3spi.jar
 									</destFileName>
-								</artifactItem>	
-								
+								</artifactItem>
+
 								<artifactItem>
 									<groupId>
 										org.mobicents.external.fmj
@@ -400,15 +398,13 @@
 									<destFileName>
 										tritonus_share.jar
 									</destFileName>
-								</artifactItem>	
-								
+								</artifactItem>
+
 								<artifactItem>
 									<groupId>
 										org.mobicents.external.fmj
 									</groupId>
-									<artifactId>
-										vorbisspi
-									</artifactId>
+									<artifactId>vorbisspi</artifactId>
 									<version>1.0.2</version>
 									<type>jar</type>
 									<overWrite>true</overWrite>
@@ -418,7 +414,23 @@
 									<destFileName>
 										vorbisspi.jar
 									</destFileName>
-								</artifactItem>								
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>
+										org.mobicents.external.opencsv
+									</groupId>
+									<artifactId>opencsv</artifactId>
+									<version>1.8</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										opencsv.jar
+									</destFileName>
+								</artifactItem>
 
 							</artifactItems>
 						</configuration>
@@ -442,7 +454,8 @@
 									<fileset dir="src/main/resources" />
 								</copy>
 								<java
-									classname="org.mobicents.media.server.load.test.gui.Main" fork="true">
+									classname="org.mobicents.media.server.load.test.gui.Main"
+									fork="true">
 									<classpath>
 										<pathelement
 											location="target/${pom.artifactId}-${pom.version}.jar" />
@@ -471,15 +484,17 @@
 										<pathelement
 											location="target/swing-layout.jar" />
 										<pathelement
-											location="target/swing-worker.jar" />			
+											location="target/swing-worker.jar" />
 										<pathelement
-											location="target/fmj.jar" />				
+											location="target/fmj.jar" />
 										<pathelement
-										location="target/mp3spi.jar" />	
+											location="target/mp3spi.jar" />
 										<pathelement
-										location="target/tritonus_share.jar" />	
+											location="target/tritonus_share.jar" />
 										<pathelement
-										location="target/vorbisspi.jar" />										
+											location="target/vorbisspi.jar" />
+										<pathelement
+											location="target/opencsv.jar" />											
 									</classpath>
 								</java>
 							</tasks>
