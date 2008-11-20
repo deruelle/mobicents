@@ -336,48 +336,107 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 		return defaultManifestFile;
 	}
 	
+	private String filterWithProperties(String string, Properties properties) {
+		String candidateResult = "";
+		int propertyNameStart = string.indexOf("${") + 2;
+		if (propertyNameStart < 2) {
+			return string;
+		}
+		else {
+			candidateResult += string.substring(0, propertyNameStart-2);
+			int propertyNameEnd = string.indexOf("}", propertyNameStart);
+			if (propertyNameEnd <= propertyNameStart) {
+				return string;
+			}
+			else {
+				String propertyName = string.substring(propertyNameStart, propertyNameEnd);
+				String propertyValue = properties.getProperty(propertyName);
+				if (propertyValue != null) {
+					candidateResult += propertyValue;
+					try {
+						candidateResult += string.substring(propertyNameEnd+1);
+					}
+					catch (Exception e) {
+						
+					}
+					return filterWithProperties(candidateResult,properties);
+				}
+				else {
+					return string;
+				}
+			}
+		}
+	}
+	
 	private boolean isDependencyFromThisProject(Artifact artifact) {
 		
-		getLog().debug("Checking if artifact "+artifact+" is a dependency from this project.");
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Checking if artifact "+artifact+" is a dependency from this project.");
+		}
 		
-		for (Object obj : this.project.getModel().getDependencies()) {
+		Properties properties = project.getProperties();
+		// this is not pretty
+		properties.put("pom.artifactId", project.getArtifactId());
+		properties.put("pom.groupId", project.getGroupId());
+		properties.put("pom.version", project.getVersion());
+		properties.put("parent.artifactId", project.getParent().getArtifactId());
+		properties.put("parent.groupId", project.getParent().getGroupId());
+		properties.put("parent.version", project.getParent().getVersion());
+		
+		for (Object obj : this.project.getOriginalModel().getDependencies()) {
 			Dependency dependency = (Dependency) obj;
 			
-			if (dependency.getArtifactId() != null && !dependency.getArtifactId().equals(artifact.getArtifactId())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getArtifactId ("+artifact.getArtifactId()+","+dependency.getArtifactId()+") doesn't match.");
+			if (dependency.getArtifactId() != null && !filterWithProperties(dependency.getArtifactId(),properties).equals(artifact.getArtifactId())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getArtifactId ("+artifact.getArtifactId()+","+filterWithProperties(dependency.getArtifactId(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			if (dependency.getGroupId() != null && !dependency.getGroupId().equals(artifact.getGroupId())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getGroupId ("+artifact.getGroupId()+","+dependency.getGroupId()+") doesn't match.");
+			if (dependency.getGroupId() != null && !filterWithProperties(dependency.getGroupId(),properties).equals(artifact.getGroupId())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getGroupId ("+artifact.getGroupId()+","+filterWithProperties(dependency.getGroupId(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			if (dependency.getScope() != null && !dependency.getScope().equals(artifact.getScope())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getScope ("+artifact.getScope()+","+dependency.getScope()+") doesn't match.");
+			if (dependency.getScope() != null && !filterWithProperties(dependency.getScope(),properties).equals(artifact.getScope())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getScope ("+artifact.getScope()+","+filterWithProperties(dependency.getScope(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			if (dependency.getType() != null && !dependency.getType().equals(artifact.getType())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getType ("+artifact.getType()+","+dependency.getType()+") doesn't match.");
+			if (dependency.getType() != null && !filterWithProperties(dependency.getType(),properties).equals(artifact.getType())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getType ("+artifact.getType()+","+filterWithProperties(dependency.getType(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			if (dependency.getVersion() != null && !dependency.getVersion().equals(artifact.getVersion())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getVersion ("+artifact.getVersion()+","+dependency.getVersion()+") doesn't match.");
+			if (dependency.getVersion() != null && !filterWithProperties(dependency.getVersion(),properties).equals(artifact.getVersion())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getVersion ("+artifact.getVersion()+","+filterWithProperties(dependency.getVersion(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			if (dependency.getClassifier() != null && !dependency.getClassifier().equals(artifact.getClassifier())) {
-				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getClassifier ("+artifact.getClassifier()+","+dependency.getClassifier()+") doesn't match.");
+			if (dependency.getClassifier() != null && !filterWithProperties(dependency.getClassifier(),properties).equals(artifact.getClassifier())) {
+				if (getLog().isDebugEnabled()) {
+					getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getClassifier ("+artifact.getClassifier()+","+filterWithProperties(dependency.getClassifier(),properties)+") doesn't match.");
+				}
 				continue;
 			}
 			
-			getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: the artifact "+artifact+" is a dependency for this project.");
+			if (getLog().isDebugEnabled()) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: the artifact "+artifact+" is a dependency for this project.");
+			}
 			return true;
 			
 		}
-		getLog().debug("Artifact "+artifact+" is a dependency inherit by parent");
+		if (getLog().isDebugEnabled()) {
+			getLog().debug("Artifact "+artifact+" is a dependency inherit by parent");
+		}
 		return false;
 		
 	}
