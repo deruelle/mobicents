@@ -127,20 +127,20 @@
 		<antcall target="xdms-deploy-X"/>
 	</target>
 
-	<target name="xdms-deploy-jmx" description="deploys the XDM server via jmx">
+	<!-- target name="xdms-deploy-jmx" description="deploys the XDM server via jmx">
 		<property name="X" value="-jmx"/>
 		<antcall target="xdms-deploy-X"/>
-	</target>
+	</target -->
 
 	<target name="xdms-undeploy" description="hard undeploy the XDM server">
 		<property name="X" value=""/>
 		<antcall target="xdms-undeploy-X"/>
 	</target>
 
-	<target name="xdms-undeploy-jmx" description="undeploys the XDM server via jmx">
+	<!-- target name="xdms-undeploy-jmx" description="undeploys the XDM server via jmx">
 		<property name="X" value="-jmx"/>
 		<antcall target="xdms-undeploy-X"/>
-	</target>
+	</target -->
 
 	<!-- INTEGRATED SERVER -->
 
@@ -193,19 +193,19 @@
 		<antcall target="integrated-deploy-X"/>
 	</target>
 
-	<target name="integrated-deploy-jmx" description="deploys the integrated presence service via jmx">
+	<!-- target name="integrated-deploy-jmx" description="deploys the integrated presence service via jmx">
 		<property name="X" value="-jmx"/>
 		<antcall target="integrated-deploy-X"/>
-	</target>
+	</target -->
 
 	<target name="integrated-undeploy" description="hard undeploy the integrated presence service">
 		<property name="X" value=""/>
 		<antcall target="integrated-undeploy-X"/>
 	</target>
 
-	<target name="integrated-undeploy-jmx" description="undeploys the integrated presence service via jmx">
+	<!-- target name="integrated-undeploy-jmx" description="undeploys the integrated presence service via jmx">
 		<property name="X" value="-jmx"/>
 		<antcall target="integrated-undeploy-X"/>
-	</target>
+	</target -->
 
 </project>
