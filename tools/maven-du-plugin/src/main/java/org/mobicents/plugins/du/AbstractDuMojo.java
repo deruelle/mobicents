@@ -35,7 +35,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -338,37 +337,49 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 	}
 	
 	private boolean isDependencyFromThisProject(Artifact artifact) {
-		for (Object obj : this.project.getOriginalModel().getDependencies()) {
+		
+		getLog().debug("Checking if artifact "+artifact+" is a dependency from this project.");
+		
+		for (Object obj : this.project.getModel().getDependencies()) {
 			Dependency dependency = (Dependency) obj;
 			
 			if (dependency.getArtifactId() != null && !dependency.getArtifactId().equals(artifact.getArtifactId())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getArtifactId ("+artifact.getArtifactId()+","+dependency.getArtifactId()+") doesn't match.");
 				continue;
 			}
 			
 			if (dependency.getGroupId() != null && !dependency.getGroupId().equals(artifact.getGroupId())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getGroupId ("+artifact.getGroupId()+","+dependency.getGroupId()+") doesn't match.");
 				continue;
 			}
 			
 			if (dependency.getScope() != null && !dependency.getScope().equals(artifact.getScope())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getScope ("+artifact.getScope()+","+dependency.getScope()+") doesn't match.");
 				continue;
 			}
 			
 			if (dependency.getType() != null && !dependency.getType().equals(artifact.getType())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getType ("+artifact.getType()+","+dependency.getType()+") doesn't match.");
 				continue;
 			}
 			
 			if (dependency.getVersion() != null && !dependency.getVersion().equals(artifact.getVersion())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getVersion ("+artifact.getVersion()+","+dependency.getVersion()+") doesn't match.");
 				continue;
 			}
 			
 			if (dependency.getClassifier() != null && !dependency.getClassifier().equals(artifact.getClassifier())) {
+				getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: getClassifier ("+artifact.getClassifier()+","+dependency.getClassifier()+") doesn't match.");
 				continue;
 			}
 			
+			getLog().debug("Comparing artifact "+artifact+" with dependency "+dependency+". Result: the artifact "+artifact+" is a dependency for this project.");
 			return true;
 			
 		}
+		getLog().debug("Artifact "+artifact+" is a dependency inherit by parent");
 		return false;
+		
 	}
 	
 	/**
@@ -476,6 +487,9 @@ public abstract class AbstractDuMojo extends AbstractMojo {
 					else {
 						getLog().warn("Ignoring dependency of unsupported scope: "+ artifact.getFile().getName());
 					}
+				}
+				else {
+					getLog().warn("Ignoring dependency inherit by parent "+artifact);
 				}
 			}
 			
