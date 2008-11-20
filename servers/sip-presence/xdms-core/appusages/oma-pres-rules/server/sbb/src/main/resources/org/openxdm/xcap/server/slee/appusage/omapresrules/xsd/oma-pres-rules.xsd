@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- bla bla bla -->
 <xs:schema targetNamespace="urn:oma:xml:prs:pres-rules"
   xmlns="urn:oma:xml:prs:pres-rules"
   xmlns:pr="urn:ietf:params:xml:ns:pres-rules"

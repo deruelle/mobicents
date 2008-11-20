@@ -1,5 +1,6 @@
 package org.mobicents.slee.sipevent.server.subscription;
 
+import javax.sip.ServerTransaction;
 import javax.slee.SbbLocalObject;
 import javax.xml.bind.Marshaller;
 
@@ -35,12 +36,16 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 	 * implemeentation must then invoke newSubscriptionAuthorization(...) so the
 	 * new subscription process is completed
 	 * 
+	 * @param serverTransaction
+	 *            in case it is a sip subscription the server transaction must
+	 *            be provided to be used later when providing the response
+	 * 
 	 * @return
 	 */
 	public abstract void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype);
+			String contentSubtype, ServerTransaction serverTransaction);
 
 	/**
 	 * Retrieves the content for the NOTIFY request of the specified

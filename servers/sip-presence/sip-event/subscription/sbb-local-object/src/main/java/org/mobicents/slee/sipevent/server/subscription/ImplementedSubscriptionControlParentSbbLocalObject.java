@@ -1,5 +1,6 @@
 package org.mobicents.slee.sipevent.server.subscription;
 
+import javax.sip.ServerTransaction;
 import javax.sip.header.ContentTypeHeader;
 import javax.slee.SbbLocalObject;
 
@@ -38,10 +39,14 @@ public interface ImplementedSubscriptionControlParentSbbLocalObject extends
 	 * @param key
 	 * @param expires
 	 * @param responseCode
+	 * @param serverTransaction
+	 *            if the subscription request was for a sip subscription then
+	 *            this param must provide the server transaction provided on the
+	 *            authorization request
 	 */
 	public void newSubscriptionAuthorization(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
-			int expires, int responseCode);
+			int expires, int responseCode, ServerTransaction serverTransaction);
 
 	/**
 	 * Through this method the subscription control sbb can be informed that the

@@ -37,8 +37,8 @@
             <event-name>Publish</event-name>
             <event-type-ref>
                 <event-type-name>javax.sip.message.Request.PUBLISH</event-type-name>
-                <event-type-vendor>javax.sip</event-type-vendor>
-                <event-type-version>1.1</event-type-version>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+				<event-type-version>1.2</event-type-version>
             </event-type-ref>
             <initial-event-select variable="ActivityContext" />
         </event>

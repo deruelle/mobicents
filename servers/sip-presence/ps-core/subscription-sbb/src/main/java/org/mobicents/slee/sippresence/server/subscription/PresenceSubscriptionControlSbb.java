@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.sip.ServerTransaction;
 import javax.sip.header.HeaderFactory;
 import javax.slee.ActivityContextInterface;
 import javax.slee.ChildRelation;
@@ -104,11 +105,11 @@ public abstract class PresenceSubscriptionControlSbb implements Sbb,
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype) {
+			String contentSubtype,ServerTransaction serverTransaction) {
 		new PresenceSubscriptionControl(this).isSubscriberAuthorized(
 				subscriber, subscriberDisplayName, notifier, key, expires,
 				content, contentType, contentSubtype, presRulesAUID,
-				presRulesDocumentName);
+				presRulesDocumentName,serverTransaction);
 	}
 
 	public void removingSubscription(Subscription subscription) {

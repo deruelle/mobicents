@@ -72,8 +72,8 @@ public abstract class AbstractDataSourceResourceAdaptor implements DataSourceRes
 		try {            
             
 			SleeContainer container = SleeContainer.lookupFromJndi();
-			ResourceAdaptorEntity resourceAdaptorEntity = ((ResourceAdaptorEntity) container
-                .getResourceAdaptorEnitity(this.bootstrapContext.getEntityName()));
+			ResourceAdaptorEntity resourceAdaptorEntity = ((ResourceAdaptorEntity) container					
+                .getResourceAdaptorEntity(this.bootstrapContext.getEntityName()));
 			
 			ResourceAdaptorTypeID raTypeId = resourceAdaptorEntity
                 .getInstalledResourceAdaptor().getRaType().getResourceAdaptorTypeID();			
@@ -81,7 +81,7 @@ public abstract class AbstractDataSourceResourceAdaptor implements DataSourceRes
 			this.acif = new DataSourceActivityContextInterfaceFactoryImpl(
                 resourceAdaptorEntity.getServiceContainer(),
                 this.bootstrapContext.getEntityName());
-			resourceAdaptorEntity.getServiceContainer().getActivityContextInterfaceFactories().put(raTypeId, this.acif);			
+			resourceAdaptorEntity.getServiceContainer().getActivityContextInterfaceFactories().put(raTypeId, (ResourceAdaptorActivityContextInterfaceFactory)this.acif);			
 			if (this.acif != null) {
 				String jndiName = ((ResourceAdaptorActivityContextInterfaceFactory) this.acif)
 				.getJndiName();

@@ -1,24 +1,27 @@
-We are happy to announce Mobicents SIP Presence Service 1.0.0.BETA2!
+We are happy to announce Mobicents SIP Presence Service 1.0.0.BETA3!
 
-Release Notes
+What is new in this release?
 -------------------------------------------------------------------------------
-Mobicents SIP Presence Service is composed by Mobicents XDM and Presence Servers, on this release you can find:
-* Mobicents XDM Server standalone installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-xdms-<version>.zip)
-* Mobicents XDM Server and Mobicents SIP Presence Servers integrated installed in JBboss AS + Mobicents JAIN SLEE Server, plus two example
-presence aware JAIN SLEE applications pre-deployed (mobicents-sip-presence-integrated-<version>.zip)
-* Mobicents SIP Presence Service binary package that you can use to install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>.zip)
-* Mobicents SIP Presence Service source project that you can use to build and install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>-src.zip)
++-- JPA XDM Server datasource instead of less flexible JDBC.
++-- Internal client JAIN SLEE components, specifically client SBBs of the XDM and Presence Servers. Allows the development of presence aware JAIN SLEE applications, without using SIP or XCAP code, and abstracting from the fact that the applications are running in the same (or not) JAIN SLEE container as the servers. Two example applications are provided in this release.
++-- Mobicents JAIN SLEE Server 1.2.1.GA, a stable release of the SIP Presence Service "heart", with significant improvements in stability and performance of the SIP and Http Servlets Resource Adaptors.
++-- Many fixes and code improvements, the complete list of issues fixed and enhancements can be found at
+http://code.google.com/p/mobicents/issues/list?can=1&q=version:1.0.00%20release:Type-Beta-3%20component:SIPPresence-Service%20status:Fixed
 
-Where to download from?
+What is included in this release?
+------------------------------------------------------------------------------
++-- Mobicents XDM Server standalone installed in JBboss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-xdms-<version>.zip)
++-- Mobicents XDM Server and Mobicents SIP Presence Servers integrated installed in JBboss AS + Mobicents JAIN SLEE Server, plus two example presence aware JAIN SLEE applications pre-deployed (mobicents-sip-presence-integrated-<version>.zip)
++-- Mobicents SIP Presence Service binary package that you can use to install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>.zip)
++-- Mobicents SIP Presence Service source project that you can use to build and install XDM or Integrated servers in JBoss AS + Mobicents JAIN SLEE Server (mobicents-sip-presence-<version>-src.zip)
+
+Where to download from:
 -------------------------------------------------------------------------------
-The distribution can be found on SourceForge.net.
-URL: https://sourceforge.net/project/showfiles.php?group_id=102670&package_id=287660&release_id=619669
+https://sourceforge.net/project/showfiles.php?group_id=102670&package_id=287660&release_id=633094
 
-SVN tag: mobicents-sip-presence-service-1.0.0.BETA3
-
-Source repositories:
+Source code:
 -------------------------------------------------------------------------------
-http://mobicents.googlecode.com/svn/trunk/servers/sip-presence
+http://mobicents.googlecode.com/svn/tags/mobicents-sip-presence-service-1.0.0.BETA3
 
 How to get started:
 -------------------------------------------------------------------------------
@@ -26,15 +29,6 @@ The servers that are bundled with JBoss AS just need to be started as usual.
 For binary or source packages see the README file in the top directory of the zip file.
 Any other directory where additional instructions are needed has its own README file.
 
-Documentation
+Beta Documentation
 -------------------------------------------------------------------------------
-http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service-guide
-
-Change Log
--------------------------------------------------------------------------------
-This is actually the first binary release of the servers, so everything is new! See full specs, architecture, etc. at
-http://groups.google.com/group/mobicents-public/web/mobicents-sip-presence-service-guide
-
-Looking forward to your feedback!!!
-
-Mobicents Team
+http://hudson.jboss.org/hudson/job/MobicentsDocumentation/lastSuccessfulBuild/artifact/html_single/index.html#chapter-Mobicents_SIP_Presence_Service

@@ -82,7 +82,7 @@ public class NewInternalSubscriptionHandler {
 			} else {
 				childSbb.isSubscriberAuthorized(subscriber,
 						subscriberDisplayName, notifier, subscriptionKey,
-						expires, content, contentType, contentSubtype);
+						expires, content, contentType, contentSubtype,null);
 			}
 		}
 	}

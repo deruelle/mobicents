@@ -55,7 +55,12 @@ public class DataSourceActivityContextInterfaceFactoryImpl implements
 		}
 				
 		// check if activity exists
-		ResourceAdaptorEntity raEntity = sleeContainer.getResourceAdaptorEnitity(raEntityName);
+		ResourceAdaptorEntity raEntity;
+		try {
+			raEntity = sleeContainer.getResourceAdaptorEntity(raEntityName);
+		} catch (Exception e) {
+			throw new FactoryException("",e);
+		}
 		ResourceAdaptor ra  = raEntity.getResourceAdaptor();
 				
 		// if it doesn't exist throw exception
@@ -64,7 +69,7 @@ public class DataSourceActivityContextInterfaceFactoryImpl implements
 			throw new UnrecognizedActivityException(activity);
 		}
 		else {
-			return new ActivityContextInterfaceImpl(this.sleeContainer,
+			return new ActivityContextInterfaceImpl(sleeContainer,
 				this.activityContextFactory.getActivityContext(new SleeActivityHandle(raEntityName, activityHandle, sleeContainer)).getActivityContextId());
 		}
     }

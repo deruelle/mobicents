@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.sip.ServerTransaction;
 import javax.sip.header.ContentTypeHeader;
 import javax.sip.message.Response;
 import javax.xml.bind.JAXBElement;
@@ -72,7 +73,7 @@ public class XcapDiffSubscriptionControl {
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype) {
+			String contentSubtype, ServerTransaction serverTransaction) {
 
 		StringReader stringReader = null;
 
@@ -213,7 +214,7 @@ public class XcapDiffSubscriptionControl {
 
 			// continue new subscription process
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
-					subscriberDisplayName, notifier, key, expires, Response.OK);
+					subscriberDisplayName, notifier, key, expires, Response.OK,serverTransaction);
 		} catch (JAXBException e) {
 			logger.error("failed to parse resource-lists in initial subscribe",
 					e);
@@ -222,7 +223,7 @@ public class XcapDiffSubscriptionControl {
 			}
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 					subscriberDisplayName, notifier, key, expires,
-					Response.FORBIDDEN);
+					Response.FORBIDDEN,serverTransaction);
 		}
 
 	}

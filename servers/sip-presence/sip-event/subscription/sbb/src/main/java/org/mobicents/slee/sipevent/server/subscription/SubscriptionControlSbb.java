@@ -37,7 +37,6 @@ import javax.slee.serviceactivity.ServiceActivity;
 import javax.slee.serviceactivity.ServiceActivityFactory;
 import javax.slee.serviceactivity.ServiceStartedEvent;
 
-import net.java.slee.resource.sip.DialogActivity;
 import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 import net.java.slee.resource.sip.SleeSipProvider;
 
@@ -203,12 +202,6 @@ public abstract class SubscriptionControlSbb implements Sbb,
 		return childSbb;
 	}
 
-	// ----------- CMP to store server tx of SUBSCRIBE in dialog
-
-	public abstract String getServerTransactionId();
-
-	public abstract void setServerTransactionId(String value);
-
 	// ----------- EVENT HANDLERS
 
 	/**
@@ -271,8 +264,7 @@ public abstract class SubscriptionControlSbb implements Sbb,
 	public void onSubscribeInDialog(RequestEvent event,
 			ActivityContextInterface aci) {
 		// store server transaction id, we need it get it from the dialog
-		// activity
-		setServerTransactionId(event.getServerTransaction().getBranchId());
+		// activity		
 		new SipSubscriptionHandler(this).processRequest(event, aci);
 	}
 
@@ -387,28 +379,21 @@ public abstract class SubscriptionControlSbb implements Sbb,
 
 	public void newSubscriptionAuthorization(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
-			int expires, int responseCode) {
+			int expires, int responseCode, ServerTransaction serverTransaction) {
 
 		EntityManager entityManager = getEntityManager();
-		ServerTransaction serverTransaction = null;
 		try {
 
 			if (!key.isInternalSubscription()) {
 				// sip subscription
-				// we need the server transaction to reply
+				// look for an aci of this server tx
 				ActivityContextInterface serverTransactionACI = null;
-				DialogActivity dialogActivity = null;
 				for (ActivityContextInterface aci : getSbbContext()
 						.getActivities()) {
 					Object activity = aci.getActivity();
 					if (activity instanceof ServerTransaction) {
-						serverTransaction = (ServerTransaction) activity;
 						serverTransactionACI = aci;
 						break;
-					} else if (activity instanceof DialogActivity) {
-						dialogActivity = (DialogActivity) activity;
-						serverTransaction = dialogActivity
-								.getServerTransaction(getServerTransactionId());
 					}
 				}
 				new SipSubscriptionHandler(this).getNewSipSubscriptionHandler()

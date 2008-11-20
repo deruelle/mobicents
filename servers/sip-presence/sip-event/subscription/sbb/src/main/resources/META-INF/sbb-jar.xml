@@ -24,9 +24,6 @@
                 	<cmp-field-name>implementedControlChildSbbCMP</cmp-field-name>
                 </cmp-field>   
                 <cmp-field>
-                	<cmp-field-name>serverTransactionId</cmp-field-name>
-                </cmp-field>
-                <cmp-field>
                 	<cmp-field-name>parentSbbCMP</cmp-field-name>
                 </cmp-field>
                 <get-child-relation-method>                	
@@ -44,8 +41,8 @@
             <event-name>SubscribeOutOfDialog</event-name>
             <event-type-ref>
                 <event-type-name>javax.sip.message.Request.SUBSCRIBE</event-type-name>
-                <event-type-vendor>javax.sip</event-type-vendor>
-                <event-type-version>1.1</event-type-version>
+               <event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
             </event-type-ref>
             <initial-event-select variable="ActivityContext"/>
         </event>
@@ -54,10 +51,10 @@
 			<event-name>SubscribeInDialog</event-name>
 			<event-type-ref>
 				<event-type-name>
-					javax.sip.dialog.Request.SUBSCRIBE
+					javax.sip.Dialog.SUBSCRIBE
 				</event-type-name>
-				<event-type-vendor>net.java</event-type-vendor>
-				<event-type-version>1.2</event-type-version>
+				<event-type-vendor>net.java.slee</event-type-vendor>
+                <event-type-version>1.2</event-type-version>
 			</event-type-ref>
 		</event>
         
@@ -90,10 +87,10 @@
 		
 		<event event-direction="Receive" initial-event="False">
             <event-name>ResponseClientErrorEvent</event-name>
-            <event-type-ref>
+            <event-type-ref>        
                 <event-type-name>javax.sip.message.Response.CLIENT_ERROR</event-type-name>
-                <event-type-vendor>net.java</event-type-vendor>
-                <event-type-version>1.2</event-type-version>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+				<event-type-version>1.2</event-type-version>
             </event-type-ref>
             <initial-event-select variable="ActivityContext"/>
        </event>
@@ -102,8 +99,8 @@
             <event-name>ResponseServerErrorEvent</event-name>
             <event-type-ref>
                 <event-type-name>javax.sip.message.Response.SERVER_ERROR</event-type-name>
-                <event-type-vendor>net.java</event-type-vendor>
-                <event-type-version>1.2</event-type-version>
+                <event-type-vendor>net.java.slee</event-type-vendor>
+				<event-type-version>1.2</event-type-version>
             </event-type-ref>
             <initial-event-select variable="ActivityContext"/>
         </event>

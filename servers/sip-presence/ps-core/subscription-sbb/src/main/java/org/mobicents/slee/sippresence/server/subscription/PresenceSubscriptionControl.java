@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sip.ServerTransaction;
 import javax.sip.message.Response;
 import javax.xml.bind.JAXBElement;
 
@@ -56,7 +57,7 @@ public class PresenceSubscriptionControl {
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
 			String contentSubtype, String presRulesAUID,
-			String presRulesDocumentName) {
+			String presRulesDocumentName, ServerTransaction serverTransaction) {
 
 		// get current combined rule from cmp
 		Map combinedRules = sbb.getCombinedRules();
@@ -90,7 +91,7 @@ public class PresenceSubscriptionControl {
 			if (documentSelector == null) {
 				sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 						subscriberDisplayName, notifier, key, expires,
-						Response.FORBIDDEN);
+						Response.FORBIDDEN,serverTransaction);
 			} else {
 				// we need to go to the xdm, reply accepted for subscription
 				// state be pending
@@ -98,7 +99,7 @@ public class PresenceSubscriptionControl {
 				sbb.setCombinedRules(combinedRules);
 				sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 						subscriberDisplayName, notifier, key, expires,
-						Response.ACCEPTED);
+						Response.ACCEPTED,serverTransaction);
 				// ask for pres-rules doc
 				sbb.getXDMClientControlSbb().get(
 						new DocumentUriKey(documentSelector));
@@ -108,7 +109,7 @@ public class PresenceSubscriptionControl {
 			// subscription control
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 					subscriberDisplayName, notifier, key, expires,
-					combinedRule.getSubHandling().getResponseCode());
+					combinedRule.getSubHandling().getResponseCode(),serverTransaction);
 		}
 
 	}

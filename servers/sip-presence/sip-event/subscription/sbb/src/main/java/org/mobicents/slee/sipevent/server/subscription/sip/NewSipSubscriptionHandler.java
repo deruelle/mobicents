@@ -115,7 +115,7 @@ public class NewSipSubscriptionHandler {
 
 			childSbb.isSubscriberAuthorized(subscriber, fromAddress
 					.getDisplayName(), notifier, key, expires, content,
-					contentType, contentSubtype);
+					contentType, contentSubtype, event.getServerTransaction());
 		}
 	}
 

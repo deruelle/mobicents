@@ -82,7 +82,7 @@ public class SchemaContext {
 	public SchemaContext(List<Document> documents) {		
 		for(Iterator<Document> i=documents.iterator();i.hasNext();) {
 			Document document = i.next();			
-			String targetNamespace = ((Element)document.getFirstChild()).getAttribute("targetNamespace");
+			String targetNamespace = (document.getDocumentElement()).getAttribute("targetNamespace");
 			if (targetNamespace != null) {
 				documentMap.put(targetNamespace,document);
 			}
