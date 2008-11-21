@@ -30,7 +30,7 @@ public class Rfc2833Detector extends AbstractSink {
     private final static Format[] FORMATS = new Format[] {DTMF};
     
     private final static String[] TONE = new String[]{
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#"
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A", "B", "C", "D"
     };
     private BaseDtmfDetector detector;
     private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);

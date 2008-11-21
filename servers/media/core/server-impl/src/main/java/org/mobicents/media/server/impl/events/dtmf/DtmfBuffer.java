@@ -25,7 +25,7 @@ public class DtmfBuffer implements Serializable {
     public final static int SILENCE = 500;
     
     private StringBuffer buffer = new StringBuffer();
-    private String mask = "[0-9, a,b,c,d,*,#]";
+    private String mask = "[0-9, A,B,C,D,*,#]";
     
     private BaseDtmfDetector detector;
     
