@@ -26,7 +26,7 @@
 			</sbb-abstract-class>
 		</sbb-classes>
 
-		<event event-direction="Receive" initial-event="True">
+		<event event-direction="Receive" initial-event="False">
 			<event-name>ModifyConnection</event-name>
 			<event-type-ref>
 				<event-type-name>

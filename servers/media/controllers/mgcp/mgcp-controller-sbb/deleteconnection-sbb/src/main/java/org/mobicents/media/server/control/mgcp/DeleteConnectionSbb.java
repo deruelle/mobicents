@@ -107,7 +107,8 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		String enpointName = endpointID.getLocalEndpointName();
 		if (enpointName.endsWith("/$")) {
 			logger.error("Cannot execute DLCX command for Endpoint which has wild card " + enpointName);
-			sendDeleteResponse(ReturnCode.Endpoint_Unknown);
+			sendDeleteResponse(ReturnCode.Endpoint_Unknown);			
+			aci.detach(sbbContext.getSbbLocalObject());
 			return;
 		}
 
