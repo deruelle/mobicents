@@ -105,6 +105,7 @@ public class Encoder implements Codec {
 
 		buffer.setData(resultingBytes);
 		buffer.setOffset(0);
+        buffer.setFormat(Codec.G729);
 		buffer.setLength(resultingBytes.length);
 	}
 

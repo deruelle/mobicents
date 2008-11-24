@@ -108,6 +108,7 @@ public class Decoder implements Codec {
 
 		buffer.setData(resultBytes);
 		buffer.setOffset(0);
+		buffer.setFormat(Codec.LINEAR_AUDIO);
 		buffer.setLength(resultBytes.length);
 
 	}
