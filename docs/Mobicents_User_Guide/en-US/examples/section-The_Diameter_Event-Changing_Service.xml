@@ -150,7 +150,6 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 			<title>Running</title>
 			<para></para>
 		</formalpara>
-	
 		<procedure
 			id="procedure-Diameter_Event-Changing_Service">
 			<title>Diameter Event-Changing Service</title>
