@@ -1,0 +1,178 @@
+<?xml version='1.0'?>
+<!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+]>
+<section
+	id="section-The_Call-Blocking_Service">
+	<title>The Call-Blocking Service</title>
+	<para>The Mobicents Call-Blocking Service, upon receiving an <literal>INVITE</literal> request, checks to see whether the sender's address is a blocked contact. If so, it returns a <literal>FORBIDDEN</literal> reply; otherwise, call setup proceeds as normal.</para>
+	<note
+		id="note-Blocked_Contacts_Cannot_Currently_Be_Configured">
+		<title>Blocked Contacts Cannot Currently Be Configured</title>
+		<para>Blocked contacts are currently hard-coded addresses. This model is evolving towards the eventual use of a database.</para>
+	</note>
+	<para>Here is the current hard-coded list of blocked contacts:</para>
+	<itemizedlist>
+		<listitem>
+			<para>
+				<literal>sip:blocked-sender@sip-servlets.com</literal>
+			</para>
+		</listitem>
+		<listitem>
+			<para>
+				<literal>sip:blocked-sender@127.0.0.1</literal>
+			</para>
+		</listitem>
+	</itemizedlist>
+	<!-- The Call-Blocking Service -->
+	<section
+		id="section-binary-Call-Blocking_Service--Installing_Configuring_and_Running">
+		<title>The Call-Blocking Service: Installing, Configuring and Running</title>
+		<para></para>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Pre-Install_Requirements_and_Prerequisites">
+			<title>Pre-Install Requirements and Prerequisites</title>
+			<para></para>
+		</formalpara>
+		<!-- <variablelist
+			id="variablelist-binary-Call-Blocking_Service-Hardware_Requirements">
+			<title>Hardware Requirements</title>
+			<varlistentry>
+				<term>Sufficient Disk Space</term>
+				<listitem>
+					<para></para>
+				</listitem>
+			</varlistentry>
+		</variablelist> -->
+		<variablelist
+			id="variablelist-binary-Call-Blocking_Service-Software_Prerequisites">
+			<title>Software Prerequisites</title>
+			<varlistentry>
+				<term>Either an MSS for JBoss or an MSS for Tomcat Installation</term>
+				<listitem>
+					<para>The Call-Blocking Service requires either an MSS for JBoss or an MSS for Tomcat binary installation.</para>
+					<para>You can find detailed instructions on installing MSS for JBoss here: <ulink
+							url="section-binary-SIP_Servlets_Server_with_JBoss-Installing_Configuring_and_Running"/>.</para>
+					<para>You can find detailed instructions on installing MSS for Tomcat here: <ulink
+							url="section-binary-SIP_Servlets_Server_with_Tomcat-Installing_Configuring_and_Running"/>.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Downloading">
+			<title>Downloading</title>
+			<para>The Call-Blocking Service is comprised of two archive files, a Web Archive (WAR) and a Data Archive (DAR), which you need to add to your installed SIP Servlets Server. For more information about WAR and DAR files, refer to the <ulink
+					url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Server_Configuration_Guide/beta422/html/index.html">JBoss Application Server Administration and Development Guide</ulink>.</para>
+		</formalpara>
+		<para>Download the Call-Blocking Service's WAR file from here: <ulink
+				url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/call-blocking/1.1/call-blocking-1.1.war"/>.</para>
+		<para>Download the Call-Blocking Service's DAR file from here: <ulink
+				url="http://www.mobicents.org/call-blocking-servlet-dar.properties"/>.</para>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Installing">
+			<title>Installing</title>
+			<para>Both the <filename>call-blocking-1.1.war</filename> WAR file and the <filename>call-blocking-servlet-dar.properties</filename> DAR file that you downloaded should be placed into different directories in your SIP Servlet Server installation hierachy. Which directory depends on whether you are using the Call-Blocking Service with MSS for JBoss or with MSS for Tomcat:</para>
+		</formalpara>
+		<variablelist>
+			<varlistentry>
+				<term>MSS for JBoss</term>
+				<listitem>
+					<para>Place <filename>call-blocking-1.1.war</filename> into the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/</filename> directory, and <filename>call-blocking-servlet-dar.properties</filename> into the <filename><envar>JBOSS_HOME</envar>/server/default/conf/dars/</filename> directory.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>MSS for Tomcat</term>
+				<listitem>
+					<para>Place <filename>call-blocking-servlet-dar.properties</filename> into the <filename><envar>CATALINA_HOME</envar>/webapps/</filename> directory, and <filename>call-blocking-servlet-dar.properties</filename> into the <filename><envar>CATALINA_HOME</envar>/conf/dars/</filename> directory.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Configuring">
+			<title>Configuring</title>
+			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>conf/dars/call-blocking-servlet-dar.properties</userinput>. The instructions for doing so are given below by SIP Servlets Server type:</para>
+		</formalpara>
+		<variablelist>
+			<varlistentry>
+				<term>MSS for JBoss</term>
+				<listitem>
+					<para>Open the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <replaceable>conf/dars/call-blocking-servlet-dar.properties</replaceable>:</para>
+					<example
+						id="example-Editing_MSS_for_JBosss_server.xml_for_the_Call-Blocking_Service">
+						<title>Editing MSS for JBoss's server.xml for the Call-Blocking Service</title>
+						<programlisting
+							id="proglist-Editing_MSS_for_JBosss_server.xml_for_the_Call-Blocking_Service"
+							role="XML"><![CDATA[<Service
+	name="jboss.web"
+	className="org.mobicents.servlet.sip.startup.SipStandardService"
+	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
+	darConfigurationFileLocation="conf/dars/call-blocking-servlet-dar.properties">]]></programlisting>
+					</example>
+					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>MSS for Tomcat</term>
+				<listitem>
+					<para>Open the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <userinput>conf/dars/call-blocking-servlet-dar.properties</userinput>:</para>
+					
+					<example
+						id="example-Editing_MSS_for_Tomcats_server.xml_for_the_Call-Blocking_Service">
+						<title>Editing MSS for Tomcat's server.xml for the Call-Blocking Service</title>
+						<programlisting
+							id="proglist-Editing_MSS_for_Tomcats_server.xml_for_the_Call-Blocking_Service"
+							role="XML"><![CDATA[<Service
+	name="Sip-Servlets"
+	className="org.mobicents.servlet.sip.startup.SipStandardService"
+	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
+	darConfigurationFileLocation="conf/dars/call-blocking-servlet-dar.properties">]]></programlisting>
+					</example>
+					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Running">
+			<title>Running</title>
+			<para>Once the WAR and DAR files have been placed in the right directories, and the JBoss Application Server or Tomcat Servlet Container knows where to find them (which you specified in a <filename>server.xml</filename> file), then you should go ahead and run SIP Servlets Server.</para>
+		</formalpara>
+		<para>To learn how to run the SIP Servlets-enabled JBoss Application Server, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_JBoss-Running"/>.</para>
+		<para>To learn how to run the SIP Servlets-enabled Tomcat Container, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_Tomcat-Running"/>.</para>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Testing">
+			<title>Testing</title>
+			<para>The following procedure shows how to test the Location Service.</para>
+		</formalpara>
+		<procedure>
+			<title></title>
+			<step>
+				<para>Start a SIP softphone of your choice. The account name should be <replaceable>blocked-sender</replaceable>. The <literal>From Header</literal> should list one of the following addresses: <replaceable>sip:blocked-sender@sip-servlets.com</replaceable> or <replaceable>sip:blocked-sender@127.0.0.1</replaceable>. The SIP softphone does not need to be registered.</para>
+			</step>
+			<step>
+				<para>Make a call to any address, and you should receive a <literal>FORBIDDEN</literal> response.</para>
+			</step>
+		</procedure>
+		<!--<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Using">
+			<title>Using</title>
+			<para></para>
+		</formalpara>-->
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Stopping">
+			<title>Stopping</title>
+			<para>To learn how to stop the SIP Servlets-enabled JBoss Application Server, refer to <ulink
+					url="section-binary-SIP_Servlets_Server_with_JBoss-Stopping"/>.</para>
+		</formalpara>
+		<para>To learn how to stop the SIP Servlets-enabled Tomcat Container, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_Tomcat-Stopping"/>.</para>
+		<formalpara
+			id="formalpara-binary-Call-Blocking_Service-Uninstalling">
+			<title>Uninstalling</title>
+			<para>Unless disk space is at a premium, there is usually no need to uninstall the Call-Blocking Service. However, if you will not be using it again, you may want to unset or reset the <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element, which you set in the <filename>server.xml</filename> configuration file in <xref
+					linkend="formalpara-binary-Call-Blocking_Service-Configuring"/>.</para>
+		</formalpara>
+		<para>You may also wish to delete the WAR and DAR files for the Call-Blocking Service, which you installed in <xref
+				linkend="formalpara-binary-Call-Blocking_Service-Installing"/>.</para>
+	</section>
+</section>

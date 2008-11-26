@@ -12,5 +12,8 @@
 		href="../examples/section-The_Diameter_Event-Changing_Service.xml" />
 		<xi:include
 			xmlns:xi="http://www.w3.org/2001/XInclude"
-			href="section-Call-Forwarding_Service.xml" />
+			href="../examples/section-The_Call-Forwarding_Service.xml" />
+		<xi:include
+			xmlns:xi="http://www.w3.org/2001/XInclude"
+			href="../examples/section-The_Call-Blocking_Service.xml" />
 </section>

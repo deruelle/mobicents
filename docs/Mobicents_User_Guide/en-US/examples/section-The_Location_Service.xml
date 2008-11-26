@@ -4,9 +4,12 @@
 <section
 	id="section-The_Location_Service">
 	<title>The Location Service</title>
-	<para>The Location Service contains a (currently hard-coded<footnote
-			xreflabel="footnote-Location_Service-Hard-Coded_Addresses"><para>The Location Service currently performs a lookup on a hard-coded list of addresses. This model is evolving towards the eventual use of a database.</para>
-		</footnote>) list of mappings of request URIs to destination addresses. When the Location Service receives a request, it performs a lookup on that mapping and proxies the request simultaneously to the destination address (or addresses) associated with that URI.</para>
+	<para>The Mobicents Location Service contains a list of mappings of request URIs to destination addresses. When the Location Service receives a request, it performs a lookup on that mapping and proxies the request simultaneously to the destination address (or addresses) associated with that URI.</para>
+	<note
+		id="note-The_Location_Service_Mappings_Cannot_Currently_Be_Configured">
+		<title>The Location Service Mappings Cannot Currently Be Configured</title>
+		<para>The Location Service currently performs a lookup on a hard-coded list of addresses. This model is evolving towards the eventual use of a database.</para>
+	</note>
 	<para>Regardless of whether you are using the JBoss Application Server or the Tomcat Servlet Container is the Servlets Server, the application, container and Location Service perform the following steps:</para>
 	<itemizedlist>
 		<listitem>
@@ -22,12 +25,10 @@
 			<para>One of the destinations returns a <literal>200 OK</literal> status code; the second proxy is then cancelled.</para>
 		</listitem>
 		<listitem>
-			<para>The <literal>200 OK is forwarded to Alice, and call setup is completed as usual.</literal>
-			</para>
+			<para>The <literal>200 OK</literal> is forwarded to Alice, and call setup is completed as usual.</para>
 		</listitem>
 	</itemizedlist>
-	<para>Here is the current list of hard-coded contacts<footnoteref
-			linkend="footnote-Location_Service-Hard-Coded_Addresses"/> and their location URIs:</para>
+	<para>Here is the current list of hard-coded contacts and their location URIs:</para>
 	<itemizedlist>
 		<title>sip:receiver@sip-servlets.com</title>
 		<listitem>
@@ -79,12 +80,13 @@
 		<formalpara
 			id="formalpara-binary-Location_Service-Downloading">
 			<title>Downloading</title>
-			<para>The Location Service is comprised of two archive files, a Web Archive (WAR) and a Data Archive (DAR).</para>
-			<para>Download the Location Service	's WAR file from here: <ulink
-					url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/location-service/1.1/location-service-1.1.war"/>.</para>
-			<para>Download the Location Service's DAR file from here: <ulink
-					url="http://www.mobicents.org/locationservice-dar.properties"/>.</para>
+			<para>The Location Service is comprised of two archive files, a Web Archive (WAR) and a Data Archive (DAR), which you need to add to your installed SIP Servlets Server. For more information about WAR and DAR files, refer to the <ulink
+					url="http://www.jboss.org/file-access/default/members/jbossas/freezone/docs/Server_Configuration_Guide/beta422/html/index.html">JBoss Application Server Administration and Development Guide</ulink>.</para>
 		</formalpara>
+		<para>Download the Location Service's WAR file from here: <ulink
+				url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/location-service/1.1/location-service-1.1.war"/>.</para>
+		<para>Download the Location Service's DAR file from here: <ulink
+				url="http://www.mobicents.org/locationservice-dar.properties"/>.</para>
 		<formalpara
 			id="formalpara-binary-Location_Service-Installing">
 			<title>Installing</title>
@@ -107,7 +109,7 @@
 		<formalpara
 			id="formalpara-binary-Location_Service-Configuring">
 			<title>Configuring</title>
-			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>darConfigurationFileLocation</userinput>. The instructions are given below by SIP Servlets Server type:</para>
+			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>conf/dars/locationservice-dar.properties</userinput>. The instructions are given below by SIP Servlets Server type:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
@@ -142,7 +144,7 @@
 	name="Sip-Servlets"
 	className="org.mobicents.servlet.sip.startup.SipStandardService"
 	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
-	darConfigurationFileLocation="conf/dars/mobicents-dar.properties">]]></programlisting>
+	darConfigurationFileLocation="conf/dars/locationservice-dar.properties">]]></programlisting>
 					</example>
 					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
 				</listitem>
