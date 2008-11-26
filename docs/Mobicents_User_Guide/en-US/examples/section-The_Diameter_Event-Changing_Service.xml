@@ -82,9 +82,7 @@
 			<title>Downloading</title>
 			<para></para>
 		</formalpara>
-		<procedure
-			id="procedure-binary-Diameter_Event-Changing_Example">
-				<!--<title>Diameter Event-Changing Example</title>-->
+		<procedure>
 			<step>
 				<para>First, download the Web Application Archive (<acronym>WAR</acronym>) file corresponding to this example, the current version of which is named <filename>diameter-event-charging-1.0.war</filename>, from <ulink
 						url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/diameter-event-charging/1.0/"/>.</para>
@@ -103,9 +101,7 @@
 			<title>Installing</title>
 			<para></para>
 		</formalpara>
-		<procedure
-			id="procedure-binary-Diameter_Event-Changing_Example">
-				<!--<title>Diameter Event-Changing Example</title>-->
+		<procedure>
 			<step>
 				<para>Place the <filename>diameter-event-charging-1.0.war</filename> WAR archive into the <filename>jboss_home/server/&lt;profile&gt;/deploy</filename> directory, where <filename>&lt;deploy&gt;</filename> is your Configuration Profile, whether <quote>default</quote> or <quote>all</quote> (the latter if you are using MSS for JBoss's clustering capabilities).</para>
 			</step>
@@ -129,8 +125,8 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 		</formalpara>
 		<example
 			id="example-Editing_the_darConfigurationFileLocation_Attribute_of_the_Service_Tag">
-	<title>Editing the <literal>darConfigurationFileLocation</literal> Attribute of the Service Tag</title>
-<programlisting
+			<title>Editing the <literal>darConfigurationFileLocation</literal> Attribute of the Service Tag</title>
+			<programlisting
 				id="proglist-Editing_the_darConfigurationFileLocation_Attribute_of_the_Service_Tag"
 				linenumbering="numbered"
 				role="XML">...
@@ -143,7 +139,7 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 
 ...<![CDATA[
 ]]></programlisting>
-</example>
+		</example>
 		<!--<para>Your server is now set up to run the Event-Changing example.</para>-->
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Running">
@@ -163,7 +159,7 @@ charging_sdk]$ jar -xvf ChargingSDK-1_0_D31E.zip</screen>
 				<screen>~]$ java -jar PPSDiamEmul.jar</screen>
 			</step>
 		</procedure>
-	
+		
 		<formalpara
 			id="formalpara-binary-Diameter_Event-Changing_Service-Using">
 			<title>Using</title>

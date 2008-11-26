@@ -5,11 +5,12 @@
 	id="section-The_Call-Forwarding_Service">
 	<title>The Call-Forwarding Service</title>
 	<para>The Mobicents Call-Forwarding Service, upon receiving an <literal>INVITE</literal> request, checks to see whether the sender's address is among those in a list of addresses which need to be forwarded. If so, then the Call-Forwarding Service acts as a Back-to-Back User Agent (B2BUA), and creates a new call leg to the destination. When the response is received from the new call leg, it sends it an acknowledgement (<literal>ACK</literal>) and then responds to the original caller. If, on the other hand, the server does not receive an <literal>ACK</literal>, then it tears down the new call leg with a <literal>BYE</literal>. Once the <literal>BYE</literal> is received, then it answers <literal>OK</literal> directly and forwards the <literal>BYE</literal> to the new call leg.</para>
-
-<note id="note-Contacts_to_Forward_Cannot_Currently_Be_Configured">
-	<title>Contacts to Forward Cannot Currently Be Configured</title>
-	<para>Contacts to forward are currently hard-coded addresses. This model is evolving towards the eventual use of a database.</para>
-</note>
+	
+	<note
+		id="note-Contacts_to_Forward_Cannot_Currently_Be_Configured">
+		<title>Contacts to Forward Cannot Currently Be Configured</title>
+		<para>Contacts to forward are currently hard-coded addresses. This model is evolving towards the eventual use of a database.</para>
+	</note>
 	<para>Here is the current hard-coded list of contacts to forward:</para>
 	<itemizedlist>
 		<listitem>
@@ -89,13 +90,13 @@
 		<formalpara
 			id="formalpara-binary-Call-Forwarding_Service-Configuring">
 			<title>Configuring</title>
-			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>conf/dars/call-blocking-servlet-dar.properties</userinput>. The instructions for doing so are given below by SIP Servlets Server type:</para>
+			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>conf/dars/call-forwarding-b2bua-servlet-dar.properties</userinput>. The instructions for doing so are given below by SIP Servlets Server type:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>MSS for JBoss</term>
 				<listitem>
-					<para>Open the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <replaceable>conf/dars/call-blocking-servlet-dar.properties</replaceable>:</para>
+					<para>Open the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <replaceable>conf/dars/call-forwarding-b2bua-servlet-dar.properties</replaceable>:</para>
 					<example
 						id="example-Editing_MSS_for_JBosss_server.xml_for_the_Call-Forwarding_Service">
 						<title>Editing MSS for JBoss's server.xml for the Call-Forwarding Service</title>
@@ -105,7 +106,7 @@
 	name="jboss.web"
 	className="org.mobicents.servlet.sip.startup.SipStandardService"
 	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
-	darConfigurationFileLocation="conf/dars/call-blocking-servlet-dar.properties">]]></programlisting>
+	darConfigurationFileLocation="conf/dars/call-forwarding-b2bua-servlet-dar.properties">]]></programlisting>
 					</example>
 					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
 				</listitem>
@@ -113,7 +114,7 @@
 			<varlistentry>
 				<term>MSS for Tomcat</term>
 				<listitem>
-					<para>Open the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <userinput>conf/dars/call-blocking-servlet-dar.properties</userinput>:</para>
+					<para>Open the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <userinput>conf/dars/call-forwarding-b2bua-servlet-dar.properties</userinput>:</para>
 					
 					<example
 						id="example-Editing_MSS_for_Tomcats_server.xml_for_the_Call-Forwarding_Service">
@@ -124,7 +125,7 @@
 	name="Sip-Servlets"
 	className="org.mobicents.servlet.sip.startup.SipStandardService"
 	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
-	darConfigurationFileLocation="conf/dars/call-blocking-servlet-dar.properties">]]></programlisting>
+	darConfigurationFileLocation="conf/dars/call-forwarding-b2bua-servlet-dar.properties">]]></programlisting>
 					</example>
 					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
 				</listitem>
@@ -142,15 +143,30 @@
 		<formalpara
 			id="formalpara-binary-Call-Forwarding_Service-Testing">
 			<title>Testing</title>
-			<para>The following procedure shows how to test the Location Service.</para>
+			<para>The following procedure shows how to test the Call-Forwarding Service.</para>
 		</formalpara>
 		<procedure>
 			<title></title>
 			<step>
-				<para>Start a SIP softphone of your choice. The account name should be <replaceable>blocked-sender</replaceable>. The <literal>From Header</literal> should list one of the following addresses: <replaceable>sip:blocked-sender@sip-servlets.com</replaceable> or <replaceable>sip:blocked-sender@127.0.0.1</replaceable>. The SIP softphone does not need to be registered.</para>
+				<para>Start two SIP softphones of your choice. Set the account settings of the first SIP softphone to:</para>
+				<itemizedlist>
+					<listitem>
+						<para>Account name: <replaceable>forward-receiver</replaceable>
+						</para>
+					</listitem>
+					<listitem>
+						<para>IP address: <replaceable>127.0.0.1</replaceable>
+						</para>
+					</listitem>
+					<listitem>
+						<para>Port: <replaceable>5090</replaceable>
+						</para>
+					</listitem>
+				</itemizedlist>
+				<para>Neither of the SIP phones need to be registered.</para>
 			</step>
 			<step>
-				<para>Make a call to any address, and you should receive a <literal>FORBIDDEN</literal> response.</para>
+				<para>From the second phone, make a call to <literal>sip:receiver@sip-servlets.com</literal>. The first phone, <quote>forward-receiver</quote>, should now be ringing.</para>
 			</step>
 		</procedure>
 		<!--<formalpara
