@@ -49,6 +49,7 @@
 		</for>
 		
 		<antcall target="release-jain-slee-common" />
+		<antcall target="release-diameter-common" />
 		<antcall target="release-sip-load-balancer" />
 		
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
@@ -59,8 +60,8 @@
 		<antcall target="clean"/>
 	</target>
 	
-	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-presence,release-sip-servlets" />
-
+	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-presence,release-sip-servlets,release-diameter-in-node" />
+	
     <target name="release-jbcp">
         <ant antfile="${ant.file.mobicents.all.release}" target="release">
             <property name="release.dir" value="${jbcp.release.dir}"/>
@@ -111,6 +112,13 @@
 			<available file="${ant.file.mobicents.all.release}/../target/servers/media/release/.svn/entries" />
 			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-presence/.svn/entries" />
 			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-servlets/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/core/jdiameter/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/core/mux/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/examples/base/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/examples/sh-client/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/resources/base/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/resources/sh-client/.svn/entries" />
+			<available file="${ant.file.mobicents.all.release}/../target/servers/diameter/release/.svn/entries" />
 			<available file="${ant.file.mobicents.all.release}/../target/servers/sip-load-balancer/.svn/entries" />
 		</and>
 	</condition>
@@ -143,10 +151,8 @@
 			<property name="release.dir" value="${release.dir}" />
             <property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
 		</ant>
-		<copydir dest="${release.dir}/resources" src="${jain-slee.target.release.dir}/resources" />
-		<copydir dest="${release.dir}/examples" src="${jain-slee.target.release.dir}/examples" />
-		<delete dir="${jain-slee.target.release.dir}/resources" />
-		<delete dir="${jain-slee.target.release.dir}/examples" />
+		<move tofile="${release.dir}/resources" file="${jain-slee.target.release.dir}/resources" />
+		<move tofile="${release.dir}/examples" file="${jain-slee.target.release.dir}/examples" />
 	</target>
 	
 	<target name="release-jain-slee-in-node">
@@ -186,6 +192,30 @@
 			<property name="jboss.home" value="${jboss.home.converted}"/>
 			<property name="jboss.config" value="${jboss.node}" />
 		</ant>
+	</target>
+	
+	<target name="release-diameter-common">
+		<property name="diameter.target.release.dir" location="${ant.file.mobicents.all.release}/../target/servers/diameter/release/target"/>
+		
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/diameter/release/build.xml" target="build-ras">
+			<property name="release.dir" value="${release.dir}" />
+			<property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
+		</ant>
+		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/diameter/release/build.xml" target="build-examples">
+			<property name="release.dir" value="${release.dir}" />
+			<property name="jboss.home.relative.path" value="${jboss.home.relative.path}" />
+		</ant>
+		<move tofile="${release.dir}/resources" file="${diameter.target.release.dir}/resources" />
+		<move tofile="${release.dir}/examples" file="${diameter.target.release.dir}/examples" />
+	</target>
+	
+	<target name="release-diameter-in-node">
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.all.release}/../target/servers/diameter/core/jdiameter">
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -Dnode=${jboss.node}"/>
+		</exec>
+		<exec executable="${mvn.executable}" dir="${ant.file.mobicents.all.release}/../target/servers/diameter/core/mux">
+			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -Dnode=${jboss.node}"/>
+		</exec>
 	</target>
 	
 	<target name="release-sip-load-balancer">
