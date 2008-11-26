@@ -5,28 +5,29 @@
 	id="section-The_Location_Service">
 	<title>The Location Service</title>
 	<para>The Location Service contains a (currently hard-coded<footnote
-			xreflabel="footnote-Location_Service-Hard-Coded_Addresses"><para>The Location Service currently performs a lookup on a hard-coded list of addresses. This model is evolving toward the eventual use of a database.</para>
+			xreflabel="footnote-Location_Service-Hard-Coded_Addresses"><para>The Location Service currently performs a lookup on a hard-coded list of addresses. This model is evolving towards the eventual use of a database.</para>
 		</footnote>) list of mappings of request URIs to destination addresses. When the Location Service receives a request, it performs a lookup on that mapping and proxies the request simultaneously to the destination address (or addresses) associated with that URI.</para>
-	<para>Regardless of whether the JBoss Application Server or the Tomcat Servlet Container is the Servlets Server being used, the following steps are the ones performed by the application and container in conjunction with the Location Service:</para>
+	<para>Regardless of whether you are using the JBoss Application Server or the Tomcat Servlet Container is the Servlets Server, the application, container and Location Service perform the following steps:</para>
 	<itemizedlist>
 		<listitem>
-			<para>A hypothetical user named Alice makes a call to <literal>sip:receivers@sip-servlets.com</literal>. The <literal>INVITE</literal> is received by the servlet container, which invokes the Location Service.</para>
+			<para>A user—let's call her Alice—makes a call to <literal>sip:receivers@sip-servlets.com</literal>. The <literal>INVITE</literal> is received by the servlet container, which then starts the Location Service.</para>
 		</listitem>
 		<listitem>
-			<para>The Location Service, using non-SIP means, determines that the callee (i.e. the receiver) is registered at two locations, identified by two SIP URIs: <literal>sip:receiver@127.0.0.1:5090</literal> and <literal>sip:receiver@127.0.0.1:6090</literal>.</para>
+			<para>The Location Service, using non-SIP means, determines that the callee (i.e. the receiver) is registered at two locations, identified by the two SIP URIs, <literal>sip:receiver@127.0.0.1:5090</literal> and <literal>sip:receiver@127.0.0.1:6090</literal>.</para>
 		</listitem>
 		<listitem>
 			<para>The Location Service proxies to those two destinations in parallel, without record-routing, and without making use of supervised mode.</para>
 		</listitem>
 		<listitem>
-			<para>One of the destinations returns a <literal>200 (OK)</literal>; the second proxy is then cancelled.</para>
+			<para>One of the destinations returns a <literal>200 OK</literal> status code; the second proxy is then cancelled.</para>
 		</listitem>
 		<listitem>
-			<para>The <literal>200 (OK) is forwarded to Alice, and call setup is completed as usual.</literal>
+			<para>The <literal>200 OK is forwarded to Alice, and call setup is completed as usual.</literal>
 			</para>
 		</listitem>
 	</itemizedlist>
-	<para>Here is the current list of hard-coded contacts<footnoteref linkend="footnote-Location_Service-Hard-Coded_Addresses"/> and their location URIs:</para>
+	<para>Here is the current list of hard-coded contacts<footnoteref
+			linkend="footnote-Location_Service-Hard-Coded_Addresses"/> and their location URIs:</para>
 	<itemizedlist>
 		<title>sip:receiver@sip-servlets.com</title>
 		<listitem>
@@ -67,46 +68,27 @@
 			<varlistentry>
 				<term>Either an MSS for JBoss or an MSS for Tomcat Installation</term>
 				<listitem>
-					<para>Before proceeding, you should follow the instructions for installing, configuring, running and testing either an MSS for JBoss or an MSS for Tomcat binary installation:</para>
-					<itemizedlist>
-						<listitem>
-							<para>
-								<ulink
-									url="section-binary-SIP_Servlets_Server_with_JBoss-Installing_Configuring_and_Running"/>
-							</para>
-						</listitem>
-						<listitem>
-							<para>
-								<ulink
-									url="section-binary-SIP_Servlets_Server_with_Tomcat-Installing_Configuring_and_Running"/>
-							</para>
-						</listitem>
-					</itemizedlist>
+					<para>The Location Service requires either an MSS for JBoss or an MSS for Tomcat binary installation.</para>
+					<para>You can find detailed instructions on installing MSS for JBoss here: <ulink
+							url="section-binary-SIP_Servlets_Server_with_JBoss-Installing_Configuring_and_Running"/>.</para>
+					<para>You can find detailed instructions on installing MSS for Tomcat here: <ulink
+							url="section-binary-SIP_Servlets_Server_with_Tomcat-Installing_Configuring_and_Running"/>.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
 		<formalpara
 			id="formalpara-binary-Location_Service-Downloading">
 			<title>Downloading</title>
-			<para>Download the Location Service's Web ARchive (WAR file) here:</para>
+			<para>The Location Service is comprised of two archive files, a Web Archive (WAR) and a Data Archive (DAR).</para>
+			<para>Download the Location Service	's WAR file from here: <ulink
+					url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/location-service/1.1/location-service-1.1.war"/>.</para>
+			<para>Download the Location Service's DAR file from here: <ulink
+					url="http://www.mobicents.org/locationservice-dar.properties"/>.</para>
 		</formalpara>
-		<itemizedlist>
-			<listitem>
-				<ulink
-					url="http://repository.jboss.org/maven2/org/mobicents/servlet/sip/example/location-service/1.1/location-service-1.1.war"/>
-			</listitem>
-		</itemizedlist>
-		<para>Its corresponding Data ARchive can be downloaded here:</para>
-		<itemizedlist>
-			<listitem>
-				<ulink
-					url="http://www.mobicents.org/locationservice-dar.properties"/>
-			</listitem>
-		</itemizedlist>
 		<formalpara
 			id="formalpara-binary-Location_Service-Installing">
 			<title>Installing</title>
-			<para>Both the <filename>location-service-1.1.war</filename> WAR file and the <filename>locationservice-dar.properties</filename> DAR file should be placed into different directories in your SIP Servlet Server installation hierachy. Which location depends on whether you are using the Location Service with MSS for JBoss or with MSS for Tomcat:</para>
+			<para>Both the <filename>location-service-1.1.war</filename> WAR file and the <filename>locationservice-dar.properties</filename> DAR file that you downloaded should be placed into different directories in your SIP Servlet Server installation hierachy. Which directory depends on whether you are using the Location Service with MSS for JBoss or with MSS for Tomcat:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
@@ -125,47 +107,60 @@
 		<formalpara
 			id="formalpara-binary-Location_Service-Configuring">
 			<title>Configuring</title>
-			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>darConfigurationFileLocation</userinput>. The instructions are given below by SIP Servlets Server breed:</para>
+			<para>The <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element must be set to the value <userinput>darConfigurationFileLocation</userinput>. The instructions are given below by SIP Servlets Server type:</para>
 		</formalpara>
 		<variablelist>
 			<varlistentry>
 				<term>MSS for JBoss</term>
 				<listitem>
-					<para>Open the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <replaceable>conf/dars/locationservice-dar.properties</replaceable>.  Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
+					<para>Open the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <replaceable>conf/dars/locationservice-dar.properties</replaceable>:</para>
+					<example
+						id="example-Editing_MSS_for_JBosss_server.xml_for_the_Location_Service">
+						<title>Editing MSS for JBoss's server.xml for the Location Service</title>
+						<programlisting
+							id="proglist-Editing_MSS_for_JBosss_server.xml_for_the_Location_Service"
+							role="XML"><![CDATA[<Service
+	name="jboss.web"
+	className="org.mobicents.servlet.sip.startup.SipStandardService"
+	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
+	darConfigurationFileLocation="conf/dars/locationservice-dar.properties">]]></programlisting>
+					</example>
+					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>MSS for Tomcat</term>
 				<listitem>
-					<para>Open the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <userinput>conf/dars/locationservice-dar.properties</userinput>. Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
+					<para>Open the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> configuration file and find the <literal>Service</literal> element. Add an attribute to it called <userinput>darConfigurationFileLocation</userinput>, and set it to <userinput>conf/dars/locationservice-dar.properties</userinput>:</para>
+					
+					<example
+						id="example-Editing_MSS_for_Tomcats_server.xml_for_the_Location_Service">
+						<title>Editing MSS for Tomcat's server.xml for the Location Service</title>
+						<programlisting
+							id="proglist-Editing_MSS_for_Tomcats_server.xml_for_the_Location_Service"
+							role="XML"><![CDATA[<Service
+	name="Sip-Servlets"
+	className="org.mobicents.servlet.sip.startup.SipStandardService"
+	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
+	darConfigurationFileLocation="conf/dars/mobicents-dar.properties">]]></programlisting>
+					</example>
+					<para>Make sure that the configuration file only contains one <literal>darConfigurationFileLocation</literal> attribute: your new one.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
 		<formalpara
 			id="formalpara-binary-Location_Service-Running">
 			<title>Running</title>
-			<para>If you are using an MSS for JBoss instance, refer to the following section for details on how to run it:</para>
+			<para>Once the WAR and DAR files have been placed in the right directories, and the JBoss Application Server or Tomcat Servlet Container knows where to find them (which you specified in a <filename>server.xml</filename> file), then you should go ahead and run SIP Servlets Server.</para>
 		</formalpara>
-		<itemizedlist>
-			<listitem>
-				<para>
-					<ulink
-						url="section-binary-SIP_Servlets_Server_with_JBoss-Running"/>
-				</para>
-			</listitem>
-		</itemizedlist>
-		<para>Or, if you are using an MSS for Tomcat instance, refer to the following section for details on running it:</para>
-		<itemizedlist>
-			<listitem>
-				<para>
-					<ulink
-						url="section-binary-SIP_Servlets_Server_with_Tomcat-Running"/>
-				</para>
-			</listitem>
-		</itemizedlist>
+		<para>To learn how to run the SIP Servlets-enabled JBoss Application Server, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_JBoss-Running"/>.</para>
+		<para>To learn how to run the SIP Servlets-enabled Tomcat Container, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_Tomcat-Running"/>.</para>
 		<formalpara
 			id="formalpara-binary-Location_Service-Testing">
 			<title>Testing</title>
+			<para>The following procedure shows how to test the Location Service.</para>
 		</formalpara>
 		<procedure>
 			<title></title>
@@ -184,29 +179,15 @@
 		<formalpara
 			id="formalpara-binary-Location_Service-Stopping">
 			<title>Stopping</title>
-			<para>If you are using an MSS for JBoss instance, refer to the following section for details on how to stop it:</para>
+			<para>To learn how to stop the SIP Servlets-enabled JBoss Application Server, refer to <ulink
+					url="section-binary-SIP_Servlets_Server_with_JBoss-Stopping"/>.</para>
 		</formalpara>
-		<itemizedlist>
-			<listitem>
-				<para>
-					<ulink
-						url="section-binary-SIP_Servlets_Server_with_JBoss-Stopping"/>
-				</para>
-			</listitem>
-		</itemizedlist>
-		<para>Or, if you are using an MSS for Tomcat instance, refer to the following section for details on stopping it:</para>
-		<itemizedlist>
-			<listitem>
-				<para>
-					<ulink
-						url="section-binary-SIP_Servlets_Server_with_Tomcat-Stopping"/>
-				</para>
-			</listitem>
-		</itemizedlist>
+		<para>To learn how to stop the SIP Servlets-enabled Tomcat Container, refer to <ulink
+				url="section-binary-SIP_Servlets_Server_with_Tomcat-Stopping"/>.</para>
 		<formalpara
 			id="formalpara-binary-Location_Service-Uninstalling">
 			<title>Uninstalling</title>
-			<para>Unless disk space is at a premium, there is usually no need to uninstall the Location Service. However, if you will not be using it again, you may want to unset the <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element, which you set to <literal>conf/dars/locationservice-dar.properties</literal>, in either the <filename><envar>JBOSS_HOME</envar>/server/default/deploy/jboss-web.deployer/server.xml</filename> (MSS for JBoss) or the <filename><envar>CATALINA_HOME</envar>/conf/server.xml</filename> (MSS for Tomcat) configuration file. Basically, you want to undo the procedure you performed in <xref
+			<para>Unless disk space is at a premium, there is usually no need to uninstall the Location Service. However, if you will not be using it again, you may want to unset or reset the <literal>darConfigurationFileLocation</literal> attribute of the <literal>Service</literal> element, which you set in the <filename>server.xml</filename> configuration file in <xref
 					linkend="formalpara-binary-Location_Service-Configuring"/>.</para>
 		</formalpara>
 		<para>You may also wish to delete the WAR and DAR files for the Location Service, which you installed in <xref
