@@ -177,7 +177,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(utils.createBearerInformation(value));
+				command.setBearerInformation(utils.decodeBearerInformation(value));
 			} else if (name.equalsIgnoreCase("c")) {
 				command.setCallIdentifier(new CallIdentifier(value));
 			} else if (name.equalsIgnoreCase("I")) {

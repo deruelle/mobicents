@@ -1,18 +1,18 @@
-package org.mobicents.mgcp.stack.test.createconnection;
+package org.mobicents.mgcp.stack.test.endpointconfiguration;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
-import jain.protocol.ip.mgcp.message.CreateConnection;
+import jain.protocol.ip.mgcp.message.EndpointConfiguration;
+import jain.protocol.ip.mgcp.message.parms.BearerInformation;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
-import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
-import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.mgcp.stack.test.createconnection.CreateConnectionTest;
 
 public class CA implements JainMgcpExtendedListener {
 
@@ -27,39 +27,30 @@ public class CA implements JainMgcpExtendedListener {
 		mgStack = mgwProvider.getJainMgcpStack().getPort();
 	}
 
-	public void sendCreateConnection() {
+	public void sendEndpointConfiguration() {
 
 		try {
 			caProvider.addJainMgcpListener(this);
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/$", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/", "127.0.0.1:" + mgStack);
+			EndpointConfiguration endpointConfiguration = new EndpointConfiguration(this, endpointID, BearerInformation.EncMethod_A_Law );
 
-			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
+			endpointConfiguration.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
-			String sdpData = "v=0\r\n" + "o=4855 13760799956958020 13760799956958020" + " IN IP4  127.0.0.1\r\n"
-					+ "s=mysession session\r\n" + "p=+46 8 52018010\r\n" + "c=IN IP4  127.0.0.1\r\n" + "t=0 0\r\n"
-					+ "m=audio 6022 RTP/AVP 0 4 18\r\n" + "a=rtpmap:0 PCMU/8000\r\n" + "a=rtpmap:4 G723/8000\r\n"
-					+ "a=rtpmap:18 G729A/8000\r\n" + "a=ptime:20\r\n";
+			caProvider.sendMgcpEvents(new JainMgcpEvent[] { endpointConfiguration });
 
-			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdpData));
-
-			createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-
-			caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
-
-			logger.debug(" CreateConnection command sent for TxId " + createConnection.getTransactionHandle()
+			logger.debug(" EndpointConfiguration command sent for TxId " + endpointConfiguration.getTransactionHandle()
 					+ " and CallId " + callID);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {			
 			e.printStackTrace();
-			CreateConnectionTest.fail("Unexpected Exception");
+			EndpointConfigurationTest.fail("Unexpected Exception");
 		}
 	}
 
 	public void checkState() {
-		CreateConnectionTest.assertTrue("Expect to receive CRCX Response", responseReceived);
+		CreateConnectionTest.assertTrue("Expect to receive EPCF Response", responseReceived);
 
 	}
 
@@ -85,7 +76,7 @@ public class CA implements JainMgcpExtendedListener {
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
-		case Constants.RESP_CREATE_CONNECTION:
+		case Constants.RESP_ENDPOINT_CONFIGURATION:
 			responseReceived = true;			
 			break;
 		default:

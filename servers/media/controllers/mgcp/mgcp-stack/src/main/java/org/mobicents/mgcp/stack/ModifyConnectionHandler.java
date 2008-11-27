@@ -114,7 +114,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
         }
         
         if (evt.getLocalConnectionOptions() != null) {
-            msg += utils.encodeLocalConnectionOptions(
+            msg += "L:"+utils.encodeLocalOptionValueList(
                     evt.getLocalConnectionOptions());
         }
         
@@ -190,15 +190,15 @@ public class ModifyConnectionHandler extends TransactionHandler {
          */
         public void param(String name, String value) throws ParseException {
             if (name.equalsIgnoreCase("B")) {
-                command.setBearerInformation(utils.createBearerInformation(value));
+                command.setBearerInformation(utils.decodeBearerInformation(value));
             } else if (name.equalsIgnoreCase("c")) {
                 command.setCallIdentifier(new CallIdentifier(value));
             } else if (name.equalsIgnoreCase("I")) {
                 command.setConnectionIdentifier(new ConnectionIdentifier(value));
             } else if (name.equalsIgnoreCase("m")) {
-                command.setMode(utils.createConnectionMode(value));
+                command.setMode(utils.decodeConnectionMode(value));
             } else if (name.equalsIgnoreCase("L")) {
-                command.setLocalConnectionOptions(utils.createLocalOptions(value));
+                command.setLocalConnectionOptions(utils.decodeLocalOptionValueList(value));
             } else if (name.equalsIgnoreCase("N")) {
             	command.setNotifiedEntity(utils.decodeNotifiedEntity(value));                
             } else if (name.equalsIgnoreCase("X")) {

@@ -17,6 +17,7 @@ package org.mobicents.mgcp.stack.parser;
 
 import jain.protocol.ip.mgcp.message.parms.Bandwidth;
 import jain.protocol.ip.mgcp.message.parms.BearerInformation;
+import jain.protocol.ip.mgcp.message.parms.CapabilityValue;
 import jain.protocol.ip.mgcp.message.parms.CompressionAlgorithm;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
@@ -29,6 +30,8 @@ import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.ExtendedConnectionParm;
 import jain.protocol.ip.mgcp.message.parms.GainControl;
+import jain.protocol.ip.mgcp.message.parms.InfoCode;
+import jain.protocol.ip.mgcp.message.parms.LocalOptVal;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionExtension;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.NotificationRequestParms;
@@ -42,6 +45,8 @@ import jain.protocol.ip.mgcp.message.parms.ResourceReservation;
 import jain.protocol.ip.mgcp.message.parms.RestartMethod;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.message.parms.SilenceSuppression;
+import jain.protocol.ip.mgcp.message.parms.SupportedModes;
+import jain.protocol.ip.mgcp.message.parms.SupportedPackages;
 import jain.protocol.ip.mgcp.message.parms.TypeOfNetwork;
 import jain.protocol.ip.mgcp.message.parms.TypeOfService;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
@@ -62,25 +67,13 @@ public class Utils {
 	}
 
 	/**
-	 * Instantiates endpoint identifier as Jain MGCP EndpointIdentifier object.
-	 * 
-	 * @param name
-	 *            the fully qualified name of the endpoint.
-	 * @return EndpointIdentifier object.
-	 */
-	public EndpointIdentifier createEndpointIdentifier(String name) {
-		String tokens[] = name.split("@");
-		return new EndpointIdentifier(tokens[0], tokens[1]);
-	}
-
-	/**
 	 * Create ConnectionMode object from given text value.
 	 * 
 	 * @param mode
 	 *            the text value of the connection mode.
 	 * @return the ConnectionMode object.
 	 */
-	public ConnectionMode createConnectionMode(String mode) {
+	public ConnectionMode decodeConnectionMode(String mode) {
 		if (mode.equals("sendrecv")) {
 			return ConnectionMode.SendRecv;
 		} else if (mode.equalsIgnoreCase("sendonly")) {
@@ -103,6 +96,17 @@ public class Utils {
 		return ConnectionMode.Inactive;
 	}
 
+	public String encodeBearerInformation(BearerInformation bearerInformation) {
+		String s = "e:";
+
+		if (BearerInformation.ENC_METHOD_A_LAW == bearerInformation.getEncodingMethod()) {
+			s += "A";
+		} else if (BearerInformation.ENC_METHOD_MU_LAW == bearerInformation.getEncodingMethod()) {
+			s += "mu";
+		}
+		return s;
+	}
+
 	/**
 	 * Create BearerInformation object from given text.
 	 * 
@@ -110,7 +114,7 @@ public class Utils {
 	 *            the text value of the object.
 	 * @return BearerInformation object.
 	 */
-	public BearerInformation createBearerInformation(String text) throws ParseException {
+	public BearerInformation decodeBearerInformation(String text) throws ParseException {
 		// BearerInformation =BearerAttribute 0*(","0*(WSP)BearerAttribute)
 		// BearerAttribute =("e"":"BearerEncoding)
 		// (BearerExtensionName [":"BearerExtensionValue ])
@@ -141,7 +145,7 @@ public class Utils {
 	 *            the text value.
 	 * @return array of LocalOptionValue objects.
 	 */
-	public LocalOptionValue[] createLocalOptions(String text) throws ParseException {
+	public LocalOptionValue[] decodeLocalOptionValueList(String text) throws ParseException {
 		// LocalConnectionOptions =LocalOptionValue 0*(WSP)
 		// 0*(","0*(WSP)LocalOptionValue 0*(WSP))
 
@@ -149,7 +153,7 @@ public class Utils {
 		LocalOptionValue[] options = new LocalOptionValue[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
-			options[i] = createLocalOption(tokens[i]);
+			options[i] = decodeLocalOptionValue(tokens[i]);
 		}
 
 		return options;
@@ -162,7 +166,7 @@ public class Utils {
 	 *            the text value of the LocalOptionValue object.
 	 * @return LocalOption object.
 	 */
-	public LocalOptionValue createLocalOption(String text) throws ParseException {
+	public LocalOptionValue decodeLocalOptionValue(String text) throws ParseException {
 		// LocalOptionValue =("p"":"packetizationPeriod)
 		// /("a"":"compressionAlgorithm)
 		// /("b"":"bandwidth)
@@ -186,11 +190,11 @@ public class Utils {
 		String value = text.substring(pos + 1).trim();
 
 		if (name.equalsIgnoreCase("a")) {
-			return createCompressionAlgorithm(value);
+			return decodeCompressionAlgorithm(value);
 		} else if (name.equalsIgnoreCase("p")) {
-			return createPacketizationPeriod(value);
+			return decodePacketizationPeriod(value);
 		} else if (name.equalsIgnoreCase("b")) {
-			return createBandwidth(value);
+			return decodeBandwidth(value);
 		} else if (name.equalsIgnoreCase("e")) {
 			return decodeEchoCancellation(value);
 		} else if (name.equalsIgnoreCase("gc")) {
@@ -211,6 +215,76 @@ public class Utils {
 
 	}
 
+	public String encodeLocalOptionVale(LocalOptionValue localOptionValue) {
+		String s = "";
+		switch (localOptionValue.getLocalOptionValueType()) {
+		case LocalOptionValue.BANDWIDTH:
+			Bandwidth b = (Bandwidth) localOptionValue;
+			s += "b:" + encodeBandwidth(b);
+			break;
+
+		case LocalOptionValue.COMPRESSION_ALGORITHM:
+			CompressionAlgorithm compressionAlgorithm = (CompressionAlgorithm) localOptionValue;
+			s += "a:" + encodeCompressionAlgorithm(compressionAlgorithm);
+			break;
+
+		case LocalOptionValue.ECHO_CANCELLATION:
+			EchoCancellation echoCancellation = (EchoCancellation) localOptionValue;
+			s += "e:" + encodeEchoCancellation(echoCancellation);
+			break;
+
+		case LocalOptionValue.ENCRYPTION_METHOD:
+			EncryptionMethod encryptionMethod = (EncryptionMethod) localOptionValue;
+			s += "k:" + encodeEncryptionMethod(encryptionMethod);
+			break;
+
+		case LocalOptionValue.GAIN_CONTROL:
+			GainControl gainControl = (GainControl) localOptionValue;
+			s += "gc:" + encodeGainControl(gainControl);
+			break;
+
+		case LocalOptionValue.LOCAL_OPTION_EXTENSION:
+			LocalOptionExtension localOptionExtension = (LocalOptionExtension) localOptionValue;
+			s += localOptionExtension.getLocalOptionExtensionName() + ":"
+					+ localOptionExtension.getLocalOptionExtensionValue();
+			break;
+
+		case LocalOptionValue.PACKETIZATION_PERIOD:
+			PacketizationPeriod packetizationPeriod = (PacketizationPeriod) localOptionValue;
+			s += "p:" + encodePacketizationPeriod(packetizationPeriod);
+			break;
+
+		case LocalOptionValue.RESOURCE_RESERVATION:
+			s += "r:";
+			ResourceReservation resourceReservation = (ResourceReservation) localOptionValue;
+			s += encodeResourceReservation(resourceReservation);
+			break;
+
+		case LocalOptionValue.SILENCE_SUPPRESSION:
+			s += "s:";
+			SilenceSuppression silenceSuppression = (SilenceSuppression) localOptionValue;
+			s += encodeSilenceSuppression(silenceSuppression);
+			break;
+
+		case LocalOptionValue.TYPE_OF_NETWORK:
+			s += "nt:";
+			TypeOfNetwork typeOfNetwork = (TypeOfNetwork) localOptionValue;
+			s += encodeTypeOfNetwork(typeOfNetwork);
+			break;
+
+		case LocalOptionValue.TYPE_OF_SERVICE:
+			TypeOfService typeOfService = (TypeOfService) localOptionValue;
+			s += "t:" + encodeTypeOfService(typeOfService);
+			break;
+
+		default:
+			System.out.println("LocalOptionValue " + localOptionValue + " not identified");
+			break;
+		}
+
+		return s;
+	}
+
 	/**
 	 * Create CompressionAlgorithm object from given text.
 	 * 
@@ -218,9 +292,24 @@ public class Utils {
 	 *            the text value of the compression algoritm.
 	 * @return CompressionAlgorithm object.
 	 */
-	public CompressionAlgorithm createCompressionAlgorithm(String value) throws ParseException {
+	public CompressionAlgorithm decodeCompressionAlgorithm(String value) throws ParseException {
 		// compressionAlgorithm =algorithmName 0*(";"algorithmName)
 		return new CompressionAlgorithm(value.split(";"));
+	}
+
+	public String encodeCompressionAlgorithm(CompressionAlgorithm compressionAlgorithm) {
+		String s = "";
+		String[] names = compressionAlgorithm.getCompressionAlgorithmNames();
+		boolean first = true;
+		for (int i = 0; i < names.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				s += ";";
+			}
+			s += names[i];
+		}
+		return s;
 	}
 
 	/**
@@ -230,7 +319,7 @@ public class Utils {
 	 *            the text view of the PacketizationPeriod object.
 	 * @return PacketizationPeriod object.
 	 */
-	public PacketizationPeriod createPacketizationPeriod(String value) throws ParseException {
+	public PacketizationPeriod decodePacketizationPeriod(String value) throws ParseException {
 		// packetizationPeriod =1*4(DIGIT)["-"1*4(DIGIT)]
 		int pos = value.indexOf('-');
 		if (pos < 0) {
@@ -251,6 +340,18 @@ public class Utils {
 		}
 	}
 
+	public String encodePacketizationPeriod(PacketizationPeriod packetizationPeriod) {
+		String s = "";
+		if (packetizationPeriod.getPacketizationPeriodLowerBound() != packetizationPeriod
+				.getPacketizationPeriodUpperBound()) {
+			s += packetizationPeriod.getPacketizationPeriodLowerBound() + "-"
+					+ packetizationPeriod.getPacketizationPeriodUpperBound();
+		} else {
+			s += packetizationPeriod.getPacketizationPeriodLowerBound();
+		}
+		return s;
+	}
+
 	/**
 	 * Create Bandwidth object from given text.
 	 * 
@@ -258,7 +359,7 @@ public class Utils {
 	 *            the text view of the Bandwidth object.
 	 * @return Bandwidth object.
 	 */
-	public Bandwidth createBandwidth(String value) throws ParseException {
+	public Bandwidth decodeBandwidth(String value) throws ParseException {
 		// bandwidth =1*4(DIGIT)["-"1*4(DIGIT)]
 		int pos = value.indexOf('-');
 		if (pos < 0) {
@@ -279,6 +380,16 @@ public class Utils {
 		}
 	}
 
+	public String encodeBandwidth(Bandwidth bandwidth) {
+		String s = "";
+		if (bandwidth.getBandwidthLowerBound() != bandwidth.getBandwidthUpperBound()) {
+			s += bandwidth.getBandwidthLowerBound() + "-" + bandwidth.getBandwidthUpperBound();
+		} else {
+			s += bandwidth.getBandwidthLowerBound();
+		}
+		return s;
+	}
+
 	/**
 	 * Decode EchoCancellation object from given text.
 	 * 
@@ -295,6 +406,16 @@ public class Utils {
 		} else {
 			throw new ParseException("Invalid value for EchoCancellation :" + value, 0);
 		}
+	}
+
+	public String encodeEchoCancellation(EchoCancellation echoCancellation) {
+		String s = "";
+		if (echoCancellation.getEchoCancellation()) {
+			s += "on";
+		} else {
+			s += "off";
+		}
+		return s;
 	}
 
 	/**
@@ -317,6 +438,16 @@ public class Utils {
 		}
 	}
 
+	public String encodeGainControl(GainControl gainControl) {
+		String s = "";
+		if (gainControl.getGainControl() == 0) {
+			s += "auto";
+		} else {
+			s += gainControl.getGainControl();
+		}
+		return s;
+	}
+
 	/**
 	 * Decode SilenceSuppression object from given text.
 	 * 
@@ -328,11 +459,21 @@ public class Utils {
 		// silenceSuppression ="on"/"off"
 		if (value.equalsIgnoreCase("on")) {
 			return SilenceSuppression.SilenceSuppressionOn;
-		} else if (value.equalsIgnoreCase("of")) {
+		} else if (value.equalsIgnoreCase("off")) {
 			return SilenceSuppression.SilenceSuppressionOff;
 		} else {
 			throw new ParseException("Invalid value for SilenceSuppression :" + value, 0);
 		}
+	}
+
+	public String encodeSilenceSuppression(SilenceSuppression silenceSuppression) {
+		String s = "";
+		if (silenceSuppression.getSilenceSuppression()) {
+			s += "on";
+		} else {
+			s += "off";
+		}
+		return s;
 	}
 
 	/**
@@ -349,6 +490,12 @@ public class Utils {
 		} catch (Exception e) {
 			throw new ParseException("Invalid value for TypeOfService :" + value, 0);
 		}
+	}
+
+	public String encodeTypeOfService(TypeOfService typeOfService) {
+		String s = "";
+		s += Integer.toString(typeOfService.getTypeOfService(), 16).toUpperCase();
+		return s;
 	}
 
 	/**
@@ -369,6 +516,24 @@ public class Utils {
 		} else {
 			throw new ParseException("Invalid value for EchoCancellation :" + value, 0);
 		}
+	}
+
+	public String encodeResourceReservation(ResourceReservation resourceReservation) {
+		String s = "";
+		switch (resourceReservation.getResourceReservation()) {
+		case ResourceReservation.BEST_EFFORT:
+			s += "be";
+			break;
+
+		case ResourceReservation.CONTROLLED_LOAD:
+			s += "cl";
+			break;
+
+		case ResourceReservation.GUARANTEED:
+			s += "g";
+			break;
+		}
+		return s;
 	}
 
 	/**
@@ -402,6 +567,24 @@ public class Utils {
 		}
 	}
 
+	public String encodeEncryptionMethod(EncryptionMethod encryptionMethod) {
+		String s = "";
+		switch (encryptionMethod.getEncryptionMethod()) {
+		case EncryptionMethod.BASE64:
+			s += "base64:" + encryptionMethod.getEncryptionKey();
+			break;
+
+		case EncryptionMethod.CLEAR:
+			s += "clear:" + encryptionMethod.getEncryptionKey();
+			break;
+
+		case EncryptionMethod.URI:
+			s += "uri:" + encryptionMethod.getEncryptionKey();
+			break;
+		}
+		return s;
+	}
+
 	/**
 	 * Decode TypeOfNetwork object from given text.
 	 * 
@@ -420,6 +603,22 @@ public class Utils {
 		} else {
 			throw new ParseException("Invalid value for TypeOfNetwork :" + value, 0);
 		}
+	}
+
+	public String encodeTypeOfNetwork(TypeOfNetwork typeOfNetwork) {
+		String s = "";
+		switch (typeOfNetwork.getTypeOfNetwork()) {
+		case TypeOfNetwork.IN:
+			s += "in";
+			break;
+		case TypeOfNetwork.ATM:
+			s += "atm";
+			break;
+		case TypeOfNetwork.LOCAL:
+			s += "local";
+			break;
+		}
+		return s;
 	}
 
 	public RestartMethod decodeRestartMethod(String value) throws ParseException {
@@ -511,6 +710,348 @@ public class Utils {
 		} else {
 			throw new ParseException("Unexpected event name " + value, 0);
 		}
+	}
+
+	public String encodeInfoCodeList(InfoCode[] infoCodes) {
+		String msg = "";
+		boolean first = true;
+		for (int i = 0; i < infoCodes.length; i++) {
+
+			if (first) {
+				first = false;
+			} else {
+				msg += ',';
+			}
+
+			InfoCode infoCode = infoCodes[i];
+			switch (infoCode.getInfoCode()) {
+			case (InfoCode.BEARER_INFORMATION):
+				msg += "B";
+				break;
+
+			case (InfoCode.CONNECTION_IDENTIFIER):
+				msg += "I";
+				break;
+
+			case (InfoCode.NOTIFIED_ENTITY):
+				msg += "N";
+				break;
+
+			case (InfoCode.REQUEST_IDENTIFIER):
+				msg += "X";
+				break;
+
+			case (InfoCode.REQUESTED_EVENTS):
+				msg += "R";
+				break;
+
+			case (InfoCode.SIGNAL_REQUESTS):
+				msg += "S";
+				break;
+
+			case (InfoCode.DIGIT_MAP):
+				msg += "D";
+				break;
+
+			case (InfoCode.OBSERVED_EVENTS):
+				msg += "O";
+				break;
+
+			case (InfoCode.REASON_CODE):
+				msg += "E";
+				break;
+
+			case (InfoCode.QUARANTINE_HANDLING):
+				msg += "Q";
+				break;
+
+			case (InfoCode.DETECT_EVENTS):
+				msg += "T";
+				break;
+
+			case (InfoCode.CAPABILITIES):
+				msg += "A";
+				break;
+
+			case (InfoCode.EVENT_STATES):
+				msg += "ES";
+				break;
+
+			case (InfoCode.RESTART_METHOD):
+				msg += "RM";
+				break;
+
+			case (InfoCode.RESTART_DELAY):
+				msg += "RD";
+				break;
+
+			default:
+				System.out.println("The InfoCode " + infoCode + " is not supported");
+				break;
+			}
+		}
+		return msg;
+	}
+
+	public InfoCode[] decodeInfoCodeList(String value) throws ParseException {
+		String tokens[] = (value.trim()).split(",");
+		InfoCode[] infoCodes = new InfoCode[tokens.length];
+		for (int i = 0; i < tokens.length; i++) {
+			infoCodes[i] = decodeInfoCode(tokens[i]);
+		}
+		return infoCodes;
+	}
+
+	private InfoCode decodeInfoCode(String value) throws ParseException {
+		value = value.trim();
+		if (value.equalsIgnoreCase("B")) {
+			return InfoCode.BearerInformation;
+		}
+
+		else if (value.equalsIgnoreCase("I")) {
+			return InfoCode.ConnectionIdentifier;
+		}
+
+		else if (value.equalsIgnoreCase("N")) {
+			return InfoCode.NotifiedEntity;
+		}
+
+		else if (value.equalsIgnoreCase("X")) {
+			return InfoCode.RequestIdentifier;
+		}
+
+		else if (value.equalsIgnoreCase("R")) {
+			return InfoCode.RequestedEvents;
+		}
+
+		else if (value.equalsIgnoreCase("S")) {
+			return InfoCode.SignalRequests;
+		}
+
+		else if (value.equalsIgnoreCase("D")) {
+			return InfoCode.DigitMap;
+		}
+
+		else if (value.equalsIgnoreCase("O")) {
+			return InfoCode.ObservedEvents;
+		}
+
+		else if (value.equalsIgnoreCase("E")) {
+			return InfoCode.ReasonCode;
+		}
+
+		else if (value.equalsIgnoreCase("Q")) {
+			return InfoCode.QuarantineHandling;
+		}
+
+		else if (value.equalsIgnoreCase("T")) {
+			return InfoCode.DetectEvents;
+		}
+
+		else if (value.equalsIgnoreCase("A")) {
+			return InfoCode.Capabilities;
+		}
+
+		else if (value.equalsIgnoreCase("ES")) {
+			return InfoCode.EventStates;
+		}
+
+		else if (value.equalsIgnoreCase("RM")) {
+			return InfoCode.RestartMethod;
+		}
+
+		else if (value.equalsIgnoreCase("RD")) {
+			return InfoCode.RestartDelay;
+		}
+
+		else {
+			throw new ParseException("Extension action not suported", 0);
+		}
+	}
+
+	public CapabilityValue[] decodeCapabilityList(String value) throws ParseException {
+		String tokens[] = (value.trim()).split(",");
+		CapabilityValue[] capabilityValues = new CapabilityValue[tokens.length];
+		for (int i = 0; i < tokens.length; i++) {
+			capabilityValues[i] = decodeCapability(tokens[i]);
+		}
+		return capabilityValues;
+
+	}
+
+	public String encodeCapabilityList(CapabilityValue[] c) {
+		String s = "";
+		boolean first = true;
+		for (int i = 0; i < c.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				s += ",";
+			}
+			s += encodeCapability(c[i]);
+		}
+		return s;
+	}
+
+	public String encodeCapability(CapabilityValue c) {
+		String s = "";
+
+		switch (c.getCapabilityValueType()) {
+		case CapabilityValue.LOCAL_OPTION_VALUE:
+			LocalOptVal localOptVal = (LocalOptVal) c;
+			LocalOptionValue localOptionValue = localOptVal.getLocalOptionValue();
+			s += encodeLocalOptionVale(localOptionValue);
+			break;
+
+		case CapabilityValue.SUPPORTED_PACKAGES:
+			s += "v:";
+			SupportedPackages supportedPackages = (SupportedPackages) c;
+			PackageName[] packageNameList = supportedPackages.getSupportedPackageNames();
+			s += encodePackageNameList(packageNameList);
+			break;
+
+		case CapabilityValue.SUPPORTED_MODES:
+			s += "m:";
+			SupportedModes supportedModes = (SupportedModes) c;
+			ConnectionMode[] connectionModeList = supportedModes.getSupportedModes();
+			s += encodeConnectionModeList(connectionModeList);
+			break;
+		}
+
+		return s;
+	}
+
+	public String encodeConnectionModeList(ConnectionMode[] connectionModeList) {
+		String s = "";
+		boolean first = true;
+		for (int i = 0; i < connectionModeList.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				s += ";";
+			}
+			s += connectionModeList[i].toString();
+
+		}
+		return s;
+	}
+
+	public String encodePackageNameList(PackageName[] packageNameList) {
+		String s = "";
+		boolean first = true;
+		for (int i = 0; i < packageNameList.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				s += ";";
+			}
+			s += packageNameList[i].toString();
+
+		}
+		return s;
+	}
+
+	public CapabilityValue decodeCapability(String value) throws ParseException {
+
+		CapabilityValue capabilityValue = null;
+		int pos = value.indexOf(':');
+		if (pos < 0) {
+			throw new ParseException("Invalid value for EncryptionData: " + value, 0);
+		}
+
+		String key = value.substring(0, pos).trim();
+		String capability = value.substring(pos + 1).trim();
+
+		if ("a".equals(key)) {
+			String[] codecs = capability.split(";");
+			CompressionAlgorithm compressionAlgorithm = new CompressionAlgorithm(codecs);
+			capabilityValue = new LocalOptVal(compressionAlgorithm);
+
+		} else if ("b".equals(key)) {
+			String[] bandwidthRange = capability.split("-");
+			int lower = Integer.parseInt(bandwidthRange[0]);
+			int upper = lower;
+			if (bandwidthRange.length == 2) {
+				upper = Integer.parseInt(bandwidthRange[1]);
+			}
+
+			Bandwidth bandwidth = new Bandwidth(lower, upper);
+			capabilityValue = new LocalOptVal(bandwidth);
+
+		} else if ("p".equals(key)) {
+			String[] packetizationRange = capability.split("-");
+			int lower = Integer.parseInt(packetizationRange[0]);
+			int upper = lower;
+			if (packetizationRange.length == 2) {
+				upper = Integer.parseInt(packetizationRange[1]);
+			}
+
+			PacketizationPeriod packetizationPeriod = new PacketizationPeriod(lower, upper);
+			capabilityValue = new LocalOptVal(packetizationPeriod);
+		} else if ("e".equals(key)) {
+			if ("on".equals(capability)) {
+				capabilityValue = new LocalOptVal(EchoCancellation.EchoCancellationOn);
+			} else {
+				capabilityValue = new LocalOptVal(EchoCancellation.EchoCancellationOff);
+			}
+		} else if ("s".equals(key)) {
+			if ("on".equals(capability)) {
+				capabilityValue = new LocalOptVal(SilenceSuppression.SilenceSuppressionOn);
+			} else {
+				capabilityValue = new LocalOptVal(SilenceSuppression.SilenceSuppressionOff);
+			}
+		} else if ("gc".equals(key)) {
+			int gainControl = 0;
+
+			try {
+				gainControl = Integer.parseInt(capability);
+			} catch (NumberFormatException ne) {
+				// Ignore
+			}
+			capabilityValue = new LocalOptVal(new GainControl(gainControl));
+
+		} else if ("t".equals(key)) {
+			byte typeOfService = 0;
+
+			try {
+				typeOfService = Byte.parseByte(capability);
+			} catch (NumberFormatException ne) {
+				// Ignore
+			}
+			capabilityValue = new LocalOptVal(new TypeOfService(typeOfService));
+		} else if ("r".equals(key)) {
+			if ("g".equals(capability)) {
+				capabilityValue = new LocalOptVal(ResourceReservation.Guaranteed);
+			} else if ("cl".equals(capability)) {
+				capabilityValue = new LocalOptVal(ResourceReservation.ControlledLoad);
+			} else if ("be".equals(capability)) {
+				capabilityValue = new LocalOptVal(ResourceReservation.BestEffort);
+			}
+		} else if ("k".equals(key)) {
+			EncryptionMethod encryptionMethod = decodeEncryptionMethod(capability);
+			capabilityValue = new LocalOptVal(encryptionMethod);
+		} else if ("nt".equals(key)) {
+			TypeOfNetwork typeOfNetwork = decodeTypeOfNetwork(capability);
+			capabilityValue = new LocalOptVal(typeOfNetwork);
+		} else if ("v".equals(key)) {
+			String[] packages = capability.split(";");
+			PackageName[] supportedPackageNames = new PackageName[packages.length];
+			for (int i = 0; i < packages.length; i++) {
+				PackageName p = PackageName.factory(packages[i]);
+				supportedPackageNames[i] = p;
+			}
+			capabilityValue = new SupportedPackages(supportedPackageNames);
+		} else if ("m".equals(key)) {
+			String[] modes = capability.split(";");
+			ConnectionMode[] supportedConnectionModes = new ConnectionMode[modes.length];
+			for (int i = 0; i < modes.length; i++) {
+				ConnectionMode c = decodeConnectionMode(modes[i]);
+				supportedConnectionModes[i] = c;
+			}
+			capabilityValue = new SupportedModes(supportedConnectionModes);
+		}
+
+		return capabilityValue;
 	}
 
 	public RequestedAction[] decodeRequestedActions(String value) throws ParseException {
@@ -639,6 +1180,39 @@ public class Utils {
 		return new EndpointIdentifier(s[0], s[1]);
 	}
 
+	public String encodeEndpointIdentifier(EndpointIdentifier e) {
+		String s = e.getLocalEndpointName();
+		if (e.getDomainName() != null) {
+			s += "@" + e.getDomainName();
+		}
+		return s;
+	}
+
+	public EndpointIdentifier[] decodeEndpointIdentifiers(String name) {
+		String[] s = name.split(",");
+		EndpointIdentifier[] endpointIdentifiers = new EndpointIdentifier[s.length];
+		for (int i = 0; i < s.length; i++) {
+			endpointIdentifiers[i] = decodeEndpointIdentifier(s[i]);
+		}
+
+		return endpointIdentifiers;
+	}
+
+	public String encodeEndpointIdentifiers(EndpointIdentifier[] endpointIdentifierList) {
+		String msg = "";
+		boolean first = true;
+		for (int i = 0; i < endpointIdentifierList.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				msg += ",";
+			}
+			msg += encodeEndpointIdentifier(endpointIdentifierList[i]);
+		}
+		return msg;
+
+	}
+
 	public ReturnCode decodeReturnCode(int code) throws ParseException {
 		switch (code) {
 		case ReturnCode.CAS_SIGNALING_PROTOCOL_ERROR:
@@ -724,14 +1298,21 @@ public class Utils {
 		}
 	}
 
-	public String encodeLocalConnectionOptions(LocalOptionValue[] options) {
-		String msg = "L:";
-		for (int i = 0; i < options.length - 1; i++) {
+	public String encodeLocalOptionValueList(LocalOptionValue[] options) {
+		String msg = "";
+		boolean first = true;
+		for (int i = 0; i < options.length; i++) {
+			if (first) {
+				first = false;
+			} else {
+				msg += ",";
+			}
 			String s = options[i].toString();
-			s = s.substring(0, s.indexOf("\n"));
-			msg += s + ",";
+			if (s.indexOf("\n") != -1) {
+				s = s.substring(0, s.indexOf("\n"));
+			}
+			msg += s;
 		}
-		msg += options[options.length - 1];
 		return msg;
 	}
 
@@ -914,5 +1495,18 @@ public class Utils {
 		}
 
 		return notifiedEntity;
+	}
+
+	public String encodeNotifiedEntity(NotifiedEntity n) {
+		String s = "";
+		s += n.getLocalName();
+		if (n.getDomainName() != null) {
+			s += "@" + n.getDomainName();
+		}
+
+		if (n.getPortNumber() > 0) {
+			s += ":" + n.getPortNumber();
+		}
+		return s;
 	}
 }

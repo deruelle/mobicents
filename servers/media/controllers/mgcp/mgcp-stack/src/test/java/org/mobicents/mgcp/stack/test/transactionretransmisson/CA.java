@@ -33,6 +33,9 @@ public class CA implements JainMgcpExtendedListener {
 	private JainMgcpStackProviderImpl caProvider;
 	private int mgStack = 0;
 	private boolean finalResponseReceived = false;
+
+	// The calling application/listener will not receive the provisional response. Hence
+	// we are setting this to true
 	private boolean provisionalResponseReceived = true;
 	private String command;
 
@@ -91,7 +94,6 @@ public class CA implements JainMgcpExtendedListener {
 			logger.debug(" DeleteConnection command sent for TxId " + deleteConnection.getTransactionHandle()
 					+ " and ConnectionIdentifier " + connectionIdentifier);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			CreateConnectionTest.fail("Unexpected Exception");
 		}

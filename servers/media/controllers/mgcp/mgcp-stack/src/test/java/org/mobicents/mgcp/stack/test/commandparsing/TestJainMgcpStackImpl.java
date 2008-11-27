@@ -1,4 +1,4 @@
-package org.mobicents.mgcp.stack.commandparsing.test;
+package org.mobicents.mgcp.stack.test.commandparsing;
 
 import jain.protocol.ip.mgcp.CreateProviderException;
 import jain.protocol.ip.mgcp.DeleteProviderException;

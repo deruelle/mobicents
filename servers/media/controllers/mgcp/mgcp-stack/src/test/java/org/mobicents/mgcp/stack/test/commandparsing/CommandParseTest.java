@@ -1,4 +1,4 @@
-package org.mobicents.mgcp.stack.commandparsing.test;
+package org.mobicents.mgcp.stack.test.commandparsing;
 
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
@@ -47,19 +47,20 @@ public class CommandParseTest extends TestHarness {
 		super("CommandParseTest");
 	}
 
+	@Override
 	public void setUp() {
 
 		try {
 			inetAddress = InetAddress.getByName("127.0.0.1");
 			jainMgcpStack = new JainMgcpStackImpl(inetAddress, 2729);
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+		} catch (UnknownHostException e) {			
 			e.printStackTrace();
 			fail("Could not setUp the CommandParseTest");
 		}
 
 	}
 
+	@Override
 	public void tearDown() {
 		jainMgcpStack.close();
 		try {

@@ -117,7 +117,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 		}
 
 		if (evt.getLocalConnectionOptions() != null) {
-			msg += utils.encodeLocalConnectionOptions(evt.getLocalConnectionOptions());
+			msg += "L:"+utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions());
 		}
 
 		if (evt.getSecondEndpointIdentifier() != null) {
@@ -197,14 +197,14 @@ public class CreateConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(utils.createBearerInformation(value));
+				command.setBearerInformation(utils.decodeBearerInformation(value));
 			} else if (name.equalsIgnoreCase("c")) {
 				command.setCallIdentifier(new CallIdentifier(value));
 			}
 			if (name.equalsIgnoreCase("L")) {
-				command.setLocalConnectionOptions(utils.createLocalOptions(value));
+				command.setLocalConnectionOptions(utils.decodeLocalOptionValueList(value));
 			} else if (name.equalsIgnoreCase("m")) {
-				command.setMode(utils.createConnectionMode(value));
+				command.setMode(utils.decodeConnectionMode(value));
 			} else if (name.equalsIgnoreCase("N")) {
 				command.setNotifiedEntity(new NotifiedEntity(value));
 			} else if (name.equalsIgnoreCase("X")) {
@@ -219,7 +219,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 				command.getNotificationRequestParms().setDetectEvents(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("Z")) {
 				try {
-					command.setSecondEndpointIdentifier(utils.createEndpointIdentifier(value));
+					command.setSecondEndpointIdentifier(utils.decodeEndpointIdentifier(value));
 				} catch (ConflictingParameterException e) {
 				}
 			}
@@ -277,9 +277,9 @@ public class CreateConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("I2")) {
 				response.setSecondConnectionIdentifier(new ConnectionIdentifier(value));
 			} else if (name.equalsIgnoreCase("Z")) {
-				response.setSpecificEndpointIdentifier(utils.createEndpointIdentifier(value));
+				response.setSpecificEndpointIdentifier(utils.decodeEndpointIdentifier(value));
 			} else if (name.equalsIgnoreCase("Z2")) {
-				response.setSecondEndpointIdentifier(utils.createEndpointIdentifier(value));
+				response.setSecondEndpointIdentifier(utils.decodeEndpointIdentifier(value));
 			}
 		}
 

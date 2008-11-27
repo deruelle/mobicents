@@ -30,7 +30,6 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -59,6 +58,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 			parser.parse(message);
 		} catch (Exception e) {
 			// should never happen
+			logger.error("Parsing of EndpointConfiguration command failed", e);
 		}
 
 		return command;
@@ -130,7 +130,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(utils.createBearerInformation(value));
+				command.setBearerInformation(utils.decodeBearerInformation(value));
 			}
 		}
 
