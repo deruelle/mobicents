@@ -4,17 +4,25 @@ import jain.protocol.ip.mgcp.message.parms.Bandwidth;
 import jain.protocol.ip.mgcp.message.parms.BearerInformation;
 import jain.protocol.ip.mgcp.message.parms.CapabilityValue;
 import jain.protocol.ip.mgcp.message.parms.CompressionAlgorithm;
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EchoCancellation;
+import jain.protocol.ip.mgcp.message.parms.EmbeddedRequest;
 import jain.protocol.ip.mgcp.message.parms.EncryptionMethod;
+import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.GainControl;
 import jain.protocol.ip.mgcp.message.parms.InfoCode;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.PacketizationPeriod;
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
+import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ResourceReservation;
+import jain.protocol.ip.mgcp.message.parms.RestartMethod;
 import jain.protocol.ip.mgcp.message.parms.SilenceSuppression;
 import jain.protocol.ip.mgcp.message.parms.TypeOfNetwork;
 import jain.protocol.ip.mgcp.message.parms.TypeOfService;
+import jain.protocol.ip.mgcp.pkg.MgcpEvent;
+import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.text.ParseException;
 
@@ -236,7 +244,250 @@ public class ParserTest extends TestHarness {
 		String encodedText = parser.encodeTypeOfService(typeOfService);
 		assertEquals(text, encodedText);
 	}
-	
-	
+
+	public void testDecodeEncodeRestartMethod() throws ParseException {
+		String text = "disconnected";
+		RestartMethod restartMethod = parser.decodeRestartMethod(text);
+		assertNotNull(restartMethod);
+		assertEquals(RestartMethod.DISCONNECTED, restartMethod.getRestartMethod());
+
+		String encodedText = restartMethod.toString();
+
+		assertEquals(text, encodedText);
+
+	}
+
+	public void testDecodeEncodeEventName() throws ParseException {
+		String text = "L/rg@112A9FF";
+		String param = "to=6000";
+		EventName eventName = parser.decodeEventName(text, param);
+
+		assertNotNull(eventName);
+		PackageName packageName = eventName.getPackageName();
+		assertEquals(PackageName.LINE, packageName.intValue());
+
+		MgcpEvent mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.RINGING, mgcpEvent.intValue());
+		assertEquals("rg", mgcpEvent.getName());
+		assertEquals("to=6000", mgcpEvent.getParms());
+
+		ConnectionIdentifier connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNotNull(connectionIdentifier);
+		assertEquals("112A9FF", connectionIdentifier.toString());
+
+		String encodedText = parser.encodeEventName(eventName);
+		assertEquals(text + "(" + param + ")", encodedText);
+
+		// Test 2
+		text = "G/rt@$";
+		eventName = parser.decodeEventName(text, null);
+
+		assertNotNull(eventName);
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.GENERIC_MEDIA, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.RINGBACK_TONE, mgcpEvent.intValue());
+		assertEquals("rt", mgcpEvent.getName());
+		assertNull(mgcpEvent.getParms());
+
+		connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNotNull(connectionIdentifier);
+		assertEquals(ConnectionIdentifier.AnyConnection.toString(), connectionIdentifier.toString());
+
+		encodedText = parser.encodeEventName(eventName);
+		assertEquals(text, encodedText);
+
+		// Test 3
+		text = "R/qa@*";
+		eventName = parser.decodeEventName(text, null);
+
+		assertNotNull(eventName);
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.RTP, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.QUALITY_ALERT, mgcpEvent.intValue());
+		assertEquals("qa", mgcpEvent.getName());
+		assertNull(mgcpEvent.getParms());
+
+		connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNotNull(connectionIdentifier);
+		assertEquals(ConnectionIdentifier.AllConnections.toString(), connectionIdentifier.toString());
+
+		encodedText = parser.encodeEventName(eventName);
+		assertEquals(text, encodedText);
+
+		// Test 4
+		text = "D/[0-9#T]";
+		eventName = parser.decodeEventName(text, null);
+
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.DTMF, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.getCurrentLargestEventValue(), mgcpEvent.intValue());
+		assertEquals("[0-9#T]", mgcpEvent.getName());
+
+		connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNull(connectionIdentifier);
+
+		encodedText = parser.encodeEventName(eventName);
+		assertEquals(text, encodedText);
+
+		// Test 5
+		text = "T/AllEvents";
+		eventName = parser.decodeEventName(text, null);
+
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.TRUNK, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.ALL_EVENTS, mgcpEvent.intValue());
+		assertEquals("AllEvents", mgcpEvent.getName());
+
+		connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNull(connectionIdentifier);
+
+		encodedText = parser.encodeEventName(eventName);
+		assertEquals(text, encodedText);
+
+		// Test 6
+		text = "*/AllEvents";
+		eventName = parser.decodeEventName(text, null);
+
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.ALL_PACKAGES, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.ALL_EVENTS, mgcpEvent.intValue());
+		assertEquals("AllEvents", mgcpEvent.getName());
+
+		connectionIdentifier = eventName.getConnectionIdentifier();
+		assertNull(connectionIdentifier);
+
+		encodedText = parser.encodeEventName(eventName);
+		assertEquals(text, encodedText);
+
+	}
+
+	public void testDecodeEncodeRequestedEvent() throws ParseException {
+
+		// Test 1
+		String text = "L/hu (N)";
+		RequestedEvent requestedEvent = parser.decodeRequestedEvent(text);
+		assertNotNull(requestedEvent);
+
+		EventName eventName = requestedEvent.getEventName();
+		assertEquals(PackageName.LINE, eventName.getPackageName().intValue());
+		assertEquals(MgcpEvent.ON_HOOK_TRANSITION, eventName.getEventIdentifier().intValue());
+
+		RequestedAction[] requestedActionList = requestedEvent.getRequestedActions();
+		assertEquals(1, requestedActionList.length);
+		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList[0].getRequestedAction());
+
+		String encodedText = parser.encodeRequestedEvent(requestedEvent);
+		assertEquals(text, encodedText);
+
+		// Test 2
+		text = "L/hf (S,N)";
+		requestedEvent = parser.decodeRequestedEvent(text);
+		assertNotNull(requestedEvent);
+
+		eventName = requestedEvent.getEventName();
+		assertEquals(PackageName.LINE, eventName.getPackageName().intValue());
+		assertEquals(MgcpEvent.FLASH_HOOK, eventName.getEventIdentifier().intValue());
+
+		requestedActionList = requestedEvent.getRequestedActions();
+		assertEquals(2, requestedActionList.length);
+		assertEquals(RequestedAction.SWAP, requestedActionList[0].getRequestedAction());
+		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList[1].getRequestedAction());
+
+		encodedText = parser.encodeRequestedEvent(requestedEvent);
+		assertEquals(text, encodedText);
+
+		// Test 3
+		text = "R/foobar (N) (epar=2)";
+		requestedEvent = parser.decodeRequestedEvent(text);
+		assertNotNull(requestedEvent);
+
+		eventName = requestedEvent.getEventName();
+		assertEquals(PackageName.RTP, eventName.getPackageName().intValue());
+		assertEquals(MgcpEvent.getCurrentLargestEventValue(), eventName.getEventIdentifier().intValue());
+		assertEquals("foobar", eventName.getEventIdentifier().getName());
+		assertEquals("epar=2", eventName.getEventIdentifier().getParms());
+
+		requestedActionList = requestedEvent.getRequestedActions();
+		assertEquals(1, requestedActionList.length);
+		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList[0].getRequestedAction());
+
+		encodedText = parser.encodeRequestedEvent(requestedEvent);
+		assertEquals(text, encodedText);
+
+		// Test 4
+		text = "L/hd (E(R(D/[0-9#T] (D),L/hu (N)),S(L/dl),D([0-9].[#T])))";
+		requestedEvent = parser.decodeRequestedEvent(text);
+		assertNotNull(requestedEvent);
+		eventName = requestedEvent.getEventName();
+		assertEquals(PackageName.LINE, eventName.getPackageName().intValue());
+
+		requestedActionList = requestedEvent.getRequestedActions();
+		assertEquals(1, requestedActionList.length);
+
+		assertEquals(RequestedAction.EMBEDDED_NOTIFICATION_REQUEST, requestedActionList[0].getRequestedAction());
+
+		EmbeddedRequest embeddedRequest = requestedActionList[0].getEmbeddedRequest();
+		assertNotNull(embeddedRequest);
+
+		RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
+		assertNotNull(requestedEventList);
+		assertEquals(2, requestedEventList.length);
+
+		// Test for Dtmf event D/[0-9#T]
+		RequestedEvent event1 = requestedEventList[0];
+		EventName eventName1 = event1.getEventName();
+
+		PackageName packageName = eventName1.getPackageName();
+		assertEquals(PackageName.DTMF, packageName.intValue());
+
+		MgcpEvent mgcpEvent = eventName1.getEventIdentifier();
+
+		// There are two custom Events and hence CurrentLargestEventValue will
+		// be greater than 2
+		assertEquals(MgcpEvent.getCurrentLargestEventValue() - 1, mgcpEvent.intValue());
+		assertEquals("[0-9#T]", mgcpEvent.getName());
+
+		ConnectionIdentifier connectionIdentifier = eventName1.getConnectionIdentifier();
+		assertNull(connectionIdentifier);
+
+		RequestedAction[] requestedActionList1 = event1.getRequestedActions();
+		assertEquals(1, requestedActionList1.length);
+		assertEquals(RequestedAction.TREAT_ACCORDING_TO_DIGIT_MAP, requestedActionList1[0].getRequestedAction());
+
+		// Test for Dtmf event L/hu(N)
+		RequestedEvent event2 = requestedEventList[1];
+		EventName eventName2 = event2.getEventName();
+
+		PackageName packageName2 = eventName2.getPackageName();
+		assertEquals(PackageName.LINE, packageName2.intValue());
+
+		MgcpEvent mgcpEvent2 = eventName2.getEventIdentifier();
+
+		// There are two custom Events and hence CurrentLargestEventValue will
+		// be greater than 2
+		assertEquals(MgcpEvent.ON_HOOK_TRANSITION, mgcpEvent2.intValue());
+		assertEquals(MgcpEvent.hu.toString(), mgcpEvent2.getName());
+
+		ConnectionIdentifier connectionIdentifier2 = eventName2.getConnectionIdentifier();
+		assertNull(connectionIdentifier2);
+
+		RequestedAction[] requestedActionList2 = event2.getRequestedActions();
+		assertEquals(1, requestedActionList2.length);
+		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList2[0].getRequestedAction());
+
+		encodedText = parser.encodeRequestedEvent(requestedEvent);
+		assertEquals(text, encodedText);
+
+	}
 
 }

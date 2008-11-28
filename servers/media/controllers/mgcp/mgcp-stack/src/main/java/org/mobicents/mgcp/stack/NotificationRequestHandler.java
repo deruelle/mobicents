@@ -134,7 +134,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setRequestIdentifier(new RequestIdentifier(value));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.setRequestedEvents(utils.decodeRequestedEvents(value));
+				command.setRequestedEvents(utils.decodeRequestedEventList(value));
 			} else if (name.equalsIgnoreCase("S")) {
 				command.setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {

@@ -185,7 +185,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setNotificationRequestParms(new NotificationRequestParms(new RequestIdentifier(value)));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEvents(value));
+				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEventList(value));
 			} else if (name.equalsIgnoreCase("S")) {
 				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {

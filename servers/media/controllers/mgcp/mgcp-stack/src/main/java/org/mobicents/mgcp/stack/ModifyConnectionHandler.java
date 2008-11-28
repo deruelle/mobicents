@@ -207,7 +207,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
                         new RequestIdentifier(value)));
             } else if (name.equalsIgnoreCase("R")) {
                 command.getNotificationRequestParms().setRequestedEvents(
-                		utils.decodeRequestedEvents(value));
+                		utils.decodeRequestedEventList(value));
             } else if (name.equalsIgnoreCase("S")) {
                 command.getNotificationRequestParms().setSignalRequests(
                 		utils.decodeEventNames(value));

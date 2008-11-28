@@ -212,7 +212,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("D")) {
 				command.getNotificationRequestParms().setDigitMap(new DigitMap(value));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEvents(value));
+				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEventList(value));
 			} else if (name.equalsIgnoreCase("S")) {
 				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {

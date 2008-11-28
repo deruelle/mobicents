@@ -53,6 +53,8 @@ import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.text.ParseException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 
@@ -643,7 +645,7 @@ public class Utils {
 		}
 	}
 
-	public RequestedEvent[] decodeRequestedEvents(String value) throws ParseException {
+	public RequestedEvent[] decodeRequestedEventList(String value) throws ParseException {
 		// RequestedEvents =requestedEvent 0*(","0*(WSP)requestedEvent)
 		String[] tokens = value.split(",");
 		RequestedEvent[] events = new RequestedEvent[tokens.length];
@@ -658,25 +660,54 @@ public class Utils {
 	public RequestedEvent decodeRequestedEvent(String value) throws ParseException {
 		// requestedEvent =(eventName ["("requestedActions ")"])
 		// /(eventName "("requestedActions ")" "("eventParameters ")")
+
+		// Replace all space, tabs
+		value = value.replaceAll("\\s", "");
 		int pos1 = value.indexOf('(');
-		int pos2 = value.indexOf(')', pos1);
-		int pos3 = value.indexOf('(', pos2);
-		int pos4 = value.indexOf(')', pos3);
+		// int pos2 = value.indexOf(')', pos1);
+		// int pos3 = value.indexOf('(', pos2);
+		// int pos4 = value.indexOf(')', pos3);
 
 		if (pos1 == -1) { // no actions, no parameters
+			// TODO: RFC3435 : 3.2.2.16 :When no action is specified, the
+			// default action is to notify the event. This should be taken care
+			// by MGW or N action should be added here by default?
 			return new RequestedEvent(decodeEventName(value, null), null);
 		}
 
-		if (pos3 == -1) {
-			String evtName = value.substring(0, pos1);
-			String actions = value.substring(pos1 + 1, pos2);
-			return new RequestedEvent(decodeEventName(evtName, null), decodeRequestedActions(actions));
+		String evtName = value.substring(0, pos1);
+		value = value.substring(pos1, value.length());
+
+		String REGEX_EMBEDDED_COMMAND = "\\(E\\(.*\\)\\)";
+		Pattern pattern = Pattern.compile(REGEX_EMBEDDED_COMMAND);
+
+		Matcher matcher = pattern.matcher(value);
+
+		if ((matcher.find())) {
+			// This is Embedded Notification Request
+
+			// TODO : We assumed that Embedded Notification Request E will not
+			// be
+			// combined with any other Action N, A, D, S, I or K
+			String embeddedNotificatonRequest = value.substring(3, value.length() - 2);
+			EmbeddedRequest embeddedRequest = decodeEmbeddedRequest(embeddedNotificatonRequest);
+			RequestedAction[] actions = new RequestedAction[] { new RequestedAction(embeddedRequest) };
+			return new RequestedEvent(decodeEventName(evtName, null), actions);
 		}
 
-		String evtName = value.substring(0, pos1);
-		String actions = value.substring(pos1 + 1, pos2);
+		int pos2 = value.indexOf(')');
+		int pos3 = value.indexOf('(', pos2);
+
+		if (pos3 == -1) {
+			value = value.substring(1, pos2);
+			return new RequestedEvent(decodeEventName(evtName, null), decodeRequestedActions(value));
+		}
+
+		int pos4 = value.indexOf(')', pos3);
 		String parms = value.substring(pos3 + 1, pos4);
-		return new RequestedEvent(decodeEventName(evtName, parms), decodeRequestedActions(actions));
+		value = value.substring(1, pos2);
+
+		return new RequestedEvent(decodeEventName(evtName, parms), decodeRequestedActions(value));
 
 	}
 
@@ -692,8 +723,16 @@ public class Utils {
 			int pos = tokens[1].indexOf('@');
 			if (pos > 0) {
 				String cid = (tokens[1].substring(pos + 1)).trim();
+				ConnectionIdentifier connectionIdentifier = null;
+				if ((ConnectionIdentifier.AnyConnection).toString().equals(cid)) {
+					connectionIdentifier = ConnectionIdentifier.AnyConnection;
+				} else if ((ConnectionIdentifier.AllConnections).toString().equals(cid)) {
+					connectionIdentifier = ConnectionIdentifier.AllConnections;
+				} else {
+					connectionIdentifier = new ConnectionIdentifier(cid);
+				}
 				return new EventName(PackageName.factory((tokens[0]).trim()), MgcpEvent.factory(
-						((tokens[1]).trim()).substring(0, pos)).withParm(param), new ConnectionIdentifier(cid));
+						((tokens[1]).trim()).substring(0, pos)).withParm(param), connectionIdentifier);
 			} else {
 				return new EventName(PackageName.factory(tokens[0].trim()), MgcpEvent.factory(tokens[1].trim())
 						.withParm(param));
@@ -1081,7 +1120,7 @@ public class Utils {
 			return RequestedAction.KeepSignalsActive;
 		} else if (value.equalsIgnoreCase("D")) {
 			return RequestedAction.TreatAccordingToDigitMap;
-		} else if (value.toLowerCase().startsWith("e")) {
+		} else if (value.equalsIgnoreCase("E")) {
 			return new RequestedAction(decodeEmbeddedRequest(value));
 		} else if (value.equalsIgnoreCase("X")) {
 			// X is RequestIdentifier and we have already taken care of this.
@@ -1092,6 +1131,39 @@ public class Utils {
 		}
 	}
 
+	private String getEvent(String s) {
+		char[] c = s.toCharArray();
+
+		String command = "";
+		int start = 0;
+		int end = 0;
+
+		int paraenthisis = 0;
+
+		boolean first = true;
+		for (int i = 0; i < c.length; i++) {
+			if (c[i] == '(') {
+				paraenthisis++;
+				if (first) {
+					first = false;
+					start = i;
+					command = String.valueOf(c[i - 1]);
+				}
+			} else if (c[i] == ')') {
+				paraenthisis--;
+			}
+
+			if (!first && paraenthisis == 0) {
+				end = i + 1;
+				break;
+				// command ends
+			}
+		}
+
+		//System.out.println("Command  = " + command + " Start = " + start + " end = " + end);
+		return s.substring(0, end);
+	}
+
 	public EmbeddedRequest decodeEmbeddedRequest(String value) throws ParseException {
 		// EmbeddedRequest =("R""("EmbeddedRequestList ")"
 		// [","0*(WSP)"S""("EmbeddedSignalRequest ")"]
@@ -1099,31 +1171,31 @@ public class Utils {
 		// /("S""("EmbeddedSignalRequest ")"
 		// [","0*(WSP)"D""("EmbeddedDigitMap ")"])
 		// /("D""("EmbeddedDigitMap ")")
-		String[] tokens = value.split(",");
 
 		RequestedEvent[] requestedEvents = null;
 		EventName[] signalEvents = null;
 		DigitMap digitMap = null;
 
-		for (int i = 0; i < tokens.length; i++) {
-			String s = tokens[i].toLowerCase();
-			if (s.startsWith("r")) {
-				int p1 = s.indexOf('(');
-				int p2 = s.indexOf(')');
+		while (value.length() > 0) {
+			String temp = this.getEvent(value);
+			value = value.substring(temp.length(), value.length());
 
-				s = s.substring(p1 + 1, p2);
-				requestedEvents = decodeRequestedEvents(s);
-			} else if (s.startsWith("s")) {
-				int p1 = s.indexOf('(');
-				int p2 = s.indexOf(')');
-
-				s = s.substring(p1 + 1, p2);
-				signalEvents = decodeEventNames(s);
-			} else if (s.startsWith("d")) {
-				digitMap = new DigitMap(s);
-			} else {
-				throw new ParseException("Unexpected embedded request string:" + value, 0);
+			if (temp.startsWith(",")) {
+				temp = temp.substring(1, temp.length());
 			}
+
+			if (temp.startsWith("R")) {
+				temp = temp.substring(2, temp.length() - 1);
+				requestedEvents = decodeRequestedEventList(temp);
+			} else if (temp.startsWith("S")) {
+				temp = temp.substring(2, temp.length() - 1);
+				signalEvents = decodeEventNames(temp);
+			} else if (temp.startsWith("D")) {
+				temp = temp.substring(2, temp.length() - 1);
+				digitMap = new DigitMap(temp);
+			}
+			System.out.println(temp);
+
 		}
 
 		return new EmbeddedRequest(requestedEvents, signalEvents, digitMap);
@@ -1157,13 +1229,19 @@ public class Utils {
 			} else {
 				s += ',';
 			}
-			s += e.getPackageName().toString() + '/' + e.getEventIdentifier().getName();
-			if (e.getConnectionIdentifier() != null) {
-				s += '@' + e.getConnectionIdentifier().toString();
-			}
-			if (e.getEventIdentifier().getParms() != null) {
-				s += '(' + e.getEventIdentifier().getParms() + ')';
-			}
+			s += encodeEventName(e);
+		}
+		return s;
+	}
+
+	public String encodeEventName(EventName e) {
+		String s = "";
+		s += e.getPackageName().toString() + '/' + e.getEventIdentifier().getName();
+		if (e.getConnectionIdentifier() != null) {
+			s += '@' + e.getConnectionIdentifier().toString();
+		}
+		if (e.getEventIdentifier().getParms() != null) {
+			s += '(' + e.getEventIdentifier().getParms() + ')';
 		}
 		return s;
 	}
@@ -1376,7 +1454,47 @@ public class Utils {
 	}
 
 	public String encodeRequestedAction(RequestedAction action) {
-		return action.toString();
+		String s = "";
+		if (RequestedAction.EMBEDDED_NOTIFICATION_REQUEST != action.getRequestedAction()) {
+			return action.toString();
+		} else {
+			
+			boolean first = true;
+			s += "E(";
+			
+			EmbeddedRequest embeddedRequest = action.getEmbeddedRequest();
+			RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
+			if (requestedEventList != null) {
+				if(first){
+					first = false;
+				} else {
+					s+=",";
+				}
+				
+				s += "R(" + encodeRequestedEvents(requestedEventList) + ")";
+			}
+
+			EventName[] eventNameList = embeddedRequest.getEmbeddedSignalRequest();
+			if(eventNameList!=null){
+				if(first){
+					first = false;
+				} else {
+					s+=",";
+				}				
+				s+="S("+encodeEventNames(eventNameList)+")";
+			}
+			DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
+			if(digitMap != null ){
+				if(first){
+					first = false;
+				} else {
+					s+=",";
+				}
+				s+="D("+digitMap.toString()+")";
+			}
+			s += ")";
+		}
+		return s;
 	}
 
 	public String encodeConnectionParm(ConnectionParm parm) {

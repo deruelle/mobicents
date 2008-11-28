@@ -289,7 +289,7 @@ public class AuditEndpointHandler extends TransactionHandler {
 				RequestIdentifier r = new RequestIdentifier(value);
 				response.setRequestIdentifier(r);
 			} else if (name.equalsIgnoreCase("R")) {
-				RequestedEvent[] r = utils.decodeRequestedEvents(value);
+				RequestedEvent[] r = utils.decodeRequestedEventList(value);
 				response.setRequestedEvents(r);
 
 			} else if (name.equalsIgnoreCase("S")) {
