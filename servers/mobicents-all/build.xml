@@ -5,7 +5,7 @@
 
 	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="release.name" value="mobicents-all"/>
-    <property name="release.version" value="1.2.0.CR2"/>
+    <property name="release.version" value="1.2.0.CR3"/>
 	<property name="release.configurations" value="default,all"/>
 	
 	<property name="jboss.version" value="4.2.3.GA"/>
@@ -16,7 +16,7 @@
 	
     <property name="jbcp.release.dir" value="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
     <property name="jbcp.release.name" value="JBCP"/>
-    <property name="jbcp.release.version" value="1.2.0.CR2"/>
+    <property name="jbcp.release.version" value="1.2.0.CR3"/>
 
     <property name="jbcp.ra.dirs" value="xmpp,http-servlet,sip,sip11,diameter/base,http-client,tts"/>
     <property name="jbcp.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
