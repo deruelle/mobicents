@@ -126,6 +126,9 @@
 			<!-- Passing -DJBOSS_HOME=${basedir}/all/tmp is hack. Look at trunk/servers/media/core/server-spi/pom.xml for maven-dependency-plugin.-->
 			<arg line="clean install -P set-svn-revision -Djboss.home=${jboss.home} -DJBOSS_HOME=${jboss.home} -Dnode=${jboss.config}" />
 		</exec>
+		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/mms-console">
+			<arg line="clean install -P maven-release -Djboss.home=${jboss.home} -Dnode=${jboss.config} -P set-svn-revision" />
+		</exec>
 		<!-- builds and moves media and mgcp RAs to resources -->
 		<exec executable="${mvn.executable}" dir="${ant.file.media.server.release}/../../controllers/mgcp/mgcp-ra">
 			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir}/tmp" />
@@ -221,6 +224,10 @@
 			<arg line="-o install -P set-svn-revision,release  -Drelease.name=all -Djboss.path=../../${jboss.home.relative.path} -Drelease.name=all" />
 		</exec>
 
+		<exec executable="${mvn.executable}" dir="${controllers.location}/mms-console">
+			<arg line="clean install -P maven-release -Djboss.home=${jboss.home} -Dnode=${jboss.config} -P set-svn-revision" />
+		</exec>
+		
 		<!-- Build the Examples and then execute the release profile  -->
 		<exec executable="${mvn.executable}" dir="${examples.location}">
 			<arg line="clean install -P set-svn-revision -Djboss.home=${release.dir.all}/tmp -DJBOSS_HOME=${release.dir.all}/tmp"/>
