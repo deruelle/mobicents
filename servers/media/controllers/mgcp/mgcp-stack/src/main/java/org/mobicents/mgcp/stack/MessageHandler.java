@@ -34,7 +34,7 @@ public class MessageHandler implements Runnable {
 	private InetAddress address;
 	private int port;
 	private static Logger logger = Logger.getLogger(MessageHandler.class);
-	
+
 	private Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
 
 	/** Creates a new instance of MessageHandler */
@@ -71,10 +71,10 @@ public class MessageHandler implements Runnable {
 	}
 
 	public boolean isRequest(String header) {
-		System.out.println("header = "+header);        
-        Matcher m = p.matcher(header);
-        return m.matches();		
-		//return header.matches("[\\w]{4}(\\s|\\S)*");
+		System.out.println("header = " + header);
+		Matcher m = p.matcher(header);
+		return m.matches();
+		// return header.matches("[\\w]{4}(\\s|\\S)*");
 	}
 
 	public void run() {
@@ -105,29 +105,31 @@ public class MessageHandler implements Runnable {
 				}
 
 				Integer remoteTxIdIntegere = new Integer(remoteTxIdString);
-				
-				//Check if the Response still in responseTx Map
+
+				// Check if the Response still in responseTx Map
 				Set<Integer> completedTxSet = stack.responseTx.keySet();
-				for(Integer completedTx : completedTxSet){
-					if( completedTx.equals(remoteTxIdIntegere)){
+				for (Integer completedTx : completedTxSet) {
+					if (completedTx.equals(remoteTxIdIntegere)) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Received Command for which stack has already sent response Tx = "+completedTx );
+							logger.debug("Received Command for which stack has already sent response Tx = "
+									+ completedTx);
 						}
 						TransactionHandler completedTxHandler = stack.responseTx.get(completedTx);
 						this.stack.jainMgcpStackImplPool.execute(completedTxHandler);
-						//(new Thread(completedTxHandler)).start();
+						// (new Thread(completedTxHandler)).start();
 						return;
 					}
 				}
-				
-				//TODO:
-				//Check if Tx is currently executing then send provisional response
-				
+
+				// TODO:
+				// Check if Tx is currently executing then send provisional
+				// response
+
 				Set<Integer> ongoingTxSet = stack.remoteTxToLocalTxMap.keySet();
-				for(Integer ongoingTx : ongoingTxSet){
-					if( ongoingTx.equals(remoteTxIdIntegere)){
+				for (Integer ongoingTx : ongoingTxSet) {
+					if (ongoingTx.equals(remoteTxIdIntegere)) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Received Command for ongoing Tx = "+ongoingTx );							
+							logger.debug("Received Command for ongoing Tx = " + ongoingTx);
 						}
 						Integer tmpLoaclTID = stack.remoteTxToLocalTxMap.get(ongoingTx);
 						TransactionHandler ongoingTxHandler = stack.loaclTransactions.get(tmpLoaclTID);
@@ -151,6 +153,8 @@ public class MessageHandler implements Runnable {
 					handle = new NotifyHandler(stack, address, port);
 				} else if (verb.equalsIgnoreCase("rsip")) {
 					handle = new RestartInProgressHandler(stack, address, port);
+				} else if (verb.equalsIgnoreCase("auep")) {
+					handle = new AuditEndpointHandler(stack, address, port);
 				} else {
 					logger.warn("Unsupported message verbose " + verb);
 					return;

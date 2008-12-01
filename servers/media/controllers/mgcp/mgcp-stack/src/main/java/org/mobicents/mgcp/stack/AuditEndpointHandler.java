@@ -19,6 +19,7 @@ import jain.protocol.ip.mgcp.message.parms.RestartMethod;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +42,10 @@ public class AuditEndpointHandler extends TransactionHandler {
 
 	public AuditEndpointHandler(JainMgcpStackImpl stack) {
 		super(stack);
+	}
+	
+	public AuditEndpointHandler(JainMgcpStackImpl stack, InetAddress address, int port) {
+		super(stack, address, port);
 	}
 
 	@Override
@@ -288,7 +293,7 @@ public class AuditEndpointHandler extends TransactionHandler {
 					response.setConnectionIdentifiers(arrayList.toArray(temp));
 				}
 			} else if (name.equalsIgnoreCase("N")) {
-				NotifiedEntity n = new NotifiedEntity(value);
+				NotifiedEntity n = utils.decodeNotifiedEntity(value, true);
 				response.setNotifiedEntity(n);
 			} else if (name.equalsIgnoreCase("X")) {
 				RequestIdentifier r = new RequestIdentifier(value);
