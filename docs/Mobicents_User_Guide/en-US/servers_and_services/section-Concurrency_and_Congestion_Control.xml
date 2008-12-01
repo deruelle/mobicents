@@ -78,7 +78,7 @@
 							<title>Permanently Changing Tunable Parameters by Editing JBoss's server.xml</title>
 							<programlisting
 								id="proglist-MSSJ-Permanently_Changing_Tunable_Parameters_by_Editing_server.xml"
-								role="XML"><![CDATA[<![CDATA[<Service
+								role="XML"><![CDATA[<Service
 	name="jboss.web"
 	className="org.mobicents.servlet.sip.startup.SipStandardService"
 	sipApplicationDispatcherClassName="org.mobicents.servlet.sip.core.SipApplicationDispatcherImpl"
