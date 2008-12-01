@@ -6,14 +6,20 @@ import jain.protocol.ip.mgcp.message.parms.CapabilityValue;
 import jain.protocol.ip.mgcp.message.parms.CompressionAlgorithm;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
+import jain.protocol.ip.mgcp.message.parms.ConnectionParm;
+import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EchoCancellation;
 import jain.protocol.ip.mgcp.message.parms.EmbeddedRequest;
 import jain.protocol.ip.mgcp.message.parms.EncryptionMethod;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.GainControl;
 import jain.protocol.ip.mgcp.message.parms.InfoCode;
 import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.PacketizationPeriod;
+import jain.protocol.ip.mgcp.message.parms.ReasonCode;
+import jain.protocol.ip.mgcp.message.parms.RegularConnectionParm;
 import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ResourceReservation;
@@ -57,6 +63,10 @@ public class ParserTest extends TestHarness {
 		String encodedCapability = parser.encodeCapabilityList(capabilities);
 
 		assertEquals(capability, encodedCapability);
+
+		// Test 2
+//		capability = "a:PCMU;G728, p:10-100, e:on, s:off, t:1, v:L, m:sendonly;recvonly;sendrecv;inactive, a:G729, p:30-90, e:on, s:on, t:1, v:L, m:sendonly;recvonly;sendrecv;inactive;confrnce";
+//		capabilities = parser.decodeCapabilityList(capability);
 	}
 
 	public void testDecodeEncodeInfoCodeList() throws ParseException {
@@ -371,6 +381,83 @@ public class ParserTest extends TestHarness {
 
 	}
 
+	public void testDecodeEncodeEmbeddedRequest() throws ParseException {
+		String text = "R(D/[0-9#T] (D),L/hu (N)),S(L/dl)";
+
+		EmbeddedRequest embeddedRequest = parser.decodeEmbeddedRequest(text);
+
+		assertNotNull(embeddedRequest);
+
+		RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
+		assertNotNull(requestedEventList);
+		assertEquals(2, requestedEventList.length);
+
+		// Test for Dtmf event D/[0-9#T]
+		RequestedEvent event1 = requestedEventList[0];
+		EventName eventName1 = event1.getEventName();
+
+		PackageName packageName = eventName1.getPackageName();
+		assertEquals(PackageName.DTMF, packageName.intValue());
+
+		MgcpEvent mgcpEvent = eventName1.getEventIdentifier();
+
+		// There are two custom Events and hence CurrentLargestEventValue will
+		// be greater than 2
+		assertEquals(MgcpEvent.getCurrentLargestEventValue(), mgcpEvent.intValue());
+		assertEquals("[0-9#T]", mgcpEvent.getName());
+
+		ConnectionIdentifier connectionIdentifier = eventName1.getConnectionIdentifier();
+		assertNull(connectionIdentifier);
+
+		RequestedAction[] requestedActionList1 = event1.getRequestedActions();
+		assertEquals(1, requestedActionList1.length);
+		assertEquals(RequestedAction.TREAT_ACCORDING_TO_DIGIT_MAP, requestedActionList1[0].getRequestedAction());
+
+		// Test for Dtmf event L/hu(N)
+		RequestedEvent event2 = requestedEventList[1];
+		EventName eventName2 = event2.getEventName();
+
+		PackageName packageName2 = eventName2.getPackageName();
+		assertEquals(PackageName.LINE, packageName2.intValue());
+
+		MgcpEvent mgcpEvent2 = eventName2.getEventIdentifier();
+
+		// There are two custom Events and hence CurrentLargestEventValue will
+		// be greater than 2
+		assertEquals(MgcpEvent.ON_HOOK_TRANSITION, mgcpEvent2.intValue());
+		assertEquals(MgcpEvent.hu.toString(), mgcpEvent2.getName());
+
+		ConnectionIdentifier connectionIdentifier2 = eventName2.getConnectionIdentifier();
+		assertNull(connectionIdentifier2);
+
+		RequestedAction[] requestedActionList2 = event2.getRequestedActions();
+		assertEquals(1, requestedActionList2.length);
+		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList2[0].getRequestedAction());
+
+		// Test the EmbeddedSignalRequest
+		EventName[] embeddedSignalRequestList = embeddedRequest.getEmbeddedSignalRequest();
+		assertNotNull(embeddedSignalRequestList);
+		assertEquals(1, embeddedSignalRequestList.length);
+		EventName eventName = embeddedSignalRequestList[0];
+
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.LINE, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.DIAL_TONE, mgcpEvent.intValue());
+		assertNull(mgcpEvent.getParms());
+		assertNull(eventName.getConnectionIdentifier());
+
+		// Test DigitMap
+		DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
+		assertNull(digitMap);
+
+		String encodedText = parser.encodeEmbeddedRequest(embeddedRequest);
+
+		assertEquals(text, encodedText);
+
+	}
+
 	public void testDecodeEncodeRequestedEvent() throws ParseException {
 
 		// Test 1
@@ -485,7 +572,100 @@ public class ParserTest extends TestHarness {
 		assertEquals(1, requestedActionList2.length);
 		assertEquals(RequestedAction.NOTIFY_IMMEDIATELY, requestedActionList2[0].getRequestedAction());
 
+		// Test the EmbeddedSignalRequest
+		EventName[] embeddedSignalRequestList = embeddedRequest.getEmbeddedSignalRequest();
+		assertNotNull(embeddedSignalRequestList);
+		assertEquals(1, embeddedSignalRequestList.length);
+		eventName = embeddedSignalRequestList[0];
+
+		packageName = eventName.getPackageName();
+		assertEquals(PackageName.LINE, packageName.intValue());
+
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(MgcpEvent.DIAL_TONE, mgcpEvent.intValue());
+		assertNull(mgcpEvent.getParms());
+		assertNull(eventName.getConnectionIdentifier());
+
+		// Test DigitMap
+		DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
+		assertEquals("[0-9].[#T]", digitMap.toString());
+
 		encodedText = parser.encodeRequestedEvent(requestedEvent);
+		assertEquals(text, encodedText);
+
+	}
+
+	public void testDecodeEncodeConnectionParm() {
+		String text = "PR=780";
+
+		ConnectionParm connectionParm = parser.decodeConnectionParm(text);
+		assertNotNull(connectionParm);
+		assertEquals(RegularConnectionParm.PACKETS_RECEIVED, connectionParm.getConnectionParmType());
+		assertEquals(780, connectionParm.getConnectionParmValue());
+
+		String encodedText = parser.encodeConnectionParm(connectionParm);
+
+		assertEquals(text, encodedText);
+
+		// Test Custom
+		text = "MS=1";
+		connectionParm = parser.decodeConnectionParm(text);
+		assertNotNull(connectionParm);
+		assertEquals(1, connectionParm.getConnectionParmValue());
+		encodedText = parser.encodeConnectionParm(connectionParm);
+
+		assertEquals(text, encodedText);
+
+	}
+
+	public void testDecodeReasonCode() {
+		String text = "0 Endpoint state is nominal.";
+		ReasonCode reasonCode = parser.decodeReasonCode(text);
+		assertNotNull(reasonCode);
+		assertEquals(ReasonCode.ENDPOINT_STATE_IS_NOMINAL, reasonCode.getValue());
+
+		String encodedText = reasonCode.toString();
+
+		assertEquals(text, encodedText);
+	}
+
+	public void testDecodeEncodeNotifiedEntity() throws ParseException {
+		String text = "128.96.41.12";
+		NotifiedEntity notifiedEntity = parser.decodeNotifiedEntity(text, true);
+		assertNotNull(notifiedEntity);
+		assertEquals("128.96.41.12", notifiedEntity.getDomainName());
+		assertEquals(2427, notifiedEntity.getPortNumber());
+
+		String encodedText = parser.encodeNotifiedEntity(notifiedEntity);
+		assertEquals("128.96.41.12:2427", encodedText);
+
+		// Test 2
+		text = "CA-1@whatever.net";
+		notifiedEntity = parser.decodeNotifiedEntity(text, false);
+		assertEquals("whatever.net", notifiedEntity.getDomainName());
+		assertEquals("CA-1", notifiedEntity.getLocalName());
+		assertEquals(2727, notifiedEntity.getPortNumber());
+		encodedText = parser.encodeNotifiedEntity(notifiedEntity);
+		assertEquals("CA-1@whatever.net:2727", encodedText);
+
+		// Test 3
+		text = "ca@ca1.whatever.net:5678";
+		notifiedEntity = parser.decodeNotifiedEntity(text, false);
+		assertEquals("ca1.whatever.net", notifiedEntity.getDomainName());
+		assertEquals("ca", notifiedEntity.getLocalName());
+		assertEquals(5678, notifiedEntity.getPortNumber());
+		encodedText = parser.encodeNotifiedEntity(notifiedEntity);
+		assertEquals(text, encodedText);
+	}
+
+	public void testDecodeEncodeEndpointIdentifier() {
+		String text = "aaln/1@rgw.whatever.net";
+		EndpointIdentifier endpointIdentifier = parser.decodeEndpointIdentifier(text);
+		assertNotNull(endpointIdentifier);
+		assertEquals("aaln/1", endpointIdentifier.getLocalEndpointName());
+		assertEquals("rgw.whatever.net", endpointIdentifier.getDomainName());
+
+		String encodedText = parser.encodeEndpointIdentifier(endpointIdentifier);
 		assertEquals(text, encodedText);
 
 	}

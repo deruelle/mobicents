@@ -130,7 +130,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("N")) {
-				command.setNotifiedEntity(utils.decodeNotifiedEntity(value));
+				command.setNotifiedEntity(utils.decodeNotifiedEntity(value, true));
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setRequestIdentifier(new RequestIdentifier(value));
 			} else if (name.equalsIgnoreCase("R")) {

@@ -27,6 +27,11 @@ import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class AuditEndpointHandler extends TransactionHandler {
 
 	private AuditEndpoint command;
@@ -98,8 +103,9 @@ public class AuditEndpointHandler extends TransactionHandler {
 		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
 				+ "\n";
 		if (response.getCapabilities() != null) {
-			// TODO
-			// msg += "A:" + response.getConnectionIdentifier() + "\n";
+			// TODO How to insert a new line with A : for different set of
+			// compression Algo?
+			msg += "A:" + utils.encodeCapabilityList(response.getCapabilities()) + "\n";
 		}
 		if (response.getBearerInformation() != null) {
 			msg += "B:" + utils.encodeBearerInformation(response.getBearerInformation()) + "\n";
@@ -168,7 +174,6 @@ public class AuditEndpointHandler extends TransactionHandler {
 		AuditEndpointResponse provisionalResponse = null;
 
 		if (!sent) {
-
 			provisionalResponse = new AuditEndpointResponse(commandEvent.getSource(),
 					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(remoteTID);

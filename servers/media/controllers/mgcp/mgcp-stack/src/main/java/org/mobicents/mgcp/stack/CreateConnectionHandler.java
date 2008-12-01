@@ -206,7 +206,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("m")) {
 				command.setMode(utils.decodeConnectionMode(value));
 			} else if (name.equalsIgnoreCase("N")) {
-				command.setNotifiedEntity(new NotifiedEntity(value));
+				command.setNotifiedEntity(utils.decodeNotifiedEntity(value, true));
 			} else if (name.equalsIgnoreCase("X")) {
 				command.setNotificationRequestParms(new NotificationRequestParms(new RequestIdentifier(value)));
 			} else if (name.equalsIgnoreCase("D")) {

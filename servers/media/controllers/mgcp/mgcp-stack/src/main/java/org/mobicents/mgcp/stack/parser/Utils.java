@@ -1160,8 +1160,45 @@ public class Utils {
 			}
 		}
 
-		//System.out.println("Command  = " + command + " Start = " + start + " end = " + end);
+		// System.out.println("Command = " + command + " Start = " + start + "
+		// end = " + end);
 		return s.substring(0, end);
+	}
+
+	public String encodeEmbeddedRequest(EmbeddedRequest embeddedRequest) {
+		String s = "";
+		boolean first = true;
+
+		RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
+		if (requestedEventList != null) {
+			if (first) {
+				first = false;
+			} else {
+				s += ",";
+			}
+
+			s += "R(" + encodeRequestedEvents(requestedEventList) + ")";
+		}
+
+		EventName[] eventNameList = embeddedRequest.getEmbeddedSignalRequest();
+		if (eventNameList != null) {
+			if (first) {
+				first = false;
+			} else {
+				s += ",";
+			}
+			s += "S(" + encodeEventNames(eventNameList) + ")";
+		}
+		DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
+		if (digitMap != null) {
+			if (first) {
+				first = false;
+			} else {
+				s += ",";
+			}
+			s += "D(" + digitMap.toString() + ")";
+		}
+		return s;
 	}
 
 	public EmbeddedRequest decodeEmbeddedRequest(String value) throws ParseException {
@@ -1458,41 +1495,8 @@ public class Utils {
 		if (RequestedAction.EMBEDDED_NOTIFICATION_REQUEST != action.getRequestedAction()) {
 			return action.toString();
 		} else {
-			
-			boolean first = true;
-			s += "E(";
-			
 			EmbeddedRequest embeddedRequest = action.getEmbeddedRequest();
-			RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
-			if (requestedEventList != null) {
-				if(first){
-					first = false;
-				} else {
-					s+=",";
-				}
-				
-				s += "R(" + encodeRequestedEvents(requestedEventList) + ")";
-			}
-
-			EventName[] eventNameList = embeddedRequest.getEmbeddedSignalRequest();
-			if(eventNameList!=null){
-				if(first){
-					first = false;
-				} else {
-					s+=",";
-				}				
-				s+="S("+encodeEventNames(eventNameList)+")";
-			}
-			DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
-			if(digitMap != null ){
-				if(first){
-					first = false;
-				} else {
-					s+=",";
-				}
-				s+="D("+digitMap.toString()+")";
-			}
-			s += ")";
+			s += "E(" + encodeEmbeddedRequest(embeddedRequest) + ")";
 		}
 		return s;
 	}
@@ -1590,21 +1594,35 @@ public class Utils {
 		return reasonCode;
 	}
 
-	public NotifiedEntity decodeNotifiedEntity(String value) throws ParseException {
+	public NotifiedEntity decodeNotifiedEntity(String value, boolean toMGW) throws ParseException {
 		NotifiedEntity notifiedEntity = null;
+
+		String localName = null;
+		String domainName = null;
+		int port = 0;
+
+		String domainAndPort[] = null;
 
 		try {
 			String tokens[] = value.split("@");
-			String localName = tokens[0];
 
-			String tokens1[] = tokens[1].split(":");
-			String domainName = tokens1[0];
+			if (tokens.length == 2) {
+				localName = tokens[0];
+				domainAndPort = tokens[1].split(":");
+				domainName = domainAndPort[0];
+			} else {
+				domainName = tokens[0];
+				return new NotifiedEntity(domainName);
+			}
 
-			// See 3.5 of RFC3435. "by the Call Agents, to the default MGCP port
-			// for gateways, 2427."
-			int port = 2427;
-			if (tokens1.length == 2) {
-				port = Integer.parseInt(tokens1[1]);
+			if (domainAndPort.length == 2) {
+				port = Integer.parseInt(domainAndPort[1]);
+			} else if (toMGW) {
+				// See 3.5 of RFC3435. "by the Call Agents, to the default
+				// MGCP port for gateways, 2427."
+				port = 2427;
+			} else {
+				port = 2727;
 			}
 
 			notifiedEntity = new NotifiedEntity(localName, domainName, port);
@@ -1617,9 +1635,13 @@ public class Utils {
 
 	public String encodeNotifiedEntity(NotifiedEntity n) {
 		String s = "";
-		s += n.getLocalName();
+
+		if (n.getLocalName() != null) {
+			s += n.getLocalName() + "@";
+		}
+
 		if (n.getDomainName() != null) {
-			s += "@" + n.getDomainName();
+			s += n.getDomainName();
 		}
 
 		if (n.getPortNumber() > 0) {
