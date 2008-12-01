@@ -152,13 +152,13 @@
 			<property name="jnpHost" value="${jnpHost}" />
 			<property name="jnpPort" value="${jnpPort}" />
 		</ant>
-		<ant antfile="${home}/examples/internal-publisher/build.xml" target="undeploy${X}" inheritAll="false">
+		<ant antfile="${home}/examples/internal-publisher/build.xml" target="deploy${X}" inheritAll="false">
 			<property name="jboss.home" value="${jboss.home}" />
 			<property name="node" value="${jboss.config}" />
 			<property name="jnpHost" value="${jnpHost}" />
 			<property name="jnpPort" value="${jnpPort}" />
 		</ant>
-		<ant antfile="${home}/examples/internal-subscriber/build.xml" target="undeploy${X}" inheritAll="false">
+		<ant antfile="${home}/examples/internal-subscriber/build.xml" target="deploy${X}" inheritAll="false">
 			<property name="jboss.home" value="${jboss.home}" />
 			<property name="node" value="${jboss.config}" />
 			<property name="jnpHost" value="${jnpHost}" />
