@@ -147,7 +147,7 @@
 		<procedure>
 			<title></title>
 			<step>
-				<para>Start a SIP softphone of your choice. The account name should be <replaceable>blocked-sender</replaceable>. The <literal>From Header</literal> should list one of the following addresses: <replaceable>sip:blocked-sender@sip-servlets.com</replaceable> or <replaceable>sip:blocked-sender@127.0.0.1</replaceable>. The SIP softphone does not need to be registered.</para>
+				<para>Start a SIP softphone of your choice. The account name should be <userinput>blocked-sender</userinput>. The <literal>From Header</literal> should list one of the following addresses: <userinput>sip:blocked-sender@sip-servlets.com</userinput> or <userinput>sip:blocked-sender@127.0.0.1</userinput>. The SIP softphone does not need to be registered.</para>
 			</step>
 			<step>
 				<para>Make a call to any address, and you should receive a <literal>FORBIDDEN</literal> response.</para>

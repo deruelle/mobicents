@@ -5,7 +5,6 @@
 	id="section-The_Call-Forwarding_Service">
 	<title>The Call-Forwarding Service</title>
 	<para>The Mobicents Call-Forwarding Service, upon receiving an <literal>INVITE</literal> request, checks to see whether the sender's address is among those in a list of addresses which need to be forwarded. If so, then the Call-Forwarding Service acts as a Back-to-Back User Agent (B2BUA), and creates a new call leg to the destination. When the response is received from the new call leg, it sends it an acknowledgement (<literal>ACK</literal>) and then responds to the original caller. If, on the other hand, the server does not receive an <literal>ACK</literal>, then it tears down the new call leg with a <literal>BYE</literal>. Once the <literal>BYE</literal> is received, then it answers <literal>OK</literal> directly and forwards the <literal>BYE</literal> to the new call leg.</para>
-	
 	<note
 		id="note-Contacts_to_Forward_Cannot_Currently_Be_Configured">
 		<title>Contacts to Forward Cannot Currently Be Configured</title>
@@ -151,19 +150,19 @@
 				<para>Start two SIP softphones of your choice. Set the account settings of the first SIP softphone to:</para>
 				<itemizedlist>
 					<listitem>
-						<para>Account name: <replaceable>forward-receiver</replaceable>
+						<para>Account name: <userinput>forward-receiver</userinput>
 						</para>
 					</listitem>
 					<listitem>
-						<para>IP address: <replaceable>127.0.0.1</replaceable>
+						<para>IP address: <userinput>127.0.0.1</userinput>
 						</para>
 					</listitem>
 					<listitem>
-						<para>Port: <replaceable>5090</replaceable>
+						<para>Port: <userinput>5090</userinput>
 						</para>
 					</listitem>
 				</itemizedlist>
-				<para>Neither of the SIP phones need to be registered.</para>
+				<para>Neither of the SIP softphones needs to be registered.</para>
 			</step>
 			<step>
 				<para>From the second phone, make a call to <literal>sip:receiver@sip-servlets.com</literal>. The first phone, <quote>forward-receiver</quote>, should now be ringing.</para>
