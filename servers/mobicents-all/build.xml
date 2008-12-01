@@ -18,7 +18,7 @@
     <property name="jbcp.release.name" value="JBCP"/>
     <property name="jbcp.release.version" value="1.2.0.CR3"/>
 
-    <property name="jbcp.ra.dirs" value="xmpp,http-servlet,sip,sip11,diameter/base,http-client,tts"/>
+    <property name="jbcp.ra.dirs" value="xmpp,http-servlet,sip,sip11,http-client,tts"/>
     <property name="jbcp.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
     <property name="jbcp.configurations" value="default,all,production"/>
 		
@@ -49,6 +49,7 @@
 		</for>
 		
 		<antcall target="release-jain-slee-common" />
+		<antcall target="release-sip-presence-common" />
 		<antcall target="release-diameter-common" />
 		<antcall target="release-sip-load-balancer" />
 		
@@ -60,7 +61,7 @@
 		<antcall target="clean"/>
 	</target>
 	
-	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-presence,release-sip-servlets,release-diameter-in-node" />
+	<target name="release-in-node" depends="release-jain-slee-in-node,release-media,release-sip-servlets,release-diameter-in-node" />
 	
     <target name="release-jbcp">
         <ant antfile="${ant.file.mobicents.all.release}" target="release">
@@ -178,11 +179,12 @@
 		</ant>
 	</target>
 
-	<target name="release-sip-presence">
+	<target name="release-sip-presence-common">
 		<ant antfile="${ant.file.mobicents.all.release}/../target/servers/sip-presence/release/build.xml" target="release-mobicents-all">
 			<property name="release.dir" value="${release.dir}" />
 			<property name="release.build.jboss.home" value="${home}../${jboss.home.relative.path}" />
-			<property name="jboss.config" value="${jboss.node}" />
+			<property name="jboss.config" value="default" />
+			<!-- This is the jboss config that is used for deployments -->
 		</ant>
 	</target>
 
