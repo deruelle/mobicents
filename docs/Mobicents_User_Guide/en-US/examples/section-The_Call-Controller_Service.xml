@@ -4,22 +4,27 @@
 <section
 	id="section-The_Call-Controller_Service">
 	<title>The Call-Controller Service</title>
-	<para>The Call-Controller service is a composition of two other services: Call-Blocking and Call-Forwarding.</para>
+	<para>The Call-Controller service is a composition of two other services: Call-Blocking and Call-Forwarding. Essentially, it performs the services of both call-forwarding and call-blocking.</para>
+	<itemizedlist>
+		<listitem>
+			<para>To learn about how the Call-Blocking service works, refer to <xref
+					linkend="section-The_Call-Blocking_Service"/>.</para>
+		</listitem>
+		<listitem>
+			<para>To learn about how the Call-Forwarding service works, refer to <xref
+					linkend="section-The_Call-Forwarding_Service"/>.</para>
+		</listitem>
+	</itemizedlist>
+	<note
+		id="note-Blocked_Contacts_and_Contacts_to_Forward_Cannot_Currently_Be_Configured">
+		<title>Blocked Contacts and Contacts to Forward Cannot Currently Be Configured</title>
+		<para>Both the list of blocked contacts and the list of contacts to forward are currently both hard-coded. However, both of those models are evolving towards the eventual use of databases.</para>
+	</note>
 	<!-- The Call-Controller Service -->
 	<section
 		id="section-binary-Call-Controller_Service--Installing_Configuring_and_Running">
 		<title>The Call-Controller Service: Installing, Configuring and Running</title>
-		<para>The Call-Controller service requires the two WAR files for the Call-Blocking and Call-Forwarding services to be placed in the correct directory inside your Mobicents SIP Servlets Server binary installation. However, the Call-Controller service does <emphasis>not</emphasis> require their corresponding DAR files: you need only to download and install a DAR file customized for the Call-Controller service. The instructions below show you how to do precisely this; there is no need, therefore, to first install either the Call-Blocking or the Call-Forwarding services, though it is helpful to at least be familiar with them:</para>
-		<itemizedlist>
-			<listitem>
-				<para>To learn more about the Call-Blocking service, refer to <xref
-						linkend="section-The_Call-Blocking_Service"/>.</para>
-			</listitem>
-			<listitem>
-				<para>To learn more about Call-Forwarding service, refer to <xref
-						linkend="section-The_Call-Forwarding_Service"/>.</para>
-			</listitem>
-		</itemizedlist>
+		<para>The Call-Controller service requires the two WAR files for the Call-Blocking and Call-Forwarding services to be placed in the correct directory inside your Mobicents SIP Servlets Server binary installation. However, the Call-Controller service does <emphasis>not</emphasis> require their corresponding DAR files: you need only to download and install a DAR file customized for the Call-Controller service. The instructions below show you how to do precisely this; there is no need, therefore, to first install either the Call-Blocking or the Call-Forwarding services, though it is helpful to at least be familiar with them.</para>
 		<formalpara
 			id="formalpara-binary-Call-Controller_Service-Pre-Install_Requirements_and_Prerequisites">
 			<title>Pre-Install Requirements and Prerequisites</title>
