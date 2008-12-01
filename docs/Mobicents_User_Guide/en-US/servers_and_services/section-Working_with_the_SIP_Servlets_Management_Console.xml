@@ -31,4 +31,19 @@
 			<para>SIP Servlets Management Console: Default Application Router Help</para>
 		</caption>
 	</mediaobject>
+	<para>More recent versions of the SIP Servlets Management Console also have a <guilabel>Server Settings</guilabel> tab, in which you can tune settings for concurrency and congestion control.</para>
+	<mediaobject
+		id="mediaobj-sas-MSSSManagementConsole-ss-ServerSettings.png">
+		<imageobject>
+			<imagedata
+				align="center"
+				fileref="images/sas-MSSSManagementConsole-ss-ServerSettings.png"
+				format="PNG" />
+		</imageobject>
+		<caption>
+			<para>Tunable SIP Servlets Server Settings</para>
+		</caption>
+	</mediaobject>
+	<para>For more information on tuning for concurrency and congestion control, refer to <xref
+			linkend="fpara-Configuring_the_Concurrency_and_Congestion_Control_Settings"/>.</para>
 </section>
