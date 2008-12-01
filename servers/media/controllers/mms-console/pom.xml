@@ -11,7 +11,7 @@
 			mobicents-media-server-controllers-parent
 		</artifactId>
 		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<version>1.0.0.CR3-SNAPSHOT</version>
+		<version>1.0.0.CR4-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<pluginRepositories>
@@ -124,7 +124,7 @@
 
 			<dependency>
 				<groupId>org.mobicents.servers.media</groupId>
-				<version>1.0.0.BETA5-SNAPSHOT</version>
+				<version>1.0.0.CR4-SNAPSHOT</version>
 				<artifactId>mobicents-media-server-impl</artifactId>
 			</dependency>
 		</dependencies>
