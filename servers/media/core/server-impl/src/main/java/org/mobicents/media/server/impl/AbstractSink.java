@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.local.management.WorkDataGatherer;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
@@ -27,7 +28,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  * 
  * @author Oleg Kulikov
  */
-public abstract class AbstractSink implements MediaSink {
+public abstract class AbstractSink extends AbstractWorkDataGatherer implements MediaSink {
 
 	protected transient Logger logger = Logger.getLogger(this.getClass());
 
@@ -35,7 +36,8 @@ public abstract class AbstractSink implements MediaSink {
 	private List<NotificationListener> listeners = new ArrayList();
 	private String id = null;
 	private String name = null;
-
+	
+	
 	public AbstractSink(String name) {
 		this.id = (new UID()).toString();
 		this.name = name;

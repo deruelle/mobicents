@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.server.impl.AbstractWorkDataGatherer;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.clock.TimerTask;
@@ -47,7 +48,7 @@ public class JitterBufferTest {
 
     @Before
     public void setUp() {
-        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period);
+        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period,new AbstractWorkDataGatherer(){});
         int ps = 1000 / Quartz.HEART_BEAT;
         MAX_ERRORS = (int) Math.round(100.0 / ps * ERRORS);
     }
@@ -112,7 +113,7 @@ public class JitterBufferTest {
     @Test
     @SuppressWarnings("static-access")
     public void testReadWrite() {
-        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period);
+        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period,new AbstractWorkDataGatherer(){});
 
         Timer r_timer = new Timer();
         r_timer.setListener(new Receiver());

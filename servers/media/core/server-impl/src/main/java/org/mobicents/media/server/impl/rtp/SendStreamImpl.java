@@ -61,11 +61,17 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
         byte[] data = (byte[]) buffer.getData();        
         RtpPacket p = new RtpPacket((byte) pt, (int) seq++, (int) buffer.getTimeStamp(),
                 ssrc, data,buffer.getOffset(), buffer.getLength());
+        boolean error=false;
         try {
             rtpSocket.peer.send(p);
         } catch (IOException e) {
             logger.error("I/O Error", e);
         } finally {
+        	if(!error)
+        	{
+        		super.octetsSent(buffer.getLength());
+        		super.packetsSent(1);
+        	}
             CachedBuffersPool.release(buffer);
         }
     }

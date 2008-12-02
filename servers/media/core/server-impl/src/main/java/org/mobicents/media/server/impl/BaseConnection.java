@@ -23,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.jboss.util.id.UID;
 import org.mobicents.media.server.local.management.ConnectionLocalManagement;
+import org.mobicents.media.server.local.management.WorkDataGatherer;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -37,7 +38,7 @@ import org.mobicents.media.server.spi.events.RequestedEvent;
  * 
  * @author Oleg Kulikov
  */
-public abstract class BaseConnection implements Connection, NotificationListener, ConnectionLocalManagement {
+public abstract class BaseConnection implements Connection, NotificationListener, ConnectionLocalManagement, WorkDataGatherer {
 
     protected String id;
     protected BaseEndpoint endpoint;
@@ -64,8 +65,19 @@ public abstract class BaseConnection implements Connection, NotificationListener
     private transient TimerTask closeTask;
     
     private long connectionCreationTime = System.currentTimeMillis();
-    private long packets;
+    
+    //http://tools.ietf.org/html/rfc3435#section-3.2.2
+    //http://tools.ietf.org/html/rfc3435#section-3.2.2.7 - unsigned integers, up to nine digits
+    protected int packetsSent=0;
+    protected int packetsReceived=0;
+    protected int octetsReceived=0;
+    protected int octetsSent=0;
+    protected int interArrivalJitter=0;
+    protected int packetsLost=0;
 
+    
+    
+    protected  boolean gatherStats=false;
     private class CloseConnectionTask extends TimerTask {
 
         public void run() {
@@ -325,14 +337,103 @@ public abstract class BaseConnection implements Connection, NotificationListener
             return t;
         }
     }
-
+    
+    //  ////////////////
+    //  // STATISTICS //
+    //  ////////////////
+    
+    
+    
     public long getConnectionCreationTime() throws IllegalArgumentException {
 
         return connectionCreationTime;
     }
 
-    public long getNumberOfPackets() throws IllegalArgumentException {
+    public boolean isGatherStats() {
+		return gatherStats;
+	}
 
-        return packets;
-    }
+	
+
+	public int getPacketsSent() {
+		return packetsSent;
+	}
+
+	public int getPacketsReceived() {
+		return packetsReceived;
+	}
+
+	public int getOctetsReceived() {
+		return octetsReceived;
+	}
+
+	public int getOctetsSent() {
+		return octetsSent;
+	}
+
+	public int getInterArrivalJitter() {
+		return interArrivalJitter;
+	}
+
+	public int getPacketsLost() {
+		return packetsLost;
+	}
+
+	
+	private final static int _DATA_LIMIT=1000000000;
+	// ///////////////////
+	// // Data gatherer //
+	// ///////////////////
+	public void octetsReceived(int count) {
+		this.octetsReceived+=count;
+		if(this.octetsReceived>_DATA_LIMIT)
+		{
+			this.octetsReceived=_DATA_LIMIT;
+		}
+		
+	}
+
+	public void octetsSent(int count) {
+		this.octetsSent+=count;
+		if(this.octetsSent>_DATA_LIMIT)
+		{
+			this.octetsSent=_DATA_LIMIT;
+		}
+		
+	}
+
+	public void packetsLost(int count) {
+		this.packetsLost+=count;
+		if(this.packetsLost>_DATA_LIMIT)
+		{
+			this.packetsLost=_DATA_LIMIT;
+		}
+		
+	}
+
+	public void packetsReceived(int count) {
+		this.packetsReceived+=count;
+		if(this.packetsReceived>_DATA_LIMIT)
+		{
+			this.packetsReceived=_DATA_LIMIT;
+		}
+		
+	}
+
+	public void packetsSent(int count) {
+		this.packetsSent+=count;
+		if(this.packetsSent>_DATA_LIMIT)
+		{
+			this.packetsSent=_DATA_LIMIT;
+		}
+		
+	}
+
+	public void interArrivalJitter(int value) {
+		//Its a simple set
+		this.interArrivalJitter=value;
+	}
+	
+	
+    
 }

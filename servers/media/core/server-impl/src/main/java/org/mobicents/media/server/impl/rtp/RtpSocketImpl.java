@@ -34,6 +34,7 @@ import net.java.stun4j.client.StunDiscoveryReport;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.local.management.WorkDataGatherer;
 
 /**
  *
@@ -47,10 +48,6 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     private DatagramSocket socket;
     private int port;
     private boolean stopped = false;
-    //private HashMap receiveStreams = new HashMap();
-    //handler for receiver thread
-    private transient Thread receiverThread;
-    private SendStreamImpl sendStream;
     //registered participants
     protected Peer peer = null;
     //holder for dynamic payloads.
@@ -65,7 +62,10 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     private String stunServerAddress;
     private int stunServerPort;
     private boolean usePortMapping = true;
+  //handler for receiver thread
+    private transient Thread receiverThread;
     private ReceiveStream receiveStream;
+    private SendStreamImpl sendStream;
     public static final AtomicInteger rtpSocketThreadNumber = new AtomicInteger(1);
     public static final String rtpSocketThreadNamePrefix = "RtpSocketImpl-";
     
@@ -450,4 +450,24 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
             listener.error(e);
         }
     }
+    
+    public void setWorkDataGatherer(WorkDataGatherer g)
+    {
+    	try{
+    		if(this.sendStream!=null)
+    		{
+    			this.sendStream.setWorkDataSink(g);
+    		}
+    		
+    		if(this.receiveStream!=null)
+    		{
+    			this.receiveStream.setWorkDataSink(g);
+    		}
+    		
+    	}catch(NullPointerException npe)
+    	{
+    		npe.printStackTrace();
+    	}
+    }
+    
 }

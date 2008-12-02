@@ -66,12 +66,11 @@ public interface EndpointManagementMBean extends ServiceMBean {
 	public long getPacketsCount(String endpointName) throws IllegalArgumentException;
 	public long getNumberOfBytes(String endpointName) throws IllegalArgumentException;
 	public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException;
-	public void setGatherPerformanceFlag(boolean flag,String endpointName) throws IllegalArgumentException;
+	public void setGatherPerformanceData(String endpointName,boolean flag) throws IllegalArgumentException;
 	public boolean getGatherPerformanceFlag(String endpointName) throws IllegalArgumentException;
 	public String[] getEndpointNames() throws IllegalArgumentException;
 	public int getEndpointsCount() throws IllegalArgumentException;
 	public String[] getConnectionIds(String endpointName) throws IllegalArgumentException;
-	public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException;
 	public void setRTPFacotryJNDIName(String endpointName,String jndiName)  throws IllegalArgumentException;
 	public void destroyConnection(String name,	String connectionId)   throws IllegalArgumentException;
 	public void destroyEndpoint(String name)  throws IllegalArgumentException;
@@ -84,10 +83,14 @@ public interface EndpointManagementMBean extends ServiceMBean {
 	public String getConnectionLocalSDP(String endpoint,String connectionId) throws IllegalArgumentException;
 	public String getConnectionRemoteSDP(String endpoint,String connectionId) throws IllegalArgumentException;
 	public String getOtherEnd(String endpoint,String connectionId) throws IllegalArgumentException;
-	public long getNumberOfPackets(String endpoint,String connectionId) throws IllegalArgumentException;
 	public String getConnectionState(String endpointName, String connectionId) throws IllegalArgumentException;
 	public String getConnectionMode(String endpointName, String connectionId) throws IllegalArgumentException;
-    
+	public int getPacketsSent(String endpointName,String connectionId) throws IllegalArgumentException;
+	public int getPacketsReceived(String endpointName,String connectionId) throws IllegalArgumentException;
+	public int getOctetsReceived(String endpointName,String connectionId) throws IllegalArgumentException;
+	public int getOctetsSent(String endpointName,String connectionId) throws IllegalArgumentException;
+	public int getInterArrivalJitter(String endpointName,String connectionId) throws IllegalArgumentException;
+	public int getPacketsLost(String endpointName,String connectionId) throws IllegalArgumentException;
 	// #########################
     // # START/STOP part       #
     // #########################

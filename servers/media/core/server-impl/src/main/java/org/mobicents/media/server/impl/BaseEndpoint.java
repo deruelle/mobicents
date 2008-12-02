@@ -212,6 +212,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
                 sink.addListener((BaseConnection) connection);
             }
             mediaSinks.put(connection.getId(), sinkMap);
+            ((BaseConnection)connection).setGatherStats(gatherStatistics);
             return connection;
         } finally {
             hasConnections = connections.size() > 0;
@@ -248,6 +249,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
                     sink.addListener((BaseConnection) connection);
                 }
                 mediaSinks.put(connection.getId(), sinkMap);
+                ((BaseConnection)connection).setGatherStats(gatherStatistics);
                 return connection;
             }
         } finally {
@@ -544,9 +546,16 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         return packets;
     }
 
-    public void setGatherPerformanceFlag(boolean flag) {
-        //FIXME
+    public void setGatherPerformanceData(boolean flag) {
+        
         gatherStatistics = flag;
+        //Make connections do this, this will reset all stats
+        //This happens because even after break stats are inaccurate.
+        for(Object c:connections.values())
+        {
+        	BaseConnection connection=(BaseConnection) c;
+        	connection.setGatherStats(flag);
+        }
     }
 
     public long getConnectionCreationTime(String connectionId)
@@ -581,15 +590,6 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getRemoteDescriptor();
-    }
-
-    public long getNumberOfPackets(String connectionId)
-            throws IllegalArgumentException {
-        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
-        if (connection == null) {
-            throw new IllegalArgumentException("Connection does not exist.");
-        }
-        return connection.getNumberOfPackets();
     }
 
     public String getOtherEnd(String connectionId)
@@ -627,7 +627,65 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
 
     }
     
-    public void notifyEndpoint(Connection connection, ConnectionState oldState)
+   
+
+	public int getInterArrivalJitter(String connectionId)
+			throws IllegalArgumentException {
+			BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+	        if (connection == null) {
+	            throw new IllegalArgumentException("Connection does not exist.");
+	        }
+	        return connection.getInterArrivalJitter();
+	}
+
+	public int getOctetsReceived(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getOctetsReceived();
+	}
+
+	public int getOctetsSent(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getOctetsSent();
+	}
+
+	public int getPacketsLost(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getPacketsLost();
+	}
+
+	public int getPacketsReceived(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getPacketsReceived();
+	}
+
+	public int getPacketsSent(String connectionId)
+			throws IllegalArgumentException {
+		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getPacketsSent();
+	}
+
+
+
+	public void notifyEndpoint(Connection connection, ConnectionState oldState)
     {
     	//synchronized (this.connectionListeners) {
 		//	for(ConnectionListener cl: this.connectionListeners)

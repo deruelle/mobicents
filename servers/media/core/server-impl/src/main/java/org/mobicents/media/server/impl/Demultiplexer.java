@@ -22,11 +22,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 
 /**
- * Combines several signals for transmission over a single medium. A
- * demultiplexor completes the process by separating multiplexed signals from a
- * transmission line. Frequently a multiplexor and demultiplexor are combined
- * into a single device capable of processing both outgoing and incoming
- * signals.
+ * Sends input signals into 
  * 
  * @author Oleg Kulikov
  */
@@ -36,12 +32,12 @@ public class Demultiplexer extends AbstractSource {
      * 
      */
     private static final long serialVersionUID = -3391642385740571114L;
-    private Input input = new Input();
+    private Input input =null;
     private HashMap<String, Output> branches = new HashMap<String, Output>();
     //private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
     private Format[] formats;
     private boolean started = false;
-    
+    private String upperComponent=null;
     public AbstractSink getInput() {
         return input;
     }
@@ -49,13 +45,17 @@ public class Demultiplexer extends AbstractSource {
     public Demultiplexer(Format[] formats) {
         super("Demultiplexer");
         this.formats = formats;
+        this.input=new Input(upperComponent);
+        this.input.setWorkDataSink(this);
+   
 
     }
 
     @Override
     public void connect(MediaSink sink) {
+   
         synchronized (branches) {
-            Output out = new Output();
+            Output out = new Output(upperComponent);
             branches.put(((AbstractSink) sink).getId(), out);
             sink.connect(out);
         }
@@ -92,8 +92,8 @@ public class Demultiplexer extends AbstractSource {
 
     private class Input extends AbstractSink {
 
-        public Input() {
-            super("Demultiplexer.Input");
+        public Input(String parent) {
+            super("Demultiplexer.Input:"+parent);
         }
 
         public boolean isAcceptable(Format fmt) {
@@ -113,10 +113,20 @@ public class Demultiplexer extends AbstractSource {
                     stream.run();
                 //demuxThreadPool.submit(stream);
                 }
-
+                if(transffered)
+                {
+                	try{
+                		super.octetsReceived(buffer.getLength());
+                	}catch(Exception e)
+                	{
+                		
+                	}
+                }
                 if (!transffered) {
                     CachedBuffersPool.release(buffer);
                 }
+                
+                
             }
         }
 
@@ -128,8 +138,8 @@ public class Demultiplexer extends AbstractSource {
 
     private class Output extends AbstractSource implements Runnable {
 
-        public Output() {
-            super("Demultiplexer.Output");
+        public Output(String parent) {
+            super("Demultiplexer.Output:"+parent);
         }
         private ArrayList<Buffer> buffers = new ArrayList();
 

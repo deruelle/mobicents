@@ -32,7 +32,7 @@ import org.mobicents.media.server.spi.Endpoint;
  * 
  * @author Oleg Kulikov
  */
-public abstract class EndpointManagement extends ServiceMBeanSupport implements EndpointManagementMBean {
+public abstract class EndpointManagement extends ServiceMBeanSupport implements EndpointManagementMBean{
 
 	protected Endpoint endpoint;
 	private String jndiName;
@@ -229,11 +229,6 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 		return getEndpoint(endpointName).getPacketsCount();
 	}
 
-	public void setGatherPerformanceFlag(boolean flag, String endpointName) throws IllegalArgumentException {
-		getEndpoint(endpointName).setGatherPerformanceFlag(flag);
-
-	}
-
 	public String[] getEndpointNames() throws IllegalArgumentException {
 
 		return ((EndpointLocalManagement) endpoint).getEndpointNames();
@@ -268,9 +263,6 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 		return getEndpoint(endpoint).getConnectionRemoteSDP(connectionId);
 	}
 
-	public long getNumberOfPackets(String endpoint, String connectionId) throws IllegalArgumentException {
-		return getEndpoint(endpoint).getNumberOfPackets(connectionId);
-	}
 
 	public String getOtherEnd(String endpoint, String connectionId) throws IllegalArgumentException {
 
@@ -290,8 +282,28 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 	}
 
 	public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException {
-		EndpointLocalManagement elm = getEndpoint(endpointName);
-		elm.setGatherPerformanceFlag(value);
+		
+		
+		
+		
+		try{
+		if(endpointName==null)
+		{
+			//This means its a trunk call
+			((EndpointLocalManagement)this.endpoint).setGatherPerformanceData(value);
+			for(EndpointLocalManagement elm : ((EndpointLocalManagement) endpoint).getEndpoints())
+			{
+				elm.setGatherPerformanceData(value);
+			}
+		}else
+		{	EndpointLocalManagement elm = getEndpoint(endpointName);
+			elm.setGatherPerformanceData(value);
+		}
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void setRTPFacotryJNDIName(String endpointName, String jndiName) throws IllegalArgumentException {
@@ -332,6 +344,53 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 		}
 	}
 
+	
+	
+	public int getInterArrivalJitter(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getInterArrivalJitter(connectionId);
+	}
+
+	public int getOctetsReceived(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getOctetsReceived(connectionId);
+	}
+
+	public int getOctetsSent(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getOctetsSent(connectionId);
+	}
+
+	public int getPacketsLost(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getPacketsLost(connectionId);
+	}
+
+	public int getPacketsReceived(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getPacketsReceived(connectionId);
+	}
+
+	public int getPacketsSent(String endpointName, String connectionId)
+			throws IllegalArgumentException {
+		EndpointLocalManagement elm = getEndpoint(endpointName);
+		
+		return elm.getPacketsSent(connectionId);
+	}
+
+	// ////////////////
+	// // STOP/START //
+	// ////////////////
 	public void startPlatform() {
 		
 		((BaseVirtualEndpoint)this.endpoint).start();

@@ -56,4 +56,5 @@ public class AnnEndpointManagement extends EndpointManagement
         }
         return clone;
     }
+
 }

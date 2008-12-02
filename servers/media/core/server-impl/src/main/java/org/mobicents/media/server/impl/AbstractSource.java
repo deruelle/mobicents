@@ -27,7 +27,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  *
  * @author Oleg Kulikov
  */
-public abstract class AbstractSource implements MediaSource {
+public abstract class AbstractSource extends AbstractWorkDataGatherer implements MediaSource {
 
     protected transient Logger logger = Logger.getLogger(this.getClass());
     

@@ -22,6 +22,7 @@ import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
@@ -236,6 +237,28 @@ public class LocalConnectionImpl extends BaseConnection {
         }
         return null;
     }
+    
+    public void setGatherStats(boolean gatherStats) {
+		super.gatherStats = gatherStats;
+		super.packetsReceived=0;
+		super.packetsSent=0;
+		super.octetsReceived=0;
+		super.octetsSent=0;
+		super.interArrivalJitter=0;
+		super.packetsLost=0;
+		if(super.gatherStats)
+		{
+			//We have to put ourselves into path
+			this.demux.setWorkDataSink(this);
+			this.mux.setWorkDataSink(this);
+		}else
+		{
+			this.demux.setWorkDataSink(null);
+			this.mux.setWorkDataSink(null);
+		}
+		
+	}
+    
 }
 
 

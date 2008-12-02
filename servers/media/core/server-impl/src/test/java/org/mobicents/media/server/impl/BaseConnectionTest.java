@@ -255,6 +255,11 @@ public class BaseConnectionTest {
             // TODO Auto-generated method stub
             return null;
         }
+
+		public void setGatherStats(boolean gatherStats) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     private class TestEndpoint extends BaseEndpoint {

@@ -30,7 +30,7 @@ import org.mobicents.media.server.impl.clock.TimerTask;
  * transmission line. Frequently a multiplexor and demultiplexor are combined
  * into a single device capable of processing both outgoing and incoming
  * signals.
- * 
+ * <br>Multiplexer combines data and sends them, it is used as output for components.
  * @author Oleg Kulikov
  */
 public class Multiplexer extends AbstractSink implements TimerTask {
@@ -199,25 +199,20 @@ public class Multiplexer extends AbstractSink implements TimerTask {
             buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
             output.sink.receive(buffer);
         }
+       
+        {
+        	try{
+        		super.octetsSent(buffer.getLength());
+        	}catch(Exception e)
+        	{
+        		e.printStackTrace();
+        	}
+        }
         seq++;
     }
 
     public void run() {
-        synchronized (packets) {
-            if (packets.size() > 0) {
-                Buffer buffer = packets.remove(0);
-                buffer.setSequenceNumber(seq);
-                buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
-//                    if (output != null && output.sink != null &&
-//                            output.sink.isAcceptable(buffer.getFormat())) {
-//                        output.sink.receive(buffer);
-//                    }
-                if (output != null && output.sink != null) {
-                    output.sink.receive(buffer);
-                }
-                seq++;
-            }
-        }
+       
     }
 
     public void started() {

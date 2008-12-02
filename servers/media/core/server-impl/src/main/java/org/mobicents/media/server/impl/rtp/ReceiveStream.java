@@ -21,66 +21,71 @@ import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class ReceiveStream extends AbstractSource implements TimerTask {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -2277812497480986797L;
-	
+
 	private int period;
-    private JitterBuffer jitterBuffer;
-    private Timer timer = new Timer();
-    private Buffer frame;
-    protected Format[] formats;
-    
-    private transient Logger logger = Logger.getLogger(ReceiveStream.class);
+	private JitterBuffer jitterBuffer;
+	private Timer timer = new Timer();
+	private Buffer frame;
+	protected Format[] formats;
 
-    /** Creates a new instance of ReceiveStream */
-    public ReceiveStream(RtpSocket rtpSocket, int period, int jitter) {
-    	super("ReceiveStream");
-        this.period = period;
+	private transient Logger logger = Logger.getLogger(ReceiveStream.class);
 
-        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period);
+	/** Creates a new instance of ReceiveStream */
+	public ReceiveStream(RtpSocket rtpSocket, int period, int jitter) {
+		super("ReceiveStream");
+		this.period = period;
 
-        timer.setListener(this);
-        timer.start();
-    }
-    
-    protected void push(RtpPacket rtpPacket) {
-        jitterBuffer.write(rtpPacket);
-    }
+		// FIXME: The discarding of data packets in a network when a device
+		// (switch, router, etc.) is overloaded and cannot accept any incoming
+		// data at a given moment. So Jitter buffer is our destination, if it
+		// drops packet, its a packet loss
+		// So, its the place to increment/decrement data, isnt it?
+		jitterBuffer = new JitterBuffer(rtpSocket, jitter, period, this);
 
-    public void stop() {
-        timer.stop();
-    }
-    
-    public void run() {
-        frame = jitterBuffer.read();
-        if (frame == null) {
-            return;
-        }
-        if (sink == null) {
-            return;
-        }
-        
-        //The sink for ReceiveStream is Processor.Input
-        sink.receive(frame);
-    }
+		timer.setListener(this);
+		timer.start();
+	}
 
-    public void start() {
-    }
+	protected void push(RtpPacket rtpPacket) {
+		jitterBuffer.write(rtpPacket);
+	}
 
-    public Format[] getFormats() {
-        return formats;
-    }
+	public void stop() {
+		timer.stop();
+	}
 
-    public void started() {
-    }
+	public void run() {
+		frame = jitterBuffer.read();
+		if (frame == null) {
+			return;
+		}
+		if (sink == null) {
+			return;
+		}
 
-    public void ended() {
-    }
+		// The sink for ReceiveStream is Processor.Input
+		sink.receive(frame);
+	}
+
+	public void start() {
+	}
+
+	public Format[] getFormats() {
+		return formats;
+	}
+
+	public void started() {
+	}
+
+	public void ended() {
+	}
 }

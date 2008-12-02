@@ -45,6 +45,7 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 			enp.setRtpFactoryName(this.getRtpFactoryName());
 
 			endpoints.put(localName, enp);
+			enp.setGatherPerformanceData(this.gatherStatistics);
 			return enp;
 		}else
 		{
@@ -94,6 +95,13 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 		return this.getClass().getSimpleName() + ":" + endpoints;
 	}
 
+	public void setGatherPerformanceData(boolean flag) {
+		//We dont have connection, our children posibly do
+		
+		super.setGatherPerformanceData(flag);
+		
+	}
+	
 	public void start() {
 		this.start=true;
 		

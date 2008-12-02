@@ -90,7 +90,6 @@ public class RtpConnectionImpl extends BaseConnection {
 
         inDsp = new Processor("InputProcess : " + endpointName + " : " + localAddress + "." + localPort);
         outDsp = new Processor("OutputProcess : " + endpointName + " : " + localAddress + "." + localPort);
-
         inDsp.getOutput().connect(demux.getInput());
         inDsp.getInput().connect(rtpSocket.getReceiveStream());
 
@@ -584,4 +583,26 @@ public class RtpConnectionImpl extends BaseConnection {
 
         return "Remote";
     }
+    
+    public void setGatherStats(boolean gatherStats) {
+		super.gatherStats = gatherStats;
+		super.packetsReceived=0;
+		super.packetsSent=0;
+		super.octetsReceived=0;
+		super.octetsSent=0;
+		super.interArrivalJitter=0;
+		super.packetsLost=0;
+		if(super.gatherStats)
+		{
+			//We have to put ourselves into path, in case of octets we could plug into mux/demux
+			//but here its more complicated, since in case of rtp we have to keep track of lost packets ;[
+			((RtpSocketImpl)rtpSocket).setWorkDataGatherer(this);
+		}else
+		{
+			((RtpSocketImpl)rtpSocket).setWorkDataGatherer(null);
+		}
+		
+	}
+    
+    
 }
