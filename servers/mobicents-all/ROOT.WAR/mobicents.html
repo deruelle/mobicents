@@ -28,7 +28,7 @@ a:visited {
 
 pre {
   line-height: 0.9em;
-  font-size: small;
+  font-size: 11px;
 }
 
 tt {
@@ -122,6 +122,7 @@ tbody {
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-servlets-server').innerHTML">SIP Servlets</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('media-server').innerHTML">Media</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-presence-server').innerHTML">SIP Presence</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('diameter-server').innerHTML">Diameter</div>
           </div>
           
           <div class="menu-header" onClick="document.getElementById('ra-items').style.display = 'block'">Resource Adaptors</div>
@@ -148,6 +149,7 @@ tbody {
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('call-controller-2-example').innerHTML">Call Controller 2</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('click-2-call-example').innerHTML">Click-2-Call</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('converged-demo-example').innerHTML">Converged Demo</div>
+            <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('diameter-example').innerHTML">Diameter Base</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('googletalk-bot-example').innerHTML">Googletalk Bot</div>        
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('media-server-example').innerHTML">Media Server</div>
             <div class="menu-item" onClick="document.getElementById('content').innerHTML = document.getElementById('sip-wakeup-example').innerHTML">SIP WakeUp</div>
@@ -289,6 +291,29 @@ tbody {
       <li><a href="#">Related-link-#2</a></li>
     </div>
 
+    <!-- Diameter Server -->
+    
+    <div style="display: none;" id="diameter-server">
+      <span class="content-header">Mobicents Diameter Solution</span><br><br>
+      Diameter is descendant of RADIUS. It was designed in way it stays compatibile with RADIUS but can be easly extended with new kind of use cases within AAA scenario and other IMS scenarios. Extensions are called "Applications". Each application introduces new kind of messages, message and AVP codes ( assigned by IANA ), processing logic and so on. Moreover each application has its own code which distinguishes its messages from messages of another application. In addition application code gives means of telling other peers what operations are suported by connecting peer. Diameter is quit simple protocol. Diameter message consists of header and payload. Both consist of AVPs ( Attribute Value Pairs : nameOfAttribute=value). AVP crucial to Base protocol ( and for applications ) has been standarized is related documents ( standarization accepted by IANA ).<br>
+      <br>
+      Mobicents Diameter provides a complete solution for Diameter products:<br>
+      <li> Stack component: Provides the basic core of the Diameter solution, taking care of Peer Management and also handles the sessions for all the supported Diameter Applications, makig it a central point in the solution. It is based on jDiameter.<br>
+      <li> Multiplexer (Mux) component: This is the responsible for managing different listeners to different Diameter Applications, enabling it to be used by J2EE components (eg, SIP Servlets) and JSLEE Components, with the same ease and using a mutual core.<br>
+      <li> Resource Adaptors: These are the components that enable SLEE services to use Diameter resources, at the moment in JSLEE the existing RA's for Diameter are Base and Sh-Client.<br>
+      <li> Sample Applications: Some sample applications are provided as a start-up and a reference point in developing custom applications. At the moment, there are three sample applications: Base and Sh-Client for JSLEE and Event-Charging (similar to base example, but more 'integrated') for Mobicents SIP Servlets.<br> 
+
+      <br>
+      To configure the Diameter Peers, Supported Applications and other tweaks, please look at the file located at <tt>jboss-&lt;jboss-version&gt;/server/&lt;node&gt;/deploy/mobicents-diameter-mux-&lt;mux-version&gt;.sar/lib/mobicents-diameter-mux-jar-&lt;mux-version&gt;.jar/org/mobicents/diameter/stack/jdiameter-config.xml</tt>. For detailed information on what each entry in this file means, please refer to the <a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter">Mobicents Diameter Wiki Page</a> or <a href="http://jdiameter.dev.java.net/">jDiameter Homepage</a>.<br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter">Mobicents Diameter Wiki Page</a></li>
+      <li><a href="http://jdiameter.dev.java.net/">jDiameter Homepage</a></li>
+    </div>
+
     <!-- Asterisk RA -->
 
     <div style="display: none;" id="asterisk-ra">
@@ -324,9 +349,9 @@ tbody {
     <div style="display: none;" id="diameter-ra">
       <span class="content-header">Diameter Resource Adaptor</span><br><br>
 
-      Diameter is descendant of RADIUS. It was designed in way it stays compatibile with RADIUS but can be easly extended with new kind of use cases within AAA scenario and other IMS scenarios. Extensions are called "Applications". Each application introduces new kind of messages, message and AVP codes ( assigned by IANA ), processing logic and so on. Moreover each application has its own code which distinguishes its messages from messages of another application. In addition application code gives means of telling other peers what operations are suported by connecting peer. Diameter is quit simple protocol. Diameter message consists of header and payload. Both consist of AVPs ( Attribute Value Pairs : nameOfAttribute=value). AVP crucial to Base protocol ( and for applications ) has been standarized is related documents ( standarization accepted by IANA ).<br>
-      <br>
-      The Resource Adaptor currently supports BASE application, which defines common part for each application/node. Half of its messages (CER-CEA/DWR-DWA/DPR-DPA) are meant to manage connection between peers. Other half (ACR-ACA/ASR-ASA/STR-STA/ACR-ACA) are used by applications for accounting/authorization purposes and of course session handling (particularly for session termination). Second half does not define stand alone functionality, rather as mentioned before common part.<br>
+      There are currently two Resource Adaptors available:<br>
+      - Base application, which defines common part for each application/node. Half of its messages (CER-CEA/DWR-DWA/DPR-DPA) are meant to manage connection between peers. Other half (ACR-ACA/ASR-ASA/STR-STA/ACR-ACA) are used by applications for accounting/authorization purposes and of course session handling (particularly for session termination). Second half does not define stand alone functionality, rather as mentioned before common part.<br>
+      - Sh interface application (3GPP TS 29.328 & TS 29.329), only acting as client mode, which can be used to communicate with IMS Component HSS, to retrieve, update and/or subscribe and receive updates notifications to user profiles. It defines User-Data-Request/Answer (UDR/UDA), Profile-Update-Request/Answer (PUR/PUA), Subscription-Notification-Request/Answer (SNR/SNA) and Profile-Notification-Request/Answer (PNR/PNA).<br>
       <br>
       The following applications will be supported in the future:
       <ul>
@@ -336,15 +361,15 @@ tbody {
       <li>Rf interface (3GPP Application)</li>
       </ul>
       
-      <br>     
       <div class="content-title">Configuration</div>
-      <li>You can find the stack configuration file at <tt>diameter-base-ra-DU-&lt;version&gt;.jar/base-ra-&lt;version&gt;.jar/org/mobicents/slee/resource/diameter/base/jdiameter-config.xml</tt> file. For an explanation of the parameters please refer to the <a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter-ra">Diameter RA Wiki Page</a></li>
+      <li>The configuration for the Resource Adaptors is the one provided by the Mux, so please refer to the Servers : Diameter section for more information.</a></li>
 
       <br>
       <div class="content-title">Deployment</div>
-      <li>To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy|undeploy</tt></li>
-      <li>To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
-      <br>
+      <li>Base: To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy|undeploy</tt></li>
+      <li>Base: To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/diameter-base/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+      <li>Sh-Client: To deploy/undeploy in a persistent way, at mobicents root: <tt>ant -f resources/sh-client/build.xml deploy|undeploy</tt></li>
+      <li>Sh-Client: To deploy/undeploy in a non-persistent way, at mobicents root: <tt>ant -f resources/sh-client/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
 
       <br>
       Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
@@ -946,10 +971,85 @@ tbody {
 
       <br>
       Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
-      <br>
+      <br> 
       <div class="content-title">Related resources</div>
       <li><a href="#">Related-link-#1</a></li>
       <li><a href="#">Related-link-#2</a></li>
+    </div>
+
+    <!-- Diameter Base Example -->
+
+    <div style="display: none;" id="diameter-example">
+      <span class="content-header">Diameter Base Example</span><br><br>
+
+      The Diameter Base example is a simple application that uses the Diameter Base RA in order to communicate with a Charging Server in client mode. It demonstrates the usage of Diameter RA for Accounting purposes, enabling the user to extend it for real world case scenarios.<br>
+
+      <br>
+      <div class="content-title">Configuration</div>
+      The Diameter Base example does not provide any configurations, at the moment. In order to configure the Diameter Peer setting, changes must be applied in the Diameter Mux component, please refer to the Diameter entry in Servers section for information on how to configure it.<br>
+
+      <br>
+      <div class="content-title">Installation</div>
+      <li>To deploy/undeploy in a persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/diameter-base/build.xml deploy-all|undeploy-all</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, with all dependencies, at mobicents root: <tt>ant -f examples/diameter-base/build.xml deploy-all-jmx|undeploy-all-jmx</tt> (server must be running!)</li>
+      <li>To deploy/undeploy in a persistent way, without dependencies, at mobicents root: <tt>ant -f examples/diameter-base/build.xml deploy|undeploy</tt></li>
+      <li>To deploy/undeploy in a non-persistent way, without dependencies, at mobicents root: <tt>ant -f examples/diameter-base/build.xml deploy-jmx|undeploy-jmx</tt> (server must be running!)</li>
+
+      <br>
+      <div class="content-title">How it works</div>
+      This example is intended to show interaction between Mobicents Diameter and Ericsson SDK Charging Server. This example sends a Accounting-Rquest (ACR) to the Accounting Server which will cause the server to debit 9.70 (server performs currency conversion) from the user account, as it is specified in the AVPs contained in the message:<br>
+
+      <pre>
+      +----------------------------------- HEADER ----------------------------------+
+      | Version.................1
+      | Message-Length..........0
+      | Command-Flags...........R[true] P[false] E[false] T[false]
+      | Command-Code............271
+      | Application-Id..........19302
+      | Hop-By-Hop Identifier...0
+      | End-To-End Identifier...1599078401
+      +------------------------------------ AVPs -----------------------------------+
+      | AVP: Code[260] VendorID[0] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=false]
+      |   AVP: Code[266] VendorID[0] Value[193] Flags[M=true;E=false;V=false]
+      |   AVP: Code[259] VendorID[0] Value[19302] Flags[M=true;E=false;V=false]
+      | AVP: Code[263] VendorID[0] Value[127.0.0.1;285;4084604763] Flags[M=true;E=false;V=false]
+      | AVP: Code[264] VendorID[0] Value[aaa://127.0.0.1:1812] Flags[M=true;E=false;V=false]
+      | AVP: Code[296] VendorID[0] Value[mobicents.org] Flags[M=true;E=false;V=false]
+      | AVP: Code[293] VendorID[0] Value[aaa://127.0.0.1:21812] Flags[M=true;E=false;V=false]
+      | AVP: Code[283] VendorID[0] Value[mobicents.org] Flags[M=true;E=false;V=false]
+      | AVP: Code[553] VendorID[193] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=true]
+      |   AVP: Code[555] VendorID[193] Value[0] Flags[M=true;E=false;V=true]
+      |   AVP: Code[554] VendorID[193] Value[00001000] Flags[M=true;E=false;V=true]
+      | AVP: Code[606] VendorID[193] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=true]
+      |   AVP: Code[611] VendorID[193] Value[2] Flags[M=true;E=false;V=true]
+      |   AVP: Code[612] VendorID[193] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=true]
+      |     AVP: Code[617] VendorID[193] Value[10] Flags[M=true;E=false;V=true]
+      | AVP: Code[485] VendorID[0] Value[0] Flags[M=true;E=false;V=false]
+      | AVP: Code[480] VendorID[0] Value[1] Flags[M=true;E=false;V=false]
+      | AVP: Code[615] VendorID[193] Value[0] Flags[M=true;E=false;V=true]
+      | AVP: Code[607] VendorID[193] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=true]
+      |   AVP: Code[608] VendorID[193] Value[0] Flags[M=true;E=false;V=true]
+      |   AVP: Code[609] VendorID[193] Value[510] Flags[M=true;E=false;V=true]
+      | AVP: Code[607] VendorID[193] Value[&lt;Grouped&gt;] Flags[M=true;E=false;V=true]
+      |   AVP: Code[608] VendorID[193] Value[14] Flags[M=true;E=false;V=true]
+      |   AVP: Code[609] VendorID[193] Value[20] Flags[M=true;E=false;V=true]
+      +-----------------------------------------------------------------------------+
+      </pre>
+      
+      The interesting AVP here are:<br>
+      <li>553[555,554]: This identifies the subscriber ID to be charged from, normally a mobile number. In this case is “00001000” of type 0 (MSISDN). These two AVPs are grouped in a AVP with code 553.<br>
+      <li>606[611,612]: This indicates that we are requesting for an accounting of type 2 (Event) to use 10 units of credit. The value is grouped in an AVP with code 612 (Unit-Value) and that one is grouped together with Unit-Type in an AVP with code 606.<br>
+      <li>605: This indicates the action we are requesting, an Debit, identified by the value “0”.<br>
+      <li>607[608,609]: With this grouped AVP we are identifying the ServiceProviderId (Type 0), as being “510”. This is internal Ericsson SDK data, used to identify the service the user requested and stored in the tariff list of the charging server.<br>
+      <li>607[608,609]: In here, again, we have internal Ericsson SDK data, identifying the TrafficCase (Type 14) with the value “20”. This field will be set to 20 for the Originating Service Charging (normal end-user initiated) and 21 for Terminating Service Charging.<br>
+      <br>
+      If everything went OK, the server should answer with a 2001 (SUCCESS) and if you look into Config > Account in Ericsson Emulator you’ll see that the corresponding amount has been deducted from user account.<br>
+
+      <br>
+      Please, direct questions and comments to the <a href="http://forums.java.net/jive/category.jspa?categoryID=36">Mobicents Forums</a>.<br>
+      <br>
+      <div class="content-title">Related resources</div>
+      <li><a href="http://groups.google.com/group/mobicents-public/web/mobicents-diameter">Mobicents Diameter Wiki Page</a></li>
     </div>
 
     <!-- Googletalk Bot Example -->
