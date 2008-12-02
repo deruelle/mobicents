@@ -6,9 +6,11 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import org.apache.log4j.Logger;
@@ -64,6 +66,16 @@ public class MGW implements JainMgcpExtendedListener {
 					ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 
 			response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			try{
+				//FIXME: we asume there is wildcard - "any of"
+				CreateConnection cc=(CreateConnection) jainmgcpcommandevent;
+				EndpointIdentifier wildcard=cc.getEndpointIdentifier();
+				EndpointIdentifier specific=new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$","")+"test-1",wildcard.getDomainName());
+				response.setSpecificEndpointIdentifier(specific);
+			}catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 			
 			responseSent = true;

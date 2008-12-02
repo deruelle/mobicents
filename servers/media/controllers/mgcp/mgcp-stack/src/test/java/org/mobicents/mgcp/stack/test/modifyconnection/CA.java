@@ -34,7 +34,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-15", "127.0.0.1:" + mgStack);
 
 			String identifier = ((CallIdentifier) caProvider.getUniqueCallIdentifier()).toString();
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);

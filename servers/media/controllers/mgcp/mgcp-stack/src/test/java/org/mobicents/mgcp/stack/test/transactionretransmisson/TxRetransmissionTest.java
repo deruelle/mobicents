@@ -28,12 +28,13 @@ public class TxRetransmissionTest extends MessageFlowHarness {
 	}
 
 	public void testReTransmissionCreateConnection() {
+		
 		ca.setCommand("CRCX");
 		mgw.setCommand("CRCX");
 		this.ca.sendReTransmissionCreateConnection();
 		waitForRetransmissionTimeout();
 	}
-
+	
 	public void testReTransmissionDeleteConnection() {
 		ca.setCommand("DLCX");
 		mgw.setCommand("DLCX");
@@ -61,14 +62,14 @@ public class TxRetransmissionTest extends MessageFlowHarness {
 		this.ca.sendReTransmissionNotify();
 		waitForRetransmissionTimeout();
 	}		
-
+	
 	public void tearDown() {
 		try {
 			super.tearDown();
 		} catch (Exception ex) {
 
 		}
-
+		
 		this.ca.checkState();
 		this.mgw.checkState();
 		logTestCompleted();

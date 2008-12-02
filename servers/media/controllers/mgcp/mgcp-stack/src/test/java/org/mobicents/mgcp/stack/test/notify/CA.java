@@ -31,7 +31,7 @@ public class CA implements JainMgcpExtendedListener {
 		try {
 			caProvider.addJainMgcpListener(this);
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-1", "127.0.0.1:" + mgStack);
 
 			Notify notify = new Notify(this, endpointID, caProvider.getUniqueRequestIdentifier(), new EventName[] {});
 			notify.setTransactionHandle(caProvider.getUniqueTransactionHandler());

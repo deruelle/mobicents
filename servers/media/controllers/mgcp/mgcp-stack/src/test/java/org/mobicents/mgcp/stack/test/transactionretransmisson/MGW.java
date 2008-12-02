@@ -4,6 +4,7 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
@@ -11,6 +12,7 @@ import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.util.TooManyListenersException;
@@ -65,6 +67,7 @@ public class MGW implements JainMgcpExtendedListener {
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_CREATE_CONNECTION:
 
+			
 			String identifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
 
@@ -72,7 +75,10 @@ public class MGW implements JainMgcpExtendedListener {
 					.getSource(), ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 
 			createConnectionResponse.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
-
+			CreateConnection cc=(CreateConnection) jainmgcpcommandevent;
+			EndpointIdentifier wildcard=cc.getEndpointIdentifier();
+			EndpointIdentifier specific=new EndpointIdentifier(wildcard.getLocalEndpointName()+"test-1",wildcard.getDomainName());
+			createConnectionResponse.setSpecificEndpointIdentifier(specific);
 			// Let us sleep for 4.5 Sec which will fire the CRCX command again
 			// from CA.
 			sleep();
