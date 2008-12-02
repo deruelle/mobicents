@@ -155,8 +155,10 @@ public class MessageHandler implements Runnable {
 					handle = new RestartInProgressHandler(stack, address, port);
 				} else if (verb.equalsIgnoreCase("auep")) {
 					handle = new AuditEndpointHandler(stack, address, port);
+				} else if (verb.equalsIgnoreCase("aucx")) {
+					handle = new AuditConnectionHandler(stack, address, port);
 				} else {
-					logger.warn("Unsupported message verbose " + verb);
+					logger.error("Unsupported message verbose " + verb);
 					return;
 				}
 				handle.receiveCommand(msg);

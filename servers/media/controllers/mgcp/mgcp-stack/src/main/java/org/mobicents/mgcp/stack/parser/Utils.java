@@ -768,6 +768,10 @@ public class Utils {
 				msg += "B";
 				break;
 
+			case (InfoCode.CALL_IDENTIFIER):
+				msg += "C";
+				break;
+
 			case (InfoCode.CONNECTION_IDENTIFIER):
 				msg += "I";
 				break;
@@ -778,6 +782,14 @@ public class Utils {
 
 			case (InfoCode.REQUEST_IDENTIFIER):
 				msg += "X";
+				break;
+
+			case (InfoCode.LOCAL_CONNECTION_OPTIONS):
+				msg += "L";
+				break;
+
+			case (InfoCode.CONNECTION_MODE):
+				msg += "M";
 				break;
 
 			case (InfoCode.REQUESTED_EVENTS):
@@ -796,8 +808,16 @@ public class Utils {
 				msg += "O";
 				break;
 
+			case (InfoCode.CONNECTION_PARAMETERS):
+				msg += "P";
+				break;
+
 			case (InfoCode.REASON_CODE):
 				msg += "E";
+				break;
+
+			case (InfoCode.SPECIFIC_ENDPOINT_ID):
+				msg += "Z";
 				break;
 
 			case (InfoCode.QUARANTINE_HANDLING):
@@ -806,6 +826,14 @@ public class Utils {
 
 			case (InfoCode.DETECT_EVENTS):
 				msg += "T";
+				break;
+
+			case (InfoCode.REMOTE_CONNECTION_DESCRIPTOR):
+				msg += "RC";
+				break;
+
+			case (InfoCode.LOCAL_CONNECTION_DESCRIPTOR):
+				msg += "LC";
 				break;
 
 			case (InfoCode.CAPABILITIES):
@@ -847,6 +875,10 @@ public class Utils {
 			return InfoCode.BearerInformation;
 		}
 
+		else if (value.equalsIgnoreCase("C")) {
+			return InfoCode.CallIdentifier;
+		}
+
 		else if (value.equalsIgnoreCase("I")) {
 			return InfoCode.ConnectionIdentifier;
 		}
@@ -857,6 +889,14 @@ public class Utils {
 
 		else if (value.equalsIgnoreCase("X")) {
 			return InfoCode.RequestIdentifier;
+		}
+
+		else if (value.equalsIgnoreCase("L")) {
+			return InfoCode.LocalConnectionOptions;
+		}
+
+		else if (value.equalsIgnoreCase("M")) {
+			return InfoCode.ConnectionMode;
 		}
 
 		else if (value.equalsIgnoreCase("R")) {
@@ -875,8 +915,16 @@ public class Utils {
 			return InfoCode.ObservedEvents;
 		}
 
+		else if (value.equalsIgnoreCase("P")) {
+			return InfoCode.ConnectionParameters;
+		}
+
 		else if (value.equalsIgnoreCase("E")) {
 			return InfoCode.ReasonCode;
+		}
+
+		else if (value.equalsIgnoreCase("Z")) {
+			return InfoCode.SpecificEndpointID;
 		}
 
 		else if (value.equalsIgnoreCase("Q")) {
@@ -885,6 +933,14 @@ public class Utils {
 
 		else if (value.equalsIgnoreCase("T")) {
 			return InfoCode.DetectEvents;
+		}
+
+		else if (value.equalsIgnoreCase("RC")) {
+			return InfoCode.RemoteConnectionDescriptor;
+		}
+
+		else if (value.equalsIgnoreCase("LC")) {
+			return InfoCode.LocalConnectionDescriptor;
 		}
 
 		else if (value.equalsIgnoreCase("A")) {
@@ -1611,7 +1667,8 @@ public class Utils {
 				domainAndPort = tokens[1].split(":");
 				domainName = domainAndPort[0];
 			} else {
-				domainName = tokens[0];
+				domainAndPort = tokens[0].split(":");
+				domainName = domainAndPort[0];
 				return new NotifiedEntity(domainName);
 			}
 

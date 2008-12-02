@@ -5,12 +5,19 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.AuditConnection;
 import jain.protocol.ip.mgcp.message.AuditConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
+import jain.protocol.ip.mgcp.message.parms.ConnectionParm;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.InfoCode;
+import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.InetAddress;
 import java.text.ParseException;
 
@@ -18,6 +25,11 @@ import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class AuditConnectionHandler extends TransactionHandler {
 
 	private Logger logger = Logger.getLogger(AuditConnectionHandler.class);
@@ -28,6 +40,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 	private EndpointIdentifier endpointId = null;
 	private InfoCode[] requestedInfo = null;
 	int tid = 0;
+
+	boolean RCfirst = false;
 
 	public AuditConnectionHandler(JainMgcpStackImpl stack) {
 		super(stack);
@@ -61,12 +75,11 @@ public class AuditConnectionHandler extends TransactionHandler {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Decoding AUEP response command");
 		}
-
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Parsing of AUCX Response failed ", e);
 		}
 
 		return response;
@@ -89,8 +102,37 @@ public class AuditConnectionHandler extends TransactionHandler {
 		}
 
 		InfoCode[] requestedInfos = evt.getRequestedInfo();
+
 		if (requestedInfos != null) {
 			msg += "F: " + utils.encodeInfoCodeList(requestedInfos);
+			int foundRC = 0;
+			int foundLC = 0;
+
+			// This is to determine which SDP is RemoteSDP and which one is
+			// LocalSDP
+			for (int count = 0; count < requestedInfos.length; count++) {
+				InfoCode info = requestedInfos[count];
+				switch (info.getInfoCode()) {
+				case (InfoCode.REMOTE_CONNECTION_DESCRIPTOR):
+					foundRC = count;
+					if (foundLC != 0 && foundLC < count) {
+						RCfirst = false;
+					} else {
+						RCfirst = true;
+					}
+					break;
+
+				case (InfoCode.LOCAL_CONNECTION_DESCRIPTOR):
+					foundLC = count;
+					if (foundRC != 0 && foundRC < count) {
+						RCfirst = true;
+					} else {
+						RCfirst = false;
+					}
+					break;
+				}
+			}
+
 		}
 
 		return msg;
@@ -98,13 +140,59 @@ public class AuditConnectionHandler extends TransactionHandler {
 
 	@Override
 	public String encode(JainMgcpResponseEvent event) {
-		return null;
+		AuditConnectionResponse response = (AuditConnectionResponse) event;
+		ReturnCode returnCode = response.getReturnCode();
+
+		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
+				+ "\n";
+
+		if (response.getCallIdentifier() != null) {
+			msg += "C:" + response.getCallIdentifier() + "\n";
+		}
+
+		if (response.getNotifiedEntity() != null) {
+			msg += "N:" + utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+		}
+
+		if (response.getLocalConnectionOptions() != null) {
+			msg += "L:" + utils.encodeLocalOptionValueList(response.getLocalConnectionOptions()) + "\n";
+		}
+
+		if (response.getMode() != null) {
+			msg += "M:" + response.getMode() + "\n";
+		}
+
+		if (response.getConnectionParms() != null) {
+			msg += "P:" + utils.encodeConnectionParms(response.getConnectionParms()) + "\n";
+		}
+
+		if (RCfirst && response.getRemoteConnectionDescriptor() != null) {
+			msg += "\n" + response.getRemoteConnectionDescriptor() + "\n";
+		}
+
+		if (response.getLocalConnectionDescriptor() != null) {
+			msg += "\n" + response.getLocalConnectionDescriptor() + "\n";
+		}
+
+		if (!RCfirst && response.getRemoteConnectionDescriptor() != null) {
+			msg += "\n" + response.getRemoteConnectionDescriptor() + "\n";
+		}
+
+		System.out.println("encoded response = \n" + msg);
+		return msg;
 	}
 
 	@Override
 	public JainMgcpResponseEvent getProvisionalResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		AuditConnectionResponse provisionalResponse = null;
+
+		if (!sent) {
+			provisionalResponse = new AuditConnectionResponse(commandEvent.getSource(),
+					ReturnCode.Transaction_Being_Executed);
+			provisionalResponse.setTransactionHandle(remoteTID);
+		}
+
+		return provisionalResponse;
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
@@ -147,9 +235,17 @@ public class AuditConnectionHandler extends TransactionHandler {
 			if (name.equalsIgnoreCase("I")) {
 				connectionIdentifier = new ConnectionIdentifier(value);
 			} else if (name.equalsIgnoreCase("F")) {
+
+				int RCindex = value.indexOf("RC");
+				int LCindex = value.indexOf("LC");
+
+				if (RCindex != -1 && RCindex < LCindex) {
+					RCfirst = true;
+				}
+
 				requestedInfo = utils.decodeInfoCodeList(value);
 			} else {
-				logger.error("Unknown code " + name);
+				logger.error("Unknown code while encoding AUCX Command name = " + name + " value = " + value);
 			}
 		}
 
@@ -161,7 +257,7 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 *            the session description from message.
 		 */
 		public void sessionDescription(String sd) throws ParseException {
-			throw new ParseException("SessionDescription shouldn't have been included in AUEP command", 0);
+			throw new ParseException("SessionDescription shouldn't have been included in AUCX command", 0);
 		}
 	}
 
@@ -200,6 +296,17 @@ public class AuditConnectionHandler extends TransactionHandler {
 			} else if (name.equalsIgnoreCase("N")) {
 				NotifiedEntity n = utils.decodeNotifiedEntity(value, true);
 				response.setNotifiedEntity(n);
+			} else if (name.equalsIgnoreCase("L")) {
+				LocalOptionValue[] LocalOptionValueList = utils.decodeLocalOptionValueList(value);
+				response.setLocalConnectionOptions(LocalOptionValueList);
+			} else if (name.equalsIgnoreCase("M")) {
+				ConnectionMode connectionMode = utils.decodeConnectionMode(value);
+				response.setMode(connectionMode);
+			} else if (name.equalsIgnoreCase("P")) {
+				ConnectionParm[] connectionParms = utils.decodeConnectionParms(value);
+				response.setConnectionParms(connectionParms);
+			} else {
+				logger.warn("Unidentified AUCX Response parameter " + name + " with value = " + value);
 			}
 		}
 
@@ -211,8 +318,47 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 *            the session description from message.
 		 */
 		public void sessionDescription(String sd) throws ParseException {
-			// response.setLocalConnectionDescriptor(new
-			// ConnectionDescriptor(sd));
+
+			System.out.println("sd = " + sd);
+			StringReader stringReader = new StringReader(sd);
+			BufferedReader reader = new BufferedReader(stringReader);
+
+			String line = null;
+			boolean sdpPresent = false;
+			String sdp1 = "";
+			String sdp2 = "";
+			try {
+				while ((line = reader.readLine()) != null) {
+					line = line.trim();
+					sdpPresent = line.length() == 0;
+					if (sdpPresent)
+						break;
+					sdp1 = sdp1 + line.trim() + "\r\n";
+
+				}
+
+				while ((line = reader.readLine()) != null) {
+					line = line.trim();
+					sdp2 = sdp2 + line.trim() + "\r\n";
+				}
+
+			} catch (IOException e) {
+				logger.error("Error while reading the SDP for AUCX Response and decoding to AUCX command ", e);
+			}
+
+			if (RCfirst) {
+				response.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdp1));
+				if (!sdp2.equals("")) {
+					response.setLocalConnectionDescriptor(new ConnectionDescriptor(sdp2));
+				}
+
+			} else {
+				response.setLocalConnectionDescriptor(new ConnectionDescriptor(sdp1));
+				if (!sdp2.equals("")) {
+					response.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdp2));
+				}
+			}
+
 		}
 	}
 

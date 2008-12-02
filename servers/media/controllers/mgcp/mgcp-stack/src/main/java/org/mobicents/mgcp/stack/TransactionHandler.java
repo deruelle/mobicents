@@ -114,7 +114,7 @@ public abstract class TransactionHandler implements Runnable {
 	private DatagramPacket sendComandDatagram = null;
 
 	private int countOfCommandRetransmitted = 0;
-	
+
 	protected Utils utils = null;
 
 	/**
@@ -325,7 +325,7 @@ public abstract class TransactionHandler implements Runnable {
 	 * @return jain mgcp response event object.
 	 */
 	public abstract JainMgcpResponseEvent decodeResponse(String message) throws ParseException;
-	
+
 	public abstract JainMgcpResponseEvent getProvisionalResponse();
 
 	public void run() {
@@ -335,8 +335,8 @@ public abstract class TransactionHandler implements Runnable {
 			this.send(this.getResponseEvent());
 		}
 	}
-	
-	protected void sendProvisionalResponse(){
+
+	protected void sendProvisionalResponse() {
 		this.send(getProvisionalResponse());
 	}
 
@@ -351,7 +351,7 @@ public abstract class TransactionHandler implements Runnable {
 
 		sent = true;
 
-		String host = null;
+		String host = "";
 		int port = 0;
 
 		switch (event.getObjectIdentifier()) {
@@ -359,7 +359,11 @@ public abstract class TransactionHandler implements Runnable {
 			Notify notifyCommand = (Notify) event;
 			NotifiedEntity notifiedEntity = notifyCommand.getNotifiedEntity();
 			port = notifiedEntity.getPortNumber();
-			host = notifiedEntity.getLocalName();
+			if (notifiedEntity.getLocalName() != null) {
+				host = notifiedEntity.getLocalName() + "@";
+			} else {
+				host += notifiedEntity.getDomainName();
+			}
 			break;
 
 		default:
@@ -450,11 +454,10 @@ public abstract class TransactionHandler implements Runnable {
 			resetLongtranTimer();
 		} else {
 			release();
-			
-			stack.responseTx.put(Integer.valueOf(event.getTransactionHandle()), this);
-			resetTHISTTimerTask(true);			
-		}
 
+			stack.responseTx.put(Integer.valueOf(event.getTransactionHandle()), this);
+			resetTHISTTimerTask(true);
+		}
 
 	}
 
@@ -484,7 +487,7 @@ public abstract class TransactionHandler implements Runnable {
 		// store original transaction handle parameter
 		// and populate with local value
 		remoteTID = event.getTransactionHandle();
-		
+
 		stack.remoteTxToLocalTxMap.put(new Integer(remoteTID), new Integer(localTID));
 		event.setTransactionHandle(localTID);
 
@@ -517,7 +520,7 @@ public abstract class TransactionHandler implements Runnable {
 
 		// restore original transaction handle parameter
 		event.setTransactionHandle(remoteTID);
-		
+
 		/*
 		 * Just reset timer in case of provisional response. Otherwise, release
 		 * tx.
