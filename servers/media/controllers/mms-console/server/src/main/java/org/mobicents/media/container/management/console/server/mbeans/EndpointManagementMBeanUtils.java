@@ -151,6 +151,7 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 			String[] paramTypes = new String[] { "java.lang.String", "java.lang.String" };
 			Object[] paramValues = new Object[] { endpointName, connectionId };
 			info.setConnecitonId(connectionId);
+			info.setEndpointName(endpointName);
 			value = this.server.invoke(beanName, "getConnectionCreationTime", paramValues, paramTypes);
 			info.setCreationTime(((Long) value).longValue());
 
@@ -170,8 +171,21 @@ public class EndpointManagementMBeanUtils implements EndpointManagementService {
 			value = this.server.invoke(beanName, "getConnectionMode", paramValues, paramTypes);
 			info.setMode((String) value);
 
-			value = this.server.invoke(beanName, "getNumberOfPackets", paramValues, paramTypes);
-			info.setNumberOfPackets(((Long) value).longValue());
+			
+			// CONNECTIONS PARAMETER rfc http://tools.ietf.org/html/rfc3435#section-3.2.2
+			
+			value = this.server.invoke(beanName, "getPacketsSent", paramValues, paramTypes);
+			info.setPacketsSent(((Integer) value).intValue());
+			value = this.server.invoke(beanName, "getPacketsReceived", paramValues, paramTypes);
+			info.setPacketsReceived(((Integer) value).intValue());
+			value = this.server.invoke(beanName, "getOctetsReceived", paramValues, paramTypes);
+			info.setOctetsReceived(((Integer) value).intValue());
+			value = this.server.invoke(beanName, "getOctetsSent", paramValues, paramTypes);
+			info.setOctetsSent(((Integer) value).intValue());
+			value = this.server.invoke(beanName, "getInterArrivalJitter", paramValues, paramTypes);
+			info.setInterArrivalJitter(((Integer) value).intValue());
+			value = this.server.invoke(beanName, "getPacketsLost", paramValues, paramTypes);
+			info.setPacketsLost(((Integer) value).intValue());
 		} catch (NullPointerException e) {
 
 			e.printStackTrace();

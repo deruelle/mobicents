@@ -44,11 +44,11 @@ import com.google.gwt.user.client.ui.Widget;
  * @author Stefano Zappaterra
  *
  */
-public class ListPanel extends Composite {
+public class ListPanel extends DockPanel {
 	
 	private FlexTable flexTable = new FlexTable();
 
-	private DockPanel panel=new DockPanel();
+	//private DockPanel panel=new DockPanel();
 	
 	public ListPanel() {
 		super();
@@ -56,11 +56,11 @@ public class ListPanel extends Composite {
 		//initWidget(flexTable);
 		 
 		
-		initWidget(panel);
-		panel.setVerticalAlignment(DockPanel.ALIGN_TOP);
-		panel.add(flexTable, DockPanel.CENTER);
-		panel.setCellHeight(flexTable, "100%");
-		panel.setCellWidth(flexTable, "100%");
+		//initWidget(panel);
+		this.setVerticalAlignment(DockPanel.ALIGN_TOP);
+		this.add(flexTable, DockPanel.CENTER);
+		this.setCellHeight(flexTable, "100%");
+		this.setCellWidth(flexTable, "100%");
 		setStyleName("common-ListPanel");
 		flexTable.getRowFormatter().setStyleName(0,	"common-ListPanel-header");		
 		flexTable.getRowFormatter().setVerticalAlign(0,	HasVerticalAlignment.ALIGN_MIDDLE);

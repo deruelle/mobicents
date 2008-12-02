@@ -7,6 +7,8 @@ import org.mobicents.media.container.management.console.client.ServerConnection;
 import org.mobicents.media.container.management.console.client.common.ListPanel;
 import org.mobicents.media.container.management.console.client.common.UserInterface;
 
+
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -24,12 +26,15 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 	protected ActionPerform onErrorAction;
 	protected boolean isVirtual;
 
+	//protected Timer refreshTimer=null;
+	
+	
 	public EndpointDataManagementTopInfoPanel(ActionPerform onRefreshDataAction, boolean isVirtual, ActionPerform onErrorAction) {
 		super();
 		this.onRefreshDataAction = onRefreshDataAction;
 		this.onErrorAction = onErrorAction;
 		this.isVirtual = isVirtual;
-
+		
 		this.setWidth("100%");
 		// this.setHeight("100%");
 
@@ -75,13 +80,19 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 		setCellText(4, 1, new Date(info.getCreationTime()).toString());
 
 		setCellText(0, 3, "" + info.getConnections());
-		setCellText(1, 3, "" + info.getPackets());
-		setCellText(2, 3, "" + (info.getNumberOfBytes() / (8 * 1024 * 1024)));
+		setCellText(1, 3, "" + ((double)info.getPackets()/(1000000))+" M");
+		setCellText(2, 3, "" + ((double)info.getNumberOfBytes() / ( 1024 * 1024))+" M");
 		setCell(3, 3, destroyButton);
 
 		updateGatherDataView(info.isGetherPerformance());
 		updateRTPList(info.getRtpFactoryJNDIName());
 		ServerConnection.rtpManagementServiceAsync.getAvailableRTPManagersJNDIName(new PopulateRTPManagersListBoxCallBack());
+		//if(refreshTimer!=null)
+		//{
+		//	refreshTimer.cancel();
+		//}
+		//refreshTimer=new MainClassRefreshTimer();
+		//refreshTimer.schedule(60*1000);
 
 	}
 
@@ -138,8 +149,7 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 		public void onChange(Widget w) {
 			ListBox lb = (ListBox) w;
 			boolean value = Boolean.valueOf(lb.getValue(lb.getSelectedIndex())).booleanValue();
-			
-			ServerConnection.endpointManagementServiceAsync.setGatherPerformanceData(info.getName(), info.getType(), value, new GatherDataSetAsyncCallback());
+			ServerConnection.endpointManagementServiceAsync.setGatherPerformanceData(isVirtual?null:info.getName(), info.getType(), value, new GatherDataSetAsyncCallback());
 
 		}
 
@@ -244,4 +254,36 @@ public class EndpointDataManagementTopInfoPanel extends ListPanel {
 
 	}
 
+	private class MainClassRefreshTimer extends Timer
+	{
+
+	
+		public void run() {
+			ServerConnection.endpointManagementServiceAsync.getEndpointInfo(info.getName(), info.getType(), new RefreshCallback());
+			
+		}
+		
+	}
+	
+	private class RefreshCallback implements AsyncCallback
+	{
+
+		public void onFailure(Throwable caught) {
+			//Error here means this endpoitn stoped to exists?
+			UserInterface.getLogPanel().warning("Endpointdoes not exist anymore");
+			//try{
+			//	refreshTimer.cancel();
+			//}catch(Exception e)
+			//{}
+			onErrorAction.performAction();
+			
+		}
+
+		public void onSuccess(Object result) {
+			EndpointFullInfo info=(EndpointFullInfo) result;
+			populateWithData(info);
+		}
+		
+	}
+	
 }

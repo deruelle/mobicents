@@ -99,11 +99,8 @@ public class EndpointListPanel extends DockPanel implements CommonControl {
 							endpointList.setCellText(i, 2, info
 									.getConnections()
 									+ "");
-							endpointList.setCellText(i, 3, info.getPackets()
-									+ "");
-							endpointList.setCellText(i, 4, info
-									.getNumberOfBytes()
-									+ "");
+							endpointList.setCellText(i, 3, "" + ((double)info.getPackets()/(1000000))+" M");
+							endpointList.setCellText(i, 4, "" + ((double)info.getNumberOfBytes() / ( 1024 * 1024))+" M");
 							endpointList.setCellText(i, 5, new Date(info
 									.getCreationTime())
 									+ "");

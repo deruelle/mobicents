@@ -4,6 +4,7 @@ import org.mobicents.media.container.management.console.client.ServerConnection;
 import org.mobicents.media.container.management.console.client.common.BrowseContainer;
 import org.mobicents.media.container.management.console.client.common.UserInterface;
 
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
@@ -18,6 +19,8 @@ public class EndpointDataManagementPanel extends Composite {
 	protected ActionPerform onRefreshAction = null;
 	protected ActionPerform onErrorAction = null;
 	protected boolean isVirtual = false;
+	
+	
 	// DataPresentation
 	EndpointDataManagementTopInfoPanel topPanel = null;
 	EndpointDataManagementConnectionsDisplay centerPanel = null;
@@ -69,6 +72,7 @@ public class EndpointDataManagementPanel extends Composite {
 	private class RefreshAction extends ActionPerform {
 
 		public void performAction() {
+			
 			ServerConnection.endpointManagementServiceAsync.getEndpointInfo(endpointName, type, new RefreshCallback());
 
 		}
@@ -89,5 +93,7 @@ public class EndpointDataManagementPanel extends Composite {
 		}
 
 	}
+	
+	
 
 }

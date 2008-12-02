@@ -13,13 +13,19 @@ public class ConnectionInfo implements IsSerializable{
 	protected String otherEnd=null;
 	protected String state=null;
 	protected String mode=null;
-	protected long numberOfPackets=0;
+	protected int packetsSent=0;
+	protected int packetsReceived=0;
+	protected int octetsSent=0;
+	protected int octetsReceived=0;
+	protected int interArrivalJitter=0;
+	protected long packetsLost=0;
 
 
-
-	public ConnectionInfo(String endpointName, String connecitonId,
+	private ConnectionInfo(String endpointName, String connecitonId,
 			long creationTime, String localSdp, String remoteSdp,
-			String otherEnd, String state, String mode, long numberOfPackets) {
+			String otherEnd, String state, String mode, int packetsSent,
+			int packetsReceived, int octetsSent, int octetsReceived,
+			int interArrivalJitter, long packetsLost) {
 		super();
 		this.endpointName = endpointName;
 		this.connecitonId = connecitonId;
@@ -29,7 +35,65 @@ public class ConnectionInfo implements IsSerializable{
 		this.otherEnd = otherEnd;
 		this.state = state;
 		this.mode = mode;
-		this.numberOfPackets = numberOfPackets;
+		this.packetsSent = packetsSent;
+		this.packetsReceived = packetsReceived;
+		this.octetsSent = octetsSent;
+		this.octetsReceived = octetsReceived;
+		this.interArrivalJitter = interArrivalJitter;
+		this.packetsLost = packetsLost;
+	}
+	
+	public ConnectionInfo() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public long getPacketsLost() {
+		return packetsLost;
+	}
+
+	public void setPacketsLost(long packetsLost) {
+		this.packetsLost = packetsLost;
+	}
+	
+	public int getPacketsSent() {
+		return packetsSent;
+	}
+
+	public void setPacketsSent(int packetsSent) {
+		this.packetsSent = packetsSent;
+	}
+
+	public int getPacketsReceived() {
+		return packetsReceived;
+	}
+
+	public void setPacketsReceived(int packetsReceived) {
+		this.packetsReceived = packetsReceived;
+	}
+
+	public int getOctetsSent() {
+		return octetsSent;
+	}
+
+	public void setOctetsSent(int octetsSent) {
+		this.octetsSent = octetsSent;
+	}
+
+	public int getOctetsReceived() {
+		return octetsReceived;
+	}
+
+	public void setOctetsReceived(int octetsReceived) {
+		this.octetsReceived = octetsReceived;
+	}
+
+	public int getInterArrivalJitter() {
+		return interArrivalJitter;
+	}
+
+	public void setInterArrivalJitter(int interArrivalJitter) {
+		this.interArrivalJitter = interArrivalJitter;
 	}
 
 	public String getState() {
@@ -47,12 +111,7 @@ public class ConnectionInfo implements IsSerializable{
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
-
-	public ConnectionInfo() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+	
 	public String getEndpointName() {
 		return endpointName;
 	}
@@ -101,13 +160,7 @@ public class ConnectionInfo implements IsSerializable{
 		this.otherEnd = otherEnd;
 	}
 
-	public long getNumberOfPackets() {
-		return numberOfPackets;
-	}
 
-	public void setNumberOfPackets(long numberOfPackets) {
-		this.numberOfPackets = numberOfPackets;
-	}
 	
 }
 

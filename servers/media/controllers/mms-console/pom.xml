@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mobicents.servers.media.controllers</groupId>
@@ -7,6 +6,7 @@
 	<packaging>pom</packaging>
 	<name>Mobicents :: Tools :: gwt-management-console</name>
 	<parent>
+	
 		<artifactId>
 			mobicents-media-server-controllers-parent
 		</artifactId>
@@ -46,7 +46,7 @@
 			<gwt.version>1.4.61</gwt.version>
 		-->
 		<!--  This is not visible ;[ -->
-		<gwt.version>1.4.60</gwt.version>
+		<gwt.version>1.4.62</gwt.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -89,15 +89,29 @@
 				<version>${jboss.version}</version>
 				<scope>provided</scope>
 			</dependency>
+			<!--  GWT deps -->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-servlet</artifactId>
 				<version>${gwt.version}</version>
+				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt-user</artifactId>
 				<version>${gwt.version}</version>
+			</dependency>
+			<!--
+				<dependency> <groupId>com.google.gwt</groupId>
+				<artifactId>gwt-dev</artifactId> <version>${gwt.version}</version>
+				<classifier>${platform}-libs</classifier> <type>zip</type>
+				</dependency>
+			-->
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt-dev</artifactId>
+				<version>${gwt.version}</version>
+				<classifier>${platform}</classifier>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
@@ -124,7 +138,7 @@
 
 			<dependency>
 				<groupId>org.mobicents.servers.media</groupId>
-				<version>1.0.0.CR4-SNAPSHOT</version>
+				<version>1.0.0.BETA5-SNAPSHOT</version>
 				<artifactId>mobicents-media-server-impl</artifactId>
 			</dependency>
 		</dependencies>
@@ -139,25 +153,131 @@
 	</dependencies>
 	<profiles>
 		<profile>
-			<id>maven-release</id>
-			<modules>
-				<module>rpc</module>
-				<module>server</module>
-				<module>war</module>
-				<module>setup</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>not-maven-release</id>
+			<id>gwt-dev-windows</id>
+			<properties>
+				<platform>windows</platform>
+			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+				<os>
+					<family>windows</family>
+				</os>
 			</activation>
 			<modules>
 				<module>rpc</module>
 				<module>server</module>
 				<module>war</module>
-				<module>setup</module>
 			</modules>
+		</profile>
+		<profile>
+			<id>gwt-dev-mac</id>
+			<properties>
+				<platform>mac</platform>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<modules>
+				<module>rpc</module>
+				<module>server</module>
+				<module>war</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>gwt-dev-linux</id>
+			<properties>
+				<platform>linux</platform>
+			</properties>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<name>linux</name>
+				</os>
+			</activation>
+			<modules>
+				<module>rpc</module>
+				<module>server</module>
+				<module>war</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>deploy</id>
+			<build>
+				<plugins>
+					
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-war</id>
+								<phase>install</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>
+												${pom.groupId}
+											</groupId>
+											<artifactId>
+												gwt-management-console-war
+											</artifactId>
+											<version>
+												${pom.version}
+											</version>
+											<type>war</type>
+											<overWrite>false</overWrite>
+											<outputDirectory>
+												${project.build.directory}
+											</outputDirectory>
+											<destFileName>
+												mms-console.war
+											</destFileName>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy-DU</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<echo>-------------------------------------------------------------------</echo>
+										<copy overwrite="true" file="target/mms-console.war"
+											todir="${jboss.home}/server/${node}/deploy" />
+										<echo></echo>
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy-DU</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete file="${jboss.home}/server/${node}/deploy/mms-console.war" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>
