@@ -9,6 +9,7 @@ import jain.protocol.ip.mgcp.JainMgcpStack;
 import jain.protocol.ip.mgcp.message.AuditConnectionResponse;
 import jain.protocol.ip.mgcp.message.AuditEndpointResponse;
 import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
@@ -49,13 +50,13 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 	// ends
 	protected Set<JainMgcpExtendedListener> jainMobicentsListeners = new HashSet<JainMgcpExtendedListener>();
 
-	private QueuedExecutor eventQueue = null;
+	//private QueuedExecutor eventQueue = null;
 
 	//private ExecutorService pool;
 
 	public JainMgcpStackProviderImpl(JainMgcpStackImpl runningStack) {
 		super();
-		eventQueue = new QueuedExecutor();
+		//eventQueue = new QueuedExecutor();
 		//pool = Executors.newCachedThreadPool(new ThreadFactoryImpl());
 		this.runningStack = runningStack;
 	}
@@ -90,9 +91,10 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
 	public synchronized void  sendMgcpEvents(JainMgcpEvent[] events) throws IllegalArgumentException {		
 		for (JainMgcpEvent event : events) {
-
+			
+			//For any onther than CRCX wildcard does not count?
+			boolean isWildcarded=false;
 			if (event instanceof JainMgcpCommandEvent) {
-
 				// SENDING REQUEST
 				JainMgcpCommandEvent commandEvent = (JainMgcpCommandEvent) event;
 
@@ -118,6 +120,8 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 						logger.debug("Sending CreateConnection object to " + commandEvent.getEndpointIdentifier());
 					}
 					handle = new CreateConnectionHandler(this.runningStack);
+					CreateConnection crcx=(CreateConnection) event;
+					isWildcarded=EndpointHandler.isAnyOfWildcard(crcx.getEndpointIdentifier().toString());
 					break;
 
 				case Constants.CMD_DELETE_CONNECTION:
@@ -175,30 +179,37 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 				}
 				handle.setCommand(true);
 				handle.setCommandEvent(commandEvent);
-
-				try {
-					eventQueue.execute(handle);
-				} catch (InterruptedException e) {					
-					logger.error("Error when sending the Comand "+commandEvent, e);
-				}
+			
+				EndpointHandler eh=this.runningStack.getEndpointHandler(handle.getEndpointId(),isWildcarded);
+				eh.addTransactionHandler(handle);
+				
+				eh.scheduleTransactionHandler(handle);
+				//try {
+				//	eventQueue.execute(handle);
+				//} catch (InterruptedException e) {					
+				//	logger.error("Error when sending the Comand "+commandEvent, e);
+				//}
 				// handle.send(commandEvent);
 
 			} else {
 
 				// SENDING RESPONSE
 				int tid = event.getTransactionHandle();
-
-				TransactionHandler handler = (TransactionHandler) runningStack.loaclTransactions.get(Integer
+				TransactionHandler handler = (TransactionHandler) runningStack.getLocalTransactions().get(Integer
+				//XXX:TransactionHandler handler = (TransactionHandler) runningStack.getLocalTransaction(Integer
 						.valueOf(tid));
 
 				if (handler != null) {
 					handler.setCommand(false);
 					handler.setResponseEvent((JainMgcpResponseEvent) event);
-					try {
-						eventQueue.execute(handler);
-					} catch (InterruptedException e) {
-						logger.error("Error when sending the Response "+event, e);
-					}
+					//try {
+					//	eventQueue.execute(handler);
+					//} catch (InterruptedException e) {
+					//	logger.error("Error when sending the Response "+event, e);
+					//}
+					EndpointHandler eh=handler.getEndpointHandler();
+					
+					eh.scheduleTransactionHandler(handler);
 				} else {
 					logger.error("The TransactionHandler not found for TransactionHandle " + tid
 							+ " May be the Tx timed out. Event = " + (JainMgcpResponseEvent) event);
@@ -254,7 +265,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 		}
 	}
 
-	protected void processTxTimeout(JainMgcpCommandEvent command) {
+	public void processTxTimeout(JainMgcpCommandEvent command) {
 		// notify RA
 		// ra.processTxTimeout(command);
 		synchronized (this.jainMobicentsListeners) {
@@ -264,7 +275,7 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 		}
 	}
 
-	protected void processRxTimeout(JainMgcpCommandEvent command) {
+	public void processRxTimeout(JainMgcpCommandEvent command) {
 		// notify RA
 		// ra.processRxTimeout(command);
 		synchronized (this.jainMobicentsListeners) {
