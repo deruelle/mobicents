@@ -74,7 +74,6 @@ public class CommandParseTest extends TestHarness {
 
 	public void testNotificationRequestDecode() {
 		String command = "RQNT 1201 aaln/1@rgw-2567.whatever.net MGCP 1.0 \nN: ca@ca1.whatever.net:5678 \nX: 16AC \nR: L/hd(N) \nS: L/rg";
-		System.out.println(command);
 
 		NotificationRequest notificationCommand = null;
 		NotificationRequestHandler rqntHandler = new NotificationRequestHandler(jainMgcpStack, inetAddress, port);
@@ -162,7 +161,6 @@ public class CommandParseTest extends TestHarness {
 
 	public void testNotifyDecode() {
 		String command = "NTFY 2002 aaln/1@rgw-2567.whatever.net MGCP 1.0\nN: ca@ca1.whatever.net:5678\nX: 16AC\nO: L/hd,D/9,D/1,D/2,D/0,D/1,D/8,D/2,D/9,D/4,D/2,D/6,D/6";
-		System.out.println(command);
 
 		Notify notify = null;
 		NotifyHandler ntfyHandler = new NotifyHandler(jainMgcpStack, inetAddress, port);

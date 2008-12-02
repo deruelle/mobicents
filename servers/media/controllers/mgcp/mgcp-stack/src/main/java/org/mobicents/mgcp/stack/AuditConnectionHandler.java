@@ -178,7 +178,6 @@ public class AuditConnectionHandler extends TransactionHandler {
 			msg += "\n" + response.getRemoteConnectionDescriptor() + "\n";
 		}
 
-		System.out.println("encoded response = \n" + msg);
 		return msg;
 	}
 
@@ -319,7 +318,6 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 */
 		public void sessionDescription(String sd) throws ParseException {
 
-			System.out.println("sd = " + sd);
 			StringReader stringReader = new StringReader(sd);
 			BufferedReader reader = new BufferedReader(stringReader);
 

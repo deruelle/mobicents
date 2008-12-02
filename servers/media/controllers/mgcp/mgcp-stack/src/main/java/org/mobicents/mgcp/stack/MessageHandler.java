@@ -71,7 +71,6 @@ public class MessageHandler implements Runnable {
 	}
 
 	public boolean isRequest(String header) {
-		System.out.println("header = " + header);
 		Matcher m = p.matcher(header);
 		return m.matches();
 		// return header.matches("[\\w]{4}(\\s|\\S)*");

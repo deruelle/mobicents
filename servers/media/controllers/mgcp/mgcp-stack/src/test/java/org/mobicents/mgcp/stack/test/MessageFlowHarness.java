@@ -17,7 +17,7 @@ public abstract class MessageFlowHarness extends TestHarness {
 	protected static long STACKS_SHUT_DOWN_FOR = 500;
 
 	// timeout values depend on pc
-	protected static long MESSAGES_ARRIVE_FOR = 2500;
+	protected static long MESSAGES_ARRIVE_FOR = 3000;
 
 	protected static long RETRANSMISSION_TRANSACTION_TIMES_OUT_FOR = 5000;
 

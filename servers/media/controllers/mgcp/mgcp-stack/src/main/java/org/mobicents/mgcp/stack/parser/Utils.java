@@ -1287,8 +1287,6 @@ public class Utils {
 				temp = temp.substring(2, temp.length() - 1);
 				digitMap = new DigitMap(temp);
 			}
-			System.out.println(temp);
-
 		}
 
 		return new EmbeddedRequest(requestedEvents, signalEvents, digitMap);

@@ -359,11 +359,11 @@ public abstract class TransactionHandler implements Runnable {
 			Notify notifyCommand = (Notify) event;
 			NotifiedEntity notifiedEntity = notifyCommand.getNotifiedEntity();
 			port = notifiedEntity.getPortNumber();
-			if (notifiedEntity.getLocalName() != null) {
-				host = notifiedEntity.getLocalName() + "@";
-			} else {
-				host += notifiedEntity.getDomainName();
-			}
+//			if (notifiedEntity.getLocalName() != null) {
+//				host = notifiedEntity.getLocalName() + "@";
+//			}
+			host += notifiedEntity.getDomainName();
+
 			break;
 
 		default:
