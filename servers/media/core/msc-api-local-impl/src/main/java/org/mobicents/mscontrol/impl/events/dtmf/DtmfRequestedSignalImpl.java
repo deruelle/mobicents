@@ -27,28 +27,41 @@
 
 package org.mobicents.mscontrol.impl.events.dtmf;
 
+import org.mobicents.media.server.spi.events.EventFactory;
+import org.mobicents.media.server.spi.events.RequestedSignal;
+import org.mobicents.media.server.spi.events.dtmf.DtmfRequestedSignal;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedSignal;
 import org.mobicents.mscontrol.events.pkg.DTMF;
+import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class DtmfRequestedSignalImpl implements MsDtmfRequestedSignal {
+public class DtmfRequestedSignalImpl extends BaseRequestedSignal implements MsDtmfRequestedSignal {
 
-    private String tone;
-    
-    public void setTone(String tone) {
-        this.tone = tone;
-    }
+	private String tone;
 
-    public String getTone() {
-        return tone;
-    }
+	public void setTone(String tone) {
+		this.tone = tone;
+	}
 
-    public MsEventIdentifier getID() {
-        return DTMF.TONE;
-    }
+	public String getTone() {
+		return tone;
+	}
+
+	public MsEventIdentifier getID() {
+		return DTMF.TONE;
+	}
+
+	@Override
+	public RequestedSignal convert() {
+		EventFactory factory = new EventFactory();
+		DtmfRequestedSignal signal = (DtmfRequestedSignal) factory.createRequestedSignal(DTMF.TONE.getPackageName(),
+				DTMF.TONE.getEventName());
+		signal.setTone(tone);
+		return signal;
+	}
 
 }

@@ -29,23 +29,26 @@ package org.mobicents.media.server.impl.events.dtmf;
 
 import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.events.EventPackage;
-import org.mobicents.media.server.impl.events.announcement.AnnSignal;
 import org.mobicents.media.server.spi.events.RequestedSignal;
-import org.mobicents.media.server.spi.events.announcement.PlayRequestedSignal;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
+import org.mobicents.media.server.spi.events.dtmf.DtmfRequestedSignal;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class PackageImpl implements EventPackage {
-    
 
-    public AbstractSignal getSignal(RequestedSignal requestedSignal) {
-        if (requestedSignal.getID().equals(Announcement.PLAY)) {            
-            return new AnnSignal(((PlayRequestedSignal)requestedSignal).getURL());
-        }
-        return null;
-    }
+	public AbstractSignal getSignal(RequestedSignal requestedSignal) {
+		// if (requestedSignal.getID().equals(Announcement.PLAY)) {
+		// return new AnnSignal(((PlayRequestedSignal)
+		// requestedSignal).getURL());
+		// } else
+
+		if (requestedSignal.getID().equals(DTMF.DTMF)) {
+			return new DTMFSignal(((DtmfRequestedSignal) requestedSignal).getTone());
+		}
+		return null;
+	}
 
 }
