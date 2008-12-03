@@ -1046,6 +1046,17 @@ public class Utils {
 		return s;
 	}
 
+	public PackageName[] decodePackageNameList(String value) {
+		String[] packages = value.split(";");
+		PackageName[] supportedPackageNames = new PackageName[packages.length];
+		for (int i = 0; i < packages.length; i++) {
+			PackageName p = PackageName.factory(packages[i]);
+			supportedPackageNames[i] = p;
+		}
+
+		return supportedPackageNames;
+	}
+
 	public CapabilityValue decodeCapability(String value) throws ParseException {
 
 		CapabilityValue capabilityValue = null;
@@ -1129,12 +1140,7 @@ public class Utils {
 			TypeOfNetwork typeOfNetwork = decodeTypeOfNetwork(capability);
 			capabilityValue = new LocalOptVal(typeOfNetwork);
 		} else if ("v".equals(key)) {
-			String[] packages = capability.split(";");
-			PackageName[] supportedPackageNames = new PackageName[packages.length];
-			for (int i = 0; i < packages.length; i++) {
-				PackageName p = PackageName.factory(packages[i]);
-				supportedPackageNames[i] = p;
-			}
+			PackageName[] supportedPackageNames = decodePackageNameList(capability);
 			capabilityValue = new SupportedPackages(supportedPackageNames);
 		} else if ("m".equals(key)) {
 			String[] modes = capability.split(";");

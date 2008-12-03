@@ -162,14 +162,14 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
 				case Constants.CMD_RESP_UNKNOWN:
 					if (logger.isDebugEnabled()) {
-						logger.debug("Sending ModifyConnection object to " + commandEvent.getEndpointIdentifier());
+						logger.debug("Sending ResponseUnknown object to " + commandEvent.getEndpointIdentifier());
 					}
 					handle = new RespUnknownHandler(this.runningStack);
 					break;
 
 				case Constants.CMD_RESTART_IN_PROGRESS:
 					if (logger.isDebugEnabled()) {
-						logger.debug("Sending ModifyConnection object to " + commandEvent.getEndpointIdentifier());
+						logger.debug("Sending RestartInProgress object to " + commandEvent.getEndpointIdentifier());
 					}
 					handle = new RestartInProgressHandler(this.runningStack);
 					break;

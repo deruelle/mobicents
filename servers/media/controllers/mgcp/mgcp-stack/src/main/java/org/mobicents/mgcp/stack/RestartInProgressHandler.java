@@ -1,4 +1,3 @@
-
 package org.mobicents.mgcp.stack;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
@@ -6,6 +5,7 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.RestartInProgress;
 import jain.protocol.ip.mgcp.message.RestartInProgressResponse;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RestartMethod;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -13,133 +13,148 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.text.ParseException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * Parse/encode RSIP commands.
  * 
  * @author Tom Uijldert
- *
+ * 
  */
 public class RestartInProgressHandler extends TransactionHandler {
 
-    private RestartInProgress command;
-    private RestartInProgressResponse response;
+	private Logger logger = Logger.getLogger(RestartInProgressHandler.class);
 
-    public RestartInProgressHandler(JainMgcpStackImpl stack) {
-        super(stack);
-    }
+	private RestartInProgress command;
+	private RestartInProgressResponse response;
 
-    public RestartInProgressHandler(JainMgcpStackImpl stack, InetAddress address, int port) {
-        super(stack, address, port);
-    }
+	public RestartInProgressHandler(JainMgcpStackImpl stack) {
+		super(stack);
+	}
 
-    @Override
-    public JainMgcpCommandEvent decodeCommand(String message)
-            throws ParseException {
-        MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
-        try {
-            parser.parse(message);
-        } catch (Exception e) {
-            throw new ParseException(e.getMessage(), -1);
-        }
-        return command;
-    }
+	public RestartInProgressHandler(JainMgcpStackImpl stack, InetAddress address, int port) {
+		super(stack, address, port);
+	}
 
-    @Override
-    public JainMgcpResponseEvent decodeResponse(String message)
-            throws ParseException {
-        MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
-        try {
-            parser.parse(message);
-        } catch (IOException e) {
-        //should never happen
-        }
-        return response;
-    }
+	@Override
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		try {
+			parser.parse(message);
+		} catch (Exception e) {
+			throw new ParseException(e.getMessage(), -1);
+		}
+		return command;
+	}
 
-    @Override
-    public String encode(JainMgcpCommandEvent event) {
-        RestartInProgress rsip = (RestartInProgress) event;
-        StringBuffer message = new StringBuffer();
-        message.append("RSIP " + event.getTransactionHandle() + " " +
-                rsip.getEndpointIdentifier() + " MGCP 1.0\n");
+	@Override
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		try {
+			parser.parse(message);
+		} catch (IOException e) {
+			// should never happen
+		}
+		return response;
+	}
 
-        message.append("RM:" + rsip.getRestartMethod() + "\n");
-        if (rsip.getRestartDelay() != 0) {
-            message.append("RD:" + rsip.getRestartDelay() + "\n");
-        }
-        if (rsip.getReasonCode() != null) {
-            message.append("E:" + rsip.getReasonCode() + "\n");
-        }
-        return message.toString();
-    }
+	@Override
+	public String encode(JainMgcpCommandEvent event) {
+		RestartInProgress rsip = (RestartInProgress) event;
+		StringBuffer message = new StringBuffer();
+		message.append("RSIP " + event.getTransactionHandle() + " " + rsip.getEndpointIdentifier() + " MGCP 1.0\n");
 
-    @Override
-    public String encode(JainMgcpResponseEvent event) {
-        return event.getReturnCode().getValue() + " " + event.getTransactionHandle() +
-                " " + event.getReturnCode().getComment() + "\n";
-    }
+		message.append("RM:" + rsip.getRestartMethod() + "\n");
+		if (rsip.getRestartDelay() != 0) {
+			message.append("RD:" + rsip.getRestartDelay() + "\n");
+		}
+		if (rsip.getReasonCode() != null) {
+			message.append("E:" + rsip.getReasonCode() + "\n");
+		}
+		return message.toString();
+	}
 
-    private class CommandContentHandle implements MgcpContentHandler {
+	@Override
+	public String encode(JainMgcpResponseEvent event) {
 
-        public void header(String header) throws ParseException {
-            String[] tokens = header.split("\\s");
+		RestartInProgressResponse response = (RestartInProgressResponse) event;
+		ReturnCode returnCode = response.getReturnCode();
 
-            String verb = tokens[0].trim();
-            String transactionID = tokens[1].trim();
-            String version = tokens[3].trim() + " " + tokens[4].trim();
+		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
+				+ "\n";
 
-            int tid = Integer.parseInt(transactionID);
-            EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
+		// TODO should utils.encodeNotifiedEntity decide on port?
+		if (response.getNotifiedEntity() != null) {
+			msg += "N:" + utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+		}
+		return msg;
+	}
 
-            command = new RestartInProgress(getObjectSource(tid), endpoint, RestartMethod.Restart);
-            command.setTransactionHandle(tid);
-        }
+	private class CommandContentHandle implements MgcpContentHandler {
 
-        public void param(String name, String value) throws ParseException {
-            if (name.equalsIgnoreCase("RM")) {
-                command.setRestartMethod(utils.decodeRestartMethod(value));
-            } else if (name.equalsIgnoreCase("RD")) {
-                command.setRestartDelay(Integer.parseInt(value));
-            } else if (name.equalsIgnoreCase("E")) {
-                command.setReasonCode(utils.decodeReasonCode(value));
-            }
-        }
+		public void header(String header) throws ParseException {
+			String[] tokens = header.split("\\s");
 
-        public void sessionDescription(String sd) throws ParseException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
+			String verb = tokens[0].trim();
+			String transactionID = tokens[1].trim();
+			String version = tokens[3].trim() + " " + tokens[4].trim();
 
-    private class ResponseContentHandle implements MgcpContentHandler {
+			int tid = Integer.parseInt(transactionID);
+			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
-        public void header(String header) throws ParseException {
-            String[] tokens = header.split("\\s");
+			command = new RestartInProgress(getObjectSource(tid), endpoint, RestartMethod.Restart);
+			command.setTransactionHandle(tid);
+		}
 
-            int tid = Integer.parseInt(tokens[1]);
-            response = new RestartInProgressResponse(stack,
-            		utils.decodeReturnCode(Integer.parseInt(tokens[0])));
-            response.setTransactionHandle(tid);
-        }
-        // TODO: Add support for [NotifiedEntity] and [PackageList]
-        public void param(String name, String value) throws ParseException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
+		public void param(String name, String value) throws ParseException {
+			if (name.equalsIgnoreCase("RM")) {
+				command.setRestartMethod(utils.decodeRestartMethod(value));
+			} else if (name.equalsIgnoreCase("RD")) {
+				command.setRestartDelay(Integer.parseInt(value));
+			} else if (name.equalsIgnoreCase("E")) {
+				command.setReasonCode(utils.decodeReasonCode(value));
+			}
+		}
 
-        public void sessionDescription(String sd) throws ParseException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-    }
+		public void sessionDescription(String sd) throws ParseException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+	}
+
+	private class ResponseContentHandle implements MgcpContentHandler {
+
+		public void header(String header) throws ParseException {
+			String[] tokens = header.split("\\s");
+
+			int tid = Integer.parseInt(tokens[1]);
+			response = new RestartInProgressResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response.setTransactionHandle(tid);
+		}
+
+		public void param(String name, String value) throws ParseException {
+			if (name.equalsIgnoreCase("N")) {
+				NotifiedEntity n = utils.decodeNotifiedEntity(value, true);
+				response.setNotifiedEntity(n);
+			} else {
+				logger.warn("Unidentified AUCX Response parameter " + name + " with value = " + value);
+			}
+		}
+
+		public void sessionDescription(String sd) throws ParseException {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+	}
 
 	@Override
 	public JainMgcpResponseEvent getProvisionalResponse() {
-		RestartInProgressResponse provisionalresponse = null;
+		RestartInProgressResponse provisionalResponse = null;
 		if (!sent) {
-			provisionalresponse = new RestartInProgressResponse(commandEvent.getSource(), ReturnCode.Transaction_Being_Executed);
+			provisionalResponse = new RestartInProgressResponse(commandEvent.getSource(),
+					ReturnCode.Transaction_Being_Executed);
+			provisionalResponse.setTransactionHandle(remoteTID);
 		}
-		return provisionalresponse;
+		return provisionalResponse;
 	}
 }

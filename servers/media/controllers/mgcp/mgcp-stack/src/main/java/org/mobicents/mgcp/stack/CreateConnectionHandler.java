@@ -28,7 +28,6 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.NotificationRequestParms;
-import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -39,7 +38,6 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 

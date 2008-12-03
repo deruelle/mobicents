@@ -259,7 +259,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack , Endpoin
 	protected synchronized void send(DatagramPacket packet) {
 		try {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Sending " + packet.getLength() + " bytes to " + packet.getAddress());
+				logger.debug("Sending " + packet.getLength() + " bytes to " + packet.getAddress() +" port = "+ packet.getPort());
 			}
 			
 			socket.send(packet);
