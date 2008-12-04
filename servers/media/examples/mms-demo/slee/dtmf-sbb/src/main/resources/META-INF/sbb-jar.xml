@@ -25,6 +25,9 @@
                 <cmp-field>
                     <cmp-field-name>userEndpoint</cmp-field-name>
                 </cmp-field>
+                <cmp-field>
+                    <cmp-field-name>star</cmp-field-name>
+                </cmp-field>                
                 <get-child-relation-method>
                     <sbb-alias-ref>AnnouncementSbb</sbb-alias-ref>
                     <get-child-relation-method-name>getAnnouncementSbb</get-child-relation-method-name>
