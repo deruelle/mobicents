@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.mobicents.servers.media</groupId>
+		<artifactId>mobicents-media-server-core</artifactId>
+		<version>1.0.0.CR4-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>gsm-codec</artifactId>
+	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+
+	<properties>
+		<!-- If setting maven.test.skip to false, please set correct value for property test.audio.file at end of this file-->
+		<maven.test.skip>true</maven.test.skip>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>mobicents-media-server-spi</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-jmx</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-system</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_share</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_gsm</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>RELEASE</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

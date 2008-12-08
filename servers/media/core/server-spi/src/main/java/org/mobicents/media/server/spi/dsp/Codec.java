@@ -24,32 +24,31 @@ import org.mobicents.media.format.AudioFormat;
  * @author Oleg Kulikov
  */
 public interface Codec extends Serializable {
-	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(
-                AudioFormat.LINEAR, 8000, 16, 1,
-		AudioFormat.LITTLE_ENDIAN, 
-                AudioFormat.SIGNED);
-        
-	public final static AudioFormat PCMA = new AudioFormat(
-                AudioFormat.ALAW, 8000, 8, 1);
-	public final static AudioFormat PCMU = new AudioFormat(
-                AudioFormat.ULAW, 8000, 8, 1);
+	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
+			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
-	public final static AudioFormat SPEEX = new AudioFormat(
-                AudioFormat.SPEEX, 8000, 8, 1);
-	
-	public final static AudioFormat G729 = new AudioFormat(
-            AudioFormat.G729, 8000, 8, 1);
-	
+	public final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+	public final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+
+	public final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+
+	public final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+
+	public final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
+
 	public Format[] getSupportedInputFormats();
+
 	public Format[] getSupportedOutputFormats(Format fmt);
 
 	public Format[] getSupportedOutputFormats();
+
 	public Format[] getSupportedInputFormats(Format fmt);
-        
-        /**
-         * Perform encoding/decoding procedure.
-         * 
-         * @param buffer the media buffer.
-         */
-        public void process(Buffer buffer);
+
+	/**
+	 * Perform encoding/decoding procedure.
+	 * 
+	 * @param buffer
+	 *            the media buffer.
+	 */
+	public void process(Buffer buffer);
 }

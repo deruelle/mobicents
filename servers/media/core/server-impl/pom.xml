@@ -62,6 +62,11 @@
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>gsm-codec</artifactId>
+			<version>${pom.version}</version>
+		</dependency>		
+		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>
 			<version>1.0.MOBICENTS</version>

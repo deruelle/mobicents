@@ -3,6 +3,7 @@
   <classpathentry kind="src" path="server-impl/src/main/resources"/>
   <classpathentry kind="src" path="server-impl/src/test/java"/>
   <classpathentry kind="src" path="server-impl/src/main/java"/>
+  <classpathentry kind="src" path="gsm/src/main/java"/>
   <classpathentry kind="src" path="server-test/src/main/java"/>
   <classpathentry kind="src" path="server-sar/src/main/resources"/>
   <classpathentry kind="src" path="server-spi/src/main/java"/>
@@ -23,6 +24,8 @@
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/java/stun4j/stun4j/1.0.MOBICENTS/stun4j-1.0.MOBICENTS.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/jspeex/jspeex/0.9.7/jspeex-0.9.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_gsm/0.3.6/tritonus_gsm-0.3.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_share/0.3.6/tritonus_share-0.3.6.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="output" path="target/classes"/>
 </classpath>

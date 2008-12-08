@@ -66,7 +66,7 @@ public class RTPAudioFormat extends AudioFormat {
 		if (enc.equals("pcm")) {
 			return 8;
 		} else if (enc.equals("gsm")) {
-			return 13;
+			return 8;
 		} else if (enc.equals("dvi")) {
 			return 4;
 		} else {
@@ -89,6 +89,8 @@ public class RTPAudioFormat extends AudioFormat {
 		} else if (this.getEncoding().equalsIgnoreCase("speex")) {
 			return 8 * duration;
 		} else if (this.getEncoding().equalsIgnoreCase("g729")) {
+			return duration;
+		} else if (this.getEncoding().equalsIgnoreCase("gsm")) {
 			return duration;
 		}
 		return 0;
