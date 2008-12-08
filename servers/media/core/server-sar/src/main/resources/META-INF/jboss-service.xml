@@ -17,11 +17,11 @@
         <attribute name="Jitter">60</attribute>
         <attribute name="PacketizationPeriod">20</attribute>
         <attribute name="PortRange">1024-65535</attribute>
+        <!--  To enable G729 Codec please look at http://www.mobicents.org/products_media_server.html -->
         <attribute name="AudioFormats">            
             0   = ULAW, 8000, 8, 1;
             8   = ALAW, 8000, 8, 1;
             3   = GSM, 8000, 8, 1;
-            18  = G729, 8000, 8, 1;
 			97  = SPEEX, 8000, 8, 1;            
 			101 = telephone-event/8000
         </attribute>    
