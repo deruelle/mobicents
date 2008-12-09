@@ -25,17 +25,16 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.impl;
+package org.mobicents.mscontrol.events.pkg;
+
+import java.io.Serializable;
+import org.mobicents.mscontrol.events.MsEventIdentifier;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public enum Generator {
-    AUDIO_PLAYER, 
-    AUDIO_RECORDER,
-    DTMF_DETECTOR,
-    DTMF_DETECTOR_RFC2833,
-    CONGESTION,
-    CONNECTION_PARAMETERS
+public interface ConnectionParameters extends Serializable {
+    public final static String PACKAGE_NAME = "org.mobicents.media.events.connection.parameters";
+    public final static MsEventIdentifier ConnectionParameters = new MsEventID(PACKAGE_NAME,"CONNECTION_PARAMETERS");
 }

@@ -21,10 +21,12 @@ import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.impl.events.audio.Recorder;
+import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
 import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 import org.mobicents.media.server.spi.events.pkg.Audio;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 /**
  * 
@@ -90,6 +92,7 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
 		HashMap map = new HashMap();
 		// init audio player
 		map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
 		return map;
 	}
 
@@ -105,7 +108,7 @@ public class IVREndpointImpl extends BaseVirtualEndpoint {
 
 	public String[] getSupportedPackages() {
 		String[] supportedpackages = new String[] { Announcement.PACKAGE_NAME, Audio.PACKAGE_NAME,
-				org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME };
+				org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME ,ConnectionParameters.PACKAGE_NAME};
 		return supportedpackages;
 	}
 

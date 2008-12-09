@@ -28,60 +28,77 @@ package org.mobicents.mscontrol.impl.events;
 
 import java.io.Serializable;
 import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.connection.parameters.ConnectionParametersEvent;
 import org.mobicents.media.server.spi.events.dtmf.DtmfEvent;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.impl.MsNotifyEventImpl;
+import org.mobicents.mscontrol.impl.events.connection.parameters.ConnectionParametersNotifyEventImpl;
 import org.mobicents.mscontrol.impl.events.dtmf.DtmfNotifyEventImpl;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class EventParser implements Serializable {
 
-    public MsNotifyEvent parse(Object source, NotifyEvent evt) {
-        if (evt.getEventID().equals(org.mobicents.media.server.spi.events.pkg.DTMF.DTMF)) {
-            DtmfEvent event = (DtmfEvent) evt;
-            return new DtmfNotifyEventImpl(source, event.getSequence());
-        }
-        String packageName = evt.getEventID().getPackageName();
-        String eventName = evt.getEventID().getEventName();
+	public MsNotifyEvent parse(Object source, NotifyEvent evt) {
+		
+			
+		if (evt.getEventID().equals(
+				org.mobicents.media.server.spi.events.pkg.DTMF.DTMF)) {
+			DtmfEvent event = (DtmfEvent) evt;
+			return new DtmfNotifyEventImpl(source, event.getSequence());
+		} else if (evt
+				.getEventID()
+				.equals(
+						org.mobicents.media.server.spi.events.pkg.ConnectionParameters.ConnectionsParameters)) {
+			ConnectionParametersEvent event = (ConnectionParametersEvent) evt;
+			ConnectionParametersNotifyEventImpl fired = new ConnectionParametersNotifyEventImpl(
+					event.getOctetsSent(), event.getOctetsReceived(), event
+							.getPacketsReceived(), event.getPacketsSent(),
+					event.getPacketsLost(), event.getJitter(), source);
+			return fired;
+		}
+		String packageName = evt.getEventID().getPackageName();
+		String eventName = evt.getEventID().getEventName();
 
-        return new MsNotifyEventImpl(source, new EventID(packageName, eventName));
-    }
+		return new MsNotifyEventImpl(source,
+				new EventID(packageName, eventName));
+	}
 
-    private class EventID implements MsEventIdentifier {
+	private class EventID implements MsEventIdentifier {
 
-        private String packageName;
-        private String eventName;
+		private String packageName;
+		private String eventName;
 
-        protected EventID(String packageName, String eventName) {
-            this.packageName = packageName;
-            this.eventName = eventName;
-        }
+		protected EventID(String packageName, String eventName) {
+			this.packageName = packageName;
+			this.eventName = eventName;
+		}
 
-        public String getPackageName() {
-            return packageName;
-        }
+		public String getPackageName() {
+			return packageName;
+		}
 
-        public String getEventName() {
-            return eventName;
-        }
+		public String getEventName() {
+			return eventName;
+		}
 
-        public String getFqn() {
-            return packageName + "." + eventName;
-        }
+		public String getFqn() {
+			return packageName + "." + eventName;
+		}
 
-        @Override
-        public boolean equals(Object other) {
-            return (other instanceof MsEventIdentifier) &&
-                    ((MsEventIdentifier) other).getFqn().equals(this.getFqn());
-        }
+		@Override
+		public boolean equals(Object other) {
+			return (other instanceof MsEventIdentifier)
+					&& ((MsEventIdentifier) other).getFqn().equals(
+							this.getFqn());
+		}
 
-        @Override
-        public int hashCode() {
-            return (packageName + "." + eventName).hashCode();
-        }
-    }
+		@Override
+		public int hashCode() {
+			return (packageName + "." + eventName).hashCode();
+		}
+	}
 }

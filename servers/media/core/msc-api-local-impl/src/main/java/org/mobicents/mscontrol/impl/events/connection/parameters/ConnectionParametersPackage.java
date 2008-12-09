@@ -25,17 +25,31 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.impl;
+package org.mobicents.mscontrol.impl.events.connection.parameters;
+
+import org.mobicents.mscontrol.events.MsEventIdentifier;
+import org.mobicents.mscontrol.events.MsRequestedEvent;
+import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.pkg.ConnectionParameters;
+import org.mobicents.mscontrol.impl.events.MsPackage;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public enum Generator {
-    AUDIO_PLAYER, 
-    AUDIO_RECORDER,
-    DTMF_DETECTOR,
-    DTMF_DETECTOR_RFC2833,
-    CONGESTION,
-    CONNECTION_PARAMETERS
+public class ConnectionParametersPackage implements MsPackage {
+    public MsRequestedEvent createRequestedEvent(MsEventIdentifier eventID) {
+        if (eventID.equals(ConnectionParameters.ConnectionParameters)) {
+            return new ConnectionParametersRequestedEventImpl();
+        }
+        return null;
+    }
+
+    public MsRequestedSignal createRequestedSignal(MsEventIdentifier eventID) {
+        if (eventID.equals(ConnectionParameters.ConnectionParameters)) {
+            return new ConnectionParametersRequestedSignalImpl();
+        }
+        return null;
+    }
+
 }

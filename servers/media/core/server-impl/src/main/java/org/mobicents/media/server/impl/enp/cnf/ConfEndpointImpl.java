@@ -22,6 +22,7 @@ import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
 import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
@@ -29,6 +30,7 @@ import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 /**
  * 
@@ -57,6 +59,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 		HashMap map = new HashMap();
 		// init audio player
 		map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
+		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
 		return map;
 	}
 
@@ -178,7 +181,7 @@ public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 	}
 
 	public String[] getSupportedPackages() {
-		return new String[] { Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME };
+		return new String[] { Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME ,ConnectionParameters.PACKAGE_NAME};
 	}
 
 	public void onModeChange(Connection connection, ConnectionMode oldMode) {

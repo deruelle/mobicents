@@ -32,12 +32,14 @@ import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
+import org.mobicents.mscontrol.events.pkg.ConnectionParameters;
 import org.mobicents.mscontrol.events.pkg.DTMF;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.mscontrol.events.pkg.MsAudio;
 import org.mobicents.mscontrol.impl.events.MsPackage;
 import org.mobicents.mscontrol.impl.events.announcement.MsAnnouncementPackage;
 import org.mobicents.mscontrol.impl.events.audio.MsAudioPackage;
+import org.mobicents.mscontrol.impl.events.connection.parameters.ConnectionParametersPackage;
 import org.mobicents.mscontrol.impl.events.dtmf.DtmfPackage;
 
 /**
@@ -51,6 +53,7 @@ public class MsEventFactoryImpl implements MsEventFactory {
         packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
         packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());
         packages.put(MsAudio.PACKAGE_NAME, new MsAudioPackage());
+        packages.put(ConnectionParameters.PACKAGE_NAME, new ConnectionParametersPackage());
     }
     
     public MsRequestedSignal createRequestedSignal(MsEventIdentifier signalID) {

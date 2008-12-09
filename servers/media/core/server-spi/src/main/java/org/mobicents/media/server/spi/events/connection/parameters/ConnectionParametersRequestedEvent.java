@@ -25,17 +25,30 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.impl;
+package org.mobicents.media.server.spi.events.connection.parameters;
+
+import org.mobicents.media.server.spi.events.AbstractRequestedEvent;
+import org.mobicents.media.server.spi.events.EventIdentifier;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
+import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public enum Generator {
-    AUDIO_PLAYER, 
-    AUDIO_RECORDER,
-    DTMF_DETECTOR,
-    DTMF_DETECTOR_RFC2833,
-    CONGESTION,
-    CONNECTION_PARAMETERS
+public class ConnectionParametersRequestedEvent extends AbstractRequestedEvent {
+    
+    private String mask;
+    
+    
+    public EventIdentifier getID() {
+        return ConnectionParameters.ConnectionsParameters;
+    }
+
+    public boolean matches(NotifyEvent event) {
+        return event.getEventID().equals(ConnectionParameters.ConnectionsParameters);
+    }
+
+    
 }

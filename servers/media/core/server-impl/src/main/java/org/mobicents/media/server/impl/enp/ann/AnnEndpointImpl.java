@@ -21,8 +21,10 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
 import org.mobicents.media.server.impl.Generator;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 
 /**
@@ -59,7 +61,7 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
         
         //init audio player
         map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
-        
+        map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
         return map;
     }
 
@@ -70,7 +72,7 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
 
 
 	public String[] getSupportedPackages() {
-		String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME};
+		String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME,ConnectionParameters.PACKAGE_NAME};
 		return supportedpackages;
 	}
 

@@ -14,11 +14,15 @@ package org.mobicents.media.server.impl.enp.test;
 import java.util.HashMap;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseVirtualEndpoint;
+import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 /**
  *
@@ -59,7 +63,10 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
 
     @Override
     public HashMap initMediaSources() {
-        return new HashMap();
+    	HashMap map = new HashMap();
+		// init audio player
+		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
+		return map;
     }
 
     @Override
@@ -72,7 +79,7 @@ public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionL
    
 
 	public String[] getSupportedPackages() {
-		return new String[]{};
+		return new String[]{ConnectionParameters.PACKAGE_NAME};
 	}
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {

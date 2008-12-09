@@ -4,7 +4,11 @@ import java.io.File;
 
 import java.util.HashMap;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 public class DFTEndpointImpl extends BaseEndpoint {
 
@@ -53,7 +57,11 @@ public class DFTEndpointImpl extends BaseEndpoint {
 
     @Override
     public HashMap initMediaSources() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    	
+    	HashMap map = new HashMap();
+		// init audio player
+		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
+		return map;
     }
 
     @Override
@@ -72,6 +80,6 @@ public class DFTEndpointImpl extends BaseEndpoint {
     }
 
 	public String[] getSupportedPackages() {		
-		return new String[]{};
+		return new String[]{ConnectionParameters.PACKAGE_NAME};
 	}
 }

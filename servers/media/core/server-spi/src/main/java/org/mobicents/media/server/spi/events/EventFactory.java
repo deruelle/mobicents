@@ -31,9 +31,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import org.mobicents.media.server.spi.events.announcement.AnnouncementPkgFactory;
 import org.mobicents.media.server.spi.events.audio.AudioPkgFactory;
+import org.mobicents.media.server.spi.events.connection.parameters.ConnectionParametersPkgFactory;
 import org.mobicents.media.server.spi.events.dtmf.DtmfPkgFactory;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 import org.mobicents.media.server.spi.events.pkg.Audio;
+import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 import org.mobicents.media.server.spi.events.pkg.DTMF;
 
 /**
@@ -48,6 +50,8 @@ public class EventFactory implements Serializable {
         pkgFactories.put(Announcement.PACKAGE_NAME, new AnnouncementPkgFactory());
         pkgFactories.put(DTMF.PACKAGE_NAME, new DtmfPkgFactory());
         pkgFactories.put(Audio.PACKAGE_NAME, new AudioPkgFactory());
+        pkgFactories.put(ConnectionParameters.PACKAGE_NAME, new ConnectionParametersPkgFactory());
+        
     }
     
     public RequestedSignal createRequestedSignal(String packageName, String signalName) {
