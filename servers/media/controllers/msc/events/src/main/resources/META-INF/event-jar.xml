@@ -182,7 +182,6 @@
 			org.mobicents.mscontrol.MsConnectionEvent
 		</event-class-name>
 	</event-definition>
-
 	<!-- LINK EVENTS -->
 	<event-definition>
 		<description>
@@ -425,6 +424,18 @@
 		<description>Failed.</description>
 		<event-type-name>
 			org.mobicents.media.events.au.FAILED
+		</event-type-name>
+		<event-type-vendor>org.mobicents.media</event-type-vendor>
+		<event-type-version>1.0</event-type-version>
+		<event-class-name>
+			org.mobicents.mscontrol.MsNotifyEvent
+		</event-class-name>
+	</event-definition>
+	<!--  PARAMETERS EVENT -->
+	<event-definition>
+		<description>Delivers parameters</description>
+		<event-type-name>
+			org.mobicents.media.events.connection.parameters.CONNECTION_PARAMETERS
 		</event-type-name>
 		<event-type-vendor>org.mobicents.media</event-type-vendor>
 		<event-type-version>1.0</event-type-version>
