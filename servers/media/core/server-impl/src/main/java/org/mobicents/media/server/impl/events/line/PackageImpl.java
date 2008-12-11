@@ -30,18 +30,19 @@ package org.mobicents.media.server.impl.events.line;
 import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.events.EventPackage;
 import org.mobicents.media.server.spi.events.RequestedSignal;
+import org.mobicents.media.server.spi.events.pkg.Line;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class PackageImpl implements EventPackage {
 
-    public AbstractSignal getSignal(RequestedSignal requestedSignal) {
-//        if (requestedSignal.getID().endsWith("CONGESTION")) {
-//            return new CongestionSignal();
-//        } 
-        return null;
-    }
+	public AbstractSignal getSignal(RequestedSignal requestedSignal) {
+		if (requestedSignal.getID().equals(Line.CONGESTION_TONE)) {
+			return new CongestionSignal();
+		}
+		return null;
+	}
 
 }

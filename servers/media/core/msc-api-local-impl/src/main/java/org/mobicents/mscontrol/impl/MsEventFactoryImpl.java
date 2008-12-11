@@ -28,6 +28,7 @@
 package org.mobicents.mscontrol.impl;
 
 import java.util.HashMap;
+
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
@@ -36,11 +37,13 @@ import org.mobicents.mscontrol.events.pkg.ConnectionParameters;
 import org.mobicents.mscontrol.events.pkg.DTMF;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.mscontrol.events.pkg.MsAudio;
+import org.mobicents.mscontrol.events.pkg.MsLine;
 import org.mobicents.mscontrol.impl.events.MsPackage;
 import org.mobicents.mscontrol.impl.events.announcement.MsAnnouncementPackage;
 import org.mobicents.mscontrol.impl.events.audio.MsAudioPackage;
 import org.mobicents.mscontrol.impl.events.connection.parameters.ConnectionParametersPackage;
 import org.mobicents.mscontrol.impl.events.dtmf.DtmfPackage;
+import org.mobicents.mscontrol.impl.events.line.MsLinePackage;
 
 /**
  *
@@ -54,6 +57,7 @@ public class MsEventFactoryImpl implements MsEventFactory {
         packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());
         packages.put(MsAudio.PACKAGE_NAME, new MsAudioPackage());
         packages.put(ConnectionParameters.PACKAGE_NAME, new ConnectionParametersPackage());
+        packages.put(MsLine.PACKAGE_NAME, new MsLinePackage());
     }
     
     public MsRequestedSignal createRequestedSignal(MsEventIdentifier signalID) {
