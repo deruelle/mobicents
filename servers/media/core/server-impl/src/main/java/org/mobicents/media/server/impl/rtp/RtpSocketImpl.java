@@ -14,7 +14,6 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -44,7 +43,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
 
 	private transient Logger logger = Logger.getLogger(RtpSocketImpl.class);
 	
-    private ArrayList<RtpSocketListener> listeners = new ArrayList();
+    private ArrayList<RtpSocketListener> listeners = new ArrayList<RtpSocketListener>();
     private DatagramSocket socket;
     private int port;
     private boolean stopped = false;

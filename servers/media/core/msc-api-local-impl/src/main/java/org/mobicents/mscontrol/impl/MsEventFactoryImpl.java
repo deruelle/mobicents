@@ -51,7 +51,8 @@ import org.mobicents.mscontrol.impl.events.line.MsLinePackage;
  */
 public class MsEventFactoryImpl implements MsEventFactory {
     
-    private static HashMap<String, MsPackage> packages = new HashMap<String, MsPackage>();
+	//Let us create the HashMap with exact bucket size of 5 as default is 16
+    private static HashMap<String, MsPackage> packages = new HashMap<String, MsPackage>(5, 1);
     static {
         packages.put(MsAnnouncement.PACKAGE_NAME, new MsAnnouncementPackage());
         packages.put(DTMF.PACKAGE_NAME, new DtmfPackage());

@@ -42,44 +42,49 @@ import org.mobicents.media.server.spi.events.pkg.DTMF;
 import org.mobicents.media.server.spi.events.pkg.Line;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class EventFactory implements Serializable {
-    
-    private HashMap<String,PkgFactory> pkgFactories = new HashMap<String,PkgFactory>();
-    
-    public EventFactory() {
-        pkgFactories.put(Announcement.PACKAGE_NAME, new AnnouncementPkgFactory());
-        pkgFactories.put(DTMF.PACKAGE_NAME, new DtmfPkgFactory());
-        pkgFactories.put(Audio.PACKAGE_NAME, new AudioPkgFactory());
-        pkgFactories.put(ConnectionParameters.PACKAGE_NAME, new ConnectionParametersPkgFactory());
-        pkgFactories.put(Line.PACKAGE_NAME, new LinePkgFactory());
-        
-    }
-    
-    public RequestedSignal createRequestedSignal(String packageName, String signalName) {
-        PkgFactory factory = pkgFactories.get(packageName);
-        if (factory == null) {
-            throw new IllegalArgumentException("Unknown package: " + packageName);
-        }
-        RequestedSignal s = factory.createRequestedSignal(signalName);
-        if (s == null) {
-            throw new IllegalArgumentException("Unknown signal name: " + signalName);
-        }
-        return s;
-    }
 
-    public RequestedEvent createRequestedEvent(String packageName, String eventName) {
-        PkgFactory factory = pkgFactories.get(packageName);
-        if (factory == null) {
-            throw new IllegalArgumentException("Unknown package: " + packageName);
-        }
-        RequestedEvent s = factory.createRequestedEvent(eventName);
-        if (s == null) {
-            throw new IllegalArgumentException("Unknown signal name: " + eventName);
-        }
-        return s;
-    }
-    
+	// Let us create the HashMap with exact bucket size of 5 as default is 16
+	private static HashMap<String, PkgFactory> pkgFactories = new HashMap<String, PkgFactory>(5, 1);
+
+	static {
+		// Remember if you increase package, increase the HashMap size above
+		pkgFactories.put(Announcement.PACKAGE_NAME, new AnnouncementPkgFactory());
+		pkgFactories.put(DTMF.PACKAGE_NAME, new DtmfPkgFactory());
+		pkgFactories.put(Audio.PACKAGE_NAME, new AudioPkgFactory());
+		pkgFactories.put(ConnectionParameters.PACKAGE_NAME, new ConnectionParametersPkgFactory());
+		pkgFactories.put(Line.PACKAGE_NAME, new LinePkgFactory());
+	}
+
+	public EventFactory() {
+
+	}
+
+	public RequestedSignal createRequestedSignal(String packageName, String signalName) {
+		PkgFactory factory = pkgFactories.get(packageName);
+		if (factory == null) {
+			throw new IllegalArgumentException("Unknown package: " + packageName);
+		}
+		RequestedSignal s = factory.createRequestedSignal(signalName);
+		if (s == null) {
+			throw new IllegalArgumentException("Unknown signal name: " + signalName);
+		}
+		return s;
+	}
+
+	public RequestedEvent createRequestedEvent(String packageName, String eventName) {
+		PkgFactory factory = pkgFactories.get(packageName);
+		if (factory == null) {
+			throw new IllegalArgumentException("Unknown package: " + packageName);
+		}
+		RequestedEvent s = factory.createRequestedEvent(eventName);
+		if (s == null) {
+			throw new IllegalArgumentException("Unknown signal name: " + eventName);
+		}
+		return s;
+	}
+
 }

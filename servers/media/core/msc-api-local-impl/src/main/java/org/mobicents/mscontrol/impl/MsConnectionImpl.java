@@ -51,316 +51,318 @@ import org.mobicents.mscontrol.impl.events.EventParser;
  */
 public class MsConnectionImpl implements MsConnection, ConnectionListener, NotificationListener {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 7869810097365002045L;
-    private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
-    private String id = (new UID()).toString();
-    private MsConnectionState state;
-    private MsConnectionMode mode = MsConnectionMode.SEND_RECV;
-    private String remoteSdp;
-    protected MsSessionImpl session;
-    private String endpointName;
-    protected Connection connection;
-    private MsEndpointImpl endpoint;
-    protected CopyOnWriteArrayList<MsNotificationListener> connLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
-    protected CopyOnWriteArrayList<MsConnectionListener> connLocalConnectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
-    private EventParser eventParser = new EventParser();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7869810097365002045L;
+	private transient Logger logger = Logger.getLogger(MsConnectionImpl.class);
+	private String id = (new UID()).toString();
+	private MsConnectionState state;
+	private MsConnectionMode mode = MsConnectionMode.SEND_RECV;
+	private String remoteSdp;
+	protected MsSessionImpl session;
+	private String endpointName;
+	protected Connection connection;
+	private MsEndpointImpl endpoint;
+	protected CopyOnWriteArrayList<MsNotificationListener> connLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
+	protected CopyOnWriteArrayList<MsConnectionListener> connLocalConnectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
+	private EventParser eventParser = new EventParser();
 
-    /**
-     * Creates a new instance of MsConnectionImpl
-     * 
-     * @params session the session object to which this connections belongs.
-     * @param endpointName
-     *            the name of the endpoint.
-     */
-    public MsConnectionImpl(MsSessionImpl session, String endpointName) {
-        this.session = session;
-        this.endpointName = endpointName;
+	/**
+	 * Creates a new instance of MsConnectionImpl
+	 * 
+	 * @params session the session object to which this connections belongs.
+	 * @param endpointName
+	 *            the name of the endpoint.
+	 */
+	public MsConnectionImpl(MsSessionImpl session, String endpointName) {
+		this.session = session;
+		this.endpointName = endpointName;
 
-        setState(MsConnectionState.IDLE, MsConnectionEventCause.NORMAL);
+		setState(MsConnectionState.IDLE, MsConnectionEventCause.NORMAL);
 
-    }
+	}
 
-    public String getId() {
-        return this.id;
-    }
+	public String getId() {
+		return this.id;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#getSession();
-     */
-    public MsSession getSession() {
-        return session;
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#getSession();
+	 */
+	public MsSession getSession() {
+		return session;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#getLocalDescriptor();
-     */
-    public String getLocalDescriptor() {
-        return connection != null ? connection.getLocalDescriptor() : null;
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#getLocalDescriptor();
+	 */
+	public String getLocalDescriptor() {
+		return connection != null ? connection.getLocalDescriptor() : null;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#getLocalDescriptor();
-     */
-    public String getRemoteDescriptor() {
-        return connection != null ? connection.getRemoteDescriptor() : null;
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#getLocalDescriptor();
+	 */
+	public String getRemoteDescriptor() {
+		return connection != null ? connection.getRemoteDescriptor() : null;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#getEndpoint();
-     */
-    public MsEndpoint getEndpoint() {
-        return endpoint;
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#getEndpoint();
+	 */
+	public MsEndpoint getEndpoint() {
+		return endpoint;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#addConectionListener(MsConnectionListener);
-     */
-    public void addConnectionListener(MsConnectionListener listener) {
-        connLocalConnectionListeners.add(listener);
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#addConectionListener(MsConnectionListener);
+	 */
+	public void addConnectionListener(MsConnectionListener listener) {
+		connLocalConnectionListeners.add(listener);
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#removeConectionListener(MsConnectionListener);
-     */
-    public void removeConnectionListener(MsConnectionListener listener) {
-        connLocalConnectionListeners.remove(listener);
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#removeConectionListener(MsConnectionListener);
+	 */
+	public void removeConnectionListener(MsConnectionListener listener) {
+		connLocalConnectionListeners.remove(listener);
+	}
 
-    public void addNotificationListener(MsNotificationListener listener) {
-        connLocalNotificationListeners.add(listener);
-    }
+	public void addNotificationListener(MsNotificationListener listener) {
+		connLocalNotificationListeners.add(listener);
+	}
 
-    public void removeNotificationListener(MsNotificationListener listener) {
-        connLocalNotificationListeners.remove(listener);
-    }
+	public void removeNotificationListener(MsNotificationListener listener) {
+		connLocalNotificationListeners.remove(listener);
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#modify();
-     */
-    public void modify(String localDesc, String remoteDesc) {
-        this.remoteSdp = remoteDesc;
-        Runnable tx = endpoint == null ? new CreateTx(this) : new ModifyTx(this);
-        MsProviderImpl.submit(tx);
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#modify();
+	 */
+	public void modify(String localDesc, String remoteDesc) {
+		this.remoteSdp = remoteDesc;
+		Runnable tx = endpoint == null ? new CreateTx(this) : new ModifyTx(this);
+		MsProviderImpl.submit(tx);
+	}
 
-    public MsConnectionMode getMode() {
-        return mode;
-    }
-    
-    public void setMode(MsConnectionMode mode) {
-        this.mode = mode;
-        if (state != MsConnectionState.IDLE) {
-            MsProviderImpl.submit(new ModifyModeTx(this));
-        }
-    }
+	public MsConnectionMode getMode() {
+		return mode;
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.mscontrol.MsConnection#release();
-     */
-    public void release() {
-        if (endpoint != null) {
-            Runnable tx = new DeleteTx();
-            MsProviderImpl.submit(tx);
-        }
-    }
+	public void setMode(MsConnectionMode mode) {
+		this.mode = mode;
+		if (state != MsConnectionState.IDLE) {
+			MsProviderImpl.submit(new ModifyModeTx(this));
+		}
+	}
 
-    private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
-        MsConnectionEventImpl evt = new MsConnectionEventImpl(this, eventID, cause, msg);
-        MsProviderImpl.sendEvent(evt);
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.mscontrol.MsConnection#release();
+	 */
+	public void release() {
+		if (endpoint != null) {
+			Runnable tx = new DeleteTx();
+			MsProviderImpl.submit(tx);
+		}
+	}
 
-    public MsConnectionState getState() {
-        return state;
-    }
+	private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
+		MsConnectionEventImpl evt = new MsConnectionEventImpl(this, eventID, cause, msg);
+		MsProviderImpl.sendEvent(evt);
+	}
 
-    private void setState(MsConnectionState state, MsConnectionEventCause cause) {
-        this.state = state;
-        switch (state) {
-            case IDLE:
-                sendEvent(MsConnectionEventID.CONNECTION_CREATED, cause, null);
-                break;
-            case HALF_OPEN:
-                sendEvent(MsConnectionEventID.CONNECTION_HALF_OPEN, cause, null);
-                break;
-            case OPEN:
-                sendEvent(MsConnectionEventID.CONNECTION_OPEN, cause, null);
-                break;
-            case FAILED:
-                // send event and immediately transit to CLOSED state
-                sendEvent(MsConnectionEventID.CONNECTION_FAILED, cause, null);
-                setState(MsConnectionState.CLOSED, cause);
-                break;
-            case CLOSED:                
-                sendEvent(MsConnectionEventID.CONNECTION_DISCONNECTED, cause, null);
-                session.removeConnection(this);
-        }
-    }
+	public MsConnectionState getState() {
+		return state;
+	}
 
-    @Override
-    public String toString() {
-        return id;
-    }
+	private void setState(MsConnectionState state, MsConnectionEventCause cause) {
+		this.state = state;
+		switch (state) {
+		case IDLE:
+			sendEvent(MsConnectionEventID.CONNECTION_CREATED, cause, null);
+			break;
+		case HALF_OPEN:
+			sendEvent(MsConnectionEventID.CONNECTION_HALF_OPEN, cause, null);
+			break;
+		case OPEN:
+			sendEvent(MsConnectionEventID.CONNECTION_OPEN, cause, null);
+			break;
+		case FAILED:
+			// send event and immediately transit to CLOSED state
+			sendEvent(MsConnectionEventID.CONNECTION_FAILED, cause, null);
+			setState(MsConnectionState.CLOSED, cause);
+			break;
+		case CLOSED:
+			sendEvent(MsConnectionEventID.CONNECTION_DISCONNECTED, cause, null);
+			session.removeConnection(this);
+		}
+	}
 
-    private class CreateTx implements Runnable {
+	@Override
+	public String toString() {
+		return id;
+	}
 
-        private MsConnectionImpl localConnection;
+	private class CreateTx implements Runnable {
 
-        public CreateTx(MsConnectionImpl localConnection) {
-            this.localConnection = localConnection;
-        }
+		private MsConnectionImpl localConnection;
 
-        public void run() {
-            try {
-                endpoint = new MsEndpointImpl(EndpointQuery.lookup(endpointName), session.getProvider());
-                endpointName = endpoint.server.getLocalName();
+		public CreateTx(MsConnectionImpl localConnection) {
+			this.localConnection = localConnection;
+		}
 
-                logger.debug("Media server returns endpoint: " + endpoint.server.getLocalName());
-                endpoint.server.addConnectionListener(localConnection);
-                connection = endpoint.server.createConnection(getConnectionMode(mode));
-                setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
-                //connection.addListener(localConnection);
-                if (remoteSdp != null) {
-                    connection.setRemoteDescriptor(remoteSdp);
-                }
-            } catch (NamingException e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN);
-            } catch (ResourceUnavailableException e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
-            } catch (TooManyConnectionsException e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
-            } catch (SdpException e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
-            } catch (IOException e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
-            } catch (Exception e) {
-                logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
-            }
-        }
-    }
+		public void run() {
+			try {
+				endpoint = new MsEndpointImpl(EndpointQuery.lookup(endpointName), session.getProvider());
+				endpointName = endpoint.server.getLocalName();
 
-    private class ModifyTx implements Runnable {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Media server returns endpoint: " + endpoint.server.getLocalName());
+				}
+				endpoint.server.addConnectionListener(localConnection);
+				connection = endpoint.server.createConnection(getConnectionMode(mode));
+				setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
+				// connection.addListener(localConnection);
+				if (remoteSdp != null) {
+					connection.setRemoteDescriptor(remoteSdp);
+				}
+			} catch (NamingException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN);
+			} catch (ResourceUnavailableException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+			} catch (TooManyConnectionsException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+			} catch (SdpException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
+			} catch (IOException e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+			} catch (Exception e) {
+				logger.error("Creation of Connection failed for Endpoint " + endpointName, e);
+				setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+			}
+		}
+	}
 
-        private MsConnectionImpl localConnection;
+	private class ModifyTx implements Runnable {
 
-        public ModifyTx(MsConnectionImpl localConnection) {
-            this.localConnection = localConnection;
-        }
+		private MsConnectionImpl localConnection;
 
-        public void run() {
-            if (remoteSdp != null) {
-                try {
-                    connection.setRemoteDescriptor(remoteSdp);
-                } catch (SdpException ex) {
-                    logger.error("Setting remote SDP failed", ex);
-                    setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
-                } catch (IOException ex) {
-                    logger.error("Setting remote SDP failed", ex);
-                    setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
-                } catch (ResourceUnavailableException ex) {
-                    logger.error("Setting remote SDP failed", ex);
-                    setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
-                }
-            }
-        }
-    }
+		public ModifyTx(MsConnectionImpl localConnection) {
+			this.localConnection = localConnection;
+		}
 
-    private class ModifyModeTx implements Runnable {
+		public void run() {
+			if (remoteSdp != null) {
+				try {
+					connection.setRemoteDescriptor(remoteSdp);
+				} catch (SdpException ex) {
+					logger.error("Setting remote SDP failed", ex);
+					setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
+				} catch (IOException ex) {
+					logger.error("Setting remote SDP failed", ex);
+					setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
+				} catch (ResourceUnavailableException ex) {
+					logger.error("Setting remote SDP failed", ex);
+					setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
+				}
+			}
+		}
+	}
 
-        private MsConnectionImpl localConnection;
+	private class ModifyModeTx implements Runnable {
 
-        public ModifyModeTx(MsConnectionImpl localConnection) {
-            this.localConnection = localConnection;
-        }
+		private MsConnectionImpl localConnection;
 
-        public void run() {
-            connection.setMode(getConnectionMode(mode));
-        }
-    }
+		public ModifyModeTx(MsConnectionImpl localConnection) {
+			this.localConnection = localConnection;
+		}
 
-    private class DeleteTx implements Runnable {
+		public void run() {
+			connection.setMode(getConnectionMode(mode));
+		}
+	}
 
-        public void run() {
-            if (connection != null) {
-                endpoint.server.deleteConnection(connection.getId());
-            }
-        }
-    }
+	private class DeleteTx implements Runnable {
 
-    public void update(NotifyEvent event) {
-        MsNotifyEvent evt = eventParser.parse(this, event);
-        for (MsNotificationListener listener : session.provider.eventListeners) {
-            listener.update(evt);
-        }
-        for (MsNotificationListener listener : connLocalNotificationListeners) {
-            listener.update(evt);
-        }
-    }
+		public void run() {
+			if (connection != null) {
+				endpoint.server.deleteConnection(connection.getId());
+			}
+		}
+	}
 
-    public void onStateChange(Connection connection, ConnectionState oldState) {
-        if (this.connection != connection) {
-            return;
-        }
-        switch (connection.getState()) {
-            case NULL:
-                setState(MsConnectionState.IDLE, MsConnectionEventCause.NORMAL);
-                break;
-            case HALF_OPEN:
-                setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
-                break;
-            case OPEN:
-                setState(MsConnectionState.OPEN, MsConnectionEventCause.NORMAL);
-                break;
-            case CLOSED:
-                setState(MsConnectionState.CLOSED, MsConnectionEventCause.NORMAL);
-                break;
-        }
-    }
+	public void update(NotifyEvent event) {
+		MsNotifyEvent evt = eventParser.parse(this, event);
+		for (MsNotificationListener listener : session.provider.eventListeners) {
+			listener.update(evt);
+		}
+		for (MsNotificationListener listener : connLocalNotificationListeners) {
+			listener.update(evt);
+		}
+	}
 
-    public void onModeChange(Connection connection, ConnectionMode oldMode) {
-        if (this.connection != connection) {
-            return;
-        }
-        if (connection.getMode() == ConnectionMode.RECV_ONLY) {
-            sendEvent(MsConnectionEventID.MODE_RECV_ONLY, MsConnectionEventCause.NORMAL, "");
-        } else if (connection.getMode() == ConnectionMode.SEND_ONLY) {
-            sendEvent(MsConnectionEventID.MODE_SEND_ONLY, MsConnectionEventCause.NORMAL, "");
-        } else {
-            sendEvent(MsConnectionEventID.MODE_SEND_RECV, MsConnectionEventCause.NORMAL, "");
-        }
-    }
+	public void onStateChange(Connection connection, ConnectionState oldState) {
+		if (this.connection != connection) {
+			return;
+		}
+		switch (connection.getState()) {
+		case NULL:
+			setState(MsConnectionState.IDLE, MsConnectionEventCause.NORMAL);
+			break;
+		case HALF_OPEN:
+			setState(MsConnectionState.HALF_OPEN, MsConnectionEventCause.NORMAL);
+			break;
+		case OPEN:
+			setState(MsConnectionState.OPEN, MsConnectionEventCause.NORMAL);
+			break;
+		case CLOSED:
+			setState(MsConnectionState.CLOSED, MsConnectionEventCause.NORMAL);
+			break;
+		}
+	}
 
-    private ConnectionMode getConnectionMode(MsConnectionMode mode) {
-        if (mode == MsConnectionMode.RECV_ONLY) {
-            return ConnectionMode.RECV_ONLY;
-        } else if (mode == MsConnectionMode.SEND_ONLY) {
-            return ConnectionMode.SEND_ONLY;
-        } else {
-            return ConnectionMode.SEND_RECV;
-        }
-    }
+	public void onModeChange(Connection connection, ConnectionMode oldMode) {
+		if (this.connection != connection) {
+			return;
+		}
+		if (connection.getMode() == ConnectionMode.RECV_ONLY) {
+			sendEvent(MsConnectionEventID.MODE_RECV_ONLY, MsConnectionEventCause.NORMAL, "");
+		} else if (connection.getMode() == ConnectionMode.SEND_ONLY) {
+			sendEvent(MsConnectionEventID.MODE_SEND_ONLY, MsConnectionEventCause.NORMAL, "");
+		} else {
+			sendEvent(MsConnectionEventID.MODE_SEND_RECV, MsConnectionEventCause.NORMAL, "");
+		}
+	}
+
+	private ConnectionMode getConnectionMode(MsConnectionMode mode) {
+		if (mode == MsConnectionMode.RECV_ONLY) {
+			return ConnectionMode.RECV_ONLY;
+		} else if (mode == MsConnectionMode.SEND_ONLY) {
+			return ConnectionMode.SEND_ONLY;
+		} else {
+			return ConnectionMode.SEND_RECV;
+		}
+	}
 }

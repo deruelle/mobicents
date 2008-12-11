@@ -29,13 +29,10 @@ package org.mobicents.mscontrol.impl.events.connection.parameters;
 import org.mobicents.media.server.spi.events.EventFactory;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.connection.parameters.ConnectionParametersRequestedEvent;
-import org.mobicents.media.server.spi.events.dtmf.DtmfRequestedEvent;
 import org.mobicents.mscontrol.events.MsEventAction;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
 import org.mobicents.mscontrol.events.connection.parameters.MsConnectionParametersRequestedEvent;
-import org.mobicents.mscontrol.events.dtmf.MsDtmfRequestedEvent;
 import org.mobicents.mscontrol.events.pkg.ConnectionParameters;
-import org.mobicents.mscontrol.events.pkg.DTMF;
 import org.mobicents.mscontrol.impl.events.BaseRequestedEvent;
 
 /**

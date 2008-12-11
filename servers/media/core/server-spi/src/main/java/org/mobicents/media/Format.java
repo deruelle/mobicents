@@ -12,6 +12,10 @@ public class Format implements Cloneable, Serializable {
 	public static final int NOT_SPECIFIED = -1;
 	public static final int TRUE = 1;
 	public static final int FALSE = 0;
+	
+	public static final int FORMAT_HASHMAP_DEFAULT_INITIAL_CAPACITY = 8;
+	
+	public static final float FORMAT_HASHMAP_DEFAULT_LOAD_FACTOR = 1f;
 
 	protected String encoding;	// allowed to be null
 
