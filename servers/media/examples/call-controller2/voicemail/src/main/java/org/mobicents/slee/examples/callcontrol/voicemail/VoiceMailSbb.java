@@ -50,6 +50,9 @@ import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
 import javax.slee.facilities.TimerPreserveMissed;
 
+import net.java.slee.resource.sip.DialogActivity;
+import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
+
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsEndpoint;
@@ -70,7 +73,6 @@ import org.mobicents.mscontrol.events.pkg.MsAudio;
 import org.mobicents.slee.examples.callcontrol.common.SubscriptionProfileSbb;
 import org.mobicents.slee.examples.callcontrol.profile.CallControlProfileCMP;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
 
 /**
  * Voice Mail service logic using SIP RA with dialog support and Media RA.
@@ -148,8 +150,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				}
 
 				// Attaching to SIP Dialog activity
-				Dialog dial = getSipFactoryProvider().getSipProvider().getNewDialog((Transaction) st);
-				ActivityContextInterface dialogAci = sipACIF.getActivityContextInterface(dial);
+				Dialog dial = getSipFactoryProvider().getNewDialog((Transaction) st);
+				ActivityContextInterface dialogAci = sipACIF.getActivityContextInterface((DialogActivity)dial);
 
 				// attach this SBB object to the Dialog activity to receive
 				// subsequent events on this Dialog
@@ -249,8 +251,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		} catch (ParseException ex) {
 		}
 
-		String localAddress = getSipFactoryProvider().getSipProvider().getListeningPoints()[0].getIPAddress();
-		int localPort = getSipFactoryProvider().getSipProvider().getListeningPoints()[0].getPort();
+		String localAddress = getSipFactoryProvider().getListeningPoints()[0].getIPAddress();
+		int localPort = getSipFactoryProvider().getListeningPoints()[0].getPort();
 
 		javax.sip.address.Address contactAddress = null;
 		try {
@@ -448,7 +450,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private void sendByeRequest() {
 		log.info("########## VOICE MAIL SBB: sendByRequest ##########");
 		try {
-			SipProvider sipProvider = getSipFactoryProvider().getSipProvider();
+			SipProvider sipProvider = getSipFactoryProvider();
 			Dialog dialog = this.getServerTransaction().getDialog();
 			Request request = dialog.createRequest(Request.BYE);
 			ClientTransaction ct = sipProvider.getNewClientTransaction(request);

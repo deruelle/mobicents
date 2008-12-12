@@ -21,9 +21,11 @@ import javax.slee.SbbID;
 import javax.slee.nullactivity.NullActivityContextInterfaceFactory;
 import javax.slee.nullactivity.NullActivityFactory;
 
+import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipFactoryProvider;
+
 import org.mobicents.slee.resource.tts.ratype.TTSActivityContextInterfaceFactory;
 import org.mobicents.slee.resource.tts.ratype.TTSProvider;
 import org.mobicents.slee.util.CacheException;
@@ -55,7 +57,7 @@ public abstract class CommonSbb implements Sbb {
 
 	private SipUtils sipUtils;
 
-	private SipFactoryProvider factoryProvider;
+	
 
 	private SipProvider sipProvider;
 
@@ -108,11 +110,10 @@ public abstract class CommonSbb implements Sbb {
 			sipUtils = SipUtilsFactorySingleton.getInstance().getSipUtils();
 
 			// Getting JAIN SIP Resource Adaptor interfaces
-			factoryProvider = (SipFactoryProvider) ctx
+			sipProvider = (SleeSipProvider) ctx
 					.lookup("slee/resources/jainsip/1.2/provider");
 
-			sipProvider = factoryProvider.getSipProvider();
-
+			
 			sipActivityContextInterfaceFactory = (SipActivityContextInterfaceFactory) ctx
 					.lookup("slee/resources/jainsip/1.2/acifactory");
 

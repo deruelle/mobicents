@@ -74,14 +74,16 @@ import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.sip.SipFactoryProvider;
+
 
 public class SipUtilsImpl implements SipUtils {
 
 	private static Logger log = Logger.getLogger(SipUtilsImpl.class);
 
-	private SipProvider sipProvider;
+	private SleeSipProvider sipProvider;
 
 	private HeaderFactory headerFactory;
 
@@ -89,7 +91,7 @@ public class SipUtilsImpl implements SipUtils {
 
 	private AddressFactory addressFactory;
 
-	public SipUtilsImpl(SipProvider sipProvider, HeaderFactory headerFactory,
+	public SipUtilsImpl(SleeSipProvider sipProvider, HeaderFactory headerFactory,
 			MessageFactory messageFactory, AddressFactory addressFactory) {
 		this.sipProvider = sipProvider;
 		this.headerFactory = headerFactory;
@@ -170,7 +172,7 @@ public class SipUtilsImpl implements SipUtils {
 		try {
 			Context myEnv = (Context) new InitialContext()
 					.lookup("java:comp/env");
-			SipFactoryProvider factoryProvider = (SipFactoryProvider) myEnv
+			SleeSipProvider factoryProvider = (SleeSipProvider) myEnv
 					.lookup("slee/resources/jainsip/1.2/provider");
 			addressFactory = factoryProvider.getAddressFactory();
 		} catch (NamingException e) {

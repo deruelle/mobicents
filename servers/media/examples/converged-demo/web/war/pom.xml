@@ -79,7 +79,7 @@
 			<exclusions>
 				<exclusion>
 					<groupId>org.mobicents.resources</groupId>
-					<artifactId>sip-ra</artifactId>
+					<artifactId>sip11-ra</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.mobicents.resources</groupId>

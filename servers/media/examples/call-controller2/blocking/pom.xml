@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
-			<artifactId>sip-ratype</artifactId>
+			<artifactId>sip11-ratype</artifactId>
 			<version>${mobicents.servers.jainslee.version}</version>
 		</dependency>
 	</dependencies>

@@ -40,6 +40,10 @@ import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
 import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
+import org.mobicents.mscontrol.events.connection.parameters.MsConnectionParametersNotifyEvent;
+import org.mobicents.mscontrol.events.connection.parameters.MsConnectionParametersRequestedSignal;
+
+import org.mobicents.mscontrol.events.pkg.ConnectionParameters;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
@@ -102,6 +106,31 @@ public abstract class AnnouncementSbb implements Sbb {
     }
 
     public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+    	MsEventFactory eventFactory = msProvider.getEventFactory();
+
+    	MsConnectionParametersRequestedSignal paramSignal = null;
+    	paramSignal = (MsConnectionParametersRequestedSignal) eventFactory.createRequestedSignal(ConnectionParameters.ConnectionParameters);
+        
+
+        MsRequestedEvent onCompleted = null;
+        MsRequestedEvent onFailed = null;
+
+        onCompleted = eventFactory.createRequestedEvent(ConnectionParameters.ConnectionParameters);
+        onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+       
+
+        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{paramSignal};
+        MsRequestedEvent[] requestedEvents = new MsRequestedEvent[]{onCompleted};
+        MsLink link=this.getLink();
+        link.getEndpoints()[1].execute(requestedSignals, requestedEvents, link);
+       // setIndex(getIndex() + 1);
+    }
+
+    public void onConnectionParameters(MsNotifyEvent evt, ActivityContextInterface aci) {
+    	System.out.println("RECEIVED STATS: "+evt);
+    	MsConnectionParametersNotifyEvent stats=(MsConnectionParametersNotifyEvent) evt;
+    	System.out.println("1--- "+stats.getJitter()+"; "+stats.getOctetsReceived()+"; "+stats.getOctetsSent()+"; "+stats.getPacketsReceived()+"; "+stats.getPacketsSent()+"; "+stats.getPacketsLost());
         MsLink link = this.getLink();
         if (this.getIndex() < this.getSequence().size()) {
             playNext(link);
@@ -115,7 +144,7 @@ public abstract class AnnouncementSbb implements Sbb {
             playNext(link);
         }
     }
-
+    
     public void playNext(MsLink link) {
         String url = (String) this.getSequence().get(this.getIndex());
         MsEventFactory eventFactory = msProvider.getEventFactory();

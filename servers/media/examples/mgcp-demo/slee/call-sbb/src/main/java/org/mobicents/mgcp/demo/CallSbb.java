@@ -30,8 +30,10 @@ import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
 
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface;
+
 
 /**
  * This SBB just acts as decision maker. For 1010 the INVITE event is routed to
@@ -50,7 +52,7 @@ public abstract class CallSbb implements Sbb {
 	private SbbContext sbbContext;
 
 	// SIP
-	private SipResourceAdaptorSbbInterface fp;
+	private SleeSipProvider provider;
 
 	private MessageFactory messageFactory;
 
@@ -117,9 +119,9 @@ public abstract class CallSbb implements Sbb {
 			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 
 			// initialize SIP API
-			fp = (SipResourceAdaptorSbbInterface) ctx.lookup("slee/resources/jainsip/1.2/provider");
+			provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
 
-			messageFactory = fp.getMessageFactory();
+			messageFactory = provider.getMessageFactory();
 
 		} catch (Exception ne) {
 			logger.error("Could not set SBB context:", ne);

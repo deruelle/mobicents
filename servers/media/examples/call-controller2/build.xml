@@ -12,7 +12,7 @@
 	</target>
 
 	<target name="deploy-all" depends="init">
-		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip11/">
 			<arg value="install"/>
 		</exec>
 
@@ -50,7 +50,7 @@
 			<arg value="clean" />
 		</exec>
 
-		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip/">
+		<exec executable="${executable}" dir="${home}/../../../jain-slee/resources/sip11/">
 			<arg value="clean"/>
 		</exec>
 	</target>

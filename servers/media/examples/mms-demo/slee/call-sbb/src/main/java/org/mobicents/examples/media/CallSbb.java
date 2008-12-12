@@ -39,6 +39,11 @@ import javax.slee.CreateException;
 import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
+
+import net.java.slee.resource.sip.DialogActivity;
+import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
@@ -46,8 +51,7 @@ import org.mobicents.mscontrol.MsConnectionEventCause;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface;
+
 
 /**
  *
@@ -61,8 +65,8 @@ public abstract class CallSbb implements Sbb {
     public final static String CONF_DEMO = "1012";
     public final static String RECORDER_DEMO = "1013";
     private SbbContext sbbContext;
-    private SipResourceAdaptorSbbInterface fp;
-    private SipProvider sipProvider;
+    
+    private SleeSipProvider sipProvider;
     private AddressFactory addressFactory;
     private HeaderFactory headerFactory;
     private MessageFactory messageFactory;
@@ -101,7 +105,7 @@ public abstract class CallSbb implements Sbb {
         try {
             Dialog dialog = sipProvider.getNewDialog(evt.getServerTransaction());
             dialog.terminateOnBye(true);
-            daci = acif.getActivityContextInterface(dialog);
+            daci = acif.getActivityContextInterface((DialogActivity)dialog);
             daci.attach(sbbContext.getSbbLocalObject());
         } catch (Exception e) {
             logger.error("Error during dialog creation", e);
@@ -300,11 +304,11 @@ public abstract class CallSbb implements Sbb {
             Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 
             //initialize SIP API
-            fp = (SipResourceAdaptorSbbInterface) ctx.lookup("slee/resources/jainsip/1.2/provider");
-            sipProvider = fp.getSipProvider();
-            addressFactory = fp.getAddressFactory();
-            headerFactory = fp.getHeaderFactory();
-            messageFactory = fp.getMessageFactory();
+            sipProvider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
+           
+            addressFactory = sipProvider.getAddressFactory();
+            headerFactory = sipProvider.getHeaderFactory();
+            messageFactory = sipProvider.getMessageFactory();
             acif = (SipActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainsip/1.2/acifactory");
 
             //initialize media api

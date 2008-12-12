@@ -269,7 +269,7 @@ public abstract class CallForwardingSbb extends SubscriptionProfileSbb implement
 		onNonInviteEvent(event, localAci);
 	}
 
-	public void onCancel(javax.sip.RequestEvent event, CallForwardingSbbActivityContextInterface localAci) {
+	public void onCancel(net.java.slee.resource.sip.CancelRequestEvent event, CallForwardingSbbActivityContextInterface localAci) {
 
 		onNonInviteEvent(event, localAci);
 	}

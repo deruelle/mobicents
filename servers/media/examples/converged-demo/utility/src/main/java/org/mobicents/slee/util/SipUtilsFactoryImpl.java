@@ -36,12 +36,13 @@ package org.mobicents.slee.util;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sip.SipProvider;
 import javax.sip.address.AddressFactory;
 import javax.sip.header.HeaderFactory;
 import javax.sip.message.MessageFactory;
 
-import org.mobicents.slee.resource.sip.SipFactoryProvider;
+import net.java.slee.resource.sip.SleeSipProvider;
+
+
 
 public class SipUtilsFactoryImpl implements SipUtilsFactory {
 
@@ -60,19 +61,19 @@ public class SipUtilsFactoryImpl implements SipUtilsFactory {
 		MessageFactory messageFactory = null;
 		AddressFactory addressFactory = null;
 		HeaderFactory headerFactory = null;
-		SipProvider sipProvider = null;
+		SleeSipProvider sipProvider = null;
 		
 		
 		Context myEnv = (Context) new InitialContext()
 				.lookup(jndiEnvPath);
 		// Getting JAIN SIP Resource Adaptor interfaces
-		SipFactoryProvider factoryProvider = (SipFactoryProvider) myEnv
+		sipProvider = (SleeSipProvider) myEnv
 				.lookup(jndiSipFactoryProviderPath);
 
-		addressFactory = factoryProvider.getAddressFactory();
-		headerFactory = factoryProvider.getHeaderFactory();
-		messageFactory = factoryProvider.getMessageFactory();
-		sipProvider = factoryProvider.getSipProvider();
+		addressFactory = sipProvider.getAddressFactory();
+		headerFactory = sipProvider.getHeaderFactory();
+		messageFactory = sipProvider.getMessageFactory();
+		
 					
 		return new SipUtilsImpl(sipProvider, headerFactory, messageFactory, addressFactory);
 	}

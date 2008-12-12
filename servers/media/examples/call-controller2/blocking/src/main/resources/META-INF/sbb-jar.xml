@@ -32,9 +32,9 @@
 		<event event-direction="Receive" initial-event="True">
 			<event-name>Invite</event-name>
 			<event-type-ref>
-				<event-type-name>javax.sip.message.Request.INVITE</event-type-name>
-				<event-type-vendor>javax.sip</event-type-vendor>
-				<event-type-version>1.1</event-type-version>
+					<event-type-name>javax.sip.message.Request.INVITE</event-type-name>
+					<event-type-vendor>net.java.slee</event-type-vendor>
+					<event-type-version>1.2</event-type-version>
 			</event-type-ref>
 			<initial-event-selector-method-name>callIDSelect</initial-event-selector-method-name>
 		</event>

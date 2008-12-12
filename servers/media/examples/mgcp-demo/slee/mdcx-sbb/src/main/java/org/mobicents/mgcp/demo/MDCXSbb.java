@@ -57,10 +57,12 @@ import javax.slee.UnrecognizedActivityException;
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 import net.java.slee.resource.mgcp.MgcpConnectionActivity;
+import net.java.slee.resource.sip.DialogActivity;
+import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
+import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
-import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipResourceAdaptorSbbInterface;
+
 
 /**
  * 
@@ -78,8 +80,7 @@ public abstract class MDCXSbb implements Sbb {
 	private SbbContext sbbContext;
 
 	// SIP
-	private SipResourceAdaptorSbbInterface fp;
-	private SipProvider sipProvider;
+	private SleeSipProvider provider;;
 	private AddressFactory addressFactory;
 	private HeaderFactory headerFactory;
 	private MessageFactory messageFactory;
@@ -106,9 +107,9 @@ public abstract class MDCXSbb implements Sbb {
 		// create Dialog and attach SBB to the Dialog Activity
 		ActivityContextInterface daci = null;
 		try {
-			Dialog dialog = sipProvider.getNewDialog(evt.getServerTransaction());
+			Dialog dialog = provider.getNewDialog(evt.getServerTransaction());
 			dialog.terminateOnBye(true);
-			daci = acif.getActivityContextInterface(dialog);
+			daci = acif.getActivityContextInterface((DialogActivity)dialog);
 			daci.attach(sbbContext.getSbbLocalObject());
 		} catch (Exception e) {
 			logger.error("Error during dialog creation", e);
@@ -201,8 +202,8 @@ public abstract class MDCXSbb implements Sbb {
 		} catch (ParseException ex) {
 		}
 
-		String localAddress = sipProvider.getListeningPoints()[0].getIPAddress();
-		int localPort = sipProvider.getListeningPoints()[0].getPort();
+		String localAddress = provider.getListeningPoints()[0].getIPAddress();
+		int localPort = provider.getListeningPoints()[0].getPort();
 
 		Address contactAddress = null;
 		try {
@@ -280,11 +281,11 @@ public abstract class MDCXSbb implements Sbb {
 			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 
 			// initialize SIP API
-			fp = (SipResourceAdaptorSbbInterface) ctx.lookup("slee/resources/jainsip/1.2/provider");
-			sipProvider = fp.getSipProvider();
-			addressFactory = fp.getAddressFactory();
-			headerFactory = fp.getHeaderFactory();
-			messageFactory = fp.getMessageFactory();
+			provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
+			
+			addressFactory = provider.getAddressFactory();
+			headerFactory = provider.getHeaderFactory();
+			messageFactory = provider.getMessageFactory();
 			acif = (SipActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainsip/1.2/acifactory");
 
 			// initialize media api

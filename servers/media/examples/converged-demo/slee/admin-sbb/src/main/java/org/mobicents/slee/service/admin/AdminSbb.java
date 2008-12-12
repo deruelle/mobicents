@@ -44,6 +44,8 @@ import javax.slee.facilities.TimerID;
 import javax.slee.facilities.TimerOptions;
 import javax.slee.nullactivity.NullActivity;
 
+import net.java.slee.resource.sip.DialogActivity;
+
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
 import org.mobicents.mscontrol.MsEndpoint;
@@ -270,8 +272,7 @@ public abstract class AdminSbb extends CommonSbb {
 				logger.debug("Obtained dialog in onThirdPCCTriggerEvent : callId = " + dialog.getCallId().getCallId());
 			}
 			// Get activity context from factory
-			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface(
-					dialog);
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface((DialogActivity)dialog);
 
 			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
 					.getActivityContextInterface(ct);

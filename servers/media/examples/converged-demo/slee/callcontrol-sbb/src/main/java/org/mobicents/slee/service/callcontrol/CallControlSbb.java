@@ -62,6 +62,10 @@ import javax.slee.SbbContext;
 import javax.slee.SbbLocalObject;
 import javax.slee.UnrecognizedActivityException;
 
+import net.java.slee.resource.sip.DialogActivity;
+import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
 import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
@@ -70,8 +74,6 @@ import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.sip.SipFactoryProvider;
 import org.mobicents.slee.service.common.SimpleCallFlowRequestState;
 import org.mobicents.slee.service.common.SimpleCallFlowResponseState;
 import org.mobicents.slee.service.common.SimpleCallFlowState;
@@ -294,10 +296,10 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			Context myEnv = (Context) new InitialContext()
 					.lookup("java:comp/env");
 			// Getting JAIN SIP Resource Adaptor interfaces
-			SipFactoryProvider factoryProvider = (SipFactoryProvider) myEnv
+			sipProvider = (SleeSipProvider) myEnv
 					.lookup("slee/resources/jainsip/1.2/provider");
 
-			sipProvider = factoryProvider.getSipProvider();
+			
 
 			activityContextInterfaceFactory = (SipActivityContextInterfaceFactory) myEnv
 					.lookup("slee/resources/jainsip/1.2/acifactory");
@@ -474,7 +476,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			try {
 
 				ActivityContextInterface daci = activityContextInterfaceFactory
-						.getActivityContextInterface(currentDialog);
+						.getActivityContextInterface((DialogActivity)currentDialog);
 				daci.attach(sbbContext.getSbbLocalObject());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1208,7 +1210,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 			try {
 				ActivityContextInterface sipACI = activityContextInterfaceFactory
-						.getActivityContextInterface(dialog);
+						.getActivityContextInterface((DialogActivity)dialog);
 				sipACI.attach(sbbLocalObject);
 				sipACI.attach(this.getParentCmp());
 			} catch (UnrecognizedActivityException aci) {

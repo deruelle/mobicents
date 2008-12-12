@@ -33,10 +33,12 @@ import javax.slee.profile.UnrecognizedAttributeException;
 import javax.slee.profile.UnrecognizedProfileNameException;
 import javax.slee.profile.UnrecognizedProfileTableNameException;
 
+import net.java.slee.resource.sip.SleeSipProvider;
+
 import org.apache.log4j.Logger;
 import org.mobicents.slee.examples.callcontrol.profile.CallControlProfileCMP;
 import org.mobicents.slee.examples.callcontrol.profile.ProfileCreator;
-import org.mobicents.slee.resource.sip.SipFactoryProvider;
+
 
 /**
  * Base SBB offering profile lookup funcationality
@@ -55,7 +57,7 @@ public abstract class SubscriptionProfileSbb implements Sbb {
 			// list or sbb-jar (check entity-bindning) for proper JNDI path!!!!"
             Context myEnv = (Context) new InitialContext().lookup("java:comp/env");
             // Getting JAIN SIP Resource Adaptor interfaces
-			fp = (SipFactoryProvider) myEnv.lookup("slee/resources/jainsip/1.2/provider");
+			fp = (SleeSipProvider) myEnv.lookup("slee/resources/jainsip/1.2/provider");
             // To create Address objects from a particular implementation of JAIN SIP
             addressFactory = fp.getAddressFactory();
 	        // To create Request and Response messages from a particular implementation of JAIN SIP    	                       
@@ -140,14 +142,14 @@ public abstract class SubscriptionProfileSbb implements Sbb {
 
     protected final SbbLocalObject getSbbLocalObject() { return sbbContext.getSbbLocalObject(); }
     
-    protected final SipFactoryProvider getSipFactoryProvider() { return fp; }
+    protected final SleeSipProvider getSipFactoryProvider() { return fp; }
     
     protected final AddressFactory getAddressFactory() { return addressFactory; }
     
     protected final MessageFactory getMessageFactory() { return messageFactory; }
     	
 	private SbbContext sbbContext;
-	private SipFactoryProvider fp;
+	private SleeSipProvider fp;
 	private AddressFactory addressFactory;
 	private MessageFactory messageFactory;
 	private ProfileFacility profileFacility;

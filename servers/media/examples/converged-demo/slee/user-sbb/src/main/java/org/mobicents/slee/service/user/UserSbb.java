@@ -33,6 +33,8 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 import javax.slee.nullactivity.NullActivity;
 
+import net.java.slee.resource.sip.DialogActivity;
+
 import org.apache.log4j.Logger;
 import org.mobicents.examples.convergeddemo.seam.pojo.Order;
 import org.mobicents.mscontrol.MsEndpoint;
@@ -174,8 +176,7 @@ public abstract class UserSbb extends CommonSbb {
 			}
 
 			// Get activity context from factory
-			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface(
-					dialog);
+			ActivityContextInterface sipACI = getSipActivityContextInterfaceFactory().getActivityContextInterface((DialogActivity)dialog);
 
 			ActivityContextInterface clientSipACI = getSipActivityContextInterfaceFactory()
 					.getActivityContextInterface(ct);
