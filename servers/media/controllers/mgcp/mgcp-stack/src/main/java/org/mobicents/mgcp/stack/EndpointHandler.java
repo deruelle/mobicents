@@ -395,7 +395,8 @@ public class EndpointHandler {
 				this.stack.removeEndpointHandler(this.endpointId);
 			}finally
 			{
-				this.executor.shutdownNow();
+				//We have a pool now, we dont kill them :}
+				//this.executor.shutdownNow();
 			}
 		}
 	}
@@ -426,7 +427,7 @@ public class EndpointHandler {
 	}
 
 	public void setUseFake(boolean b) {
-		// TODO Auto-generated method stub
+		this.useFakeId=b;
 		
 	}
 

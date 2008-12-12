@@ -70,10 +70,19 @@ public class MessageHandler {
 	}
 
 	public boolean isRequest(String header) {
-		Matcher m = p.matcher(header);
-		return m.matches();
-		// return header.matches("[\\w]{4}(\\s|\\S)*");
-	}
+        header = header.trim();
+       
+        char ch = header.charAt(0);
+       
+        if(Character.isDigit(ch)){
+            return false;
+        }
+        return true;
+        //Dont use matcher due to bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6337993
+        // Matcher m = p.matcher(header);
+        // return m.matches();
+        // return header.matches("[\\w]{4}(\\s|\\S)*");
+    }
 
 	
 
