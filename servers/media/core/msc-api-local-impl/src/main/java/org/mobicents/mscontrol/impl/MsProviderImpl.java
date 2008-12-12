@@ -35,8 +35,6 @@ import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionListener;
-import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.events.MsEventFactory;
 
 import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
@@ -61,8 +59,8 @@ public class MsProviderImpl implements MsProvider, Serializable {
 	protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
 	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
-	protected static transient ExecutorService pool = Executors.newFixedThreadPool(5, new ThreadFactoryImpl());
-	private static transient QueuedExecutor eventQueue = new QueuedExecutor();
+	protected static transient ExecutorService pool = Executors.newFixedThreadPool(10, new ThreadFactoryImpl());
+	//private static transient QueuedExecutor eventQueue = new QueuedExecutor();
 
 	/** Creates a new instance of MsProviderImpl */
 	public MsProviderImpl() {
@@ -142,18 +140,6 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		eventListeners.remove(listener);
 	}
 
-	public MsSignalGenerator getSignalGenerator(String endpointName) {
-		// MsSignalGenerator msSignalGenerator = new MsSignalGeneratorImpl(this,
-		// endpointName);
-		return null;// msSignalGenerator;
-	}
-
-	public MsSignalDetector getSignalDetector(String endpointName) {
-		// MsSignalDetector signalDetectror = new MsSignalDetectorImpl(this,
-		// endpointName);
-		return null;// signalDetectror;
-	}
-
 	public MsConnection getMsConnection(String msConnectionId) {
 
 		for (MsSession e : sessions) {
@@ -194,17 +180,17 @@ public class MsProviderImpl implements MsProvider, Serializable {
 		return msLinkList;
 	}
 
-	protected static synchronized void submit(Runnable task) {
+	protected static  void submit(Runnable task) {
 		pool.submit(task);
 	}
 
-	protected static synchronized void sendEvent(Runnable event) {
-		try {
-			eventQueue.execute(event);
-		} catch (InterruptedException e) {
-			logger.error("Firing of event failed " + event, e);
-		}
-	}
+	//protected static synchronized void sendEvent(Runnable event) {
+	//	try {
+	//		eventQueue.execute(event);
+	//	} catch (InterruptedException e) {
+	//		logger.error("Firing of event failed " + event, e);
+	//	}
+	//}
 
 	static class ThreadFactoryImpl implements ThreadFactory {
 

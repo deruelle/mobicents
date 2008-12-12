@@ -17,6 +17,7 @@ package org.mobicents.mscontrol.impl;
 
 import java.io.IOException;
 import java.rmi.server.UID;
+import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.naming.NamingException;
@@ -49,7 +50,7 @@ import org.mobicents.mscontrol.impl.events.EventParser;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class MsConnectionImpl implements MsConnection, ConnectionListener, NotificationListener {
+public class MsConnectionImpl extends MsActionPerformer implements MsConnection, ConnectionListener, NotificationListener {
 
 	/**
 	 * 
@@ -67,7 +68,7 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 	protected CopyOnWriteArrayList<MsNotificationListener> connLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 	protected CopyOnWriteArrayList<MsConnectionListener> connLocalConnectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
 	private EventParser eventParser = new EventParser();
-
+    
 	/**
 	 * Creates a new instance of MsConnectionImpl
 	 * 
@@ -149,44 +150,53 @@ public class MsConnectionImpl implements MsConnection, ConnectionListener, Notif
 		connLocalNotificationListeners.remove(listener);
 	}
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.mscontrol.MsConnection#modify();
-	 */
-	public void modify(String localDesc, String remoteDesc) {
-		this.remoteSdp = remoteDesc;
-		Runnable tx = endpoint == null ? new CreateTx(this) : new ModifyTx(this);
-		MsProviderImpl.submit(tx);
-	}
 
-	public MsConnectionMode getMode() {
-		return mode;
-	}
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.mscontrol.MsConnection#modify();
+     */
+    public void modify(String localDesc, String remoteDesc) {
+        this.remoteSdp = remoteDesc;
+        Runnable tx = endpoint == null ? new CreateTx(this) : new ModifyTx(this);
+        //MsProviderImpl.submit(tx);
+        super.submit(tx);
+    }
 
-	public void setMode(MsConnectionMode mode) {
-		this.mode = mode;
-		if (state != MsConnectionState.IDLE) {
-			MsProviderImpl.submit(new ModifyModeTx(this));
-		}
-	}
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.mscontrol.MsConnection#release();
-	 */
-	public void release() {
-		if (endpoint != null) {
-			Runnable tx = new DeleteTx();
-			MsProviderImpl.submit(tx);
-		}
-	}
 
-	private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
-		MsConnectionEventImpl evt = new MsConnectionEventImpl(this, eventID, cause, msg);
-		MsProviderImpl.sendEvent(evt);
-	}
+    public MsConnectionMode getMode() {
+        return mode;
+    }
+    
+    public void setMode(MsConnectionMode mode) {
+        this.mode = mode;
+        if (state != MsConnectionState.IDLE) {
+            //MsProviderImpl.submit(new ModifyModeTx(this));
+        	super.submit(new ModifyModeTx(this));
+        }
+    }
+
+
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.mscontrol.MsConnection#release();
+     */
+    public void release() {
+        if (endpoint != null) {
+            Runnable tx = new DeleteTx();
+            //MsProviderImpl.submit(tx);
+            super.submit(tx);
+        }
+    }
+
+    private synchronized void sendEvent(MsConnectionEventID eventID, MsConnectionEventCause cause, String msg) {
+        MsConnectionEventImpl evt = new MsConnectionEventImpl(this, eventID, cause, msg);
+        //MsProviderImpl.sendEvent(evt);
+        super.submit(evt);
+    }
+
 
 	public MsConnectionState getState() {
 		return state;

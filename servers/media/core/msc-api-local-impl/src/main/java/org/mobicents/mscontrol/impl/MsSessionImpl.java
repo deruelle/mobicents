@@ -35,7 +35,7 @@ import org.mobicents.mscontrol.MsSessionState;
  * @author Oleg Kulikov
  * @author amit.bhayani
  */
-public class MsSessionImpl implements MsSession {
+public class MsSessionImpl extends MsActionPerformer implements MsSession {
 
     /**
      * 
@@ -111,7 +111,8 @@ public class MsSessionImpl implements MsSession {
      */
     private void sendEvent(MsSessionEventID eventID, MsSessionEventCause eventCause, Object causeObject) {
         MsSessionEventImpl evt = new MsSessionEventImpl(this, eventID, eventCause, causeObject);
-        MsProviderImpl.sendEvent(evt);
+        //MsProviderImpl.sendEvent(evt);
+        super.submit(evt);
     }
 
     /**

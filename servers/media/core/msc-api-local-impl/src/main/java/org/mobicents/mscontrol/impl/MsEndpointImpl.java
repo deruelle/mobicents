@@ -46,7 +46,7 @@ import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
  * @author Oleg Kulikov
  * @author amit.bhayani
  */
-public class MsEndpointImpl implements MsEndpoint {
+public class MsEndpointImpl extends MsActionPerformer implements MsEndpoint {
 
     protected Endpoint server;
     private MsProvider msprovider;
@@ -85,17 +85,20 @@ public class MsEndpointImpl implements MsEndpoint {
     }
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events) {
-        MsProviderImpl.submit(new Tx(signals, events, null, null));
+        //MsProviderImpl.submit(new Tx(signals, events, null, null));
+    	super.submit(new Tx(signals, events, null, null));
     }
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsConnection connection) {
         String connectionID = ((MsConnectionImpl) connection).connection.getId();
-        MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsConnectionImpl) connection));
+        //MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsConnectionImpl) connection));
+        super.submit(new Tx(signals, events, connectionID, (MsConnectionImpl) connection));
     }
 
     public void execute(MsRequestedSignal[] signals, MsRequestedEvent[] events, MsLink link) {
         String connectionID = ((MsLinkImpl) link).getConnectionID(getLocalName());
-        MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsLinkImpl) link));
+        //MsProviderImpl.submit(new Tx(signals, events, connectionID, (MsLinkImpl) link));
+        super.submit(new Tx(signals, events, connectionID, (MsLinkImpl) link));
     }
 
     private class Tx implements Runnable {

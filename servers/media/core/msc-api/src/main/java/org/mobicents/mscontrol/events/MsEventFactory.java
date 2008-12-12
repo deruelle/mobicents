@@ -34,14 +34,13 @@ import java.io.Serializable;
  * Application may ask to be notified about certain events occurring in an
  * endpoint (e.g., DTMF) by including the name of the event in a
  * <code>org.mobicents.mscontrol.events.MsEventIdentifier</code> parameter and calling
- * <code>createRequestedEvent</code><br/> Look at example shown in
- * {@link org.mobicents.mscontrol.MsProvider#getSignalDetector}
+ * <code>createRequestedEvent</code><br/> 
  * </p>
  * <p>
  * A Call Agent may also request certain signals to be applied to an endpoint
  * (e.g., Play Announcement) by supplying the name of the event in a
  * <code>MsEventIdentifier</code> parameter and calling createRequestedSignal
- * <br/> Look at example shown in {@link org.mobicents.mscontrol.MsProvider#getSignalGenerator}
+ * <br/>
  * </p>
  * 
  * 

@@ -50,7 +50,7 @@ import org.mobicents.mscontrol.impl.events.EventParser;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListener {
+public class MsLinkImpl extends MsActionPerformer implements MsLink, ConnectionListener, NotificationListener {
 
     private static final long serialVersionUID = 6373269860176309745L;
     protected transient Logger logger = Logger.getLogger(this.getClass());
@@ -62,7 +62,7 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
     private MsEndpointImpl endpoints[] = new MsEndpointImpl[2];
     private EventParser eventParser = new EventParser();
     private int permits = 0;
-    private PendingQueue[] pendingQueue = new PendingQueue[2];
+   
     protected CopyOnWriteArrayList<MsLinkListener> linkLocalLinkListeners = new CopyOnWriteArrayList<MsLinkListener>();
     protected CopyOnWriteArrayList<MsNotificationListener> linkLocalNotificationListeners = new CopyOnWriteArrayList<MsNotificationListener>();
 
@@ -137,7 +137,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
 
     private void sendEvent(MsLinkEventID eventID, MsLinkEventCause cause, String msg) {
         MsLinkEventImpl evt = new MsLinkEventImpl(this, eventID, cause, msg);
-        MsProviderImpl.sendEvent(evt);
+        //MsProviderImpl.sendEvent(evt);
+        super.submit(evt);
     }
 
     /**
@@ -150,7 +151,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
      */
     public void join(String a, String b) {
         Runnable tx = new JoinTx(this, a, b);
-        MsProviderImpl.submit(tx);
+        //MsProviderImpl.submit(tx);
+        super.submit(tx);
     }
 
     public MsEndpoint[] getEndpoints() {
@@ -178,22 +180,8 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
      */
     public void release() {
         DropTx tx = new DropTx();
-        MsProviderImpl.submit(tx);
-    }
-
-    private PendingQueue getQueue(String endpointName) {
-        if (endpoints[0].getLocalName().equals(endpointName)) {
-            return pendingQueue[0];
-        }
-        return pendingQueue[1];
-    }
-
-    public void append(MsRequestedSignal requestedSignal, String endpointName) {
-        getQueue(endpointName).append(requestedSignal);
-    }
-
-    public void append(MsRequestedEvent requestedEvent, String endpointName) {
-        getQueue(endpointName).append(requestedEvent);
+        //MsProviderImpl.submit(tx);
+        super.submit(tx);
     }
 
     @Override
@@ -233,13 +221,13 @@ public class MsLinkImpl implements MsLink, ConnectionListener, NotificationListe
                 connections[0].addListener(link);
 
                 endpoints[0] = new MsEndpointImpl(connections[0].getEndpoint(), session.getProvider());
-                pendingQueue[0] = new PendingQueue(connections[0].getEndpoint(), connections[0].getId());
+ 
 
                 connections[1] = createConnection(epnB, 1);
                 connections[1].addListener(link);
 
                 endpoints[1] = new MsEndpointImpl(connections[1].getEndpoint(), session.getProvider());
-                pendingQueue[1] = new PendingQueue(connections[1].getEndpoint(), connections[1].getId());
+                
 
                 connections[0].setOtherParty(connections[1]);
             } catch (NamingException e) {
