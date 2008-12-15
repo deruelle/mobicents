@@ -19,8 +19,6 @@ import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
 import org.mobicents.mscontrol.MsSessionListener;
-import org.mobicents.mscontrol.MsSignalDetector;
-import org.mobicents.mscontrol.MsSignalGenerator;
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.slee.resource.media.ra.MediaResourceAdaptor;
 
@@ -98,14 +96,6 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
         } finally {
             block.unlock();
         }
-    }
-
-    public MsSignalGenerator getSignalGenerator(String endpointName) {
-        return provider.getSignalGenerator(endpointName);
-    }
-
-    public MsSignalDetector getSignalDetector(String endpointName) {
-        return provider.getSignalDetector(endpointName);
     }
 
     public MsConnection getMsConnection(String msConnectionId) {
