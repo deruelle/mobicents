@@ -44,7 +44,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
 public abstract class EndpointConfigurationSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(EndpointConfigurationSbb.class);
+	private static final Logger logger = Logger.getLogger(EndpointConfigurationSbb.class);
 
 	private JainMgcpProvider mgcpProvider;
 
@@ -89,7 +89,7 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 			// matches the wildcard.
 		}
 
-		logger.info("--> EPCF TX ID = " + txID + " Endpoint = " + endpointID);
+		//logger.info("--> EPCF TX ID = " + txID + " Endpoint = " + endpointID);
 
 		Endpoint endpoint = null;
 		try {
@@ -127,7 +127,7 @@ public abstract class EndpointConfigurationSbb implements Sbb {
 	private void sendResponse(int txID, ReturnCode reason) {
 		EndpointConfigurationResponse response = new EndpointConfigurationResponse(this.getReceivedTransactionID(), reason);
 		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		//logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 

@@ -59,7 +59,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
 public abstract class DeleteConnectionSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(DeleteConnectionSbb.class);
+	private static final Logger logger = Logger.getLogger(DeleteConnectionSbb.class);
 
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
@@ -94,7 +94,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 
 	public void onDeleteConnection(DeleteConnection event, ActivityContextInterface aci) {
 		int txID = event.getTransactionHandle();
-		logger.info("--> DLCX TX ID = " + txID);
+		//logger.info("--> DLCX TX ID = " + txID);
 
 		this.setTxId(txID);
 		this.setDeleteResponseSent(false);
@@ -141,7 +141,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 		int txID = this.getTxId();
 
 		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		//logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 
 	}
@@ -164,7 +164,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 					MsConnection msConnection = (MsConnection) mediaACI.getActivity();
 
 					if (msConnection.getId().equals(c.getId())) {
-						logger.debug("Releasing MgcpConnectionActivity = " + a.getConnectionIdentifier());
+						//logger.debug("Releasing MgcpConnectionActivity = " + a.getConnectionIdentifier());
 						a.release();
 						mgcpConnectionActivities.remove(a);
 						break;
@@ -185,7 +185,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 				msAci.attach(sbbContext.getSbbLocalObject());
 				c.release();
 
-				logger.debug("Successfully deleted MsConnection ID = " + c.getId());
+				//logger.debug("Successfully deleted MsConnection ID = " + c.getId());
 
 			} catch (FactoryException e) {
 				logger.error("FactoryException while trying to retrieve the MS ACI for MsConnection ID = " + c.getId());

@@ -52,7 +52,6 @@ import org.mobicents.mscontrol.events.MsRequestedSignal;
 import org.mobicents.mscontrol.events.ann.MsPlayRequestedSignal;
 import org.mobicents.mscontrol.events.pkg.MsAnnouncement;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
-import org.mobicents.slee.runtime.facilities.ActivityContextNamingFacilityImpl;
 
 /**
  * @author amit bhayani
@@ -60,7 +59,7 @@ import org.mobicents.slee.runtime.facilities.ActivityContextNamingFacilityImpl;
 public abstract class NotificationRequestSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(NotificationRequestSbb.class);
+	private static final Logger logger = Logger.getLogger(NotificationRequestSbb.class);
 	private JainMgcpProvider mgcpProvider;
 
 	private MsProvider msProvider;
@@ -78,14 +77,17 @@ public abstract class NotificationRequestSbb implements Sbb {
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+			Context ctx = (Context) new InitialContext()
+					.lookup("java:comp/env");
 
-			mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
+			mgcpProvider = (JainMgcpProvider) ctx
+					.lookup("slee/resources/jainmgcp/2.0/provider");
 
 			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
 					.lookup("slee/facilities/activitycontextnaming");
 
-			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			msProvider = (MsProvider) ctx
+					.lookup("slee/resources/media/1.0/provider");
 			msActivityFactory = (MediaRaActivityContextInterfaceFactory) ctx
 					.lookup("slee/resources/media/1.0/acifactory");
 
@@ -94,10 +96,11 @@ public abstract class NotificationRequestSbb implements Sbb {
 		}
 	}
 
-	public void onNotificationRequest(NotificationRequest notificationRequest, ActivityContextInterface aci) {
+	public void onNotificationRequest(NotificationRequest notificationRequest,
+			ActivityContextInterface aci) {
 
 		int txID = notificationRequest.getTransactionHandle();
-		logger.info("--> RQNT TX ID = " + txID);
+		// logger.info("--> RQNT TX ID = " + txID);
 
 		this.setReceivedTransactionID(notificationRequest.getSource());
 		this.setRequestIdentifier(notificationRequest.getRequestIdentifier());
@@ -105,7 +108,8 @@ public abstract class NotificationRequestSbb implements Sbb {
 		MsConnection msConnection = null;
 		ActivityContextInterface mediaACI = null;
 
-		EndpointIdentifier endpointID = notificationRequest.getEndpointIdentifier();
+		EndpointIdentifier endpointID = notificationRequest
+				.getEndpointIdentifier();
 		this.setEndpointIdentifier(endpointID);
 
 		NotifiedEntity notifiedEntity = notificationRequest.getNotifiedEntity();
@@ -117,27 +121,45 @@ public abstract class NotificationRequestSbb implements Sbb {
 
 		EventName[] eventNames = notificationRequest.getSignalRequests();
 
-		RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
+		RequestedEvent[] requestedEvents = notificationRequest
+				.getRequestedEvents();
 
 		this.setRequestedEvents(requestedEvents);
 
 		for (EventName event : eventNames) {
 
-			ConnectionIdentifier connectionIdentifier = event.getConnectionIdentifier();
+			ConnectionIdentifier connectionIdentifier = event
+					.getConnectionIdentifier();
 
 			if (connectionIdentifier != null) {
 
-				logger.info("The size of activityContextNamingfacility is growing >>> "
-						+ ((ActivityContextNamingFacilityImpl) activityContextNamingfacility).getBindings().size());
+				// logger.info("The size of activityContextNamingfacility is growing >>> "
+				// + ((ActivityContextNamingFacilityImpl)
+				// activityContextNamingfacility).getBindings().size());
 
-				String tmpConnectionIdentifier = connectionIdentifier.toString();
+				String tmpConnectionIdentifier = connectionIdentifier
+						.toString();
 
-				mediaACI = activityContextNamingfacility.lookup(tmpConnectionIdentifier);
+				mediaACI = activityContextNamingfacility
+						.lookup(tmpConnectionIdentifier);
 
-				logger.debug("Lookeup the ActivityContextInterface = " + mediaACI + " to ConnectionIdentifier = "
-						+ tmpConnectionIdentifier);
+				if (mediaACI == null) {
+					logger
+							.warn("The MediaActivity doesn't exist for connectionIdentifier = "
+									+ tmpConnectionIdentifier);
+					
+					sendResponse(txID, ReturnCode.Incorrect_Connection_ID);
+					return;
+				}
 
-				SbbLocalObject sbbObjectLocalObject = sbbContext.getSbbLocalObject();
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("Lookeup the ActivityContextInterface = "
+				// + mediaACI + " to ConnectionIdentifier = "
+				// + tmpConnectionIdentifier);
+				// }
+
+				SbbLocalObject sbbObjectLocalObject = sbbContext
+						.getSbbLocalObject();
 				mediaACI.attach(sbbObjectLocalObject);
 				msConnection = (MsConnection) mediaACI.getActivity();
 			}
@@ -152,26 +174,31 @@ public abstract class NotificationRequestSbb implements Sbb {
 
 				if (msConnection != null) {
 					String endpoint = msConnection.getEndpoint().getLocalName();
-					
+
 					MsEventFactory eventFactory = msProvider.getEventFactory();
-					
-			        MsPlayRequestedSignal play = null;
-			        play = (MsPlayRequestedSignal) eventFactory.createRequestedSignal(MsAnnouncement.PLAY);
-			        play.setURL(announcementUrl);
-			        
-			        MsRequestedEvent onCompleted = null;
-			        MsRequestedEvent onFailed = null;
 
-			        onCompleted = eventFactory.createRequestedEvent(MsAnnouncement.COMPLETED);
-			        onCompleted.setEventAction(MsEventAction.NOTIFY);
+					MsPlayRequestedSignal play = null;
+					play = (MsPlayRequestedSignal) eventFactory
+							.createRequestedSignal(MsAnnouncement.PLAY);
+					play.setURL(announcementUrl);
 
-			        onFailed = eventFactory.createRequestedEvent(MsAnnouncement.FAILED);
-			        onFailed.setEventAction(MsEventAction.NOTIFY);
+					MsRequestedEvent onCompleted = null;
+					MsRequestedEvent onFailed = null;
 
-			        MsRequestedSignal[] requestedSignals = new MsRequestedSignal[]{play};
-			        MsRequestedEvent[] msrequestedEvents = new MsRequestedEvent[]{onCompleted, onFailed};	
-			        
-			        msConnection.getEndpoint().execute(requestedSignals, msrequestedEvents, msConnection);
+					onCompleted = eventFactory
+							.createRequestedEvent(MsAnnouncement.COMPLETED);
+					onCompleted.setEventAction(MsEventAction.NOTIFY);
+
+					onFailed = eventFactory
+							.createRequestedEvent(MsAnnouncement.FAILED);
+					onFailed.setEventAction(MsEventAction.NOTIFY);
+
+					MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
+					MsRequestedEvent[] msrequestedEvents = new MsRequestedEvent[] {
+							onCompleted, onFailed };
+
+					msConnection.getEndpoint().execute(requestedSignals,
+							msrequestedEvents, msConnection);
 
 					// MsSignalGenerator generator =
 					// msProvider.getSignalGenerator(endpoint);
@@ -184,8 +211,8 @@ public abstract class NotificationRequestSbb implements Sbb {
 					// { announcementUrl });
 					//
 					// } catch (UnrecognizedActivityException e) {
-					//						e.printStackTrace();
-					//					}
+					// e.printStackTrace();
+					// }
 				}
 
 				break;
@@ -201,7 +228,8 @@ public abstract class NotificationRequestSbb implements Sbb {
 		sendResponse(txID, ReturnCode.Transaction_Executed_Normally);
 	}
 
-	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
+	public void onAnnouncementComplete(MsNotifyEvent evt,
+			ActivityContextInterface aci) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("onAnnouncementComplete");
 		}
@@ -217,14 +245,16 @@ public abstract class NotificationRequestSbb implements Sbb {
 		}
 	}
 
-	public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionFailed(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("onConnectionTransactionFailed");
 		}
 		this.reportFailure();
 	}
 
-	public void onAnnouncementFailed(MsNotifyEvent evt, ActivityContextInterface aci) {
+	public void onAnnouncementFailed(MsNotifyEvent evt,
+			ActivityContextInterface aci) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("onAnnouncementFailed");
 		}
@@ -245,8 +275,9 @@ public abstract class NotificationRequestSbb implements Sbb {
 	}
 
 	private void sendNotify(EventName[] eventNames) {
-		Notify notify = new Notify(this.getReceivedTransactionID(), this.getEndpointIdentifier(), this
-				.getRequestIdentifier(), eventNames);
+		Notify notify = new Notify(this.getReceivedTransactionID(), this
+				.getEndpointIdentifier(), this.getRequestIdentifier(),
+				eventNames);
 
 		notify.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 		notify.setNotifiedEntity(this.getNotifiedEntity());
@@ -257,9 +288,10 @@ public abstract class NotificationRequestSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		NotificationRequestResponse response = new NotificationRequestResponse(this.getReceivedTransactionID(), reason);
+		NotificationRequestResponse response = new NotificationRequestResponse(
+				this.getReceivedTransactionID(), reason);
 		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		//logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
@@ -287,7 +319,8 @@ public abstract class NotificationRequestSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object,
+			ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
@@ -303,13 +336,15 @@ public abstract class NotificationRequestSbb implements Sbb {
 
 	public abstract RequestIdentifier getRequestIdentifier();
 
-	public abstract void setRequestIdentifier(RequestIdentifier requestIdentifier);
+	public abstract void setRequestIdentifier(
+			RequestIdentifier requestIdentifier);
 
 	public abstract RequestedEvent[] getRequestedEvents();
 
 	public abstract void setRequestedEvents(RequestedEvent[] requestedEvents);
 
-	public abstract void setEndpointIdentifier(EndpointIdentifier endpointIdentifier);
+	public abstract void setEndpointIdentifier(
+			EndpointIdentifier endpointIdentifier);
 
 	public abstract EndpointIdentifier getEndpointIdentifier();
 

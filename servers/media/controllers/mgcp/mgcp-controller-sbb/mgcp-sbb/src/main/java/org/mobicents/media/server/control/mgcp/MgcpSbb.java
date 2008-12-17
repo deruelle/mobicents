@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 public abstract class MgcpSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(MgcpSbb.class);
+	private static final Logger logger = Logger.getLogger(MgcpSbb.class);
 
 	/** Creates a new instance of MgcpSbb */
 	public MgcpSbb() {

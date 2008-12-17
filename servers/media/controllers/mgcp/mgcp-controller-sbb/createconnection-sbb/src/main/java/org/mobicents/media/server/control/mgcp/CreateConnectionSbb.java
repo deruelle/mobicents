@@ -59,7 +59,7 @@ import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceF
 public abstract class CreateConnectionSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(CreateConnectionSbb.class);
+	private static final Logger logger = Logger.getLogger(CreateConnectionSbb.class);
 
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
@@ -79,15 +79,19 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {
-			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+			Context ctx = (Context) new InitialContext()
+					.lookup("java:comp/env");
 
 			// initialize media api
-			msProvider = (MsProvider) ctx.lookup("slee/resources/media/1.0/provider");
+			msProvider = (MsProvider) ctx
+					.lookup("slee/resources/media/1.0/provider");
 			msActivityFactory = (MediaRaActivityContextInterfaceFactory) ctx
 					.lookup("slee/resources/media/1.0/acifactory");
 
-			mgcpProvider = (JainMgcpProvider) ctx.lookup("slee/resources/jainmgcp/2.0/provider");
-			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx.lookup("slee/resources/jainmgcp/2.0/acifactory");
+			mgcpProvider = (JainMgcpProvider) ctx
+					.lookup("slee/resources/jainmgcp/2.0/provider");
+			mgcpAcif = (MgcpActivityContextInterfaceFactory) ctx
+					.lookup("slee/resources/jainmgcp/2.0/acifactory");
 
 			activityContextNamingfacility = (ActivityContextNamingFacility) ctx
 					.lookup("slee/facilities/activitycontextnaming");
@@ -97,10 +101,11 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onCreateConnection(CreateConnection event, ActivityContextInterface aci) {
+	public void onCreateConnection(CreateConnection event,
+			ActivityContextInterface aci) {
 		String remoteSDP = null;
 
-		CallIdentifier callIdentifier = event.getCallIdentifier();
+		// CallIdentifier callIdentifier = event.getCallIdentifier();
 
 		this.setReceivedTransactionID(event.getSource());
 		this.setSendCreateConnectionResponse(true);
@@ -118,7 +123,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 
 		MsSession session = msProvider.createSession();
-		MsConnection msConnection = session.createNetworkConnection(endPointName);
+		MsConnection msConnection = session
+				.createNetworkConnection(endPointName);
 
 		logger.info("--> CRCX TX ID = " + txID + " Endpoint = " + endpointID);
 
@@ -135,22 +141,25 @@ public abstract class CreateConnectionSbb implements Sbb {
 			// correct?
 			return;
 		}
+		
+		System.out.println(" MSActivity Created");
 
 		// Check if RemoteConnectionDescriptor is available apply it to
 		// Connection
 
-		ConnectionDescriptor remoteConnectionDescriptor = event.getRemoteConnectionDescriptor();
+		ConnectionDescriptor remoteConnectionDescriptor = event
+				.getRemoteConnectionDescriptor();
 
 		if (remoteConnectionDescriptor != null) {
-			
+
 			this.setSendCreateConnectionResponse(false);
-			
+
 			// Masking will work when aci is same on which HALF_OPEN event is
 			// fired
 			String[] eventsToBeMasked = { "ConnectionHalfOpen" };
 			try {
 				sbbContext.maskEvent(eventsToBeMasked, aci);
-			} catch (TransactionRequiredLocalException e) {				
+			} catch (TransactionRequiredLocalException e) {
 				e.printStackTrace();
 			} catch (NullPointerException e) {
 				// TODO Auto-generated catch block
@@ -197,23 +206,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	}
 
-	public void onConnectionHalfOpen(MsConnectionEvent event, ActivityContextInterface aci) {
-		logger.info(" onConnectionHalfOpen called ");
+	public void onConnectionHalfOpen(MsConnectionEvent event,
+			ActivityContextInterface aci) {
 		if (this.getSendCreateConnectionResponse()) {
 			sendConnectionResponse(event, aci);
 		}
-		logger.info(" onConnectionHalfOpen exiting ");
-
 	}
 
-	public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
-
-		logger.info(" onConnectionCreated called ");
+	public void onConnectionOpen(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 		sendConnectionResponse(evt, aci);
-		logger.info(" onConnectionCreated exiting ");
 	}
 
-	private void sendConnectionResponse(MsConnectionEvent evt, ActivityContextInterface aci) {
+	private void sendConnectionResponse(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 		MsConnection msConnection = evt.getConnection();
 
 		// MGCP only accepts hexadecimal string X-(
@@ -222,16 +228,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		// TODO This is wrong. We need to change MMS to have ID of msConnection
 		// as hexadecimal string
-		String identifier = ((CallIdentifier) mgcpProvider.getUniqueCallIdentifier()).toString();
-		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
+		String identifier = ((CallIdentifier) mgcpProvider
+				.getUniqueCallIdentifier()).toString();
+		ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(
+				identifier);
 
 		bindMediaActivityContextInterface(aci, connectionIdentifier);
 
-		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(),
+		CreateConnectionResponse response = new CreateConnectionResponse(this
+				.getReceivedTransactionID(),
 				ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
 		String sdpLocalDescriptor = msConnection.getLocalDescriptor();
 
-		ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(sdpLocalDescriptor);
+		ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(
+				sdpLocalDescriptor);
 
 		response.setLocalConnectionDescriptor(localConnectionDescriptor);
 
@@ -239,15 +249,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 		if (this.getUseSpecificEndPointId()) {
 
-			String localEndpointName = msConnection.getEndpoint().getLocalName();
+			String localEndpointName = msConnection.getEndpoint()
+					.getLocalName();
 
-			String domainName = (new StringBuffer().append(System.getProperty("jboss.bind.address")).append(":")
-					.append(mgcpProvider.getJainMgcpStack().getPort())).toString();
+			String domainName = (new StringBuffer().append(
+					System.getProperty("jboss.bind.address")).append(":")
+					.append(mgcpProvider.getJainMgcpStack().getPort()))
+					.toString();
 
-			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(localEndpointName, domainName);
+			EndpointIdentifier specificEndpointIdentifier = new EndpointIdentifier(
+					localEndpointName, domainName);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("Setting SpecificEndPointId to = " + specificEndpointIdentifier.toString());
+				logger.debug("Setting SpecificEndPointId to = "
+						+ specificEndpointIdentifier.toString());
 			}
 
 			response.setSpecificEndpointIdentifier(specificEndpointIdentifier);
@@ -256,15 +271,20 @@ public abstract class CreateConnectionSbb implements Sbb {
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
-	private void bindMediaActivityContextInterface(ActivityContextInterface aci,
+	private void bindMediaActivityContextInterface(
+			ActivityContextInterface aci,
 			ConnectionIdentifier connectionIdentifier) {
 		try {
 			// bind the MsConnection aci to ActivityContextNamingFacility for
 			// processing DLCX
-			activityContextNamingfacility.bind(aci, connectionIdentifier.toString());
+			activityContextNamingfacility.bind(aci, connectionIdentifier
+					.toString());
 
-			logger.debug("Bound the ActivityContextInterface = " + aci + " to ConnectionIdentifier = "
-					+ connectionIdentifier.toString());
+			if (logger.isDebugEnabled()) {
+				logger.debug("Bound the ActivityContextInterface = " + aci
+						+ " to ConnectionIdentifier = "
+						+ connectionIdentifier.toString());
+			}
 
 		} catch (TransactionRequiredLocalException e) {
 			logger
@@ -294,7 +314,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		}
 	}
 
-	public void onConnectionFailed(MsConnectionEvent evt, ActivityContextInterface aci) {
+	public void onConnectionFailed(MsConnectionEvent evt,
+			ActivityContextInterface aci) {
 		logger.warn("ConnectionTransactionFailed");
 
 		MsConnectionEventCause msConnectionEventCause = evt.getCause();
@@ -302,7 +323,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 		// TODO is the ReturnCode correct
 		switch (msConnectionEventCause) {
 		case FACILITY_FAILURE:
-			sendResponse(this.getTxId(), ReturnCode.Endpoint_Insufficient_Resources);
+			sendResponse(this.getTxId(),
+					ReturnCode.Endpoint_Insufficient_Resources);
 			break;
 
 		default:
@@ -313,10 +335,10 @@ public abstract class CreateConnectionSbb implements Sbb {
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
-		CreateConnectionResponse response = new CreateConnectionResponse(this.getReceivedTransactionID(), reason,
-				new ConnectionIdentifier("0"));
-		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		CreateConnectionResponse response = new CreateConnectionResponse(this
+				.getReceivedTransactionID(), reason, new ConnectionIdentifier(
+				"0"));
+		response.setTransactionHandle(txID);		
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
@@ -329,10 +351,10 @@ public abstract class CreateConnectionSbb implements Sbb {
 	 */
 	private int getMode(ConnectionMode mode) {
 		/*
-		 * switch (mode.getConnectionModeValue()) { case ConnectionMode.RECVONLY :
-		 * return BaseConnection.MODE_RECV_ONLY; case ConnectionMode.SENDONLY :
-		 * return BaseConnection.MODE_SEND_ONLY; case ConnectionMode.SENDRECV :
-		 * return BaseConnection.MODE_SEND_RECV; default : return
+		 * switch (mode.getConnectionModeValue()) { case ConnectionMode.RECVONLY
+		 * : return BaseConnection.MODE_RECV_ONLY; case ConnectionMode.SENDONLY
+		 * : return BaseConnection.MODE_SEND_ONLY; case ConnectionMode.SENDRECV
+		 * : return BaseConnection.MODE_SEND_RECV; default : return
 		 * BaseConnection.MODE_SEND_RECV; }
 		 */
 		return 0;
@@ -362,7 +384,8 @@ public abstract class CreateConnectionSbb implements Sbb {
 	public void sbbRemove() {
 	}
 
-	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
+	public void sbbExceptionThrown(Exception exception, Object object,
+			ActivityContextInterface activityContextInterface) {
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
@@ -382,6 +405,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	public abstract boolean getSendCreateConnectionResponse();
 
-	public abstract void setSendCreateConnectionResponse(boolean sendCreateConnectionResponse);
+	public abstract void setSendCreateConnectionResponse(
+			boolean sendCreateConnectionResponse);
 
 }

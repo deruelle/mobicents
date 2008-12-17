@@ -51,7 +51,7 @@ import org.mobicents.mscontrol.MsConnectionEventCause;
 public abstract class ModifyConnectionSbb implements Sbb {
 
 	private SbbContext sbbContext;
-	private Logger logger = Logger.getLogger(ModifyConnectionSbb.class);
+	private static final Logger logger = Logger.getLogger(ModifyConnectionSbb.class);
 
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
@@ -78,24 +78,24 @@ public abstract class ModifyConnectionSbb implements Sbb {
 
 	public void onModifyConnection(ModifyConnection event, ActivityContextInterface aci) {
 		int txID = event.getTransactionHandle();
-		logger.info("--> MDCX TX ID = " + txID);
+		//logger.info("--> MDCX TX ID = " + txID);
 
 		this.setTxId(txID);
 		this.setReceivedTransactionID(event.getSource());
 
-		EndpointIdentifier endpointID = event.getEndpointIdentifier();
-		CallIdentifier callID = event.getCallIdentifier();
+//		EndpointIdentifier endpointID = event.getEndpointIdentifier();
+//		CallIdentifier callID = event.getCallIdentifier();
 		ConnectionIdentifier connectionID = event.getConnectionIdentifier();
 
-		LocalOptionValue[] localOptionValue = event.getLocalConnectionOptions();
+//		LocalOptionValue[] localOptionValue = event.getLocalConnectionOptions();
 
 		ConnectionDescriptor remoteConnectionDescriptor = event.getRemoteConnectionDescriptor();
 
 		// TODO : Wildcard conventions shall not be used for EndpointIdentifier.
 		// Send Error Response if found?
 
-		logger.debug("Modifing Connection for ConnectionIdentifier = " + connectionID + " EndpointIdentifier = "
-				+ endpointID + " CallIdentifier = " + callID);
+//		logger.debug("Modifing Connection for ConnectionIdentifier = " + connectionID + " EndpointIdentifier = "
+//				+ endpointID + " CallIdentifier = " + callID);
 
 		ActivityContextInterface mediaACI = activityContextNamingfacility.lookup(connectionID.toString());
 
@@ -107,7 +107,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 
 	public void onConnectionModified(MsConnectionEvent evt, ActivityContextInterface aci) {
 		int txID = this.getTxId();
-		logger.debug("Modify Connection Successful for TxID = " + txID);
+		//logger.debug("Modify Connection Successful for TxID = " + txID);
 
 		MsConnection msConnection = evt.getConnection();
 		String localSdp = msConnection.getLocalDescriptor();
@@ -145,7 +145,7 @@ public abstract class ModifyConnectionSbb implements Sbb {
 	private void sendResponse(int txID, ReturnCode reason) {
 		ModifyConnectionResponse response = new ModifyConnectionResponse(this.getReceivedTransactionID(), reason);
 		response.setTransactionHandle(txID);
-		logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
+		//logger.info("<-- TX ID = " + txID + ": " + response.getReturnCode());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 	}
 
