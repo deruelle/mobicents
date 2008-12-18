@@ -34,7 +34,6 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -46,7 +45,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	private DeleteConnection command;
 	private DeleteConnectionResponse response;
 
-	private Logger logger = Logger.getLogger(DeleteConnectionHandler.class);
+	private static final Logger logger = Logger.getLogger(DeleteConnectionHandler.class);
 
 	/** Creates a new instance of CreateConnectionHandle */
 	public DeleteConnectionHandler(JainMgcpStackImpl stack) {
@@ -58,86 +57,95 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding delete connection command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Decode of DLCX command failed", e);
 		}
 
 		return command;
 	}
 
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding delete connection response command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
-			// should never happen
+			logger.error("Decode of DLCX Response failed", e);
 		}
 
 		return response;
 	}
 
 	public String encode(JainMgcpCommandEvent event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Encoding DeleteConnection object into MGCP delete connection command");
-		}
 
 		// encode message header
 
 		DeleteConnection evt = (DeleteConnection) event;
-		String msg = "DLCX " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
+		StringBuffer s = new StringBuffer();
+		s.append("DLCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
+		// String msg = "DLCX " + evt.getTransactionHandle() + " " +
+		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode optional parameters
 
 		if (evt.getBearerInformation() != null) {
-			msg += "B:e:" + evt.getBearerInformation() + "\n";
+			s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
+			// msg += "B:e:" + evt.getBearerInformation() + "\n";
 		}
 
 		if (evt.getCallIdentifier() != null) {
-			msg += "C:" + evt.getCallIdentifier() + "\n";
+			s.append("C:").append(evt.getCallIdentifier()).append(NEW_LINE);
+			// msg += "C:" + evt.getCallIdentifier() + "\n";
 		}
 
 		if (evt.getConnectionIdentifier() != null) {
-			msg += "I:" + evt.getConnectionIdentifier() + "\n";
+			s.append("I:").append(evt.getConnectionIdentifier()).append(NEW_LINE);
+			// msg += "I:" + evt.getConnectionIdentifier() + "\n";
 		}
 
 		if (evt.getConnectionParms() != null) {
-			msg += "P:" + utils.encodeConnectionParms(evt.getConnectionParms()) + "\n";
+			s.append("P:").append(utils.encodeConnectionParms(evt.getConnectionParms())).append(NEW_LINE);
+			// msg += "P:" +
+			// utils.encodeConnectionParms(evt.getConnectionParms()) + "\n";
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
-			msg += utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
+			s.append(utils.encodeNotificationRequestParms(evt.getNotificationRequestParms()));
+			// msg +=
+			// utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
 		}
 
 		if (evt.getReasonCode() != null) {
-			msg += "E:" + evt.getReasonCode();
+			s.append("E:").append(evt.getReasonCode());
+			// msg += "E:" + evt.getReasonCode();
 		}
 
-		return msg;
+		return s.toString();
+		// return msg;
 	}
 
 	public String encode(JainMgcpResponseEvent event) {
 		DeleteConnectionResponse response = (DeleteConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
-
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+		// String msg = returnCode.getValue() + " " +
+		// response.getTransactionHandle() + " " + returnCode.getComment()
+		// + "\n";
 
 		if (response.getConnectionParms() != null) {
-			msg += response.getConnectionParms() + "\n";
+			s.append(response.getConnectionParms()).append(NEW_LINE);
+			// msg += response.getConnectionParms() + "\n";
 		}
 
-		return msg;
+		return s.toString();
+		//return msg;
 	}
 
 	public class CommandContentHandle implements MgcpContentHandler {
@@ -240,7 +248,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("I")) {
-				// @todo connection params
+				//TODO connection params
 			}
 		}
 
@@ -261,7 +269,8 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		DeleteConnectionResponse provisionalResponse = null;
 
 		if (!sent) {
-			provisionalResponse = new DeleteConnectionResponse(commandEvent.getSource(), ReturnCode.Transaction_Being_Executed);
+			provisionalResponse = new DeleteConnectionResponse(commandEvent.getSource(),
+					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(commandEvent.getTransactionHandle());
 		}
 		return provisionalResponse;

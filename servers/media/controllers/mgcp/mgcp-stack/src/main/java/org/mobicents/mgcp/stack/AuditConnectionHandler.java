@@ -32,7 +32,7 @@ import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
  */
 public class AuditConnectionHandler extends TransactionHandler {
 
-	private Logger logger = Logger.getLogger(AuditConnectionHandler.class);
+	private static final Logger logger = Logger.getLogger(AuditConnectionHandler.class);
 
 	private AuditConnection command;
 	private AuditConnectionResponse response;
@@ -53,9 +53,6 @@ public class AuditConnectionHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding AUEP command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
@@ -72,9 +69,6 @@ public class AuditConnectionHandler extends TransactionHandler {
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding AUEP response command");
-		}
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
@@ -87,24 +81,23 @@ public class AuditConnectionHandler extends TransactionHandler {
 
 	@Override
 	public String encode(JainMgcpCommandEvent event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Encoding AuditConnection object into MGCP audit connection command");
-		}
 
 		// encode message header
 
 		AuditConnection evt = (AuditConnection) event;
-		String msg = "AUCX " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
+		StringBuffer s = new StringBuffer();
+		s.append("AUCX ").append(evt.getTransactionHandle()).append(TransactionHandler.SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
 
 		// encode mandatory parameters
 		if (evt.getConnectionIdentifier() != null) {
-			msg += "I:" + evt.getConnectionIdentifier() + "\n";
+			s.append("I:").append(evt.getConnectionIdentifier()).append(NEW_LINE);
 		}
 
 		InfoCode[] requestedInfos = evt.getRequestedInfo();
 
 		if (requestedInfos != null) {
-			msg += "F: " + utils.encodeInfoCodeList(requestedInfos);
+			s.append("F: ").append(utils.encodeInfoCodeList(requestedInfos));
 			int foundRC = 0;
 			int foundLC = 0;
 
@@ -135,7 +128,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 
 		}
 
-		return msg;
+		//return msg;
+		return s.toString();
 	}
 
 	@Override
@@ -143,42 +137,45 @@ public class AuditConnectionHandler extends TransactionHandler {
 		AuditConnectionResponse response = (AuditConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+
 
 		if (response.getCallIdentifier() != null) {
-			msg += "C:" + response.getCallIdentifier() + "\n";
+			s.append("C:").append(response.getCallIdentifier()).append(NEW_LINE);
 		}
 
 		if (response.getNotifiedEntity() != null) {
-			msg += "N:" + utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+			s.append("N:").append(utils.encodeNotifiedEntity(response.getNotifiedEntity())).append(NEW_LINE);
 		}
 
 		if (response.getLocalConnectionOptions() != null) {
-			msg += "L:" + utils.encodeLocalOptionValueList(response.getLocalConnectionOptions()) + "\n";
+			s.append("L:").append(utils.encodeLocalOptionValueList(response.getLocalConnectionOptions())).append(NEW_LINE);
 		}
 
 		if (response.getMode() != null) {
-			msg += "M:" + response.getMode() + "\n";
+			s.append("M:").append(response.getMode()).append(NEW_LINE);
 		}
 
 		if (response.getConnectionParms() != null) {
-			msg += "P:" + utils.encodeConnectionParms(response.getConnectionParms()) + "\n";
+			s.append("P:").append(utils.encodeConnectionParms(response.getConnectionParms())).append(NEW_LINE);
 		}
 
 		if (RCfirst && response.getRemoteConnectionDescriptor() != null) {
-			msg += "\n" + response.getRemoteConnectionDescriptor() + "\n";
+			s.append(NEW_LINE).append(response.getRemoteConnectionDescriptor()).append(NEW_LINE);
 		}
 
 		if (response.getLocalConnectionDescriptor() != null) {
-			msg += "\n" + response.getLocalConnectionDescriptor() + "\n";
+			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor() ).append(NEW_LINE);
 		}
 
 		if (!RCfirst && response.getRemoteConnectionDescriptor() != null) {
-			msg += "\n" + response.getRemoteConnectionDescriptor() + "\n";
+			s.append(NEW_LINE).append(response.getRemoteConnectionDescriptor() ).append(NEW_LINE);
 		}
-
-		return msg;
+		
+		return s.toString();
+		//return msg;
 	}
 
 	@Override

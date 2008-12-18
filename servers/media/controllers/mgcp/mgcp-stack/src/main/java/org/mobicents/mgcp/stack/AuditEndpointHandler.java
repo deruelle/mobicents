@@ -35,25 +35,21 @@ import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
  */
 public class AuditEndpointHandler extends TransactionHandler {
 
+	private static final Logger logger = Logger.getLogger(AuditEndpointHandler.class);
+
 	private AuditEndpoint command;
 	private AuditEndpointResponse response;
-
-	private Logger logger = Logger.getLogger(AuditEndpointHandler.class);
 
 	public AuditEndpointHandler(JainMgcpStackImpl stack) {
 		super(stack);
 	}
-	
+
 	public AuditEndpointHandler(JainMgcpStackImpl stack, InetAddress address, int port) {
 		super(stack, address, port);
 	}
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding AUEP command");
-		}
-
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
 			parser.parse(message);
@@ -66,15 +62,12 @@ public class AuditEndpointHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding AUEP response command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Decoding of AUEP Response failed", e);
 		}
 
 		return response;
@@ -82,22 +75,24 @@ public class AuditEndpointHandler extends TransactionHandler {
 
 	@Override
 	public String encode(JainMgcpCommandEvent event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Encoding AuditEndpoint object into MGCP audit endpoint command");
-		}
 
 		// encode message header
-
 		AuditEndpoint evt = (AuditEndpoint) event;
-		String msg = "AUEP " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
+		StringBuffer s = new StringBuffer();
+		s.append("AUEP ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
+		// String msg = "AUEP " + evt.getTransactionHandle() + " " +
+		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode mandatory parameters
 		InfoCode[] requestedInfos = evt.getRequestedInfo();
 		if (requestedInfos != null) {
-			msg += "F: " + utils.encodeInfoCodeList(requestedInfos);
+			s.append("F: ").append(utils.encodeInfoCodeList(requestedInfos));
+			// msg += "F: " + utils.encodeInfoCodeList(requestedInfos);
 		}
 
-		return msg;
+		// return msg;
+		return s.toString();
 	}
 
 	@Override
@@ -105,73 +100,100 @@ public class AuditEndpointHandler extends TransactionHandler {
 		AuditEndpointResponse response = (AuditEndpointResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+		// String msg = returnCode.getValue() + " " +
+		// response.getTransactionHandle() + " " + returnCode.getComment()
+		// + "\n";
 		if (response.getCapabilities() != null) {
 			// TODO How to insert a new line with A : for different set of
 			// compression Algo?
-			msg += "A:" + utils.encodeCapabilityList(response.getCapabilities()) + "\n";
+			s.append("A: ").append(utils.encodeCapabilityList(response.getCapabilities())).append(NEW_LINE);
+			// msg += "A:" +
+			// utils.encodeCapabilityList(response.getCapabilities()) + "\n";
 		}
 		if (response.getBearerInformation() != null) {
-			msg += "B:" + utils.encodeBearerInformation(response.getBearerInformation()) + "\n";
+			s.append("B: ").append(utils.encodeBearerInformation(response.getBearerInformation())).append(NEW_LINE);
+			// msg += "B:" +
+			// utils.encodeBearerInformation(response.getBearerInformation()) +
+			// "\n";
 		}
 		ConnectionIdentifier[] connectionIdentifiers = response.getConnectionIdentifiers();
 		if (connectionIdentifiers != null) {
-			msg += "I:";
+			s.append("I: ");
+			// msg += "I:";
 			boolean first = true;
 			for (int i = 0; i < connectionIdentifiers.length; i++) {
 				if (first) {
 					first = false;
 				} else {
-					msg += ",";
+					s.append(",");
+					// msg += ",";
 				}
-				msg += connectionIdentifiers[i].toString();
+				s.append(connectionIdentifiers[i].toString());
+				// msg += connectionIdentifiers[i].toString();
 			}
-			msg += "\n";
+			s.append(NEW_LINE);
+			// msg += "\n";
 		}
 		if (response.getNotifiedEntity() != null) {
-			msg += "N:" + utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+			s.append("N: ").append(utils.encodeNotifiedEntity(response.getNotifiedEntity())).append(NEW_LINE);
+			// msg += "N:" +
+			// utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
 		}
 		if (response.getRequestIdentifier() != null) {
-			msg += "X:" + response.getRequestIdentifier() + "\n";
+			s.append("X: ").append(response.getRequestIdentifier()).append(NEW_LINE);
+			// msg += "X:" + response.getRequestIdentifier() + "\n";
 		}
 		RequestedEvent[] r = response.getRequestedEvents();
 		if (r != null) {
-			msg += "R:" + utils.encodeRequestedEvents(r) + "\n";
+			s.append("R: ").append(utils.encodeRequestedEvents(r)).append(NEW_LINE);
+			// msg += "R:" + utils.encodeRequestedEvents(r) + "\n";
 		}
-		EventName[] s = response.getSignalRequests();
-		if (s != null) {
-			msg += "S:" + utils.encodeEventNames(s) + "\n";
+		EventName[] sEvet = response.getSignalRequests();
+		if (sEvet != null) {
+			s.append("S: ").append(utils.encodeEventNames(sEvet)).append(NEW_LINE);
+			// msg += "S:" + utils.encodeEventNames(s) + "\n";
 		}
 		if (response.getDigitMap() != null) {
-			msg += "D:" + response.getDigitMap() + "\n";
+			s.append("D: ").append(response.getDigitMap()).append(NEW_LINE);
+			// msg += "D:" + response.getDigitMap() + "\n";
 		}
 		EventName[] o = response.getObservedEvents();
 		if (o != null) {
-			msg += "O:" + utils.encodeEventNames(o) + "\n";
+			s.append("O: ").append(utils.encodeEventNames(o)).append(NEW_LINE);
+			// msg += "O:" + utils.encodeEventNames(o) + "\n";
 		}
 		if (response.getReasonCode() != null) {
-			msg += "E:" + response.getReasonCode() + "\n";
+			s.append("E: ").append(response.getReasonCode()).append(NEW_LINE);
+			// msg += "E:" + response.getReasonCode() + "\n";
 		}
 		EventName[] t = response.getDetectEvents();
 		if (t != null) {
-			msg += "T:" + utils.encodeEventNames(t) + "\n";
+			s.append("T: ").append(utils.encodeEventNames(t)).append(NEW_LINE);
+			// msg += "T:" + utils.encodeEventNames(t) + "\n";
 		}
 		EventName[] es = response.getEventStates();
 		if (es != null) {
-			msg += "ES:" + utils.encodeEventNames(es) + "\n";
+			s.append("ES: ").append(utils.encodeEventNames(es)).append(NEW_LINE);
+			// msg += "ES:" + utils.encodeEventNames(es) + "\n";
 		}
 		if (response.getRestartMethod() != null) {
-			msg += "RM:" + response.getRestartMethod() + "\n";
+			s.append("RM: ").append(response.getRestartMethod()).append(NEW_LINE);
+			// msg += "RM:" + response.getRestartMethod() + "\n";
 		}
 		if (response.getRestartDelay() > 0) {
-			msg += "RD:" + response.getRestartDelay() + "\n";
+			s.append("RD: ").append(response.getRestartDelay()).append(NEW_LINE);
+			// msg += "RD:" + response.getRestartDelay() + "\n";
 		}
 		EndpointIdentifier[] z = response.getEndpointIdentifierList();
 		if (z != null) {
-			msg += "Z:" + utils.encodeEndpointIdentifiers(z) + "\n";
+			s.append("Z: ").append(utils.encodeEndpointIdentifiers(z)).append(NEW_LINE);
+			// msg += "Z:" + utils.encodeEndpointIdentifiers(z) + "\n";
 		}
-		return msg;
+		return s.toString();
+		// return msg;
 	}
 
 	@Override

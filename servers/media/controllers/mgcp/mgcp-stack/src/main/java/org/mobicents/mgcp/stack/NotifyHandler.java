@@ -6,7 +6,6 @@ import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
-import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -17,15 +16,14 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 public class NotifyHandler extends TransactionHandler {
 
 	private Notify command;
 	private NotifyResponse response;
 
-	private Logger logger = Logger.getLogger(NotifyHandler.class);
-	
+	private static final Logger logger = Logger.getLogger(NotifyHandler.class);
+
 	public NotifyHandler(JainMgcpStackImpl stack) {
 		super(stack);
 	}
@@ -48,14 +46,11 @@ public class NotifyHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding Notify response = "+message);
-		}
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			logger.error("Something wrong while parsing the NOTIFY Response received",e);
+			logger.error("Something wrong while parsing the NOTIFY Response received", e);
 		}
 
 		return response;
@@ -65,24 +60,29 @@ public class NotifyHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 		Notify notify = (Notify) event;
 		StringBuffer message = new StringBuffer();
-		message.append("NTFY " + event.getTransactionHandle() + " " + notify.getEndpointIdentifier() + " MGCP 1.0\n");
+		message.append("NTFY ").append(event.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				notify.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
 
 		if (notify.getNotifiedEntity() != null) {
-			message.append("N:" + notify.getNotifiedEntity() + "\n");
+			message.append("N: ").append(notify.getNotifiedEntity()).append(NEW_LINE);
 		}
 
-		message.append("X:" + notify.getRequestIdentifier() + "\n");
+		message.append("X: ").append(notify.getRequestIdentifier()).append(NEW_LINE);
 
-		if (notify.getObservedEvents() != null) {
-			message.append("O:" + utils.encodeEventNames(notify.getObservedEvents()) + "\n");
-		}
+		message.append("O: ").append(utils.encodeEventNames(notify.getObservedEvents())).append(NEW_LINE);
+
 		return message.toString();
 	}
 
 	@Override
 	public String encode(JainMgcpResponseEvent event) {
-		return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + " "
-				+ event.getReturnCode().getComment() + "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(event.getReturnCode().getValue()).append(SINGLE_CHAR_SPACE).append(event.getTransactionHandle())
+				.append(SINGLE_CHAR_SPACE).append(event.getReturnCode().getComment()).append(NEW_LINE);
+		return s.toString();
+		
+//		return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + " "
+//				+ event.getReturnCode().getComment() + "\n";
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {

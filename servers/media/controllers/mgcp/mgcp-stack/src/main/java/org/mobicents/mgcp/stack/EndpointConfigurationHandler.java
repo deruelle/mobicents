@@ -41,7 +41,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	private EndpointConfiguration command;
 	private EndpointConfigurationResponse response;
 
-	private Logger logger = Logger.getLogger(EndpointConfigurationHandler.class);
+	private static final Logger logger = Logger.getLogger(EndpointConfigurationHandler.class);
 
 	/** Creates a new instance of EndpointConfigurationHandle */
 	public EndpointConfigurationHandler(JainMgcpStackImpl stack) {
@@ -70,6 +70,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 			parser.parse(message);
 		} catch (Exception e) {
 			// should never happen
+			logger.error("Parsing of EndpointConfiguration Response failed", e);
 		}
 		return response;
 	}
@@ -77,20 +78,30 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 		// encode message header
 		EndpointConfiguration evt = (EndpointConfiguration) event;
-		String msg = "EPCF " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
+		StringBuffer s = new StringBuffer();
+		s.append("EPCF ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
+		// String msg = "EPCF " + evt.getTransactionHandle() + " " +
+		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode mandatory parameters
-		msg += "B:e:" + evt.getBearerInformation() + "\n";
-		return msg;
+		s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
+		// msg += "B:e:" + evt.getBearerInformation() + "\n";
+		// return msg;
+		return s.toString();
 	}
 
 	public String encode(JainMgcpResponseEvent event) {
 		EndpointConfigurationResponse response = (EndpointConfigurationResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
-
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
-		return msg;
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+		// String msg = returnCode.getValue() + " " +
+		// response.getTransactionHandle() + " " + returnCode.getComment()
+		// + "\n";
+		// return msg;
+		return s.toString();
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {

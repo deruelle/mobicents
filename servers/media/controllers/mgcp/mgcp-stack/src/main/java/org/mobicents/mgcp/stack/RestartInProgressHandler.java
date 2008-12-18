@@ -64,14 +64,15 @@ public class RestartInProgressHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 		RestartInProgress rsip = (RestartInProgress) event;
 		StringBuffer message = new StringBuffer();
-		message.append("RSIP " + event.getTransactionHandle() + " " + rsip.getEndpointIdentifier() + " MGCP 1.0\n");
+		message.append("RSIP ").append(event.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				rsip.getEndpointIdentifier()).append(SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
 
-		message.append("RM:" + rsip.getRestartMethod() + "\n");
+		message.append("RM:").append(rsip.getRestartMethod()).append(NEW_LINE);
 		if (rsip.getRestartDelay() != 0) {
-			message.append("RD:" + rsip.getRestartDelay() + "\n");
+			message.append("RD:").append(rsip.getRestartDelay()).append(NEW_LINE);
 		}
 		if (rsip.getReasonCode() != null) {
-			message.append("E:" + rsip.getReasonCode() + "\n");
+			message.append("E:").append(rsip.getReasonCode()).append(NEW_LINE);
 		}
 		return message.toString();
 	}
@@ -81,15 +82,21 @@ public class RestartInProgressHandler extends TransactionHandler {
 
 		RestartInProgressResponse response = (RestartInProgressResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
-
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+		// String msg = returnCode.getValue() + " " +
+		// response.getTransactionHandle() + " " + returnCode.getComment()
+		// + "\n";
 
 		// TODO should utils.encodeNotifiedEntity decide on port?
 		if (response.getNotifiedEntity() != null) {
-			msg += "N:" + utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+			s.append("N:").append(utils.encodeNotifiedEntity(response.getNotifiedEntity()) ).append(NEW_LINE);
+			// msg += "N:" +
+			// utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
 		}
-		return msg;
+		return s.toString();
+		// return msg;
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {

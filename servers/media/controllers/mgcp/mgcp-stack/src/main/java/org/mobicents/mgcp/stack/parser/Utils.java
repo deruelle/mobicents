@@ -56,6 +56,8 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 /**
  * 
  * @author Oleg Kulikov
@@ -63,6 +65,8 @@ import java.util.regex.Pattern;
  * @author Amit Bhayani
  */
 public class Utils {
+
+	Logger logger = Logger.getLogger(Utils.class);
 
 	/** Creates a new instance of Utils */
 	public Utils() {
@@ -99,14 +103,14 @@ public class Utils {
 	}
 
 	public String encodeBearerInformation(BearerInformation bearerInformation) {
-		String s = "e:";
+		StringBuffer s = new StringBuffer("e:");
 
 		if (BearerInformation.ENC_METHOD_A_LAW == bearerInformation.getEncodingMethod()) {
-			s += "A";
+			s.append("A");
 		} else if (BearerInformation.ENC_METHOD_MU_LAW == bearerInformation.getEncodingMethod()) {
-			s += "mu";
+			s.append("mu");
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -218,73 +222,73 @@ public class Utils {
 	}
 
 	public String encodeLocalOptionVale(LocalOptionValue localOptionValue) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		switch (localOptionValue.getLocalOptionValueType()) {
 		case LocalOptionValue.BANDWIDTH:
 			Bandwidth b = (Bandwidth) localOptionValue;
-			s += "b:" + encodeBandwidth(b);
+			s.append("b:").append(encodeBandwidth(b));
 			break;
 
 		case LocalOptionValue.COMPRESSION_ALGORITHM:
 			CompressionAlgorithm compressionAlgorithm = (CompressionAlgorithm) localOptionValue;
-			s += "a:" + encodeCompressionAlgorithm(compressionAlgorithm);
+			s.append("a:").append(encodeCompressionAlgorithm(compressionAlgorithm));
 			break;
 
 		case LocalOptionValue.ECHO_CANCELLATION:
 			EchoCancellation echoCancellation = (EchoCancellation) localOptionValue;
-			s += "e:" + encodeEchoCancellation(echoCancellation);
+			s.append("e:").append(encodeEchoCancellation(echoCancellation));
 			break;
 
 		case LocalOptionValue.ENCRYPTION_METHOD:
 			EncryptionMethod encryptionMethod = (EncryptionMethod) localOptionValue;
-			s += "k:" + encodeEncryptionMethod(encryptionMethod);
+			s.append("k:").append(encodeEncryptionMethod(encryptionMethod));
 			break;
 
 		case LocalOptionValue.GAIN_CONTROL:
 			GainControl gainControl = (GainControl) localOptionValue;
-			s += "gc:" + encodeGainControl(gainControl);
+			s.append("gc:").append(encodeGainControl(gainControl));
 			break;
 
 		case LocalOptionValue.LOCAL_OPTION_EXTENSION:
 			LocalOptionExtension localOptionExtension = (LocalOptionExtension) localOptionValue;
-			s += localOptionExtension.getLocalOptionExtensionName() + ":"
-					+ localOptionExtension.getLocalOptionExtensionValue();
+			s.append(localOptionExtension.getLocalOptionExtensionName()).append(":").append(
+					localOptionExtension.getLocalOptionExtensionValue());
 			break;
 
 		case LocalOptionValue.PACKETIZATION_PERIOD:
 			PacketizationPeriod packetizationPeriod = (PacketizationPeriod) localOptionValue;
-			s += "p:" + encodePacketizationPeriod(packetizationPeriod);
+			s.append("p:").append(encodePacketizationPeriod(packetizationPeriod));
 			break;
 
 		case LocalOptionValue.RESOURCE_RESERVATION:
-			s += "r:";
+			s.append("r:");
 			ResourceReservation resourceReservation = (ResourceReservation) localOptionValue;
-			s += encodeResourceReservation(resourceReservation);
+			s.append(encodeResourceReservation(resourceReservation));
 			break;
 
 		case LocalOptionValue.SILENCE_SUPPRESSION:
-			s += "s:";
+			s.append("s:");
 			SilenceSuppression silenceSuppression = (SilenceSuppression) localOptionValue;
-			s += encodeSilenceSuppression(silenceSuppression);
+			s.append(encodeSilenceSuppression(silenceSuppression));
 			break;
 
 		case LocalOptionValue.TYPE_OF_NETWORK:
-			s += "nt:";
+			s.append("nt:");
 			TypeOfNetwork typeOfNetwork = (TypeOfNetwork) localOptionValue;
-			s += encodeTypeOfNetwork(typeOfNetwork);
+			s.append(encodeTypeOfNetwork(typeOfNetwork));
 			break;
 
 		case LocalOptionValue.TYPE_OF_SERVICE:
 			TypeOfService typeOfService = (TypeOfService) localOptionValue;
-			s += "t:" + encodeTypeOfService(typeOfService);
+			s.append("t:").append(encodeTypeOfService(typeOfService));
 			break;
 
 		default:
-			System.out.println("LocalOptionValue " + localOptionValue + " not identified");
+			logger.error("LocalOptionValue " + localOptionValue + " not identified");
 			break;
 		}
 
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -300,18 +304,18 @@ public class Utils {
 	}
 
 	public String encodeCompressionAlgorithm(CompressionAlgorithm compressionAlgorithm) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		String[] names = compressionAlgorithm.getCompressionAlgorithmNames();
 		boolean first = true;
 		for (int i = 0; i < names.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				s += ";";
+				s.append(";");
 			}
-			s += names[i];
+			s.append(names[i]);
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -343,15 +347,15 @@ public class Utils {
 	}
 
 	public String encodePacketizationPeriod(PacketizationPeriod packetizationPeriod) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (packetizationPeriod.getPacketizationPeriodLowerBound() != packetizationPeriod
 				.getPacketizationPeriodUpperBound()) {
-			s += packetizationPeriod.getPacketizationPeriodLowerBound() + "-"
-					+ packetizationPeriod.getPacketizationPeriodUpperBound();
+			s.append(packetizationPeriod.getPacketizationPeriodLowerBound()).append("-").append(
+					packetizationPeriod.getPacketizationPeriodUpperBound());
 		} else {
-			s += packetizationPeriod.getPacketizationPeriodLowerBound();
+			s.append(packetizationPeriod.getPacketizationPeriodLowerBound());
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -383,13 +387,13 @@ public class Utils {
 	}
 
 	public String encodeBandwidth(Bandwidth bandwidth) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (bandwidth.getBandwidthLowerBound() != bandwidth.getBandwidthUpperBound()) {
-			s += bandwidth.getBandwidthLowerBound() + "-" + bandwidth.getBandwidthUpperBound();
+			s.append(bandwidth.getBandwidthLowerBound()).append("-").append(bandwidth.getBandwidthUpperBound());
 		} else {
-			s += bandwidth.getBandwidthLowerBound();
+			s.append(bandwidth.getBandwidthLowerBound());
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -411,13 +415,13 @@ public class Utils {
 	}
 
 	public String encodeEchoCancellation(EchoCancellation echoCancellation) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (echoCancellation.getEchoCancellation()) {
-			s += "on";
+			s.append("on");
 		} else {
-			s += "off";
+			s.append("off");
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -441,13 +445,13 @@ public class Utils {
 	}
 
 	public String encodeGainControl(GainControl gainControl) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (gainControl.getGainControl() == 0) {
-			s += "auto";
+			s.append("auto");
 		} else {
-			s += gainControl.getGainControl();
+			s.append(gainControl.getGainControl());
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -469,13 +473,13 @@ public class Utils {
 	}
 
 	public String encodeSilenceSuppression(SilenceSuppression silenceSuppression) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (silenceSuppression.getSilenceSuppression()) {
-			s += "on";
+			s.append("on");
 		} else {
-			s += "off";
+			s.append("off");
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -495,8 +499,7 @@ public class Utils {
 	}
 
 	public String encodeTypeOfService(TypeOfService typeOfService) {
-		String s = "";
-		s += Integer.toString(typeOfService.getTypeOfService(), 16).toUpperCase();
+		String s = Integer.toString(typeOfService.getTypeOfService(), 16).toUpperCase();
 		return s;
 	}
 
@@ -521,21 +524,21 @@ public class Utils {
 	}
 
 	public String encodeResourceReservation(ResourceReservation resourceReservation) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		switch (resourceReservation.getResourceReservation()) {
 		case ResourceReservation.BEST_EFFORT:
-			s += "be";
+			s.append("be");
 			break;
 
 		case ResourceReservation.CONTROLLED_LOAD:
-			s += "cl";
+			s.append("cl");
 			break;
 
 		case ResourceReservation.GUARANTEED:
-			s += "g";
+			s.append("g");
 			break;
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -570,21 +573,21 @@ public class Utils {
 	}
 
 	public String encodeEncryptionMethod(EncryptionMethod encryptionMethod) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		switch (encryptionMethod.getEncryptionMethod()) {
 		case EncryptionMethod.BASE64:
-			s += "base64:" + encryptionMethod.getEncryptionKey();
+			s.append("base64:").append(encryptionMethod.getEncryptionKey());
 			break;
 
 		case EncryptionMethod.CLEAR:
-			s += "clear:" + encryptionMethod.getEncryptionKey();
+			s.append("clear:").append(encryptionMethod.getEncryptionKey());
 			break;
 
 		case EncryptionMethod.URI:
-			s += "uri:" + encryptionMethod.getEncryptionKey();
+			s.append("uri:").append(encryptionMethod.getEncryptionKey());
 			break;
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -608,19 +611,19 @@ public class Utils {
 	}
 
 	public String encodeTypeOfNetwork(TypeOfNetwork typeOfNetwork) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		switch (typeOfNetwork.getTypeOfNetwork()) {
 		case TypeOfNetwork.IN:
-			s += "in";
+			s.append("in");
 			break;
 		case TypeOfNetwork.ATM:
-			s += "atm";
+			s.append("atm");
 			break;
 		case TypeOfNetwork.LOCAL:
-			s += "local";
+			s.append("local");
 			break;
 		}
-		return s;
+		return s.toString();
 	}
 
 	public RestartMethod decodeRestartMethod(String value) throws ParseException {
@@ -752,112 +755,112 @@ public class Utils {
 	}
 
 	public String encodeInfoCodeList(InfoCode[] infoCodes) {
-		String msg = "";
+		StringBuffer msg = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < infoCodes.length; i++) {
 
 			if (first) {
 				first = false;
 			} else {
-				msg += ',';
+				msg.append(',');
 			}
 
 			InfoCode infoCode = infoCodes[i];
 			switch (infoCode.getInfoCode()) {
 			case (InfoCode.BEARER_INFORMATION):
-				msg += "B";
+				msg.append("B");
 				break;
 
 			case (InfoCode.CALL_IDENTIFIER):
-				msg += "C";
+				msg.append("C");
 				break;
 
 			case (InfoCode.CONNECTION_IDENTIFIER):
-				msg += "I";
+				msg.append("I");
 				break;
 
 			case (InfoCode.NOTIFIED_ENTITY):
-				msg += "N";
+				msg.append("N");
 				break;
 
 			case (InfoCode.REQUEST_IDENTIFIER):
-				msg += "X";
+				msg.append("X");
 				break;
 
 			case (InfoCode.LOCAL_CONNECTION_OPTIONS):
-				msg += "L";
+				msg.append("L");
 				break;
 
 			case (InfoCode.CONNECTION_MODE):
-				msg += "M";
+				msg.append("M");
 				break;
 
 			case (InfoCode.REQUESTED_EVENTS):
-				msg += "R";
+				msg.append("R");
 				break;
 
 			case (InfoCode.SIGNAL_REQUESTS):
-				msg += "S";
+				msg.append("S");
 				break;
 
 			case (InfoCode.DIGIT_MAP):
-				msg += "D";
+				msg.append("D");
 				break;
 
 			case (InfoCode.OBSERVED_EVENTS):
-				msg += "O";
+				msg.append("O");
 				break;
 
 			case (InfoCode.CONNECTION_PARAMETERS):
-				msg += "P";
+				msg.append("P");
 				break;
 
 			case (InfoCode.REASON_CODE):
-				msg += "E";
+				msg.append("E");
 				break;
 
 			case (InfoCode.SPECIFIC_ENDPOINT_ID):
-				msg += "Z";
+				msg.append("Z");
 				break;
 
 			case (InfoCode.QUARANTINE_HANDLING):
-				msg += "Q";
+				msg.append("Q");
 				break;
 
 			case (InfoCode.DETECT_EVENTS):
-				msg += "T";
+				msg.append("T");
 				break;
 
 			case (InfoCode.REMOTE_CONNECTION_DESCRIPTOR):
-				msg += "RC";
+				msg.append("RC");
 				break;
 
 			case (InfoCode.LOCAL_CONNECTION_DESCRIPTOR):
-				msg += "LC";
+				msg.append("LC");
 				break;
 
 			case (InfoCode.CAPABILITIES):
-				msg += "A";
+				msg.append("A");
 				break;
 
 			case (InfoCode.EVENT_STATES):
-				msg += "ES";
+				msg.append("ES");
 				break;
 
 			case (InfoCode.RESTART_METHOD):
-				msg += "RM";
+				msg.append("RM");
 				break;
 
 			case (InfoCode.RESTART_DELAY):
-				msg += "RD";
+				msg.append("RD");
 				break;
 
 			default:
-				System.out.println("The InfoCode " + infoCode + " is not supported");
+				logger.error("The InfoCode " + infoCode + " is not supported");
 				break;
 			}
 		}
-		return msg;
+		return msg.toString();
 	}
 
 	public InfoCode[] decodeInfoCodeList(String value) throws ParseException {
@@ -975,75 +978,75 @@ public class Utils {
 	}
 
 	public String encodeCapabilityList(CapabilityValue[] c) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < c.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				s += ",";
+				s.append(",");
 			}
-			s += encodeCapability(c[i]);
+			s.append(encodeCapability(c[i]));
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodeCapability(CapabilityValue c) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 
 		switch (c.getCapabilityValueType()) {
 		case CapabilityValue.LOCAL_OPTION_VALUE:
 			LocalOptVal localOptVal = (LocalOptVal) c;
 			LocalOptionValue localOptionValue = localOptVal.getLocalOptionValue();
-			s += encodeLocalOptionVale(localOptionValue);
+			s.append(encodeLocalOptionVale(localOptionValue));
 			break;
 
 		case CapabilityValue.SUPPORTED_PACKAGES:
-			s += "v:";
+			s.append("v:");
 			SupportedPackages supportedPackages = (SupportedPackages) c;
 			PackageName[] packageNameList = supportedPackages.getSupportedPackageNames();
-			s += encodePackageNameList(packageNameList);
+			s.append(encodePackageNameList(packageNameList));
 			break;
 
 		case CapabilityValue.SUPPORTED_MODES:
-			s += "m:";
+			s.append("m:");
 			SupportedModes supportedModes = (SupportedModes) c;
 			ConnectionMode[] connectionModeList = supportedModes.getSupportedModes();
-			s += encodeConnectionModeList(connectionModeList);
+			s.append(encodeConnectionModeList(connectionModeList));
 			break;
 		}
 
-		return s;
+		return s.toString();
 	}
 
 	public String encodeConnectionModeList(ConnectionMode[] connectionModeList) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < connectionModeList.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				s += ";";
+				s.append(";");
 			}
-			s += connectionModeList[i].toString();
+			s.append(connectionModeList[i].toString());
 
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodePackageNameList(PackageName[] packageNameList) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < packageNameList.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				s += ";";
+				s.append(";");
 			}
-			s += packageNameList[i].toString();
+			s.append(packageNameList[i].toString());
 
 		}
-		return s;
+		return s.toString();
 	}
 
 	public PackageName[] decodePackageNameList(String value) {
@@ -1228,7 +1231,7 @@ public class Utils {
 	}
 
 	public String encodeEmbeddedRequest(EmbeddedRequest embeddedRequest) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		boolean first = true;
 
 		RequestedEvent[] requestedEventList = embeddedRequest.getEmbeddedRequestList();
@@ -1236,10 +1239,10 @@ public class Utils {
 			if (first) {
 				first = false;
 			} else {
-				s += ",";
+				s.append(",");
 			}
 
-			s += "R(" + encodeRequestedEvents(requestedEventList) + ")";
+			s.append("R(").append(encodeRequestedEvents(requestedEventList)).append(")");
 		}
 
 		EventName[] eventNameList = embeddedRequest.getEmbeddedSignalRequest();
@@ -1247,20 +1250,20 @@ public class Utils {
 			if (first) {
 				first = false;
 			} else {
-				s += ",";
+				s.append(",");
 			}
-			s += "S(" + encodeEventNames(eventNameList) + ")";
+			s.append("S(").append(encodeEventNames(eventNameList)).append(")");
 		}
 		DigitMap digitMap = embeddedRequest.getEmbeddedDigitMap();
 		if (digitMap != null) {
 			if (first) {
 				first = false;
 			} else {
-				s += ",";
+				s.append(",");
 			}
-			s += "D(" + digitMap.toString() + ")";
+			s.append("D(").append(digitMap.toString()).append(")");
 		}
-		return s;
+		return s.toString();
 	}
 
 	public EmbeddedRequest decodeEmbeddedRequest(String value) throws ParseException {
@@ -1318,29 +1321,29 @@ public class Utils {
 	}
 
 	public String encodeEventNames(EventName[] events) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		boolean first = true;
 		for (EventName e : events) {
 			if (first) {
 				first = false;
 			} else {
-				s += ',';
+				s.append(',');
 			}
-			s += encodeEventName(e);
+			s.append(encodeEventName(e));
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodeEventName(EventName e) {
-		String s = "";
-		s += e.getPackageName().toString() + '/' + e.getEventIdentifier().getName();
+		StringBuffer s = new StringBuffer("");
+		s.append(e.getPackageName().toString()).append('/').append(e.getEventIdentifier().getName());
 		if (e.getConnectionIdentifier() != null) {
-			s += '@' + e.getConnectionIdentifier().toString();
+			s.append('@').append(e.getConnectionIdentifier().toString());
 		}
 		if (e.getEventIdentifier().getParms() != null) {
-			s += '(' + e.getEventIdentifier().getParms() + ')';
+			s.append('(').append(e.getEventIdentifier().getParms()).append(')');
 		}
-		return s;
+		return s.toString();
 	}
 
 	/**
@@ -1374,17 +1377,17 @@ public class Utils {
 	}
 
 	public String encodeEndpointIdentifiers(EndpointIdentifier[] endpointIdentifierList) {
-		String msg = "";
+		StringBuffer msg = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < endpointIdentifierList.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				msg += ",";
+				msg.append(",");
 			}
-			msg += encodeEndpointIdentifier(endpointIdentifierList[i]);
+			msg.append(encodeEndpointIdentifier(endpointIdentifierList[i]));
 		}
-		return msg;
+		return msg.toString();
 
 	}
 
@@ -1474,91 +1477,92 @@ public class Utils {
 	}
 
 	public String encodeLocalOptionValueList(LocalOptionValue[] options) {
-		String msg = "";
+		StringBuffer msg = new StringBuffer("");
 		boolean first = true;
 		for (int i = 0; i < options.length; i++) {
 			if (first) {
 				first = false;
 			} else {
-				msg += ",";
+				msg.append(",");
 			}
 			String s = options[i].toString();
 			if (s.indexOf("\n") != -1) {
 				s = s.substring(0, s.indexOf("\n"));
 			}
-			msg += s;
+			msg.append(s);
 		}
-		return msg;
+		return msg.toString();
 	}
 
 	public String encodeNotificationRequestParms(NotificationRequestParms parms) {
-		String msg = "X:" + parms.getRequestIdentifier() + "\n";
+		StringBuffer msg = new StringBuffer("X:").append(parms.getRequestIdentifier()).append("\n");
 		if (parms.getSignalRequests() != null) {
-			msg += "S:" + encodeEventNames(parms.getSignalRequests()) + "\n";
+			msg.append("S:").append(encodeEventNames(parms.getSignalRequests())).append("\n");
 		}
 		if (parms.getRequestedEvents() != null) {
-			msg += "R:" + encodeRequestedEvents(parms.getRequestedEvents()) + "\n";
+			msg.append("R:").append(encodeRequestedEvents(parms.getRequestedEvents())).append("\n");
 		}
 		if (parms.getDetectEvents() != null) {
-			msg += "T:" + encodeEventNames(parms.getDetectEvents()) + "\n";
+			msg.append("T:").append(encodeEventNames(parms.getDetectEvents())).append("\n");
 		}
 		if (parms.getDigitMap() != null) {
-			msg += "D:" + parms.getDigitMap() + "\n";
+			msg.append("D:").append(parms.getDigitMap()).append("\n");
 		}
-		return msg;
+		return msg.toString();
 	}
 
 	public String encodeRequestedEvent(RequestedEvent evt) {
-		String s = evt.getEventName().getPackageName() + "/" + evt.getEventName().getEventIdentifier().getName();
+		StringBuffer s = new StringBuffer((evt.getEventName().getPackageName()).toString()).append("/").append(
+				evt.getEventName().getEventIdentifier().getName());
 
 		if (evt.getEventName().getConnectionIdentifier() != null) {
-			s += '@' + evt.getEventName().getConnectionIdentifier().toString();
+			s.append('@').append(evt.getEventName().getConnectionIdentifier().toString());
 		}
 		String parms = evt.getEventName().getEventIdentifier().getParms();
 		RequestedAction[] actions = evt.getRequestedActions();
 
 		if (actions != null) {
 			String ac = encodeRequestedActions(actions);
-			s += " (" + ac + ")";
+			s.append(" (").append(ac).append(")");
 		}
 
 		if (parms != null) {
-			s += " (" + parms + ")";
+			s.append(" (").append(parms).append(")");
 		}
 
-		return s;
+		return s.toString();
 	}
 
 	public String encodeRequestedEvents(RequestedEvent[] evts) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		for (int i = 0; i < evts.length; i++) {
-			s += encodeRequestedEvent(evts[i]);
+			s.append(encodeRequestedEvent(evts[i]));
 			if (i != evts.length - 1) {
-				s += ',';
+				s.append(',');
 			}
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodeRequestedActions(RequestedAction[] actions) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		String d = "";
 		for (int i = 0; i < actions.length; i++) {
 			d = i == 0 ? "" : ",";
-			s += d + encodeRequestedAction(actions[i]);
+			s.append(d).append(encodeRequestedAction(actions[i]));
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodeRequestedAction(RequestedAction action) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		if (RequestedAction.EMBEDDED_NOTIFICATION_REQUEST != action.getRequestedAction()) {
 			return action.toString();
 		} else {
 			EmbeddedRequest embeddedRequest = action.getEmbeddedRequest();
-			s += "E(" + encodeEmbeddedRequest(embeddedRequest) + ")";
+			s.append("E(").append(encodeEmbeddedRequest(embeddedRequest)).append(")");
 		}
-		return s;
+		return s.toString();
 	}
 
 	public String encodeConnectionParm(ConnectionParm parm) {
@@ -1610,13 +1614,13 @@ public class Utils {
 	}
 
 	public String encodeConnectionParms(ConnectionParm[] parms) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 		for (int i = 0; i < parms.length - 1; i++) {
-			s += encodeConnectionParm(parms[i]) + ",";
+			s.append(encodeConnectionParm(parms[i])).append(",");
 		}
 
-		s += encodeConnectionParm(parms[parms.length - 1]);
-		return s;
+		s.append(encodeConnectionParm(parms[parms.length - 1]));
+		return s.toString();
 	}
 
 	public ConnectionParm[] decodeConnectionParms(String value) {
@@ -1695,19 +1699,19 @@ public class Utils {
 	}
 
 	public String encodeNotifiedEntity(NotifiedEntity n) {
-		String s = "";
+		StringBuffer s = new StringBuffer("");
 
 		if (n.getLocalName() != null) {
-			s += n.getLocalName() + "@";
+			s.append(n.getLocalName()).append("@");
 		}
 
 		if (n.getDomainName() != null) {
-			s += n.getDomainName();
+			s.append(n.getDomainName());
 		}
 
 		if (n.getPortNumber() > 0) {
-			s += ":" + n.getPortNumber();
+			s.append(":").append(n.getPortNumber());
 		}
-		return s;
+		return s.toString();
 	}
 }

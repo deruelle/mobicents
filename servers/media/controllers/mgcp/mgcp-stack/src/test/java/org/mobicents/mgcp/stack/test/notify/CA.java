@@ -5,9 +5,12 @@ import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
+import jain.protocol.ip.mgcp.pkg.MgcpEvent;
+import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -31,12 +34,16 @@ public class CA implements JainMgcpExtendedListener {
 		try {
 			caProvider.addJainMgcpListener(this);
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-1", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-1", "127.0.0.1:"
+					+ mgStack);
 
-			Notify notify = new Notify(this, endpointID, caProvider.getUniqueRequestIdentifier(), new EventName[] {});
+			Notify notify = new Notify(this, endpointID, caProvider.getUniqueRequestIdentifier(),
+					new EventName[] { new EventName(PackageName.Announcement, MgcpEvent.oc, new ConnectionIdentifier(
+							"1")) });
 			notify.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
-			//TODO We are forced to set the NotifiedEntity, but this should happen automatically. Fix this in MGCP Stack
+			// TODO We are forced to set the NotifiedEntity, but this should
+			// happen automatically. Fix this in MGCP Stack
 			NotifiedEntity notifiedEntity = new NotifiedEntity("127.0.0.1", "127.0.0.1", mgStack);
 			notify.setNotifiedEntity(notifiedEntity);
 

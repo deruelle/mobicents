@@ -74,6 +74,10 @@ import org.mobicents.mgcp.stack.parser.Utils;
 public abstract class TransactionHandler implements Runnable,TransactionHandlerManagement {
 
 	private static int GENERATOR = 1;
+	
+	public static final String NEW_LINE = "\n";
+	public static final String SINGLE_CHAR_SPACE = " ";
+	public static final String MGCP_VERSION = " MGCP 1.0"; //let the single char space prefix the version 
 
 	public final static int LONGTRAN_TIMER_TIMEOUT = 5000; // 5secs
 	/** Is this a transaction on a command sent or received? */

@@ -16,7 +16,6 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
-import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * @author Oleg Kulikov
@@ -26,7 +25,7 @@ import org.mobicents.mgcp.stack.parser.Utils;
 
 public class NotificationRequestHandler extends TransactionHandler {
 
-	private Logger logger = Logger.getLogger(NotificationRequestHandler.class);
+	private static final Logger logger = Logger.getLogger(NotificationRequestHandler.class);
 
 	private NotificationRequest command;
 	private NotificationRequestResponse response;
@@ -57,7 +56,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Decode RQNT Response failed", e);
 		}
 
 		return response;
@@ -68,32 +67,32 @@ public class NotificationRequestHandler extends TransactionHandler {
 		NotificationRequest req = (NotificationRequest) event;
 		StringBuffer buffer = new StringBuffer();
 
-		buffer.append("RQNT " + event.getTransactionHandle() + " " + req.getEndpointIdentifier() + " MGCP 1.0\n");
+		buffer.append("RQNT ").append(event.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				req.getEndpointIdentifier()).append(SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
 
 		if (req.getNotifiedEntity() != null) {
-			buffer.append("N:" + req.getNotifiedEntity() + "\n");
+			buffer.append("N:").append(req.getNotifiedEntity()).append(NEW_LINE);
 		}
 
-		buffer.append("X:" + req.getRequestIdentifier() + "\n");
+		buffer.append("X:").append(req.getRequestIdentifier()).append(NEW_LINE);
 
 		if (req.getDigitMap() != null) {
 			// encode digit map
 		}
 
 		if (req.getSignalRequests() != null) {
-			buffer.append("S:" + utils.encodeEventNames(req.getSignalRequests()) + "\n");
+			buffer.append("S:").append(utils.encodeEventNames(req.getSignalRequests())).append(NEW_LINE);
 		}
 
 		if (req.getRequestedEvents() != null) {
-			buffer.append("R:" + utils.encodeRequestedEvents(req.getRequestedEvents()) + "\n");
+			buffer.append("R:").append(utils.encodeRequestedEvents(req.getRequestedEvents())).append(NEW_LINE);
 		}
 
 		if (req.getDetectEvents() != null) {
-			buffer.append("T:" + utils.encodeEventNames(req.getDetectEvents()) + "\n");
+			buffer.append("T:").append(utils.encodeEventNames(req.getDetectEvents())).append(NEW_LINE);
 		}
 
 		return buffer.toString();
-
 	}
 
 	@Override
@@ -102,12 +101,9 @@ public class NotificationRequestHandler extends TransactionHandler {
 		NotificationRequestResponse response = (NotificationRequestResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
-		String encodedEvent = (new StringBuffer().append(returnCode.getValue()).append(" ").append(
-				response.getTransactionHandle()).append(" ").append(returnCode.getComment()).append("\n")).toString();
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("NotificationRequestHandler : encode(JainMgcpResponseEvent event) = " + encodedEvent);
-		}
+		String encodedEvent = (new StringBuffer().append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(
+				response.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(returnCode.getComment())
+				.append(NEW_LINE)).toString();
 
 		return encodedEvent;
 	}

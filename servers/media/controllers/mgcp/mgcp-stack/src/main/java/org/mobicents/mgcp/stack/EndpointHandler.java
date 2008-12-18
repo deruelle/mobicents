@@ -30,9 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.handlers.EndpointHandlerManager;

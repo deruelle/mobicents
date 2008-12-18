@@ -45,10 +45,11 @@ import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
  * @author Pavel Mitrenko
  */
 public class CreateConnectionHandler extends TransactionHandler {
+
+	private static final Logger logger = Logger.getLogger(CreateConnectionHandler.class);
+
 	private CreateConnection command;
 	private CreateConnectionResponse response;
-
-	private Logger logger = Logger.getLogger(CreateConnectionHandler.class);
 
 	/** Creates a new instance of CreateConnectionHandle */
 	public CreateConnectionHandler(JainMgcpStackImpl stack) {
@@ -60,9 +61,6 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding create connection command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
 		try {
@@ -75,86 +73,104 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Decoding create connection response command");
-		}
 
 		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
-			// should never happen
+			logger.error("Decode of CRCX Response failed ", e);
 		}
 
 		return response;
 	}
 
 	public String encode(JainMgcpCommandEvent event) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Encoding CreateConnection object into MGCP create connection command");
-		}
-
 		// encode message header
 
 		CreateConnection evt = (CreateConnection) event;
-		String msg = "CRCX " + evt.getTransactionHandle() + " " + evt.getEndpointIdentifier() + " MGCP 1.0\n";
+
+		StringBuffer s = new StringBuffer();
+		s.append("CRCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
+		// String msg = "CRCX " + evt.getTransactionHandle() + " " +
+		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode mandatory parameters
 
-		msg += "C:" + evt.getCallIdentifier() + "\n";
-		msg += "M:" + evt.getMode() + "\n";
+		s.append("C: ").append(evt.getCallIdentifier()).append(NEW_LINE);
+		// msg += "C:" + evt.getCallIdentifier() + "\n";
+		s.append("M: ").append(evt.getMode()).append(NEW_LINE);
+		// msg += "M:" + evt.getMode() + "\n";
 
 		// encode optional parameters
 
 		if (evt.getBearerInformation() != null) {
-			msg += "B:e:" + evt.getBearerInformation() + "\n";
+			s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
+			// msg += "B:e:" + evt.getBearerInformation() + "\n";
 		}
 
 		if (evt.getNotifiedEntity() != null) {
-			msg += "N:" + evt.getNotifiedEntity() + "\n";
+			s.append("N: ").append(evt.getNotifiedEntity()).append(NEW_LINE);
+			// msg += "N:" + evt.getNotifiedEntity() + "\n";
 		}
 
 		if (evt.getLocalConnectionOptions() != null) {
-			msg += "L:"+utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions());
+			s.append("L: ").append(utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions()));
+			// msg += "L:" +
+			// utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions());
 		}
 
 		if (evt.getSecondEndpointIdentifier() != null) {
-			msg += "Z2:" + evt.getSecondEndpointIdentifier() + "\n";
+			s.append("Z2: ").append(evt.getSecondEndpointIdentifier()).append(NEW_LINE);
+			// msg += "Z2:" + evt.getSecondEndpointIdentifier() + "\n";
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
-			msg += utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
+			s.append(utils.encodeNotificationRequestParms(evt.getNotificationRequestParms()));
+			// msg +=
+			// utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
 		}
 
 		if (evt.getRemoteConnectionDescriptor() != null) {
-			msg += "\n" + evt.getRemoteConnectionDescriptor();
+			s.append(NEW_LINE).append(evt.getRemoteConnectionDescriptor());
+			// msg += "\n" + evt.getRemoteConnectionDescriptor();
 		}
-		return msg;
+		// return msg;
+		return s.toString();
 	}
 
 	public String encode(JainMgcpResponseEvent event) {
 		CreateConnectionResponse response = (CreateConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
-		String msg = returnCode.getValue() + " " + response.getTransactionHandle() + " " + returnCode.getComment()
-				+ "\n";
+		StringBuffer s = new StringBuffer();
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
+		// String msg = returnCode.getValue() + " " +
+		// response.getTransactionHandle() + " " + returnCode.getComment()
+		// + "\n";
 		if (response.getConnectionIdentifier() != null) {
-			msg += "I:" + response.getConnectionIdentifier() + "\n";
+			s.append("I: ").append(response.getConnectionIdentifier()).append(NEW_LINE);
+			// msg += "I:" + response.getConnectionIdentifier() + "\n";
 		}
 		if (response.getSpecificEndpointIdentifier() != null) {
-			msg += "Z:" + response.getSpecificEndpointIdentifier() + "\n";
+			s.append("Z: ").append(response.getSpecificEndpointIdentifier()).append(NEW_LINE);
+			// msg += "Z:" + response.getSpecificEndpointIdentifier() + "\n";
 		}
 		if (response.getSecondConnectionIdentifier() != null) {
-			msg += "I2:" + response.getSecondConnectionIdentifier() + "\n";
+			s.append("I2: ").append(response.getSecondConnectionIdentifier()).append(NEW_LINE);
+			// msg += "I2:" + response.getSecondConnectionIdentifier() + "\n";
 		}
 		if (response.getSecondEndpointIdentifier() != null) {
-			msg += "Z2:" + response.getSecondEndpointIdentifier() + "\n";
+			s.append("Z2: ").append(response.getSecondEndpointIdentifier()).append(NEW_LINE);
+			// msg += "Z2:" + response.getSecondEndpointIdentifier() + "\n";
 		}
 		if (response.getLocalConnectionDescriptor() != null) {
-			msg += "\n" + response.getLocalConnectionDescriptor();
+			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor());
+			// msg += "\n" + response.getLocalConnectionDescriptor();
 		}
-
-		return msg;
+		return s.toString();
+		// return msg;
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {

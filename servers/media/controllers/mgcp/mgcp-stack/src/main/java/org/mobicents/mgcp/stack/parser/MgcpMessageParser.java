@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 public class MgcpMessageParser {
   
     private MgcpContentHandler contentHandler;
-    private Logger logger = Logger.getLogger(MgcpMessageParser.class);
+    private static final Logger logger = Logger.getLogger(MgcpMessageParser.class);
     
     /** Creates a new instance of MgcpMessageParser */
     public MgcpMessageParser(MgcpContentHandler contentHandler) {
@@ -49,9 +49,9 @@ public class MgcpMessageParser {
         
         String header = reader.readLine();
         
-        if (logger.isDebugEnabled()) {
-            logger.debug("Read header: " + header);
-        }
+//        if (logger.isDebugEnabled()) {
+//            logger.debug("Read header: " + header);
+//        }
         contentHandler.header(header);
 
         boolean sdpPresent = false;
@@ -59,9 +59,9 @@ public class MgcpMessageParser {
         
         while ((line = reader.readLine()) != null) {
             line = line.trim();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Read line: " + line);
-            }
+//            if (logger.isDebugEnabled()) {
+//                logger.debug("Read line: " + line);
+//            }
             
             sdpPresent = line.length() == 0;
             if (sdpPresent) break;

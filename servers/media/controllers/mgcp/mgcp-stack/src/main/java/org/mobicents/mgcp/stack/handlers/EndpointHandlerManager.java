@@ -1,7 +1,5 @@
 package org.mobicents.mgcp.stack.handlers;
 
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
-
 import org.mobicents.mgcp.stack.EndpointHandler;
 import org.mobicents.mgcp.stack.ThreadPoolQueueExecutor;
 
