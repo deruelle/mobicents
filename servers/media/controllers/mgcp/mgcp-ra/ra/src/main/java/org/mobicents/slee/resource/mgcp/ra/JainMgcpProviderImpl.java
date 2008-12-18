@@ -14,7 +14,6 @@ import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TooManyListenersException;
-import java.util.WeakHashMap;
 
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpConnectionActivity;
@@ -26,7 +25,7 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 public class JainMgcpProviderImpl implements JainMgcpProvider {
 
-	private static Logger logger = Logger.getLogger(JainMgcpProviderImpl.class);
+	private static final Logger logger = Logger.getLogger(JainMgcpProviderImpl.class);
 
 	private final MgcpResourceAdaptor ra;
 	private final JainMgcpStackProviderImpl provider;

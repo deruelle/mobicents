@@ -34,24 +34,23 @@ public class MgcpActivityManager {
 
 	public MgcpConnectionActivityHandle putMgcpConnectionActivity(MgcpConnectionActivityImpl activity) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : putMgcpConnectionActivity(activity=" + activity + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : putMgcpConnectionActivity(activity=" + activity + ")");
+//		}
 
-		//MgcpConnectionActivityHandle handle = new MgcpConnectionActivityHandle(activity.getId());
 		MgcpConnectionActivityHandle handle=activity.getActivityHandle();
 		if (activity.getConnectionIdentifier() != null) {
 			connectionIdentifier2ActivityHandleMap.put(activity.getConnectionIdentifier(), handle);
-			if (logger.isDebugEnabled()) {
-				logger.debug(this.getMgcpRaEntityName()+" : created mapping between connection identifier " + activity.getConnectionIdentifier()
-						+ " and activity handle " + handle + ")");
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug(this.getMgcpRaEntityName()+" : created mapping between connection identifier " + activity.getConnectionIdentifier()
+//						+ " and activity handle " + handle + ")");
+//			}
 		} else if (activity.getTransactionHandle() != null) {
 			transactionHandle2ActivityHandleMap.put(activity.getTransactionHandle(), handle);
-			if (logger.isDebugEnabled()) {
-				logger.debug(this.getMgcpRaEntityName()+" : created temp mapping between transaction handle " + activity.getTransactionHandle()
-						+ " and activity handle " + handle + ")");
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug(this.getMgcpRaEntityName()+" : created temp mapping between transaction handle " + activity.getTransactionHandle()
+//						+ " and activity handle " + handle + ")");
+//			}
 		}
 		connectionActivities.put(handle, activity);
 		return handle;
@@ -59,9 +58,9 @@ public class MgcpActivityManager {
 
 	public MgcpConnectionActivityImpl getMgcpConnectionActivity(MgcpConnectionActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : getMgcpConnectionActivity(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : getMgcpConnectionActivity(handle=" + handle + ")");
+//		}
 
 		return connectionActivities.get(handle);
 	}
@@ -86,10 +85,10 @@ public class MgcpActivityManager {
 	public MgcpConnectionActivityHandle updateMgcpConnectionActivity(int transactionHandle,
 			ConnectionIdentifier connectionIdentifier, EndpointIdentifier endpointIdentifier) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : updateMgcpConnectionActivity(transactionHandle=" + transactionHandle
-					+ ",connectionIdentifier=" + connectionIdentifier + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : updateMgcpConnectionActivity(transactionHandle=" + transactionHandle
+//					+ ",connectionIdentifier=" + connectionIdentifier + ")");
+//		}
 
 		if (connectionIdentifier != null) {
 			ActivityHandle handle = transactionHandle2ActivityHandleMap.remove(Integer.valueOf(transactionHandle));
@@ -108,9 +107,9 @@ public class MgcpActivityManager {
 					if (endpointIdentifier != null) {
 						activity.setEndpointIdentifier(endpointIdentifier);
 					}
-					if (logger.isDebugEnabled()) {
-						logger.debug(this.getMgcpRaEntityName()+" : activity for connectionIdentifier " + connectionIdentifier + " updated");
-					}
+//					if (logger.isDebugEnabled()) {
+//						logger.debug(this.getMgcpRaEntityName()+" : activity for connectionIdentifier " + connectionIdentifier + " updated");
+//					}
 					return connectionHandle;
 				}
 			} else {
@@ -128,10 +127,10 @@ public class MgcpActivityManager {
 	public MgcpConnectionActivityHandle getMgcpConnectionActivityHandle(ConnectionIdentifier connectionIdentifier,
 			EndpointIdentifier endpointIdentifier, int transactionHandle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : getMgcpConnectionActivityHandle(transactionHandle=" + transactionHandle
-					+ ",connectionIdentifier=" + connectionIdentifier + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : getMgcpConnectionActivityHandle(transactionHandle=" + transactionHandle
+//					+ ",connectionIdentifier=" + connectionIdentifier + ")");
+//		}
 
 		if (connectionIdentifier != null) {
 			// get handle from connection id map
@@ -150,27 +149,27 @@ public class MgcpActivityManager {
 	//public void putMgcpEndpointActivity(MgcpEndpointActivityHandle handle, MgcpEndpointActivityImpl activity) {
 	public void putMgcpEndpointActivity( MgcpEndpointActivityImpl activity) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : putMgcpEndpointActivity(activity=" + activity + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : putMgcpEndpointActivity(activity=" + activity + ")");
+//		}
 
 		endpointActivities.put(activity.getActivityHandle(), activity);
 	}
 
 	public MgcpEndpointActivityImpl getMgcpEndpointActivity(MgcpEndpointActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : getMgcpEndpointActivity(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : getMgcpEndpointActivity(handle=" + handle + ")");
+//		}
 
 		return endpointActivities.get(handle);
 	}
 
 	public boolean containsMgcpEndpointActivityHandle(MgcpEndpointActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : containsMgcpEndpointActivityHandle(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : containsMgcpEndpointActivityHandle(handle=" + handle + ")");
+//		}
 
 		return endpointActivities.containsKey(handle);
 	}
@@ -179,16 +178,16 @@ public class MgcpActivityManager {
 
 	public void removeMgcpActivity(ActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : removeMgcpActivity(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : removeMgcpActivity(handle=" + handle + ")");
+//		}
 
 		if (handle instanceof MgcpConnectionActivityHandle) {
 			MgcpConnectionActivityImpl activity = connectionActivities.remove((MgcpConnectionActivityHandle) handle);
 			if (activity != null) {
-				if (logger.isDebugEnabled()) {
-					logger.debug(this.getMgcpRaEntityName()+" : removed connection activity for handle " + handle);
-				}
+//				if (logger.isDebugEnabled()) {
+//					logger.debug(this.getMgcpRaEntityName()+" : removed connection activity for handle " + handle);
+//				}
 				if (activity.getConnectionIdentifier() != null) {
 					if (connectionIdentifier2ActivityHandleMap.remove(activity.getConnectionIdentifier()) != null) {
 						if (logger.isDebugEnabled()) {
@@ -220,9 +219,9 @@ public class MgcpActivityManager {
 
 	public boolean containsActivityHandle(ActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : containsActivityHandle(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : containsActivityHandle(handle=" + handle + ")");
+//		}
 
 		if (handle instanceof MgcpConnectionActivityHandle) {
 			return connectionActivities.containsKey((MgcpConnectionActivityHandle) handle);
@@ -236,9 +235,9 @@ public class MgcpActivityManager {
 
 	public Object getActivity(ActivityHandle handle) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : getActivity(handle=" + handle + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : getActivity(handle=" + handle + ")");
+//		}
 
 		if (handle instanceof MgcpConnectionActivityHandle) {
 			return connectionActivities.get((MgcpConnectionActivityHandle) handle);
@@ -252,21 +251,14 @@ public class MgcpActivityManager {
 
 	public ActivityHandle getActivityHandle(Object activity) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(this.getMgcpRaEntityName()+" : getActivityHandle(activity=" + activity + ")");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug(this.getMgcpRaEntityName()+" : getActivityHandle(activity=" + activity + ")");
+//		}
 
 		if (activity instanceof MgcpConnectionActivityImpl) {
 			MgcpConnectionActivityImpl castedActivity = (MgcpConnectionActivityImpl) activity;
-			//if (castedActivity.getConnectionIdentifier() != null) {
-			//	return connectionIdentifier2ActivityHandleMap.get(castedActivity.getConnectionIdentifier());
-			//} else {
-			//	return transactionHandle2ActivityHandleMap.get(castedActivity.getTransactionHandle());
-			//}
 			return castedActivity.getActivityHandle();
 		} else if (activity instanceof MgcpEndpointActivityImpl) {
-			//MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(((MgcpEndpointActivityImpl) activity)
-			//		.getEndpointIdentifier().toString());
 			MgcpEndpointActivityHandle handle = ((MgcpEndpointActivityImpl) activity).getActivityHandle();
 			if (endpointActivities.containsKey(handle)) {
 				return handle;
