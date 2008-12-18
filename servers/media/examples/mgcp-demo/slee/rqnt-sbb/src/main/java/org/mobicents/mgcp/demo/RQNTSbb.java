@@ -19,6 +19,7 @@ import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
+import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConflictingParameterException;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
@@ -26,6 +27,7 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
@@ -41,7 +43,6 @@ import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
-import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.header.ContactHeader;
@@ -59,25 +60,22 @@ import javax.slee.RolledBackContext;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
-import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 import net.java.slee.resource.mgcp.MgcpConnectionActivity;
+import net.java.slee.resource.mgcp.event.TransactionTimeout;
 import net.java.slee.resource.sip.DialogActivity;
 import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * 
  * @author amit.bhayani
  */
 public abstract class RQNTSbb implements Sbb {
-
-	private static int CALL_ID_GEN = 1;
 
 	public final static String ENDPOINT_NAME = "media/trunk/Announcement/$";
 
@@ -99,7 +97,7 @@ public abstract class RQNTSbb implements Sbb {
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
 
-	private Logger logger = Logger.getLogger(RQNTSbb.class);
+	private static final Logger logger = Logger.getLogger(RQNTSbb.class);
 
 	/** Creates a new instance of CallSbb */
 	public RQNTSbb() {
@@ -118,7 +116,7 @@ public abstract class RQNTSbb implements Sbb {
 		try {
 			Dialog dialog = provider.getNewDialog(evt.getServerTransaction());
 			dialog.terminateOnBye(true);
-			daci = acif.getActivityContextInterface((DialogActivity)dialog);
+			daci = acif.getActivityContextInterface((DialogActivity) dialog);
 			daci.attach(sbbContext.getSbbLocalObject());
 		} catch (Exception e) {
 			logger.error("Error during dialog creation", e);
@@ -128,7 +126,7 @@ public abstract class RQNTSbb implements Sbb {
 
 		// respond(evt, Response.RINGING);
 
-		CallIdentifier callID = new CallIdentifier(Integer.toHexString(CALL_ID_GEN++));
+		CallIdentifier callID = mgcpProvider.getUniqueCallIdentifier();
 		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
 
 		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
@@ -167,9 +165,9 @@ public abstract class RQNTSbb implements Sbb {
 		Request request = txn.getRequest();
 
 		ReturnCode status = event.getReturnCode();
-		
+
 		this.setEndpointName(event.getSpecificEndpointIdentifier().getLocalEndpointName());
-		logger.info("***&& "+this.getEndpointName());
+		logger.info("***&& " + this.getEndpointName());
 
 		switch (status.getValue()) {
 		case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
@@ -215,8 +213,22 @@ public abstract class RQNTSbb implements Sbb {
 			notificationRequest.setRequestedEvents(requestedEvents);
 			notificationRequest.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 
-			NotifiedEntity notifiedEntity = new NotifiedEntity(JBOSS_BIND_ADDRESS,	JBOSS_BIND_ADDRESS, 2728);
+			NotifiedEntity notifiedEntity = new NotifiedEntity(JBOSS_BIND_ADDRESS, JBOSS_BIND_ADDRESS, 2728);
 			notificationRequest.setNotifiedEntity(notifiedEntity);
+
+			// MgcpEndpointActivity endpointActivity = null;
+			// try {
+			// endpointActivity = mgcpProvider.getEndpointActivity(endpointID);
+			// ActivityContextInterface epnAci =
+			// mgcpAcif.getActivityContextInterface(endpointActivity);
+			// epnAci.attach(sbbContext.getSbbLocalObject());
+			// } catch (FactoryException ex) {
+			// ex.printStackTrace();
+			// } catch (NullPointerException ex) {
+			// ex.printStackTrace();
+			// } catch (UnrecognizedActivityException ex) {
+			// ex.printStackTrace();
+			// }
 
 			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 
@@ -251,6 +263,29 @@ public abstract class RQNTSbb implements Sbb {
 	public void onNotificationRequestResponse(NotificationRequestResponse event, ActivityContextInterface aci) {
 		logger.info("onNotificationRequestResponse");
 
+	}
+
+	public void onNotifyRequest(Notify event, ActivityContextInterface aci) {
+		logger.info("onNotifyRequest");
+
+		EventName[] observedEvents = event.getObservedEvents();
+
+		for (EventName observedEvent : observedEvents) {
+			if (observedEvent.getEventIdentifier().intValue() == MgcpEvent.REPORT_ON_COMPLETION) {
+				NotificationRequestResponse response = new NotificationRequestResponse(event.getSource(),
+						ReturnCode.Transaction_Executed_Normally);
+				response.setTransactionHandle(event.getTransactionHandle());
+
+				mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+
+				logger.info("Announcemnet Completed NTFY received");
+			}
+		}
+
+	}
+
+	public void onTransactionTimeout(TransactionTimeout event, ActivityContextInterface aci) {
+		logger.info("onTransactionTimeout");
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
@@ -300,7 +335,7 @@ public abstract class RQNTSbb implements Sbb {
 
 			// initialize SIP API
 			provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
-			
+
 			addressFactory = provider.getAddressFactory();
 			headerFactory = provider.getHeaderFactory();
 			messageFactory = provider.getMessageFactory();
@@ -327,10 +362,10 @@ public abstract class RQNTSbb implements Sbb {
 	public abstract String getRemoteSdp();
 
 	public abstract void setRemoteSdp(String remoteSdp);
-	
+
 	public abstract String getEndpointName();
 
-	public abstract void setEndpointName(String endpointName);	
+	public abstract void setEndpointName(String endpointName);
 
 	public void unsetSbbContext() {
 	}

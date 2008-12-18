@@ -34,7 +34,6 @@ import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
-import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.header.ContactHeader;
@@ -62,15 +61,13 @@ import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * 
  * @author amit.bhayani
  */
 public abstract class CRCXSbb implements Sbb {
-
-	private static int CALL_ID_GEN = 1;
-	private static int GEN = 1;
+	
+	private final static Logger logger = Logger.getLogger(CRCXSbb.class);
 
 	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/$";
 
@@ -89,7 +86,7 @@ public abstract class CRCXSbb implements Sbb {
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
 
-	private Logger logger = Logger.getLogger(CRCXSbb.class);
+	
 
 	/** Creates a new instance of CallSbb */
 	public CRCXSbb() {
@@ -108,7 +105,7 @@ public abstract class CRCXSbb implements Sbb {
 		try {
 			Dialog dialog = provider.getNewDialog(evt.getServerTransaction());
 			dialog.terminateOnBye(true);
-			daci = acif.getActivityContextInterface((DialogActivity)dialog);
+			daci = acif.getActivityContextInterface((DialogActivity) dialog);
 			daci.attach(sbbContext.getSbbLocalObject());
 		} catch (Exception e) {
 			logger.error("Error during dialog creation", e);
@@ -118,7 +115,7 @@ public abstract class CRCXSbb implements Sbb {
 
 		// respond(evt, Response.RINGING);
 
-		CallIdentifier callID = new CallIdentifier(Integer.toHexString(CALL_ID_GEN++));
+		CallIdentifier callID = mgcpProvider.getUniqueCallIdentifier();
 		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
 
 		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
@@ -130,14 +127,14 @@ public abstract class CRCXSbb implements Sbb {
 			// should never happen
 		}
 
-		int txID = GEN++;
-		createConnection.setTransactionHandle(txID);
+		createConnection.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 
 		MgcpConnectionActivity connectionActivity = null;
 		try {
-			connectionActivity = mgcpProvider.getConnectionActivity(txID, endpointID);
+			connectionActivity = mgcpProvider
+					.getConnectionActivity(createConnection.getTransactionHandle(), endpointID);
 			ActivityContextInterface epnAci = mgcpAcif.getActivityContextInterface(connectionActivity);
-			logger.info("END 111: "+connectionActivity.getEndpointIdentifier());
+			logger.info("END 111: " + connectionActivity.getEndpointIdentifier());
 			epnAci.attach(sbbContext.getSbbLocalObject());
 		} catch (FactoryException ex) {
 			ex.printStackTrace();
@@ -153,7 +150,7 @@ public abstract class CRCXSbb implements Sbb {
 	public void onCreateConnectionResponse(CreateConnectionResponse event, ActivityContextInterface aci)
 			throws ParseException {
 		logger.info("Receive CRCX response: " + event.getTransactionHandle());
-		
+
 		ServerTransaction txn = getServerTransaction();
 		Request request = txn.getRequest();
 
@@ -205,23 +202,21 @@ public abstract class CRCXSbb implements Sbb {
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
 		try {
-			MgcpConnectionActivity activity=getMgcpConnectionActivity();
+			MgcpConnectionActivity activity = getMgcpConnectionActivity();
 
-			//EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
-		
+			// EndpointIdentifier endpointID = new
+			// EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
+
 			DeleteConnection deleteConnection = new DeleteConnection(this, activity.getEndpointIdentifier());
 
 			deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
 
-			int txID = GEN++;
-
-			deleteConnection.setTransactionHandle(txID);
+			deleteConnection.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
 
 			ServerTransaction tx = evt.getServerTransaction();
 			Request request = evt.getRequest();
 
-		
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
@@ -268,15 +263,15 @@ public abstract class CRCXSbb implements Sbb {
 		}
 		return null;
 	}
-	
+
 	public void setSbbContext(SbbContext sbbContext) {
 		this.sbbContext = sbbContext;
 		try {
 			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 
 			// initialize SIP API
-		   provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
-			
+			provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
+
 			addressFactory = provider.getAddressFactory();
 			headerFactory = provider.getHeaderFactory();
 			messageFactory = provider.getMessageFactory();

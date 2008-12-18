@@ -35,7 +35,6 @@ import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
-import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.header.ContactHeader;
@@ -63,18 +62,16 @@ import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
 
-
 /**
  * 
  * @author amit.bhayani
  */
 public abstract class MDCXSbb implements Sbb {
 
-	private static int CALL_ID_GEN = 1;
-	private static int GEN = 2000;
+	private static final Logger logger = Logger.getLogger(MDCXSbb.class);
 
 	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/$";
-	
+
 	public final static String JBOSS_BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
 
 	private SbbContext sbbContext;
@@ -89,8 +86,6 @@ public abstract class MDCXSbb implements Sbb {
 	// MGCP
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
-
-	private Logger logger = Logger.getLogger(MDCXSbb.class);
 
 	/** Creates a new instance of CallSbb */
 	public MDCXSbb() {
@@ -109,7 +104,7 @@ public abstract class MDCXSbb implements Sbb {
 		try {
 			Dialog dialog = provider.getNewDialog(evt.getServerTransaction());
 			dialog.terminateOnBye(true);
-			daci = acif.getActivityContextInterface((DialogActivity)dialog);
+			daci = acif.getActivityContextInterface((DialogActivity) dialog);
 			daci.attach(sbbContext.getSbbLocalObject());
 		} catch (Exception e) {
 			logger.error("Error during dialog creation", e);
@@ -120,19 +115,19 @@ public abstract class MDCXSbb implements Sbb {
 		String remoteSdp = new String(evt.getRequest().getRawContent());
 		this.setRemoteSdp(remoteSdp);
 
-		CallIdentifier callID = new CallIdentifier(Integer.toHexString(CALL_ID_GEN++));
+		CallIdentifier callID = mgcpProvider.getUniqueCallIdentifier();
 		this.setCallIdentifier(callID.toString());
 
-		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS+":2729");
+		EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS + ":2729");
 
 		CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 
-		int txID = GEN++;
-		createConnection.setTransactionHandle(txID);
+		createConnection.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 
 		MgcpConnectionActivity connectionActivity = null;
 		try {
-			connectionActivity = mgcpProvider.getConnectionActivity(txID, endpointID);
+			connectionActivity = mgcpProvider
+					.getConnectionActivity(createConnection.getTransactionHandle(), endpointID);
 			ActivityContextInterface epnAci = mgcpAcif.getActivityContextInterface(connectionActivity);
 			epnAci.attach(sbbContext.getSbbLocalObject());
 		} catch (FactoryException ex) {
@@ -162,24 +157,25 @@ public abstract class MDCXSbb implements Sbb {
 
 			CallIdentifier callIdentifier = new CallIdentifier(this.getCallIdentifier());
 
-			//EndpointIdentifier endpointID = new EndpointIdentifier(getMgcpConnectionActivity(), JBOSS_BIND_ADDRESS+":2729");
+			// EndpointIdentifier endpointID = new
+			// EndpointIdentifier(getMgcpConnectionActivity(),
+			// JBOSS_BIND_ADDRESS+":2729");
 
-			EndpointIdentifier endpointID =((MgcpConnectionActivity)aci.getActivity()).getEndpointIdentifier();
-			
+			EndpointIdentifier endpointID = ((MgcpConnectionActivity) aci.getActivity()).getEndpointIdentifier();
+
 			ModifyConnection modifyConnection = new ModifyConnection(this, callIdentifier, endpointID, event
 					.getConnectionIdentifier());
 
 			ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(this.getRemoteSdp());
 			modifyConnection.setRemoteConnectionDescriptor(connectionDescriptor);
 
-			int txID = GEN++;
-			modifyConnection.setTransactionHandle(txID);
+			modifyConnection.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 
 			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
 
 			break;
 		default:
-			logger.error("CRCX did not go successfully "+status.getValue());
+			logger.error("CRCX did not go successfully " + status.getValue());
 			try {
 				Response response = messageFactory.createResponse(Response.SERVER_INTERNAL_ERROR, request);
 				txn.sendResponse(response);
@@ -230,24 +226,23 @@ public abstract class MDCXSbb implements Sbb {
 	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
-		
-		
-		try{
-		//EndpointIdentifier endpointID = new EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS+":2729");
-			EndpointIdentifier endpointID =getMgcpConnectionActivity().getEndpointIdentifier();
+
+		try {
+			// EndpointIdentifier endpointID = new
+			// EndpointIdentifier(ENDPOINT_NAME, JBOSS_BIND_ADDRESS+":2729");
+			EndpointIdentifier endpointID = getMgcpConnectionActivity().getEndpointIdentifier();
 			DeleteConnection deleteConnection = new DeleteConnection(this, endpointID);
 
 			deleteConnection.setConnectionIdentifier(new ConnectionIdentifier(this.getConnectionIdentifier()));
 
-			int txID = GEN++;
+			
 
-			deleteConnection.setTransactionHandle(txID);
+			deleteConnection.setTransactionHandle(mgcpProvider.getUniqueTransactionHandler());
 			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
 
 			ServerTransaction tx = evt.getServerTransaction();
 			Request request = evt.getRequest();
 
-		
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
@@ -282,7 +277,7 @@ public abstract class MDCXSbb implements Sbb {
 
 			// initialize SIP API
 			provider = (SleeSipProvider) ctx.lookup("slee/resources/jainsip/1.2/provider");
-			
+
 			addressFactory = provider.getAddressFactory();
 			headerFactory = provider.getHeaderFactory();
 			messageFactory = provider.getMessageFactory();
@@ -339,6 +334,7 @@ public abstract class MDCXSbb implements Sbb {
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
 	}
+
 	private MgcpConnectionActivity getMgcpConnectionActivity() {
 		ActivityContextInterface[] activities = sbbContext.getActivities();
 		for (ActivityContextInterface activity : activities) {
@@ -348,5 +344,5 @@ public abstract class MDCXSbb implements Sbb {
 		}
 		return null;
 	}
-	
+
 }
