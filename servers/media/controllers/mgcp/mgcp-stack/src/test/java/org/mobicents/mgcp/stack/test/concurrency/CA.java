@@ -38,7 +38,7 @@ public class CA extends TestCase implements JainMgcpExtendedListener {
 	protected static final int CA_PORT = 2724;
 
 	protected static final int MGW_PORT = 2729;
-	static int NDIALOGS = 1000;
+	static int NDIALOGS = 10000;
 
 	static int MAXCONCURRENTCRCX = 100;
 
@@ -125,8 +125,9 @@ public class CA extends TestCase implements JainMgcpExtendedListener {
 
 			int ndialogs = nbConcurrentInvite.decrementAndGet();
 			// System.out.println(nbConcurrentInvite);
-			if (ndialogs > MAXCONCURRENTCRCX)
+			if (ndialogs > MAXCONCURRENTCRCX) {
 				System.out.println("Concurrent invites = " + ndialogs);
+			}
 			synchronized (this) {
 				if (ndialogs < MAXCONCURRENTCRCX / 2)
 					this.notify();
@@ -185,7 +186,7 @@ public class CA extends TestCase implements JainMgcpExtendedListener {
 			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdpData));
 
 			createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-
+			nbConcurrentInvite.incrementAndGet();
 			caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 		} catch (Exception e) {
@@ -326,7 +327,8 @@ public class CA extends TestCase implements JainMgcpExtendedListener {
 			while (ca.deleteCount < NDIALOGS) {
 
 				while (ca.nbConcurrentInvite.intValue() >= MAXCONCURRENTCRCX) {
-					System.out.println("Waiting for max CRCX count to go down!");
+					System.out.println("nbConcurrentInvite = " + ca.nbConcurrentInvite.intValue()
+							+ " Waiting for max CRCX count to go down!");
 					synchronized (ca) {
 						try {
 							ca.wait();
