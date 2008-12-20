@@ -85,15 +85,12 @@ public class RestartInProgressHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-		// String msg = returnCode.getValue() + " " +
-		// response.getTransactionHandle() + " " + returnCode.getComment()
-		// + "\n";
+
 
 		// TODO should utils.encodeNotifiedEntity decide on port?
 		if (response.getNotifiedEntity() != null) {
 			s.append("N:").append(utils.encodeNotifiedEntity(response.getNotifiedEntity()) ).append(NEW_LINE);
-			// msg += "N:" +
-			// utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
+
 		}
 		return s.toString();
 		// return msg;
@@ -136,7 +133,7 @@ public class RestartInProgressHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new RestartInProgressResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new RestartInProgressResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -158,7 +155,7 @@ public class RestartInProgressHandler extends TransactionHandler {
 	public JainMgcpResponseEvent getProvisionalResponse() {
 		RestartInProgressResponse provisionalResponse = null;
 		if (!sent) {
-			provisionalResponse = new RestartInProgressResponse(commandEvent.getSource(),
+			provisionalResponse = new RestartInProgressResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(remoteTID);
 		}

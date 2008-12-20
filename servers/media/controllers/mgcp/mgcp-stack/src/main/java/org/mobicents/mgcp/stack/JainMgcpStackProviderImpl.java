@@ -31,8 +31,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 
-import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
-
 public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 
 	private static Logger logger = Logger.getLogger(JainMgcpStackProviderImpl.class);

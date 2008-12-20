@@ -92,48 +92,39 @@ public class CreateConnectionHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append("CRCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
 				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
-		// String msg = "CRCX " + evt.getTransactionHandle() + " " +
-		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode mandatory parameters
 
 		s.append("C: ").append(evt.getCallIdentifier()).append(NEW_LINE);
-		// msg += "C:" + evt.getCallIdentifier() + "\n";
+
 		s.append("M: ").append(evt.getMode()).append(NEW_LINE);
-		// msg += "M:" + evt.getMode() + "\n";
 
 		// encode optional parameters
 
 		if (evt.getBearerInformation() != null) {
 			s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
-			// msg += "B:e:" + evt.getBearerInformation() + "\n";
+
 		}
 
 		if (evt.getNotifiedEntity() != null) {
 			s.append("N: ").append(evt.getNotifiedEntity()).append(NEW_LINE);
-			// msg += "N:" + evt.getNotifiedEntity() + "\n";
+
 		}
 
 		if (evt.getLocalConnectionOptions() != null) {
 			s.append("L: ").append(utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions()));
-			// msg += "L:" +
-			// utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions());
 		}
 
 		if (evt.getSecondEndpointIdentifier() != null) {
 			s.append("Z2: ").append(evt.getSecondEndpointIdentifier()).append(NEW_LINE);
-			// msg += "Z2:" + evt.getSecondEndpointIdentifier() + "\n";
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
 			s.append(utils.encodeNotificationRequestParms(evt.getNotificationRequestParms()));
-			// msg +=
-			// utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
 		}
 
 		if (evt.getRemoteConnectionDescriptor() != null) {
 			s.append(NEW_LINE).append(evt.getRemoteConnectionDescriptor());
-			// msg += "\n" + evt.getRemoteConnectionDescriptor();
 		}
 		// return msg;
 		return s.toString();
@@ -146,31 +137,24 @@ public class CreateConnectionHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-		// String msg = returnCode.getValue() + " " +
-		// response.getTransactionHandle() + " " + returnCode.getComment()
-		// + "\n";
+
 		if (response.getConnectionIdentifier() != null) {
 			s.append("I: ").append(response.getConnectionIdentifier()).append(NEW_LINE);
-			// msg += "I:" + response.getConnectionIdentifier() + "\n";
 		}
 		if (response.getSpecificEndpointIdentifier() != null) {
 			s.append("Z: ").append(response.getSpecificEndpointIdentifier()).append(NEW_LINE);
-			// msg += "Z:" + response.getSpecificEndpointIdentifier() + "\n";
 		}
 		if (response.getSecondConnectionIdentifier() != null) {
 			s.append("I2: ").append(response.getSecondConnectionIdentifier()).append(NEW_LINE);
-			// msg += "I2:" + response.getSecondConnectionIdentifier() + "\n";
 		}
 		if (response.getSecondEndpointIdentifier() != null) {
 			s.append("Z2: ").append(response.getSecondEndpointIdentifier()).append(NEW_LINE);
-			// msg += "Z2:" + response.getSecondEndpointIdentifier() + "\n";
 		}
 		if (response.getLocalConnectionDescriptor() != null) {
 			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor());
-			// msg += "\n" + response.getLocalConnectionDescriptor();
 		}
 		return s.toString();
-		// return msg;
+
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
@@ -271,8 +255,8 @@ public class CreateConnectionHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new CreateConnectionResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])),
-					new ConnectionIdentifier("00"));
+			response = new CreateConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])), new ConnectionIdentifier("00"));
 			response.setTransactionHandle(tid);
 		}
 
@@ -320,7 +304,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 			// differ from final response. Problem?
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier("1");
 
-			provisionalResponse = new CreateConnectionResponse(commandEvent.getSource(),
+			provisionalResponse = new CreateConnectionResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed, connectionIdentifier);
 			provisionalResponse.setTransactionHandle(remoteTID);
 		}

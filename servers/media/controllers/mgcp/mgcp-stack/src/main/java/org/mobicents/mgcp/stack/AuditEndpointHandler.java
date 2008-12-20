@@ -81,14 +81,11 @@ public class AuditEndpointHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append("AUEP ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
 				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
-		// String msg = "AUEP " + evt.getTransactionHandle() + " " +
-		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode mandatory parameters
 		InfoCode[] requestedInfos = evt.getRequestedInfo();
 		if (requestedInfos != null) {
 			s.append("F: ").append(utils.encodeInfoCodeList(requestedInfos));
-			// msg += "F: " + utils.encodeInfoCodeList(requestedInfos);
 		}
 
 		// return msg;
@@ -103,21 +100,14 @@ public class AuditEndpointHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-		// String msg = returnCode.getValue() + " " +
-		// response.getTransactionHandle() + " " + returnCode.getComment()
-		// + "\n";
+
 		if (response.getCapabilities() != null) {
 			// TODO How to insert a new line with A : for different set of
 			// compression Algo?
 			s.append("A: ").append(utils.encodeCapabilityList(response.getCapabilities())).append(NEW_LINE);
-			// msg += "A:" +
-			// utils.encodeCapabilityList(response.getCapabilities()) + "\n";
 		}
 		if (response.getBearerInformation() != null) {
 			s.append("B: ").append(utils.encodeBearerInformation(response.getBearerInformation())).append(NEW_LINE);
-			// msg += "B:" +
-			// utils.encodeBearerInformation(response.getBearerInformation()) +
-			// "\n";
 		}
 		ConnectionIdentifier[] connectionIdentifiers = response.getConnectionIdentifiers();
 		if (connectionIdentifiers != null) {
@@ -129,71 +119,61 @@ public class AuditEndpointHandler extends TransactionHandler {
 					first = false;
 				} else {
 					s.append(",");
-					// msg += ",";
 				}
 				s.append(connectionIdentifiers[i].toString());
-				// msg += connectionIdentifiers[i].toString();
 			}
 			s.append(NEW_LINE);
-			// msg += "\n";
 		}
 		if (response.getNotifiedEntity() != null) {
 			s.append("N: ").append(utils.encodeNotifiedEntity(response.getNotifiedEntity())).append(NEW_LINE);
-			// msg += "N:" +
-			// utils.encodeNotifiedEntity(response.getNotifiedEntity()) + "\n";
 		}
 		if (response.getRequestIdentifier() != null) {
 			s.append("X: ").append(response.getRequestIdentifier()).append(NEW_LINE);
-			// msg += "X:" + response.getRequestIdentifier() + "\n";
 		}
 		RequestedEvent[] r = response.getRequestedEvents();
 		if (r != null) {
 			s.append("R: ").append(utils.encodeRequestedEvents(r)).append(NEW_LINE);
-			// msg += "R:" + utils.encodeRequestedEvents(r) + "\n";
 		}
 		EventName[] sEvet = response.getSignalRequests();
 		if (sEvet != null) {
 			s.append("S: ").append(utils.encodeEventNames(sEvet)).append(NEW_LINE);
-			// msg += "S:" + utils.encodeEventNames(s) + "\n";
 		}
 		if (response.getDigitMap() != null) {
 			s.append("D: ").append(response.getDigitMap()).append(NEW_LINE);
-			// msg += "D:" + response.getDigitMap() + "\n";
 		}
 		EventName[] o = response.getObservedEvents();
 		if (o != null) {
 			s.append("O: ").append(utils.encodeEventNames(o)).append(NEW_LINE);
-			// msg += "O:" + utils.encodeEventNames(o) + "\n";
 		}
 		if (response.getReasonCode() != null) {
 			s.append("E: ").append(response.getReasonCode()).append(NEW_LINE);
-			// msg += "E:" + response.getReasonCode() + "\n";
+
 		}
 		EventName[] t = response.getDetectEvents();
 		if (t != null) {
 			s.append("T: ").append(utils.encodeEventNames(t)).append(NEW_LINE);
-			// msg += "T:" + utils.encodeEventNames(t) + "\n";
+
 		}
 		EventName[] es = response.getEventStates();
 		if (es != null) {
 			s.append("ES: ").append(utils.encodeEventNames(es)).append(NEW_LINE);
-			// msg += "ES:" + utils.encodeEventNames(es) + "\n";
+
 		}
 		if (response.getRestartMethod() != null) {
 			s.append("RM: ").append(response.getRestartMethod()).append(NEW_LINE);
-			// msg += "RM:" + response.getRestartMethod() + "\n";
+
 		}
 		if (response.getRestartDelay() > 0) {
 			s.append("RD: ").append(response.getRestartDelay()).append(NEW_LINE);
-			// msg += "RD:" + response.getRestartDelay() + "\n";
+
 		}
 		EndpointIdentifier[] z = response.getEndpointIdentifierList();
 		if (z != null) {
 			s.append("Z: ").append(utils.encodeEndpointIdentifiers(z)).append(NEW_LINE);
-			// msg += "Z:" + utils.encodeEndpointIdentifiers(z) + "\n";
+
 		}
 		return s.toString();
-		// return msg;
+
 	}
 
 	@Override
@@ -201,7 +181,7 @@ public class AuditEndpointHandler extends TransactionHandler {
 		AuditEndpointResponse provisionalResponse = null;
 
 		if (!sent) {
-			provisionalResponse = new AuditEndpointResponse(commandEvent.getSource(),
+			provisionalResponse = new AuditEndpointResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(remoteTID);
 		}
@@ -280,7 +260,8 @@ public class AuditEndpointHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new AuditEndpointResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new AuditEndpointResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

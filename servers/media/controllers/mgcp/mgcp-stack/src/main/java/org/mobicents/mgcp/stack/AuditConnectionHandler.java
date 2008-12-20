@@ -183,7 +183,7 @@ public class AuditConnectionHandler extends TransactionHandler {
 		AuditConnectionResponse provisionalResponse = null;
 
 		if (!sent) {
-			provisionalResponse = new AuditConnectionResponse(commandEvent.getSource(),
+			provisionalResponse = new AuditConnectionResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(remoteTID);
 		}
@@ -273,7 +273,7 @@ public class AuditConnectionHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new AuditConnectionResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new AuditConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

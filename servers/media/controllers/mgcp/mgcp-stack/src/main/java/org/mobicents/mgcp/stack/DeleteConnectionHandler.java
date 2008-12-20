@@ -88,45 +88,41 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append("DLCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
 				evt.getEndpointIdentifier()).append(SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
-		// String msg = "DLCX " + evt.getTransactionHandle() + " " +
-		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
 
 		// encode optional parameters
 
 		if (evt.getBearerInformation() != null) {
 			s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
-			// msg += "B:e:" + evt.getBearerInformation() + "\n";
+
 		}
 
 		if (evt.getCallIdentifier() != null) {
 			s.append("C:").append(evt.getCallIdentifier()).append(NEW_LINE);
-			// msg += "C:" + evt.getCallIdentifier() + "\n";
+
 		}
 
 		if (evt.getConnectionIdentifier() != null) {
 			s.append("I:").append(evt.getConnectionIdentifier()).append(NEW_LINE);
-			// msg += "I:" + evt.getConnectionIdentifier() + "\n";
+
 		}
 
 		if (evt.getConnectionParms() != null) {
 			s.append("P:").append(utils.encodeConnectionParms(evt.getConnectionParms())).append(NEW_LINE);
-			// msg += "P:" +
-			// utils.encodeConnectionParms(evt.getConnectionParms()) + "\n";
+
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
 			s.append(utils.encodeNotificationRequestParms(evt.getNotificationRequestParms()));
-			// msg +=
-			// utils.encodeNotificationRequestParms(evt.getNotificationRequestParms());
+
 		}
 
 		if (evt.getReasonCode() != null) {
 			s.append("E:").append(evt.getReasonCode());
-			// msg += "E:" + evt.getReasonCode();
+
 		}
 
 		return s.toString();
-		// return msg;
+
 	}
 
 	public String encode(JainMgcpResponseEvent event) {
@@ -135,17 +131,15 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-		// String msg = returnCode.getValue() + " " +
-		// response.getTransactionHandle() + " " + returnCode.getComment()
-		// + "\n";
+
 
 		if (response.getConnectionParms() != null) {
 			s.append(response.getConnectionParms()).append(NEW_LINE);
-			// msg += response.getConnectionParms() + "\n";
+
 		}
 
 		return s.toString();
-		//return msg;
+
 	}
 
 	public class CommandContentHandle implements MgcpContentHandler {
@@ -233,7 +227,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new DeleteConnectionResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new DeleteConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -269,7 +263,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		DeleteConnectionResponse provisionalResponse = null;
 
 		if (!sent) {
-			provisionalResponse = new DeleteConnectionResponse(commandEvent.getSource(),
+			provisionalResponse = new DeleteConnectionResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 			provisionalResponse.setTransactionHandle(commandEvent.getTransactionHandle());
 		}

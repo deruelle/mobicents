@@ -71,13 +71,18 @@ import org.mobicents.mgcp.stack.parser.Utils;
  * @author Pavel Mitrenko
  * @author Amit Bhayani
  */
-public abstract class TransactionHandler implements Runnable,TransactionHandlerManagement {
+public abstract class TransactionHandler implements Runnable, TransactionHandlerManagement {
+
+	/** Logger instance */
+	private static final Logger logger = Logger.getLogger(TransactionHandler.class);
 
 	private static int GENERATOR = 1;
-	
+
 	public static final String NEW_LINE = "\n";
 	public static final String SINGLE_CHAR_SPACE = " ";
-	public static final String MGCP_VERSION = " MGCP 1.0"; //let the single char space prefix the version 
+	public static final String MGCP_VERSION = " MGCP 1.0"; // let the single
+	// char space prefix
+	// the version
 
 	public final static int LONGTRAN_TIMER_TIMEOUT = 5000; // 5secs
 	/** Is this a transaction on a command sent or received? */
@@ -100,8 +105,6 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	/** Used to hold parsed response event * */
 	protected JainMgcpResponseEvent responseEvent;
 
-	/** Logger instance */
-	private Logger logger = Logger.getLogger(TransactionHandler.class);
 	/** Expiration timer */
 	protected static Timer transactionHandlerTimer = new Timer("TransactionHandlerTimer");
 	private LongtranTimerTask longtranTimerTask;
@@ -120,15 +123,17 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	private DatagramPacket sendComandDatagram = null;
 
 	private int countOfCommandRetransmitted = 0;
-	
+
 	protected Utils utils = null;
 
-	protected EndpointHandler endpointHandler=null;
+	protected EndpointHandler endpointHandler = null;
 
 	protected boolean retransmision;
-	
-	protected LinkedList<ActionPerform> actionToPerform=new LinkedList<ActionPerform>();
-	
+
+	protected Object source = null;
+
+	protected LinkedList<ActionPerform> actionToPerform = new LinkedList<ActionPerform>();
+
 	/**
 	 * Creates a new instance of TransactionHandle
 	 * 
@@ -142,26 +147,22 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 		this.stack = stack;
 		this.localTID = GENERATOR++;
 		utils = new Utils();
-		//XXX:stack.addLocalTransaction(Integer.valueOf(localTID), this);
+		// XXX:stack.addLocalTransaction(Integer.valueOf(localTID), this);
 		stack.getLocalTransactions().put(Integer.valueOf(localTID), this);
-		if (logger.isDebugEnabled()) {
-			logger.debug("New mgcp transaction with id localID=" + localTID);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("New mgcp transaction with id localID=" + localTID);
+//		}
 	}
 
-	
-	public void setEndpointHandler(EndpointHandler handler)
-	{
-		
-		this.endpointHandler=handler;
+	public void setEndpointHandler(EndpointHandler handler) {
+
+		this.endpointHandler = handler;
 	}
-	
-	public EndpointHandler getEndpointHandler()
-	{
+
+	public EndpointHandler getEndpointHandler() {
 		return this.endpointHandler;
 	}
-	
-	
+
 	private void processTxTimeout() {
 		try {
 
@@ -171,21 +172,19 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 			// the try ensures the static timer will not get a runtime
 			// exception process tx timeout
 			if (sent) {
-				try{
+				try {
 					stack.provider.processTxTimeout(commandEvent);
-				}finally
-				{
-					getEndpointHandler().processTxTimeout(commandEvent,this);
+				} finally {
+					getEndpointHandler().processTxTimeout(commandEvent, this);
 				}
 			} else {
 				// TODO : Send back 406 TxTimedOut to NotifiedEntity
-				try{
+				try {
 					stack.provider.processRxTimeout(commandEvent);
-				}finally
-				{
-					getEndpointHandler().processRxTimeout(commandEvent,this);
+				} finally {
+					getEndpointHandler().processRxTimeout(commandEvent, this);
 				}
-				
+
 			}
 
 		} catch (Exception e) {
@@ -245,7 +244,7 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 			} else {
 				Integer key = new Integer(remoteTID);
 				TransactionHandler obj = stack.getCompletedTransactions().remove(key);
-				//XXX:TransactionHandler obj = stack.removeCompletedTx(key);
+				// XXX:TransactionHandler obj = stack.removeCompletedTx(key);
 				obj.clearEndpointHandler();
 				if (logger.isDebugEnabled()) {
 					logger.debug("T-HIST timeout deleting Response for Tx = " + remoteTID + " Response = " + obj);
@@ -287,31 +286,29 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 
 	/** Release this transaction and frees all allocated resources. */
 	protected void release(boolean removeEndpointHandler) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Released transaction (local id=" + localTID + "), stop timer");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Released transaction (local id=" + localTID + "), stop timer");
+//		}
 
-		//XXX:stack.removeLocalTransaction(Integer.valueOf(localTID));
-		//XXX:stack.removeRemoteTransaction(Integer.valueOf(remoteTID));
+		// XXX:stack.removeLocalTransaction(Integer.valueOf(localTID));
+		// XXX:stack.removeRemoteTransaction(Integer.valueOf(remoteTID));
 		stack.getLocalTransactions().remove(Integer.valueOf(localTID));
 		stack.getRemoteTxToLocalTxMap().remove(Integer.valueOf(remoteTID));
 		cancelTHISTTimerTask();
 		cancelLongtranTimer();
 		cancelReTransmissionTimer();
-		if(removeEndpointHandler)
-		{
+		if (removeEndpointHandler) {
 			this.clearEndpointHandler();
 		}
-	
+
 	}
 
-	public void clearEndpointHandler()
-	{
+	public void clearEndpointHandler() {
 		this.endpointHandler.transactionHandlerDeleted(this);
-		this.endpointHandler=null;
-		
+		this.endpointHandler = null;
+
 	}
-	
+
 	/**
 	 * Returns the transaction handle sent from application to the MGCP
 	 * provider.
@@ -382,8 +379,8 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	public abstract JainMgcpResponseEvent getProvisionalResponse();
 
 	public void run() {
-		
-		ActionPerform ap=this.actionToPerform.remove();
+
+		ActionPerform ap = this.actionToPerform.remove();
 		ap.perform();
 	}
 
@@ -410,9 +407,9 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 			Notify notifyCommand = (Notify) event;
 			NotifiedEntity notifiedEntity = notifyCommand.getNotifiedEntity();
 			port = notifiedEntity.getPortNumber();
-//			if (notifiedEntity.getLocalName() != null) {
-//				host = notifiedEntity.getLocalName() + "@";
-//			}
+			// if (notifiedEntity.getLocalName() != null) {
+			// host = notifiedEntity.getLocalName() + "@";
+			// }
 			host += notifiedEntity.getDomainName();
 
 			break;
@@ -445,6 +442,7 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 
 		// save this tx in stack and start timer
 		remoteTID = event.getTransactionHandle();
+		source = event.getSource();
 		event.setTransactionHandle(localTID);
 
 		// encode event object as MGCP command and send over UDP.
@@ -460,10 +458,9 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 		}
 		countOfCommandRetransmitted++;
 		stack.send(sendComandDatagram);
-		try{
+		try {
 			getEndpointHandler().commandDelivered(event, this);
-		}catch(Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -497,8 +494,8 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 		DatagramPacket packet = new DatagramPacket(data, data.length, remoteAddress, remotePort);
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("--- TransactionHandler:"+this+" :LocalID=" + localTID + ", Send response event to " + remoteAddress + ":" + remotePort
-					+ ", message\n" + msg);
+			logger.debug("--- TransactionHandler:" + this + " :LocalID=" + localTID + ", Send response event to "
+					+ remoteAddress + ":" + remotePort + ", message\n" + msg);
 		}
 		stack.send(packet);
 
@@ -510,18 +507,17 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 			// reset timer.
 			resetLongtranTimer();
 		} else {
-			try{
+			try {
 				getEndpointHandler().commandDelivered(commandEvent, event, this);
-			}catch(Exception e)
-			{
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			release(false);
 			stack.getCompletedTransactions().put(Integer.valueOf(event.getTransactionHandle()), this);
-			//XXX:stack.addCompletedTransaction(Integer.valueOf(event.getTransactionHandle()), this);
-			resetTHISTTimerTask(true);			
+			// XXX:stack.addCompletedTransaction(Integer.valueOf(event.getTransactionHandle()),
+			// this);
+			resetTHISTTimerTask(true);
 		}
-
 
 	}
 
@@ -533,37 +529,23 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	 *            receive MGCP command message.
 	 */
 	/*
-	public void receiveCommand(String message) {
-
-		JainMgcpCommandEvent event = null;
-		try {
-			event = decodeCommand(message);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Event decoded: " + event);
-			}
-		} catch (ParseException e) {
-			logger.error("Coud not parse message: ", e);
-			return;
-		}
-
-		sent = false;
-		commandEvent = event;
-
-		// store original transaction handle parameter
-		// and populate with local value
-		remoteTID = event.getTransactionHandle();
-		
-		stack.remoteTxToLocalTxMap.put(new Integer(remoteTID), new Integer(localTID));
-		event.setTransactionHandle(localTID);
-
-		resetLongtranTimer();
-
-		// fire event
-		stack.provider.processMgcpCommandEvent(event);
-
-	}
+	 * public void receiveCommand(String message) {
+	 * 
+	 * JainMgcpCommandEvent event = null; try { event = decodeCommand(message);
+	 * if (logger.isDebugEnabled()) { logger.debug("Event decoded: " + event); } }
+	 * catch (ParseException e) { logger.error("Coud not parse message: ", e);
+	 * return; }
+	 * 
+	 * sent = false; commandEvent = event; // store original transaction handle
+	 * parameter // and populate with local value remoteTID =
+	 * event.getTransactionHandle();
+	 * 
+	 * stack.remoteTxToLocalTxMap.put(new Integer(remoteTID), new
+	 * Integer(localTID)); event.setTransactionHandle(localTID);
+	 * 
+	 * resetLongtranTimer(); // fire event
+	 * stack.provider.processMgcpCommandEvent(event); }
 	 */
-	
 
 	private void cancelLongtranTimer() {
 		if (longtranTimerTask != null) {
@@ -638,7 +620,7 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	}
 
 	public void setCommandEvent(JainMgcpCommandEvent commandEvent) {
-		
+
 		this.commandEvent = commandEvent;
 		this.actionToPerform.add(new ScheduleCommandSend());
 	}
@@ -648,26 +630,24 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 	}
 
 	public void setResponseEvent(JainMgcpResponseEvent responseEvent) {
-		
+
 		this.responseEvent = responseEvent;
 		this.actionToPerform.add(new ScheduleCommandSend());
-		
-	}
 
+	}
 
 	public void markRetransmision() {
-		this.retransmision=true;
-		
+		this.retransmision = true;
+
 	}
 
-
 	public void receiveRequest(String msg) {
-		
+
 		JainMgcpCommandEvent event = null;
 		try {
 			event = decodeCommand(msg);
 			if (logger.isDebugEnabled()) {
-				logger.debug("Event decoded: " + event);
+				logger.debug("Event decoded: \n" + event);
 			}
 		} catch (ParseException e) {
 			logger.error("Coud not parse message: ", e);
@@ -680,14 +660,15 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 		// and populate with local value
 		remoteTID = event.getTransactionHandle();
 		stack.getRemoteTxToLocalTxMap().put(new Integer(remoteTID), new Integer(localTID));
-		//XXX:stack.addRemoteTxIDToLocalTxID(new Integer(remoteTID), new Integer(localTID));
+		// XXX:stack.addRemoteTxIDToLocalTxID(new Integer(remoteTID), new
+		// Integer(localTID));
 		event.setTransactionHandle(localTID);
 
 		resetLongtranTimer();
-		
+
 		this.actionToPerform.add(new ScheduleRequestReceival(this));
-		//we shoudl be scheduled by message handler
-		
+		// we shoudl be scheduled by message handler
+
 	}
 
 	/**
@@ -712,44 +693,45 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 
 		// restore original transaction handle parameter
 		event.setTransactionHandle(remoteTID);
-		
+
 		/*
 		 * Just reset timer in case of provisional response. Otherwise, release
 		 * tx.
 		 */
 		if (this.isProvisional(event.getReturnCode())) {
 			resetLongtranTimer();
-			//Add dumym action
-			//This is required since on message receivel it is scheduled to execute
-			this.actionToPerform.add(new ActionPerform(){
+			// Add dumym action
+			// This is required since on message receivel it is scheduled to
+			// execute
+			this.actionToPerform.add(new ActionPerform() {
 
 				@Override
 				public void perform() {
-					
-					
-				}});
+
+				}
+			});
 		} else {
 			// fire event only if non provisional response
-			//This is done in MessageHandler
-			//endpointHandler.scheduleTransactionHandler(this);
-			
-			this.actionToPerform.add(new ScheduleResponseReceival(event,this));
+			// This is done in MessageHandler
+			// endpointHandler.scheduleTransactionHandler(this);
+
+			this.actionToPerform.add(new ScheduleResponseReceival(event, this));
 		}
 	}
+
 	public String getEndpointId() {
-		
+
 		return this.commandEvent.getEndpointIdentifier().toString();
 	}
-	protected abstract class ActionPerform 
-	{
+
+	protected abstract class ActionPerform {
 		public abstract void perform();
 	}
-	
-	protected class ScheduleRequestReceival extends ActionPerform
-	{
 
-		protected TransactionHandler th=null;
-		
+	protected class ScheduleRequestReceival extends ActionPerform {
+
+		protected TransactionHandler th = null;
+
 		public ScheduleRequestReceival(TransactionHandler th) {
 			super();
 			this.th = th;
@@ -757,73 +739,65 @@ public abstract class TransactionHandler implements Runnable,TransactionHandlerM
 
 		@Override
 		public void perform() {
-			try{
+			try {
 				stack.provider.processMgcpCommandEvent(commandEvent);
-			
-			}catch(Exception e)
-			{
+
+			} catch (Exception e) {
 				e.printStackTrace();
-			}finally
-			{
-				getEndpointHandler().commandDelivered(commandEvent,th);
+			} finally {
+				getEndpointHandler().commandDelivered(commandEvent, th);
 			}
 		}
-		
+
 	}
-	protected class ScheduleResponseReceival extends ActionPerform
-	{
+
+	protected class ScheduleResponseReceival extends ActionPerform {
 
 		protected JainMgcpResponseEvent event = null;
-		protected TransactionHandler th=null;
-		public ScheduleResponseReceival(JainMgcpResponseEvent event,TransactionHandler th) {
+		protected TransactionHandler th = null;
+
+		public ScheduleResponseReceival(JainMgcpResponseEvent event, TransactionHandler th) {
 			super();
 			this.th = th;
 			this.event = event;
 		}
 
-		
-
 		@Override
 		public void perform() {
-			try{
+			try {
 				stack.provider.processMgcpResponseEvent(event, commandEvent);
-				
-			}catch(Exception e)
-			{
+
+			} catch (Exception e) {
 				e.printStackTrace();
-			}finally
-			{
-				try{
-				getEndpointHandler().commandDelivered(commandEvent,event,th);
-				}finally
-				{
+			} finally {
+				try {
+					getEndpointHandler().commandDelivered(commandEvent, event, th);
+				} finally {
 					release(true);
 				}
 			}
 		}
-		
+
 	}
-	
-	protected class ScheduleCommandSend extends ActionPerform
-	{
+
+	protected class ScheduleCommandSend extends ActionPerform {
 
 		@Override
 		public void perform() {
-			
-			try{
+
+			try {
 				if (isCommand) {
 					send(getCommandEvent());
 				} else {
 					send(getResponseEvent());
 				}
-			
-			}catch(Exception e)
-			{
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
+
 	}
 
 }

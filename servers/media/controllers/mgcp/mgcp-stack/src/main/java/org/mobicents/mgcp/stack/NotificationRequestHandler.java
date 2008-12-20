@@ -151,7 +151,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new NotificationRequestResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new NotificationRequestResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -168,7 +168,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	public JainMgcpResponseEvent getProvisionalResponse() {
 		NotificationRequestResponse provisionalresponse = null;
 		if (!sent) {
-			provisionalresponse = new NotificationRequestResponse(commandEvent.getSource(),
+			provisionalresponse = new NotificationRequestResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 		}
 		return provisionalresponse;

@@ -81,13 +81,11 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append("EPCF ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
 				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
-		// String msg = "EPCF " + evt.getTransactionHandle() + " " +
-		// evt.getEndpointIdentifier() + " MGCP 1.0\n";
+
 
 		// encode mandatory parameters
 		s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
-		// msg += "B:e:" + evt.getBearerInformation() + "\n";
-		// return msg;
+
 		return s.toString();
 	}
 
@@ -97,10 +95,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-		// String msg = returnCode.getValue() + " " +
-		// response.getTransactionHandle() + " " + returnCode.getComment()
-		// + "\n";
-		// return msg;
+
 		return s.toString();
 	}
 
@@ -172,7 +167,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 			String[] tokens = header.split("\\s");
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new EndpointConfigurationResponse(stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new EndpointConfigurationResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -203,7 +198,7 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	public JainMgcpResponseEvent getProvisionalResponse() {
 		EndpointConfigurationResponse provisionalresponse = null;
 		if (!sent) {
-			provisionalresponse = new EndpointConfigurationResponse(commandEvent.getSource(),
+			provisionalresponse = new EndpointConfigurationResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 		}
 		return provisionalresponse;

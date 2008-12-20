@@ -1,0 +1,359 @@
+package org.mobicents.mgcp.stack.test.concurrency;
+
+import jain.protocol.ip.mgcp.CreateProviderException;
+import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
+import jain.protocol.ip.mgcp.JainMgcpEvent;
+import jain.protocol.ip.mgcp.JainMgcpListener;
+import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
+import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.CreateConnection;
+import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.DeleteConnection;
+import jain.protocol.ip.mgcp.message.NotificationRequest;
+import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TooManyListenersException;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import junit.framework.TestCase;
+
+import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
+import org.mobicents.mgcp.stack.JainMgcpStackImpl;
+import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+
+public class CA extends TestCase implements JainMgcpExtendedListener {
+
+	protected static final String CLIENT_ADDRESS = "127.0.0.1";
+
+	protected static final String SERVER_ADDRESS = "127.0.0.1";
+
+	protected static final int CA_PORT = 2724;
+
+	protected static final int MGW_PORT = 2729;
+	static int NDIALOGS = 1000;
+
+	static int MAXCONCURRENTCRCX = 100;
+
+	// a ramp-up period is required for performance testing.
+	int deleteCount = -100;
+
+	protected InetAddress caIPAddress = null;
+	protected InetAddress mgIPAddress = null;
+
+	protected JainMgcpStackImpl caStack = null;
+
+	private AtomicInteger ENDPOINT_ID = new AtomicInteger(0);
+
+	AtomicInteger nbConcurrentInvite = new AtomicInteger(0);
+
+	private JainMgcpStackProviderImpl caProvider;
+
+	long start = 0l;
+
+	private static Timer timer;
+
+	static {
+		timer = new Timer();
+	}
+
+	// //////////////////////////////////
+	// //// Listeners Method start /////
+	// /////////////////////////////////
+
+	public void transactionEnded(int handle) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void transactionRxTimedOut(JainMgcpCommandEvent command) {
+		System.out.println("Transaction Request Time out");
+		fail("Unexpected event: Rx TimeoutEvent ");
+	}
+
+	public void transactionTxTimedOut(JainMgcpCommandEvent command) {
+		System.out.println("Transaction Time out");
+		fail("Unexpected event: TimeoutEvent ");
+
+	}
+
+	public void processMgcpCommandEvent(JainMgcpCommandEvent jainmgcpcommandevent) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
+		Appdata appdatad = (Appdata) jainmgcpresponseevent.getSource();
+
+		EndpointIdentifier endpointID = new EndpointIdentifier(appdatad.getEndpointId(), SERVER_ADDRESS + ":"
+				+ MGW_PORT);
+
+		switch (jainmgcpresponseevent.getObjectIdentifier()) {
+		case Constants.RESP_CREATE_CONNECTION:
+			appdatad.setReceivedCrcxResponse(true);
+			appdatad.setConnectionIdentifier(((CreateConnectionResponse) jainmgcpresponseevent)
+					.getConnectionIdentifier());
+			// send RQNT
+
+			NotificationRequest notificationRequest = new NotificationRequest(appdatad, endpointID, caProvider
+					.getUniqueRequestIdentifier());
+			notificationRequest.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+			caProvider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
+			break;
+		case Constants.RESP_NOTIFICATION_REQUEST:
+			appdatad.setReceivedRqntResponse(true);
+
+			// Send DLCX
+
+			DeleteConnection deleteConnection = new DeleteConnection(appdatad, endpointID);
+			deleteConnection.setConnectionIdentifier(appdatad.getConnectionIdentifier());
+			deleteConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+			caProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+
+			break;
+		case Constants.RESP_DELETE_CONNECTION:
+			appdatad.setReceivedDlcxResponse(true);
+
+			int ndialogs = nbConcurrentInvite.decrementAndGet();
+			// System.out.println(nbConcurrentInvite);
+			if (ndialogs > MAXCONCURRENTCRCX)
+				System.out.println("Concurrent invites = " + ndialogs);
+			synchronized (this) {
+				if (ndialogs < MAXCONCURRENTCRCX / 2)
+					this.notify();
+			}
+
+			this.deleteCount++;
+
+			if (this.deleteCount == NDIALOGS) {
+				long current = System.currentTimeMillis();
+				float sec = (float) (current - start) / 1000f;
+				System.out.println("Total time in sec = " + sec);
+				System.out.println("Thrupt = " + (float) (NDIALOGS / sec));
+			}
+			break;
+		default:
+			System.out.println("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			break;
+
+		}
+
+	}
+
+	// //////////////////////////////////
+	// //// Listeners Method over //////
+	// /////////////////////////////////
+
+	public void createMgcpStack(JainMgcpListener listener) throws UnknownHostException, CreateProviderException,
+			TooManyListenersException {
+		caIPAddress = InetAddress.getByName(CLIENT_ADDRESS);
+		caStack = new JainMgcpStackImpl(caIPAddress, CA_PORT);
+		caProvider = (JainMgcpStackProviderImpl) caStack.createProvider();
+		caProvider.addJainMgcpListener(listener);
+	}
+
+	public void sendCreateConnection() {
+
+		try {
+
+			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
+
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-"
+					+ ENDPOINT_ID.incrementAndGet(), SERVER_ADDRESS + ":" + MGW_PORT);
+
+			String endpointName = endpointID.getLocalEndpointName();
+
+			Appdata appdata = new Appdata(endpointName);
+
+			CreateConnection createConnection = new CreateConnection(appdata, callID, endpointID,
+					ConnectionMode.SendRecv);
+
+			String sdpData = "v=0\r\n" + "o=4855 13760799956958020 13760799956958020" + " IN IP4  127.0.0.1\r\n"
+					+ "s=mysession session\r\n" + "p=+46 8 52018010\r\n" + "c=IN IP4  127.0.0.1\r\n" + "t=0 0\r\n"
+					+ "m=audio 6022 RTP/AVP 0 4 18\r\n" + "a=rtpmap:0 PCMU/8000\r\n" + "a=rtpmap:4 G723/8000\r\n"
+					+ "a=rtpmap:18 G729A/8000\r\n" + "a=ptime:20\r\n";
+
+			createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdpData));
+
+			createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+			caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			fail("Unexpected Exception " + e.getMessage());
+		}
+	}
+
+	class Appdata {
+
+		protected TTask ttask;
+
+		protected long startTime;
+
+		protected long endTime;
+
+		private ConnectionIdentifier connectionIdentifier = null;
+		private boolean receivedCrcxResponse = false;
+		private boolean receivedRqntResponse = false;
+		private boolean receivedDlcxResponse = false;
+
+		String endpointId = null;
+
+		Appdata(String endpointId) {
+			this.endpointId = endpointId;
+			ttask = new TTask(this);
+			timer.schedule(ttask, 20 * 1000 * NDIALOGS / 100);
+			startTime = System.currentTimeMillis();
+		}
+
+		public void setReceivedCrcxResponse(boolean response) {
+			if (!receivedRqntResponse && !receivedDlcxResponse) {
+				this.receivedCrcxResponse = response;
+			} else {
+
+				System.out.println("receivedCrcxResponse after receivedRqntResponse or receivedDlcxResponse");
+				System.out.println("System falsed " + this.toString());
+				System.exit(0);
+			}
+		}
+
+		public void setReceivedRqntResponse(boolean response) {
+			if (receivedCrcxResponse && !receivedDlcxResponse) {
+				this.receivedRqntResponse = response;
+			} else {
+
+				System.out.println("receivedRqntResponse after receivedDlcxResponse or before receivedCrcxResponse");
+				System.out.println("System falsed " + this.toString());
+				System.exit(0);
+			}
+		}
+
+		public void setReceivedDlcxResponse(boolean response) {
+			if (receivedCrcxResponse && receivedRqntResponse) {
+				this.receivedDlcxResponse = response;
+			} else {
+
+				System.out.println("receivedDlcxResponse before receivedCrcxResponse or receivedDlcxResponse");
+				System.out.println("System falsed " + this.toString());
+				System.exit(0);
+			}
+		}
+
+		public TTask getTtask() {
+			return ttask;
+		}
+
+		public void setTtask(TTask ttask) {
+			this.ttask = ttask;
+		}
+
+		public String getEndpointId() {
+			return endpointId;
+		}
+
+		public void setEndpointId(String endpointId) {
+			this.endpointId = endpointId;
+		}
+
+		public boolean isReceivedCrcxResponse() {
+			return receivedCrcxResponse;
+		}
+
+		public boolean isReceivedRqntResponse() {
+			return receivedRqntResponse;
+		}
+
+		public boolean isReceivedDlcxResponse() {
+			return receivedDlcxResponse;
+		}
+
+		public void cancelTimer() {
+			this.ttask.cancel();
+			endTime = System.currentTimeMillis();
+		}
+
+		public String toString() {
+			return new StringBuffer("EndpointId = ").append(this.endpointId).append(" receivedCrcxResponse = ").append(
+					receivedCrcxResponse).append(" receivedRqntResponse= ").append(receivedRqntResponse).append(
+					" receivedDlcxResponse= ").append(receivedDlcxResponse).toString();
+
+		}
+
+		public ConnectionIdentifier getConnectionIdentifier() {
+			return connectionIdentifier;
+		}
+
+		public void setConnectionIdentifier(ConnectionIdentifier connectionIdentifier) {
+			this.connectionIdentifier = connectionIdentifier;
+		}
+	}
+
+	class TTask extends TimerTask {
+		Appdata appdata;
+
+		public TTask(Appdata appdata) {
+			this.appdata = appdata;
+		}
+
+		public void run() {
+			if (!this.appdata.isReceivedCrcxResponse() || !this.appdata.isReceivedDlcxResponse()
+					|| !this.appdata.isReceivedRqntResponse()) {
+				System.out.println("Appdata " + appdata.toString());
+				System.exit(0);
+			} else {
+				this.appdata = null;
+			}
+		}
+	}
+
+	public static void main(String args[]) {
+		final CA ca = new CA();
+		try {
+			ca.createMgcpStack(ca);
+			ca.start = System.currentTimeMillis();
+
+			while (ca.deleteCount < NDIALOGS) {
+
+				while (ca.nbConcurrentInvite.intValue() >= MAXCONCURRENTCRCX) {
+					System.out.println("Waiting for max CRCX count to go down!");
+					synchronized (ca) {
+						try {
+							ca.wait();
+						} catch (Exception ex) {
+						}
+					}
+				}
+
+				if (ca.deleteCount == 0) {
+					ca.start = System.currentTimeMillis();
+				}
+
+				try {
+					Thread.sleep(5);
+				} catch (InterruptedException e) {
+				}
+
+				ca.sendCreateConnection();
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (CreateProviderException e) {
+			e.printStackTrace();
+		} catch (TooManyListenersException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}
