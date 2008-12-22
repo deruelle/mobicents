@@ -48,7 +48,7 @@ import org.mobicents.slee.examples.callcontrol.profile.ProfileCreator;
  */
 public abstract class SubscriptionProfileSbb implements Sbb {
 	
-	protected static Logger log = Logger.getLogger(SubscriptionProfileSbb.class);
+	protected transient Logger log = Logger.getLogger(this.getClass());
 	
     public void setSbbContext(SbbContext context) {
 		this.sbbContext = context;

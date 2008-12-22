@@ -208,8 +208,8 @@ public abstract class CallForwardingSbb extends SubscriptionProfileSbb implement
 				log.info("########## BINDINGS: " + binding);
 				ContactHeader header = null;
 				try {
-					header = binding.getContactHeader(getAddressFactory(), getHeaderFactory());
-				} catch (InvalidArgumentException e) {
+					header = getHeaderFactory().createContactHeader(getAddressFactory().createAddress(binding.getContactAddress()));
+				} catch (ParseException e) {
 					log.error(e.getMessage(), e);
 				}
 				log.info("########## CONTACT HEADER: " + header);
@@ -219,7 +219,7 @@ public abstract class CallForwardingSbb extends SubscriptionProfileSbb implement
 				}
 
 				Address na = header.getAddress();
-				log.info("Address: " + na);
+				log.info("isUserAvailable Address: " + na);
 				target = na.getURI();
 				break;
 			}
