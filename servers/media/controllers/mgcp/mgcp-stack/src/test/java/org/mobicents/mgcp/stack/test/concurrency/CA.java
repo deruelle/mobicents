@@ -23,13 +23,12 @@ import java.util.TimerTask;
 import java.util.TooManyListenersException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import junit.framework.TestCase;
-
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.mgcp.stack.test.TestHarness;
 
-public class CA extends TestCase implements JainMgcpExtendedListener {
+public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 	protected static final String CLIENT_ADDRESS = "127.0.0.1";
 

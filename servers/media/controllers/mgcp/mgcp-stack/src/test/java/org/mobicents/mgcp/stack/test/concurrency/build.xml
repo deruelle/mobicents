@@ -3,15 +3,17 @@
 	<property name="root" value="../../../../../../../../../" />
 	<property file="${root}/ant-build-config.properties" />
 	<property name="classes" value="${root}/target/classes" />
+	<property name="test-classes" value="${root}/target/test-classes" />
 	<property name="srcroot" value="${root}/src" />
 	<property name="log4j_jar" value="${log4j}" />
 	<property name="junit_jar" value="${junit}" />
 	<property name="jain_mgcp_ri_jar" value="${jain-mgcp-ri}" />
 	<path id="project.class.path">
 		<pathelement location="${jain_mgcp_ri_jar}" />
+		<pathelement location="${test-classes}" />
 		<pathelement location="${classes}" />
 		<pathelement location="${log4j_jar}" />
-		<pathelement location="${junit_jar}" />
+		<pathelement location="${junit_jar}" />			
 	</path>
 	<target name="make">
 		<javac debug="true" source="${javac.source}" deprecation="${javac.deprecation}" debuglevel="${javac.debuglevel}" srcdir="${srcroot}" includes="test/java/org/mobicents/mgcp/stack/test/concurrency/**/*.java" classpathref="project.class.path" destdir="${classes}">
@@ -22,7 +24,9 @@
 	<target name="mgw" depends="make" description="run the example UAs.">
 		<delete file="shootistdebug.txt" />
 		<delete file="shootistlog.txt" />
-		<java classname="${packageprefix}.MGW" fork="true" maxmemory="128m" classpathref="project.class.path" />
+		<java classname="${packageprefix}.MGW" fork="true" maxmemory="128m" classpathref="project.class.path" >
+			
+		</java>
 	</target>
 	<target name="ca" depends="make" description="run the example UAs.">
 		<delete file="shootistdebug.txt" />

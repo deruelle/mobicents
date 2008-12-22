@@ -1,9 +1,8 @@
 package org.mobicents.mgcp.stack.test;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -85,10 +84,14 @@ public class TestHarness extends TestCase {
 			logger.debug("log4j configured");
 
 			// If already created a print writer then just use it.
+			try{
 			if (lf != null)
 				logger.addAppender(new FileAppender(new SimpleLayout(), logFileName));
 			else
 				logger.addAppender(new FileAppender(new SimpleLayout(), "testoutput.txt"));
+			} catch(FileNotFoundException fnfe){
+				
+			}
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -96,6 +99,7 @@ public class TestHarness extends TestCase {
 	}
 
 	protected TestHarness() {
+		init();
 
 	}
 

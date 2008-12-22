@@ -48,18 +48,19 @@ import org.mobicents.mgcp.stack.handlers.EndpointHandlerManager;
  * @author Pavel Mitrenko
  */
 public class JainMgcpStackImpl extends Thread implements JainMgcpStack, EndpointHandlerManager {
-
+	private static final Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
 	private static final String propertiesFileName = "mgcp-stack.properties";
 	private String protocolVersion = "1.0";
 	protected int port = 2727;
 	private DatagramSocket socket;
+	private InetAddress localAddress = null;
 	private boolean stopped = true;
 	private int executorTableSize = 200;
 	private int executorQueueSize = -1;
 	private int incomingDataBufferSize = -1;
 	private ThreadPoolQueueExecutor[] executors = null;
 	private int executorPosition = 0;
-	private Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
+
 	// protected ExecutorService jainMgcpStackImplPool =
 	// Executors.newFixedThreadPool(50,new
 	// JainMgcpStackImpl.ThreadFactoryImpl());
@@ -100,7 +101,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 				try {
 					InetSocketAddress bindAddress = new InetSocketAddress(localAddress, port);
 					socket = new DatagramSocket(bindAddress);
-					logger.info("Jain Mgcp stack bound to IP " + localAddress + " and UDP port " + this.port);
+					this.localAddress = socket.getLocalAddress();
+					logger.info("Jain Mgcp stack bound to IP " + this.localAddress + " and UDP port " + this.port);
 					break;
 				} catch (SocketException e) {
 					logger.error("Failed to bound to local port " + this.port + ". Caused by", e);
@@ -230,8 +232,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	}
 
 	public InetAddress getAddress() {
-		if (this.socket != null) {
-			return socket.getLocalAddress();
+		if (this.localAddress != null) {
+			return this.localAddress;
 		} else {
 			return null;
 		}
@@ -247,10 +249,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 	protected synchronized void send(DatagramPacket packet) {
 		try {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Sending " + packet.getLength() + " bytes to " + packet.getAddress() + " port = "
-						+ packet.getPort());
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Sending " + packet.getLength() + " bytes to " + packet.getAddress() + " port = "
+//						+ packet.getPort());
+//			}
 
 			socket.send(packet);
 		} catch (IOException e) {
@@ -265,9 +267,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	@Override
 	public void run() {
 		if (logger.isDebugEnabled()) {
-			logger
-					.debug("MGCP stack started successfully on " + socket.getLocalAddress() + ":"
-							+ socket.getLocalPort());
+			logger.debug("MGCP stack started successfully on " + this.localAddress + ":" + this.port);
 		}
 
 		byte[] buffer = new byte[86400];
@@ -287,10 +287,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 				continue;
 			}
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Receive " + packet.getLength() + " bytes from " + packet.getAddress() + ":"
-						+ packet.getPort());
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Receive " + packet.getLength() + " bytes from " + packet.getAddress() + ":"
+//						+ packet.getPort());
+//			}
 
 			// uses now the actual data length from the DatagramPacket
 			// instead of the length of the byte[] buffer
@@ -355,49 +355,48 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		EndpointHandler eh = null;
 		String _endpointId = endpointId.intern();
 
-		if (logger.isDebugEnabled()) {
-			for (String key : endpointHandlers.keySet()) {
-				logger.debug("-------------" + this.socket.getLocalAddress() + ":" + this.socket.getLocalPort()
-						+ "--------------\n" + endpointId + "\n" + key + "\n" + (endpointId.equals(key)) + "\n"
-						+ endpointHandlers.containsKey(_endpointId) + "\n---------------------------");
-			}
-		}
+//		if (logger.isDebugEnabled()) {
+//			for (String key : endpointHandlers.keySet()) {
+//				logger.debug("-------------" + this.localAddress + ":" + this.port + "--------------\n" + endpointId
+//						+ "\n" + key + "\n" + (endpointId.equals(key)) + "\n"
+//						+ endpointHandlers.containsKey(_endpointId) + "\n---------------------------");
+//			}
+//		}
 		// In case of fake we always create new EH
 		if (useFakeOnWildcard) {
 			eh = new EndpointHandler(this, _endpointId);
 			eh.setUseFake(true);
 			endpointHandlers.put(eh.getFakeId(), eh);
 		} else if (!endpointHandlers.containsKey(_endpointId)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Adding endpoint handler on:" + this.socket.getLocalAddress() + ":"
-						+ this.socket.getLocalPort() + ", using fakeId[" + useFakeOnWildcard + "]  -  " + _endpointId);
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Adding endpoint handler on:" + this.localAddress + ":" + this.port + ", using fakeId["
+//						+ useFakeOnWildcard + "]  -  " + _endpointId);
+//			}
 			eh = new EndpointHandler(this, _endpointId);
 			endpointHandlers.put(_endpointId, eh);
 
 		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Fetching endpoint handler on: " + this.socket.getLocalAddress() + ":"
-						+ this.socket.getLocalPort() + "  -  " + _endpointId);
-			}
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Fetching endpoint handler on: " + this.localAddress + ":" + this.port + "  -  "
+//						+ _endpointId);
+//			}
 			eh = endpointHandlers.get(_endpointId);
 		}
-		int count = 0;
-		if (logger.isDebugEnabled())
-			for (String key : endpointHandlers.keySet()) {
-				logger.debug("----AA--[" + (count++) + "]-------" + this.socket.getLocalAddress() + ":"
-						+ this.socket.getLocalPort() + "-------------- " + key + ": " + endpointHandlers.get(key));
-			}
+//		int count = 0;
+//		if (logger.isDebugEnabled())
+//			for (String key : endpointHandlers.keySet()) {
+//				logger.debug("----AA--[" + (count++) + "]-------" + this.localAddress + ":" + this.port
+//						+ "-------------- " + key + ": " + endpointHandlers.get(key));
+//			}
 
 		return eh;
 	}
 
 	public synchronized void removeEndpointHandler(String endpointId) {
 		EndpointHandler eh = this.endpointHandlers.remove(endpointId.intern());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Removing EH" + this.socket.getLocalAddress() + ":" + this.socket.getLocalPort() + ": for:"
-					+ endpointId + " = " + eh);
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Removing EH" + this.localAddress + ":" + this.port + ": for:" + endpointId + " = " + eh);
+//		}
 
 	}
 
@@ -412,12 +411,12 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 			eh.setUseFake(false);
 			eh = null;
 		}
-		int count = 0;
-		if (logger.isDebugEnabled())
-			for (String key : endpointHandlers.keySet()) {
-				logger.debug("----AS--[" + (count++) + "]-------" + this.socket.getLocalAddress() + ":"
-						+ this.socket.getLocalPort() + "-------------- " + key + ": " + endpointHandlers.get(key));
-			}
+//		int count = 0;
+//		if (logger.isDebugEnabled())
+//			for (String key : endpointHandlers.keySet()) {
+//				logger.debug("----AS--[" + (count++) + "]-------" + this.localAddress + ":" + this.port
+//						+ "-------------- " + key + ": " + endpointHandlers.get(key));
+//			}
 
 		return eh;
 	}
@@ -498,19 +497,15 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	 * this.responseTx.remove(key); }
 	 * 
 	 * public void removeLocalTransaction(Integer valueOf) {
-	 * this.loaclTransactions.remove(valueOf);
-	 *  }
+	 * this.loaclTransactions.remove(valueOf); }
 	 * 
 	 * public void removeRemoteTransaction(Integer valueOf) {
-	 * this.remoteTxToLocalTxMap.remove(valueOf);
-	 *  }
+	 * this.remoteTxToLocalTxMap.remove(valueOf); }
 	 * 
 	 * public void addCompletedTransaction(Integer valueOf, TransactionHandler
-	 * transactionHandler) { this.responseTx.put(valueOf,transactionHandler);
-	 *  }
+	 * transactionHandler) { this.responseTx.put(valueOf,transactionHandler); }
 	 * 
 	 * public void addRemoteTxIDToLocalTxID(Integer remoteTxID, Integer
-	 * localTxID) { this.remoteTxToLocalTxMap.put(remoteTxID, localTxID);
-	 *  }
+	 * localTxID) { this.remoteTxToLocalTxMap.put(remoteTxID, localTxID); }
 	 */
 }
