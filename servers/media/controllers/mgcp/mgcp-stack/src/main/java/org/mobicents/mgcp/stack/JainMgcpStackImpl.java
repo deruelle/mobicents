@@ -54,7 +54,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	protected int port = 2727;
 	private DatagramSocket socket;
 	private boolean stopped = true;
-	private int executorTableSize = 80;
+	private int executorTableSize = 200;
 	private int executorQueueSize = -1;
 	private int incomingDataBufferSize = -1;
 	private ThreadPoolQueueExecutor[] executors = null;

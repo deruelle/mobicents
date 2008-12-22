@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -85,6 +86,8 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 	// the version
 
 	public final static int LONGTRAN_TIMER_TIMEOUT = 5000; // 5secs
+
+	public static final int THIST_TIMER_TIMEOUT = 30000; // 30 sec
 	/** Is this a transaction on a command sent or received? */
 	protected boolean sent;
 	/** Transaction handle sent from application to the MGCP provider. */
@@ -132,6 +135,8 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 
 	protected Object source = null;
 
+	private String msgTemp = null;
+
 	protected LinkedList<ActionPerform> actionToPerform = new LinkedList<ActionPerform>();
 
 	/**
@@ -148,10 +153,10 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 		this.localTID = GENERATOR++;
 		utils = new Utils();
 		// XXX:stack.addLocalTransaction(Integer.valueOf(localTID), this);
-		stack.getLocalTransactions().put(Integer.valueOf(localTID), this);
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("New mgcp transaction with id localID=" + localTID);
-//		}
+		stack.getLocalTransactions().put(Integer.valueOf(localTID), this);		
+		// if (logger.isDebugEnabled()) {
+		// logger.debug("New mgcp transaction with id localID=" + localTID);
+		// }
 	}
 
 	public void setEndpointHandler(EndpointHandler handler) {
@@ -213,6 +218,8 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 				if (logger.isDebugEnabled()) {
 					logger.debug("Tx ID = " + localTID + " Sending the Command " + countOfCommandRetransmitted);
 				}
+				System.out.println("message = \n" + msgTemp + "\n local Tx ID = " + localTID + " Remote Tx ID = "
+						+ remoteTID + " Sending the Command " + countOfCommandRetransmitted);
 				stack.send(sendComandDatagram);
 				resetReTransmissionTimer();
 
@@ -286,9 +293,10 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 
 	/** Release this transaction and frees all allocated resources. */
 	protected void release(boolean removeEndpointHandler) {
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("Released transaction (local id=" + localTID + "), stop timer");
-//		}
+		// if (logger.isDebugEnabled()) {
+		// logger.debug("Released transaction (local id=" + localTID + "), stop
+		// timer");
+		// }
 
 		// XXX:stack.removeLocalTransaction(Integer.valueOf(localTID));
 		// XXX:stack.removeRemoteTransaction(Integer.valueOf(remoteTID));
@@ -379,9 +387,12 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 	public abstract JainMgcpResponseEvent getProvisionalResponse();
 
 	public void run() {
-
-		ActionPerform ap = this.actionToPerform.remove();
-		ap.perform();
+		try {
+			ActionPerform ap = this.actionToPerform.remove();
+			ap.perform();
+		} catch (NoSuchElementException nsee) {
+			System.out.println("Received NoSuchElementException for remoteeTx = " + remoteTID);
+		}
 	}
 
 	protected void sendProvisionalResponse() {
@@ -447,6 +458,9 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 
 		// encode event object as MGCP command and send over UDP.
 		String msg = encode(event);
+
+		msgTemp = msg;
+
 		byte[] data = msg.getBytes();
 		sendComandDatagram = new DatagramPacket(data, data.length, address, port);
 
@@ -590,7 +604,7 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 	private void resetTHISTTimerTask(boolean responseSent) {
 		cancelTHISTTimerTask();
 		tHISTTimerTask = new THISTTimerTask(responseSent);
-		transactionHandlerTimer.schedule(tHISTTimerTask, 1000 * 30);
+		transactionHandlerTimer.schedule(tHISTTimerTask, THIST_TIMER_TIMEOUT);
 	}
 
 	/**
@@ -646,9 +660,9 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 		JainMgcpCommandEvent event = null;
 		try {
 			event = decodeCommand(msg);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Event decoded: \n" + event);
-			}
+			// if (logger.isDebugEnabled()) {
+			// logger.debug("Event decoded: \n" + event);
+			// }
 		} catch (ParseException e) {
 			logger.error("Coud not parse message: ", e);
 			return;

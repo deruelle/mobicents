@@ -31,17 +31,15 @@ public class MessageHandler {
 
 	private JainMgcpStackImpl stack;
 	private static Logger logger = Logger.getLogger(MessageHandler.class);
-	
+
 	private static final Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
 
 	/** Creates a new instance of MessageHandler */
-	
 
 	public MessageHandler(JainMgcpStackImpl jainMgcpStackImpl) {
-		
+
 		this.stack = jainMgcpStackImpl;
-		
-		
+
 	}
 
 	/**
@@ -70,31 +68,29 @@ public class MessageHandler {
 	}
 
 	public boolean isRequest(String header) {
-        header = header.trim();
-       
-        char ch = header.charAt(0);
-       
-        if(Character.isDigit(ch)){
-            return false;
-        }
-        return true;
-        //Dont use matcher due to bug http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6337993
-        // Matcher m = p.matcher(header);
-        // return m.matches();
-        // return header.matches("[\\w]{4}(\\s|\\S)*");
-    }
+		header = header.trim();
 
-	
+		char ch = header.charAt(0);
+
+		if (Character.isDigit(ch)) {
+			return false;
+		}
+		return true;
+		// Dont use matcher due to bug
+		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6337993
+		// Matcher m = p.matcher(header);
+		// return m.matches();
+		// return header.matches("[\\w]{4}(\\s|\\S)*");
+	}
 
 	public void scheduleMessages(PacketRepresentation pr) {
-		
-		
-		final InetAddress address=pr.getRemoteAddress();
-		final int port=pr.getRemotePort();
+
+		final InetAddress address = pr.getRemoteAddress();
+		final int port = pr.getRemotePort();
 		for (String msg : piggyDismount(new String(pr.getRawData()))) {
 
 			int pos = msg.indexOf("\n");
-			//System.out.println(" --- RECEIVING:"+msg);
+			// System.out.println(" --- RECEIVING:"+msg);
 			// extract message header to determine transaction handle parameter
 			// and type of the received message
 			String header = msg.substring(0, pos).trim();
@@ -118,60 +114,92 @@ public class MessageHandler {
 				}
 
 				Integer remoteTxIdIntegere = new Integer(remoteTxIdString);
-				
-				//Check if the Response still in responseTx Map
-				//FIXME: baranowb: this checks seems bad, why do we itterate and than get value for key?
-				Set<Integer> completedTxSet = stack.getCompletedTransactions().keySet();
-				for(Integer completedTx : completedTxSet){
-					if( completedTx.equals(remoteTxIdIntegere)){
-						if (logger.isDebugEnabled()) {
-							logger.debug("Received Command for which stack has already sent response Tx = "+completedTx );
-						}
-						TransactionHandler completedTxHandler = stack.getCompletedTransactions().get(completedTx);
-						
-						EndpointHandler eh=completedTxHandler.getEndpointHandler();
-						completedTxHandler.markRetransmision();
-						eh.scheduleTransactionHandler(completedTxHandler);
-						
-						//this.stack.jainMgcpStackImplPool.execute(completedTxHandler);
-						//(new Thread(completedTxHandler)).start();
-						return;
+
+				// Check if the Response still in responseTx Map
+				// FIXME: baranowb: this checks seems bad, why do we itterate
+				// and than get value for key?
+
+				TransactionHandler completedTxHandler = stack.getCompletedTransactions().get(remoteTxIdIntegere);
+				if (completedTxHandler != null) {
+
+					EndpointHandler eh = completedTxHandler.getEndpointHandler();
+					completedTxHandler.markRetransmision();
+					eh.scheduleTransactionHandler(completedTxHandler);
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Received Command for which stack has already sent response Tx = " + verb + " "
+								+ remoteTxIdIntegere);
 					}
-				}
-				
-				//TransactionHandler completedTxHandler =stack.getCompletedTransaction(remoteTxIdIntegere);
-				//if(completedTxHandler!=null)
-				//{
-				//	EndpointHandler eh=completedTxHandler.getEndpointHandler();
-				//	completedTxHandler.markRetransmision();
-				//	eh.scheduleTransactionHandler(completedTxHandler);
-				//}
-				//TODO:
-				//Check if Tx is currently executing then send provisional response
-				//FIXME: I wonder if it should be moved? Maybe we should always send provisional response upon receival?
-				//FIXME: baranowb: this checks seems bad, why do we itterate and than get value for key?
-				Set<Integer> ongoingTxSet = stack.getRemoteTxToLocalTxMap().keySet();
-				for(Integer ongoingTx : ongoingTxSet){
-					if( ongoingTx.equals(remoteTxIdIntegere)){
-						if (logger.isDebugEnabled()) {
-							logger.debug("Received Command for ongoing Tx = "+ongoingTx );							
-						}
-						Integer tmpLoaclTID = stack.getRemoteTxToLocalTxMap().get(ongoingTx);
-						TransactionHandler ongoingTxHandler = stack.getLocalTransactions().get(tmpLoaclTID);
-						ongoingTxHandler.sendProvisionalResponse();
-						return;
-					}
+
+					return;
 				}
 
-				//Integer tmpLoaclTID = stack.getLocalTXIDFromRemoteTXID(remoteTxIdIntegere);
-				//if(tmpLoaclTID!=null)
-				//{
-				//	TransactionHandler ongoingTxHandler = stack.getLocalTransaction(tmpLoaclTID);
-				//	ongoingTxHandler.sendProvisionalResponse();
-				//}
-				//If we are here, it means this is new TX, we have to create TxH and EH
-				
-				
+				// Set<Integer> completedTxSet =
+				// stack.getCompletedTransactions().keySet();
+				// for(Integer completedTx : completedTxSet){
+				// if( completedTx.equals(remoteTxIdIntegere)){
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("Received Command for which stack has already
+				// sent response Tx = "+completedTx );
+				// }
+				// TransactionHandler completedTxHandler =
+				// stack.getCompletedTransactions().get(completedTx);
+				//						
+				// EndpointHandler eh=completedTxHandler.getEndpointHandler();
+				// completedTxHandler.markRetransmision();
+				// eh.scheduleTransactionHandler(completedTxHandler);
+				//						
+				// //this.stack.jainMgcpStackImplPool.execute(completedTxHandler);
+				// //(new Thread(completedTxHandler)).start();
+				// return;
+				// }
+				// }
+
+				// TransactionHandler completedTxHandler
+				// =stack.getCompletedTransaction(remoteTxIdIntegere);
+				// if(completedTxHandler!=null)
+				// {
+				// EndpointHandler eh=completedTxHandler.getEndpointHandler();
+				// completedTxHandler.markRetransmision();
+				// eh.scheduleTransactionHandler(completedTxHandler);
+				// }
+				// TODO:
+				// Check if Tx is currently executing then send provisional
+				// response
+				// FIXME: I wonder if it should be moved? Maybe we should always
+				// send provisional response upon receival?
+				// FIXME: baranowb: this checks seems bad, why do we itterate
+				// and than get value for key?
+				// Set<Integer> ongoingTxSet =
+				// stack.getRemoteTxToLocalTxMap().keySet();
+				// for(Integer ongoingTx : ongoingTxSet){
+				// if( ongoingTx.equals(remoteTxIdIntegere)){
+				// if (logger.isDebugEnabled()) {
+				// logger.debug("Received Command for ongoing Tx = "+ongoingTx
+				// );
+				// }
+				// Integer tmpLoaclTID =
+				// stack.getRemoteTxToLocalTxMap().get(ongoingTx);
+				// TransactionHandler ongoingTxHandler =
+				// stack.getLocalTransactions().get(tmpLoaclTID);
+				// ongoingTxHandler.sendProvisionalResponse();
+				// return;
+				// }
+				// }
+
+				Integer tmpLoaclTID = stack.getRemoteTxToLocalTxMap().get(remoteTxIdIntegere);
+				if (tmpLoaclTID != null) {
+					TransactionHandler ongoingTxHandler = stack.getLocalTransactions().get(tmpLoaclTID);
+					ongoingTxHandler.sendProvisionalResponse();
+					if (logger.isDebugEnabled()) {
+						logger.debug("Received Command for ongoing Tx = " + remoteTxIdIntegere);
+					}
+					return;
+				}
+
+				// If we are here, it means this is new TX, we have to create
+				// TxH and EH
+
 				TransactionHandler handler;
 				if (verb.equalsIgnoreCase("crcx")) {
 					handler = new CreateConnectionHandler(stack, address, port);
@@ -186,7 +214,7 @@ public class MessageHandler {
 				} else if (verb.equalsIgnoreCase("ntfy")) {
 					handler = new NotifyHandler(stack, address, port);
 				} else if (verb.equalsIgnoreCase("rsip")) {
-					handler = new RestartInProgressHandler(stack, address, port);	
+					handler = new RestartInProgressHandler(stack, address, port);
 				} else if (verb.equalsIgnoreCase("auep")) {
 					handler = new AuditEndpointHandler(stack, address, port);
 				} else if (verb.equalsIgnoreCase("aucx")) {
@@ -195,19 +223,18 @@ public class MessageHandler {
 					logger.warn("Unsupported message verbose " + verb);
 					return;
 				}
-				
-				//This makes this command to be set in queue to process
+
+				// This makes this command to be set in queue to process
 				handler.receiveRequest(msg);
-				boolean useFakeOnWildcard=false;
-				if(handler instanceof CreateConnectionHandler)
-				{
-					useFakeOnWildcard=EndpointHandler.isAnyOfWildcard(handler.getEndpointId());
+				boolean useFakeOnWildcard = false;
+				if (handler instanceof CreateConnectionHandler) {
+					useFakeOnWildcard = EndpointHandler.isAnyOfWildcard(handler.getEndpointId());
 				}
-				EndpointHandler eh=stack.getEndpointHandler(handler.getEndpointId(),useFakeOnWildcard);
+				EndpointHandler eh = stack.getEndpointHandler(handler.getEndpointId(), useFakeOnWildcard);
 				eh.addTransactionHandler(handler);
-				
+
 				eh.scheduleTransactionHandler(handler);
-				//handle.receiveCommand(msg);
+				// handle.receiveCommand(msg);
 			} else {
 				// RESPONSE HANDLING
 				if (logger.isDebugEnabled()) {
@@ -215,22 +242,24 @@ public class MessageHandler {
 				}
 				// String domainName = address.getHostName();
 				String tid = tokens[1];
-				
-				//XXX:TransactionHandler handler = (TransactionHandler) stack.getLocalTransaction(Integer.valueOf(tid));
-				TransactionHandler handler = (TransactionHandler) stack.getLocalTransactions().get(Integer.valueOf(tid));
+
+				// XXX:TransactionHandler handler = (TransactionHandler)
+				// stack.getLocalTransaction(Integer.valueOf(tid));
+				TransactionHandler handler = (TransactionHandler) stack.getLocalTransactions()
+						.get(Integer.valueOf(tid));
 				if (handler == null) {
-					logger.warn("---  Address:"+address+"\nPort:"+port+"\nID:"+this.hashCode()+"\n Unknown transaction: " + tid);
+					logger.warn("---  Address:" + address + "\nPort:" + port + "\nID:" + this.hashCode()
+							+ "\n Unknown transaction: " + tid);
 					return;
 				}
 				handler.receiveResponse(msg);
-				//EndpointHandler eh=stack.getEndpointHandler(handler.getEndpointId());
-				EndpointHandler eh=handler.getEndpointHandler();
+				// EndpointHandler
+				// eh=stack.getEndpointHandler(handler.getEndpointId());
+				EndpointHandler eh = handler.getEndpointHandler();
 				eh.scheduleTransactionHandler(handler);
-				
 
 			}
 		}
-		
-		
+
 	}
 }
