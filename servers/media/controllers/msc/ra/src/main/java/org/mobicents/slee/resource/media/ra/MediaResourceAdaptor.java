@@ -397,8 +397,8 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
             }
         }
     }
-
-    private synchronized void fireEvent(String eventName, ActivityHandle activityHandle, Object event) {
+    //This method does not have to be synced - all events fired here are ordered by executor in source - see MsActionPerformer class
+    private  void fireEvent(String eventName, ActivityHandle activityHandle, Object event) {
         int eventID = -1;
         try {
             eventID = eventLookup.getEventID(eventName, "org.mobicents.media", "1.0");
