@@ -111,11 +111,11 @@ public class NotificationRequestHandler extends TransactionHandler {
 	private class CommandContentHandle implements MgcpContentHandler {
 
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
-			String verb = tokens[0].trim();
+			//String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			String version = tokens[3].trim() + " " + tokens[4].trim();
+			//String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -148,7 +148,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 	private class ResponseContentHandle implements MgcpContentHandler {
 
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
 			response = new NotificationRequestResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));

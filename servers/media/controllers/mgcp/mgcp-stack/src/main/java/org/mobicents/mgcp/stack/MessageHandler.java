@@ -17,11 +17,11 @@ package org.mobicents.mgcp.stack;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -34,12 +34,16 @@ public class MessageHandler {
 
 	private static final Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
 
+	private static final String pb = "\r?\n\\.\r?\n";
+	private static final Pattern piggyDismountPattern = Pattern.compile(pb);
+
+	private Utils utils = null;
+
 	/** Creates a new instance of MessageHandler */
 
 	public MessageHandler(JainMgcpStackImpl jainMgcpStackImpl) {
-
 		this.stack = jainMgcpStackImpl;
-
+		utils = new Utils();
 	}
 
 	/**
@@ -52,12 +56,11 @@ public class MessageHandler {
 	 * @return array of all separate messages
 	 */
 	public static String[] piggyDismount(String packet) {
-		final String pb = "\r?\n\\.\r?\n";
-		final Pattern p = Pattern.compile(pb);
+
 		int idx = 0;
 		ArrayList<String> mList = new ArrayList<String>();
 
-		Matcher m = p.matcher(packet);
+		Matcher m = piggyDismountPattern.matcher(packet);
 		while (m.find()) {
 			mList.add(packet.substring(idx, m.start()) + "\n");
 			idx = m.end();
@@ -103,7 +106,7 @@ public class MessageHandler {
 			// for specified type of this message.
 			// if received message is a response then try to find corresponded
 			// transaction to handle this message
-			String tokens[] = header.split("\\s");
+			String tokens[] = utils.splitStringBySpace(header);
 			if (isRequest(header)) {
 
 				String verb = tokens[0];

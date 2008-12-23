@@ -25,7 +25,7 @@ import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
  */
 public class RestartInProgressHandler extends TransactionHandler {
 
-	private Logger logger = Logger.getLogger(RestartInProgressHandler.class);
+	private static final Logger logger = Logger.getLogger(RestartInProgressHandler.class);
 
 	private RestartInProgress command;
 	private RestartInProgressResponse response;
@@ -99,11 +99,11 @@ public class RestartInProgressHandler extends TransactionHandler {
 	private class CommandContentHandle implements MgcpContentHandler {
 
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
-			String verb = tokens[0].trim();
+			//String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			String version = tokens[3].trim() + " " + tokens[4].trim();
+			//String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -130,7 +130,7 @@ public class RestartInProgressHandler extends TransactionHandler {
 	private class ResponseContentHandle implements MgcpContentHandler {
 
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
 			response = new RestartInProgressResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));

@@ -204,11 +204,11 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 *            the header from the message.
 		 */
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
-			String verb = tokens[0].trim();
+			//String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			String version = tokens[3].trim() + " " + tokens[4].trim();
+			//String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			tid = Integer.parseInt(transactionID);
 			endpointId = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -270,7 +270,7 @@ public class AuditConnectionHandler extends TransactionHandler {
 		 *            the header from the message.
 		 */
 		public void header(String header) throws ParseException {
-			String[] tokens = header.split("\\s");
+			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
 			response = new AuditConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));

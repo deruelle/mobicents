@@ -15,6 +15,11 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.EventName;
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
+import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
+import jain.protocol.ip.mgcp.pkg.MgcpEvent;
+import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -39,7 +44,7 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 	protected static final int MGW_PORT = 2729;
 	static int NDIALOGS = 10000;
 
-	static int MAXCONCURRENTCRCX = 100;
+	static int MAXCONCURRENTCRCX = 15;
 
 	// a ramp-up period is required for performance testing.
 	int deleteCount = -100;
@@ -97,14 +102,25 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_CREATE_CONNECTION:
 			appdatad.setReceivedCrcxResponse(true);
-			appdatad.setConnectionIdentifier(((CreateConnectionResponse) jainmgcpresponseevent)
-					.getConnectionIdentifier());
+			CreateConnectionResponse crcxResp = (CreateConnectionResponse) jainmgcpresponseevent;
+			;
+			ConnectionIdentifier connectionIdentifier = crcxResp.getConnectionIdentifier();
+			appdatad.setConnectionIdentifier(connectionIdentifier);
 			// send RQNT
 
 			NotificationRequest notificationRequest = new NotificationRequest(appdatad, endpointID, caProvider
 					.getUniqueRequestIdentifier());
 			notificationRequest.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
+			RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+
+			RequestedEvent[] requestedEvents = {
+					new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc, connectionIdentifier),
+							actions),
+					new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of, connectionIdentifier),
+							actions) };
+
+			notificationRequest.setRequestedEvents(requestedEvents);
 			caProvider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 			break;
 		case Constants.RESP_NOTIFICATION_REQUEST:

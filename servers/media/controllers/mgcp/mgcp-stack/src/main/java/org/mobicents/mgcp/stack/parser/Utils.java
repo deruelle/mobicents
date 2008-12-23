@@ -66,10 +66,33 @@ import org.apache.log4j.Logger;
  */
 public class Utils {
 
-	Logger logger = Logger.getLogger(Utils.class);
+	private static final Logger logger = Logger.getLogger(Utils.class);
 
+	private static final String REGEX_EMBEDDED_COMMAND = "\\(E\\(.*\\)\\)";
+	private static final Pattern pattern = Pattern.compile(REGEX_EMBEDDED_COMMAND);
+
+	private static final Pattern spacePattern = Pattern.compile("\\s");
+
+	private static final Pattern commaPattern = Pattern.compile(",");
+
+	private static final Pattern forwardSlashPattern = Pattern.compile("/");
+
+	private static final Pattern ampersandPattern = Pattern.compile("@");
+	
+	private static final Pattern equalsPattern = Pattern.compile("=");
+	
+	private static final Pattern colonPattern = Pattern.compile(":");
+	
+	private static final Pattern semiColonPattern = Pattern.compile(";");
+	
+	private static final Pattern dashPattern = Pattern.compile("-");
+	
 	/** Creates a new instance of Utils */
 	public Utils() {
+	}
+
+	public String[] splitStringBySpace(String value) {
+		return spacePattern.split(value, 0);
 	}
 
 	/**
@@ -155,7 +178,7 @@ public class Utils {
 		// LocalConnectionOptions =LocalOptionValue 0*(WSP)
 		// 0*(","0*(WSP)LocalOptionValue 0*(WSP))
 
-		String[] tokens = text.split(",");
+		String[] tokens = commaPattern.split(text,0);
 		LocalOptionValue[] options = new LocalOptionValue[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -300,7 +323,7 @@ public class Utils {
 	 */
 	public CompressionAlgorithm decodeCompressionAlgorithm(String value) throws ParseException {
 		// compressionAlgorithm =algorithmName 0*(";"algorithmName)
-		return new CompressionAlgorithm(value.split(";"));
+		return new CompressionAlgorithm(semiColonPattern.split(value, 0));
 	}
 
 	public String encodeCompressionAlgorithm(CompressionAlgorithm compressionAlgorithm) {
@@ -650,7 +673,7 @@ public class Utils {
 
 	public RequestedEvent[] decodeRequestedEventList(String value) throws ParseException {
 		// RequestedEvents =requestedEvent 0*(","0*(WSP)requestedEvent)
-		String[] tokens = value.split(",");
+		String[] tokens = commaPattern.split(value, 0);
 		RequestedEvent[] events = new RequestedEvent[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -665,7 +688,9 @@ public class Utils {
 		// /(eventName "("requestedActions ")" "("eventParameters ")")
 
 		// Replace all space, tabs
-		value = value.replaceAll("\\s", "");
+
+		// value = value.replaceAll("\\s", "");
+		value = spacePattern.matcher(value).replaceAll("");
 		int pos1 = value.indexOf('(');
 		// int pos2 = value.indexOf(')', pos1);
 		// int pos3 = value.indexOf('(', pos2);
@@ -680,9 +705,6 @@ public class Utils {
 
 		String evtName = value.substring(0, pos1);
 		value = value.substring(pos1, value.length());
-
-		String REGEX_EMBEDDED_COMMAND = "\\(E\\(.*\\)\\)";
-		Pattern pattern = Pattern.compile(REGEX_EMBEDDED_COMMAND);
 
 		Matcher matcher = pattern.matcher(value);
 
@@ -719,7 +741,7 @@ public class Utils {
 		// (eventId /"all"/eventRange
 		// /"*"/"#");for DTMF
 		// ["@"(ConnectionId /"$"/"*")]
-		String tokens[] = value.split("/");
+		String tokens[] = forwardSlashPattern.split(value, 0);
 		if (tokens.length == 1) {
 			return new EventName(PackageName.AllPackages, MgcpEvent.factory((tokens[0]).trim()).withParm(param));
 		} else if (tokens.length == 2) {
@@ -864,7 +886,7 @@ public class Utils {
 	}
 
 	public InfoCode[] decodeInfoCodeList(String value) throws ParseException {
-		String tokens[] = (value.trim()).split(",");
+		String tokens[] = commaPattern.split(value.trim(), 0);
 		InfoCode[] infoCodes = new InfoCode[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
 			infoCodes[i] = decodeInfoCode(tokens[i]);
@@ -968,7 +990,7 @@ public class Utils {
 	}
 
 	public CapabilityValue[] decodeCapabilityList(String value) throws ParseException {
-		String tokens[] = (value.trim()).split(",");
+		String tokens[] = commaPattern.split(value.trim(),0);
 		CapabilityValue[] capabilityValues = new CapabilityValue[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
 			capabilityValues[i] = decodeCapability(tokens[i]);
@@ -1050,7 +1072,7 @@ public class Utils {
 	}
 
 	public PackageName[] decodePackageNameList(String value) {
-		String[] packages = value.split(";");
+		String[] packages = semiColonPattern.split(value,0);
 		PackageName[] supportedPackageNames = new PackageName[packages.length];
 		for (int i = 0; i < packages.length; i++) {
 			PackageName p = PackageName.factory(packages[i]);
@@ -1072,12 +1094,12 @@ public class Utils {
 		String capability = value.substring(pos + 1).trim();
 
 		if ("a".equals(key)) {
-			String[] codecs = capability.split(";");
+			String[] codecs = semiColonPattern.split(capability,0);
 			CompressionAlgorithm compressionAlgorithm = new CompressionAlgorithm(codecs);
 			capabilityValue = new LocalOptVal(compressionAlgorithm);
 
 		} else if ("b".equals(key)) {
-			String[] bandwidthRange = capability.split("-");
+			String[] bandwidthRange = dashPattern.split(capability,0);
 			int lower = Integer.parseInt(bandwidthRange[0]);
 			int upper = lower;
 			if (bandwidthRange.length == 2) {
@@ -1088,7 +1110,7 @@ public class Utils {
 			capabilityValue = new LocalOptVal(bandwidth);
 
 		} else if ("p".equals(key)) {
-			String[] packetizationRange = capability.split("-");
+			String[] packetizationRange = dashPattern.split(capability,0);
 			int lower = Integer.parseInt(packetizationRange[0]);
 			int upper = lower;
 			if (packetizationRange.length == 2) {
@@ -1146,7 +1168,7 @@ public class Utils {
 			PackageName[] supportedPackageNames = decodePackageNameList(capability);
 			capabilityValue = new SupportedPackages(supportedPackageNames);
 		} else if ("m".equals(key)) {
-			String[] modes = capability.split(";");
+			String[] modes = semiColonPattern.split(capability,0);
 			ConnectionMode[] supportedConnectionModes = new ConnectionMode[modes.length];
 			for (int i = 0; i < modes.length; i++) {
 				ConnectionMode c = decodeConnectionMode(modes[i]);
@@ -1160,7 +1182,7 @@ public class Utils {
 
 	public RequestedAction[] decodeRequestedActions(String value) throws ParseException {
 		// requestedActions =requestedAction 0*(","0*(WSP)requestedAction)
-		String tokens[] = value.split(",");
+		String tokens[] = commaPattern.split(value, 0);
 		RequestedAction[] actions = new RequestedAction[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
 			actions[i] = decodeRequestedAction(tokens[i]);
@@ -1302,7 +1324,7 @@ public class Utils {
 	}
 
 	public EventName[] decodeEventNames(String value) throws ParseException {
-		String tokens[] = value.split(",");
+		String tokens[] = commaPattern.split(value, 0);
 		EventName[] events = new EventName[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
 			String name = null;
@@ -1354,7 +1376,7 @@ public class Utils {
 	 * @return EdnpointIdentifier object.
 	 */
 	public EndpointIdentifier decodeEndpointIdentifier(String name) {
-		String[] s = name.split("@");
+		String[] s = ampersandPattern.split(name, 0);
 		return new EndpointIdentifier(s[0], s[1]);
 	}
 
@@ -1367,7 +1389,7 @@ public class Utils {
 	}
 
 	public EndpointIdentifier[] decodeEndpointIdentifiers(String name) {
-		String[] s = name.split(",");
+		String[] s = commaPattern.split(name, 0);
 		EndpointIdentifier[] endpointIdentifiers = new EndpointIdentifier[s.length];
 		for (int i = 0; i < s.length; i++) {
 			endpointIdentifiers[i] = decodeEndpointIdentifier(s[i]);
@@ -1589,7 +1611,7 @@ public class Utils {
 	}
 
 	public ConnectionParm decodeConnectionParm(String parm) {
-		String[] tokens = parm.split("=");
+		String[] tokens = equalsPattern.split(parm,0);
 
 		String name = tokens[0].trim();
 		String value = tokens[1].trim();
@@ -1624,7 +1646,7 @@ public class Utils {
 	}
 
 	public ConnectionParm[] decodeConnectionParms(String value) {
-		String tokens[] = value.split(",");
+		String tokens[] = commaPattern.split(value,0);
 		ConnectionParm[] parms = new ConnectionParm[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -1635,7 +1657,7 @@ public class Utils {
 	}
 
 	public ReasonCode decodeReasonCode(String value) {
-		String[] tokens = value.split("\\s");
+		String[] tokens = this.splitStringBySpace(value);
 
 		int code = Integer.parseInt(tokens[0]);
 		ReasonCode reasonCode = null;
@@ -1668,14 +1690,14 @@ public class Utils {
 		String domainAndPort[] = null;
 
 		try {
-			String tokens[] = value.split("@");
+			String tokens[] = ampersandPattern.split(value,0);
 
 			if (tokens.length == 2) {
 				localName = tokens[0];
-				domainAndPort = tokens[1].split(":");
+				domainAndPort = colonPattern.split(tokens[1],0);
 				domainName = domainAndPort[0];
 			} else {
-				domainAndPort = tokens[0].split(":");
+				domainAndPort = colonPattern.split(tokens[0],0);
 				domainName = domainAndPort[0];
 				return new NotifiedEntity(domainName);
 			}

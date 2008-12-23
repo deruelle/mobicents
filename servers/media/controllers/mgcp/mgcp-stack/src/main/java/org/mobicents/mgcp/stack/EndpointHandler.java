@@ -43,6 +43,8 @@ import org.mobicents.mgcp.stack.handlers.TransactionHandlerManagement;
  *         </a>
  */
 public class EndpointHandler {
+	
+	protected static final Logger logger = Logger.getLogger(EndpointHandler.class);
 
 	protected TreeSet<ConnectionIdentifier> connectionIds = new TreeSet<ConnectionIdentifier>(new Comparator<ConnectionIdentifier>(){
 
@@ -82,7 +84,7 @@ public class EndpointHandler {
 			
 		}});
 
-	protected final Logger logger = Logger.getLogger(this.getClass());
+	
 
 	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl,
 			String endpointId) {
