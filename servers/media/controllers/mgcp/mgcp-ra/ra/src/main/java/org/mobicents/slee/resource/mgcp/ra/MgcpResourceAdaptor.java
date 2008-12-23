@@ -189,6 +189,11 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 	 * the resource adaptor entity transitions to the Active state.
 	 */
 	public void entityActivated() throws ResourceException {
+
+		// TODO:  Some stupid class loading issues. Hence load the class at activation
+		// time. 
+		Class a = jain.protocol.ip.JainIPException.class;
+
 		try {
 			localAddress = InetAddress.getLocalHost().getHostName() + ":" + port;
 		} catch (UnknownHostException e) {
@@ -597,7 +602,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 						.getTransactionHandle(), "net.java.slee.resource.mgcp.NOTIFICATION_REQUEST", event);
 			}
 
-			if (processOnEndpoint) {
+			if ((detectEvents == null && signalEvents == null) || processOnEndpoint) {
 				processEndpointMgcpEvent(notificationRequest.getEndpointIdentifier(),
 						"net.java.slee.resource.mgcp.NOTIFICATION_REQUEST", event);
 			}
@@ -834,7 +839,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 
 		try {
 			Address address = new Address(AddressPlan.IP, "localhost");
-			sleeEndpoint.fireEvent(handle, event, eventID, address);			
+			sleeEndpoint.fireEvent(handle, event, eventID, address);
 		} catch (Exception e) {
 			logger.error("Caught an exception while firing event", e);
 		}
