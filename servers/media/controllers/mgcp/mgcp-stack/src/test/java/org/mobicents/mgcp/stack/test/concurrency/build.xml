@@ -32,7 +32,8 @@
 		<delete file="shootistdebug.txt" />
 		<delete file="shootistlog.txt" />
 		<java classname="${packageprefix}.CA" fork="true" maxmemory="128m" classpathref="project.class.path">
-			<arg value="1000" />
+			<arg value="10000" />
+			<arg value="100" />
 		</java>
 	</target>
 

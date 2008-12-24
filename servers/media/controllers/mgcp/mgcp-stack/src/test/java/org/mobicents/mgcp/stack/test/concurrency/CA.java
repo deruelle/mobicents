@@ -28,12 +28,15 @@ import java.util.TimerTask;
 import java.util.TooManyListenersException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 import org.mobicents.mgcp.stack.test.TestHarness;
 
 public class CA extends TestHarness implements JainMgcpExtendedListener {
+
+	private static Logger logger = Logger.getLogger(CA.class);
 
 	protected static final String CLIENT_ADDRESS = "127.0.0.1";
 
@@ -42,7 +45,7 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 	protected static final int CA_PORT = 2724;
 
 	protected static final int MGW_PORT = 2729;
-	static int NDIALOGS = 10000;
+	static int NDIALOGS = 50000;
 
 	static int MAXCONCURRENTCRCX = 15;
 
@@ -101,9 +104,15 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_CREATE_CONNECTION:
-			appdatad.setReceivedCrcxResponse(true);
 			CreateConnectionResponse crcxResp = (CreateConnectionResponse) jainmgcpresponseevent;
-			;
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Received CRCX Response Tx Id = " + crcxResp.getTransactionHandle() + " Connection ID = "
+						+ crcxResp.getConnectionIdentifier());
+			}
+
+			appdatad.setReceivedCrcxResponse(true);
+
 			ConnectionIdentifier connectionIdentifier = crcxResp.getConnectionIdentifier();
 			appdatad.setConnectionIdentifier(connectionIdentifier);
 			// send RQNT
@@ -121,9 +130,21 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 							actions) };
 
 			notificationRequest.setRequestedEvents(requestedEvents);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Sending RQNT Tx Id = " + notificationRequest.getTransactionHandle() + " Connection ID = "
+						+ connectionIdentifier);
+			}
+
 			caProvider.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 			break;
 		case Constants.RESP_NOTIFICATION_REQUEST:
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Received RQNT Response Tx Id = " + jainmgcpresponseevent.getTransactionHandle()
+						+ " Connection ID = " + appdatad.getConnectionIdentifier());
+			}
+
 			appdatad.setReceivedRqntResponse(true);
 
 			// Send DLCX
@@ -132,10 +153,21 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 			deleteConnection.setConnectionIdentifier(appdatad.getConnectionIdentifier());
 			deleteConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
+			if (logger.isDebugEnabled()) {
+				logger.debug("Sending DLCX Tx Id = " + deleteConnection.getTransactionHandle() + " Connection ID = "
+						+ appdatad.getConnectionIdentifier());
+			}
+
 			caProvider.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
 
 			break;
 		case Constants.RESP_DELETE_CONNECTION:
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Received DLCX Response Tx Id = " + jainmgcpresponseevent.getTransactionHandle()
+						+ " Connection ID = " + appdatad.getConnectionIdentifier());
+			}
+
 			appdatad.setReceivedDlcxResponse(true);
 
 			int ndialogs = nbConcurrentInvite.decrementAndGet();
@@ -153,12 +185,16 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 			if (this.deleteCount == NDIALOGS) {
 				long current = System.currentTimeMillis();
 				float sec = (float) (current - start) / 1000f;
+
+				logger.info("Total time in sec = " + sec);
+				logger.info("Thrupt = " + (float) (NDIALOGS / sec));
 				System.out.println("Total time in sec = " + sec);
 				System.out.println("Thrupt = " + (float) (NDIALOGS / sec));
 			}
 			break;
 		default:
 			System.out.println("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			logger.error("This RESPONSE is unexpected " + jainmgcpresponseevent);
 			break;
 
 		}
@@ -202,6 +238,9 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 			createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 			nbConcurrentInvite.incrementAndGet();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Sending CRCX Tx Id = " + createConnection.getTransactionHandle());
+			}
 			caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 		} catch (Exception e) {
@@ -326,6 +365,7 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 			if (!this.appdata.isReceivedCrcxResponse() || !this.appdata.isReceivedDlcxResponse()
 					|| !this.appdata.isReceivedRqntResponse()) {
 				System.out.println("Appdata " + appdata.toString());
+				logger.info("Appdata " + appdata.toString());
 				System.exit(0);
 			} else {
 				this.appdata = null;
@@ -334,6 +374,19 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 	}
 
 	public static void main(String args[]) {
+
+		int noOfCalls = Integer.parseInt(args[0]);
+		int noOfConcurrentCalls = Integer.parseInt(args[1]);
+
+		System.out.println("Number calls to be completed = " + noOfCalls
+				+ " Number of concurrent calls to be maintained = " + noOfConcurrentCalls);
+
+		logger.info("Number calls to be completed = " + noOfCalls + " Number of concurrent calls to be maintained = "
+				+ noOfConcurrentCalls);
+
+		NDIALOGS = noOfCalls;
+		MAXCONCURRENTCRCX = noOfConcurrentCalls;
+
 		final CA ca = new CA();
 		try {
 			ca.createMgcpStack(ca);
@@ -343,6 +396,9 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 				while (ca.nbConcurrentInvite.intValue() >= MAXCONCURRENTCRCX) {
 					System.out.println("nbConcurrentInvite = " + ca.nbConcurrentInvite.intValue()
+							+ " Waiting for max CRCX count to go down!");
+
+					logger.info("nbConcurrentInvite = " + ca.nbConcurrentInvite.intValue()
 							+ " Waiting for max CRCX count to go down!");
 					synchronized (ca) {
 						try {
