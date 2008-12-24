@@ -34,6 +34,7 @@ import jain.protocol.ip.mgcp.message.RestartInProgress;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
+import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.io.Serializable;
@@ -122,6 +123,13 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 	 */
 	private transient EventLookupFacility eventLookup = null;
 
+	/**
+	 * caches the eventIDs, avoiding lookup in container
+	 */
+	private transient static final EventIDCache eventIdCache = new EventIDCache();
+
+	private transient static final Address address = new Address(AddressPlan.IP, "localhost");
+
 	private Integer port = new Integer(2728);
 	private String localAddress;
 
@@ -190,8 +198,9 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 	 */
 	public void entityActivated() throws ResourceException {
 
-		// TODO:  Some stupid class loading issues. Hence load the class at activation
-		// time. 
+		// TODO: Some stupid class loading issues. Hence load the class at
+		// activation
+		// time.
 		Class a = jain.protocol.ip.JainIPException.class;
 
 		try {
@@ -565,12 +574,12 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 			boolean processOnEndpoint = false;
 			List<String> connectionIds = new ArrayList<String>();
 
-			EventName[] detectEvents = notificationRequest.getDetectEvents();
+			RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
 
-			if (detectEvents != null) {
-				for (int i = 0; i < detectEvents.length; i++) {
-					EventName detecetEvent = detectEvents[i];
-					ConnectionIdentifier connectionIdentifier = detecetEvent.getConnectionIdentifier();
+			if (requestedEvents != null) {
+				for (RequestedEvent requestedEvent : requestedEvents) {
+					EventName detectEvent = requestedEvent.getEventName();
+					ConnectionIdentifier connectionIdentifier = detectEvent.getConnectionIdentifier();
 					if (connectionIdentifier != null) {
 						if (!connectionIds.contains(connectionIdentifier.toString())) {
 							connectionIds.add(connectionIdentifier.toString());
@@ -584,8 +593,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 			EventName[] signalEvents = notificationRequest.getSignalRequests();
 
 			if (signalEvents != null) {
-				for (int i = 0; i < signalEvents.length; i++) {
-					EventName signalEvent = signalEvents[i];
+				for (EventName signalEvent : signalEvents) {
 					ConnectionIdentifier connectionIdentifier = signalEvent.getConnectionIdentifier();
 					if (connectionIdentifier != null) {
 						if (!connectionIds.contains(connectionIdentifier.toString())) {
@@ -602,7 +610,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 						.getTransactionHandle(), "net.java.slee.resource.mgcp.NOTIFICATION_REQUEST", event);
 			}
 
-			if ((detectEvents == null && signalEvents == null) || processOnEndpoint) {
+			if ((requestedEvents == null && signalEvents == null) || processOnEndpoint) {
 				processEndpointMgcpEvent(notificationRequest.getEndpointIdentifier(),
 						"net.java.slee.resource.mgcp.NOTIFICATION_REQUEST", event);
 			}
@@ -826,11 +834,15 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 	 */
 	private void fireEvent(String eventName, ActivityHandle handle, Object event) {
 		int eventID = -1;
-		try {
-			eventID = eventLookup.getEventID(eventName, "net.java", "1.0");
-		} catch (Exception fe) {
-			logger.error("Caught a exception while getting id of event to fire", fe);
-		}
+
+		// try {
+		// eventID = eventLookup.getEventID(eventName, "net.java", "1.0");
+		// } catch (Exception fe) {
+		// logger.error("Caught a exception while getting id of event to fire",
+		// fe);
+		// }
+
+		eventID = eventIdCache.getEventId(eventLookup, eventName, "net.java", "1.0");
 
 		if (eventID == -1) {
 			logger.warn("Unknown event type: " + eventName);
@@ -838,7 +850,6 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 		}
 
 		try {
-			Address address = new Address(AddressPlan.IP, "localhost");
 			sleeEndpoint.fireEvent(handle, event, eventID, address);
 		} catch (Exception e) {
 			logger.error("Caught an exception while firing event", e);
@@ -857,7 +868,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 				endpointIdentifier, transactionHandle);
 		if (handle == null) {
 			MgcpConnectionActivity newConnectionActivity = this.mgcpProvider.getConnectionActivity(
-					connectionIdentifier, endpointIdentifier);
+					connectionIdentifier, endpointIdentifier, false);
 			handle = (MgcpConnectionActivityHandle) mgcpActivityManager.getActivityHandle(newConnectionActivity);
 		}
 		// fire event
@@ -884,7 +895,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 		// fire on new connection activity
 
 		MgcpConnectionActivity newConnectionActivity = this.mgcpProvider.getConnectionActivity(createConnection
-				.getTransactionHandle(), createConnection.getEndpointIdentifier());
+				.getTransactionHandle(), createConnection.getEndpointIdentifier(), false);
 		MgcpConnectionActivityHandle handle = (MgcpConnectionActivityHandle) mgcpActivityManager
 				.getActivityHandle(newConnectionActivity);
 
@@ -904,7 +915,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 			// mgcpActivityManager.putMgcpEndpointActivity(handle, new
 			// MgcpEndpointActivityImpl(this, endpointIdentifier));
 			handle = (MgcpEndpointActivityHandle) this.mgcpActivityManager.getActivityHandle(this.mgcpProvider
-					.getEndpointActivity(endpointIdentifier));
+					.getEndpointActivity(endpointIdentifier, false));
 		}
 		fireEvent(eventName, handle, eventObject);
 

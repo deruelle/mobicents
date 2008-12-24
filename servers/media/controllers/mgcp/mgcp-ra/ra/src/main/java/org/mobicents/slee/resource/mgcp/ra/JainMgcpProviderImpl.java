@@ -29,13 +29,12 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 
 	private final MgcpResourceAdaptor ra;
 	private final JainMgcpStackProviderImpl provider;
-	private MgcpStackListener listener=new MgcpStackListener();
-	//private WeakHashMap<Integer, JainMgcpCommandEvent> commandsEventMap=new WeakHashMap<Integer, JainMgcpCommandEvent>();
-	private HashMap<Integer, JainMgcpCommandEvent> commandsEventMap=new HashMap<Integer, JainMgcpCommandEvent>();
-	
-	
-	public JainMgcpProviderImpl(MgcpResourceAdaptor ra,
-			jain.protocol.ip.mgcp.JainMgcpProvider jainMgcpProvider) {
+	private MgcpStackListener listener = new MgcpStackListener();
+	// private WeakHashMap<Integer, JainMgcpCommandEvent> commandsEventMap=new
+	// WeakHashMap<Integer, JainMgcpCommandEvent>();
+	private HashMap<Integer, JainMgcpCommandEvent> commandsEventMap = new HashMap<Integer, JainMgcpCommandEvent>();
+
+	public JainMgcpProviderImpl(MgcpResourceAdaptor ra, jain.protocol.ip.mgcp.JainMgcpProvider jainMgcpProvider) {
 		this.ra = ra;
 		this.provider = (JainMgcpStackProviderImpl) jainMgcpProvider;
 		try {
@@ -46,97 +45,97 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 		}
 	}
 
-	public MgcpConnectionActivity getConnectionActivity(
-			ConnectionIdentifier connectionIdentifier,
+	public MgcpConnectionActivity getConnectionActivity(ConnectionIdentifier connectionIdentifier,
 			EndpointIdentifier endpointIdentifier) {
-		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager()
-				.getMgcpConnectionActivityHandle(connectionIdentifier,
-						endpointIdentifier, -1);
+		return getConnectionActivity(connectionIdentifier, endpointIdentifier, true);
+	}
+
+	protected MgcpConnectionActivity getConnectionActivity(ConnectionIdentifier connectionIdentifier,
+			EndpointIdentifier endpointIdentifier, boolean startActivity) {
+		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager().getMgcpConnectionActivityHandle(
+				connectionIdentifier, endpointIdentifier, -1);
 		if (handle != null) {
-			return ra.getMgcpActivityManager()
-					.getMgcpConnectionActivity(handle);
+			return ra.getMgcpActivityManager().getMgcpConnectionActivity(handle);
 		} else {
-			try {
-				MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(
-						connectionIdentifier, endpointIdentifier, ra);
-				handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(
-						activity);
-				ra.getSleeEndpoint().activityStarted(handle);
-				return activity;
-			} catch (Exception e) {
-				logger.error("Failed to start activity", e);
-				if (handle != null) {
-					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+			MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(connectionIdentifier,
+					endpointIdentifier, ra);
+			handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(activity);
+			if (startActivity) {
+				try {
+					ra.getSleeEndpoint().activityStarted(handle);
+				} catch (Exception e) {
+					logger.error("Failed to start activity", e);
+					if (handle != null) {
+						ra.getMgcpActivityManager().removeMgcpActivity(handle);
+					}
+					activity = null;
 				}
-				return null;
 			}
+			return activity;
 		}
 	}
 
-	public MgcpConnectionActivity getConnectionActivity(int transactionHandle,
-			EndpointIdentifier endpointIdentifier) {
-		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager()
-				.getMgcpConnectionActivityHandle(null, endpointIdentifier,
-						transactionHandle);
+	public MgcpConnectionActivity getConnectionActivity(int transactionHandle, EndpointIdentifier endpointIdentifier) {
+		return getConnectionActivity(transactionHandle, endpointIdentifier, true);
+	}
+
+	protected MgcpConnectionActivity getConnectionActivity(int transactionHandle,
+			EndpointIdentifier endpointIdentifier, boolean startActivity) {
+		MgcpConnectionActivityHandle handle = ra.getMgcpActivityManager().getMgcpConnectionActivityHandle(null,
+				endpointIdentifier, transactionHandle);
 		if (handle != null) {
-			return ra.getMgcpActivityManager()
-					.getMgcpConnectionActivity(handle);
+			return ra.getMgcpActivityManager().getMgcpConnectionActivity(handle);
 		} else {
-			try {
-				MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(
-						transactionHandle, endpointIdentifier, ra);
-				handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(
-						activity);
-				ra.getSleeEndpoint().activityStarted(handle);
-				return activity;
-			} catch (Exception e) {
-				logger.error("Failed to start activity", e);
-				if (handle != null) {
-					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+			MgcpConnectionActivityImpl activity = new MgcpConnectionActivityImpl(transactionHandle, endpointIdentifier,
+					ra);
+			handle = ra.getMgcpActivityManager().putMgcpConnectionActivity(activity);
+			if (startActivity) {
+				try {
+					ra.getSleeEndpoint().activityStarted(handle);
+				} catch (Exception e) {
+					logger.error("Failed to start activity", e);
+					if (handle != null) {
+						ra.getMgcpActivityManager().removeMgcpActivity(handle);
+					}
+					activity = null;
 				}
-				return null;
 			}
+			return activity;
 		}
 
 	}
 
-	public List<MgcpConnectionActivity> getConnectionActivities(
-			EndpointIdentifier endpointIdentifier) {
-		return ra.getMgcpActivityManager().getMgcpConnectionActivities(
-				endpointIdentifier);
+	public List<MgcpConnectionActivity> getConnectionActivities(EndpointIdentifier endpointIdentifier) {
+		return ra.getMgcpActivityManager().getMgcpConnectionActivities(endpointIdentifier);
 	}
 
-	public MgcpEndpointActivity getEndpointActivity(
-			EndpointIdentifier endpointIdentifier) {
-		MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(
-				endpointIdentifier.toString());
-		MgcpEndpointActivityImpl activity = ra.getMgcpActivityManager()
-				.getMgcpEndpointActivity(handle);
+	public MgcpEndpointActivity getEndpointActivity(EndpointIdentifier endpointIdentifier) {
+		return getEndpointActivity(endpointIdentifier, true);
+	}
+
+	protected MgcpEndpointActivity getEndpointActivity(EndpointIdentifier endpointIdentifier, boolean startActivity) {
+		MgcpEndpointActivityHandle handle = new MgcpEndpointActivityHandle(endpointIdentifier.toString());
+		MgcpEndpointActivityImpl activity = ra.getMgcpActivityManager().getMgcpEndpointActivity(handle);
 		if (activity != null) {
 			return activity;
 		} else {
-			boolean insertedActivity = false;
 			activity = new MgcpEndpointActivityImpl(ra, endpointIdentifier);
-			try {
-				ra.getMgcpActivityManager().putMgcpEndpointActivity(activity);
-				insertedActivity = true;
-			
-				ra.getSleeEndpoint().activityStarted(handle);
-				return activity;
-			} catch (Exception e) {
-				logger.error("Failed to start activity", e);
-				if (insertedActivity) {
+			ra.getMgcpActivityManager().putMgcpEndpointActivity(activity);
+			if (startActivity) {
+				try {
+					ra.getSleeEndpoint().activityStarted(handle);
+				} catch (Exception e) {
+					logger.error("Failed to start activity", e);
 					ra.getMgcpActivityManager().removeMgcpActivity(handle);
+					activity = null;
 				}
-				return null;
 			}
+			return activity;
 		}
 	}
 
-	public void addJainMgcpListener(JainMgcpListener arg0)
-			throws TooManyListenersException {
-		throw new TooManyListenersException(
-				"this provider does not support listeners");
+	public void addJainMgcpListener(JainMgcpListener arg0) throws TooManyListenersException {
+		throw new TooManyListenersException("this provider does not support listeners");
 	}
 
 	public JainMgcpStack getJainMgcpStack() {
@@ -147,17 +146,14 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 		// do nothing
 	}
 
-	public void sendMgcpEvents(JainMgcpEvent[] events)
-			throws IllegalArgumentException {
+	public void sendMgcpEvents(JainMgcpEvent[] events) throws IllegalArgumentException {
 
-		//provider.sendMgcpEvents(events);
-		for(JainMgcpEvent event: events)
-		{
+		// provider.sendMgcpEvents(events);
+		for (JainMgcpEvent event : events) {
 			if (event instanceof CreateConnectionResponse) {
 				ra.sendingCreateConnectionResponse((CreateConnectionResponse) event);
 			}
-			if(event instanceof JainMgcpCommandEvent)
-			{
+			if (event instanceof JainMgcpCommandEvent) {
 				commandsEventMap.put(event.getTransactionHandle(), (JainMgcpCommandEvent) event);
 			}
 		}
@@ -177,37 +173,35 @@ public class JainMgcpProviderImpl implements JainMgcpProvider {
 	public RequestIdentifier getUniqueRequestIdentifier() {
 		return provider.getUniqueRequestIdentifier();
 	}
-	
-	private class MgcpStackListener implements JainMgcpExtendedListener
-	{
 
-
+	private class MgcpStackListener implements JainMgcpExtendedListener {
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent event) {
 			ra.processMgcpCommandEvent(event);
-			
+
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
 			ra.processMgcpResponseEvent(response, commandsEventMap.remove(response.getTransactionHandle()));
-			
+
 		}
 
 		public void transactionEnded(int handle) {
-			//TODO: ????
-			
+			// TODO: ????
+
 		}
 
 		public void transactionRxTimedOut(JainMgcpCommandEvent command) {
 			ra.processRxTimeout(command);
 			commandsEventMap.remove(command.getTransactionHandle());
-			
+
 		}
 
 		public void transactionTxTimedOut(JainMgcpCommandEvent command) {
 			ra.processTxTimeout(command);
 			commandsEventMap.remove(command.getTransactionHandle());
-			
-		}}
+
+		}
+	}
 
 }
