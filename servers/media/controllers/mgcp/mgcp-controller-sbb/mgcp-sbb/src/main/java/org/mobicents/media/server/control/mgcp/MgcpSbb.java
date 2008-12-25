@@ -80,7 +80,7 @@ public abstract class MgcpSbb implements Sbb {
 		try {
 			SbbLocalObject child = relation.create();
 			aci.attach(child);
-			aci.detach(sbbContext.getSbbLocalObject());
+			//aci.detach(sbbContext.getSbbLocalObject());
 		} catch (Exception e) {
 			logger.error("Unexpected error: ", e);
 		}

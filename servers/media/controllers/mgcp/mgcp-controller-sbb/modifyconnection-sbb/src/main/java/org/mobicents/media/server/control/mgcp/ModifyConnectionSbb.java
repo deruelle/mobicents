@@ -20,11 +20,8 @@ import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpProvider;
 import jain.protocol.ip.mgcp.message.ModifyConnection;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
-import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
-import jain.protocol.ip.mgcp.message.parms.LocalOptionValue;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import javax.naming.Context;
