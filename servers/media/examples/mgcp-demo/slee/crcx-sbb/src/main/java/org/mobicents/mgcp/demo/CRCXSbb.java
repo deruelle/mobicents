@@ -66,7 +66,7 @@ import org.apache.log4j.Logger;
  * @author amit.bhayani
  */
 public abstract class CRCXSbb implements Sbb {
-	
+
 	private final static Logger logger = Logger.getLogger(CRCXSbb.class);
 
 	public final static String ENDPOINT_NAME = "media/test/trunk/Loopback/$";
@@ -85,8 +85,6 @@ public abstract class CRCXSbb implements Sbb {
 	// MGCP
 	private JainMgcpProvider mgcpProvider;
 	private MgcpActivityContextInterfaceFactory mgcpAcif;
-
-	
 
 	/** Creates a new instance of CallSbb */
 	public CRCXSbb() {
@@ -143,7 +141,7 @@ public abstract class CRCXSbb implements Sbb {
 		} catch (UnrecognizedActivityException ex) {
 			ex.printStackTrace();
 		}
-		logger.info("SENDING MGCP");
+		logger.info("SENDING MGCP CRCX Comand TxId = " + createConnection.getTransactionHandle());
 		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 	}
 
@@ -188,14 +186,18 @@ public abstract class CRCXSbb implements Sbb {
 			try {
 				txn.sendResponse(response);
 			} catch (InvalidArgumentException ex) {
+				logger.error("Error while sending OK ", ex);
 			} catch (SipException ex) {
+				logger.error("SIP Error while sending OK ", ex);
 			}
+
 			break;
 		default:
 			try {
 				response = messageFactory.createResponse(Response.SERVER_INTERNAL_ERROR, request);
 				txn.sendResponse(response);
 			} catch (Exception ex) {
+				logger.error("Transaction failed ", ex);
 			}
 		}
 	}
@@ -220,6 +222,7 @@ public abstract class CRCXSbb implements Sbb {
 			Response response = messageFactory.createResponse(Response.OK, request);
 			tx.sendResponse(response);
 		} catch (Exception e) {
+			logger.error("Error while sending OK for BYE", e);
 		}
 	}
 

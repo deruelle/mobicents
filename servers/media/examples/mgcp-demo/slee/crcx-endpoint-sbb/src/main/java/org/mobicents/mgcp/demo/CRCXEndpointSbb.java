@@ -34,7 +34,6 @@ import javax.sip.InvalidArgumentException;
 import javax.sip.RequestEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
-import javax.sip.SipProvider;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.header.ContactHeader;
