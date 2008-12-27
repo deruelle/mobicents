@@ -93,4 +93,16 @@ public interface ImplementedPublicationControlSbbLocalObject extends
 	public boolean authorizePublication(String entity,
 			JAXBElement unmarshalledContent);
 
+	/**
+	 * 
+	 * Through this method the event package implementation sbb has a chance to
+	 * define an alternative publication value for the one expired, this can
+	 * allow a behavior such as defining offline status in a presence resource.
+	 * 
+	 * @param publication
+	 * @return
+	 */
+	public Publication getAlternativeValueForExpiredPublication(
+			Publication publication);
+
 }

@@ -572,6 +572,16 @@ public abstract class PublicationControlSbb implements Sbb,
 				ComposedPublication composedPublication = removeFromComposedPublication(
 						entityManager, publication, childSbb);
 				entityManager.flush();
+				entityManager.close();
+				entityManager = null;
+				// give the event package implementation sbb a chance to define
+				// an alternative publication value for the one expired,
+				// this can allow a behavior such as defining offline status
+				// in a presence resource
+				Publication alternativePublication = childSbb.getAlternativeValueForExpiredPublication(publication);
+				if (alternativePublication != null) {
+					composedPublication = childSbb.combinePublication(alternativePublication, composedPublication);
+				}
 				// notify subscribers
 				childSbb.notifySubscribers(composedPublication);
 			} catch (Exception e) {

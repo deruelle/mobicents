@@ -1,6 +1,8 @@
 package org.mobicents.slee.sippresence.server.publication;
 
+import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -29,7 +31,10 @@ import org.mobicents.slee.sipevent.server.publication.ImplementedPublicationCont
 import org.mobicents.slee.sipevent.server.publication.pojo.ComposedPublication;
 import org.mobicents.slee.sipevent.server.publication.pojo.Publication;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbbLocalObject;
+import org.mobicents.slee.sippresence.pojo.pidf.Basic;
 import org.mobicents.slee.sippresence.pojo.pidf.Presence;
+import org.mobicents.slee.sippresence.pojo.pidf.Status;
+import org.mobicents.slee.sippresence.pojo.pidf.Tuple;
 
 /**
  * Publication control implementation child sbb that transforms the sip event
@@ -199,6 +204,56 @@ public abstract class PresencePublicationControlSbb implements Sbb,
 		composedPublication.setContentSubType(publication.getContentSubType());
 		composedPublication.setContentType(publication.getContentType());
 		return composedPublication;
+	}
+
+	public Publication getAlternativeValueForExpiredPublication(
+			Publication publication) {
+		JAXBElement element = publication.getUnmarshalledContent();
+		if (element == null) {
+			StringReader stringReader = new StringReader(publication
+					.getDocument());
+			try {
+				element = (JAXBElement) getUnmarshaller().unmarshal(
+						stringReader);
+			} catch (Exception e) {
+				logger.error("failed to unmarshall publication", e);
+				return null;
+			} finally {
+				stringReader.close();
+			}
+			publication.setUnmarshalledContent(element);
+		}
+		if (element.getValue() instanceof Presence) {
+			Presence presence = (Presence) element.getValue();
+			for (Tuple tuple : presence.getTuple()) {
+				tuple.getAny().clear();
+				tuple.getNote().clear();
+				tuple.setTimestamp(null);
+				Status status = new Status();
+				status.setBasic(Basic.CLOSED);
+				tuple.setStatus(status);
+			}
+			presence.getAny().clear();
+			presence.getNote().clear();
+			// marshall new content
+			StringWriter stringWriter = new StringWriter();
+			try {
+				getMarshaller().marshal(element, stringWriter);
+				publication.setDocument(stringWriter.toString());
+			} catch (Exception e) {
+				logger.error("failed to marshall alternative publication", e);
+				return null;
+			} finally {
+				try {
+					stringWriter.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+			return publication;
+		} else {
+			return null;
+		}
 	}
 
 	public boolean isResponsibleForResource(URI uri) {
