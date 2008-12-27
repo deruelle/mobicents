@@ -48,7 +48,7 @@ public abstract class InternalPublisherExampleSbb implements javax.slee.Sbb,
 				"<dm:note>Busy</dm:note>" +
 			"</dm:person>" +
 		"</presence>";
-	int expires = 60;
+	int expires = 300;
 
 	// --- INTERNAL CHILD SBB
 
