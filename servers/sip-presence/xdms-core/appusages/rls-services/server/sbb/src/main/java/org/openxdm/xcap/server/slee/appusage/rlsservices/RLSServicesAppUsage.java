@@ -255,6 +255,18 @@ public class RLSServicesAppUsage extends AppUsage {
 						serviceUriSet.add(((Element)globalChildNodes.item(i)).getAttributeNode("uri").getNodeValue());
 					}
 				}
+				// this may be an update, if so we need to remove the old services before checking for uniqueness
+				org.openxdm.xcap.common.datasource.Document oldDatasourceDocument = dataSource.getDocument(documentSelector);
+				if (oldDatasourceDocument != null) {
+					NodeList oldDocumentChildNodes = oldDatasourceDocument.getAsDOMDocument().getDocumentElement().getChildNodes();				
+					for(int i=0;i<oldDocumentChildNodes.getLength();i++) {
+						Node oldDocumentChildNode = oldDocumentChildNodes.item(i);
+						if (oldDocumentChildNode.getNodeType() == Node.ELEMENT_NODE && oldDocumentChildNode.getLocalName().equals("service")) {
+							serviceUriSet.remove(((Element)oldDocumentChildNodes.item(i)).getAttributeNode("uri").getNodeValue());
+						}
+					}
+				}
+				
 				// now we process the document being inserted
 				for(int d=0;d<documentChildNodes.getLength();d++) {
 					Node documentChildNode = documentChildNodes.item(d);	
