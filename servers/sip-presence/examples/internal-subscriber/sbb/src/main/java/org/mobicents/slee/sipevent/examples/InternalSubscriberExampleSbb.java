@@ -40,7 +40,7 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 	String subscriber = "sip:internal-subscriber@"+presenceDomain;
 	String notifier = "sip:user@"+presenceDomain;
 	String eventPackage = "presence";
-	int expires = 60;
+	int expires = 300;
 
 	// --- INTERNAL CHILD SBB
 
@@ -73,7 +73,7 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 	public abstract String getSubscriptionId();
 
 	/*
-	 * service activation event, publish initial state
+	 * service activation event, create subscription
 	 */
 	public void onServiceStartedEvent(
 			javax.slee.serviceactivity.ServiceStartedEvent event,
@@ -86,7 +86,7 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 				// create sub id
 				String subscriptionId = subscriber + ":" + notifier + ":"
 						+ eventPackage;
-				// save in cmp
+				// save subscription id in cmp
 				setSubscriptionId(subscriptionId);
 				// subscribe
 				getSubscriptionControlChildSbb().subscribe(subscriber, "voyer",
@@ -175,7 +175,7 @@ public abstract class InternalSubscriberExampleSbb implements javax.slee.Sbb,
 	}
 
 	/**
-	 * service deactivation, remove published state
+	 * service deactivation, unsubscribe
 	 * 
 	 * @param event
 	 * @param aci
