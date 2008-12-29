@@ -636,6 +636,8 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 						processOnEndpointNtfy = true;
 					}
 				}
+			} else {
+				processOnEndpointNtfy = true;
 			}
 
 			for (String s : connectionIdsNtfy) {
@@ -734,13 +736,12 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 
 			boolean processOnEndpoint = false;
 			List<String> connectionIds = new ArrayList<String>();
+			RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
 
-			EventName[] detectEvents = notificationRequest.getDetectEvents();
-
-			if (detectEvents != null) {
-				for (int i = 0; i < detectEvents.length; i++) {
-					EventName detecetEvent = detectEvents[i];
-					ConnectionIdentifier connectionIdentifier = detecetEvent.getConnectionIdentifier();
+			if (requestedEvents != null) {
+				for (RequestedEvent requestedEvent : requestedEvents) {
+					EventName detectEvent = requestedEvent.getEventName();
+					ConnectionIdentifier connectionIdentifier = detectEvent.getConnectionIdentifier();
 					if (connectionIdentifier != null) {
 						if (!connectionIds.contains(connectionIdentifier.toString())) {
 							connectionIds.add(connectionIdentifier.toString());
@@ -773,7 +774,7 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 						"net.java.slee.resource.mgcp.NOTIFICATION_REQUEST_RESPONSE", response);
 			}
 
-			if (processOnEndpoint) {
+			if ((requestedEvents == null && signalEvents == null) || processOnEndpoint) {
 				processEndpointMgcpEvent(notificationRequest.getEndpointIdentifier(),
 						"net.java.slee.resource.mgcp.NOTIFICATION_REQUEST_RESPONSE", response);
 			}
@@ -801,6 +802,8 @@ public class MgcpResourceAdaptor implements ResourceAdaptor, Serializable {
 						processOnEndpointNtfy = true;
 					}
 				}
+			} else {
+				processOnEndpointNtfy = true;
 			}
 
 			for (String s : connectionIdsNtfy) {
