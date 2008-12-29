@@ -30,13 +30,10 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.slee.ActivityContextInterface;
 import javax.slee.CreateException;
-import javax.slee.NotAttachedException;
 import javax.slee.RolledBackContext;
-import javax.slee.SLEEException;
 import javax.slee.Sbb;
 import javax.slee.SbbContext;
 import javax.slee.TransactionRequiredLocalException;
-import javax.slee.UnrecognizedEventException;
 import javax.slee.facilities.ActivityContextNamingFacility;
 import javax.slee.facilities.FacilityException;
 import javax.slee.facilities.NameAlreadyBoundException;
@@ -156,27 +153,28 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 			// Masking will work when aci is same on which HALF_OPEN event is
 			// fired
-			String[] eventsToBeMasked = { "ConnectionHalfOpen" };
-			try {
-				sbbContext.maskEvent(eventsToBeMasked, aci);
-			} catch (TransactionRequiredLocalException e) {
-				e.printStackTrace();
-			} catch (NullPointerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnrecognizedEventException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SLEEException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NotAttachedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			String[] eventsToBeMasked = { "ConnectionHalfOpen" };
+//			try {
+//				sbbContext.maskEvent(eventsToBeMasked, aci);
+//			} catch (TransactionRequiredLocalException e) {
+//				e.printStackTrace();
+//			} catch (NullPointerException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IllegalStateException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (UnrecognizedEventException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (SLEEException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (NotAttachedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			
 			remoteSDP = remoteConnectionDescriptor.toString();
 		}
 
@@ -268,7 +266,7 @@ public abstract class CreateConnectionSbb implements Sbb {
 			response.setSpecificEndpointIdentifier(specificEndpointIdentifier);
 		}
 
-		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+		mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });		
 	}
 
 	private void bindMediaActivityContextInterface(
@@ -331,7 +329,6 @@ public abstract class CreateConnectionSbb implements Sbb {
 			sendResponse(this.getTxId(), ReturnCode.Internal_Hardware_Failure);
 			break;
 		}
-
 	}
 
 	private void sendResponse(int txID, ReturnCode reason) {
@@ -386,9 +383,11 @@ public abstract class CreateConnectionSbb implements Sbb {
 
 	public void sbbExceptionThrown(Exception exception, Object object,
 			ActivityContextInterface activityContextInterface) {
+		logger.error("Runtime exception thrown in CRCX TxId = ");
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
+		logger.error("Tx rolled back in CRCX TxId = ");
 	}
 
 	public abstract int getTxId();

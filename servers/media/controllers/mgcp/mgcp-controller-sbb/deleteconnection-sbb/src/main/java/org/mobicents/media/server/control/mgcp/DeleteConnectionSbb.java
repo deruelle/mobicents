@@ -224,9 +224,11 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	}
 
 	public void sbbExceptionThrown(Exception exception, Object object, ActivityContextInterface activityContextInterface) {
+		logger.error("Runtime exception thrown in DLCX TxId = ");
 	}
 
 	public void sbbRolledBack(RolledBackContext rolledBackContext) {
+		logger.error("Tx rolled back in DLCX TxId = ");
 	}
 
 	public abstract int getTxId();
