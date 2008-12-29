@@ -9,6 +9,7 @@
 package org.mobicents.slee.resource.media.ra;
 
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.naming.NamingException;
 import javax.slee.Address;
@@ -48,8 +49,6 @@ import org.mobicents.slee.resource.ResourceAdaptorEntity;
 import org.mobicents.slee.resource.media.local.MsProviderLocal;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
-
 /**
  * 
  * The main Media Resource Adaptor class. Provides to SLEE services basic media
@@ -65,11 +64,15 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListener, MsResourceListener, MsLinkListener,
         MsSessionListener, MsNotificationListener {
 
-    public Properties properties;
+	private static final transient Logger logger = Logger.getLogger(MediaResourceAdaptor.class);
+	
+	public Properties properties;
     private MsProviderLocal msProvider;
-    private ConcurrentReaderHashMap activities = new ConcurrentReaderHashMap();
-    private ConcurrentReaderHashMap handlers = new ConcurrentReaderHashMap();
-    static private transient Logger logger = Logger.getLogger(MediaResourceAdaptor.class);
+    private transient ConcurrentHashMap activities = new ConcurrentHashMap();
+    private ConcurrentHashMap handlers = new ConcurrentHashMap();
+    
+    private static final Address address = new Address(AddressPlan.IP, "localhost");
+    
     /**
      * The BootstrapContext provides the resource adaptor with the required
      * capabilities in the SLEE to execute its work. The bootstrap context is
@@ -417,7 +420,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
             return;
         }
 
-        Address address = new Address(AddressPlan.IP, "localhost");
+        
 
         try {
             sleeEndpoint.fireEvent(activityHandle, event, eventID, address);

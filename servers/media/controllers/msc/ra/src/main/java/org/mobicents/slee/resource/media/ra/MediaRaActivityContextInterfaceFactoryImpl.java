@@ -29,7 +29,7 @@ import org.mobicents.slee.runtime.ActivityContextInterfaceImpl;
 public class MediaRaActivityContextInterfaceFactoryImpl implements MediaRaActivityContextInterfaceFactory,
         ResourceAdaptorActivityContextInterfaceFactory {
 
-    private static Logger logger = Logger.getLogger(MediaRaActivityContextInterfaceFactoryImpl.class);
+    private static final Logger logger = Logger.getLogger(MediaRaActivityContextInterfaceFactoryImpl.class);
     // Reference to the SLEE for further usage
     private SleeContainer serviceContainer;
     // The JNDI name of the ActivityContextInterfaceFactory object
