@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<list name="friends" xmlns="urn:ietf:params:xml:ns:resource-lists"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<entry uri="sip:bill@example.com">
+		<display-name>Bill Doe</display-name>
+	</entry>
+	<entry-ref
+		ref="resource-lists/users/sip:bill@example.com/index/~~/
+      resource-lists/list%5b@name=%22list1%22%5d/entry%5b@uri=%22sip:pet
+      ri@example.com%22%5d" />
+	<list name="close-friends">
+		<display-name>Close Friends</display-name>
+		<entry uri="sip:joe@example.com">
+			<display-name>Joe Smith</display-name>
+		</entry>
+		<entry uri="sip:nancy@example.com">
+			<display-name>Nancy Gross</display-name>
+		</entry>
+	</list>
+</list>

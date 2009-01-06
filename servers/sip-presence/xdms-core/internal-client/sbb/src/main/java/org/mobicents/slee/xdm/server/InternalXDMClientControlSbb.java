@@ -14,6 +14,8 @@ import javax.slee.Sbb;
 import javax.slee.SbbContext;
 
 import org.apache.log4j.Logger;
+import org.openxdm.xcap.common.error.ConflictException;
+import org.openxdm.xcap.common.error.NoParentConflictException;
 import org.openxdm.xcap.common.error.RequestException;
 import org.openxdm.xcap.common.key.XcapUriKey;
 import org.openxdm.xcap.common.uri.DocumentSelector;
@@ -71,7 +73,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 				childSbb = (RequestProcessorSbbLocalObject) getRequestProcessorChildRelation()
 						.create();
 			} catch (Exception e) {
-				logger.error("Failed to create child sbb", e);
+				logger.error("failed to create child sbb", e);
 			}
 			setRequestProcessorSbbLocalObjectCMP(childSbb);
 		}
@@ -81,18 +83,25 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 	// -- SBB LOCAL OBJECT METHODS
 
 	private void delete(XcapUriKey key, ETagValidator eTagValidator) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Deleting " + key);
+		}
 		int responseCode = -1;
 		String eTag = null;
+		String responseContent = null;
 		try {
 			WriteResult writeResult = getRequestProcessor().delete(
 					key.getResourceSelector(), null,
 					ServerConfiguration.XCAP_ROOT);
 			responseCode = writeResult.getResponseStatus();
 			eTag = writeResult.getResponseEntityTag();
+		} catch (ConflictException e) {
+			responseCode = e.getResponseStatus();
+			responseContent = e.getResponseContent();
 		} catch (RequestException e) {
 			responseCode = e.getResponseStatus();
 		}
-		getParentSbbCMP().deleteResponse(key, responseCode, eTag);
+		getParentSbbCMP().deleteResponse(key, responseCode, responseContent, eTag);
 	}
 
 	public void delete(XcapUriKey key) {
@@ -109,7 +118,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 
 	public void get(XcapUriKey key) {
 		if (logger.isInfoEnabled()) {
-			logger.info("Retrieveing " + key);
+			logger.info("Retreiving " + key);
 		}
 		int responseCode = -1;
 		String mimetype = null;
@@ -134,15 +143,32 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 
 	private void put(XcapUriKey key, String mimetype, byte[] content,
 			ETagValidator eTagValidator) {
+		
+		if (logger.isInfoEnabled()) {
+			logger.info("Putting content with mimetype "+mimetype+" at " + key);
+		}
+		
 		ByteArrayInputStream bais = new ByteArrayInputStream(content);
 		int responseCode = -1;
 		String eTag = null;
+		String responseContent = null;
 		try {
 			WriteResult writeResult = getRequestProcessor().put(
 					key.getResourceSelector(), mimetype, bais, eTagValidator,
 					ServerConfiguration.XCAP_ROOT);
 			responseCode = writeResult.getResponseStatus();
 			eTag = writeResult.getResponseEntityTag();
+		
+		} catch (NoParentConflictException e) {
+			// add base uri
+			e
+					.setSchemeAndAuthorityURI(ServerConfiguration.SCHEME_AND_AUTHORITY_URI);
+			
+			responseCode = e.getResponseStatus();
+			responseContent = e.getResponseContent();
+		} catch (ConflictException e) {
+			responseCode = e.getResponseStatus();
+			responseContent = e.getResponseContent();
 		} catch (RequestException e) {
 			responseCode = e.getResponseStatus();
 		} finally {
@@ -150,10 +176,10 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 				bais.close();
 			} catch (IOException e) {
 				// ignore
-				logger.error(e);
+				logger.error(e.getMessage(),e);
 			}
 		}
-		getParentSbbCMP().putResponse(key, responseCode, eTag);
+		getParentSbbCMP().putResponse(key, responseCode, responseContent, eTag);
 	}
 
 	public void put(XcapUriKey key, String mimetype, byte[] content) {
@@ -184,10 +210,10 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 					.getActivityContextInterface(activity);
 			aci.attach(this.sbbContext.getSbbLocalObject());
 			if (logger.isInfoEnabled()) {
-				logger.info("Subscribed " + documentSelector);
+				logger.info("Subscribed document " + documentSelector);
 			}
 		} catch (Exception e) {
-			logger.error("failed to subscribe document resource", e);
+			logger.error("Failed to subscribe document resource", e);
 		}
 	}
 
@@ -201,7 +227,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 					aci.detach(sbbContext.getSbbLocalObject());
 					activity.remove();
 					if (logger.isInfoEnabled()) {
-						logger.info("Unsubscribed " + documentSelector);
+						logger.info("Unsubscribed document " + documentSelector);
 					}
 					return;
 				}
@@ -221,10 +247,10 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 					.getActivityContextInterface(activity);
 			aci.attach(this.sbbContext.getSbbLocalObject());
 			if (logger.isInfoEnabled()) {
-				logger.info("Subscribed " + auid);
+				logger.info("Subscribed app usage " + auid);
 			}
 		} catch (Exception e) {
-			logger.error("failed to subscribe document resource", e);
+			logger.error("Failed to subscribe document resource", e);
 		}
 	}
 
@@ -237,7 +263,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 					aci.detach(sbbContext.getSbbLocalObject());
 					activity.remove();
 					if (logger.isInfoEnabled()) {
-						logger.info("Unsubscribed " + auid);
+						logger.info("Unsubscribed app usage" + auid);
 					}
 					return;
 				}
@@ -254,7 +280,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 	public void onAttributeUpdatedEvent(AttributeUpdatedEvent event,
 			ActivityContextInterface aci) {
 		if (logger.isInfoEnabled()) {
-			logger.info("attribute updated on " + event.getDocumentSelector());
+			logger.info("Attribute updated at " + event.getDocumentSelector());
 		}
 		getParentSbbCMP().attributeUpdated(event.getDocumentSelector(),
 				event.getNodeSelector(), event.getAttributeSelector(),
@@ -265,7 +291,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 	public void onDocumentUpdatedEvent(DocumentUpdatedEvent event,
 			ActivityContextInterface aci) {
 		if (logger.isInfoEnabled()) {
-			logger.info("document updated on " + event.getDocumentSelector());
+			logger.info("Document updated at " + event.getDocumentSelector());
 		}
 		getParentSbbCMP().documentUpdated(event.getDocumentSelector(),
 				event.getOldETag(), event.getNewETag(),
@@ -275,7 +301,7 @@ public abstract class InternalXDMClientControlSbb implements Sbb,
 	public void onElementUpdatedEvent(ElementUpdatedEvent event,
 			ActivityContextInterface aci) {
 		if (logger.isInfoEnabled()) {
-			logger.info("element updated on " + event.getDocumentSelector());
+			logger.info("Element updated at " + event.getDocumentSelector());
 		}
 		getParentSbbCMP().elementUpdated(event.getDocumentSelector(),
 				event.getNodeSelector(), event.getNamespaces(),

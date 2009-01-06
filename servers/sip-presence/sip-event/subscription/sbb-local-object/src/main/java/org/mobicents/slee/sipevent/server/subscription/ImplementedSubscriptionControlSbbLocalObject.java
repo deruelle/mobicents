@@ -35,6 +35,7 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 	 * subscription control to authorize a subscriber, the concrete
 	 * implemeentation must then invoke newSubscriptionAuthorization(...) so the
 	 * new subscription process is completed
+	 * @param eventList 
 	 * 
 	 * @param serverTransaction
 	 *            in case it is a sip subscription the server transaction must
@@ -42,10 +43,10 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 	 * 
 	 * @return
 	 */
-	public abstract void isSubscriberAuthorized(String subscriber,
+	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype, ServerTransaction serverTransaction);
+			String contentSubtype, boolean eventList, ServerTransaction serverTransaction);
 
 	/**
 	 * Retrieves the content for the NOTIFY request of the specified
@@ -54,14 +55,14 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 	 * @param subscription
 	 * @return
 	 */
-	public abstract NotifyContent getNotifyContent(Subscription subscription);
+	public NotifyContent getNotifyContent(Subscription subscription);
 
 	/**
 	 * Filters content per subscriber.
 	 * 
 	 * @return content filtered
 	 */
-	public abstract Object filterContentPerSubscriber(String subscriber,
+	public Object filterContentPerSubscriber(String subscriber,
 			String notifier, String eventPackage, Object unmarshalledContent);
 
 	/**
@@ -69,7 +70,7 @@ public interface ImplementedSubscriptionControlSbbLocalObject extends
 	 * 
 	 * @return
 	 */
-	public abstract Marshaller getMarshaller();
+	public Marshaller getMarshaller();
 
 	/**
 	 * notifies the event package impl that a subscription is about to be

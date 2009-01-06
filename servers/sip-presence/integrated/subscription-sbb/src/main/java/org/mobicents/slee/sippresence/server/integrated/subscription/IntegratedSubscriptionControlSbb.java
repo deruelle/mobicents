@@ -141,19 +141,19 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype,ServerTransaction serverTransaction) {
+			String contentSubtype, boolean eventList,ServerTransaction serverTransaction) {
 
 		if (contains(PresenceSubscriptionControl.getEventPackages(), key
 				.getEventPackage())) {
 			new PresenceSubscriptionControl(this).isSubscriberAuthorized(
 					subscriber, subscriberDisplayName, notifier, key, expires,
-					content, contentType, contentSubtype, presRulesAUID,
+					content, contentType, contentSubtype, eventList, presRulesAUID,
 					presRulesDocumentName,serverTransaction);
 		} else if (contains(XcapDiffSubscriptionControl.getEventPackages(), key
 				.getEventPackage())) {
 			new XcapDiffSubscriptionControl(this).isSubscriberAuthorized(
 					subscriber, subscriberDisplayName, notifier, key, expires,
-					content, contentType, contentSubtype,serverTransaction);
+					content, contentType, contentSubtype,eventList,serverTransaction);
 		}
 	}
 
@@ -327,11 +327,11 @@ public abstract class IntegratedSubscriptionControlSbb implements Sbb,
 
 	// unused methods from xdm client sbb
 
-	public void deleteResponse(XcapUriKey key, int responseCode, String tag) {
+	public void deleteResponse(XcapUriKey key, int responseCode, String responseContent, String tag) {
 		throw new UnsupportedOperationException();
 	}
 
-	public void putResponse(XcapUriKey key, int responseCode, String tag) {
+	public void putResponse(XcapUriKey key, int responseCode, String responseContent, String tag) {
 		throw new UnsupportedOperationException();
 	}
 

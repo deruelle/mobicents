@@ -99,10 +99,12 @@ public class RefreshInternalSubscriptionHandler {
 		internalSubscriptionHandler.sbb.getParentSbbCMP().resubscribeOk(
 				subscriber, notifier, eventPackage, subscriptionId, expires);
 
-		// notify subscriber
-		internalSubscriptionHandler.getInternalSubscriberNotificationHandler()
-				.notifyInternalSubscriber(entityManager, subscription, aci,
-						childSbb);
+		if (!subscription.getResourceList()) {
+			// notify subscriber
+			internalSubscriptionHandler.getInternalSubscriberNotificationHandler()
+			.notifyInternalSubscriber(entityManager, subscription, aci,
+					childSbb);
+		}
 
 		// set new timer
 		internalSubscriptionHandler.sbb
@@ -112,6 +114,11 @@ public class RefreshInternalSubscriptionHandler {
 		if (logger.isInfoEnabled()) {
 			logger.info("Refreshed " + subscription + " for " + expires
 					+ " seconds");
+		}
+		
+		if (subscription.getResourceList()) {
+			// it's a resource list subscription thus pas control to rls
+			internalSubscriptionHandler.sbb.getEventListControlChildSbb().refreshSubscription(subscription);
 		}
 	}
 }

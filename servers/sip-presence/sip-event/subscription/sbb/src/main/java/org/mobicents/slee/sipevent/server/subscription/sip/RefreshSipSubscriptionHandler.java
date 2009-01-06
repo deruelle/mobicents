@@ -67,13 +67,15 @@ public class RefreshSipSubscriptionHandler {
 			logger.error("Can't send RESPONSE", e);
 		}
 
-		// notify subscriber
-		try {
-			sipSubscriptionHandler.getSipSubscriberNotificationHandler()
-					.createAndSendNotify(entityManager, subscription,
-							(Dialog) aci.getActivity(), childSbb);
-		} catch (Exception e) {
-			logger.error("failed to notify subscriber", e);
+		if (!subscription.getResourceList()) {
+			// notify subscriber
+			try {
+				sipSubscriptionHandler.getSipSubscriberNotificationHandler()
+				.createAndSendNotify(entityManager, subscription,
+						(Dialog) aci.getActivity(), childSbb);
+			} catch (Exception e) {
+				logger.error("failed to notify subscriber", e);
+			}
 		}
 
 		// set new timer
@@ -83,6 +85,11 @@ public class RefreshSipSubscriptionHandler {
 		if (logger.isInfoEnabled()) {
 			logger.info("Refreshed " + subscription + " for " + expires
 					+ " seconds");
+		}
+		
+		if (subscription.getResourceList()) {
+			// it's a resource list subscription thus pas control to rls
+			sipSubscriptionHandler.sbb.getEventListControlChildSbb().refreshSubscription(subscription);
 		}
 	}
 

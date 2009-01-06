@@ -36,7 +36,13 @@ public class InternalSubscriberNotificationHandler {
 	public void notifyInternalSubscriber(EntityManager entityManager,
 			Subscription subscription, ActivityContextInterface aci,
 			ImplementedSubscriptionControlSbbLocalObject childSbb) {
-		NotifyContent notifyContent = childSbb.getNotifyContent(subscription);
+		
+		NotifyContent notifyContent = null; 
+		// only get notify content if subscription status is active
+		if (subscription.getStatus().equals(Subscription.Status.active)) {
+			notifyContent = childSbb.getNotifyContent(subscription); 
+		}
+			
 		if (notifyContent != null) {
 			notifyInternalSubscriber(entityManager, subscription, notifyContent
 					.getContent(), notifyContent.getContentTypeHeader(), childSbb);
@@ -50,8 +56,7 @@ public class InternalSubscriberNotificationHandler {
 	public void notifyInternalSubscriber(EntityManager entityManager,
 			Subscription subscription, String content,
 			ContentTypeHeader contentTypeHeader,
-			ActivityContextInterface subscriptionACI,
-			ImplementedSubscriptionControlSbbLocalObject childSbb) {
+			ActivityContextInterface subscriptionACI) {
 		
 			String contentType = null;
 			String contentSubtype = null;
@@ -90,14 +95,21 @@ public class InternalSubscriberNotificationHandler {
 			ImplementedSubscriptionControlSbbLocalObject childSbb) {
 
 		try {
-			// get subscription dialog
+			// get subscription aci
 			ActivityContextInterface aci = internalSubscriptionHandler.sbb
 					.getActivityContextNamingfacility().lookup(
 							subscription.getKey().toString());
 			if (aci != null) {
-				notifyInternalSubscriber(entityManager, subscription,
-						(content != null ? getFilteredNotifyContent(subscription, content,
-								childSbb) : null), contentTypeHeader, aci, childSbb);
+				if (!subscription.getResourceList()) {
+					notifyInternalSubscriber(entityManager, subscription,
+							(content != null ? getFilteredNotifyContent(subscription, content,
+									childSbb) : null), contentTypeHeader, aci);
+				}
+				else {
+					// resource list subscription, no filtering
+					notifyInternalSubscriber(entityManager, subscription,
+							(content != null ? (String)content : null), contentTypeHeader, aci);
+				}
 			} else {
 				// clean up
 				logger.warn("Unable to find subscription aci to notify "

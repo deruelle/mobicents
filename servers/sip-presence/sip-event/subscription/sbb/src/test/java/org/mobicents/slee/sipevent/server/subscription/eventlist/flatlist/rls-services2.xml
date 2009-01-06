@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rls-services xmlns="urn:ietf:params:xml:ns:rls-services"
+	xmlns:rl="urn:ietf:params:xml:ns:resource-lists"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<service uri="sip:mybuddies@example.com">
+		<list name="friends">
+			<rl:entry uri="sip:bill@example.com">
+				<rl:display-name>Bill Doe</rl:display-name>
+			</rl:entry>
+			<rl:entry-ref
+				ref="resource-lists/users/sip:bill@example.com/index/~~/
+      resource-lists/list%5b@name=%22list1%22%5d/entry%5b@uri=%22sip:pet
+      ri@example.com%22%5d" />
+			<rl:list name="close-friends">
+				<rl:display-name>Close Friends</rl:display-name>
+				<rl:entry uri="sip:joe@example.com">
+					<rl:display-name>Joe Smith</rl:display-name>
+				</rl:entry>
+				<rl:entry uri="sip:nancy@example.com">
+					<rl:display-name>Nancy Gross</rl:display-name>
+				</rl:entry>
+				<rl:list name="more-close-friends">
+					<rl:display-name>More Close Friends</rl:display-name>
+					<rl:entry uri="sip:me@example.com">
+						<rl:display-name>?</rl:display-name>
+					</rl:entry>
+					<rl:entry uri="sip:yesme@example.com">
+						<rl:display-name>?!?</rl:display-name>
+					</rl:entry>
+				</rl:list>
+			</rl:list>
+		</list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+</rls-services>

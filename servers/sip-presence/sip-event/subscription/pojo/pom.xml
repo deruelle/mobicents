@@ -26,6 +26,13 @@
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
+		
+		<dependency>
+			<artifactId>server-internal-client-sbb</artifactId>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		
 	</dependencies>
 	
 	<build>

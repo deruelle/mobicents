@@ -83,7 +83,7 @@ public class WInfoSubscriptionHandler {
 													subscription,
 													partialWInfoContent,
 													winfoContentHeader,
-													winfoAci, childSbb);
+													winfoAci);
 								} else {
 									// sip subscription
 									Dialog winfoDialog = (Dialog) winfoAci

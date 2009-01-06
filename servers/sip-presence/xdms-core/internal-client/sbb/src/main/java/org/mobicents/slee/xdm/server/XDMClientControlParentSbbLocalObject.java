@@ -35,8 +35,9 @@ public interface XDMClientControlParentSbbLocalObject extends SbbLocalObject {
 	 * @param key
 	 * @param responseCode
 	 * @param eTag
+	 * @param tag 
 	 */
-	public void putResponse(XcapUriKey key, int responseCode, String eTag);
+	public void putResponse(XcapUriKey key, int responseCode, String responseContent, String eTag);
 
 	/**
 	 * Provides response of a delete request.
@@ -44,8 +45,9 @@ public interface XDMClientControlParentSbbLocalObject extends SbbLocalObject {
 	 * @param key
 	 * @param responseCode
 	 * @param eTag
+	 * @param tag 
 	 */
-	public void deleteResponse(XcapUriKey key, int responseCode, String eTag);
+	public void deleteResponse(XcapUriKey key, int responseCode, String responseContent, String eTag);
 
 	/**
 	 * Callback that indicates a document subscribed in the XDM client was

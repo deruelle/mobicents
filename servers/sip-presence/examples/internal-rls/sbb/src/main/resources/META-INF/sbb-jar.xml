@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sbb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD JAIN SLEE SBB 1.0//EN"
+                         "http://java.sun.com/dtd/slee-sbb-jar_1_0.dtd">    
+<sbb-jar>
+    <sbb>      
+       <description/>
+    
+        <sbb-name>RLSExampleRootSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+
+		<sbb-ref>
+       		<sbb-name>RLSExamplePublisherSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>publisherChildSbb</sbb-alias>
+       </sbb-ref>
+       
+       <sbb-ref>
+       		<sbb-name>RLSExampleSubscriberSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>subscriberChildSbb</sbb-alias>
+       </sbb-ref>
+       
+	    <sbb-classes>
+            <sbb-abstract-class reentrant="True">
+                <sbb-abstract-class-name>org.mobicents.slee.sipevent.examples.RLSExampleRootSbb</sbb-abstract-class-name>                
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>publisherChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getPublisherChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>subscriberChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getSubscriberChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>                   	            
+	        </sbb-abstract-class>
+	        <sbb-local-interface>
+            	<sbb-local-interface-name>org.mobicents.slee.sipevent.examples.RLSExampleRootSbbLocalObject</sbb-local-interface-name>
+            </sbb-local-interface>	   
+        </sbb-classes>            
+             
+        <event event-direction="Receive" initial-event="True">
+            <event-name>ServiceStartedEvent</event-name>
+            <event-type-ref>
+                <event-type-name>javax.slee.serviceactivity.ServiceStartedEvent</event-type-name>
+                <event-type-vendor>javax.slee</event-type-vendor>
+                <event-type-version>1.0</event-type-version>
+            </event-type-ref>
+            <initial-event-select variable="ActivityContext"/>
+        </event>
+        
+        <event event-direction="Receive" initial-event="False">
+            <event-name>ActivityEndEvent</event-name>
+            <event-type-ref>
+        		<event-type-name>javax.slee.ActivityEndEvent</event-type-name>
+				<event-type-vendor> javax.slee </event-type-vendor>
+				<event-type-version> 1.0 </event-type-version>
+			</event-type-ref>
+		</event>
+
+    </sbb>
+
+    <sbb>
+    	<description />
+
+    	<sbb-name>RLSExamplePublisherSbb</sbb-name>
+    	<sbb-vendor>org.mobicents</sbb-vendor>
+    	<sbb-version>1.0</sbb-version>
+
+    	<sbb-ref>
+    		<sbb-name>InternalPresenceClientControlSbb</sbb-name>
+    		<sbb-vendor>org.mobicents</sbb-vendor>
+    		<sbb-version>1.0</sbb-version>
+    		<sbb-alias>childSbb</sbb-alias>
+    	</sbb-ref>
+
+    	<sbb-classes>
+    		<sbb-abstract-class reentrant="True">
+    			<sbb-abstract-class-name>
+    				org.mobicents.slee.sipevent.examples.RLSExamplePublisherSbb
+    			</sbb-abstract-class-name>
+    			<cmp-field>
+    				<cmp-field-name>parentSbbCMP</cmp-field-name>
+    			</cmp-field>
+    			<cmp-field>
+    				<cmp-field-name>eTag</cmp-field-name>
+    			</cmp-field>
+    			<cmp-field>
+    				<cmp-field-name>publisher</cmp-field-name>
+    			</cmp-field>
+    			<cmp-field>
+    				<cmp-field-name>
+    					presenceClientControlSbbCMP
+    				</cmp-field-name>
+    			</cmp-field>
+    			<get-child-relation-method>
+    				<sbb-alias-ref>childSbb</sbb-alias-ref>
+    				<get-child-relation-method-name>
+    					getPresenceClientControlSbbChildRelation
+    				</get-child-relation-method-name>
+    				<default-priority>0</default-priority>
+    			</get-child-relation-method>
+    		</sbb-abstract-class>
+    		<sbb-local-interface>
+    			<sbb-local-interface-name>
+    				org.mobicents.slee.sipevent.examples.RLSExamplePublisherSbbLocalObject
+    			</sbb-local-interface-name>
+    		</sbb-local-interface>
+    	</sbb-classes>
+
+    	<event event-direction="Receive" initial-event="False">
+    		<event-name>TimerEvent</event-name>
+    		<event-type-ref>
+    			<event-type-name>
+    				javax.slee.facilities.TimerEvent
+    			</event-type-name>
+    			<event-type-vendor>javax.slee</event-type-vendor>
+    			<event-type-version>1.0</event-type-version>
+    		</event-type-ref>
+    	</event>
+
+    </sbb>
+
+	    <sbb>
+    	<description />
+
+    	<sbb-name>RLSExampleSubscriberSbb</sbb-name>
+    	<sbb-vendor>org.mobicents</sbb-vendor>
+    	<sbb-version>1.0</sbb-version>
+
+    	<sbb-ref>
+    		<sbb-name>InternalPresenceClientControlSbb</sbb-name>
+    		<sbb-vendor>org.mobicents</sbb-vendor>
+    		<sbb-version>1.0</sbb-version>
+    		<sbb-alias>presenceChildSbb</sbb-alias>
+    	</sbb-ref>
+
+    	<sbb-ref>
+    		<sbb-name>InternalXDMClientControlSbb</sbb-name>
+    		<sbb-vendor>org.mobicents</sbb-vendor>
+    		<sbb-version>1.0</sbb-version>
+    		<sbb-alias>xdmChildSbb</sbb-alias>
+    	</sbb-ref>
+
+    	<sbb-classes>
+    		<sbb-abstract-class reentrant="True">
+    			<sbb-abstract-class-name>
+    				org.mobicents.slee.sipevent.examples.RLSExampleSubscriberSbb
+    			</sbb-abstract-class-name>
+    			<cmp-field>
+    				<cmp-field-name>parentSbbCMP</cmp-field-name>
+    			</cmp-field>
+    			<cmp-field>
+    				<cmp-field-name>xDMClientControlChildSbbCMP</cmp-field-name>
+    			</cmp-field>    			
+    			<cmp-field>
+    				<cmp-field-name>
+    					presenceClientControlSbbCMP
+    				</cmp-field-name>
+    			</cmp-field>
+    			<get-child-relation-method>
+    				<sbb-alias-ref>presenceChildSbb</sbb-alias-ref>
+    				<get-child-relation-method-name>
+    					getPresenceClientControlSbbChildRelation
+    				</get-child-relation-method-name>
+    				<default-priority>0</default-priority>
+    			</get-child-relation-method>
+    			<get-child-relation-method>
+    				<sbb-alias-ref>xdmChildSbb</sbb-alias-ref>
+    				<get-child-relation-method-name>
+    					getXDMClientControlChildRelation
+    				</get-child-relation-method-name>
+    				<default-priority>0</default-priority>
+    			</get-child-relation-method>
+    		</sbb-abstract-class>
+    		<sbb-local-interface>
+    			<sbb-local-interface-name>
+    				org.mobicents.slee.sipevent.examples.RLSExampleSubscriberSbbLocalObject
+    			</sbb-local-interface-name>
+    		</sbb-local-interface>
+    	</sbb-classes>
+
+    	<event event-direction="Receive" initial-event="False">
+    		<event-name>TimerEvent</event-name>
+    		<event-type-ref>
+    			<event-type-name>
+    				javax.slee.facilities.TimerEvent
+    			</event-type-name>
+    			<event-type-vendor>javax.slee</event-type-vendor>
+    			<event-type-version>1.0</event-type-version>
+    		</event-type-ref>
+    	</event>
+
+    </sbb>
+
+</sbb-jar>

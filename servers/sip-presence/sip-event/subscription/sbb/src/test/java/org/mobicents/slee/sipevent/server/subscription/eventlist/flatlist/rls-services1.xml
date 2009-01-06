@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rls-services xmlns="urn:ietf:params:xml:ns:rls-services"
+	xmlns:rl="urn:ietf:params:xml:ns:resource-lists"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<service uri="sip:mybuddies@example.com">
+		<resource-list>
+			http://127.0.0.1:8080/resource-lists/user
+			s/sip:joe@example.com/index/~~/resource-lists/list%5b@nam
+			e=%22l1%22%5d
+		</resource-list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+</rls-services>

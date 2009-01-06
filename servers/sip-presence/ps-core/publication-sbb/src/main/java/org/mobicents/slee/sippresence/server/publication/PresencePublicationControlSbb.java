@@ -168,6 +168,7 @@ public abstract class PresencePublicationControlSbb implements Sbb,
 		try {
 			return JAXBContext
 					.newInstance("org.mobicents.slee.sippresence.pojo.pidf"
+							+ ":org.mobicents.slee.sippresence.pojo.pidf.oma"
 							+ ":org.mobicents.slee.sippresence.pojo.rpid"
 							+ ":org.mobicents.slee.sippresence.pojo.datamodel"
 							+ ":org.mobicents.slee.sippresence.pojo.commonschema");
@@ -195,14 +196,66 @@ public abstract class PresencePublicationControlSbb implements Sbb,
 		}
 	}
 
+	private static final PresenceCompositionPolicy presenceCompositionPolicy = new PresenceCompositionPolicy();
+	
+	private JAXBElement unmarshall(String marshalledContent, Unmarshaller unmarshaller) {
+		StringReader stringReader = new StringReader(marshalledContent);
+		JAXBElement jaxbElement = null;
+		try {
+			jaxbElement = (JAXBElement) unmarshaller.unmarshal(stringReader);
+		} catch (JAXBException e) {
+			logger.error("failed to unmarshall presence content", e);
+		}
+		stringReader.close();
+		return jaxbElement;		
+	}
+	
+	private String marshall(Presence presence, Marshaller marshaller) {
+		StringWriter stringWriter = new StringWriter();
+		String result = null;
+		try {
+			marshaller.marshal(presence, stringWriter);
+			result = stringWriter.toString();
+		} catch (JAXBException e) {
+			logger.error("failed to marshall presence content", e);
+		}
+		try {
+			stringWriter.close();
+		} catch (IOException e) {
+			logger.error("failed to close string writer", e);
+		}
+		return result;		
+	}
+	
 	public ComposedPublication combinePublication(Publication publication,
 			ComposedPublication composedPublication) {
-		// for now don't compose, maintain only newest state
-		composedPublication.setDocument(publication.getDocument());
-		composedPublication.setUnmarshalledContent(publication
-				.getUnmarshalledContent());
-		composedPublication.setContentSubType(publication.getContentSubType());
-		composedPublication.setContentType(publication.getContentType());
+		
+		Unmarshaller unmarshaller = null;
+		Marshaller marshaller = null;
+		try {
+			unmarshaller = jaxbContext.createUnmarshaller();
+			marshaller = jaxbContext.createMarshaller();
+		} catch (JAXBException e) {
+			logger.error("failed to create unmarshaller", e);
+			return null;
+		}
+		
+		JAXBElement publicationUnmarshalledContent = publication.getUnmarshalledContent();
+		if (publicationUnmarshalledContent == null) {
+			publicationUnmarshalledContent = unmarshall(publication.getDocument(), unmarshaller);
+			publication.setUnmarshalledContent(publicationUnmarshalledContent);
+		}
+		JAXBElement composedpublicationUnmarshalledContent = composedPublication.getUnmarshalledContent();
+		if (composedpublicationUnmarshalledContent == null) {
+			composedpublicationUnmarshalledContent = unmarshall(composedPublication.getDocument(), unmarshaller);			
+		}
+		if (publicationUnmarshalledContent != null && composedpublicationUnmarshalledContent != null) {
+			Presence composedPresence = presenceCompositionPolicy.compose((Presence)publicationUnmarshalledContent.getValue(), (Presence)composedpublicationUnmarshalledContent.getValue());
+			composedpublicationUnmarshalledContent.setValue(composedPresence);
+			composedPublication.setUnmarshalledContent(composedpublicationUnmarshalledContent);
+			composedPublication.setDocument(marshall(composedPresence, marshaller));
+			
+		}
 		return composedPublication;
 	}
 

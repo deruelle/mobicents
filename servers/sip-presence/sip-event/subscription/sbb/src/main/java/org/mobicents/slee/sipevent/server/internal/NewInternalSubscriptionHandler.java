@@ -32,7 +32,7 @@ public class NewInternalSubscriptionHandler {
 	public void newInternalSubscription(String subscriber,
 			String subscriberDisplayName, String notifier, String eventPackage,
 			String subscriptionId, int expires, String content,
-			String contentType, String contentSubtype,
+			String contentType, String contentSubtype, boolean eventList,
 			EntityManager entityManager,
 			ImplementedSubscriptionControlSbbLocalObject childSbb) {
 
@@ -57,12 +57,12 @@ public class NewInternalSubscriptionHandler {
 		}
 
 		// create subscription key
-		SubscriptionKey subscriptionKey = new SubscriptionKey(
+		SubscriptionKey key = new SubscriptionKey(
 				SubscriptionKey.NO_CALL_ID, SubscriptionKey.NO_REMOTE_TAG,
 				eventPackage, subscriptionId);
 		// find subscription
 		Subscription subscription = entityManager.find(Subscription.class,
-				subscriptionKey);
+				key);
 
 		if (subscription != null) {
 			// subscription exists
@@ -70,23 +70,25 @@ public class NewInternalSubscriptionHandler {
 					eventPackage, subscriptionId,
 					Response.CONDITIONAL_REQUEST_FAILED);
 		} else {
-			// subscription does not exists
-			// ask authorization
-			if (eventPackage.endsWith(".winfo")) {
-				// winfo package, only accept subscriptions when subscriber and
-				// notifier are the same
-				newInternalSubscriptionAuthorization(subscriber,
-						subscriberDisplayName, notifier, subscriptionKey,
-						expires, (subscriber.equals(notifier) ? Response.OK
-								: Response.FORBIDDEN), entityManager, childSbb);
-			} else {
-				childSbb.isSubscriberAuthorized(subscriber,
-						subscriberDisplayName, notifier, subscriptionKey,
-						expires, content, contentType, contentSubtype,null);
-			}
+			authorizeNewInternalSubscription(subscriber, subscriberDisplayName, notifier, key, expires, content, contentType, contentSubtype, eventList, entityManager, childSbb);						
 		}
 	}
 
+	private void authorizeNewInternalSubscription(String subscriber, String subscriberDisplayName, String notifier, SubscriptionKey key, int expires, String content, String contentType, String contentSubtype, boolean eventList, EntityManager entityManager, ImplementedSubscriptionControlSbbLocalObject childSbb) {
+		// ask authorization
+		if (key.getEventPackage().endsWith(".winfo")) {
+			// winfo package, only accept subscriptions when subscriber and
+			// notifier are the same
+			newInternalSubscriptionAuthorization(subscriber,
+					subscriberDisplayName, notifier, key,
+					expires, (subscriber.equals(notifier) ? Response.OK
+							: Response.FORBIDDEN), eventList, entityManager, childSbb);
+		} else {
+			childSbb.isSubscriberAuthorized(subscriber,
+					subscriberDisplayName, notifier, key,
+					expires, content, contentType, contentSubtype,eventList,null);
+		}
+	}
 	/**
 	 * Used by {@link ImplementedSubscriptionControlSbbLocalObject} to provide
 	 * the authorization to a new internal subscription request.
@@ -97,13 +99,14 @@ public class NewInternalSubscriptionHandler {
 	 * @param subscriptionKey
 	 * @param expires
 	 * @param responseCode
+	 * @param eventList 
 	 * @param entityManager
 	 * @param childSbb
 	 */
 	public void newInternalSubscriptionAuthorization(String subscriber,
 			String subscriberDisplayName, String notifier,
 			SubscriptionKey subscriptionKey, int expires, int responseCode,
-			EntityManager entityManager,
+			boolean eventList, EntityManager entityManager,
 			ImplementedSubscriptionControlSbbLocalObject childSbb) {
 
 		if (logger.isDebugEnabled()) {
@@ -154,13 +157,15 @@ public class NewInternalSubscriptionHandler {
 				: Subscription.Status.active;
 		Subscription subscription = new Subscription(subscriptionKey,
 				subscriber, notifier, initialStatus, subscriberDisplayName,
-				expires);
+				expires, eventList);
 
-		// notify subscriber
-		internalSubscriptionHandler.getInternalSubscriberNotificationHandler()
-				.notifyInternalSubscriber(entityManager, subscription, aci,
-						childSbb);
-
+		if (!eventList || (responseCode == Response.ACCEPTED)) {
+			// notify subscriber
+			internalSubscriptionHandler.getInternalSubscriberNotificationHandler()
+			.notifyInternalSubscriber(entityManager, subscription, aci,
+					childSbb);
+		}
+		
 		// notify winfo subscribers
 		sbb.getWInfoSubscriptionHandler().notifyWinfoSubscriptions(
 				entityManager, subscription, childSbb);
@@ -169,6 +174,13 @@ public class NewInternalSubscriptionHandler {
 		sbb.setSubscriptionTimerAndPersistSubscription(entityManager,
 				subscription, expires + 1, aci);
 
+		if (eventList && (responseCode == Response.OK)) {
+			// resource list and active subscription, ask the event list control child to create the subscription 
+			if (!internalSubscriptionHandler.sbb.getEventListControlChildSbb().createSubscription(subscription)) {
+				internalSubscriptionHandler.getRemoveInternalSubscriptionHandler().removeInternalSubscription(aci, subscription, entityManager, childSbb);
+			}
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.info("Created " + subscription);
 		}

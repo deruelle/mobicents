@@ -18,6 +18,7 @@ import javax.sip.message.Response;
 import javax.slee.ActivityContextInterface;
 
 import org.apache.log4j.Logger;
+import org.mobicents.slee.sipevent.server.internal.InternalSubscriptionHandler;
 import org.mobicents.slee.sipevent.server.subscription.ImplementedSubscriptionControlSbbLocalObject;
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbb;
 import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
@@ -76,7 +77,7 @@ public class SipSubscriptionHandler {
 	 */
 	public void processRequest(RequestEvent event, ActivityContextInterface aci) {
 
-		// get child sbb that handles all the publication logic
+		// get child sbb that handles all the concrete event package subscription logic
 		ImplementedSubscriptionControlSbbLocalObject childSbb = sbb
 				.getImplementedControlChildSbb();
 		if (childSbb == null) {
@@ -95,10 +96,6 @@ public class SipSubscriptionHandler {
 		}
 
 		EntityManager entityManager = sbb.getEntityManager();
-
-		// if exists remove UserAgent header
-		if (event.getRequest().getHeader(UserAgentHeader.NAME) != null)
-			event.getRequest().removeHeader(UserAgentHeader.NAME);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Processing SUBSCRIBE request...");
@@ -217,10 +214,13 @@ public class SipSubscriptionHandler {
 									logger.error("Can't send RESPONSE", e);
 								}
 								// remove subscription
+								if (subscription.getResourceList()) {
+									sbb.getEventListControlChildSbb().removeSubscription(subscription);
+								}
 								removeSipSubscriptionHandler
-										.removeSipSubscription(aci,
-												subscription, entityManager,
-												childSbb);
+								.removeSipSubscription(aci,
+										subscription, entityManager,
+										childSbb);
 							} else {
 								// subscription does exists but status does
 								// not permits removal

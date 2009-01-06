@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entry uri="sip:bill@example.com"
+	xmlns="urn:ietf:params:xml:ns:resource-lists"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<display-name>Bill Doe</display-name>
+</entry>

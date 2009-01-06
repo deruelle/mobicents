@@ -170,12 +170,6 @@ public abstract class RequestProcessorSbb implements
 			UniquenessFailureConflictException,
 			ConstraintFailureConflictException {
 
-		if (logger.isInfoEnabled()) {
-			logger.info("delete(resourceSelector=" + resourceSelector
-					+ ",eTagValidator=" + eTagValidator + ",xcapRoot="
-					+ xcapRoot + ")");
-		}
-
 		WriteResult result = new OKWriteResult();
 		DocumentSelector documentSelector = null;
 		NodeSelector nodeSelector = null;
@@ -568,10 +562,6 @@ public abstract class RequestProcessorSbb implements
 			throws NotFoundException, InternalServerErrorException,
 			BadRequestException {
 
-		if (logger.isInfoEnabled()) {
-			logger.info("get(resourceSelector=" + resourceSelector + ")");
-		}
-
 		AppUsage appUsage = null;
 		try {
 			// parse document parent String
@@ -803,12 +793,6 @@ public abstract class RequestProcessorSbb implements
 			MethodNotAllowedException, UnsupportedMediaTypeException,
 			InternalServerErrorException, PreconditionFailedException,
 			BadRequestException {
-
-		if (logger.isInfoEnabled()) {
-			logger.info("put(resourceSelector=" + resourceSelector
-					+ ",mimetype=" + mimetype + ",eTagValidator="
-					+ eTagValidator + ",xcapRoot=" + xcapRoot + ")");
-		}
 
 		WriteResult result = null;
 		DocumentSelector documentSelector = null;

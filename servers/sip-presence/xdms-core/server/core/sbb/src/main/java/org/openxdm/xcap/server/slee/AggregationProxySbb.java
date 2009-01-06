@@ -163,6 +163,11 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				}
 
 				// delete in data source
+				if (logger.isInfoEnabled()) {
+					logger.info("delete(resourceSelector=" + resourceSelector
+							+ ",eTagValidator=" + eTagValidator + ",xcapRoot="
+							+ xcapRoot + ")");
+				}
 				WriteResult result = getRequestProcessor().delete(
 						resourceSelector, eTagValidator, xcapRoot);
 				// set response status
@@ -255,6 +260,9 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 								request.getRequestURI(), request
 										.getQueryString());
 				// read result from data source
+				if (logger.isInfoEnabled()) {
+					logger.info("get(resourceSelector=" + resourceSelector + ")");
+				}
 				ReadResult result = getRequestProcessor().get(resourceSelector);
 				// get data object from result
 				Resource dataObject = result.getResponseDataObject();
@@ -334,6 +342,11 @@ public abstract class AggregationProxySbb implements javax.slee.Sbb {
 				}
 				// get content mimetype
 				String mimetype = request.getContentType();
+				if (logger.isInfoEnabled()) {
+					logger.info("put(resourceSelector=" + resourceSelector
+							+ ",mimetype=" + mimetype + ",eTagValidator="
+							+ eTagValidator + ",xcapRoot=" + ServerConfiguration.XCAP_ROOT + ")");
+				}
 				// put object in data source
 				WriteResult result = getRequestProcessor().put(
 						resourceSelector, mimetype, request.getInputStream(),

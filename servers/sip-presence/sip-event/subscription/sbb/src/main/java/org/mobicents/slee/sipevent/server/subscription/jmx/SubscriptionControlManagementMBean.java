@@ -82,4 +82,17 @@ public interface SubscriptionControlManagementMBean {
 	 * @param contactAddressDisplayName
 	 */
 	public void setContactAddressDisplayName(String contactAddressDisplayName);
+	
+	/**
+	 * Indicates if event list support is on, that is, this server acts as Resource List Server too
+	 * @return
+	 */
+	public boolean getEventListSupportOn();
+	
+	/**
+	 * Turns on/off event list support, that is, if this server acts as Resource List Server too
+	 * @param eventListSupportOn
+	 */
+	public void setEventListSupportOn(boolean eventListSupportOn);
+	
 }

@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.slee.facilities.TimerID;
 
 /**
@@ -30,6 +31,7 @@ import javax.slee.facilities.TimerID;
 @NamedQueries({
 	@NamedQuery(name="selectSubscriptionFromTimerID",query="SELECT s FROM Subscription s WHERE s.timerID = :timerID"),
 	@NamedQuery(name="selectSubscriptionsFromNotifierAndEventPackage",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier AND s.key.eventPackage = :eventPackage"),
+	@NamedQuery(name="selectSubscriptionsFromNotifier",query="SELECT s FROM Subscription s WHERE s.notifier = :notifier"),
 	@NamedQuery(name="selectDialogSubscriptions",query="SELECT s FROM Subscription s WHERE s.key.callId = :callId AND s.key.remoteTag = :remoteTag")
 	})
 public class Subscription implements Serializable {
@@ -50,7 +52,6 @@ public class Subscription implements Serializable {
 	 */
 	@Column(name = "SUBSCRIBER",nullable=false)
 	private String subscriber;
-	
 	
 	/**
 	 * the notifier
@@ -118,16 +119,28 @@ public class Subscription implements Serializable {
 	private TimerID timerID;
 	
 	/**
-	 * the version of the last content, this only applies to WInfo subscriptions
+	 * the version of the last content, this only applies to WInfo or RLS subscriptions
 	 */
 	@Column(name = "VERSION", nullable = false)
 	private int version;
+	
+	/**
+	 * if true the subscription if for a resource list
+	 */
+	@Column(name = "RESOURCE_LIST", nullable = false)
+	private Boolean resourceList;
+	
+	/**
+	 * the entity manager used to load and persist this subscription
+	 */
+	@Transient
+	private EntityManager entityManager; 
 	
 	public Subscription() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Subscription(SubscriptionKey key, String subscriber, String notifier, Status status, String subscriberDisplayName, int expires) {
+	public Subscription(SubscriptionKey key, String subscriber, String notifier, Status status, String subscriberDisplayName, int expires, boolean resourceList) {
 		this.key = key;
 		this.subscriber = subscriber;
 		this.notifier = notifier;
@@ -143,6 +156,7 @@ public class Subscription implements Serializable {
 		this.expires = expires;
 		this.subscriberDisplayName = subscriberDisplayName;
 		this.version = 0;
+		this.resourceList = Boolean.valueOf(resourceList);
 	}
 	
 	public int getRemainingExpires() {
@@ -310,9 +324,17 @@ public class Subscription implements Serializable {
 		this.version++;
 	}
 	
+	public Boolean getResourceList() {
+		return resourceList;
+	}
+	
+	public void setResourceList(Boolean resourceList) {
+		this.resourceList = resourceList;
+	}
+	
 	@Override
 	public String toString() {
-		return "subscription: subscriber="+subscriber+",notifier="+notifier+",eventPackage="+key.getEventPackage()+",eventId="+key.getRealEventId()+",status="+status;
+		return "subscription: subscriber="+subscriber+",notifier="+notifier+",resourceList="+resourceList+",eventPackage="+key.getEventPackage()+",eventId="+key.getRealEventId()+",status="+status;
 	}
 	
 	/*
@@ -335,6 +357,14 @@ public class Subscription implements Serializable {
 		.setParameter("callId",callId)
 		.setParameter("remoteTag",remoteTag)
 		.getResultList();
+	}
+	
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+	
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 }

@@ -19,6 +19,11 @@
 			<artifactId>sip11-ra</artifactId>
 			<groupId>org.mobicents.resources</groupId>
 		</dependency>
+		<dependency>
+			<artifactId>appusage-resource-lists-client</artifactId>
+			<groupId>org.mobicents.servers.xdm.core</groupId>
+			<version>${pom.version}</version>
+		</dependency>
 	</dependencies>
 	
 	<build>

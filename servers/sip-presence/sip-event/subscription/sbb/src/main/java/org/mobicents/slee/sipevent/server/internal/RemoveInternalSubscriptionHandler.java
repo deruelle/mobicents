@@ -9,6 +9,7 @@ import org.mobicents.slee.sipevent.server.subscription.ImplementedSubscriptionCo
 import org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbb;
 import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription;
 import org.mobicents.slee.sipevent.server.subscription.pojo.SubscriptionKey;
+import org.mobicents.slee.sipevent.server.subscription.pojo.Subscription.Status;
 
 /**
  * Handles the removal of a SIP subscription
@@ -68,7 +69,12 @@ public class RemoveInternalSubscriptionHandler {
 		sbb.getParentSbbCMP().unsubscribeOk(subscriber, notifier, eventPackage,
 				subscriptionId);
 
+		if (subscription.getResourceList()) {
+			internalSubscriptionHandler.sbb.getEventListControlChildSbb().removeSubscription(subscription);
+		}
+		
 		removeInternalSubscription(aci, subscription, entityManager, childSbb);
+		
 	}
 
 	public void removeInternalSubscription(ActivityContextInterface aci,
@@ -79,14 +85,16 @@ public class RemoveInternalSubscriptionHandler {
 		internalSubscriptionHandler.sbb.getTimerFacility().cancelTimer(
 				subscription.getTimerID());
 
-		// change subscription state
-		subscription.setStatus(Subscription.Status.terminated);
-		subscription.setLastEvent(null);
+		if (!subscription.getStatus().equals(Status.terminated) && !subscription.getStatus().equals(Status.waiting)) {
+			// change subscription state
+			subscription.setStatus(Subscription.Status.terminated);
+			subscription.setLastEvent(null);
+		}
 
 		// notify subscriber
 		internalSubscriptionHandler.getInternalSubscriberNotificationHandler()
-				.notifyInternalSubscriber(entityManager, subscription, aci,
-						childSbb);
+		.notifyInternalSubscriber(entityManager, subscription, aci,
+				childSbb);
 
 		// notify winfo subscription(s)
 		internalSubscriptionHandler.sbb

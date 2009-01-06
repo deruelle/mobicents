@@ -185,7 +185,8 @@ public class Parser {
 		String elementSelector = null;
 		
 		int elementToTerminalSelectorSeparator =  nodeSelector.lastIndexOf('/');
-		if (elementToTerminalSelectorSeparator != -1) {		
+		if (elementToTerminalSelectorSeparator != -1 
+				&& elementToTerminalSelectorSeparator < (nodeSelector.length()-1)) {
 			// it can be breaked, check its last part is a just a element path or a terminal selector
 			String elementSelectorCandidate = nodeSelector.substring(0,elementToTerminalSelectorSeparator);
 			String terminalSelectorCandidate = nodeSelector.substring(elementToTerminalSelectorSeparator+1);

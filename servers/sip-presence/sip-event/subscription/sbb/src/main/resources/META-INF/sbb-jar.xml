@@ -17,11 +17,21 @@
         	<sbb-alias>implementedChildSbb</sbb-alias>
        </sbb-ref>
        
+       <sbb-ref>
+       		<sbb-name>EventListSubscriptionControlSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>eventListControlChildSbb</sbb-alias>
+       </sbb-ref>
+       
         <sbb-classes>
             <sbb-abstract-class reentrant="True">
                 <sbb-abstract-class-name>org.mobicents.slee.sipevent.server.subscription.SubscriptionControlSbb</sbb-abstract-class-name>
                 <cmp-field>
                 	<cmp-field-name>implementedControlChildSbbCMP</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>eventListControlChildSbbCMP</cmp-field-name>
                 </cmp-field>   
                 <cmp-field>
                 	<cmp-field-name>parentSbbCMP</cmp-field-name>
@@ -29,6 +39,11 @@
                 <get-child-relation-method>                	
                 	<sbb-alias-ref>implementedChildSbb</sbb-alias-ref>
                 	<get-child-relation-method-name>getImplementedControlChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method> 
+                 <get-child-relation-method>                	
+                	<sbb-alias-ref>eventListControlChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getEventListControlChildRelation</get-child-relation-method-name>
                 	<default-priority>0</default-priority>
                 </get-child-relation-method>                                      
 	        </sbb-abstract-class>
@@ -139,6 +154,168 @@
 			</resource-adaptor-entity-binding>
 		</resource-adaptor-type-binding>
 
+    </sbb>
+    
+    <!-- event list control sbb -->
+    
+    <sbb>      
+    
+        <description />
+
+        <sbb-name>EventListSubscriptionControlSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+
+        <sbb-ref>
+       		<sbb-name>FlatListMakerSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>flatListMakerChildSbb</sbb-alias>
+       </sbb-ref>
+       
+       <sbb-ref>
+       		<sbb-name>EventListSubscriberSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>eventListSubscriberChildSbb</sbb-alias>
+       </sbb-ref>
+       
+       <sbb-ref>
+       		<sbb-name>InternalXDMClientControlSbb</sbb-name>
+       		<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>xdmClientControlChildSbb</sbb-alias>
+       </sbb-ref>
+       
+        <sbb-classes>
+            <sbb-abstract-class reentrant="True">
+                <sbb-abstract-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.EventListSubscriptionControlSbb</sbb-abstract-class-name>
+                <cmp-field>
+                	<cmp-field-name>xDMClientControlChildSbbCMP</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>flatListMakerChildSbbCMP</cmp-field-name>
+                </cmp-field> 
+                <cmp-field>
+                	<cmp-field-name>parentSbbCMP</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>flatListMakerChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getFlatListMakerChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>xdmClientControlChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getXDMClientControlChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method> 
+                 <get-child-relation-method>                	
+                	<sbb-alias-ref>eventListSubscriberChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getEventListSubscriberChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>                                      
+	        </sbb-abstract-class>
+	        <sbb-local-interface>
+            	<sbb-local-interface-name>org.mobicents.slee.sipevent.server.subscription.EventListSubscriptionControlSbbLocalObject</sbb-local-interface-name>
+            </sbb-local-interface>	   
+        </sbb-classes>            
+     
+    </sbb>
+    
+    <!-- flat list maker sbb -->
+    
+    <sbb>      
+    
+        <description />
+
+        <sbb-name>FlatListMakerSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+
+		<sbb-ref>
+       		<sbb-name>InternalXDMClientControlSbb</sbb-name>
+       		<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>xdmClientControlChildSbb</sbb-alias>
+       </sbb-ref>
+       
+        <sbb-classes>
+            <sbb-abstract-class reentrant="True">
+                <sbb-abstract-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.FlatListMakerSbb</sbb-abstract-class-name>
+                <cmp-field>
+                	<cmp-field-name>xDMClientControlChildSbbCMP</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>flatList</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>lists</cmp-field-name>
+                </cmp-field> 
+                <cmp-field>
+                	<cmp-field-name>currentListType</cmp-field-name>
+                </cmp-field> 
+                <cmp-field>
+                	<cmp-field-name>parentSbbCMP</cmp-field-name>
+                </cmp-field>
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>xdmClientControlChildSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getXDMClientControlChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>                                      
+	        </sbb-abstract-class>
+	        <sbb-local-interface>
+            	<sbb-local-interface-name>org.mobicents.slee.sipevent.server.subscription.FlatListMakerSbbLocalObject</sbb-local-interface-name>
+            </sbb-local-interface>	   
+        </sbb-classes>            
+     
+    </sbb>
+    
+    <!-- event list subscriber sbb -->
+    
+    <sbb>      
+    
+        <description />
+
+        <sbb-name>EventListSubscriberSbb</sbb-name>
+        <sbb-vendor>org.mobicents</sbb-vendor>
+        <sbb-version>1.0</sbb-version>
+       
+       <sbb-ref>
+       		<sbb-name>SubscriptionControlSbb</sbb-name>
+        	<sbb-vendor>org.mobicents</sbb-vendor>
+        	<sbb-version>1.0</sbb-version>
+        	<sbb-alias>childSbb</sbb-alias>
+       </sbb-ref>
+       
+        <sbb-classes>
+            <sbb-abstract-class reentrant="True">
+                <sbb-abstract-class-name>org.mobicents.slee.sipevent.server.subscription.eventlist.EventListSubscriberSbb</sbb-abstract-class-name>
+           		<cmp-field>
+                	<cmp-field-name>subscriptionClientControlChildSbbCMP</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>flatList</cmp-field-name>
+                </cmp-field>
+                <cmp-field>
+                	<cmp-field-name>notificationData</cmp-field-name>
+                </cmp-field> 
+                <cmp-field>
+                	<cmp-field-name>subscriptionKey</cmp-field-name>
+                </cmp-field> 
+                <cmp-field>
+                	<cmp-field-name>parentSbbCMP</cmp-field-name>
+                </cmp-field>   
+                <get-child-relation-method>                	
+                	<sbb-alias-ref>childSbb</sbb-alias-ref>
+                	<get-child-relation-method-name>getSubscriptionClientControlChildRelation</get-child-relation-method-name>
+                	<default-priority>0</default-priority>
+                </get-child-relation-method>                                   
+	        </sbb-abstract-class>
+	        <sbb-local-interface>
+            	<sbb-local-interface-name>org.mobicents.slee.sipevent.server.subscription.EventListSubscriberSbbLocalObject</sbb-local-interface-name>
+            </sbb-local-interface>	   
+        </sbb-classes>            
+     
     </sbb>
     
 </sbb-jar>

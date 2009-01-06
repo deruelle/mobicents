@@ -14,7 +14,7 @@
        		<sbb-name>PublicationControlSbb</sbb-name>
         	<sbb-vendor>org.mobicents</sbb-vendor>
         	<sbb-version>1.0</sbb-version>
-        	<sbb-alias>publicationchildSbb</sbb-alias>
+        	<sbb-alias>publicationChildSbb</sbb-alias>
        	</sbb-ref>
         
         <sbb-ref>
@@ -51,7 +51,6 @@
             	<sbb-local-interface-name>org.mobicents.slee.sippresence.client.InternalPresenceClientControlSbbLocalObject</sbb-local-interface-name>
             </sbb-local-interface>	   
         </sbb-classes>            
-     
     </sbb>
     
 </sbb-jar>

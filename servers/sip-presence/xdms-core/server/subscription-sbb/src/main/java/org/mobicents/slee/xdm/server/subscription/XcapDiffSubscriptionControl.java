@@ -73,7 +73,7 @@ public class XcapDiffSubscriptionControl {
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype, ServerTransaction serverTransaction) {
+			String contentSubtype, boolean eventList, ServerTransaction serverTransaction) {
 
 		StringReader stringReader = null;
 
@@ -214,7 +214,7 @@ public class XcapDiffSubscriptionControl {
 
 			// continue new subscription process
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
-					subscriberDisplayName, notifier, key, expires, Response.OK,serverTransaction);
+					subscriberDisplayName, notifier, key, expires, Response.OK,eventList,serverTransaction);
 		} catch (JAXBException e) {
 			logger.error("failed to parse resource-lists in initial subscribe",
 					e);
@@ -223,7 +223,7 @@ public class XcapDiffSubscriptionControl {
 			}
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 					subscriberDisplayName, notifier, key, expires,
-					Response.FORBIDDEN,serverTransaction);
+					Response.FORBIDDEN,eventList,serverTransaction);
 		}
 
 	}

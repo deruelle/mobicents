@@ -86,18 +86,23 @@ public class SipSubscriberNotificationHandler {
 			ImplementedSubscriptionControlSbbLocalObject childSbb)
 			throws JAXBException, ParseException, IOException {
 
-		// filter content per subscriber (notifier rules)
-		Object filteredContent = childSbb.filterContentPerSubscriber(
-				subscription.getSubscriber(), subscription.getNotifier(),
-				subscription.getKey().getEventPackage(), content);
-		// filter content per notifier (subscriber rules)
-		// TODO
-		// marshall content to string
-		StringWriter stringWriter = new StringWriter();
-		childSbb.getMarshaller().marshal(filteredContent, stringWriter);
-		notify.setContent(stringWriter.toString(), contentTypeHeader);
-		stringWriter.close();
-
+		if (!subscription.getResourceList()) {
+			// filter content per subscriber (notifier rules)
+			Object filteredContent = childSbb.filterContentPerSubscriber(
+					subscription.getSubscriber(), subscription.getNotifier(),
+					subscription.getKey().getEventPackage(), content);
+			// filter content per notifier (subscriber rules)
+			// TODO
+			// marshall content to string
+			StringWriter stringWriter = new StringWriter();
+			childSbb.getMarshaller().marshal(filteredContent, stringWriter);
+			notify.setContent(stringWriter.toString(), contentTypeHeader);
+			stringWriter.close();
+		}
+		else {
+			// resource list subscription, no filtering
+			notify.setContent(content, contentTypeHeader);
+		}
 		return notify;
 	}
 
@@ -213,6 +218,12 @@ public class SipSubscriberNotificationHandler {
 				}
 			}
 			notify.addHeader(ssh);
+			
+			// if it's a RLS notify a required header must be present
+			if (subscription.getResourceList()) {
+				notify.addHeader(sipSubscriptionHandler.sbb.getHeaderFactory().createRequireHeader("eventlist"));
+			}
+			
 		} catch (Exception e) {
 			logger.error("unable to fill notify headers", e);
 		}

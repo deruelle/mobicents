@@ -56,7 +56,7 @@ public class PresenceSubscriptionControl {
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype, String presRulesAUID,
+			String contentSubtype, boolean eventList, String presRulesAUID,
 			String presRulesDocumentName, ServerTransaction serverTransaction) {
 
 		// get current combined rule from cmp
@@ -91,7 +91,7 @@ public class PresenceSubscriptionControl {
 			if (documentSelector == null) {
 				sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 						subscriberDisplayName, notifier, key, expires,
-						Response.FORBIDDEN,serverTransaction);
+						Response.FORBIDDEN,eventList,serverTransaction);
 			} else {
 				// we need to go to the xdm, reply accepted for subscription
 				// state be pending
@@ -99,7 +99,7 @@ public class PresenceSubscriptionControl {
 				sbb.setCombinedRules(combinedRules);
 				sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 						subscriberDisplayName, notifier, key, expires,
-						Response.ACCEPTED,serverTransaction);
+						Response.ACCEPTED,eventList,serverTransaction);
 				// ask for pres-rules doc
 				sbb.getXDMClientControlSbb().get(
 						new DocumentUriKey(documentSelector));
@@ -109,7 +109,7 @@ public class PresenceSubscriptionControl {
 			// subscription control
 			sbb.getParentSbbCMP().newSubscriptionAuthorization(subscriber,
 					subscriberDisplayName, notifier, key, expires,
-					combinedRule.getSubHandling().getResponseCode(),serverTransaction);
+					combinedRule.getSubHandling().getResponseCode(),eventList, serverTransaction);
 		}
 
 	}
@@ -195,12 +195,11 @@ public class PresenceSubscriptionControl {
 			// just simulate a document update
 			documentUpdated(documentSelector, null, null, content);
 		} else {
-			if (logger.isInfoEnabled()) {
-				logger.info("didn't found a pres-rules in doc at "
-						+ key.getResourceSelector());
-			}
 			// let's be friendly with clients without xcap, allow subscription
 			String notifier = getUser(documentSelector);
+			if (logger.isInfoEnabled()) {
+				logger.info(notifier+ " pres-rules not found, allowing subscription");
+			}
 			Map combinedRules = sbb.getCombinedRules();
 			if (combinedRules != null) {
 				for (Object object : combinedRules.keySet()) {

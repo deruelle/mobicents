@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-api</artifactId>
-		</dependency>
+		</dependency>		
 	</dependencies>
 	
 	<build>

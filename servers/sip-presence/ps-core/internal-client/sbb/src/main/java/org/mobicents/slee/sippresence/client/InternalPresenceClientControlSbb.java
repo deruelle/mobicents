@@ -252,7 +252,7 @@ public abstract class InternalPresenceClientControlSbb implements Sbb,
 
 	public abstract PresenceClientControlParentSbbLocalObject getParentSbbCMP();
 
-	public abstract PublicationClientControlSbbLocalObject getPublicationClientControlSbbCMP();
+	public abstract PublicationClientControlSbbLocalObject getPublicationClientControlChildSbbCMP();
 
 	public abstract void setPublicationClientControlChildSbbCMP(
 			PublicationClientControlSbbLocalObject value);
@@ -260,7 +260,7 @@ public abstract class InternalPresenceClientControlSbb implements Sbb,
 	public abstract ChildRelation getPublicationClientControlChildRelation();
 
 	private PublicationClientControlSbbLocalObject getPublicationClientControlSbbLocalObject() {
-		PublicationClientControlSbbLocalObject childSbb = getPublicationClientControlSbbCMP();
+		PublicationClientControlSbbLocalObject childSbb = getPublicationClientControlChildSbbCMP();
 		if (childSbb == null) {
 			try {
 				childSbb = (PublicationClientControlSbbLocalObject) getPublicationClientControlChildRelation()
@@ -277,7 +277,7 @@ public abstract class InternalPresenceClientControlSbb implements Sbb,
 		return childSbb;
 	}
 
-	public abstract SubscriptionClientControlSbbLocalObject getSubscriptionClientControlSbbCMP();
+	public abstract SubscriptionClientControlSbbLocalObject getSubscriptionClientControlChildSbbCMP();
 
 	public abstract void setSubscriptionClientControlChildSbbCMP(
 			SubscriptionClientControlSbbLocalObject value);
@@ -285,7 +285,7 @@ public abstract class InternalPresenceClientControlSbb implements Sbb,
 	public abstract ChildRelation getSubscriptionClientControlChildRelation();
 
 	private SubscriptionClientControlSbbLocalObject getSubscriptionClientControlSbbLocalObject() {
-		SubscriptionClientControlSbbLocalObject childSbb = getSubscriptionClientControlSbbCMP();
+		SubscriptionClientControlSbbLocalObject childSbb = getSubscriptionClientControlChildSbbCMP();
 		if (childSbb == null) {
 			try {
 				childSbb = (SubscriptionClientControlSbbLocalObject) getSubscriptionClientControlChildRelation()

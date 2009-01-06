@@ -112,11 +112,11 @@ public abstract class XcapDiffSubscriptionControlSbb implements Sbb,
 	public void isSubscriberAuthorized(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
 			int expires, String content, String contentType,
-			String contentSubtype,ServerTransaction serverTransaction) {
+			String contentSubtype, boolean eventList,ServerTransaction serverTransaction) {
 		// exposing to XcapDiffSubscriptionControl
 		new XcapDiffSubscriptionControl(this).isSubscriberAuthorized(
 				subscriber, subscriberDisplayName, notifier, key, expires,
-				content, contentType, contentSubtype,serverTransaction);
+				content, contentType, contentSubtype,eventList,serverTransaction);
 	}
 
 	public void removingSubscription(Subscription subscription) {
@@ -226,10 +226,15 @@ public abstract class XcapDiffSubscriptionControlSbb implements Sbb,
 
 	// --- not used
 
-	public void deleteResponse(XcapUriKey key, int responseCode, String tag) {
+	public void deleteResponse(XcapUriKey key, int responseCode, String responseContent, String tag) {
 		throw new UnsupportedOperationException();
 	}
 
+	public void putResponse(XcapUriKey key, int responseCode,
+			String responseContent, String tag) {
+		throw new UnsupportedOperationException();
+	}
+	
 	public void getResponse(XcapUriKey key, int responseCode, String mimetype,
 			String content, String tag) {
 		throw new UnsupportedOperationException();

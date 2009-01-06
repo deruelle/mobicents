@@ -19,6 +19,7 @@ public class SubscriptionControlManagement implements SubscriptionControlManagem
 	private int defaultWaitingExpires = (24*60*60);
 	private int maxForwards = 70;
 	private String contactAddressDisplayName = "Mobicents SIP Event Server";
+	private boolean eventListSupportOn = true;
 		
 	public void startService() throws Exception {
 		MBeanServer mbs=SleeContainer.lookupFromJndi().getMBeanServer();
@@ -105,5 +106,14 @@ public class SubscriptionControlManagement implements SubscriptionControlManagem
 	public void setContactAddressDisplayName(String contactAddressDisplayName) {
 		this.contactAddressDisplayName = contactAddressDisplayName;
 	}
+
+	public boolean getEventListSupportOn() {
+		return eventListSupportOn;
+	}
+
+	public void setEventListSupportOn(boolean eventListSupportOn) {
+		this.eventListSupportOn = eventListSupportOn;
+	}
+	
 	
 }

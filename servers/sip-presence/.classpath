@@ -3,6 +3,9 @@
   <classpathentry kind="src" path="examples/internal-publisher/du/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/java"/>
   <classpathentry kind="src" path="examples/internal-publisher/sbb/src/main/resources"/>
+  <classpathentry kind="src" path="examples/internal-rls/du/src/main/resources"/>
+  <classpathentry kind="src" path="examples/internal-rls/sbb/src/main/resources"/>
+  <classpathentry kind="src" path="examples/internal-rls/sbb/src/main/java"/>
   <classpathentry kind="src" path="examples/internal-subscriber/du/src/main/resources"/>
   <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/java"/>
   <classpathentry kind="src" path="examples/internal-subscriber/sbb/src/main/resources"/>
@@ -12,6 +15,7 @@
   <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/resources"/>
   <classpathentry kind="src" path="ps-core/internal-client/sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/jaxb-pojos/src/main/java"/>
+  <classpathentry kind="src" path="ps-core/publication-sbb/src/test/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/java"/>
   <classpathentry kind="src" path="ps-core/publication-sbb/src/main/resources"/>
   <classpathentry kind="src" path="ps-core/subscription-sbb/src/main/resources"/>
@@ -25,8 +29,10 @@
   <classpathentry kind="src" path="sip-event/subscription/event/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/pojo/src/main/java"/>
+  <classpathentry kind="src" path="sip-event/subscription/rls-test/src/test/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/resources"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb/src/main/java"/>
+  <classpathentry kind="src" path="sip-event/subscription/sbb/src/test/java"/>
   <classpathentry kind="src" path="sip-event/subscription/sbb-local-object/src/main/java"/>
   <classpathentry kind="src" path="xcap-client/api/src/main/java"/>
   <classpathentry kind="src" path="xcap-client/ra/du/src/main/resources"/>

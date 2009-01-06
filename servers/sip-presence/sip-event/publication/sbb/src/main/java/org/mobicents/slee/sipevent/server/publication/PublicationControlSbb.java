@@ -245,8 +245,7 @@ public abstract class PublicationControlSbb implements Sbb,
 
 	private ComposedPublication getUpdatedComposedPublication(
 			EntityManager entityManager, Publication publication,
-			ImplementedPublicationControlSbbLocalObject childSbb)
-			throws JAXBException, IOException {
+			ImplementedPublicationControlSbbLocalObject childSbb) {
 
 		ComposedPublication composedPublication = getComposedPublication(
 				entityManager, publication.getPublicationKey().getEntity(),
@@ -399,6 +398,21 @@ public abstract class PublicationControlSbb implements Sbb,
 			ComposedPublication composedPublication = removeFromComposedPublication(
 					entityManager, publication, childSbb);
 			entityManager.flush();
+			entityManager.close();
+			entityManager = null;
+			if (composedPublication.getDocument() == null) {
+				// give the event package implementation sbb a chance to define
+				// an alternative publication value for the one removed,
+				// this can allow a behavior such as defining offline status
+				// in a presence resource
+				Publication alternativePublication = childSbb.getAlternativeValueForExpiredPublication(publication);
+				if (alternativePublication != null) {
+					composedPublication.setContentSubType(alternativePublication.getContentSubType());
+					composedPublication.setContentType(alternativePublication.getContentType());
+					composedPublication.setDocument(alternativePublication.getDocument());
+					composedPublication.setUnmarshalledContent(alternativePublication.getUnmarshalledContent());
+				}
+			}
 			// notify subscribers
 			childSbb.notifySubscribers(composedPublication);
 		} catch (Exception e) {
@@ -574,13 +588,18 @@ public abstract class PublicationControlSbb implements Sbb,
 				entityManager.flush();
 				entityManager.close();
 				entityManager = null;
-				// give the event package implementation sbb a chance to define
-				// an alternative publication value for the one expired,
-				// this can allow a behavior such as defining offline status
-				// in a presence resource
-				Publication alternativePublication = childSbb.getAlternativeValueForExpiredPublication(publication);
-				if (alternativePublication != null) {
-					composedPublication = childSbb.combinePublication(alternativePublication, composedPublication);
+				if (composedPublication.getDocument() == null) {
+					// give the event package implementation sbb a chance to define
+					// an alternative publication value for the one expired,
+					// this can allow a behavior such as defining offline status
+					// in a presence resource
+					Publication alternativePublication = childSbb.getAlternativeValueForExpiredPublication(publication);
+					if (alternativePublication != null) {
+						composedPublication.setContentSubType(alternativePublication.getContentSubType());
+						composedPublication.setContentType(alternativePublication.getContentType());
+						composedPublication.setDocument(alternativePublication.getDocument());
+						composedPublication.setUnmarshalledContent(alternativePublication.getUnmarshalledContent());
+					}
 				}
 				// notify subscribers
 				childSbb.notifySubscribers(composedPublication);
@@ -688,9 +707,10 @@ public abstract class PublicationControlSbb implements Sbb,
 				.getResultList();
 		for (Iterator i = resultList.iterator(); i.hasNext();) {
 			Publication otherPublication = (Publication) i.next();
-			if (otherPublication.getPublicationKey().getETag().equals(
+			if (!otherPublication.getPublicationKey().getETag().equals(
 					publication.getPublicationKey().getETag())) {
 				// it's not the publication being removed
+				
 				if (composedPublication.getDocument() == null) {
 					composedPublication.setDocument(otherPublication
 							.getDocument());
@@ -722,23 +742,34 @@ public abstract class PublicationControlSbb implements Sbb,
 
 	private Publication getPublication(EntityManager entityManager,
 			TimerID timerID) {
-		try {
-			return (Publication) entityManager.createNamedQuery(
-					"selectPublicationFromTimerID").setParameter("timerID",
-					timerID).getSingleResult();
-		} catch (Exception e) {
+		List resultList = entityManager.createNamedQuery(
+		"selectPublicationFromTimerID").setParameter("timerID",
+				timerID).getResultList();
+		if (resultList.size() == 1) {
+			return (Publication) resultList.get(0);
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Failed to get publication for timer id "+timerID);
+			}
 			return null;
 		}
 	}
 
 	private ComposedPublication getComposedPublication(
 			EntityManager entityManager, String entity, String eventPackage) {
-		try {
-			return (ComposedPublication) entityManager.createNamedQuery(
-					"selectComposedPublicationFromEntityAndEventPackage")
-					.setParameter("entity", entity).setParameter(
-							"eventPackage", eventPackage).getSingleResult();
-		} catch (Exception e) {
+		
+		List resultList = entityManager.createNamedQuery(
+		"selectComposedPublicationFromEntityAndEventPackage")
+		.setParameter("entity", entity).setParameter(
+				"eventPackage", eventPackage).getResultList();
+		if (resultList.size() == 1) {
+			return (ComposedPublication) resultList.get(0);
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Failed to get single composed publication for entity "+entity+" and event package "+eventPackage);
+			}
 			return null;
 		}
 	}

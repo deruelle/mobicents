@@ -37,7 +37,12 @@
 			<artifactId>sip-event-subscription-control-sbb</artifactId>
 			<version>${pom.version}</version>			
 		</dependency>		
-				
+		<dependency>
+			<artifactId>sip-presence-internal-client-sbb</artifactId>
+			<groupId>org.mobicents.servers.sippresence</groupId>
+			<version>${pom.version}</version>			
+		</dependency>		
+			
 		<!-- libs -->
 		<dependency>
 			<groupId>org.mobicents.servers.xdm.core</groupId>

@@ -46,7 +46,7 @@ public interface ImplementedSubscriptionControlParentSbbLocalObject extends
 	 */
 	public void newSubscriptionAuthorization(String subscriber,
 			String subscriberDisplayName, String notifier, SubscriptionKey key,
-			int expires, int responseCode, ServerTransaction serverTransaction);
+			int expires, int responseCode, boolean eventList, ServerTransaction serverTransaction);
 
 	/**
 	 * Through this method the subscription control sbb can be informed that the
