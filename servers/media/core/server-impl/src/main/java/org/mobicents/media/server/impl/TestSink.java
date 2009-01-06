@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.media.server.impl;
 
 import org.mobicents.media.Buffer;
@@ -14,15 +13,18 @@ import org.mobicents.media.format.AudioFormat;
  * @author Oleg Kulikov
  */
 public class TestSink extends AbstractSink {
-	
-	public TestSink(){
-		super("TestSink");
-	}
 
-    private Format[] formats = new Format[] {
+    private String name;
+    
+    public TestSink(String name) {
+        super(name);
+        this.name = name;
+    }
+    
+    private Format[] formats = new Format[]{
         new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED)
     };
-    
+
     public Format[] getFormats() {
         return formats;
     }
@@ -32,7 +34,6 @@ public class TestSink extends AbstractSink {
     }
 
     public void receive(Buffer buffer) {
-        System.out.println(buffer);
+        System.out.println("src=" + name + ", recv=" + buffer);
     }
-
 }
