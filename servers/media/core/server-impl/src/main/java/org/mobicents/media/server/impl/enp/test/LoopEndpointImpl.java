@@ -11,77 +11,157 @@
  */
 package org.mobicents.media.server.impl.enp.test;
 
-import java.util.HashMap;
-import org.mobicents.media.server.impl.BaseConnection;
-import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.Generator;
-import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.MediaResource;
+import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
-import org.mobicents.media.server.spi.ConnectionState;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class LoopEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
+public class LoopEndpointImpl extends BaseEndpoint {
 
-    public LoopEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-        super(localName, endpointsMap);
+    private final static Format FORMATS[] = new Format[] {LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, DTMF, GSM};
+    
+    private Multiplexer mux;
+    private Demultiplexer demux;
+    private RtpSocket rtpSocket;
+
+    public LoopEndpointImpl(String localName) {
+        super(localName);
         this.setMaxConnectionsAvailable(1);
-        addConnectionListener(this);
+        mux = new Multiplexer();
+        demux = new Demultiplexer(FORMATS);
     }
 
-    public void onStateChange(Connection connection, ConnectionState oldState) {
-        BaseConnection con = (BaseConnection) connection;
-
+    @Override
+    public void start() {
+        demux.connect(mux);
         try {
-            switch (connection.getState()) {
-                case OPEN:
-//                con.getDemux().connect(new TestSink());
-                    con.getMux().connect(con.getDemux());
-                    break;
-                case CLOSED:
-                    con.getMux().disconnect(con.getDemux());
-                    break;
-            }
+            RtpFactory rtpFactory = getRtpFactory();
+            rtpSocket = rtpFactory.getRTPSocket(this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }
-
-    @Override
-    public Endpoint doCreateEndpoint(String localName) {
-        return new LoopEndpointImpl(localName, super.endpoints);
-    }
-
-    @Override
-    public HashMap initMediaSources() {
-    	HashMap map = new HashMap();
-		// init audio player
-		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
-		return map;
-    }
-
-    @Override
-    public HashMap initMediaSinks() {
-        return new HashMap();
     }
 
     
+    @Override
+    public void stop() {
+        //disconnecting components
+        demux.disconnect(mux);
+        
+        //dispose components
+        demux.dispose();
+        mux.dispose();
 
-   
+        //close sockets
+        if (rtpSocket != null) {
+            rtpSocket.close();
+        }
+    }
 
-	public String[] getSupportedPackages() {
-		return new String[]{ConnectionParameters.PACKAGE_NAME};
-	}
+    @Override
+    public Format[] getFormats() {
+        return FORMATS;
+    }
+    
+    @Override
+    public int getConnectionsCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getCreationTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean getGatherPerformanceFlag() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public long getNumberOfBytes() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public long getPacketsCount() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    public void setGatherPerformanceFlag(boolean flag) {
+        // TODO Auto-generated method stub
+    }
+
+    public String[] getSupportedPackages() {
+        return new String[]{};
+    }
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {
+    }
+
+    @Override
+    public MediaSink getPrimarySink(Connection connection) {
+        return demux.getInput();
+    }
+
+    @Override
+    public MediaSource getPrimarySource(Connection connection) {
+        return mux.getOutput();
+    }
+
+    @Override
+    public void allocateMediaSources(Connection connection, Format[] formats) {
+        mux.getOutput().start();
+    }
+
+    @Override
+    public void allocateMediaSinks(Connection connection) {
+        demux.start();
+    }
+
+    @Override
+    protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+        return null;
+    }
+
+    @Override
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        return null;
+    }
+
+    @Override
+    public void releaseMediaSources(Connection connection) {
+        mux.getOutput().stop();
+    }
+
+    @Override
+    public void releaseMediaSinks(Connection connection) {
+        demux.stop();
+    }
+
+    @Override
+    public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+        return rtpSocket;
+    }
+
+    @Override
+    public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
     }
 }
