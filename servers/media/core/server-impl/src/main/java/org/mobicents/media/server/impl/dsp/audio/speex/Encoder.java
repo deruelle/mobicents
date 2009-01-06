@@ -15,6 +15,7 @@ import org.mobicents.media.Buffer;
  * usefulness of the software.
  */
 import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.xiph.speex.SpeexEncoder;
 
@@ -24,7 +25,7 @@ import org.xiph.speex.SpeexEncoder;
  * @author Amit Bhayani
  * @author Oleg Kulikov
  */
-public class Encoder implements Codec {
+public class Encoder extends BaseCodec {
 
     private int MODE_NB = 0;
     private int mode = 0;
@@ -77,50 +78,45 @@ public class Encoder implements Codec {
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedInputFormats() {
-        Format[] formats = new Format[]{Codec.LINEAR_AUDIO};
-        return formats;
+    public Format getSupportedInputFormat() {
+        return Codec.LINEAR_AUDIO;
     }
 
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedOutputFormats(Format fmt) {
-        Format[] formats = new Format[]{Codec.SPEEX};
-        return formats;
+    public Format getSupportedOutputFormat() {
+        return Codec.SPEEX;
     }
 
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
-     */
-    public Format[] getSupportedInputFormats(Format fmt) {
-        Format[] formats = new Format[]{Codec.LINEAR_AUDIO};
-        return formats;
-    }
-
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
-     */
-    public Format[] getSupportedOutputFormats() {
-        Format[] formats = new Format[]{Codec.SPEEX};
-        return formats;
-    }
-    
     /**
      * (Non Java-doc)
      * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
+        int length = buffer.getLength();
+        
+        //if packet not full we need to pad it with zeros
+        if (length < 320) {            
+            byte[] data = (byte[]) buffer.getData();
+            int offset = buffer.getOffset() + buffer.getLength();
+            int count = 320 - length;
+            for (int i = offset; i < count; i++) {
+                data[i] = 0;
+            }
+            buffer.setLength(320);
+        }
+        
+        int len = process((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength(), (byte[]) buffer.getData());
+        buffer.setLength(len);
+        buffer.setOffset(0);
+        buffer.setFormat(Codec.SPEEX);
+/*        byte[] data = (byte[]) buffer.getData();
         
         int offset = buffer.getOffset();
         int length = buffer.getLength();
@@ -128,12 +124,13 @@ public class Encoder implements Codec {
         byte[] media = new byte[length - offset];
         System.arraycopy(data, 0, media, 0, media.length);
         
-        byte[] res = process(data);
+        byte[] res = process(media);
         
         buffer.setData(res);
         buffer.setOffset(0);
         buffer.setFormat(Codec.SPEEX);
         buffer.setLength(res.length);
+ */ 
     }
     
     /**
@@ -142,11 +139,10 @@ public class Encoder implements Codec {
      * @param media input media
      * @return compressed media.
      */
-    public byte[] process(byte[] media) {
-        speexEncoder.processData(media, 0, media.length);
+    public int process(byte[] media, int offset, int length, byte[] dest) {
+        speexEncoder.processData(media, offset, length);
         int size = speexEncoder.getProcessedDataByteSize();
-        byte[] buff = new byte[size];
-        speexEncoder.getProcessedData(buff, 0);
-        return buff;
+        speexEncoder.getProcessedData(dest, 0);
+        return size;
     }
 }
