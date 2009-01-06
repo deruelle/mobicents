@@ -17,18 +17,12 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Timer;
 
-import org.apache.log4j.Logger;
-import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.events.EventPackage;
 import org.mobicents.media.server.impl.events.PackageNotSupportedEventImpl;
-import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -45,7 +39,22 @@ import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.pkg.EventID;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import java.util.concurrent.ThreadFactory;
+import javax.sdp.SdpFactory;
+import org.apache.log4j.Logger;
+
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.ReentrantLock;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
 
 /**
  * The basic implementation of the endpoint.
@@ -60,34 +69,108 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
  * 
  * @author Oleg Kulikov.
  */
-public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement {
+public abstract class BaseEndpoint implements Endpoint {
 
-    protected final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    protected final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    protected final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-    protected final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
-    protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    protected final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-    protected final static Format[] formats = new Format[]{LINEAR, DTMF};
-    protected String localName;
-    protected String rtpFactoryName;
-    protected transient HashMap<String, HashMap> mediaSources = new HashMap<String, HashMap>();
-    protected transient HashMap<String, HashMap> mediaSinks = new HashMap<String, HashMap>();
-    protected boolean hasConnections;
-    private ConcurrentReaderHashMap connections = new ConcurrentReaderHashMap();
+    /** The local name of the endpoint */
+    private String localName;
+    
+    /** The JNDI name of the RTP Factory */
+    private String rtpFactoryName;
+    /** This flag indicates is this endpoint in use or not*/
+    private boolean isInUse = false;
+    /** The list of indexes available for connection enumeration within endpoint */
+    private ArrayList<Integer> connectionIndexes = new ArrayList();    
+    /** The last generated connection's index*/
+    private int lastIndex = -1;    
+    /** Holder for created connections */
+    protected transient HashMap connections = new HashMap();
+    /** The number of max allowed connections for this endpoint */
     protected int maxConnections = 0;
+    /** The queue of currently plaing signals */
+    private HashMap<String, SignalQueue> signalQueues = new HashMap();
+    
+    /** Listeners for events detected on the endpoint */
     protected transient ArrayList<NotificationListener> listeners = new ArrayList<NotificationListener>();
+    /** Connection state listeners */
     protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList<ConnectionListener>();
-    protected transient static Timer connectionTimer = new Timer();
-    protected transient Logger logger = Logger.getLogger(this.getClass());    // ----------- SOME MGMT info
-    protected long creationTime = System.currentTimeMillis();
+    private transient HashMap<String, EventPackage> eventPackages = new HashMap();
+    
+    private transient ExecutorService commandExecutor;
+    private transient ExecutorService eventQueue;
+    /** Timer for connection's state*/
+    protected transient static Timer stateTimer = new Timer("ConnectionStateTimer");
+    /** Thread handling receved packets */
+    private transient ScheduledExecutorService receiverThread;
+    /** Thread handling outgoing packets */
+    private transient ScheduledExecutorService transmittorThread;
+    /** Maximum conversation time allowed for connection */
+    protected int connectionLifeTime = 30;
     protected boolean gatherStatistics = false;
     protected long packets = 0;
     protected long numberOfBytes = 0;
+    
+    /** SDP Factory instance*/
+    private transient SdpFactory sdpFactory = SdpFactory.getInstance();
+    /** lock instance */
+    protected ReentrantLock lock = new ReentrantLock();
+    /** Logger instance */
+    private transient Logger logger = Logger.getLogger(this.getClass());       
 
+    /**
+     * Creates new endpoint instance.
+     * 
+     * @param localName
+     */
     public BaseEndpoint(String localName) {
         this.localName = localName;
+    }
+
+    /**
+     * Generates index for connection.
+     * 
+     * The connection uses this method to ask endpoint for new lowerest index.
+     * The index is unique withing endpoint but it is not used as connection 
+     * identifier outside of the endpoint.
+     * 
+     * @return the lowerest available integer value.
+     */
+    protected int getIndex() {
+        return connectionIndexes.isEmpty() ? ++lastIndex : connectionIndexes.remove(0);
+    }
+
+    /**
+     * Notify endpoint that specified index not longer is associated with 
+     * any connection and may be reused.
+     * 
+     * @param i the index value.
+     */
+    protected void releaseIndex(int i) {
+        connectionIndexes.add(i);
+    }
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#start() 
+     */
+    public void start() throws ResourceUnavailableException {
+        receiverThread = Executors.newSingleThreadScheduledExecutor(new ReceiverThreadFactory());
+        transmittorThread = Executors.newSingleThreadScheduledExecutor(new TransmittorThreadFactory());
+        commandExecutor = Executors.newSingleThreadExecutor(new CommandThreadFactory());
+        eventQueue = Executors.newSingleThreadExecutor(new EventQueueThreadFactory());
+    }
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#stop() 
+     */
+    public void stop() {
+        receiverThread.shutdownNow();
+        transmittorThread.shutdownNow();
+
+        commandExecutor.shutdownNow();
+        eventQueue.shutdownNow();
     }
 
     /**
@@ -99,8 +182,58 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         return localName;
     }
 
-    public Format[] getSupportedFormats() {
-        return formats;
+    /**
+     * Gets the reference to used RTP Factory instance.
+     * 
+     * This method is used by concrete endpoint to preinstantiate RTP stuff.
+     * The RTP Factory is bounded to JNDI under <code>rtpFactoryName</code>
+     * which is provided by management interface. If JNDI name not specified this 
+     * method creates new RTPFactory instance with assigned G711 codec only. 
+     * The default RTP factory is used by junit tests.
+     * 
+     * @return RtpFactory instance.
+     */
+    protected RtpFactory getRtpFactory() throws NamingException {
+        String jndiName = getRtpFactoryName();
+        if (jndiName != null) {
+            InitialContext ic = new InitialContext();
+            return (RtpFactory) ic.lookup(jndiName);
+        } else {
+            return new RtpFactory();
+        }
+    }
+
+    /**
+     * Gets the SDP Factory used by RTP connection to parse and create SDPs
+     * during connect procedure.
+     * 
+     * The endpoint precreates instance of SDP factory for reducing time of 
+     * factory access
+     * 
+     * @return the instance of SDP factory.
+     */
+    protected SdpFactory getSdpFactory() {
+        return sdpFactory;
+    }
+
+    /**
+     * Gets the receiver thread.
+     * Media components use receiver thread to schedule handing of received packets
+     * 
+     * @return the receiver thread which as ExecutorService object
+     */
+    public ScheduledExecutorService getReceiverThread() {
+        return receiverThread;
+    }
+
+    /**
+     * Gets the reference to the trasmittor thread which handles outgoing packets.
+     * Media components use this thread to schedule handing of outgoing packets.
+     * 
+     * @return thread as ExecutorService.
+     */
+    public ScheduledExecutorService getTransmittorThread() {
+        return transmittorThread;
     }
 
     /**
@@ -141,15 +274,64 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     }
 
     /**
-     * Indicates that endpoint has connections.
+     * Gets the primary sink instance.
      * 
-     * @return true if endpoint executing one or more connection and false
-     *         otherwise.
+     * @return the primary sink of the endpoint.
      */
-    public boolean hasConnections() {
-        return this.hasConnections;
+    public abstract MediaSink getPrimarySink(Connection connection);
+
+    /**
+     * Gets the primary sink instance.
+     * 
+     * @return the primary source of the endpoint.
+     */
+    public abstract MediaSource getPrimarySource(Connection connection);
+
+    /**
+     * Sets maximum connection's life time.
+     * 
+     * @param connectionLifeTime the value in minutes
+     */
+    public void setConnectionLifeTime(int connectionLifeTime) {
+        this.connectionLifeTime = connectionLifeTime;
     }
 
+    /**
+     * Gets the maximum duration of media conversation.
+     * 
+     * @return the time in minutes.
+     */
+    public int getConnectionLifeTime() {
+        return this.connectionLifeTime;
+    }
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#hasConnections() 
+     */
+    public boolean hasConnections() {
+        return !connections.isEmpty();
+    }
+
+    /**
+     * Shows the usage status of this enpoint.
+     * 
+     * @return true if the endpoint is in use.
+     */
+    public boolean isInUse() {
+        return this.isInUse;
+    }
+    
+    /**
+     * Marks this endpoint as used or not used.
+     * 
+     * @param isInUse true for used undpoint and false for unused.
+     */
+    public void setInUse(boolean isInUse) {
+        this.isInUse = isInUse;
+    }
+    
     /**
      * Gets connection with specified identifier.
      * 
@@ -188,34 +370,20 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * 
      * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
      */
-    public synchronized Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException,
-            ResourceUnavailableException {
+    public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
+        lock.lock();
         try {
             if (connections.size() == maxConnections) {
                 throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
             }
-
-            Connection connection = doCreateConnection(this, mode);
-
-            connections.put(connection.getId(), connection);
-
-            HashMap<String, MediaSource> sourceMap = initMediaSources();
-            for (MediaSource source : sourceMap.values()) {
-                source.connect(((BaseConnection) connection).getMux());
-                source.addListener((BaseConnection) connection);
-            }
-            mediaSources.put(connection.getId(), sourceMap);
-
-            HashMap<String, MediaSink> sinkMap = initMediaSinks();
-            for (MediaSink sink : sinkMap.values()) {
-                sink.connect(((BaseConnection) connection).getDemux());
-                sink.addListener((BaseConnection) connection);
-            }
-            mediaSinks.put(connection.getId(), sinkMap);
-            ((BaseConnection)connection).setGatherStats(gatherStatistics);
+            Connection connection = new RtpConnectionImpl(this, mode);
+            signalQueues.put(connection.getId(), new SignalQueue(this));
             return connection;
+        } catch (Exception e) {
+            logger.error("Could not create RTP connection", e);
+            throw new ResourceUnavailableException(e.getMessage());
         } finally {
-            hasConnections = connections.size() > 0;
+            lock.unlock();
         }
     }
 
@@ -224,36 +392,20 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * 
      * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
      */
-    public synchronized Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException,
-            ResourceUnavailableException {
-        // hasConnections = true;
+    public Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
+        lock.lock();
         try {
             if (connections.size() == maxConnections) {
-                throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
+                throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed for " + getLocalName());
             }
-
-            synchronized (this) {
-                Connection connection = new LocalConnectionImpl(this, mode);
-
-                connections.put(connection.getId(), connection);
-
-                HashMap<String, MediaSource> sourceMap = initMediaSources();
-                for (MediaSource source : sourceMap.values()) {
-                    source.connect(((BaseConnection) connection).getMux());
-                    source.addListener((BaseConnection) connection);
-                }
-                mediaSources.put(connection.getId(), sourceMap);
-                HashMap<String, MediaSink> sinkMap = initMediaSinks();
-                for (MediaSink sink : sinkMap.values()) {
-                    sink.connect(((BaseConnection) connection).getDemux());
-                    sink.addListener((BaseConnection) connection);
-                }
-                mediaSinks.put(connection.getId(), sinkMap);
-                ((BaseConnection)connection).setGatherStats(gatherStatistics);
-                return connection;
-            }
+            Connection connection = new LocalConnectionImpl(this, mode);
+            signalQueues.put(connection.getId(), new SignalQueue(this));
+            return connection;
+        } catch (Exception e) {
+            logger.error("Could not create Local connection", e);
+            throw new ResourceUnavailableException(e.getMessage());
         } finally {
-            hasConnections = connections.size() > 0;
+            lock.unlock();
         }
     }
 
@@ -262,32 +414,22 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * 
      * @see org.mobicents.media.server.spi.Endpoint#deleteConnection();
      */
-    public synchronized void deleteConnection(String connectionID) {
-        BaseConnection connection = (BaseConnection) connections.remove(connectionID);
-        if (connection != null) {
-            connection.detect(null);
-            //clean
-            HashMap map = mediaSources.remove(connection.getId());
-            Collection<MediaSource> gens = map.values();
-            for (MediaSource generator : gens) {
-                generator.stop();
-                generator.disconnect(connection.getMux());
-                generator.dispose();
+    public void deleteConnection(String connectionID) {
+        lock.lock();
+        try {
+            SignalQueue signalQueue = signalQueues.remove(connectionID);
+            if (signalQueue != null) {
+                signalQueue.reset();
             }
-            map.clear();
-
-            map = mediaSinks.remove(connection.getId());
-            Collection<MediaSink> dets = map.values();
-            for (MediaSink detector : dets) {
-                detector.disconnect(connection.getDemux());
-                detector.dispose();
+            BaseConnection connection = (BaseConnection) connections.get(connectionID);
+            if (connection != null) {
+                connection.detect(null);
+                connection.close();
             }
-            map.clear();
-
-
-            connection.close();
+            isInUse = connections.size() > 0;
+        } finally {
+            lock.unlock();
         }
-        hasConnections = connections.size() > 0;
     }
 
     /**
@@ -295,53 +437,71 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * 
      * @see org.mobicents.media.server.spi.Endpoint#deleteAllConnections();
      */
-    public synchronized void deleteAllConnections() {
-        Iterator list = connections.values().iterator();
-        while (list.hasNext()) {
-            Connection connection = (Connection) list.next();
-            deleteConnection(connection.getId());
+    public void deleteAllConnections() {
+        lock.lock();
+        try {
+            BaseConnection[] list = new BaseConnection[connections.size()];
+            connections.values().toArray(list);
+            for (int i = 0; i < list.length; i++) {
+                list[i].close();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
     /**
-     * Initialized media sources executed by this endpoint.
-     * Specific endpoint should overwrite this method.
+     * The list of formats supported by the endpoint.
      * 
-     * @return the map of the media sources.
+     * @return the list of Format object.
      */
-    public abstract HashMap initMediaSources();
+    public abstract Format[] getFormats();
+    
+    /**
+     * Used by RTP connection to allocate RTP socket.
+     * 
+     * @param connection the connection instance which requires RTP socket.
+     * @return the instance of RTP socket.
+     * @throws org.mobicents.media.server.spi.ResourceUnavailableException
+     */
+    public abstract RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException;
 
     /**
-     * Initialized media sinks executed by this endpoint.
-     * Specific endpoint should overwrite this method.
+     * Used by RTP connection to release unused RTP scoket.
+     * The RTP connection call this method during close procedure.
      * 
-     * @return the map of the media sinks.
+     * @param rtpSocket the RTP socket to release
+     * @param connection the connection which releases socket.
      */
-    public abstract HashMap initMediaSinks();
+    public abstract void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection);
 
     /**
-     * Gets the map of the media sources executed by this endpoint and associated
-     * with specified connection.
+     * Instructs endpoint to allocate all media sources associated with a connection.
      * 
-     * @param connectionID the identifier of the connection.
-     * @return the map where key is an identifier of media source and value is 
-     * a media source instance
+     * @param connection the connection for which endpoint should prepare sources
+     * @param formats the list of formats indicating requires sources.
      */
-    public HashMap getMediaSources(String connectionID) {
-        return mediaSources.get(connectionID);
-    }
+    public abstract void allocateMediaSources(Connection connection, Format[] formats);
 
     /**
-     * Gets the map of the media sinks executed by this endpoint and associated
-     * with specified connection.
+     * Asks endpoint to allocate media sinks associated with the connection.
      * 
-     * @param connectionID the identifier of the connection.
-     * @return the map where key is an identifier of media sink and value is 
-     * a media sink instance
+     * @param connection the connection for which endpoint allocate sinks.
      */
-    public HashMap getMediaSinks(String connectionID) {
-        return mediaSinks.get(connectionID);
-    }
+    public abstract void allocateMediaSinks(Connection connection);
+
+    /**
+     * Releases media sources associated with specified connection.
+     * 
+     * @param connection the connection instance.
+     */
+    public abstract void releaseMediaSources(Connection connection);
+
+    /**
+     * Releases media sinks associated with specified connection.
+     * @param connection the connection instance.
+     */
+    public abstract void releaseMediaSinks(Connection connection);
 
     /**
      * Gets the specified media source executed by this endpoint and associated
@@ -351,9 +511,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * @param connection the connection with which this connection is associated
      * @return the media source instance.
      */
-    public MediaSource getMediaSource(Generator id, Connection connection) {
-        return (MediaSource) mediaSources.get(connection.getId()).get(id);
-    }
+    protected abstract MediaSource getMediaSource(MediaResource id, Connection connection);
 
     /**
      * Gets the specified media sink executed by this endpoint and associated
@@ -363,9 +521,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * @param connection the connection with which this connection is associated
      * @return the media source instance.
      */
-    public MediaSink getMediaSink(Generator id, Connection connection) {
-        return (MediaSink) mediaSinks.get(connection.getId()).get(id);
-    }
+    protected abstract MediaSink getMediaSink(MediaResource id, Connection connection);
 
     /**
      * Adds a Listener.
@@ -401,7 +557,8 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
      * @param event
      *            the event to be sent.
      */
-    public synchronized void sendEvent(NotifyEvent event) {
+    public void sendEvent(Runnable handler) {
+        eventQueue.submit(handler);
     }
 
     protected String getPackageName(String eventID) {
@@ -423,7 +580,36 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         return tokens[tokens.length - 1];
     }
 
-    private AbstractSignal getSignal(RequestedSignal signal) throws UnknownSignalException, FacilityException {
+    /**
+     * Narrows specified format map to the list of required formats.
+     * 
+     * The result of the method execution is a map with a common subset of 
+     * initial format map and required formats.
+     * 
+     * @param fmtMap - the map to narrow
+     * @param formats - the list of required formats
+     */
+    protected void narrow(HashMap<Integer, Format> fmtMap, Format[] formats) {
+        int count = 0;
+        int[] trash = new int[fmtMap.size()];
+        
+        Set <Integer> payloads  = fmtMap.keySet();
+        for (Integer payload : payloads) {
+            Format fmt = fmtMap.get(payload);
+            for (int i = 0; i < formats.length; i++) {
+                if (fmt.equals(formats[i])) {
+                    break;
+                }
+            }
+            trash[count++] = payload;
+        }
+        
+        for (int i = 0; i < count; i++) {
+            fmtMap.remove(trash[i]);
+        }
+    }
+    
+    protected AbstractSignal getSignal(RequestedSignal signal) throws UnknownSignalException, FacilityException {
         try {
             EventPackage eventPackage = EventPackageFactory.load(signal.getID().getPackageName());
             return eventPackage.getSignal(signal);
@@ -436,130 +622,59 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         }
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#execute(org.mobicents.media.server.spi.events.RequestedSignal[], org.mobicents.media.server.spi.events.RequestedEvent[]) 
+     */
     public void execute(RequestedSignal[] signals, RequestedEvent[] events) {
     }
 
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.Endpoint#execute(org.mobicents.media.server.spi.events.RequestedSignal[], org.mobicents.media.server.spi.events.RequestedEvent[], String) 
+     */
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-        boolean supports = false;
-        String packageName = null;
-
-        String[] supportedPackages = this.getSupportedPackages();
-
-        // if (supportedPackages == null || (supportedPackages != null &&
-        // supportedPackages.length == 0)) {
-        // throw new PackageNotSupportedException(this.getLocalName() + "
-        // doesn't support any packages");
-        // }
-        for (int i = 0; i < events.length; i++) {
-
-            supports = false;
-            packageName = events[i].getID().getPackageName();
-
-            for (String s : supportedPackages) {
-                if (s.equals(packageName)) {
-                    supports = true;
-                    break;
-                }
-            }
-            if (!supports) {
-                logger.error(this.getLocalName() + "doesn't support package " + packageName);
-                EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-                NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-                events[i].getHandler().update(notifyEvent);
-                return;
-            }
-
-        }
-
-        // TODO : Supported only one signal for now
-        RequestedSignal requestedSignal = null;
-        if (signals.length > 0) {
-            requestedSignal = signals[0];
-            supports = false;
-            packageName = requestedSignal.getID().getPackageName();
-
-            for (String s : supportedPackages) {
-                if (s.equals(packageName)) {
-                    supports = true;
-                    break;
-                }
-            }
-
-            if (!supports) {
-                logger.error(this.getLocalName() + "doesn't support package " + packageName);
-                EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-                NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-                requestedSignal.getHandler().update(notifyEvent);
-                return;
-            }
-        }
-        
-        BaseConnection connection = (BaseConnection) this.getConnection(connectionID);
-
-        //disbale all previous detected event
-        connection.detect(null);
-        for (int i = 0; i < events.length; i++) {
-            connection.detect(events[i]);
-        }
-
-        //disbale all previous signals
-        Collection<AbstractSource> sources = getMediaSources(connection.getId()).values();
-        for (AbstractSource source: sources) {
-            source.stop();
-        }
-        
-        if (requestedSignal != null) {
-            try {
-                AbstractSignal signal = getSignal(signals[0]);
-                signal.apply(connection);
-            } catch (Exception e) {
-                logger.error("Unexpected error", e);
-            }
-        }
+        commandExecutor.execute(new ExecuteCommand(signals, events, connectionID));
     }
 
     // ###############################
     // # MANAGEMENT FUNCTIONS        #
     // ###############################
+    public long getCreationTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+    
     public int getConnectionsCount() {
-
         return connections.keySet().size();
     }
 
-    public long getCreationTime() {
-
-        return creationTime;
-    }
-
     public boolean getGatherPerformanceFlag() {
-
         return gatherStatistics;
     }
 
     public long getNumberOfBytes() {
-
         return numberOfBytes;
     }
 
     public long getPacketsCount() {
-
         return packets;
     }
 
     public void setGatherPerformanceData(boolean flag) {
-        
+
         gatherStatistics = flag;
         //Make connections do this, this will reset all stats
         //This happens because even after break stats are inaccurate.
-        for(Object c:connections.values())
-        {
-        	BaseConnection connection=(BaseConnection) c;
-        	connection.setGatherStats(flag);
+        for (Object c : connections.values()) {
+            BaseConnection connection = (BaseConnection) c;
+            connection.setGatherStats(flag);
         }
     }
 
-    public long getConnectionCreationTime(String connectionId)
-            throws IllegalArgumentException {
+    public long getConnectionCreationTime(String connectionId) throws IllegalArgumentException {
         BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
@@ -568,9 +683,7 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
     }
 
     public String[] getConnectionIds() {
-
         String[] tmp = (String[]) this.connections.keySet().toArray(new String[this.connections.keySet().size()]);
-
         return tmp;
     }
 
@@ -621,98 +734,190 @@ public abstract class BaseEndpoint implements Endpoint, EndpointLocalManagement 
         return this.rtpFactoryName;
     }
 
-    public void setRTPFacotryJNDIName(String jndiName)
-            throws IllegalArgumentException {
+    public void setRTPFacotryJNDIName(String jndiName) throws IllegalArgumentException {
         this.setRtpFactoryName(jndiName);
+    }
+
+    public void notifyEndpoint(Connection connection, ConnectionState oldState) {
+        for (int index = 0; index < connectionListeners.size(); index++) {
+            connectionListeners.get(index).onStateChange(connection, oldState);
+        }
 
     }
-    
-   
 
-	public int getInterArrivalJitter(String connectionId)
-			throws IllegalArgumentException {
-			BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
-	        if (connection == null) {
-	            throw new IllegalArgumentException("Connection does not exist.");
-	        }
-	        return connection.getInterArrivalJitter();
-	}
+    public void notifyEndpoint(Connection connection, ConnectionMode oldMode) {
+        for (int index = 0; index < connectionListeners.size(); index++) {
+            connectionListeners.get(index).onModeChange(connection, oldMode);
+        }
+    }
 
-	public int getOctetsReceived(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+
+    public int getInterArrivalJitter(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+        if (connection == null) {
+            throw new IllegalArgumentException("Connection does not exist.");
+        }
+        return connection.getInterArrivalJitter();
+    }
+
+    public int getOctetsReceived(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getOctetsReceived();
-	}
+    }
 
-	public int getOctetsSent(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+    public int getOctetsSent(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getOctetsSent();
-	}
+    }
 
-	public int getPacketsLost(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+    public int getPacketsLost(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getPacketsLost();
-	}
+    }
 
-	public int getPacketsReceived(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+    public int getPacketsReceived(String connectionId)
+            throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getPacketsReceived();
-	}
+    }
 
-	public int getPacketsSent(String connectionId)
-			throws IllegalArgumentException {
-		BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
+    public int getPacketsSent(String connectionId) throws IllegalArgumentException {
+        BaseConnection connection = (BaseConnection) this.connections.get(connectionId);
         if (connection == null) {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getPacketsSent();
-	}
-
-
-
-	public void notifyEndpoint(Connection connection, ConnectionState oldState)
-    {
-    	//synchronized (this.connectionListeners) {
-		//	for(ConnectionListener cl: this.connectionListeners)
-		//	{
-		//		cl.onStateChange(connection, oldState);
-		//	}
-		//}
-    	//FIXME: this is not synced, but from point of view of endpoint, its safe since endpoint is always at index 0 and we wont get ConurrentMod exception
-    	for(int index=0;index<connectionListeners.size();index++)
-    	{
-    		connectionListeners.get(index).onStateChange(connection, oldState);
-    	}
-    	
     }
-    
-    public void notifyEndpoint(Connection connection, ConnectionMode oldMode)
-    {
-    	//synchronized (this.connectionListeners) {
-		//	for(ConnectionListener cl: this.connectionListeners)
-		//	{
-		//		cl.onStateChange(connection, oldState);
-		//	}
-		//}
-    	//FIXME: this is not synced, but from point of view of endpoint, its safe since endpoint is always at index 0 and we wont get ConurrentMod exception
-    	for(int index=0;index<connectionListeners.size();index++)
-    	{
-    		connectionListeners.get(index).onModeChange(connection, oldMode);
-    	}
+
+    private class ExecuteCommand implements Runnable {
+
+        private RequestedSignal[] signals;
+        private RequestedEvent[] events;
+        private String connectionID;
+
+        protected ExecuteCommand(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
+            this.signals = signals;
+            this.events = events;
+            this.connectionID = connectionID;
+        }
+
+        public void run() {
+            boolean supports = false;
+            String packageName = null;
+
+            String[] supportedPackages = getSupportedPackages();
+
+            for (int i = 0; i < events.length; i++) {
+
+                supports = false;
+                packageName = events[i].getID().getPackageName();
+
+                for (String s : supportedPackages) {
+                    if (s.equals(packageName)) {
+                        supports = true;
+                        break;
+                    }
+                }
+
+                if (!supports) {
+                    logger.error(getLocalName() + "doesn't support package " + packageName);
+                    EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+                    NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+                    events[i].getHandler().update(notifyEvent);
+                    return;
+                }
+
+            }
+
+            // TODO : Supported only one signal for now
+            RequestedSignal requestedSignal = null;
+            if (signals.length > 0) {
+                requestedSignal = signals[0];
+                supports = false;
+                packageName = requestedSignal.getID().getPackageName();
+
+                for (String s : supportedPackages) {
+                    if (s.equals(packageName)) {
+                        supports = true;
+                        break;
+                    }
+                }
+
+                if (!supports) {
+                    logger.error(getLocalName() + "doesn't support package " + packageName);
+                    EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
+                    NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
+                    requestedSignal.getHandler().update(notifyEvent);
+                    return;
+                }
+            }
+
+            BaseConnection connection = (BaseConnection) getConnection(connectionID);
+            if (connection == null) {
+                return;
+            }
+            //disbale all previous detected event
+            connection.detect(null);
+            for (int i = 0; i < events.length; i++) {
+                connection.detect(events[i]);
+            }
+
+            SignalQueue signalQueue = signalQueues.get(connectionID);
+            
+            signalQueue.reset();
+            signalQueue.offer(signals, connection);
+        }
+    }
+
+    private class CommandThreadFactory implements ThreadFactory {
+
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "CommandThread[" + localName + "]");
+            thread.setPriority(Thread.MIN_PRIORITY);
+            return thread;
+        }
+    }
+
+    private class EventQueueThreadFactory implements ThreadFactory {
+
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "EventQueue[" + localName + "]");
+            thread.setPriority(Thread.MIN_PRIORITY);
+            return thread;
+        }
+    }
+
+    private class ReceiverThreadFactory implements ThreadFactory {
+
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "Receiver[" + localName + "]");
+            thread.setPriority(Thread.NORM_PRIORITY);
+            return thread;
+        }
+    }
+
+    private class TransmittorThreadFactory implements ThreadFactory {
+
+        public Thread newThread(Runnable r) {
+            Thread thread = new Thread(r, "Transmittor[" + localName + "]");
+            thread.setPriority(Thread.MAX_PRIORITY);
+            return thread;
+        }
     }
 }
