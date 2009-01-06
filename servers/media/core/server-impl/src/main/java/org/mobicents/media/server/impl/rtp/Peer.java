@@ -11,49 +11,60 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import org.mobicents.media.Buffer;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public class Peer implements Serializable {
-        private InetAddress address;
-        private int port;
-        private RtpSocketImpl rtpSocket;
-        
-        
-        /**
-         * Creates new instance of the peer.
-         *
-         * @param rtpSocket the instance of the RTP socket.
-         * @param address the address of the participant.
-         * @param port the address of the participant.
-         */
-        public Peer(RtpSocketImpl rtpSocket, InetAddress address, int port) {
-            this.rtpSocket = rtpSocket;
-            this.address = address;
-            this.port = port;
-        }
 
-        public InetAddress getInetAddress() {
-            return address;
-        }
-        
-        public int getPort() {
-            return port;
-        }
-        
-        public synchronized void send(RtpPacket packet) throws IOException {
-            byte[] data = packet.toByteArray();
-            DatagramPacket dp = new DatagramPacket(data, data.length, address, port);
-            rtpSocket.sendPacket(dp);
-        }
+    private InetAddress address;
+    private int port;
+    private RtpSocketImpl rtpSocket;
+    private byte[] data = new byte[172];
+    private transient DatagramPacket dp;
+    
+    /**
+     * Creates new instance of the peer.
+     *
+     * @param rtpSocket the instance of the RTP socket.
+     * @param address the address of the participant.
+     * @param port the address of the participant.
+     */
+    public Peer(RtpSocketImpl rtpSocket, InetAddress address, int port) {
+        this.rtpSocket = rtpSocket;
+        this.address = address;
+        this.port = port;
+        dp = new DatagramPacket(data, 0, data.length, address, port);
+    }
+
+    public InetAddress getInetAddress() {
+        return address;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void start() {
+    }
+
+    public void stop() {
+    }
+
+    public void send(Buffer buffer) throws IOException {
+        RtpHeader header = (RtpHeader) buffer.getHeader();
+        System.arraycopy(header.toByteArray(), 0, data, 0, header.toByteArray().length);
+        System.arraycopy((byte[]) buffer.getData(), 0, data, header.toByteArray().length, buffer.getLength());
+
+        rtpSocket.sendPacket(dp);
+    }
 
 }
