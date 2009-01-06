@@ -17,10 +17,20 @@ import org.mobicents.mscontrol.MsSessionEventID;
 public class MsSessionEventLocal implements MsSessionEvent {
 
     private MsSessionEvent evt;
+    private MsSessionEventID eventID;
+    private MsSessionEventCause cause;
     private MsSession session;
     
     protected MsSessionEventLocal(MsSessionEvent evt, MsSession session) {
         this.evt = evt;
+        this.eventID = evt.getEventID();
+        this.cause = evt.getEventCause();
+        this.session = session;
+    }
+    
+    protected MsSessionEventLocal(MsSessionEventID eventID, MsSessionEventCause cause, MsSession session) {
+        this.eventID = eventID;
+        this.cause = cause;
         this.session = session;
     }
     
@@ -29,11 +39,11 @@ public class MsSessionEventLocal implements MsSessionEvent {
     }
 
     public MsSessionEventID getEventID() {
-        return evt.getEventID();
+        return eventID;
     }
 
     public MsSessionEventCause getEventCause() {
-        return evt.getEventCause();
+        return cause;
     }
 
     public Object getCauseObject() {

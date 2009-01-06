@@ -18,9 +18,21 @@ public class MsConnectionEventLocal implements MsConnectionEvent {
 
     private MsConnectionEvent evt;
     private MsConnection connection;
+    private MsConnectionEventID eventID;
+    private MsConnectionEventCause cause;
+    private String msg;
     
     protected MsConnectionEventLocal(MsConnectionEvent evt, MsConnection connection) {
         this.evt = evt;
+        this.eventID = evt.getEventID();
+        this.cause = evt.getCause();
+        this.connection = connection;
+        this.msg = evt.getMessage();
+    }
+    
+    protected MsConnectionEventLocal(MsConnectionEventID eventID, MsConnectionEventCause cause, MsConnection connection) {
+        this.eventID = eventID;
+        this.cause = cause;
         this.connection = connection;
     }
     
@@ -29,15 +41,15 @@ public class MsConnectionEventLocal implements MsConnectionEvent {
     }
 
     public MsConnectionEventID getEventID() {
-        return evt.getEventID();
+        return eventID;
     }
 
     public MsConnectionEventCause getCause() {
-        return evt.getCause();
+        return cause;
     }
 
     public String getMessage() {
-        return evt.getMessage();
+        return msg;
     }
 
 }

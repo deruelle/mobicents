@@ -6,8 +6,6 @@ package org.mobicents.slee.resource.media.local;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionListener;
@@ -18,6 +16,8 @@ import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsResourceListener;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.mscontrol.MsSessionEvent;
+import org.mobicents.mscontrol.MsSessionEventCause;
+import org.mobicents.mscontrol.MsSessionEventID;
 import org.mobicents.mscontrol.MsSessionListener;
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.slee.resource.media.ra.MediaResourceAdaptor;
@@ -32,8 +32,6 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     private MsProvider provider;
     protected MediaResourceAdaptor ra;
     protected ConcurrentHashMap sessions = new ConcurrentHashMap();
-    private ReentrantLock block = new ReentrantLock();
-    private Condition sessionActivityCreated = block.newCondition();
 
     public MsProviderLocal(MsProvider provider, MediaResourceAdaptor ra) {
         this.provider = provider;
@@ -83,19 +81,15 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     }
 
     public MsSession createSession() {
-        block.lock();
-        try {
-            MsSession session = provider.createSession();
-            while (!sessions.containsKey(session.getId())) {
-                try {
-                    sessionActivityCreated.await();
-                } catch (InterruptedException e) {
-                }
-            }
-            return (MsSession) sessions.get(session.getId());
-        } finally {
-            block.unlock();
-        }
+        MsSession s = provider.createSession();
+        MsSessionLocal session = new MsSessionLocal(s, this);
+        sessions.put(session.getId(), session);
+        MsSessionEventLocal event = new MsSessionEventLocal(
+                MsSessionEventID.SESSION_CREATED,
+                MsSessionEventCause.SESSION_CREATED, 
+                session);
+        this.ra.sessionCreated(event);
+        return session;
     }
 
     public MsConnection getMsConnection(String msConnectionId) {
@@ -105,24 +99,25 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     public List<MsConnection> getMsConnections(String endpointName) {
         return provider.getMsConnections(endpointName);
     }
-    
-	public List<MsLink> getMsLinks(String endpointName) {
+
+    public List<MsLink> getMsLinks(String endpointName) {
         return provider.getMsLinks(endpointName);
-	}    
+    }
 
     public void sessionCreated(MsSessionEvent evt) {
-        block.lock();
+        /*        block.lock();
         try {
-            MsSessionLocal session = new MsSessionLocal(evt.getSource(), this);
-            sessions.put(session.getId(), session);
-
-            MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
-            this.ra.sessionCreated(event);
-
-            sessionActivityCreated.signal();
+        MsSessionLocal session = new MsSessionLocal(evt.getSource(), this);
+        sessions.put(session.getId(), session);
+        
+        MsSessionEventLocal event = new MsSessionEventLocal(evt, session);
+        this.ra.sessionCreated(event);
+        
+        sessionActivityCreated.signal();
         } finally {
-            block.unlock();
+        block.unlock();
         }
+         */
     }
 
     public void sessionActive(MsSessionEvent evt) {
@@ -141,6 +136,4 @@ public class MsProviderLocal implements MsProvider, MsSessionListener {
     public MsEventFactory getEventFactory() {
         return provider.getEventFactory();
     }
-
-
 }

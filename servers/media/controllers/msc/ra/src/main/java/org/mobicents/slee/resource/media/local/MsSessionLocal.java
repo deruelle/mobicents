@@ -4,7 +4,6 @@
  */
 package org.mobicents.slee.resource.media.local;
 
-import EDU.oswego.cs.dl.util.concurrent.ConcurrentReaderHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,6 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsConnectionEventCause;
+import org.mobicents.mscontrol.MsConnectionEventID;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsProvider;
@@ -52,21 +53,33 @@ public class MsSessionLocal implements MsSession {
     }
 
     public MsConnection createNetworkConnection(String endpointName) {
-        blockState.lock();
-        try {
-            MsConnection connection = session.createNetworkConnection(endpointName);
-            while (!connections.containsKey(connection.getId())) {
-                try {
-                    connectionActivityCreated.await();
-                } catch (InterruptedException e) {
-                    connection.release();
-                    return null;
-                }
-            }
-            return (MsConnection) connections.get(connection.getId());
-        } finally {
-            blockState.unlock();
-        }
+        MsConnection c = session.createNetworkConnection(endpointName);
+        MsConnectionLocal connection = new MsConnectionLocal(this, c);
+
+        connections.put(connection.getId(), connection);
+        MsConnectionEventLocal evt = new MsConnectionEventLocal(
+                MsConnectionEventID.CONNECTION_CREATED,
+                MsConnectionEventCause.NORMAL, connection);
+        this.provider.ra.connectionCreated(evt);
+
+        return connection;
+
+    /*        blockState.lock();
+    try {
+    MsConnection connection = session.createNetworkConnection(endpointName);
+    while (!connections.containsKey(connection.getId())) {
+    try {
+    connectionActivityCreated.await();
+    } catch (InterruptedException e) {
+    connection.release();
+    return null;
+    }
+    }
+    return (MsConnection) connections.get(connection.getId());
+    } finally {
+    blockState.unlock();
+    }
+     */
     }
 
     public MsLink createLink(MsLinkMode mode) {
@@ -103,15 +116,15 @@ public class MsSessionLocal implements MsSession {
         }
         return list;
     }
-    
-	public List<MsLink> getLinks() {
+
+    public List<MsLink> getLinks() {
         Collection<MsLink> values = links.values();
         ArrayList<MsLink> list = new ArrayList<MsLink>();
         for (MsLink link : values) {
             list.add(link);
         }
         return list;
-	}    
+    }
 
     public void connectionActivityCreated() {
         blockState.lock();
@@ -135,6 +148,4 @@ public class MsSessionLocal implements MsSession {
     public String toString() {
         return session.toString();
     }
-
-
 }

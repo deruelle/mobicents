@@ -22,12 +22,12 @@ public class MsConnectionEventProxy implements MsConnectionListener {
     }
 
     public void connectionCreated(MsConnectionEvent event) {
-        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
-        MsConnectionLocal connection = new MsConnectionLocal(session, event.getConnection());
-        session.connections.put(connection.getId(), connection);
-        MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
-        this.provider.ra.connectionCreated(evt);
-        session.connectionActivityCreated();
+ //       MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
+//        MsConnectionLocal connection = new MsConnectionLocal(session, event.getConnection());
+//        session.connections.put(connection.getId(), connection);
+//        MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
+//        this.provider.ra.connectionCreated(evt);
+//        session.connectionActivityCreated();
     }
 
     public void connectionFailed(MsConnectionEvent event) {
@@ -52,15 +52,8 @@ public class MsConnectionEventProxy implements MsConnectionListener {
     }
 
     public void connectionDisconnected(MsConnectionEvent event) {
-        String eventSessionId = event.getConnection().getSession().getId();
-
-        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(eventSessionId);
-        MsConnection connection = null;
-        if (session != null) {
-            connection = (MsConnection) session.connections.remove(event.getConnection().getId());
-        } else {
-            connection = event.getConnection();
-        }
+        MsSessionLocal session = (MsSessionLocal) provider.sessions.get(event.getConnection().getSession().getId());
+        MsConnection connection = (MsConnection) session.connections.remove(event.getConnection().getId());        
         MsConnectionEventLocal evt = new MsConnectionEventLocal(event, connection);
         this.provider.ra.connectionDisconnected(evt);
     }
