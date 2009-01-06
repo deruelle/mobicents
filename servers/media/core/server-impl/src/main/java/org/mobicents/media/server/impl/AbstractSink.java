@@ -15,12 +15,10 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 import org.jboss.util.id.UID;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.local.management.WorkDataGatherer;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
@@ -30,80 +28,79 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public abstract class AbstractSink extends AbstractWorkDataGatherer implements MediaSink {
 
-	protected transient Logger logger = Logger.getLogger(this.getClass());
+    protected transient MediaSource mediaStream;
+    private List<NotificationListener> listeners = new ArrayList();
+    private String id = null;
+    private String name = null;
 
-	protected MediaSource mediaStream;
-	private List<NotificationListener> listeners = new ArrayList();
-	private String id = null;
-	private String name = null;
-	
-	
-	public AbstractSink(String name) {
-		this.id = (new UID()).toString();
-		this.name = name;
+    public AbstractSink(String name) {
+        this.id = (new UID()).toString();
+        this.name = name;
 
-	}
+    }
 
-	public String getId() {
-		return this.id;
-	}
+    public String getId() {
+        return this.id;
+    }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.MediaSink#connect(MediaStream).
-	 */
-	public void connect(MediaSource mediaStream) {
-		this.mediaStream = mediaStream;
-		if (((AbstractSource) mediaStream).sink == null) {
-			mediaStream.connect(this);
-		}
-	}
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.MediaSink#connect(MediaStream).
+     */
+    public void connect(MediaSource mediaStream) {
+        this.mediaStream = mediaStream;
+        if (((AbstractSource) mediaStream).sink == null) {
+            mediaStream.connect(this);
+        }
+    }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.MediaSink#disconnect(MediaStream).
-	 */
-	public void disconnect(MediaSource mediaStream) {
-		this.mediaStream = null;
-		((AbstractSource) mediaStream).sink = null;
-	}
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.MediaSink#disconnect(MediaStream).
+     */
+    public void disconnect(MediaSource mediaStream) {
+        if (this.mediaStream != null) {
+            this.mediaStream = null;
+            ((AbstractSource) mediaStream).sink = null;
+            mediaStream.disconnect(this);
+        }
+    }
 
-	public void addListener(NotificationListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-		}
-	}
+    public void addListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
 
-	public void removeListener(NotificationListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}
-	}
+    public void removeListener(NotificationListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
 
-	protected void sendEvent(NotifyEvent evt) {
-		synchronized (listeners) {
-			for (NotificationListener listener : listeners) {
-				listener.update(evt);
-			}
-		}
-	}
+    protected void sendEvent(NotifyEvent evt) {
+        synchronized (listeners) {
+            for (NotificationListener listener : listeners) {
+                listener.update(evt);
+            }
+        }
+    }
 
-	public void dispose() {
-		synchronized (listeners) {
-			listeners.clear();
-		}
-                if (this.mediaStream != null) {
-                    ((AbstractSource) mediaStream).sink = null;
-                }
-                mediaStream = null;
-	}
+    public void dispose() {
+        synchronized (listeners) {
+            listeners.clear();
+        }
+        if (this.mediaStream != null) {
+            ((AbstractSource) mediaStream).sink = null;
+        }
+        mediaStream = null;
+    }
 
-	@Override
-	public String toString() {
-		return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
+    @Override
+    public String toString() {
+        return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
 
-	}
-
+    }
 }
