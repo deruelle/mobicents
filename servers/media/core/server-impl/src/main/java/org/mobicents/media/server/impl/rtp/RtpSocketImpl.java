@@ -19,55 +19,44 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import net.java.stun4j.StunAddress;
 import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
 import net.java.stun4j.client.StunDiscoveryReport;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.media.server.local.management.WorkDataGatherer;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class RtpSocketImpl implements RtpSocket, Runnable  {
+public class RtpSocketImpl implements RtpSocket {
 
-	private transient Logger logger = Logger.getLogger(RtpSocketImpl.class);
-	
-    private ArrayList<RtpSocketListener> listeners = new ArrayList<RtpSocketListener>();
-    private DatagramSocket socket;
+//    private ArrayList<RtpSocketListener> listeners = new ArrayList<RtpSocketListener>();
+    private transient DatagramSocket socket;
     private int port;
-    private boolean stopped = false;
-    //registered participants
     protected Peer peer = null;
     //holder for dynamic payloads.
-    private HashMap <Integer, Format> rtpMap = new HashMap<Integer, Format>();
-    private InetAddress localhost;
+    private HashMap<Integer, Format> rtpMap = new HashMap<Integer, Format>();
     protected int period = 20;
     private int jitter = 60;
-    //STUN variables
+    
+    private String localAddress;
     private String publicAddressFromStun = null;
     private int publicPortFromStun;
     private boolean useStun = false;
     private String stunServerAddress;
     private int stunServerPort;
     private boolean usePortMapping = true;
-  //handler for receiver thread
-    private transient Thread receiverThread;
+    //handler for receiver thread
     private ReceiveStream receiveStream;
     private SendStreamImpl sendStream;
-    public static final AtomicInteger rtpSocketThreadNumber = new AtomicInteger(1);
-    public static final String rtpSocketThreadNamePrefix = "RtpSocketImpl-";
-    
 
     /**
      * Creates a new instance of RtpSocketImpl
@@ -78,9 +67,12 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     /**
      * Creates a new instance of RtpSocketImpl
      */
-    public RtpSocketImpl(int period, int jitter) {
+    public RtpSocketImpl(BaseEndpoint endpoint, int period, int jitter, HashMap<Integer, Format> rtpMap) {
         this.period = period;
         this.jitter = jitter;
+        this.rtpMap.putAll(rtpMap);        
+        sendStream = new SendStreamImpl(this);
+        receiveStream = new ReceiveStream(endpoint.getReceiverThread(), this, period, jitter);
     }
 
     /**
@@ -104,6 +96,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
      */
     public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException {
         boolean bound = false;
+        this.localAddress = localAddress.getHostAddress();
         port = lowPort;
         while (!bound) {
             try {
@@ -114,7 +107,9 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
                         socket.disconnect();
                         socket.close();
                         socket = null;
-                        if(mapStun(port, bindAddress.getHostName())) bound = true;
+                        if (mapStun(port, bindAddress.getHostName())) {
+                            bound = true;
+                        }
                         socket = new DatagramSocket(bindAddress);
                     } else {
                         // publicAddressFromStun is already set
@@ -132,17 +127,13 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
             }
         }
 
-        try {
-            localhost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-        }
-
-        receiverThread = new Thread(this, rtpSocketThreadNamePrefix + rtpSocketThreadNumber.getAndIncrement());
-        receiverThread.setPriority(Thread.MAX_PRIORITY);
-
         return port;
     }
 
+    public String getLocalAddress() {
+        return localAddress;
+    }
+    
     /**
      * (Non Java-doc).
      * 
@@ -155,12 +146,39 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     /**
      * (Non Java-doc).
      * 
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#setPeriod();
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#getPeriod();
+     */
+    public int getPeriod() {
+        return this.period;
+    }
+    
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#setPeriod(int);
      */
     public void setPeriod(int period) {
         this.period = period;
     }
 
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#getJitter();
+     */
+    public int getJitter() {
+        return this.jitter;
+    }
+    
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#setJitter(int);
+     */
+    public void setJitter(int jitter) {
+        this.jitter = jitter;
+    }
+    
     public MediaSource getReceiveStream() {
         return receiveStream;
     }
@@ -184,7 +202,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     public boolean mapStun(int localPort, String localAddress) {
         try {
             if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
-                logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+//                logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
                 this.publicAddressFromStun = localAddress;
                 this.publicPortFromStun = localPort;
             } else {
@@ -204,13 +222,13 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
                 //TODO set a timer to retry the binding and provide a callback to update the global ip address and port
                 } else {
                     useStun = false;
-                    logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+//                    logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
                 }
-                logger.info("Stun report = " + report);
+//                logger.info("Stun report = " + report);
                 addressDiscovery.shutDown();
             }
         } catch (Throwable t) {
-            logger.error("Stun lookup has failed: " + t.getMessage());
+//            logger.error("Stun lookup has failed: " + t.getMessage());
             return false;
         }
         return true;
@@ -220,42 +238,16 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
     /**
      * (Non Java-doc).
      *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#start();
-     */
-    public void start() {
-        stopped = false;
-        receiverThread.start();
-
-        receiveStream = new ReceiveStream(this, period, jitter);
-        
-        sendStream = new SendStreamImpl(this);
-        sendStream.formats = new Format[rtpMap.size()];
-        rtpMap.values().toArray(sendStream.formats);
-    }
-
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#stop();
-     */
-    public void stop() {
-        stopped = true;
-        receiverThread.interrupt();
-    }
-
-    /**
-     * (Non Java-doc).
-     *
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#close();
      */
     public void close() {
-        stopped = true;
+        if (receiveStream != null) {
+            receiveStream.stop();
+        }
+        
         if (socket != null) {
             socket.disconnect();
             socket.close();
-        }
-        if (receiveStream != null) {
-            receiveStream.stop();
         }
     }
 
@@ -266,6 +258,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
      */
     public void setPeer(InetAddress address, int port) {
         this.peer = new Peer(this, address, port);
+        peer.start();
     }
 
     /**
@@ -302,7 +295,7 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
             rtpMap.values().toArray(sendStream.formats);
         }
     }
-    
+
     /**
      * Determines payload type for specified format.
      *
@@ -311,11 +304,10 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
      * was not previously registered with addFormat().
      */
     protected int getPayloadType(Format format) {
-        Set<Integer> keys = rtpMap.keySet();
-        for (Integer k : keys) {
-            Format fmt = (Format) rtpMap.get(k);
-            if (fmt.matches(format)) {
-                return k.intValue();
+        Collection<Format> fmts = rtpMap.values();
+        for (Format fmt : fmts) {
+            if (fmt.equals(format)) {
+                return ((RTPAudioFormat) fmt).getPayload();
             }
         }
         return -1;
@@ -330,102 +322,9 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
         return sendStream;
     }
 
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#addAdaptorListener(RtpSocketListener);
-     */
-    public void addAdaptorListener(RtpSocketListener listener) {
-        listeners.add(listener);
-    }
 
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#removeAdaptorListener(RtpSocketListener);
-     */
-    public void removeAdaptorListener(RtpSocketListener listener) {
-        listeners.remove(listener);
-    }
-
-    /**
-     * Reads actualy received data.
-     *
-     * @param packet the datagram packet object to read data from.
-     * @return received data as array of bytes.
-     */
-    private byte[] readData(DatagramPacket packet) {
-        byte[] data = new byte[packet.getLength()];
-        System.arraycopy(packet.getData(), 0, data, 0, data.length);
-        return data;
-    }
-
-    /**
-     * Verify that this socket is authorized to receive data from the peer.
-     *
-     * @param address the address of the peer.
-     * @port the port number of the peer.
-     * @return true if this socket is authorized to receive data from peer
-     * with specified address & port or false otherwise.
-     */
-    private boolean checkPeer(InetAddress address, int port) {
-        return peer != null &&
-                ((peer.getInetAddress().equals(address) && port == peer.getPort()) ||
-                address.equals(localhost));
-    }
-
-    /**
-     * The main reader loop.
-     *
-     * Reads incoming data from socket and distribute data between peers.
-     */
-    @SuppressWarnings("static-access")
-    public void run() {
-        while (!stopped) {
-            byte[] buff = new byte[200];
-
-            DatagramPacket udpPacket = new DatagramPacket(buff, buff.length);
-            try {
-                socket.receive(udpPacket);
-                if (stopped) {
-                    continue;
-                }
-            } catch (SocketTimeoutException e) {
-                continue;
-            } catch (IOException e) {
-                this.sendError(e);
-                continue;
-            }
-
-            //if peer is not present we do not authorize adaptor to
-            //receive data
-//            boolean authorized = checkPeer(udpPacket.getAddress(), udpPacket.getPort());
-//            if (!authorized) {
-//                System.out.println("not authorized " + udpPacket.getAddress());
-//                continue;
-//            }
-
-            RtpPacket rtpPacket = null;
-            try {
-                rtpPacket = new RtpPacket(readData(udpPacket));
-            } catch (IOException e) {
-                e.printStackTrace();
-                //corrupted packet, ignore this one
-                continue;
-            }
-            try {
-                receiveStream.push(rtpPacket);
-                Thread.currentThread().yield();
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
-        }
-
-        socket.close();
-        receiveStream.stop();
-        if (logger.isDebugEnabled()) {
-            logger.debug("Gracefully close RTP socket");
-        }
+    protected void receivePacket(DatagramPacket p) throws IOException {
+        socket.receive(p);
     }
 
     /**
@@ -433,40 +332,22 @@ public class RtpSocketImpl implements RtpSocket, Runnable  {
      *
      * @param packet the datagram packet object to sent out.
      */
-    protected synchronized void sendPacket(DatagramPacket packet) throws IOException {
-        if (!stopped) {
-            socket.send(packet);
-        }
+    protected void sendPacket(DatagramPacket packet) throws IOException {
+        socket.send(packet);
     }
 
-    /**
-     * Notify listeners about error
-     * 
-     * @param e the exception occured.
-     */
-    private void sendError(Exception e) {
-        for (RtpSocketListener listener : listeners) {
-            listener.error(e);
+    public void setWorkDataGatherer(WorkDataGatherer g) {
+        try {
+            if (this.sendStream != null) {
+                this.sendStream.setWorkDataSink(g);
+            }
+
+            if (this.receiveStream != null) {
+                this.receiveStream.setWorkDataSink(g);
+            }
+
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
         }
     }
-    
-    public void setWorkDataGatherer(WorkDataGatherer g)
-    {
-    	try{
-    		if(this.sendStream!=null)
-    		{
-    			this.sendStream.setWorkDataSink(g);
-    		}
-    		
-    		if(this.receiveStream!=null)
-    		{
-    			this.receiveStream.setWorkDataSink(g);
-    		}
-    		
-    	}catch(NullPointerException npe)
-    	{
-    		npe.printStackTrace();
-    	}
-    }
-    
 }
