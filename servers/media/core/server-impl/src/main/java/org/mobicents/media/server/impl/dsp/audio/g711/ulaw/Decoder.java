@@ -15,13 +15,14 @@ package org.mobicents.media.server.impl.dsp.audio.g711.ulaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class Decoder implements Codec {
+public class Decoder extends BaseCodec {
 
     private final static int cBias = 0x84;
     private int QUANT_MASK = 0xf;
@@ -67,57 +68,27 @@ public class Decoder implements Codec {
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedInputFormats() {
-        Format[] formats = new Format[]{
-            Codec.PCMU
-        };
-        return formats;
+    public Format getSupportedInputFormat() {
+        return Codec.PCMU;
     }
 
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedOutputFormats(Format fmt) {
-        Format[] formats = new Format[]{
-            Codec.LINEAR_AUDIO
-        };
-        return formats;
+    public Format getSupportedOutputFormat() {
+        return Codec.LINEAR_AUDIO;
     }
 
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
-     */
-    public Format[] getSupportedInputFormats(Format fmt) {
-        Format[] formats = new Format[]{
-            Codec.PCMU
-        };
-        return formats;
-    }
-
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
-     */
-    public Format[] getSupportedOutputFormats() {
-        Format[] formats = new Format[]{
-            Codec.LINEAR_AUDIO
-        };
-        return formats;
-    }
-    
     /**
      * (Non Java-doc)
      * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
-    public synchronized void process(Buffer buffer) {
+    public void process(Buffer buffer) {
         byte[] data = (byte[]) buffer.getData();
         
         int offset = buffer.getOffset();

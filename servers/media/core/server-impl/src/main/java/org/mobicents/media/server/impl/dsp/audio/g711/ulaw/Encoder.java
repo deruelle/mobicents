@@ -15,6 +15,7 @@ package org.mobicents.media.server.impl.dsp.audio.g711.ulaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -22,7 +23,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * 
  * @author Oleg Kulikov
  */
-public class Encoder implements Codec {
+public class Encoder extends BaseCodec {
 
     private final static byte[] muLawCompressTable = new byte[]{
         0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -47,19 +48,14 @@ public class Encoder implements Codec {
     private static short seg_end[] = new short[]{0xFF, 0x1FF, 0x3FF, 0x7FF,
         0xFFF, 0x1FFF, 0x3FFF, 0x7FFF
     };
+    private byte[] temp = new byte[1200];
 
-    public Format[] getSupportedInputFormats() {
-        Format[] formats = new Format[]{
-            Codec.LINEAR_AUDIO
-        };
-        return formats;
+    public Format getSupportedInputFormat() {
+        return Codec.LINEAR_AUDIO;
     }
 
-    public Format[] getSupportedOutputFormats(Format fmt) {
-        Format[] formats = new Format[]{
-            Codec.PCMU
-        };
-        return formats;
+    public Format getSupportedOutputFormat() {
+        return Codec.PCMU;
     }
 
     public Format[] getSupportedInputFormats(Format fmt) {
@@ -82,7 +78,12 @@ public class Encoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
+        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
+        buffer.setOffset(0);
+        buffer.setLength(len);
+        buffer.setFormat(PCMU);
+/*        byte[] data = (byte[]) buffer.getData();
         
         int offset = buffer.getOffset();
         int length = buffer.getLength();
@@ -96,6 +97,18 @@ public class Encoder implements Codec {
         buffer.setOffset(0);
         buffer.setFormat(Codec.PCMU);
         buffer.setLength(res.length);
+ */ 
+    }
+    
+    private int process(byte[] src, int len, byte[] res) {
+        int j = 0;
+        int count = len / 2;
+        short sample = 0;
+        for (int i = 0; i < count; i++) {
+            sample = (short) (((src[j++] & 0xff) | (src[j++]) << 8));
+            res[i] = linear2ulaw(sample);
+        }
+        return count;
     }
     
     /**
