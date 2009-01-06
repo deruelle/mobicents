@@ -16,6 +16,9 @@ package org.mobicents.media.server.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
@@ -28,26 +31,32 @@ public abstract class AbstractSignal implements Serializable {
     private List<NotificationListener> listeners = new ArrayList();
 
     protected void sendEvent(NotifyEvent evt) {
-        synchronized (listeners) {
-            for (NotificationListener listener : listeners) {
-                listener.update(evt);
-            }
+        for (NotificationListener listener : listeners) {
+            listener.update(evt);
         }
         listeners.clear();
     }
 
     public abstract void apply(BaseConnection connection);
     public abstract void apply(BaseEndpoint connection);
+
+    public abstract void cancel();
     
+    protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+        BaseEndpoint endpoint = (BaseEndpoint) connection.getEndpoint();
+        return endpoint.getMediaSource(id, connection);
+    }
+
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        BaseEndpoint endpoint = (BaseEndpoint) connection.getEndpoint();
+        return endpoint.getMediaSink(id, connection);
+    }
+
     public void addListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
     }
 
     public void removeListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 }
