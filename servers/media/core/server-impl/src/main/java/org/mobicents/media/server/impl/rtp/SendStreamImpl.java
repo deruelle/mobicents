@@ -15,12 +15,10 @@ package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
 import java.util.Collection;
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.CachedBuffersPool;
 
 /**
  *
@@ -39,40 +37,46 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
     private RtpPacketizer packetizer;
     //the amount of ticks in one milliseconds
     int ticks;
-    
     protected Format[] formats;
-    
     private RtpSocketImpl rtpSocket;
-    private transient Logger logger = Logger.getLogger(SendStreamImpl.class);
+    private RtpHeader header = new RtpHeader();
+
+    private int payloadType;
+    private Format format;
     
     public SendStreamImpl(RtpSocketImpl rtpSocket) {
-    	super("SendStreamImpl");
+        super("SendStreamImpl");
         this.rtpSocket = rtpSocket;
         packetizer = new RtpPacketizer();
     }
 
+    private int getPayloadType(Format fmt) {
+        if (format != null && fmt.equals(format)) {
+            return payloadType;
+        }
+        
+        payloadType = rtpSocket.getPayloadType(fmt);
+        format = fmt;
+        
+        return payloadType;
+    }
     
     public void receive(Buffer buffer) {
-        packetizer.process(buffer, rtpSocket.period);
-        
-        AudioFormat fmt = (AudioFormat) buffer.getFormat();
-        pt = rtpSocket.getPayloadType(fmt);
-        
-        byte[] data = (byte[]) buffer.getData();        
-        RtpPacket p = new RtpPacket((byte) pt, (int) seq++, (int) buffer.getTimeStamp(),
-                ssrc, data,buffer.getOffset(), buffer.getLength());
+        if (buffer.getFlags() != Buffer.FLAG_SYSTEM_TIME) {
+            packetizer.process(buffer, rtpSocket.period);
+
+            AudioFormat fmt = (AudioFormat) buffer.getFormat();
+            pt = getPayloadType(fmt);
+
+            header.init((byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
+            buffer.setHeader(header);
+        }
         boolean error=false;
         try {
-            rtpSocket.peer.send(p);
+            rtpSocket.peer.send(buffer);
         } catch (IOException e) {
-            logger.error("I/O Error", e);
         } finally {
-        	if(!error)
-        	{
-        		super.octetsSent(buffer.getLength());
-        		super.packetsSent(1);
-        	}
-            CachedBuffersPool.release(buffer);
+            buffer.dispose();
         }
     }
 
@@ -83,8 +87,8 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
      */
     public boolean isAcceptable(Format fmt) {
         boolean res = false;
-        for (Format format : formats) {
-            if (format.matches(fmt)) {
+        for (Format f : formats) {
+            if (f.matches(fmt)) {
                 res = true;
                 break;
             }
@@ -95,7 +99,7 @@ public class SendStreamImpl extends AbstractSink implements SendStream {
     public Format[] getFormats() {
         return formats;
     }
-    
+
     public void setFormats(Collection<Format> fmts) {
         formats = new Format[fmts.size()];
         fmts.toArray(formats);
