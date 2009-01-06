@@ -12,6 +12,7 @@ import org.mobicents.media.server.impl.codec.g729.PostFil;
 import org.mobicents.media.server.impl.codec.g729.PostPro;
 import org.mobicents.media.server.impl.codec.g729.Util;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
 public class Decoder implements Codec {
 
@@ -49,14 +50,12 @@ public class Decoder implements Codec {
 		voicing = 60;
 	}
 
-	public Format[] getSupportedInputFormats() {
-		Format[] formats = new Format[] { Codec.G729 };
-		return formats;
+	public Format getSupportedInputFormat() {
+		return Codec.G729;
 	}
 
-	public Format[] getSupportedOutputFormats(Format fmt) {
-		Format[] formats = new Format[] { Codec.LINEAR_AUDIO };
-		return formats;
+	public Format getSupportedOutputFormat() {
+		return Codec.LINEAR_AUDIO;
 	}
 
 	public Format[] getSupportedInputFormats(Format fmt) {
@@ -159,5 +158,8 @@ public class Decoder implements Codec {
 
 		return Util.floatArrayToByteArray(pst_out, LD8KConstants.L_FRAME);
 	}
+
+    public void setProc(SignalingProcessor processor) {
+    }
 
 }
