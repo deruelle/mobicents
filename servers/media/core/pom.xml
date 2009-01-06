@@ -41,7 +41,7 @@
 		<module>server-sar</module>
 		<module>server-test</module>
 		<module>g729</module>
-
+		<module>gsm</module>
 	</modules>
 
 	<!-- RELEASE STUFF -->

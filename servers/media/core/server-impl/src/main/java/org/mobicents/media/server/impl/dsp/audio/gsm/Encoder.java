@@ -70,4 +70,14 @@ public class Encoder extends BaseCodec {
         
         buffer.setData(res);
     }
+
+	public Format getSupportedInputFormat() {
+		return Codec.LINEAR_AUDIO;
+	}
+
+
+	
+	public Format getSupportedOutputFormat() {
+		return Codec.GSM;
+	}
 }

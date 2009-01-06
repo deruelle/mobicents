@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 import org.tritonus.lowlevel.gsm.InvalidGSMFrameException;
 
 /**
@@ -80,6 +81,19 @@ public class Decoder implements Codec {
 			e.printStackTrace();
 		}
 		return m_abBuffer;
+	}
+
+	public Format getSupportedInputFormat() {
+		return Codec.GSM;
+	}
+
+	public Format getSupportedOutputFormat() {
+		return Codec.LINEAR_AUDIO;
+	}
+
+	public void setProc(SignalingProcessor processor) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -70,8 +70,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.tritonus</groupId>
-            <artifactId>tritonus-gsm</artifactId>
+            <groupId>org.mobicents.external.tritonus</groupId>
+            <artifactId>tritonus_gsm</artifactId>
             <version>0.3.6</version>
             <scope>provided</scope>
         </dependency>

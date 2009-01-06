@@ -4,6 +4,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
 /**
  * 
@@ -61,6 +62,21 @@ public class Encoder implements Codec {
 	private short bytesToShort16(byte[] buffer, int byteOffset, boolean bigEndian) {
 		return bigEndian ? ((short) ((buffer[byteOffset] << 8) | (buffer[byteOffset + 1] & 0xFF)))
 				: ((short) ((buffer[byteOffset + 1] << 8) | (buffer[byteOffset] & 0xFF)));
+	}
+
+	public Format getSupportedInputFormat() {
+		return Codec.LINEAR_AUDIO;
+	}
+
+
+	
+	public Format getSupportedOutputFormat() {
+		return Codec.GSM;
+	}
+
+	public void setProc(SignalingProcessor processor) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
