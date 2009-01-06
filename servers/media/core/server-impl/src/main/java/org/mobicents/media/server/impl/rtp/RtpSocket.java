@@ -52,6 +52,13 @@ public interface RtpSocket extends Serializable {
     public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException;
     
     /**
+     * Gets the address to which this socket is bound.
+     * 
+     * @return the address to which this socket bound.
+     */
+    public String getLocalAddress();
+    
+    /**
      * Gets the actualy used port number.
      * 
      * @return port number.
@@ -66,22 +73,25 @@ public interface RtpSocket extends Serializable {
     public void setPeriod(int period);
     
     /**
-     * Starts packet receiver.
-     *
-     * If peer list may be empty, it does not know whether the packets that 
-     * it receives have been authorized by the server. It must thus navigate 
-     * between two risks, i.e. clipping some important announcements or 
-     * listening to insane data. Server uses this method to start receiver
-     * handler upon request.
+     * Gets the currently used period of packetization.
+     * 
+     * @return period in milliseconds.
      */
-    public void start();
+    public int getPeriod();
     
     /**
-     * Stops receiver handler.
-     *
-     * This method does not close RTP Socket adaptor.
+     * Modify jitter buffer size.
+     * 
+     * @param jitter the size in milliseconds.
      */
-    public void stop();
+    public void setJitter(int jitter);
+    
+    /**
+     * Gets the size of jitter buffer.
+     * 
+     * @return the size of jitter buffer in milliseconds.
+     */
+    public int getJitter();
     
     /**
      * Sets the a peer to the RTP socket. 
@@ -100,20 +110,25 @@ public interface RtpSocket extends Serializable {
     public void addFormat(int pt, Format format);
     
     /**
+     * Removes format from list of registered payloads.
+     * 
+     * @param pt the payload type to be removed
+     */
+    public void removeFormat(int pt);
+    
+    /**
      * Gets list of registered formats.
      * 
      * @return the map where key is payload number and value id Format object.
      */
     public HashMap<Integer, Format> getRtpMap();
     
-    public void setRtpMap(HashMap<Integer, Format> rtpMap);
-    
     /**
-     * Removes format from list of registered payloads.
+     * Modify map of registered payloads.
      * 
-     * @param pt the payload type to be removed
+     * @param rtpMap the map where keys are paylioad types and values are formats
      */
-    public void removeFormat(int pt);
+    public void setRtpMap(HashMap<Integer, Format> rtpMap);
     
     /**
      * Gets the Receive stream.
@@ -129,21 +144,6 @@ public interface RtpSocket extends Serializable {
      * @param stream the data to sent out.
      */
     public SendStream getSendStream();
-    
-    /**
-     * Adds a ReceiverStreamListener.
-     *
-     * @param listener the listener receives all events for receiver stream 
-     * state transition
-     */
-    public void addAdaptorListener(RtpSocketListener listener);
-    
-    /**
-     * Removess a ReceiverStreamListener.
-     *
-     * @param listener the listener that was previously registered.
-     */
-    public void removeAdaptorListener(RtpSocketListener listener);
     
     /**
      * Closes this socket.
