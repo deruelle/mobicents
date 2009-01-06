@@ -16,7 +16,7 @@ package org.mobicents.media.server.impl.events.announcement;
 import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.MediaResource;
 
 /**
  * 
@@ -25,6 +25,8 @@ import org.mobicents.media.server.impl.Generator;
 public class AnnSignal extends AbstractSignal {
 
     private String file;
+    private AudioPlayer player;
+    
     public AnnSignal(String file) {
         this.file = file;
     }
@@ -35,14 +37,18 @@ public class AnnSignal extends AbstractSignal {
 
     @Override
     public void apply(BaseConnection connection) {
-        BaseEndpoint endpoint = (BaseEndpoint) connection.getEndpoint();
-        AudioPlayer player = (AudioPlayer) endpoint.getMediaSource(Generator.AUDIO_PLAYER, connection);
+        player = (AudioPlayer) getMediaSource(MediaResource.AUDIO_PLAYER, connection);
         player.setFile(file);
         player.start();
     }
 
     @Override
-    public void apply(BaseEndpoint connection) {
+    public void apply(BaseEndpoint endpoint) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void cancel() {        
+        player.stop();
     }
 }

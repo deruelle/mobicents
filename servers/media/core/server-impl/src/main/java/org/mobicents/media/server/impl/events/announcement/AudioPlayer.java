@@ -18,160 +18,124 @@ package org.mobicents.media.server.impl.events.announcement;
 import java.io.IOException;
 import java.net.URL;
 
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat.Encoding;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.CachedBuffersPool;
-import org.mobicents.media.server.impl.clock.Quartz;
-import org.mobicents.media.server.impl.clock.Timer;
-import org.mobicents.media.server.impl.clock.TimerTask;
+import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
+
 import org.xiph.speex.spi.SpeexAudioFileReader;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class AudioPlayer extends AbstractSource implements TimerTask {
+public class AudioPlayer extends AbstractSource {
 
-    private transient Logger logger = Logger.getLogger(AudioPlayer.class);
-    protected final static AudioFormat LINEAR = new AudioFormat(
+    private final static int MAX_ERRORS = 5;
+    /** supported formats definition */
+    private final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN,
             AudioFormat.SIGNED);
-    protected AudioFormat format = LINEAR;
-    protected final static Format[] formats = new Format[]{LINEAR};
-    private AudioInputStream stream = null;
+    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
+    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+    private final static Format[] formats = new Format[]{LINEAR, PCMA, PCMU, SPEEX};
+    /** format of the file */
+    private AudioFormat format;
+    /** audio stream */
+    private transient AudioInputStream stream = null;
+    /** the size of the packet in bytes */
     private int packetSize;
+    /** packetization period in millisconds  */
+    private int period = 20;
+    /** sequence number of the packet */
     private long seq = 0;
-    protected volatile Timer timer;
-    private volatile boolean started;
+    /** Timer     */
+    private transient ScheduledExecutorService timer;
+    private transient Future worker;
+    /** Command executor service used for async command executions */
+    private transient ExecutorService executor;
+    private transient ThreadFactory threadFactory;
+    /** Name (path) of the file to play */
     private String file;
-    private boolean eom = false;
-    private ReentrantLock state = new ReentrantLock();
-    private Condition playerStarted = state.newCondition();
-    private Condition playerStopped = state.newCondition();
-    //protected int packetPeriod;
-    public AudioPlayer() {
-        super("AudioPlayer");
-        this.timer = new Timer();
-        timer.setListener(this);
+    /** Flag indicating end of media */
+    private volatile boolean eom = false;
+    /** The countor for errors occured during processing */
+    private int errorCount;
+    private volatile boolean started = false;
+    private BufferFactory bufferFactory = new BufferFactory(10);
+    private transient Logger logger = Logger.getLogger(AudioPlayer.class);
+
+    public AudioPlayer(BaseEndpoint endpoint) {
+        super("AudioPlayer[" + endpoint.getLocalName() + "]");
+        this.timer = endpoint.getTransmittorThread();
+        threadFactory = new ThreadFactoryImpl("AudioPlayerCommand[" + endpoint.getLocalName() + "]");
+        executor = Executors.newSingleThreadExecutor(threadFactory);
     }
 
     public void setFile(String file) {
         this.file = file;
     }
 
+    /**
+     * Sarts playback. Executes asynchronously.
+     */
     public void start() {
-        state.lock();
-        try {
-            seq = 0;
-            start(file);
-
-            while (!started) {
-                try {
-                    playerStarted.await();
-                } catch (InterruptedException e) {
-                    timer.stop();
-                }
-            }
-        } finally {
-            state.unlock();
+        if (file != null) {
+            executor.submit(new StartCommand());
         }
     }
 
     /**
-     * Starts playing audio from specified file.
-     * 
-     * 
-     * @param file the string url which points to a file to be played.     * 
-     * 
-     * @throws java.net.MalformedURLException
-     * @throws java.io.IOException
-     * @throws javax.media.NoDataSourceException
-     * @throws javax.media.NoProcessorException
-     * @throws javax.media.CannotRealizeException
+     * Terminates player. Methods executes asynchronously.
      */
-    public void start(String file) {
-        if (started) {
-            return;
-        }
-
-        URL url = null;
-        try {
-            url = new URL(file);
-        } catch (IOException e) {
-            logger.error("IOException in file " + file, e);
-            this.failed(e);
-            return;
-        }
-        //speex support
-        try {
-            synchronized (this) {
-                stream = AudioSystem.getAudioInputStream(url);
-            }
-        } catch (Exception e) {
-            logger.error("Error " + stream, e);
-            this.failed(e);
-            return;
-        }
-
-        if (stream == null) {
-            SpeexAudioFileReader speexAudioFileReader = new SpeexAudioFileReader();
-            try {
-                stream = speexAudioFileReader.getAudioInputStream(url);
-            } catch (Exception e) {
-                logger.error("Using SpeexAudioFileReader. Error  " + stream, e);
-                this.failed(e);
-                return;
-            }
-        }
-
-        AudioFormat fmt = new AudioFormat(getEncoding(stream.getFormat().getEncoding()), stream.getFormat().getFrameRate(), stream.getFormat().getFrameSize() * 8, stream.getFormat().getChannels());
-        packetSize = (int) ((fmt.getSampleRate() / 1000) * (fmt.getSampleSizeInBits() / 8) * Quartz.HEART_BEAT);
-
-        timer.start();
-        eom = false;
+    public void stop() {
+        executor.submit(new StopCommand());
     }
 
-    private String getEncoding(Encoding encoding) {
+    /**
+     * Gets the format of specified stream.
+     * 
+     * @param stream the stream to obtain format.
+     * @return the format object.
+     */
+    private AudioFormat getFormat(AudioInputStream stream) {
+        Encoding encoding = stream.getFormat().getEncoding();
         if (encoding == Encoding.ALAW) {
-            return "ALAW";
+            return new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
         } else if (encoding == Encoding.ULAW) {
-            return "ULAW";
+            return new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
         } else if (encoding == Encoding.PCM_SIGNED) {
-            return "LINEAR";
+            return LINEAR;
         } else if (encoding == Encoding.PCM_UNSIGNED) {
-            return "LINEAR";
+            return new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.UNSIGNED);
         } else {
             return null;
         }
     }
 
     /**
-     * Terminates player.
+     * Calculates size of packets for the currently opened stream.
+     * @return the size of packets in bytes;
      */
-    public void stop() {
-        state.lock();
-        try {
-            timer.stop();
-            while (started) {
-                try {
-                    playerStopped.await();
-                } catch (InterruptedException e) {
-                }
-            }
-        } finally {
-            state.unlock();
-        }
+    private int getPacketSize() {
+        return format.getEncoding().equals(AudioFormat.LINEAR) ? 320 : 160;
     }
 
     /**
@@ -186,86 +150,114 @@ public class AudioPlayer extends AbstractSource implements TimerTask {
      * Called when player started to transmitt audio.
      */
     public void started() {
-        state.lock();
-        try {
-            started = true;
-            AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
-            this.sendEvent(evt);
-            playerStarted.signalAll();
-        } finally {
-            state.unlock();
-        }
+        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
+        this.sendEvent(evt);
     }
 
     /**
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
-        started = false;
         AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
         this.sendEvent(evt);
     }
 
-    private int readPacket(byte[] packet) throws IOException {
-        int offset = 0;
-        while (offset < packetSize) {
-            int len = stream.read(packet, offset, packetSize - offset);
+    /**
+     * Reads packet from currently opened stream.
+     * 
+     * @param packet the packet to read
+     * @param offset the offset from which new data will be inserted
+     * @return the number of actualy read bytes.
+     * @throws java.io.IOException 
+     */
+    private int readPacket(byte[] packet, int offset) throws IOException {
+        int length = 0;
+        while (length < packetSize) {
+            int len = stream.read(packet, offset + length, packetSize - length);
             if (len == -1) {
-                return -1;
+                return length;
             }
-            offset += len;
+            length += len;
         }
-        return packetSize;
+        return length;
     }
 
-    private void doProcess() {
-        byte[] packet = new byte[packetSize];
+    /**
+     * Reads packet from currently opened stream into specified buffer.
+     * 
+     * @param buffer the buffer object to insert data to
+     * @throws java.io.IOException
+     */
+    private void readPacket(Buffer buffer) throws IOException {
+        buffer.setLength(readPacket((byte[]) buffer.getData(), buffer.getOffset()));
+    }
+
+    /**
+     * Perform padding buffer with zeros to aling length.
+     * 
+     * @param buffer the buffer for padding.
+     */
+    private void padding(Buffer buffer) {
+        int count = packetSize - buffer.getLength();
+        byte[] data = (byte[]) buffer.getData();
+        int offset = buffer.getOffset() + buffer.getLength();
+        for (int i = 0; i <
+                count; i++) {
+            data[i + offset] = 0;
+        }
+
+        buffer.setLength(packetSize);
+    }
+
+    /**
+     * Closes audio stream
+     */
+    private void closeAudioStream() {
         try {
-            int len = readPacket(packet);
-            if (len == -1) {
-                timer.stop();
+            if (stream != null) {
+                stream.close();
+            }
+        } catch (IOException e) {
+        }
+    }
 
-                if (started) {
-                    eom = true;
-                }
+    private void doProcess1() {
+        Buffer buffer = bufferFactory.allocate();
+        try {
+            readPacket(buffer);
+        } catch (IOException e) {
+            failed(e);
+            worker.cancel(true);
+            return;
+        }
 
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                }
+        if (buffer.getLength() == 0) {
+            eom = true;
+        } else if (buffer.getLength() < packetSize) {
+            padding(buffer);
+        }
 
-            } else {
-                Buffer buffer = CachedBuffersPool.allocate();
-                buffer.setData(packet);
-                buffer.setDuration(Quartz.HEART_BEAT);
-                buffer.setLength(len);
-                buffer.setOffset(0);
-                buffer.setFormat(format);
-                buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
-                buffer.setEOM(false);
-                buffer.setSequenceNumber(seq++);
+        buffer.setDuration(period);
+        buffer.setFormat(format);
+        buffer.setTimeStamp(seq * period);
+        buffer.setEOM(eom);
+        buffer.setSequenceNumber(seq++);
 
-                if (sink != null) {
-                    sink.receive(buffer);
-//                    System.out.println("packet out");
-                }
-
+        try {
+            sink.receive(buffer);
+            errorCount = 0;
+            if (eom) {
+                worker.cancel(true);
+                started = false;
+                ended();
             }
         } catch (Exception e) {
-            System.out.println("Error:" + e.getMessage());
-            timer.stop();
-            started = false;
-            try {
-                stream.close();
-            } catch (IOException ex) {
+            errorCount++;
+            if (errorCount == MAX_ERRORS) {
+                failed(e);
+                worker.cancel(true);
             }
-            e.printStackTrace();
-            failed(e);
         }
-    }
-
-    public void run() {
-        doProcess();
     }
 
     public Format[] getFormats() {
@@ -273,16 +265,77 @@ public class AudioPlayer extends AbstractSource implements TimerTask {
     }
 
     public void ended() {
-        state.lock();
-        try {
-            started = false;
-            if (eom) {
-                AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
-                this.sendEvent(evt);
+        closeAudioStream();
+        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+        this.sendEvent(evt);
+    }
+
+    private class Player implements Runnable {
+
+        public void run() {
+            doProcess1();
+        }
+    }
+
+    private class StartCommand implements Runnable {
+
+        @SuppressWarnings("static-access")
+        public void run() {
+            if (started) {
+                return;
             }
-            playerStopped.signalAll();
-        } finally {
-            state.unlock();
+            closeAudioStream();
+            seq = 0;
+            try {
+                if (file.endsWith("spx")) {
+                    stream = new SpeexAudioFileReader().getAudioInputStream(new URL(file));
+                } else {
+                    stream = AudioSystem.getAudioInputStream(new URL(file));
+                }
+                format = getFormat(stream);
+                if (format == null) {
+                    throw new IOException("Unsupported format: " + stream.getFormat());
+                }
+                packetSize = getPacketSize();
+                eom = false;
+
+                if (Thread.currentThread().interrupted()) {
+                    return;
+                }
+                worker = timer.scheduleAtFixedRate(new Player(), 0, period, TimeUnit.MILLISECONDS);
+                started = true;
+                started();
+            } catch (Exception e) {
+                logger.error("Exception in file " + file, e);
+                failed(e);
+            }
+        }
+    }
+
+    private class StopCommand implements Runnable {
+
+        @SuppressWarnings("static-access")
+        public void run() {
+            if (worker != null && started) {
+                worker.cancel(true);
+                started = false;
+            }
+            closeAudioStream();
+        }
+    }
+
+    private class ThreadFactoryImpl implements ThreadFactory {
+
+        private String name;
+
+        public ThreadFactoryImpl(String name) {
+            this.name = name;
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r, name);
+            t.setPriority(Thread.MIN_PRIORITY);
+            return t;
         }
     }
 }
