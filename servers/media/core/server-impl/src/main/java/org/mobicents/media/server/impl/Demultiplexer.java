@@ -15,8 +15,8 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
@@ -32,46 +32,80 @@ public class Demultiplexer extends AbstractSource {
      * 
      */
     private static final long serialVersionUID = -3391642385740571114L;
-    private Input input =null;
-    private HashMap<String, Output> branches = new HashMap<String, Output>();
-    //private final static ExecutorService demuxThreadPool = Executors.newCachedThreadPool(new Demultiplexer.ThreadFactoryImpl());
+    private Input input = null;
+    private ConcurrentHashMap<String, Output> branches = new ConcurrentHashMap<String, Output>();
+    private Format[] inputFormats;
     private Format[] formats;
     private boolean started = false;
-    private String upperComponent=null;
+    private String upperComponent = null;
+
     public AbstractSink getInput() {
         return input;
     }
 
     public Demultiplexer(Format[] formats) {
         super("Demultiplexer");
-        this.formats = formats;
-        this.input=new Input(upperComponent);
+        this.inputFormats = formats;
+        this.input = new Input(upperComponent);
         this.input.setWorkDataSink(this);
-   
-
     }
 
+    public void setFormats(Format[] formats) {
+        this.inputFormats = formats;
+    }
+    
+    public Format[] getFormats() {
+        return input.mediaStream != null ? 
+            input.mediaStream.getFormats() : null;
+        
+    }
+    
     @Override
     public void connect(MediaSink sink) {
-   
-        synchronized (branches) {
-            Output out = new Output(upperComponent);
-            branches.put(((AbstractSink) sink).getId(), out);
-            sink.connect(out);
-        }
+//        super.connect(sink);
+        Output out = new Output("");
+        branches.put(((AbstractSink) sink).getId(), out);
+        out.connect(sink);
+//        sink.connect(out);
+//        this.reassemblyFormats();
     }
 
     @Override
     public void disconnect(MediaSink sink) {
-        synchronized (branches) {
-            Output out = (Output) branches.remove(((AbstractSink) sink).getId());
-            if (out != null) {
-                sink.disconnect(out);
-                out.dispose();
-            }
+        Output out = (Output) branches.remove(((AbstractSink) sink).getId());
+        if (out != null) {
+            sink.disconnect(out);
+            out.dispose();
         }
+//        super.disconnect(sink);
     }
 
+    /**
+     * Reassemblies the list of used formats. This method is called each time
+     * when connected/disconnected source
+     */
+    private void reassemblyFormats() {
+        ArrayList list = new ArrayList();
+        Collection<Output> sinks = branches.values();
+        for (Output output : sinks) {
+            Format[] fmts = output.sink != null ? output.sink.getFormats() : null;
+            if (fmts != null) {
+                for (Format format : fmts) {
+                    if (!list.contains(format)) {
+                        list.add(format);
+                    }
+                }
+            }
+        }
+
+        if (list.size() > 0) {
+            formats = new Format[list.size()];
+            list.toArray(formats);
+        } else {
+            formats = null;
+        }
+    }
+    
     @Override
     public void dispose() {
         super.dispose();
@@ -93,7 +127,7 @@ public class Demultiplexer extends AbstractSource {
     private class Input extends AbstractSink {
 
         public Input(String parent) {
-            super("Demultiplexer.Input:"+parent);
+            super("Demultiplexer.Input:" + parent);
         }
 
         public boolean isAcceptable(Format fmt) {
@@ -104,48 +138,30 @@ public class Demultiplexer extends AbstractSource {
             if (!started) {
                 return;
             }
-            synchronized (branches) {
-                boolean transffered = false;
-                Collection<Output> streams = branches.values();
-                for (Output stream : streams) {
-                    transffered = true;
-                    stream.push((Buffer) buffer.clone());
-                    stream.run();
-                //demuxThreadPool.submit(stream);
-                }
-                if(transffered)
-                {
-                	try{
-                		super.octetsReceived(buffer.getLength());
-                	}catch(Exception e)
-                	{
-                		
-                	}
-                }
-                if (!transffered) {
-                    CachedBuffersPool.release(buffer);
-                }
-                
-                
+            Collection<Output> streams = branches.values();
+            for (Output stream : streams) {
+                stream.push((Buffer) buffer.clone());
             }
+            buffer.dispose();
         }
 
         public Format[] getFormats() {
-            // return mediaStream != null ? mediaStream.getFormats() : null;
-            return formats;
+            return inputFormats;
         }
     }
 
-    private class Output extends AbstractSource implements Runnable {
+    private class Output extends AbstractSource {
 
         public Output(String parent) {
-            super("Demultiplexer.Output:"+parent);
+            super("Demultiplexer.Output:" + parent);
         }
-        private ArrayList<Buffer> buffers = new ArrayList();
 
         protected void push(Buffer buffer) {
-            synchronized (buffers) {
-                buffers.add(buffer);
+            try {
+                if (sink.isAcceptable(buffer.getFormat())) {
+                    sink.receive(buffer);
+                }
+            } catch (NullPointerException e) {
             }
         }
 
@@ -159,22 +175,9 @@ public class Demultiplexer extends AbstractSource {
         public void stop() {
         }
 
-        public void run() {
-            if (sink != null && !buffers.isEmpty()) {
-                Buffer buffer = buffers.remove(0);
-                if (sink.isAcceptable(buffer.getFormat())) {
-                    sink.receive(buffer);
-                }
-            }
-        }
-
         public Format[] getFormats() {
-            return input.getFormats();
+            return formats;
         }
     }
 
-    public Format[] getFormats() {
-        // return input.getFormats();
-        return formats;
-    }
 }
