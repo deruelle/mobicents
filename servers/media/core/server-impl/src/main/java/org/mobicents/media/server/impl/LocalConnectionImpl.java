@@ -18,11 +18,10 @@ package org.mobicents.media.server.impl;
 import java.io.IOException;
 
 import javax.sdp.SdpException;
-import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
-import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
@@ -38,7 +37,6 @@ public class LocalConnectionImpl extends BaseConnection {
     private SessionDescription localSDP;
     private SessionDescription remoteSDP;
     private LocalConnectionImpl otherConnection;
-    private SdpFactory sdpFactory = SdpFactory.getInstance();
 
     /**
      * Creates a new instance of RtpConnectionImpl.
@@ -51,8 +49,6 @@ public class LocalConnectionImpl extends BaseConnection {
      */
     public LocalConnectionImpl(Endpoint endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
-        logger = Logger.getLogger(LocalConnectionImpl.class);
-        setState(ConnectionState.HALF_OPEN);
     }
 
     /**
@@ -70,56 +66,7 @@ public class LocalConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#getLocalDescriptor();
      */
     public String getLocalDescriptor() {
-        try {
-            super.lockState();
-            if (state == ConnectionState.NULL || state == ConnectionState.CLOSED) {
-                throw new IllegalStateException("State is " + state);
-            }
-
-            String userName = "MediaServer";
-            long sessionID = System.currentTimeMillis() & 0xffffff;
-            long sessionVersion = sessionID;
-
-            String networkType = javax.sdp.Connection.IN;
-            String addressType = "EPN";
-            String address = endpoint.getLocalName();
-            try {
-                localSDP = sdpFactory.createSessionDescription();
-                localSDP.setVersion(sdpFactory.createVersion(0));
-                localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType, address));
-                localSDP.setSessionName(sdpFactory.createSessionName("session"));
-                localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, address));
-
-            /*
-             * Vector descriptions = new Vector(); // encode formats HashMap
-             * fmts = codecs != null ? codecs : audioFormats; Object[]
-             * payloads = getPayloads(fmts).toArray(); int[] formats = new
-             * int[payloads.length]; for (int i = 0; i < formats.length;
-             * i++) { formats[i] = ((Integer) payloads[i]).intValue(); } //
-             * generate media descriptor MediaDescription md =
-             * sdpFactory.createMediaDescription("audio", 0, 1, "RTP/AVP",
-             * formats); boolean g729 = false; // set attributes for formats
-             * Vector attributes = new Vector(); for (int i = 0; i <
-             * formats.length; i++) { Format format = (Format) fmts.get(new
-             * Integer(formats[i]));
-             * attributes.add(sdpFactory.createAttribute("rtpmap",
-             * format.toString())); if
-             * (format.getEncoding().contains("g729")) { g729 = true; } } if
-             * (g729) { attributes.add(sdpFactory.createAttribute("fmtp",
-             * "18 annexb=no")); } // generate descriptor
-             * md.setAttributes(attributes); descriptions.add(md);
-             * localSDP.setMediaDescriptions(descriptions);
-             */
-            } catch (SdpException e) {
-                logger.error("Could not create descriptor", e);
-            }
-            return localSDP.toString();
-        } catch (InterruptedException e) {
-            logger.error("Could not create descriptor", e);
-            return null;
-        } finally {
-            super.releaseState();
-        }
+        return null;
     }
 
     /**
@@ -147,7 +94,7 @@ public class LocalConnectionImpl extends BaseConnection {
             }
             setState(ConnectionState.OPEN);
         } catch (InterruptedException e) {
-            logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
+//            logger.error("Failed to lock connection due to exception, possibly server is shutting down.");
             e.printStackTrace();
             //FIXME: baranowb: shouldnt we close here instead?
             throw new ResourceUnavailableException(e);
@@ -164,49 +111,67 @@ public class LocalConnectionImpl extends BaseConnection {
      * @see org.mobicents.media.server.spi.Connection#setRemoteDescriptor();
      */
     public void setOtherParty(Connection other) throws IOException {
+        if (other == null) {
+            throw new IllegalArgumentException("Other party can not be null");
+        }
+        if (state == ConnectionState.CLOSED) {
+            throw new IllegalStateException("Connection is closed");
+        }
+        if (otherConnection == other) {
+            return;
+        }
         try {
-            this.lockState();
-            if (other == null) {
-                throw new IllegalArgumentException("Other party can not be null");
-            }
-
-            if (state == ConnectionState.CLOSED) {
-                throw new IllegalStateException("Connection is closed");
-            }
-
-            if (otherConnection == other) {
-                return;
-            }
-
-            this.otherConnection = (LocalConnectionImpl) other;
-            demux.getInput().connect(otherConnection.mux.getOutput());
-            if (otherConnection.getMode() == ConnectionMode.SEND_ONLY || otherConnection.getMode() == ConnectionMode.SEND_RECV) {
-                otherConnection.mux.getOutput().start();
+            otherConnection = (LocalConnectionImpl) other;
+            if (otherConnection.endpoint.getPrimarySink(otherConnection) != null) {
+                endpoint.allocateMediaSources(this, otherConnection.endpoint.getFormats());
             }
             
-            if (getMode() == ConnectionMode.RECV_ONLY || getMode() == ConnectionMode.SEND_RECV) {
-                demux.start();
-            }    
+            if (endpoint.getPrimarySink(this) != null) {
+                otherConnection.endpoint.allocateMediaSources(other, endpoint.getPrimarySink(this).getFormats());
+            }
+            
+            MediaSink sink1 = endpoint.getPrimarySink(this);
+            MediaSource source1 = otherConnection.endpoint.getPrimarySource(otherConnection);
+            
+            if (sink1 != null && source1 != null) {
+                sink1.connect(source1);
+                source1.start();
+            }
+
+            MediaSink sink2 = otherConnection.endpoint.getPrimarySink(otherConnection);
+            MediaSource source2 = endpoint.getPrimarySource(this);
+            
+            if (sink2 != null && source2 != null) {
+                sink2.connect(source2);
+                source2.start();
+            }
+            
             setState(ConnectionState.OPEN);
-            otherConnection.setOtherParty(this);
-        } catch (InterruptedException e) {
-            logger.error("Could not set other party", e);
-            close();
+            otherConnection.setState(ConnectionState.OPEN);
         } catch (Exception e) {
-            logger.error("Could not set other party", e);
+            e.printStackTrace();
             throw new IOException(e.getMessage());
-        } finally {
-            this.releaseState();
         }
     }
 
     @Override
-    public void close() {
-        LocalConnectionImpl other = otherConnection;
+    protected void close() {
+        endpoint.connections.remove(id);
         if (otherConnection != null) {
+            MediaSink sink = endpoint.getPrimarySink(this);
+            MediaSource source = otherConnection.endpoint.getPrimarySource(otherConnection);
+
+            if (sink != null && source != null) {
+                source.disconnect(sink);
+            }
+            
+            sink = otherConnection.endpoint.getPrimarySink(otherConnection);
+            source = endpoint.getPrimarySource(this);
+            
+            if (sink != null && source != null) {
+                sink.disconnect(source);
+            }
             otherConnection = null;
-            demux.getInput().disconnect(other.mux.getOutput());
-            other.close();
         }
         super.close();
     }
@@ -218,12 +183,11 @@ public class LocalConnectionImpl extends BaseConnection {
      */
     @Override
     public String toString() {
-        return "(connectionID=" + id + ", endpoint=" + endpointName + ", state=" + state + ")";
+        return "(LocalConnection, ID=" + id + ", endpoint=" + endpointName + ", state=" + state + ")";
     }
 
     public void error(Exception e) {
         endpoint.deleteConnection(id);
-        logger.error("Facility error", e);
     }
 
     public String getOtherEnd() throws IllegalArgumentException {
@@ -233,32 +197,42 @@ public class LocalConnectionImpl extends BaseConnection {
                 return otherConnection.getEndpoint().getLocalName();
             }
         } catch (NullPointerException e) {
-            logger.error("Could not get other end", e);
+//            logger.error("Could not get other end", e);
         }
         return null;
     }
-    
+
+    public boolean isGatherStats() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     public void setGatherStats(boolean gatherStats) {
-		super.gatherStats = gatherStats;
-		super.packetsReceived=0;
-		super.packetsSent=0;
-		super.octetsReceived=0;
-		super.octetsSent=0;
-		super.interArrivalJitter=0;
-		super.packetsLost=0;
-		if(super.gatherStats)
-		{
-			//We have to put ourselves into path
-			this.demux.setWorkDataSink(this);
-			this.mux.setWorkDataSink(this);
-		}else
-		{
-			this.demux.setWorkDataSink(null);
-			this.mux.setWorkDataSink(null);
-		}
-		
-	}
-    
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getPacketsSent() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getPacketsReceived() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getOctetsReceived() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getOctetsSent() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getInterArrivalJitter() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public int getPacketsLost() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 
 
