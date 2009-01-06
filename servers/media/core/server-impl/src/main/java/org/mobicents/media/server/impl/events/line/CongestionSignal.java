@@ -30,7 +30,7 @@ package org.mobicents.media.server.impl.events.line;
 import org.mobicents.media.server.impl.AbstractSignal;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.server.impl.MediaResource;
 
 /**
  *
@@ -41,12 +41,17 @@ public class CongestionSignal extends AbstractSignal {
     @Override
     public void apply(BaseConnection connection) {
         BaseEndpoint endpoint = (BaseEndpoint) connection.getEndpoint();
-        CongestionToneGen generator = (CongestionToneGen) endpoint.getMediaSource(Generator.AUDIO_PLAYER, connection);
+        CongestionToneGen generator = (CongestionToneGen) getMediaSource(MediaResource.AUDIO_PLAYER, connection);
         generator.start();
     }
 
     @Override
     public void apply(BaseEndpoint endpoint) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void cancel() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
