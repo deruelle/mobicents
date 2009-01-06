@@ -47,172 +47,192 @@ import EDU.oswego.cs.dl.util.concurrent.QueuedExecutor;
  */
 public class MsProviderImpl implements MsProvider, Serializable {
 
-	private transient static Logger logger = Logger.getLogger(MsProviderImpl.class);
+    private transient static Logger logger = Logger.getLogger(MsProviderImpl.class);
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2166483960453025777L;
+    protected CopyOnWriteArrayList<MsSessionListener> sessionListeners = new CopyOnWriteArrayList<MsSessionListener>();
+    protected CopyOnWriteArrayList<MsConnectionListener> connectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
+    protected CopyOnWriteArrayList<MsResourceListener> resourceListeners = new CopyOnWriteArrayList<MsResourceListener>();
+    protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
+    protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
+    protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
+    protected static transient ExecutorService pool = Executors.newFixedThreadPool(10, new ThreadFactoryImpl());
+    private transient CopyOnWriteArrayList<ExecutorService> queues = new CopyOnWriteArrayList();
+    private transient EventQueueThreadFactory threadFactory = new EventQueueThreadFactory();
+    
+    //private static transient QueuedExecutor eventQueue = new QueuedExecutor();
+    /** Creates a new instance of MsProviderImpl */
+    public MsProviderImpl() {
+        for (int i = 0; i < 10; i++) {
+            queues.add(Executors.newSingleThreadExecutor(threadFactory));
+        }
+    }
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2166483960453025777L;
-	protected CopyOnWriteArrayList<MsSessionListener> sessionListeners = new CopyOnWriteArrayList<MsSessionListener>();
-	protected CopyOnWriteArrayList<MsConnectionListener> connectionListeners = new CopyOnWriteArrayList<MsConnectionListener>();
-	protected CopyOnWriteArrayList<MsResourceListener> resourceListeners = new CopyOnWriteArrayList<MsResourceListener>();
-	protected CopyOnWriteArrayList<MsLinkListener> linkListeners = new CopyOnWriteArrayList<MsLinkListener>();
-	protected CopyOnWriteArrayList<MsNotificationListener> eventListeners = new CopyOnWriteArrayList<MsNotificationListener>();
-	protected CopyOnWriteArrayList<MsSession> sessions = new CopyOnWriteArrayList<MsSession>();
-	protected static transient ExecutorService pool = Executors.newFixedThreadPool(10, new ThreadFactoryImpl());
-	//private static transient QueuedExecutor eventQueue = new QueuedExecutor();
+    public synchronized MsSession createSession() {
+        MsSession session = new MsSessionImpl(this, allocateQueue());
+        sessions.add(session);
+        return session;
+    }
 
-	/** Creates a new instance of MsProviderImpl */
-	public MsProviderImpl() {
+    public MsEventFactory getEventFactory() {
+        return new MsEventFactoryImpl();
+    }
 
-	}
+    private ExecutorService allocateQueue() {
+        if (!queues.isEmpty()) {
+            return queues.remove(0);
+        }
+        return Executors.newSingleThreadExecutor(threadFactory);
+    }
+    
+    protected void deallocateQueue(ExecutorService queue) {
+        queues.add(queue);
+    }
+    
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.mscontrol.MsProvider#addSessionListener(MsSessionListener).
+     */
+    public void addSessionListener(MsSessionListener listener) {
+        sessionListeners.add(listener);
+    }
 
-	public MsSession createSession() {
-		MsSession call = new MsSessionImpl(this);
-		sessions.add(call);
+    /**
+     * (Non Java-doc).
+     * 
+     * @see org.mobicents.mscontrol.MsProvider#removeSessionListener(MsSessionListener).
+     */
+    public void removeSessionListener(MsSessionListener listener) {
+        sessionListeners.remove(listener);
+    }
 
-		return call;
-	}
+    public void addResourceListener(MsResourceListener listener) {
+        resourceListeners.add(listener);
+    }
 
-	public MsEventFactory getEventFactory() {
-		return new MsEventFactoryImpl();
-	}
+    public void removeResourceListener(MsResourceListener listener) {
+        resourceListeners.remove(listener);
+    }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.mscontrol.MsProvider#addSessionListener(MsSessionListener).
-	 */
-	public void addSessionListener(MsSessionListener listener) {
-		sessionListeners.add(listener);
-	}
+    public void addConnectionListener(MsConnectionListener listener) {
+        connectionListeners.add(listener);
+    }
 
-	/**
-	 * (Non Java-doc).
-	 * 
-	 * @see org.mobicents.mscontrol.MsProvider#removeSessionListener(MsSessionListener).
-	 */
-	public void removeSessionListener(MsSessionListener listener) {
-		sessionListeners.remove(listener);
-	}
+    public void removeConnectionListener(MsConnectionListener listener) {
+        connectionListeners.remove(listener);
+    }
 
-	public void addResourceListener(MsResourceListener listener) {
-		resourceListeners.add(listener);
-	}
+    /**
+     * Add a termination listener to all terminations.
+     * 
+     * @param MsLinkListener
+     *            object that receives the specified events.
+     */
+    public void addLinkListener(MsLinkListener listener) {
+        linkListeners.add(listener);
+    }
 
-	public void removeResourceListener(MsResourceListener listener) {
-		resourceListeners.remove(listener);
-	}
+    /**
+     * Removes termination listener
+     * 
+     * @param MsLinkListener
+     *            object that receives the specified events.
+     */
+    public void removeLinkListener(MsLinkListener listener) {
+        linkListeners.remove(listener);
+    }
 
-	public void addConnectionListener(MsConnectionListener listener) {
-		connectionListeners.add(listener);
-	}
+    public void addNotificationListener(MsNotificationListener listener) {
+        eventListeners.add(listener);
+    }
 
-	public void removeConnectionListener(MsConnectionListener listener) {
-		connectionListeners.remove(listener);
-	}
+    public void removeNotificationListener(MsNotificationListener listener) {
+        eventListeners.remove(listener);
+    }
 
-	/**
-	 * Add a termination listener to all terminations.
-	 * 
-	 * @param MsLinkListener
-	 *            object that receives the specified events.
-	 */
-	public void addLinkListener(MsLinkListener listener) {
-		linkListeners.add(listener);
-	}
+    public MsConnection getMsConnection(String msConnectionId) {
 
-	/**
-	 * Removes termination listener
-	 * 
-	 * @param MsLinkListener
-	 *            object that receives the specified events.
-	 */
-	public void removeLinkListener(MsLinkListener listener) {
-		linkListeners.remove(listener);
-	}
+        for (MsSession e : sessions) {
+            for (MsConnection c : e.getConnections()) {
+                if (c.getId().equals(msConnectionId)) {
+                    return c;
+                }
+            }
+        }
+        return null;
+    }
 
-	public void addNotificationListener(MsNotificationListener listener) {
-		eventListeners.add(listener);
-	}
+    public List<MsConnection> getMsConnections(String endpointName) {
+        List<MsConnection> msConnectionList = new ArrayList<MsConnection>();
+        for (MsSession e : sessions) {
+            for (MsConnection c : e.getConnections()) {
+                MsEndpoint endpoint = c.getEndpoint();
+                if (endpoint != null && endpoint.getLocalName().equals(endpointName)) {
+                    msConnectionList.add(c);
+                }
+            }
+        }
+        return msConnectionList;
+    }
 
-	public void removeNotificationListener(MsNotificationListener listener) {
-		eventListeners.remove(listener);
-	}
+    public List<MsLink> getMsLinks(String endpointName) {
+        List<MsLink> msLinkList = new ArrayList<MsLink>();
+        for (MsSession e : sessions) {
+            for (MsLink c : e.getLinks()) {
+                MsEndpoint[] endpoint = c.getEndpoints();
 
-	public MsConnection getMsConnection(String msConnectionId) {
+                if ((endpoint[0] != null && endpoint[0].getLocalName().equals(endpointName)) || (endpoint[1] != null && endpoint[1].getLocalName().equals(endpointName))) {
+                    msLinkList.add(c);
+                }
+            }
+        }
+        return msLinkList;
+    }
 
-		for (MsSession e : sessions) {
-			for (MsConnection c : e.getConnections()) {
-				if (c.getId().equals(msConnectionId)) {
-					return c;
-				}
-			}
-		}
-		return null;
-	}
+    protected static void submit(Runnable task) {
+        pool.submit(task);
+    }
 
-	public List<MsConnection> getMsConnections(String endpointName) {
-		List<MsConnection> msConnectionList = new ArrayList<MsConnection>();
-		for (MsSession e : sessions) {
-			for (MsConnection c : e.getConnections()) {
-				MsEndpoint endpoint = c.getEndpoint();
-				if (endpoint != null && endpoint.getLocalName().equals(endpointName)) {
-					msConnectionList.add(c);
-				}
-			}
-		}
-		return msConnectionList;
-	}
+    //protected static synchronized void sendEvent(Runnable event) {
+    //	try {
+    //		eventQueue.execute(event);
+    //	} catch (InterruptedException e) {
+    //		logger.error("Firing of event failed " + event, e);
+    //	}
+    //}
+    static class ThreadFactoryImpl implements ThreadFactory {
 
-	public List<MsLink> getMsLinks(String endpointName) {
-		List<MsLink> msLinkList = new ArrayList<MsLink>();
-		for (MsSession e : sessions) {
-			for (MsLink c : e.getLinks()) {
-				MsEndpoint[] endpoint = c.getEndpoints();
+        final ThreadGroup group;
+        static final AtomicInteger msProviderPoolNumber = new AtomicInteger(1);
+        final AtomicInteger threadNumber = new AtomicInteger(1);
+        final String namePrefix;
 
-				if ((endpoint[0] != null && endpoint[0].getLocalName().equals(endpointName))
-						|| (endpoint[1] != null && endpoint[1].getLocalName().equals(endpointName))) {
-					msLinkList.add(c);
-				}
-			}
-		}
-		return msLinkList;
-	}
+        ThreadFactoryImpl() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "MsProviderImpl-FixedThreadPool-" + msProviderPoolNumber.getAndIncrement() + "-thread-";
+        }
 
-	protected static  void submit(Runnable task) {
-		pool.submit(task);
-	}
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
+    }
+    
+    private class EventQueueThreadFactory implements ThreadFactory  {
 
-	//protected static synchronized void sendEvent(Runnable event) {
-	//	try {
-	//		eventQueue.execute(event);
-	//	} catch (InterruptedException e) {
-	//		logger.error("Firing of event failed " + event, e);
-	//	}
-	//}
-
-	static class ThreadFactoryImpl implements ThreadFactory {
-
-		final ThreadGroup group;
-		static final AtomicInteger msProviderPoolNumber = new AtomicInteger(1);
-		final AtomicInteger threadNumber = new AtomicInteger(1);
-		final String namePrefix;
-
-		ThreadFactoryImpl() {
-			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			namePrefix = "MsProviderImpl-FixedThreadPool-" + msProviderPoolNumber.getAndIncrement() + "-thread-";
-		}
-
-		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
-			if (t.isDaemon())
-				t.setDaemon(false);
-			if (t.getPriority() != Thread.NORM_PRIORITY)
-				t.setPriority(Thread.NORM_PRIORITY);
-			return t;
-		}
-
-	}
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r, "MsSessionEventQueue");
+            return t;
+        }
+    }
 }

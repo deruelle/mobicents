@@ -24,8 +24,8 @@ public abstract class MsActionPerformer implements Runnable{
     public void submit(Runnable r)
     {
     	//No need to sync, since we schedule r first.
-    	this.taskList.add(r);
-    	MsProviderImpl.submit(this);
+    	//this.taskList.add(r);
+    	MsProviderImpl.submit(r);
     }
 
 

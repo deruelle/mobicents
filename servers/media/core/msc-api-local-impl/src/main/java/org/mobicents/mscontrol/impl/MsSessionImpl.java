@@ -19,6 +19,7 @@ import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.concurrent.ExecutorService;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsLink;
 import org.mobicents.mscontrol.MsLinkMode;
@@ -46,12 +47,14 @@ public class MsSessionImpl extends MsActionPerformer implements MsSession {
     protected ArrayList<MsLink> links = new ArrayList<MsLink>();
     protected ArrayList<MsConnection> connections = new ArrayList<MsConnection>();
     private MsSessionState state;
+    private transient ExecutorService eventQueue;
 
     /**
      * Creates a new instance of MsSessionImpl
      */
-    public MsSessionImpl(MsProviderImpl provider) {
+    public MsSessionImpl(MsProviderImpl provider, ExecutorService eventQueue) {
         this.provider = provider;
+        this.eventQueue = eventQueue;
         setState(MsSessionState.IDLE, MsSessionEventCause.SESSION_CREATED, this);
     }
 
@@ -111,10 +114,13 @@ public class MsSessionImpl extends MsActionPerformer implements MsSession {
      */
     private void sendEvent(MsSessionEventID eventID, MsSessionEventCause eventCause, Object causeObject) {
         MsSessionEventImpl evt = new MsSessionEventImpl(this, eventID, eventCause, causeObject);
-        //MsProviderImpl.sendEvent(evt);
-        super.submit(evt);
+        eventQueue.submit(evt);
     }
 
+    protected void sendEvent(Runnable evt) {
+        eventQueue.submit(evt);
+    }
+    
     /**
      * Modify state of the session.
      * 
@@ -133,6 +139,7 @@ public class MsSessionImpl extends MsActionPerformer implements MsSession {
                     break;
                 case INVALID:
                     provider.sessions.remove(this);
+                    provider.deallocateQueue(eventQueue);
                     sendEvent(MsSessionEventID.SESSION_INVALID, eventCause, causeObject);
                     break;
             }
@@ -165,14 +172,14 @@ public class MsSessionImpl extends MsActionPerformer implements MsSession {
     	return this.links;
     }
 
-    protected void removeConnection(MsConnection msConnection) {
+    protected synchronized void removeConnection(MsConnection msConnection) {
         connections.remove(msConnection);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
         }
     }
 
-    protected void removeLink(MsLink link) {
+    protected synchronized void removeLink(MsLink link) {
         links.remove(link);
         if (connections.isEmpty() && links.isEmpty()) {
             setState(MsSessionState.INVALID, MsSessionEventCause.CONNECTION_DROPPED, null);
