@@ -22,6 +22,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
@@ -29,37 +30,41 @@ import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
  * @author Oleg Kulikov
  */
 public class RtpFactory implements Serializable {
-	
- 
 
-    private InetAddress bindAddress;
-    private Integer packetizationPeriod;
+    private Integer period;
     private Integer jitter;
+    
+    private InetAddress bindAddress;
     private int lowPortNumber;
     private int highPortNumber;
+    
     private String stunServerAddress;
     private int stunServerPort;
     private boolean useStun = false;
     private boolean usePortMapping = true;
     private String publicAddressFromStun = null;
-    private HashMap<Integer, Format> audioFormats;
-    private transient Logger logger = Logger.getLogger(RtpFactory.class);
     
+    private HashMap<Integer, Format> audioFormats;
+    
+    private transient Logger logger = Logger.getLogger(RtpFactory.class);
+
     public RtpFactory() {
         try {
             bindAddress = InetAddress.getLocalHost();
         } catch (Exception e) {
-        	logger.error("Failed to get the IP address for host", e);
+            logger.error("Failed to get the IP address for host", e);
         }
         lowPortNumber = 1024;
         highPortNumber = 65535;
-        packetizationPeriod = 20;
+
+        period = 20;
         jitter = 80;
-        
+
         audioFormats = new HashMap<Integer, Format>();
         audioFormats.put(0, new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
         audioFormats.put(8, new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1));
     }
+
     /**
      * Gets the IP address to which trunk is bound.
      * All endpoints of the trunk use this address for RTP connection.
@@ -129,7 +134,7 @@ public class RtpFactory implements Serializable {
      * @return packetion period for media in milliseconds.
      */
     public Integer getPacketizationPeriod() {
-        return packetizationPeriod;
+        return period;
     }
 
     /**
@@ -143,7 +148,7 @@ public class RtpFactory implements Serializable {
      * @param period the value of the packetization period in milliseconds.
      */
     public void setPacketizationPeriod(Integer period) {
-        packetizationPeriod = period;
+        this.period = period;
     }
 
     /**
@@ -254,7 +259,7 @@ public class RtpFactory implements Serializable {
     public HashMap<Integer, Format> getAudioFormats() {
         return audioFormats;
     }
-    
+
     /**
      * Sets a list of supported RTPFormats.
      * 
@@ -263,28 +268,24 @@ public class RtpFactory implements Serializable {
     public void setAudioFormats(HashMap<Integer, Format> formats) {
         this.audioFormats = formats;
     }
-    
+
     /**
      * Constructs new RTP socket.
      * 
      * @return the RTPSocketInstance.
      * @throws java.net.SocketException
      */
-    public RtpSocket getRTPSocket() throws SocketException {
+    public RtpSocket getRTPSocket(BaseEndpoint endpoint) throws SocketException {
         RtpSocketImpl rtpSocket = null;
         if (this.isUseStun()) {
-            rtpSocket = new RtpSocketImpl(
-                packetizationPeriod, jitter, stunServerAddress, stunServerPort,
-                usePortMapping, publicAddressFromStun);
+            rtpSocket = new RtpSocketImpl(period, jitter, stunServerAddress, stunServerPort,
+                    usePortMapping, publicAddressFromStun);
         } else {
-            rtpSocket = new RtpSocketImpl(packetizationPeriod,jitter);
+            rtpSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
         }
-        
-        int port = rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
-        rtpSocket.getRtpMap().putAll(audioFormats);
-        if (logger.isDebugEnabled()) {
-            logger.debug(this + " Bound RTP socket to " + getBindAddress() + ":" + port);
-        }
+
+        rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
+//        rtpSocket.getRtpMap().putAll(audioFormats);
         return rtpSocket;
     }
 }
