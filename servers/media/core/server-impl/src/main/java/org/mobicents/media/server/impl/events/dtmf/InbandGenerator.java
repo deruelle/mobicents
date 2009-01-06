@@ -17,12 +17,13 @@ import java.util.TimerTask;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.AbstractSource;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class InbandGenerator {
+public class InbandGenerator extends AbstractSource {
 
     private final static AudioFormat LINEAR = new AudioFormat(
             AudioFormat.LINEAR, 8000, 16, 1);
@@ -51,7 +52,11 @@ public class InbandGenerator {
     private int sizeInBytes;
     private int packetPeriod;
 
-    public InbandGenerator(String tone, int packetPeriod) {
+    public InbandGenerator(String name) {
+        super(name);
+    }
+    
+/*    public InbandGenerator(String tone, int packetPeriod) {
         this.packetPeriod = packetPeriod;
         //codec = CodecLocator.getCodec(Codec.LINEAR_AUDIO, Codec.PCMU);
 
@@ -73,7 +78,7 @@ public class InbandGenerator {
             data[k++] = (byte) (s >> 8);
         }
     }
-
+*/
     public static void print(byte[] data) {
         System.out.println("--------------------");
         for (int i = 0; i < data.length; i++) {
@@ -158,5 +163,9 @@ public class InbandGenerator {
         public void run() {
            // transferHandler.transferData(stream);
         }
+    }
+
+    public Format[] getFormats() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

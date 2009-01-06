@@ -27,14 +27,14 @@ public class DtmfBuffer implements Serializable {
     private StringBuffer buffer = new StringBuffer();
     private String mask = "[0-9, A,B,C,D,*,#]";
     
-    private BaseDtmfDetector detector;
+    private DtmfDetector detector;
     
     private long lastActivity = System.currentTimeMillis();
     private String lastSymbol;
     
     private transient Logger logger = Logger.getLogger(DtmfBuffer.class);
     
-    public DtmfBuffer(BaseDtmfDetector detector) {
+    public DtmfBuffer(DtmfDetector detector) {
         this.detector = detector;
     }
     

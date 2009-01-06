@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl.events.dtmf;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
@@ -52,13 +51,12 @@ public class InbandDetector extends AbstractSink {
     private int offset = 0;
     private Filter filter = null;
     private boolean started = false;
-    private BaseDtmfDetector detector;
-    private transient Logger logger = Logger.getLogger(InbandDetector.class);
-
+    private DtmfDetector detector;
+    
     /**
      * Creates new instance of Detector.
      */
-    public InbandDetector(BaseDtmfDetector detector) {
+    public InbandDetector(DtmfDetector detector) {
     	super("InbandDetector");
         this.detector = detector;
         localBuffer = new byte[16 * TONE_DURATION];
@@ -89,7 +87,6 @@ public class InbandDetector extends AbstractSink {
      * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
      */
     public void receive(Buffer buffer) {
-        
         byte[] data = (byte[]) buffer.getData();
         int len = Math.min(localBuffer.length - offset, data.length);
         System.arraycopy(data, 0, localBuffer, offset, len);

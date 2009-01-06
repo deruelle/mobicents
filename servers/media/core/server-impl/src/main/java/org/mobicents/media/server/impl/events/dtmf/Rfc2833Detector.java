@@ -32,10 +32,10 @@ public class Rfc2833Detector extends AbstractSink {
     private final static String[] TONE = new String[]{
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A", "B", "C", "D"
     };
-    private BaseDtmfDetector detector;
+    private DtmfDetector detector;
     private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
-    public Rfc2833Detector(BaseDtmfDetector detector) {
+    public Rfc2833Detector(DtmfDetector detector) {
     	super("Rfc2833Detector");
         this.detector = detector;
     }
@@ -64,6 +64,7 @@ public class Rfc2833Detector extends AbstractSink {
     }
 
     public boolean isAcceptable(Format format) {
-        return DTMF.matches(format);
+        //System.out.println("Checking format " + format);
+        return DTMF.equals(format);
     }
 }
