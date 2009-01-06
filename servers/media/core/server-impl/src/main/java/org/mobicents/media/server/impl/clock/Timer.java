@@ -14,6 +14,11 @@
 package org.mobicents.media.server.impl.clock;
 
 import java.io.Serializable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -23,13 +28,34 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Timer implements Serializable, Runnable {
 
-	//public final static Quartz quartz = new Quartz();
+    private final static int CORE_POOL_SIZE = 25;
+    
+    private transient static ScheduledThreadPoolExecutor threadPool = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(10);
+    private transient static TimerThreadFactory threadFactory = new TimerThreadFactory();
+    
+    private transient ScheduledFuture task;
+    private transient TimerTask handler;
 
-	private TimerTask handler;
+    static {
+        threadPool.setThreadFactory(threadFactory);
+        threadPool.setCorePoolSize(CORE_POOL_SIZE);
+        threadPool.prestartAllCoreThreads();
+    }
+    /**
+     * Creates new instance of the timer.
+     */
+    public Timer() {
+    }
 
+
+    /**
+     * Starts execution;
+     */
 	private volatile boolean stopped = true;
 	private transient Thread worker;
-
+    /**
+     * Terminates execution.
+     */
 	private long lastTick;
 	private long next;
 
@@ -38,8 +64,6 @@ public class Timer implements Serializable, Runnable {
 	/**
 	 * Creates new instance of the timer.
 	 */
-	public Timer() {
-	}
 
 	public void setListener(TimerTask handler) {
 		this.handler = handler;
@@ -129,4 +153,9 @@ public class Timer implements Serializable, Runnable {
 		}
 
 	}
+
+    public void run2() {
+        handler.run();
+    }
+    
 }

@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 
 /**
@@ -37,10 +34,8 @@ public class Quartz implements Serializable {
     private boolean active = false;
     private List<Timer> timers = Collections.synchronizedList(new ArrayList());
 
-    private java.util.Timer q = new java.util.Timer();
-    private TimerTask sync = new Sync();
-    
-    private ScheduledExecutorService quartz = Executors.newScheduledThreadPool(150);
+    //private java.util.Timer q = new java.util.Timer();
+    //private TimerTask sync = new Sync();
     
     protected boolean testMode = false;
     protected long errors = 0;
@@ -54,7 +49,7 @@ public class Quartz implements Serializable {
      * Creates new instance of Quartz.
      */
     protected Quartz() {
-        q.scheduleAtFixedRate(sync, HEART_BEAT, HEART_BEAT);
+        //q.scheduleAtFixedRate(sync, HEART_BEAT, HEART_BEAT);
     }
 
     private class Sync extends TimerTask {
@@ -99,7 +94,6 @@ public class Quartz implements Serializable {
     private void heartBeat() {
         synchronized (timers) {
             for (Timer timer : timers) {
-                timer.heartBeat();
             }
         }
         
