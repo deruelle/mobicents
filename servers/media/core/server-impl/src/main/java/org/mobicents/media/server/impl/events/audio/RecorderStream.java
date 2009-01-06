@@ -26,89 +26,88 @@ import org.mobicents.media.Buffer;
  */
 public class RecorderStream extends InputStream {
 
-	protected List<Buffer> buffers = new CopyOnWriteArrayList();
-	protected int available = 0;
-	protected Semaphore semaphore = new Semaphore(0);
-	protected boolean blocked = false;
-	private boolean eom = false;
+    protected List<Buffer> buffers = new CopyOnWriteArrayList();
+    protected int available = 0;
+    protected Semaphore semaphore = new Semaphore(0);
+    protected boolean blocked = false;
+    private boolean eom = false;
 
-	public RecorderStream() {
-	}
+    public RecorderStream() {
+    }
 
-	@Override
-	public int available() {
-		return available;
-	}
+    @Override
+    public int available() {
+        return available;
+    }
 
-	@Override
-	public int read() throws IOException {
+    @Override
+    public int read() throws IOException {
 
-		if (eom) {
+        if (eom) {
 
-			return -1;
-		}
+            return -1;
+        }
 
-		if (buffers.isEmpty()) {
-			blocked = true;
-			try {
+        if (buffers.isEmpty()) {
+            blocked = true;
+            try {
 
-				semaphore.acquire();
+                semaphore.acquire();
 
-			} catch (InterruptedException e) {
-				return -1;
-			}
-		}
+            } catch (InterruptedException e) {
+                return -1;
+            }
+        }
 
-		byte[] buff = new byte[1];
-		int count = readBytes(buff);
+        byte[] buff = new byte[1];
+        int count = readBytes(buff);
 
-		return count == -1 ? -1 : buff[0] & 0xff;
-	}
+        return count == -1 ? -1 : buff[0] & 0xff;
+    }
 
-	@Override
-	public int read(byte[] buff) {
+    @Override
+    public int read(byte[] buff) {
 
-		if (buffers.isEmpty()) {
-			blocked = true;
-			try {
-				semaphore.acquire();
-			} catch (InterruptedException e) {
-				return -1;
-			}
-		}
-		return readBytes(buff);
-	}
+        if (buffers.isEmpty()) {
+            blocked = true;
+            try {
+                semaphore.acquire();
+            } catch (InterruptedException e) {
+                return -1;
+            }
+        }
+        return readBytes(buff);
+    }
 
-	private int readBytes(byte[] buff) {
-		if (buffers.isEmpty()) {
-			return -1;
-		}
+    private int readBytes(byte[] buff) {
+        if (buffers.isEmpty()) {
+            return -1;
+        }
 
-		int count = 0;
-		while (count < buff.length && !buffers.isEmpty()) {
-			Buffer buffer = buffers.get(0);
-			byte[] data = (byte[]) buffer.getData();
+        int count = 0;
+        while (count < buff.length && !buffers.isEmpty()) {
+            Buffer buffer = buffers.get(0);
+            byte[] data = (byte[]) buffer.getData();
 
-			int remainder = buff.length - count;
-			int len = Math.min(remainder, buffer.getLength() - buffer.getOffset());
+            int remainder = buff.length - count;
+            int len = Math.min(remainder, buffer.getLength() - buffer.getOffset());
 
-			System.arraycopy(data, buffer.getOffset(), buff, count, len);
-			count += len;
+            System.arraycopy(data, buffer.getOffset(), buff, count, len);
+            count += len;
 
-			buffer.setOffset(buffer.getOffset() + len);
-			if (buffer.getOffset() == buffer.getLength()) {
-				buffers.remove(0);
-			}
+            buffer.setOffset(buffer.getOffset() + len);
+            if (buffer.getOffset() == buffer.getLength()) {
+                buffers.remove(0);
+            }
 
-			if (buffer.isEOM()) {
-				eom = true;
-				// break;
-			}
+            if (buffer.isEOM()) {
+                eom = true;
+            // break;
+            }
 
-		}
+        }
 
-		available -= count;
-		return count;
-	}
-
+        available -= count;
+        return count;
+    }
 }
