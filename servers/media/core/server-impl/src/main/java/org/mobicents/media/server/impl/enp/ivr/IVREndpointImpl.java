@@ -13,103 +13,154 @@
  */
 package org.mobicents.media.server.impl.enp.ivr;
 
-import java.util.HashMap;
-
-import org.apache.log4j.Logger;
-import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.Generator;
-import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.MediaResource;
+import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.events.audio.Recorder;
-import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
-import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
 import org.mobicents.media.server.spi.events.pkg.Audio;
-import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
+
+import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.dsp.Processor;
+import org.mobicents.media.server.impl.events.dtmf.DTMFMode;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class IVREndpointImpl extends BaseVirtualEndpoint {
+public class IVREndpointImpl extends AnnEndpointImpl {
 
-	protected AudioFormat audioFormat = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1);
-	// protected String mediaType = FileTypeDescriptor.WAVE;
-	protected String recordDir = null;
-	private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
+//    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
+    private Format[] formats;    
+    
+    private Demultiplexer demux;    
+    private Recorder recorder;
+    private DtmfDetector dtmfDetector;
+    
+    protected String recordDir = null;
+    private DTMFMode dtmfMode = DTMFMode.AUTO;
+    private transient Processor recDsp;
+    
+    private transient Logger logger = Logger.getLogger(IVREndpointImpl.class);
 
-	/**
-	 * Creates a new instance of IVREndpointImpl
-	 * 
-	 * @param endpointsMap
-	 */
-	public IVREndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-		super(localName, endpointsMap);
-		this.setMaxConnectionsAvailable(1);
-	}
+    /**
+     * Creates a new instance of IVREndpointImpl
+     * 
+     * @param endpointsMap
+     */
+    public IVREndpointImpl(String localName) throws Exception {
+        super(localName);
+    }
 
-	public void setRecordDir(String recordDir) {
-		this.recordDir = recordDir;
-	}
+    @Override
+    public Format[] getFormats() {
+        if (formats == null) {
+            updateFormats();
+        }
+        return formats;
+    }
 
-	public String getRecordDir() {
-		return this.recordDir;
-	}
+    private void updateFormats() {
+        Format[] annFormats = super.getFormats();
+        if (dtmfMode == DTMFMode.INBAND) {
+            formats = annFormats;
+        } else {
+            formats = new Format[annFormats.length + 1];
 
-	public String getMediaType() {
-		return null;
-	}
+            System.arraycopy(annFormats, 0, formats, 0, annFormats.length);
+            formats[annFormats.length] = DTMF;
+        }
+    }
+    
+    @Override
+    public void start() throws ResourceUnavailableException {
+        super.start();
+        startPrimarySink();
+    }
 
-	public void setMediaType(String mediaType) {
-	}
+    protected void startPrimarySink() {
+        demux = new Demultiplexer(getFormats());
 
-	@Override
-	public Endpoint doCreateEndpoint(String localName) {
-		IVREndpointImpl enp = new IVREndpointImpl(localName, super.endpoints);
-		enp.setRecordDir(recordDir);
-		enp.setMediaType(localName);
-		return enp;
-	}
+        recorder = new Recorder("wav", recordDir);
+        dtmfDetector = new DtmfDetector("DtmfDetector[" + getLocalName() + "]");
+        dtmfDetector.setMode(dtmfMode);
+        
+        recDsp = new Processor("");
+        recDsp.getInput().connect(demux);
+        recDsp.getOutput().connect(recorder);
+        recDsp.configure(
+                new Format[] {Endpoint.PCMU,Endpoint.PCMA, Endpoint.SPEEX, Endpoint.G729, Endpoint.GSM}, 
+                new Format[] {Endpoint.LINEAR_AUDIO});
+        
+        //demux.connect(recorder);
+        dtmfDetector.connect(demux);
+        demux.start();
+    }
 
-	/*
-	 * public void play(String signalID, Options options, String connectionID,
-	 * NotificationListener listener) throws UnknownSignalException,
-	 * FacilityException { if
-	 * (signalID.equals("org.mobicents.media.au.PLAY_RECORD")) { if (recordDir !=
-	 * null) { String param1 = (String) options.get("recorder.url"); int index =
-	 * param1.lastIndexOf("/"); if (index > 0) { String folderStructure =
-	 * param1.substring(0, index);
-	 * 
-	 * java.io.File file = new java.io.File(new
-	 * StringBuffer(recordDir).append("/").append(folderStructure).toString());
-	 * boolean fileCreationSuccess = file.mkdirs(); }
-	 * options.add("recorder.url", recordDir + "/" + param1); } }
-	 * super.play(signalID, options, connectionID, listener); }
-	 */
-	@Override
-	public HashMap initMediaSources() {
-		HashMap map = new HashMap();
-		// init audio player
-		map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
-		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
-		return map;
-	}
+    public void setRecordDir(String recordDir) {
+        this.recordDir = recordDir;
+    }
 
-	@Override
-	public HashMap initMediaSinks() {
-		HashMap map = new HashMap();
-		// init audio player
-		map.put(Generator.AUDIO_RECORDER, new Recorder("", this.recordDir));
-		map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
+    public String getRecordDir() {
+        return this.recordDir;
+    }
 
-		return map;
-	}
+    public String getMediaType() {
+        return null;
+    }
 
-	public String[] getSupportedPackages() {
-		String[] supportedpackages = new String[] { Announcement.PACKAGE_NAME, Audio.PACKAGE_NAME,
-				org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME ,ConnectionParameters.PACKAGE_NAME};
-		return supportedpackages;
-	}
+    public DTMFMode getDtmfMode() {
+        return dtmfMode;
+    }
+    
+    public void setDtmfMode(DTMFMode dtmfMode) {
+        this.dtmfMode = dtmfMode;
+        //updateFormats();
+    }
+    
+    public void setMediaType(String mediaType) {
+    }
 
+    @Override
+    public String[] getSupportedPackages() {
+        String[] supportedpackages = new String[]{
+            Announcement.PACKAGE_NAME,
+            Audio.PACKAGE_NAME,
+            org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME
+        };
+        return supportedpackages;
+    }
+
+    @Override
+    public MediaSink getPrimarySink(Connection connection) {
+        return demux.getInput();
+    }
+
+    @Override
+    public void allocateMediaSinks(Connection connection) {
+        dtmfDetector.addListener((BaseConnection) connection);
+    }
+
+    @Override
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        if (id == MediaResource.AUDIO_RECORDER) {
+            return recorder;
+        } else if (id == MediaResource.DTMF_DETECTOR) {
+            return dtmfDetector;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void releaseMediaSinks(Connection connection) {
+        dtmfDetector.removeListener((BaseConnection) connection);
+    }
 }
