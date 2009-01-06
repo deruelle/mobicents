@@ -16,25 +16,36 @@
  */
 package org.mobicents.media.server.impl.enp.ann;
 
-import java.util.HashMap;
-import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.Generator;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.events.pkg.Announcement;
-import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.events.dtmf.DtmfGenerator;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * Implements Announcement access point.
  * 
  * @author Oleg Kulikov
  */
-public class AnnEndpointImpl extends BaseVirtualEndpoint {
+public class AnnEndpointImpl extends BaseEndpoint {
+
+    private final static Format[] FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, GSM};
     
-    private transient Logger logger = Logger.getLogger(AnnEndpointImpl.class);
+    private AudioPlayer audioPlayer;
+    private transient DtmfGenerator dtmfGenerator;
+    private Multiplexer mux;
+    
+    private RtpSocket rtpSocket;
     
     /**
      * Creates a new instance of AnnEndpointImpl
@@ -42,39 +53,108 @@ public class AnnEndpointImpl extends BaseVirtualEndpoint {
      * @param localName the local name of the endpoint.
      * @param endpointsMap 
      */
-    public AnnEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-        super(localName,endpointsMap);
-        this.setMaxConnectionsAvailable(1);
+    public AnnEndpointImpl(String localName) throws Exception {
+        super(localName);
+        setMaxConnectionsAvailable(1);
+    }
+
+    public Format[] getFormats() {
+        return audioPlayer.getFormats();
+    }
+    
+    @Override
+    public void start() throws ResourceUnavailableException {
+        super.start();
         
-        logger = Logger.getLogger(AnnEndpointImpl.class);
-    }
-
-
-    @Override
-    public Endpoint doCreateEndpoint(String localName) {
-        return new AnnEndpointImpl(localName,super.endpoints);
-    }
-
-    @Override
-    public HashMap initMediaSources() {
-        HashMap map = new HashMap();
+        startRtp();
+        startPrimarySource();
         
-        //init audio player
-        map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
-        map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
-        return map;
+        narrow(rtpSocket.getRtpMap(), getFormats());
+        
+        dtmfGenerator = new DtmfGenerator(this) ;
+        dtmfGenerator.connect(mux);
+    }
+    
+    protected void startRtp() throws ResourceUnavailableException {
+        try {
+            RtpFactory rtpFactory = getRtpFactory();
+            rtpSocket = rtpFactory.getRTPSocket(this);
+        } catch (Exception e) {
+            throw new ResourceUnavailableException(e.getMessage());
+        }
+    }
+    
+    protected void startPrimarySource() {
+        audioPlayer = new AudioPlayer(this);
+        mux = new Multiplexer();
+        mux.connect(audioPlayer);
+    }
+    
+    @Override
+    public void stop() {
+        rtpSocket.close();
+    }
+    
+    public String[] getSupportedPackages() {
+        String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME, 
+        org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
+        return supportedpackages;
     }
 
     @Override
-    public HashMap initMediaSinks() {
-        return new HashMap();
+    public MediaSink getPrimarySink(Connection connection) {
+        return null;
     }
 
+    @Override
+    public MediaSource getPrimarySource(Connection connection) {
+        return mux.getOutput();
+    }
+    
+    @Override
+    protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+        if (id == MediaResource.AUDIO_PLAYER) {
+            return audioPlayer;
+        } else if (id == MediaResource.DTMF_GENERATOR) {
+            return dtmfGenerator;
+        }
+        return null;
+    }
 
-	public String[] getSupportedPackages() {
-		String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME,ConnectionParameters.PACKAGE_NAME};
-		return supportedpackages;
-	}
+    @Override
+    public void allocateMediaSources(Connection connection, Format[] formats) {
+        audioPlayer.addListener((BaseConnection)connection);
+        dtmfGenerator.configure(formats);
+        dtmfGenerator.addListener((BaseConnection)connection);
+    }
 
+    @Override
+    public void allocateMediaSinks(Connection connection) {
+    }
+
+    @Override
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        return null;
+    }
+
+    @Override
+    public void releaseMediaSources(Connection connection) {
+        audioPlayer.stop();
+        audioPlayer.removeListener((BaseConnection)connection);
+        dtmfGenerator.removeListener((BaseConnection)connection);
+    }
+
+    @Override
+    public void releaseMediaSinks(Connection connection) {
+    }
+
+    @Override
+    public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+        return rtpSocket;
+    }
+
+    @Override
+    public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+    }
 
 }
