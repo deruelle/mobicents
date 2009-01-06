@@ -15,261 +15,315 @@ package org.mobicents.media.server.impl.dsp;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
 /**
  * Implements DSP features.
  * 
- * Processor has input and output and is used to perform required transcoding if
- * needed for packets followed from source to consumer. Processor is transparent
- * for packets with format acceptable by consumer by default.
+ * Processor has input and output and is used to perform required 
+ * transcoding if needed for packets followed from source to consumer. 
+ * Processor is transparent for packets with format acceptable by consumer 
+ * by default. 
  * 
  * @author Oleg Kulikov
  */
-public class Processor implements Serializable {
+public class Processor implements SignalingProcessor {
 
-	private Input input;
-	private Output output;
-	private final static ArrayList<Codec> codecs = new ArrayList();
-	private transient Logger logger = Logger.getLogger(Processor.class);
-	protected String resourceName = null;
+    private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
+            AudioFormat.LINEAR, 8000, 16, 1,
+            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+    private final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
+    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
+    
+    private final static Format FORMATS[] = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, DTMF};
+    
+    private String name = null;
+    
+    private Input input;
+    private Output output;
+    
+    private transient ArrayList<Codec> codecs = new ArrayList();
+    
+    private Transformator transformator;
+    private ArrayList<Transformator> map = new ArrayList();
 
-	static {
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Encoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Decoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Encoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Decoder());
+    public Processor(String name) {
+        this.name = name;
 
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Encoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Decoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Encoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Decoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Encoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Decoder());
 
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Encoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Encoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Decoder());
 
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Encoder());
-		codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Decoder());
-	};
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Encoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
 
-	private HashMap<String, Codec> selectedCodecs = new HashMap<String, Codec>();
+        input = new Input();
+        output = new Output();
+    }
 
-	public Processor(String resourceName) {
-		input = new Input();
-		output = new Output();
-		this.resourceName = resourceName;
-	}
+    /**
+     * Gets the input for original media
+     * 
+     * @return media handler for input media.
+     */
+    public MediaSink getInput() {
+        return input;
+    }
 
-	/**
-	 * Gets the input for original media
-	 * 
-	 * @return media handler for input media.
-	 */
-	public MediaSink getInput() {
-		return input;
-	}
+    /**
+     * Gets the output stream with transcoded media.
+     * 
+     * @return media stream.
+     */
+    public MediaSource getOutput() {
+        return output;
+    }
 
-	/**
-	 * Gets the output stream with transcoded media.
-	 * 
-	 * @return media stream.
-	 */
-	public MediaSource getOutput() {
-		return output;
-	}
+    /**
+     * Checks is format presented in the list.
+     * 
+     * @param fmts the list of formats to check
+     * @param fmt the format instance to check.
+     * @return true if fmt is in list of fmts.
+     */
+    private boolean contains(Format[] fmts, Format fmt) {
+        for (int i = 0; i < fmts.length; i++) {
+            if (fmts[i].matches(fmt)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Checks is format presented in the list.
-	 * 
-	 * @param fmts
-	 *            the list of formats to check
-	 * @param fmt
-	 *            the format instance to check.
-	 * @return true if fmt is in list of fmts.
-	 */
-	private boolean contains(Format[] fmts, Format fmt) {
-		for (int i = 0; i < fmts.length; i++) {
-			if (fmts[i].matches(fmt)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Implements output of the processor.
+     */
+    private class Output extends AbstractSource {
+        //references to the format of last processed packet
+        private Format format;
+        protected boolean connected = false;
+        protected int failDeliveryCount = 0;
 
-	/**
-	 * Draws codec map as String. Used for debug and test perpouses.
-	 * 
-	 * @return the map as String.
-	 */
-	public String showCodecMap() {
-		StringBuffer s = new StringBuffer();
-		Set<String> formats = selectedCodecs.keySet();
-		for (String f : formats) {
-			s.append(f.toLowerCase());
-			s.append("-->");
-			s.append(selectedCodecs.get(f).getClass().getCanonicalName());
-			s.append("\n");
-		}
-		return s.toString();
-	}
+        public Output() {
+            super("Processor.Output");
+        }
 
-	/**
-	 * Implements output of the processor.
-	 */
-	private class Output extends AbstractSource {
+        @Override
+        public void connect(MediaSink sink) {
+            super.connect(sink);
+        }
 
-		public Output() {
-			super("Processor.Output");
-		}
+        public void start() {
+        }
 
-		protected boolean connected = false;
-		protected int failDeliveryCount = 0;
+        public void stop() {
+        }
 
-		@Override
-		public void connect(MediaSink sink) {
-			super.connect(sink);
-			configure();
-		}
+        public Format[] getFormats() {
+            return FORMATS;
+        }
 
-		/**
-		 * Configures codec map.
-		 * 
-		 * Keys of the codec map are input formats which can be transcoded to
-		 * one of the output format using codec.
-		 * 
-		 * map ={Format[for each on input]--->Codec[output= one of the output
-		 * formats]}
-		 */
-		private void configure() {
-			// analyze each consumer format
-			Format[] cunsumerFormats = sink.getFormats();
-			ArrayList extFormats = new ArrayList();
+        /**
+         * Transmits buffer to the output handler.
+         * 
+         * @param buffer the buffer to transmit
+         */
+        protected void transmit(Buffer buffer) {
+            //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
+            // Discard packet silently if output handler is not assigned yet
+            if (sink == null) {
+                return;
+            }
 
-			for (Format f : cunsumerFormats) {
-				extFormats.add(f);
-				for (Codec codec : codecs) {
-					// get all formats supported by the codec
-					Format[] supported = codec.getSupportedOutputFormats();
+            //compare format of the currently processing packet with last one
+            //and if same use same codec also else reassign codec
+            if (format == null || !format.equals(buffer.getFormat())) {
+                //disable last used transformator
+                transformator = null;
+                //searcg for new one
+                for (int i = 0; i < map.size(); i++) {
+                    if (map.get(i).getFormat().equals(buffer.getFormat())) {
+                        transformator = map.get(i);
+                        format = buffer.getFormat();
+                        break;
+                    }
+                }
+            }
+            
+            if (transformator != null) {
+                try {
+                    transformator.process(buffer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+//            codec.process(buffer);
 
-					// if it does not support currently analysed format go to
-					// the next codec
-					if (!contains(supported, f)) {
-						continue;
-					}
+            // Codec can delay media transition if it has not enouph media
+            // to perform its job. 
+            // It means that Processor should check FLAGS after codec's 
+            // work and discard packet if required
+            if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
+                return;
+            }
 
-					// possible that this codec can perform required transcoding
-					// we are obtaining all formats to wich this codec can
-					// transform
-					// the original format f
-					Format[] out = codec.getSupportedInputFormats(f);
+            //may be a situation when original format can not be trancoded to 
+            //one of the required output. In this case codec map will have no 
+            //entry for this format. also codec may has no entry in case of when 
+            //transcoding is not required. to differentiate these two cases check
+            //if this format is acceptable by the consumer.
 
-					for (Format of : out) {
-						extFormats.add(of);
-						selectedCodecs.put(of.toString(), codec);
-					}
-				}
-			}
+            //deliver packet to the consumer
+            try {
+                sink.receive(buffer);
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+        }
+    }
 
-			input.formats = new Format[extFormats.size()];
-			extFormats.toArray(input.formats);
-		}
+    /**
+     * Implements output of the processor.
+     */
+    private class Input extends AbstractSink {
 
-		public void start() {
-		}
+        public Input() {
+            super("Processor.Input");
+        }
 
-		public void stop() {
-		}
+        public boolean isAcceptable(Format format) {
+            return true;
+        }
 
-		public Format[] getFormats() {
-			return null;
-		}
+        public void receive(Buffer buffer) {
+            output.transmit(buffer);
+        }
 
-		/**
-		 * Transmits buffer to the output handler.
-		 * 
-		 * @param buffer
-		 *            the buffer to transmit
-		 */
-		protected void transmit(Buffer buffer) {
+        public Format[] getFormats() {
+            return FORMATS;
+        }
+    }
 
-			// Here we work in ReceiveStream.run method, which runs in local
-			// ReceiveStreamTimer
-			// Discard packet silently if output handler is not assigned yet
+    /**
+     * Creates transformation for media from one format to another.
+     * 
+     * @param f1 the format of the input media
+     * @param f2 the format of the output media.
+     * @return true if this transformation available and false otherwise.
+     */
+    private boolean configure(Format f1, Format f2) {
+        output.format = null;
+        //looking for direct transformation
+        for (int i = 0; i < codecs.size(); i++) {
+            Codec c = codecs.get(i);
+            if (c.getSupportedInputFormat().equals(f1) &&
+                    c.getSupportedOutputFormat().equals(f2)) {
+                map.add(new Transformator(f1, c, null));
+                return true;
+            }
+        }
 
-			if (super.sink == null || buffer == null || buffer.getFormat() == null) {
-				return;
-			}
+        //if there is no direct transformation then decompresson/compresson
+        //algorithm should be applied
+        Codec decoder = null;
 
-			// perform transcoding if it is needed.
-			// when processor is configured it creates a map of codecs where
-			// for each input format stands a required codec if transcoding
-			// really
-			// required
-			// if ((sink instanceof SendStream)) {
-			// System.out.println("f=" + buffer.getFormat() + " codec=" +
-			// selectedCodecs.get(buffer.getFormat().toString()));
-			// System.out.println(showCodecMap());
-			// }
+        //looking for decoder
+        for (int i = 0; i < codecs.size(); i++) {
+            Codec c = codecs.get(i);
+            if (c.getSupportedInputFormat().equals(f1) &&
+                    c.getSupportedOutputFormat().equals(Codec.LINEAR_AUDIO)) {
+                decoder = c;
+                break;
+            }
+        }
 
-			String format = buffer.getFormat().toString();
-			if (selectedCodecs.containsKey(format)) {
-				Codec codec = selectedCodecs.get(format);
-				codec.process(buffer);
-			}
+        if (decoder == null) {
+            return false;
+        }
 
-			// Codec can delay media transition if it has not enouph media
-			// to perform its job.
-			// It means that Processor should check FLAGS after codec's
-			// work and discard packet if required
-			if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
-				return;
-			}
+        Codec encoder = null;
+        //looking for encoder
+        for (int i = 0; i < codecs.size(); i++) {
+            Codec c = codecs.get(i);
+            if (c.getSupportedInputFormat().equals(Codec.LINEAR_AUDIO) &&
+                    c.getSupportedOutputFormat().equals(f2)) {
+                encoder = c;
+                break;
+            }
+        }
 
-			// may be a situation when original format can not be trancoded to
-			// one of the required output. In this case codec map will have no
-			// entry for this format. also codec may has no entry in case of
-			// when
-			// transcoding is not required. to differentiate these two cases
-			// check
-			// if this format is acceptable by the consumer.
+        if (encoder == null) {
+            return false;
+        }
 
-			// deliver packet to the consumer
-			sink.receive(buffer);
+        map.add(new Transformator(f1, decoder, encoder));
+        return true;
+    }
 
-		}
-	}
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.SignalingProcessor.configure(Format[], Format[]).
+     */
+    public void configure(Format[] inputFormats, Format[] outputFormats) {
+        map.clear();
+        for (int i = 0; i < inputFormats.length; i++) {
+            //if input format is same as one of the 
+            //output we skip it
+            if (contains(outputFormats, inputFormats[i])) {
+                continue;
+            }
 
-	/**
-	 * Implements output of the processor.
-	 */
-	private class Input extends AbstractSink {
+            //we should find only one available transformation
+            //so we break searching after first suitable match
+            for (int j = 0; j < outputFormats.length; j++) {
+                if (configure(inputFormats[i], outputFormats[j])) {
+                    break;
+                }
+            }
+        }
+    }
 
-		public Input() {
-			super("Processor.Input");
-		}
+    private class Transformator implements Serializable {
 
-		protected Format[] formats;
-		protected boolean connected = false;
+        private Format inputFormat;
+        private Codec decoder;
+        private Codec encoder;
 
-		public boolean isAcceptable(Format format) {
-			return contains(formats, format);
-		}
+        protected Transformator(Format inputFormat, Codec decoder, Codec encoder) {
+            this.inputFormat = inputFormat;
+            this.decoder = decoder;
+            this.encoder = encoder;
+        }
 
-		// FIXME: baranowb: why this is synced ?
-		public synchronized void receive(Buffer buffer) {
-			output.transmit(buffer);
-		}
+        protected Format getFormat() {
+            return inputFormat;
+        }
 
-		public Format[] getFormats() {
-			return formats;
-		}
-	}
+        protected void process(Buffer buffer) {
+            if (decoder != null) {
+                decoder.process(buffer);
+            }
+            if (encoder != null) {
+                encoder.process(buffer);
+            }
+        }
+    }
 }
