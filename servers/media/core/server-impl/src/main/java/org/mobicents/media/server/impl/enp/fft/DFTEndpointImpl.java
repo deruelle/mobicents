@@ -2,13 +2,16 @@ package org.mobicents.media.server.impl.enp.fft;
 
 import java.io.File;
 
-import java.util.HashMap;
+import java.util.Collection;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Generator;
-import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
+import org.mobicents.media.server.impl.MediaResource;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
-import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 public class DFTEndpointImpl extends BaseEndpoint {
 
@@ -55,20 +58,6 @@ public class DFTEndpointImpl extends BaseEndpoint {
         this.sineDuration = sineDuration;
     }
 
-    @Override
-    public HashMap initMediaSources() {
-    	
-    	HashMap map = new HashMap();
-		// init audio player
-		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
-		return map;
-    }
-
-    @Override
-    public HashMap initMediaSinks() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public EndpointLocalManagement[] getEndpoints() {
         // TODO Auto-generated method stub
         return null;
@@ -80,6 +69,61 @@ public class DFTEndpointImpl extends BaseEndpoint {
     }
 
 	public String[] getSupportedPackages() {		
-		return new String[]{ConnectionParameters.PACKAGE_NAME};
+		return new String[]{};
 	}
+
+    @Override
+    public MediaSink getPrimarySink(Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public MediaSource getPrimarySource(Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void allocateMediaSources(Connection connection, Format[] formats) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void allocateMediaSinks(Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void releaseMediaSources(Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void releaseMediaSinks(Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Format[] getFormats() {
+        return null;
+    }
 }
