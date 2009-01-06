@@ -21,7 +21,7 @@
 		</release.name>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS  -->
 		<mobicents.servers.jainslee.version>
-			1.2.2.GA
+			1.2.3.GA-SNAPSHOT
 		</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>
 			1.0.0.BETA2
@@ -41,7 +41,7 @@
 		<module>server-sar</module>
 		<module>server-test</module>
 		<module>g729</module>
-		<module>gsm</module>
+
 	</modules>
 
 	<!-- RELEASE STUFF -->
