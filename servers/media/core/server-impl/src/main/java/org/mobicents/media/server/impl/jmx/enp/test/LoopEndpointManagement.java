@@ -13,12 +13,9 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.test;
 
-import java.util.HashMap;
 
 import org.mobicents.media.server.impl.enp.test.*;
-import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
-import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -27,21 +24,9 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class LoopEndpointManagement extends EndpointManagement implements LoopEndpointManagementMBean {
 
-    private transient Logger logger = Logger.getLogger(LoopEndpointManagement.class);
-    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     public Endpoint createEndpoint() throws Exception {
-        LoopEndpointImpl endpoint = new LoopEndpointImpl(getJndiName(),endpointsMap);
-        return endpoint;
+        LoopEndpointImpl enp = new LoopEndpointImpl(getJndiName());
+        return enp;
     }
 
-    public EndpointManagementMBean cloneEndpointManagementMBean() {
-        LoopEndpointManagement clone = new LoopEndpointManagement();
-        try {
-            clone.setJndiName(this.getJndiName());
-        } catch (Exception ex) {
-            logger.error("LoopEndpointManagement clonning failed ", ex);
-            return null;
-        }
-        return clone;
-    }
 }

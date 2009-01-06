@@ -13,28 +13,28 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.jmx.enp.ann;
 
-import org.mobicents.media.server.impl.jmx.EndpointManagement;
+
+import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.jmx.TrunkManagement;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class AnnTrunkManagement extends TrunkManagement
-    implements AnnTrunkManagementMBean {
-    
+public class AnnTrunkManagement extends TrunkManagement implements AnnTrunkManagementMBean {
+
     /**
-     * Creates a new instance of AnnTrunkManagement
+     * Creates a new instance of AnnEndpointManagement
      */
     public AnnTrunkManagement() {
-        super();
     }
 
-    public EndpointManagement initEndpointManagement() {
-        return new AnnEndpointManagement();
+    @Override
+    public Endpoint createEndpoint(String localName) throws Exception {
+        AnnEndpointImpl endpoint = new AnnEndpointImpl(localName);
+        return endpoint;
     }
-    
 }

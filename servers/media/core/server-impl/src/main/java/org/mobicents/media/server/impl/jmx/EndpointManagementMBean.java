@@ -18,7 +18,6 @@ package org.mobicents.media.server.impl.jmx;
 
 import javax.naming.NamingException;
 import org.jboss.system.ServiceMBean;
-import org.mobicents.media.server.impl.BaseEndpoint;
 
 
 /**
@@ -54,9 +53,19 @@ public interface EndpointManagementMBean extends ServiceMBean {
      */
     public void setRtpFactoryName(String rtpFactoryName);
     
+    /**
+     * Gets the maximum life time value of the connection executed by the endpoint.
+     * 
+     * @return the value in minutes
+     */
+    public Integer getConnectionTTL();
     
-    public EndpointManagementMBean cloneEndpointManagementMBean();
-    
+    /**
+     * Modify maximum lifetime of the connection execiuted by this endpoint.
+     * 
+     * @param lifeTime the value in minutes.
+     */
+    public void setConnectionTTL(Integer ttl);
     
     // #########################
     // # MANAGEMENT OPERATIONS #

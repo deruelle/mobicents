@@ -34,253 +34,281 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public abstract class EndpointManagement extends ServiceMBeanSupport implements EndpointManagementMBean{
 
-	protected Endpoint endpoint;
-	private String jndiName;
-	private String rtpFactoryName;
-	private Properties dtmfConfig;
-	private transient Logger logger = Logger.getLogger(EndpointManagement.class);
+    protected Endpoint endpoint;
+    private String jndiName;
+    private String rtpFactoryName;
+    private Properties dtmfConfig;
+    private int ttl;
+    
+    private transient Logger logger = Logger.getLogger(EndpointManagement.class);
 
-	/**
-	 * Creates a new instance of EndpointManagement
-	 */
-	public EndpointManagement() {
-	}
+    /**
+     * Creates a new instance of EndpointManagement
+     */
+    public EndpointManagement() {
+    }
 
-	public Endpoint getEndpoint() {
-		return endpoint;
-	}
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
 
-	/**
-	 * Gets the JNDI name to which this trunk instance is bound.
-	 * 
-	 * @return the JNDI name.
-	 */
-	public String getJndiName() {
-		return jndiName;
-	}
+    /**
+     * Gets the JNDI name to which this trunk instance is bound.
+     * 
+     * @return the JNDI name.
+     */
+    public String getJndiName() {
+        return jndiName;
+    }
 
-	/**
-	 * Sets the JNDI name to which this trunk object should be bound.
-	 * 
-	 * @param jndiName
-	 *            the JNDI name to which trunk object will be bound.
-	 */
-	public void setJndiName(String jndiName) throws NamingException {
-		String oldName = this.jndiName;
-		this.jndiName = jndiName;
+    /**
+     * Sets the JNDI name to which this trunk object should be bound.
+     * 
+     * @param jndiName
+     *            the JNDI name to which trunk object will be bound.
+     */
+    public void setJndiName(String jndiName) throws NamingException {
+        String oldName = this.jndiName;
+        this.jndiName = jndiName;
 
-		if (this.getState() == STARTED) {
-			unbind(oldName);
-			try {
-				rebind();
-			} catch (NamingException e) {
-				NamingException ne = new NamingException("Failed to update JNDI name");
-				ne.setRootCause(e);
-				throw ne;
-			}
-		}
-	}
+        if (this.getState() == STARTED) {
+            unbind(oldName);
+            try {
+                rebind();
+            } catch (NamingException e) {
+                NamingException ne = new NamingException("Failed to update JNDI name");
+                ne.setRootCause(e);
+                throw ne;
+            }
+        }
+    }
 
-	/**
-	 * Gets the name of used RTP Factory.
-	 * 
-	 * @return the JNDI name of the RTP Factory
-	 */
-	public String getRtpFactoryName() {
-		return rtpFactoryName;
-	}
+    /**
+     * Gets the name of used RTP Factory.
+     * 
+     * @return the JNDI name of the RTP Factory
+     */
+    public String getRtpFactoryName() {
+        return rtpFactoryName;
+    }
 
-	/**
-	 * Sets the name of used RTP Factory.
-	 * 
-	 * @param rtpFactoryName
-	 *            the JNDI name of the RTP Factory.
-	 */
-	public void setRtpFactoryName(String rtpFactoryName) {
-		this.rtpFactoryName = rtpFactoryName;
-		if (this.getState() == STARTED) {
-			((BaseEndpoint) getEndpoint()).setRtpFactoryName(rtpFactoryName);
-		}
-	}
+    /**
+     * Sets the name of used RTP Factory.
+     * 
+     * @param rtpFactoryName
+     *            the JNDI name of the RTP Factory.
+     */
+    public void setRtpFactoryName(String rtpFactoryName) {
+        this.rtpFactoryName = rtpFactoryName;
+        if (this.getState() == STARTED) {
+            ((BaseEndpoint) getEndpoint()).setRtpFactoryName(rtpFactoryName);
+        }
+    }
 
-	/**
-	 * Binds trunk object to the JNDI under the jndiName.
-	 */
-	private void rebind() throws NamingException {
-		Context ctx = new InitialContext();
-		String tokens[] = jndiName.split("/");
+    /**
+     * Gets the maximum life time value of the connection executed by the endpoint.
+     * 
+     * @return the value in minutes
+     */
+    public Integer getConnectionTTL() {
+        return ttl;
+    }
 
-		for (int i = 0; i < tokens.length - 1; i++) {
-			if (tokens[i].trim().length() > 0) {
-				try {
-					ctx = (Context) ctx.lookup(tokens[i]);
-				} catch (NamingException e) {
-					ctx = ctx.createSubcontext(tokens[i]);
-				}
-			}
-		}
+    /**
+     * Modify maximum lifetime of the connection execiuted by this endpoint.
+     * 
+     * @param lifeTime the value in minutes.
+     */
+    public void setConnectionTTL(Integer ttl) {
+        this.ttl = ttl;
+        if (this.getState() == STARTED) {
+            ((BaseEndpoint) getEndpoint()).setConnectionLifeTime(ttl);
+        }
+    }
 
-		ctx.bind(tokens[tokens.length - 1], endpoint);
-	}
+    /**
+     * Binds trunk object to the JNDI under the jndiName.
+     */
+    private void rebind() throws NamingException {
+        Context ctx = new InitialContext();
+        String tokens[] = jndiName.split("/");
 
-	/**
-	 * Unbounds object under specified name.
-	 * 
-	 * @param jndiName
-	 *            the JNDI name of the object to be unbound.
-	 */
-	private void unbind(String jndiName) {
-		try {
-			InitialContext initialContext = new InitialContext();
-			initialContext.unbind(jndiName);
-		} catch (NamingException e) {
-			logger.error("Failed to unbind endpoint", e);
-		}
-	}
+        for (int i = 0; i < tokens.length - 1; i++) {
+            if (tokens[i].trim().length() > 0) {
+                try {
+                    ctx = (Context) ctx.lookup(tokens[i]);
+                } catch (NamingException e) {
+                    ctx = ctx.createSubcontext(tokens[i]);
+                }
+            }
+        }
 
-	public abstract Endpoint createEndpoint() throws Exception;
+        ctx.bind(tokens[tokens.length - 1], endpoint);
+    }
 
-	public abstract EndpointManagementMBean cloneEndpointManagementMBean();
+    /**
+     * Unbounds object under specified name.
+     * 
+     * @param jndiName
+     *            the JNDI name of the object to be unbound.
+     */
+    private void unbind(String jndiName) {
+        try {
+            InitialContext initialContext = new InitialContext();
+            initialContext.unbind(jndiName);
+        } catch (NamingException e) {
+            logger.error("Failed to unbind endpoint", e);
+        }
+    }
 
-	/*
-	 * private void mapStun(int localPort, String localAddress) { try { if
-	 * (InetAddress.getByName(localAddress).isLoopbackAddress()) {logger.warn(
-	 * "The Ip address provided is the loopback address, stun won't be enabled for it"
-	 * ); this.publicAddressFromStun = localAddress; } else { StunAddress
-	 * localStunAddress = new StunAddress(localAddress, localPort);
-	 * 
-	 * StunAddress serverStunAddress = new StunAddress( stunServerAddress,
-	 * stunServerPort);
-	 * 
-	 * NetworkConfigurationDiscoveryProcess addressDiscovery = new
-	 * NetworkConfigurationDiscoveryProcess( localStunAddress,
-	 * serverStunAddress); addressDiscovery.start(); StunDiscoveryReport report
-	 * = addressDiscovery.determineAddress(); if (report.getPublicAddress() !=
-	 * null) { this.publicAddressFromStun =
-	 * report.getPublicAddress().getSocketAddress
-	 * ().getAddress().getHostAddress(); //TODO set a timer to retry the binding
-	 * and provide a callback to update the global ip address and port } else {
-	 * useStun = false;logger.error(
-	 * "Stun discovery failed to find a valid public ip address, disabling stun !"
-	 * ); } logger.info("Stun report = " + report); addressDiscovery.shutDown();
-	 * } } catch (Throwable t) { logger.error("Stun lookup has failed: " +
-	 * t.getMessage()); }
-	 * 
-	 * }
-	 */
-	/**
-	 * Starts MBean.
-	 */
-	@Override
-	public void startService() throws Exception {
-		endpoint = createEndpoint();
-		((BaseEndpoint) endpoint).setRtpFactoryName(rtpFactoryName);
+    public abstract Endpoint createEndpoint() throws Exception;
 
-		rebind();
-		logger.info("Started Endpoint MBean " + this.getJndiName());
-	}
+    /*
+     * private void mapStun(int localPort, String localAddress) { try { if
+     * (InetAddress.getByName(localAddress).isLoopbackAddress()) {logger.warn(
+     * "The Ip address provided is the loopback address, stun won't be enabled for it"
+     * ); this.publicAddressFromStun = localAddress; } else { StunAddress
+     * localStunAddress = new StunAddress(localAddress, localPort);
+     * 
+     * StunAddress serverStunAddress = new StunAddress( stunServerAddress,
+     * stunServerPort);
+     * 
+     * NetworkConfigurationDiscoveryProcess addressDiscovery = new
+     * NetworkConfigurationDiscoveryProcess( localStunAddress,
+     * serverStunAddress); addressDiscovery.start(); StunDiscoveryReport report
+     * = addressDiscovery.determineAddress(); if (report.getPublicAddress() !=
+     * null) { this.publicAddressFromStun =
+     * report.getPublicAddress().getSocketAddress
+     * ().getAddress().getHostAddress(); //TODO set a timer to retry the binding
+     * and provide a callback to update the global ip address and port } else {
+     * useStun = false;logger.error(
+     * "Stun discovery failed to find a valid public ip address, disabling stun !"
+     * ); } logger.info("Stun report = " + report); addressDiscovery.shutDown();
+     * } } catch (Throwable t) { logger.error("Stun lookup has failed: " +
+     * t.getMessage()); }
+     * 
+     * }
+     */
+    /**
+     * Starts MBean.
+     */
+    @Override
+    public void startService() throws Exception {
+        endpoint = createEndpoint();
+        ((BaseEndpoint) endpoint).setRtpFactoryName(rtpFactoryName);
+        ((BaseEndpoint) endpoint).setConnectionLifeTime(ttl);
 
-	/**
-	 * Stops MBean.
-	 */
-	@Override
-	public void stopService() {
-		unbind(jndiName);
-		logger.info("Stopped Endpoint MBean " + this.getJndiName());
-	}
+        rebind();
+        logger.info("Started Endpoint MBean " + this.getJndiName());
+    }
 
-	// #########################
-	// # MANAGEMENT OPERATIONS #
-	// #########################
+    /**
+     * Stops MBean.
+     */
+    @Override
+    public void stopService() {
+        unbind(jndiName);
+        logger.info("Stopped Endpoint MBean " + this.getJndiName());
+    }
 
-	private EndpointLocalManagement getEndpoint(String endpointName) throws IllegalArgumentException {
+    // #########################
+    // # MANAGEMENT OPERATIONS #
+    // #########################
+    private EndpointLocalManagement getEndpoint(String endpointName) throws IllegalArgumentException {
 
-		if (endpointName.equals(this.endpoint.getLocalName())) {
-			if (log.isDebugEnabled()) {
-				log.debug("Fetching MBean static endpoint, possible danger of missuse.");
-			}
-			return (EndpointLocalManagement) this.endpoint;
-		}
-		EndpointLocalManagement[] locals = ((EndpointLocalManagement) endpoint).getEndpoints();
-		for (EndpointLocalManagement l : locals) {
-			if (l.getLocalName().equals(endpointName))
-				return l;
-		}
-		throw new IllegalArgumentException("Endpoint with name: " + endpointName + ", is not available/present.");
-	}
+        if (endpointName.equals(this.endpoint.getLocalName())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Fetching MBean static endpoint, possible danger of missuse.");
+            }
+            return (EndpointLocalManagement) this.endpoint;
+        }
+        EndpointLocalManagement[] locals = ((EndpointLocalManagement) endpoint).getEndpoints();
+        for (EndpointLocalManagement l : locals) {
+            if (l.getLocalName().equals(endpointName)) {
+                return l;
+            }
+        }
+        throw new IllegalArgumentException("Endpoint with name: " + endpointName + ", is not available/present.");
+    }
 
-	public int getConnectionsCount(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getConnectionsCount();
-	}
+    public int getConnectionsCount(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getConnectionsCount();
+    }
 
-	public long getCreationTime(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getCreationTime();
-	}
+    public long getCreationTime(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getCreationTime();
+    }
 
-	public boolean getGatherPerformanceFlag(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getGatherPerformanceFlag();
-	}
+    public boolean getGatherPerformanceFlag(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getGatherPerformanceFlag();
+    }
 
-	public long getNumberOfBytes(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getNumberOfBytes();
-	}
+    public long getNumberOfBytes(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getNumberOfBytes();
+    }
 
-	public long getPacketsCount(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getPacketsCount();
-	}
+    public long getPacketsCount(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getPacketsCount();
+    }
 
-	public String[] getEndpointNames() throws IllegalArgumentException {
+    public void setGatherPerformanceFlag(boolean flag, String endpointName) throws IllegalArgumentException {
+//        getEndpoint(endpointName).setGatherPerformanceFlag(flag);
+    }
 
-		return ((EndpointLocalManagement) endpoint).getEndpointNames();
+    public String[] getEndpointNames() throws IllegalArgumentException {
 
-	}
+        return ((EndpointLocalManagement) endpoint).getEndpointNames();
 
-	public int getEndpointsCount() throws IllegalArgumentException {
-		// This is just to have this info clearly visible in MBean view.
-		String[] tmp = getEndpointNames();
-		if (tmp == null) {
-			return -1;
-		} else {
-			return tmp.length;
-		}
-	}
+    }
 
-	public long getConnectionCreationTime(String endpoint, String connectionId) throws IllegalArgumentException {
+    public int getEndpointsCount() throws IllegalArgumentException {
+        // This is just to have this info clearly visible in MBean view.
+        String[] tmp = getEndpointNames();
+        if (tmp == null) {
+            return -1;
+        } else {
+            return tmp.length;
+        }
+    }
 
-		return getEndpoint(endpoint).getConnectionCreationTime(connectionId);
+    public long getConnectionCreationTime(String endpoint, String connectionId) throws IllegalArgumentException {
 
-	}
+        return getEndpoint(endpoint).getConnectionCreationTime(connectionId);
 
-	public String[] getConnectionIds(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getConnectionIds();
-	}
+    }
 
-	public String getConnectionLocalSDP(String endpoint, String connectionId) throws IllegalArgumentException {
-		return getEndpoint(endpoint).getConnectionLocalSDP(connectionId);
-	}
+    public String[] getConnectionIds(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getConnectionIds();
+    }
 
-	public String getConnectionRemoteSDP(String endpoint, String connectionId) throws IllegalArgumentException {
-		return getEndpoint(endpoint).getConnectionRemoteSDP(connectionId);
-	}
+    public String getConnectionLocalSDP(String endpoint, String connectionId) throws IllegalArgumentException {
+        return getEndpoint(endpoint).getConnectionLocalSDP(connectionId);
+    }
 
+    public String getConnectionRemoteSDP(String endpoint, String connectionId) throws IllegalArgumentException {
+        return getEndpoint(endpoint).getConnectionRemoteSDP(connectionId);
+    }
 
-	public String getOtherEnd(String endpoint, String connectionId) throws IllegalArgumentException {
+    public long getNumberOfPackets(String endpoint, String connectionId) throws IllegalArgumentException {
+        return 0;//        return getEndpoint(endpoint).getNumberOfPackets(connectionId);
+    }
 
-		return getEndpoint(endpoint).getOtherEnd(connectionId);
-	}
+    public String getOtherEnd(String endpoint, String connectionId) throws IllegalArgumentException {
 
-	public String getConnectionMode(String endpointName, String connectionId) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getConnectionMode(connectionId);
-	}
+        return getEndpoint(endpoint).getOtherEnd(connectionId);
+    }
 
-	public String getConnectionState(String endpointName, String connectionId) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getConnectionState(connectionId);
-	}
+    public String getConnectionMode(String endpointName, String connectionId) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getConnectionMode(connectionId);
+    }
 
-	public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException {
-		return getEndpoint(endpointName).getRTPFacotryJNDIName();
-	}
+    public String getConnectionState(String endpointName, String connectionId) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getConnectionState(connectionId);
+    }
 
+    public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException {
+        return getEndpoint(endpointName).getRTPFacotryJNDIName();
+    }
 	public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException {
 		
 		
@@ -306,44 +334,48 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 		
 	}
 
-	public void setRTPFacotryJNDIName(String endpointName, String jndiName) throws IllegalArgumentException {
-		EndpointLocalManagement elm = getEndpoint(endpointName);
-		elm.setRTPFacotryJNDIName(jndiName);
-	}
+//    public void setGatherPerformanceData(String endpointName, boolean value) throws IllegalArgumentException {
+//        EndpointLocalManagement elm = getEndpoint(endpointName);
+//        elm.setGatherPerformanceFlag(value);
+//    }
 
-	public void destroyConnection(String name, String connectionId) throws IllegalArgumentException {
-		BaseEndpoint elm = (BaseEndpoint) getEndpoint(name);
-		try {
-			elm.deleteConnection(connectionId);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Connection does not exist?");
-		}
-	}
+    public void setRTPFacotryJNDIName(String endpointName, String jndiName) throws IllegalArgumentException {
+        EndpointLocalManagement elm = getEndpoint(endpointName);
+        elm.setRTPFacotryJNDIName(jndiName);
+    }
 
-	public void destroyEndpoint(String name) throws IllegalArgumentException {
-		if (!name.equals(this.endpoint.getLocalName())) {
-			BaseEndpoint elm = (BaseEndpoint) getEndpoint(name);
-			try {
-				// This is weird....
-				elm.deleteAllConnections();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new IllegalArgumentException("Connection does not exist?");
-			}
-		} else {
-			throw new IllegalArgumentException("Dont use delete operation on MBean endpoint!!!");
-		}
-	}
+    public void destroyConnection(String name, String connectionId) throws IllegalArgumentException {
+        BaseEndpoint elm = (BaseEndpoint) getEndpoint(name);
+        try {
+            elm.deleteConnection(connectionId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Connection does not exist?");
+        }
+    }
 
-	public String getTrunkName() {
-		if (this.endpoint == null) {
-			return "NOT DEFINED";
-		} else {
-			return this.endpoint.getLocalName();
-		}
-	}
+    public void destroyEndpoint(String name) throws IllegalArgumentException {
+        if (!name.equals(this.endpoint.getLocalName())) {
+            BaseEndpoint elm = (BaseEndpoint) getEndpoint(name);
+            try {
+                // This is weird....
+                elm.deleteAllConnections();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new IllegalArgumentException("Connection does not exist?");
+            }
+        } else {
+            throw new IllegalArgumentException("Dont use delete operation on MBean endpoint!!!");
+        }
+    }
 
+    public String getTrunkName() {
+        if (this.endpoint == null) {
+            return "NOT DEFINED";
+        } else {
+            return this.endpoint.getLocalName();
+        }
+    }
 	
 	
 	public int getInterArrivalJitter(String endpointName, String connectionId)
@@ -391,27 +423,24 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
 	// ////////////////
 	// // STOP/START //
 	// ////////////////
-	public void startPlatform() {
-		
-		((BaseVirtualEndpoint)this.endpoint).start();
-		
-	}
 
-	public void stopPlatform() {
-		((BaseVirtualEndpoint)this.endpoint).stop();
-		
-	}
+    public void startPlatform() {
 
-	public void tearDownPlatform() {
-		this.stopPlatform();
-		for(String name: this.getEndpointNames())
-		{
-			this.destroyEndpoint(name);
-		}
+        ((BaseVirtualEndpoint) this.endpoint).start();
 
-		
-	}
+    }
 
-	
-	
+    public void stopPlatform() {
+        ((BaseVirtualEndpoint) this.endpoint).stop();
+
+    }
+
+    public void tearDownPlatform() {
+        this.stopPlatform();
+        for (String name : this.getEndpointNames()) {
+            this.destroyEndpoint(name);
+        }
+
+
+    }
 }

@@ -15,12 +15,9 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.ann;
 
-import java.util.HashMap;
 
 import org.mobicents.media.server.impl.enp.ann.*;
-import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.jmx.EndpointManagement;
-import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -28,11 +25,8 @@ import org.mobicents.media.server.spi.Endpoint;
  *
  * @author Oleg Kulikov
  */
-public class AnnEndpointManagement extends EndpointManagement
-        implements AnnEndpointManagementMBean {
+public class AnnEndpointManagement extends EndpointManagement implements AnnEndpointManagementMBean {
 
-    private transient Logger logger = Logger.getLogger(AnnEndpointManagement.class);
-    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
     /**
      * Creates a new instance of AnnEndpointManagement
      */
@@ -41,20 +35,9 @@ public class AnnEndpointManagement extends EndpointManagement
 
     @Override
     public Endpoint createEndpoint() throws Exception {
-        AnnEndpointImpl endpoint = new AnnEndpointImpl(getJndiName(),endpointsMap);
-        return endpoint;
+        AnnEndpointImpl enp = new AnnEndpointImpl(getJndiName());
+        return enp;
     }
 
-    @Override
-    public EndpointManagementMBean cloneEndpointManagementMBean() {
-        AnnEndpointManagement clone = new AnnEndpointManagement();
-        try {
-            clone.setJndiName(this.getJndiName());
-        } catch (Exception ex) {
-            logger.error("AnnEndpointManagement clonning failed ", ex);
-            return null;
-        }
-        return clone;
-    }
 
 }

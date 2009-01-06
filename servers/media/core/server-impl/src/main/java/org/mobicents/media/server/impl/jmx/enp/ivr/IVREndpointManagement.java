@@ -15,12 +15,10 @@
  */
 package org.mobicents.media.server.impl.jmx.enp.ivr;
 
-import java.util.HashMap;
 
 import org.mobicents.media.server.impl.enp.ivr.*;
-import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.events.dtmf.DTMFMode;
 import org.mobicents.media.server.impl.jmx.enp.ann.AnnEndpointManagement;
-import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -31,10 +29,11 @@ import org.mobicents.media.server.spi.Endpoint;
 public class IVREndpointManagement extends AnnEndpointManagement
         implements IVREndpointManagementMBean {
 
-    private transient Logger logger = Logger.getLogger(IVREndpointManagement.class);
     private String recordDir;
     private String mediaType;
-    private HashMap<String, Endpoint> endpointsMap= new HashMap<String, Endpoint>();
+    private String dtmfMode;
+    private final static String dtmfModes[] = new String[]{"INBAND", "RFC2833", "AUTO"};
+    
     /** Creates a new instance of IVREndpointManagement */
     public IVREndpointManagement() {
     }
@@ -62,24 +61,21 @@ public class IVREndpointManagement extends AnnEndpointManagement
         }
     }
 
+    public String getDtmfMode() {
+        return dtmfMode;
+    }
+    
+    public void setDtmfMode(String dtmfMode) {
+        this.dtmfMode = dtmfMode;
+        if (this.getState() == STARTED) {
+            ((IVREndpointImpl) getEndpoint()).setDtmfMode(DTMFMode.valueOf(dtmfMode));
+        }
+    }
+        
     @Override
     public Endpoint createEndpoint() throws Exception {
-        IVREndpointImpl endpoint = new IVREndpointImpl(getJndiName(),endpointsMap);
-        return endpoint;
-    }
-
-    @Override
-    public EndpointManagementMBean cloneEndpointManagementMBean() {
-        IVREndpointManagement clone = new IVREndpointManagement();
-        try {
-            clone.setJndiName(this.getJndiName());
-            clone.setRecordDir(this.getRecordDir());
-            clone.setMediaType(this.getMediaType());
-        } catch (Exception ex) {
-            logger.error("IVREndpointManagement clonning failed ", ex);
-            return null;
-        }
-        return clone;
+        IVREndpointImpl enp = new IVREndpointImpl(getJndiName());
+        return enp;
     }
 
     /**

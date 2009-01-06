@@ -13,28 +13,27 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.jmx.enp.prl;
 
-import org.mobicents.media.server.impl.jmx.EndpointManagement;
+
+import org.mobicents.media.server.impl.enp.prl.PREndpointImpl;
+import org.mobicents.media.server.impl.jmx.EndpointManagementMBean;
 import org.mobicents.media.server.impl.jmx.TrunkManagement;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class PRTrunkManagement extends TrunkManagement
-    implements PRTrunkManagementMBean {
-    
-    /**
-     * Creates a new instance of PRTrunkManagement
-     */
-    public PRTrunkManagement() {
-        super();
+public class PRTrunkManagement extends TrunkManagement implements PRTrunkManagementMBean {
+
+    /** Creates a new instance of PREndpointManagement */
+    public Endpoint createEndpoint(String name) throws Exception {
+        return new PREndpointImpl(name);
     }
 
-    public EndpointManagement initEndpointManagement() {
-        return new PREndpointManagement();
+    public EndpointManagementMBean cloneEndpointManagementMBean() {
+        PREndpointManagement clone = new PREndpointManagement();
+        return clone;
     }
-    
 }

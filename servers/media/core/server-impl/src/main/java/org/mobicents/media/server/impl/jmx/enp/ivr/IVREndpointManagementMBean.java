@@ -31,4 +31,7 @@ public interface IVREndpointManagementMBean extends AnnEndpointManagementMBean {
     
     public String getMediaType();
     public void setMediaType(String mediaType);
+    
+    public String getDtmfMode();
+    public void setDtmfMode(String mode);
 }
