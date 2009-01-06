@@ -15,6 +15,7 @@ package org.mobicents.media.server.impl.dsp.audio.g711.alaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -22,7 +23,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * 
  * @author Oleg Kulikov
  */
-public class Decoder implements Codec {
+public class Decoder extends BaseCodec {
     /** decompress table constants */
     private static short aLawDecompressTable[] = new short[]{
         -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,
@@ -58,53 +59,24 @@ public class Decoder implements Codec {
         688, 656, 752, 720, 560, 528, 624, 592,
         944, 912, 1008, 976, 816, 784, 880, 848
     };
+    private byte[] temp = new byte[1200];
 
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedInputFormats() {
-        Format[] formats = new Format[] {
-            Codec.PCMA
-        }; 
-        return formats;
+    public Format getSupportedInputFormat() {
+        return Codec.PCMA;
     }
     
     /**
      * (Non Java-doc)
      * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
      */
-    public Format[] getSupportedOutputFormats(Format fmt) {
-        Format[] formats = new Format[] {
-            Codec.LINEAR_AUDIO
-        }; 
-        return formats;
-    }
-
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
-     */
-    public Format[] getSupportedInputFormats(Format fmt) {
-        Format[] formats = new Format[] {
-            Codec.PCMA
-        }; 
-        return formats;
-    }
-    
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
-     */
-    public Format[] getSupportedOutputFormats() {
-        Format[] formats = new Format[] {
-            Codec.LINEAR_AUDIO
-        }; 
-        return formats;
+    public Format getSupportedOutputFormat() {
+        return Codec.LINEAR_AUDIO;
     }
     
     /**
@@ -113,20 +85,11 @@ public class Decoder implements Codec {
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
-        
-        int offset = buffer.getOffset();
-        int length = buffer.getLength();
-        
-        byte[] media = new byte[length - offset];
-        System.arraycopy(data, 0, media, 0, media.length);
-        
-        byte[] res = process(data);
-        
-        buffer.setData(res);
-        buffer.setFormat(Codec.LINEAR_AUDIO);
+        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         buffer.setOffset(0);
-        buffer.setLength(res.length);
+        buffer.setLength(len);
+        buffer.setFormat(Codec.LINEAR_AUDIO);
     }
     
     /**
@@ -135,14 +98,14 @@ public class Decoder implements Codec {
      * @param media the input compressed media
      * @return the output decompressed media.
      */
-    private byte[] process(byte[] media) {
-        byte[] decompressed = new byte[media.length * 2];
+    private int process(byte[] src, int len, byte[] res) {
         int j = 0;
-        for (int i = 0; i < media.length; i++) {
-            short s = aLawDecompressTable[media[i] & 0xff];
-            decompressed[j++] = (byte) s;
-            decompressed[j++] = (byte) (s >> 8);
+        for (int i = 0; i < len; i++) {
+            short s = aLawDecompressTable[src[i] & 0xff];
+            res[j++] = (byte) s;
+            res[j++] = (byte) (s >> 8);
         }
-        return decompressed;
-    }
+        return 2 * len;
+    }    
+
 }

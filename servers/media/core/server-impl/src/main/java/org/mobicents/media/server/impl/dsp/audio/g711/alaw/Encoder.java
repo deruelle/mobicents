@@ -15,8 +15,8 @@ package org.mobicents.media.server.impl.dsp.audio.g711.alaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.CachedBuffersPool;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
 /**
  * Implements G.711 A-law compressor.
@@ -46,89 +46,50 @@ public class Encoder implements Codec {
     };
 
     private byte[] temp = new byte[1200];
+    private SignalingProcessor dsp;
+    
+    public void setProc(SignalingProcessor dsp) {
+        this.dsp = dsp;
+    }
+    
+    /**
+     * (Non Java-doc)
+     * 
+     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormat().
+     */
+    public Format getSupportedInputFormat() {
+        return Codec.LINEAR_AUDIO;
+    }
     
     /**
      * (Non Java-doc)
      * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats().
      */
-    public Format[] getSupportedInputFormats() {
-        Format[] formats = new Format[] {
-            Codec.LINEAR_AUDIO
-        }; 
-        return formats;
-    }
-    
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedFormats(Format).
-     */
-    public Format[] getSupportedOutputFormats(Format fmt) {
-        Format[] formats = new Format[] {
-            Codec.PCMA
-        }; 
-        return formats;
+    public Format getSupportedOutputFormat() {
+        return Codec.PCMA;
     }
 
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedInputFormats(Format).
-     */
-    public Format[] getSupportedInputFormats(Format fmt) {
-        Format[] formats = new Format[] {
-            Codec.LINEAR_AUDIO
-        }; 
-        return formats;
-    }
-    
-    /**
-     * (Non Java-doc)
-     * 
-     * @see org.mobicents.media.server.impl.jmf.dsp.Codec#getSupportedOutputFormats().
-     */
-    public Format[] getSupportedOutputFormats() {
-        Format[] formats = new Format[] {
-            Codec.PCMA
-        }; 
-        return formats;
-    }
-    
     /**
      * (Non Java-doc)
      * 
      * @see org.mobicents.media.server.impl.jmf.dsp.Codec#process(Buffer).
      */
     public void process(Buffer buffer) {
-/*        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
+        int len = process((byte[]) buffer.getData(), buffer.getLength(), temp);
         System.arraycopy(temp, 0, (byte[])buffer.getData(), 0, len);
         buffer.setOffset(0);
         buffer.setLength(len);
         buffer.setFormat(PCMA);
- */ 
-        byte[] data = (byte[]) buffer.getData();
-        
-        int offset = buffer.getOffset();
-        int length = buffer.getLength();
-        
-        byte[] media = new byte[length - offset];
-        System.arraycopy(data, 0, media, 0, media.length);
-        
-        byte[] res = process(data);
-        
-        buffer.setData(res);
-        buffer.setOffset(0);
-        buffer.setFormat(Codec.PCMA);
-        buffer.setLength(res.length);
-         
     }
     
     private int process(byte[] src, int len, byte[] res) {
         int j = 0;
         int count = len / 2;
+        short sample = 0;
+        
         for (int i = 0; i < count; i++) {
-            short sample = (short) (((src[j++] & 0xff) | (src[j++]) << 8));
+            sample = (short) (((src[j++] & 0xff) | (src[j++]) << 8));
             res[i] = linearToALawSample(sample);
         }
         return count;
