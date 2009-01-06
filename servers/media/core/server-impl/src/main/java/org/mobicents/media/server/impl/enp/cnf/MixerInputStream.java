@@ -20,7 +20,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.CachedBuffersPool;
 
 /**
  *
@@ -56,13 +55,11 @@ public class MixerInputStream extends AbstractSink {
 
     public void receive(Buffer buffer) {
         if (mixer == null) {
-            CachedBuffersPool.release(buffer);
             return;
         }
         
         if (duration + buffer.getDuration() > jitter) {
             //silently discard packet
-            CachedBuffersPool.release(buffer);
             return;
         }
 
@@ -98,7 +95,6 @@ public class MixerInputStream extends AbstractSink {
 
             if (buff.getOffset() == buff.getLength()) {
                 buffers.remove(buff);
-                CachedBuffersPool.release(buff);
                 this.duration -= buff.getDuration();
             }
         }

@@ -13,177 +13,197 @@
  */
 package org.mobicents.media.server.impl.enp.cnf;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
+
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+
+import org.mobicents.media.server.impl.BaseConnection;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.MediaResource;
+
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
+
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.BaseConnection;
-import org.mobicents.media.server.impl.BaseVirtualEndpoint;
-import org.mobicents.media.server.impl.Demultiplexer;
-import org.mobicents.media.server.impl.Generator;
-import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
-import org.mobicents.media.server.impl.events.connection.parameters.ConnectionParametersGenerator;
-import org.mobicents.media.server.impl.events.dtmf.BaseDtmfDetector;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ConnectionListener;
-import org.mobicents.media.server.spi.ConnectionMode;
-import org.mobicents.media.server.spi.ConnectionState;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
-import org.mobicents.media.server.spi.events.pkg.ConnectionParameters;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class ConfEndpointImpl extends BaseVirtualEndpoint implements ConnectionListener {
+public class ConfEndpointImpl extends BaseEndpoint {
 
-	private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
-	private HashMap mixers = new HashMap();
+    private final static Format FORMATS[] = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, GSM, G729, DTMF};
+    private ArrayList<RtpSocket> sockets = new ArrayList();
+    private ArrayList<RxChannel> rxChannels = new ArrayList();
+    private ArrayList<TxChannel> txChannels = new ArrayList();
+    private transient Logger logger = Logger.getLogger(ConfEndpointImpl.class);
 
-	// private transient Logger logger =
-	// Logger.getLogger(ConfEndpointImpl.class);
-	public ConfEndpointImpl(String localName, HashMap<String, Endpoint> endpointsMap) {
-		super(localName, endpointsMap);
-		this.setMaxConnectionsAvailable(1000);
-		this.addConnectionListener(this);
-	}
+    public ConfEndpointImpl(String localName) {
+        super(localName);
+        this.setMaxConnectionsAvailable(5);
+    }
 
-	@Override
-	public Endpoint doCreateEndpoint(String localName) {
-		return new ConfEndpointImpl(localName, super.endpoints);
-	}
+    @Override
+    public void start() throws ResourceUnavailableException {
+        super.start();
 
-	@Override
-	public HashMap initMediaSources() {
-		HashMap map = new HashMap();
-		// init audio player
-		map.put(Generator.AUDIO_PLAYER, new AudioPlayer());
-		map.put(Generator.CONNECTION_PARAMETERS, new ConnectionParametersGenerator());
-		return map;
-	}
+        try {
+            RtpFactory rtpFactory = getRtpFactory();
+            for (int i = 0; i < this.getMaxConnectionsAvailable(); i++) {
+                sockets.add(rtpFactory.getRTPSocket(this));
+            }
+        } catch (Exception e) {
+            throw new ResourceUnavailableException(e.getMessage());
+        }
 
-	@Override
-	public HashMap initMediaSinks() {
-		HashMap map = new HashMap();
-		// init audio player
-		// map.put(Generator.AUDIO_RECORDER, new Recorder(""));
-		map.put(Generator.DTMF_DETECTOR, new BaseDtmfDetector());
+        for (int i = 0; i < this.getMaxConnectionsAvailable(); i++) {
+            rxChannels.add(new RxChannel(i));
+            txChannels.add(new TxChannel(this, i));
+        }
+    }
 
-		return map;
-	}
+    @Override
+    public void stop() {
+        for (int i = 0; i < this.getMaxConnectionsAvailable(); i++) {
+            sockets.get(i).close();
+            rxChannels.get(i).close();
+            txChannels.get(i).close();
+        }
 
-	/**
-	 * Attaches connection's receiver stream to other connections.
-	 * 
-	 * @param connection
-	 *            the connection which receiver stream will be attached.
-	 */
-	private void attachReceiver(Connection connection) {
-		Demultiplexer demux = ((BaseConnection) connection).getDemux();
-		Collection<Connection> connections = this.getConnections();
-		for (Connection conn : connections) {
-			if (!conn.getId().equals(connection.getId())) {
-				AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-				if (mixer != null) {
-					demux.connect(mixer);
-				}
-			}
-		}
-	}
+        sockets.clear();
 
-	/**
-	 * Attach receiver streams from "otrher" connections to current mixer.
-	 * Register mixer as secondary source for current primary source.
-	 * 
-	 * @param connection
-	 *            the connection which mixer will be used to attach to.
-	 */
-	private void attachSender(Connection connection) {
-		Collection<Connection> connections = getConnections();
-		AudioMixer mixer = new AudioMixer(connection.getId());
-		mixers.put(connection.getId(), mixer);
+        rxChannels.clear();
+        txChannels.clear();
+        
+        super.stop();
+    }
 
-		// detach player from MUX and attach to Mixer.
-		AudioPlayer player = (AudioPlayer) this.getMediaSource(Generator.AUDIO_PLAYER, connection);
-		player.disconnect(((BaseConnection) connection).getMux());
-		mixer.connect(player);
+    @Override
+    public Format[] getFormats() {
+        return FORMATS;
+    }
 
-		mixer.start();
+    public String[] getSupportedPackages() {
+        return new String[]{Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
+    }
 
-		for (Connection conn : connections) {
-			if (!conn.getId().equals(connection.getId())) {
-				((BaseConnection) conn).getDemux().connect(mixer);
-			}
-		}
+    @Override
+    public MediaSink getPrimarySink(Connection connection) {
+        int index = ((BaseConnection) connection).getIndex();
+        return rxChannels.get(index).getInput();
+    }
 
-		((BaseConnection) connection).getMux().connect(mixer.getOutput());
-	}
+    @Override
+    public MediaSource getPrimarySource(Connection connection) {
+        int index = ((BaseConnection) connection).getIndex();
+        return txChannels.get(index).getSource();
+    }
 
-	public void detachReceiver(Connection connection) {
-		// Mixer exist only when ConnectionState is OPEN
+    @Override
+    public void allocateMediaSources(Connection connection, Format[] formats) {
+        lock.lock();
+        try {
+            TxChannel txChannel = txChannels.get(((BaseConnection) connection).getIndex());
+            txChannel.configure(FORMATS, formats);
+            txChannel.addListener((BaseConnection) connection);
+            txChannel.start();
+            for (RxChannel rxChannel : rxChannels) {
+                if (rxChannel.isActive() && txChannel.getIndex() != rxChannel.getIndex()) {
+                    txChannel.attach(rxChannel);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
-		Demultiplexer demux = ((BaseConnection) connection).getDemux();
-		Collection<Connection> connections = getConnections();
-		for (Connection conn : connections) {
-			if (!(conn.getState().equals(ConnectionState.HALF_OPEN)) && !conn.getId().equals(connection.getId())) {
-				AudioMixer mixer = (AudioMixer) mixers.get(conn.getId());
-				demux.disconnect(mixer);
-			}
+    @Override
+    public void allocateMediaSinks(Connection connection) {
+        lock.lock();
+        try {
+            RxChannel rxChannel = rxChannels.get(((BaseConnection) connection).getIndex());
+            rxChannel.addListener((BaseConnection) connection);
+            rxChannel.start();
+            for (TxChannel txChannel : txChannels) {
+                if (txChannel.isActive() && rxChannel.getIndex() != txChannel.getIndex()) {
+                    txChannel.attach(rxChannel);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
-		}
-	}
+    @Override
+    protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+        lock.lock();
+        try {
+            int index = ((BaseConnection) connection).getIndex();
+            return txChannels.get(index).getMediaSource(id);
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public void detachSender(Connection connection) {
-		// Mixer exist only when ConnectionState is OPEN
-		AudioMixer mixer = (AudioMixer) mixers.get(connection.getId());
-		if (mixer != null) {
-			mixer.stop();
+    @Override
+    protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        lock.lock();
+        try {
+            int index = ((BaseConnection) connection).getIndex();
+            return rxChannels.get(index).getMediaSink(id);
+        } finally {
+            lock.unlock();
+        }
+    }
 
-			Collection<Connection> connections = getConnections();
+    @Override
+    public void releaseMediaSources(Connection connection) {
+        lock.lock();
+        try {
+            TxChannel txChannel = txChannels.get(((BaseConnection) connection).getIndex());
+            txChannel.stop();
+            txChannel.removeListener((BaseConnection) connection);
+            for (RxChannel rxChannel : rxChannels) {
+                txChannel.deattach(rxChannel);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
-			for (Connection conn : connections) {
-				if (!conn.getId().equals(connection.getId())) {
-					((BaseConnection) conn).getDemux().disconnect(mixer);
-				}
-			}
-		}
+    @Override
+    public void releaseMediaSinks(Connection connection) {
+        lock.lock();
+        try {
+            RxChannel rxChannel = rxChannels.get(((BaseConnection) connection).getIndex());
+            rxChannel.stop();
+            rxChannel.removeListener((BaseConnection) connection);
+            for (TxChannel txChannel : txChannels) {
+                txChannel.deattach(rxChannel);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	}
+    @Override
+    public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+        lock.lock();
+        try {
+            int index = ((BaseConnection) connection).getIndex();
+            return sockets.get(index);
+        } finally {
+            lock.unlock();
+        }
+    }
 
-	public synchronized void onStateChange(Connection connection, ConnectionState oldState) {
-		switch (connection.getState()) {
-		// endpoint can receive media, so all existing mixers should
-		// be registered as secondary sources for primary source.
-		case HALF_OPEN:
-			if (logger.isDebugEnabled()) {
-				logger.debug("localName=" + getLocalName() + ", Attaching receiver");
-			}
-			attachReceiver(connection);
-			break;
-		case OPEN:
-			if (logger.isDebugEnabled()) {
-				logger.debug("localName=" + getLocalName() + ", Attaching sender");
-			}
-			attachSender(connection);
-			break;
-		case CLOSED:
-			if (logger.isDebugEnabled()) {
-				logger.debug("localName=" + getLocalName() + ", Detaching receiver");
-			}
-			detachReceiver(connection);
-			if (logger.isDebugEnabled()) {
-				logger.debug("localName=" + getLocalName() + ", Detaching sender");
-			}
-			detachSender(connection);
-			break;
-		}
-	}
-
-	public String[] getSupportedPackages() {
-		return new String[] { Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME ,ConnectionParameters.PACKAGE_NAME};
-	}
-
-	public void onModeChange(Connection connection, ConnectionMode oldMode) {
-	}
+    @Override
+    public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+    }
 }

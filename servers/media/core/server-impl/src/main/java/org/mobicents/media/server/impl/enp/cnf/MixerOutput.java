@@ -22,10 +22,10 @@ import org.mobicents.media.server.impl.AbstractSource;
  * @author Oleg Kulikov
  */
 public class MixerOutput extends AbstractSource {
-	
-	public MixerOutput(){
-		super("MixerOutput");
-	}
+
+    public MixerOutput() {
+        super("MixerOutput");
+    }
 
     protected void push(Buffer buffer) {
         if (sink != null) {

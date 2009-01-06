@@ -18,17 +18,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.CachedBuffersPool;
+import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.clock.Quartz;
-import org.mobicents.media.server.impl.clock.Timer;
-import org.mobicents.media.server.impl.clock.TimerTask;
-
+//import org.mobicents.media.server.impl.clock.TimerTask;
 /**
  * 
  * @author Oleg Kulikov
@@ -39,8 +40,8 @@ public class AudioMixer extends AbstractSink implements Serializable {
     protected final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
             AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
     protected final static Format[] formats = new Format[]{LINEAR};
-    private TimerTask mixer;
-    protected Timer timer;
+    private transient ScheduledExecutorService timer;
+    private volatile transient Future worker;
     private ConcurrentHashMap<MediaSource, MixerInputStream> inputs = new ConcurrentHashMap<MediaSource, MixerInputStream>();
     private boolean started = false;
     private AudioFormat fmt = LINEAR;
@@ -65,10 +66,10 @@ public class AudioMixer extends AbstractSink implements Serializable {
      * @param fmt
      *            format of the output stream.
      */
-    public AudioMixer(String name) {
-        super("AudioMixer");
-        this.timer = new Timer();
-        this.name = name;
+    public AudioMixer(BaseEndpoint endpoint, String name) {
+        super("AudioMixer[" + endpoint.getLocalName() + "]");
+        this.name = "AudioMixer[" + endpoint.getLocalName() + "]/" + name;
+        this.timer = endpoint.getReceiverThread();
         this.mixerOutput = new MixerOutput();
         this.init();
     }
@@ -97,6 +98,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
 
     @Override
     public void connect(MediaSource stream) {
+        //super.connect(stream);
         MixerInputStream input = new MixerInputStream(this, jitter);
         inputs.put(stream, input);
         input.connect(stream);
@@ -108,6 +110,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
         if (input != null) {
             input.disconnect(stream);
         }
+        //super.disconnect(stream);
     }
 
     public int getInputCount() {
@@ -118,21 +121,17 @@ public class AudioMixer extends AbstractSink implements Serializable {
      * Starts mixer.
      */
     public void start() {
-        if (!started) {
-            started = true;
-            mixer = new Mixer();
-            timer.setListener(mixer);
-            timer.start();
-        }
+        started = true;
+        worker = timer.scheduleAtFixedRate(new Mixer(), 0, packetPeriod, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Terminates mixer.
      */
     public void stop() {
-        if (started) {
-            started = false;
-            timer.stop();
+        started = false;
+        if (worker != null) {
+            worker.cancel(true);
         }
     }
 
@@ -144,7 +143,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
     /**
      * Implements mixing procedure for a buffer of audio.
      */
-    private class Mixer implements TimerTask {
+    private class Mixer implements Runnable {
 
         public short[] byteToShortArray(byte[] input) {
             short[] output = new short[input.length >> 1];
@@ -212,7 +211,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
             return data;
         }
 
-        public synchronized void run() {
+        public void run() {
             Collection<MixerInputStream> buffers = inputs.values();
             ArrayList<byte[]> frames = new ArrayList();
             for (MixerInputStream buffer : buffers) {
@@ -224,16 +223,10 @@ public class AudioMixer extends AbstractSink implements Serializable {
             byte[] data = mix(frames);
             push(data);
         }
-
-        public void started() {
-        }
-
-        public void ended() {
-        }
     }
 
     private void push(byte[] data) {
-        Buffer buffer = CachedBuffersPool.allocate();
+        Buffer buffer = new Buffer();
         buffer.setData(data);
         buffer.setOffset(0);
         buffer.setLength(data.length);
@@ -242,10 +235,6 @@ public class AudioMixer extends AbstractSink implements Serializable {
         buffer.setSequenceNumber(seq++);
 
         buffer.setFormat(fmt);
-        // if (codec != null) {
-        // codec.process(buffer);
-        // }
-
         mixerOutput.push(buffer);
     }
 
