@@ -120,8 +120,4 @@ public interface Connection extends Serializable {
      */
     public void removeListener(ConnectionListener listener);
 
-    /**
-     * Closes this connection.
-     */
-    public void close();
 }

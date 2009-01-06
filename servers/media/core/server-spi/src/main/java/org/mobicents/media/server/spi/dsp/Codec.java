@@ -26,23 +26,15 @@ import org.mobicents.media.format.AudioFormat;
 public interface Codec extends Serializable {
 	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
 			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-
 	public final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
 	public final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-
 	public final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-
 	public final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
-
 	public final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
 
-	public Format[] getSupportedInputFormats();
+	public Format getSupportedInputFormat();
+	public Format getSupportedOutputFormat();
 
-	public Format[] getSupportedOutputFormats(Format fmt);
-
-	public Format[] getSupportedOutputFormats();
-
-	public Format[] getSupportedInputFormats(Format fmt);
 
 	/**
 	 * Perform encoding/decoding procedure.
@@ -51,4 +43,6 @@ public interface Codec extends Serializable {
 	 *            the media buffer.
 	 */
 	public void process(Buffer buffer);
+        
+        public void setProc(SignalingProcessor processor);
 }

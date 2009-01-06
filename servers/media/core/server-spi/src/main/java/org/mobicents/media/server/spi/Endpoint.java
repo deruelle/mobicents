@@ -17,8 +17,10 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
+
 /**
  * The basic implementation of the endpoint.
  *
@@ -34,7 +36,16 @@ import org.mobicents.media.server.spi.events.RequestedSignal;
  * @author amit.bhayani
  */
 public interface Endpoint extends Serializable {
-   
+
+    public final static AudioFormat LINEAR_AUDIO = 
+            new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    public final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+    public final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+    public final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+    public final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+    public final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
+    public final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
+    
     /**
      * Gets the local name attribute.
      *
@@ -42,7 +53,15 @@ public interface Endpoint extends Serializable {
      */
     public String getLocalName();
 
-
+    /**
+     * Starts endpoint.
+     */
+    public void start() throws ResourceUnavailableException ;
+    
+    /**
+     * Terminates endpoint's execution.
+     */
+    public void stop();
     
     /**
      * Creates new connection with specified mode.
@@ -59,7 +78,7 @@ public interface Endpoint extends Serializable {
      */
     public Connection createLocalConnection(ConnectionMode mode)
             throws TooManyConnectionsException, ResourceUnavailableException;
-    
+
     /**
      * Deletes specified connection.
      *
@@ -78,46 +97,73 @@ public interface Endpoint extends Serializable {
      * @return true if endpoint has connections.
      */
     public boolean hasConnections();
-
     
+    /**
+     * Shows is this endpoint in use
+     * 
+     * @return true if this endpoint is in use.
+     */
+    public boolean isInUse();
+    
+    /**
+     * Marks this endpoint as used/unsed.
+     * 
+     * @param inUse true if endpoint is in use.
+     */
+    public void setInUse(boolean inUse);
+    
+    /**
+     * Executes the sequence of signals and detects requested events on the endpoint.
+     * 
+     * @param signals the list of requested signals.
+     * @param events the list of reguested events.
+     */
     public void execute(RequestedSignal[] signals, RequestedEvent[] events);
+
+    /**
+     * Executes the sequence of signals and detects requested events on the connection.
+     * 
+     * @param signals the list of requested signals.
+     * @param events the list of reguested events.
+     * @param connectionID  the identifier of the connection. 
+     */
     public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID);
-    
-	/**
-	 * Register NotificationListener to listen for <code>MsNotifyEvent</code>
-	 * which are fired due to events detected by Endpoints like DTMF. Use above
-	 * execute methods to register for event passing appropriate
-	 * <code>RequestedEvent</code>
-	 * 
-	 * @param listener
-	 */
-	public void addNotificationListener(NotificationListener listener);
 
-	/**
-	 * Remove the NotificationListener
-	 * 
-	 * @param listener
-	 */
-	public void removeNotificationListener(NotificationListener listener);
+    /**
+     * Register NotificationListener to listen for <code>MsNotifyEvent</code>
+     * which are fired due to events detected by Endpoints like DTMF. Use above
+     * execute methods to register for event passing appropriate
+     * <code>RequestedEvent</code>
+     * 
+     * @param listener
+     */
+    public void addNotificationListener(NotificationListener listener);
 
-	/**
-	 * Register <code>ConnectionListener</code> to listen for changes in MsConnection state
-	 * handled by this Endpoint
-	 * 
-	 * @param listener
-	 */
-	public void addConnectionListener(ConnectionListener listener);
+    /**
+     * Remove the NotificationListener
+     * 
+     * @param listener
+     */
+    public void removeNotificationListener(NotificationListener listener);
 
-	/**
-	 * Removes the ConnectionListener
-	 * 
-	 * @param listener
-	 */
-	public void removeConnectionListener(ConnectionListener listener);
-	
-	/**
-	 * This method gives the array of Supported Packages for given Endpoint.
-	 * @return String[]
-	 */
-	public String[] getSupportedPackages();
+    /**
+     * Register <code>ConnectionListener</code> to listen for changes in MsConnection state
+     * handled by this Endpoint
+     * 
+     * @param listener
+     */
+    public void addConnectionListener(ConnectionListener listener);
+
+    /**
+     * Removes the ConnectionListener
+     * 
+     * @param listener
+     */
+    public void removeConnectionListener(ConnectionListener listener);
+
+    /**
+     * This method gives the array of Supported Packages for given Endpoint.
+     * @return String[]
+     */
+    public String[] getSupportedPackages();
 }

@@ -14,6 +14,7 @@
 
 package org.mobicents.media.server.spi.dsp;
 
+import java.io.Serializable;
 import org.mobicents.media.Format;
 
 /**
@@ -21,27 +22,13 @@ import org.mobicents.media.Format;
  * 
  * @author Oleg Kulikov
  */
-public interface Processor {
-    /**
-     * Appends specified codec to the list of supported codecs.
-     * 
-     * @param codec the codec implementation to be added
-     */
-    public void register(Codec codec);
-    
-    /**
-     * Removes codec from the list of supported codecs.
-     * 
-     * @param codec the codec instance to be removed
-     */
-    public void unregister(Codec codec);
-    
+public interface SignalingProcessor extends Serializable {
     /**
      * Configures signaling processor.
      * 
      * @param inputFormat the format of the input signal.
      * @param outputFormat the format of the output signal.
      */
-    public void configure(Format inputFormat, Format outputFormat);
+    public void configure(Format[] inputFormats, Format[] outputFormats);
     
 }

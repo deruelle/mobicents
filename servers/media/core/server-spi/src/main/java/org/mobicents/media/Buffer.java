@@ -44,10 +44,16 @@ public class Buffer implements Serializable {
     public static final long TIME_UNKNOWN = -1;
     public static final long SEQUENCE_UNKNOWN = Long.MAX_VALUE - 1;
 
+    private BufferFactory factory;
+    
     public Buffer() {
         super();
     }
 
+    public void setFactory(BufferFactory factory) {
+        this.factory = factory;
+    }
+        
     public Format getFormat() {
         return format;
     }
@@ -235,5 +241,11 @@ public class Buffer implements Serializable {
         return "Buffer[fmt=" + this.format + ", timestamp=" + this.timeStamp +
                 ", seq=" + this.sequenceNumber + ", size= " + (length - offset) +
                 "]";
+    }
+    
+    public void dispose() {
+        if (factory != null) {
+            factory.deallocate(this);
+        }
     }
 }
