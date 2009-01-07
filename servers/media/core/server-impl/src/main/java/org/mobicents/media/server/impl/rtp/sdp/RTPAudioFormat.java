@@ -115,6 +115,8 @@ public class RTPAudioFormat extends AudioFormat {
 			return new RTPAudioFormat(p, AudioFormat.ULAW, clockRate, 8, chans);
 		} else if (encodingName.equals("pcma")) {
 			return new RTPAudioFormat(p, AudioFormat.ALAW, clockRate, 8, chans);
+		} else if (encodingName.equals("speex")) {
+			return new RTPAudioFormat(p, AudioFormat.SPEEX, clockRate, 8, chans);
 		} else if (encodingName.equals("telephone-event")) {
 			return new DtmfFormat(p, "telephone-event/8000");
 		} else {
