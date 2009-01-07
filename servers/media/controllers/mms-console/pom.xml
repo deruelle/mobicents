@@ -138,7 +138,7 @@
 
 			<dependency>
 				<groupId>org.mobicents.servers.media</groupId>
-				<version>1.0.0.BETA5-SNAPSHOT</version>
+				<version>${project.version}</version>
 				<artifactId>mobicents-media-server-impl</artifactId>
 			</dependency>
 		</dependencies>
