@@ -22,7 +22,6 @@ import javax.slee.SbbContext;
 import javax.slee.UnrecognizedActivityException;
 
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.impl.common.events.EventID;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsEndpoint;
@@ -32,7 +31,6 @@ import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
-import org.mobicents.mscontrol.MsSignalDetector;
 import org.mobicents.mscontrol.events.MsEventAction;
 import org.mobicents.mscontrol.events.MsEventFactory;
 import org.mobicents.mscontrol.events.MsRequestedEvent;
@@ -234,16 +232,7 @@ public abstract class DtmfDemoSbb implements Sbb {
 		ivr.execute(signals, events, link);
 	}
 
-	@SuppressWarnings("static-access")
-	private void initDtmfDetector(MsConnection connection) {
-		MsSignalDetector dtmfDetector = msProvider.getSignalDetector(this.getUserEndpoint());
-		try {
-			ActivityContextInterface dtmfAci = mediaAcif.getActivityContextInterface(dtmfDetector);
-			dtmfAci.attach(sbbContext.getSbbLocalObject());
-			dtmfDetector.receive(EventID.DTMF, connection, new String[] {});
-		} catch (UnrecognizedActivityException e) {
-		}
-	}
+
 
 	public void onUserDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
 		MsLink link = getLink();
