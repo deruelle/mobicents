@@ -38,13 +38,16 @@ public class LoopEndpointImpl extends BaseEndpoint {
 
     public LoopEndpointImpl(String localName) {
         super(localName);
+        
         this.setMaxConnectionsAvailable(1);
         mux = new Multiplexer();
         demux = new Demultiplexer(FORMATS);
     }
 
     @Override
-    public void start() {
+    public void start() throws ResourceUnavailableException{
+    	
+		super.start();
         demux.connect(mux);
         try {
             RtpFactory rtpFactory = getRtpFactory();
@@ -68,6 +71,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         if (rtpSocket != null) {
             rtpSocket.close();
         }
+        super.stop();
     }
 
     @Override
