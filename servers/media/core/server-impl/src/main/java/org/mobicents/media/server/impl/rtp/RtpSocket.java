@@ -150,4 +150,6 @@ public interface RtpSocket extends Serializable {
      */
     public void close();
     
+    public void resetRtpMap();
+    
 }

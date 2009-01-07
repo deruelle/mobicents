@@ -44,6 +44,7 @@ public class RtpSocketImpl implements RtpSocket {
     protected Peer peer = null;
     //holder for dynamic payloads.
     private HashMap<Integer, Format> rtpMap = new HashMap<Integer, Format>();
+    private HashMap<Integer, Format> rtpMapOriginal = new HashMap<Integer, Format>();;
     protected int period = 20;
     private int jitter = 60;
     
@@ -70,6 +71,7 @@ public class RtpSocketImpl implements RtpSocket {
     public RtpSocketImpl(BaseEndpoint endpoint, int period, int jitter, HashMap<Integer, Format> rtpMap) {
         this.period = period;
         this.jitter = jitter;
+        rtpMapOriginal.putAll(rtpMap);
         this.rtpMap.putAll(rtpMap);        
         sendStream = new SendStreamImpl(this);
         receiveStream = new ReceiveStream(endpoint.getReceiverThread(), this, period, jitter);
@@ -294,6 +296,11 @@ public class RtpSocketImpl implements RtpSocket {
             sendStream.formats = new Format[rtpMap.size()];
             rtpMap.values().toArray(sendStream.formats);
         }
+    }
+    
+    public void resetRtpMap(){
+    	this.rtpMap.clear();
+    	this.rtpMap.putAll(rtpMapOriginal);
     }
 
     /**

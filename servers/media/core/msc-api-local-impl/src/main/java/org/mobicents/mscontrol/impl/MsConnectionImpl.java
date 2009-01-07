@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.naming.NamingException;
 import javax.sdp.SdpException;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -53,6 +54,7 @@ public class MsConnectionImpl extends MsActionPerformer implements MsConnection,
     /**
      * 
      */
+	private static final Logger logger = Logger.getLogger(MsConnectionImpl.class);
     private static final long serialVersionUID = 7869810097365002045L;
     private String id = (new UID()).toString();
     private MsConnectionState state;
@@ -244,16 +246,22 @@ public class MsConnectionImpl extends MsActionPerformer implements MsConnection,
                     connection.setRemoteDescriptor(remoteSdp);
                 }
             } catch (NamingException e) {
+            	logger.error("NamingException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN);
             } catch (ResourceUnavailableException e) {
+            	logger.error("ResourceUnavailableException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
             } catch (TooManyConnectionsException e) {
+            	logger.error("TooManyConnectionsException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
             } catch (SdpException e) {
+            	logger.error("SdpException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
             } catch (IOException e) {
+            	logger.error("IOException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
             } catch (Exception e) {
+            	logger.error("Exception while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
             }
         }
@@ -272,10 +280,13 @@ public class MsConnectionImpl extends MsActionPerformer implements MsConnection,
                 try {
                     connection.setRemoteDescriptor(remoteSdp);
                 } catch (SdpException ex) {
+                	logger.error("SdpException while trying to create Connection ", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 } catch (IOException ex) {
+                	logger.error("IOException while trying to create Connection ", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);
                 } catch (ResourceUnavailableException ex) {
+                	logger.error("ResourceUnavailableException while trying to create Connection ", ex);
                     setState(MsConnectionState.FAILED, MsConnectionEventCause.REMOTE_SDP_INVALID);
                 }
             }

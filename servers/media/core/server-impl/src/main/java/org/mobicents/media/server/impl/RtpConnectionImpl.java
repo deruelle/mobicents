@@ -70,6 +70,8 @@ public class RtpConnectionImpl extends BaseConnection {
         sdpFactory = this.endpoint.getSdpFactory();
         rtpSocket = this.endpoint.allocateRtpSocket(this);
         
+        rtpSocket.resetRtpMap();
+        
         if (this.endpoint.getPrimarySink(this) != null) {
             this.endpoint.getPrimarySink(this).connect(rtpSocket.getReceiveStream());
             if (mode == ConnectionMode.RECV_ONLY || mode == ConnectionMode.SEND_RECV) {
@@ -260,8 +262,12 @@ public class RtpConnectionImpl extends BaseConnection {
 
         // negotiate codecs
         HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
+        System.out.println("Codec offer = "+ offer);
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
+        System.out.println("Codec rtpMap = "+ rtpMap);
+        
         HashMap<Integer, Format> subset = this.subset(offer, rtpMap);
+        System.out.println("Codec subset = "+ subset);
 
         if (subset.isEmpty()) {
             throw new IOException("Codecs are not negotiated");
