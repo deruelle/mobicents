@@ -81,7 +81,7 @@ public abstract class RQNTSbb implements Sbb {
 
 	public final static String JBOSS_BIND_ADDRESS = System.getProperty("jboss.bind.address", "127.0.0.1");
 
-	public final static String HELLO_WORLD = "http://" + JBOSS_BIND_ADDRESS + ":8080/mgcpdemo/audio/RQNT.wav";
+	public final static String HELLO_WORLD = "http://" + JBOSS_BIND_ADDRESS + ":8080/mgcpdemo/audio/RQNT-ULAW.wav";
 
 	private SbbContext sbbContext;
 
