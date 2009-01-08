@@ -66,15 +66,14 @@
         <dependency>
             <groupId>javax.sip</groupId>
             <artifactId>jain-sip-ri</artifactId>
-            <version>1.2.85</version>
+            <version>${jain-sip-ri.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mobicents.external.tritonus</groupId>
-            <artifactId>tritonus_gsm</artifactId>
-            <version>0.3.6</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>${pom.groupId}</groupId>
+			<artifactId>gsm-codec</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
     </dependencies>
     <build>
         <finalName>${pom.artifactId}-${pom.version}</finalName>

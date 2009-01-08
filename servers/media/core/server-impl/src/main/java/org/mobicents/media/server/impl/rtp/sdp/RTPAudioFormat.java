@@ -121,6 +121,8 @@ public class RTPAudioFormat extends AudioFormat {
 			return new DtmfFormat(p, "telephone-event/8000");
 		} if (encodingName.equals("g729")) {
 			return new RTPAudioFormat(p, AudioFormat.G729, clockRate, 8, chans);
+		} if (encodingName.equals("gsm")) {
+			return new RTPAudioFormat(p, AudioFormat.GSM, clockRate, 8, chans);
 		} else {
 			return new RTPAudioFormat(p, encodingName, clockRate, getBits(encodingName), chans);
 		}

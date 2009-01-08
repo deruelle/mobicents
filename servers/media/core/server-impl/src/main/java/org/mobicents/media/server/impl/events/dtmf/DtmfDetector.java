@@ -58,7 +58,7 @@ public class DtmfDetector extends AbstractSink {
         
         dsp = new Processor("");
         dsp.getOutput().connect(inband);
-        dsp.configure(new Format[] {PCMA, SPEEX, PCMU, G729}, new Format[]{LINEAR_AUDIO});
+        dsp.configure(new Format[] {PCMA, SPEEX, PCMU, G729, GSM}, new Format[]{LINEAR_AUDIO});
     }
 
     

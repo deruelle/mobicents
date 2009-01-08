@@ -55,7 +55,7 @@ public class AudioPlayer extends AbstractSource {
     private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
     private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
     private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-    private final static Format[] formats = new Format[]{LINEAR, PCMA, PCMU, SPEEX};
+    private final static Format[] formats = new Format[]{LINEAR, PCMA, PCMU, SPEEX, GSM};
     /** format of the file */
     private AudioFormat format;
     /** audio stream */

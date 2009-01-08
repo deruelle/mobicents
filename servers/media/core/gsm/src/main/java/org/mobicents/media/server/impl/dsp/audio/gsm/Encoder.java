@@ -2,7 +2,6 @@ package org.mobicents.media.server.impl.dsp.audio.gsm;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -13,26 +12,11 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  */
 public class Encoder implements Codec {
 
-	private final static AudioFormat[] supportedInputFormats = new AudioFormat[] { Codec.LINEAR_AUDIO };
-	private final static AudioFormat[] supportedOutputFormats = new AudioFormat[] { Codec.GSM };
+
 
 	private org.tritonus.lowlevel.gsm.Encoder encoder = new org.tritonus.lowlevel.gsm.Encoder();
 
-	public Format[] getSupportedInputFormats() {
-		return supportedInputFormats;
-	}
 
-	public Format[] getSupportedOutputFormats(Format fmt) {
-		return supportedOutputFormats;
-	}
-
-	public Format[] getSupportedOutputFormats() {
-		return supportedOutputFormats;
-	}
-
-	public Format[] getSupportedInputFormats(Format fmt) {
-		return supportedInputFormats;
-	}
 
 	public void process(Buffer buffer) {
 		if (buffer.getLength() != 320) {

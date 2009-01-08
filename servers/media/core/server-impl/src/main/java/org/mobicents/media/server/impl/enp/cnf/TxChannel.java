@@ -53,7 +53,7 @@ public class TxChannel implements Serializable {
     private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
     private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     
-    private final static Format f1[] = new Format[]{PCMA, PCMU, SPEEX, G729, DTMF};
+    private final static Format f1[] = new Format[]{PCMA, PCMU, SPEEX, G729, GSM, DTMF};
     private final static Format f2[] = new Format[]{LINEAR_AUDIO, DTMF};
     
     

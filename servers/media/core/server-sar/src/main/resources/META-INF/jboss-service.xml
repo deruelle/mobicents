@@ -20,9 +20,10 @@
         <!--  To enable G729 Codec please look at http://www.mobicents.org/products_media_server.html -->
         <attribute name="AudioFormats">            
             0   = ULAW, 8000, 8, 1;
+            3   = GSM, 8000, 8, 1;
             8   = ALAW, 8000, 8, 1;
-	    97  = SPEEX, 8000, 8, 1;            
-	   101 = telephone-event/8000
+	    	97  = SPEEX, 8000, 8, 1;            
+	   		101 = telephone-event/8000
         </attribute>    
     </mbean>
     
@@ -109,7 +110,8 @@
         <attribute name="JndiName">media/trunk/IVR</attribute>
         <attribute name="RtpFactoryName">java:media/mobicents/protocol/RTP</attribute>
         <attribute name="MediaType">audio.x_wav</attribute>
-        <attribute name="DtmfMode">RFC2833</attribute>
+        <!--  DtmfMode can be either RFC2833 or INBAND or AUTO -->
+        <attribute name="DtmfMode">AUTO</attribute>
         <attribute name="RecordDir">${jboss.server.data.dir}</attribute>
         <attribute name="Channels">24</attribute>
     </mbean>    

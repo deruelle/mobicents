@@ -48,7 +48,7 @@ public class Processor implements SignalingProcessor {
     private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
     private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     
-    private final static Format FORMATS[] = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, DTMF};
+    private final static Format FORMATS[] = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
     
     private String name = null;
     
@@ -71,6 +71,9 @@ public class Processor implements SignalingProcessor {
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Encoder());
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Decoder());
 
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Encoder());
+        codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Decoder());
+        
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Encoder());
         codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
 

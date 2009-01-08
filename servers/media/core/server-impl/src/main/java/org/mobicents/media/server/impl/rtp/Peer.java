@@ -60,9 +60,19 @@ public class Peer implements Serializable {
     }
 
     public void send(Buffer buffer) throws IOException {
+    	
+    	int i = 0;
         RtpHeader header = (RtpHeader) buffer.getHeader();
-        System.arraycopy(header.toByteArray(), 0, data, 0, header.toByteArray().length);
-        System.arraycopy((byte[]) buffer.getData(), 0, data, header.toByteArray().length, buffer.getLength());
+        byte[] headerByte = header.toByteArray();
+        i = headerByte.length + buffer.getLength();
+        
+        byte[] data1 = new byte[i];
+        
+        
+        System.arraycopy(headerByte, 0, data1, 0, headerByte.length);
+        System.arraycopy((byte[]) buffer.getData(), 0, data1, headerByte.length, buffer.getLength());
+        
+        dp.setData(data1, 0, data1.length);
 
         rtpSocket.sendPacket(dp);
     }
