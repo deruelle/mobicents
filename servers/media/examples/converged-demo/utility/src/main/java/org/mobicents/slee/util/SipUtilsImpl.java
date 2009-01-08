@@ -49,9 +49,9 @@ import javax.sip.RequestEvent;
 import javax.sip.ResponseEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipException;
-import javax.sip.SipProvider;
 import javax.sip.SipStack;
 import javax.sip.TransactionUnavailableException;
+import javax.sip.TransportNotSupportedException;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.address.SipURI;
@@ -78,7 +78,6 @@ import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
 
-
 public class SipUtilsImpl implements SipUtils {
 
 	private static Logger log = Logger.getLogger(SipUtilsImpl.class);
@@ -91,8 +90,8 @@ public class SipUtilsImpl implements SipUtils {
 
 	private AddressFactory addressFactory;
 
-	public SipUtilsImpl(SleeSipProvider sipProvider, HeaderFactory headerFactory,
-			MessageFactory messageFactory, AddressFactory addressFactory) {
+	public SipUtilsImpl(SleeSipProvider sipProvider, HeaderFactory headerFactory, MessageFactory messageFactory,
+			AddressFactory addressFactory) {
 		this.sipProvider = sipProvider;
 		this.headerFactory = headerFactory;
 		this.messageFactory = messageFactory;
@@ -105,16 +104,13 @@ public class SipUtilsImpl implements SipUtils {
 		if (event.getDialog() == null) {
 			// This is non recoverable and can occur if AUTOMATIC_DIALOG_SUPPORT
 			// is disabled in the sip stack.
-			log
-					.error("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
-							+ "you must obtain a dialog before the first sip response arrives");
-			throw new SipException(
-					"responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
-							+ "you must obtain a dialog before the first sip response arrives");
+			log.error("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
+					+ "you must obtain a dialog before the first sip response arrives");
+			throw new SipException("responseEvent.getDialog returned null, if AUTOMATIC_DIALOG_SUPPORT is disabled "
+					+ "you must obtain a dialog before the first sip response arrives");
 		} else {
 			retVal = event.getDialog();
-			log
-					.debug("Returning dialog in getDialog(ResponseEvent) obtained directly from ResponseEvent");
+			log.debug("Returning dialog in getDialog(ResponseEvent) obtained directly from ResponseEvent");
 		}
 
 		return retVal;
@@ -129,10 +125,7 @@ public class SipUtilsImpl implements SipUtils {
 				retVal = event.getDialog();
 			}
 		} catch (SipException ex) {
-			log
-					.error(
-							"Exception in creating a new dialog in getDialog(RequestEvent)",
-							ex);
+			log.error("Exception in creating a new dialog in getDialog(RequestEvent)", ex);
 			throw ex;
 		}
 		return retVal;
@@ -141,8 +134,7 @@ public class SipUtilsImpl implements SipUtils {
 	/**
 	 * Hex characters
 	 */
-	private final char[] toHex = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
-			'9', 'a', 'b', 'c', 'd', 'e', 'f' };
+	private final char[] toHex = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
 	public String generateTag() {
 		String tag = new Integer((int) (Math.random() * 10000)).toString();
@@ -170,10 +162,8 @@ public class SipUtilsImpl implements SipUtils {
 	private AddressFactory getAddressFactory() {
 		AddressFactory addressFactory = null;
 		try {
-			Context myEnv = (Context) new InitialContext()
-					.lookup("java:comp/env");
-			SleeSipProvider factoryProvider = (SleeSipProvider) myEnv
-					.lookup("slee/resources/jainsip/1.2/provider");
+			Context myEnv = (Context) new InitialContext().lookup("java:comp/env");
+			SleeSipProvider factoryProvider = (SleeSipProvider) myEnv.lookup("slee/resources/jainsip/1.2/provider");
 			addressFactory = factoryProvider.getAddressFactory();
 		} catch (NamingException e) {
 			e.printStackTrace();
@@ -215,13 +205,10 @@ public class SipUtilsImpl implements SipUtils {
 		final int nameIndex = sipPrefixIndex + 1;
 		final int hostIndex = uriIndex + 1;
 
-		if (sipURI.indexOf(sipPrexfix) == -1
-				|| sipURI.indexOf(uriSeparator) == -1
-				|| sipPrefixIndex > uriIndex) {
-			throw new URISyntaxException(
-					sipURI,
-					"Malformed URI, the URI must use the format \"sip:user@host\". The incorrect URI was \""
-							+ sipURI + "\".");
+		if (sipURI.indexOf(sipPrexfix) == -1 || sipURI.indexOf(uriSeparator) == -1 || sipPrefixIndex > uriIndex) {
+			throw new URISyntaxException(sipURI,
+					"Malformed URI, the URI must use the format \"sip:user@host\". The incorrect URI was \"" + sipURI
+							+ "\".");
 		}
 
 		userAndHost[0] = sipURI.substring(nameIndex, uriIndex);
@@ -252,19 +239,16 @@ public class SipUtilsImpl implements SipUtils {
 		ct.sendRequest();
 	}
 
-	public Request buildInvite(Address fromAddress, Address toAddress,
-			byte[] content, int cSeq) throws ParseException,
+	public Request buildInvite(Address fromAddress, Address toAddress, byte[] content, int cSeq) throws ParseException,
 			InvalidArgumentException {
 		return buildInvite(fromAddress, toAddress, content, cSeq, null);
 	}
 
-	public Request buildInvite(Address fromAddress, Address toAddress,
-			byte[] content, int cSeq, String callId) throws ParseException,
-			InvalidArgumentException {
+	public Request buildInvite(Address fromAddress, Address toAddress, byte[] content, int cSeq, String callId)
+			throws ParseException, InvalidArgumentException {
 
 		// From Header:
-		FromHeader fromHeader = headerFactory.createFromHeader(fromAddress,
-				generateTag());
+		FromHeader fromHeader = headerFactory.createFromHeader(fromAddress, generateTag());
 
 		// To header:
 		ToHeader toHeader = headerFactory.createToHeader(toAddress, null);
@@ -273,8 +257,7 @@ public class SipUtilsImpl implements SipUtils {
 		Request request = null;
 
 		// Set the sequence number for the invite
-		CSeqHeader cseqHeader = headerFactory.createCSeqHeader(cSeq,
-				Request.INVITE);
+		CSeqHeader cseqHeader = headerFactory.createCSeqHeader(cSeq, Request.INVITE);
 
 		// Create the Via header and add to an array list
 		ArrayList viaHeadersList = new ArrayList();
@@ -287,10 +270,10 @@ public class SipUtilsImpl implements SipUtils {
 		 * value reaches 0 before the request reaches its destination, it will
 		 * be rejected with a 483(Too Many Hops) error response.
 		 */
-		MaxForwardsHeader maxForwardsHeader = headerFactory
-				.createMaxForwardsHeader(70);
+		MaxForwardsHeader maxForwardsHeader = headerFactory.createMaxForwardsHeader(70);
 
-		final URI requestURI = convertAddressToSipURI(toAddress);
+		final SipURI requestURI = convertAddressToSipURI(toAddress);
+		SipURI fromUri = convertAddressToSipURI(fromAddress);
 
 		/*
 		 * Create the request
@@ -302,9 +285,8 @@ public class SipUtilsImpl implements SipUtils {
 		}
 
 		// callId = callIdHeader.getCallId();
-		request = messageFactory.createRequest(requestURI, Request.INVITE,
-				callIdHeader, cseqHeader, fromHeader, toHeader, viaHeadersList,
-				maxForwardsHeader);
+		request = messageFactory.createRequest(requestURI, Request.INVITE, callIdHeader, cseqHeader, fromHeader,
+				toHeader, viaHeadersList, maxForwardsHeader);
 
 		// If a Content (such as an SDP) is to be attached with this
 		// INVITE, attach it! Otherwise this part is just skipped
@@ -318,7 +300,7 @@ public class SipUtilsImpl implements SipUtils {
 		 * like to receive requests, and this URI MUST be valid even if used in
 		 * subsequent requests outside of any dialogs.
 		 */
-		ContactHeader contactHeader = createLocalContactHeader();
+		ContactHeader contactHeader = createLocalContactHeader(fromUri.getUser());
 		request.setHeader(contactHeader);
 
 		if (log.isDebugEnabled()) {
@@ -328,26 +310,20 @@ public class SipUtilsImpl implements SipUtils {
 		return request;
 	}
 
-	public ContactHeader createLocalContactHeader() throws ParseException {
+	public ContactHeader createLocalContactHeader(String user) throws ParseException {
 
-		// First get the sip stack from the sip provider
-		SipStack sipStack = sipProvider.getSipStack();
-		// Get the host name of this listening point
-		final String host = sipProvider.getListeningPoints()[0].getIPAddress();
-		// Get the port
-		final int port = sipProvider.getListeningPoints()[0].getPort();
+
+
 		// Get the transport
 		final String transport = sipProvider.getListeningPoints()[0]
 				.getTransport();
 
 		// Create a SIP URI of the host name
-		SipURI sipURI = null;
-		sipURI = addressFactory.createSipURI(null, host);
+		SipURI sipURI = sipProvider.getLocalSipURI(transport);
+		sipURI.setUser(user);
+		
+		//There is a bug, let make sure
 		sipURI.setTransportParam(transport);
-		// Attach the port to the SIP URI
-		sipURI.setPort(port);
-		// Attach the transport
-
 		// Create the contact address using the address factory
 		Address contactAddress = addressFactory.createAddress(sipURI);
 		// Create the contact header from the contact address
@@ -356,19 +332,15 @@ public class SipUtilsImpl implements SipUtils {
 		return contactHeader;
 	}
 
-	public ViaHeader createLocalViaHeader() throws ParseException,
-			InvalidArgumentException {
-		// First get the sip stack from the sip provider
-		SipStack sipStack = sipProvider.getSipStack();
-		// Get the host name of this listening point
-		final String host = sipProvider.getListeningPoints()[0].getIPAddress();
-		// Get the port
-		final int port = sipProvider.getListeningPoints()[0].getPort();
-		// Get the transport
-		final String transport = sipProvider.getListeningPoints()[0]
-				.getTransport();
+	public ViaHeader createLocalViaHeader() throws ParseException, InvalidArgumentException {
+		final String transport = sipProvider.getListeningPoints()[0].getTransport();
 		ViaHeader viaHeader = null;
-		viaHeader = headerFactory.createViaHeader(host, port, transport, null);
+		try {
+			viaHeader = this.sipProvider.getLocalVia(transport, null);
+		} catch (TransportNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return viaHeader;
 	}
@@ -387,9 +359,8 @@ public class SipUtilsImpl implements SipUtils {
 	 * @throws ParseException
 	 * @throws InvalidArgumentException
 	 */
-	private void setContent(Request request, String contentType,
-			String contentSubType, byte[] content) throws ParseException,
-			InvalidArgumentException {
+	private void setContent(Request request, String contentType, String contentSubType, byte[] content)
+			throws ParseException, InvalidArgumentException {
 		/*
 		 * Create Content-Type The Content-Type header field indicates the media
 		 * type of the message-body sent to the recipient. The Content-Type
@@ -398,8 +369,7 @@ public class SipUtilsImpl implements SipUtils {
 		 * the body of the specific type has zero length (for example, an empty
 		 * audio file).
 		 */
-		ContentTypeHeader contentTypeHeader = headerFactory
-				.createContentTypeHeader(contentType, contentSubType);
+		ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader(contentType, contentSubType);
 		// Apply the header
 		// request.setHeader(contentTypeHeader);
 
@@ -408,13 +378,12 @@ public class SipUtilsImpl implements SipUtils {
 		/*
 		 * Content-Length header
 		 */
-		ContentLengthHeader contentLengthHeader = headerFactory
-				.createContentLengthHeader(content.length);
+		ContentLengthHeader contentLengthHeader = headerFactory.createContentLengthHeader(content.length);
 		request.setContentLength(contentLengthHeader);
 	}
 
-	public Request buildRequestWithAuthorizationHeader(ResponseEvent event,
-			String password) throws TransactionUnavailableException {
+	public Request buildRequestWithAuthorizationHeader(ResponseEvent event, String password)
+			throws TransactionUnavailableException {
 		// If user is not authenticated, initialize the authentication
 		// process. First we start off by retrieving the request that
 		// triggered this response.
@@ -424,8 +393,7 @@ public class SipUtilsImpl implements SipUtils {
 
 		if (request == null) {
 			if (log.isDebugEnabled()) {
-				log
-						.debug("The request that caused the 407 could not be retrieved.");
+				log.debug("The request that caused the 407 could not be retrieved.");
 			}
 			return null;
 		} else {
@@ -435,8 +403,7 @@ public class SipUtilsImpl implements SipUtils {
 			// Dialog dialog = event.getDialog();
 			// Request requestClone = (Request) request.clone();
 			// Get the sequence number from the request clone
-			CSeqHeader cseqHeader = (CSeqHeader) request
-					.getHeader(CSeqHeader.NAME);
+			CSeqHeader cseqHeader = (CSeqHeader) request.getHeader(CSeqHeader.NAME);
 			// try {
 			// // Increase the sequence number by one
 			// cseqHeader
@@ -447,18 +414,15 @@ public class SipUtilsImpl implements SipUtils {
 			// e.printStackTrace();
 			// }
 
-			FromHeader fromHeaderReq = (FromHeader) request
-					.getHeader(FromHeader.NAME);
+			FromHeader fromHeaderReq = (FromHeader) request.getHeader(FromHeader.NAME);
 			Address fromAddressReq = fromHeaderReq.getAddress();
 
 			ToHeader toHeader = (ToHeader) request.getHeader(ToHeader.NAME);
 			Address toAddress = toHeader.getAddress();
 			Request newRequest = null;
-			String callId = ((CallIdHeader) response
-					.getHeader(CallIdHeader.NAME)).getCallId();
+			String callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME)).getCallId();
 			try {
-				newRequest = buildInvite(fromAddressReq, toAddress, null,
-						cseqHeader.getSequenceNumber() + 1, callId);
+				newRequest = buildInvite(fromAddressReq, toAddress, null, cseqHeader.getSequenceNumber() + 1, callId);
 			} catch (ParseException parseExc) {
 				parseExc.printStackTrace();
 			} catch (InvalidArgumentException invaliArgExc) {
@@ -495,8 +459,7 @@ public class SipUtilsImpl implements SipUtils {
 				nonce = proxyAuthenticateHeader.getNonce();
 			} else {
 				if (log.isDebugEnabled()) {
-					log
-							.debug("Neither a ProxyAuthenticateHeader or AuthorizationHeader found!");
+					log.debug("Neither a ProxyAuthenticateHeader or AuthorizationHeader found!");
 				}
 				return null;
 			}
@@ -505,8 +468,7 @@ public class SipUtilsImpl implements SipUtils {
 			final String method = cseqHeader.getMethod();
 
 			// Get the user name
-			final FromHeader fromHeader = ((FromHeader) response
-					.getHeader(FromHeader.NAME));
+			final FromHeader fromHeader = ((FromHeader) response.getHeader(FromHeader.NAME));
 			Address address = fromHeader.getAddress();
 			String fromHost = null;
 			String fromUser = null;
@@ -607,8 +569,7 @@ public class SipUtilsImpl implements SipUtils {
 			} else { // if Proxy Authentication
 				ProxyAuthorizationHeader pah = null;
 				try {
-					pah = headerFactory
-							.createProxyAuthorizationHeader("Digest");
+					pah = headerFactory.createProxyAuthorizationHeader("Digest");
 					pah.setUsername(fromUser);
 					pah.setRealm(realm);
 					pah.setAlgorithm("MD5");
@@ -674,13 +635,11 @@ public class SipUtilsImpl implements SipUtils {
 	}
 
 	public void sendOk(Request request) throws ParseException, SipException {
-		Response okResponse = messageFactory.createResponse(Response.OK,
-				request);
+		Response okResponse = messageFactory.createResponse(Response.OK, request);
 		sipProvider.sendResponse(okResponse);
 	}
 
-	public void sendStatefulOk(RequestEvent event) throws ParseException,
-			SipException, InvalidArgumentException {
+	public void sendStatefulOk(RequestEvent event) throws ParseException, SipException, InvalidArgumentException {
 		ServerTransaction tx = event.getServerTransaction();
 		Request request = event.getRequest();
 

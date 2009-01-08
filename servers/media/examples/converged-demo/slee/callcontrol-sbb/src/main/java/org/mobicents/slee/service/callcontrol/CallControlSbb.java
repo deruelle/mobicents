@@ -48,6 +48,8 @@ import javax.sip.ResponseEvent;
 import javax.sip.SipException;
 import javax.sip.SipProvider;
 import javax.sip.TransactionUnavailableException;
+import javax.sip.address.Address;
+import javax.sip.address.SipURI;
 import javax.sip.header.CallIdHeader;
 import javax.sip.header.ContactHeader;
 import javax.sip.header.Header;
@@ -67,10 +69,10 @@ import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 import net.java.slee.resource.sip.SleeSipProvider;
 
 import org.apache.log4j.Logger;
-import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
 import org.mobicents.slee.resource.media.ratype.MediaRaActivityContextInterfaceFactory;
@@ -1122,10 +1124,14 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 			// TODO Do we have to change the VIA header?
 			request.removeHeader(ViaHeader.NAME);
 			request.removeHeader(ContactHeader.NAME);
+			
+			Address address = dialog.getLocalParty();
+			
 
 			try {
+				SipURI sipUri = sipUtils.convertAddressToSipURI(address);
 				request.addHeader(sipUtils.createLocalViaHeader());
-				request.addHeader(sipUtils.createLocalContactHeader());
+				request.addHeader(sipUtils.createLocalContactHeader(sipUri.getUser()));
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

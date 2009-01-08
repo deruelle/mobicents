@@ -156,7 +156,7 @@ public interface SipUtils {
 	 *         and transport based on the sip providers first listening point.
 	 * @throws ParseException
 	 */
-	public ContactHeader createLocalContactHeader() throws ParseException;
+	public ContactHeader createLocalContactHeader(String user) throws ParseException;
 	
 	/**
 	 * Create a ViaHeader based on the local ip of the sip stack, the port and
