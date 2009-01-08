@@ -33,6 +33,8 @@
 
 package org.mobicents.slee.service.callcontrol;
 
+import gov.nist.javax.sip.header.CSeq;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -223,6 +225,8 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 					+ event.getResponse().getStatusCode());
 		}
 		executeResponseState(event);
+		if( ((CSeq)event.getResponse().getHeader(CSeq.NAME)).getMethod().compareTo(Request.BYE)==0)
+			releaseMediaConnectionAndDialog();
 	}
 
 	public void onConnectionOpen(MsConnectionEvent evt,
@@ -277,7 +281,7 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 
 	public void sendBye() {
 
-		releaseMediaConnectionAndDialog();
+		//releaseMediaConnectionAndDialog();
 
 		try {
 			Dialog dialog = sipUtils.getDialog(getResponseEventCmp());
@@ -1145,10 +1149,10 @@ public abstract class CallControlSbb implements javax.slee.Sbb {
 		// Attach ourselves to receive responses and finally send the request
 		try {
 			ClientTransaction ct = sipProvider.getNewClientTransaction(request);
-			ActivityContextInterface acIntf = activityContextInterfaceFactory
-					.getActivityContextInterface(ct);
-			SbbLocalObject mySelf = sbbContext.getSbbLocalObject();
-			acIntf.attach(mySelf);
+			//ActivityContextInterface acIntf = activityContextInterfaceFactory
+			//		.getActivityContextInterface(ct);
+			//SbbLocalObject mySelf = sbbContext.getSbbLocalObject();
+			//acIntf.attach(mySelf);
 			dialog.sendRequest(ct);
 		} catch (Exception e) { // This catches no less than 10 distinct
 			// exception types...
