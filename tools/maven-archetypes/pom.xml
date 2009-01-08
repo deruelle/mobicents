@@ -20,9 +20,9 @@
 	</modules>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/branches/servers/jain-slee/1.x.y/tools/${pom.artifactId}</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/branches/servers/jain-slee/1.x.y/tools/${pom.artifactId}</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/branches/servers/jain-slee/1.x.y/tools/${pom.artifactId}</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/${pom.artifactId}</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tools/${pom.artifactId}</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tools/${pom.artifactId}</url>
 	</scm>
 
 	<build>
@@ -57,6 +57,24 @@
 		</plugins>		
 	</build>
 	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<build>
+				<plugins>
+					<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<configuration>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagBase>https://mobicents.googlecode.com/svn/tags/tools/${pom.artifactId}</tagBase>
+					</configuration>
+					</plugin>
+				</plugins>
+			</build>		
+		</profile>
+	</profiles>
+
 	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
 
 	<repositories>
