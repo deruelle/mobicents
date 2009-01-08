@@ -27,14 +27,16 @@
 					org.mobicents.slee.examples.callcontrol.voicemail.VoiceMailSbb
 				</sbb-abstract-class-name>
 				<cmp-field>
-					<cmp-field-name>mediaSession</cmp-field-name>
-				</cmp-field>
-				<cmp-field>
 					<cmp-field-name>inviteRequest</cmp-field-name>
+				</cmp-field>
+				<!-- 
+				<cmp-field>
+					<cmp-field-name>mediaSession</cmp-field-name>
 				</cmp-field>
 				<cmp-field>
 					<cmp-field-name>serverTransaction</cmp-field-name>
 				</cmp-field>
+				 -->
 				<cmp-field>
 					<cmp-field-name>ok</cmp-field-name>
 				</cmp-field>
@@ -48,7 +50,10 @@
 					<cmp-field-name>dtmf</cmp-field-name>
 				</cmp-field>
 				<cmp-field>
-					<cmp-field-name>userEndpoint</cmp-field-name>
+					<cmp-field-name>userIVREndpoint</cmp-field-name>
+				</cmp-field>
+				<cmp-field>
+					<cmp-field-name>userPREndpoint</cmp-field-name>
 				</cmp-field>
 				<get-profile-cmp-method>
 					<profile-spec-alias-ref>
@@ -98,6 +103,35 @@
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
 		</event>
+		
+		<event event-direction="Receive" initial-event="False">
+			<event-name>LinkConnected</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.LINK_CONNECTED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+
+		<event event-direction="Receive" initial-event="False">
+			<event-name>LinkFailed</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.LINK_FAILED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+
+		<event event-direction="Receive" initial-event="False">
+			<event-name>LinkDisconnected</event-name>
+			<event-type-ref>
+				<event-type-name>org.mobicents.slee.media.LINK_DISCONNECTED</event-type-name>
+				<event-type-vendor>org.mobicents.media</event-type-vendor>
+				<event-type-version>1.0</event-type-version>
+			</event-type-ref>
+		</event>
+		
+		
 		<event event-direction="Receive" initial-event="False">
 			<event-name>AnnouncementComplete</event-name>
 			<event-type-ref>

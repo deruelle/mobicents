@@ -55,7 +55,11 @@ import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 
 import org.mobicents.mscontrol.MsConnection;
 import org.mobicents.mscontrol.MsConnectionEvent;
+import org.mobicents.mscontrol.MsConnectionMode;
 import org.mobicents.mscontrol.MsEndpoint;
+import org.mobicents.mscontrol.MsLink;
+import org.mobicents.mscontrol.MsLinkEvent;
+import org.mobicents.mscontrol.MsLinkMode;
 import org.mobicents.mscontrol.MsNotifyEvent;
 import org.mobicents.mscontrol.MsProvider;
 import org.mobicents.mscontrol.MsSession;
@@ -95,10 +99,10 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		// Server Transaction
 		ServerTransaction st = event.getServerTransaction();
 		// Setting Server Transaction
-		this.setServerTransaction(st);
+		//this.setServerTransaction(st);
 
 		try {
-			localAci.detach(this.getSbbLocalObject());
+			//localAci.detach(this.getSbbLocalObject());
 
 			if (localAci.getFilteredByAncestor()) {
 				log.info("########## VOICE MAIL SBB: FILTERED BY ANCESTOR ##########");
@@ -129,26 +133,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 
 			if (isSubscriber) {
 
-				// SDP Description from the request
-				String sdp = new String(request.getRawContent());
-
-				// Creating Media Session
-				MsSession mediaSession = msProvider.createSession();
-				// Setting Media Session
-				this.setMediaSession(mediaSession);
-				MsConnection msConnection = mediaSession.createNetworkConnection(ENDPOINT_NAME);
-
-				// Attaching session AC
-				ActivityContextInterface msAci = null;
-				try {
-					msAci = msActivityFactory.getActivityContextInterface(msConnection);
-					msAci.attach(this.getSbbLocalObject());
-				} catch (Exception ex) {
-					log.error("Internal server error", ex);
-					getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR, request);
-					return;
-				}
-
+				//Formalities of sip, so we dont get retrans
 				// Attaching to SIP Dialog activity
 				Dialog dial = getSipFactoryProvider().getNewDialog((Transaction) st);
 				ActivityContextInterface dialogAci = sipACIF.getActivityContextInterface((DialogActivity)dial);
@@ -156,7 +141,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				// attach this SBB object to the Dialog activity to receive
 				// subsequent events on this Dialog
 				dialogAci.attach(this.getSbbLocalObject());
-
+				
 				// Notify caller that we're TRYING to reach voice mail. Just a
 				// formality, we know we can go further than TRYING at this
 				// point
@@ -166,10 +151,45 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				// RINGING. Another formality of the SIP protocol.
 				response = getMessageFactory().createResponse(Response.RINGING, request);
 				st.sendResponse(response);
+				
+				
+				
+				
+				
+				// Creating Media Session
+				MsSession mediaSession = msProvider.createSession();
+				// Setting Media Session; should be activity but for simplicity :}, this should not be used in production.
+				//this.setMediaSession(mediaSession);
+				ActivityContextInterface msAci = null;
+				try {
+					msAci = msActivityFactory.getActivityContextInterface(mediaSession);
+					msAci.attach(this.getSbbLocalObject());
+				} catch (Exception ex) {
+					log.error("Internal server error", ex);
+					//getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR, request);
+					sendServerError(ex.getMessage(), Response.SERVER_INTERNAL_ERROR);
+					return;
+				}
+				
+				
+				//We have session, lets create Link
+				MsLink link=mediaSession.createLink(MsLinkMode.FULL_DUPLEX);
 
-				log.info("Creating RTP connection [" + ENDPOINT_NAME + "]");
-				msConnection.modify("$", sdp);
-
+				// Attaching link AC
+				//ActivityContextInterface msAci = null;
+				try {
+					msAci = msActivityFactory.getActivityContextInterface(link);
+					msAci.attach(this.getSbbLocalObject());
+				} catch (Exception ex) {
+					log.error("Internal server error", ex);
+					//getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR, request);
+					sendServerError(ex.getMessage(), Response.SERVER_INTERNAL_ERROR);
+					return;
+				}
+	
+				
+				//now join
+				link.join(IVR_ENDPOINT_NAME, PRE_ENDPOINT_NAME);
 			}
 			// Voice Mail service disabled
 			else {
@@ -195,44 +215,49 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		}
 	}
 
-	/**
-	 * At any time a SIP Client can send a BYE Request. If the Voice Mail is
-	 * being used it will be the VoicemailSbb the one that will send OK
-	 * Response.
-	 * 
-	 * @param event
-	 * @param aci
-	 */
-	public void onByeEvent(RequestEvent event, ActivityContextInterface aci) {
-		log.info("########## VOICE MAIL SBB: BYE ##########");
+	
+	public void onLinkConnected(MsLinkEvent evt, ActivityContextInterface aci) {
+		MsLink link = evt.getSource();
+		//Link has been estabilished
+		log.info("########## VOICE MAIL SBB: Link Connected ["+link.getEndpoints()[0].getLocalName()+"]<====>["+link.getEndpoints()[1].getLocalName()+"] ##########");
+        
+        String ivrEndpointName = link.getEndpoints()[0].getLocalName();
+        String prEndpointName = link.getEndpoints()[1].getLocalName();
+        this.setUserIVREndpoint(ivrEndpointName);
+        this.setUserPREndpoint(prEndpointName);
+        
+        //create connection
+        MsConnection connection=this.getMediaSession().createNetworkConnection(prEndpointName);
+        ActivityContextInterface msAci = null;
 		try {
-			TimerID timerID = this.getTimerID();
-
-			// If there is a Timer set we have to cancel it.
-			if (timerID != null) {
-				timerFacility.cancelTimer(timerID);
-			}
-
-			releaseMediaConnectionAndDialog();
-
-			// Sending the OK Response to the BYE Request received.
-			byeRequestOkResponse(event);
-
-		} catch (FactoryException e) {
-			log.error(e.getMessage(), e);
-		} catch (NullPointerException e) {
-			log.error(e.getMessage(), e);
+			msAci = msActivityFactory.getActivityContextInterface(connection);
+			msAci.attach(this.getSbbLocalObject());
+		} catch (Exception ex) {
+			log.error("Internal server error", ex);
+			//getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR, request);
+			sendServerError(ex.getMessage(), Response.SERVER_INTERNAL_ERROR);
+			return;
 		}
-	}
+        // SDP Description from the request
+		String sdp = new String(getServerTransaction().getRequest().getRawContent());
+		//log.info("Creating RTP connection [" + ENDPOINT_NAME + "]");
+		connection.setMode(MsConnectionMode.SEND_RECV);
+		connection.modify("$", sdp);
+    }
 
-	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
+    public void onLinkDisconnected(MsLinkEvent evt, ActivityContextInterface aci) {
+       
+        aci.detach(this.getSbbLocalObject());
+    }
 
-	}
-
-	public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
+    public void onLinkFailed(MsLinkEvent evt, ActivityContextInterface aci) {
+    	sendServerError("Failed to create link: "+evt.getMessage()+" : "+evt.getCause(), Response.SERVER_INTERNAL_ERROR);
+    }
+	
+    public void onConnectionOpen(MsConnectionEvent evt, ActivityContextInterface aci) {
 		MsConnection connection = evt.getConnection();
-		log.info("Created RTP connection [" + connection.getEndpoint() + "]");
-
+		//log.info("Created RTP connection [" + connection.getEndpoint() + "]");
+		log.info("########## VOICE MAIL SBB: Created RTP connection [" + connection.getEndpoint().getLocalName() + "] ##########");
 		MsConnection msConnection = evt.getConnection();
 		String sdp = msConnection.getLocalDescriptor();
 
@@ -277,8 +302,8 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			log.error(ex.getMessage(), ex);
 		}
 
-		String endpointName = connection.getEndpoint().getLocalName();
-		this.setUserEndpoint(endpointName);
+		//String endpointName = connection.getEndpoint().getLocalName();
+		//this.setUserEndpoint(endpointName);
 
 		MsEventFactory eventFactory = msProvider.getEventFactory();
 		URL audioFileURL = null;
@@ -320,14 +345,54 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { play };
 		MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
 
-		connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
+		
+		MsLink link=getLink();
+		
+		log.info("########## VOICE MAIL SBB: Execute on [" + link.getEndpoints()[0].getLocalName() + "] Connection Endpoint:["+connection.getEndpoint().getLocalName()+"] ##########");
+		link.getEndpoints()[0].execute(requestedSignals, requestedEvents, link);
+
+	}
+	/**
+	 * At any time a SIP Client can send a BYE Request. If the Voice Mail is
+	 * being used it will be the VoicemailSbb the one that will send OK
+	 * Response.
+	 * 
+	 * @param event
+	 * @param aci
+	 */
+	public void onByeEvent(RequestEvent event, ActivityContextInterface aci) {
+		log.info("########## VOICE MAIL SBB: BYE ##########");
+		try {
+			TimerID timerID = this.getTimerID();
+
+			// If there is a Timer set we have to cancel it.
+			if (timerID != null) {
+				timerFacility.cancelTimer(timerID);
+			}
+
+			releaseState();
+
+			// Sending the OK Response to the BYE Request received.
+			byeRequestOkResponse(event);
+
+		} catch (FactoryException e) {
+			log.error(e.getMessage(), e);
+		} catch (NullPointerException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+
+	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
 
 	}
 
-	private void releaseMediaConnectionAndDialog() {
+	
+
+	private void releaseState() {
 		ActivityContextInterface[] activities = getSbbContext().getActivities();
 		SbbLocalObject sbbLocalObject = getSbbContext().getSbbLocalObject();
 		MsConnection msConnection = null;
+		MsLink msLink = null;
 		for (ActivityContextInterface attachedAci : activities) {
 			if (attachedAci.getActivity() instanceof Dialog) {
 				attachedAci.detach(sbbLocalObject);
@@ -336,16 +401,25 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 				attachedAci.detach(sbbLocalObject);
 				msConnection = (MsConnection) attachedAci.getActivity();
 			}
+			
+			if (attachedAci.getActivity() instanceof MsLink) {
+				attachedAci.detach(sbbLocalObject);
+				msLink = (MsLink) attachedAci.getActivity();
+			}
 		}
 		if (msConnection != null) {
 			msConnection.release();
 		}
+		if (msLink != null) {
+			msLink.release();
+		}
 	}
 
-	private void sendServerInternalError() {
+	private void sendServerError(String message, int errorCode) {
 		try {
 			Response response = getMessageFactory().createResponse(Response.SERVER_INTERNAL_ERROR,
-					this.getInviteRequest());
+					this.getInviteRequest(),getHeaderFactory().createContentTypeHeader("text", "plain"),message.getBytes());
+			
 			this.getServerTransaction().sendResponse(response);
 
 		} catch (ParseException e) {
@@ -355,6 +429,16 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		} catch (InvalidArgumentException e) {
 			log.error(e.getMessage(), e);
 		}
+		
+		if(this.getLink()!=null)
+		{
+			this.getLink().release();
+		}
+		
+		if(this.getConnection()!=null)
+		{
+			this.getConnection().release();
+		}
 	}
 
 	public void onAnnouncementFailed(MsNotifyEvent evt, ActivityContextInterface aci) {
@@ -363,8 +447,9 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	}
 	public void onAnnouncementComplete(MsNotifyEvent evt, ActivityContextInterface aci) {
 		log.info("########## VOICE MAIL SBB: onAnnouncementComplete ##########");
-		MsConnection connection = (MsConnection) evt.getSource();
-		MsEndpoint ivr = connection.getEndpoint();
+		MsLink link = (MsLink) evt.getSource();
+		MsEndpoint ivr = link.getEndpoints()[0];
+
 		if (this.getSameUser()) {
 
 			MsEventFactory factory = msProvider.getEventFactory();
@@ -372,7 +457,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			MsRequestedSignal[] signals = new MsRequestedSignal[] {};
 			MsRequestedEvent[] events = new MsRequestedEvent[] { dtmf };
 
-			ivr.execute(signals, events, connection);
+			ivr.execute(signals, events, link);
 		} else {
 			ServerTransaction txn = getServerTransaction();
 			Request request = txn.getRequest();
@@ -399,7 +484,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			MsRequestedSignal[] requestedSignals = new MsRequestedSignal[] { record };
 			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onFailed };
 
-			ivr.execute(requestedSignals, requestedEvents, connection);
+			ivr.execute(requestedSignals, requestedEvents, link);
 		}
 	}
 
@@ -407,7 +492,7 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		log.info("########## VOICE MAIL SBB: onDTMFEvent ##########");
 
 		MsDtmfNotifyEvent event = (MsDtmfNotifyEvent) evt;
-		MsConnection connection = (MsConnection) evt.getSource();
+		MsLink link = (MsLink) evt.getSource();
 		String seq = event.getSequence();
 		boolean bye = checkDtmfDigit(seq);
 	}
@@ -421,7 +506,27 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		}
 		return null;
 	}
+	
+	private MsLink getLink() {
+		ActivityContextInterface[] activities = this.getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsLink) {
+				return (MsLink) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
 
+	private MsSession getMediaSession() {
+		ActivityContextInterface[] activities = this.getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof MsSession) {
+				return (MsSession) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+	
 	private ActivityContextInterface getConnectionActivityContext() {
 		ActivityContextInterface[] activities = getSbbContext().getActivities();
 		for (int i = 0; i < activities.length; i++) {
@@ -432,6 +537,28 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		return null;
 	}
 
+	private ServerTransaction getServerTransaction()
+	{
+		ActivityContextInterface[] activities = this.getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof ServerTransaction) {
+				return (ServerTransaction) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+	
+	private Dialog getDialog()
+	{
+		ActivityContextInterface[] activities = this.getSbbContext().getActivities();
+		for (int i = 0; i < activities.length; i++) {
+			if (activities[i].getActivity() instanceof Dialog) {
+				return (Dialog) activities[i].getActivity();
+			}
+		}
+		return null;
+	}
+	
 	private void startTimer(int duration) throws NamingException {
 		Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 		timerFacility = (TimerFacility) ctx.lookup("slee/facilities/timer");
@@ -451,13 +578,13 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 		log.info("########## VOICE MAIL SBB: sendByRequest ##########");
 		try {
 			SipProvider sipProvider = getSipFactoryProvider();
-			Dialog dialog = this.getServerTransaction().getDialog();
+			Dialog dialog = this.getDialog();
 			Request request = dialog.createRequest(Request.BYE);
 			ClientTransaction ct = sipProvider.getNewClientTransaction(request);
 
 			dialog.sendRequest(ct);
 
-			releaseMediaConnectionAndDialog();
+			releaseState();
 
 		} catch (TransactionUnavailableException e) {
 			log.error(e.getMessage(), e);
@@ -571,8 +698,13 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 			MsRequestedEvent[] requestedEvents = new MsRequestedEvent[] { onCompleted, onFailed };
 
 			log.debug("EXECUTING PLAY");
-			MsConnection connection = this.getConnection();
-			connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
+			//MsConnection connection = this.getConnection();
+			//connection.getEndpoint().execute(requestedSignals, requestedEvents, connection);
+			MsLink link=getLink();
+			if(link!=null)
+			{
+				link.getEndpoints()[0].execute(requestedSignals, requestedEvents,link); 
+			}
 
 		}
 
@@ -688,8 +820,9 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	private MsProvider msProvider;
 	private MediaRaActivityContextInterfaceFactory msActivityFactory;
 
-	public final static String ENDPOINT_NAME = "media/trunk/IVR/$";
-
+	public final static String IVR_ENDPOINT_NAME = "media/trunk/IVR/$";
+	//Pre is required since it has capability to transcode
+	public final static String PRE_ENDPOINT_NAME = "media/trunk/PacketRelay/$";
 	private String route = null;
 
 	/**
@@ -698,10 +831,10 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	 */
 
 	// 'mediaSession' CMP field setter
-	public abstract void setMediaSession(MsSession value);
+	//public abstract void setMediaSession(MsSession value);
 
 	// 'mediaSession' CMP field getter
-	public abstract MsSession getMediaSession();
+	//public abstract MsSession getMediaSession();
 
 	// 'inviteRequest' CMP field setter
 	public abstract void setInviteRequest(Request value);
@@ -710,10 +843,10 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	public abstract Request getInviteRequest();
 
 	// 'serverTransaction' CMP field setter
-	public abstract void setServerTransaction(ServerTransaction value);
+	//public abstract void setServerTransaction(ServerTransaction value);
 
 	// 'serverTransaction' CMP field getter
-	public abstract ServerTransaction getServerTransaction();
+	//public abstract ServerTransaction getServerTransaction();
 
 	// 'ok' CMP field setter
 	public abstract void setOk(boolean value);
@@ -739,8 +872,13 @@ public abstract class VoiceMailSbb extends SubscriptionProfileSbb implements jav
 	// 'dtmf' CMP field getter
 	public abstract String getDtmf();
 
-	public abstract String getUserEndpoint();
+	public abstract String getUserIVREndpoint();
 
-	public abstract void setUserEndpoint(String endpointName);
+	public abstract void setUserIVREndpoint(String endpointName);
+	
+	public abstract String getUserPREndpoint();
+
+	public abstract void setUserPREndpoint(String endpointName);
+	
 
 }
