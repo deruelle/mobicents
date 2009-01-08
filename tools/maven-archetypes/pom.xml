@@ -12,7 +12,7 @@
 	
 	<artifactId>maven-archetypes</artifactId>
 	<groupId>org.mobicents.tools.maven.archetype.slee</groupId>
-	<version>1.0.0.BETA1</version>
+	<version>1.0.0.BETA2-SNAPSHOT</version>
 				
 	<modules>
 		<module>jain-slee-basic-service</module>			
@@ -20,9 +20,9 @@
 	</modules>
 	
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tags/tools/maven-archetypes/maven-archetypes-1.0.0.BETA1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/tools/maven-archetypes/maven-archetypes-1.0.0.BETA1</developerConnection>
-		<url>http://mobicents.googlecode.com/svn/tags/tools/maven-archetypes/maven-archetypes-1.0.0.BETA1</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/tools/maven-archetypes</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tools/maven-archetypes</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/tools/maven-archetypes</url>
 	</scm>
 
 	<build>

@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>maven-archetypes</artifactId>
 		<groupId>org.mobicents.tools.maven.archetype.slee</groupId>
-		<version>1.0.0.BETA1</version>
+		<version>1.0.0.BETA2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>jain-slee-basic-ra</artifactId>
