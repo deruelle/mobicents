@@ -4,16 +4,17 @@ import java.io.Serializable;
 
 import javax.slee.resource.ActivityHandle;
 
-public class MsLinkActivityHandle implements Serializable, ActivityHandle {
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public class MediaActivityHandle implements Serializable, ActivityHandle {
 
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5873066577664979438L;
+	private static final long serialVersionUID = 3573219377986401628L;
 	private final String id;
-	
-	public MsLinkActivityHandle(String id){
+
+	public MediaActivityHandle(String id) {
 		this.id = id;
 	}
 
@@ -21,20 +22,19 @@ public class MsLinkActivityHandle implements Serializable, ActivityHandle {
 	public int hashCode() {
 		return id.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass() == this.getClass()) {
-			return ((MsLinkActivityHandle)obj).id.equals(this.id);
-		}
-		else {
+			return ((MediaActivityHandle) obj).id.equals(this.id);
+		} else {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
-		return "MsLinkActivityHandle(id="+id+")";
+		return "MediaActivityHandle(id=" + id + ")";
 	}
 
 }
