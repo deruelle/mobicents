@@ -31,23 +31,25 @@ import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
-
-import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
  * 
  * @author Oleg Kulikov
  */
 public class RtpConnectionImpl extends BaseConnection {
+	
+	//public static transient final Logger logger = Logger.getLogger(RtpConnectionImpl.class);  
 
     private String localAddress;
     private String localDescriptor;
@@ -262,12 +264,12 @@ public class RtpConnectionImpl extends BaseConnection {
 
         // negotiate codecs
         HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
-        System.out.println("Codec offer = "+ offer);
+        //logger.debug("Codec offer = "+ offer);
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
-        System.out.println("Codec rtpMap = "+ rtpMap);
+        //logger.debug("Codec rtpMap = "+ rtpMap);
         
         HashMap<Integer, Format> subset = this.subset(offer, rtpMap);
-        System.out.println("Codec subset = "+ subset);
+        //logger.debug("Codec subset = "+ subset);
 
         if (subset.isEmpty()) {
             throw new IOException("Codecs are not negotiated");
