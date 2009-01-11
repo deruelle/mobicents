@@ -404,7 +404,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 
 	// This method does not have to be synced - all events fired here are
 	// ordered by executor in source - see MsActionPerformer class
-	private void fireEvent(String eventName, ActivityHandle activityHandle, Object event) {
+	private synchronized void fireEvent(String eventName, ActivityHandle activityHandle, Object event) {
 		int eventID = -1;
 		
 		eventID = eventIdCache.getEventId(eventLookup, eventName, "org.mobicents.media", "1.0");
@@ -438,7 +438,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 	// -----------------------------------------------------------------------------
 	// NOTIFY events
 	// -----------------------------------------------------------------------------
-	public void update(MsNotifyEvent event) {
+	public synchronized void update(MsNotifyEvent event) {
 		Object source = event.getSource();
 		ActivityHandle handle = new MediaActivityHandle(source.toString());
 		fireEvent(event.getEventID().getFqn(), handle, event);
@@ -447,20 +447,20 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 	// -----------------------------------------------------------------------------
 	// Link events
 	// -----------------------------------------------------------------------------
-	public void linkCreated(MsLinkEvent evt) {
+	public synchronized void linkCreated(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		MediaActivityHandle handle = new MediaActivityHandle(link.getId());
 		activities.put(handle, link);
 		this.fireEvent("org.mobicents.slee.media.LINK_CREATED", handle, evt);
 	}
 
-	public void linkConnected(MsLinkEvent evt) {
+	public synchronized void linkConnected(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(link.getId());
 		this.fireEvent("org.mobicents.slee.media.LINK_CONNECTED", handle, evt);
 	}
 
-	public void linkDisconnected(MsLinkEvent evt) {
+	public synchronized void linkDisconnected(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(link.getId());
 		fireEvent("org.mobicents.slee.media.LINK_DISCONNECTED", handle, evt);
@@ -471,19 +471,19 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		}
 	}
 
-	public void linkFailed(MsLinkEvent evt) {
+	public synchronized void linkFailed(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(link.getId());
 		this.fireEvent("org.mobicents.slee.media.LINK_FAILED", handle, evt);
 	}
 
-	public void modeHalfDuplex(MsLinkEvent evt) {
+	public synchronized void modeHalfDuplex(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(link.getId());
 		this.fireEvent("org.mobicents.slee.media.LINK_MODE_HALF_DUPLEX", handle, evt);
 	}
 
-	public void modeFullDuplex(MsLinkEvent evt) {
+	public synchronized void modeFullDuplex(MsLinkEvent evt) {
 		MsLink link = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(link.getId());
 		this.fireEvent("org.mobicents.slee.media.LINK_MODE_FULL_DUPLEX", handle, evt);
@@ -492,7 +492,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 	// -----------------------------------------------------------------------------
 	// Connection events
 	// -----------------------------------------------------------------------------
-	public void connectionCreated(MsConnectionEvent evt) {
+	public synchronized void connectionCreated(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		MediaActivityHandle handle = new MediaActivityHandle(connection.getId());
 
@@ -501,25 +501,25 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_CREATED", handle, evt);
 	}
 
-	public void connectionHalfOpen(MsConnectionEvent evt) {
+	public synchronized void connectionHalfOpen(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_HALF_OPEN", handle, evt);
 	}
 
-	public void connectionOpen(MsConnectionEvent evt) {
+	public synchronized void connectionOpen(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_OPEN", handle, evt);
 	}
 
-	public void connectionFailed(MsConnectionEvent evt) {
+	public synchronized void connectionFailed(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_FAILED", handle, evt);
 	}
 
-	public void connectionDisconnected(MsConnectionEvent evt) {
+	public synchronized void connectionDisconnected(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_DISCONNECTED", handle, evt);
@@ -530,19 +530,19 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		}
 	}
 
-	public void connectionModeRecvOnly(MsConnectionEvent evt) {
+	public synchronized void connectionModeRecvOnly(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_RECV_ONLY", handle, evt);
 	}
 
-	public void connectionModeSendOnly(MsConnectionEvent evt) {
+	public synchronized void connectionModeSendOnly(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_SEND_ONLY", handle, evt);
 	}
 
-	public void connectionModeSendRecv(MsConnectionEvent evt) {
+	public synchronized void connectionModeSendRecv(MsConnectionEvent evt) {
 		MsConnection connection = evt.getConnection();
 		ActivityHandle handle = new MediaActivityHandle(connection.getId());
 		this.fireEvent("org.mobicents.slee.media.CONNECTION_MODE_SEND_RECV", handle, evt);
@@ -551,7 +551,7 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 	// -----------------------------------------------------------------------------
 	// Session events
 	// -----------------------------------------------------------------------------
-	public void sessionCreated(MsSessionEvent evt) {
+	public synchronized void sessionCreated(MsSessionEvent evt) {
 		MsSession session = evt.getSource();
 		MediaActivityHandle handle = new MediaActivityHandle(session.getId());
 
@@ -560,13 +560,13 @@ public class MediaResourceAdaptor implements ResourceAdaptor, MsConnectionListen
 		this.fireEvent("org.mobicents.slee.media.SESSION_CREATED", handle, evt);
 	}
 
-	public void sessionActive(MsSessionEvent evt) {
+	public synchronized void sessionActive(MsSessionEvent evt) {
 		MsSession session = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(session.getId());
 		this.fireEvent("org.mobicents.slee.media.SESSION_ACTIVE", handle, evt);
 	}
 
-	public void sessionInvalid(MsSessionEvent evt) {
+	public synchronized void sessionInvalid(MsSessionEvent evt) {
 		MsSession session = evt.getSource();
 		ActivityHandle handle = new MediaActivityHandle(session.getId());
 		this.fireEvent("org.mobicents.slee.media.SESSION_INVALID", handle, evt);
