@@ -52,6 +52,13 @@ public interface RtpSocket extends Serializable {
     public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException;
     
     /**
+     * Resets the RTP map to configured value.
+     * 
+     * This methods should be called when endpoint allocates RTPSocket.
+     */
+    public void resetRtpMap();
+    
+    /**
      * Gets the address to which this socket is bound.
      * 
      * @return the address to which this socket bound.
@@ -102,21 +109,6 @@ public interface RtpSocket extends Serializable {
     public void setPeer(InetAddress address, int port);
     
     /**
-     * This method is used to add a dynamic payload.
-     *
-     * @param int payload type.
-     * @param format the format for specified payload type.
-     */
-    public void addFormat(int pt, Format format);
-    
-    /**
-     * Removes format from list of registered payloads.
-     * 
-     * @param pt the payload type to be removed
-     */
-    public void removeFormat(int pt);
-    
-    /**
      * Gets list of registered formats.
      * 
      * @return the map where key is payload number and value id Format object.
@@ -149,7 +141,5 @@ public interface RtpSocket extends Serializable {
      * Closes this socket.
      */
     public void close();
-    
-    public void resetRtpMap();
     
 }

@@ -266,24 +266,6 @@ public class RtpSocketImpl implements RtpSocket {
     /**
      * (Non Java-doc).
      *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#addFormat(int, Format);
-     */
-    public void addFormat(int pt, Format format) {
-        rtpMap.put(new Integer(pt), format);
-    }
-
-    /**
-     * (Non Java-doc).
-     *
-     * @see org.mobicents.media.server.impl.rtp.RtpSocket#removeFormat(int)
-     */
-    public void removeFormat(int pt) {
-        rtpMap.remove(pt);
-    }
-
-    /**
-     * (Non Java-doc).
-     *
      * @see org.mobicents.media.server.impl.rtp.RtpSocket#getFormats();
      */
     public HashMap<Integer, Format> getRtpMap() {
@@ -311,13 +293,23 @@ public class RtpSocketImpl implements RtpSocket {
      * was not previously registered with addFormat().
      */
     protected int getPayloadType(Format format) {
-        Collection<Format> fmts = rtpMap.values();
+        Collection<Integer> keys = rtpMap.keySet();
+        for (Integer key : keys) {
+            Format fmt = rtpMap.get(key);
+            if (fmt.equals(format)) {
+                return key;
+            }
+        }
+        return -1;
+        
+/*        Collection<Format> fmts = rtpMap.values();
         for (Format fmt : fmts) {
             if (fmt.equals(format)) {
                 return ((RTPAudioFormat) fmt).getPayload();
             }
         }
         return -1;
+ */ 
     }
 
     /**
