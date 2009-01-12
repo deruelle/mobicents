@@ -36,4 +36,7 @@ import org.mobicents.mscontrol.events.MsRequestedSignal;
 public interface MsRecordRequestedSignal extends MsRequestedSignal {
     public String getFile();
     public void setFile(String url);
+    
+    public int getRecordTime();
+    public void setRecordTime(int timeInSec);
 }

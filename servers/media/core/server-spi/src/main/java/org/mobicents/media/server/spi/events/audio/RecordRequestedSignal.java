@@ -38,6 +38,7 @@ import org.mobicents.media.server.spi.events.pkg.Audio;
 public class RecordRequestedSignal extends AbstractRequestedSignal {
 
 	private String file;
+	private int recordTime;
 
 	public EventIdentifier getID() {
 		return Audio.RECORD;
@@ -50,4 +51,12 @@ public class RecordRequestedSignal extends AbstractRequestedSignal {
 	public void setFile(String file) {
 		this.file = file;
 	}
+	
+	public int getRecordTime() {
+		return recordTime;
+	}
+
+	public void setRecordTime(int timeInSec) {
+		this.recordTime = timeInSec;		
+	}    
 }

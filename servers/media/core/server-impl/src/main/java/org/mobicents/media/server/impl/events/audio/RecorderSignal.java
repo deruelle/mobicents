@@ -17,10 +17,12 @@ import org.mobicents.media.server.impl.MediaResource;
 public class RecorderSignal extends AbstractSignal {
 
     private String file;
+    private int recordTimeInSec = 60;
     private Recorder recorder;
     
-    public RecorderSignal(String file) {
+    public RecorderSignal(String file, int recordTimeInSec) {
         this.file = file;
+        this.recordTimeInSec = recordTimeInSec;
     }
     
 
@@ -28,6 +30,7 @@ public class RecorderSignal extends AbstractSignal {
     public void apply(BaseConnection connection) {
         BaseEndpoint endpoint = (BaseEndpoint) connection.getEndpoint();
         recorder = (Recorder) getMediaSink(MediaResource.AUDIO_RECORDER, connection);
+        recorder.setRecordTime(recordTimeInSec);
         recorder.start(file);
     }
 

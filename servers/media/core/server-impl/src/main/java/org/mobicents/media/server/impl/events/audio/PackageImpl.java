@@ -25,8 +25,9 @@ public class PackageImpl implements EventPackage {
 
 
     public AbstractSignal getSignal(RequestedSignal requestedSignal) {
-        if (requestedSignal.getID().equals(Audio.RECORD)) {            
-            return new RecorderSignal(((RecordRequestedSignal)requestedSignal).getFile());
+        if (requestedSignal.getID().equals(Audio.RECORD)) {
+        	RecordRequestedSignal tmpRecordRequestedSignal = (RecordRequestedSignal)requestedSignal;
+            return new RecorderSignal(tmpRecordRequestedSignal.getFile(), tmpRecordRequestedSignal.getRecordTime());
         }
         return null;
     }

@@ -59,6 +59,10 @@ public class Recorder extends AbstractSink {
         this.recordTime = recordTime;
         this.recordDir = recordDir;
     }
+    
+    public void setRecordTime(int recordTime){
+    	this.recordTime = recordTime;
+    }
 
     /**
      * (Non Java-doc).

@@ -41,6 +41,7 @@ import org.mobicents.mscontrol.impl.events.BaseRequestedSignal;
 public class RecordRequestedSignalImpl extends BaseRequestedSignal implements MsRecordRequestedSignal {
 
     private String file;
+    private int recordTime = 60;
 
     public MsEventIdentifier getID() {
         return MsAudio.RECORD;
@@ -53,6 +54,14 @@ public class RecordRequestedSignalImpl extends BaseRequestedSignal implements Ms
     public void setFile(String file) {
         this.file = file;
     }
+    
+	public int getRecordTime() {
+		return recordTime;
+	}
+
+	public void setRecordTime(int timeInSec) {
+		this.recordTime = timeInSec;		
+	}    
 
     @Override
     public RequestedSignal convert() {
@@ -60,6 +69,9 @@ public class RecordRequestedSignalImpl extends BaseRequestedSignal implements Ms
         RecordRequestedSignal signal = (RecordRequestedSignal) factory.createRequestedSignal(
                 MsAudio.RECORD.getPackageName(), MsAudio.RECORD.getEventName());
         signal.setFile(file);
+        signal.setRecordTime(recordTime);
         return signal;
     }
+
+
 }
