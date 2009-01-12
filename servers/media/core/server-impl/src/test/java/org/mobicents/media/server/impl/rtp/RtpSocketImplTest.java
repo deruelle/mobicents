@@ -4,34 +4,26 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Buffer;
+import static org.junit.Assert.*;
 import org.mobicents.media.Format;
-import org.mobicents.media.MediaSink;
-import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.clock.TimerTask;
-import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -48,12 +40,11 @@ public class RtpSocketImplTest {
     private int period = 20;
     private int jitter = 40;
     private InetAddress localAddress;
-    private AudioFormat PCMA = new AudioFormat("PCMA", 8000, 8, 1);
-    private AudioFormat PCMU = new AudioFormat("PCMU", 8000, 8, 1);
-    private AudioFormat DTMF = new AudioFormat("telephone-event", 8000, 8, 1);
+    private AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW,8000, 8,1);
     private ArrayList packets = new ArrayList();
     private int errorCount;
-
+    private BaseEndpoint endpoint;
+    
     public RtpSocketImplTest() {
     }
 
@@ -66,28 +57,28 @@ public class RtpSocketImplTest {
     }
 
     @Before
-    public void setUp() {
-    	
-    	TestEndpoint endpoint = new TestEndpoint("Test");
-    	HashMap<Integer, Format> audioFormats = new HashMap<Integer, Format>();
-    	audioFormats.put(0, PCMU);
-    	audioFormats.put(8, PCMA);
-    	audioFormats.put(101, DTMF);
-    	
+    public void setUp() {        
         int ps = 1000 / Quartz.HEART_BEAT;
         MAX_ERRORS = (int) Math.round(100.0 / ps * ERRORS);
         try {
+            endpoint = new AnnEndpointImpl("test");
+            endpoint.start();
+            
             localAddress = InetAddress.getLocalHost();
         } catch (Exception e) {
         }
-        serverSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
-        clientSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
+        HashMap<Integer,Format> rtpMap = new HashMap();
+        rtpMap.put(8, PCMA);
+        
+        serverSocket = new RtpSocketImpl(endpoint, period, jitter, rtpMap);
+        clientSocket = new RtpSocketImpl(endpoint, period, jitter, rtpMap);
     }
 
     @After
     public void tearDown() {
         serverSocket.close();
         clientSocket.close();
+        endpoint.stop();
     }
 
     /**
@@ -95,12 +86,12 @@ public class RtpSocketImplTest {
      */
     @Test
     public void init() throws Exception {
-        serverSocket.init(localAddress, 1024, 1024);
+        serverSocket.init(localAddress, 2828, 2828);
         int port = serverSocket.getPort();
-        assertEquals(1024, port);
+        assertEquals(2828, port);
 
         try {
-            port = clientSocket.init(localAddress, 1024, 1024);
+            port = clientSocket.init(localAddress, 2828, 2828);
             fail("Unexpected resource");
         } catch (SocketException e) {
         }
@@ -109,92 +100,46 @@ public class RtpSocketImplTest {
 
     @Test
     @SuppressWarnings("static-access")
-    public void release() throws Exception {
+    public void close() throws Exception {
         try {
             Thread.currentThread().sleep(500);
         } catch (Exception e) {
         }
-        serverSocket.init(localAddress, 1024, 1024);
+        serverSocket.init(localAddress, 2828, 2828);
         serverSocket.close();
 
         try {
-            serverSocket.init(localAddress, 1024, 1024);
+            serverSocket.init(localAddress, 2828, 2828);
             serverSocket.close();
         } catch (SocketException e) {
             fail("Previuos socket was not closed");
         }
     }
 
-    /**
-     * Test of addFormat method, of class RtpSocketImpl.
-     */
- /*   @Test
-    public void addFormat() {
-        serverSocket.addFormat(1, new AudioFormat("Test"));
-        if (!serverSocket.getRtpMap().containsKey(1)) {
-            fail("Expected payload number: 1");
-        }
-
-        Format f = (Format) serverSocket.getRtpMap().get(1);
-        if (!f.matches(new AudioFormat("Test"))) {
-            fail("Expected format :" + new AudioFormat("Test"));
-        }
-    } */
-
-    /**
-     * Test of removeFormat method, of class RtpSocketImpl.
-     */
-    /*     @Test
-  public void removeFormat() {
-        serverSocket.addFormat(1, new AudioFormat("Test"));
-        if (!serverSocket.getRtpMap().containsKey(1)) {
-            fail("Expected payload number: 1");
-        }
-
-        Format f = (Format) serverSocket.getRtpMap().get(1);
-        if (!f.matches(new AudioFormat("Test"))) {
-            fail("Expected format :" + new AudioFormat("Test"));
-        }
-
-        serverSocket.removeFormat(1);
-        if (serverSocket.getRtpMap().containsKey(1)) {
-            fail("Format not removed");
-        }
-    } */
-
-    /**
-     * Test of getFormats method, of class RtpSocketImpl.
-     */
-/*    @Test
-    public void getFormats() {
-        addFormat();
-    } */
 
     /**
      * Test of getPayloadType method, of class RtpSocketImpl.
      */
- /*   @Test
+    @Test
     public void getPayloadType() {
-        serverSocket.addFormat(1, new RTPAudioFormat(1, "Test"));
-        if (!serverSocket.getRtpMap().containsKey(1)) {
-            fail("Expected payload number: 1");
+        //serverSocket.addFormat(1, new AudioFormat("Test"));
+        if (!serverSocket.getRtpMap().containsKey(8)) {
+            fail("Expected payload number: 8");
         }
 
-        Format f = (Format) serverSocket.getRtpMap().get(1);
-        if (!f.matches(new AudioFormat("Test"))) {
-            fail("Expected format :" + new AudioFormat("Test"));
+        Format f = (Format) serverSocket.getRtpMap().get(8);
+        if (!f.equals(PCMA)) {
+            fail("Expected format :" + PCMA);
         }
 
-        RTPAudioFormat r = new RTPAudioFormat(1, "Test");
-        int pt = serverSocket.getPayloadType(r);
-        assertEquals(1, pt);
-    } */
+        int pt = serverSocket.getPayloadType(PCMA);
+        assertEquals(8, pt);
+    }
 
     @Test
     @SuppressWarnings("static-access")
     public void testTransmission() throws Exception {
         int p1 = serverSocket.init(localAddress, 1024, 65535);
-
         int p2 = clientSocket.init(localAddress, 1024, 65535);
 
 //        serverSocket.addFormat(1, PCMA);
@@ -203,14 +148,10 @@ public class RtpSocketImplTest {
         serverSocket.setPeer(localAddress, p2);
         clientSocket.setPeer(localAddress, p1);
 
-       // serverSocket.start();
-       // clientSocket.start();
 
         serverSocket.getReceiveStream().connect(new Receiver());
 
         Sender sender = new Sender();
-        //System.out.println("**** " + clientSocket.getSendStream().getFormats()[0]);
-        //System.out.println("**** " + sender.getFormats());
         clientSocket.getSendStream().connect(sender);
         sender.start();
         
@@ -255,88 +196,8 @@ public class RtpSocketImplTest {
         if (errorCount > MAX_ERRORS) {
             fail("Too many errors: " + errorCount + ", max=" + MAX_ERRORS);
         }
-        System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);
-        
+        System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);        
     }
-    
-    
-    public class TestEndpoint extends BaseEndpoint {
-
-        public TestEndpoint(String localName) {
-            super(localName);
-        }
-
-		@Override
-		public void allocateMediaSinks(Connection connection) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void allocateMediaSources(Connection connection, Format[] formats) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public Format[] getFormats() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		protected MediaSink getMediaSink(MediaResource id, Connection connection) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		protected MediaSource getMediaSource(MediaResource id, Connection connection) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public MediaSink getPrimarySink(Connection connection) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public MediaSource getPrimarySource(Connection connection) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void releaseMediaSinks(Connection connection) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void releaseMediaSources(Connection connection) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		public String[] getSupportedPackages() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-    } 
 
     private class Sender extends AbstractSource implements TimerTask {
 
@@ -373,7 +234,7 @@ public class RtpSocketImplTest {
         }
 
         public Format[] getFormats() {
-            return null;//new Format[] {PCMA};
+            return new Format[] {PCMA};
         }
 
         public void started() {
