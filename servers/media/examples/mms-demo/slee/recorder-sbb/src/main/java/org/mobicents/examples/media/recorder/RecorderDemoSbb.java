@@ -128,6 +128,7 @@ public abstract class RecorderDemoSbb implements Sbb {
         MsEventFactory eventFactory = msProvider.getEventFactory();
         MsRecordRequestedSignal record = (MsRecordRequestedSignal) eventFactory.createRequestedSignal(MsAudio.RECORD);
         record.setFile(RECORDER);
+        record.setRecordTime(27);
 
 
         MsRequestedEvent onFailed = eventFactory.createRequestedEvent(MsAudio.FAILED);
