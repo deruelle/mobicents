@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
@@ -61,8 +62,8 @@ public class RtpFactory implements Serializable {
         jitter = 80;
 
         audioFormats = new HashMap<Integer, Format>();
-        audioFormats.put(0, new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1));
-        audioFormats.put(8, new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1));
+        audioFormats.put(0, AVProfile.PCMU);
+        audioFormats.put(8, AVProfile.PCMA);
     }
 
     /**
