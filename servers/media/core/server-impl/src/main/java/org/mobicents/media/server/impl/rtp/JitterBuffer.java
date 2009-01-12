@@ -72,7 +72,7 @@ public class JitterBuffer implements Serializable {
 
     public void write(Buffer buffer) {
         if (queue.size() == this.maxSize) {
-            queue.remove(0);
+            queue.remove();
         }
         queue.offer(buffer);
         if (!ready && queue.size() >= this.maxSize / 2) {
