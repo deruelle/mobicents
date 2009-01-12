@@ -401,9 +401,15 @@ public abstract class BaseEndpoint implements Endpoint {
             Connection connection = new LocalConnectionImpl(this, mode);
             signalQueues.put(connection.getId(), new SignalQueue(this));
             return connection;
-        } catch (Exception e) {
+        } catch(TooManyConnectionsException e){
             logger.error("Could not create Local connection", e);
-            throw new ResourceUnavailableException(e.getMessage());
+            throw e;
+        } catch (ResourceUnavailableException e) {
+            logger.error("Could not create Local connection", e);
+            throw e;
+        } catch(Exception e){        	
+            logger.error("Could not create Local connection", e);
+            throw new ResourceUnavailableException(e.getMessage());        	
         } finally {
             lock.unlock();
         }

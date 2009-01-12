@@ -29,7 +29,7 @@ public class JitterBufferTest {
     
     private int period = 20;
     private int jitter = 40;
-    private RtpSocket rtpSocket = new RtpSocketImpl(period, jitter);
+    private RtpSocket rtpSocket = new RtpSocketImpl();
     private JitterBuffer jitterBuffer;
     private ArrayList packets = new ArrayList();
 
@@ -48,7 +48,7 @@ public class JitterBufferTest {
 
     @Before
     public void setUp() {
-        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period,new AbstractWorkDataGatherer(){});
+        jitterBuffer = new JitterBuffer( jitter, period);
         int ps = 1000 / Quartz.HEART_BEAT;
         MAX_ERRORS = (int) Math.round(100.0 / ps * ERRORS);
     }
@@ -59,24 +59,44 @@ public class JitterBufferTest {
 
     @Test
     public void testFirstRead() {
-        RtpPacket p1 = new RtpPacket((byte) 8, 1, 0, 1L, "One".getBytes());
-        RtpPacket p2 = new RtpPacket((byte) 8, 2, 160, 1L, "Two".getBytes());
-        RtpPacket p3 = new RtpPacket((byte) 8, 3, 320, 1L, "Three".getBytes());
-        RtpPacket p4 = new RtpPacket((byte) 8, 4, 480, 1L, "Four".getBytes());
+    	Buffer one = new Buffer();
+    	one.setData( "One".getBytes());
+    	one.setSequenceNumber(1);
+    	one.setTimeStamp(0);
+    	one.setSequenceNumber(1L);
+    	
+    	Buffer two = new Buffer();
+    	two.setData( "Two".getBytes());
+    	two.setSequenceNumber(2);
+    	two.setTimeStamp(160);
+    	two.setSequenceNumber(1L);
+    	
+    	Buffer three = new Buffer();
+    	three.setData( "Three".getBytes());
+    	three.setSequenceNumber(3);
+    	three.setTimeStamp(320);
+    	three.setSequenceNumber(1L);
+    	
+    	Buffer four = new Buffer();
+    	three.setData( "Four".getBytes());
+    	three.setSequenceNumber(4);
+    	three.setTimeStamp(480);
+    	three.setSequenceNumber(1L);    	
+    	
 
-        jitterBuffer.write(p1);
+        jitterBuffer.write(one);
         Buffer buffer = jitterBuffer.read();
         if (buffer != null) {
             fail("Buffer is new and not full yet. But it allow to read packets");
         }
 
-        jitterBuffer.write(p2);
+        jitterBuffer.write(two);
         buffer = jitterBuffer.read();
         if (buffer == null) {
             fail("Buffer is new and not full yet. But it allow to read packets");
         }
 
-        jitterBuffer.write(p3);
+        jitterBuffer.write(three);
         buffer = jitterBuffer.read();
         if (buffer == null) {
             fail("Buffer is new and full but it doesn't allow to read packets");
@@ -86,26 +106,49 @@ public class JitterBufferTest {
         if (buffer == null) {
             fail("Buffer is new and not empty but it doesn't allow to read packets");
         }
-        jitterBuffer.write(p4);
+        jitterBuffer.write(four);
 
     }
 
     @Test
     public void testOverflow() {
-        RtpPacket p1 = new RtpPacket((byte) 8, 1, 0, 1L, "One".getBytes());
-        RtpPacket p2 = new RtpPacket((byte) 8, 2, 160, 1L, "Two".getBytes());
-        RtpPacket p3 = new RtpPacket((byte) 8, 3, 320, 1L, "Three".getBytes());
-        RtpPacket p4 = new RtpPacket((byte) 8, 4, 480, 1L, "Four".getBytes());
+    	
+    	Buffer one = new Buffer();
+    	one.setData( "One".getBytes());
+    	one.setSequenceNumber(1);
+    	one.setTimeStamp(0);
+    	one.setLength("One".getBytes().length);
+    	
+    	Buffer two = new Buffer();
+    	two.setData( "Two".getBytes());
+    	two.setSequenceNumber(2);
+    	two.setTimeStamp(160);
+    	two.setLength("Two".getBytes().length);
+    	
+    	Buffer three = new Buffer();
+    	three.setData( "Three".getBytes());
+    	three.setSequenceNumber(3);
+    	three.setTimeStamp(320);
+    	three.setLength("Three".getBytes().length);
+    	
+    	Buffer four = new Buffer();
+    	three.setData( "Four".getBytes());
+    	three.setSequenceNumber(4);
+    	three.setTimeStamp(480);
+    	three.setLength("Four".getBytes().length);  
 
-        jitterBuffer.write(p1);
-        jitterBuffer.write(p2);
-        jitterBuffer.write(p3);
-        jitterBuffer.write(p4);
-        jitterBuffer.write(p4);
+
+        jitterBuffer.write(one);
+        jitterBuffer.write(two);
+        jitterBuffer.write(three);
+        jitterBuffer.write(four);
+        jitterBuffer.write(four);
 
         Buffer buffer = jitterBuffer.read();
         String s = new String((byte[]) buffer.getData(), buffer.getOffset(), buffer.getLength());
-
+        
+        System.out.println(buffer.getData());
+        
         assertEquals("Two", s);
 
     }
@@ -113,7 +156,7 @@ public class JitterBufferTest {
     @Test
     @SuppressWarnings("static-access")
     public void testReadWrite() {
-        jitterBuffer = new JitterBuffer(rtpSocket, jitter, period,new AbstractWorkDataGatherer(){});
+        jitterBuffer = new JitterBuffer(jitter, period);
 
         Timer r_timer = new Timer();
         r_timer.setListener(new Receiver());
@@ -164,9 +207,19 @@ public class JitterBufferTest {
 
         @SuppressWarnings("static-access")
         public void run() {
-            RtpPacket p = new RtpPacket((byte) 8, seq, seq, 1L,
-                    new Integer(seq).toString().getBytes());
-            jitterBuffer.write(p);
+//            RtpPacket p = new RtpPacket((byte) 8, seq, seq, 1L,
+//                    new Integer(seq).toString().getBytes());
+            
+            
+           	Buffer b = new Buffer();
+           	byte[] bytes = new Integer(seq).toString().getBytes();
+           	
+        	b.setData( bytes);
+        	b.setSequenceNumber(seq);
+        	b.setTimeStamp(seq);
+        	b.setLength(bytes.length);            
+            
+            jitterBuffer.write(b);
             seq++;
         }
 

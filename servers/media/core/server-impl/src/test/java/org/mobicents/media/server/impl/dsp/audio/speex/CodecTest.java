@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 public class CodecTest {
 
     private final static byte[] ENCODED_SILENCE_NB_Q03_MONO = {30, -99, 102, 0, 0, 103, 57, -56, 16, 51, -100, -28, 8, 25, -50, 114, 4, 12, -25, 57};
+    private final static byte[] silenceOriginal = new byte[320];
     private final static byte[] silence = new byte[320];
     
     public CodecTest() {
@@ -53,16 +54,19 @@ public class CodecTest {
         
         byte[] res = (byte[]) buffer.getData();
         for (int i = 0; i < ENCODED_SILENCE_NB_Q03_MONO.length; i++) {
+        	
             if (ENCODED_SILENCE_NB_Q03_MONO[i] != res[i]) {
                 fail("mismatch found at " + i);
             }
         }
         org.mobicents.media.server.spi.dsp.Codec decompressor = new Decoder();
         decompressor.process(buffer);
+      
         
         res = (byte[]) buffer.getData();
-        for (int i = 0; i < silence.length; i++) {
-            if (silence[i] != res[i]) {
+        for (int i = 0; i < silenceOriginal.length; i++) {
+        	  	
+            if (silenceOriginal[i] != res[i]) {
                 fail("mismatch found at " + i);
             }
         }

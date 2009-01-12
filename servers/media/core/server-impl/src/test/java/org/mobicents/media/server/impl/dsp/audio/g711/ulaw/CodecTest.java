@@ -50,6 +50,7 @@ public class CodecTest extends TestCase {
     };
     
     private byte[] src = new byte[512];
+    private byte[] srcOriginal = new byte[512];
     
     public CodecTest(String testName) {
         super(testName);
@@ -59,10 +60,15 @@ public class CodecTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         int k = 0;
+        int j = 0;
         for (int i = 0; i < 256; i++) {
             short s = muLawDecompressTable[i];
             src[k++] = (byte)(s);
+            srcOriginal[j++] = (byte)(s);
+            
             src[k++] = (byte)(s >> 8);
+            srcOriginal[j++] = (byte)(s >> 8);
+             
         }
     }
 
@@ -86,8 +92,8 @@ public class CodecTest extends TestCase {
         decompressor.process(buffer);
         
         byte[] res = (byte[]) buffer.getData();
-        for (int i = 0; i < src.length; i++) {
-            if (src[i] != res[i]) {
+        for (int i = 0; i < srcOriginal.length; i++) {
+            if (srcOriginal[i] != res[i]) {
                 fail("mismatch found at " + i);
             }
         }

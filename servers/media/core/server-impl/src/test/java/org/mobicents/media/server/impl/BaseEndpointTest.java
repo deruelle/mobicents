@@ -8,17 +8,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mobicents.media.server.local.management.EndpointLocalManagement;
+import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.events.dtmf.DtmfGenerator;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 import org.mobicents.media.server.spi.events.EventFactory;
 import org.mobicents.media.server.spi.events.EventIdentifier;
@@ -274,6 +278,13 @@ public class BaseEndpointTest {
 	public void testExecute() {
 
 		TestEndpoint enp = new TestEndpoint("test");
+		
+		try {
+			enp.start();
+		} catch (ResourceUnavailableException e) {			
+			e.printStackTrace();
+			fail();
+		}
 
 		EventFactory eventFactory = new EventFactory();
 		RequestedSignal signal = eventFactory.createRequestedSignal(DTMF.DTMF.getPackageName(), DTMF.DTMF
@@ -297,34 +308,93 @@ public class BaseEndpointTest {
 	}
 
 	public class TestEndpoint extends BaseEndpoint {
+		
+	    private RtpSocket rtpSocket;	    
 
 		public TestEndpoint(String localName) {
 			super(localName);
+			startRtp();
+		}
+	    
+	    protected void startRtp() {
+	        try {
+	            RtpFactory rtpFactory = getRtpFactory();
+	            rtpSocket = rtpFactory.getRTPSocket(this);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }		
+
+		@Override
+		public void allocateMediaSinks(Connection connection) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		public HashMap initMediaSources() {
-			return new HashMap();
+		public void allocateMediaSources(Connection connection, Format[] formats) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		@Override
-		public HashMap initMediaSinks() {
-			return new HashMap();
+		public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+			return rtpSocket;
 		}
 
-		public String[] getEndpointNames() {
+		@Override
+		public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Format[] getFormats() {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		public EndpointLocalManagement[] getEndpoints() {
+		@Override
+		protected MediaSink getMediaSink(MediaResource id, Connection connection) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public MediaSink getPrimarySink(Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public MediaSource getPrimarySource(Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void releaseMediaSinks(Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void releaseMediaSources(Connection connection) {
+			// TODO Auto-generated method stub
+			
 		}
 
 		public String[] getSupportedPackages() {
 			String[] supportedpackages = new String[] { Announcement.PACKAGE_NAME };
 			return supportedpackages;
 		}
+
+
 	}
 }

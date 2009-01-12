@@ -140,12 +140,12 @@ public class DemultiplexerTest {
         assertEquals(0, demux.getBranchCount());
     }
 
-    @Test
+ /*   @Test
     public void testGetFormat() {
         AudioFormat f = new AudioFormat("F1");
         assertEquals(1,demux.getFormats().length);
         assertEquals(f,demux.getFormats()[0]);
-    }
+    }*/
     
     private class Source extends AbstractSource implements TimerTask {
 

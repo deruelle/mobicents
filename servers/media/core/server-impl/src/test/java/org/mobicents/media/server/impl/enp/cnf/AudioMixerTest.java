@@ -11,13 +11,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSink;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.Utils;
 import org.mobicents.media.format.AudioFormat;
 import static org.junit.Assert.*;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.events.test.SineGenerator;
 import org.mobicents.media.server.impl.enp.fft.SpectralAnalyser;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.test.SpectrumEvent;
 
@@ -48,7 +55,8 @@ public class AudioMixerTest {
 
     @Before
     public void setUp() {
-        mixer = new AudioMixer("test");
+    	TestEndpoint test = new TestEndpoint("test");
+        mixer = new AudioMixer(test, "test");
     }
 
     @After
@@ -91,7 +99,7 @@ public class AudioMixerTest {
         SineGenerator g0 = new SineGenerator(F[0]);
         SineGenerator g1 = new SineGenerator(F[1]);
         SineGenerator g2 = new SineGenerator(F[2]);
-
+        
             mixer.connect(g0);
             mixer.connect(g1);
             mixer.connect(g2);
@@ -170,5 +178,91 @@ public class AudioMixerTest {
                 spectra.add(s);
             }
         }
+    }
+    
+    public class TestEndpoint extends BaseEndpoint {
+        public TestEndpoint(String localName) {
+            super(localName);
+            
+            try {
+				super.start();
+			} catch (ResourceUnavailableException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+
+		@Override
+		public void allocateMediaSinks(Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void allocateMediaSources(Connection connection, Format[] formats) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public RtpSocket allocateRtpSocket(Connection connection) throws ResourceUnavailableException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public Format[] getFormats() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected MediaSource getMediaSource(MediaResource id, Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public MediaSink getPrimarySink(Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public MediaSource getPrimarySource(Connection connection) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void releaseMediaSinks(Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void releaseMediaSources(Connection connection) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public String[] getSupportedPackages() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
     }
 }

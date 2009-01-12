@@ -4,6 +4,7 @@
  */
 
 package org.mobicents.media.server.impl.events.au;
+import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.events.audio.Recorder;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -18,6 +19,14 @@ import static org.junit.Assert.*;
  * @author Oleg Kulikov
  */
 public class RecorderTest {
+	
+	   private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+	    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+	    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
+	    private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
+	            AudioFormat.LINEAR, 8000, 16, 1,
+	            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+	    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
 
     private final static int F = 50;
     private final static int TEST_DURATION = 10000;
@@ -47,8 +56,23 @@ public class RecorderTest {
         Recorder r = new Recorder("", "");
         AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR,8000, 16, 1,
                 AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-        assertEquals(1, r.getFormats().length);
-        assertEquals(LINEAR, r.getFormats()[0]);
+        assertEquals(4, r.getFormats().length);
+        
+        Format[] formats = r.getFormats();
+        
+        assertEquals(true, contains(formats, PCMA));
+        assertEquals(true, contains(formats, PCMU));              
+        assertEquals(true, contains(formats, LINEAR));       
+        assertEquals(true, contains(formats, GSM));
+    }
+    
+    private boolean contains(Format[] fmts, Format fmt) {
+        for (int i = 0; i < fmts.length; i++) {
+            if (fmts[i].matches(fmt)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**

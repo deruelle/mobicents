@@ -28,6 +28,14 @@ public class ProcessorTest {
     private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
     private final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
+    private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
+            AudioFormat.LINEAR, 8000, 16, 1,
+            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
+    
+    
+    private final static Format[] FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
+    
     private Processor dsp;
 
     public ProcessorTest() {
@@ -53,7 +61,7 @@ public class ProcessorTest {
     @Test
     public void testFormatsNoConnection() {
         Format[] formats = dsp.getInput().getFormats();
-        assertEquals(null, formats);
+        assertEquals(FORMATS, formats);
     }
 
     @Test
@@ -63,7 +71,7 @@ public class ProcessorTest {
 
         Format[] formats = dsp.getInput().getFormats();
 
-        assertEquals(6, formats.length);
+        assertEquals(7, formats.length);
         
         assertEquals(true, contains(formats, PCMA));
         assertEquals(true, contains(formats, PCMU));
@@ -71,6 +79,7 @@ public class ProcessorTest {
         assertEquals(true, contains(formats, G729));
         assertEquals(true, contains(formats, LINEAR));
         assertEquals(true, contains(formats, DTMF));
+        assertEquals(true, contains(formats, GSM));
     }
 
     private boolean contains(Format[] fmts, Format fmt) {
