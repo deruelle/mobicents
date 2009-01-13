@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.CR4-SNAPSHOT</version>	
+		<version>1.0.0.CR4</version>	
 	</parent>
 	
 	<artifactId>mobicents-media-server-controllers-parent</artifactId>
@@ -17,7 +17,7 @@
 
 	<properties>
 		<mobicents.media.server.core.version>
-			1.0.0.CR4-SNAPSHOT
+			1.0.0.CR4
 		</mobicents.media.server.core.version>		
 	</properties>
 	
@@ -29,7 +29,7 @@
 		<module>mgcp/mgcp-controller-sbb</module>
 		
 		<!-- It fails due to some glitch, dunno why it happens as from mms-console module level it works!!! -->
-		<module>mms-console</module>
+		<!--module>mms-console</module -->
 	</modules>
 	
 	<!-- RELEASE STUFF -->

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="jsr309/src/test/java"/>
-  <classpathentry kind="src" path="jsr309/src/main/java"/>
   <classpathentry kind="src" path="mgcp/mgcp-stack/src/main/java"/>
   <classpathentry kind="src" path="mgcp/mgcp-stack/src/test/java"/>
   <classpathentry kind="src" path="mgcp/mgcp-stack/src/main/resources"/>
@@ -60,7 +58,7 @@
   <classpathentry kind="var" path="M2_REPO/javassist/javassist/3.8.0.GA/javassist-3.8.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.2/servlet-api-2.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.85/jain-sip-ri-1.2.85.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.89/jain-sip-ri-1.2.89.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/slee/jain-slee/1.1.draft/jain-slee-1.1.draft.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/xml/stream/stax-api/1.0-2/stax-api-1.0-2.jar"/>
@@ -76,9 +74,8 @@
   <classpathentry kind="var" path="M2_REPO/jboss/jmx-adaptor-plugin/4.2.3.GA/jmx-adaptor-plugin-4.2.3.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.1/junit-4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.3.GA-SNAPSHOT/mobicents-core-jar-1.2.3.GA-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/core/mobicents-core-jar/1.2.3.GA/mobicents-core-jar-1.2.3.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/jspeex/jspeex/0.9.7/jspeex-0.9.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/external/jsr309/jsr309/0.1/jsr309-0.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_gsm/0.3.6/tritonus_gsm-0.3.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_share/0.3.6/tritonus_share-0.3.6.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servers/media/gsm-codec/1.0.0.CR4-SNAPSHOT/gsm-codec-1.0.0.CR4-SNAPSHOT.jar"/>
