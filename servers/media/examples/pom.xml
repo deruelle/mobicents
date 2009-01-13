@@ -9,7 +9,7 @@
 
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
 	<groupId>org.mobicents.servers.media.examples</groupId>
-	<version>1.0.0.CR4</version>
+	<version>1.0.0.CR5-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
@@ -43,9 +43,9 @@
 	</profiles>
 
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR4</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR4</developerConnection>
-		<url>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR4</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/examples</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media/examples</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
 
 	<build>
