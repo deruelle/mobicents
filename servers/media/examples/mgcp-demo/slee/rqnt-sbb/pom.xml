@@ -22,11 +22,7 @@
 		    <artifactId>sip11-ra</artifactId>
 		    <version>${mobicents.servers.jainslee.version}</version>
 	</dependency>
-	<dependency>
-		<groupId>org.mobicents.servers.media.controllers</groupId>
-		<artifactId>mgcp-events</artifactId>
-		<version>${pom.version}</version>
-		</dependency>
+
     </dependencies>	  
     
     <build>

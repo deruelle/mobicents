@@ -64,7 +64,6 @@ import javax.slee.UnrecognizedActivityException;
 import net.java.slee.resource.mgcp.JainMgcpProvider;
 import net.java.slee.resource.mgcp.MgcpActivityContextInterfaceFactory;
 import net.java.slee.resource.mgcp.MgcpConnectionActivity;
-import net.java.slee.resource.mgcp.event.TransactionTimeout;
 import net.java.slee.resource.sip.DialogActivity;
 import net.java.slee.resource.sip.SipActivityContextInterfaceFactory;
 import net.java.slee.resource.sip.SleeSipProvider;
@@ -284,9 +283,9 @@ public abstract class RQNTSbb implements Sbb {
 
 	}
 
-	public void onTransactionTimeout(TransactionTimeout event, ActivityContextInterface aci) {
-		logger.info("onTransactionTimeout");
-	}
+//	public void onTransactionTimeout(TransactionTimeout event, ActivityContextInterface aci) {
+//		logger.info("onTransactionTimeout");
+//	}
 
 	public void onCallTerminated(RequestEvent evt, ActivityContextInterface aci) {
 		EndpointIdentifier endpointID = new EndpointIdentifier(this.getEndpointName(), JBOSS_BIND_ADDRESS + ":2729");
