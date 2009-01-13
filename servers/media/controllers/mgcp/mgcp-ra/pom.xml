@@ -6,7 +6,7 @@
 		<artifactId>
 			mobicents-media-server-controllers-parent
 		</artifactId>
-		<version>1.0.0.CR4-SNAPSHOT</version>
+		<version>1.0.0.CR4</version>
 	</parent>
 
 	<artifactId>mgcp-parent</artifactId>
