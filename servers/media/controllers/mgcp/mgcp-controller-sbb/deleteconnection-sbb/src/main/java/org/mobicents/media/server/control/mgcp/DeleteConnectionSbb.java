@@ -132,7 +132,7 @@ public abstract class DeleteConnectionSbb implements Sbb {
 	public void onConnectionDisconnected(MsConnectionEvent evt, ActivityContextInterface aci) {
 		if (!this.getDeleteResponseSent()) {
 			sendDeleteResponse(ReturnCode.Transaction_Executed_Normally);
-			this.setDeleteResponseSent(true);
+			//this.setDeleteResponseSent(true);
 		}
 	}
 
