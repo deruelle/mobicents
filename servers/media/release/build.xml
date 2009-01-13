@@ -81,7 +81,7 @@
 
 		<ant antfile="${ant.file.media.server.release}/../target/servers/jain-slee/release/build.xml" target="build-ras">
 			<property name="release.dir" value="${release.dir.all}" />
-			<property name ="ra.dirs" value="tts,sip"/>
+			<property name ="ra.dirs" value="tts,sip11"/>
 		</ant>
 		<ant antfile="${ant.file.media.server.release}/../target/servers/jain-slee/release/build.xml" target="build-examples">
 			<property name="release.dir" value="${release.dir.all}" />
@@ -89,7 +89,7 @@
 		</ant>
 
 		<copy overwrite="true" todir="${release.dir.all}/">
-			<fileset dir="${ant.file.media.server.release}/../target/servers/jain-slee/release/target" includes="**/resources/tts/* **/resources/sip/* **/examples/sip-services/*" />
+			<fileset dir="${ant.file.media.server.release}/../target/servers/jain-slee/release/target" includes="**/resources/tts/* **/resources/sip11/* **/examples/sip-services/*" />
 		</copy>
 		<copy failonerror="true" file="${ant.file.media.server.release}/../target/servers/jain-slee/release/jbossjta-properties.xml" tofile="${jboss.home}/server/default/conf/jbossjta-properties.xml" overwrite="true" />
 	</target>

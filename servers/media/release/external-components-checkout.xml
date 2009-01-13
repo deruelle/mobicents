@@ -13,7 +13,7 @@
 		<checkout.username>mobicents-read-only</checkout.username>
 		<checkout.password></checkout.password>
 		
-		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.2.GA</jainslee.connectionURL>
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.3.GA</jainslee.connectionURL>
 	</properties>
 	
 	<profiles>
