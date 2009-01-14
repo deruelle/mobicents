@@ -39,6 +39,8 @@ import org.rhq.core.domain.measurement.AvailabilityType;
 import org.rhq.core.domain.measurement.MeasurementDataNumeric;
 import org.rhq.core.domain.measurement.MeasurementReport;
 import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
+import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 import org.rhq.core.pluginapi.inventory.ResourceContext;
 import org.rhq.core.pluginapi.measurement.MeasurementFacet;
 import org.rhq.core.pluginapi.operation.OperationFacet;
@@ -50,7 +52,7 @@ import org.rhq.plugins.jmx.JMXComponent;
  *
  * @author jean.deruelle@gmail.com
  */
-public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementFacet, OperationFacet {
+public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementFacet, OperationFacet, ConfigurationFacet {
     private static Log log = LogFactory.getLog(MobicentsSipBalancerComponent.class);
 
     private ResourceContext resourceContext;
@@ -171,5 +173,15 @@ public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementF
 			throws InterruptedException, Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Configuration loadResourceConfiguration() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void updateResourceConfiguration(ConfigurationUpdateReport arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

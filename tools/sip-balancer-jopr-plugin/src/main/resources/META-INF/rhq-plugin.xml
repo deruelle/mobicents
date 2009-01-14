@@ -37,20 +37,7 @@
 				displayName="Stop the Mobicents Sip Load Balancer"
 				description="Stop the Mobicents Sip Load Balancer">				
 			</operation>
-		</service>
 
-		<service name="Mobicents Sip Balancer Forwarder"
-			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
-			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Statistics for Mobicents Sip Balancer Forwarder">
-
-			<!--
-				Discovery of Mobicents Sip Balancer Forwarder object is done through JMX
-			-->
-			<plugin-configuration>
-				<c:simple-property name="objectName" readOnly="true"
-					default="mobicents:type=LoadBalancerForwarder,name=forwarder" />
-			</plugin-configuration>			
-			
 			<metric displayName="Number of SIP requests processed"
 				property="NumberOfRequestsProcessed" defaultOn="true" defaultInterval="1000"
 				displayType="summary" />
@@ -58,25 +45,12 @@
 			<metric displayName="Number of SIP responses processed"
 				property="numberOfResponsesProcessed" defaultOn="true" defaultInterval="1000"
 				displayType="summary" />
-		</service>
-		
-		<service name="Mobicents Sip Balancer Registrar"
-			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
-			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Statistics for Mobicents Sip Balancer Registrar">
-
-			<!--
-				Discovery of Mobicents Sip Balancer Registrar object is done through JMX
-			-->
-			<plugin-configuration>
-				<c:simple-property name="objectName" readOnly="true"
-					default="mobicents:type=LoadBalancerNodeRegistrar,name=registrar" />
-			</plugin-configuration>			
-				
+			
 			<resource-configuration>
         		<c:simple-property name="nodeExpirationTaskInterval" type="long" description="Sets interval between runs of task that removes nodes that expired. Value in milliseconds" />
         		<c:simple-property name="nodeExpiration" type="long" description="Sets value which indicates when node has expired. if node.timeStamp+nodeExpiration lower than System.currentTimeMilis than node has expired and on next run of nodeExpirationTask will be removed. Value in milliseconds" />
+        		<c:simple-property name="nodes" description="The list of nodes to which the Load Balancer can forward to." readOnly="true"/>
         	</resource-configuration>
-        	
-		</service>				
+		</service>
 	</server>
 </plugin>
