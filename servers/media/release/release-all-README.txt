@@ -47,10 +47,12 @@ If you are interested to do the performance test at your environment please drop
 
 3) The most important change is transcoding is removed from Announcement and IVR Endpoint. In order to have transcoding, the application needs to use PR Endpoint. Look at VoiceMailSbb of call-controller2 example to understand this. The Conference Endpoint is unchanged. This move is to improve the performance. If the application knows the codec used by UA, the audio files can be pre encoded in that format and hence all MMS will do is create RTP Packets and send it to far end. Even if application doesn't know the Codec's used by UA, application should take onus of having audio files pre encoded in multiple supported codecs and call one of them depending on codec negotiated. The business logic here is much cleaner and cheap as compared to unnecessary transcoding.
 
-4) As usual fixed other bugs related to functionality and performance
+4) The recording time can now be configured. http://code.google.com/p/mobicents/issues/detail?id=547
+
+5) As usual fixed other bugs related to functionality and performance
 http://code.google.com/p/mobicents/issues/list?can=1&q=Media-Server%20label%3AMilestone-Release-1.0.0.CR4
 
-5) For this release we have removed mms-console. Insted JOPR will soon replace mms-console but that will happen only in 2.x releases of MMS
+6) For this release we have removed mms-console. Insted JOPR will soon replace mms-console but that will happen only in 2.x releases of MMS
 
 Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/
 
