@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<plugin name="SipLoadBalancer" displayName="Mobicents Sip Load Balancer"
+	package="org.rhq.plugins.mobicents.tools" version="1.0"
+	description="Statistics for SipLoadBalancer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:xmlns:rhq-plugin" xmlns:c="urn:xmlns:rhq-configuration">
+
+	<depends plugin="JMX" />
+
+	<server name="Mobicents Sip Load Balancer" discovery="MobicentsSipBalancerDiscoveryComponent"
+		class="MobicentsSipBalancerComponent" description="Mobicents Sip Load Balancer"
+		supportsManualAdd="true">
+
+		<process-scan name="MobicentsSipBalancer" query="process|basename|match=^java.*,arg|*|match=.*mobicents.*balancer.*config.*"/>
+
+		<service name="Mobicents Sip Balancer"
+			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
+			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Operations for Mobicents Sip Balancer">
+
+			<!--
+				Discovery of Mobicents Sip Balancer object is done through JMX
+			-->
+			<plugin-configuration>
+				<c:simple-property name="objectName" readOnly="true"
+					default="mobicents:type=LoadBalancer,name=LoadBalancer" />
+			</plugin-configuration>			
+			
+			<operation name="start"
+				displayName="Start the Mobicents Sip Load Balancer"
+				description="Starts the Mobicents Sip Load Balancer - specify a configuration file">
+				<parameters>
+					<c:simple-property name="configurationFileLocation"/>											
+				</parameters>
+			</operation>
+			
+			<operation name="stop"
+				displayName="Stop the Mobicents Sip Load Balancer"
+				description="Stop the Mobicents Sip Load Balancer">				
+			</operation>
+		</service>
+
+		<service name="Mobicents Sip Balancer Forwarder"
+			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
+			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Statistics for Mobicents Sip Balancer Forwarder">
+
+			<!--
+				Discovery of Mobicents Sip Balancer Forwarder object is done through JMX
+			-->
+			<plugin-configuration>
+				<c:simple-property name="objectName" readOnly="true"
+					default="mobicents:type=LoadBalancerForwarder,name=forwarder" />
+			</plugin-configuration>			
+			
+			<metric displayName="Number of SIP requests processed"
+				property="NumberOfRequestsProcessed" defaultOn="true" defaultInterval="1000"
+				displayType="summary" />
+
+			<metric displayName="Number of SIP responses processed"
+				property="numberOfResponsesProcessed" defaultOn="true" defaultInterval="1000"
+				displayType="summary" />
+		</service>
+		
+		<service name="Mobicents Sip Balancer Registrar"
+			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
+			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Statistics for Mobicents Sip Balancer Registrar">
+
+			<!--
+				Discovery of Mobicents Sip Balancer Registrar object is done through JMX
+			-->
+			<plugin-configuration>
+				<c:simple-property name="objectName" readOnly="true"
+					default="mobicents:type=LoadBalancerNodeRegistrar,name=registrar" />
+			</plugin-configuration>			
+				
+			<resource-configuration>
+        		<c:simple-property name="nodeExpirationTaskInterval" type="long" description="Sets interval between runs of task that removes nodes that expired. Value in milliseconds" />
+        		<c:simple-property name="nodeExpiration" type="long" description="Sets value which indicates when node has expired. if node.timeStamp+nodeExpiration lower than System.currentTimeMilis than node has expired and on next run of nodeExpirationTask will be removed. Value in milliseconds" />
+        	</resource-configuration>
+        	
+		</service>				
+	</server>
+</plugin>
