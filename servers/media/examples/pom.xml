@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.CR4</version>
+		<version>1.0.0.CR5-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mobicents-media-server-examples-parent</artifactId>
@@ -17,7 +17,7 @@
 
 	<properties>
 		<mobicents.media.server.controllers.version>
-			1.0.0.CR4
+			1.0.0.CR5-SNAPSHOT
 		</mobicents.media.server.controllers.version>
 	</properties>
 
