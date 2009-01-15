@@ -15,7 +15,7 @@
 
 		<service name="Mobicents Sip Balancer"
 			discovery="org.rhq.plugins.jmx.MBeanResourceDiscoveryComponent"
-			class="org.rhq.plugins.jmx.MBeanResourceComponent" description="Operations for Mobicents Sip Balancer">
+			class="LoadBalancerComponent" description="Operations for Mobicents Sip Balancer">
 
 			<!--
 				Discovery of Mobicents Sip Balancer object is done through JMX
@@ -43,14 +43,25 @@
 				displayType="summary" />
 
 			<metric displayName="Number of SIP responses processed"
-				property="numberOfResponsesProcessed" defaultOn="true" defaultInterval="1000"
+				property="NumberOfResponsesProcessed" defaultOn="true" defaultInterval="1000"
+				displayType="summary" />
+				
+			<metric displayName="Number of currently active calls"
+				property="NumberOfGluedSessions" defaultOn="true" defaultInterval="1000"
 				displayType="summary" />
 			
 			<resource-configuration>
         		<c:simple-property name="nodeExpirationTaskInterval" type="long" description="Sets interval between runs of task that removes nodes that expired. Value in milliseconds" />
-        		<c:simple-property name="nodeExpiration" type="long" description="Sets value which indicates when node has expired. if node.timeStamp+nodeExpiration lower than System.currentTimeMilis than node has expired and on next run of nodeExpirationTask will be removed. Value in milliseconds" />
-        		<c:simple-property name="nodes" description="The list of nodes to which the Load Balancer can forward to." readOnly="true"/>
-        	</resource-configuration>
+        		<c:simple-property name="nodeExpiration" type="long" description="Sets value which indicates when node has expired. if node.timeStamp+nodeExpiration lower than System.currentTimeMilis than node has expired and on next run of nodeExpirationTask will be removed. Value in milliseconds" />        		
+        		<c:list-property name="nodes" readOnly="true">
+				   <c:map-property name="node" readOnly="true">
+				   	 <c:simple-property name="hostName" type="string"  readOnly="true"/>
+				     <c:simple-property name="ip" type="string"  readOnly="true"/>
+				     <c:simple-property name="port" type="integer"  readOnly="true"/>
+				     <c:simple-property name="transports" type="string" readOnly="true"/>
+				   </c:map-property>
+				</c:list-property>
+			</resource-configuration>
 		</service>
 	</server>
 </plugin>

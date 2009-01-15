@@ -1,33 +1,35 @@
- /*
-  * Jopr Management Platform
-  * Copyright (C) 2005-2008 Red Hat, Inc.
-  * All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License, version 2, as
-  * published by the Free Software Foundation, and/or the GNU Lesser
-  * General Public License, version 2.1, also as published by the Free
-  * Software Foundation.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  * GNU General Public License and the GNU Lesser General Public License
-  * for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * and the GNU Lesser General Public License along with this program;
-  * if not, write to the Free Software Foundation, Inc.,
-  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-  */
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.rhq.plugins.mobicents.tools;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mc4j.ems.connection.ConnectionFactory;
+import org.mc4j.ems.connection.EmsConnectException;
 import org.mc4j.ems.connection.EmsConnection;
 import org.mc4j.ems.connection.settings.ConnectionSettings;
 import org.mc4j.ems.connection.support.ConnectionProvider;
@@ -36,15 +38,8 @@ import org.mc4j.ems.connection.support.metadata.InternalVMTypeDescriptor;
 import org.mc4j.ems.connection.support.metadata.J2SE5ConnectionTypeDescriptor;
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.measurement.AvailabilityType;
-import org.rhq.core.domain.measurement.MeasurementDataNumeric;
-import org.rhq.core.domain.measurement.MeasurementReport;
-import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
-import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
-import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceContext;
-import org.rhq.core.pluginapi.measurement.MeasurementFacet;
-import org.rhq.core.pluginapi.operation.OperationFacet;
-import org.rhq.core.pluginapi.operation.OperationResult;
 import org.rhq.plugins.jmx.JMXComponent;
 
  /**
@@ -52,7 +47,7 @@ import org.rhq.plugins.jmx.JMXComponent;
  *
  * @author jean.deruelle@gmail.com
  */
-public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementFacet, OperationFacet, ConfigurationFacet {
+public class MobicentsSipBalancerComponent implements JMXComponent {
     private static Log log = LogFactory.getLog(MobicentsSipBalancerComponent.class);
 
     private ResourceContext resourceContext;
@@ -66,31 +61,50 @@ public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementF
     
     public void start(ResourceContext context) {
         resourceContext = context;
+        // Attempt to load the connection now. If we cannot, do not consider the start operation as failed. The only
+        // exception to this rule is if the connection cannot be made due to a JMX security exception. In this case,
+        // we treat it as an invalid plugin configuration and throw the appropriate exception (see the javadoc for
+        // ResourceComponent)
+        try {
+            getEmsConnection();
+        } catch (Exception e) {
+
+            // Explicit checking for security exception (i.e. invalid credentials for connecting to JMX)
+            if (e instanceof EmsConnectException) {
+                Throwable cause = e.getCause();
+
+                if (cause instanceof SecurityException) {
+                    throw new InvalidPluginConfigurationException(
+                        "Invalid JMX credentials specified for connecting to this balancer.", e);
+                }
+            }
+
+        }
     }
 
     public void stop() {
+    	if (this.connection != null) {
+            try {
+                this.connection.close();
+            } catch (Exception e) {
+                log.error("Error closing Mobicents Sip Balancer connection: " + e);
+            }
+            this.connection = null;
+        }
     }
 
     public AvailabilityType getAvailability() {
-        // TODO: Implement availability check.
-        return AvailabilityType.UP;
-    }
-
-    public void getValues(MeasurementReport report, Set<MeasurementScheduleRequest> requests) {
-        for (MeasurementScheduleRequest request : requests) {
-            String name = request.getName();
-
-            // TODO: based on the request information, you must collect the requested measurement(s)
-            //       you can use the name of the measurement to determine what you actually need to collect
-            try {
-                Number value = new Integer(1); // dummy measurement value - this should come from the managed resource
-                report.addData(new MeasurementDataNumeric(request, value.doubleValue()));
-            } catch (Exception e) {
-                log.error("Failed to obtain measurement [" + name + "]. Cause: " + e);
+    	try {
+            EmsConnection connection = getEmsConnection();
+            if(connection != null) {
+	            connection.getBean("mobicents:type=LoadBalancer,name=LoadBalancer");
+	            return AvailabilityType.UP;
+            } else {
+            	return AvailabilityType.DOWN;
             }
+        } catch (Exception e) {
+            return AvailabilityType.DOWN;
         }
-
-        return;
     }
 
     public EmsConnection getEmsConnection() {
@@ -103,18 +117,31 @@ public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementF
 		    			J2SE5ConnectionTypeDescriptor.class.getCanonicalName()).newInstance());
 		    	connectionSettings.setServerUrl("service:jmx:rmi:///jndi/rmi://" + pluginConfig.getSimpleValue(MobicentsSipBalancerDiscoveryComponent.HOST_PROP, "localhost") + ":" + pluginConfig.getSimpleValue(MobicentsSipBalancerDiscoveryComponent.RMI_REGISTRY_PORT_PROP, "2000") + "/server");
                 connectionSettings.setPrincipal(null);
-                connectionSettings.setCredentials(null);                
-
+                connectionSettings.setCredentials(null);
+                
+                String balancerExecutableJarFilePath = pluginConfig.getSimpleValue(MobicentsSipBalancerDiscoveryComponent.BALANCER_EXECUTABLE_JAR_FILE_PATH, null);
+                String balancerExecutableJarFile = pluginConfig.getSimpleValue(MobicentsSipBalancerDiscoveryComponent.BALANCER_EXECUTABLE_JAR_FILE, null);
+                log.debug("JarBalancer = " + balancerExecutableJarFile);                
+                log.debug("JarBalancerPath = " + balancerExecutableJarFilePath);
+                // allow JMX to unmarshall SIPNode class in LoadBalancerComponent
+                List<File> classpathEntries = connectionSettings.getClassPathEntries();
+                if(classpathEntries == null) {
+                	classpathEntries = new ArrayList<File>();
+                }
+                classpathEntries.add(new File(balancerExecutableJarFile));
+                connectionSettings.setClassPathEntries(classpathEntries);
+//                connectionSettings.setLibraryURI(pluginConfig.getSimpleValue("balancerJarPath", null));
+                
+                
                 ConnectionFactory connectionFactory = new ConnectionFactory();
                 connectionFactory.discoverServerClasses(connectionSettings);
-
+                
                 if (connectionSettings.getAdvancedProperties() == null) {
                     connectionSettings.setAdvancedProperties(new Properties());
                 }
 
                 // Tell EMS to make copies of jar files so that the ems classloader doesn't lock
                 // application files (making us unable to update them)  Bug: JBNADM-670
-                // TODO GH: turn this off in the embedded case
                 connectionSettings.getControlProperties().setProperty(ConnectionFactory.COPY_JARS_TO_TEMP,
                     String.valueOf(Boolean.TRUE));
 
@@ -168,20 +195,4 @@ public class MobicentsSipBalancerComponent implements JMXComponent, MeasurementF
 
         return connection;
     }
-
-	public OperationResult invokeOperation(String arg0, Configuration arg1)
-			throws InterruptedException, Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Configuration loadResourceConfiguration() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void updateResourceConfiguration(ConfigurationUpdateReport arg0) {
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -1,25 +1,24 @@
- /*
-  * Jopr Management Platform
-  * Copyright (C) 2005-2008 Red Hat, Inc.
-  * All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License, version 2, as
-  * published by the Free Software Foundation, and/or the GNU Lesser
-  * General Public License, version 2.1, also as published by the Free
-  * Software Foundation.
-  *
-  * This program is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  * GNU General Public License and the GNU Lesser General Public License
-  * for more details.
-  *
-  * You should have received a copy of the GNU General Public License
-  * and the GNU Lesser General Public License along with this program;
-  * if not, write to the Free Software Foundation, Inc.,
-  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-  */
+/*
+ * JBoss, Home of Professional Open Source
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.rhq.plugins.mobicents.tools;
 
 import java.io.File;
@@ -50,8 +49,6 @@ import org.rhq.core.system.SystemInfo;
  */
 public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscoveryComponent {
 
-	private static final String MOBICENTS_BALANCER_CONFIG_ARG = "-mobicents-balancer-config=";
-
 	private final Log log = LogFactory.getLog(MobicentsSipBalancerDiscoveryComponent.class);
     
     public static final String HOST_PROP = "host";
@@ -59,7 +56,12 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
 	public static final String INTERNAL_PORT_PROP = "internalPort";
     public static final String RMI_REGISTRY_PORT_PROP = "rmiRegistryPort";
 	public static final String JMX_HTML_ADAPTER_PORT_PROP = "jmxHtmlAdapterPort";
-    
+
+	public static final String BALANCER_EXECUTABLE_JAR_FILE_PATH = "balancerJarPath";
+	public static final String BALANCER_EXECUTABLE_JAR_FILE = "balancerJar";
+	public static final String MOBICENTS_BALANCER_CONFIG_ARG = "-mobicents-balancer-config=";
+
+	
     /**
      * Formal name used to identify the Mobicents Sip Balancer.
      */
@@ -124,7 +126,7 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
         String resourceName = ((hostname == null) ? "" : (hostname + " ")) + PRODUCT_NAME + " " + resourceVersion;
         String resourceKey = installationPath;
 
-        Configuration pluginConfiguration = populatePluginConfiguration(config);
+        Configuration pluginConfiguration = populatePluginConfiguration(config, processInfo);
 
         DiscoveredResourceDetails resource = new DiscoveredResourceDetails(context.getResourceType(), resourceKey,
             resourceName, resourceVersion, PRODUCT_DESCRIPTION, pluginConfiguration, processInfo);
@@ -217,7 +219,7 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
      *
      * @return populated plugin configuration instance
      */
-    private Configuration populatePluginConfiguration(Properties properties) {
+    private Configuration populatePluginConfiguration(Properties properties, ProcessInfo processInfo) {
         Configuration configuration = new Configuration();
 
         configuration.put(new PropertySimple(HOST_PROP, properties.getProperty(HOST_PROP)));
@@ -225,7 +227,16 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
         configuration.put(new PropertySimple(EXTERNAL_PORT_PROP, properties.getProperty(EXTERNAL_PORT_PROP)));
         configuration.put(new PropertySimple(RMI_REGISTRY_PORT_PROP, properties.getProperty(RMI_REGISTRY_PORT_PROP)));
         configuration.put(new PropertySimple(JMX_HTML_ADAPTER_PORT_PROP, properties.getProperty(JMX_HTML_ADAPTER_PORT_PROP)));
-
+        String balancerJar = findMainJarArgument(processInfo.getCommandLine());
+        log.debug("balancerJar = " + balancerJar);
+        String balancerJarPath = balancerJar.substring(0, balancerJar.lastIndexOf(File.separatorChar));
+        log.debug("balancerJarPath = " + balancerJarPath);
+        configuration.put(new PropertySimple(BALANCER_EXECUTABLE_JAR_FILE_PATH, balancerJarPath));
+        configuration.put(new PropertySimple(BALANCER_EXECUTABLE_JAR_FILE, balancerJar));
+          
+        //allow JMX to unmarshall SIPNode class in LoadBalancerComponent
+//        configuration.put(new PropertySimple("additionalClassPathEntries", balancerJar));
+        
         return configuration;
     }
 }
