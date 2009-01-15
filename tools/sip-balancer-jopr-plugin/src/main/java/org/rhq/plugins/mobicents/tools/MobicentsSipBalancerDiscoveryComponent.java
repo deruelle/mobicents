@@ -123,7 +123,7 @@ public class MobicentsSipBalancerDiscoveryComponent implements ResourceDiscovery
         String resourceVersion = determineVersion(commandLine);
         log.debug("Version for the newly found mobicents sip balancer process is " + resourceVersion);
         String hostname = systemInfo.getHostname();
-        String resourceName = ((hostname == null) ? "" : (hostname + " ")) + PRODUCT_NAME + " " + resourceVersion;
+        String resourceName = ((hostname == null) ? "" : (hostname + " ")) + PRODUCT_NAME + " " + resourceVersion + "(" + config.getProperty(HOST_PROP) + ")";
         String resourceKey = installationPath;
 
         Configuration pluginConfiguration = populatePluginConfiguration(config, processInfo);
