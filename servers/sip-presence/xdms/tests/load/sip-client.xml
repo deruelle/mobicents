@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- Luis Barreiro - Mobicents QA team -->
+
+<scenario name="UAC for XDMS Tests">
+
+  <send retrans="5000" start_rtd="1">
+    <![CDATA[
+    
+      SUBSCRIBE sip:eduardo[call_number]@openxdm.org SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:eduardo[call_number]@openxdm.org>;tag=[call_number][pid]
+      To: <sip:eduardo[call_number]@openxdm.org>    
+      Call-ID: [call_id]
+      CSeq: 1 SUBSCRIBE
+      Max-Forwards: 70
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Event: xcap-diff
+      Expires: 60
+      Content-Type: application/resource-lists+xml
+      Content-Length: [len]
+         
+      <?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list><entry uri="/resource-lists/users/sip%3Aeduardo[call_number]%40openxdm.org/index"/></list></resource-lists>
+      
+    ]]>
+  </send>
+
+  <recv response="200" rrs="true" />
+  
+  <recv request="NOTIFY" rtd="1" />
+  
+  <send>
+    <![CDATA[
+      
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+      
+    ]]>
+  </send>
+
+  <!-- #################################################################### -->
+  
+  <recv request="NOTIFY"  start_rtd="2" />
+  
+  <send>
+    <![CDATA[
+      
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+      
+    ]]>
+  </send>
+    
+  <recv request="NOTIFY" />
+  
+  <send>
+    <![CDATA[
+      
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+      
+    ]]>
+  </send>  
+  
+  <recv request="NOTIFY" rtd="2" />
+  
+  <send>
+    <![CDATA[
+      
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+      
+    ]]>
+  </send>
+  
+  <!-- #################################################################### -->
+
+  <pause milliseconds="10000"/>
+  
+  <send retrans="5000" start_rtd="3">
+    <![CDATA[
+    
+      SUBSCRIBE sip:eduardo[call_number]@openxdm.org SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:eduardo[call_number]@openxdm.org>;tag=[call_number][pid]
+      To: <sip:eduardo[call_number]@openxdm.org>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 2 SUBSCRIBE
+      Max-Forwards: 70
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Event: xcap-diff
+      Expires: 0
+      Content-Length: 0
+      
+    ]]>
+  </send>
+
+  <recv response="200" />
+  
+  <recv request="NOTIFY" rtd="3" />
+  
+  <send>
+    <![CDATA[
+      
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+      
+    ]]>
+  </send>
+  
+  <pause milliseconds="1000"/>
+
+</scenario>
+

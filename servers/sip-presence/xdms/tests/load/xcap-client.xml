@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!-- Seagull scenario file for XDMS tests  -->
+
+<!-- (c)Copyright 2008 Mobicents -->
+
+<scenario>
+
+    <counter>
+        <counterdef name="call_counter" init="0"> </counterdef>
+    </counter>
+
+<!-- subscribe, put (201), timer, get (200), timer, get (200), timer, get (200), timer, put (200), timer, get (200), timer, get (200), timer, get (200), timer, delete (200), unsubscribe -->
+<!--            #01               #02               #03               #04               #05               #06               #07               #08               #09                       -->
+
+    <traffic>
+
+<!-- Transaction #01 - Create resource-lists document -->
+       
+        <send channel="channel-1">
+            <action>
+                <inc-counter name="call_counter"></inc-counter>
+                <set-value name="request-uri" format="/mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index"></set-value>
+            </action>
+            
+            <message>
+                <![CDATA[PUT /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 200
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list><entry uri="/resource-lists/users/sip%3Aeduardo%40openxdm.org/index"/></list></resource-lists>
+                ]]>
+            </message>
+            
+            <action>
+                <store name="REQ-URI" entity="request-uri"></store>
+                
+                <start-timer></start-timer>
+            </action>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 201 Created
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+            
+            <action>
+                <stop-timer></stop-timer>
+            </action>
+            
+        </receive>
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #02 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #03 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #04 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>  
+           
+<!-- Transaction #05 - Modify document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[PUT /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #06 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #07 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+        
+<!-- Transaction #08 - Get document -->
+       
+        <send channel="channel-1">
+            <action>
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+            
+            <message>
+                <![CDATA[GET /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         Content-Type: application/resource-lists+xml
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 124
+                ]]>
+                <![CDATA[<?xml version="1.0" encoding="UTF-8"?><resource-lists xmlns="urn:ietf:params:xml:ns:resource-lists"><list/></resource-lists>
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+        </receive>        
+        
+        <wait-ms value="1000"></wait-ms>
+          
+<!-- Transaction #09 - Clean -->
+
+        <send channel="channel-1">
+            <action>                
+                <restore name="REQ-URI" entity="request-uri"></restore>
+            </action>
+
+            <message>
+                <!-- header -->
+                <![CDATA[DELETE /mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index HTTP/1.1
+                         User-Agent: Seagull-gull.sourceforge.net by Mobicents QA
+                         Host: 127.0.0.1:8001
+                         Connection: keep-alive
+                         Content-Length: 0
+                ]]>
+            </message>
+        </send>
+
+        <receive channel="channel-1">
+            <message>
+                <!-- header -->
+                <![CDATA[HTTP/1.1 200 OK
+                         Server: Apache-Coyote/1.1
+                         X-Powered-By: Servlet 2.4; JBoss-4.2.3.GA (build: SVNTag=JBoss_4_2_3_GA date=200807181417)/JBossWeb-2.0
+                         ETag: 0
+                         Content-Length: 0
+                         Date: Thu, 1 Jan 2008 00:00:00 GMT
+                ]]>
+            </message>
+            
+            <action>
+                <!-- Close the TCP socket we opened at the beginning -->
+                <close></close>
+            </action>
+        </receive>                     
+    </traffic>
+</scenario>
+
