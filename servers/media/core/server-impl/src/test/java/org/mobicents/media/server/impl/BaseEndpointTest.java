@@ -69,22 +69,22 @@ public class BaseEndpointTest {
 	/**
 	 * Test of getRtpFactoryName method, of class BaseEndpoint.
 	 */
-	@Test
-	public void testGetRtpFactoryName() {
-		TestEndpoint enp = new TestEndpoint("test");
-		enp.setRtpFactoryName("rtp/test");
-		assertEquals("rtp/test", enp.getRtpFactoryName());
-	}
-
-	/**
-	 * Test of setRtpFactoryName method, of class BaseEndpoint.
-	 */
-	@Test
-	public void testSetRtpFactoryName() {
-		TestEndpoint enp = new TestEndpoint("test");
-		enp.setRtpFactoryName("rtp/test");
-		assertEquals("rtp/test", enp.getRtpFactoryName());
-	}
+//	@Test
+//	public void testGetRtpFactoryName() {
+//		TestEndpoint enp = new TestEndpoint("test");
+//		enp.setRtpFactoryName("rtp/test");
+//		assertEquals("rtp/test", enp.getRtpFactoryName());
+//	}
+//
+//	/**
+//	 * Test of setRtpFactoryName method, of class BaseEndpoint.
+//	 */
+//	@Test
+//	public void testSetRtpFactoryName() {
+//		TestEndpoint enp = new TestEndpoint("test");
+//		enp.setRtpFactoryName("rtp/test");
+//		assertEquals("rtp/test", enp.getRtpFactoryName());
+//	}
 
 	/**
 	 * Test of getMaxConnectionsAvailable method, of class BaseEndpoint.

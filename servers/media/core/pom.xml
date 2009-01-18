@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>mobicents</artifactId>
 		<groupId>org.mobicents</groupId>
-		<version>8</version>
+		<version>9-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
 	<artifactId>mobicents-media-server-core</artifactId>
-	<version>1.0.0.CR5-SNAPSHOT</version>
+	<version>2.0.0.CR1-SNAPSHOT</version>
 
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 
@@ -21,7 +21,7 @@
 		</release.name>
 		<!-- OTHER MOBICENTS COMPONENTS VERSIONS  -->
 		<mobicents.servers.jainslee.version>
-			1.2.3.GA
+			2.0.0-SNAPSHOT
 		</mobicents.servers.jainslee.version>
 		<mobicents.tools.mavenplugin.du.version>
 			1.0.0.BETA2
@@ -43,6 +43,27 @@
 		<module>g729</module>
 		<module>gsm</module>
 	</modules>
+	<!-- This should go in parent.xml -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.microcontainer</groupId>
+				<artifactId>jboss-kernel</artifactId>
+				<version>2.0.0.Beta6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.aop</groupId>
+				<artifactId>jboss-aop</artifactId>
+				<version>2.0.0.beta1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.microcontainer</groupId>
+				<artifactId>jboss-aop-mc-int</artifactId>
+				<version>2.0.0.Beta6</version>
+				<scope>runtime</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<!-- RELEASE STUFF -->
 

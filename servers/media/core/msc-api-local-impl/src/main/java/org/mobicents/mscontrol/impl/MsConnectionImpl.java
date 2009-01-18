@@ -235,7 +235,7 @@ public class MsConnectionImpl extends MsActionPerformer implements MsConnection,
 
         public void run() {
             try {
-                endpoint = new MsEndpointImpl(EndpointQuery.lookup(endpointName), session.getProvider());
+                endpoint = new MsEndpointImpl(EndpointQuery.getInstance().lookup(endpointName), session.getProvider());
                 endpointName = endpoint.server.getLocalName();
 
                 endpoint.server.addConnectionListener(localConnection);
@@ -245,9 +245,6 @@ public class MsConnectionImpl extends MsActionPerformer implements MsConnection,
                 if (remoteSdp != null) {
                     connection.setRemoteDescriptor(remoteSdp);
                 }
-            } catch (NamingException e) {
-            	logger.error("NamingException while trying to create Connection ", e);
-                setState(MsConnectionState.FAILED, MsConnectionEventCause.ENDPOINT_UNKNOWN);
             } catch (ResourceUnavailableException e) {
             	logger.error("ResourceUnavailableException while trying to create Connection ", e);
                 setState(MsConnectionState.FAILED, MsConnectionEventCause.FACILITY_FAILURE);

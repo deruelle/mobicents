@@ -209,9 +209,9 @@ public class MsLinkImpl extends MsActionPerformer implements MsLink, ConnectionL
             this.epnB = epnB;
         }
 
-        private Connection createConnection(String epn, int end) throws NamingException, ResourceUnavailableException,
+        private Connection createConnection(String epn, int end) throws ResourceUnavailableException,
                 TooManyConnectionsException {
-            Endpoint endpoint = EndpointQuery.lookup(epn);
+            Endpoint endpoint = EndpointQuery.getInstance().lookup(epn);
             return endpoint.createLocalConnection(getMode(end));
         }
 
@@ -230,10 +230,6 @@ public class MsLinkImpl extends MsActionPerformer implements MsLink, ConnectionL
                 
 
                 connections[0].setOtherParty(connections[1]);
-            } catch (NamingException e) {
-                logger.error("Joining of endpoint for Link failed", e);
-                setState(MsLinkState.FAILED, MsLinkEventCause.ENDPOINT_UNKNOWN);
-                clean();
             } catch (ResourceUnavailableException e) {
                 logger.error("Joining of endpoint for Link failed", e);
                 setState(MsLinkState.FAILED, MsLinkEventCause.RESOURCE_UNAVAILABLE);

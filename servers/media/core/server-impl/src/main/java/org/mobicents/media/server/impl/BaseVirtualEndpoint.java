@@ -42,7 +42,7 @@ public abstract class BaseVirtualEndpoint extends BaseEndpoint implements Virtua
 			String localName = this.getLocalName() + "/" + "enp-" + (GEN++);
 			BaseEndpoint enp = (BaseEndpoint) doCreateEndpoint(localName);
 
-			enp.setRtpFactoryName(this.getRtpFactoryName());
+			//enp.setRtpFactoryName(this.getRtpFactoryName());
 
 			endpoints.put(localName, enp);
 			enp.setGatherPerformanceData(this.gatherStatistics);

@@ -18,9 +18,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+
 
 import net.java.stun4j.StunAddress;
 import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
@@ -68,20 +66,20 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 	 * 
 	 * @see org.mobicents.media.server.impl.jmx.rtp.RtpManagerMBean#setJndiName(String);
 	 */
-	public void setJndiName(String jndiName) throws NamingException {
+	public void setJndiName(String jndiName) {
 		String oldName = this.jndiName;
 		this.jndiName = jndiName;
 
-		if (this.getState() == STARTED) {
-			unbind(oldName);
-			try {
-				rebind();
-			} catch (NamingException e) {
-				NamingException ne = new NamingException("Failed to update JNDI name");
-				ne.setRootCause(e);
-				throw ne;
-			}
-		}
+//		if (this.getState() == STARTED) {
+//			unbind(oldName);
+//			try {
+//				rebind();
+//			} catch (NamingException e) {
+//				NamingException ne = new NamingException("Failed to update JNDI name");
+//				ne.setRootCause(e);
+//				throw ne;
+//			}
+//		}
 	}
 
 	/**
@@ -291,9 +289,9 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 	public void setAudioFormats(String desc) {
 		FormatDescription fd = new FormatDescription();
 		audioFormats = fd.parse(desc);
-		if (getState() == RTPManager.STARTED) {
-			rtpFactory.setAudioFormats(audioFormats);
-		}
+//		if (getState() == RTPManager.STARTED) {
+//			rtpFactory.setAudioFormats(audioFormats);
+//		}
 	}
 
 	/**
@@ -333,8 +331,8 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 		rtpFactory.setStunServerPort(stunServerPort);
 		rtpFactory.setUsePortMapping(usePortMapping);
 		rtpFactory.setUseStun(useStun);
-		rtpFactory.setAudioFormats(audioFormats);
-		rebind();
+		//rtpFactory.setAudioFormats(audioFormats);
+		//rebind();
 	}
 
 	/**
@@ -342,29 +340,29 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 	 */
 	@Override
 	public void stopService() {
-		unbind(jndiName);
+		//unbind(jndiName);
 		logger.info("Stopped RTP manager " + this.getJndiName());
 	}
 
 	/**
 	 * Binds trunk object to the JNDI under the jndiName.
 	 */
-	private void rebind() throws NamingException {
-		Context ctx = new InitialContext();
-		String tokens[] = jndiName.split("/");
-
-		for (int i = 0; i < tokens.length - 1; i++) {
-			if (tokens[i].trim().length() > 0) {
-				try {
-					ctx = (Context) ctx.lookup(tokens[i]);
-				} catch (NamingException e) {
-					ctx = ctx.createSubcontext(tokens[i]);
-				}
-			}
-		}
-
-		ctx.bind(tokens[tokens.length - 1], rtpFactory);
-	}
+//	private void rebind() throws NamingException {
+//		Context ctx = new InitialContext();
+//		String tokens[] = jndiName.split("/");
+//
+//		for (int i = 0; i < tokens.length - 1; i++) {
+//			if (tokens[i].trim().length() > 0) {
+//				try {
+//					ctx = (Context) ctx.lookup(tokens[i]);
+//				} catch (NamingException e) {
+//					ctx = ctx.createSubcontext(tokens[i]);
+//				}
+//			}
+//		}
+//
+//		ctx.bind(tokens[tokens.length - 1], rtpFactory);
+//	}
 
 	/**
 	 * Unbounds object under specified name.
@@ -372,14 +370,14 @@ public class RTPManager extends ServiceMBeanSupport implements RTPManagerMBean {
 	 * @param jndiName
 	 *            the JNDI name of the object to be unbound.
 	 */
-	private void unbind(String jndiName) {
-		try {
-			InitialContext initialContext = new InitialContext();
-			initialContext.unbind(jndiName);
-		} catch (NamingException e) {
-			logger.error("Failed to unbind endpoint", e);
-		}
-	}
+//	private void unbind(String jndiName) {
+//		try {
+//			InitialContext initialContext = new InitialContext();
+//			initialContext.unbind(jndiName);
+//		} catch (NamingException e) {
+//			logger.error("Failed to unbind endpoint", e);
+//		}
+//	}
 
 	private boolean mapStun(int localPort, String localAddress) {
 		try {

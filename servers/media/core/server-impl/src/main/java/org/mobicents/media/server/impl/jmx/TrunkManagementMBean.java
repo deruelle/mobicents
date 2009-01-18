@@ -19,6 +19,7 @@ package org.mobicents.media.server.impl.jmx;
 import javax.naming.NamingException;
 
 import org.jboss.system.ServiceMBean;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
 
 /**
  * 
@@ -45,7 +46,7 @@ public interface TrunkManagementMBean extends ServiceMBean {
 	 * 
 	 * @return the JNDI name of the RTP Factory
 	 */
-	public String getRtpFactoryName();
+	public RtpFactory getRtpFactory();
 
 	/**
 	 * Sets the name of used RTP Factory.
@@ -53,7 +54,7 @@ public interface TrunkManagementMBean extends ServiceMBean {
 	 * @param rtpFactoryName
 	 *            the JNDI name of the RTP Factory.
 	 */
-	public void setRtpFactoryName(String rtpFactoryName) throws Exception;
+	public void setRtpFactory(RtpFactory rtpFactory) throws Exception;
 
 	/**
 	 * Gets ammount of Endpoints.
@@ -81,7 +82,7 @@ public interface TrunkManagementMBean extends ServiceMBean {
 
 	public long getNumberOfBytes(String endpointName) throws IllegalArgumentException;
 
-	public String getRTPFacotryJNDIName(String endpointName) throws IllegalArgumentException;
+	
 
 	public void setGatherPerformanceData(String endpointName, boolean flag) throws IllegalArgumentException;
 
@@ -93,7 +94,7 @@ public interface TrunkManagementMBean extends ServiceMBean {
 
 	public String[] getConnectionIds(String endpointName) throws IllegalArgumentException;
 
-	public void setRTPFacotryJNDIName(String endpointName, String jndiName) throws IllegalArgumentException;
+	
 
 	public void destroyConnection(String name, String connectionId) throws IllegalArgumentException;
 

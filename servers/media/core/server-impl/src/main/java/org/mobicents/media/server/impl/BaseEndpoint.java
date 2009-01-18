@@ -17,12 +17,25 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.locks.ReentrantLock;
 
+import javax.sdp.SdpFactory;
+
+import org.apache.log4j.Logger;
+import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.events.EventPackage;
 import org.mobicents.media.server.impl.events.PackageNotSupportedEventImpl;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -38,23 +51,6 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.events.RequestedEvent;
 import org.mobicents.media.server.spi.events.RequestedSignal;
 import org.mobicents.media.server.spi.events.pkg.EventID;
-
-import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import java.util.concurrent.ThreadFactory;
-import javax.sdp.SdpFactory;
-import org.apache.log4j.Logger;
-
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.locks.ReentrantLock;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.rtp.RtpFactory;
-import org.mobicents.media.server.impl.rtp.RtpSocket;
 
 /**
  * The basic implementation of the endpoint.
@@ -75,7 +71,7 @@ public abstract class BaseEndpoint implements Endpoint {
     private String localName;
     
     /** The JNDI name of the RTP Factory */
-    private String rtpFactoryName;
+    private RtpFactory rtpFactory;
     /** This flag indicates is this endpoint in use or not*/
     private boolean isInUse = false;
     /** The list of indexes available for connection enumeration within endpoint */
@@ -193,14 +189,8 @@ public abstract class BaseEndpoint implements Endpoint {
      * 
      * @return RtpFactory instance.
      */
-    protected RtpFactory getRtpFactory() throws NamingException {
-        String jndiName = getRtpFactoryName();
-        if (jndiName != null) {
-            InitialContext ic = new InitialContext();
-            return (RtpFactory) ic.lookup(jndiName);
-        } else {
-            return new RtpFactory();
-        }
+    protected RtpFactory getRtpFactory()  {
+    	return this.rtpFactory;
     }
 
     /**
@@ -236,14 +226,7 @@ public abstract class BaseEndpoint implements Endpoint {
         return transmittorThread;
     }
 
-    /**
-     * Gets the name of used RTP Factory.
-     * 
-     * @return the JNDI name of the RTP Factory
-     */
-    public String getRtpFactoryName() {
-        return rtpFactoryName;
-    }
+
 
     /**
      * Sets the name of used RTP Factory.
@@ -251,8 +234,8 @@ public abstract class BaseEndpoint implements Endpoint {
      * @param rtpFactoryName
      *            the JNDI name of the RTP Factory.
      */
-    public void setRtpFactoryName(String rtpFactoryName) {
-        this.rtpFactoryName = rtpFactoryName;
+    public void setRtpFactory(RtpFactory rtpFactory) {
+        this.rtpFactory = rtpFactory;
     }
 
     /**
@@ -734,14 +717,6 @@ public abstract class BaseEndpoint implements Endpoint {
             throw new IllegalArgumentException("Connection does not exist.");
         }
         return connection.getMode().toString();
-    }
-
-    public String getRTPFacotryJNDIName() {
-        return this.rtpFactoryName;
-    }
-
-    public void setRTPFacotryJNDIName(String jndiName) throws IllegalArgumentException {
-        this.setRtpFactoryName(jndiName);
     }
 
     public void notifyEndpoint(Connection connection, ConnectionState oldState) {

@@ -100,9 +100,9 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
      */
     public void setRtpFactoryName(String rtpFactoryName) {
         this.rtpFactoryName = rtpFactoryName;
-        if (this.getState() == STARTED) {
-            ((BaseEndpoint) getEndpoint()).setRtpFactoryName(rtpFactoryName);
-        }
+//        if (this.getState() == STARTED) {
+//            ((BaseEndpoint) getEndpoint()).setRtpFactoryName(rtpFactoryName);
+//        }
     }
 
     /**
@@ -195,7 +195,7 @@ public abstract class EndpointManagement extends ServiceMBeanSupport implements 
     @Override
     public void startService() throws Exception {
         endpoint = createEndpoint();
-        ((BaseEndpoint) endpoint).setRtpFactoryName(rtpFactoryName);
+        //((BaseEndpoint) endpoint).setRtpFactoryName(rtpFactoryName);
         ((BaseEndpoint) endpoint).setConnectionLifeTime(ttl);
 
         rebind();

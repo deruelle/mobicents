@@ -1,28 +1,35 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-media-server-core</artifactId>
-		<version>1.0.0.CR5-SNAPSHOT</version>
+		<version>2.0.0.CR1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>mobicents-media-server-spi</artifactId>
-	
+
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
-	
+
 	<properties>
 		<maven.test.skip>false</maven.test.skip>
 	</properties>
-	
-	<dependencies>        
+
+	<dependencies>
 		<dependency>
 			<groupId>javax.sip</groupId>
-			<artifactId>jain-sip-ri</artifactId>            
+			<artifactId>jain-sip-ri</artifactId>
 			<version>${jain-sip-ri.version}</version>
-		</dependency>	
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
@@ -37,7 +44,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>		 	          		
+				<executions>
 					<execution>
 						<id>copy-to-jboss-lib</id>
 						<phase>install</phase>
@@ -45,12 +52,16 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<includeArtifactIds>jain-sip-ri</includeArtifactIds>
-							<outputDirectory>${env.JBOSS_HOME}/server/${node}/lib</outputDirectory>
+							<includeArtifactIds>
+								jain-sip-ri
+							</includeArtifactIds>
+							<outputDirectory>
+								${env.JBOSS_HOME}/server/${node}/lib
+							</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
-		 	      	</plugin>						
+			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -62,11 +73,14 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+								<condition property="jboss.dir"
+									value="${jboss.home}" else="${env.JBOSS_HOME}">
 									<isset property="jboss.home" />
 								</condition>
-								<copy file="target/${project.build.finalName}.jar" todir="${jboss.dir}/server/${node}/lib">
-									
+								<copy
+									file="target/${project.build.finalName}.jar"
+									todir="${jboss.dir}/server/${node}/lib">
+
 								</copy>
 							</tasks>
 						</configuration>
@@ -79,13 +93,14 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.jar" />
+								<delete
+									file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.jar" />
 							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
-	</build> 	
-	
+	</build>
+
 </project>

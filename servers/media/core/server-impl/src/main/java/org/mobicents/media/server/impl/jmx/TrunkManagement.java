@@ -15,16 +15,13 @@
  */
 package org.mobicents.media.server.impl.jmx;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
+import org.apache.log4j.Logger;
 import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.local.management.EndpointLocalManagement;
 import org.mobicents.media.server.spi.Endpoint;
-
-import org.apache.log4j.Logger;
+import org.mobicents.media.server.spi.EndpointQuery;
 
 /**
  * 
@@ -33,8 +30,8 @@ import org.apache.log4j.Logger;
 public abstract class TrunkManagement extends ServiceMBeanSupport implements TrunkManagementMBean {
 
     private String jndiName;
-    private String rtpFactoryName;
     private Integer channels = 0;
+    private RtpFactory rtpFactory = null;
     
     private transient Logger logger = Logger.getLogger(EndpointManagement.class);
     
@@ -59,18 +56,18 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
      * @param jndiName
      *            the JNDI name to which trunk object will be bound.
      */
-    public void setJndiName(String jndiName) throws NamingException {
+    public void setJndiName(String jndiName)  {
         String oldName = this.jndiName;
         this.jndiName = jndiName;
 
-        if (this.getState() == STARTED) {
-            InitialContext ic = new InitialContext();
-            for (int i = 0; i < channels; i++) {
-                BaseEndpoint endpoint = (BaseEndpoint) ic.lookup(oldName +"/" + i);
-                ic.unbind(oldName + "/" + i);
-                rebind(jndiName + "/" + i, endpoint);
-            }
-        }
+//        if (this.getState() == STARTED) {
+//            InitialContext ic = new InitialContext();
+//            for (int i = 0; i < channels; i++) {
+//                BaseEndpoint endpoint = (BaseEndpoint) ic.lookup(oldName +"/" + i);
+//                ic.unbind(oldName + "/" + i);
+//                rebind(jndiName + "/" + i, endpoint);
+//            }
+//        }
     }
 
     /**
@@ -78,8 +75,8 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
      * 
      * @return the JNDI name of the RTP Factory
      */
-    public String getRtpFactoryName() {
-        return rtpFactoryName;
+    public RtpFactory getRtpFactory() {
+        return this.rtpFactory;
     }
 
     /**
@@ -88,15 +85,15 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
      * @param rtpFactoryName
      *            the JNDI name of the RTP Factory.
      */
-    public void setRtpFactoryName(String rtpFactoryName) throws Exception {
-        this.rtpFactoryName = rtpFactoryName;
-        if (this.getState() == STARTED) {
-            InitialContext ic = new InitialContext();
-            for (int i = 0; i < channels; i++) {
-                BaseEndpoint endpoint = (BaseEndpoint) ic.lookup(jndiName +"/" + i);
-                endpoint.setRtpFactoryName(rtpFactoryName);
-            }
-        }
+    public void setRtpFactory(RtpFactory rtpFactory) throws Exception {
+        this.rtpFactory = rtpFactory;
+//        if (this.getState() == STARTED) {
+//            InitialContext ic = new InitialContext();
+//            for (int i = 0; i < channels; i++) {
+//                BaseEndpoint endpoint = (BaseEndpoint) ic.lookup(jndiName +"/" + i);
+//                endpoint.setRtpFactoryName(rtpFactoryName);
+//            }
+//        } 
     }
 
     public Integer getChannels() {
@@ -110,7 +107,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
     /**
      * Binds trunk object to the JNDI under the jndiName.
      */
-    private void rebind(String theJndiName, Endpoint tmpEndpoint) throws NamingException {
+/*    private void rebind(String theJndiName, Endpoint tmpEndpoint) throws NamingException {
         Context ctx = new InitialContext();
 
         String tokens[] = theJndiName.split("/");
@@ -126,7 +123,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
         }
 
         ctx.bind(tokens[tokens.length - 1], tmpEndpoint);
-    }
+    } */
 
     /**
      * Unbounds object under specified name.
@@ -134,7 +131,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
      * @param jndiName
      *            the JNDI name of the object to be unbound.
      */
-    private void unbind(String jndiName) {
+ /*   private void unbind(String jndiName) {
         try {
             InitialContext initialContext = new InitialContext();
             Endpoint enp = (Endpoint) initialContext.lookup(jndiName);
@@ -143,7 +140,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
         } catch (NamingException e) {
             logger.error("Failed to unbind endpoint", e);
         }
-    }
+    } */
 
     public abstract Endpoint createEndpoint(String localName) throws Exception;
 
@@ -153,14 +150,17 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
     @Override
     public void startService() throws Exception {
         logger.info("Starting trunk " + jndiName  + ", channels=" + channels);
+        EndpointQuery endpointQuery = EndpointQuery.getInstance();
         for (int i = 0; i < channels; i++) {
             String name = jndiName + "/" + i;
             Endpoint enp = createEndpoint(name);
             
-            ((BaseEndpoint) enp).setRtpFactoryName(rtpFactoryName);
+            ((BaseEndpoint) enp).setRtpFactory(this.rtpFactory);
             enp.start();
             
-            rebind(enp.getLocalName(), enp);
+            endpointQuery.addEndpoint(enp.getLocalName(), enp);
+            
+            //rebind(enp.getLocalName(), enp);
             logger.info("Started endpoint: " + jndiName + "/" + i);
         }
 
@@ -173,7 +173,7 @@ public abstract class TrunkManagement extends ServiceMBeanSupport implements Tru
     public void stopService() {
         logger.info("Stoping trunk " + jndiName  + ", channels=" + channels);
         for (int i = 0; i < channels; i++) {
-            unbind(jndiName + "/" + i);
+            EndpointQuery.getInstance().remove(jndiName + "/" + i);
             logger.info("Stopped endpoint: " + jndiName + "/" + i);
         }
     }

@@ -13,280 +13,352 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+import net.java.stun4j.StunAddress;
+import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
+import net.java.stun4j.client.StunDiscoveryReport;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
-import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
-import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
-public class RtpFactory implements Serializable {
+public class RtpFactory {
 
-    private Integer period;
-    private Integer jitter;
-    
-    private InetAddress bindAddress;
-    private int lowPortNumber;
-    private int highPortNumber;
-    
-    private String stunServerAddress;
-    private int stunServerPort;
-    private boolean useStun = false;
-    private boolean usePortMapping = true;
-    private String publicAddressFromStun = null;
-    
-    private HashMap<Integer, Format> audioFormats;
-    
-    private transient Logger logger = Logger.getLogger(RtpFactory.class);
+	private Integer period;
+	private Integer jitter;
 
-    public RtpFactory() {
-        try {
-            bindAddress = InetAddress.getLocalHost();
-        } catch (Exception e) {
-            logger.error("Failed to get the IP address for host", e);
-        }
-        lowPortNumber = 1024;
-        highPortNumber = 65535;
+	private InetAddress bindAddress;
+	private int lowPortNumber;
+	private int highPortNumber;
 
-        period = 20;
-        jitter = 80;
+	private String stunServerAddress;
+	private int stunServerPort;
+	private boolean useStun = false;
+	private boolean usePortMapping = true;
+	private String publicAddressFromStun = null;
 
-        audioFormats = new HashMap<Integer, Format>();
-        audioFormats.put(0, AVProfile.PCMU);
-        audioFormats.put(8, AVProfile.PCMA);
-    }
+	private HashMap<Integer, Format> audioFormats;
 
-    /**
-     * Gets the IP address to which trunk is bound.
-     * All endpoints of the trunk use this address for RTP connection.
-     *
-     * @return the IP address string to which this trunk is bound.
-     */
-    public String getBindAddress() {
-        return bindAddress != null ? bindAddress.getHostAddress() : null;
-    }
+	private transient Logger logger = Logger.getLogger(RtpFactory.class);
 
-    /**
-     * Modify the bind address.
-     * All endpoints of the trunk use this address for RTP connection.
-     *
-     * @param the IP address string.
-     */
-    public void setBindAddress(String bindAddress) throws UnknownHostException {
-        this.bindAddress = InetAddress.getByName(bindAddress);
-    }
+	public RtpFactory() {
+		try {
+			bindAddress = InetAddress.getLocalHost();
+		} catch (Exception e) {
+			logger.error("Failed to get the IP address for host", e);
+		}
+		lowPortNumber = 1024;
+		highPortNumber = 65535;
 
-    /**
-     * Gets the size of the jitter buffer in milliseconds.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @return the size of the buffer in milliseconds.
-     */
-    public Integer getJitter() {
-        return jitter;
-    }
+		period = 20;
+		jitter = 80;
 
-    /**
-     * Modify size of the jitter buffer.
-     * 
-     * Jitter buffer is used at the receiving ends of a VoIP connection. 
-     * A jitter buffer stores received, time-jittered VoIP packets, that arrive 
-     * within its time window. It then plays stored packets out, in sequence, 
-     * and at a constant rate for subsequent decoding. A jitter buffer is
-     * typically filled half-way before playing out packets to allow early, 
-     * or late, packet-arrival jitter compensation.
-     * 
-     * Choosing a large jitter buffer reduces packet dropping from jitter but
-     * increases VoIP path delay
-     * 
-     * @param jitter the new buffer's size in milliseconds
-     */
-    public void setJitter(Integer jitter) {
-        this.jitter = jitter;
-    }
+		audioFormats = new HashMap<Integer, Format>();
+		audioFormats.put(0, AVProfile.PCMU);
+		audioFormats.put(8, AVProfile.PCMA);
+	}
 
-    /**
-     * Gets packetization period.
-     * 
-     * The packetization period is the period over which encoded voice bits 
-     * are collected for encapsulation in packets.
-     * 
-     * Higher period will reduce VoIP overhead allowing higher channel utilization
-     * 
-     * @return packetion period for media in milliseconds.
-     */
-    public Integer getPacketizationPeriod() {
-        return period;
-    }
+	public void create() {
+		System.out.println("create: " + this);
+	}
 
-    /**
-     * Modify packetization period.
-     * 
-     * The packetization period is the period over which encoded voice bits 
-     * are collected for encapsulation in packets.
-     * 
-     * Higher period will reduce VoIP overhead allowing higher channel utilization
-     * 
-     * @param period the value of the packetization period in milliseconds.
-     */
-    public void setPacketizationPeriod(Integer period) {
-        this.period = period;
-    }
+	public void start() {
+		logger.info("Starting RTP Factory: ");
+		if (!this.usePortMapping) {
+			int randomPort = 9000;			
+			for (int q = 0; q <= 10; q++) {
+				if (mapStun(randomPort + q * 1003, getBindAddress()))
+					break;
+			}
+		}
+		logger.info("Formats endabled = : "+ this.audioFormats);
+		logger.info("Started RTP Factory: ");
+	}
 
-    /**
-     * Gets the available port range.
-     *
-     * @return the string in format "lowPort-highPort".
-     */
-    public String getPortRange() {
-        return lowPortNumber + "-" + highPortNumber;
-    }
+	public void stop() {
+		System.out.println("stop: " + this);
+	}
 
-    /**
-     * Modify port used to create RTP stream. 
-     *
-     * @param portRange the string in format "lowPort-highPort"
-     */
-    public void setPortRange(String portRange) {
-        String[] tokens = portRange.split("-");
-        lowPortNumber = Integer.parseInt(tokens[0]);
-        highPortNumber = Integer.parseInt(tokens[1]);
-    }
+	public void destroy() {
+		System.out.println("destroy: " + this);
+	}
 
-    /**
-     * Gets the STUN server address.
-     * 
-     * @return the address of the server as string.
-     */
-    public String getStunServerAddress() {
-        return stunServerAddress;
-    }
+	/**
+	 * Gets the IP address to which trunk is bound. All endpoints of the trunk
+	 * use this address for RTP connection.
+	 * 
+	 * @return the IP address string to which this trunk is bound.
+	 */
+	public String getBindAddress() {
+		return bindAddress != null ? bindAddress.getHostAddress() : null;
+	}
 
-    /**
-     * Modify STUN server address.
-     * 
-     * @param stunServerAddress the valid address of the server
-     */
-    public void setStunServerAddress(String stunServerAddress) {
-        this.stunServerAddress = stunServerAddress;
-    }
+	/**
+	 * Modify the bind address. All endpoints of the trunk use this address for
+	 * RTP connection.
+	 * 
+	 * @param the
+	 *            IP address string.
+	 */
+	public void setBindAddress(String bindAddress) throws UnknownHostException {
+		this.bindAddress = InetAddress.getByName(bindAddress);
+	}
 
-    /**
-     * Gets the port of the STUN server.
-     * 
-     * @return the port number.
-     */
-    public int getStunServerPort() {
-        return stunServerPort;
-    }
+	/**
+	 * Gets the size of the jitter buffer in milliseconds.
+	 * 
+	 * Jitter buffer is used at the receiving ends of a VoIP connection. A
+	 * jitter buffer stores received, time-jittered VoIP packets, that arrive
+	 * within its time window. It then plays stored packets out, in sequence,
+	 * and at a constant rate for subsequent decoding. A jitter buffer is
+	 * typically filled half-way before playing out packets to allow early, or
+	 * late, packet-arrival jitter compensation.
+	 * 
+	 * Choosing a large jitter buffer reduces packet dropping from jitter but
+	 * increases VoIP path delay
+	 * 
+	 * @return the size of the buffer in milliseconds.
+	 */
+	public Integer getJitter() {
+		return jitter;
+	}
 
-    /**
-     * Configures port of the STUN server.
-     * 
-     * @param stunServerPort port number.
-     */
-    public void setStunServerPort(int stunServerPort) {
-        this.stunServerPort = stunServerPort;
-    }
+	/**
+	 * Modify size of the jitter buffer.
+	 * 
+	 * Jitter buffer is used at the receiving ends of a VoIP connection. A
+	 * jitter buffer stores received, time-jittered VoIP packets, that arrive
+	 * within its time window. It then plays stored packets out, in sequence,
+	 * and at a constant rate for subsequent decoding. A jitter buffer is
+	 * typically filled half-way before playing out packets to allow early, or
+	 * late, packet-arrival jitter compensation.
+	 * 
+	 * Choosing a large jitter buffer reduces packet dropping from jitter but
+	 * increases VoIP path delay
+	 * 
+	 * @param jitter
+	 *            the new buffer's size in milliseconds
+	 */
+	public void setJitter(Integer jitter) {
+		this.jitter = jitter;
+	}
 
-    /**
-     * Shows does STUN enabled.
-     * 
-     * @return true if STUN is used.
-     */
-    public boolean isUseStun() {
-        return useStun;
-    }
+	/**
+	 * Gets packetization period.
+	 * 
+	 * The packetization period is the period over which encoded voice bits are
+	 * collected for encapsulation in packets.
+	 * 
+	 * Higher period will reduce VoIP overhead allowing higher channel
+	 * utilization
+	 * 
+	 * @return packetion period for media in milliseconds.
+	 */
+	public Integer getPacketizationPeriod() {
+		return period;
+	}
 
-    /**
-     * Enables/disables STUN usage.
-     * 
-     * @param useStun true to use STUN or false otherwise.
-     */
-    public void setUseStun(boolean useStun) {
-        this.useStun = useStun;
-    }
+	/**
+	 * Modify packetization period.
+	 * 
+	 * The packetization period is the period over which encoded voice bits are
+	 * collected for encapsulation in packets.
+	 * 
+	 * Higher period will reduce VoIP overhead allowing higher channel
+	 * utilization
+	 * 
+	 * @param period
+	 *            the value of the packetization period in milliseconds.
+	 */
+	public void setPacketizationPeriod(Integer period) {
+		this.period = period;
+	}
 
-    /**
-     * Shows does NAT uses port mapping.
-     * 
-     * @return true if NAT uses port mapping.
-     */
-    public boolean isUsePortMapping() {
-        return usePortMapping;
-    }
+	/**
+	 * Gets the available port range.
+	 * 
+	 * @return the string in format "lowPort-highPort".
+	 */
+	public String getPortRange() {
+		return lowPortNumber + "-" + highPortNumber;
+	}
 
-    /**
-     * Configures NAT traversal procedure.
-     *  
-     * @param usePortMapping true if NAT uses port mapping.
-     */
-    public void setUsePortMapping(boolean usePortMapping) {
-        this.usePortMapping = usePortMapping;
-    }
+	/**
+	 * Modify port used to create RTP stream.
+	 * 
+	 * @param portRange
+	 *            the string in format "lowPort-highPort"
+	 */
+	public void setPortRange(String portRange) {
+		String[] tokens = portRange.split("-");
+		lowPortNumber = Integer.parseInt((tokens[0]).trim());
+		highPortNumber = Integer.parseInt((tokens[1]).trim());
+	}
 
-    public String getPublicAddressFromStun() {
-        return publicAddressFromStun;
-    }
+	/**
+	 * Gets the STUN server address.
+	 * 
+	 * @return the address of the server as string.
+	 */
+	public String getStunServerAddress() {
+		return stunServerAddress;
+	}
 
-    public void setPublicAddressFromStun(String publicAddressFromStun) {
-        this.publicAddressFromStun = publicAddressFromStun;
-    }
+	/**
+	 * Modify STUN server address.
+	 * 
+	 * @param stunServerAddress
+	 *            the valid address of the server
+	 */
+	public void setStunServerAddress(String stunServerAddress) {
+		this.stunServerAddress = stunServerAddress;
+	}
 
-    /**
-     * Gets the list of supported RTP audioFormats.
-     * 
-     * @return map where key is payload number and value is Format object.
-     */
-    public HashMap<Integer, Format> getAudioFormats() {
-        return audioFormats;
-    }
+	/**
+	 * Gets the port of the STUN server.
+	 * 
+	 * @return the port number.
+	 */
+	public int getStunServerPort() {
+		return stunServerPort;
+	}
 
-    /**
-     * Sets a list of supported RTPFormats.
-     * 
-     * @param audioFormats a map where key is payload number and value is Format object.
-     */
-    public void setAudioFormats(HashMap<Integer, Format> formats) {
-        this.audioFormats = formats;
-    }
+	/**
+	 * Configures port of the STUN server.
+	 * 
+	 * @param stunServerPort
+	 *            port number.
+	 */
+	public void setStunServerPort(int stunServerPort) {
+		this.stunServerPort = stunServerPort;
+	}
 
-    /**
-     * Constructs new RTP socket.
-     * 
-     * @return the RTPSocketInstance.
-     * @throws java.net.SocketException
-     */
-    public RtpSocket getRTPSocket(BaseEndpoint endpoint) throws SocketException {
-        RtpSocketImpl rtpSocket = null;
-        if (this.isUseStun()) {
-            rtpSocket = new RtpSocketImpl(period, jitter, stunServerAddress, stunServerPort,
-                    usePortMapping, publicAddressFromStun);
-        } else {
-            rtpSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
-        }
+	/**
+	 * Shows does STUN enabled.
+	 * 
+	 * @return true if STUN is used.
+	 */
+	public boolean isUseStun() {
+		return useStun;
+	}
 
-        rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
-//        rtpSocket.getRtpMap().putAll(audioFormats);
-        return rtpSocket;
-    }
+	/**
+	 * Enables/disables STUN usage.
+	 * 
+	 * @param useStun
+	 *            true to use STUN or false otherwise.
+	 */
+	public void setUseStun(boolean useStun) {
+		this.useStun = useStun;
+	}
+
+	/**
+	 * Shows does NAT uses port mapping.
+	 * 
+	 * @return true if NAT uses port mapping.
+	 */
+	public boolean isUsePortMapping() {
+		return usePortMapping;
+	}
+
+	/**
+	 * Configures NAT traversal procedure.
+	 * 
+	 * @param usePortMapping
+	 *            true if NAT uses port mapping.
+	 */
+	public void setUsePortMapping(boolean usePortMapping) {
+		this.usePortMapping = usePortMapping;
+	}
+
+	public String getPublicAddressFromStun() {
+		return publicAddressFromStun;
+	}
+
+	public void setPublicAddressFromStun(String publicAddressFromStun) {
+		this.publicAddressFromStun = publicAddressFromStun;
+	}
+
+	/**
+	 * Gets the list of supported RTP audioFormats.
+	 * 
+	 * @return map where key is payload number and value is Format object.
+	 */
+	public HashMap getAudioFormats() {
+		return this.audioFormats;
+	}
+
+	/**
+	 * Sets a list of supported RTPFormats.
+	 * 
+	 * @param audioFormats
+	 *            a map where key is payload number and value is Format object.
+	 */
+	public void setAudioFormats(HashMap<Integer, Format> formats) {		
+		this.audioFormats = formats;
+
+	}
+
+	/**
+	 * Constructs new RTP socket.
+	 * 
+	 * @return the RTPSocketInstance.
+	 * @throws java.net.SocketException
+	 */
+	public RtpSocket getRTPSocket(BaseEndpoint endpoint) throws SocketException {
+		RtpSocketImpl rtpSocket = null;
+		if (this.isUseStun()) {
+			rtpSocket = new RtpSocketImpl(period, jitter, stunServerAddress, stunServerPort, usePortMapping,
+					publicAddressFromStun, audioFormats);
+		} else {
+			rtpSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
+		}
+
+		rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
+		// rtpSocket.getRtpMap().putAll(audioFormats);
+		return rtpSocket;
+	}
+	
+	private boolean mapStun(int localPort, String localAddress) {
+		try {
+			if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
+				logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+				this.publicAddressFromStun = localAddress;
+			} else {
+				StunAddress localStunAddress = new StunAddress(localAddress, localPort);
+
+				StunAddress serverStunAddress = new StunAddress(stunServerAddress, stunServerPort);
+
+				NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
+						localStunAddress, serverStunAddress);
+				addressDiscovery.start();
+				StunDiscoveryReport report = addressDiscovery.determineAddress();
+				if (report.getPublicAddress() != null) {
+					this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress()
+							.getHostAddress();
+					// TODO set a timer to retry the binding and provide a
+					// callback to update the global ip address and port
+				} else {
+					useStun = false;
+					logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+				}
+				logger.info("Stun report = " + report);
+				addressDiscovery.shutDown();
+			}
+		} catch (Throwable t) {
+			logger.error("Stun lookup has failed: " + t.getMessage());
+			return false;
+		}
+		return true;
+
+	}
 }

@@ -15,15 +15,9 @@
  */
 package org.mobicents.media.server.spi;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Logger;
+import java.util.concurrent.ConcurrentHashMap;
 
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import org.apache.log4j.Logger;
 
 /**
  * The VirtualEndpoint like AnnEndpoint, PREndpoint, LoopEndpoint etc are
@@ -40,86 +34,89 @@ import javax.naming.NamingException;
  */
 public class EndpointQuery {
 
-    protected static Logger logger = Logger.getLogger(EndpointQuery.class.getCanonicalName());
-    /**
-     * This matches xxxxxxxxxxxx/end-y<br>
-     * where x is any character, y is any number of digits
-     */
-//    protected static final String exactNameRegex = ".*enp-\\d*$";
-//    protected static final String trunkNameRegex = ".*\\$$";
+	protected static Logger logger = Logger.getLogger(EndpointQuery.class.getCanonicalName());
+	private static final ConcurrentHashMap<String, ConcurrentHashMap<String, Endpoint>> ENDPOINT_MAPS = new ConcurrentHashMap<String, ConcurrentHashMap<String, Endpoint>>();
+	private static final EndpointQuery ENDPOINTQUERY = new EndpointQuery();
 
-    public static synchronized Endpoint findAny(String name) throws NamingException, ResourceUnavailableException {
-        EndpointName endpointName = new EndpointName(name);
-        InitialContext ic = new InitialContext();
+	private EndpointQuery() {
 
-        Object f = ic.lookup(endpointName.getContextName());
-        Context ctx = (Context) f;
+	}
 
-        NamingEnumeration list = ctx.listBindings("");
-        while (list.hasMore()) {
+	public static EndpointQuery getInstance() {
+		return ENDPOINTQUERY;
+	}
 
-            Binding binding = (Binding) list.next();
+	public synchronized void addEndpoint(String stringEndpointName, Endpoint endpoint) {
+		EndpointName endpointName = new EndpointName(stringEndpointName);
+		ConcurrentHashMap<String, Endpoint> endpointMap = ENDPOINT_MAPS.get(endpointName.getContextName());
+		if (endpointMap == null) {
+			endpointMap = new ConcurrentHashMap<String, Endpoint>();
+			ENDPOINT_MAPS.put(endpointName.getContextName(), endpointMap);
+		}
+		endpointMap.put(stringEndpointName, endpoint);
+	}
 
-            Object obj = binding.getObject();
-            if (obj instanceof Endpoint) {
-                Endpoint endpoint = (Endpoint) obj;
-                if (!endpoint.isInUse()) {
-                    endpoint.setInUse(true);
-                    return endpoint;
-                }
-            } else {
-                logger.info("Wrong class[" + obj.getClass() + "], it doesnt implement [" + Endpoint.class + "], if it does, its a class loader issue!!!");
-            }
-        }
+	/**
+	 * This matches xxxxxxxxxxxx/end-y<br>
+	 * where x is any character, y is any number of digits
+	 */
+	public synchronized Endpoint findAny(String name) throws ResourceUnavailableException {
+		EndpointName endpointName = new EndpointName(name);
+		ConcurrentHashMap<String, Endpoint> endpointMap = ENDPOINT_MAPS.get(endpointName.getContextName());
+		if (endpointMap != null) {
 
-        throw new ResourceUnavailableException("Endpoint unknown or in use[" + name + "]");
-    }
+			for (Endpoint b : endpointMap.values()) {
+				if (!b.isInUse()) {
+					b.setInUse(true);
+					return b;
+				}
+			}
+		}
 
-    public static synchronized Collection findAll(String name) throws NamingException, ResourceUnavailableException {
+		throw new ResourceUnavailableException("Endpoint unknown or in use[" + name + "]");
+	}
 
-        try {
-            InitialContext ic = new InitialContext();
-            ArrayList endpoints = new ArrayList();
+	public synchronized Endpoint find(String name) throws ResourceUnavailableException {
+		EndpointName endpointName = new EndpointName(name);
+		ConcurrentHashMap<String, Endpoint> endpointMap = ENDPOINT_MAPS.get(endpointName.getContextName());
+		if (endpointMap != null) {
+			Endpoint b = endpointMap.get(name);
+			if (b != null)
+				return b;
+		}
+		throw new ResourceUnavailableException("Endpoint unknown or in use[" + name + "]");
+	}
 
-            Context ctx = (Context) ic.lookup(name);
+	public Endpoint lookup(String name) throws ResourceUnavailableException {
+		if (name.endsWith("$")) {
+			return findAny(name);
+		} else {
+			return find(name);
+		}
+	}
 
-            NamingEnumeration list = ctx.listBindings("");
-            while (list.hasMore()) {
-                Binding binding = (Binding) list.next();
+	public synchronized void remove(String name) {
+		EndpointName endpointName = new EndpointName(name);
+		ConcurrentHashMap<String, Endpoint> endpointMap = ENDPOINT_MAPS.get(endpointName.getContextName());
+		if (endpointMap != null) {
+			Endpoint endpoint = endpointMap.remove(name);
+			if (logger.isDebugEnabled()) {
+				if (endpoint == null) {
+					logger.debug("remove failed. No Endpoint found for endpoint name " + name);
+				} else {
+					logger.debug("removed successfully enbdpoint = " + endpoint.getLocalName());
+				}
+			}
+			if (endpointMap.size() == 0) {
+				ENDPOINT_MAPS.remove(endpointName.getContextName());
+			}
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("remove failed. No EndpointMap found for conetxt " + endpointName.getContextName());
+			}
+		}
 
-                String bindingName = binding.getName();
-                Endpoint endpoint = (Endpoint) binding.getObject();
-                endpoints.add(endpoint);
-            }
-
-            return endpoints;
-        } catch (ClassCastException cce) {
-            throw new ResourceUnavailableException(cce);
-        }
-    }
-
-    public static synchronized Endpoint find(String name) throws NamingException, ResourceUnavailableException {
-        InitialContext ic = new InitialContext();
-        Object f = ic.lookup(name);
-        return (Endpoint)f;
-    }
-
-    public static Endpoint lookup(String name) throws NamingException, ResourceUnavailableException {
-        if (name.endsWith("$")) {
-            return findAny(name);
-        } else {
-            return find(name);
-        }
-    /*        if (Pattern.matches(trunkNameRegex, name)) {
-    name = name.substring(0, name.indexOf("/$"));
-    return findAny(name);
-    } else if (Pattern.matches(exactNameRegex, name)) {
-    return find(name);
-    } else {
-    throw new ResourceUnavailableException("Name: " + name + " is neither trunk name nor an endpoint name!!!");
-    }
-     */
-    }
+	}
 }
 
 /**
@@ -133,32 +130,32 @@ public class EndpointQuery {
  */
 class EndpointName {
 
-    private String contextName;
-    private String name;
+	private String contextName;
+	private String name;
 
-    public EndpointName(String fqn) {
-        parse(fqn);
-    }
+	public EndpointName(String fqn) {
+		parse(fqn);
+	}
 
-    public String getContextName() {
-        return contextName;
-    }
+	public String getContextName() {
+		return contextName;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    private void parse(String fqn) {
-        int pos = 0;
-        int idx = 0;
-        while (idx != -1) {
-            idx = fqn.indexOf("/", pos);
-            if (idx != -1) {
-                pos = idx + 1;
-            }
-        }
+	private void parse(String fqn) {
+		int pos = 0;
+		int idx = 0;
+		while (idx != -1) {
+			idx = fqn.indexOf("/", pos);
+			if (idx != -1) {
+				pos = idx + 1;
+			}
+		}
 
-        contextName = fqn.substring(0, pos - 1).trim();
-        name = fqn.substring(pos).trim();
-    }
+		contextName = fqn.substring(0, pos - 1).trim();
+		name = fqn.substring(pos).trim();
+	}
 }
