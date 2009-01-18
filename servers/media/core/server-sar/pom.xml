@@ -10,7 +10,7 @@
 	<artifactId>mobicents-media-server-sar</artifactId>
 
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
-	<packaging>jboss-sar</packaging>
+	
 
 	<dependencies>
 		<dependency>
@@ -40,50 +40,30 @@
 	</dependencies>
 
 	<build>
-		<finalName>mobicents-media-server-${pom.version}</finalName>
+		<finalName>mobicents-media-server.sar</finalName>
 		<plugins>
+
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jboss-packaging-maven-plugin</artifactId>
-				<version>2.0-beta-1</version>
-				<extensions>true</extensions>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<!--<deploymentDescriptorFile>
-						xml/META-INF/jboss-service.xml
-						</deploymentDescriptorFile>
-					-->
-					<excludes>
-						<exclude>concurrent:concurrent</exclude>
-
-						<exclude>commons-collections:commons-collections</exclude>
-						<exclude>commons-logging:commons-logging</exclude>
-
-						<exclude>ant:ant-optional</exclude>
-
-						<exclude>jboss:jboss</exclude>
-						<exclude>jboss:jboss-jmx</exclude>
-						<exclude>jboss:jboss-common</exclude>
-						<exclude>jboss:jboss-j2se</exclude>
-						<exclude>jboss:jboss-minimal</exclude>
-						<exclude>jboss:jboss-system</exclude>
-						<exclude>jboss:jbossall-client</exclude>
-						<exclude>jboss:jbossall</exclude>
-						<exclude>jboss:jbossha</exclude>
-						<exclude>jboss:jmx-adaptor-plugin</exclude>
-						<exclude>javax.transaction:jta</exclude>
-						<exclude>junit:junit</exclude>
-						<exclude>log4j:log4j</exclude>
-						<exclude>javax.servlet:servlet-api</exclude>
-						<exclude>jdom:jdom</exclude>
-						<exclude>jgroups:jgroups-all</exclude>
-						<exclude>xerces:xerces</exclude>
-						<exclude>xerces:xercesImpl</exclude>
-						<exclude>xml-apis:xml-apis</exclude>
-						<exclude>slide:webdavlib</exclude>
-					</excludes>
-
+					<descriptors>
+						<descriptor>
+							src/main/assemble/descriptor.xml
+						</descriptor>
+					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id><!-- this is used for inheritance merges -->
+						<phase>package</phase><!-- append to the packaging phase. -->
+						<goals>
+							<goal>directory-inline</goal><!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
+
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -98,9 +78,11 @@
 								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
 									<isset property="jboss.home" />
 								</condition>
-								<copy todir="${jboss.dir}/server/${node}/deploy/${project.build.finalName}.sar">
-									<fileset dir="target/${project.build.finalName}">
-										<include name="**" />
+								<copy todir="${jboss.home}/server/${node}/deploy">
+									<fileset
+										dir="target/${build.finalName}.dir">
+										<include
+											name="${build.finalName}/**" />
 									</fileset>
 								</copy>
 							</tasks>
@@ -114,7 +96,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.sar" />
+								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}" />
 							</tasks>
 						</configuration>
 					</execution>

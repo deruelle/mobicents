@@ -319,6 +319,9 @@ public class BaseEndpointTest {
 	    protected void startRtp() {
 	        try {
 	            RtpFactory rtpFactory = getRtpFactory();
+	            if(rtpFactory == null){
+	            	rtpFactory = new RtpFactory();
+	            }
 	            rtpSocket = rtpFactory.getRTPSocket(this);
 	        } catch (Exception e) {
 	            e.printStackTrace();

@@ -117,18 +117,15 @@ public class JitterBufferTest {
         jitterBuffer.write(b3);
         jitterBuffer.write(b4);
         jitterBuffer.write(b1);
-
-        Buffer buffer = jitterBuffer.read();
-        assertEquals(1, buffer.getData());
         
-        buffer = jitterBuffer.read();
+        Buffer buffer = jitterBuffer.read();
         assertEquals(2, buffer.getData());
         
         buffer = jitterBuffer.read();
         assertEquals(3, buffer.getData());
         
         buffer = jitterBuffer.read();
-        assertEquals(1, buffer.getData());
+        assertEquals(4, buffer.getData());
         
     }
 

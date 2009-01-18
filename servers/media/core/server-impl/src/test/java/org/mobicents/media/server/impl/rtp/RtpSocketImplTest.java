@@ -62,10 +62,13 @@ public class RtpSocketImplTest {
         MAX_ERRORS = (int) Math.round(100.0 / ps * ERRORS);
         try {
             endpoint = new AnnEndpointImpl("test");
+            endpoint.setRtpFactory(new RtpFactory());
             endpoint.start();
             
             localAddress = InetAddress.getLocalHost();
         } catch (Exception e) {
+        	e.printStackTrace();
+        	fail();
         }
         HashMap<Integer,Format> rtpMap = new HashMap();
         rtpMap.put(8, PCMA);
