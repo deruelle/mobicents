@@ -98,7 +98,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
         recDsp.configure(
                 new Format[] {Endpoint.PCMU,Endpoint.PCMA, Endpoint.SPEEX, Endpoint.G729, Endpoint.GSM}, 
                 new Format[] {Endpoint.LINEAR_AUDIO});
-        
+        recDsp.getOutput().start();
         //demux.connect(recorder);
         dtmfDetector.connect(demux);
         demux.start();

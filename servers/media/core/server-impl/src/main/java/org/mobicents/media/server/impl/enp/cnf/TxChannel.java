@@ -100,11 +100,13 @@ public class TxChannel implements Serializable {
     public void start() {
         active = true;
         mixer.start();
+        dsp.getOutput().start();
         mux.getOutput().start();
     }
     
     public void stop() {
         active = false;
+        dsp.getOutput().stop();
         mixer.stop();
         mux.getOutput().stop();
     }

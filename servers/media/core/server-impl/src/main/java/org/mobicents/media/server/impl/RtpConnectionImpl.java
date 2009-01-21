@@ -85,6 +85,20 @@ public class RtpConnectionImpl extends BaseConnection {
         setState(ConnectionState.HALF_OPEN);
     }
 
+    @Override
+    public void setMode(ConnectionMode mode) {
+        if (mode == ConnectionMode.RECV_ONLY) {
+            endpoint.getPrimarySource(this).stop();
+            rtpSocket.getReceiveStream().start();
+        } else if (mode == ConnectionMode.SEND_ONLY) {
+            endpoint.getPrimarySource(this).start();
+            rtpSocket.getReceiveStream().stop();
+        } else {
+            endpoint.getPrimarySource(this).start();
+            rtpSocket.getReceiveStream().start();
+        }
+        super.setMode(mode);
+    }    
     /**
      * Checks is format presented in the list.
      * 

@@ -147,7 +147,6 @@ public abstract class BaseConnection implements Connection, NotificationListener
         ConnectionMode oldMode = this.mode;
         this.mode = mode;
 
-        //@TODO disbale receiver/sender
         endpoint.notifyEndpoint(this, oldMode);
         for (ConnectionListener cl : listeners) {
             cl.onModeChange(this, oldMode);

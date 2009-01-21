@@ -24,6 +24,8 @@ import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.Multiplexer;
 import org.mobicents.media.server.impl.dsp.Processor;
+import org.mobicents.media.server.impl.events.dtmf.DTMFMode;
+import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
@@ -43,6 +45,8 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
     private RtpSocket sockets[] = new RtpSocket[2];
     private Multiplexer[] mux = new Multiplexer[2];
     private Demultiplexer[] demux = new Demultiplexer[2];
+    private DtmfDetector[] dtmfDetector = new DtmfDetector[2];
+    private DTMFMode dtmfMode = DTMFMode.AUTO;
 
     /**
      * Creates a new instance of PREndpointImpl
@@ -75,12 +79,19 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         demux[0] = new Demultiplexer(FORMATS);
         demux[1] = new Demultiplexer(FORMATS);
 
+        dtmfDetector[0] = new DtmfDetector("0");
+        dtmfDetector[1] = new DtmfDetector("1");
+
+        dtmfDetector[0].connect(demux[0]);
         demux[0].connect(dsp[0].getInput());
         dsp[0].getOutput().connect(mux[1]);
 
+        dtmfDetector[1].connect(demux[1]);
         demux[1].connect(dsp[1].getInput());
         dsp[1].getOutput().connect(mux[0]);
 
+        dsp[0].getOutput().start();
+        dsp[1].getOutput().start();
         demux[0].start();
         demux[1].start();
     }
@@ -136,6 +147,7 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         lock.lock();
         try {
             demux[((BaseConnection) connection).getIndex()].start();
+            dtmfDetector[((BaseConnection) connection).getIndex()].addListener((BaseConnection) connection);
         } finally {
             lock.unlock();
         }
@@ -156,6 +168,7 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         lock.lock();
         try {
             demux[((BaseConnection) connection).getIndex()].stop();
+            dtmfDetector[((BaseConnection) connection).getIndex()].removeListener((BaseConnection) connection);
         } finally {
             lock.unlock();
         }
@@ -168,6 +181,9 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
 
     @Override
     protected MediaSink getMediaSink(MediaResource id, Connection connection) {
+        if (id == MediaResource.DTMF_DETECTOR) {
+            return dtmfDetector[((BaseConnection)connection).getIndex()];
+        }
         return null;
     }
 

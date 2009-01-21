@@ -60,6 +60,26 @@ public class LocalConnectionImpl extends BaseConnection {
         return this.otherConnection;
     }
 
+    @Override
+    public void setMode(ConnectionMode mode) {
+        if (mode == ConnectionMode.RECV_ONLY) {
+            endpoint.getPrimarySource(this).stop();
+            if (otherConnection != null) {
+                otherConnection.endpoint.getPrimarySource(otherConnection).start();
+            }
+        } else if (mode == ConnectionMode.SEND_ONLY) {
+            endpoint.getPrimarySource(this).start();
+            if (otherConnection != null) {
+                otherConnection.endpoint.getPrimarySource(otherConnection).stop();
+            }
+        } else {
+            endpoint.getPrimarySource(this).start();
+            if (otherConnection != null) {
+                otherConnection.endpoint.getPrimarySource(otherConnection).start();
+            }
+        }
+        super.setMode(mode);
+    }    
     /**
      * (Non-Javadoc).
      * 
@@ -135,7 +155,6 @@ public class LocalConnectionImpl extends BaseConnection {
             
             if (sink1 != null && source1 != null) {
                 sink1.connect(source1);
-                source1.start();
             }
 
             MediaSink sink2 = otherConnection.endpoint.getPrimarySink(otherConnection);
@@ -143,9 +162,9 @@ public class LocalConnectionImpl extends BaseConnection {
             
             if (sink2 != null && source2 != null) {
                 sink2.connect(source2);
-                source2.start();
             }
             
+            setMode(mode);
             setState(ConnectionState.OPEN);
             otherConnection.setState(ConnectionState.OPEN);
         } catch (Exception e) {

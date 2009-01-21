@@ -159,7 +159,7 @@ public class Multiplexer extends AbstractSink {
     }
 
     public synchronized void deliver(Buffer buffer) {
-        if (output != null && !output.stopped && output.sink != null) {
+        if (output != null && !output.stopped && output.sink != null ) {
             buffer.setSequenceNumber(seq);
             buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
             output.sink.receive(buffer);

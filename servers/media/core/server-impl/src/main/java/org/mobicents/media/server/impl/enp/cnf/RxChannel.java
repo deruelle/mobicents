@@ -88,11 +88,13 @@ public class RxChannel implements Serializable {
     
     public void start() {
         active = true;
+        dsp.getOutput().start();
         demux.start();
     }
     
     public void stop() {
         active = false;
+        dsp.getOutput().stop();
         demux.stop();
     }
     

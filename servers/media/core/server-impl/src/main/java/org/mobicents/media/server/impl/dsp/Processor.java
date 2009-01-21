@@ -124,6 +124,8 @@ public class Processor implements SignalingProcessor {
         protected boolean connected = false;
         protected int failDeliveryCount = 0;
 
+        private boolean started = false;
+        
         public Output() {
             super("Processor.Output");
         }
@@ -134,9 +136,12 @@ public class Processor implements SignalingProcessor {
         }
 
         public void start() {
+            System.out.println("Started Processor " + name);
+            started = true;
         }
 
         public void stop() {
+            started = false;
         }
 
         public Format[] getFormats() {
@@ -149,6 +154,9 @@ public class Processor implements SignalingProcessor {
          * @param buffer the buffer to transmit
          */
         protected void transmit(Buffer buffer) {
+            if (!started) {
+                return;
+            }
             //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
             // Discard packet silently if output handler is not assigned yet
             if (sink == null) {
