@@ -80,12 +80,15 @@ public class RtpSocketImpl implements RtpSocket {
     /**
      * Creates a new instance of RtpSocketImpl
      */
-    public RtpSocketImpl(int period, int jitter, String stunServerAddress, int stunServerPort,
+    public RtpSocketImpl(BaseEndpoint endpoint, int period, int jitter, String stunServerAddress, int stunServerPort,
             boolean usePortMapping, String knownPublicAddressFromStun, HashMap<Integer, Format> rtpMap) {
         this.period = period;
         this.jitter = jitter;
         rtpMapOriginal.putAll(rtpMap);
         this.rtpMap.putAll(rtpMap);   
+        sendStream = new SendStreamImpl(this);
+        receiveStream = new ReceiveStream(endpoint.getReceiverThread(), this, period, jitter);
+        
         this.stunServerAddress = stunServerAddress;
         this.stunServerPort = stunServerPort;
         this.useStun = true; // If we are using this constructor we are stunning

@@ -317,7 +317,7 @@ public class RtpFactory {
 	public RtpSocket getRTPSocket(BaseEndpoint endpoint) throws SocketException {
 		RtpSocketImpl rtpSocket = null;
 		if (this.isUseStun()) {
-			rtpSocket = new RtpSocketImpl(period, jitter, stunServerAddress, stunServerPort, usePortMapping,
+			rtpSocket = new RtpSocketImpl(endpoint, period, jitter, stunServerAddress, stunServerPort, usePortMapping,
 					publicAddressFromStun, audioFormats);
 		} else {
 			rtpSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
