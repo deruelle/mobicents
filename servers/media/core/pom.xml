@@ -34,8 +34,7 @@
 
 	<modules>
 		<module>msc-api</module>
-		<module>msc-api-local-impl</module>
-		<module>server-constants</module>
+		<module>msc-api-local-impl</module>		
 		<module>server-spi</module>
 		<module>server-impl</module>
 		<module>server-sar</module>
