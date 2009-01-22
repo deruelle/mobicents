@@ -39,9 +39,7 @@
 		<module>server-spi</module>
 		<module>server-impl</module>
 		<module>server-sar</module>
-		<module>server-test</module>
-		<module>g729</module>
-		<module>gsm</module>
+		<module>server-test</module>		
 	</modules>
 	<!-- This should go in parent.xml -->
 	<dependencyManagement>

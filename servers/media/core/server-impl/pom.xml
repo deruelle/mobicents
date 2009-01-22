@@ -69,11 +69,6 @@
 			<version>0.9.7</version>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>itu-g729c-codec</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>
 			<version>1.0.MOBICENTS</version>
@@ -86,9 +81,14 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>${pom.groupId}</groupId>
-			<artifactId>gsm-codec</artifactId>
-			<version>${pom.version}</version>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_share</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_gsm</artifactId>
+			<version>0.3.6</version>
 		</dependency>
 	</dependencies>
 	<build>
