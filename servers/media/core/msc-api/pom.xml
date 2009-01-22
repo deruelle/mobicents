@@ -11,14 +11,6 @@
 	
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
 	
-	<dependencies>
-		<dependency>
-			<groupId>org.mobicents.servers.media</groupId>
-			<artifactId>mobicents-media-server-constants</artifactId>
-			<version>${pom.version}</version>
-		</dependency>
-	</dependencies>
-	
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>

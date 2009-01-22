@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -10,28 +12,34 @@
 	<artifactId>mobicents-media-server-sar</artifactId>
 
 	<name>Mobicents Media Server :: ${pom.artifactId}</name>
-	
+
 
 	<dependencies>
 		<dependency>
 			<artifactId>mobicents-media-server-impl</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>ant</artifactId>
-					<groupId>ant-optional</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>cactus</artifactId>
-					<groupId>cactus</groupId>
-				</exclusion>
-				<!-- This is sneakly passed, we cant to that with UCL, as instanceof wont return true for the same classes - it check Class objects, whihc for two CLs will differ -->
-				<exclusion>
-					<artifactId>mobicents-media-server-spi</artifactId>
-					<groupId>${pom.groupId}</groupId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.external.jspeex</groupId>
+			<artifactId>jspeex</artifactId>
+			<version>0.9.7</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.stun4j</groupId>
+			<artifactId>stun4j</artifactId>
+			<version>1.0.MOBICENTS</version>			
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_share</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_gsm</artifactId>
+			<version>0.3.6</version>
 		</dependency>
 	</dependencies>
 
@@ -71,10 +79,12 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+								<condition property="jboss.dir"
+									value="${jboss.home}" else="${env.JBOSS_HOME}">
 									<isset property="jboss.home" />
 								</condition>
-								<copy todir="${jboss.home}/server/${node}/deploy">
+								<copy
+									todir="${jboss.home}/server/${node}/deploy">
 									<fileset
 										dir="target/${build.finalName}.dir">
 										<include
@@ -92,7 +102,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}" />
+								<delete
+									dir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}" />
 							</tasks>
 						</configuration>
 					</execution>
