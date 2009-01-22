@@ -31,10 +31,6 @@
 					<artifactId>mobicents-media-server-spi</artifactId>
 					<groupId>${pom.groupId}</groupId>
 				</exclusion>
-				<exclusion>
-					<artifactId>mobicents-media-server-constants</artifactId>
-					<groupId>${pom.groupId}</groupId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>

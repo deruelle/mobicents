@@ -37,8 +37,7 @@
 		<module>msc-api-local-impl</module>		
 		<module>server-spi</module>
 		<module>server-impl</module>
-		<module>server-sar</module>
-		<module>server-test</module>		
+		<module>server-sar</module>			
 	</modules>
 	<!-- This should go in parent.xml -->
 	<dependencyManagement>
