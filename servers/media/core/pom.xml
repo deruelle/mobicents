@@ -32,9 +32,7 @@
 
 	</properties>
 
-	<modules>
-		<module>msc-api</module>
-		<module>msc-api-local-impl</module>		
+	<modules>	
 		<module>server-spi</module>
 		<module>server-impl</module>
 		<module>server-sar</module>			

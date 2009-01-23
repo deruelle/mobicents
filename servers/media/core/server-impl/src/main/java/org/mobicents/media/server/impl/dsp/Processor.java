@@ -135,8 +135,7 @@ public class Processor implements SignalingProcessor {
             super.connect(sink);
         }
 
-        public void start() {
-            System.out.println("Started Processor " + name);
+        public void start() {            
             started = true;
         }
 
