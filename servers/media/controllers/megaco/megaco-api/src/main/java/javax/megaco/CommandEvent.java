@@ -21,7 +21,7 @@ public abstract class CommandEvent extends EventObject {
 	private int txnHandle;
 	private int actionHandle;
 	private boolean isFirstCommandInAction;
-	private boolean isLastCommandInAction;
+	private boolean txn_or_cmd_status;
 	private ContextInfo contextInfo = null;
 	private int exchangeId = 0;
 
@@ -61,6 +61,11 @@ public abstract class CommandEvent extends EventObject {
 	 *            </ol>
 	 * @param actionHandle
 	 * @param txn_or_cmd_status
+	 *            In case of command request, this parameter specifies whether
+	 *            the command is last command in the transaction. And in case of
+	 *            command response, this parameter specifies whether the command
+	 *            response is the last response for the wildcarded request
+	 *            received.
 	 * @param isFirstCommandInAction
 	 */
 	public CommandEvent(Object source, int assocHandle, int txnHandle,
@@ -70,6 +75,7 @@ public abstract class CommandEvent extends EventObject {
 		this.assocHandle = assocHandle;
 		this.txnHandle = txnHandle;
 		this.actionHandle = actionHandle;
+		this.txn_or_cmd_status = txn_or_cmd_status;
 		this.isFirstCommandInAction = isFirstCommandInAction;
 	}
 
@@ -187,7 +193,7 @@ public abstract class CommandEvent extends EventObject {
 	 *         transaction.
 	 */
 	public boolean isLastCommandInTxn() {
-		return this.isLastCommandInAction;
+		return this.txn_or_cmd_status;
 	}
 
 	/**
@@ -205,7 +211,7 @@ public abstract class CommandEvent extends EventObject {
 	}
 
 	public void setLastCommandInTxn() {
-		this.isLastCommandInAction = true;
+		this.txn_or_cmd_status = true;
 	}
 
 	public void setCntxtInfo(ContextInfo contextInfo)
