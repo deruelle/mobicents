@@ -14,21 +14,23 @@
 		<checkout.username>ze carlos</checkout.username>
 		<checkout.password></checkout.password>
 		
-		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.2.GA</jainslee.connectionURL>
+		<jainslee.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/jain-slee/mobicents-jainslee-server-1.2.3.GA</jainslee.connectionURL>
 		
-		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/core/mobicents-media-server-core-1.0.0.CR3</media.core.connectionURL>
-		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/controllers/mobicents-media-server-controllers-1.0.0.CR3</media.controllers.connectionURL>
-		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR3</media.examples.connectionURL>
+		<media.core.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/core/mobicents-media-server-core-1.0.0.CR5</media.core.connectionURL>
+		<media.controllers.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/controllers/mobicents-media-server-controllers-1.0.0.CR5</media.controllers.connectionURL>
+		<media.examples.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/media/examples/mobicents-media-server-examples-1.0.0.CR5</media.examples.connectionURL>
 		<media.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/media/release</media.release.connectionURL>
         
-		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-presence/mobicents-sip-presence-service-1.0.0.BETA3-CP1</sippresence.connectionURL>
+		<sippresence.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-presence/mobicents-sip-presence-service-1.0.0.BETA4</sippresence.connectionURL>
 		<sipservlets.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/sip-servlets/release-0.7.1</sipservlets.connectionURL>
-        <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.0.1-build183</diameter.core.jdiameter.connectionURL>
-        <diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.0.BETA1</diameter.core.mux.connectionURL>
-        <diameter.examples.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/base/base-1.0.0.BETA1</diameter.examples.base.connectionURL>
-        <diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.0.BETA1</diameter.examples.sh-client.connectionURL>
-        <diameter.resources.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/base/base-1.0.0.BETA2</diameter.resources.base.connectionURL>
-        <diameter.resources.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-client/sh-client-1.0.0.BETA1</diameter.resources.sh-client.connectionURL>
+        
+        <diameter.core.jdiameter.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/jdiameter/jdiameter-1.5.0.1-build184</diameter.core.jdiameter.connectionURL>
+		<diameter.core.mux.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/core/mux/mobicents-diameter-mux-1.0.0.BETA2</diameter.core.mux.connectionURL>
+		<diameter.examples.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/base/base-1.0.0.BETA1</diameter.examples.base.connectionURL>
+		<diameter.examples.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/examples/sh-client/sh-client-1.0.0.BETA1</diameter.examples.sh-client.connectionURL>
+		<diameter.resources.base.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/base/base-1.0.0.BETA3</diameter.resources.base.connectionURL>
+		<diameter.resources.sh-client.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/sh-client/sh-client-1.0.0.BETA2</diameter.resources.sh-client.connectionURL> 
+		<diameter.resources.cca.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/servers/diameter/resources/cca/cca-1.0.0.BETA1</diameter.resources.cca.connectionURL>
         <diameter.release.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/trunk/servers/diameter/release</diameter.release.connectionURL>
         
         <sip.loadbalancer.connectionURL>scm:svn:http://mobicents.googlecode.com/svn/tags/tools/sip-balancer/mobicents-tools-sip-balancer-1.0.BETA2</sip.loadbalancer.connectionURL>
