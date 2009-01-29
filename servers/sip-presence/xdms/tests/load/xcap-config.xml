@@ -38,19 +38,19 @@
     <define entity="traffic-param" name="log-protocol-stat-period" value="1"></define>
     <define entity="traffic-param" name="log-protocol-stat-name" value="all"></define>
     <define entity="traffic-param" name="log-protocol-stat-file" value="client-protocol-stat.csv"></define>
-    
+    -->
     
     <define entity="traffic-param" name="call-open-timeout-ms" value="5000"></define>
     <define entity="traffic-param" name="execute-check-action" value="false"></define>
     
-    <!-- This is used for response time repartition.
-         We get the same king of data from the stat files
-         
+    <!-- This is used for response time repartition. We get the same king of data from the stat files
+    
     <define entity="traffic-param" name="data-log-period" value="10"></define>
     <define entity="traffic-param" name="data-log-number" value="1000"></define>
     <define entity="traffic-param" name="data-log-file" value="client-rtt.csv"></define>
     <define entity="traffic-param" name="data-log-rtdistrib" value="3000"></define>
     -->
+    
     <define entity="traffic-param" name="max-send" value="200"></define>
     <define entity="traffic-param" name="max-receive" value="200"></define>
     <define entity="traffic-param" name="max-simultaneous-calls" value="2000"></define>

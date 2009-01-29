@@ -21,6 +21,8 @@
             <action>
                 <inc-counter name="call_counter"></inc-counter>
                 <set-value name="request-uri" format="/mobicents/resource-lists/users/sip%3Aeduardo$(call_counter)%40openxdm.org/index"></set-value>
+                
+                <open args="mode=client;dest=127.0.0.1:8080"></open>
             </action>
             
             <message>
@@ -330,10 +332,9 @@
             </message>
             
             <action>
-                <!-- Close the TCP socket we opened at the beginning -->
                 <close></close>
             </action>
-        </receive>                     
+        </receive>
     </traffic>
 </scenario>
 
