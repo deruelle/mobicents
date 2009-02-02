@@ -7,14 +7,79 @@
 		<version>2.0.0.BETA1-SNAPSHOT</version>
     	</parent>
 
-	<artifactId>mobicents-megaco-stack-api-parent</artifactId>
+	<artifactId>mobicents-jain-megaco-stack-parent</artifactId>
 
 	<packaging>pom</packaging>
 
 	<name>Mobicents MEGACO Stack :: ${pom.artifactId}</name>
-
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+		<release.name>
+			${release.name.prefix}${parent.version}${release.name.suffix}
+		</release.name>
+	</properties>
 	<modules>
 		<module>megaco-api</module>
 		<module>megaco-impl</module>
 	</modules>
+	
+	
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules>
+				<module>megaco-api</module>
+				<module>megaco-impl</module>
+			</modules>
+		</profile>
+	</profiles>
+	
+	<scm>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/trunk/servers/media
+		</developerConnection>
+		<url>http://mobicents.googlecode.com/svn/trunk</url>
+	</scm>
+	
+	<!--  -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-jain-megaco-stack
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+					<tagBase>
+						https://mobicents.googlecode.com/svn/tags/servers/media/core
+					</tagBase>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>	
 </project>
