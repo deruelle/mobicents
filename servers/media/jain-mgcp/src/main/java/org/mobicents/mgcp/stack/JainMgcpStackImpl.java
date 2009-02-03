@@ -48,6 +48,23 @@ import org.mobicents.mgcp.stack.handlers.EndpointHandlerManager;
  * @author Pavel Mitrenko
  */
 public class JainMgcpStackImpl extends Thread implements JainMgcpStack, EndpointHandlerManager {
+	
+	
+	
+	//Static variables from properties files
+	/**
+	 * Defines how many executors will work on event delivery
+	 */
+	public static final String _EXECUTOR_TABLE_SIZE="executorTableSize";
+	/**
+	 * Defines how many message can be stored in queue before new ones are discarded.
+	 */
+	public static final String _EXECUTOR_QUEUE_SIZE="executorQueueSize";
+
+	public static final String _MESSAGE_READER_THREAD_PRIORITY="messageReaderThreadPriority";
+	public static final String _MESSAGE_DISPATCHER_THREAD_PRIORITY="messageDispatcherThreadPriority";
+	public static final String _MESSAGE_EXECUTOR_THREAD_PRIORITY="messageExecutorThreadPriority";
+	
 	private static final Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
 	private static final String propertiesFileName = "mgcp-stack.properties";
 	private String protocolVersion = "1.0";
@@ -57,7 +74,12 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	private boolean stopped = true;
 	private int executorTableSize = 200;
 	private int executorQueueSize = -1;
-	private int incomingDataBufferSize = -1;
+	
+	private int messageReaderThreadPriority = Thread.MAX_PRIORITY;
+	private int messageDispatcherThreadPriority = Thread.NORM_PRIORITY+2; //7
+	private int messageExecutorThreadPriority = Thread.MIN_PRIORITY;
+	
+
 	private ThreadPoolQueueExecutor[] executors = null;
 	private int executorPosition = 0;
 
@@ -123,6 +145,9 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		this.provider = new JainMgcpStackProviderImpl(this);
 		this.messageHandler = new MessageHandler(this);
 		this.eventSchedulerExecutor.execute(new EventSchedulerTask());
+		this.setPriority(this.messageReaderThreadPriority);
+		//So stack does not die
+		this.setDaemon(false);
 		start();
 		// tt.scheduleAtFixedRate(new TimerTask(){
 
@@ -148,16 +173,22 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 			}
 
 			String val = null;
-			val = props.getProperty("executorTableSize", "" + executorTableSize);
+			val = props.getProperty(_EXECUTOR_TABLE_SIZE, "" + executorTableSize);
 			this.executorTableSize = Integer.parseInt(val);
 			val = null;
 
-			val = props.getProperty("executorQueueSize", "" + executorQueueSize);
+			val = props.getProperty(_EXECUTOR_QUEUE_SIZE, "" + executorQueueSize);
 			this.executorQueueSize = Integer.parseInt(val);
 			val = null;
 
-			val = props.getProperty("incomingDataBufferSize", "" + incomingDataBufferSize);
-			this.incomingDataBufferSize = Integer.parseInt(val);
+			val = props.getProperty(_MESSAGE_READER_THREAD_PRIORITY, "" + this.messageReaderThreadPriority);
+			this.messageReaderThreadPriority=Integer.parseInt(val);
+			val = null;
+			val = props.getProperty(_MESSAGE_DISPATCHER_THREAD_PRIORITY, "" + this.messageDispatcherThreadPriority);
+			this.messageDispatcherThreadPriority=Integer.parseInt(val);
+			val = null;
+			val = props.getProperty(_MESSAGE_EXECUTOR_THREAD_PRIORITY, "" + this.messageExecutorThreadPriority);
+			this.messageExecutorThreadPriority=Integer.parseInt(val);
 			val = null;
 
 		} catch (Exception e) {
@@ -168,8 +199,11 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 	private void initExecutors() {
 		this.executors = new ThreadPoolQueueExecutor[this.executorTableSize];
+		ThreadFactoryImpl th = new ThreadFactoryImpl();
+		th.setPriority(this.messageExecutorThreadPriority);
+		th.setDaemonFactory(true);
 		for (int i = 0; i < this.executors.length; i++) {
-			ThreadFactoryImpl th = new ThreadFactoryImpl();
+			
 			if (executorQueueSize > 0)
 				this.executors[i] = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>(
 						executorQueueSize));
@@ -177,14 +211,14 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 				this.executors[i] = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>());
 			this.executors[i].setThreadFactory(th);
 		}
-		if (this.incomingDataBufferSize > 0)
-			this.eventSchedulerExecutor = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>(
-					executorQueueSize));
-		else
+		//if (this.incomingDataBufferSize > 0)
+		//	this.eventSchedulerExecutor = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>(
+		//			incomingDataBufferSize));
+		//else
 			this.eventSchedulerExecutor = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>());
-
-		ThreadFactoryImpl th = new ThreadFactoryImpl();
-		th.setPriority(Thread.MAX_PRIORITY);
+		th = new ThreadFactoryImpl();
+		th.setPriority(this.messageDispatcherThreadPriority);
+		th.setDaemonFactory(true);
 		eventSchedulerExecutor.setThreadFactory(th);
 
 	}
@@ -454,7 +488,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		final AtomicInteger threadNumber = new AtomicInteger(1);
 		final String namePrefix;
 		protected int priority = Thread.NORM_PRIORITY;
-
+		protected boolean isDaemonFactory=false;
 		ThreadFactoryImpl() {
 			SecurityManager s = System.getSecurityManager();
 			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
@@ -463,10 +497,11 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 		public Thread newThread(Runnable r) {
 			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 5);
-			if (t.isDaemon())
-				t.setDaemon(false);
-			if (t.getPriority() != Thread.NORM_PRIORITY)
-				t.setPriority(Thread.NORM_PRIORITY);
+			
+			t.setDaemon(this.isDaemonFactory);
+			//if (t.getPriority() != Thread.NORM_PRIORITY)
+			//t.setPriority(Thread.NORM_PRIORITY);
+			t.setPriority(priority);
 			return t;
 		}
 
@@ -476,6 +511,14 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 		public void setPriority(int priority) {
 			this.priority = priority;
+		}
+
+		public boolean isDaemonFactory() {
+			return isDaemonFactory;
+		}
+
+		public void setDaemonFactory(boolean isDaemonFactory) {
+			this.isDaemonFactory = isDaemonFactory;
 		}
 
 	}
