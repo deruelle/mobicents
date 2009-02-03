@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	    xmlns="urn:jboss:bean-deployer:2.0">
+	
+	
+	<!-- Media Server Management MBean -->
+	<bean name="MediaServerManagementService"
+	      class="org.mobicents.media.server.impl.jmx.MediaServerManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:service=MediaServerManagement",exposedInterface=org.mobicents.media.server.impl.jmx.MediaServerManagementMBean.class,registerDirectly=true)</annotation>
+		
+		<property name="ivrEndpointManagementMBean">
+			media.mobicents:endpoint=ivr
+		</property>
+		<property name="confEndpointManagementMBean">
+			media.mobicents:endpoint=conf
+		</property>
+		<property name="loopEndpointManagementMBean">
+			media.mobicents:endpoint=loopback
+		</property>
+		<property name="prEndpointManagementMBean">
+			media.mobicents:endpoint=packet-relay
+		</property>
+		<property name="annEndpointManagementMBean">
+			media.mobicents:endpoint=announcement
+		</property>
+		
+		<depends>Mobicents.MMS.AnnTrunkManagementService</depends>
+		<depends>Mobicents.MMS.PRTrunkManagementService</depends>
+		<depends>Mobicents.MMS.LoopTrunkManagement</depends>
+		<depends>Mobicents.MMS.ConfTrunkManagementService</depends>
+		<depends>Mobicents.MMS.IVRTrunkManagementService</depends>
+		
+		<!-- Any non standard endpoint with mgmt mbean shoult be specified as below -->
+		<!--  <depends optional-attribute-name="DependencyMBean">media.mobicents:endpoint=PSTNx</depends>  -->
+	</bean>
+	
+	<bean name="RtpFactory"
+	      class="org.mobicents.media.server.impl.rtp.RtpFactory">
+		<property name="bindAddress">127.0.0.1</property>
+		<property name="jitter">60</property>
+		<property name="packetizationPeriod">20</property>
+		<property name="portRange">1024-65535</property>
+		<!--  To enable G729 Codec please look at http://www.mobicents.org/products_media_server.html -->
+		<property name="audioFormats">
+			<map class="java.util.HashMap" keyClass="java.lang.Integer" valueClass="java.lang.String">
+				<entry>
+					<key>0</key>
+					<value>ULAW</value>
+				</entry>
+				<entry>
+					<key>3</key>
+					<value>GSM</value>
+				</entry>
+				<entry>
+					<key>8</key>
+					<value>ALAW</value>
+				</entry>
+				<entry>
+					<key>97</key>
+					<value>SPEEX</value>
+				</entry>	
+				<entry>
+					<key>101</key>
+					<value>telephone-event/8000</value>
+				</entry>				
+			</map>
+		</property>
+	</bean>
+	
+	<!-- ANNOUNCEMENT  -->
+	<bean name="Mobicents.MMS.AnnTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=announcement",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">media/trunk/Announcement</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="channels">24</property>
+		
+		<demand>RtpFactory</demand>
+	</bean>
+	
+	<!-- PACKET RELAY -->
+	<bean name="Mobicents.MMS.PRTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=packet-relay",exposedInterface=org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		
+		<property name="jndiName">media/trunk/PacketRelay</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="channels">10</property>
+		<demand>RtpFactory</demand>
+	</bean>
+	
+	<!-- LOOPBACK  -->
+	<bean name="Mobicents.MMS.LoopTrunkManagement"
+	      class="org.mobicents.media.server.impl.jmx.enp.test.LoopTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=loopback",exposedInterface=org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		
+		<property name="jndiName">media/test/trunk/Loopback</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="channels">10</property>
+		<demand>RtpFactory</demand>
+	</bean>
+	
+	<!-- CONFERENCE -->
+	<bean name="Mobicents.MMS.ConfTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.cnf.ConfTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=conf",exposedInterface=org.mobicents.media.server.impl.jmx.enp.cnf.ConfTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		
+		<property name="jndiName">media/trunk/Conference</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="channels">10</property>
+		
+		<demand>RtpFactory</demand>
+	</bean>
+	
+	<!-- IVR -->
+	<bean name="Mobicents.MMS.IVRTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=ivr",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">media/trunk/IVR</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="mediaType">audio.x_wav</property>
+		<!--  DtmfMode can be either RFC2833 or INBAND or AUTO -->
+		<property name="dtmfMode">AUTO</property>
+		<property name="recordDir">${jboss.server.data.dir}</property>
+		<property name="channels">24</property>
+		
+		<demand>RtpFactory</demand>
+	</bean>
+	
+</deployment>

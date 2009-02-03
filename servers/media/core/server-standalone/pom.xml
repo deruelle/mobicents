@@ -1,0 +1,103 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.servers.media</groupId>
+		<artifactId>mobicents-media-server-core</artifactId>
+		<version>2.0.0.BETA1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>mobicents-media-server-standalone</artifactId>
+
+	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+
+
+	<dependencies>
+		<dependency>
+			<artifactId>mobicents-media-server-spi</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<artifactId>mobicents-media-server-impl</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.external.jspeex</groupId>
+			<artifactId>jspeex</artifactId>
+			<version>0.9.7</version>
+		</dependency>
+		<dependency>
+			<groupId>net.java.stun4j</groupId>
+			<artifactId>stun4j</artifactId>
+			<version>1.0.MOBICENTS</version>			
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_share</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.tritonus</groupId>
+			<artifactId>tritonus_gsm</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-kernel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.aop</groupId>
+			<artifactId>jboss-aop</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-aop-mc-int</artifactId>
+    		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-system</artifactId>			
+		</dependency>
+		<dependency>
+			<groupId>jboss</groupId>
+			<artifactId>jboss-jmx</artifactId>			
+		</dependency>		
+	</dependencies>
+
+	<build>
+		<finalName>mms-standalone-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/pojo.xml</descriptor>
+					</descriptors>
+					<finalName>${pom.artifactId}</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>directory-inline</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+  </build>
+
+</project>
