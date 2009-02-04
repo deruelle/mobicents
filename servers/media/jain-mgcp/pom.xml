@@ -9,7 +9,7 @@
 
 	<groupId>org.mobicents.jain</groupId>
 	<artifactId>mobicents-mgcp-impl</artifactId>
-	<version>2.0.0.RC1-SNAPSHOT</version>
+	<version>2.0.0.RC1</version>
 	<name>Mobicents MGCP Impl</name>
 	<url>http://www.mobicents.org/products_media_server.html</url>
 	<developers>
