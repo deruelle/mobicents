@@ -1,0 +1,1 @@
+This is open source implementation of JSR 23 Media Gateway Control Protocol. To understand more about MGCP look at RFC 3435.

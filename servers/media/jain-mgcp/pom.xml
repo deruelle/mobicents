@@ -1,20 +1,72 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>mobicents-media-server</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
-		<version>2.0.0.BETA1-SNAPSHOT</version>
-    	</parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents</artifactId>
+		<version>8</version>
+	</parent>
 
-	<artifactId>mobicents-jain-mgcp-stack</artifactId>
-	<name>Mobicents MGCP Stack :: ${pom.artifactId}</name>
+	<groupId>org.mobicents.jain</groupId>
+	<artifactId>mobicents-mgcp-impl</artifactId>
+	<version>2.0.0.RC1-SNAPSHOT</version>
+	<name>Mobicents MGCP Impl</name>
+	<url>http://www.mobicents.org/products_media_server.html</url>
+	<developers>
+		<developer>
+			<id>oleg.kulikoff</id>
+			<name>Oleg Kulikoff</name>
+			<email>oleg.kulikoff@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+3</timezone>
+		</developer>
+		<developer>
+			<id>amit.bhayani</id>
+			<name>Amit Bhayani</name>
+			<email>amit.bhayani@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+5.5</timezone>
+		</developer>
+		<developer>
+			<id>baranowb</id>
+			<name>Bartosz Baranowski</name>
+			<email>baranowb@gmail.com</email>
+			<organization>JBoss/Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>Active Developer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
 		<maven.test.skip>true</maven.test.skip>
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
+
+		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
 
 	<dependencies>
@@ -35,7 +87,7 @@
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
-		</dependency>		
+		</dependency>
 	</dependencies>
 	<scm>
 		<connection>
@@ -46,6 +98,30 @@
 		</developerConnection>
 		<url>http://mobicents.googlecode.com/svn/trunk</url>
 	</scm>
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules></modules>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp
+							</tagBase>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
@@ -82,9 +158,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-
 				<groupId>org.apache.maven.plugins</groupId>
-
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>1.5</source>
@@ -92,9 +166,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-
 				<groupId>org.apache.maven.plugins</groupId>
-
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.4.3</version>
 				<configuration>
@@ -105,4 +177,26 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>
