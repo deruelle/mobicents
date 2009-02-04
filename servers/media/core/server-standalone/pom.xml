@@ -5,23 +5,23 @@
 
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
-		<artifactId>mobicents-media-server-core</artifactId>
+		<artifactId>mms-core</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-media-server-standalone</artifactId>
+	<artifactId>mms-standalone</artifactId>
 
-	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server [Standalone]</name>
 
 
 	<dependencies>
 		<dependency>
-			<artifactId>mobicents-media-server-spi</artifactId>
+			<artifactId>mms-spi</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
-			<artifactId>mobicents-media-server-impl</artifactId>
+			<artifactId>mms-impl</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
 		</dependency>

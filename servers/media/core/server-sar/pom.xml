@@ -5,18 +5,18 @@
 
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
-		<artifactId>mobicents-media-server-core</artifactId>
+		<artifactId>mms-core</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-media-server-sar</artifactId>
+	<artifactId>mms-sar</artifactId>
 
-	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server[JBoss Service]</name>
 
 
 	<dependencies>
 		<dependency>
-			<artifactId>mobicents-media-server-impl</artifactId>
+			<artifactId>mms-impl</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
 		</dependency>
@@ -26,6 +26,7 @@
 			<artifactId>jspeex</artifactId>
 			<version>0.9.7</version>
 		</dependency>
+                
 		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>

@@ -3,16 +3,16 @@
 	<packaging>pom</packaging>
 
 	<parent>
-		<artifactId>mobicents-media-server</artifactId>
-		<groupId>org.mobicents.servers.media</groupId>
-		<version>2.0.0.BETA1-SNAPSHOT</version>
+		<artifactId>mobicents</artifactId>
+		<groupId>org.mobicents</groupId>
+		<version>9-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mobicents.servers.media</groupId>
-	<artifactId>mobicents-media-server-core</artifactId>
+	<artifactId>mms-core</artifactId>
 	<version>2.0.0.BETA1-SNAPSHOT</version>
 
-	<name>Mobicents Media Server :: ${pom.artifactId}</name>
+	<name>Mobicents Media Server</name>
 
 	<properties>
 		<!-- RELEASE CONFIGURATION -->
@@ -25,6 +25,8 @@
 		<module>server-spi</module>
 		<module>server-impl</module>
 		<module>server-sar</module>			
+		<module>server-standalone</module>			
+		<module>controllers</module>			
 	</modules>
 	<!-- This should go in parent.xml -->
 	<dependencyManagement>
@@ -74,7 +76,7 @@
 	<!--  -->
 	<build>
 		<plugins>
-			<plugin>
+			<!-- plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>
 				<version>
@@ -94,7 +96,7 @@
 						mobicents-media-server-core
 					</eclipseProjectName>
 				</configuration>
-			</plugin>
+			</plugin -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

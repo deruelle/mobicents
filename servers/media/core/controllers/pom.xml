@@ -3,23 +3,23 @@
 	
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
-		<artifactId>mobicents-media-server-core</artifactId>
+		<artifactId>mms-core</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>	
 	</parent>
 	
-	<artifactId>mobicents-media-server-controllers-parent</artifactId>
-	<groupId>org.mobicents.servers.media.controllers</groupId>
+	<groupId>org.mobicents.servers.media</groupId>
+	<artifactId>mms-controllers</artifactId>
 	<version>2.0.0.BETA1-SNAPSHOT</version>
 	
 	<packaging>pom</packaging>
 	
-	<name>Mobicents Media Server Controllers :: ${pom.artifactId}</name>	
+	<name>Mobicents Media Server Controllers</name>	
 
-	<properties>
+	<!-- properties>
 		<mobicents.media.server.core.version>
 			2.0.0.BETA1-SNAPSHOT
 		</mobicents.media.server.core.version>		
-	</properties>
+	</properties -->
 	
 	<modules>
 		<!--module>msc/msc-stack</module -->
@@ -46,7 +46,7 @@
 	
 	<build>
 		<plugins>
-			<plugin>
+			<!-- plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>
 				<version>
@@ -66,7 +66,7 @@
 						mobicents-media-server-controllers
 					</eclipseProjectName>
 				</configuration>
-			</plugin>
+			</plugin -->
 			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
