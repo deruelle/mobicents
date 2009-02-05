@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>pom</packaging>
 
@@ -19,18 +21,16 @@
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
-		
+
 		<mobicents.tools.mavenplugin.eclipse.version>
 			1.0.0.BETA2
-		</mobicents.tools.mavenplugin.eclipse.version>		
+		</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
 
-	<modules>	
+	<modules>
 		<module>server-spi</module>
 		<module>server-impl</module>
-		<module>server-sar</module>			
-		<module>server-standalone</module>			
-		<module>controllers</module>			
+		<module>controllers</module>
 	</modules>
 	<!-- This should go in parent.xml -->
 	<dependencyManagement>
@@ -63,6 +63,25 @@
 				<module>server-spi</module>
 				<module>server-impl</module>
 				<module>server-sar</module>
+				<module>server-standalone</module>
+				<module>controllers</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>jboss-5</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>server-sar</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>standalone</id>
+			<modules>
+				<module>server-standalone</module>
 			</modules>
 		</profile>
 	</profiles>
@@ -115,6 +134,8 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 
 	<!-- dupe info from parent, but it's only way to retrieve the parent without user configuration -->
 
