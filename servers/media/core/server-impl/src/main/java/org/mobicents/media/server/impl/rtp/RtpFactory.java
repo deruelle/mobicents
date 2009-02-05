@@ -24,8 +24,10 @@ import net.java.stun4j.client.StunDiscoveryReport;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
  * 
@@ -74,13 +76,13 @@ public class RtpFactory {
 	public void start() {
 		logger.info("Starting RTP Factory: ");
 		if (!this.usePortMapping) {
-			int randomPort = 9000;			
+			int randomPort = 9000;
 			for (int q = 0; q <= 10; q++) {
 				if (mapStun(randomPort + q * 1003, getBindAddress()))
 					break;
 			}
 		}
-		logger.info("Formats endabled = : "+ this.audioFormats);
+		logger.info("Formats endabled = : " + this.audioFormats);
 		logger.info("Started RTP Factory: ");
 	}
 
@@ -293,18 +295,42 @@ public class RtpFactory {
 	 * 
 	 * @return map where key is payload number and value is Format object.
 	 */
-	public HashMap getAudioFormats() {
-		return this.audioFormats;
-	}
-
+	// public HashMap getAudioFormats() {
+	// return this.audioFormats;
+	// }
 	/**
 	 * Sets a list of supported RTPFormats.
 	 * 
 	 * @param audioFormats
 	 *            a map where key is payload number and value is Format object.
 	 */
-	public void setAudioFormats(HashMap<Integer, Format> formats) {		
-		this.audioFormats = formats;
+	public void setAudioFormats(HashMap<Integer, String> formats) {
+		
+		System.out.println("  THE AUDIO FORMAT SETTING ");
+		
+		
+		for (Integer i : formats.keySet()) {
+			String s = formats.get(i);
+			if (s.equalsIgnoreCase(AudioFormat.ULAW)) {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
+						AudioFormat.ULAW, 8000, 1, 1));
+			} else if (s.equalsIgnoreCase(AudioFormat.GSM)) {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
+						AudioFormat.GSM, 8000, 1, 1));
+
+			} else if (s.equalsIgnoreCase(AudioFormat.ALAW)) {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
+						AudioFormat.ALAW, 8000, 1, 1));
+			} else if (s.equalsIgnoreCase(AudioFormat.SPEEX)) {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
+						AudioFormat.SPEEX, 8000, 1, 1));
+			} else if (s.equalsIgnoreCase(AudioFormat.G729)) {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
+						AudioFormat.G729, 8000, 1, 1));
+			} else {
+				audioFormats.put(i, new RTPAudioFormat(i.intValue(), s));
+			}
+		}
 
 	}
 
@@ -317,39 +343,46 @@ public class RtpFactory {
 	public RtpSocket getRTPSocket(BaseEndpoint endpoint) throws SocketException {
 		RtpSocketImpl rtpSocket = null;
 		if (this.isUseStun()) {
-			rtpSocket = new RtpSocketImpl(endpoint, period, jitter, stunServerAddress, stunServerPort, usePortMapping,
+			rtpSocket = new RtpSocketImpl(endpoint, period, jitter,
+					stunServerAddress, stunServerPort, usePortMapping,
 					publicAddressFromStun, audioFormats);
 		} else {
-			rtpSocket = new RtpSocketImpl(endpoint, period, jitter, audioFormats);
+			rtpSocket = new RtpSocketImpl(endpoint, period, jitter,
+					audioFormats);
 		}
 
 		rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
 		// rtpSocket.getRtpMap().putAll(audioFormats);
 		return rtpSocket;
 	}
-	
+
 	private boolean mapStun(int localPort, String localAddress) {
 		try {
 			if (InetAddress.getByName(localAddress).isLoopbackAddress()) {
-				logger.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
+				logger
+						.warn("The Ip address provided is the loopback address, stun won't be enabled for it");
 				this.publicAddressFromStun = localAddress;
 			} else {
-				StunAddress localStunAddress = new StunAddress(localAddress, localPort);
+				StunAddress localStunAddress = new StunAddress(localAddress,
+						localPort);
 
-				StunAddress serverStunAddress = new StunAddress(stunServerAddress, stunServerPort);
+				StunAddress serverStunAddress = new StunAddress(
+						stunServerAddress, stunServerPort);
 
 				NetworkConfigurationDiscoveryProcess addressDiscovery = new NetworkConfigurationDiscoveryProcess(
 						localStunAddress, serverStunAddress);
 				addressDiscovery.start();
-				StunDiscoveryReport report = addressDiscovery.determineAddress();
+				StunDiscoveryReport report = addressDiscovery
+						.determineAddress();
 				if (report.getPublicAddress() != null) {
-					this.publicAddressFromStun = report.getPublicAddress().getSocketAddress().getAddress()
-							.getHostAddress();
+					this.publicAddressFromStun = report.getPublicAddress()
+							.getSocketAddress().getAddress().getHostAddress();
 					// TODO set a timer to retry the binding and provide a
 					// callback to update the global ip address and port
 				} else {
 					useStun = false;
-					logger.error("Stun discovery failed to find a valid public ip address, disabling stun !");
+					logger
+							.error("Stun discovery failed to find a valid public ip address, disabling stun !");
 				}
 				logger.info("Stun report = " + report);
 				addressDiscovery.shutDown();

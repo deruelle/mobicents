@@ -36,58 +36,6 @@
 		<!--  <depends optional-attribute-name="DependencyMBean">media.mobicents:endpoint=PSTNx</depends>  -->
 	</bean>
 	
-	<bean name="RTPAudioFormat.ULAW"
-	      class="org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat">
-		<constructor>
-			<parameter class="int">0</parameter>
-			<parameter class="java.lang.String">ULAW</parameter>
-			<parameter class="double">8000</parameter>
-			<parameter class="int">8</parameter>
-			<parameter class="int">1</parameter>
-		</constructor>
-	</bean>
-	
-	<bean name="RTPAudioFormat.GSM"
-	      class="org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat">
-		<constructor>
-			<parameter class="int">3</parameter>
-			<parameter class="java.lang.String">GSM</parameter>
-			<parameter class="double">8000</parameter>
-			<parameter class="int">8</parameter>
-			<parameter class="int">1</parameter>
-		</constructor>
-	</bean>		
-	
-	<bean name="RTPAudioFormat.ALAW"
-	      class="org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat">
-		<constructor>
-			<parameter class="int">8</parameter>
-			<parameter class="java.lang.String">ALAW</parameter>
-			<parameter class="double">8000</parameter>
-			<parameter class="int">8</parameter>
-			<parameter class="int">1</parameter>
-		</constructor>
-	</bean>	
-	
-	<bean name="RTPAudioFormat.SPEEX"
-	      class="org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat">
-		<constructor>
-			<parameter class="int">97</parameter>
-			<parameter class="java.lang.String">SPEEX</parameter>
-			<parameter class="double">8000</parameter>
-			<parameter class="int">8</parameter>
-			<parameter class="int">1</parameter>
-		</constructor>
-	</bean>
-	
-	<bean name="RTPAudioFormat.TELEPHONE-EVENT"
-	      class="org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat">
-		<constructor>
-			<parameter class="int">101</parameter>
-			<parameter class="java.lang.String">telephone-event/8000</parameter>
-		</constructor>
-	</bean>	
-	
 	<bean name="RtpFactory"
 	      class="org.mobicents.media.server.impl.rtp.RtpFactory">
 		<property name="bindAddress">127.0.0.1</property>
@@ -96,26 +44,26 @@
 		<property name="portRange">1024-65535</property>
 		<!--  To enable G729 Codec please look at http://www.mobicents.org/products_media_server.html -->
 		<property name="audioFormats">
-			<map class="java.util.HashMap" keyClass="java.lang.Integer" valueClass="org.mobicents.media.Format">
+			<map class="java.util.HashMap" keyClass="java.lang.Integer" valueClass="java.lang.String">
 				<entry>
 					<key>0</key>
-					<value><inject bean="RTPAudioFormat.ULAW" /></value>
+					<value>ULAW</value>
 				</entry>
 				<entry>
 					<key>3</key>
-					<value><inject bean="RTPAudioFormat.GSM" /></value>
+					<value>GSM</value>
 				</entry>
 				<entry>
 					<key>8</key>
-					<value><inject bean="RTPAudioFormat.ALAW" /></value>
+					<value>ALAW</value>
 				</entry>
 				<entry>
 					<key>97</key>
-					<value><inject bean="RTPAudioFormat.SPEEX" /></value>
+					<value>SPEEX</value>
 				</entry>	
 				<entry>
 					<key>101</key>
-					<value><inject bean="RTPAudioFormat.TELEPHONE-EVENT" /></value>
+					<value>telephone-event/8000</value>
 				</entry>				
 			</map>
 		</property>
