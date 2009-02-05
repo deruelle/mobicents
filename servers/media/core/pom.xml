@@ -19,6 +19,10 @@
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
+		
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>		
 	</properties>
 
 	<modules>	
@@ -76,7 +80,7 @@
 	<!--  -->
 	<build>
 		<plugins>
-			<!-- plugin>
+			<plugin>
 				<artifactId>maven-eclipse-plugin</artifactId>
 				<groupId>org.mobicents.tools</groupId>
 				<version>
@@ -96,7 +100,7 @@
 						mobicents-media-server-core
 					</eclipseProjectName>
 				</configuration>
-			</plugin -->
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
