@@ -43,55 +43,59 @@ import org.mobicents.mgcp.stack.handlers.TransactionHandlerManagement;
  *         </a>
  */
 public class EndpointHandler {
-	
-	protected static final Logger logger = Logger.getLogger(EndpointHandler.class);
 
-	protected TreeSet<ConnectionIdentifier> connectionIds = new TreeSet<ConnectionIdentifier>(new Comparator<ConnectionIdentifier>(){
+	protected static final Logger logger = Logger
+			.getLogger(EndpointHandler.class);
 
-		public int compare(ConnectionIdentifier o1, ConnectionIdentifier o2) {
-			
-		
-				if(o1==null)
-					return -1;
-				if(o2==null)
-					return 1;
-				return o1.toString().compareTo(o2.toString());
-			
-		}});
+	protected TreeSet<ConnectionIdentifier> connectionIds = new TreeSet<ConnectionIdentifier>(
+			new Comparator<ConnectionIdentifier>() {
+
+				public int compare(ConnectionIdentifier o1,
+						ConnectionIdentifier o2) {
+
+					if (o1 == null)
+						return -1;
+					if (o2 == null)
+						return 1;
+					return o1.toString().compareTo(o2.toString());
+
+				}
+			});
 	/**
 	 * EndpointWide notification requests
 	 */
-	//protected Set<String> subscribedEvents = new HashSet<String>();
-	//protected BlockingQueue<Runnable> ourQueue = new LinkedBlockingQueue<Runnable>();
-	//protected ThreadPoolQueueExecutor executor = new ThreadPoolQueueExecutor(1,
-	//		1, ourQueue);
+	// protected Set<String> subscribedEvents = new HashSet<String>();
+	// protected BlockingQueue<Runnable> ourQueue = new
+	// LinkedBlockingQueue<Runnable>();
+	// protected ThreadPoolQueueExecutor executor = new
+	// ThreadPoolQueueExecutor(1,
+	// 1, ourQueue);
 	protected ThreadPoolQueueExecutor executor = null;
 	protected List<TransactionHandlerManagement> ongoingTransactions = new ArrayList<TransactionHandlerManagement>();
 	protected EndpointHandlerManager stack = null;
 	protected String endpointId = null;
-	protected String fakeId=null;
-	protected boolean useFakeId=false;
-	protected Set<RequestedEvent> requestedEvents = new TreeSet<RequestedEvent>(new Comparator<RequestedEvent>(){
-		
-		public int compare(RequestedEvent o1, RequestedEvent o2) {
-			
-		
-				if(o1==null)
-					return -1;
-				if(o2==null)
-					return 1;
-				return o1.toString().compareTo(o2.toString());
-			
-		}});
+	protected String fakeId = null;
+	protected boolean useFakeId = false;
+	protected Set<RequestedEvent> requestedEvents = new TreeSet<RequestedEvent>(
+			new Comparator<RequestedEvent>() {
 
-	
+				public int compare(RequestedEvent o1, RequestedEvent o2) {
+
+					if (o1 == null)
+						return -1;
+					if (o2 == null)
+						return 1;
+					return o1.toString().compareTo(o2.toString());
+
+				}
+			});
 
 	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl,
 			String endpointId) {
 		this.endpointId = endpointId;
 		this.stack = jainMgcpStackImpl;
-		this.fakeId=new UID().toString();
-		this.executor=this.stack.getNextExecutor();
+		this.fakeId = new UID().toString();
+		this.executor = this.stack.getNextExecutor();
 	}
 
 	public String getFakeId() {
@@ -144,6 +148,10 @@ public class EndpointHandler {
 			CreateConnection ccRequest = (CreateConnection) commandEvent;
 			CreateConnectionResponse ccResponse = (CreateConnectionResponse) event;
 
+			int responseCode = ccResponse.getReturnCode().getValue();
+			MgcpResponseType type = MgcpResponseType
+					.getResponseTypeFromCode(responseCode);
+
 			if (ccResponse.getSpecificEndpointIdentifier() == null) {
 				// protocol violation
 				// FIXME: add parser checks
@@ -151,23 +159,19 @@ public class EndpointHandler {
 
 			EndpointIdentifier specificEndpointId = ccResponse
 					.getSpecificEndpointIdentifier();
-			if (this.endpointId.compareTo(specificEndpointId.toString())==0) {
+			if (this.endpointId.compareTo(specificEndpointId.toString()) == 0) {
 
 				// This is local/we have to handle
-				int responseCode = ccResponse.getReturnCode().getValue();
-				MgcpResponseType type = MgcpResponseType
-						.getResponseTypeFromCode(responseCode);
-		
+
 				switch (type) {
-				case ProvisionalResponse:
-					return;
+
 				case SuccessResponse:
 					// On Success we have to add ConnectionId, possibly process
 					// NotificationRequest like, since it can have
 					// NotificationRequest embeded :]
 					this.connectionIds
 							.add(ccResponse.getConnectionIdentifier());
-					
+
 					if (ccRequest.getNotificationRequestParms() != null) {
 						processRequestedEvents(ccRequest.getNotifiedEntity(),
 								ccRequest.getNotificationRequestParms()
@@ -181,28 +185,30 @@ public class EndpointHandler {
 					break;
 				}
 
-			} else if(isAnyOfWildcard(endpointId)){
-				//This means that client asked to get connection on any of endpoints, we have to change mapping
-				//this.ongoingTransactions.remove(handler);
-				//EndpointHandler validEndpointHandler = this.stack
-				//		.getEndpointHandler(specificEndpointId.toString());
-				this.endpointId=specificEndpointId.toString();
-				EndpointHandler concurrent=this.stack.switchMapping(this.fakeId,specificEndpointId.toString());
-				if(concurrent!=null)
-				{
-					//This could mean that in a mean while someone created this, we shoudl use it.
+			} else if (isAnyOfWildcard(endpointId)) {
+				// This means that client asked to get connection on any of
+				// endpoints, we have to change mapping
+				// this.ongoingTransactions.remove(handler);
+				// EndpointHandler validEndpointHandler = this.stack
+				// .getEndpointHandler(specificEndpointId.toString());
+				this.endpointId = specificEndpointId.toString();
+				EndpointHandler concurrent = this.stack.switchMapping(
+						this.fakeId, specificEndpointId.toString());
+				if (concurrent != null) {
+					// This could mean that in a mean while someone created
+					// this, we shoudl use it.
 					this.ongoingTransactions.remove(handler);
 					concurrent.addTransactionHandler(handler);
-					concurrent.commandDelivered(commandEvent, event,
-						handler);
-				}else
-				{	
+					concurrent.commandDelivered(commandEvent, event, handler);
+				} else {
 					this.commandDelivered(commandEvent, event, handler);
 				}
-			}else
-			{
-				// ? This is error, this means that endpoitID does not match and possibly is AllOfWildcad - *, which is not permited
-				logger.error("Wrong endpoitn id, local: "+endpointId+", fakeId: "+fakeId+", id in response: "+specificEndpointId);
+			} else {
+				// ? This is error, this means that endpoitID does not match and
+				// possibly is AllOfWildcad - *, which is not permited
+				logger.error("Wrong endpoitn id, local: " + endpointId
+						+ ", fakeId: " + fakeId + ", id in response: "
+						+ specificEndpointId);
 			}
 
 		} else if (commandEvent instanceof NotificationRequest) {
@@ -302,11 +308,14 @@ public class EndpointHandler {
 						// deletes specific connection
 						this.connectionIds.remove(dcRequest
 								.getConnectionIdentifier());
-						if(logger.isDebugEnabled())
-						{
-							logger.debug("Removing connection:"+dcRequest.getConnectionIdentifier()+" From:"+Arrays.toString(this.connectionIds.toArray())+" ------ "+this);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Removing connection:"
+									+ dcRequest.getConnectionIdentifier()
+									+ " From:"
+									+ Arrays.toString(this.connectionIds
+											.toArray()) + " ------ " + this);
 						}
-						
+
 					} else {
 						// 2.3.9
 						this.connectionIds.clear();
@@ -332,8 +341,9 @@ public class EndpointHandler {
 
 	protected void processRequestedEvents(NotifiedEntity entity,
 			RequestedEvent[] rEvents) {
-		// FIXME: there is only single list of those? New one overwrites previous?
-		
+		// FIXME: there is only single list of those? New one overwrites
+		// previous?
+
 		// RequestedEvents is not incremental list, it acts as setter?
 		this.requestedEvents.clear();
 		if (rEvents != null) {
@@ -342,8 +352,7 @@ public class EndpointHandler {
 			}
 
 		}
-		
-		
+
 	}
 
 	/**
@@ -386,48 +395,48 @@ public class EndpointHandler {
 	public void doEndChecks() {
 		if (this.connectionIds.size() == 0
 				&& this.ongoingTransactions.size() == 0
-				//&& this.requestedEvents.size() == 0
-				//FIXME: This can cause a leak if someone does not unregister
-				//Oleg, Amit?
-				) {
-			try{
+		// && this.requestedEvents.size() == 0
+		// FIXME: This can cause a leak if someone does not unregister
+		// Oleg, Amit?
+		) {
+			try {
 				this.stack.removeEndpointHandler(this.endpointId);
-			}finally
-			{
-				//We have a pool now, we dont kill them :}
-				//this.executor.shutdownNow();
+			} finally {
+				// We have a pool now, we dont kill them :}
+				// this.executor.shutdownNow();
 			}
 		}
 	}
 
-	//For now simple detection, no range wildcard detection
+	// For now simple detection, no range wildcard detection
 	public static boolean isWildCardEndpointName(String endpointId) {
-		
-		return isAllOfWildcard(endpointId)|| isAllOfWildcard(endpointId);
+
+		return isAllOfWildcard(endpointId) || isAllOfWildcard(endpointId);
 	}
-	
-	public static boolean isAnyOfWildcard(String endpointId)
-	{
+
+	public static boolean isAnyOfWildcard(String endpointId) {
 		return endpointId.contains("$");
 	}
 
-	public static boolean isAllOfWildcard(String endpointId)
-	{
+	public static boolean isAllOfWildcard(String endpointId) {
 		return endpointId.contains("*");
 	}
-	
+
 	public String toString() {
 
-		return this.getClass().getSimpleName() + this.hashCode() +" - EId: " + this.endpointId
-				+ ", Subscribed events: "
+		return this.getClass().getSimpleName() + this.hashCode() + " - EId: "
+				+ this.endpointId + ", Subscribed events: "
 				+ Arrays.toString(this.requestedEvents.toArray())
-				+ ", connectionIds: " + Arrays.toString(this.connectionIds.toArray())+", Handlers: "+Arrays.toString(this.ongoingTransactions.toArray());
+				+ ", connectionIds: "
+				+ Arrays.toString(this.connectionIds.toArray())
+				+ ", Handlers: "
+				+ Arrays.toString(this.ongoingTransactions.toArray());
 
 	}
 
 	public void setUseFake(boolean b) {
-		this.useFakeId=b;
-		
+		this.useFakeId = b;
+
 	}
 
 }

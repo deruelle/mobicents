@@ -89,7 +89,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	// JainMgcpStackImpl.ThreadFactoryImpl());
 
 	// For now we have only one provider/delete prvider method wont work.
-	public JainMgcpStackProviderImpl provider;
+	public JainMgcpStackProviderImpl provider = null;
 	/**
 	 * holds current active transactions (RFC 3435 [$3.2.1.2]: for tx sent &
 	 * received).
@@ -138,8 +138,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 					this.localAddress = socket.getLocalAddress();
 					logger.info("Jain Mgcp stack bound to IP "
 							+ this.localAddress + " and UDP port " + this.port);
-					
-					//This is for TCK don't remove
+
+					// This is for TCK don't remove
 					System.out.println("Jain Mgcp stack bound to IP "
 							+ this.localAddress + " and UDP port " + this.port);
 					break;
@@ -284,14 +284,21 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	}
 
 	public JainMgcpProvider createProvider() throws CreateProviderException {
-
+		if (this.provider != null) {
+			throw new CreateProviderException(
+					"Provider already created. Only 1 provider can be created. Delete the first and then re-create");
+		}
 		init();
 		return this.provider;
 	}
 
 	public void deleteProvider(JainMgcpProvider provider)
 			throws DeleteProviderException {
-		// do nothing
+		if (this.provider == null) {
+			throw new DeleteProviderException("No Provider exist.");
+		}
+		this.close();
+		this.provider = null;
 	}
 
 	public void setPort(int port) {

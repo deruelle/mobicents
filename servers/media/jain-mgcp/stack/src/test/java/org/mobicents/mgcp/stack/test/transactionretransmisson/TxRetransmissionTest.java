@@ -61,7 +61,7 @@ public class TxRetransmissionTest extends MessageFlowHarness {
 		mgw.setCommand("NTFY");
 		this.ca.sendReTransmissionNotify();
 		waitForRetransmissionTimeout();
-	}		
+	}	
 	
 	public void tearDown() {
 		try {

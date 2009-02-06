@@ -137,59 +137,6 @@ public class MessageHandler {
 					return;
 				}
 
-				// Set<Integer> completedTxSet =
-				// stack.getCompletedTransactions().keySet();
-				// for(Integer completedTx : completedTxSet){
-				// if( completedTx.equals(remoteTxIdIntegere)){
-				// if (logger.isDebugEnabled()) {
-				// logger.debug("Received Command for which stack has already
-				// sent response Tx = "+completedTx );
-				// }
-				// TransactionHandler completedTxHandler =
-				// stack.getCompletedTransactions().get(completedTx);
-				//						
-				// EndpointHandler eh=completedTxHandler.getEndpointHandler();
-				// completedTxHandler.markRetransmision();
-				// eh.scheduleTransactionHandler(completedTxHandler);
-				//						
-				// //this.stack.jainMgcpStackImplPool.execute(completedTxHandler);
-				// //(new Thread(completedTxHandler)).start();
-				// return;
-				// }
-				// }
-
-				// TransactionHandler completedTxHandler
-				// =stack.getCompletedTransaction(remoteTxIdIntegere);
-				// if(completedTxHandler!=null)
-				// {
-				// EndpointHandler eh=completedTxHandler.getEndpointHandler();
-				// completedTxHandler.markRetransmision();
-				// eh.scheduleTransactionHandler(completedTxHandler);
-				// }
-				// TODO:
-				// Check if Tx is currently executing then send provisional
-				// response
-				// FIXME: I wonder if it should be moved? Maybe we should always
-				// send provisional response upon receival?
-				// FIXME: baranowb: this checks seems bad, why do we itterate
-				// and than get value for key?
-				// Set<Integer> ongoingTxSet =
-				// stack.getRemoteTxToLocalTxMap().keySet();
-				// for(Integer ongoingTx : ongoingTxSet){
-				// if( ongoingTx.equals(remoteTxIdIntegere)){
-				// if (logger.isDebugEnabled()) {
-				// logger.debug("Received Command for ongoing Tx = "+ongoingTx
-				// );
-				// }
-				// Integer tmpLoaclTID =
-				// stack.getRemoteTxToLocalTxMap().get(ongoingTx);
-				// TransactionHandler ongoingTxHandler =
-				// stack.getLocalTransactions().get(tmpLoaclTID);
-				// ongoingTxHandler.sendProvisionalResponse();
-				// return;
-				// }
-				// }
-
 				Integer tmpLoaclTID = stack.getRemoteTxToLocalTxMap().get(remoteTxIdIntegere);
 				if (tmpLoaclTID != null) {
 					TransactionHandler ongoingTxHandler = stack.getLocalTransactions().get(tmpLoaclTID);

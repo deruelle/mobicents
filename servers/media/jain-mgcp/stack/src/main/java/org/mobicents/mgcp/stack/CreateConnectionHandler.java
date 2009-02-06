@@ -28,6 +28,7 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.NotificationRequestParms;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -43,6 +44,7 @@ import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
  * 
  * @author Oleg Kulikov
  * @author Pavel Mitrenko
+ * @author amit bhayani
  */
 public class CreateConnectionHandler extends TransactionHandler {
 
@@ -67,6 +69,11 @@ public class CreateConnectionHandler extends TransactionHandler {
 			parser.parse(message);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		}
+		
+		NotifiedEntity notifiedEntity = command.getNotifiedEntity();
+		if(command.getNotifiedEntity() != null ){
+			this.stack.provider.setNotifiedEntity(notifiedEntity);
 		}
 
 		return command;

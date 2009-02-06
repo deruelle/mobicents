@@ -6,6 +6,7 @@ import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -46,7 +47,10 @@ public class NotificationRequestHandler extends TransactionHandler {
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
 		}
-
+		NotifiedEntity notifiedEntity = command.getNotifiedEntity();
+		if(command.getNotifiedEntity() != null ){
+			this.stack.provider.setNotifiedEntity(notifiedEntity);
+		}
 		return command;
 	}
 

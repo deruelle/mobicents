@@ -56,6 +56,8 @@ public class CommandParseTest extends TestHarness {
 			inetAddress = InetAddress.getByName("127.0.0.1");
 			jainMgcpStack = new JainMgcpStackImpl(inetAddress, 2729);
 			
+			port = jainMgcpStack.getPort();
+			
 			JainMgcpProvider provider = jainMgcpStack.createProvider();
 		} catch (UnknownHostException e) {			
 			e.printStackTrace();

@@ -19,6 +19,7 @@ import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.RestartInProgressResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
@@ -48,15 +49,21 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 	// ends
 	protected Set<JainMgcpExtendedListener> jainMobicentsListeners = new HashSet<JainMgcpExtendedListener>();
 
-	//private QueuedExecutor eventQueue = null;
-
-	//private ExecutorService pool;
+	protected NotifiedEntity notifiedEntity = null;
 
 	public JainMgcpStackProviderImpl(JainMgcpStackImpl runningStack) {
 		super();
 		//eventQueue = new QueuedExecutor();
 		//pool = Executors.newCachedThreadPool(new ThreadFactoryImpl());
 		this.runningStack = runningStack;
+	}
+	
+	public void setNotifiedEntity(NotifiedEntity notifiedEntity){
+		this.notifiedEntity = notifiedEntity;
+	}
+	
+	public NotifiedEntity getNotifiedEntity(){
+		return this.notifiedEntity;
 	}
 
 	public void addJainMgcpListener(JainMgcpListener listener) throws TooManyListenersException {
@@ -358,28 +365,4 @@ public class JainMgcpStackProviderImpl implements JainMgcpProvider {
 		return new RequestIdentifier(Long.toHexString(current));
 	}
 
-	// private class ThreadFactoryImpl implements ThreadFactory {
-	//
-	// final ThreadGroup group;
-	// final AtomicInteger threadNumber = new AtomicInteger(1);
-	// final String namePrefix;
-	//
-	// ThreadFactoryImpl() {
-	// SecurityManager s = System.getSecurityManager();
-	// group = (s != null) ? s.getThreadGroup() :
-	// Thread.currentThread().getThreadGroup();
-	// namePrefix = "JainMgcpStackProviderImpl-CachedThreadPool-" + "thread-";
-	// }
-	//
-	// public Thread newThread(Runnable r) {
-	// Thread t = new Thread(group, r, namePrefix +
-	// threadNumber.getAndIncrement(), 0);
-	// if (t.isDaemon())
-	// t.setDaemon(false);
-	// if (t.getPriority() != Thread.NORM_PRIORITY)
-	// t.setPriority(Thread.NORM_PRIORITY);
-	// return t;
-	//		}
-	//
-	//	}
 }
