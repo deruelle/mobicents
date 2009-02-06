@@ -1,6 +1,7 @@
 package org.openxdm.xcap.server.slee.appusage.rlsservices;
 
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -354,7 +355,7 @@ public class RLSServicesAppUsage extends AppUsage {
 						// flag setup
 						boolean throwException = true;
 						// node value is the uri to evaluate
-						String resourceListUri = serviceChildNode.getTextContent();
+						String resourceListUri = serviceChildNode.getTextContent().trim();
 
 						try {																	
 							// build uri
@@ -383,10 +384,16 @@ public class RLSServicesAppUsage extends AppUsage {
 					      							tree), the server MUST verify that the XUI in the path is the same
 					      							as the XUI in the URI of to the resource-list document.
 											 */
-											if (resourceListUriPaths[k+2].equals(documentSelector.getDocumentParent().split("/")[1])) {
-												throwException = false;
-												break;
+											// decode the candidate xui first
+											String resourceListXUIDecoded = URLDecoder.decode(resourceListUriPaths[k+2],"UTf-8");
+											String requestXUI = documentSelector.getDocumentParent().split("/")[1];
+											if (resourceListXUIDecoded.equals(requestXUI)) {
+												throwException = false;												
 											}
+											else {
+												logger.error("not the same xcap user id in request ("+requestXUI+") and resource list ("+resourceListXUIDecoded+") URIs");
+											}
+											break;
 										}
 										else {
 											throwException = false;
@@ -398,7 +405,7 @@ public class RLSServicesAppUsage extends AppUsage {
 						}
 						catch (Exception e) {
 							// ignore
-							e.printStackTrace();
+							logger.error(e.getMessage(),e);
 						}							
 						// throw exception if needed
 						if (throwException) {

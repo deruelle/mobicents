@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rls-services xmlns:rl="urn:ietf:params:xml:ns:resource-lists"
+	xmlns="urn:ietf:params:xml:ns:rls-services">
+	<service uri="sip:vasily@ericsson.com;pres-list=Default">
+		<resource-list>http://xdmhost:8080/mobicents/resource-lists/users/sip%3avasily%40ericsson.com/index/~~/resource-lists/list%5b@name=%22Default%22%5d</resource-list>
+		<packages>
+			<package>presence</package>
+		</packages>
+	</service>
+</rls-services>
