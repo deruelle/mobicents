@@ -58,4 +58,18 @@ public interface PublicationControlManagementMBean {
 	 * @param contactAddressDisplayName
 	 */
 	public void setContactAddressDisplayName(String contactAddressDisplayName);
+	
+	/**
+	 * Retrieves the TerminationIOI parameter of PChargingVector header, to be used on PUBLISH responses in a IMS environment.
+	 *   
+	 * @return
+	 */
+	public String getPChargingVectorHeaderTerminatingIOI();
+	
+	/**
+	 * Defines the TerminationIOI parameter of PChargingVector header, to be used on PUBLISH responses in a IMS environment.
+	 * @param chargingVectorHeaderTerminatingIOI
+	 */
+	public void setPChargingVectorHeaderTerminatingIOI(
+			String chargingVectorHeaderTerminatingIOI);
 }

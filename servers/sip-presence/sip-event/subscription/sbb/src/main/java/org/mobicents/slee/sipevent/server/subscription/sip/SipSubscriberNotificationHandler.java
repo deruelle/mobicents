@@ -1,5 +1,10 @@
 package org.mobicents.slee.sipevent.server.subscription.sip;
 
+import gov.nist.javax.sip.Utils;
+import gov.nist.javax.sip.header.HeaderFactoryExt;
+import gov.nist.javax.sip.header.HeaderFactoryImpl;
+import gov.nist.javax.sip.header.ims.PChargingVectorHeader;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.text.ParseException;
@@ -59,6 +64,10 @@ public class SipSubscriberNotificationHandler {
 					notify = setNotifyContent(subscription, notify, content,
 							contentTypeHeader, childSbb);
 				}
+				
+				// ....aayush added code here (with ref issue #567)
+				notify.addHeader(addPChargingVectorHeader());
+				
 				// send notify in dialog related with subscription
 				dialog.sendRequest(sipSubscriptionHandler.sbb.getSipProvider()
 						.getNewClientTransaction(notify));
@@ -150,6 +159,10 @@ public class SipSubscriberNotificationHandler {
 				}
 			}
 		}
+		
+		// ....aayush added code here (with ref issue #567)
+		notify.addHeader(addPChargingVectorHeader());
+		
 		// send notify
 		ClientTransaction clientTransaction = sipSubscriptionHandler.sbb
 				.getSipProvider().getNewClientTransaction(notify);
@@ -228,5 +241,31 @@ public class SipSubscriberNotificationHandler {
 			logger.error("unable to fill notify headers", e);
 		}
 		return notify;
+	}
+	/**
+	 * 
+	 * @return the newly created P-charging-vector header
+	 * @throws ParseException 
+	 */
+	private PChargingVectorHeader addPChargingVectorHeader() throws ParseException
+	{
+		// aayush..started adding here.
+		
+		/*
+		 * (with ref to issue #567)
+		 * Need to add a P-charging-vector header here with a unique ICID parameter
+		 * and an orig-ioi parameter pointing to the home domain of the PS.
+		 */
+		
+		// sbb.getHeaderFactory() does not provide the API for creating P-headers.
+		HeaderFactoryExt extensions = new HeaderFactoryImpl();
+		
+		// Ideally,there should also be an ICID generator in Utils, that generates a unique ICID.
+		PChargingVectorHeader pcv = extensions.createChargingVectorHeader(Utils.generateBranchId()+System.currentTimeMillis());
+		pcv.setOriginatingIOI(sipSubscriptionHandler.sbb.getConfiguration().getPChargingVectorHeaderTerminatingIOI());
+		
+		return pcv;
+		//aayush...added code till here.
+		
 	}
 }

@@ -20,7 +20,8 @@ public class SubscriptionControlManagement implements SubscriptionControlManagem
 	private int maxForwards = 70;
 	private String contactAddressDisplayName = "Mobicents SIP Event Server";
 	private boolean eventListSupportOn = true;
-		
+	private String pChargingVectorHeaderTerminatingIOI = "mobicents.org";
+	
 	public void startService() throws Exception {
 		MBeanServer mbs=SleeContainer.lookupFromJndi().getMBeanServer();
 		ObjectName on=null;
@@ -115,5 +116,12 @@ public class SubscriptionControlManagement implements SubscriptionControlManagem
 		this.eventListSupportOn = eventListSupportOn;
 	}
 	
+	public String getPChargingVectorHeaderTerminatingIOI() {
+		return pChargingVectorHeaderTerminatingIOI;
+	}
 	
+	public void setPChargingVectorHeaderTerminatingIOI(
+			String chargingVectorHeaderTerminatingIOI) {
+		pChargingVectorHeaderTerminatingIOI = chargingVectorHeaderTerminatingIOI;
+	}
 }

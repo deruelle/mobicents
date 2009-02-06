@@ -1,5 +1,8 @@
 package org.mobicents.slee.sipevent.server.publication;
 
+import gov.nist.javax.sip.header.ims.PChargingFunctionAddressesHeader;
+import gov.nist.javax.sip.header.ims.PChargingVectorHeader;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sip.ListeningPoint;
@@ -387,6 +390,36 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 		if (response.getHeader(ContactHeader.NAME) != null) {
 			response.removeHeader(ContactHeader.NAME);
 		}
+		
+		/* aayush..started adding here: (Ref issue #567)
+		 * The PUBLISH request had a P-charging-vector header
+		 * that consisted of an ICID and an orig-ioi parameter.The PS
+		 * needs to preserve that header and needs to add a term-ioi
+		 * parameter pointing to its own domain name:*/
+        
+		// 1. Get the header as received from the request:
+		PChargingVectorHeader pcv = (PChargingVectorHeader) 
+		event.getRequest().getHeader(PChargingVectorHeader.NAME);
+		
+		// 2. In case the request is received from a non-IMS VoIP network,P-charging-Vector wont be there,so check for pcv!=null
+		if(pcv!=null) 
+		{
+		pcv.setTerminatingIOI(configuration.getPChargingVectorHeaderTerminatingIOI());
+		response.addHeader(pcv);
+		}
+		
+		// Also need to add the P-Charging-Function-Addresses header
+		// as received from the PUBLISH request in the 200 OK being sent:
+		
+		// 1. Get the header from the request:
+		PChargingFunctionAddressesHeader pcfa = (PChargingFunctionAddressesHeader) 
+		event.getRequest().getHeader(PChargingFunctionAddressesHeader.NAME);
+		
+		// 2. Add the header without any changes:
+		if(pcfa!=null)
+		response.addHeader(pcfa);
+		// end of additions...aayush.
+		
 		try {
 			ListeningPoint listeningPoint = sipProvider.getListeningPoint("udp");
 			Address address = addressFactory.createAddress(

@@ -1,5 +1,8 @@
 package org.mobicents.slee.sipevent.server.subscription.sip;
 
+import gov.nist.javax.sip.header.ims.PChargingFunctionAddressesHeader;
+import gov.nist.javax.sip.header.ims.PChargingVectorHeader;
+
 import java.text.ParseException;
 
 import javax.persistence.EntityManager;
@@ -298,6 +301,35 @@ public class SipSubscriptionHandler {
 			}
 			// 2xx response to SUBSCRIBE need a Contact
 			response = addContactHeader(response);
+			
+			/*...aayush started adding here..(with ref issue#567)
+			 * 
+			 * The 200 OK of the SUBSCRIBE needs to preserve the P-charging-vector 
+			 * header that was received in the request, adding a term-ioi parameter
+			 * to it which points to the home domain.
+			 */
+			
+			// 1. Get header from the request
+			PChargingVectorHeader pcv = (PChargingVectorHeader) 
+			request.getHeader(PChargingVectorHeader.NAME);
+			
+			// 2. Check for NULL, as the request may not come from IMS all the time.
+			if(pcv!=null)
+			{
+			pcv.setTerminatingIOI(sbb.getConfiguration().getPChargingVectorHeaderTerminatingIOI());
+			response.addHeader(pcv);
+			}
+			
+			// We also need to get the P-charging-function-addresses header from the request
+			// and add it to the response:
+			
+			PChargingFunctionAddressesHeader pcfa = (PChargingFunctionAddressesHeader) 
+			request.getHeader(PChargingFunctionAddressesHeader.NAME);
+			
+			if(pcfa!=null)
+				response.addHeader(pcfa);
+			//...aayush added code till here.
+			
 			serverTransaction.sendResponse(response);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Response sent:\n" + response.toString());

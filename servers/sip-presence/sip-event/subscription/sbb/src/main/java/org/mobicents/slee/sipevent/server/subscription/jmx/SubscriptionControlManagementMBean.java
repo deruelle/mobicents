@@ -95,4 +95,17 @@ public interface SubscriptionControlManagementMBean {
 	 */
 	public void setEventListSupportOn(boolean eventListSupportOn);
 	
+	/**
+	 * Retrieves the TerminationIOI parameter of PChargingVector header, to be used on SUBSCRIBE responses and NOTIFY requests in a IMS environment.
+	 *   
+	 * @return
+	 */
+	public String getPChargingVectorHeaderTerminatingIOI();
+	
+	/**
+	 * Defines the TerminationIOI parameter of PChargingVector header, to be used on SUBSCRIBE responses and NOTIFY requests in a IMS environment.
+	 * @param chargingVectorHeaderTerminatingIOI
+	 */
+	public void setPChargingVectorHeaderTerminatingIOI(
+			String chargingVectorHeaderTerminatingIOI);
 }

@@ -17,7 +17,8 @@ public class PublicationControlManagement implements PublicationControlManagemen
 	private int maxExpires = defaultExpires;
 	private int minExpires = 60;
 	private String contactAddressDisplayName = "Mobicents SIP Event Server";
-		
+	private String pChargingVectorHeaderTerminatingIOI = "mobicents.org"; 
+	
 	public void startService() throws Exception {
 		MBeanServer mbs=SleeContainer.lookupFromJndi().getMBeanServer();
 		ObjectName on=null;
@@ -88,4 +89,12 @@ public class PublicationControlManagement implements PublicationControlManagemen
 		this.contactAddressDisplayName = contactAddressDisplayName;
 	}
 	
+	public String getPChargingVectorHeaderTerminatingIOI() {
+		return pChargingVectorHeaderTerminatingIOI;
+	}
+	
+	public void setPChargingVectorHeaderTerminatingIOI(
+			String chargingVectorHeaderTerminatingIOI) {
+		pChargingVectorHeaderTerminatingIOI = chargingVectorHeaderTerminatingIOI;
+	}
 }
