@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents</groupId>
+		<artifactId>mobicents</artifactId>
+		<version>8</version>
+	</parent>
+
+	<groupId>org.mobicents.jsr309</groupId>
+	<artifactId>mobicents-jsr309-impl</artifactId>
+	<version>2.0.0.BETA1-SNAPSHOT</version>
+	<name>Mobicents JSR-309 Impl</name>
+	<url>http://www.mobicents.org/products_media_server.html</url>
+
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+		<release.name>
+			${release.name.prefix}${parent.version}${release.name.suffix}
+		</release.name>
+
+		<!-- OTHER MOBICENTS COMPONENTS VERSIONS -->
+		<mobicents.tools.mavenplugin.eclipse.version>
+			1.0.0.BETA2
+		</mobicents.tools.mavenplugin.eclipse.version>
+		<mobicents.mgcp.impl.version>
+			2.0.0.RC2-SNAPSHOT
+		</mobicents.mgcp.impl.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.mobicents.external.jsr309</groupId>
+			<artifactId>jsr309</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>jain</groupId>
+			<artifactId>jain-mgcp-ri</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+			<version>${jain-sip-ri.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.jain</groupId>
+			<artifactId>mobicents-mgcp-impl</artifactId>
+			<version>${mobicents.mgcp.impl.version}</version>
+		</dependency>		
+	</dependencies>
+
+	<scm>
+		<connection>
+			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+		</connection>
+		<developerConnection>
+			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+		</developerConnection>
+		<url>
+			scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1
+		</url>
+	</scm>
+
+	<profiles>
+		<profile>
+			<id>maven-release</id>
+			<modules />
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<configuration>
+							<autoVersionSubmodules>
+								true
+							</autoVersionSubmodules>
+							<tagBase>
+								https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp
+							</tagBase>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId>
+				<version>
+					${mobicents.tools.mavenplugin.eclipse.version}
+				</version>
+				<inherited>false</inherited>
+				<executions />
+				<configuration>
+					<classpathExcludes>
+						<exclude>xml-apis:xml-apis</exclude>
+						<exclude>jtidy:jtidy</exclude>
+					</classpathExcludes>
+					<resolveTransitiveDependencies>
+						true
+					</resolveTransitiveDependencies>
+					<eclipseProjectName>
+						mobicents-jsr309-impl
+					</eclipseProjectName>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<resume>false</resume>
+					<tagBase>
+						https://mobicents.googlecode.com/svn/tags/servers/media/jain-mgcp
+					</tagBase>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>jboss</id>
+			<name>JBoss Repository</name>
+			<url>http://repository.jboss.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>jboss-snapshots</id>
+			<name>JBoss Snapshot Repository</name>
+			<url>http://snapshots.jboss.org/maven2</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+</project>
