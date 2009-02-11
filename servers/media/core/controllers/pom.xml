@@ -22,7 +22,7 @@
 	</properties -->
 	
 	<modules>
-		<!--module>msc/msc-stack</module -->
+		<module>mgcp</module>
 		<!-- module>mgcp/mgcp-stack</module -->
 	</modules>
 	
