@@ -12,13 +12,13 @@ This is the release bundle of Mobicents.
 Directory Structure
 -------------------
 
-There are 4 top-level directories:
+There are 5 top-level directories:
 
  +jboss-4.X.Y.GA	(JBossAS, the JAIN SLEE container, Sip Servlets container, Media Server and other base services)
  +resources			(various resource adaptors and related scripts)
  +sip-presence		(SIP Presence Service and related scripts)
  +examples			(various examples)
- 
+ +documentation     (user guides for the mobicents servers)
  
 How to use?
 -----------

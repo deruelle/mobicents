@@ -3,12 +3,14 @@
 
 	<property environment="sys"/>
 
-	<property name="release.dir" value="${ant.file.mobicents.all.release}/../target/release"/>
+    <property name="docs.stage.dir" location="${ant.file.mobicents.all.release}/../documentation"/>
+
+	<property name="release.dir" location="${ant.file.mobicents.all.release}/../target/release"/>
 	<property name="release.name" value="mobicents-all"/>
     <property name="release.version" value="1.2.0.GA"/>
 	<property name="release.configurations" value="default,all"/>
 	
-    <property name="release.slee.ra.dirs" value="xmpp,http-servlet,sip,sip11,http-client,tts"/>
+    <property name="release.slee.ra.dirs" value="xmpp,smpp,http-servlet,asterisk,sip,sip11,http-client,jcc,rules,tts"/>
     <property name="release.slee.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
     <property name="release.diameter.ra.dirs" value="base,sh-client"/>
     <property name="release.diameter.example.dirs" value="base"/>
@@ -19,7 +21,7 @@
 	<property name="jboss.home.relative.path" value="jboss-${jboss.version}" />
 	<property name="jboss.home" value="${release.dir}/${jboss.home.relative.path}" />
 	
-    <property name="jbcp.release.dir" value="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
+    <property name="jbcp.release.dir" location="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
     <property name="jbcp.release.name" value="JBCP"/>
     <property name="jbcp.release.version" value="1.2.0.CR3"/>
 
@@ -302,11 +304,81 @@
 			<format property="time.stamp" pattern="yyMMddHHmm" />
 		</tstamp>
 	</target>
+	
+    <!-- Fetch and build documentation -->
+
+    <condition property="docs.checked.out">
+        <and>
+            <available file="${docs.stage.dir}/common/.svn/entries" />
+
+            <available file="${docs.stage.dir}/jain-slee/.svn/entries" />
+            <available file="${docs.stage.dir}/media/.svn/entries" />
+            <available file="${docs.stage.dir}/sip-presence/.svn/entries" />
+            <available file="${docs.stage.dir}/sip-servlets/.svn/entries" />
+        </and>
+    </condition>
+    <target name="get-documentation" depends="checkout-documentation,update-documentation" />
+
+    <target name="checkout-documentation" unless="docs.checked.out">
+        <echo>Checking out documentation</echo>
+        <exec executable="${mvn.executable}" dir="${ant.file.mobicents.all.release}/../">
+            <arg line="-f documentation-checkout.xml validate -P checkout" />
+        </exec>
+    </target>
+
+    <target name="update-documentation">
+        <echo>Updating documentation</echo>
+        <exec executable="${mvn.executable}" dir="${ant.file.mobicents.all.release}/../">
+            <arg line="-f documentation-checkout.xml validate -P update" />
+        </exec>
+    </target>
+
+    <target name="build-documentation" depends="get-documentation">
+        <echo>Building documentation</echo>
+
+        <!-- Use move/copy if symbolic links doesn't work -->
+        <!--move todir="${docs.stage.dir}/jain-slee/en-US/Common_Content">
+            <fileset dir="${docs.stage.dir}/common" />
+        </move-->
+        <symlink overwrite="true" link="${docs.stage.dir}/jain-slee/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
+        <symlink overwrite="true" link="${docs.stage.dir}/media/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
+        <symlink overwrite="true" link="${docs.stage.dir}/sip-presence/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
+        <symlink overwrite="true" link="${docs.stage.dir}/sip-servlets/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
+
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/jain-slee/">
+            <arg line="clean compile" />
+        </exec>
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/media/">
+            <arg line="clean compile" />
+        </exec>
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/sip-presence/">
+            <arg line="clean compile" />
+        </exec>
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/sip-servlets/">
+            <arg line="clean compile" />
+        </exec>
+
+        <copy overwrite="true" todir="${release.dir}/documentation/jain-slee">
+            <fileset dir="${docs.stage.dir}/jain-slee/target/docbook/publish/en-US/" />
+        </copy>
+        <copy overwrite="true" todir="${release.dir}/documentation/media">
+            <fileset dir="${docs.stage.dir}/media/target/docbook/publish/en-US/" />
+        </copy>
+        <copy overwrite="true" todir="${release.dir}/documentation/sip-presence">
+            <fileset dir="${docs.stage.dir}/sip-presence/target/docbook/publish/en-US/" />
+        </copy>
+        <copy overwrite="true" todir="${release.dir}/documentation/sip-servlets">
+            <fileset dir="${docs.stage.dir}/sip-servlets/target/docbook/publish/en-US/" />
+        </copy>
+
+        <!--delete dir="${docs.stage.dir}" /-->
+    </target>
 
 	<!-- clean build process -->
 
 	<target name="clean">
 		<delete dir="${release.dir}" />
+		<delete dir="${docs.stage.dir}" />
 	</target>
 
 </project>
