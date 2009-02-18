@@ -61,6 +61,7 @@
 		<antcall target="release-sip-presence-common" />
 		<antcall target="release-diameter-common" />
 		<antcall target="release-sip-load-balancer" />
+        <antcall target="release-documentation" />
 		
 		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
 		<antcall target="copy-frontpage"/>
@@ -333,7 +334,7 @@
         </exec>
     </target>
 
-    <target name="build-documentation" depends="get-documentation">
+    <target name="release-documentation" depends="get-documentation">
         <echo>Building documentation</echo>
 
         <!-- Use move/copy if symbolic links doesn't work -->
