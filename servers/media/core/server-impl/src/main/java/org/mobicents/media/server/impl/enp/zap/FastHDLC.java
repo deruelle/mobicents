@@ -59,7 +59,7 @@ public class FastHDLC {
     decoding.
     
      */
-    private byte[] hdlc_search = new byte[256];
+    private int[] hdlc_search = new int[256];
 
     /*
     HDLC Data Table
@@ -86,7 +86,7 @@ public class FastHDLC {
     public final static int STATE_MASK = (1 << 15);
     public final static int ONES_MASK = (7 << 12);
     public final static int DATA_MASK = (0xff);
-    private short[][] hdlc_frame = new short[6][1024];
+    private int[][] hdlc_frame = new int[6][1024];
     private int minbits[] = new int[]{8, 10};
     /*
     Last, but not least, we have the encoder table.  It takes
@@ -103,7 +103,7 @@ public class FastHDLC {
      */
     private int[][] hdlc_encode = new int[6][256];
 
-    private byte hdlc_search_precalc(byte c) {
+    private int hdlc_search_precalc(int c) {
         int x, p = 0;
         /* Look for a flag.  If this isn't a flag,
         line us up for the next possible shot at
@@ -138,20 +138,20 @@ public class FastHDLC {
             x <<= 1;
             p--;
         }
-        return (byte) p;
+        return p;
     }
 
     private int HFP(int status, int ones, int bits, int data) {
         return ((status) | ((ones) << 12) | ((bits) << 8) | (data));
     }
 
-    private int hdlc_frame_precalc(byte x, short c) {
+    private int hdlc_frame_precalc(int x, int c) {
         /* Assume we have seen 'x' one's so far, and have read the
         bottom 10 bytes of c (MSB first).  Now, we HAVE to have
         a byte of data or a frame or something.  We are assumed
         to be at the beginning of a byte of data or something */
-        byte ones = x;
-        byte data = 0;
+        int ones = x;
+        int data = 0;
         int bits = 0;
         int consumed = 0;
         while (bits < 8) {
@@ -196,10 +196,10 @@ public class FastHDLC {
         return HFP(STATUS_VALID, ones, consumed, data);
     }
 
-    private int hdlc_encode_precalc(int x, byte y) {
+    private int hdlc_encode_precalc(int x, int y) {
         int bits = 0;
         int ones = x;
-        short data = 0;
+        int data = 0;
         int z;
         for (z = 0; z < 8; z++) {
             /* Zero-stuff if needed */
@@ -233,30 +233,30 @@ public class FastHDLC {
         return (data << 22) | (ones << 8) | (bits);
     }
 
-    private void fasthdlc_precalc() {
+    public void fasthdlc_precalc() {
         int x;
         int y;
         /* First the easy part -- the searching */
         for (x = 0; x < 256; x++) {
-            hdlc_search[x] = hdlc_search_precalc((byte) x);
+            hdlc_search[x] = hdlc_search_precalc(x);
         }
         /* Now the hard part -- the frame tables */
         for (x = 0; x < 6; x++) {
             /* Given the # of preceeding ones, process the next
             byte of input (up to 10 actual bits) */
             for (y = 0; y < 1024; y++) {
-                hdlc_frame[x][y] = (short) hdlc_frame_precalc((byte) x, (short) y);
+                hdlc_frame[x][y] = hdlc_frame_precalc(x, y);
             }
         }
         /* Now another not-so-hard part, the encoding table */
         for (x = 0; x < 6; x++) {
             for (y = 0; y < 256; y++) {
-                hdlc_encode[x][y] = hdlc_encode_precalc(x, (byte) y);
+                hdlc_encode[x][y] = hdlc_encode_precalc(x,  y);
             }
         }
     }
 
-    private void fasthdlc_init(HdlcFrame h) {
+    public void fasthdlc_init(HdlcFrame h) {
         /* Initializes all states appropriately */
         h.state = 0;
         h.bits = 0;
@@ -265,7 +265,7 @@ public class FastHDLC {
 
     }
 
-    public int fasthdlc_tx_load_nocheck(HdlcFrame h, byte c) {
+    public int fasthdlc_tx_load_nocheck(HdlcFrame h, int c) {
         int res;
         res = hdlc_encode[h.ones][c];
         h.ones = (res & 0xf00) >> 8;
@@ -274,7 +274,7 @@ public class FastHDLC {
         return 0;
     }
 
-    public int fasthdlc_tx_load(HdlcFrame h, byte c) {
+    public int fasthdlc_tx_load(HdlcFrame h, int c) {
         /* Gotta have at least 10 bits left */
         if (h.bits > 22) {
             return -1;
@@ -311,14 +311,14 @@ public class FastHDLC {
         return fasthdlc_tx_run_nocheck(h);
     }
 
-    public int fasthdlc_rx_load_nocheck(HdlcFrame h, byte b) {
+    public int fasthdlc_rx_load_nocheck(HdlcFrame h, int b) {
         /* Put the new byte in the data stream */
         h.data |= b << (24 - h.bits);
         h.bits += 8;
         return 0;
     }
 
-    public int fasthdlc_rx_load(HdlcFrame h, byte b) {
+    public int fasthdlc_rx_load(HdlcFrame h, int b) {
         /* Make sure we have enough space */
         if (h.bits > 24) {
             return -1;
@@ -333,7 +333,7 @@ public class FastHDLC {
     discarded frame, or there is nothing to return.
      */
     public int fasthdlc_rx_run(HdlcFrame h) {
-        short next;
+        int next;
         int retval = RETURN_EMPTY_FLAG;
         while ((h.bits >= minbits[h.state]) && (retval == RETURN_EMPTY_FLAG)) {
             /* Run until we can no longer be assured that we will
@@ -342,19 +342,19 @@ public class FastHDLC {
                 case FRAME_SEARCH:
                     /* Look for an HDLC frame, keying from
                     the top byte.  */
-                    next = hdlc_search[h.data >> 24];
+                    next = hdlc_search[(h.data >> 24) & 0xff];
                     h.bits -= next & 0x0f;
                     h.data <<= next & 0x0f;
-                    h.state = next >> 4;
+                    h.state = (next >> 4) & 0xff;
                     h.ones = 0;
                     break;
                 case PROCESS_FRAME:
                     /* Process as much as the next ten bits */
-                    next = hdlc_frame[h.ones][h.data >> 22];
-                    h.bits -= ((next & 0x0f00) >> 8);
-                    h.data <<= ((next & 0x0f00) >> 8);
-                    h.state = (next & STATE_MASK) >> 15;
-                    h.ones = (next & ONES_MASK) >> 12;
+                    next = hdlc_frame[h.ones][(h.data >> 22)& 0xff];
+                    h.bits -= (((next & 0x0f00) >> 8)& 0xff);
+                    h.data <<= (((next & 0x0f00) >> 8)& 0xff);
+                    h.state = ((next & STATE_MASK) >> 15)& 0xff;
+                    h.ones = (((next & ONES_MASK) >> 12)& 0xff);
                     switch (next & STATUS_MASK) {
                         case STATUS_CONTROL:
                             if ((next & CONTROL_COMPLETE) != 0) {
