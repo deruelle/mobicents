@@ -11,6 +11,8 @@ package javax.megaco.pkg;
 public abstract class PkgPrptyItem extends PkgItem {
 
 	private ParamRelation paramRelation;
+	protected int itemValueType=-1;
+	protected int propertyId=-1;
 
 	/**
 	 * Constructs a Jain MEGACO Pacakge Property Item Object. This is an

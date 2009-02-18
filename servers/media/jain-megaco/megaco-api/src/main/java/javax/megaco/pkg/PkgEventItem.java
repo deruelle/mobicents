@@ -10,7 +10,10 @@ package javax.megaco.pkg;
  * 
  */
 public abstract class PkgEventItem extends PkgItem {
-	private PkgItemParam[] paramInfo;
+	
+	protected int eventId = -1;
+	
+	protected PkgItemParam[] paramInfo;
 
 	/**
 	 * Constructs a Jain MEGACO Package Event Item Object. This is an abstract

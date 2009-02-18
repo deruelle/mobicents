@@ -11,9 +11,9 @@ import java.io.Serializable;
  */
 public class PkgItem implements Serializable {
 
-	private int itemId;
-	private int itemType;
-	private MegacoPkg packageId;
+	protected int itemId;
+	protected int itemType;
+	protected MegacoPkg packageId;
 
 	/**
 	 * Constructs a Jain MEGACO Item Object. This class may be derived by the

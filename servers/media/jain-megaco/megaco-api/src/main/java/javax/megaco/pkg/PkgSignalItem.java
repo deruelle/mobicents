@@ -13,7 +13,7 @@ public abstract class PkgSignalItem extends PkgItem {
 
 	}
 
-	private MegacoPkg packageId;
+	protected MegacoPkg packageId;
 
 	/**
 	 * The method can be used to get the signal identifier. This method gives

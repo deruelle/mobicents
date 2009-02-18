@@ -9,6 +9,8 @@ import java.io.Serializable;
  * 
  */
 public abstract class MegacoPkg implements Serializable {
+	
+	
 	/**
 	 * Constructs a Jain MEGACO Package Object. This is an abstract class and
 	 * can be called only by the derived classes.
@@ -42,4 +44,12 @@ public abstract class MegacoPkg implements Serializable {
 	public java.lang.String toString(){
 		return this.getPkgId() +" "+this.getExtendedPkgIds();
 	}
+	
+	
+	public String getPackageName()
+	{
+		//this method is referenced in extending classes but no javadoc present... ech
+		return getClass().getName().replace("Pkg", "");
+	}
+	
 }

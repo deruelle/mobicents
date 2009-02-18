@@ -16,6 +16,11 @@ public abstract class PkgItemParam implements java.io.Serializable {
 
 	private ParamRelation paramRelation;
 
+	protected int paramId = -1;
+	protected int paramValueType = -1;
+	protected int[] paramsDescriptorIds = null;
+	protected int[] paramsItemIds = null;
+
 	/**
 	 * Constructs a Jain MEGACO package item parameter Object. This is an
 	 * abstract class and can be called only by the derived classes.
@@ -42,44 +47,32 @@ public abstract class PkgItemParam implements java.io.Serializable {
 	 */
 	public abstract int getParamValueType();
 
-	public final int getParamsValueRelation()
-			throws javax.megaco.ParameterNotSetException {
+	public final int getParamsValueRelation() throws javax.megaco.ParameterNotSetException {
 		return this.paramRelation.getParamRelation();
 	}
 
-	public final void setParamsValueRelation(ParamRelation paramRelation)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setParamsValueRelation(ParamRelation paramRelation) throws javax.megaco.InvalidArgumentException {
 		if (paramRelation == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"ParamRelation cannot be null from PkgItemParam");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_PARAM_RELATION);
+			InvalidArgumentException invalidArgumentException = new InvalidArgumentException("ParamRelation cannot be null from PkgItemParam");
+			invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_PARAM_RELATION);
 			throw invalidArgumentException;
 		}
 		this.paramRelation = paramRelation;
 	}
 
-	public final void setParamsValue(java.lang.String[] value)
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.InvalidArgumentException {
+	public final void setParamsValue(java.lang.String[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
 		// TODO
 	}
 
-	public final void setParamsValue(int[] value)
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.InvalidArgumentException {
+	public final void setParamsValue(int[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
 		// TODO
 	}
 
-	public final void setParamsValue(boolean value)
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.InvalidArgumentException {
+	public final void setParamsValue(boolean value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
 		// TODO
 	}
 
-	public final void setParamsValue(double[] value)
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.InvalidArgumentException {
+	public final void setParamsValue(double[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
 		// TODO
 	}
 
