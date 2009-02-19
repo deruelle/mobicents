@@ -183,7 +183,7 @@
                                     <basedir>${checkout.basedir}/sip-presence</basedir>
                                     <scmVersion>HEAD</scmVersion>
                                     <scmVersionType>revision</scmVersionType>
-                                    <connectionUrl>${sippresent.docs.connectionURL}</connectionUrl>
+                                    <connectionUrl>${sippresence.docs.connectionURL}</connectionUrl>
                                     <username>${checkout.username}</username>
                                     <password>${checkout.password}</password>
                                 </configuration>
