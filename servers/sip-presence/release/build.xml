@@ -3,12 +3,13 @@
 
 	<property environment="sys" />
 
-	<property name="release.dir" value="${ant.file.mobicents.release}/../target" />
-	<property name="mobicents.jainslee.version" value="1.2.3.GA" />
+	<property name="release.dir" location="${ant.file.mobicents.release}/../target" />
+    <property name="docs.stage.dir" location="${ant.file.mobicents.release}/../documentation"/>
+	<property name="mobicents.jainslee.version" value="1.2.4.GA" />
 	<property name="jboss.version" value="4.2.3.GA" />
 	<property name="release.version" value="1.0.0.BETA4-CP1-SNAPSHOT" />
 	<property name="mobicents.distro.zip.path" value="mobicents-jainslee-server-${mobicents.jainslee.version}.zip" />
-	<property name="jboss.home" value="${release.dir}/jboss-${jboss.version}/" />
+	<property name="jboss.home" location="${release.dir}/jboss-${jboss.version}/" />
 	<property name="jboss.config" value="default" />
 
 	<tstamp>
@@ -64,6 +65,7 @@
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
+		<antcall target="build-documentation" />
 		<antcall target="build-with-mobicents-src-zip" />
 		<delete dir="." includes="mobicents-sip-presence-xdms-${release.version}-*.zip" />
 		<antcall target="zip-jboss">
@@ -83,6 +85,7 @@
 			<param name="mvn.executable" value="${mvn.executable}" />
 			<param name="jboss.home" value="${jboss.home}" />
 		</antcall>
+		<antcall target="build-documentation" />
 		<antcall target="build-with-mobicents-src-zip" />
 		<delete dir="." includes="mobicents-sip-presence-integrated-${release.version}-*.zip" />
 		<copy overwrite="true" file="${ant.file.mobicents.release}/../msps-integrated-server-README.txt" todir="${jboss.home}" />
@@ -267,7 +270,48 @@
 		<delete dir="${release.dir}/sip-presence-src" />
 	</target>
 
+    <!-- Fetch and build documentation -->
 
+    <condition property="sip-presence.docs.checked.out">
+        <and>
+            <available file="${docs.stage.dir}/common/.svn/entries" />
+            <available file="${docs.stage.dir}/sip-presence/.svn/entries" />
+        </and>
+    </condition>
+    <target name="get-documentation" depends="checkout-documentation,update-documentation" />
+
+    <target name="checkout-documentation" unless="sip-presence.docs.checked.out">
+        <echo>Checking out documentation</echo>
+        <exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+            <arg line="-f documentation-checkout.xml validate -P checkout" />
+        </exec>
+    </target>
+
+    <target name="update-documentation">
+        <echo>Updating documentation</echo>
+        <exec executable="${mvn.executable}" dir="${ant.file.mobicents.release}/../">
+            <arg line="-f documentation-checkout.xml validate -P update" />
+        </exec>
+    </target>
+
+    <target name="build-documentation" depends="get-documentation">
+        <echo>Building documentation</echo>
+
+        <!--move todir="${docs.stage.dir}/sip-presence/en-US/Common_Content">
+            <fileset dir="${docs.stage.dir}/common" />
+        </move-->
+        <symlink overwrite="true" link="${docs.stage.dir}/sip-presence/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
+
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/sip-presence/">
+            <arg line="clean compile" />
+        </exec>
+
+        <copy overwrite="true" todir="${jboss.home}/docs/mobicents-sip-presence">
+            <fileset dir="${docs.stage.dir}/sip-presence/target/docbook/publish/en-US/" />
+        </copy>
+
+        <!--delete dir="${docs.stage.dir}" /-->
+    </target>
 
 
 
@@ -293,11 +337,18 @@
 
 	<target name="clean">
 		<delete dir="${release.dir}" />
+		<delete dir="${docs.stage.dir}" />
 	</target>
 
 	<target name="unzip-mobicents-jainslee">
 		<delete dir="${jboss.home}/.." failonerror="true" />
 		<unzip src="${mobicents.distro.zip.path}" dest="${release.dir}" />
+
+		<move todir="${jboss.home}/docs/mobicents-jain-slee/">
+			<fileset dir="${release.dir}/documentation">
+				<include name="**"/>
+			</fileset>
+		</move>
 	</target>
 
 	<target name="zip-jboss" description="">
@@ -358,7 +409,7 @@
 	<available file="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" property="got.mobicents-jain-slee" />
 	<target name="get-mobicents-jain-slee" unless="got.mobicents-jain-slee">
 		<echo>Downloading Mobicents JAIN SLEE Server</echo>
-		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-${mobicents.jainslee.version}-jboss-${jboss.version}_.zip" />
+		<get dest="${ant.file.mobicents.release}/../${mobicents.distro.zip.path}" src="http://downloads.sourceforge.net/mobicents/mobicents-jainslee-server-${mobicents.jainslee.version}-jboss-${jboss.version}.zip" />
 	</target>
 
 	<target name="checksum">
