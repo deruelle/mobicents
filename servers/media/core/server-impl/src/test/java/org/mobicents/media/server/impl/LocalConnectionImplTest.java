@@ -548,8 +548,10 @@ public class LocalConnectionImplTest {
     }
     
     public class TestEndpoint extends BaseEndpoint {
+    	DummySource dummySource = null;
         public TestEndpoint(String localName) {
             super(localName);
+            dummySource = new DummySource(localName+"-DummySource");
         }
 
 		@Override
@@ -602,8 +604,7 @@ public class LocalConnectionImplTest {
 
 		@Override
 		public MediaSource getPrimarySource(Connection connection) {
-			// TODO Auto-generated method stub
-			return null;
+			return dummySource;
 		}
 
 		@Override
@@ -625,6 +626,29 @@ public class LocalConnectionImplTest {
 
 
     }
+ 
+    private class DummySource extends AbstractSource {
+
+		public DummySource(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void start() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void stop() {
+			// TODO Auto-generated method stub
+			
+		}
+    	
+    }    
     
     private class Source extends AbstractSource implements TimerTask {
 

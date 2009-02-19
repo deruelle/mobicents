@@ -55,11 +55,13 @@ public class MixerInputStream extends AbstractSink {
 
     public void receive(Buffer buffer) {
         if (mixer == null) {
+        	buffer.dispose();
             return;
         }
         
         if (duration + buffer.getDuration() > jitter) {
             //silently discard packet
+        	buffer.dispose();
             return;
         }
 
@@ -84,6 +86,7 @@ public class MixerInputStream extends AbstractSink {
             if (buff.isEOM() || buff.getData() == null) {
                 buffers.remove(buff);
                 this.duration -= buff.getDuration();
+                buff.dispose();
                 break;
             }
             
@@ -96,6 +99,7 @@ public class MixerInputStream extends AbstractSink {
             if (buff.getOffset() == buff.getLength()) {
                 buffers.remove(buff);
                 this.duration -= buff.getDuration();
+                buff.dispose();
             }
         }
 

@@ -21,50 +21,53 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class Rfc2833Detector extends AbstractSink {
 
-    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-    private final static Format[] FORMATS = new Format[] {DTMF};
-    
-    private final static String[] TONE = new String[]{
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A", "B", "C", "D"
-    };
-    private DtmfDetector detector;
-    private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
+	private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
+	private final static Format[] FORMATS = new Format[] { DTMF };
 
-    public Rfc2833Detector(DtmfDetector detector) {
-    	super("Rfc2833Detector");
-        this.detector = detector;
-    }
+	private final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#",
+			"A", "B", "C", "D" };
+	private DtmfDetector detector;
+	private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
-    public void start() {
-    }
+	public Rfc2833Detector(DtmfDetector detector) {
+		super("Rfc2833Detector");
+		this.detector = detector;
+	}
 
-    public void stop() {
-    }
+	public void start() {
+	}
 
-    public void receive(Buffer buffer) {
-        byte[] data = (byte[]) buffer.getData();
+	public void stop() {
+	}
 
-        String digit = TONE[data[0]];
-        boolean end = (data[1] & 0x7f) != 0;
+	public void receive(Buffer buffer) {
+		try {
+			byte[] data = (byte[]) buffer.getData();
 
-        detector.digitBuffer.push(digit);
-    }
+			String digit = TONE[data[0]];
+			boolean end = (data[1] & 0x7f) != 0;
 
-    @Override
-    public void disconnect(MediaSource source) {
-        super.disconnect(source);
-    }
-    public Format[] getFormats() {
-        return FORMATS;
-    }
+			detector.digitBuffer.push(digit);
+		} finally {
+			buffer.dispose();
+		}
+	}
 
-    public boolean isAcceptable(Format format) {
-        //System.out.println("Checking format " + format);
-        return DTMF.equals(format);
-    }
+	@Override
+	public void disconnect(MediaSource source) {
+		super.disconnect(source);
+	}
+
+	public Format[] getFormats() {
+		return FORMATS;
+	}
+
+	public boolean isAcceptable(Format format) {		
+		return DTMF.equals(format);
+	}
 }

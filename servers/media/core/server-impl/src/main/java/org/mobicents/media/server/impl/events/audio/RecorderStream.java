@@ -26,7 +26,7 @@ import org.mobicents.media.Buffer;
  */
 public class RecorderStream extends InputStream {
 
-    protected List<Buffer> buffers = new CopyOnWriteArrayList();
+    protected List<Buffer> buffers = new CopyOnWriteArrayList<Buffer>();
     protected int available = 0;
     protected Semaphore semaphore = new Semaphore(0);
     protected boolean blocked = false;
@@ -96,15 +96,14 @@ public class RecorderStream extends InputStream {
             count += len;
 
             buffer.setOffset(buffer.getOffset() + len);
-            if (buffer.getOffset() == buffer.getLength()) {
-                buffers.remove(0);
-            }
-
             if (buffer.isEOM()) {
                 eom = true;
             // break;
             }
-
+            if (buffer.getOffset() == buffer.getLength()) {
+                buffer = buffers.remove(0);
+                buffer.dispose();
+            }
         }
 
         available -= count;

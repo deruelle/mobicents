@@ -163,6 +163,8 @@ public class Multiplexer extends AbstractSink {
             buffer.setSequenceNumber(seq);
             buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
             output.sink.receive(buffer);
+        } else{
+        	buffer.dispose();
         }
 
         seq++;

@@ -3,6 +3,7 @@
   <classpathentry kind="src" path="server-impl/src/main/resources"/>
   <classpathentry kind="src" path="server-impl/src/test/java"/>
   <classpathentry kind="src" path="server-impl/src/main/java"/>
+  <classpathentry kind="src" path="controllers/mgcp/src/main/java"/>
   <classpathentry kind="src" path="server-standalone/src/main/resources"/>
   <classpathentry kind="src" path="server-standalone/src/main/java"/>
   <classpathentry kind="src" path="server-sar/src/main/resources"/>
@@ -14,6 +15,7 @@
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xercesImpl/2.7.1/xercesImpl-2.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.7.1/xml-apis-2.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/concurrent/concurrent/1.3.4/concurrent-1.3.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jain/jain-mgcp-ri/1.0/jain-mgcp-ri-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.0.2/activation-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.90/jain-sip-ri-1.2.90.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/jboss-common-core/2.0.4.GA/jboss-common-core-2.0.4.GA.jar"/>

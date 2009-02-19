@@ -79,11 +79,12 @@ public class AudioPlayer extends AbstractSource {
     /** The countor for errors occured during processing */
     private int errorCount;
     private volatile boolean started = false;
-    private BufferFactory bufferFactory = new BufferFactory(10);
+    private BufferFactory bufferFactory = null;
     private transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
     public AudioPlayer(BaseEndpoint endpoint) {
         super("AudioPlayer[" + endpoint.getLocalName() + "]");
+        bufferFactory = new BufferFactory(10, "AudioPlayer[" + endpoint.getLocalName() + "]");
         this.timer = endpoint.getTransmittorThread();
         threadFactory = new ThreadFactoryImpl("AudioPlayerCommand[" + endpoint.getLocalName() + "]");
         executor = Executors.newSingleThreadExecutor(threadFactory);

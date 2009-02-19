@@ -76,8 +76,8 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         mux[0] = new Multiplexer();
         mux[1] = new Multiplexer();
 
-        demux[0] = new Demultiplexer(FORMATS);
-        demux[1] = new Demultiplexer(FORMATS);
+        demux[0] = new Demultiplexer(FORMATS, "Demultiplexer[0] "+this.getLocalName());
+        demux[1] = new Demultiplexer(FORMATS, "Demultiplexer[1] "+this.getLocalName());
 
         dtmfDetector[0] = new DtmfDetector("0");
         dtmfDetector[1] = new DtmfDetector("1");

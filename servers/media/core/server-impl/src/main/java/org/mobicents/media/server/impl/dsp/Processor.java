@@ -154,11 +154,13 @@ public class Processor implements SignalingProcessor {
          */
         protected void transmit(Buffer buffer) {
             if (!started) {
+            	buffer.dispose();
                 return;
             }
             //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
             // Discard packet silently if output handler is not assigned yet
             if (sink == null) {
+            	buffer.dispose();
                 return;
             }
 
@@ -191,6 +193,7 @@ public class Processor implements SignalingProcessor {
             // It means that Processor should check FLAGS after codec's 
             // work and discard packet if required
             if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
+            	buffer.dispose();
                 return;
             }
 

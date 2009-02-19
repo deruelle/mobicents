@@ -1,57 +1,67 @@
 <component>
-  <fileSets>
-    <fileSet>
-      <directory>target</directory>
-      <outputDirectory/>
-      <includes>
-        <include>*.jar</include>
-      </includes>
-    </fileSet>
-  </fileSets>
-  <files>
-    <file>
-      <source>src/main/config/run.sh</source>
-      <fileMode>0744</fileMode>
-      <filtered>true</filtered>
-    </file>
-  </files>
-  <dependencySets>
-    <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-       <!-- Need to explicity include dependencies here until optional dependencies are sorted out. -->
-       <includes>
-        <include>org.jboss.microcontainer:jboss-kernel</include>
-        <include>org.jboss.microcontainer:jboss-dependency</include>
-        <include>org.jboss.microcontainer:jboss-container</include>
-        <include>org.jboss:jboss-common-core</include>
-        <include>jboss:jboss-common-core</include>
-        <include>jboss:jboss-common-logging-spi</include>
-        <include>jboss:jboss-common-logging-log4j</include>
-        <include>log4j:log4j</include>
-        <include>org.jboss:jbossxb</include>
-        <include>apache-xerces:xercesImpl</include>
-        <include>oswego-concurrent:concurrent</include>
-	<include>org.mobicents.external.jspeex:jspeex</include>
-	<include>net.java.stun4j:stun4j</include>
-	<include>javax.sip:jain-sip-ri</include>
-	<include>org.mobicents.external.tritonus:tritonus_share</include>
-	<include>org.mobicents.external.tritonus:tritonus_gsm</include>
-	<include>org.jboss.microcontainer:jboss-aop-mc-int</include>
-	<include>org.jboss.microcontainer:jboss-kernel</include>
-	<include>org.jboss.aop:jboss-aop</include>
-	<include>org.jboss:javassist</include>
-	
-	<include>trove:trove</include>
-	
-	<!-- The bellow jars should be removed once the MBeans are independent of it -->
-	<include>jboss:jboss-system</include>
-	<include>jboss:jboss-jmx</include>
-	
-	
-	
-      </includes>
-    </dependencySet>
-  </dependencySets>
+	<fileSets>
+		<fileSet>
+			<directory>target</directory>
+			<outputDirectory />
+			<includes>
+				<include>*.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+	<files>
+		<file>
+			<source>src/main/config/run.sh</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+		</file>
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<!-- Need to explicity include dependencies here until optional dependencies are sorted out. -->
+			<includes>
+				<include>org.jboss.microcontainer:jboss-kernel</include>
+				<include>
+					org.jboss.microcontainer:jboss-dependency
+				</include>
+				<include>
+					org.jboss.microcontainer:jboss-container
+				</include>
+				<include>org.jboss:jboss-common-core</include>
+				<include>jboss:jboss-common-core</include>
+				<include>jboss:jboss-common-logging-spi</include>
+				<include>jboss:jboss-common-logging-log4j</include>
+				<include>log4j:log4j</include>
+				<include>org.jboss:jbossxb</include>
+				<include>apache-xerces:xercesImpl</include>
+				<include>oswego-concurrent:concurrent</include>
+				<include>org.mobicents.external.jspeex:jspeex</include>
+				<include>net.java.stun4j:stun4j</include>
+				<include>javax.sip:jain-sip-ri</include>
+				<include>
+					org.mobicents.external.tritonus:tritonus_share
+				</include>
+				<include>
+					org.mobicents.external.tritonus:tritonus_gsm
+				</include>
+				<include>
+					org.jboss.microcontainer:jboss-aop-mc-int
+				</include>
+				<include>org.jboss.microcontainer:jboss-kernel</include>
+				<include>org.jboss.aop:jboss-aop</include>
+				<include>org.jboss:javassist</include>
+
+				<include>trove:trove</include>
+
+				<!-- The bellow jars should be removed once the MBeans are independent of it -->
+				<include>jboss:jboss-system</include>
+				<include>jboss:jboss-jmx</include>
+
+
+
+			</includes>
+		</dependencySet>
+	</dependencySets>
 </component>

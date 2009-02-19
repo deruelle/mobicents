@@ -20,7 +20,7 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
 
     private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
     private final static Format[] FORMATS = new Format[] {DTMF};
-    private BufferFactory bufferFactory = new BufferFactory(10);
+    private BufferFactory bufferFactory = null;
     
     private String digit;
     private boolean endOfEvent = false;
@@ -30,6 +30,7 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
     
     public Rfc2833Generator(BaseEndpoint endpoint) {
         super("DTMF[" + endpoint.getLocalName() + "]");
+        bufferFactory = new BufferFactory(10, "Rfc2833Generator[" + endpoint.getLocalName() + "]");
     }
     
     private byte encode(String digit) {

@@ -65,7 +65,7 @@ public class RxChannel implements Serializable {
     public RxChannel(int index) {
         this.index = index;
         dsp = new Processor("rx-channel-" + index);
-        demux = new Demultiplexer(f1);
+        demux = new Demultiplexer(f1, "Demultiplexer rx-channel-" + index);
         dsp.getOutput().connect(demux.getInput());
         dsp.configure(f1, f2);
         

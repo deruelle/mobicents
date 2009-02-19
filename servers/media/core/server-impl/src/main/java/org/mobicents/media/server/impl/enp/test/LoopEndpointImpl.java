@@ -41,7 +41,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         
         this.setMaxConnectionsAvailable(1);
         mux = new Multiplexer();
-        demux = new Demultiplexer(FORMATS);
+        demux = new Demultiplexer(FORMATS, "Demultiplexer "+this.getLocalName());
     }
 
     @Override

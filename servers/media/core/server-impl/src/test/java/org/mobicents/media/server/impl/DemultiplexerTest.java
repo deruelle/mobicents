@@ -46,7 +46,7 @@ public class DemultiplexerTest {
 
     @Before
     public void setUp() {
-        demux = new Demultiplexer(new Format[]{new AudioFormat("F1")});
+    	 demux = new Demultiplexer(new Format[]{new AudioFormat("F1")}, "DemultiplexerTest ");
     }
 
     @After

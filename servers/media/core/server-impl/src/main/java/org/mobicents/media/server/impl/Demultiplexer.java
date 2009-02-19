@@ -15,9 +15,10 @@ package org.mobicents.media.server.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 
@@ -38,13 +39,15 @@ public class Demultiplexer extends AbstractSource {
     private Format[] formats;
     private boolean started = false;
     private String upperComponent = null;
+    private BufferFactory bufferFactory = null;
 
     public AbstractSink getInput() {
         return input;
     }
 
-    public Demultiplexer(Format[] formats) {
+    public Demultiplexer(Format[] formats, String name) {
         super("Demultiplexer");
+        bufferFactory = new BufferFactory(10, name);
         this.inputFormats = formats;
         this.input = new Input(upperComponent);
         this.input.setWorkDataSink(this);
@@ -140,7 +143,11 @@ public class Demultiplexer extends AbstractSource {
             }
             Collection<Output> streams = branches.values();
             for (Output stream : streams) {
-                stream.push((Buffer) buffer.clone());
+                //stream.push((Buffer) buffer.clone());
+            	Buffer bufferNew = bufferFactory.allocate();
+            	bufferNew.copy(buffer);
+            	stream.push(bufferNew);
+            	
             }
             buffer.dispose();
         }
@@ -160,6 +167,8 @@ public class Demultiplexer extends AbstractSource {
             try {
                 if (sink.isAcceptable(buffer.getFormat())) {
                     sink.receive(buffer);
+                } else{
+                	buffer.dispose();
                 }
             } catch (NullPointerException e) {
             }

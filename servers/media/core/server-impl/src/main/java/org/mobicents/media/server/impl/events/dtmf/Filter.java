@@ -62,7 +62,8 @@ public class Filter implements Serializable {
         double resultr = 0.5*realW*d1 - d2;
         double resulti = imagW*d1;
         
-        return Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
+        //return Math.sqrt(Math.pow(resultr, 2) + Math.pow(resulti, 2));
+        return Math.sqrt( (resultr * resultr) + (resulti * resulti));
     } 
     
     

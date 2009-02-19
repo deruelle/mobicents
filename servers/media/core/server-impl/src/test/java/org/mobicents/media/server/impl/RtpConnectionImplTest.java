@@ -594,6 +594,11 @@ public class RtpConnectionImplTest {
 
         public TestEndpoint(String localName) {
             super(localName);
+            try {
+				start();
+			} catch (ResourceUnavailableException e) {				
+				e.printStackTrace();
+			}
             startRtp();
             
             source = new Source();

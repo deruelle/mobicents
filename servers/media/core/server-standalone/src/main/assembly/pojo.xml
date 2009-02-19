@@ -16,8 +16,8 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
        <includes>
-	       <include>org.mobicents.servers.media:mobicents-media-server-spi</include>
-	       <include>org.mobicents.servers.media:mobicents-media-server-impl</include>
+	       <include>org.mobicents.servers.media:mms-spi</include>
+	       <include>org.mobicents.servers.media:mms-impl</include>
        </includes>
      </dependencySet>
   </dependencySets>

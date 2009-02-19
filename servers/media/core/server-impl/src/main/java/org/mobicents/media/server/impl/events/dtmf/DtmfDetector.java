@@ -56,7 +56,7 @@ public class DtmfDetector extends AbstractSink {
         inband = new InbandDetector(this);
         rfc2833 = new Rfc2833Detector(this);
         
-        dsp = new Processor("");
+        dsp = new Processor("Processor " + name);
         dsp.getOutput().connect(inband);
         dsp.configure(new Format[] {PCMA, SPEEX, PCMU, G729, GSM}, new Format[]{LINEAR_AUDIO});
         dsp.getOutput().start();
@@ -119,11 +119,17 @@ public class DtmfDetector extends AbstractSink {
     }
 
     public boolean isAcceptable(Format format) {
-        return format.equals(DTMF) || format.equals(LINEAR_AUDIO);
+    	// return format.equals(DTMF) || format.equals(LINEAR_AUDIO);
+    	// The DEMUX is now connected to Rfc2833Detector and InbandDetector. So
+    	// this check is not required here. Lets us hardcode to return false
+    	return false;
     }
 
 
     public void receive(Buffer buffer) {
+    	// It should never reach at this pint as isAcceptable is returning false
+    	// anyway
+    	buffer.dispose();
     }
 
     public String getID() {

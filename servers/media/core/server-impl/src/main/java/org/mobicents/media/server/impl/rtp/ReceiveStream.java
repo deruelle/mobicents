@@ -44,14 +44,16 @@ public class ReceiveStream extends AbstractSource {
     private Buffer frame;
     protected Format[] formats;
     private RtpSocketImpl rtpSocket;
-    private BufferFactory bufferFactory = new BufferFactory(10);
+    private BufferFactory bufferFactory = null;
     
     private transient ExecutorService worker = Executors.newSingleThreadExecutor();
     private transient Future workerTask;
+    private RtpHeader header = new RtpHeader();
     
     /** Creates a new instance of ReceiveStream */
     public ReceiveStream(ScheduledExecutorService timer, RtpSocket rtpSocket, int period, int jitter) {
         super("ReceiveStream");
+        bufferFactory = new BufferFactory(10, "ReceiveStream");
         this.rtpSocket = (RtpSocketImpl) rtpSocket;
         this.timer = timer;
         this.period = period;        
@@ -104,8 +106,7 @@ public class ReceiveStream extends AbstractSource {
                 } catch (IOException e) {
                     continue;
                 }
-
-                RtpHeader header = new RtpHeader();
+                
                 header.init(buff);
 
                 //change format if payload type is changed

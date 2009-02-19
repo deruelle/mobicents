@@ -17,12 +17,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
-
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
@@ -57,6 +58,8 @@ public class AudioMixer extends AbstractSink implements Serializable {
     private static double maxStepUp = 1. / 4000; // 3000 samples transition
     // from gain 1 to gain 0
     private transient Logger logger = Logger.getLogger(AudioMixer.class);
+    
+    private BufferFactory bufferFactory = null;
 
     /**
      * Creates a new instance of AudioMixer.
@@ -68,6 +71,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
      */
     public AudioMixer(BaseEndpoint endpoint, String name) {
         super("AudioMixer[" + endpoint.getLocalName() + "]");
+        bufferFactory = new BufferFactory(10, "AudioMixer[" + endpoint.getLocalName() + "]");
         this.name = "AudioMixer[" + endpoint.getLocalName() + "]/" + name;
         this.timer = endpoint.getReceiverThread();
         this.mixerOutput = new MixerOutput();
@@ -226,7 +230,7 @@ public class AudioMixer extends AbstractSink implements Serializable {
     }
 
     private void push(byte[] data) {
-        Buffer buffer = new Buffer();
+        Buffer buffer = bufferFactory.allocate();
         buffer.setData(data);
         buffer.setOffset(0);
         buffer.setLength(data.length);

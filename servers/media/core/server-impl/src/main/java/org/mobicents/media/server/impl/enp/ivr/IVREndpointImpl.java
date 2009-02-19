@@ -86,7 +86,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     }
 
     protected void startPrimarySink() {
-        demux = new Demultiplexer(getFormats());
+        demux = new Demultiplexer(getFormats(), "Demultiplexer "+this.getLocalName());
 
         recorder = new Recorder("wav", recordDir);
         dtmfDetector = new DtmfDetector("DtmfDetector[" + getLocalName() + "]");

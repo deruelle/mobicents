@@ -23,6 +23,7 @@ public class Buffer implements Serializable {
     protected Object header;
     protected int length = 0;
     protected int offset = 0;
+    protected BufferFactory factory;
     protected long sequenceNumber = SEQUENCE_UNKNOWN;
     public static final int FLAG_EOM = 1;
     public static final int FLAG_DISCARD = 2;
@@ -44,7 +45,7 @@ public class Buffer implements Serializable {
     public static final long TIME_UNKNOWN = -1;
     public static final long SEQUENCE_UNKNOWN = Long.MAX_VALUE - 1;
 
-    private BufferFactory factory;
+    
     
     public Buffer() {
         super();
@@ -163,6 +164,7 @@ public class Buffer implements Serializable {
         offset = buffer.offset;
         sequenceNumber = buffer.sequenceNumber;
         timeStamp = buffer.timeStamp;
+        //factory = buffer.factory;
         if (swapData) {
             data = dupData(buffer.data, false);
         } else {
@@ -185,6 +187,7 @@ public class Buffer implements Serializable {
         result.sequenceNumber = sequenceNumber;
         result.timeStamp = timeStamp;
         result.data = dupData(data, true);
+        result.factory = factory;
 
         return result;
     }
@@ -246,6 +249,6 @@ public class Buffer implements Serializable {
     public void dispose() {
         if (factory != null) {
             factory.deallocate(this);
-        }
+        } 
     }
 }
