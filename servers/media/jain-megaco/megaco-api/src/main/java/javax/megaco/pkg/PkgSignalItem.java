@@ -12,7 +12,7 @@ public abstract class PkgSignalItem extends PkgItem {
 	public PkgSignalItem() {
 
 	}
-
+	protected int signalId=-1;
 	protected MegacoPkg packageId;
 
 	/**

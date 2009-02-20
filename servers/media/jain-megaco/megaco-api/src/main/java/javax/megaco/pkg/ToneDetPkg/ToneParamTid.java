@@ -67,7 +67,7 @@ public class ToneParamTid extends PkgItemParam {
 	 * @return The integer values corresponding to start tone detected, end tone
 	 *         detected and long tone detected. Thus this shall return a vector
 	 *         containing the elements {@link ToneStdEvent.TONE_DET_STD_EVENT},
-	 *         {@link ToneEtdEvent.TONE_DET_ETD_EVENT} and
+	 *         {@link AnalogLineSOnEvt.TONE_DET_ETD_EVENT} and
 	 *         {@link ToneLtdEvent.TONE_DET_LTD_EVENT}.
 	 */
 	public int[] getParamsItemIds() {
