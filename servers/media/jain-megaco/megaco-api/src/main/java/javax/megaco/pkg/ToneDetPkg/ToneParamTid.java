@@ -94,8 +94,8 @@ public class ToneParamTid extends PkgItemParam {
 	 * parameters to which the parameter can be set.
 	 * 
 	 * @return This parameter can be present in Signal descriptor. It shall thus
-	 *         return a value {@link DescriptorType.M_OBSERVED_EVENT_DESC} as a part of
-	 *         integer vector.
+	 *         return a value {@link DescriptorType.M_OBSERVED_EVENT_DESC} as a
+	 *         part of integer vector.
 	 */
 	public int[] getParamsDescriptorIds() {
 		return super.paramsDescriptorIds;

@@ -7,30 +7,32 @@ import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgPrptyItem;
 
 /**
- * The MEGACO MaxNrOfCtxt property class extends the PkgPrptyItem class. This is
- * a final class. This class defines MaxNrOfCtxt property of MEGACO Root
- * package. The methods shall define that this property item belongs to the Root
- * package.
+ * The MEGACO MaxTermsPerCtxt property class extends the PkgPrptyItem class.
+ * This is a final class. This class defines MaxTermsPerCtxt property of MEGACO
+ * Root package. The methods shall define that this property item belongs to the
+ * Root package.
  */
-public class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
+public final class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
 
 	/**
-	 * Identifies MaxNrOfCtxts property of the MEGACO Base Root Package. Its
-	 * value shall be set equal to 0x0001.
+	 * Identifies MaxTermsPerCtxt property of the MEGACO Base Root Package. Its
+	 * value shall be set equal to 0x0002.
 	 */
 	public static final int ROOT_MAX_NR_OF_CTXT_PRPT = 0x0001;
 
-	
-	protected int[] itemsDescriptorIds=null;
-	
-	
+	protected int[] itemsDescriptorIds = null;
+
+	/**
+	 * Constructs a Jain MEGACO Object representing property item of the MEGACO
+	 * Package for property MaxTermsPerCtxt and Package as Base Root.
+	 */
 	public RootMaxNrOfCtxtPrpt() {
 		super();
-		super.itemId=ROOT_MAX_NR_OF_CTXT_PRPT;
-		super.itemType=ParamValueType.M_ITEM_PARAM_VALUE_DOUBLE;
-		super.packageId=new BaseRootPkg();
-		
-		this.itemsDescriptorIds=new int[]{DescriptorType.M_TERMINATION_STATE_DESC};
+		super.itemId = ROOT_MAX_NR_OF_CTXT_PRPT;
+		super.itemType = ParamValueType.M_ITEM_PARAM_VALUE_DOUBLE;
+		super.packageId = new BaseRootPkg();
+
+		this.itemsDescriptorIds = new int[] { DescriptorType.M_TERMINATION_STATE_DESC };
 	}
 
 	/**
@@ -46,8 +48,12 @@ public class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
 	}
 
 	/**
-	 * The method can be used to get the type of the value as defined in the MEGACO packages. These could be one of string or enumerated value or integer or double value or boolean.
-	 * @return It returns {@link ITEM_PARAM_VALUE_DOUBLE} indicating that the parameter is a double.
+	 * The method can be used to get the type of the value as defined in the
+	 * MEGACO packages. These could be one of string or enumerated value or
+	 * integer or double value or boolean.
+	 * 
+	 * @return It returns {@link ITEM_PARAM_VALUE_DOUBLE} indicating that the
+	 *         parameter is a double.
 	 */
 	public int getItemValueType() {
 		return super.itemType;
@@ -73,18 +79,20 @@ public class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
 	 * @return The package id {@link BASE_ROOT_PACKAGE}.
 	 */
 	public MegacoPkg getItemsPkgId() {
-		
+
 		return super.packageId;
 	}
-	
+
 	/**
-	 *  The method can be used to get the descriptor ids corresponding to the parameters to which the parameter can be set.
-	 * @return  This parameter can be present in Event descriptor. It shall thus return a value {@link M_TERMINATION_STATE_DESC} as a part of integer vector.
+	 * The method can be used to get the descriptor ids corresponding to the
+	 * parameters to which the parameter can be set.
+	 * 
+	 * @return This parameter can be present in Event descriptor. It shall thus
+	 *         return a value {@link M_TERMINATION_STATE_DESC} as a part of
+	 *         integer vector.
 	 */
-	public int[] getItemsDescriptorIds()
-	{
+	public int[] getItemsDescriptorIds() {
 		return this.itemsDescriptorIds;
 	}
-   
 
 }

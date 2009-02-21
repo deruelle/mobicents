@@ -5,10 +5,10 @@ import javax.megaco.pkg.PkgSignalItem;
 import javax.megaco.pkg.DTMFGenPkg.DTMFGenPkg;
 
 /**
- * The MEGACO Congestion Tone signal class extends the PkgSignalItem class. This
- * is a final class. This class defines Congestion Tone signal of MEGACO Call
- * Progress Tone Generator package. The methods shall define that this signal
- * item belongs to the Call Progress Tone Generator package.
+ * The MEGACO Call Waiting Tone signal class extends the PkgSignalItem class.
+ * This is a final class. This class defines Call Waiting Tone signal of MEGACO
+ * Call Progress Tone Generator package. The methods shall define that this
+ * signal item belongs to the Call Progress Tone Generator package.
  */
 public final class CPToneGenCwtSignal extends PkgSignalItem {
 

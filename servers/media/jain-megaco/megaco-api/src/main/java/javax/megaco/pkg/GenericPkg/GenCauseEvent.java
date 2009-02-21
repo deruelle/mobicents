@@ -10,8 +10,6 @@ import javax.megaco.pkg.PkgEventItem;
  */
 public class GenCauseEvent extends PkgEventItem {
 
-	
-
 	/**
 	 * Identifies Cause event of the MEGACO Generic Package.
 	 */
@@ -19,12 +17,14 @@ public class GenCauseEvent extends PkgEventItem {
 
 	/**
 	 * 
-	 * Constructs a MEGACO Event item object with event id as Cause.
+	 * Constructs a Jain MEGACO object representing the Cause event of the
+	 * Generic package.
 	 */
 	public GenCauseEvent() {
 		super();
-		super.packageId=new GenericPkg();
-		super.itemId=GEN_CAUSE_EVENT;
+		super.packageId = new GenericPkg();
+		super.itemId = GEN_CAUSE_EVENT;
+		super.eventId = GEN_CAUSE_EVENT;
 
 	}
 
@@ -37,13 +37,13 @@ public class GenCauseEvent extends PkgEventItem {
 	 */
 	public final int getEventId() {
 
-		return GEN_CAUSE_EVENT;
+		return super.eventId;
 	}
 
 	/**
 	 * This method is used to get the item identifier from an Item object. The
 	 * implementations of this method in this class returns the id of the Cause
-	 * event of Generic Package.
+	 * event of Generic Package
 	 * 
 	 * @return It shall return {@link GEN_CAUSE_EVENT}.
 	 */

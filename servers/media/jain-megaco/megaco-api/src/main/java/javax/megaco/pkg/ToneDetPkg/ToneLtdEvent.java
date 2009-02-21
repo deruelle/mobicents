@@ -9,7 +9,7 @@ import javax.megaco.pkg.PkgEventItem;
  * Detect package. The methods shall define that this event item belongs to the
  * Tone Detect package.
  */
-public class ToneLtdEvent extends PkgEventItem {
+public final class ToneLtdEvent extends PkgEventItem {
 
 	/**
 	 * Identifies Long tone detect event of the MEGACO Tone Detect Package. Its
@@ -32,7 +32,7 @@ public class ToneLtdEvent extends PkgEventItem {
 	/**
 	 * This method is used to get the event identifier from an Event Item
 	 * object. The implementations of this method in this class returns the id
-	 * of the Long Tone Detect event of Tone Detect Packag
+	 * of the Long Tone Detect event of Tone Detect Package.
 	 * 
 	 * @return It shall {@link TONE_DET_LTD_EVENT}.
 	 */

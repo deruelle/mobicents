@@ -9,8 +9,7 @@ import javax.megaco.pkg.PkgConsts;
  * with Signal Completion event of Generic Package. This class defines all the
  * static information for this parameter.
  */
-public class GenParamTermMeth extends javax.megaco.pkg.PkgItemParam
-{
+public class GenParamTermMeth extends javax.megaco.pkg.PkgItemParam {
 
 	/**
 	 * Identifies Termination method parameter of the MEGACO Generic Package.
@@ -18,22 +17,23 @@ public class GenParamTermMeth extends javax.megaco.pkg.PkgItemParam
 	 */
 	public static final int GEN_PARAM_TERM_METH = 0x0002;
 
-	
-	
-	
+	/**
+	 * Constructs a parameter class for Generic package that specifies the
+	 * parameter as Termination Method.
+	 */
 	public GenParamTermMeth() {
 		super();
 		super.paramId = GEN_PARAM_TERM_METH;
 		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { GenSigComplEvent.GEN_SIG_COMPL_EVENT };
-		
+
 	}
 
 	/**
 	 * The method can be used to get the parameter identifier as defined in the
 	 * MEGACO packages. The implementation of this method in this class returns
-	 * Id of General Cause parameter.
+	 * Id of Termination Method parameter.
 	 * 
 	 * @return paramId - Returns param id as {@link GEN_PARAM_TERM_METH}.
 	 */
@@ -64,7 +64,7 @@ public class GenParamTermMeth extends javax.megaco.pkg.PkgItemParam
 	 *         vector.
 	 */
 	public int[] getParamsDescriptorIds() {
-		return 	super.paramsDescriptorIds;
+		return super.paramsDescriptorIds;
 	}
 
 	/**
@@ -72,8 +72,8 @@ public class GenParamTermMeth extends javax.megaco.pkg.PkgItemParam
 	 * parameters to which the parameter can be set. This method specifies the
 	 * valid item (event/signal) ids to which the parameter can belong to.
 	 * 
-	 * @return The integer value corresponding to Cause Event. Thus this shall
-	 *         return {@link GEN_SIG_COMPL_EVENT}.
+	 * @return The integer value corresponding to Signal Completion Event. Thus
+	 *         this shall return {@link GEN_SIG_COMPL_EVENT}.
 	 */
 	public int[] getParamsItemIds() {
 		return super.paramsItemIds;

@@ -12,17 +12,25 @@ import javax.megaco.pkg.PkgConsts;
 public class ToneGenPkg extends MegacoPkg {
 
 	/**
-	 * This method gets the package ids of all the package which the package had directly or indirectly extended. Package ids are defined in {@link PkgConsts}.
-	 * @return Since this packge extends no other package, this shall return a NULL value.
+	 * This method gets the package ids of all the package which the package had
+	 * directly or indirectly extended. Package ids are defined in
+	 * {@link PkgConsts}.
+	 * 
+	 * @return Since this packge extends no other package, this shall return a
+	 *         NULL value.
 	 */
-	public int[] getExtendedPkgIds() {
+	public final int[] getExtendedPkgIds() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	/**
-	 * This method return the package Id of the MEGACO package for which the object is created. For Tone Generator Package constant value TONE_GEN_PACKAGE shall be returned. 
-	 * @return Constant value {@link TONE_GEN_PACKAGE} indicating Tone Generator Package. 
+	 * This method return the package Id of the MEGACO package for which the
+	 * object is created. For Tone Generator Package constant value
+	 * {@link TONE_GEN_PACKAGE} shall be returned.
+	 * 
+	 * @return Constant value {@link TONE_GEN_PACKAGE} indicating Tone Generator
+	 *         Package.
 	 */
 	public int getPkgId() {
 		return PkgConsts.TONE_GEN_PACKAGE;

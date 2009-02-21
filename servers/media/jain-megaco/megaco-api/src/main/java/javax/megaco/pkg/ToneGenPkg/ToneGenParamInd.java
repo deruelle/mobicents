@@ -13,13 +13,14 @@ import javax.megaco.pkg.PkgItemParam;
 public class ToneGenParamInd extends PkgItemParam {
 
 	/**
-	 * Identifies Inter Signal Duration parameter of the MEGACO Tone Generator Package. Its value shall be set equal to 0x0002.
+	 * Identifies Inter Signal Duration parameter of the MEGACO Tone Generator
+	 * Package. Its value shall be set equal to 0x0002.
 	 */
 	public static final int TONE_GEN_PARAM_IND = 0x0002;
 
 	/**
-	 * Constructs a Tone package parameter class that specifies the parameter as
-	 * tone list.
+	 * Constructs a parameter class for Tone Generator package that specifies
+	 * the parameter as tone list.
 	 */
 	public ToneGenParamInd() {
 		super();
@@ -32,7 +33,7 @@ public class ToneGenParamInd extends PkgItemParam {
 	/**
 	 * The method can be used to get the parameter identifier as defined in the
 	 * MEGACO packages. The implementation of this method in this class returns
-	 * Id of Tone List parameter.
+	 * Id of Inter Signal Duration parameter.
 	 * 
 	 * @return paramId - Returns param id as {@link TONE_GEN_PARAM_IND}.
 	 */
@@ -60,7 +61,7 @@ public class ToneGenParamInd extends PkgItemParam {
 	 * valid item (event/signal) ids to which the parameter can belong to.
 	 * 
 	 * @return The integer value corresponding to Play Tone. Thus this shall
-	 *         return {@link ToneGenPlayToneSignal.TONE_GEN_PLAY_TONE_SIGNAL}.
+	 *         return {@link ContRspSignal.TONE_GEN_PLAY_TONE_SIGNAL}.
 	 */
 	public int[] getParamsItemIds() {
 		return this.paramsItemIds;

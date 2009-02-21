@@ -5,6 +5,11 @@ import javax.megaco.pkg.ParamValueType;
 import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgItemParam;
 
+/**
+ * The MEGACO parameter class for the Tonelist Parameter is associated with
+ * Start Tone Detect, Long Tone Detect and End Tone Detect event of Network
+ * Package. This class defines all the static information for this parameter.
+ */
 public class ToneParamTl extends PkgItemParam {
 
 	/**
@@ -23,8 +28,8 @@ public class ToneParamTl extends PkgItemParam {
 		super();
 		super.paramId = TONE_DET_PARAM_TL;
 		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
-		super.paramsDescriptorIds = new int[] {  DescriptorType.M_EVENT_DESC };
-		this.paramsItemIds = new int[] {ToneStdEvent.TONE_DET_STD_EVENT, ToneEtdEvent.TONE_DET_ETD_EVENT, ToneLtdEvent.TONE_DET_LTD_EVENT };
+		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
+		this.paramsItemIds = new int[] { ToneStdEvent.TONE_DET_STD_EVENT, ToneEtdEvent.TONE_DET_ETD_EVENT, ToneLtdEvent.TONE_DET_LTD_EVENT };
 	}
 
 	/**
@@ -59,8 +64,9 @@ public class ToneParamTl extends PkgItemParam {
 	 * 
 	 * @return The integer values corresponding to start tone detected, end tone
 	 *         detected and long tone detected. Thus this shall return a vector
-	 *         containing the elements {@link ToneStdEvent.TONE_DET_STD_EVENT}, {@link AnalogLineSOnEvt.TONE_DET_ETD_EVENT}
-	 *         and {@link ToneLtdEvent.TONE_DET_LTD_EVENT}.
+	 *         containing the elements {@link ToneStdEvent.TONE_DET_STD_EVENT},
+	 *         {@link AnalogLineSOnEvt.TONE_DET_ETD_EVENT} and
+	 *         {@link ToneLtdEvent.TONE_DET_LTD_EVENT}.
 	 */
 	public int[] getParamsItemIds() {
 		return this.paramsItemIds;

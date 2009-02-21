@@ -9,7 +9,7 @@ import javax.megaco.pkg.PkgSignalItem;
  * package. The methods shall define that this signal item belongs to the Tone
  * Generator package.
  */
-public class ToneGenPlayToneSignal extends PkgSignalItem {
+public final class ToneGenPlayToneSignal extends PkgSignalItem {
 
 	/**
 	 * Identifies Play Tone of the MEGACO Tone Generator Package. Its value
@@ -19,6 +19,10 @@ public class ToneGenPlayToneSignal extends PkgSignalItem {
 
 	protected int signalId = TONE_GEN_PLAY_TONE_SIGNAL;
 
+	/**
+	 * Constructs a Jain MEGACO Object representing signal item of the MEGACO
+	 * Package for Signal Play Tone and Package as Tone Gen.
+	 */
 	public ToneGenPlayToneSignal() {
 		super();
 		super.itemId = TONE_GEN_PLAY_TONE_SIGNAL;
@@ -45,13 +49,17 @@ public class ToneGenPlayToneSignal extends PkgSignalItem {
 	public int getSignalId() {
 		return signalId;
 	}
-	
+
 	/**
-	 * This method gets the package id to which the item belongs. Since the Play Tone signal is defined in the Tone Generator Package of MEGACO protocol, this method returns the ToneGenPkg class object.
+	 * This method gets the package id to which the item belongs. Since the Play
+	 * Tone signal is defined in the Tone Generator Package of MEGACO protocol,
+	 * this method returns the ToneGenPkg class object.is defined in the Tone
+	 * Generator Package of MEGACO protocol, this method returns the ToneGenPkg
+	 * class object.
+	 * 
 	 * @return The package is {@link ToneGenPkg}
 	 */
-	public MegacoPkg getItemsPkgId()
-	{
+	public MegacoPkg getItemsPkgId() {
 		return super.packageId;
 	}
 

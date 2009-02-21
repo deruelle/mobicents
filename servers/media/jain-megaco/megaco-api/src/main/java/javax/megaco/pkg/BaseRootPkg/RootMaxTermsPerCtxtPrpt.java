@@ -11,7 +11,7 @@ import javax.megaco.pkg.PkgPrptyItem;
  * Root package. The methods shall define that this property item belongs to the
  * Root package.
  */
-public class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
+public final class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 
 	/**
 	 * Identifies MaxTermsPerCtxt property of the MEGACO Base Root Package. Its
@@ -19,15 +19,15 @@ public class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 	 */
 	public static final int ROOT_MAX_TERMS_PER_CTXT_PRPT = 0x0002;
 
-	protected int[] itemsDescriptorIds=null;
-	
+	protected int[] itemsDescriptorIds = null;
+
 	public RootMaxTermsPerCtxtPrpt() {
 		super();
 		super.propertyId = ROOT_MAX_TERMS_PER_CTXT_PRPT;
 		super.itemId = ROOT_MAX_TERMS_PER_CTXT_PRPT;
 		super.packageId = new BaseRootPkg();
 		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
-		this.itemsDescriptorIds=new int[]{DescriptorType.M_TERMINATION_STATE_DESC};
+		this.itemsDescriptorIds = new int[] { DescriptorType.M_TERMINATION_STATE_DESC };
 	}
 
 	/**
@@ -42,8 +42,12 @@ public class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 	}
 
 	/**
-	 * The method can be used to get the type of the value as defined in the MEGACO packages. These could be one of string or enumerated value or integer or double value or boolean.
-	 * @return It returns {@link ITEM_PARAM_VALUE_INTEGER} indicating that the parameter is a double.
+	 * The method can be used to get the type of the value as defined in the
+	 * MEGACO packages. These could be one of string or enumerated value or
+	 * integer or double value or boolean.
+	 * 
+	 * @return It returns {@link ITEM_PARAM_VALUE_INTEGER} indicating that the
+	 *         parameter is a double.
 	 */
 	public int getItemValueType() {
 
@@ -68,25 +72,23 @@ public class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 	 * Package of MEGACO protocol, this method returns the value
 	 * BASE_ROOT_PACKAGE constant. This constant is defined in the PkgConsts
 	 * class.
+	 * 
 	 * @return The package id {@link BASE_ROOT_PACKAGE}.
 	 */
 	public MegacoPkg getItemsPkgId() {
 		return this.packageId;
 	}
-	
+
 	/**
-	 * The method can be used to get the descriptor ids corresponding to the parameters to which the parameter can be set.
-	 * @return   This parameter can be present in Event descriptor. It shall thus return a value {@link M_TERMINATION_STATE_DESC} as a part of integer vector.
+	 * The method can be used to get the descriptor ids corresponding to the
+	 * parameters to which the parameter can be set.
+	 * 
+	 * @return This parameter can be present in Event descriptor. It shall thus
+	 *         return a value {@link M_TERMINATION_STATE_DESC} as a part of
+	 *         integer vector.
 	 */
-	public int[] getItemsDescriptorIds()
-	{
-		return itemsDescriptorIds; 
+	public int[] getItemsDescriptorIds() {
+		return itemsDescriptorIds;
 	}
 
-    
-
-
-         
-	
-	
 }

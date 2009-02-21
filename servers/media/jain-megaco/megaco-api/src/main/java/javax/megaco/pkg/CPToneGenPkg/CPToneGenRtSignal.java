@@ -12,10 +12,10 @@ import javax.megaco.pkg.PkgSignalItem;
 public final class CPToneGenRtSignal extends PkgSignalItem {
 
 	/**
-	 * Identifies Call waiting tone signal of the MEGACO Call Progress Tone
-	 * Generator Package. Its value shall be set equal to 0x0032.
+	 * Identifies Ringing tone signal of the MEGACO Call Progress Tone Generator
+	 * Package. Its value shall be set equal to 0x0031.
 	 */
-	public static final int CP_TONE_GEN_BT_SIGNAL = 0x0032;
+	public static final int CP_TONE_GEN_BT_SIGNAL = 0x0031;
 
 	private CPToneGenPkg itemsPkgId = new CPToneGenPkg();
 

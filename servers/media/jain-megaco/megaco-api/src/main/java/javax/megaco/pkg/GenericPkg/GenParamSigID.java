@@ -18,8 +18,10 @@ public class GenParamSigID extends PkgItemParam {
 	 */
 	public static final int GEN_PARAM_SIGID = 0x0001;
 
-	
-	
+	/**
+	 * Constructs a parameter class for Generic package that specifies the
+	 * parameter as Signal Identity.
+	 */
 	public GenParamSigID() {
 		super();
 		super.paramId = GEN_PARAM_SIGID;
@@ -31,7 +33,7 @@ public class GenParamSigID extends PkgItemParam {
 	/**
 	 * The method can be used to get the parameter identifier as defined in the
 	 * MEGACO packages. The implementation of this method in this class returns
-	 * Id of General Cause parameter.
+	 * Id of Signal Identity parameter.
 	 * 
 	 * @return paramId - Returns param id as {@link GEN_PARAM_SIGID}.
 	 */
@@ -70,8 +72,8 @@ public class GenParamSigID extends PkgItemParam {
 	 * parameters to which the parameter can be set. This method specifies the
 	 * valid item (event/signal) ids to which the parameter can belong to.
 	 * 
-	 * @return The integer value corresponding to Cause Event. Thus this shall
-	 *         return {@link GEN_SIG_COMPL_EVENT}.
+	 * @return The integer value corresponding to Signal Completion Event. Thus
+	 *         this shall return {@link GEN_SIG_COMPL_EVENT}.
 	 */
 	public int[] getParamsItemIds() {
 		return super.paramsItemIds;

@@ -13,6 +13,7 @@ public abstract class PkgStatsItem extends PkgItem {
 
 	private ParamRelation paramRelation;
 	private int[] value;
+	protected int statisticsId = -1;
 
 	/**
 	 * Constructs a Jain MEGACO Package Statistics Item Object. This is an

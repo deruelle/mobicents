@@ -11,19 +11,26 @@ import javax.megaco.pkg.PkgConsts;
  */
 public class ToneDetPkg extends MegacoPkg {
 
-	
 	/**
-	 * This method gets the package ids of all the package which the package had directly or indirectly extended. Package ids are defined in {@link PkgConsts.TONE_DET_PACKAGE}.
-	 * @return Since this packge extends no other package, this shall return a NULL value.
+	 * This method gets the package ids of all the package which the package had
+	 * directly or indirectly extended. Package ids are defined in
+	 * {@link PkgConsts.TONE_DET_PACKAGE}.
+	 * 
+	 * @return Since this packge extends no other package, this shall return a
+	 *         NULL value.
 	 */
 	public int[] getExtendedPkgIds() {
-	
+
 		return null;
 	}
 
 	/**
-	 * This method return the package Id of the MEGACO package for which the object is created. For Tone Detection Package constant value {@link PkgConsts.TONE_DET_PACKAGE} shall be returned.
-	 * @return Constant value {@link PkgConsts.TONE_DET_PACKAGE} indicating Tone Detection Package.
+	 * This method return the package Id of the MEGACO package for which the
+	 * object is created. For Tone Detection Package constant value
+	 * {@link PkgConsts.TONE_DET_PACKAGE} shall be returned.
+	 * 
+	 * @return Constant value {@link PkgConsts.TONE_DET_PACKAGE} indicating Tone
+	 *         Detection Package.
 	 */
 	public int getPkgId() {
 		return PkgConsts.TONE_DET_PACKAGE;

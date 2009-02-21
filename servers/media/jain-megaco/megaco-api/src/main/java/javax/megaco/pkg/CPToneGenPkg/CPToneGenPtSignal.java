@@ -4,8 +4,8 @@ import javax.megaco.pkg.MegacoPkg;
 import javax.megaco.pkg.PkgSignalItem;
 
 /**
- * The MEGACO Special Information Tone signal class extends the PkgSignalItem
- * class. This is a final class. This class defines Special Information Tone
+ * The MEGACO Payphone Recognition Tone signal class extends the PkgSignalItem
+ * class. This is a final class. This class defines Payphone Recognition Tone
  * signal of MEGACO Call Progress Tone Generator package. The methods shall
  * define that this signal item belongs to the Call Progress Tone Generator
  * package.

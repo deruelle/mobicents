@@ -11,18 +11,19 @@ import javax.megaco.pkg.PkgPrptyItem;
  * Root package. The methods shall define that this property item belongs to the
  * Root package.
  */
-public class RootNormMGCExecTimePrpt extends PkgPrptyItem {
+public final class RootNormMGCExecTimePrpt extends PkgPrptyItem {
 
 	/**
-	 *Identifies NormMGCExecTime property of the MEGACO Base Root Package. Its value shall be set equal to 0x0004
+	 *Identifies NormMGCExecTime property of the MEGACO Base Root Package. Its
+	 * value shall be set equal to 0x0004.
 	 */
-	public static final int ROOT_NORM_MGC_EXEC_TIME_PRPT  = 0x0004;
+	public static final int ROOT_NORM_MGC_EXEC_TIME_PRPT = 0x0004;
 
 	protected int[] itemsDescriptorIds = null;
 
 	/**
-	 * Constructs a Jain MEGACO Object representing property Item of the MEGACO
-	 * Package for property NormMGExecTime and Package as Base Root.
+	 * Constructs a Jain MEGACO Object representing property item of the MEGACO
+	 * Package for property NormMGCExecTime and Package as Base Root.
 	 */
 	public RootNormMGCExecTimePrpt() {
 		super();
@@ -35,9 +36,9 @@ public class RootNormMGCExecTimePrpt extends PkgPrptyItem {
 	}
 
 	/**
-	 * This method is used to get the property identifier from an Property Item
-	 * object. The implementations of this method in this class returns the id
-	 * of the Normal MG Execution Time property of ROOT Package.
+	 * This method is used to get the item identifier from an Item object. The
+	 * implementations of this method in this class returns the id of the Normal
+	 * MGC Execution Time property of ROOT Package.
 	 * 
 	 * @return It shall return {@link ROOT_NORM_MGC_EXEC_TIME_PRPT}
 	 */
@@ -60,7 +61,7 @@ public class RootNormMGCExecTimePrpt extends PkgPrptyItem {
 	/**
 	 * This method is used to get the property identifier from an Property Item
 	 * object. The implementations of this method in this class returns the id
-	 * of the Normal MG Execution Time property of ROOT Package.
+	 * of the Normal MGC Execution Time property of ROOT Package.
 	 * 
 	 * @return It shall return {@link ROOT_NORM_MGC_EXEC_TIME_PRPT}
 	 */
@@ -71,7 +72,7 @@ public class RootNormMGCExecTimePrpt extends PkgPrptyItem {
 
 	/**
 	 * This method gets the package id to which the item belongs. Since the
-	 * Normal MG Execution Time property is defined in the Base ROOT Package of
+	 * Normal MGC Execution Time property is defined in the Base ROOT Package of
 	 * MEGACO protocol, this method returns the value {@link BASE_ROOT_PACKAGE}
 	 * constant. This constant is defined in the PkgConsts class.
 	 */

@@ -12,7 +12,8 @@ import javax.megaco.pkg.PkgEventItem;
 public final class CPToneDetCtEvt extends PkgEventItem {
 
 	/**
-	 * Identifies Congestion Tone event of the MEGACO Call Progress Tone Detect Package. Its value shall be set equal to 0x0033.
+	 * Identifies Congestion Tone event of the MEGACO Call Progress Tone Detect
+	 * Package. Its value shall be set equal to 0x0033.
 	 */
 	public static final int CP_TONE_DET_CT_EVENT = 0x0033;
 

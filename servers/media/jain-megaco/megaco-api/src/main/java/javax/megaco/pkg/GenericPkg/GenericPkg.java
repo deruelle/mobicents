@@ -24,7 +24,7 @@ public class GenericPkg extends MegacoPkg {
 	 */
 	public GenericPkg() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class GenericPkg extends MegacoPkg {
 	 *         NULL value.
 	 */
 	public final int[] getExtendedPkgIds() {
-		
+
 		return null;
 	}
 

@@ -9,7 +9,7 @@ import javax.megaco.pkg.PkgSignalItem;
  * DTMF package. The methods shall define that this signal item belongs to the
  * DTMF package.
  */
-public class DTMFGenDHashSignal extends PkgSignalItem {
+public final class DTMFGenDHashSignal extends PkgSignalItem {
 
 	/**
 	 * Identifies signal id DTMF character # of the MEGACO DTMF Generator

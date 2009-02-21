@@ -18,13 +18,16 @@ public class DTMFDetParamMeth extends PkgItemParam {
 	public static final int DTMF_DET_PARAM_METH = 0x0003;
 	private DTMFDetPkg itemsPackageId = new DTMFDetPkg();
 
+	/**
+	 * Constructs a parameter class for DTMF Detect package that specifies the
+	 * parameter as Termination Method.
+	 */
 	public DTMFDetParamMeth() {
 		super();
 
 		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramId = DTMF_DET_PARAM_METH;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
-		//FIXME: is this ok?? should not it be  DTMF_DET_PARAM_METH?
 		super.paramsItemIds = new int[] { DTMFDetCeEvt.DTMF_DET_CE_EVENT };
 	}
 

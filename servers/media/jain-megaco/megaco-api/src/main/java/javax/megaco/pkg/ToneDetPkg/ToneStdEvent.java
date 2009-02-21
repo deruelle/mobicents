@@ -3,7 +3,13 @@ package javax.megaco.pkg.ToneDetPkg;
 import javax.megaco.pkg.MegacoPkg;
 import javax.megaco.pkg.PkgEventItem;
 
-public class ToneStdEvent extends PkgEventItem {
+/**
+ * The MEGACO Start Tone Detect event class extends the PkgEventItem class. This
+ * is a final class. This class defines Start Tone Detect event of MEGACO Tone
+ * Detect package. The methods shall define that this event item belongs to the
+ * Tone Detect package.
+ */
+public final class ToneStdEvent extends PkgEventItem {
 
 	/**
 	 * Identifies Start tone detect event of the MEGACO Tone Detect Package. Its
@@ -26,8 +32,9 @@ public class ToneStdEvent extends PkgEventItem {
 	/**
 	 * This method is used to get the event identifier from an Event Item
 	 * object. The implementations of this method in this class returns the id
-	 * of the Start Tone Detect event of Tone Detect Package. * @return It shall
-	 * return {@link TONE_DET_STD_EVENT}.
+	 * of the Start Tone Detect event of Tone Detect Package.
+	 * 
+	 * @return It shall return {@link TONE_DET_STD_EVENT}.
 	 */
 	public int getEventId() {
 
@@ -49,7 +56,7 @@ public class ToneStdEvent extends PkgEventItem {
 	/**
 	 * This method gets the package to which the item belongs. Since the Start
 	 * Tone Detect event is defined in the Tone Detect Package of MEGACO
-	 * protocol, this method returns the ToneDetPkg class object .
+	 * protocol, this method returns the ToneDetPkg class object ..
 	 * 
 	 * @return The package is {@link ToneDetPkg}.
 	 */

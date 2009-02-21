@@ -11,7 +11,7 @@ import javax.megaco.pkg.PkgPrptyItem;
  * package. The methods shall define that this property item belongs to the Root
  * package.
  */
-public class RootNormMGExecTimePrpt extends PkgPrptyItem {
+public final class RootNormMGExecTimePrpt extends PkgPrptyItem {
 
 	/**
 	 * Identifies NormMGExecTime property of the MEGACO Base Root Package. Its

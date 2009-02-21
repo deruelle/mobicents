@@ -6,6 +6,11 @@ import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgItemParam;
 import javax.megaco.pkg.ToneGenPkg.ToneGenPlayToneSignal;
 
+/**
+ * The MEGACO parameter class for the Failure Cause Parameter is associated with
+ * Cause event of Generic Package. This class defines all the static information
+ * for this parameter.
+ */
 public class GenParamFailureCause extends PkgItemParam {
 
 	/**
@@ -14,8 +19,6 @@ public class GenParamFailureCause extends PkgItemParam {
 	 */
 	public static final int GEN_PARAM_GENERAL_CAUSE = 0x0002;
 
-	
-	
 	public GenParamFailureCause() {
 		super();
 
@@ -28,7 +31,7 @@ public class GenParamFailureCause extends PkgItemParam {
 	/**
 	 * The method can be used to get the parameter identifier as defined in the
 	 * MEGACO packages. The implementation of this method in this class returns
-	 * Id of General Cause parameter.
+	 * Id of Failure Cause parameter.
 	 * 
 	 * @return paramId - Returns param id as {@link GEN_PARAM_GENERAL_CAUSE}.
 	 */
@@ -59,7 +62,7 @@ public class GenParamFailureCause extends PkgItemParam {
 	 *         vector.
 	 */
 	public int[] getParamsDescriptorIds() {
-		return super.paramsDescriptorIds ;
+		return super.paramsDescriptorIds;
 	}
 
 	/**

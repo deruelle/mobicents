@@ -9,7 +9,7 @@ import javax.megaco.pkg.PkgEventItem;
  * package. The methods shall define that this event item belongs to the Analog
  * Line Supervision package.
  */
-public class AnalogLineSOnEvt extends PkgEventItem {
+public final class AnalogLineSOnEvt extends PkgEventItem {
 	/**
 	 * Identifies On Hook event of the MEGACO Analog Line Supervision Package.
 	 * Its value shall be set equal to 0x0004.

@@ -4,11 +4,10 @@ import javax.megaco.pkg.MegacoPkg;
 import javax.megaco.pkg.PkgSignalItem;
 
 /**
- * The MEGACO Special Information Tone signal class extends the PkgSignalItem
- * class. This is a final class. This class defines Special Information Tone
- * signal of MEGACO Call Progress Tone Generator package. The methods shall
- * define that this signal item belongs to the Call Progress Tone Generator
- * package.
+ * The MEGACO Warning Tone signal class extends the PkgSignalItem class. This is
+ * a final class. This class defines Warning Tone signal of MEGACO Call Progress
+ * Tone Generator package. The methods shall define that this signal item
+ * belongs to the Call Progress Tone Generator package.
  */
 public final class CPToneGenWtSignal extends PkgSignalItem {
 
@@ -22,7 +21,7 @@ public final class CPToneGenWtSignal extends PkgSignalItem {
 
 	/**
 	 * Constructs a Jain MEGACO Object representing signal Item of the MEGACO
-	 * Package for signal Ringing Tone and Package as Call Progress Tone
+	 * Package for signal Warning Tone and Package as Call Progress Tone
 	 * Generator.
 	 */
 	public CPToneGenWtSignal() {
@@ -55,10 +54,9 @@ public final class CPToneGenWtSignal extends PkgSignalItem {
 	}
 
 	/**
-	 * This method is used to get the signal identifier from an Signal Item
-	 * object. The implementations of this method in this class returns the id
-	 * of the Special Information Tone signal of Call Progress Tone Generator
-	 * Package.
+	 * This method gets the package to which the item belongs. Since the Warning
+	 * Tone signal is defined in the Call Progress Tone Generator Package of
+	 * MEGACO protocol, this method returns the CPToneGenPkg class object.
 	 * 
 	 * @return The package is CPToneGenPkg
 	 */

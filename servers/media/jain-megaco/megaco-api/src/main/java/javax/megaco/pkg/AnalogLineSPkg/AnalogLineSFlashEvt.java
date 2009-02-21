@@ -9,7 +9,7 @@ import javax.megaco.pkg.PkgEventItem;
  * package. The methods shall define that this event item belongs to the Analog
  * Line Supervision package.
  */
-public class AnalogLineSFlashEvt extends PkgEventItem {
+public final class AnalogLineSFlashEvt extends PkgEventItem {
 	/**
 	 * Identifies Flash Hook event of the MEGACO Analog Line Supervision
 	 * Package. Its value shall be set equal to 0x0006.

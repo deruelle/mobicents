@@ -8,7 +8,7 @@ import javax.megaco.pkg.PkgEventItem;
  * DTMF Detection package. The methods shall define that this event item belongs
  * to the DTMF Detection package.
  */
-public class DTMFDetCeEvt extends PkgEventItem {
+public final class DTMFDetCeEvt extends PkgEventItem {
 
 	/**
 	 * Identifies Digitmap Completion Event of the MEGACO DTMF Detection
