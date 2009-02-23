@@ -17,7 +17,6 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.dsp.Processor;
-import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.events.dtmf.DtmfEvent;
 
 /**
@@ -49,9 +48,11 @@ public class DtmfDetector extends AbstractSink {
     private MediaSource source;
     
     private DTMFMode mode = DTMFMode.AUTO;
+    protected String name;
     
     public DtmfDetector(String name) {
     	super(name);
+    	this.name = name;
         digitBuffer = new DtmfBuffer(this);
         inband = new InbandDetector(this);
         rfc2833 = new Rfc2833Detector(this);

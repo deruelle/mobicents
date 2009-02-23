@@ -27,7 +27,14 @@ import org.mobicents.media.server.impl.AbstractSink;
  * Female voice are known to once in a while trigger the recognition of a DTMF
  * tone. For analog lines inband is the only possible means to transmit DTMF.
  * 
+ * Though Inband DTMF detection may work for other codecs like SPEEX, GSM, G729
+ * as DtmfDetector is using DSP in front of InbandDetector there is no guarantee
+ * that it will always work. In future MMS may not have DSP in front of
+ * InbandDetector and hence Inband detection for codecs like SPEEX, GSM, G729
+ * may completely stop
+ * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public class InbandDetector extends AbstractSink {
 
@@ -44,18 +51,41 @@ public class InbandDetector extends AbstractSink {
 	private int[] highFreq = new int[] { 1209, 1336, 1477, 1633 };
 	private byte[] localBuffer;
 	private int offset = 0;
-	private Filter filter = null;
+
 	private boolean started = false;
 	private DtmfDetector detector;
+
+	private int N = 16 * TONE_DURATION / 2;
+	private double scale = (double) TONE_DURATION / (double) 1000;
+	private double[] ham = new double[N];
+	private double[] realWLowFreq = new double[lowFreq.length];
+	private double[] imagWLowFreq = new double[lowFreq.length];
+
+	private double[] realWHighFreq = new double[highFreq.length];
+	private double[] imagWHighFreq = new double[highFreq.length];
 
 	/**
 	 * Creates new instance of Detector.
 	 */
 	public InbandDetector(DtmfDetector detector) {
-		super("InbandDetector");
+		super("InbandDetector " + detector.name);
 		this.detector = detector;
 		localBuffer = new byte[16 * TONE_DURATION];
-		filter = new Filter();
+
+		// hamming window
+		for (int i = 0; i < N; i++) {
+			ham[i] = (0.54 - 0.46 * Math.cos(2 * Math.PI * i / N));
+		}
+
+		for (int i = 0; i < lowFreq.length; i++) {
+			realWLowFreq[i] = 2.0 * Math.cos(2.0 * scale * Math.PI * lowFreq[i] / N);
+			imagWLowFreq[i] = Math.sin(2.0 * scale * Math.PI * lowFreq[i] / N);
+		}
+
+		for (int i = 0; i < highFreq.length; i++) {
+			realWHighFreq[i] = 2.0 * Math.cos(2.0 * scale * Math.PI * highFreq[i] / N);
+			imagWHighFreq[i] = Math.sin(2.0 * scale * Math.PI * highFreq[i] / N);
+		}
 	}
 
 	/**
@@ -82,6 +112,7 @@ public class InbandDetector extends AbstractSink {
 	 * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
 	 */
 	public void receive(Buffer buffer) {
+
 		try {
 			byte[] data = (byte[]) buffer.getData();
 			int len = Math.min(localBuffer.length - offset, data.length);
@@ -99,8 +130,8 @@ public class InbandDetector extends AbstractSink {
 				localBuffer = new byte[localBuffer.length];
 				offset = 0;
 
-				double p[] = getPower(lowFreq, signal);
-				double P[] = getPower(highFreq, signal);
+				double p[] = getPower(lowFreq, realWLowFreq, imagWLowFreq, signal);
+				double P[] = getPower(highFreq, realWHighFreq, imagWHighFreq, signal);
 
 				String tone = getTone(p, P);
 				if (tone != null) {
@@ -122,12 +153,67 @@ public class InbandDetector extends AbstractSink {
 	 *            signal
 	 * @return the power for the respective frequency
 	 */
-	private double[] getPower(int[] freq, double[] data) {
+	private double[] getPower(int[] freq, double[] realW, double[] imagW, double[] data) {
 		double[] power = new double[freq.length];
-		for (int i = 0; i < freq.length; i++) {
-			power[i] = filter.getPower(freq[i], data, (double) TONE_DURATION / (double) 1000);
+
+		double d1 = 0.0;
+		double d2 = 0.0;
+		double y = 0;
+		
+		for (int j = 0; j < freq.length; j++) {
+
+			double f = freq[j];
+
+			// hamming window
+			for (int i = 0; i < N; i++) {
+				data[i] *= ham[i];
+			}
+
+			d1 = 0.0;
+			d2 = 0.0;
+			y = 0;
+
+			for (int n = 0; n < N; ++n) {
+				y = data[n] + realW[j] * d1 - d2;
+				d2 = d1;
+				d1 = y;
+			}
+
+			double resultr = 0.5 * realW[j] * d1 - d2;
+			double resulti = imagW[j] * d1;
+
+			// The profiling shows that Math.sqrt() is really not taking much
+			// CPU. If you think otherwise try using the calculateSqRt() method
+			// using Babylonian algo and profile.
+			power[j] = Math.sqrt((resultr * resultr) + (resulti * resulti));
 		}
 		return power;
+	}
+
+	// This is Babylonian method of calculating Sq Root
+	// http://en.wikipedia.org/wiki/Babylonian_method#Babylonian_method
+	private double calculateSqRt(double n) {
+
+		double x = n * 0.25;
+		double a = 0.0;
+		
+		// The loop shows how many iteration it took to get the Sq Root. The
+		// lesser the iteration the fast is calculation and less is CPU. This
+		// depends on approximation 'x' above. If this can some how be close to
+		// Sq Root value the iteration can be reduced greatly
+		
+		// int loop = 0;
+
+		do {
+			// loop++;
+			x = 0.5 * (x + n / x);
+			a = x * x - n;
+			if (a < 0)
+				a = -a;
+
+		} while (a > 0.00001);
+
+		return x;
 	}
 
 	/**
