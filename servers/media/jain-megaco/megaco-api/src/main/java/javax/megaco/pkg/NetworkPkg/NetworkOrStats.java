@@ -58,8 +58,8 @@ public final class NetworkOrStats extends PkgStatsItem {
 	 * 
 	 * @return The package id {@link PkgConsts.NETWORK_PACKAGE}.
 	 */
-	public int getItemsPkgId() {
-		return super.packageId.getPkgId();
+	public static int getItemsPkgId() {
+		return PkgConsts.NETWORK_PACKAGE;
 	}
 	FIXME: whats that ??
 	@Override
