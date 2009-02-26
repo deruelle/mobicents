@@ -83,13 +83,12 @@
 
     <!-- File Structure -->
     <bean name="FileStructure" class="org.jboss.deployers.vfs.plugins.structure.file.FileStructure">
-       <!-- Unless specified the default list of suffixes is -service.xml, -beans.xml, -ds.xml, -aop.xml -->
+       <!-- Unless specified the default list of suffixes is -service.xml, -beans.xml, -aop.xml -->
        <constructor>
           <parameter>
              <set elementClass="java.lang.String">
                 <value>-service.xml</value>
-                <value>-beans.xml</value>
-                <value>-ds.xml</value>
+                <value>-beans.xml</value>               
                 <value>-aop.xml</value>
              </set>
           </parameter>

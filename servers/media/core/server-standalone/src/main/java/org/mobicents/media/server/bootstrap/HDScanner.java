@@ -148,7 +148,6 @@ public class HDScanner implements Runnable
       }
       files.clear();
       files.addAll(tmp);
-      log.info("Process deployments...");
       helper.process();
    }
 }

@@ -39,8 +39,7 @@ public class JMXMain
       {
          Main.deploy(
                "${"+Main.MMS_HOME+"}/bootstrap/system-jmx-beans.xml",
-               "${"+Main.MMS_HOME+"}/bootstrap/aop-beans.xml",
-               "${"+Main.MMS_HOME+"}/bootstrap/varia-deployers-beans.xml"
+               "${"+Main.MMS_HOME+"}/bootstrap/aop-beans.xml"            
          );
 
          Main.validate();
