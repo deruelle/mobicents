@@ -1,27 +1,50 @@
 <assembly>
-  <id>pojo</id>
-  <formats>
-    <format>zip</format>
-  </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
-  <files>
-    <file>
-      <source>src/main/config/pojo-beans.xml</source>
-      <destName>jboss-beans.xml</destName>
-    </file>
-  </files>
-  <dependencySets>
-    <dependencySet>
-      <outputDirectory>/lib</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-       <includes>
-	       <include>org.mobicents.servers.media:mms-spi</include>
-	       <include>org.mobicents.servers.media:mms-impl</include>
-       </includes>
-     </dependencySet>
-  </dependencySets>
-  <componentDescriptors>
-    <componentDescriptor>src/main/assembly/common.xml</componentDescriptor>
-  </componentDescriptors>
+	<id>pojo</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<files>
+		<file>
+			<source>src/main/config/bootstrap-beans.xml</source>
+			<destName>bootstrap/bootstrap-beans.xml</destName>
+		</file>
+
+		<file>
+			<source>src/main/config/aop-beans.xml</source>
+			<destName>bootstrap/aop-beans.xml</destName>
+		</file>
+
+		<file>
+			<source>src/main/config/system-jmx-beans.xml</source>
+			<destName>bootstrap/system-jmx-beans.xml</destName>
+		</file>
+
+		<file>
+			<source>src/main/config/varia-deployers-beans.xml</source>
+			<destName>bootstrap/varia-deployers-beans.xml</destName>
+		</file>
+		
+		<file>
+			<source>src/main/config/pojo-beans.xml</source>
+			<destName>deploy/pojo-beans.xml</destName>
+		</file>		
+
+	</files>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/lib</outputDirectory>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<includes>
+				<include>org.mobicents.servers.media:mms-spi</include>
+				<include>org.mobicents.servers.media:mms-impl</include>
+			</includes>
+		</dependencySet>
+	</dependencySets>
+	<componentDescriptors>
+		<componentDescriptor>
+			src/main/assembly/common.xml
+		</componentDescriptor>
+	</componentDescriptors>
 </assembly>

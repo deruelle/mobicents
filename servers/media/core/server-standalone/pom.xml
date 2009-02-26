@@ -15,15 +15,17 @@
 
 
 	<dependencies>
+
+
 		<dependency>
 			<artifactId>mms-spi</artifactId>
-			<groupId>${pom.groupId}</groupId>
-			<version>${pom.version}</version>
+			<groupId>org.mobicents.servers.media</groupId>
+			<version>2.0.0.BETA1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<artifactId>mms-impl</artifactId>
-			<groupId>${pom.groupId}</groupId>
-			<version>${pom.version}</version>
+			<groupId>org.mobicents.servers.media</groupId>
+			<version>2.0.0.BETA1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -34,7 +36,7 @@
 		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>
-			<version>1.0.MOBICENTS</version>			
+			<version>1.0.MOBICENTS</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.external.tritonus</groupId>
@@ -46,26 +48,88 @@
 			<artifactId>tritonus_gsm</artifactId>
 			<version>0.3.6</version>
 		</dependency>
+
+
+		<!-- Compile (global dependencies) -->
+		<dependency>
+			<groupId>org.jboss.deployers</groupId>
+			<artifactId>jboss-deployers-vfs-spi</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>jboss</groupId>
+					<artifactId>jboss-vfs</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>apache-xerces</groupId>
+			<artifactId>xml-apis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-vfs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-common-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.logging</groupId>
+			<artifactId>jboss-logging-log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-dependency</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.deployers</groupId>
+			<artifactId>jboss-deployers-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.deployers</groupId>
+			<artifactId>jboss-deployers-structure-spi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.deployers</groupId>
+			<artifactId>jboss-deployers-vfs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.deployers</groupId>
+			<artifactId>jboss-deployers-core-spi</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.microcontainer</groupId>
 			<artifactId>jboss-kernel</artifactId>
+		</dependency>
+		<!-- Comment this if you want plain POJO bootstrap -->
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-aop-mc-int</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.aop</groupId>
 			<artifactId>jboss-aop</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.microcontainer</groupId>
-			<artifactId>jboss-aop-mc-int</artifactId>
-    		</dependency>
-		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-system</artifactId>			
+			<groupId>org.jboss.aop</groupId>
+			<artifactId>jboss-aop-asintegration-mc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>jboss</groupId>
-			<artifactId>jboss-jmx</artifactId>			
-		</dependency>		
+			<groupId>org.jboss.aop</groupId>
+			<artifactId>jboss-aop-asintegration-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.aop</groupId>
+			<artifactId>jboss-aop-asintegration-jmx</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.jbossas</groupId>
+			<artifactId>jboss-as-system-jmx</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -84,7 +148,9 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptors>
-						<descriptor>src/main/assembly/pojo.xml</descriptor>
+						<descriptor>
+							src/main/assembly/pojo.xml
+						</descriptor>
 					</descriptors>
 					<finalName>${pom.artifactId}</finalName>
 				</configuration>
@@ -98,6 +164,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-  </build>
+	</build>
 
 </project>
