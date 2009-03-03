@@ -25,7 +25,7 @@ public class NetworkParamCs extends PkgItemParam {
 	public NetworkParamCs() {
 		super();
 		super.paramId = NETWORK_PARAM_CS;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsItemIds = new int[] { NetworkNetfailEvt.NETWORK_NETFAIL_EVENT };
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 	}
@@ -50,7 +50,7 @@ public class NetworkParamCs extends PkgItemParam {
 	 *         indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

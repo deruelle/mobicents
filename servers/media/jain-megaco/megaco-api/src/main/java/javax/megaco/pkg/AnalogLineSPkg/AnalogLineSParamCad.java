@@ -27,7 +27,7 @@ public class AnalogLineSParamCad extends PkgItemParam {
 	public AnalogLineSParamCad() {
 		super();
 		super.paramId = ANALOG_LINE_PARAM_CAD;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_SIGNAL_DESC };
 
 		// FIXME: ANALOG_LINE_RING_SIGNAL ??
@@ -56,7 +56,7 @@ public class AnalogLineSParamCad extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

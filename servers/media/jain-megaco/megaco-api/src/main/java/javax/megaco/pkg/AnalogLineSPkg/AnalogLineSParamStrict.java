@@ -27,7 +27,7 @@ public class AnalogLineSParamStrict extends PkgItemParam {
 	public AnalogLineSParamStrict() {
 		super();
 		super.paramId = ANALOG_LINE_PARAM_STRICT;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
 		this.paramsItemIds = new int[] { AnalogLineSOnEvt.ANALOG_LINE_ONHOOK_EVENT, AnalogLineSOffEvt.ANALOG_LINE_OFFHOOK_EVENT };
 	}
@@ -54,7 +54,7 @@ public class AnalogLineSParamStrict extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

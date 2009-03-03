@@ -12,7 +12,8 @@ public abstract class PkgSignalItem extends PkgItem {
 	public PkgSignalItem() {
 
 	}
-	protected int signalId=-1;
+
+	protected int signalId = -1;
 	protected MegacoPkg packageId;
 
 	/**
@@ -50,8 +51,16 @@ public abstract class PkgSignalItem extends PkgItem {
 		return this.packageId;
 	}
 
-	public void setAssociatedPkgId(MegacoPkg packageId)
-			throws javax.megaco.InvalidArgumentException {
+	/**
+	 * This method overrides the corresponding method in PkgItem. This method
+	 * would set a flag to indicate that the dynamic package has been associated
+	 * and would not allow the application to overwrite the package association
+	 * once the parameter has been set for the item. If the package name can be
+	 * linked, then this method inturn calls the corresponding method of the
+	 * PkgItem class.
+	 * @param packageId - The object reference of the package object to which the item is dynamically associated.
+	 */
+	public void setAssociatedPkgId(MegacoPkg packageId) throws javax.megaco.InvalidArgumentException {
 		// TODO
 	}
 
@@ -60,15 +69,13 @@ public abstract class PkgSignalItem extends PkgItem {
 		return null;
 	}
 
-	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo)
-			throws javax.megaco.InvalidArgumentException,
-			javax.megaco.MethodInvocationException {
+	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
 		// TODO
 	}
-	
+
 	@Override
-	public java.lang.String toString(){
-		//TODO
+	public java.lang.String toString() {
+		// TODO
 		return this.toString();
 	}
 }

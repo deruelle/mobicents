@@ -27,7 +27,7 @@ public class AnalogLineSParamMaxdur extends PkgItemParam {
 	public AnalogLineSParamMaxdur() {
 		super();
 		super.paramId = ANALOG_LINE_PARAM_MAXDUR;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
 
 		this.paramsItemIds = new int[] { AnalogLineSFlashEvt.ANALOG_LINE_FLASH_EVENT };
@@ -55,7 +55,7 @@ public class AnalogLineSParamMaxdur extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

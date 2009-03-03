@@ -25,7 +25,7 @@ public class ToneGenParamInd extends PkgItemParam {
 	public ToneGenParamInd() {
 		super();
 		super.paramId = TONE_GEN_PARAM_IND;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_SIGNAL_DESC };
 		this.paramsItemIds = new int[] { ToneGenPlayToneSignal.TONE_GEN_PLAY_TONE_SIGNAL };
 	}
@@ -52,7 +52,7 @@ public class ToneGenParamInd extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

@@ -12,12 +12,12 @@ import javax.megaco.InvalidArgumentException;
  * 
  * 
  */
-public abstract class PkgItemParam implements java.io.Serializable {
+public abstract class PkgItemParam  extends PkgValueItem implements java.io.Serializable {
 
+	//FIXME: jsr jdoc does not extend
 	private ParamRelation paramRelation;
 
 	protected int paramId = -1;
-	protected int paramValueType = -1;
 	protected int[] paramsDescriptorIds = null;
 	protected int[] paramsItemIds = null;
 
@@ -60,21 +60,7 @@ public abstract class PkgItemParam implements java.io.Serializable {
 		this.paramRelation = paramRelation;
 	}
 
-	public final void setParamsValue(java.lang.String[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
-		// TODO
-	}
 
-	public final void setParamsValue(int[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
-		// TODO
-	}
-
-	public final void setParamsValue(boolean value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
-		// TODO
-	}
-
-	public final void setParamsValue(double[] value) throws javax.megaco.MethodInvocationException, javax.megaco.InvalidArgumentException {
-		// TODO
-	}
 
 	@Override
 	public java.lang.String toString() {

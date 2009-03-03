@@ -25,7 +25,7 @@ public class RTPParamRtppltype extends PkgItemParam {
 	public RTPParamRtppltype() {
 		super();
 		super.paramId = RTP_PARAM_PL_TYPE;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { RTPPltransEvt.RTP_PLTRANS_EVENT };
 	}
@@ -53,7 +53,7 @@ public class RTPParamRtppltype extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

@@ -26,7 +26,7 @@ public class ToneParamDur extends PkgItemParam {
 	public ToneParamDur() {
 		super();
 		super.paramId = TONE_DET_PARAM_DUR;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		this.paramsItemIds = new int[] {  ToneEtdEvent.TONE_DET_ETD_EVENT, ToneLtdEvent.TONE_DET_LTD_EVENT };
 	}
@@ -53,7 +53,7 @@ public class ToneParamDur extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

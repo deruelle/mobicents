@@ -25,7 +25,7 @@ public class DTMFDetParamMeth extends PkgItemParam {
 	public DTMFDetParamMeth() {
 		super();
 
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramId = DTMF_DET_PARAM_METH;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { DTMFDetCeEvt.DTMF_DET_CE_EVENT };
@@ -52,7 +52,7 @@ public class DTMFDetParamMeth extends PkgItemParam {
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	public DTMFDetPkg getItemsPackageId() {

@@ -25,7 +25,7 @@ public class ContParamRes extends PkgItemParam {
 	public ContParamRes() {
 		super();
 		super.paramId = CONT_PARAM_RES;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
 		super.paramsItemIds = new int[] { ContComplEvt.CONT_COMPL_EVENT };
 	}
@@ -51,7 +51,7 @@ public class ContParamRes extends PkgItemParam {
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

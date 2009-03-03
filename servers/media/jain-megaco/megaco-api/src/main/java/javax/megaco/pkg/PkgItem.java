@@ -1,6 +1,7 @@
 package javax.megaco.pkg;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * The MEGACO item class is defined as the base class for all the items in
@@ -14,6 +15,7 @@ public class PkgItem implements Serializable {
 	protected int itemId;
 	protected int itemType;
 	protected MegacoPkg packageId;
+	protected MegacoPkg associatedPkgId = null;
 
 	/**
 	 * Constructs a Jain MEGACO Item Object. This class may be derived by the
@@ -82,10 +84,9 @@ public class PkgItem implements Serializable {
 	 *             associated and the item type too denotes anything other than
 	 *             M_ITEM_ALL.
 	 */
-	public final MegacoPkg getAssociatedPkgId()
-			throws javax.megaco.ParameterNotSetException {
-		// TODO
-		return null;
+	public final MegacoPkg getAssociatedPkgId() throws javax.megaco.ParameterNotSetException {
+		// FIXME: Add exception checks
+		return this.associatedPkgId;
 	}
 
 	/**
@@ -110,14 +111,38 @@ public class PkgItem implements Serializable {
 	 *             or the package is not one of the ancestor package of the
 	 *             package, to which the item belongs.
 	 */
-	public void setAssociatedPkgId(MegacoPkg packageId)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
+	public void setAssociatedPkgId(MegacoPkg packageId) throws javax.megaco.InvalidArgumentException {
+		// FIXME: addd exception checks
+		this.associatedPkgId = packageId;
 	}
 
 	@Override
 	public java.lang.String toString() {
 		// TODO
-		return "package Id = " + this.packageId;
+		return this.getClass().getSimpleName() + " : ItemId = " + this.itemId + " : PackageId = " + this.packageId + " : Type = " + typeToString(this.itemType);
+	}
+
+	/**
+	 * This is helper method.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	protected static String typeToString(int itemType) {
+
+		switch (itemType) {
+		case ParamValueType.M_ITEM_PARAM_VALUE_BOOLEAN:
+			return "boolean";
+		case ParamValueType.M_ITEM_PARAM_VALUE_DOUBLE:
+			return "double";
+		case ParamValueType.M_ITEM_PARAM_VALUE_INTEGER:
+			return "integer";
+		case ParamValueType.M_ITEM_PARAM_VALUE_STRING:
+			return "String";
+		default:
+			return "Type not known: " + itemType;
+
+		}
+
 	}
 }

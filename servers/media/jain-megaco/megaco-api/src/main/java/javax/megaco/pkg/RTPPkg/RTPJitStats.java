@@ -1,5 +1,6 @@
 package javax.megaco.pkg.RTPPkg;
 
+import javax.megaco.pkg.MegacoPkg;
 import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgStatsItem;
 
@@ -49,8 +50,8 @@ public final class RTPJitStats extends PkgStatsItem {
 	 * 
 	 * @return The package id RTP_PACKAGE.
 	 */
-	public static int getItemsPkgId() {
-		return PkgConsts.RTP_PACKAGE;
+	public MegacoPkg getItemsPkgId() {
+		return super.packageId;
 	}
 
 	/**

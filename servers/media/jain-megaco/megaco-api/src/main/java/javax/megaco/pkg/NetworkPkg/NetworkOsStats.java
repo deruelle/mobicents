@@ -1,5 +1,6 @@
 package javax.megaco.pkg.NetworkPkg;
 
+import javax.megaco.pkg.MegacoPkg;
 import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgStatsItem;
 
@@ -58,15 +59,15 @@ public final class NetworkOsStats extends PkgStatsItem {
 	 * 
 	 * @return The package id {@link PkgConsts.NETWORK_PACKAGE}.
 	 */
-	public static int getItemsPkgId() {
-		return PkgConsts.NETWORK_PACKAGE;
+	public MegacoPkg getItemsPkgId() {
+		return super.packageId;
 	}
 
 	FIXME: whats that ??
 	@Override
 	public int getItemValueType() {
 		// TODO Auto-generated method stub
-		return 0;
+		return super.paramValueType;
 	}
 
 	@Override

@@ -1,5 +1,11 @@
 package javax.megaco.pkg;
 
+import java.util.Arrays;
+
+import javax.megaco.InvalidArgumentException;
+import javax.megaco.MethodInvocationException;
+import javax.megaco.ParameterNotSetException;
+
 /**
  * The MEGACO property item class is an abstract class defined as the base class
  * for all the property items in the MEGACO Package. This class shall be used
@@ -8,11 +14,11 @@ package javax.megaco.pkg;
  * 
  * 
  */
-public abstract class PkgPrptyItem extends PkgItem {
+public abstract class PkgPrptyItem extends PkgValueItem {
 
 	private ParamRelation paramRelation;
-	protected int itemValueType=-1;
-	protected int propertyId=-1;
+	protected int itemValueType = -1;
+	protected int propertyId = -1;
 
 	/**
 	 * Constructs a Jain MEGACO Pacakge Property Item Object. This is an
@@ -81,33 +87,49 @@ public abstract class PkgPrptyItem extends PkgItem {
 	 *         The values shall be defined in ParamRelation.
 	 * @throws javax.megaco.ParameterNotSetException
 	 */
-	public final int getItemsValueRelation()
-			throws javax.megaco.ParameterNotSetException {
-		return this.paramRelation.getParamRelation();
+	public final int getItemsValueRelation() throws javax.megaco.ParameterNotSetException {
+		if (this.paramRelation == null) {
+			throw new ParameterNotSetException("Value relation has not been set.");
+		}
+
+		return paramRelation.getParamRelation();
 	}
 
-	public final void setItemValue(java.lang.String[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
+	/**
+	 * The method can be used to set the relation of the value as defined in the
+	 * MEGACO packages. The relation operator can be one of equal, not equal,
+	 * greater than or less than operator for single value. The MEGACO parameter
+	 * is accompanied by a parameter value that can be single value or set of
+	 * values or sublist of values or range of values. The relation operator can
+	 * be equal when the value is set or sublist or range. This method specifies
+	 * both the relation operator and also specifies whether the accompaning
+	 * parameter value is single value or set of values or sublist of values or
+	 * range of value. If the relation specifies set or range or sublist, it
+	 * automatically assumes the relation to be "MEGACO_EQUAL".
+	 * 
+	 * @param paramRelation
+	 *            paramRelation - The integer corresponding to the value
+	 *            relation. The values shall be defined in ParamRelation.
+	 */
+	public final void setItemsValueRelation(ParamRelation paramRelation) {
+		this.paramRelation = paramRelation;
 	}
 
-	public final void setItemValue(int[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
-	}
-
-	public final void setItemValue(boolean value) {
-		// TODO
-	}
-
-	public final void setItemValue(double[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
-	}
+	/**
+	 * This method sets the list of values where each element is of string type.
+	 * This is to be called only if the getItemValueType returns
+	 * {@link ParamValueType.M_ITEM_PARAM_VALUE_STRING}. Else shall throw an
+	 * exception.
+	 * 
+	 * @param value
+	 *            - A vector of string values.
+	 * @throws javax.megaco.InvalidArgumentException
+	 *             - Thrown if invalid argument is passed for setting the item
+	 *             value.
+	 */
 
 	public java.lang.String toString() {
-		// TODO
-		return this.toString();
+		return super.toString() + " : Value = " + getValueAsString() + "]";
 	}
 
 }

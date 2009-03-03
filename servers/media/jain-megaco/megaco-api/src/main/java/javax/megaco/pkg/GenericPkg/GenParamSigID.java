@@ -25,7 +25,7 @@ public class GenParamSigID extends PkgItemParam {
 	public GenParamSigID() {
 		super();
 		super.paramId = GEN_PARAM_SIGID;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { GenSigComplEvent.GEN_SIG_COMPL_EVENT };
 	}
@@ -52,7 +52,7 @@ public class GenParamSigID extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

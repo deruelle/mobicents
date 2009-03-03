@@ -10,9 +10,9 @@ package javax.megaco.pkg;
  * 
  */
 public abstract class PkgEventItem extends PkgItem {
-	
+
 	protected int eventId = -1;
-	
+
 	protected PkgItemParam[] paramInfo;
 
 	/**
@@ -90,16 +90,37 @@ public abstract class PkgEventItem extends PkgItem {
 		return this.paramInfo;
 	}
 
-	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo)
-			throws javax.megaco.InvalidArgumentException,
-			javax.megaco.MethodInvocationException {
-		// TODO
+	/**
+	 * The method can be used to set the Parameter information. This method sets
+	 * the attached parameters for the event. This method should be called only
+	 * after a package has been associated with the item. Once the parameter has
+	 * been set, it shall not allow the associated item to be overwritten. This
+	 * method shall verify the following:
+	 * 
+	 * <br>
+	 * 1. The parameter can be set for the relevant item. <br>
+	 * 2. The parameter too belongs to the same package for which the item
+	 * belongs. <br>
+	 * 3. If the parameter does not belong to the same package, then does it
+	 * belong to a package that extends the package to which the item belongs. <br>
+	 * 4. If the parameter and the item belong to different packages, but if the
+	 * package to which the parameter belongs extends the package to which the
+	 * item belongs, then it should validate that the current association of the
+	 * item is to the package to which the parameter belongs or should be such
+	 * that it extends the package to which the parameter belongs.
+	 * 
+	 * @param paramInfo - The vector of objectIdentifier corresponding to the parameter information.
+	 * @throws javax.megaco.InvalidArgumentException If the parameter cannot be linked to the current event.
+	 * @throws javax.megaco.MethodInvocationException If the item has not been associated with a package.
+	 */
+	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
+		// FIXME: add checks for exceptions
 		this.paramInfo = paramInfo;
 	}
-	
+
 	@Override
-	public java.lang.String toString(){
-		//TODO
-		return this.toString();
+	public java.lang.String toString() {
+		// TODO
+		return super.toString() +" : EventId = "+eventId;
 	}
 }

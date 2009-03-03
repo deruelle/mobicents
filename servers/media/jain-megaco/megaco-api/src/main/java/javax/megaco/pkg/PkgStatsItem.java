@@ -1,5 +1,11 @@
 package javax.megaco.pkg;
 
+import java.util.Arrays;
+
+import javax.megaco.InvalidArgumentException;
+import javax.megaco.MethodInvocationException;
+import javax.megaco.ParameterNotSetException;
+
 /**
  * The MEGACO statistics item class is an abstract class defined as the base
  * class for all the statistics items in the MEGACO Package. This class shall be
@@ -9,10 +15,10 @@ package javax.megaco.pkg;
  * 
  * 
  */
-public abstract class PkgStatsItem extends PkgItem {
+public abstract class PkgStatsItem extends PkgValueItem {
 
+	//FIXME: orignaly it only extends PkgItem
 	private ParamRelation paramRelation;
-	private int[] value;
 	protected int statisticsId = -1;
 
 	/**
@@ -81,9 +87,12 @@ public abstract class PkgStatsItem extends PkgItem {
 	 * @throws javax.megaco.ParameterNotSetException
 	 *             Thrown if this parameter has not been set.
 	 */
-	public final int getItemsValueRelation()
-			throws javax.megaco.ParameterNotSetException {
-		// TODO
+	public final int getItemsValueRelation() throws javax.megaco.ParameterNotSetException {
+
+		if (this.paramRelation == null) {
+			throw new ParameterNotSetException("Value relation has not been set.");
+		}
+
 		return paramRelation.getParamRelation();
 	}
 
@@ -98,39 +107,7 @@ public abstract class PkgStatsItem extends PkgItem {
 	 */
 	public abstract int[] getItemsDescriptorIds();
 
-	public final java.lang.String[] getItemStringValue()
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.ParameterNotSetException {
-		// TODO
-		return null;
-	}
-
-	public final int[] getItemIntValue()
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.ParameterNotSetException {
-		// TODO
-		return null;
-	}
-
-	/**
-	 * 
-	 * @return
-	 * @throws javax.megaco.MethodInvocationException
-	 * @throws javax.megaco.ParameterNotSetException
-	 */
-	public final boolean getItemBooleanValue()
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.ParameterNotSetException {
-		// TODO
-		return false;
-	}
-
-	public final double[] getItemDoubleValue()
-			throws javax.megaco.MethodInvocationException,
-			javax.megaco.ParameterNotSetException {
-		// TODO
-		return null;
-	}
+	
 
 	/**
 	 * The method can be used to set the relation of the value as defined in the
@@ -152,27 +129,13 @@ public abstract class PkgStatsItem extends PkgItem {
 		this.paramRelation = paramRelation;
 	}
 
-	public final void setItemValue(java.lang.String[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
-	}
-
-	public final void setItemValue(int[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
-	}
-
-	public final void setItemValue(boolean value) {
-		// TODO
-	}
-
-	public final void setItemValue(double[] value)
-			throws javax.megaco.InvalidArgumentException {
-		// TODO
-	}
+	
+	
 
 	public java.lang.String toString() {
-		// TODO
-		return this.toString();
+		return super.toString() + " : Value = " + getValueAsString() + "]";
 	}
+
+	
+
 }

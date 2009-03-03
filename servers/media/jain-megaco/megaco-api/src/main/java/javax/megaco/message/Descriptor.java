@@ -11,12 +11,16 @@ import java.io.Serializable;
  */
 public abstract class Descriptor implements Serializable {
 
+	
+	protected int descriptorId = -1;
+	
 	/**
 	 * Constructs a Jain Megaco abstract class.
 	 */
 	public Descriptor() {
 
 	}
+	
 
 	/**
 	 * The method is an abstract method and can be used to get the descriptor

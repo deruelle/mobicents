@@ -25,7 +25,7 @@ public class GenParamGenCause extends PkgItemParam {
 	public GenParamGenCause() {
 		super();
 		super.paramId = GEN_PARAM_GENERAL_CAUSE;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { GenCauseEvent.GEN_CAUSE_EVENT };
 
@@ -53,7 +53,7 @@ public class GenParamGenCause extends PkgItemParam {
 	 */
 	public int getParamValueType() {
 
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**

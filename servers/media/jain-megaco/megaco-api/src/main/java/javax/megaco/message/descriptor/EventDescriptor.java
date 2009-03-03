@@ -1,6 +1,7 @@
 package javax.megaco.message.descriptor;
 
 import javax.megaco.InvalidArgumentException;
+import javax.megaco.ParameterNotSetException;
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -13,6 +14,7 @@ import javax.megaco.message.DescriptorType;
 public class EventDescriptor extends Descriptor {
 
 	private int requestId;
+	private RequestedEventParam[] requestedEventParam = null;
 
 	/**
 	 * Constructs a Event Descriptor with specific request identifier.
@@ -20,20 +22,19 @@ public class EventDescriptor extends Descriptor {
 	 * @param requestId
 	 *            requestId - An integer value specifying the request
 	 *            identifier, which uniquely identifies the event.
-	 * @throws javax.megaco.InvalidArgumentException :
-	 *             This exception is raised if the value of request identifier
+	 * @throws javax.megaco.InvalidArgumentException
+	 *             : This exception is raised if the value of request identifier
 	 *             passed to this method is less than 0.
 	 */
-	public EventDescriptor(int requestId)
-			throws javax.megaco.InvalidArgumentException {
+	public EventDescriptor(int requestId) throws javax.megaco.InvalidArgumentException {
 		if (requestId < 0) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"requestId cannot be less than 0 for EventDescriptor");
+			InvalidArgumentException invalidArgumentException = new InvalidArgumentException("requestId cannot be less than 0 for EventDescriptor");
 
 			// TODO set ExceptionInfoCode ?
 			throw invalidArgumentException;
 		}
 		this.requestId = requestId;
+		super.descriptorId = DescriptorType.M_EVENT_DESC;
 	}
 
 	/**
@@ -43,7 +44,7 @@ public class EventDescriptor extends Descriptor {
 	 */
 	@Override
 	public final int getDescriptorId() {
-		return DescriptorType.M_EVENT_DESC;
+		return super.descriptorId;
 	}
 
 	/**
@@ -58,10 +59,46 @@ public class EventDescriptor extends Descriptor {
 		return this.requestId;
 	}
 
-	public final void setRequestedEventParam(
-			RequestedEventParam[] requestedParam)
-			throws javax.megaco.InvalidArgumentException {
+	/**
+	 * This method sets the Requested Event Params field of the event
+	 * descriptor.
+	 * 
+	 * @param requestedParam
+	 *            - Sets the requested params. There can be multiple requested
+	 *            parameters set, but atleaset one should be present.
+	 * @throws javax.megaco.InvalidArgumentException
+	 *             : This exception is raised if the reference of request event
+	 *             params as passed to this method is NULL.
+	 */
+	public final void setRequestedEventParam(RequestedEventParam[] requestedParam) throws javax.megaco.InvalidArgumentException {
 
+		// FIXME: add zero length check?
+		if (requestedParam == null) {
+
+			throw new InvalidArgumentException();
+		}
+
+		this.requestedEventParam = requestedParam;
+	}
+
+	/**
+	 * This method gets the Request Events Params field of the event descriptor.
+	 * This method returns vector of objects of type RequsetedEventParams.
+	 * 
+	 * @return Returns the vector of the request event params. If requested
+	 *         event parameter has not been set for the event descriptor, then
+	 *         this method would return NULL.
+	 * @throws javax.megaco.ParameterNotSetException
+	 *             ????
+	 */
+
+	public final RequestedEventParam[] getRequestedEventParam() throws javax.megaco.ParameterNotSetException {
+
+		// FIXME: what ?
+		// if (this.requestedEventParam == null) {
+		// throw new ParameterNotSetException();
+		// }
+		return this.requestedEventParam;
 	}
 
 }

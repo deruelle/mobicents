@@ -5,7 +5,7 @@ import javax.megaco.pkg.PkgSignalItem;
 import javax.megaco.pkg.DTMFGenPkg.DTMFGenPkg;
 
 
-FIXME: Busy Tone ???
+
 /**
  * The MEGACO Busy Tone signal class extends the PkgSignalItem class. This is a
  * final class. This class defines Busy Tone signal of MEGACO Call Progress Tone
@@ -15,9 +15,8 @@ FIXME: Busy Tone ???
 public final class CPToneGenBtSignal extends PkgSignalItem {
 
 	
-	FIXME: CALL WAITING?
 	/**
-	 * Identifies Call waiting tone signal of the MEGACO Call Progress Tone
+	 * Identifies Call busy tone signal of the MEGACO Call Progress Tone
 	 * Generator Package. Its value shall be set equal to 0x0032.
 	 */
 	public static final int CPTONE_GEN_RT_SIGNAL = 0x0032;

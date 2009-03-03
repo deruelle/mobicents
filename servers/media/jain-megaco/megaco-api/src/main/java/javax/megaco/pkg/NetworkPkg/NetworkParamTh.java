@@ -12,12 +12,12 @@ import javax.megaco.pkg.PkgItemParam;
  */
 public class NetworkParamTh extends PkgItemParam {
 
-	FIXME: value is the same as for CS param
+	//FIXME: value is the same as for CS param, setting it for 2
 	/**
 	 * Identifies Threshold parameter of the MEGACO Network Package. Its value
-	 * shall be set equal to 0x0001.
+	 * shall be set equal to 0x0002.
 	 */
-	public static final int NETWORK_PARAM_TH = 0x0001;
+	public static final int NETWORK_PARAM_TH = 0x0002;
 
 	/**
 	 * Constructs a parameter class for Network package that specifies the
@@ -26,7 +26,7 @@ public class NetworkParamTh extends PkgItemParam {
 	public NetworkParamTh() {
 		super();
 		super.paramId = NETWORK_PARAM_TH;
-		super.paramValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
 		super.paramsItemIds = new int[] { NetworkQualertEvt.NETWORK_QLTY_ALERT_EVENT };
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC, DescriptorType.M_EVENT_DESC };
 	}
@@ -51,7 +51,7 @@ public class NetworkParamTh extends PkgItemParam {
 	 *         indicating that the parameter is a integer.
 	 */
 	public int getParamValueType() {
-		return super.paramValueType;
+		return super.itemValueType;
 	}
 
 	/**
