@@ -12,27 +12,23 @@ public class TopologyDirection implements Serializable {
 	public static final int M_TOPO_DIR_ISOLATE = 1;
 	public static final int M_TOPO_DIR_ONEWAY = 2;
 
-	public static final TopologyDirection TOPO_DIR_BOTHWAY = new TopologyDirection(
-			M_TOPO_DIR_BOTHWAY);
+	public static final TopologyDirection TOPO_DIR_BOTHWAY = new TopologyDirection(M_TOPO_DIR_BOTHWAY);
 
-	public static final TopologyDirection TOPO_DIR_ISOLATE = new TopologyDirection(
-			M_TOPO_DIR_ISOLATE);
+	public static final TopologyDirection TOPO_DIR_ISOLATE = new TopologyDirection(M_TOPO_DIR_ISOLATE);
 
-	public static final TopologyDirection TOPO_DIR_ONEWAY = new TopologyDirection(
-			M_TOPO_DIR_ONEWAY);
+	public static final TopologyDirection TOPO_DIR_ONEWAY = new TopologyDirection(M_TOPO_DIR_ONEWAY);
 
 	private int topology_direction;
 
 	private TopologyDirection(int topology_direction) {
 		this.topology_direction = topology_direction;
 	}
-	
-	public int getTopologyDirection(){
+
+	public int getTopologyDirection() {
 		return this.topology_direction;
 	}
 
-	public static final TopologyDirection getObject(int value)
-			throws IllegalArgumentException {
+	public static final TopologyDirection getObject(int value) throws IllegalArgumentException {
 		TopologyDirection t = null;
 		switch (value) {
 		case M_TOPO_DIR_BOTHWAY:
@@ -46,8 +42,7 @@ public class TopologyDirection implements Serializable {
 			break;
 
 		default:
-			throw new IllegalArgumentException(
-					"No TopologyDirection for value = " + value);
+			throw new IllegalArgumentException("No TopologyDirection for value = " + value);
 		}
 
 		return t;
@@ -56,4 +51,26 @@ public class TopologyDirection implements Serializable {
 	private Object readResolve() {
 		return this.getObject(this.topology_direction);
 	}
+
+	@Override
+	public String toString() {
+		String t = null;
+		switch (this.topology_direction) {
+		case M_TOPO_DIR_BOTHWAY:
+			t = "TopologyDirection[BOTHWAY]";
+			break;
+		case M_TOPO_DIR_ISOLATE:
+			t = "TopologyDirection[ISOLATE]";
+			break;
+		case M_TOPO_DIR_ONEWAY:
+			t = "TopologyDirection[ONEWAY]";
+			break;
+
+		default:
+			t = "TopologyDirection[" + this.topology_direction + "]";
+		}
+
+		return t;
+	}
+
 }

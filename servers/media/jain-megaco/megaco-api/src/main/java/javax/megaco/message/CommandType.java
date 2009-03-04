@@ -16,8 +16,7 @@ public class CommandType implements Serializable {
 
 	public static final CommandType COMMAND_REQ = new CommandType(M_COMMAND_REQ);
 
-	public static final CommandType COMMAND_RESP = new CommandType(
-			M_COMMAND_RESP);
+	public static final CommandType COMMAND_RESP = new CommandType(M_COMMAND_RESP);
 
 	public static final CommandType ACTION_REQ = new CommandType(M_ACTION_REQ);
 
@@ -34,8 +33,7 @@ public class CommandType implements Serializable {
 		return this.cmd_type;
 	}
 
-	public static final CommandType getObject(int value)
-			throws IllegalArgumentException {
+	public static final CommandType getObject(int value) throws IllegalArgumentException {
 		CommandType c = null;
 		switch (value) {
 		case M_COMMAND_REQ:
@@ -55,8 +53,7 @@ public class CommandType implements Serializable {
 			break;
 
 		default:
-			IllegalArgumentException illegalArgumentException = new IllegalArgumentException(
-					"No CommandType for value  = " + value);
+			IllegalArgumentException illegalArgumentException = new IllegalArgumentException("No CommandType for value  = " + value);
 			throw illegalArgumentException;
 		}
 		return c;
@@ -65,4 +62,31 @@ public class CommandType implements Serializable {
 	private Object readResolve() {
 		return this.getObject(this.cmd_type);
 	}
+
+	@Override
+	public String toString() {
+		String c = null;
+		switch (this.cmd_type) {
+		case M_COMMAND_REQ:
+			c = "CommandType[COMMAND_REQ]";
+			break;
+
+		case M_COMMAND_RESP:
+			c = "CommandType[COMMAND_RESP]";
+			break;
+
+		case M_ACTION_REQ:
+			c = "CommandType[ACTION_REQ]";
+			break;
+
+		case M_ACTION_RESP:
+			c = "CommandType[ACTION_RESP]";
+			break;
+
+		default:
+			c = "CommandType[" + this.cmd_type + "]";
+		}
+		return c;
+	}
+
 }

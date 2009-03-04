@@ -20,8 +20,7 @@ public class ReturnStatus {
 		return this.return_status;
 	}
 
-	public static final ReturnStatus getObject(int value)
-			throws IllegalArgumentException {
+	public static final ReturnStatus getObject(int value) throws IllegalArgumentException {
 		ReturnStatus r = null;
 		switch (value) {
 		case M_SUCCESS:
@@ -32,8 +31,7 @@ public class ReturnStatus {
 			r = FAILURE;
 			break;
 		default:
-			throw new IllegalArgumentException("No ReturnStatus for value "
-					+ value);
+			throw new IllegalArgumentException("No ReturnStatus for value " + value);
 
 		}
 
@@ -42,6 +40,25 @@ public class ReturnStatus {
 
 	private Object readResolve() {
 		return this.getObject(this.return_status);
+	}
+
+	@Override
+	public String toString() {
+		String r = null;
+		switch (this.return_status) {
+		case M_SUCCESS:
+			r = "ReturnStatus[SUCCESS]";
+			break;
+
+		case M_FAILURE:
+			r = "ReturnStatus[FAILURE]";
+			break;
+		default:
+			r = "ReturnStatus[" + this.return_status + "]";
+
+		}
+
+		return r;
 	}
 
 }

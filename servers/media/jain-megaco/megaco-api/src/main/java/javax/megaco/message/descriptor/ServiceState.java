@@ -111,4 +111,20 @@ public class ServiceState implements Serializable {
 		return getObject(this.serviceState);
 	}
 
+	@Override
+	public String toString() {
+		switch (this.serviceState) {
+		case M_SERVICE_STATE_INS:
+			return "ServiceState[INS]";
+		case M_SERVICE_STATE_OOS:
+			return "ServiceState[OOS]";
+		case M_SERVICE_STATE_TEST:
+			return "ServiceState[TEST]";
+		default:
+			return "ServiceState["+this.serviceState+"]";
+
+		}
+
+	}
+
 }

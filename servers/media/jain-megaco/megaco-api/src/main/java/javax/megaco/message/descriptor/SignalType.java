@@ -100,4 +100,18 @@ public class SignalType implements Serializable {
 		return this.getObject(this.signalType);
 	}
 
+	@Override
+	public String toString() {
+		switch (this.signalType) {
+		case M_SIGNAL_TYPE_BRIEF:
+			return "SignalType[BRIEF]";
+		case M_SIGNAL_TYPE_ON_OFF:
+			return "SignalType[ON_OFF]";
+		case M_SIGNAL_TYPE_TIMEOUT:
+			return "SignalType[TIMEOUT]";
+		default:
+			return "SignalType[" + this.signalType + "]";
+		}
+	}
+
 }

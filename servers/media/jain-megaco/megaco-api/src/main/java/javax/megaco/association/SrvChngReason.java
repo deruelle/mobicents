@@ -95,98 +95,82 @@ public class SrvChngReason implements Serializable {
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_900.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_900 = new SrvChngReason(
-			M_SVC_CHNG_REASON_900);
+	public static final SrvChngReason SVC_CHNG_REASON_900 = new SrvChngReason(M_SVC_CHNG_REASON_900);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_901.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_901 = new SrvChngReason(
-			M_SVC_CHNG_REASON_901);
+	public static final SrvChngReason SVC_CHNG_REASON_901 = new SrvChngReason(M_SVC_CHNG_REASON_901);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_902.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_902 = new SrvChngReason(
-			M_SVC_CHNG_REASON_902);
+	public static final SrvChngReason SVC_CHNG_REASON_902 = new SrvChngReason(M_SVC_CHNG_REASON_902);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_903.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_903 = new SrvChngReason(
-			M_SVC_CHNG_REASON_903);
+	public static final SrvChngReason SVC_CHNG_REASON_903 = new SrvChngReason(M_SVC_CHNG_REASON_903);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_904.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_904 = new SrvChngReason(
-			M_SVC_CHNG_REASON_904);
+	public static final SrvChngReason SVC_CHNG_REASON_904 = new SrvChngReason(M_SVC_CHNG_REASON_904);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_905.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_905 = new SrvChngReason(
-			M_SVC_CHNG_REASON_905);
+	public static final SrvChngReason SVC_CHNG_REASON_905 = new SrvChngReason(M_SVC_CHNG_REASON_905);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_906.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_906 = new SrvChngReason(
-			M_SVC_CHNG_REASON_906);
+	public static final SrvChngReason SVC_CHNG_REASON_906 = new SrvChngReason(M_SVC_CHNG_REASON_906);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_907.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_907 = new SrvChngReason(
-			M_SVC_CHNG_REASON_907);
+	public static final SrvChngReason SVC_CHNG_REASON_907 = new SrvChngReason(M_SVC_CHNG_REASON_907);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_908.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_908 = new SrvChngReason(
-			M_SVC_CHNG_REASON_908);
+	public static final SrvChngReason SVC_CHNG_REASON_908 = new SrvChngReason(M_SVC_CHNG_REASON_908);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_909.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_909 = new SrvChngReason(
-			M_SVC_CHNG_REASON_909);
+	public static final SrvChngReason SVC_CHNG_REASON_909 = new SrvChngReason(M_SVC_CHNG_REASON_909);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_910.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_910 = new SrvChngReason(
-			M_SVC_CHNG_REASON_910);
+	public static final SrvChngReason SVC_CHNG_REASON_910 = new SrvChngReason(M_SVC_CHNG_REASON_910);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_911.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_911 = new SrvChngReason(
-			M_SVC_CHNG_REASON_911);
+	public static final SrvChngReason SVC_CHNG_REASON_911 = new SrvChngReason(M_SVC_CHNG_REASON_911);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_912.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_912 = new SrvChngReason(
-			M_SVC_CHNG_REASON_912);
+	public static final SrvChngReason SVC_CHNG_REASON_912 = new SrvChngReason(M_SVC_CHNG_REASON_912);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_913.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_913 = new SrvChngReason(
-			M_SVC_CHNG_REASON_913);
+	public static final SrvChngReason SVC_CHNG_REASON_913 = new SrvChngReason(M_SVC_CHNG_REASON_913);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_914.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_914 = new SrvChngReason(
-			M_SVC_CHNG_REASON_914);
+	public static final SrvChngReason SVC_CHNG_REASON_914 = new SrvChngReason(M_SVC_CHNG_REASON_914);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
 	 * constant M_SVC_CHNG_REASON_915.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_915 = new SrvChngReason(
-			M_SVC_CHNG_REASON_915);
+	public static final SrvChngReason SVC_CHNG_REASON_915 = new SrvChngReason(M_SVC_CHNG_REASON_915);
 
 	private int srvChngReasonId = -1;
 
@@ -213,18 +197,17 @@ public class SrvChngReason implements Serializable {
 	 *             - If the value passed to this method is invalid, then this
 	 *             exception is raised.
 	 */
-	public static final SrvChngReason getObject(int value)
-			throws IllegalArgumentException {
+	public static final SrvChngReason getObject(int value) throws IllegalArgumentException {
 		switch (value) {
 		case M_SVC_CHNG_REASON_900:
 			return SVC_CHNG_REASON_900;
 
 		case M_SVC_CHNG_REASON_901:
 			return SVC_CHNG_REASON_901;
-			
+
 		case M_SVC_CHNG_REASON_902:
 			return SVC_CHNG_REASON_902;
-			
+
 		case M_SVC_CHNG_REASON_903:
 			return SVC_CHNG_REASON_903;
 		case M_SVC_CHNG_REASON_904:
@@ -252,9 +235,7 @@ public class SrvChngReason implements Serializable {
 		case M_SVC_CHNG_REASON_915:
 			return SVC_CHNG_REASON_915;
 		default:
-			throw new IllegalArgumentException(
-					"Wrogn value passed, there is no change reason with code: "
-							+ value);
+			throw new IllegalArgumentException("Wrogn value passed, there is no change reason with code: " + value);
 		}
 	}
 
@@ -279,6 +260,62 @@ public class SrvChngReason implements Serializable {
 	 */
 	public int getSrvChngReasonId() {
 		return this.srvChngReasonId;
+	}
+
+	@Override
+	public String toString() {
+		switch (this.srvChngReasonId) {
+		case M_SVC_CHNG_REASON_900:
+			return "SrvChngReason[SVC_CHNG_REASON_900]";
+
+		case M_SVC_CHNG_REASON_901:
+			return "SrvChngReason[SVC_CHNG_REASON_901]";
+
+		case M_SVC_CHNG_REASON_902:
+			return "SrvChngReason[SVC_CHNG_REASON_902]";
+
+		case M_SVC_CHNG_REASON_903:
+			return "SrvChngReason[SVC_CHNG_REASON_903]";
+
+		case M_SVC_CHNG_REASON_904:
+			return "SrvChngReason[SVC_CHNG_REASON_904]";
+
+		case M_SVC_CHNG_REASON_905:
+			return "SrvChngReason[SVC_CHNG_REASON_905]";
+
+		case M_SVC_CHNG_REASON_906:
+			return "SrvChngReason[SVC_CHNG_REASON_906]";
+
+		case M_SVC_CHNG_REASON_907:
+			return "SrvChngReason[SVC_CHNG_REASON_907]";
+
+		case M_SVC_CHNG_REASON_908:
+			return "SrvChngReason[SVC_CHNG_REASON_908]";
+
+		case M_SVC_CHNG_REASON_909:
+			return "SrvChngReason[SVC_CHNG_REASON_909]";
+
+		case M_SVC_CHNG_REASON_910:
+			return "SrvChngReason[SVC_CHNG_REASON_910]";
+
+		case M_SVC_CHNG_REASON_911:
+			return "SrvChngReason[SVC_CHNG_REASON_911]";
+
+		case M_SVC_CHNG_REASON_912:
+			return "SrvChngReason[SVC_CHNG_REASON_912]";
+
+		case M_SVC_CHNG_REASON_913:
+			return "SrvChngReason[SVC_CHNG_REASON_913]";
+
+		case M_SVC_CHNG_REASON_914:
+			return "SrvChngReason[SVC_CHNG_REASON_914]";
+
+		case M_SVC_CHNG_REASON_915:
+			return "SrvChngReason[SVC_CHNG_REASON_915]";
+
+		default:
+			return "SrvChngReason[" + this.srvChngReasonId + "]";
+		}
 	}
 
 }

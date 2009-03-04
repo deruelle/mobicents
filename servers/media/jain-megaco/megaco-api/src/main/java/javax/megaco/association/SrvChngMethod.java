@@ -44,44 +44,37 @@ public class SrvChngMethod implements Serializable {
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_GRACEFUL.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_GRACEFUL = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_GRACEFUL);
+	public final static SrvChngMethod SVC_CHNG_METHOD_GRACEFUL = new SrvChngMethod(M_SVC_CHNG_METHOD_GRACEFUL);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_FORCED.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_FORCED = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_FORCED);
+	public final static SrvChngMethod SVC_CHNG_METHOD_FORCED = new SrvChngMethod(M_SVC_CHNG_METHOD_FORCED);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_RESTART.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_RESTART = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_RESTART);
+	public final static SrvChngMethod SVC_CHNG_METHOD_RESTART = new SrvChngMethod(M_SVC_CHNG_METHOD_RESTART);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_DISCONNECTED.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_DISCONNECTED = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_DISCONNECTED);
+	public final static SrvChngMethod SVC_CHNG_METHOD_DISCONNECTED = new SrvChngMethod(M_SVC_CHNG_METHOD_DISCONNECTED);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_HANDOFF.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_HANDOFF = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_HANDOFF);
+	public final static SrvChngMethod SVC_CHNG_METHOD_HANDOFF = new SrvChngMethod(M_SVC_CHNG_METHOD_HANDOFF);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_FAILOVER.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_FAILOVER = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_FAILOVER);
+	public final static SrvChngMethod SVC_CHNG_METHOD_FAILOVER = new SrvChngMethod(M_SVC_CHNG_METHOD_FAILOVER);
 	/**
 	 * Identifies a SrvChngMethod object that constructs the class with the
 	 * constant M_SVC_CHNG_METHOD_EXTENSION.
 	 */
-	public final static SrvChngMethod SVC_CHNG_METHOD_EXTENSION = new SrvChngMethod(
-			M_SVC_CHNG_METHOD_EXTENSION);
+	public final static SrvChngMethod SVC_CHNG_METHOD_EXTENSION = new SrvChngMethod(M_SVC_CHNG_METHOD_EXTENSION);
 
 	private int srvChngMethodId = -1;
 
@@ -118,8 +111,7 @@ public class SrvChngMethod implements Serializable {
 	 *             - If the value passed to this method is invalid, then this
 	 *             exception is raised.
 	 */
-	public static SrvChngMethod getObject(int value)
-			throws IllegalArgumentException {
+	public static SrvChngMethod getObject(int value) throws IllegalArgumentException {
 
 		switch (value) {
 		case M_SVC_CHNG_METHOD_GRACEFUL:
@@ -138,9 +130,7 @@ public class SrvChngMethod implements Serializable {
 			return SVC_CHNG_METHOD_EXTENSION;
 
 		default:
-			throw new IllegalArgumentException(
-					"Wrogn value passed, there is no change method with code: "
-							+ value);
+			throw new IllegalArgumentException("Wrogn value passed, there is no change method with code: " + value);
 		}
 
 	}
@@ -155,6 +145,34 @@ public class SrvChngMethod implements Serializable {
 	 */
 	private Object readResolve() {
 		return this.getObject(this.srvChngMethodId);
+	}
+
+	@Override
+	public String toString() {
+		switch (this.srvChngMethodId) {
+		case M_SVC_CHNG_METHOD_GRACEFUL:
+			return "SrvChngMethod[SVC_CHNG_METHOD_GRACEFUL]";
+		case M_SVC_CHNG_METHOD_FORCED:
+			return "SrvChngMethod[SVC_CHNG_METHOD_FORCED]";
+
+		case M_SVC_CHNG_METHOD_RESTART:
+			return "SrvChngMethod[SVC_CHNG_METHOD_RESTART]";
+
+		case M_SVC_CHNG_METHOD_DISCONNECTED:
+			return "SrvChngMethod[SVC_CHNG_METHOD_DISCONNECTED]";
+
+		case M_SVC_CHNG_METHOD_HANDOFF:
+			return "SrvChngMethod[SVC_CHNG_METHOD_HANDOFF]";
+
+		case M_SVC_CHNG_METHOD_FAILOVER:
+			return "SrvChngMethod[SVC_CHNG_METHOD_FAILOVER]";
+
+		case M_SVC_CHNG_METHOD_EXTENSION:
+			return "SrvChngMethod[SVC_CHNG_METHOD_EXTENSION]";
+
+		default:
+			return "SrvChngMethod[" + this.srvChngMethodId + "]";
+		}
 	}
 
 }

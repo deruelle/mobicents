@@ -231,4 +231,35 @@ public class ModemType implements Serializable {
 		return getObject(this.modemType);
 	}
 
+	@Override
+	public String toString() {
+
+		switch (this.modemType) {
+		case M_MODEM_TYPE_EXT:
+			return "ModemType[MODEM_TYPE_EXT]";
+		case M_MODEM_TYPE_SYNCH_ISDN:
+			return "ModemType[MODEM_TYPE_SYNCH_ISDN]";
+		case M_MODEM_TYPE_V18:
+			return "ModemType[MODEM_TYPE_V18]";
+		case M_MODEM_TYPE_V22:
+			return "ModemType[MODEM_TYPE_V22]";
+		case M_MODEM_TYPE_V22BIS:
+			return "ModemType[MODEM_TYPE_V22BIS]";
+		case M_MODEM_TYPE_V32:
+			return "ModemType[MODEM_TYPE_V32]";
+		case M_MODEM_TYPE_V32BIS:
+			return "ModemType[MODEM_TYPE_V32BIS]";
+		case M_MODEM_TYPE_V34:
+			return "ModemType[MODEM_TYPE_V34]";
+		case M_MODEM_TYPE_V90:
+			return "ModemType[MODEM_TYPE_V90]";
+		case M_MODEM_TYPE_V91:
+			return "ModemType[MODEM_TYPE_V91]";
+
+		default:
+			return "ModemType[" + this.modemType + "]";
+
+		}
+	}
+
 }

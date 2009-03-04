@@ -23,47 +23,33 @@ public final class AssocEventType {
 	public static final int M_CREATE_TXN_RESP = 13;
 	public static final int M_TXN_ERR_IND = 14;
 
-	public static final AssocEventType CREATE_ASSOC_REQ = new AssocEventType(
-			M_CREATE_ASSOC_REQ);
+	public static final AssocEventType CREATE_ASSOC_REQ = new AssocEventType(M_CREATE_ASSOC_REQ);
 
-	public static final AssocEventType DELETE_ASSOC_REQ = new AssocEventType(
-			M_DELETE_ASSOC_REQ);
+	public static final AssocEventType DELETE_ASSOC_REQ = new AssocEventType(M_DELETE_ASSOC_REQ);
 
-	public static final AssocEventType MODIFY_ASSOC_REQ = new AssocEventType(
-			M_MODIFY_ASSOC_REQ);
+	public static final AssocEventType MODIFY_ASSOC_REQ = new AssocEventType(M_MODIFY_ASSOC_REQ);
 
-	public static final AssocEventType ASSOC_STATE_IND = new AssocEventType(
-			M_ASSOC_STATE_IND);
+	public static final AssocEventType ASSOC_STATE_IND = new AssocEventType(M_ASSOC_STATE_IND);
 
-	public static final AssocEventType CREATE_ASSOC_RESP = new AssocEventType(
-			M_CREATE_ASSOC_RESP);
+	public static final AssocEventType CREATE_ASSOC_RESP = new AssocEventType(M_CREATE_ASSOC_RESP);
 
-	public static final AssocEventType DELETE_ASSOC_RESP = new AssocEventType(
-			M_DELETE_ASSOC_RESP);
+	public static final AssocEventType DELETE_ASSOC_RESP = new AssocEventType(M_DELETE_ASSOC_RESP);
 
-	public static final AssocEventType MODIFY_ASSOC_RESP = new AssocEventType(
-			M_MODIFY_ASSOC_RESP);
+	public static final AssocEventType MODIFY_ASSOC_RESP = new AssocEventType(M_MODIFY_ASSOC_RESP);
 
-	public static final AssocEventType ASSOC_CONFIG_REQ = new AssocEventType(
-			M_ASSOC_CONFIG_REQ);
+	public static final AssocEventType ASSOC_CONFIG_REQ = new AssocEventType(M_ASSOC_CONFIG_REQ);
 
-	public static final AssocEventType ASSOC_CONFIG_RESP = new AssocEventType(
-			M_ASSOC_CONFIG_RESP);
+	public static final AssocEventType ASSOC_CONFIG_RESP = new AssocEventType(M_ASSOC_CONFIG_RESP);
 
-	public static final AssocEventType DELETE_TXN_REQ = new AssocEventType(
-			M_DELETE_TXN_REQ);
+	public static final AssocEventType DELETE_TXN_REQ = new AssocEventType(M_DELETE_TXN_REQ);
 
-	public static final AssocEventType DELETE_TXN_RESP = new AssocEventType(
-			M_DELETE_TXN_RESP);
+	public static final AssocEventType DELETE_TXN_RESP = new AssocEventType(M_DELETE_TXN_RESP);
 
-	public static final AssocEventType CREATE_TXN_REQ = new AssocEventType(
-			M_CREATE_TXN_REQ);
+	public static final AssocEventType CREATE_TXN_REQ = new AssocEventType(M_CREATE_TXN_REQ);
 
-	public static final AssocEventType CREATE_TXN_RESP = new AssocEventType(
-			M_CREATE_TXN_RESP);
+	public static final AssocEventType CREATE_TXN_RESP = new AssocEventType(M_CREATE_TXN_RESP);
 
-	public static final AssocEventType TXN_ERR_IND = new AssocEventType(
-			M_TXN_ERR_IND);
+	public static final AssocEventType TXN_ERR_IND = new AssocEventType(M_TXN_ERR_IND);
 
 	private int event_type;
 
@@ -75,8 +61,7 @@ public final class AssocEventType {
 		return this.event_type;
 	}
 
-	public static final AssocEventType getObject(int value)
-			throws IllegalArgumentException {
+	public static final AssocEventType getObject(int value) throws IllegalArgumentException {
 		AssocEventType a = null;
 		switch (value) {
 		case M_CREATE_ASSOC_REQ:
@@ -136,8 +121,7 @@ public final class AssocEventType {
 			break;
 
 		default:
-			throw new IllegalArgumentException(
-					"There is no AsscoEventType for passed value = " + value);
+			throw new IllegalArgumentException("There is no AsscoEventType for passed value = " + value);
 
 		}
 		return a;
@@ -146,4 +130,71 @@ public final class AssocEventType {
 	private Object readResolve() {
 		return this.getObject(this.event_type);
 	}
+
+	@Override
+	public String toString() {
+		switch (this.event_type) {
+		case M_CREATE_ASSOC_REQ:
+
+			return "AssocEventType[CREATE_ASSOC_REQ]";
+
+		case M_DELETE_ASSOC_REQ:
+
+			return "AssocEventType[DELETE_ASSOC_REQ]";
+
+		case M_MODIFY_ASSOC_REQ:
+
+			return "AssocEventType[MODIFY_ASSOC_REQ]";
+
+		case M_ASSOC_STATE_IND:
+
+			return "AssocEventType[ASSOC_STATE_IND]";
+
+		case M_CREATE_ASSOC_RESP:
+
+			return "AssocEventType[CREATE_ASSOC_RESP]";
+
+		case M_DELETE_ASSOC_RESP:
+
+			return "AssocEventType[DELETE_ASSOC_RESP]";
+
+		case M_MODIFY_ASSOC_RESP:
+
+			return "AssocEventType[MODIFY_ASSOC_RESP]";
+
+		case M_ASSOC_CONFIG_REQ:
+
+			return "AssocEventType[ASSOC_CONFIG_REQ]";
+
+		case M_ASSOC_CONFIG_RESP:
+
+			return "AssocEventType[ASSOC_CONFIG_RESP]";
+
+		case M_DELETE_TXN_REQ:
+
+			return "AssocEventType[DELETE_TXN_REQ]";
+
+		case M_DELETE_TXN_RESP:
+
+			return "AssocEventType[DELETE_TXN_RESP]";
+
+		case M_CREATE_TXN_REQ:
+
+			return "AssocEventType[CREATE_TXN_REQ]";
+
+		case M_CREATE_TXN_RESP:
+
+			return "AssocEventType[CREATE_TXN_RESP]";
+
+		case M_TXN_ERR_IND:
+
+			return "AssocEventType[TXN_ERR_IND]";
+
+		default:
+
+			return "AssocEventType[" + this.event_type + "]";
+
+		}
+	}
+
 }

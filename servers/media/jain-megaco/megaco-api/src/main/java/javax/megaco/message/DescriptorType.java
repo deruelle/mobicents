@@ -190,74 +190,74 @@ public class DescriptorType implements Serializable {
 		String d = "";
 		switch (this.descriptor) {
 		case M_EVENT_DESC:
-			d = "EVENT_DESC";
+			d = "DescriptorType[EVENT_DESC]";
 			break;
 		case M_DIGIT_MAP_DESC:
-			d = "DIGIT_MAP_DESC";
+			d = "DescriptorType[DIGIT_MAP_DESC]";
 			break;
 		case M_SIGNAL_DESC:
-			d = "SIGNAL_DESC";
+			d = "DescriptorType[SIGNAL_DESC]";
 			break;
 		case M_MEDIA_DESC:
-			d = "MEDIA_DESC";
+			d = "DescriptorType[MEDIA_DESC]";
 			break;
 		case M_STREAM_DESC:
-			d = "STREAM_DESC";
+			d = "DescriptorType[STREAM_DESC]";
 			break;
 		case M_LOCAL_CONTROL_DESC:
-			d = "LOCAL_CONTROL_DESC";
+			d = "DescriptorType[LOCAL_CONTROL_DESC]";
 			break;
 		case M_TERMINATION_STATE_DESC:
-			d = "TERMINATION_STATE_DESC";
+			d = "DescriptorType[TERMINATION_STATE_DESC]";
 			break;
 		case M_SERVICE_CHANGE_DESC:
-			d = "SERVICE_CHANGE_DESC";
+			d = "DescriptorType[SERVICE_CHANGE_DESC]";
 			break;
 		case M_SERVICE_CHANGE_RESP_DESC:
-			d = "SERVICE_CHANGE_RESP_DESC";
+			d = "DescriptorType[SERVICE_CHANGE_RESP_DESC]";
 			break;
 		case M_AUDIT_CAP_DESC:
-			d = "AUDIT_CAP_DESC";
+			d = "DescriptorType[AUDIT_CAP_DESC]";
 			break;
 		case M_AUDIT_VAL_DESC:
-			d = "AUDIT_VAL_DESC";
+			d = "DescriptorType[AUDIT_VAL_DESC]";
 			break;
 		case M_AUDIT_CAP_REPLY_DESC:
-			d = "AUDIT_CAP_REPLY_DESC";
+			d = "DescriptorType[AUDIT_CAP_REPLY_DESC]";
 			break;
 		case M_AUDIT_VAL_REPLY_DESC:
-			d = "AUDIT_VAL_REPLY_DESC";
+			d = "DescriptorType[AUDIT_VAL_REPLY_DESC]";
 			break;
 		case M_EVENT_BUF_DESC:
-			d = "EVENT_BUF_DESC";
+			d = "DescriptorType[EVENT_BUF_DESC]";
 			break;
 		case M_STATISTICS_DESC:
-			d = "STATISTICS_DESC";
+			d = "DescriptorType[STATISTICS_DESC]";
 			break;
 		case M_PACKAGE_DESC:
-			d = "PACKAGE_DESC";
+			d = "DescriptorType[PACKAGE_DESC]";
 			break;
 		case M_ERROR_DESC:
-			d = "ERROR_DESC";
+			d = "DescriptorType[ERROR_DESC]";
 			break;
 		case M_MODEM_DESC:
-			d = "MODEM_DESC";
+			d = "DescriptorType[MODEM_DESC]";
 			break;
 		case M_MUX_DESC:
-			d = "MUX_DESC";
+			d = "DescriptorType[MUX_DESC]";
 			break;
 		case M_TOPOLOGY_DESC:
-			d = "TOPOLOGY_DESC";
+			d = "DescriptorType[TOPOLOGY_DESC]";
 			break;
 		case M_CTX_TERM_AUDIT_DESC:
-			d = "CTX_TERM_AUDIT_DESC";
+			d = "DescriptorType[CTX_TERM_AUDIT_DESC]";
 			break;
 		case M_OBSERVED_EVENT_DESC:
-			d = "OBSERVED_EVENT_DESC";
+			d = "DescriptorType[OBSERVED_EVENT_DESC]";
 			break;
 		default:
 
-			d = "There is no DescriptorType defined for value " + descriptor;
+			d = "DescriptorType[" + this.descriptor + "]";
 		}
 
 		return d;

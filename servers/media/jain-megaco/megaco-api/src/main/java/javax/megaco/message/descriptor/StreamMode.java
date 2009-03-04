@@ -141,4 +141,23 @@ public class StreamMode implements Serializable {
 		return getObject(this.streamMode);
 	}
 
+	@Override
+	public String toString() {
+		switch (this.streamMode) {
+		case M_STREAM_MODE_INACTIVE:
+			return "StreamMode[INACTIVE]";
+		case M_STREAM_MODE_LOOPBACK:
+			return "StreamMode[LOOPBACK]";
+		case M_STREAM_MODE_RECV_ONLY:
+			return "StreamMode[RECV_ONLY]";
+		case M_STREAM_MODE_SEND_ONLY:
+			return "StreamMode[SEND_ONLY]";
+		case M_STREAM_MODE_SEND_RECV:
+			return "StreamMode[SEND_RECV]";
+
+		default:
+			return "StreamMode[" + this.streamMode + "]";
+		}
+	}
+
 }

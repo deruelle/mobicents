@@ -113,6 +113,7 @@ public class MuxType implements Serializable {
 	 *             exception is raised.
 	 */
 	public static final MuxType getObject(int value) throws IllegalArgumentException {
+
 		switch (value) {
 
 		case M_MUX_TYPE_EXT:
@@ -142,6 +143,27 @@ public class MuxType implements Serializable {
 	 */
 	private Object readResolve() {
 		return getObject(this.muxType);
+	}
+
+	@Override
+	public String toString() {
+		switch (this.muxType) {
+
+		case M_MUX_TYPE_EXT:
+			return "MuxType[MUX_TYPE_EXT]";
+		case M_MUX_TYPE_H221:
+			return "MuxType[MUX_TYPE_H221]";
+		case M_MUX_TYPE_H223:
+			return "MuxType[MUX_TYPE_H223]";
+		case M_MUX_TYPE_H226:
+			return "MuxType[MUX_TYPE_H226]";
+		case M_MUX_TYPE_V76:
+			return "MuxType[MUX_TYPE_V76]";
+
+		default:
+			return "MuxType[" + this.muxType + "]";
+
+		}
 	}
 
 }

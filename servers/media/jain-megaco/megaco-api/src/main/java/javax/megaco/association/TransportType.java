@@ -25,8 +25,7 @@ public class TransportType implements Serializable {
 		return this.transport_type;
 	}
 
-	public static final TransportType getObject(int value)
-			throws IllegalArgumentException {
+	public static final TransportType getObject(int value) throws IllegalArgumentException {
 		TransportType t = null;
 		switch (value) {
 		case M_TCP_TPT:
@@ -49,8 +48,7 @@ public class TransportType implements Serializable {
 			t = MTP3B_TPT;
 			break;
 		default:
-			IllegalArgumentException illegalArgumentException = new IllegalArgumentException(
-					"No TransportType defined for value = " + value);
+			IllegalArgumentException illegalArgumentException = new IllegalArgumentException("No TransportType defined for value = " + value);
 			throw illegalArgumentException;
 		}
 		return t;
@@ -59,6 +57,35 @@ public class TransportType implements Serializable {
 
 	private Object readResolve() {
 		return this.getObject(this.transport_type);
+	}
+
+	@Override
+	public String toString() {
+		String t = null;
+		switch (this.transport_type) {
+		case M_TCP_TPT:
+			t = "TransportType[TCP_TPT]";
+			break;
+
+		case M_UDP_TPT:
+			t = "TransportType[UDP_TPT]";
+			break;
+
+		case M_SCTP_TPT:
+			t = "TransportType[SCTP_TPT]";
+			break;
+
+		case M_ATM_TPT:
+			t = "TransportType[ATM_TPT]";
+			break;
+
+		case M_MTP3B_TPT:
+			t = "TransportType[MTP3B_TPT]";
+			break;
+		default:
+			t = "TransportType[" + this.transport_type + "]";
+		}
+		return t;
 	}
 
 }

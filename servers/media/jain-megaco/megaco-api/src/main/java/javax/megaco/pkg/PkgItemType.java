@@ -41,16 +41,14 @@ public final class PkgItemType implements Serializable {
 	 * constant M_ITEM_STATISTICS. Since it is reference to static final object,
 	 * it prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_STATISTICS = new PkgItemType(
-			M_ITEM_STATISTICS);
+	public static final PkgItemType ITEM_STATISTICS = new PkgItemType(M_ITEM_STATISTICS);
 
 	/**
 	 * Identifies a package item type object that constructs the class with the
 	 * constant M_ITEM_PROPERTY. Since it is reference to static final object,
 	 * it prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_PROPERTY = new PkgItemType(
-			M_ITEM_PROPERTY);
+	public static final PkgItemType ITEM_PROPERTY = new PkgItemType(M_ITEM_PROPERTY);
 
 	private int item_type;
 
@@ -62,8 +60,7 @@ public final class PkgItemType implements Serializable {
 		return this.item_type;
 	}
 
-	public static final PkgItemType getObject(int value)
-			throws IllegalArgumentException {
+	public static final PkgItemType getObject(int value) throws IllegalArgumentException {
 		PkgItemType p = null;
 		switch (value) {
 		case M_ITEM_ALL:
@@ -82,13 +79,38 @@ public final class PkgItemType implements Serializable {
 			p = ITEM_PROPERTY;
 			break;
 		default:
-			throw new IllegalArgumentException(
-					"There is no PkgItemType for passed value = " + value);
+			throw new IllegalArgumentException("There is no PkgItemType for passed value = " + value);
 		}
 		return p;
 	}
-	
+
 	private Object readResolve() {
 		return this.getObject(this.item_type);
 	}
+
+	@Override
+	public String toString() {
+		String p = null;
+		switch (this.item_type) {
+		case M_ITEM_ALL:
+			p = "PkgItemType[ALL]";
+			break;
+		case M_ITEM_EVENT:
+			p = "PkgItemType[EVENT]";
+			break;
+		case M_ITEM_SIGNAL:
+			p = "PkgItemType[SIGNAL]";
+			break;
+		case M_ITEM_STATISTICS:
+			p = "PkgItemType[STATISTICS]";
+			break;
+		case M_ITEM_PROPERTY:
+			p = "PkgItemType[PROPERTY]";
+			break;
+		default:
+			p = "PkgItemType[" + this.item_type + "]";
+		}
+		return p;
+	}
+
 }

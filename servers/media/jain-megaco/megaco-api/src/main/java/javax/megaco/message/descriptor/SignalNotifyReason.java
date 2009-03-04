@@ -136,4 +136,21 @@ public class SignalNotifyReason {
 		return getObject(this.notifyReason);
 	}
 
+	@Override
+	public String toString() {
+		switch (this.notifyReason) {
+		case M_NOTIFY_REASON_INT_EVENT:
+			return "SignalNotifyReason[INT_EVENT]";
+		case M_NOTIFY_REASON_INT_SIGNAL:
+			return "SignalNotifyReason[NT_SIGNAL]";
+		case M_NOTIFY_REASON_OTHER:
+			return "SignalNotifyReason[OTHER]";
+		case M_NOTIFY_REASON_TIMEOUT:
+			return "SignalNotifyReason[TIMEOUT]";
+
+		default:
+			return "SignalNotifyReason[" + this.notifyReason + "]";
+		}
+	}
+
 }

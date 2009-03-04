@@ -8,14 +8,10 @@ public final class ParamValueType implements Serializable {
 	public static final int M_ITEM_PARAM_VALUE_BOOLEAN = 3;
 	public static final int M_ITEM_PARAM_VALUE_DOUBLE = 4;
 
-	public static final ParamValueType ITEM_PARAM_VALUE_STRING = new ParamValueType(
-			M_ITEM_PARAM_VALUE_STRING);
-	public static final ParamValueType ITEM_PARAM_VALUE_INTEGER = new ParamValueType(
-			M_ITEM_PARAM_VALUE_INTEGER);
-	public static final ParamValueType ITEM_PARAM_VALUE_BOOLEAN = new ParamValueType(
-			M_ITEM_PARAM_VALUE_BOOLEAN);
-	public static final ParamValueType ITEM_PARAM_VALUE_DOUBLE = new ParamValueType(
-			M_ITEM_PARAM_VALUE_DOUBLE);
+	public static final ParamValueType ITEM_PARAM_VALUE_STRING = new ParamValueType(M_ITEM_PARAM_VALUE_STRING);
+	public static final ParamValueType ITEM_PARAM_VALUE_INTEGER = new ParamValueType(M_ITEM_PARAM_VALUE_INTEGER);
+	public static final ParamValueType ITEM_PARAM_VALUE_BOOLEAN = new ParamValueType(M_ITEM_PARAM_VALUE_BOOLEAN);
+	public static final ParamValueType ITEM_PARAM_VALUE_DOUBLE = new ParamValueType(M_ITEM_PARAM_VALUE_DOUBLE);
 
 	private int value_type;
 
@@ -27,8 +23,7 @@ public final class ParamValueType implements Serializable {
 		return this.value_type;
 	}
 
-	public static final ParamValueType getObject(int value)
-			throws IllegalArgumentException {
+	public static final ParamValueType getObject(int value) throws IllegalArgumentException {
 		ParamValueType p = null;
 		switch (value) {
 		case M_ITEM_PARAM_VALUE_STRING:
@@ -48,8 +43,7 @@ public final class ParamValueType implements Serializable {
 			break;
 
 		default:
-			throw new IllegalArgumentException(
-					"No ParamValueType for passed value " + value);
+			throw new IllegalArgumentException("No ParamValueType for passed value " + value);
 		}
 		return p;
 	}
@@ -57,4 +51,31 @@ public final class ParamValueType implements Serializable {
 	private Object readResolve() {
 		return this.getObject(this.value_type);
 	}
+
+	@Override
+	public String toString() {
+		String p = null;
+		switch (this.value_type) {
+		case M_ITEM_PARAM_VALUE_STRING:
+			p = "ParamValueTypeSTRING]";
+			break;
+
+		case M_ITEM_PARAM_VALUE_INTEGER:
+			p = "ParamValueTypeINTEGER]";
+			break;
+
+		case M_ITEM_PARAM_VALUE_BOOLEAN:
+			p = "ParamValueTypeBOOLEAN]";
+			break;
+
+		case M_ITEM_PARAM_VALUE_DOUBLE:
+			p = "ParamValueTypeDOUBLE]";
+			break;
+
+		default:
+			p = "ParamValueType[" + this.value_type + "]";
+		}
+		return p;
+	}
+
 }

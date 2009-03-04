@@ -96,4 +96,18 @@ public class EventBufferCtrl implements Serializable {
 		return getObject(this.eventBufferCtrl);
 	}
 
+	@Override
+	public String toString() {
+		switch (this.eventBufferCtrl) {
+		case M_EVENT_BUFFER_CONTROL_LOCK_STEP:
+			return "EventBufferCtrl[EVENT_BUFFER_CONTROL_LOCK_STEP]";
+		case M_EVENT_BUFFER_CONTROL_OFF:
+			return "EventBufferCtrl[EVENT_BUFFER_CONTROL_OFF]";
+
+		default:
+			return "EventBufferCtrl[" + this.eventBufferCtrl + "]";
+
+		}
+	}
+
 }

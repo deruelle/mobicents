@@ -13,13 +13,10 @@ public class TermType implements Serializable {
 	public static final int M_TERM_TYPE_ROOT = 3;
 	public static final int M_TERM_TYPE_WILDCARD = 4;
 
-	public static final TermType TERM_TYPE_NORMAL = new TermType(
-			M_TERM_TYPE_NORMAL);
-	public static final TermType TERM_TYPE_CHOOSE = new TermType(
-			M_TERM_TYPE_CHOOSE);
+	public static final TermType TERM_TYPE_NORMAL = new TermType(M_TERM_TYPE_NORMAL);
+	public static final TermType TERM_TYPE_CHOOSE = new TermType(M_TERM_TYPE_CHOOSE);
 	public static final TermType TERM_TYPE_ROOT = new TermType(M_TERM_TYPE_ROOT);
-	public static final TermType TERM_TYPE_WILDCARD = new TermType(
-			M_TERM_TYPE_WILDCARD);
+	public static final TermType TERM_TYPE_WILDCARD = new TermType(M_TERM_TYPE_WILDCARD);
 
 	private int term_type;
 
@@ -56,8 +53,7 @@ public class TermType implements Serializable {
 	 * @return Returns reference of the TermType object.
 	 * @throws IllegalArgumentException
 	 */
-	public static final TermType getObject(int value)
-			throws IllegalArgumentException {
+	public static final TermType getObject(int value) throws IllegalArgumentException {
 		TermType t = null;
 		switch (value) {
 		case M_TERM_TYPE_NORMAL:
@@ -75,14 +71,37 @@ public class TermType implements Serializable {
 			t = TERM_TYPE_WILDCARD;
 			break;
 		default:
-			throw new IllegalArgumentException("TermType not found for value "
-					+ value);
+			throw new IllegalArgumentException("TermType not found for value " + value);
 		}
 		return t;
 	}
 
 	private Object readResolve() {
 		return this.getObject(this.term_type);
+	}
+
+	@Override
+	public String toString() {
+		String t = null;
+		switch (this.term_type) {
+		case M_TERM_TYPE_NORMAL:
+			t = "TermType[NORMAL]";
+			break;
+		case M_TERM_TYPE_CHOOSE:
+			t = "TermType[CHOOSE]";
+			break;
+
+		case M_TERM_TYPE_ROOT:
+			t = "TermType[ROOT]";
+			break;
+
+		case M_TERM_TYPE_WILDCARD:
+			t = "TermType[WILDCARD]";
+			break;
+		default:
+			t = "TermType[" + this.term_type + "]";
+		}
+		return t;
 	}
 
 }

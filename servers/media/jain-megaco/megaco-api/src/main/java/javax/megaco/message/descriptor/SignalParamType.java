@@ -34,12 +34,11 @@ public class SignalParamType implements Serializable {
 	 */
 	public static final SignalParamType SIGNAL_PARAM_REQUEST = new SignalParamType(M_SIGNAL_PARAM_REQUEST);
 
-
-
 	private int signalParamType = -1;
 
 	/**
-	 * Constructs an class that specifies the signal param type in the signal descriptor.
+	 * Constructs an class that specifies the signal param type in the signal
+	 * descriptor.
 	 * 
 	 * @param signal_type
 	 */
@@ -59,8 +58,8 @@ public class SignalParamType implements Serializable {
 	}
 
 	/**
-	 * Returns reference of the SignalParamType object that identifies the signal
-	 * type as value passed to this method.
+	 * Returns reference of the SignalParamType object that identifies the
+	 * signal type as value passed to this method.
 	 * 
 	 * @param value
 	 *            - It is one of the possible values of the static constant that
@@ -77,7 +76,7 @@ public class SignalParamType implements Serializable {
 			return SIGNAL_PARAM_LIST;
 		case M_SIGNAL_PARAM_REQUEST:
 			return SIGNAL_PARAM_REQUEST;
-		
+
 		default:
 			throw new IllegalArgumentException("Wrong signal param type passed: " + value);
 		}
@@ -86,6 +85,19 @@ public class SignalParamType implements Serializable {
 
 	private Object readResolve() {
 		return this.getObject(this.signalParamType);
+	}
+
+	@Override
+	public String toString() {
+		switch (this.signalParamType) {
+		case M_SIGNAL_PARAM_LIST:
+			return "SignalParamType[LIST]";
+		case M_SIGNAL_PARAM_REQUEST:
+			return "SignalParamType[REQUEST]";
+
+		default:
+			return "SignalParamType[" + this.signalParamType + "]";
+		}
 	}
 
 }

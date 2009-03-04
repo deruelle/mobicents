@@ -58,9 +58,7 @@ public class EncodingFormat implements Serializable {
 		case M_ASN:
 			return ASN;
 		default:
-			throw new IllegalArgumentException(
-					"Wrogn value passed, there is no encoding with code: "
-							+ value);
+			throw new IllegalArgumentException("Wrogn value passed, there is no encoding with code: " + value);
 		}
 	}
 
@@ -73,6 +71,19 @@ public class EncodingFormat implements Serializable {
 	 */
 	public int getEncodingFormat() {
 		return this.encodingFormat;
+	}
+
+	@Override
+	public String toString() {
+		switch (this.encodingFormat) {
+
+		case M_TEXT:
+			return "EncodingFormat[TEXT]";
+		case M_ASN:
+			return "EncodingFormat[ASN]";
+		default:
+			return "EncodingFormat[" + this.encodingFormat + "]";
+		}
 	}
 
 }
