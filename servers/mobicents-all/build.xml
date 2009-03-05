@@ -14,7 +14,9 @@
     <property name="release.slee.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
     <property name="release.diameter.ra.dirs" value="base,sh-client"/>
     <property name="release.diameter.example.dirs" value="base"/>
-	
+
+    <property name="release.readme.file.location" location="${ant.file.mobicents.all.release}/../readme-all.txt"/>
+
 	<property name="jboss.version" value="4.2.3.GA"/>
 	<property name="jboss.distro.zip.path" value="jboss-${jboss.version}.zip"/>
 	<property name="jboss.download.url" value="http://downloads.sourceforge.net/jboss/jboss-${jboss.version}.zip" />
@@ -23,17 +25,19 @@
 	
     <property name="jbcp.release.dir" location="${ant.file.mobicents.all.release}/../target/release-jbcp"/>
     <property name="jbcp.release.name" value="JBCP"/>
-    <property name="jbcp.release.version" value="1.2.0.CR3"/>
+    <property name="jbcp.release.version" value="1.2.0.GA"/>
+    <property name="jbcp.configurations" value="default,all,production"/>
 
     <property name="jbcp.slee.ra.dirs" value="xmpp,http-servlet,sip,sip11,http-client,tts"/>
     <property name="jbcp.slee.example.dirs" value="sip-services,google-talk-bot,sip-wake-up"/>
     <property name="jbcp.diameter.ra.dirs" value="base,sh-client"/>
     <property name="jbcp.diameter.example.dirs" value="base"/>
-    <property name="jbcp.configurations" value="default,all,production"/>
-		
+
+    <property name="jbcp.readme.file.location" location="${ant.file.mobicents.all.release}/../readme-jbcp.txt"/>
+
 	<property name="eap.version" value="eap-4.3"/>
-	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP03.zip"/>
-	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP03/zip/${eap.distro.zip.path}" />
+	<property name="eap.distro.zip.path" value="jboss-eap-4.3.0.GA_CP04.zip"/>
+	<property name="eap.download.url" value="http://porkchop.redhat.com/released/JBEAP-4.3.0/CP04/zip/${eap.distro.zip.path}" />
     <property name="eap.home.relative.path" value="jboss-${eap.version}/jboss-as"/>
 	<property name="eap.home" value="${jbcp.release.dir}/${eap.home.relative.path}"/>
 
@@ -63,7 +67,7 @@
 		<antcall target="release-sip-load-balancer" />
         <antcall target="release-documentation" />
 		
-		<copy file="${ant.file.mobicents.all.release}/../readme.txt" todir="${release.dir}" overwrite="true"/>
+		<copy file="${release.readme.file.location}" todir="${release.dir}" overwrite="true"/>
 		<antcall target="copy-frontpage"/>
 		
 		<antcall target="build-src-zip" />
@@ -84,6 +88,8 @@
             <property name="release.slee.example.dirs" value="${jbcp.slee.example.dirs}"/>
             <property name="release.diameter.ra.dirs" value="${jbcp.diameter.ra.dirs}"/>
             <property name="release.diameter.example.dirs" value="${jbcp.diameter.example.dirs}"/>
+
+            <property name="release.readme.file.location" value="${jbcp.readme.file.location}"/>
 
             <property name="jboss.version" value="${eap.version}"/>
             <property name="jboss.distro.zip.path" value="${eap.distro.zip.path}"/>
