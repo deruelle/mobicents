@@ -151,6 +151,7 @@ public class Main
    {
       public void run()
       {
+    	 System.out.println("Shutting down");		
          kernelDeployer.shutdown();
          kernelDeployer = null;
 

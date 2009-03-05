@@ -30,6 +30,82 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>jboss-5</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-to-jboss-lib</id>
+								<phase>install</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeArtifactIds>
+										jain-sip-ri
+									</includeArtifactIds>
+									<outputDirectory>
+										${env.JBOSS_HOME}/server/${node}/lib
+									</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<condition property="jboss.dir"
+											value="${jboss.home}" else="${env.JBOSS_HOME}">
+											<isset
+												property="jboss.home" />
+										</condition>
+										<copy
+											file="target/${project.build.finalName}.jar"
+											todir="${jboss.dir}/server/${node}/lib">
+
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${env.JBOSS_HOME}/server/${node}/lib/${project.build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>standalone</id>
+		</profile>
+	</profiles>
+
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
@@ -40,65 +116,6 @@
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-to-jboss-lib</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<includeArtifactIds>
-								jain-sip-ri
-							</includeArtifactIds>
-							<outputDirectory>
-								${env.JBOSS_HOME}/server/${node}/lib
-							</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>deploy</id>
-						<phase>install</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<condition property="jboss.dir"
-									value="${jboss.home}" else="${env.JBOSS_HOME}">
-									<isset property="jboss.home" />
-								</condition>
-								<copy
-									file="target/${project.build.finalName}.jar"
-									todir="${jboss.dir}/server/${node}/lib">
-
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-					<execution>
-						<id>undeploy</id>
-						<phase>clean</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<delete
-									file="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}.jar" />
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

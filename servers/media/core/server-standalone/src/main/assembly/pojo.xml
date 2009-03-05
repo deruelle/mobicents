@@ -19,11 +19,6 @@
 			<source>src/main/config/system-jmx-beans.xml</source>
 			<destName>bootstrap/system-jmx-beans.xml</destName>
 		</file>
-
-		<file>
-			<source>src/main/config/varia-deployers-beans.xml</source>
-			<destName>bootstrap/varia-deployers-beans.xml</destName>
-		</file>
 		
 		<file>
 			<source>src/main/config/pojo-beans.xml</source>

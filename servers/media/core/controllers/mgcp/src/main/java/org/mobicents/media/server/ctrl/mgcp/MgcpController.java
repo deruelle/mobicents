@@ -36,12 +36,18 @@ import jain.protocol.ip.mgcp.JainMgcpStack;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
+
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.mgcp.stack.JainMgcpStackImpl;
+
+
 
 /**
  *
@@ -55,20 +61,48 @@ public class MgcpController implements JainMgcpListener {
     
     private ConcurrentHashMap<String, Call> calls = new ConcurrentHashMap();
     private Logger logger = Logger.getLogger(MgcpController.class);
+    
+    public MgcpController(){
+    	
+    }
 
+    public void create()
+    {
+    	logger.info("Starting MGCP Controller module for MMS");
+    }
+    
     /**
      * Starts MGCP controller.
      * 
      * @throws java.lang.Exception
      */
     public void start() throws Exception {
+    	
         jainFactory = JainIPFactory.getInstance();
         jainFactory.setPathName("org.mobicents");
 
-        mgcpStack = (JainMgcpStack) jainFactory.createIPObject(
-                "jain.protocol.ip.mgcp.JainMgcpStackImpl");
+//        mgcpStack = (JainMgcpStack) jainFactory.createIPObject(
+//                "mgcp.stack.JainMgcpStackImpl");
+        
+        
+		InetAddress inetAddress = null;
+	
+			inetAddress = InetAddress.getByName("127.0.0.1");
+
+			int port = 2727;
+
+			JainMgcpStackImpl mgcpStack= new JainMgcpStackImpl(inetAddress,
+					port);
+	
+        
+        
         mgcpProvider = mgcpStack.createProvider();
+        
+        
+        
         mgcpProvider.addJainMgcpListener(this);
+        
+        logger.info("Started MGCP Controller module for MMS");
     }
 
     /**
@@ -78,6 +112,7 @@ public class MgcpController implements JainMgcpListener {
      */
     public void stop() {
         mgcpProvider.removeJainMgcpListener(this);
+        logger.info("Stoping MGCP Controller module for MMS");
     }
 
     /**
