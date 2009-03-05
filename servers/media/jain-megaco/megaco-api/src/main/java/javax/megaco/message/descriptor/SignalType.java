@@ -11,41 +11,41 @@ public class SignalType implements Serializable {
 	/**
 	 * Identifies signal type to be brief. Its value shall be set to 1.
 	 */
-	public static final int M_SIGNAL_TYPE_BRIEF = 1;
+	public static final int M_BRIEF = 1;
 
 	/**
 	 * Identifies signal type to be on-off. Its value shall be set to 2.
 	 */
-	public static final int M_SIGNAL_TYPE_ON_OFF = 2;
+	public static final int M_ON_OFF = 2;
 
 	/**
 	 * Identifies signal type to be "timeout". Its value shall be set to 3.
 	 */
-	public static final int M_SIGNAL_TYPE_TIMEOUT = 3;
+	public static final int M_TIMEOUT = 3;
 
 	/**
 	 * Identifies a SignalType object that constructs the class with the
-	 * constant M_SIGNAL_TYPE_BRIEF. Since it is reference to static final
+	 * constant M_BRIEF. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalType SIGNAL_TYPE_BRIEF = new SignalType(M_SIGNAL_TYPE_BRIEF);
+	public static final SignalType BRIEF = new SignalType(M_BRIEF);
 
 	/**
 	 * Identifies a SignalType object that constructs the class with the
-	 * constant M_SIGNAL_TYPE_ON_OFF. Since it is reference to static final
+	 * constant M_ON_OFF. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalType SIGNAL_TYPE_ON_OFF = new SignalType(M_SIGNAL_TYPE_ON_OFF);
+	public static final SignalType ON_OFF = new SignalType(M_ON_OFF);
 
 	/**
 	 * Identifies a SignalType object that constructs the class with the
-	 * constant M_SIGNAL_TYPE_TIMEOUT. Since it is reference to static final
+	 * constant M_TIMEOUT. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalType SIGNAL_TYPE_TIMEOUT = new SignalType(M_SIGNAL_TYPE_TIMEOUT);
+	public static final SignalType TIMEOUT = new SignalType(M_TIMEOUT);
 
 	private int signalType = -1;
 
@@ -84,12 +84,12 @@ public class SignalType implements Serializable {
 	public static final SignalType getObject(int value) throws IllegalArgumentException {
 
 		switch (value) {
-		case M_SIGNAL_TYPE_BRIEF:
-			return SIGNAL_TYPE_BRIEF;
-		case M_SIGNAL_TYPE_ON_OFF:
-			return SIGNAL_TYPE_ON_OFF;
-		case M_SIGNAL_TYPE_TIMEOUT:
-			return SIGNAL_TYPE_TIMEOUT;
+		case M_BRIEF:
+			return BRIEF;
+		case M_ON_OFF:
+			return ON_OFF;
+		case M_TIMEOUT:
+			return TIMEOUT;
 		default:
 			throw new IllegalArgumentException("Wrong signal type passed: " + value);
 		}
@@ -103,11 +103,11 @@ public class SignalType implements Serializable {
 	@Override
 	public String toString() {
 		switch (this.signalType) {
-		case M_SIGNAL_TYPE_BRIEF:
+		case M_BRIEF:
 			return "SignalType[BRIEF]";
-		case M_SIGNAL_TYPE_ON_OFF:
+		case M_ON_OFF:
 			return "SignalType[ON_OFF]";
-		case M_SIGNAL_TYPE_TIMEOUT:
+		case M_TIMEOUT:
 			return "SignalType[TIMEOUT]";
 		default:
 			return "SignalType[" + this.signalType + "]";

@@ -1,7 +1,7 @@
 package javax.megaco.message.descriptor;
 
 import java.io.Serializable; //FIXME: this requires JSIP
-import javax.megaco.InvalidArgumentException;
+
 import javax.sdp.SessionDescription;
 
 /**
@@ -42,7 +42,7 @@ public class SDPInfo implements Serializable {
 	 * @param session
 	 *            - The reference to the object corresponding to the session
 	 *            description.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if parameters set in the session description are
 	 *             such that the object cannot be set for the local/remote
 	 *             descriptor.
@@ -50,11 +50,11 @@ public class SDPInfo implements Serializable {
 	 *             - Thrown if parameters set in the session description are
 	 *             such that they are not supported.
 	 */
-	public void setSessionDescription(SessionDescription session) throws javax.megaco.InvalidArgumentException, javax.megaco.ParamNotSupportedException {
+	public void setSessionDescription(SessionDescription session) throws IllegalArgumentException, javax.megaco.ParamNotSupportedException {
 
 		// FIXME: add checks
 		if (session == null) {
-			throw new InvalidArgumentException("SessionDescription must not be null.");
+			throw new IllegalArgumentException("SessionDescription must not be null.");
 		}
 
 		this.sessionDescription = session;
@@ -89,16 +89,16 @@ public class SDPInfo implements Serializable {
 	 * @param session
 	 *            - The reference to the object corresponding to the session
 	 *            description string.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of session
 	 *             description string passed to this method is NULL.
 	 */
 	public void setSessionDescStr(java.lang.String session)
 
-	throws javax.megaco.InvalidArgumentException {
+	throws IllegalArgumentException {
 
 		if (session == null) {
-			throw new InvalidArgumentException("SessionDescription must not be null.");
+			throw new IllegalArgumentException("SessionDescription must not be null.");
 		}
 		this.sessionDescStr = session;
 

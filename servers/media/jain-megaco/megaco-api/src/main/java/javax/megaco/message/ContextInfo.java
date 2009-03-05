@@ -2,7 +2,7 @@ package javax.megaco.message;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 
 /**
  * This class defines the context information block that contains the context id
@@ -18,9 +18,9 @@ public class ContextInfo implements Serializable {
 	private ContextParam contextParam = null;
 
 	public ContextInfo(int contextId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (contextId < 0) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"ContextID for ContextInfo cannot be less than zero");
 			throw invalidArgumentException;
 		}
@@ -36,11 +36,11 @@ public class ContextInfo implements Serializable {
 	}
 
 	public void setContextParam(ContextParam contextParam)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (contextParam == null) {
-			InvalidArgumentException InvalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException IllegalArgumentException = new IllegalArgumentException(
 					"ContextParam cannot be null for ContextInfo");
-			throw InvalidArgumentException;
+			throw IllegalArgumentException;
 		}
 
 		this.contextParam = contextParam;

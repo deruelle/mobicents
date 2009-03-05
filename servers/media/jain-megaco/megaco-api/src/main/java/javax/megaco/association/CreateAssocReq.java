@@ -11,7 +11,7 @@ package javax.megaco.association;
 import java.io.Serializable;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 
 /**
  * The class extends JAIN MEGACO Association Events. This would cause the stack
@@ -27,13 +27,13 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	protected LocalAddr localAddr = null;
 	protected RemoteAddr[] remoteAddr = null;
 	protected SrvChngReason srvChangeReason = null;
-	protected SrvChngReason srvChngMethod = null;
+	protected SrvChngMethod srvChngMethod = null;
 	protected LocalAddr srvChngAddress = null;
 	protected LocalAddr handOffMGCId = null;
 	protected EncodingFormat endcodingFormat = null;
 
 	public CreateAssocReq(Object source, int assocHandle)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source, assocHandle);
 
 	}
@@ -71,12 +71,12 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 *            different from the local entity configured in the user Id as
 	 *            specified in the addMegacoListener method of MegacoProvider
 	 *            interface.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the local transport address
 	 *             specified is invalid.
 	 */
 	public void setLocalAddr(LocalAddr localAddr)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		this.localAddr = localAddr;
 	}
 
@@ -108,12 +108,12 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param remoteAddr
 	 *            -- List of remote entity transport addresses of the MGC/MG.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Remote Address
 	 *             passed to this method is NULL.
 	 */
 	public void setRemoteAddr(RemoteAddr[] remoteAddr)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		this.remoteAddr = remoteAddr;
 	}
 
@@ -125,12 +125,13 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @return Returns the integer value corresponding to the service change
 	 *         reason. If the ServiceChangeReason is not set, then this method
-	 *         would return value 0. The possible values are field constants
+	 *         would return value null. The possible values are field constants
 	 *         defined for the class {@link SrvChngReason}.
 	 */
-	public int getSrvChangeReason() {
-		return srvChangeReason == null ? 0 : srvChangeReason
-				.getSrvChngReasonId();
+	public SrvChngReason getSrvChangeReason() {
+//		return srvChangeReason == null ? 0 : srvChangeReason
+//				.getSrvChngReasonId();
+		return srvChangeReason ;
 	}
 
 	/**
@@ -140,14 +141,14 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param reason
 	 *            - The object reference to ServiceChange Reason.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
 	public void setSrvChangeReason(SrvChngReason reason)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (reason == null) {
-			throw new InvalidArgumentException("Change reason can not be null");
+			throw new IllegalArgumentException("Change reason can not be null");
 		}
 		this.srvChangeReason = reason;
 	}
@@ -160,11 +161,12 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @return Returns the integer value corresponding to the service change
 	 *         method. If the ServiceChangeMethod is not set, then this method
-	 *         would return value 0. The possible values are field constants
+	 *         would return value null. The possible values are field constants
 	 *         defined for the class SrvChngMethod.
 	 */
-	public int getSrvChngMethod() {
-		return srvChngMethod == null ? 0 : srvChngMethod.getSrvChngReasonId();
+	public SrvChngMethod getSrvChngMethod() {
+		//return srvChngMethod == null ? 0 : srvChngMethod.getSrvChngReasonId();
+		return srvChngMethod ;
 	}
 
 	/**
@@ -174,14 +176,14 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param method
 	 *            - The object reference to ServiceChange Method.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
-	public void setSrvChngMethod(SrvChngReason method)
-			throws InvalidArgumentException {
+	public void setSrvChngMethod(SrvChngMethod method)
+			throws IllegalArgumentException {
 		if (method == null) {
-			throw new InvalidArgumentException("Change method can not be null");
+			throw new IllegalArgumentException("Change method can not be null");
 		}
 		this.srvChngMethod = method;
 	}
@@ -211,13 +213,13 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param srvChngAddress
 	 *            The service change address.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the service change address
 	 *             specified is invalid.
 	 */
 	public void setSrvChngAddress(LocalAddr srvChngAddress)
-			throws InvalidArgumentException {
-		//FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		//FIXME: IllegalArgumentException
 		this.srvChngAddress = srvChngAddress;
 	}
 
@@ -243,13 +245,13 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * @param handOffMGCId
 	 *            The identity of the MGC to which the association is to be
 	 *            handoffed.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the HandedOffMGCId specified is
 	 *             invalid.
 	 */
 	public void setHandOffMGCId(LocalAddr handOffMGCId)
-			throws InvalidArgumentException {
-		//FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		//FIXME: IllegalArgumentException
 		this.handOffMGCId = handOffMGCId;
 	}
 
@@ -264,14 +266,14 @@ public class CreateAssocReq extends AssociationEvent implements Serializable {
 	 * @param endcodingFormat
 	 *            The object reference to derived class of EncodingFormat class
 	 *            which gives value of encoding format.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Encoding Format
 	 *             passed to this method is NULL.
 	 */
 	public void setEndcodingFormat(EncodingFormat format)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (format == null) {
-			throw new InvalidArgumentException("Encoding format can not be null");
+			throw new IllegalArgumentException("Encoding format can not be null");
 		}
 		this.endcodingFormat = format;
 	}

@@ -23,7 +23,7 @@ public class GenParamFailureCause extends PkgItemParam {
 		super();
 
 		super.paramId = GEN_PARAM_GENERAL_CAUSE;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		this.paramsItemIds = new int[] { GenCauseEvent.GEN_CAUSE_EVENT };
 	}
@@ -45,7 +45,7 @@ public class GenParamFailureCause extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link M_ITEM_PARAM_VALUE_STRING} indicating that the
+	 * @return It returns {@link M_STRING} indicating that the
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {

@@ -303,7 +303,9 @@ public class ErrorCode implements Serializable {
 	}
 
 	private Object readResolve() {
+
 		return this.getObject(this.error_code);
+
 	}
 
 	@Override

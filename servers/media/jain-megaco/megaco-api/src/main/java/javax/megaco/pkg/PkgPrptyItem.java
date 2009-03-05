@@ -2,7 +2,7 @@ package javax.megaco.pkg;
 
 import java.util.Arrays;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.ParameterNotSetException;
 
@@ -53,10 +53,10 @@ public abstract class PkgPrptyItem extends PkgValueItem {
 	 * return an hard coded value to indicate the item type is property.
 	 * 
 	 * @return itemType - An integer value for the item type corresponding to
-	 *         the property. This shall return M_ITEM_PROPERTY.
+	 *         the property. This shall return {@link javax.megaco.pkg.PkgItemType.M_PROPERTY}.
 	 */
 	public final int getItemType() {
-		return PkgItemType.M_ITEM_PROPERTY;
+		return PkgItemType.M_PROPERTY;
 	}
 
 	/**
@@ -83,16 +83,14 @@ public abstract class PkgPrptyItem extends PkgValueItem {
 	 * value of the relation can be set in constructor of each class that
 	 * derives this class.
 	 * 
-	 * @return paramRelation - The integer corresponding to the value relation.
+	 * @return paramRelation - The corresponding to the value relation.
 	 *         The values shall be defined in ParamRelation.
 	 * @throws javax.megaco.ParameterNotSetException
 	 */
-	public final int getItemsValueRelation() throws javax.megaco.ParameterNotSetException {
-		if (this.paramRelation == null) {
-			throw new ParameterNotSetException("Value relation has not been set.");
-		}
+	public final ParamRelation getItemsValueRelation() {
 
-		return paramRelation.getParamRelation();
+
+		return paramRelation;
 	}
 
 	/**
@@ -118,12 +116,12 @@ public abstract class PkgPrptyItem extends PkgValueItem {
 	/**
 	 * This method sets the list of values where each element is of string type.
 	 * This is to be called only if the getItemValueType returns
-	 * {@link ParamValueType.M_ITEM_PARAM_VALUE_STRING}. Else shall throw an
+	 * {@link ParamValueType.M_STRING}. Else shall throw an
 	 * exception.
 	 * 
 	 * @param value
 	 *            - A vector of string values.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if invalid argument is passed for setting the item
 	 *             value.
 	 */

@@ -1,6 +1,7 @@
 package javax.megaco.pkg.NetworkPkg;
 
 import javax.megaco.pkg.MegacoPkg;
+import javax.megaco.pkg.ParamValueType;
 import javax.megaco.pkg.PkgConsts;
 import javax.megaco.pkg.PkgStatsItem;
 
@@ -27,6 +28,8 @@ public final class NetworkOrStats extends PkgStatsItem {
 		super.itemId = NETWORK_OR_STATS;
 		super.statisticsId = NETWORK_OR_STATS;
 		super.packageId = new NetworkPkg();
+
+		super.itemType = ParamValueType.M_STRING;
 	}
 
 	/**
@@ -62,17 +65,18 @@ public final class NetworkOrStats extends PkgStatsItem {
 	public MegacoPkg getItemsPkgId() {
 		return super.packageId;
 	}
-	FIXME: whats that ??
-	@Override
+
+	// FIXME: add jdoc ? those are not present
+
 	public int getItemValueType() {
-		// TODO Auto-generated method stub
-		return 0;
+
+		return super.itemType;
 	}
 
 	@Override
 	public int[] getItemsDescriptorIds() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return new int[] {};
 	}
 
 }

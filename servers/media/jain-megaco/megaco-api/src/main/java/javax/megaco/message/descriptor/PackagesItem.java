@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.pkg.MegacoPkg;
 
 /**
@@ -22,19 +22,19 @@ public class PackagesItem implements Serializable {
 	 *            - The Megaco Package object reference.
 	 * @param version
 	 *            - The version of the Megaco Package.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Megaco Package
 	 *             passed to this method is NULL or the version passed is less
 	 *             than 0.
 	 */
-	public PackagesItem(MegacoPkg pkg, short version) throws javax.megaco.InvalidArgumentException {
+	public PackagesItem(MegacoPkg pkg, short version) throws IllegalArgumentException {
 
 		if (pkg == null) {
-			throw new InvalidArgumentException("MegacoPkg must not be null");
+			throw new IllegalArgumentException("MegacoPkg must not be null");
 		}
 
 		if (version < 0) {
-			throw new InvalidArgumentException("Version must not be less than zerp");
+			throw new IllegalArgumentException("Version must not be less than zerp");
 		}
 
 		this.megacoPkg = pkg;

@@ -25,7 +25,7 @@ public class DTMFDetParamMeth extends PkgItemParam {
 	public DTMFDetParamMeth() {
 		super();
 
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramId = DTMF_DET_PARAM_METH;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { DTMFDetCeEvt.DTMF_DET_CE_EVENT };
@@ -48,7 +48,7 @@ public class DTMFDetParamMeth extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link _ITEM_PARAM_VALUE_STRING} indicating that the
+	 * @return It returns {@link _STRING} indicating that the
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {

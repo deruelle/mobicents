@@ -1,19 +1,15 @@
 package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
-import javax.megaco.ParameterNotSetException;
 
 public class ModifyAssocReq extends AssociationEvent {
 
 	protected SrvChngReason srvChangeReason = null;
-	protected SrvChngReason srvChngMethod = null;
+	protected SrvChngMethod srvChngMethod = null;
 	protected LocalAddr srvChngAddress = null;
 	protected String srvChngMethodExtension = null;
 
-
-	public ModifyAssocReq(Object source, int assocHandle)
-			throws InvalidArgumentException {
+	public ModifyAssocReq(Object source, int assocHandle) throws IllegalArgumentException {
 		super(source, assocHandle);
 		// TODO Auto-generated constructor stub
 	}
@@ -30,12 +26,13 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @return Returns the integer value corresponding to the service change
 	 *         reason. If the ServiceChangeReason is not set, then this method
-	 *         would return value 0. The possible values are field constants
+	 *         would return value null. The possible values are field constants
 	 *         defined for the class SrvChngReason.
 	 */
-	public int getSrvChangeReason() {
-		return srvChangeReason == null ? 0 : srvChangeReason
-				.getSrvChngReasonId();
+	public SrvChngReason getSrvChangeReason() {
+		// return srvChangeReason == null ? 0 : srvChangeReason
+		// .getSrvChngReasonId();
+		return srvChangeReason;
 	}
 
 	/**
@@ -45,14 +42,13 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @param reason
 	 *            - The object reference to ServiceChange Reason.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
-	public void setSrvChangeReason(SrvChngReason reason)
-			throws javax.megaco.InvalidArgumentException {
+	public void setSrvChangeReason(SrvChngReason reason) throws IllegalArgumentException {
 		if (reason == null) {
-			throw new InvalidArgumentException("Change reason can not be null");
+			throw new IllegalArgumentException("Change reason can not be null");
 		}
 		this.srvChangeReason = reason;
 	}
@@ -65,11 +61,13 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @return Returns the integer value corresponding to the service change
 	 *         method. If the ServiceChangeMethod is not set, then this method
-	 *         would return value 0. The possible values are field constants
+	 *         would return value null. The possible values are field constants
 	 *         defined for the class SrvChngMethod.
 	 */
-	public int getSrvChngMethod() {
-		return srvChngMethod == null ? 0 : srvChngMethod.getSrvChngReasonId();
+	public SrvChngMethod getSrvChngMethod() {
+		// return srvChngMethod == null ? 0 :
+		// srvChngMethod.getSrvChngMethodId();
+		return srvChngMethod;
 	}
 
 	/**
@@ -79,14 +77,13 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @param method
 	 *            - The object reference to ServiceChange Method.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
-	public void setSrvChngMethod(SrvChngReason method)
-			throws InvalidArgumentException {
+	public void setSrvChngMethod(SrvChngMethod method) throws IllegalArgumentException {
 		if (method == null) {
-			throw new InvalidArgumentException("Change method can not be null");
+			throw new IllegalArgumentException("Change method can not be null");
 		}
 		this.srvChngMethod = method;
 	}
@@ -110,16 +107,14 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @param srvChngAddress
 	 *            - The service change address.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the service change address
 	 *             specified is invalid.
 	 */
-	public void setSrvChngAddress(LocalAddr srvChngAddress)
-			throws InvalidArgumentException {
-		// FIXME: InvalidArgumentException
+	public void setSrvChngAddress(LocalAddr srvChngAddress) throws IllegalArgumentException {
+		// FIXME: IllegalArgumentException
 		this.srvChngAddress = srvChngAddress;
 	}
-
 
 	/**
 	 * Gets the string value of the extended service change method.
@@ -127,18 +122,15 @@ public class ModifyAssocReq extends AssociationEvent {
 	 * 
 	 * @return Returns string value of the extended service change method. This
 	 *         is to be set only if the service change method is set to
-	 *         M_SVC_CHNG_METHOD_EXTENSION.
+	 *         {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             javax.megaco.association.MethodExtensionException - Thrown if
 	 *             service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}
 	 */
-	public java.lang.String getSrvChngMethodExtension()
-			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
-			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+	public java.lang.String getSrvChngMethodExtension() throws javax.megaco.association.MethodExtensionException, IllegalArgumentException {
+		if (getSrvChngMethod() == null || getSrvChngMethod().getSrvChngMethodId() != SrvChngMethod.M_EXTENSION) {
+			throw new MethodExtensionException("Changed Method is not equal to {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
 
 		return this.srvChngMethodExtension;
@@ -146,31 +138,27 @@ public class ModifyAssocReq extends AssociationEvent {
 
 	/**
 	 * This method sets the extended service change method. This needs to be set
-	 * if and only if the service change method is M_SVC_CHNG_METHOD_EXTENSION.
+	 * if and only if the service change method is
+	 * {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * 
 	 * @param extMethod
 	 *            - The string value of the extended service change method.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             - Thrown if service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
+	 * @throws IllegalArgumentException
 	 *             - Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
-	public void setSrvChngMethod(java.lang.String extMethod)
-			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
-			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+	public void setSrvChngMethod(java.lang.String extMethod) throws javax.megaco.association.MethodExtensionException, IllegalArgumentException {
+		if (getSrvChngMethod() == null || getSrvChngMethod().getSrvChngMethodId() != SrvChngMethod.M_EXTENSION) {
+			throw new MethodExtensionException("Changed Method is not equal to SrvChngMethod.{@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
-		// FIXME javax.megaco.InvalidArgumentException - Thrown if extension
+		// FIXME IllegalArgumentException - Thrown if extension
 		// string does not follow the rules of the extension parameter, e.g,
 		// should start with X+ or X- etc.
 
 		this.srvChngMethodExtension = extMethod;
 	}
-
-
 
 }

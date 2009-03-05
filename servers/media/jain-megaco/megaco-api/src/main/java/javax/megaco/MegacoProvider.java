@@ -12,7 +12,7 @@ public interface MegacoProvider {
 			throws java.util.TooManyListenersException,
 			javax.megaco.InvalidUserIdException,
 			javax.megaco.AssocHandleExhaustedException,
-			javax.megaco.InvalidArgumentException;
+			IllegalArgumentException;
 
 	public MegacoStack getMegacoStack();
 
@@ -20,7 +20,7 @@ public interface MegacoProvider {
 			throws javax.megaco.NonExistentAssocException;
 
 	public void removeMegacoListener(MegacoListener listener, int assocHandle)
-			throws javax.megaco.InvalidArgumentException;
+			throws IllegalArgumentException;
 
 	public void sendMegacoAssocEvent(AssociationEvent jainMegacoAssocEvent);
 

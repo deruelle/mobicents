@@ -26,7 +26,7 @@ public class ToneParamDur extends PkgItemParam {
 	public ToneParamDur() {
 		super();
 		super.paramId = TONE_DET_PARAM_DUR;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		this.paramsItemIds = new int[] {  ToneEtdEvent.TONE_DET_ETD_EVENT, ToneLtdEvent.TONE_DET_LTD_EVENT };
 	}
@@ -48,7 +48,7 @@ public class ToneParamDur extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_INTEGER}
+	 * @return It returns {@link ParamValueType.M_INTEGER}
 	 *         indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {

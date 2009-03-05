@@ -8,15 +8,15 @@ import java.io.Serializable;
  * 
  */
 public class TermType implements Serializable {
-	public static final int M_TERM_TYPE_NORMAL = 1;
-	public static final int M_TERM_TYPE_CHOOSE = 2;
-	public static final int M_TERM_TYPE_ROOT = 3;
-	public static final int M_TERM_TYPE_WILDCARD = 4;
+	public static final int M_NORMAL = 1;
+	public static final int M_CHOOSE = 2;
+	public static final int M_ROOT = 3;
+	public static final int M_WILDCARD = 4;
 
-	public static final TermType TERM_TYPE_NORMAL = new TermType(M_TERM_TYPE_NORMAL);
-	public static final TermType TERM_TYPE_CHOOSE = new TermType(M_TERM_TYPE_CHOOSE);
-	public static final TermType TERM_TYPE_ROOT = new TermType(M_TERM_TYPE_ROOT);
-	public static final TermType TERM_TYPE_WILDCARD = new TermType(M_TERM_TYPE_WILDCARD);
+	public static final TermType NORMAL = new TermType(M_NORMAL);
+	public static final TermType CHOOSE = new TermType(M_CHOOSE);
+	public static final TermType ROOT = new TermType(M_ROOT);
+	public static final TermType WILDCARD = new TermType(M_WILDCARD);
 
 	private int term_type;
 
@@ -56,19 +56,19 @@ public class TermType implements Serializable {
 	public static final TermType getObject(int value) throws IllegalArgumentException {
 		TermType t = null;
 		switch (value) {
-		case M_TERM_TYPE_NORMAL:
-			t = TERM_TYPE_NORMAL;
+		case M_NORMAL:
+			t = NORMAL;
 			break;
-		case M_TERM_TYPE_CHOOSE:
-			t = TERM_TYPE_CHOOSE;
-			break;
-
-		case M_TERM_TYPE_ROOT:
-			t = TERM_TYPE_ROOT;
+		case M_CHOOSE:
+			t = CHOOSE;
 			break;
 
-		case M_TERM_TYPE_WILDCARD:
-			t = TERM_TYPE_WILDCARD;
+		case M_ROOT:
+			t = ROOT;
+			break;
+
+		case M_WILDCARD:
+			t = WILDCARD;
 			break;
 		default:
 			throw new IllegalArgumentException("TermType not found for value " + value);
@@ -84,18 +84,18 @@ public class TermType implements Serializable {
 	public String toString() {
 		String t = null;
 		switch (this.term_type) {
-		case M_TERM_TYPE_NORMAL:
+		case M_NORMAL:
 			t = "TermType[NORMAL]";
 			break;
-		case M_TERM_TYPE_CHOOSE:
+		case M_CHOOSE:
 			t = "TermType[CHOOSE]";
 			break;
 
-		case M_TERM_TYPE_ROOT:
+		case M_ROOT:
 			t = "TermType[ROOT]";
 			break;
 
-		case M_TERM_TYPE_WILDCARD:
+		case M_WILDCARD:
 			t = "TermType[WILDCARD]";
 			break;
 		default:

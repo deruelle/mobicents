@@ -98,22 +98,22 @@ public abstract class CommandEvent extends EventObject {
 	 *            The vector of reference to the object identifier of type
 	 *            descriptor information.
 	 * @return
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of vector of
 	 *             Descriptor Ids passed to this method is set NULL.
 	 */
 	public int setDescriptor(Descriptor[] descriptorInfo)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 
 		if (descriptorInfo == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"Descriptor[] cannot be null for CommandEvent");
 
 			// TODO : some check of Descriptor should be done here?
 			// TODO : set the correct ExceptionInfoCode
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_DESC_TYPE);
-			invalidArgumentException.setAssocHandle(this.assocHandle);
+//			invalidArgumentException
+//					.setInfoCode(ExceptionInfoCode.INV_DESC_TYPE);
+//			invalidArgumentException.setAssocHandle(this.assocHandle);
 			throw invalidArgumentException;
 		}
 		this.descriptorInfo = descriptorInfo;
@@ -140,18 +140,18 @@ public abstract class CommandEvent extends EventObject {
 	 * @param termination
 	 *            The reference to the object identifier of type Termination.
 	 * @return
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Termination Id
 	 *             passed to this method is NULL.
 	 */
 	public int setTermination(Termination termination)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (termination == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"Termination cannot be null for CommandEvent");
-			invalidArgumentException.setAssocHandle(this.assocHandle);
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
+//			invalidArgumentException.setAssocHandle(this.assocHandle);
+//			invalidArgumentException
+//					.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
 			throw invalidArgumentException;
 		}
 		// TODO : caheck Termination for M_FAILURE
@@ -215,9 +215,9 @@ public abstract class CommandEvent extends EventObject {
 	}
 
 	public void setCntxtInfo(ContextInfo contextInfo)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (contextInfo == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"ContextInfo cannot be null for CommandEvent");
 			throw invalidArgumentException;
 		}
@@ -233,7 +233,7 @@ public abstract class CommandEvent extends EventObject {
 	}
 
 	public void setExchangeId(int exchangeId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		// TODO : Throw exception is raised if the exchange Id specified is
 		// invalid.
 		this.exchangeId = exchangeId;

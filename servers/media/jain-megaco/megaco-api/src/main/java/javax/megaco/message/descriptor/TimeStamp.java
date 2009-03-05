@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.megaco.InvalidArgumentException;
+
 
 /**
  * The TimeStamp object is a class that shall be used to set the time and date
@@ -34,10 +34,10 @@ public class TimeStamp implements Serializable {
 	 *            -
 	 * @param sec
 	 *            -
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an illegal date or time parameter is set.
 	 */
-	public TimeStamp(int year, int month, int day, int hour, int min, int sec) throws javax.megaco.InvalidArgumentException {
+	public TimeStamp(int year, int month, int day, int hour, int min, int sec) throws IllegalArgumentException {
 		// Lets use trick to validate.
 
 		gc.setLenient(false);

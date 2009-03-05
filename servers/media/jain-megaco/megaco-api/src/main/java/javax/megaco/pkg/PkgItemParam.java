@@ -1,7 +1,6 @@
 package javax.megaco.pkg;
 
 import javax.megaco.ExceptionInfoCode;
-import javax.megaco.InvalidArgumentException;
 
 /**
  * The MEGACO package item parameter class is an abstract and shall be used for
@@ -12,9 +11,9 @@ import javax.megaco.InvalidArgumentException;
  * 
  * 
  */
-public abstract class PkgItemParam  extends PkgValueItem implements java.io.Serializable {
+public abstract class PkgItemParam extends PkgValueItem implements java.io.Serializable {
 
-	//FIXME: jsr jdoc does not extend
+	// FIXME: jsr jdoc does not extend
 	private ParamRelation paramRelation;
 
 	protected int paramId = -1;
@@ -47,20 +46,55 @@ public abstract class PkgItemParam  extends PkgValueItem implements java.io.Seri
 	 */
 	public abstract int getParamValueType();
 
-	public final int getParamsValueRelation() throws javax.megaco.ParameterNotSetException {
-		return this.paramRelation.getParamRelation();
+	/**
+	 * The method can be used to get the relation set in the parameter for the
+	 * parameter value as defined in the MEGACO packages. The relation operator
+	 * can be one of equal, not equal, greater than or less than operator for
+	 * single value. The MEGACO parameter is accompanied by a parameter value
+	 * that can be single value or set of values or sublist of values or range
+	 * of values. The relation operator can be equal when the value is set or
+	 * sublist or range. This method specifies both the relation operator and
+	 * also specifies whether the accompaning parameter value is single value or
+	 * set of values or sublist of values or range of value. If the relation
+	 * specifies set or range or sublist, it automatically assumes the relation
+	 * to be "MEGACO_EQUAL".
+	 * 
+	 * @return paramRelation - The integer corresponding to the parameter
+	 *         relation. The values shall be defined in ParamRelation.
+	 */
+	public final ParamRelation getParamsValueRelation() {
+		return this.paramRelation;
 	}
 
-	public final void setParamsValueRelation(ParamRelation paramRelation) throws javax.megaco.InvalidArgumentException {
+	/**
+	 * The method can be used to set the relation of the value as defined in the
+	 * MEGACO packages. The relation operator can be one of equal, not equal,
+	 * greater than or less than operator for single value. The MEGACO parameter
+	 * is accompanied by a parameter value that can be single value or set of
+	 * values or sublist of values or range of values. The relation operator can
+	 * be equal when the value is set or sublist or range. This method specifies
+	 * both the relation operator and also specifies whether the accompaning
+	 * parameter value is single value or set of values or sublist of values or
+	 * range of value. If the relation specifies set or range or sublist, it
+	 * automatically assumes the relation to be "MEGACO_EQUAL". The default
+	 * value of the relation can be set in constructor of each class that
+	 * derives this class.
+	 * 
+	 * @param paramRelation
+	 *            - The integer corresponding to the value relation. The values
+	 *            shall be defined in ParamRelation.
+	 * @throws IllegalArgumentException
+	 *             This exception is raised if the reference of Param Relation
+	 *             passed to this method is NULL.
+	 */
+	public final void setParamsValueRelation(ParamRelation paramRelation) throws IllegalArgumentException {
 		if (paramRelation == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException("ParamRelation cannot be null from PkgItemParam");
-			invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_PARAM_RELATION);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("ParamRelation cannot be null from PkgItemParam");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_PARAM_RELATION);
 			throw invalidArgumentException;
 		}
 		this.paramRelation = paramRelation;
 	}
-
-
 
 	@Override
 	public java.lang.String toString() {

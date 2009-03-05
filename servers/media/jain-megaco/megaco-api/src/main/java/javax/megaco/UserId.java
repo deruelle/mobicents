@@ -29,23 +29,23 @@ public class UserId implements Serializable {
 	 *            list of remote End Ids specified here are one to one in
 	 *            correspondence with the remote entity address in the
 	 *            CreateAssocReq
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Local Entity Id
 	 *             or Remote Entity Id passed to this method is NULL.
 	 */
 
 	public UserId(java.lang.String localEntId, java.lang.String[] remoteEntId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (remoteEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"RemoteEntityIds cannot be null for UserId");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
+//			invalidArgumentException
+//					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
 			throw invalidArgumentException;
 		}
 
 		if (localEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"LocalEntityId cannot be null for UserId");
 			throw invalidArgumentException;
 		}
@@ -56,17 +56,17 @@ public class UserId implements Serializable {
 	}
 
 	public UserId(java.lang.String localEntId, java.lang.String[] remoteEntId,
-			char listenerInstance) throws javax.megaco.InvalidArgumentException {
+			char listenerInstance) throws IllegalArgumentException {
 		if (remoteEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"RemoteEntityIds cannot be null for UserId");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
+//			invalidArgumentException
+//					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
 			throw invalidArgumentException;
 		}
 
 		if (localEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"LocalEntityId cannot be null for UserId");
 			throw invalidArgumentException;
 		}
@@ -83,10 +83,10 @@ public class UserId implements Serializable {
 	}
 
 	public void setLocalEntId(java.lang.String localEntId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 
 		if (localEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"LocalEntityId cannot be null for UserId");
 			throw invalidArgumentException;
 		}
@@ -96,12 +96,12 @@ public class UserId implements Serializable {
 	}
 
 	public void setRemoteEntId(java.lang.String[] remoteEntId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (remoteEntId == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException(
 					"RemoteEntityIds cannot be null for UserId");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
+//			invalidArgumentException
+//					.setInfoCode(ExceptionInfoCode.INV_REMOTE_ADDR);
 			throw invalidArgumentException;
 		}
 		this.remoteEntId = remoteEntId;
@@ -121,6 +121,8 @@ public class UserId implements Serializable {
 
 	public char getListenerInstance()
 			throws javax.megaco.ParameterNotSetException {
+		
+		//FIXME: ???
 		if (!this.isListenerInstancePresent()) {
 			ParameterNotSetException parameterNotSetException = new ParameterNotSetException(
 					"ListenerInstance not yet set for UserId");

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -115,24 +115,24 @@ public class AuditValRespDescriptor extends Descriptor implements Serializable {
 	 * @param descriptor
 	 *            The vector of reference to the object identifier of type
 	 *            descriptor information.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             if the descriptor passed to this method is invalid.
 	 */
-	public void setDescriptor(Descriptor[] descriptors) throws javax.megaco.InvalidArgumentException {
+	public void setDescriptor(Descriptor[] descriptors) throws IllegalArgumentException {
 		if (descriptors == null) {
-			throw new InvalidArgumentException("Descriptor[] must not be null.");
+			throw new IllegalArgumentException("Descriptor[] must not be null.");
 		}
 
 		if (descriptors.length == 0) {
-			throw new InvalidArgumentException("Descriptor[] must not be empty.");
+			throw new IllegalArgumentException("Descriptor[] must not be empty.");
 		}
 		int count = 0;
 		for (Descriptor d : descriptors) {
 			if (d == null) {
-				throw new InvalidArgumentException("Descriptor[" + count + "] is null!");
+				throw new IllegalArgumentException("Descriptor[" + count + "] is null!");
 			}
 			if (!allowedDescritpors.contains(d.getDescriptorId())) {
-				throw new InvalidArgumentException("Descriptor[" + count + "] is is of wrong type, its not allowed: " + d.toString());
+				throw new IllegalArgumentException("Descriptor[" + count + "] is is of wrong type, its not allowed: " + d.toString());
 			}
 
 			count++;

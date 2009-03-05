@@ -27,7 +27,7 @@ public class AnalogLineSParamStrict extends PkgItemParam {
 	public AnalogLineSParamStrict() {
 		super();
 		super.paramId = ANALOG_LINE_PARAM_STRICT;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
 		this.paramsItemIds = new int[] { AnalogLineSOnEvt.ANALOG_LINE_ONHOOK_EVENT, AnalogLineSOffEvt.ANALOG_LINE_OFFHOOK_EVENT };
 	}
@@ -49,7 +49,7 @@ public class AnalogLineSParamStrict extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_STRING }
+	 * @return It returns {@link ParamValueType.M_STRING }
 	 *         indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {

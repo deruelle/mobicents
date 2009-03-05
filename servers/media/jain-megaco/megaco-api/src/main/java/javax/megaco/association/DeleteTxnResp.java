@@ -10,7 +10,7 @@ package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
 import javax.megaco.ErrorCode;
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.ReturnStatus;
 
@@ -20,14 +20,12 @@ public class DeleteTxnResp extends AssociationEvent {
 	protected ReturnStatus eventStatus = null;
 	protected ErrorCode errorCode = null;
 
-	public DeleteTxnResp(Object source, int assocHandle)
-			throws InvalidArgumentException {
+	public DeleteTxnResp(Object source, int assocHandle) throws IllegalArgumentException {
 		super(source, assocHandle);
 		// TODO Auto-generated constructor stub
 	}
 
-	public DeleteTxnResp(Object source, int assocHandle, int txnHandle)
-			throws InvalidArgumentException {
+	public DeleteTxnResp(Object source, int assocHandle, int txnHandle) throws IllegalArgumentException {
 		super(source, assocHandle);
 		this.setTxnHandle(txnHandle);
 	}
@@ -45,10 +43,11 @@ public class DeleteTxnResp extends AssociationEvent {
 	 *         transaction event issued earlier could be performed successfuly
 	 *         or not. The values are field constants defined in class
 	 *         ReturnStatus. If the returnStatus is not set, then this method
-	 *         would return value 0.
+	 *         would return value null.
 	 */
-	public final int getEventStatus() {
-		return eventStatus == null ? 0 : eventStatus.getReturnStatus();
+	public final ReturnStatus getEventStatus() {
+		// return eventStatus == null ? 0 : eventStatus.getReturnStatus();
+		return eventStatus;
 	}
 
 	/**
@@ -60,14 +59,13 @@ public class DeleteTxnResp extends AssociationEvent {
 	 *            transaction event. The static object corresponding to the
 	 *            return status which are one of the derived classes of the
 	 *            ReturnStatus shall be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Return Status
 	 *             passed to this method is NULL.
 	 */
-	public final void setEventStatus(ReturnStatus returnStatus)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setEventStatus(ReturnStatus returnStatus) throws IllegalArgumentException {
 		if (returnStatus == null)
-			throw new InvalidArgumentException("Event status can not be null.");
+			throw new IllegalArgumentException("Event status can not be null.");
 
 		this.eventStatus = returnStatus;
 	}
@@ -80,18 +78,18 @@ public class DeleteTxnResp extends AssociationEvent {
 	 *         specifying why the execution of the modify association event
 	 *         could not be successful. The possible values are field constants
 	 *         defined for the class ErrorCode. If the error code is not set,
-	 *         then this method would return value 0.
-	 * @throws MethodInvocationException
+	 *         then this method would return value null.
+	 * @throws IllegalStateException
 	 *             - This exception would be raised if the return status is set
 	 *             to M_SUCCESS, the error code is not set and hence should not
 	 *             invoke this method.
 	 */
-	public final int getErrorCode() throws MethodInvocationException {
-		if (getEventStatus() == ReturnStatus.M_SUCCESS) {
-			throw new MethodInvocationException(
-					"Event status is success, error code is not premited.");
+	public final ErrorCode getErrorCode() throws IllegalStateException {
+		if (getEventStatus() == null || getEventStatus().getReturnStatus() == ReturnStatus.M_SUCCESS) {
+			throw new IllegalStateException("Event status is success or not set, error code is not premited.");
 		}
-		return errorCode == null ? 0 : errorCode.getErrorCode();
+		// return errorCode == null ? 0 : errorCode.getErrorCode();
+		return errorCode;
 	}
 
 	/**
@@ -102,17 +100,18 @@ public class DeleteTxnResp extends AssociationEvent {
 	 *            - The error code correspondingto why the delete transaction
 	 *            event could not be executed successfuly. The values are
 	 *            defined in AssocEventType.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception would be raised in following conditions <br>
 	 *             1. If the return status is not set to M_FAILURE, the error
 	 *             code should not be set. <br>
 	 *             2. If the error code is not valid for the DeleteTxnReq event.
 	 */
-	public final void setErrorCode(ErrorCode errorCode)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setErrorCode(ErrorCode errorCode) throws IllegalArgumentException {
 		if (errorCode == null)
-			throw new InvalidArgumentException("Error code can not be null.");
-		// FIXME: see javadoc
+			throw new IllegalArgumentException("Error code can not be null.");
+		if (getEventStatus() == null || getEventStatus().getReturnStatus() != ReturnStatus.M_FAILURE) {
+			throw new IllegalArgumentException("Event status is not failure or nto set, error code is not premited.");
+		}
 		this.errorCode = errorCode;
 	}
 
@@ -143,16 +142,14 @@ public class DeleteTxnResp extends AssociationEvent {
 	 * 
 	 * @param transactionHandle
 	 *            A reference to transaction identifier.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of transaction handle
 	 *             passed to this method is less than 0.
 	 */
-	public final void setTxnHandle(int transactionHandle)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setTxnHandle(int transactionHandle) throws IllegalArgumentException {
 
 		if (transactionHandle < 0)
-			throw new InvalidArgumentException(
-					"Txn Handle can not be less than zero");
+			throw new IllegalArgumentException("Txn Handle can not be less than zero");
 
 		this.txnHandle = transactionHandle;
 	}

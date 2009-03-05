@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 import javax.megaco.pkg.PkgItemStr;
@@ -21,18 +21,18 @@ public class StatsDescriptor extends Descriptor implements Serializable {
 	 * its associated value.
 	 * 
 	 * @param statsItem
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid statistics id is set.
 	 */
-	public StatsDescriptor(PkgStatsItem[] statsItem) throws javax.megaco.InvalidArgumentException {
+	public StatsDescriptor(PkgStatsItem[] statsItem) throws IllegalArgumentException {
 		super.descriptorId = DescriptorType.M_STATISTICS_DESC;
 
 		if (statsItem == null) {
-			throw new InvalidArgumentException("PkgStatsItem[] must not be null.");
+			throw new IllegalArgumentException("PkgStatsItem[] must not be null.");
 		}
 
 		if (statsItem.length == 0) {
-			throw new InvalidArgumentException("PkgStatsItem[] must not be empty.");
+			throw new IllegalArgumentException("PkgStatsItem[] must not be empty.");
 		}
 
 		this.pkgStatsItem = statsItem;
@@ -44,18 +44,18 @@ public class StatsDescriptor extends Descriptor implements Serializable {
 	 * string format.
 	 * 
 	 * @param statsItemStr
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid statsItemStr object reference is set.
 	 */
-	public StatsDescriptor(PkgItemStr[] statsItemStr) throws javax.megaco.InvalidArgumentException {
+	public StatsDescriptor(PkgItemStr[] statsItemStr) throws IllegalArgumentException {
 		super.descriptorId = DescriptorType.M_STATISTICS_DESC;
 
 		if (statsItemStr == null) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be null.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be null.");
 		}
 
 		if (statsItemStr.length == 0) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be empty.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be empty.");
 		}
 
 		this.pkgItemStr = statsItemStr;

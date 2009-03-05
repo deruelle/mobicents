@@ -26,7 +26,7 @@ public class NetworkParamTh extends PkgItemParam {
 	public NetworkParamTh() {
 		super();
 		super.paramId = NETWORK_PARAM_TH;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 		super.paramsItemIds = new int[] { NetworkQualertEvt.NETWORK_QLTY_ALERT_EVENT };
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC, DescriptorType.M_EVENT_DESC };
 	}
@@ -47,7 +47,7 @@ public class NetworkParamTh extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_INTEGER}
+	 * @return It returns {@link ParamValueType.M_INTEGER}
 	 *         indicating that the parameter is a integer.
 	 */
 	public int getParamValueType() {

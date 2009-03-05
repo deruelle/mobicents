@@ -14,6 +14,13 @@ public class CPToneGenPkg extends MegacoPkg {
 
 	private int[] extendedPkgIds = new int[] { PkgConsts.TONE_GEN_PACKAGE };
 
+	
+	
+	public CPToneGenPkg() {
+		super();
+		
+	}
+
 	/**
 	 * This method gets the package ids of all the package which the package had
 	 * directly or indirectly extended. Package ids are defined in

@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -20,16 +20,16 @@ public class ModemDescriptor extends Descriptor implements Serializable {
 	 * ModemParam.
 	 * 
 	 * @param modemParam
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of vector of
 	 *             Modem Param passed to this method is NULL.
 	 */
-	public ModemDescriptor(ModemParam[] modemParam) throws javax.megaco.InvalidArgumentException {
+	public ModemDescriptor(ModemParam[] modemParam) throws IllegalArgumentException {
 		if (modemParam == null) {
-			throw new InvalidArgumentException("ModemParam[] must not be null.");
+			throw new IllegalArgumentException("ModemParam[] must not be null.");
 		}
 		if (modemParam.length == 0) {
-			throw new InvalidArgumentException("ModemParam[] must not be empty.");
+			throw new IllegalArgumentException("ModemParam[] must not be empty.");
 		}
 		this.modemParam = modemParam;
 
@@ -81,17 +81,17 @@ public class ModemDescriptor extends Descriptor implements Serializable {
 	 * @param param
 	 *            - Sets the vector of the object refernces to name-param value
 	 *            pair for modem properties.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             if the param name or param value or the relation used is not
 	 *             one of the allowed values or the vector of ModemParamValue is
 	 *             set to NULL.
 	 */
-	public void setModemParamValue(ModemParamValue[] param) throws javax.megaco.InvalidArgumentException {
+	public void setModemParamValue(ModemParamValue[] param) throws IllegalArgumentException {
 		if (param == null) {
-			throw new InvalidArgumentException("ModemParamValue[] must not be null.");
+			throw new IllegalArgumentException("ModemParamValue[] must not be null.");
 		}
 		if (param.length == 0) {
-			throw new InvalidArgumentException("ModemParamValue[] must not be empty.");
+			throw new IllegalArgumentException("ModemParamValue[] must not be empty.");
 		}
 
 		// FIXME: add checks here

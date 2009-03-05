@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 import javax.megaco.pkg.PkgItemStr;
@@ -55,18 +55,18 @@ public class PackageDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param pkgs_item
 	 *            - Vector value that identifies the package Item value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Packages Item
 	 *             passed to this method is NULL.
 	 */
-	public final void setMegacoPkgItems(PackagesItem[] pkgs_item) throws javax.megaco.InvalidArgumentException {
+	public final void setMegacoPkgItems(PackagesItem[] pkgs_item) throws IllegalArgumentException {
 
 		if (pkgs_item == null) {
-			throw new InvalidArgumentException("PackagesItem[] must not be null.");
+			throw new IllegalArgumentException("PackagesItem[] must not be null.");
 		}
 
 		if (pkgs_item.length == 0) {
-			throw new InvalidArgumentException("PackagesItem[] must not be empty.");
+			throw new IllegalArgumentException("PackagesItem[] must not be empty.");
 		}
 
 		this.packagesItems = pkgs_item;
@@ -91,18 +91,18 @@ public class PackageDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param pkgs_item
 	 *            - Vector value that identifies the package Item value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Package Item
 	 *             String passed to this method is NULL.
 	 */
-	public final void setMegacoPkgItemsStr(PkgItemStr[] pkgs_item) throws javax.megaco.InvalidArgumentException {
+	public final void setMegacoPkgItemsStr(PkgItemStr[] pkgs_item) throws IllegalArgumentException {
 
 		if (pkgs_item == null) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be null.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be null.");
 		}
 
 		if (pkgs_item.length == 0) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be empty.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be empty.");
 		}
 
 		this.pkgItemStr = pkgs_item;

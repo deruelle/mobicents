@@ -48,10 +48,10 @@ public abstract class PkgEventItem extends PkgItem {
 	 * return an hard coded value to indicate the item type is event.
 	 * 
 	 * itemType - An integer value for the item type corresponding to the event.
-	 * This shall return M_ITEM_EVENT.
+	 * This shall return {@link javax.megaco.pkg.PkgItemType.M_EVENT}
 	 */
 	public final int getItemType() {
-		return PkgItemType.M_ITEM_EVENT;
+		return PkgItemType.M_EVENT;
 	}
 
 	/**
@@ -65,7 +65,7 @@ public abstract class PkgEventItem extends PkgItem {
 	 * packageId - The object reference of the package object to which the item
 	 * is dynamically associated.
 	 * 
-	 * InvalidArgumentException This exception will be raised in the following
+	 * IllegalArgumentException This exception will be raised in the following
 	 * cases 1. If the method is called to modify the associated package after
 	 * the parameter has been set. 2. If the package that is dynamically being
 	 * linked cannot be set due to the fact that the item does not belong to the
@@ -74,7 +74,7 @@ public abstract class PkgEventItem extends PkgItem {
 	 * this method is NULL.
 	 */
 	public void setAssociatedPkgId(MegacoPkg packageId)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		// TODO
 	}
 
@@ -110,10 +110,10 @@ public abstract class PkgEventItem extends PkgItem {
 	 * that it extends the package to which the parameter belongs.
 	 * 
 	 * @param paramInfo - The vector of objectIdentifier corresponding to the parameter information.
-	 * @throws javax.megaco.InvalidArgumentException If the parameter cannot be linked to the current event.
-	 * @throws javax.megaco.MethodInvocationException If the item has not been associated with a package.
+	 * @throws IllegalArgumentException If the parameter cannot be linked to the current event.
+	 * @throws IllegalStateException If the item has not been associated with a package.
 	 */
-	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
+	public final void setMegacoPkgItemParam(PkgItemParam[] paramInfo) throws IllegalArgumentException, IllegalStateException {
 		// FIXME: add checks for exceptions
 		this.paramInfo = paramInfo;
 	}

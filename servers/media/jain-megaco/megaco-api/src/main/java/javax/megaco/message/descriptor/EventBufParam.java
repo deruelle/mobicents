@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 import javax.megaco.pkg.PkgEventItem;
 import javax.megaco.pkg.PkgItemStr;
@@ -25,10 +25,10 @@ public class EventBufParam implements Serializable {
 	 * This is to be set within an event buffer descriptor.
 	 * 
 	 * @param eventItem
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid eventItem object reference is set.
 	 */
-	public EventBufParam(PkgEventItem eventItem) throws javax.megaco.InvalidArgumentException {
+	public EventBufParam(PkgEventItem eventItem) throws IllegalArgumentException {
 		this.eventItem = eventItem;
 	}
 
@@ -39,10 +39,10 @@ public class EventBufParam implements Serializable {
 	 * string format. This is to be set within an event buffer descriptor.
 	 * 
 	 * @param eventItemStr
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid eventItemStr object reference is set.
 	 */
-	public EventBufParam(PkgItemStr eventItemStr) throws javax.megaco.InvalidArgumentException {
+	public EventBufParam(PkgItemStr eventItemStr) throws IllegalArgumentException {
 		this.eventItemStr = eventItemStr;
 	}
 
@@ -102,13 +102,13 @@ public class EventBufParam implements Serializable {
 	 * 
 	 * @param streamId
 	 *            - The integer value of the stream id shall be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if streamId is set with an invalid value.
 	 */
-	public void setStreamId(int streamId) throws javax.megaco.InvalidArgumentException {
+	public void setStreamId(int streamId) throws IllegalArgumentException {
 
 		if (streamId <= 0) {
-			throw new InvalidArgumentException("StreamId must be greater than zero.");
+			throw new IllegalArgumentException("StreamId must be greater than zero.");
 		}
 
 		this.streamId = new Integer(streamId);

@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.pkg.ParamRelation;
 import javax.megaco.pkg.ParamValueType;
 
@@ -42,13 +42,13 @@ public class ModemParamValue implements Serializable {
 	 * 
 	 * @param name
 	 *            - The string value corresponding to the parameter name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Exception shall be thrown if the param name is not of
 	 *             proper format.
 	 */
-	public void setParamName(java.lang.String name) throws javax.megaco.InvalidArgumentException {
+	public void setParamName(java.lang.String name) throws IllegalArgumentException {
 		if (name == null) {
-			throw new InvalidArgumentException("ParamName must not be null");
+			throw new IllegalArgumentException("ParamName must not be null");
 		}
 
 		DescriptorUtils.checkParamNameRules(name);
@@ -105,13 +105,13 @@ public class ModemParamValue implements Serializable {
 	 * @param paramRelation
 	 *            paramRelation - The integer corresponding to the value
 	 *            relation. The values shall be defined in ParamRelation.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Param Relation
 	 *             passed to this method is NULL.
 	 */
-	public void setParamsValueRelation(ParamRelation paramRelation) throws javax.megaco.InvalidArgumentException {
+	public void setParamsValueRelation(ParamRelation paramRelation) throws IllegalArgumentException {
 		if (paramRelation == null) {
-			throw new InvalidArgumentException("ParamRelation must not be null.");
+			throw new IllegalArgumentException("ParamRelation must not be null.");
 		}
 
 		this.paramRelation = paramRelation;
@@ -123,16 +123,16 @@ public class ModemParamValue implements Serializable {
 	 * 
 	 * @param value
 	 *            - A vector of string values.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if invalid argument is passed for setting the item
 	 *             value.
 	 */
-	public void setParamsValue(java.lang.String[] value) throws javax.megaco.InvalidArgumentException {
+	public void setParamsValue(java.lang.String[] value) throws IllegalArgumentException {
 		if (value == null) {
-			throw new InvalidArgumentException("Value must not be null.");
+			throw new IllegalArgumentException("Value must not be null.");
 		}
 		if (value.length == 0) {
-			throw new InvalidArgumentException("Value must not be empty.");
+			throw new IllegalArgumentException("Value must not be empty.");
 		}
 		this.paramsValue = value;
 	}

@@ -29,7 +29,7 @@ public final class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
 	public RootMaxNrOfCtxtPrpt() {
 		super();
 		super.itemId = ROOT_MAX_NR_OF_CTXT_PRPT;
-		super.itemType = ParamValueType.M_ITEM_PARAM_VALUE_DOUBLE;
+		super.itemType = ParamValueType.M_DOUBLE;
 		super.packageId = new BaseRootPkg();
 
 		this.itemsDescriptorIds = new int[] { DescriptorType.M_TERMINATION_STATE_DESC };
@@ -52,7 +52,7 @@ public final class RootMaxNrOfCtxtPrpt extends PkgPrptyItem {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ITEM_PARAM_VALUE_DOUBLE} indicating that the
+	 * @return It returns {@link DOUBLE} indicating that the
 	 *         parameter is a double.
 	 */
 	public int getItemValueType() {

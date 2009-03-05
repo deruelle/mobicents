@@ -3,15 +3,15 @@ package javax.megaco.pkg;
 import java.io.Serializable;
 
 public final class ParamValueType implements Serializable {
-	public static final int M_ITEM_PARAM_VALUE_STRING = 1;
-	public static final int M_ITEM_PARAM_VALUE_INTEGER = 2;
-	public static final int M_ITEM_PARAM_VALUE_BOOLEAN = 3;
-	public static final int M_ITEM_PARAM_VALUE_DOUBLE = 4;
+	public static final int M_STRING = 1;
+	public static final int M_INTEGER = 2;
+	public static final int M_BOOLEAN = 3;
+	public static final int M_DOUBLE = 4;
 
-	public static final ParamValueType ITEM_PARAM_VALUE_STRING = new ParamValueType(M_ITEM_PARAM_VALUE_STRING);
-	public static final ParamValueType ITEM_PARAM_VALUE_INTEGER = new ParamValueType(M_ITEM_PARAM_VALUE_INTEGER);
-	public static final ParamValueType ITEM_PARAM_VALUE_BOOLEAN = new ParamValueType(M_ITEM_PARAM_VALUE_BOOLEAN);
-	public static final ParamValueType ITEM_PARAM_VALUE_DOUBLE = new ParamValueType(M_ITEM_PARAM_VALUE_DOUBLE);
+	public static final ParamValueType STRING = new ParamValueType(M_STRING);
+	public static final ParamValueType INTEGER = new ParamValueType(M_INTEGER);
+	public static final ParamValueType BOOLEAN = new ParamValueType(M_BOOLEAN);
+	public static final ParamValueType DOUBLE = new ParamValueType(M_DOUBLE);
 
 	private int value_type;
 
@@ -26,20 +26,20 @@ public final class ParamValueType implements Serializable {
 	public static final ParamValueType getObject(int value) throws IllegalArgumentException {
 		ParamValueType p = null;
 		switch (value) {
-		case M_ITEM_PARAM_VALUE_STRING:
-			p = ITEM_PARAM_VALUE_STRING;
+		case M_STRING:
+			p = STRING;
 			break;
 
-		case M_ITEM_PARAM_VALUE_INTEGER:
-			p = ITEM_PARAM_VALUE_INTEGER;
+		case M_INTEGER:
+			p = INTEGER;
 			break;
 
-		case M_ITEM_PARAM_VALUE_BOOLEAN:
-			p = ITEM_PARAM_VALUE_BOOLEAN;
+		case M_BOOLEAN:
+			p = BOOLEAN;
 			break;
 
-		case M_ITEM_PARAM_VALUE_DOUBLE:
-			p = ITEM_PARAM_VALUE_DOUBLE;
+		case M_DOUBLE:
+			p = DOUBLE;
 			break;
 
 		default:
@@ -56,20 +56,20 @@ public final class ParamValueType implements Serializable {
 	public String toString() {
 		String p = null;
 		switch (this.value_type) {
-		case M_ITEM_PARAM_VALUE_STRING:
-			p = "ParamValueTypeSTRING]";
+		case M_STRING:
+			p = "ParamValueType[STRING]";
 			break;
 
-		case M_ITEM_PARAM_VALUE_INTEGER:
-			p = "ParamValueTypeINTEGER]";
+		case M_INTEGER:
+			p = "ParamValueType[INTEGER]";
 			break;
 
-		case M_ITEM_PARAM_VALUE_BOOLEAN:
-			p = "ParamValueTypeBOOLEAN]";
+		case M_BOOLEAN:
+			p = "ParamValueType[BOOLEAN]";
 			break;
 
-		case M_ITEM_PARAM_VALUE_DOUBLE:
-			p = "ParamValueTypeDOUBLE]";
+		case M_DOUBLE:
+			p = "ParamValueType[DOUBLE]";
 			break;
 
 		default:

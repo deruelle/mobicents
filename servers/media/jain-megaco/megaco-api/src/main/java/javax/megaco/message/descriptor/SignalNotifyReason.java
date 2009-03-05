@@ -11,63 +11,63 @@ public class SignalNotifyReason {
 	 * Identifies notification reason to be timeout. Its value shall be set to
 	 * 1.
 	 */
-	public static final int M_NOTIFY_REASON_TIMEOUT = 1;
+	public static final int M_TIMEOUT = 1;
 
 	/**
 	 * Identifies notification reason to be interrupted by event. Its value
 	 * shall be set to 2.
 	 */
-	public static final int M_NOTIFY_REASON_INT_EVENT = 2;
+	public static final int M_INT_EVENT = 2;
 
 	/**
 	 * Identifies notification reason to be interrupted by application of
 	 * another signal. Its value shall be set to 3.
 	 */
-	public static final int M_NOTIFY_REASON_INT_SIGNAL = 3;
+	public static final int M_INT_SIGNAL = 3;
 
 	/**
 	 * Identifies notification reason to be "other". Its value shall be set to
 	 * 4.
 	 */
-	public static final int M_NOTIFY_REASON_OTHER = 4;
+	public static final int M_OTHER = 4;
 
 	/**
 	 * Identifies a SignalNotifyReason object that constructs the class with the
-	 * constant M_NOTIFY_REASON_TIMEOUT. Since it is reference to static final
+	 * constant M_TIMEOUT. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalNotifyReason NOTIFY_REASON_TIMEOUT = new SignalNotifyReason(M_NOTIFY_REASON_TIMEOUT);
+	public static final SignalNotifyReason TIMEOUT = new SignalNotifyReason(M_TIMEOUT);
 
 	/**
 	 * Identifies a SignalNotifyReason object that constructs the class with the
-	 * constant M_NOTIFY_REASON_INT_EVENT. Since it is reference to static final
+	 * constant M_INT_EVENT. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalNotifyReason NOTIFY_REASON_INT_EVENT
+	public static final SignalNotifyReason INT_EVENT
 
-	= new SignalNotifyReason(M_NOTIFY_REASON_INT_EVENT);
+	= new SignalNotifyReason(M_INT_EVENT);
 
 	/**
 	 * Identifies a SignalNotifyReason object that constructs the class with the
-	 * constant M_NOTIFY_REASON_INT_SIGNAL. Since it is reference to static
+	 * constant M_INT_SIGNAL. Since it is reference to static
 	 * final object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalNotifyReason NOTIFY_REASON_INT_SIGNAL
+	public static final SignalNotifyReason INT_SIGNAL
 
-	= new SignalNotifyReason(M_NOTIFY_REASON_INT_SIGNAL);
+	= new SignalNotifyReason(M_INT_SIGNAL);
 
 	/**
 	 * Identifies a SignalNotifyReason object that constructs the class with the
-	 * constant M_NOTIFY_REASON_OTHER. Since it is reference to static final
+	 * constant M_OTHER. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final SignalNotifyReason NOTIFY_REASON_OTHER
+	public static final SignalNotifyReason OTHER
 
-	= new SignalNotifyReason(M_NOTIFY_REASON_OTHER);
+	= new SignalNotifyReason(M_OTHER);
 
 	private int notifyReason = -1;
 
@@ -109,14 +109,14 @@ public class SignalNotifyReason {
 	public static final SignalNotifyReason getObject(int value) throws IllegalArgumentException {
 
 		switch (value) {
-		case M_NOTIFY_REASON_INT_EVENT:
-			return NOTIFY_REASON_INT_EVENT;
-		case M_NOTIFY_REASON_INT_SIGNAL:
-			return NOTIFY_REASON_INT_SIGNAL;
-		case M_NOTIFY_REASON_OTHER:
-			return NOTIFY_REASON_OTHER;
-		case M_NOTIFY_REASON_TIMEOUT:
-			return NOTIFY_REASON_TIMEOUT;
+		case M_INT_EVENT:
+			return INT_EVENT;
+		case M_INT_SIGNAL:
+			return INT_SIGNAL;
+		case M_OTHER:
+			return OTHER;
+		case M_TIMEOUT:
+			return TIMEOUT;
 
 		default:
 			throw new IllegalArgumentException("Wrong signal notify reason passed: " + value);
@@ -139,13 +139,13 @@ public class SignalNotifyReason {
 	@Override
 	public String toString() {
 		switch (this.notifyReason) {
-		case M_NOTIFY_REASON_INT_EVENT:
+		case M_INT_EVENT:
 			return "SignalNotifyReason[INT_EVENT]";
-		case M_NOTIFY_REASON_INT_SIGNAL:
+		case M_INT_SIGNAL:
 			return "SignalNotifyReason[NT_SIGNAL]";
-		case M_NOTIFY_REASON_OTHER:
+		case M_OTHER:
 			return "SignalNotifyReason[OTHER]";
-		case M_NOTIFY_REASON_TIMEOUT:
+		case M_TIMEOUT:
 			return "SignalNotifyReason[TIMEOUT]";
 
 		default:

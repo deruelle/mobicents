@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 import javax.megaco.pkg.PkgItemStr;
@@ -38,16 +38,13 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	/**
 	 * This method gets the service state for the termination state descriptor.
 	 * This shall specify one of out of service or in service or test. When
-	 * service state is not present, then this shall return value 0.
+	 * service state is not present, then this shall return value null.
 	 * 
 	 * @return Returns the object reference of type service state. If the
-	 *         service state is not set then this shall return value 0.
+	 *         service state is not set then this shall return value null.
 	 */
 	public final int getServiceState() {
 
-		if (this.serviceState == null) {
-			return 0;
-		}
 		return this.serviceState.getServiceState();
 	}
 
@@ -60,15 +57,15 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	 *            - Sets the object reference of the derived object of
 	 *            ServiceState to specify one of out of service or in service or
 	 *            test.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Service State
 	 *             passed to this method is NULL.
 	 */
 	public final void setServiceState(ServiceState serviceState)
 
-	throws javax.megaco.InvalidArgumentException {
+	throws IllegalArgumentException {
 		if (serviceState == null) {
-			throw new InvalidArgumentException("ServiceState must not be null.");
+			throw new IllegalArgumentException("ServiceState must not be null.");
 		}
 
 		this.serviceState = serviceState;
@@ -77,18 +74,14 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	/**
 	 * This method gets the event buffer control for the termination state
 	 * descriptor. This shall specify one of off or lock step. When event buffer
-	 * control is not present, then this shall return value 0.
+	 * control is not present, then this shall return value null.
 	 * 
 	 * @return Returns the object reference of type event buffer control. If the
-	 *         event buffer control is not set then this shall return value 0.
+	 *         event buffer control is not set then this shall return value nul.
 	 */
-	public final int getEvtBufferControl() {
+	public final EventBufferCtrl getEvtBufferControl() {
 
-		if (this.evtBufferControl == null) {
-			return 0;
-		}
-
-		return this.evtBufferControl.getEvtBufferControl();
+		return this.evtBufferControl;
 	}
 
 	/**
@@ -99,14 +92,14 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	 * @param eventBufferControl
 	 *            - Sets the object reference of the derived object of
 	 *            EventBufferCtrl to specify one of off or lock step.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Event Buffer
 	 *             Control passed to this method is NULL.
 	 */
-	public final void setEvtBufferControl(EventBufferCtrl eventBufferControl) throws javax.megaco.InvalidArgumentException {
+	public final void setEvtBufferControl(EventBufferCtrl eventBufferControl) throws IllegalArgumentException {
 
 		if (eventBufferControl == null) {
-			throw new InvalidArgumentException("EventBufferCtrl must not be null.");
+			throw new IllegalArgumentException("EventBufferCtrl must not be null.");
 		}
 		this.evtBufferControl = eventBufferControl;
 	}
@@ -132,18 +125,18 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	 * @param prptyParam
 	 *            - The Megaco Property parameter specifying the property for
 	 *            the termination in the command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if the parameters set for the property parameter are such
 	 *             that the TermState Descriptor cannot be encoded.
 	 */
-	public final void setMegacoPkgPrptyItem(PkgPrptyItem[] prptyParam) throws javax.megaco.InvalidArgumentException {
+	public final void setMegacoPkgPrptyItem(PkgPrptyItem[] prptyParam) throws IllegalArgumentException {
 
 		// FIXME: add error checks
 		if (prptyParam == null) {
-			throw new InvalidArgumentException("PkgPrptyItem[] must not be null.");
+			throw new IllegalArgumentException("PkgPrptyItem[] must not be null.");
 		}
 		if (prptyParam.length == 0) {
-			throw new InvalidArgumentException("PkgPrptyItem[] must not be empty.");
+			throw new IllegalArgumentException("PkgPrptyItem[] must not be empty.");
 		}
 		this.pkgPrptyItems = prptyParam;
 
@@ -173,17 +166,17 @@ public class TermStateDescriptor extends Descriptor implements Serializable {
 	 * @param prptyParam
 	 *            - The Megaco Property parameter specifying the property for
 	 *            the termination in the command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Package Item
 	 *             string passed to this method is NULL.
 	 */
-	public final void setMegacoPkgItemStr(PkgItemStr[] prptyParamStr) throws javax.megaco.InvalidArgumentException {
+	public final void setMegacoPkgItemStr(PkgItemStr[] prptyParamStr) throws IllegalArgumentException {
 		// FIXME: add error checks
 		if (prptyParamStr == null) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be null.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be null.");
 		}
 		if (prptyParamStr.length == 0) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be empty.");
+			throw new IllegalArgumentException("PkgItemStr[] must not be empty.");
 		}
 		this.prptyParamStr = prptyParamStr;
 	}

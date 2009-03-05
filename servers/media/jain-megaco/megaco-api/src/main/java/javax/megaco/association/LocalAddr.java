@@ -3,7 +3,7 @@ package javax.megaco.association;
 import java.io.Serializable;
 
 import javax.megaco.ExceptionInfoCode;
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 
 /**
@@ -38,13 +38,10 @@ public class LocalAddr implements Serializable {
 
 	}
 
-	public LocalAddr(java.lang.String[] ipAddr, TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public LocalAddr(java.lang.String[] ipAddr, TransportType tpt_type) throws IllegalArgumentException {
 		if (ipAddr == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"IP Address or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("IP Address or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -54,14 +51,11 @@ public class LocalAddr implements Serializable {
 		this.tpt_type = tpt_type;
 	}
 
-	public LocalAddr(java.lang.String addrString, TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public LocalAddr(java.lang.String addrString, TransportType tpt_type) throws IllegalArgumentException {
 
 		if (addrString == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"AddressString or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("AddressString or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -71,14 +65,11 @@ public class LocalAddr implements Serializable {
 		this.tpt_type = tpt_type;
 	}
 
-	public LocalAddr(java.lang.String aal5Addr)
-			throws javax.megaco.InvalidArgumentException {
+	public LocalAddr(java.lang.String aal5Addr) throws IllegalArgumentException {
 
 		if (addrString == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"aal5 AddressString cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("aal5 AddressString cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -88,14 +79,10 @@ public class LocalAddr implements Serializable {
 		this.aal5Addr = aal5Addr;
 	}
 
-	public void setDomainName(java.lang.String domainName,
-			TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public void setDomainName(java.lang.String domainName, TransportType tpt_type) throws IllegalArgumentException {
 		if (domainName == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"domainName  or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("domainName  or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -104,13 +91,10 @@ public class LocalAddr implements Serializable {
 		this.tpt_type = tpt_type;
 	}
 
-	public void setIpAddr(java.lang.String[] ipAddr, TransportType tpt_type)
-			throws InvalidArgumentException {
+	public void setIpAddr(java.lang.String[] ipAddr, TransportType tpt_type) throws IllegalArgumentException {
 		if (domainName == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"ipAddr  or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("ipAddr  or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -120,81 +104,74 @@ public class LocalAddr implements Serializable {
 		this.tpt_type = tpt_type;
 	}
 
-	public void setPortId(int portId) throws InvalidArgumentException {
+	public void setPortId(int portId) throws IllegalArgumentException {
 
 		if (portId < 1) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"portId cannot be less than 1 for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("portId cannot be less than 1 for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 		this.isPortIdPresent = true;
 		this.portId = portId;
 	}
-	
-	public void setMtp3Addr(java.lang.String mtpAddr)   throws InvalidArgumentException{
+
+	public void setMtp3Addr(java.lang.String mtpAddr) throws IllegalArgumentException {
 		if (mtpAddr == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"mtpAddr cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("mtpAddr cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 		this.tpt_type = TransportType.MTP3B_TPT;
 		this.mtpAddr = mtpAddr;
 	}
-	
-	public void setAAL5Addr(java.lang.String aal5Addr)   throws InvalidArgumentException{
+
+	public void setAAL5Addr(java.lang.String aal5Addr) throws IllegalArgumentException {
 		if (aal5Addr == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"aal5Addr cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("aal5Addr cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
-		//TODO : Validity check?
+		// TODO : Validity check?
 		this.aal5Addr = aal5Addr;
 		this.tpt_type = TransportType.ATM_TPT;
 	}
-	
-	public java.lang.String getDomainName(){
+
+	public java.lang.String getDomainName() {
 		return this.domainName;
 	}
-	
-	public java.lang.String[] getIpAddr(){
+
+	public java.lang.String[] getIpAddr() {
 		return this.ipAddr;
 	}
-	
+
 	public int getPortId() throws ParameterNotSetException {
-		if(!this.isPortIdPresent){
+		if (!this.isPortIdPresent) {
 			ParameterNotSetException parameterNotSetException = new ParameterNotSetException("PortId not yet set for LocalAddr");
 			throw parameterNotSetException;
 		}
 		return this.portId;
 	}
-	
-	public boolean isPortIdPresent(){
-		return this.isPortIdPresent; 
+
+	public boolean isPortIdPresent() {
+		return this.isPortIdPresent;
 	}
-	
-	public java.lang.String getMtp3Addr(){
+
+	public java.lang.String getMtp3Addr() {
 		return this.mtpAddr;
 	}
-	
-	public java.lang.String getAAL5Addr(){
+
+	public java.lang.String getAAL5Addr() {
 		return this.aal5Addr;
 	}
-	
-	public int getTransportType(){
+
+	public int getTransportType() {
 		return this.tpt_type.getTransportType();
 	}
 
 	@Override
-	public String toString() {	
-		//TODO : need to recreate 
+	public String toString() {
+		// TODO : need to recreate
 		return super.toString();
 	}
-	
 
 }

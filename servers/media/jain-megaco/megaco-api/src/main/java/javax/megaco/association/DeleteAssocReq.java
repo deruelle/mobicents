@@ -3,7 +3,7 @@ package javax.megaco.association;
 import java.io.Serializable;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 
 /**
@@ -25,7 +25,7 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	protected int srvChngDelay = -1;
 
 	public DeleteAssocReq(Object source, int assocHandle)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source, assocHandle);
 		// TODO Auto-generated constructor stub
 	}
@@ -57,14 +57,14 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param reason
 	 *            - The object reference to ServiceChange Reason.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
 	public void setSrvChangeReason(SrvChngReason reason)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (reason == null) {
-			throw new InvalidArgumentException("Change reason can not be null");
+			throw new IllegalArgumentException("Change reason can not be null");
 		}
 		this.srvChangeReason = reason;
 	}
@@ -91,14 +91,14 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param method
 	 *            - The object reference to ServiceChange Method.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
 	public void setSrvChngMethod(SrvChngReason method)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (method == null) {
-			throw new InvalidArgumentException("Change method can not be null");
+			throw new IllegalArgumentException("Change method can not be null");
 		}
 		this.srvChngMethod = method;
 	}
@@ -122,13 +122,13 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @param srvChngAddress
 	 *            - The service change address.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the service change address
 	 *             specified is invalid.
 	 */
 	public void setSrvChngAddress(LocalAddr srvChngAddress)
-			throws InvalidArgumentException {
-		// FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		// FIXME: IllegalArgumentException
 		this.srvChngAddress = srvChngAddress;
 	}
 
@@ -156,13 +156,13 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * @param handOffMGCId
 	 *            The identity of the MGC to which the association is to be
 	 *            handoffed.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the HandedOffMGCId specified is
 	 *             invalid.
 	 */
 	public void setHandOffMGCId(LocalAddr handOffMGCId)
-			throws InvalidArgumentException {
-		// FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		// FIXME: IllegalArgumentException
 		this.handOffMGCId = handOffMGCId;
 	}
 
@@ -172,18 +172,18 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * @return Returns string value of the extended service change method. This
 	 *         is to be set only if the service change method is set to
-	 *         M_SVC_CHNG_METHOD_EXTENSION.
+	 *         {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             javax.megaco.association.MethodExtensionException - Thrown if
 	 *             service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}
 	 */
 	public java.lang.String getSrvChngMethodExtension()
 			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+			IllegalArgumentException {
+		if (getSrvChngMethod() != SrvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+					"Changed Method is not equal to SrvChngMethod.{@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
 
 		return this.srvChngMethodExtension;
@@ -191,25 +191,25 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 
 	/**
 	 * This method sets the extended service change method. This needs to be set
-	 * if and only if the service change method is M_SVC_CHNG_METHOD_EXTENSION.
+	 * if and only if the service change method is {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * 
 	 * @param extMethod
 	 *            - The string value of the extended service change method.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             - Thrown if service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
+	 * @throws IllegalArgumentException
 	 *             - Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
 	public void setSrvChngMethod(java.lang.String extMethod)
 			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+			IllegalArgumentException {
+		if (getSrvChngMethod() != SrvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+					"Changed Method is not equal to SrvChngMethod.{@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
-		// FIXME javax.megaco.InvalidArgumentException - Thrown if extension
+		// FIXME IllegalArgumentException - Thrown if extension
 		// string does not follow the rules of the extension parameter, e.g,
 		// should start with X+ or X- etc.
 
@@ -243,13 +243,13 @@ public class DeleteAssocReq extends AssociationEvent implements Serializable {
 	 * 
 	 * 
 	 * @param delay - The integer value of the delay value in milliseconds.
-	 * @throws javax.megaco.InvalidArgumentException This exception is raised if the value of service change delay passed to this method is less than 0.
+	 * @throws IllegalArgumentException This exception is raised if the value of service change delay passed to this method is less than 0.
 	 */
 	public void setSrvChngDelay(int delay)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if(delay<0)
 		{
-			throw new InvalidArgumentException("Delay can not be less than zero");
+			throw new IllegalArgumentException("Delay can not be less than zero");
 		}
 		
 		

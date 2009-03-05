@@ -39,7 +39,9 @@ public class ReturnStatus {
 	}
 
 	private Object readResolve() {
+
 		return this.getObject(this.return_status);
+
 	}
 
 	@Override

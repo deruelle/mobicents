@@ -1,14 +1,14 @@
 package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 
 public class DeleteTxnReq extends AssociationEvent {
 
 	private int txnHandle = -1;
 
 	public DeleteTxnReq(Object source, int assocHandle)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source, assocHandle);
 		// TODO Auto-generated constructor stub
 	}
@@ -38,13 +38,13 @@ public class DeleteTxnReq extends AssociationEvent {
 	/**
 	 * This method sets the transaction identifier. To delete all transactions, the transaction identifier is set to 0. 
 	 * @param transactionHandle A reference to transaction identifier.
-	 * @throws javax.megaco.InvalidArgumentException This exception is raised if the value of transaction handle passed to this method is less than 0.
+	 * @throws IllegalArgumentException This exception is raised if the value of transaction handle passed to this method is less than 0.
 	 */
-	public final void setTxnHandle(int transactionHandle)     throws javax.megaco.InvalidArgumentException
+	public final void setTxnHandle(int transactionHandle)     throws IllegalArgumentException
 	{
 		
 		if(transactionHandle<0)
-			throw new InvalidArgumentException("Txn Handle can not be less than zero");
+			throw new IllegalArgumentException("Txn Handle can not be less than zero");
 		
 		this.txnHandle=transactionHandle;
 	}

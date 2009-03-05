@@ -29,7 +29,7 @@ public final class RootProvRespTimePrpt extends PkgPrptyItem {
 		super.propertyId = ROOT_PROV_RESP_TIME_PRPT;
 		super.itemId = ROOT_PROV_RESP_TIME_PRPT;
 		super.packageId = new BaseRootPkg();
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 
 		this.itemsDescriptorIds = new int[] { DescriptorType.M_TERMINATION_STATE_DESC };
 	}
@@ -50,7 +50,7 @@ public final class RootProvRespTimePrpt extends PkgPrptyItem {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.ITEM_PARAM_VALUE_INTEGER}
+	 * @return It returns {@link ParamValueType.INTEGER}
 	 *         indicating that the parameter is a double.
 	 */
 	public int getItemValueType() {

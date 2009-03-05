@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 
 /**
  * The DigitMapString object is a class that shall be used to set the digit
@@ -50,13 +50,13 @@ public class DigitMapString implements Serializable {
 	 * 
 	 * @param digitPositions
 	 *            The vector of the object identifer of the digit positions.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Digit String
 	 *             Position passed to this method is NULL.
 	 */
-	public void setDigitStringPosition(DigitStringPosition[] digitPositions) throws javax.megaco.InvalidArgumentException {
+	public void setDigitStringPosition(DigitStringPosition[] digitPositions) throws IllegalArgumentException {
 		if (digitPositions == null) {
-			throw new InvalidArgumentException("DigitStringPosition[] must not be null.");
+			throw new IllegalArgumentException("DigitStringPosition[] must not be null.");
 		}
 		this.digitStringPosition = digitPositions;
 	}

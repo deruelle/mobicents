@@ -3,7 +3,6 @@ package javax.megaco.message;
 import java.io.Serializable;
 
 import javax.megaco.ExceptionInfoCode;
-import javax.megaco.InvalidArgumentException;
 
 /**
  * The Jain MEGACO termination class is used to get the detailed information
@@ -27,17 +26,14 @@ public class Termination implements Serializable {
 	 * 
 	 * @param termName
 	 *            An string format of the termination name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             If the termination name is set such that it violates the
 	 *             protocol.
 	 */
-	public void setTermName(java.lang.String termName)
-			throws javax.megaco.InvalidArgumentException {
+	public void setTermName(java.lang.String termName) throws IllegalArgumentException {
 		if (termName == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Termination Name cannot be null");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.SYNTAX_ERR_IN_TERM_NAME);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Termination Name cannot be null");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.SYNTAX_ERR_IN_TERM_NAME);
 			throw invalidArgumentException;
 		}
 		this.terminationName = termName;
@@ -49,17 +45,14 @@ public class Termination implements Serializable {
 	 * 
 	 * @param termName
 	 *            A byte stream of the termination name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             If the termination name is set such that it violates the
 	 *             syntax defined by the protocol.
 	 */
-	public void setTermName(byte[] termName)
-			throws javax.megaco.InvalidArgumentException {
+	public void setTermName(byte[] termName) throws IllegalArgumentException {
 		if (termName == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Termination Name cannot be null");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.SYNTAX_ERR_IN_TERM_NAME);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Termination Name cannot be null");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.SYNTAX_ERR_IN_TERM_NAME);
 			throw invalidArgumentException;
 		}
 		this.terminationNameBinary = termName;
@@ -73,17 +66,14 @@ public class Termination implements Serializable {
 	 *            A reference to an object specifying the type of the
 	 *            termination name. These could be one of normal, choose, root
 	 *            or wildcarded.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Termination Type
 	 *             passed to this method is NULL.
 	 */
-	public void setTermType(TermType termType)
-			throws javax.megaco.InvalidArgumentException {
+	public void setTermType(TermType termType) throws IllegalArgumentException {
 		if (termType == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"TermType cannot be null");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("TermType cannot be null");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
 			throw invalidArgumentException;
 		}
 		this.termType = termType;
@@ -94,17 +84,14 @@ public class Termination implements Serializable {
 	 * 
 	 * @param termWC
 	 *            A byte stream of the termination name wildcarding information.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             If the termination name is set such that it violates the
 	 *             protocol.
 	 */
-	public void setTermWildCard(byte[] termWC)
-			throws javax.megaco.InvalidArgumentException {
+	public void setTermWildCard(byte[] termWC) throws IllegalArgumentException {
 		if (termWC == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"TermType cannot be null");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("TermType cannot be null");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_TERM_TYPE);
 			throw invalidArgumentException;
 		}
 		this.termWC = termWC;
@@ -155,9 +142,6 @@ public class Termination implements Serializable {
 
 	@Override
 	public java.lang.String toString() {
-		return "Text Format : Term Name = " + this.terminationName
-				+ " Termtype = " + this.termType
-				+ ". Binnary Format : Term Name = "
-				+ this.terminationNameBinary + " Termtype = " + this.termWC;
+		return "Text Format : Term Name = " + this.terminationName + " Termtype = " + this.termType + ". Binnary Format : Term Name = " + this.terminationNameBinary + " Termtype = " + this.termWC;
 	}
 }

@@ -3,7 +3,6 @@ package javax.megaco.pkg;
 import java.io.Serializable;
 
 import javax.megaco.ExceptionInfoCode;
-import javax.megaco.InvalidArgumentException;
 
 /**
  * The MEGACO Package Item String class is used to define the Package, Items and
@@ -45,17 +44,14 @@ public class PkgItemStr implements Serializable {
 	 * 
 	 * @param pkgName
 	 *            The string corresponding to the package name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Package name
 	 *             string passed to this method is NULL.
 	 */
-	public final void setPkgName(java.lang.String pkgName)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setPkgName(java.lang.String pkgName) throws IllegalArgumentException {
 		if (pkgName == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Package name cannot be null for PkgItemStr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.MISSING_PKG_NAME);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Package name cannot be null for PkgItemStr");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.MISSING_PKG_NAME);
 			throw invalidArgumentException;
 		}
 		this.pkgName = pkgName;
@@ -80,17 +76,14 @@ public class PkgItemStr implements Serializable {
 	 * 
 	 * @param itemName
 	 *            The string corresponding to the item name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Item name string
 	 *             passed to this method is NULL.
 	 */
-	public final void setItemName(java.lang.String itemName)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setItemName(java.lang.String itemName) throws IllegalArgumentException {
 		if (itemName == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Item name cannot be null for PkgItemStr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.MISSING_ITEM_NAME);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Item name cannot be null for PkgItemStr");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.MISSING_ITEM_NAME);
 			throw invalidArgumentException;
 		}
 		this.itemName = itemName;
@@ -116,17 +109,14 @@ public class PkgItemStr implements Serializable {
 	 * 
 	 * @param parameter
 	 *            The string corresponding to the package parameters.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Package Item
 	 *             object passed to this method is NULL.
 	 */
-	public final void setParameter(java.lang.String parameter)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setParameter(java.lang.String parameter) throws IllegalArgumentException {
 		if (itemName == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Parameter cannot be null for PkgItemStr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.MISSING_PKG_PARAM);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Parameter cannot be null for PkgItemStr");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.MISSING_PKG_PARAM);
 			throw invalidArgumentException;
 		}
 		this.parameter = parameter;
@@ -146,30 +136,30 @@ public class PkgItemStr implements Serializable {
 
 	/**
 	 * This method is used to set the Item type for which the parameters are
-	 * specified. The item_type is set to M_ITEM_ALL if the item_name is '*'.
-	 * The item_type is set to M_ITEM_EVENT, if the descriptor for which the
-	 * parameters are specified is one of Event Descriptor, Observed Event
-	 * Descriptor or Event Buffer Descriptor. The item_type is set to
-	 * M_ITEM_STATISTICS, if the descriptor for which the parameters are
-	 * specified is Statistics Descriptor. The item_type is set to
-	 * M_ITEM_SIGNAL, if the descriptor for which the parameters are specified
-	 * is Signal Descriptor. The item_type is set to M_ITEM_PROPERTY, if the
-	 * descriptor for which the parameters are specified is Media Descriptor.
+	 * specified. The item_type is set to
+	 * {@link javax.megaco.pkg.PkgItemType.M_ALL} if the item_name is '*'. The
+	 * item_type is set to {@link javax.megaco.pkg.PkgItemType.M_EVENT}, if the
+	 * descriptor for which the parameters are specified is one of Event
+	 * Descriptor, Observed Event Descriptor or Event Buffer Descriptor. The
+	 * item_type is set to {@link javax.megaco.pkg.PkgItemType.M_STATISTICS}, if
+	 * the descriptor for which the parameters are specified is Statistics
+	 * Descriptor. The item_type is set to
+	 * {@link javax.megaco.pkg.PkgItemType.M_SIGNAL}, if the descriptor for
+	 * which the parameters are specified is Signal Descriptor. The item_type is
+	 * set to {@link javax.megaco.pkg.PkgItemType.M_PROPERTY}, if the descriptor
+	 * for which the parameters are specified is Media Descriptor.
 	 * 
 	 * @param itemType
 	 *            The object reference of the class PkgItemType which identifies
 	 *            the item type to which the parameter belongs.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Package Item
 	 *             object passed to this method is NULL.
 	 */
-	public final void setItemType(PkgItemType itemType)
-			throws javax.megaco.InvalidArgumentException {
+	public final void setItemType(PkgItemType itemType) throws IllegalArgumentException {
 		if (itemType == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Package Item Type cannot be null for PkgItemStr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_PKG_ITEM_TYPE);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Package Item Type cannot be null for PkgItemStr");
+			// invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_PKG_ITEM_TYPE);
 			throw invalidArgumentException;
 		}
 		this.itemType = itemType;
@@ -177,7 +167,6 @@ public class PkgItemStr implements Serializable {
 
 	@Override
 	public java.lang.String toString() {
-		return this.pkgName + " " + this.parameter + " " + this.itemName + " "
-				+ this.itemType;
+		return this.pkgName + " " + this.parameter + " " + this.itemName + " " + this.itemType;
 	}
 }

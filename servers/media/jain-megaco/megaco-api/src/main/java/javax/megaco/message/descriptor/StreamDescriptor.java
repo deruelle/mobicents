@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
@@ -48,13 +48,9 @@ public class StreamDescriptor extends Descriptor implements Serializable {
 	 * control descriptor.
 	 * 
 	 * @return Returns the object reference of type stream parameter.
-	 * @throws javax.megaco.ParameterNotSetException
-	 *             if the stream parameter was not set.
 	 */
-	public final MediaStreamParam getMediaStreamParam() throws javax.megaco.ParameterNotSetException {
-		if (this.mediaStreamParam == null) {
-			throw new ParameterNotSetException();
-		}
+	public final MediaStreamParam getMediaStreamParam()  {
+	
 		return this.mediaStreamParam;
 	}
 
@@ -64,15 +60,15 @@ public class StreamDescriptor extends Descriptor implements Serializable {
 	 * @param streamParam
 	 *            - Sets the stream parameter consisiting of atleast one of
 	 *            local descriptor, local control and remote descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             if the parameters set for the stream parameter are such that
 	 *             the Stream Descriptor cannot be encoded.
 	 */
-	public final void setMediaStreamParam(MediaStreamParam streamParam) throws javax.megaco.InvalidArgumentException {
+	public final void setMediaStreamParam(MediaStreamParam streamParam) throws IllegalArgumentException {
 		// FIXME: add error checks
 
 		if (streamParam == null) {
-			throw new InvalidArgumentException("MediaStreamParam must not be null");
+			throw new IllegalArgumentException("MediaStreamParam must not be null");
 		}
 
 		this.mediaStreamParam = streamParam;
@@ -100,12 +96,12 @@ public class StreamDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param streamId
 	 *            - The integer value of the stream id shall be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if streamId is set with an invalid value.
 	 */
-	public void setStreamId(int streamId) throws javax.megaco.InvalidArgumentException {
+	public void setStreamId(int streamId) throws IllegalArgumentException {
 		if (streamId <= 0) {
-			throw new InvalidArgumentException("StreanId must not be less or equal to zero");
+			throw new IllegalArgumentException("StreanId must not be less or equal to zero");
 		}
 
 		this.streamId = new Integer(streamId);

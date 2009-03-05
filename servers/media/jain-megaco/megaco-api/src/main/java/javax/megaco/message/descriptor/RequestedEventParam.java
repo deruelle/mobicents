@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.pkg.PkgEventItem;
 import javax.megaco.pkg.PkgItemStr;
 
@@ -28,10 +28,10 @@ public class RequestedEventParam implements Serializable {
 	 * object. This is used to set the first level event parameters.
 	 * 
 	 * @param eventItem
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid eventItem object reference is set.
 	 */
-	public RequestedEventParam(PkgEventItem eventItem) throws javax.megaco.InvalidArgumentException {
+	public RequestedEventParam(PkgEventItem eventItem) throws IllegalArgumentException {
 
 		// FIXME: add error throw ? - what does invalind even item reference
 		// mean ?
@@ -46,11 +46,11 @@ public class RequestedEventParam implements Serializable {
 	 * the string format. This is used to set the first level event parameters.
 	 * 
 	 * @param eventItemStr
-	 * @throws javax.megaco.InvalidArgumentException
-	 *             InvalidArgumentException - Thrown if an invalid eventItemStr
+	 * @throws IllegalArgumentException
+	 *             IllegalArgumentException - Thrown if an invalid eventItemStr
 	 *             object reference is set.
 	 */
-	public RequestedEventParam(PkgItemStr eventItemStr) throws javax.megaco.InvalidArgumentException {
+	public RequestedEventParam(PkgItemStr eventItemStr) throws IllegalArgumentException {
 		// FIXME: add error throw ?
 		this.itemStr = eventItemStr;
 	}
@@ -77,14 +77,14 @@ public class RequestedEventParam implements Serializable {
 	 * @param embedEvent
 	 *            - The objectIdentifier corresponding to the embedded event
 	 *            descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of embed first
 	 *             event parameter passed to this method is NULL.
 	 */
-	public void setEmbedFirstEventParam(EmbedFirstEventParam embedEvent) throws javax.megaco.InvalidArgumentException {
+	public void setEmbedFirstEventParam(EmbedFirstEventParam embedEvent) throws IllegalArgumentException {
 
 		if (embedEvent == null) {
-			throw new InvalidArgumentException();
+			throw new IllegalArgumentException();
 		}
 		this.embedFirstEventParam = embedEvent;
 
@@ -114,11 +114,11 @@ public class RequestedEventParam implements Serializable {
 	 * @param eventParam
 	 *            - The objectIdentifier corresponding to the event paramater of
 	 *            first level event.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an illegal event is set in the embedded event
 	 *             descriptor.
 	 */
-	public void setEventParam(EventParam eventParam) throws javax.megaco.InvalidArgumentException {
+	public void setEventParam(EventParam eventParam) throws IllegalArgumentException {
 
 		// FIXME: add checks
 		this.eventParam = eventParam;

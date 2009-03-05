@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -58,17 +58,17 @@ public class DigitMapDescriptor extends Descriptor implements Serializable {
 	 *            - Sets a string value that identifies the digit map name for
 	 *            the DigitMap descriptor. If the digit map name is not set,
 	 *            then this shall return a null value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if the string value does not satisfy the grammar for
 	 *             the digit map name.
 	 */
-	public final void setDigitMapName(java.lang.String digitName) throws javax.megaco.InvalidArgumentException {
+	public final void setDigitMapName(java.lang.String digitName) throws IllegalArgumentException {
 
 		// FIXME: add grammar check
 		// if(getDigitMapValue() != null)
 		// {
 		// throw new
-		// InvalidArgumentException("Digit map value must not be present when name is set.");
+		// IllegalArgumentException("Digit map value must not be present when name is set.");
 		// }
 		this.digitMapName = digitName;
 
@@ -91,16 +91,16 @@ public class DigitMapDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param digitValue
 	 *            - The DigitMap value object refernce.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if the digit map value passed in the arguments
 	 *             contains invalid parameters.
 	 */
-	public final void setDigitMapValue(DigitMapValue digitValue) throws javax.megaco.InvalidArgumentException {
+	public final void setDigitMapValue(DigitMapValue digitValue) throws IllegalArgumentException {
 
 		// if(getDigitMapName() != null)
 		// {
 		// throw new
-		// InvalidArgumentException("Digit map name must not be present when value is set.");
+		// IllegalArgumentException("Digit map name must not be present when value is set.");
 		// }
 		// FIXME: add checks
 
@@ -130,14 +130,14 @@ public class DigitMapDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param digitValue
 	 *            - The DigitMap value object refernce.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if the digit map value passed in the arguments
 	 *             contains invalid parameters.
 	 */
-	public final void setDigitMapValueStr(java.lang.String digitValueStr) throws javax.megaco.InvalidArgumentException {
+	public final void setDigitMapValueStr(java.lang.String digitValueStr) throws IllegalArgumentException {
 
 		if (getDigitMapName() != null) {
-			throw new InvalidArgumentException("Digit map name must not be present when digit map string is set.");
+			throw new IllegalArgumentException("Digit map name must not be present when digit map string is set.");
 		}
 		// FIXME: add checks:
 		// FIXME - shouldnt it be DigitMapString ?

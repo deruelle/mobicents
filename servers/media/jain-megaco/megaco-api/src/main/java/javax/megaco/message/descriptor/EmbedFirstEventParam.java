@@ -1,6 +1,6 @@
 package javax.megaco.message.descriptor;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.pkg.PkgEventItem;
 import javax.megaco.pkg.PkgItemStr;
 
@@ -24,10 +24,10 @@ public class EmbedFirstEventParam {
 	 * @param requestId
 	 *            - An integer value specifying the request identifier, which
 	 *            uniquely identifies the event.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if request id is set to an invalid value.
 	 */
-	public EmbedFirstEventParam(int requestId) throws javax.megaco.InvalidArgumentException {
+	public EmbedFirstEventParam(int requestId) throws IllegalArgumentException {
 		// FIXME: what is invalid value?
 		this.requestId = requestId;
 
@@ -45,14 +45,14 @@ public class EmbedFirstEventParam {
 	 * @param eventItem
 	 *            - An PkgEventItem object which identifies the event to be
 	 *            detected and corresponding package parameters.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if request id is set to an invalid value or the
 	 *             reference of Package Event Item object is set to NULL.
 	 */
-	public EmbedFirstEventParam(int requestId, PkgEventItem eventItem) throws javax.megaco.InvalidArgumentException {
+	public EmbedFirstEventParam(int requestId, PkgEventItem eventItem) throws IllegalArgumentException {
 		this(requestId);
 		if (eventItem == null) {
-			throw new InvalidArgumentException("PkgEventItem must nto be null");
+			throw new IllegalArgumentException("PkgEventItem must nto be null");
 		}
 		this.eventItem = eventItem;
 	}
@@ -71,15 +71,15 @@ public class EmbedFirstEventParam {
 	 *            - An PkgItemStr object which identifies the event to be
 	 *            detected and corresponding package parameters in the string
 	 *            format.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if request id is set to an invalid value or the
 	 *             reference of Package Item String object is set to NULL.
 	 */
-	public EmbedFirstEventParam(int requestId, PkgItemStr eventItemStr) throws javax.megaco.InvalidArgumentException {
+	public EmbedFirstEventParam(int requestId, PkgItemStr eventItemStr) throws IllegalArgumentException {
 		this(requestId);
 
 		if (eventItemStr == null) {
-			throw new InvalidArgumentException("PkgItemStr must nto be null");
+			throw new IllegalArgumentException("PkgItemStr must nto be null");
 		}
 		this.itemStr = eventItemStr;
 	}
@@ -118,15 +118,15 @@ public class EmbedFirstEventParam {
 	 * @param EventParam
 	 *            The objectIdentifier corresponding to the event paramater of
 	 *            first level event.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             Thrown if an illegal event is set in the embedded event
 	 *             descriptor.
 	 */
-	public void setEventParam(EventParam eventParam) throws javax.megaco.InvalidArgumentException {
+	public void setEventParam(EventParam eventParam) throws IllegalArgumentException {
 
 		// FIXME: add checks
 		// if(eventItem == null)
-		// throw new InvalidArgumentException("EventParam must not be null.");
+		// throw new IllegalArgumentException("EventParam must not be null.");
 		this.eventParam = eventParam;
 	}
 
@@ -170,13 +170,13 @@ public class EmbedFirstEventParam {
 	 *            - The object reference for the Event Item. This has the object
 	 *            reference of corresponding megaco package and has the
 	 *            reference of the parameter info associated with it.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Package Event
 	 *             Item passed to this method is NULL.
 	 */
-	public void setMegacoPkgEventItem(PkgEventItem eventItem) throws javax.megaco.InvalidArgumentException {
+	public void setMegacoPkgEventItem(PkgEventItem eventItem) throws IllegalArgumentException {
 		if (eventItem == null)
-			throw new InvalidArgumentException("PkgEventItem must not be null.");
+			throw new IllegalArgumentException("PkgEventItem must not be null.");
 	}
 
 	/**
@@ -190,13 +190,13 @@ public class EmbedFirstEventParam {
 	 *            - The object reference for the megaco package item. This class
 	 *            holds information about package name, item name and the
 	 *            parameters in the string format.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of package item
 	 *             string passed to this method is NULL.
 	 */
-	public void setMegacoPkgItemStr(PkgItemStr eventItemStr) throws InvalidArgumentException {
+	public void setMegacoPkgItemStr(PkgItemStr eventItemStr) throws IllegalArgumentException {
 		if (eventItemStr == null)
-			throw new InvalidArgumentException("PkgItemStr must not be null.");
+			throw new IllegalArgumentException("PkgItemStr must not be null.");
 
 		this.itemStr = eventItemStr;
 

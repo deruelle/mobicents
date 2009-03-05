@@ -1,7 +1,7 @@
 package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 
 public class CreateTxnReq extends AssociationEvent {
 
@@ -21,10 +21,10 @@ public class CreateTxnReq extends AssociationEvent {
 	 *            with the provider with a unique MG-MGC identity.
 	 * @param exchangeId
 	 *            - The exchange Identifier value.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
 	public CreateTxnReq(Object source, int assocHandle, int exchangeId)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source, assocHandle);
 		this.exchangeId=exchangeId;
 	}

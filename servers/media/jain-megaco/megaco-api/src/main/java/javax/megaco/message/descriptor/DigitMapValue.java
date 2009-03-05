@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 
 /**
@@ -58,12 +58,12 @@ public class DigitMapValue implements Serializable {
 	 * @param timerT
 	 *            The integer value for the timer value. This automatically sets
 	 *            the isTimerTPresent() to TRUE.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if timer value is not correctly set.
 	 */
-	public void setTimerTValue(int timerT) throws javax.megaco.InvalidArgumentException {
+	public void setTimerTValue(int timerT) throws IllegalArgumentException {
 		if (timerT <= 0) {
-			new InvalidArgumentException("Timer value must not be less or equal to zero");
+			new IllegalArgumentException("Timer value must not be less or equal to zero");
 		}
 		this.timerT = timerT;
 	}
@@ -99,12 +99,12 @@ public class DigitMapValue implements Serializable {
 	 * @param timerS
 	 *            The integer value for the timer value. This automatically sets
 	 *            the isTimerSPresent() to TRUE.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if timer value is not correctly set.
 	 */
-	public void setTimerSValue(int timerS) throws javax.megaco.InvalidArgumentException {
+	public void setTimerSValue(int timerS) throws IllegalArgumentException {
 		if (timerS <= 0) {
-			new InvalidArgumentException("Timer value must not be less or equal to zero");
+			new IllegalArgumentException("Timer value must not be less or equal to zero");
 		}
 		this.timerS = timerS;
 	}
@@ -140,12 +140,12 @@ public class DigitMapValue implements Serializable {
 	 * @param timerL
 	 *            The integer value for the timer value. This automatically sets
 	 *            the isTimerLPresent() to TRUE.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if timer value is not correctly set.
 	 */
-	public void setTimerLValue(int timerL) throws javax.megaco.InvalidArgumentException {
+	public void setTimerLValue(int timerL) throws IllegalArgumentException {
 		if (timerL <= 0) {
-			new InvalidArgumentException("Timer value must not be less or equal to zero");
+			new IllegalArgumentException("Timer value must not be less or equal to zero");
 		}
 		this.timerL = timerL;
 	}
@@ -166,10 +166,10 @@ public class DigitMapValue implements Serializable {
 	 * 
 	 * @param digitStrings
 	 *            The vector of the object identifer of the digit strings.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if the digit string is not set properly.
 	 */
-	public void setDigitMapStrings(DigitMapString[] digitStrings) throws javax.megaco.InvalidArgumentException {
+	public void setDigitMapStrings(DigitMapString[] digitStrings) throws IllegalArgumentException {
 		// FIXME: what does mean - not correctly?
 		this.digitMapString = digitStrings;
 	}

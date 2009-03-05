@@ -2,9 +2,6 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
-import javax.megaco.ParameterNotSetException;
-
 /**
  * 
  * The DigitStringPosition object is a class that shall be used to set the Digit
@@ -167,14 +164,10 @@ public class DigitStringPosition implements Serializable {
 	 * digit position.
 	 * 
 	 * @return The vector specifying the digits at the digit position.
-	 * @throws javax.megaco.ParameterNotSetException
-	 *             : This exception is raised if single digit position has not
-	 *             been set.
+	 
 	 */
-	public int[] getDigitStringPosition() throws javax.megaco.ParameterNotSetException {
-		if (digits == null) {
-			throw new ParameterNotSetException("Digits string position not set.");
-		}
+	public int[] getDigitStringPosition(){
+
 		return this.digits;
 	}
 
@@ -184,19 +177,19 @@ public class DigitStringPosition implements Serializable {
 	 * 
 	 * @param digits
 	 *            The vector of the integer for digits.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - if the vector of digits contains values other than the
 	 *             static constants as defined for this class.
 	 */
-	public void setDigitStringPosition(int[] digits) throws javax.megaco.InvalidArgumentException {
+	public void setDigitStringPosition(int[] digits) throws IllegalArgumentException {
 		if (digits == null) {
 			// FIXME:?
-			throw new InvalidArgumentException("Digits must not be null");
+			throw new IllegalArgumentException("Digits must not be null");
 		}
 
 		for (int i : digits) {
 			if (i > _HIGH_MARK || i < _LOW_MARK) {
-				throw new InvalidArgumentException("One of passed digits is out of defined scope: " + i);
+				throw new IllegalArgumentException("One of passed digits is out of defined scope: " + i);
 			}
 		}
 
@@ -205,6 +198,7 @@ public class DigitStringPosition implements Serializable {
 	}
 
 	public java.lang.String toString() {
+		//FIXME: add proper dump
 		return super.toString();
 	}
 }

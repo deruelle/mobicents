@@ -8,15 +8,15 @@ import java.io.Serializable;
  * 
  */
 public class TopologyDirection implements Serializable {
-	public static final int M_TOPO_DIR_BOTHWAY = 0;
-	public static final int M_TOPO_DIR_ISOLATE = 1;
-	public static final int M_TOPO_DIR_ONEWAY = 2;
+	public static final int M_BOTHWAY = 0;
+	public static final int M_ISOLATE = 1;
+	public static final int M_ONEWAY = 2;
 
-	public static final TopologyDirection TOPO_DIR_BOTHWAY = new TopologyDirection(M_TOPO_DIR_BOTHWAY);
+	public static final TopologyDirection BOTHWAY = new TopologyDirection(M_BOTHWAY);
 
-	public static final TopologyDirection TOPO_DIR_ISOLATE = new TopologyDirection(M_TOPO_DIR_ISOLATE);
+	public static final TopologyDirection ISOLATE = new TopologyDirection(M_ISOLATE);
 
-	public static final TopologyDirection TOPO_DIR_ONEWAY = new TopologyDirection(M_TOPO_DIR_ONEWAY);
+	public static final TopologyDirection ONEWAY = new TopologyDirection(M_ONEWAY);
 
 	private int topology_direction;
 
@@ -31,14 +31,14 @@ public class TopologyDirection implements Serializable {
 	public static final TopologyDirection getObject(int value) throws IllegalArgumentException {
 		TopologyDirection t = null;
 		switch (value) {
-		case M_TOPO_DIR_BOTHWAY:
-			t = TOPO_DIR_BOTHWAY;
+		case M_BOTHWAY:
+			t = BOTHWAY;
 			break;
-		case M_TOPO_DIR_ISOLATE:
-			t = TOPO_DIR_ISOLATE;
+		case M_ISOLATE:
+			t = ISOLATE;
 			break;
-		case M_TOPO_DIR_ONEWAY:
-			t = TOPO_DIR_ONEWAY;
+		case M_ONEWAY:
+			t = ONEWAY;
 			break;
 
 		default:
@@ -56,13 +56,13 @@ public class TopologyDirection implements Serializable {
 	public String toString() {
 		String t = null;
 		switch (this.topology_direction) {
-		case M_TOPO_DIR_BOTHWAY:
+		case M_BOTHWAY:
 			t = "TopologyDirection[BOTHWAY]";
 			break;
-		case M_TOPO_DIR_ISOLATE:
+		case M_ISOLATE:
 			t = "TopologyDirection[ISOLATE]";
 			break;
-		case M_TOPO_DIR_ONEWAY:
+		case M_ONEWAY:
 			t = "TopologyDirection[ONEWAY]";
 			break;
 

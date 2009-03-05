@@ -14,163 +14,163 @@ public class SrvChngReason implements Serializable {
 	 * Identifies the service change reason towards the peer shall be 900 -
 	 * Service restored.
 	 */
-	public final static int M_SVC_CHNG_REASON_900 = 900;
+	public final static int M_R900 = 900;
 	/**
 	 * Identifies the service change reason towards the peer shall be 901 - Cold
 	 * Boot.
 	 */
-	public final static int M_SVC_CHNG_REASON_901 = 901;
+	public final static int M_R901 = 901;
 	/**
 	 * Identifies the service change reason towards the peer shall be 902 - Warm
 	 * Boot.
 	 */
-	public final static int M_SVC_CHNG_REASON_902 = 902;
+	public final static int M_R902 = 902;
 	/**
 	 * Identifies the service change reason towards the peer shall be 903 - MGC
 	 * Directed Change.
 	 */
-	public final static int M_SVC_CHNG_REASON_903 = 903;
+	public final static int M_R903 = 903;
 	/**
 	 * Identifies the service change reason towards the peer shall be 904 -
 	 * Termination Malfunctioning.
 	 */
-	public final static int M_SVC_CHNG_REASON_904 = 904;
+	public final static int M_R904 = 904;
 	/**
 	 * Identifies the service change reason towards the peer shall be 905 -
 	 * Termination Taken Out Of Service.
 	 */
-	public final static int M_SVC_CHNG_REASON_905 = 905;
+	public final static int M_R905 = 905;
 	/**
 	 * Identifies the service change reason towards the peer shall be 906 - Loss
 	 * Of Lower Layer Connectivity.
 	 */
-	public final static int M_SVC_CHNG_REASON_906 = 906;
+	public final static int M_R906 = 906;
 	/**
 	 * Identifies the service change reason towards the peer shall be 907 -
 	 * Transmission Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_907 = 907;
+	public final static int M_R907 = 907;
 	/**
 	 * Identifies the service change reason towards the peer shall be 908 - MG
 	 * Impending Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_908 = 908;
+	public final static int M_R908 = 908;
 	/**
 	 * Identifies the service change reason towards the peer shall be 909 - MGC
 	 * Impending Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_909 = 909;
+	public final static int M_R909 = 909;
 	/**
 	 * Identifies the service change reason towards the peer shall be 910 -
 	 * Media Capability Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_910 = 910;
+	public final static int M_R910 = 910;
 	/**
 	 * Identifies the service change reason towards the peer shall be 911 -
 	 * Modem Capability Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_911 = 911;
+	public final static int M_R911 = 911;
 	/**
 	 * Identifies the service change reason towards the peer shall be 912 - Mux
 	 * Capability Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_912 = 912;
+	public final static int M_R912 = 912;
 	/**
 	 * Identifies the service change reason towards the peer shall be 913 -
 	 * Signal Capability Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_913 = 913;
+	public final static int M_R913 = 913;
 	/**
 	 * Identifies the service change reason towards the peer shall be 914 -
 	 * Event Capability Failure.
 	 */
-	public final static int M_SVC_CHNG_REASON_914 = 914;
+	public final static int M_R914 = 914;
 	/**
 	 * Identifies the service change reason towards the peer shall be 915 -
 	 * State Loss.
 	 */
-	public final static int M_SVC_CHNG_REASON_915 = 915;
+	public final static int M_R915 = 915;
 
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_900.
+	 * constant M_R900.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_900 = new SrvChngReason(M_SVC_CHNG_REASON_900);
+	public static final SrvChngReason R900 = new SrvChngReason(M_R900);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_901.
+	 * constant M_R901.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_901 = new SrvChngReason(M_SVC_CHNG_REASON_901);
+	public static final SrvChngReason R901 = new SrvChngReason(M_R901);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_902.
+	 * constant M_R902.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_902 = new SrvChngReason(M_SVC_CHNG_REASON_902);
+	public static final SrvChngReason R902 = new SrvChngReason(M_R902);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_903.
+	 * constant M_R903.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_903 = new SrvChngReason(M_SVC_CHNG_REASON_903);
+	public static final SrvChngReason R903 = new SrvChngReason(M_R903);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_904.
+	 * constant M_R904.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_904 = new SrvChngReason(M_SVC_CHNG_REASON_904);
+	public static final SrvChngReason R904 = new SrvChngReason(M_R904);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_905.
+	 * constant M_R905.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_905 = new SrvChngReason(M_SVC_CHNG_REASON_905);
+	public static final SrvChngReason R905 = new SrvChngReason(M_R905);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_906.
+	 * constant M_R906.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_906 = new SrvChngReason(M_SVC_CHNG_REASON_906);
+	public static final SrvChngReason R906 = new SrvChngReason(M_R906);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_907.
+	 * constant M_R907.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_907 = new SrvChngReason(M_SVC_CHNG_REASON_907);
+	public static final SrvChngReason R907 = new SrvChngReason(M_R907);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_908.
+	 * constant M_R908.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_908 = new SrvChngReason(M_SVC_CHNG_REASON_908);
+	public static final SrvChngReason R908 = new SrvChngReason(M_R908);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_909.
+	 * constant M_R909.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_909 = new SrvChngReason(M_SVC_CHNG_REASON_909);
+	public static final SrvChngReason R909 = new SrvChngReason(M_R909);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_910.
+	 * constant M_R910.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_910 = new SrvChngReason(M_SVC_CHNG_REASON_910);
+	public static final SrvChngReason R910 = new SrvChngReason(M_R910);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_911.
+	 * constant M_R911.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_911 = new SrvChngReason(M_SVC_CHNG_REASON_911);
+	public static final SrvChngReason R911 = new SrvChngReason(M_R911);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_912.
+	 * constant M_R912.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_912 = new SrvChngReason(M_SVC_CHNG_REASON_912);
+	public static final SrvChngReason R912 = new SrvChngReason(M_R912);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_913.
+	 * constant M_R913.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_913 = new SrvChngReason(M_SVC_CHNG_REASON_913);
+	public static final SrvChngReason R913 = new SrvChngReason(M_R913);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_914.
+	 * constant M_R914.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_914 = new SrvChngReason(M_SVC_CHNG_REASON_914);
+	public static final SrvChngReason R914 = new SrvChngReason(M_R914);
 	/**
 	 * Identifies a SrvChngReason object that constructs the class with the
-	 * constant M_SVC_CHNG_REASON_915.
+	 * constant M_R915.
 	 */
-	public static final SrvChngReason SVC_CHNG_REASON_915 = new SrvChngReason(M_SVC_CHNG_REASON_915);
+	public static final SrvChngReason R915 = new SrvChngReason(M_R915);
 
 	private int srvChngReasonId = -1;
 
@@ -199,41 +199,41 @@ public class SrvChngReason implements Serializable {
 	 */
 	public static final SrvChngReason getObject(int value) throws IllegalArgumentException {
 		switch (value) {
-		case M_SVC_CHNG_REASON_900:
-			return SVC_CHNG_REASON_900;
+		case M_R900:
+			return R900;
 
-		case M_SVC_CHNG_REASON_901:
-			return SVC_CHNG_REASON_901;
+		case M_R901:
+			return R901;
 
-		case M_SVC_CHNG_REASON_902:
-			return SVC_CHNG_REASON_902;
+		case M_R902:
+			return R902;
 
-		case M_SVC_CHNG_REASON_903:
-			return SVC_CHNG_REASON_903;
-		case M_SVC_CHNG_REASON_904:
-			return SVC_CHNG_REASON_904;
-		case M_SVC_CHNG_REASON_905:
-			return SVC_CHNG_REASON_905;
-		case M_SVC_CHNG_REASON_906:
-			return SVC_CHNG_REASON_906;
-		case M_SVC_CHNG_REASON_907:
-			return SVC_CHNG_REASON_907;
-		case M_SVC_CHNG_REASON_908:
-			return SVC_CHNG_REASON_908;
-		case M_SVC_CHNG_REASON_909:
-			return SVC_CHNG_REASON_909;
-		case M_SVC_CHNG_REASON_910:
-			return SVC_CHNG_REASON_910;
-		case M_SVC_CHNG_REASON_911:
-			return SVC_CHNG_REASON_911;
-		case M_SVC_CHNG_REASON_912:
-			return SVC_CHNG_REASON_912;
-		case M_SVC_CHNG_REASON_913:
-			return SVC_CHNG_REASON_913;
-		case M_SVC_CHNG_REASON_914:
-			return SVC_CHNG_REASON_914;
-		case M_SVC_CHNG_REASON_915:
-			return SVC_CHNG_REASON_915;
+		case M_R903:
+			return R903;
+		case M_R904:
+			return R904;
+		case M_R905:
+			return R905;
+		case M_R906:
+			return R906;
+		case M_R907:
+			return R907;
+		case M_R908:
+			return R908;
+		case M_R909:
+			return R909;
+		case M_R910:
+			return R910;
+		case M_R911:
+			return R911;
+		case M_R912:
+			return R912;
+		case M_R913:
+			return R913;
+		case M_R914:
+			return R914;
+		case M_R915:
+			return R915;
 		default:
 			throw new IllegalArgumentException("Wrogn value passed, there is no change reason with code: " + value);
 		}
@@ -265,53 +265,53 @@ public class SrvChngReason implements Serializable {
 	@Override
 	public String toString() {
 		switch (this.srvChngReasonId) {
-		case M_SVC_CHNG_REASON_900:
-			return "SrvChngReason[SVC_CHNG_REASON_900]";
+		case M_R900:
+			return "SrvChngReason[R900]";
 
-		case M_SVC_CHNG_REASON_901:
-			return "SrvChngReason[SVC_CHNG_REASON_901]";
+		case M_R901:
+			return "SrvChngReason[R901]";
 
-		case M_SVC_CHNG_REASON_902:
-			return "SrvChngReason[SVC_CHNG_REASON_902]";
+		case M_R902:
+			return "SrvChngReason[R902]";
 
-		case M_SVC_CHNG_REASON_903:
-			return "SrvChngReason[SVC_CHNG_REASON_903]";
+		case M_R903:
+			return "SrvChngReason[R903]";
 
-		case M_SVC_CHNG_REASON_904:
-			return "SrvChngReason[SVC_CHNG_REASON_904]";
+		case M_R904:
+			return "SrvChngReason[R904]";
 
-		case M_SVC_CHNG_REASON_905:
-			return "SrvChngReason[SVC_CHNG_REASON_905]";
+		case M_R905:
+			return "SrvChngReason[R905]";
 
-		case M_SVC_CHNG_REASON_906:
-			return "SrvChngReason[SVC_CHNG_REASON_906]";
+		case M_R906:
+			return "SrvChngReason[R906]";
 
-		case M_SVC_CHNG_REASON_907:
-			return "SrvChngReason[SVC_CHNG_REASON_907]";
+		case M_R907:
+			return "SrvChngReason[R907]";
 
-		case M_SVC_CHNG_REASON_908:
-			return "SrvChngReason[SVC_CHNG_REASON_908]";
+		case M_R908:
+			return "SrvChngReason[R908]";
 
-		case M_SVC_CHNG_REASON_909:
-			return "SrvChngReason[SVC_CHNG_REASON_909]";
+		case M_R909:
+			return "SrvChngReason[R909]";
 
-		case M_SVC_CHNG_REASON_910:
-			return "SrvChngReason[SVC_CHNG_REASON_910]";
+		case M_R910:
+			return "SrvChngReason[R910]";
 
-		case M_SVC_CHNG_REASON_911:
-			return "SrvChngReason[SVC_CHNG_REASON_911]";
+		case M_R911:
+			return "SrvChngReason[R911]";
 
-		case M_SVC_CHNG_REASON_912:
-			return "SrvChngReason[SVC_CHNG_REASON_912]";
+		case M_R912:
+			return "SrvChngReason[R912]";
 
-		case M_SVC_CHNG_REASON_913:
-			return "SrvChngReason[SVC_CHNG_REASON_913]";
+		case M_R913:
+			return "SrvChngReason[R913]";
 
-		case M_SVC_CHNG_REASON_914:
-			return "SrvChngReason[SVC_CHNG_REASON_914]";
+		case M_R914:
+			return "SrvChngReason[R914]";
 
-		case M_SVC_CHNG_REASON_915:
-			return "SrvChngReason[SVC_CHNG_REASON_915]";
+		case M_R915:
+			return "SrvChngReason[R915]";
 
 		default:
 			return "SrvChngReason[" + this.srvChngReasonId + "]";

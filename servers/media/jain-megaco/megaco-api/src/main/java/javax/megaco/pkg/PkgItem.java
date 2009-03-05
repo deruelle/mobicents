@@ -44,7 +44,7 @@ public class PkgItem implements Serializable {
 	 * integer value defined in PkgItemType.
 	 * 
 	 * @return An integer value for the item type corresponding to the derived
-	 *         object. This shall return an integer value M_ITEM_ALL when called
+	 *         object. This shall return an integer value {@link javax.megaco.pkg.PkgItemType.M_ALL} when called
 	 *         from this class.
 	 */
 	public int getItemType() {
@@ -86,6 +86,7 @@ public class PkgItem implements Serializable {
 	 */
 	public final MegacoPkg getAssociatedPkgId() throws javax.megaco.ParameterNotSetException {
 		// FIXME: Add exception checks
+		//FIXME: add proper error  - IllegalState exception ?
 		return this.associatedPkgId;
 	}
 
@@ -105,13 +106,13 @@ public class PkgItem implements Serializable {
 	 * @param packageId
 	 *            packageId - The object reference of the package object to
 	 *            which the item is dynamically associated.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             If the package that is dynamically being linked cannot be set
 	 *             due to the fact that the item does not belong to the package
 	 *             or the package is not one of the ancestor package of the
 	 *             package, to which the item belongs.
 	 */
-	public void setAssociatedPkgId(MegacoPkg packageId) throws javax.megaco.InvalidArgumentException {
+	public void setAssociatedPkgId(MegacoPkg packageId) throws IllegalArgumentException {
 		// FIXME: addd exception checks
 		this.associatedPkgId = packageId;
 	}
@@ -131,13 +132,13 @@ public class PkgItem implements Serializable {
 	protected static String typeToString(int itemType) {
 
 		switch (itemType) {
-		case ParamValueType.M_ITEM_PARAM_VALUE_BOOLEAN:
+		case ParamValueType.M_BOOLEAN:
 			return "boolean";
-		case ParamValueType.M_ITEM_PARAM_VALUE_DOUBLE:
+		case ParamValueType.M_DOUBLE:
 			return "double";
-		case ParamValueType.M_ITEM_PARAM_VALUE_INTEGER:
+		case ParamValueType.M_INTEGER:
 			return "integer";
-		case ParamValueType.M_ITEM_PARAM_VALUE_STRING:
+		case ParamValueType.M_STRING:
 			return "String";
 		default:
 			return "Type not known: " + itemType;

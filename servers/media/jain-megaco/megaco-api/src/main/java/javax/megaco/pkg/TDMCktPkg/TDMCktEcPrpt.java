@@ -26,7 +26,7 @@ public class TDMCktEcPrpt extends PkgPrptyItem {
 		super();
 		super.itemId = TDMC_EC_PRPT;
 		super.propertyId = TDMC_EC_PRPT;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_BOOLEAN;
+		super.itemValueType = ParamValueType.M_BOOLEAN;
 		
 	}
 

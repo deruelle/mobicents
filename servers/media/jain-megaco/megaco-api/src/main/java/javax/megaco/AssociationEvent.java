@@ -18,11 +18,11 @@ public abstract class AssociationEvent extends EventObject {
 	 *            The association handle to uniquely identify the MG-MGC pair.
 	 *            This is allocated by the stack when the Listener registers
 	 *            with the provider with a unique MG-MGC identity.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             if the parameters send in the constructor are invalid.
 	 */
 	public AssociationEvent(java.lang.Object source, int assocHandle)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source);
 		this.assocHandle = assocHandle;
 	}
@@ -55,4 +55,5 @@ public abstract class AssociationEvent extends EventObject {
 	 *         or association indication event.
 	 */
 	public abstract int getAssocOperIdentifier();
+	//FIXME: should this be object ?
 }

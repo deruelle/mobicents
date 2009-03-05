@@ -25,7 +25,7 @@ public class RTPParamRtppltype extends PkgItemParam {
 	public RTPParamRtppltype() {
 		super();
 		super.paramId = RTP_PARAM_PL_TYPE;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { RTPPltransEvt.RTP_PLTRANS_EVENT };
 	}
@@ -48,7 +48,7 @@ public class RTPParamRtppltype extends PkgItemParam {
 	 * integer or double value or boolean.
 	 * 
 	 * 
-	 * @ return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_STRING}
+	 * @ return It returns {@link ParamValueType.M_STRING}
 	 * indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {

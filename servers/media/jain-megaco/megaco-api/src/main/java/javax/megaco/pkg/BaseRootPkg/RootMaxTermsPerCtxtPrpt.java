@@ -26,7 +26,7 @@ public final class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 		super.propertyId = ROOT_MAX_TERMS_PER_CTXT_PRPT;
 		super.itemId = ROOT_MAX_TERMS_PER_CTXT_PRPT;
 		super.packageId = new BaseRootPkg();
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 		this.itemsDescriptorIds = new int[] { DescriptorType.M_TERMINATION_STATE_DESC };
 	}
 
@@ -46,7 +46,7 @@ public final class RootMaxTermsPerCtxtPrpt extends PkgPrptyItem {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ITEM_PARAM_VALUE_INTEGER} indicating that the
+	 * @return It returns {@link INTEGER} indicating that the
 	 *         parameter is a double.
 	 */
 	public int getItemValueType() {

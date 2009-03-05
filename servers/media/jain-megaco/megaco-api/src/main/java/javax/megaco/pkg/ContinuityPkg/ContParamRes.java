@@ -25,7 +25,7 @@ public class ContParamRes extends PkgItemParam {
 	public ContParamRes() {
 		super();
 		super.paramId = CONT_PARAM_RES;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_EVENT_DESC };
 		super.paramsItemIds = new int[] { ContComplEvt.CONT_COMPL_EVENT };
 	}
@@ -47,7 +47,7 @@ public class ContParamRes extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ITEM_PARAM_VALUE_STRING} indicating that the
+	 * @return It returns {@link STRING} indicating that the
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {

@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.message.Descriptor;
 
@@ -18,18 +18,18 @@ public class ModemParam implements Serializable {
 
 	/**
 	 * Constructs a object of class ModemParam with ModemType. This constructor
-	 * can take all values of modem type except MODEM_TYPE_EXTENSION.
+	 * can take all values of modem type except {@link ModemType.EXT}.
 	 * 
 	 * @param modemType
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - If the object of class ModemType is set to NULL or the
-	 *             modem type is set to MODEM_TYPE_EXTENSION.
+	 *             modem type is set to {@link ModemType.EXT}.
 	 */
 	public ModemParam(ModemType modemType)
 
-	throws javax.megaco.InvalidArgumentException {
+	throws IllegalArgumentException {
 		if (modemType == null) {
-			throw new InvalidArgumentException("ModemType must not be null");
+			throw new IllegalArgumentException("ModemType must not be null");
 		}
 
 		this.modemType = modemType;
@@ -38,15 +38,15 @@ public class ModemParam implements Serializable {
 	/**
 	 * 
 	 * Constructs a object of class ModemParam with extension string. This
-	 * implicitly sets the modem type to MODEM_TYPE_EXTENSION.
+	 * implicitly sets the modem type to {@link ModemType.EXT}.
 	 * 
 	 * @param extModem
 	 *            - Sets the string for the extension of the modem type. The
 	 *            extension string should be prefixed with "X-" or "X+". The
 	 *            extension characters following the prefix should be at most of
 	 *            6 characters. The extension string would be set only when the
-	 *            modem type specifies MODEM_TYPE_EXT.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *            modem type specifies {@link ModemType.EXT}.
+	 * @throws IllegalArgumentException
 	 *             - If the extension string passed to this method is NULL or if
 	 *             the extension string is not in proper format. It should be
 	 *             prefixed with either "X+" or "X-" followed by at most 6
@@ -54,16 +54,16 @@ public class ModemParam implements Serializable {
 	 */
 	public ModemParam(java.lang.String extModem)
 
-	throws javax.megaco.InvalidArgumentException {
-		modemType = ModemType.MODEM_TYPE_EXT;
+	throws IllegalArgumentException {
+		modemType = ModemType.EXT;
 
 		if (extModem == null) {
-			throw new InvalidArgumentException("ExtModem must not be null");
+			throw new IllegalArgumentException("ExtModem must not be null");
 		}
 		// FIXME??
 		DescriptorUtils.checkMethodExtensionRules(extModem);
 		if (extModem.length() > 8) {
-			throw new InvalidArgumentException("ExtModem length must nto exceed 8 characters");
+			throw new IllegalArgumentException("ExtModem length must nto exceed 8 characters");
 		}
 		this.extModem = extModem;
 
@@ -90,13 +90,13 @@ public class ModemParam implements Serializable {
 	 * @return Gets the string for the extension of the modem type. The
 	 *         extension string would be set only when the modem type specifies
 	 *         MODEM_TYPE_EXTENSION.
-	 * @throws javax.megaco.MethodInvocationException
+	 * @throws IllegalStateException
 	 *             if the method has been called when the modem type denotes
 	 *             anything other than MODEM_TYPE_EXT
 	 */
-	public java.lang.String getExtensionString() throws javax.megaco.MethodInvocationException {
-		if (this.modemType.getModemType() != ModemType.M_MODEM_TYPE_EXT) {
-			throw new MethodInvocationException("ModemType must be: MODEM_TYPE_EXT");
+	public java.lang.String getExtensionString() throws IllegalStateException {
+		if (this.modemType.getModemType() != ModemType.M_EXT) {
+			throw new IllegalStateException("ModemType must be: EXT");
 		}
 		return this.extModem;
 	}

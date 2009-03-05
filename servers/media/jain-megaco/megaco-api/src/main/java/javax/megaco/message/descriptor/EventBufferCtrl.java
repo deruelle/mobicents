@@ -12,29 +12,29 @@ public class EventBufferCtrl implements Serializable {
 	/**
 	 * Identifies event buffer control to be off. Its value shall be set to 0.
 	 */
-	public static final int M_EVENT_BUFFER_CONTROL_OFF = 0;
+	public static final int M_OFF = 0;
 
 	/**
 	 * Identifies event buffer control to be lock step. Its value shall be set
 	 * to 1.
 	 */
-	public static final int M_EVENT_BUFFER_CONTROL_LOCK_STEP = 1;
+	public static final int M_LOCK_STEP = 1;
 
 	/**
 	 * Identifies a EventBufferCtrl object that constructs the class with the
-	 * constant M_EVENT_BUFFER_CONTROL_OFF. Since it is reference to static
+	 * constant M_OFF. Since it is reference to static
 	 * final object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final EventBufferCtrl EVENT_BUFFER_CONTROL_OFF = new EventBufferCtrl(M_EVENT_BUFFER_CONTROL_OFF);
+	public static final EventBufferCtrl OFF = new EventBufferCtrl(M_OFF);
 
 	/**
 	 * Identifies a EventBufferCtrl object that constructs the class with the
-	 * constant M_EVENT_BUFFER_CONTROL_LOCK_STEP. Since it is reference to
+	 * constant M_LOCK_STEP. Since it is reference to
 	 * static final object, it prevents further instantiation of the same object
 	 * in the system.
 	 */
-	public static final EventBufferCtrl EVENT_BUFFER_CONTROL_LOCK_STEP = new EventBufferCtrl(M_EVENT_BUFFER_CONTROL_LOCK_STEP);
+	public static final EventBufferCtrl LOCK_STEP = new EventBufferCtrl(M_LOCK_STEP);
 
 	private int eventBufferCtrl = -1;
 
@@ -73,10 +73,10 @@ public class EventBufferCtrl implements Serializable {
 	 */
 	public static final EventBufferCtrl getObject(int value) throws IllegalArgumentException {
 		switch (value) {
-		case M_EVENT_BUFFER_CONTROL_LOCK_STEP:
-			return EVENT_BUFFER_CONTROL_LOCK_STEP;
-		case M_EVENT_BUFFER_CONTROL_OFF:
-			return EVENT_BUFFER_CONTROL_OFF;
+		case M_LOCK_STEP:
+			return LOCK_STEP;
+		case M_OFF:
+			return OFF;
 
 		default:
 			throw new IllegalArgumentException("Wrong value of EventBufferCtrl: " + value);
@@ -99,10 +99,10 @@ public class EventBufferCtrl implements Serializable {
 	@Override
 	public String toString() {
 		switch (this.eventBufferCtrl) {
-		case M_EVENT_BUFFER_CONTROL_LOCK_STEP:
-			return "EventBufferCtrl[EVENT_BUFFER_CONTROL_LOCK_STEP]";
-		case M_EVENT_BUFFER_CONTROL_OFF:
-			return "EventBufferCtrl[EVENT_BUFFER_CONTROL_OFF]";
+		case M_LOCK_STEP:
+			return "EventBufferCtrl[LOCK_STEP]";
+		case M_OFF:
+			return "EventBufferCtrl[OFF]";
 
 		default:
 			return "EventBufferCtrl[" + this.eventBufferCtrl + "]";

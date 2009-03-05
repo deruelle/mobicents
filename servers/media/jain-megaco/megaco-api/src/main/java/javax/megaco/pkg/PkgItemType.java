@@ -9,74 +9,74 @@ import java.io.Serializable;
  */
 public final class PkgItemType implements Serializable {
 
-	public static final int M_ITEM_ALL = 1;
-	public static final int M_ITEM_EVENT = 2;
-	public static final int M_ITEM_SIGNAL = 3;
-	public static final int M_ITEM_STATISTICS = 4;
-	public static final int M_ITEM_PROPERTY = 5;
+	public static final int M_ALL = 1;
+	public static final int M_EVENT = 2;
+	public static final int M_SIGNAL = 3;
+	public static final int M_STATISTICS = 4;
+	public static final int M_PROPERTY = 5;
 
 	/**
 	 * Identifies a package item type object that constructs the class with the
-	 * constant M_ITEM_ALL. Since it is reference to static final object, it
+	 * constant M_ALL. Since it is reference to static final object, it prevents
+	 * further instantiation of the same object in the system.
+	 */
+	public static final PkgItemType ALL = new PkgItemType(M_ALL);
+
+	/**
+	 * Identifies a package item type object that constructs the class with the
+	 * constant M_EVENT. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_ALL = new PkgItemType(M_ITEM_ALL);
+	public static final PkgItemType EVENT = new PkgItemType(M_EVENT);
 
 	/**
 	 * Identifies a package item type object that constructs the class with the
-	 * constant M_ITEM_EVENT. Since it is reference to static final object, it
+	 * constant M_SIGNAL. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_EVENT = new PkgItemType(M_ITEM_EVENT);
+	public static final PkgItemType SIGNAL = new PkgItemType(M_SIGNAL);
 
 	/**
 	 * Identifies a package item type object that constructs the class with the
-	 * constant M_ITEM_SIGNAL. Since it is reference to static final object, it
+	 * constant M_STATISTICS. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_SIGNAL = new PkgItemType(M_ITEM_SIGNAL);
+	public static final PkgItemType STATISTICS = new PkgItemType(M_STATISTICS);
 
 	/**
 	 * Identifies a package item type object that constructs the class with the
-	 * constant M_ITEM_STATISTICS. Since it is reference to static final object,
-	 * it prevents further instantiation of the same object in the system.
+	 * constant M_PROPERTY. Since it is reference to static final object, it
+	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final PkgItemType ITEM_STATISTICS = new PkgItemType(M_ITEM_STATISTICS);
+	public static final PkgItemType PROPERTY = new PkgItemType(M_PROPERTY);
 
-	/**
-	 * Identifies a package item type object that constructs the class with the
-	 * constant M_ITEM_PROPERTY. Since it is reference to static final object,
-	 * it prevents further instantiation of the same object in the system.
-	 */
-	public static final PkgItemType ITEM_PROPERTY = new PkgItemType(M_ITEM_PROPERTY);
+	private int type;
 
-	private int item_type;
-
-	private PkgItemType(int item_type) {
-		this.item_type = item_type;
+	private PkgItemType(int type) {
+		this.type = type;
 	}
 
 	public int getPkgItemType() {
-		return this.item_type;
+		return this.type;
 	}
 
 	public static final PkgItemType getObject(int value) throws IllegalArgumentException {
 		PkgItemType p = null;
 		switch (value) {
-		case M_ITEM_ALL:
-			p = ITEM_ALL;
+		case M_ALL:
+			p = ALL;
 			break;
-		case M_ITEM_EVENT:
-			p = ITEM_EVENT;
+		case M_EVENT:
+			p = EVENT;
 			break;
-		case M_ITEM_SIGNAL:
-			p = ITEM_SIGNAL;
+		case M_SIGNAL:
+			p = SIGNAL;
 			break;
-		case M_ITEM_STATISTICS:
-			p = ITEM_STATISTICS;
+		case M_STATISTICS:
+			p = STATISTICS;
 			break;
-		case M_ITEM_PROPERTY:
-			p = ITEM_PROPERTY;
+		case M_PROPERTY:
+			p = PROPERTY;
 			break;
 		default:
 			throw new IllegalArgumentException("There is no PkgItemType for passed value = " + value);
@@ -85,30 +85,30 @@ public final class PkgItemType implements Serializable {
 	}
 
 	private Object readResolve() {
-		return this.getObject(this.item_type);
+		return this.getObject(this.type);
 	}
 
 	@Override
 	public String toString() {
 		String p = null;
-		switch (this.item_type) {
-		case M_ITEM_ALL:
+		switch (this.type) {
+		case M_ALL:
 			p = "PkgItemType[ALL]";
 			break;
-		case M_ITEM_EVENT:
+		case M_EVENT:
 			p = "PkgItemType[EVENT]";
 			break;
-		case M_ITEM_SIGNAL:
+		case M_SIGNAL:
 			p = "PkgItemType[SIGNAL]";
 			break;
-		case M_ITEM_STATISTICS:
+		case M_STATISTICS:
 			p = "PkgItemType[STATISTICS]";
 			break;
-		case M_ITEM_PROPERTY:
+		case M_PROPERTY:
 			p = "PkgItemType[PROPERTY]";
 			break;
 		default:
-			p = "PkgItemType[" + this.item_type + "]";
+			p = "PkgItemType[" + this.type + "]";
 		}
 		return p;
 	}

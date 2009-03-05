@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -45,13 +45,13 @@ public class SignalDescriptor extends Descriptor implements Serializable {
 	 *            - Sets the signals as defined in the MEGACO packages. This
 	 *            method takes vector of the signal parameters therefore allows
 	 *            multiple signals to be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Signal Param
 	 *             passed to this method is NULL.
 	 */
-	public final void setSignalParam(SignalParam[] signalParam) throws javax.megaco.InvalidArgumentException {
+	public final void setSignalParam(SignalParam[] signalParam) throws IllegalArgumentException {
 		if (signalParam == null) {
-			throw new InvalidArgumentException("SignalParam[] must not be null");
+			throw new IllegalArgumentException("SignalParam[] must not be null");
 		}
 
 		this.signalParam = signalParam;

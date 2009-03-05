@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
@@ -28,24 +28,24 @@ public class MuxDescriptor extends Descriptor implements Serializable {
 	 * @param termList
 	 *            - This specifies list of termination ids for the specified mux
 	 *            type.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of MuxType or
 	 *             Termination Id list passed to this method is NULL.
 	 */
-	public MuxDescriptor(MuxType muxType, Termination[] termList) throws javax.megaco.InvalidArgumentException {
+	public MuxDescriptor(MuxType muxType, Termination[] termList) throws IllegalArgumentException {
 
 		super.descriptorId = DescriptorType.M_MUX_DESC;
 
 		if (muxType == null) {
-			throw new InvalidArgumentException("MuxType must not be null");
+			throw new IllegalArgumentException("MuxType must not be null");
 		}
 
 		if (termList == null) {
-			throw new InvalidArgumentException("Termination[] must not be null");
+			throw new IllegalArgumentException("Termination[] must not be null");
 		}
 
 		if (termList.length == 0) {
-			throw new InvalidArgumentException("Termination[] lmust not be empty");
+			throw new IllegalArgumentException("Termination[] lmust not be empty");
 		}
 
 		this.muxType = muxType;
@@ -85,14 +85,14 @@ public class MuxDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @return Gets the string for the extension of the mux type. The extension
 	 *         string would be set only when the mux type specifies
-	 *         MUX_TYPE_EXT.
-	 * @throws javax.megaco.MethodInvocationException
+	 *         {@link MuxType.EXT}.
+	 * @throws IllegalStateException
 	 *             if the method has been called when the mux type denotes
-	 *             anything other than MUX_TYPE_EXT.
+	 *             anything other than {@link MuxType.EXT}.
 	 */
-	public java.lang.String getExtensionString() throws javax.megaco.MethodInvocationException {
-		if (this.muxType.getMuxType() != muxType.M_MUX_TYPE_EXT) {
-			throw new MethodInvocationException("MuxType must be: MUX_TYPE_EXT");
+	public java.lang.String getExtensionString() throws IllegalStateException {
+		if (this.muxType.getMuxType() != muxType.M_EXT) {
+			throw new IllegalStateException("MuxType must be: EXT");
 		}
 		return this.extMux;
 	}
@@ -106,29 +106,29 @@ public class MuxDescriptor extends Descriptor implements Serializable {
 	 *            extension string should be prefixed with "X-" or "X+". The
 	 *            extension characters following the prefix should be at most of
 	 *            6 characters. The extension string would be set only when the
-	 *            mux type specifies MUX_TYPE_EXTENSION.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *            mux type specifies {@link MuxType.EXT}.
+	 * @throws IllegalArgumentException
 	 *             if the extension string is not in proper format. It should be
 	 *             prefixed with either "X+" or "X-" followed by at most 6
 	 *             characters.
-	 * @throws javax.megaco.MethodInvocationException
+	 * @throws IllegalStateException
 	 *             if the method has been called when the mux type denotes
-	 *             anything other than MUX_TYPE_EXT.
+	 *             anything other than {@link MuxType.EXT}.
 	 */
-	public void setExtensionString(java.lang.String extMux) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
+	public void setExtensionString(java.lang.String extMux) throws IllegalArgumentException, IllegalStateException {
 
-		if (this.muxType.getMuxType() != muxType.M_MUX_TYPE_EXT) {
-			throw new MethodInvocationException("MuxType must be: MUX_TYPE_EXT");
+		if (this.muxType.getMuxType() != muxType.M_EXT) {
+			throw new IllegalStateException("MuxType must be: EXT");
 		}
 
 		if (extMux == null) {
-			new InvalidArgumentException("ExtMux must not be null");
+			new IllegalArgumentException("ExtMux must not be null");
 		}
 
 		DescriptorUtils.checkMethodExtensionRules(extMux);
 
 		if (extMux.length() > 8) {
-			throw new InvalidArgumentException("ExtMux must not be longer than 8 characters.");
+			throw new IllegalArgumentException("ExtMux must not be longer than 8 characters.");
 		}
 		this.extMux = extMux;
 

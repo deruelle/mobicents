@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 import javax.megaco.pkg.PkgItemStr;
@@ -69,16 +69,16 @@ public class LocalCtrlDescriptor extends Descriptor implements Serializable {
 	 *            - Sets the object reference of the derived object of
 	 *            StreamMode to specify one of send only or receive only or send
 	 *            receive or inactive or loopback.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Stream Mode
 	 *             passed to this method is NULL.
 	 */
 	public final void setStreamMode(StreamMode streamMode)
 
-	throws javax.megaco.InvalidArgumentException {
+	throws IllegalArgumentException {
 
 		if (streamMode == null) {
-			throw new InvalidArgumentException("StreamMode must not be null.");
+			throw new IllegalArgumentException("StreamMode must not be null.");
 		}
 
 		this.streamMode = streamMode;
@@ -164,19 +164,19 @@ public class LocalCtrlDescriptor extends Descriptor implements Serializable {
 	 * @param prptyParam
 	 *            - The Megaco Property parameter specifying the property for
 	 *            the termination in the command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             if the parameters set for the property parameter are such
 	 *             that the LclCtrl Descriptor cannot be encoded.
 	 */
-	public final void setMegacoPkgPrptyItem(PkgPrptyItem[] prptyParam) throws javax.megaco.InvalidArgumentException {
+	public final void setMegacoPkgPrptyItem(PkgPrptyItem[] prptyParam) throws IllegalArgumentException {
 
 		// FIXME: what does this mean - cant be encoded?
 		if (prptyParam == null) {
-			throw new InvalidArgumentException("PkgPrptyItem[] must not be null");
+			throw new IllegalArgumentException("PkgPrptyItem[] must not be null");
 		}
 
 		if (prptyParam.length == 0) {
-			throw new InvalidArgumentException("PkgPrptyItem[] must not be empty");
+			throw new IllegalArgumentException("PkgPrptyItem[] must not be empty");
 		}
 
 		this.pkgPrptyItem = prptyParam;
@@ -206,19 +206,19 @@ public class LocalCtrlDescriptor extends Descriptor implements Serializable {
 	 * @param prptyParam
 	 *            - The Megaco Property parameter specifying the property for
 	 *            the termination in the command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Package Item
 	 *             string passed to this method is NULL.
 	 */
 	public final void setMegacoPkgItemStr(PkgItemStr[] prptyParamStr)
 
-	throws javax.megaco.InvalidArgumentException {
+	throws IllegalArgumentException {
 		if (prptyParamStr == null) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be null");
+			throw new IllegalArgumentException("PkgItemStr[] must not be null");
 		}
 
 		if (prptyParamStr.length == 0) {
-			throw new InvalidArgumentException("PkgItemStr[] must not be empty");
+			throw new IllegalArgumentException("PkgItemStr[] must not be empty");
 		}
 
 		this.pkgItemStr = prptyParamStr;

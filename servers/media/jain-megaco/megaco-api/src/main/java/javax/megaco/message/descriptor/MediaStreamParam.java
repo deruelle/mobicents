@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 
 /**
  * The MediaStreamParam object is a class that shall be used to set the local
@@ -66,15 +66,15 @@ public class MediaStreamParam implements Serializable {
 	 * @param localControlDesc
 	 *            - The reference to the object corresponding to the local
 	 *            control descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if local control descriptor has incompatible
 	 *             parameters.
 	 */
-	public void setLclCtrlDescriptor(LocalCtrlDescriptor localControlDesc) throws javax.megaco.InvalidArgumentException {
+	public void setLclCtrlDescriptor(LocalCtrlDescriptor localControlDesc) throws IllegalArgumentException {
 
 		// FIXME this is not present
 		if (localControlDesc == null) {
-			throw new InvalidArgumentException("LocalCtrlDescriptor must not be null");
+			throw new IllegalArgumentException("LocalCtrlDescriptor must not be null");
 		}
 
 		// FIXME: add error checks
@@ -89,13 +89,13 @@ public class MediaStreamParam implements Serializable {
 	 * @param sdp
 	 *            - The reference to the object corresponding to the SDPInfo for
 	 *            setting the local descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if sdp information has incompatible parameters.
 	 */
-	public void setLocalDescriptor(SDPInfo sdp) throws javax.megaco.InvalidArgumentException {
+	public void setLocalDescriptor(SDPInfo sdp) throws IllegalArgumentException {
 		// FIXME this is not present
 		if (sdp == null) {
-			throw new InvalidArgumentException("SDPInfo must not be null");
+			throw new IllegalArgumentException("SDPInfo must not be null");
 		}
 
 		// FIXME: add error checks
@@ -111,13 +111,13 @@ public class MediaStreamParam implements Serializable {
 	 * @param sdp
 	 *            - The reference to the object corresponding to the SDPInfo for
 	 *            setting the remote descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if sdp information has incompatible parameters.
 	 */
-	public void setRemoteDescriptor(SDPInfo sdp) throws javax.megaco.InvalidArgumentException {
+	public void setRemoteDescriptor(SDPInfo sdp) throws IllegalArgumentException {
 		// FIXME this is not present
 		if (sdp == null) {
-			throw new InvalidArgumentException("SDPInfo must not be null");
+			throw new IllegalArgumentException("SDPInfo must not be null");
 		}
 
 		// FIXME: add error checks

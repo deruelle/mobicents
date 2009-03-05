@@ -3,7 +3,6 @@ package javax.megaco.association;
 import java.io.Serializable;
 
 import javax.megaco.ExceptionInfoCode;
-import javax.megaco.InvalidArgumentException;
 
 /**
  * This class represents the remote transport address. This transport address is
@@ -40,15 +39,12 @@ public class RemoteAddr implements Serializable {
 	 * 
 	 * @param ipAddr
 	 * @param tpt_type
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public RemoteAddr(java.lang.String[] ipAddr, TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public RemoteAddr(java.lang.String[] ipAddr, TransportType tpt_type) throws IllegalArgumentException {
 		if (ipAddr == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"IP Address or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("IP Address or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -65,16 +61,13 @@ public class RemoteAddr implements Serializable {
 	 * 
 	 * @param addrString
 	 * @param tpt_type
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public RemoteAddr(java.lang.String addrString, TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public RemoteAddr(java.lang.String addrString, TransportType tpt_type) throws IllegalArgumentException {
 
 		if (addrString == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"AddressString or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("AddressString or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -91,16 +84,13 @@ public class RemoteAddr implements Serializable {
 	 * M_ATM_TPT.
 	 * 
 	 * @param aal5Addr
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public RemoteAddr(java.lang.String aal5Addr)
-			throws javax.megaco.InvalidArgumentException {
+	public RemoteAddr(java.lang.String aal5Addr) throws IllegalArgumentException {
 
 		if (addrString == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"aal5 AddressString cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("aal5 AddressString cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -118,24 +108,17 @@ public class RemoteAddr implements Serializable {
 	 * 
 	 * @param domainName
 	 * @param tpt_type
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public void setDomainName(java.lang.String domainName,
-			TransportType tpt_type)
-			throws javax.megaco.InvalidArgumentException {
+	public void setDomainName(java.lang.String domainName, TransportType tpt_type) throws IllegalArgumentException {
 		if (domainName == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"domainName  or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("domainName  or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
-		if (tpt_type.getTransportType() == TransportType.MTP3B_TPT
-				.getTransportType()) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"Transport type can not be set to MTP3B_TPT");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+		if (tpt_type.getTransportType() == TransportType.MTP3B_TPT.getTransportType()) {
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("Transport type can not be set to MTP3B_TPT");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 		// TODO: Set the domainName as per tpt_type
@@ -151,15 +134,12 @@ public class RemoteAddr implements Serializable {
 	 * 
 	 * @param ipAddr
 	 * @param tpt_type
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public void setIpAddr(java.lang.String[] ipAddr, TransportType tpt_type)
-			throws InvalidArgumentException {
+	public void setIpAddr(java.lang.String[] ipAddr, TransportType tpt_type) throws IllegalArgumentException {
 		if (domainName == null || tpt_type == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"ipAddr  or TransportType cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("ipAddr  or TransportType cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 
@@ -173,15 +153,13 @@ public class RemoteAddr implements Serializable {
 	 * Sets the remote port identity.
 	 * 
 	 * @param portId
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public void setPortId(int portId) throws InvalidArgumentException {
+	public void setPortId(int portId) throws IllegalArgumentException {
 
 		if (portId < 1) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"portId cannot be less than 1 for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("portId cannot be less than 1 for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 		this.portId = portId;
@@ -192,15 +170,12 @@ public class RemoteAddr implements Serializable {
 	 * underlying link is over SS7.
 	 * 
 	 * @param mtpAddr
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public void setMtp3Addr(java.lang.String mtpAddr)
-			throws InvalidArgumentException {
+	public void setMtp3Addr(java.lang.String mtpAddr) throws IllegalArgumentException {
 		if (mtpAddr == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"mtpAddr cannot be null for LocalAddr");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("mtpAddr cannot be null for LocalAddr");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
 		this.tpt_type = TransportType.MTP3B_TPT;
@@ -212,18 +187,15 @@ public class RemoteAddr implements Serializable {
 	 * transport is over ATM cells.
 	 * 
 	 * @param aal5Addr
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 */
-	public void setAAL5Addr(java.lang.String aal5Addr)
-			throws InvalidArgumentException {
+	public void setAAL5Addr(java.lang.String aal5Addr) throws IllegalArgumentException {
 		if (aal5Addr == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException(
-					"aal5Addr cannot be null for RemoteAddrd");
-			invalidArgumentException
-					.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("aal5Addr cannot be null for RemoteAddrd");
+			//invalidArgumentException.setInfoCode(ExceptionInfoCode.INV_LOCAL_ADDR);
 			throw invalidArgumentException;
 		}
-		//??
+		// ??
 		this.tpt_type = TransportType.ATM_TPT;
 		this.AAL5Addr = aal5Addr;
 	}

@@ -27,7 +27,7 @@ public class AnalogLineSParamCad extends PkgItemParam {
 	public AnalogLineSParamCad() {
 		super();
 		super.paramId = ANALOG_LINE_PARAM_CAD;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_SIGNAL_DESC };
 
 		// FIXME: ANALOG_LINE_RING_SIGNAL ??
@@ -51,7 +51,7 @@ public class AnalogLineSParamCad extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_INTEGER}
+	 * @return It returns {@link ParamValueType.M_INTEGER}
 	 *         indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {

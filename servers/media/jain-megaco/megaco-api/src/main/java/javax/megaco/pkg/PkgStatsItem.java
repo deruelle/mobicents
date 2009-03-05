@@ -2,7 +2,7 @@ package javax.megaco.pkg;
 
 import java.util.Arrays;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.ParameterNotSetException;
 
@@ -54,10 +54,10 @@ public abstract class PkgStatsItem extends PkgValueItem {
 	 * return an hard coded value to indicate the item type is statistics.
 	 * 
 	 * itemType - An integer value for the item type corresponding to the
-	 * statistics. This shall return M_ITEM_STATISTICS.
+	 * statistics. This shall return {@link javax.megaco.pkg.PkgItemType.M_STATISTICS}.
 	 */
 	public final int getItemType() {
-		return PkgItemType.M_ITEM_STATISTICS;
+		return PkgItemType.M_STATISTICS;
 	}
 
 	/**
@@ -84,16 +84,11 @@ public abstract class PkgStatsItem extends PkgValueItem {
 	 * 
 	 * @return paramRelation - The int corresponding to the value relation. The
 	 *         values shall be defined in ParamRelation.
-	 * @throws javax.megaco.ParameterNotSetException
-	 *             Thrown if this parameter has not been set.
+
 	 */
-	public final int getItemsValueRelation() throws javax.megaco.ParameterNotSetException {
+	public final ParamRelation getItemsValueRelation() throws javax.megaco.ParameterNotSetException {
 
-		if (this.paramRelation == null) {
-			throw new ParameterNotSetException("Value relation has not been set.");
-		}
-
-		return paramRelation.getParamRelation();
+		return paramRelation;
 	}
 
 	/**

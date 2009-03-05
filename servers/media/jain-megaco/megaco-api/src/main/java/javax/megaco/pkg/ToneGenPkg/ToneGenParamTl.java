@@ -27,7 +27,7 @@ public class ToneGenParamTl extends PkgItemParam {
 	public ToneGenParamTl() {
 		super();
 		super.paramId = TONE_GEN_PARAM_IND;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_SIGNAL_DESC };
 		this.paramsItemIds = new int[] { ToneGenPlayToneSignal.TONE_GEN_PLAY_TONE_SIGNAL };
 	}
@@ -49,7 +49,7 @@ public class ToneGenParamTl extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_STRING}
+	 * @return It returns {@link ParamValueType.M_STRING}
 	 *         indicating that the parameter is a string.
 	 */
 	public int getParamValueType() {

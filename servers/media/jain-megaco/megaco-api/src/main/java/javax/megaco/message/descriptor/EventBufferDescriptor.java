@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 
@@ -20,19 +20,19 @@ public class EventBufferDescriptor extends Descriptor implements Serializable {
 	 * attached stream id and the parameter name and value for the events
 	 * buffered.
 	 * 
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of vector of
 	 *             Event Buffer Param passed to this method is NULL.
 	 */
-	public EventBufferDescriptor(EventBufParam[] evtBufParam) throws javax.megaco.InvalidArgumentException {
+	public EventBufferDescriptor(EventBufParam[] evtBufParam) throws IllegalArgumentException {
 		super();
 
 		if (evtBufParam == null) {
-			throw new InvalidArgumentException("EventBufParam[] must not be null");
+			throw new IllegalArgumentException("EventBufParam[] must not be null");
 		}
 
 		if (evtBufParam.length == 0) {
-			throw new InvalidArgumentException("EventBufParam[] must not be empty");
+			throw new IllegalArgumentException("EventBufParam[] must not be empty");
 		}
 		this.eventBufParam = evtBufParam;
 

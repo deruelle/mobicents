@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 import javax.megaco.association.LocalAddr;
 import javax.megaco.association.MethodExtensionException;
@@ -75,13 +75,13 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param method
 	 *            The object reference of service change method.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Service Change
 	 *             Method passed to this method is NULL.
 	 */
-	public void setSrvChngMethod(SrvChngMethod method) throws javax.megaco.InvalidArgumentException {
+	public void setSrvChngMethod(SrvChngMethod method) throws IllegalArgumentException {
 		if (method == null) {
-			throw new InvalidArgumentException("SrvChngMethod must not be null.");
+			throw new IllegalArgumentException("SrvChngMethod must not be null.");
 		}
 
 		this.srvChngMethod = method;
@@ -92,14 +92,14 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @return Returns string value of the extended service change method. This
 	 *         is to be set only if the service change method is set to
-	 *         M_SVC_CHNG_METHOD_EXTENSION.
+	 *         {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             - Thrown if service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION.
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 */
 	public java.lang.String getSvcChngMethodExtension() throws javax.megaco.association.MethodExtensionException {
 
-		if (this.srvChngMethod == null || this.srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+		if (this.srvChngMethod == null || this.srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException("SrvChngMethod must be set to: SVC_CHNG_METHOD_EXTENSION");
 		}
 		return this.svcChngMethodExtension;
@@ -108,20 +108,20 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 
 	/**
 	 * This method sets the extended service change method. This needs to be set
-	 * if and only if the service change method is M_SVC_CHNG_METHOD_EXTENSION.
+	 * if and only if the service change method is {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * 
 	 * @param extMethod
 	 *            - The string value of the extended service change method.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             - Thrown if service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
+	 * @throws IllegalArgumentException
 	 *             - Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
-	public void setSvcChngMethodExtension(java.lang.String extMethod) throws javax.megaco.association.MethodExtensionException, javax.megaco.InvalidArgumentException {
+	public void setSvcChngMethodExtension(java.lang.String extMethod) throws javax.megaco.association.MethodExtensionException, IllegalArgumentException {
 
-		if (this.srvChngMethod == null || this.srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+		if (this.srvChngMethod == null || this.srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException("SrvChngMethod must be set to: SVC_CHNG_METHOD_EXTENSION");
 		}
 
@@ -150,14 +150,14 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * @param reasonCode
 	 *            The object reference to the corresponding service change
 	 *            reason.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if the reference of ServiceChange reason passed to
 	 *             this method is NULL.
 	 */
-	public void setSrvChngReason(SrvChngReason reasonCode) throws javax.megaco.InvalidArgumentException {
+	public void setSrvChngReason(SrvChngReason reasonCode) throws IllegalArgumentException {
 
 		if (reasonCode == null) {
-			throw new InvalidArgumentException("SrvChngReason must not be null.");
+			throw new IllegalArgumentException("SrvChngReason must not be null.");
 		}
 
 		this.srvChngReason = reasonCode;
@@ -185,13 +185,13 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param delay
 	 *            The service change delay as an integer value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the value of service change
 	 *             delay passed to this method is less than 0.
 	 */
-	public void setSrvChngDelay(int delay) throws javax.megaco.InvalidArgumentException {
+	public void setSrvChngDelay(int delay) throws IllegalArgumentException {
 		if (delay <= 0) {
-			throw new InvalidArgumentException("Delay must be greater than zero.");
+			throw new IllegalArgumentException("Delay must be greater than zero.");
 		}
 
 		this.srvChngDelay = new Integer(delay);
@@ -224,15 +224,15 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param LocalAddr
 	 *            The object reference of service change address.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if a parameter in service change address is set such
 	 *             that it is invalid.
 	 */
-	public void setSrvChngAddress(LocalAddr localAddr) throws javax.megaco.InvalidArgumentException {
+	public void setSrvChngAddress(LocalAddr localAddr) throws IllegalArgumentException {
 
 		// FIXME: not present in jdoc
 		if (localAddr == null) {
-			throw new InvalidArgumentException("LocalAddr must not be null.");
+			throw new IllegalArgumentException("LocalAddr must not be null.");
 		}
 		// FIXME: add error checks?
 
@@ -257,13 +257,13 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param profile
 	 *            The service change profile as a string value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if service change profile parameter has invalid
 	 *             format.
 	 */
-	public void setSrvChngProfile(java.lang.String profile) throws javax.megaco.InvalidArgumentException {
+	public void setSrvChngProfile(java.lang.String profile) throws IllegalArgumentException {
 		if (profile == null) {
-			throw new InvalidArgumentException("profile must not be null.");
+			throw new IllegalArgumentException("profile must not be null.");
 		}
 
 		DescriptorUtils.checkSrvcChngProfileRules(profile);
@@ -276,7 +276,7 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * As specified in the protocol, in case of failure of MGC, it would handoff
 	 * the control of the MG to the new MGC. This is conveyed using service
 	 * change command on ROOT termination, with service change method set to
-	 * M_SVC_CHNG_METHOD_HANDOFF and transport parameters of the new MGC
+	 * M_HANDOFF and transport parameters of the new MGC
 	 * specified in the mgcidToTry field of the service change descriptor. This
 	 * mgcidToTry field of the service change descriptor is represented using
 	 * HandedOffMGCId field on this class.
@@ -295,7 +295,7 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * As specified in the protocol, in case of failure of MGC, it would handoff
 	 * the control of the MG to the new MGC. This is conveyed using service
 	 * change command on ROOT termination, with service change method set to
-	 * M_SVC_CHNG_METHOD_HANDOFF and transport parameters of the new MGC
+	 * M_HANDOFF and transport parameters of the new MGC
 	 * specified in the mgcidToTry field of the service change descriptor. This
 	 * mgcidToTry field of the service change descriptor is represented using
 	 * HandedOffMGCId field on this class.
@@ -303,19 +303,19 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * @param mgcidToTry
 	 *            The identity of the MGC to which the association is to be
 	 *            handoffed.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if a parameter in mgc Id is set such that it is
 	 *             invalid.
 	 */
-	public void setHandOffMGCId(LocalAddr mgcidToTry) throws javax.megaco.InvalidArgumentException {
+	public void setHandOffMGCId(LocalAddr mgcidToTry) throws IllegalArgumentException {
 
 		// FIXME: not present in jdoc
 		if (mgcidToTry == null) {
-			throw new InvalidArgumentException("LocalAddr must not be null.");
+			throw new IllegalArgumentException("LocalAddr must not be null.");
 		}
 
-		if (srvChngMethod == null || srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_SVC_CHNG_METHOD_HANDOFF) {
-			throw new InvalidArgumentException("SrvChngMethodId must be set to: SVC_CHNG_METHOD_HANDOFF.");
+		if (srvChngMethod == null || srvChngMethod.getSrvChngMethodId() != srvChngMethod.M_HANDOFF) {
+			throw new IllegalArgumentException("SrvChngMethodId must be set to: SVC_CHNG_METHOD_HANDOFF.");
 		}
 
 		// FIXME: add error checks?
@@ -344,14 +344,14 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param version
 	 *            The protocol version as an integer value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if service change version parameter is less than or
 	 *             equal to 0.
 	 */
-	public void setProtocolVersion(int version) throws javax.megaco.InvalidArgumentException {
+	public void setProtocolVersion(int version) throws IllegalArgumentException {
 
 		if (version <= 0) {
-			throw new InvalidArgumentException("Protocol Version must be greater than zero.");
+			throw new IllegalArgumentException("Protocol Version must be greater than zero.");
 		}
 
 		this.protocolVersion = new Integer(version);
@@ -386,14 +386,14 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * @param dateValue
 	 *            The string value of the date value of timestamp in service
 	 *            change descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if date value of timestamp in service change
 	 *             descriptor is not of 8 digit length.
 	 */
-	public void setDateValue(java.lang.String dateValue) throws javax.megaco.InvalidArgumentException {
+	public void setDateValue(java.lang.String dateValue) throws IllegalArgumentException {
 
 		if (dateValue == null) {
-			new InvalidArgumentException("DateValue must nto be null.");
+			new IllegalArgumentException("DateValue must nto be null.");
 		}
 
 		DescriptorUtils.checkTimeStampRules(dateValue);
@@ -419,14 +419,14 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * @param timeValue
 	 *            The string value of the time value of timestamp in service
 	 *            change descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if time value of timestamp in service change
 	 *             descriptor is not of 8 digit length.
 	 */
-	public void setTimeValue(java.lang.String timeValue) throws javax.megaco.InvalidArgumentException {
+	public void setTimeValue(java.lang.String timeValue) throws IllegalArgumentException {
 
 		if (timeValue == null) {
-			new InvalidArgumentException("TimeValue must nto be null.");
+			new IllegalArgumentException("TimeValue must nto be null.");
 		}
 
 		DescriptorUtils.checkTimeStampRules(timeValue);
@@ -449,13 +449,13 @@ public class SrvChngDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param extMethod
 	 *            The string value of the extended service change parameter.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
-	public void setParameterExtention(java.lang.String extMethod) throws javax.megaco.InvalidArgumentException {
+	public void setParameterExtention(java.lang.String extMethod) throws IllegalArgumentException {
 		if (extMethod == null) {
-			new InvalidArgumentException("ExtMethod must nto be null.");
+			new IllegalArgumentException("ExtMethod must nto be null.");
 		}
 
 		DescriptorUtils.checkMethodExtensionRules(extMethod);

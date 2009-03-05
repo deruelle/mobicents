@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
@@ -65,21 +65,21 @@ public class CntxtTermAudDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param errorDescriptor
 	 *            - Megaco Error descriptor to be set for this command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid descriptor is set.
-	 * @throws MethodInvocationException
+	 * @throws IllegalStateException
 	 *             - Thrown if the Termination Id list has already been
 	 *             specified for this command. The object of this class can have
 	 *             either error descriptor or termination Id list associated
 	 *             with it and not both.
 	 */
-	public void setErrorDescriptor(ErrorDescriptor errorDescriptor) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
+	public void setErrorDescriptor(ErrorDescriptor errorDescriptor) throws IllegalArgumentException, IllegalStateException {
 		if (errorDescriptor == null) {
-			throw new InvalidArgumentException("ErrorDescriptor must not be null.");
+			throw new IllegalArgumentException("ErrorDescriptor must not be null.");
 		}
 
 		if (this.terminationList != null) {
-			throw new MethodInvocationException("ErrorDescriptor must not be set when Termination[] is present");
+			throw new IllegalStateException("ErrorDescriptor must not be set when Termination[] is present");
 		}
 
 		this.errorDescriptor = errorDescriptor;
@@ -91,25 +91,25 @@ public class CntxtTermAudDescriptor extends Descriptor implements Serializable {
 	 * @param termIdList
 	 *            - Vector of Megaco terminationId descriptor to be set for this
 	 *            command.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid descriptor is set.
-	 * @throws MethodInvocationException
+	 * @throws IllegalStateException
 	 *             - Thrown if the error descriptor has already been specified
 	 *             for this command. The object of this class can have either
 	 *             error descriptor or termination Id list associated with it
 	 *             and not both.
 	 */
-	public void setTerminationId(Termination[] termIdList) throws javax.megaco.InvalidArgumentException, javax.megaco.MethodInvocationException {
+	public void setTerminationId(Termination[] termIdList) throws IllegalArgumentException, IllegalStateException {
 		if (termIdList == null) {
-			throw new InvalidArgumentException("Termination[] must not be null.");
+			throw new IllegalArgumentException("Termination[] must not be null.");
 		}
 
 		if (termIdList.length == 0) {
-			throw new InvalidArgumentException("Termination[] must not be empty.");
+			throw new IllegalArgumentException("Termination[] must not be empty.");
 		}
 
 		if (this.errorDescriptor != null) {
-			throw new MethodInvocationException("Termination[] must not be set when ErrorDescriptor is present");
+			throw new IllegalStateException("Termination[] must not be set when ErrorDescriptor is present");
 		}
 
 		this.terminationList = termIdList;

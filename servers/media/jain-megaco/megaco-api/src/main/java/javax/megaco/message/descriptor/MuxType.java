@@ -11,72 +11,72 @@ public class MuxType implements Serializable {
 	/**
 	 * Identifies mux type to be h221. Its value shall be set to 0.
 	 */
-	public static final int M_MUX_TYPE_H221 = 0;
+	public static final int M_H221 = 0;
 
 	/**
 	 * Identifies mux type to be h223. Its value shall be set to 1.
 	 */
-	public static final int M_MUX_TYPE_H223 = 1;
+	public static final int M_H223 = 1;
 
 	/**
 	 * Identifies mux type to be "h226". Its value shall be set to 2.
 	 */
-	public static final int M_MUX_TYPE_H226 = 2;
+	public static final int M_H226 = 2;
 
 	/**
 	 * Identifies mux type to be "v76". Its value shall be set to 3.
 	 */
-	public static final int M_MUX_TYPE_V76 = 3;
+	public static final int M_V76 = 3;
 
 	/**
 	 * Identifies mux type to be "extension". Its value shall be set to 4.
 	 */
-	public static final int M_MUX_TYPE_EXT = 4;
+	public static final int M_EXT = 4;
 
 	/**
 	 * Identifies a Mux Type object that constructs the class with the constant
-	 * M_MUX_TYPE_H221. Since it is reference to static final object, it
+	 * M_H221. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final MuxType MUX_TYPE_H221
+	public static final MuxType H221
 
-	= new MuxType(M_MUX_TYPE_H221);
+	= new MuxType(M_H221);
 
 	/**
 	 * Identifies a Mux Type object that constructs the class with the constant
-	 * M_MUX_TYPE_H223. Since it is reference to static final object, it
+	 * M_H223. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final MuxType MUX_TYPE_H223
+	public static final MuxType H223
 
-	= new MuxType(M_MUX_TYPE_H223);
+	= new MuxType(M_H223);
 
 	/**
 	 * Identifies a Mux Type object that constructs the class with the constant
-	 * M_MUX_TYPE_H226. Since it is reference to static final object, it
+	 * M_H226. Since it is reference to static final object, it
 	 * prevents further instantiation of the same object in the system.
 	 */
-	public static final MuxType MUX_TYPE_H226
+	public static final MuxType H226
 
-	= new MuxType(M_MUX_TYPE_H226);
+	= new MuxType(M_H226);
 
 	/**
 	 * Identifies a Mux Type object that constructs the class with the constant
-	 * M_MUX_TYPE_V76. Since it is reference to static final object, it prevents
+	 * M_V76. Since it is reference to static final object, it prevents
 	 * further instantiation of the same object in the system.
 	 */
-	public static final MuxType MUX_TYPE_V76
+	public static final MuxType V76
 
-	= new MuxType(M_MUX_TYPE_V76);
+	= new MuxType(M_V76);
 
 	/**
 	 * Identifies a Mux Type object that constructs the class with the constant
-	 * M_MUX_TYPE_EXT. Since it is reference to static final object, it prevents
+	 * M_EXT. Since it is reference to static final object, it prevents
 	 * further instantiation of the same object in the system.
 	 */
-	public static final MuxType MUX_TYPE_EXT
+	public static final MuxType EXT
 
-	= new MuxType(M_MUX_TYPE_EXT);
+	= new MuxType(M_EXT);
 
 	private int muxType = -1;
 
@@ -116,16 +116,16 @@ public class MuxType implements Serializable {
 
 		switch (value) {
 
-		case M_MUX_TYPE_EXT:
-			return MUX_TYPE_EXT;
-		case M_MUX_TYPE_H221:
-			return MUX_TYPE_H221;
-		case M_MUX_TYPE_H223:
-			return MUX_TYPE_H223;
-		case M_MUX_TYPE_H226:
-			return MUX_TYPE_H226;
-		case M_MUX_TYPE_V76:
-			return MUX_TYPE_V76;
+		case M_EXT:
+			return EXT;
+		case M_H221:
+			return H221;
+		case M_H223:
+			return H223;
+		case M_H226:
+			return H226;
+		case M_V76:
+			return V76;
 
 		default:
 			throw new IllegalArgumentException("Wrong mux type passed: " + value);
@@ -149,16 +149,16 @@ public class MuxType implements Serializable {
 	public String toString() {
 		switch (this.muxType) {
 
-		case M_MUX_TYPE_EXT:
-			return "MuxType[MUX_TYPE_EXT]";
-		case M_MUX_TYPE_H221:
-			return "MuxType[MUX_TYPE_H221]";
-		case M_MUX_TYPE_H223:
-			return "MuxType[MUX_TYPE_H223]";
-		case M_MUX_TYPE_H226:
-			return "MuxType[MUX_TYPE_H226]";
-		case M_MUX_TYPE_V76:
-			return "MuxType[MUX_TYPE_V76]";
+		case M_EXT:
+			return "MuxType[EXT]";
+		case M_H221:
+			return "MuxType[H221]";
+		case M_H223:
+			return "MuxType[H223]";
+		case M_H226:
+			return "MuxType[H226]";
+		case M_V76:
+			return "MuxType[V76]";
 
 		default:
 			return "MuxType[" + this.muxType + "]";

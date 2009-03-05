@@ -1,6 +1,6 @@
 package javax.megaco.message.descriptor;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 
 /**
@@ -79,14 +79,14 @@ public class EventParam {
 	 * @return streamId - The integer value of the stream id shall be returned.
 	 *         This shall be returned only if the streamId is present in the
 	 *         event parameter of the event descriptor.
-	 * @throws javax.megaco.MethodInvocationException
+	 * @throws IllegalStateException
 	 *             - Thrown if streamId has not been set. Thus this method
 	 *             should be called only after verifying that the streamId is
 	 *             set using isStreamIdPresent()
 	 */
-	public int getStreamId() throws javax.megaco.MethodInvocationException {
+	public int getStreamId() throws IllegalStateException {
 		if (streamId == null) {
-			throw new MethodInvocationException("StreamId must be set.");
+			throw new IllegalStateException("StreamId must be set.");
 		}
 
 		return this.streamId.intValue();
@@ -99,11 +99,11 @@ public class EventParam {
 	 * @param signalDesc
 	 *            - The reference to the object corresponding to the signal
 	 *            descriptor.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if parameters set in the signal descriptor are such
 	 *             that the object cannot be set for the event descriptor.
 	 */
-	public void setSignalDescriptor(SignalDescriptor signalDesc) throws javax.megaco.InvalidArgumentException {
+	public void setSignalDescriptor(SignalDescriptor signalDesc) throws IllegalArgumentException {
 		// FIXME: add checks
 		this.signalDescriptor = signalDesc;
 
@@ -118,13 +118,13 @@ public class EventParam {
 	 * @param digitMapName
 	 *            - The reference to the object corresponding to the digitMap
 	 *            name.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if digit Map value has already been set. The
 	 *             protocol allows only either of them but not both.
 	 */
-	public void setDigitMapName(java.lang.String digitMapName) throws javax.megaco.InvalidArgumentException {
+	public void setDigitMapName(java.lang.String digitMapName) throws IllegalArgumentException {
 		if (this.digitMapDescriptor.getDigitMapValue() != null) {
-			throw new InvalidArgumentException("Digit map value must not be present when name is set.");
+			throw new IllegalArgumentException("Digit map value must not be present when name is set.");
 		}
 		this.digitMapDescriptor.setDigitMapName(digitMapName);
 	}
@@ -138,13 +138,13 @@ public class EventParam {
 	 * @param digitMapValue
 	 *            - The reference to the object corresponding to the digitMap
 	 *            value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if digit Map name has already been set. The protocol
 	 *             allows only either of them but not both.
 	 */
-	public void setDigitMapValue(DigitMapValue digitMapValue) throws javax.megaco.InvalidArgumentException {
+	public void setDigitMapValue(DigitMapValue digitMapValue) throws IllegalArgumentException {
 		if (this.digitMapDescriptor.getDigitMapName() != null) {
-			throw new InvalidArgumentException("Digit map name must not be present when value is set.");
+			throw new IllegalArgumentException("Digit map name must not be present when value is set.");
 		}
 		this.digitMapDescriptor.setDigitMapValue(digitMapValue);
 	}
@@ -158,13 +158,13 @@ public class EventParam {
 	 * @param digitMapValue
 	 *            - The reference to the object corresponding to the digitMap
 	 *            value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if digit Map name has already been set. The protocol
 	 *             allows only either of them but not both.
 	 */
-	public void setDigitMapValueStr(java.lang.String digitMapValue) throws javax.megaco.InvalidArgumentException {
+	public void setDigitMapValueStr(java.lang.String digitMapValue) throws IllegalArgumentException {
 		if (this.digitMapDescriptor.getDigitMapName() != null) {
-			throw new InvalidArgumentException("Digit map name must not be present when digit map string is set.");
+			throw new IllegalArgumentException("Digit map name must not be present when digit map string is set.");
 		}
 		this.digitMapDescriptor.setDigitMapValueStr(digitMapValue);
 	}
@@ -176,10 +176,10 @@ public class EventParam {
 	 * 
 	 * @param streamId
 	 *            - The integer value of the stream id shall be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if streamId is set with an invalid value.
 	 */
-	public void setStreamId(int streamId) throws javax.megaco.InvalidArgumentException {
+	public void setStreamId(int streamId) throws IllegalArgumentException {
 		// FIXME: what invalid value?
 		this.streamId = new Integer(streamId);
 	}

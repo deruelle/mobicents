@@ -12,41 +12,41 @@ public class ServiceState implements Serializable {
 	 * Identifies service state to be out of service. Its value shall be set to
 	 * 0.
 	 */
-	public static final int M_SERVICE_STATE_OOS = 0;
+	public static final int M_OOS = 0;
 
 	/**
 	 * Identifies service state to be in-service. Its value shall be set to 1.
 	 */
-	public static final int M_SERVICE_STATE_INS = 1;
+	public static final int M_INS = 1;
 
 	/**
 	 * Identifies service state to be "test". Its value shall be set to 2.
 	 */
-	public static final int M_SERVICE_STATE_TEST = 2;
+	public static final int M_TEST = 2;
 
 	/**
 	 * Identifies a ServiceState object that constructs the class with the
-	 * constant M_SERVICE_STATE_OOS. Since it is reference to static final
+	 * constant M_OOS. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final ServiceState SERVICE_STATE_OOS = new ServiceState(M_SERVICE_STATE_OOS);
+	public static final ServiceState OOS = new ServiceState(M_OOS);
 
 	/**
 	 * Identifies a ServiceState object that constructs the class with the
-	 * constant M_SERVICE_STATE_INS. Since it is reference to static final
+	 * constant M_INS. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final ServiceState SERVICE_STATE_INS = new ServiceState(M_SERVICE_STATE_INS);
+	public static final ServiceState INS = new ServiceState(M_INS);
 
 	/**
 	 * Identifies a ServiceState object that constructs the class with the
-	 * constant M_SERVICE_STATE_TEST. Since it is reference to static final
+	 * constant M_TEST. Since it is reference to static final
 	 * object, it prevents further instantiation of the same object in the
 	 * system.
 	 */
-	public static final ServiceState SERVICE_STATE_TEST = new ServiceState(M_SERVICE_STATE_TEST);
+	public static final ServiceState TEST = new ServiceState(M_TEST);
 
 	private int serviceState = -1;
 
@@ -86,12 +86,12 @@ public class ServiceState implements Serializable {
 	public static final ServiceState getObject(int value) throws IllegalArgumentException {
 
 		switch (value) {
-		case M_SERVICE_STATE_INS:
-			return SERVICE_STATE_INS;
-		case M_SERVICE_STATE_OOS:
-			return SERVICE_STATE_OOS;
-		case M_SERVICE_STATE_TEST:
-			return SERVICE_STATE_TEST;
+		case M_INS:
+			return INS;
+		case M_OOS:
+			return OOS;
+		case M_TEST:
+			return TEST;
 		default:
 			throw new IllegalArgumentException("Wrong value of service state: " + value);
 
@@ -114,11 +114,11 @@ public class ServiceState implements Serializable {
 	@Override
 	public String toString() {
 		switch (this.serviceState) {
-		case M_SERVICE_STATE_INS:
+		case M_INS:
 			return "ServiceState[INS]";
-		case M_SERVICE_STATE_OOS:
+		case M_OOS:
 			return "ServiceState[OOS]";
-		case M_SERVICE_STATE_TEST:
+		case M_TEST:
 			return "ServiceState[TEST]";
 		default:
 			return "ServiceState["+this.serviceState+"]";

@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.MethodInvocationException;
 import javax.megaco.pkg.PkgEventItem;
 import javax.megaco.pkg.PkgItemStr;
@@ -27,14 +27,14 @@ public class ObservedEvent implements Serializable {
 	 * observed event descriptor.
 	 * 
 	 * @param eventItem
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid event id is set.
 	 */
-	public ObservedEvent(PkgEventItem eventItem) throws javax.megaco.InvalidArgumentException {
+	public ObservedEvent(PkgEventItem eventItem) throws IllegalArgumentException {
 
 		// FIXME: add error check on invalid event?
 		if (eventItem == null) {
-			throw new InvalidArgumentException("PkgEventItem must not be null");
+			throw new IllegalArgumentException("PkgEventItem must not be null");
 
 		}
 
@@ -48,12 +48,12 @@ public class ObservedEvent implements Serializable {
 	 * the string format. This is to be set within an event buffer descriptor.
 	 * 
 	 * @param eventItemStr
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid eventItemStr object reference is set.
 	 */
-	public ObservedEvent(PkgItemStr eventItemStr) throws javax.megaco.InvalidArgumentException {
+	public ObservedEvent(PkgItemStr eventItemStr) throws IllegalArgumentException {
 		if (eventItemStr == null) {
-			throw new InvalidArgumentException("PkgItemStr must not be null");
+			throw new IllegalArgumentException("PkgItemStr must not be null");
 
 		}
 
@@ -97,14 +97,14 @@ public class ObservedEvent implements Serializable {
 	 * @return streamId - The integer value of the stream id shall be returned.
 	 *         This shall be returned only if the streamId is present in the
 	 *         event parameter of the event descriptor.
-	 * @throws javax.megaco.MethodInvocationException
+	 * @throws IllegalStateException
 	 *             - Thrown if streamId has not been set. Thus this method
 	 *             should be called only after verifying that the streamId is
 	 *             set using isStreamIdPresent
 	 */
-	public int getStreamId() throws javax.megaco.MethodInvocationException {
+	public int getStreamId() throws IllegalStateException {
 		if (!isStreamIdPresent()) {
-			throw new MethodInvocationException("StreamId must be present");
+			throw new IllegalStateException("StreamId must be present");
 		}
 		return this.streamId.intValue();
 	}
@@ -116,12 +116,12 @@ public class ObservedEvent implements Serializable {
 	 * 
 	 * @param streamId
 	 *            - The integer value of the stream id shall be set.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if streamId is set with an invalid value.
 	 */
-	public void setStreamId(int streamId) throws javax.megaco.InvalidArgumentException {
+	public void setStreamId(int streamId) throws IllegalArgumentException {
 		if (streamId <= 0) {
-			throw new InvalidArgumentException("StreamId must be greater than zero.");
+			throw new IllegalArgumentException("StreamId must be greater than zero.");
 		}
 		this.streamId = new Integer(streamId);
 	}
@@ -153,14 +153,14 @@ public class ObservedEvent implements Serializable {
 	 * 
 	 * @param timeStamp
 	 *            - The object reference for the timestamp.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if timestamp is set with an invalid value.
 	 */
-	public void setTimeStamp(TimeStamp timeStamp) throws javax.megaco.InvalidArgumentException {
+	public void setTimeStamp(TimeStamp timeStamp) throws IllegalArgumentException {
 
 		// FIXME: add checks for invalid value?
 		if (timeStamp == null) {
-			throw new InvalidArgumentException("TimeStamp must not be null");
+			throw new IllegalArgumentException("TimeStamp must not be null");
 		}
 
 		this.timeStamp = timeStamp;

@@ -1,26 +1,26 @@
 package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 
 public class AssociationConfigReq extends AssociationEvent {
 
-	protected int maxRegstRetries = -1;
-	protected int restartAvalancheMWD = -1;
-	protected int normalMGExecTime = -1;
-	protected int provisionalRespTime = -1;
-	protected int responseRetentionTimePresent = -1;
-	protected int maxPndngRespCountPresent = -1;
-	protected int maxRetransmissionCountPresent = -1;
-	protected int initialRTT = -1;
+	protected Integer maxRegstRetries = -1;
+	protected Integer restartAvalancheMWD = -1;
+	protected Integer normalMGExecTime = -1;
+	protected Integer provisionalRespTime = -1;
+	protected Integer responseRetentionTimePresent = -1;
+	protected Integer maxPndngRespCountPresent = -1;
+	protected Integer maxRetransmissionCountPresent = -1;
+	protected Integer initialRTT = -1;
 	protected EncodingFormat endcodingFormat = null;
 	protected TransportType transportType;
-	protected int protocolVersion = -1;
+	protected Integer protocolVersion = -1;
 	protected String srvChngProfile = null;
 
 	public AssociationConfigReq(Object source, int assocHandle)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		super(source, assocHandle);
 		// TODO Auto-generated constructor stub
 	}
@@ -40,7 +40,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 */
 	public int getMaxRegstRetries()
 			throws javax.megaco.ParameterNotSetException {
-		if (this.maxRegstRetries == -1)
+		if (this.maxRegstRetries == null)
 			throw new ParameterNotSetException();
 
 		return this.maxRegstRetries;
@@ -52,7 +52,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @return Returns true if the maximum registration retries is present.
 	 */
 	public boolean isMaxRegstRetriesPresent() {
-		return this.maxRegstRetries != -1;
+		return this.maxRegstRetries != null;
 	}
 
 	// FIXME: name should me avalanche not avalance ?
@@ -82,15 +82,15 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @param restartAvalancheTime
 	 *            The integer value of MWD used during restart avalance
 	 *            prevention .
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of restart avalanche
 	 *             time passed to this method is less than 0.
 	 */
 	public void setRestartAvalancheMWD(int restartAvalancheTime)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 
 		if (restartAvalancheTime < 0)
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Restart Avalanche Time can not be less than zero");
 		this.restartAvalancheMWD = restartAvalancheTime;
 
@@ -104,7 +104,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 *         is present.
 	 */
 	public boolean isRestartAvalanceMWDPresent() {
-		return this.restartAvalancheMWD != -1;
+		return this.restartAvalancheMWD != null;
 	}
 
 	/**
@@ -130,14 +130,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param mgExecTime
 	 *            The integer value of normal MG execution time.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of normal MG execution
 	 *             time passed to this method is less than 0.
 	 */
 	public void setNormalMGExecTime(int mgExecTime)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (mgExecTime < 0)
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Exec Time can not be less than zero");
 		this.normalMGExecTime = mgExecTime;
 	}
@@ -149,7 +149,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 *         present.
 	 */
 	public boolean isNormalMGCExecTimePresent() {
-		return this.normalMGExecTime != -1;
+		return this.normalMGExecTime != null;
 	}
 
 	/**
@@ -177,14 +177,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param provRespTime
 	 *            The integer value of provisional response timer.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of provisional response
 	 *             time passed to this method is less than 0.
 	 */
 	public void setProvisionalRespTime(int provRespTime)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (provRespTime < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"value can not be less than zero");
 		}
 		this.provisionalRespTime = provRespTime;
@@ -197,7 +197,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 *         present.
 	 */
 	public boolean isProvisionalRespTimePresent() {
-		return this.provisionalRespTime != -1;
+		return this.provisionalRespTime != null;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 *         present.
 	 */
 	public boolean isResponseRetentionTimePresent() {
-		return this.responseRetentionTimePresent != -1;
+		return this.responseRetentionTimePresent != null;
 	}
 
 	/**
@@ -217,14 +217,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param responseTime
 	 *            The integer value of response retention time.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of response retention
 	 *             time passed to this method is less than 0.
 	 */
 	public void setResponseRetentionTime(int responseTime)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (responseTime < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"value can not be less than zero");
 		}
 		this.responseRetentionTimePresent = responseTime;
@@ -238,7 +238,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 *         present.
 	 */
 	public boolean isMaxPndngRespCountPresent() {
-		return this.maxPndngRespCountPresent != -1;
+		return this.maxPndngRespCountPresent != null;
 	}
 
 	/**
@@ -250,14 +250,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param responseTime
 	 *            The integer value of maximum pending response count.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of response retention
 	 *             time passed to this method is less than 0.
 	 */
 	public void setMaxPndngRespCount(int pndngCount)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (pndngCount < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"value can not be less than zero");
 		}
 		this.maxPndngRespCountPresent = pndngCount;
@@ -286,7 +286,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @return Returns true if the maximum retransmission count is present.
 	 */
 	public boolean isMaxRetransmissionCountPresent() {
-		return this.maxRetransmissionCountPresent != -1;
+		return this.maxRetransmissionCountPresent != null;
 	}
 
 	/**
@@ -297,14 +297,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param responseTime
 	 *            The integer value of maximum retransmission count.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of response retention
 	 *             time passed to this method is less than 0.
 	 */
 	public void setMaxRetransmissionCount(int retransmissionCount)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (retransmissionCount < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"value can not be less than zero");
 		}
 		this.maxRetransmissionCountPresent = retransmissionCount;
@@ -327,7 +327,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	}
 
 	public boolean isInitialRTTPresent() {
-		return this.initialRTT != -1;
+		return this.initialRTT != null;
 	}
 
 	/**
@@ -336,14 +336,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param responseTime
 	 *            The integer value of initial rtt.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value passed to this method
 	 *             is less than 0.
 	 */
 	public void setInitialRTT(int rtt)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (rtt < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"value can not be less than zero");
 		}
 		this.initialRTT = rtt;
@@ -385,14 +385,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @param endcodingFormat
 	 *            The object reference to derived class of EncodingFormat class
 	 *            which gives value of encoding format.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Encoding Format
 	 *             passed to this method is NULL.
 	 */
 	public void setEndcodingFormat(EncodingFormat format)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (format == null) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Encoding format can not be null");
 		}
 		this.endcodingFormat = format;
@@ -404,14 +404,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @param transport
 	 *            The object refenrece to transport type.
 	 * 
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Transport type
 	 *             passed to this method is NULL.
 	 */
 	public void setTransportType(TransportType transport)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (transport == null)
-			throw new InvalidArgumentException("Value can not be null");
+			throw new IllegalArgumentException("Value can not be null");
 		this.transportType = transport;
 
 	}
@@ -434,14 +434,14 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * 
 	 * @param version
 	 *            The protocol version as an integer value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of protocol version
 	 *             passed to this method is less than 0.
 	 */
 	public void setProtocolVersion(int version)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (version < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Value can not be less than zero");
 		}
 
@@ -454,7 +454,7 @@ public class AssociationConfigReq extends AssociationEvent {
 	 * @return Returns true if the protocol version is present.
 	 */
 	public boolean isProtocolVersionPresent() {
-		return this.protocolVersion != -1;
+		return this.protocolVersion != null;
 	}
 
 	/**
@@ -488,9 +488,9 @@ public class AssociationConfigReq extends AssociationEvent {
 	}
 
 	public void setSrvChngProfile(java.lang.String profile)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (profile == null)
-			throw new InvalidArgumentException("Value can not be null");
+			throw new IllegalArgumentException("Value can not be null");
 		this.srvChngProfile = profile;
 	}
 }

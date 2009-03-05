@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 
 /**
@@ -19,10 +19,10 @@ public class ErrorDescriptor extends Descriptor implements Serializable {
 	 * code and optionally the error string qualifying the error code.
 	 * 
 	 * @param errorCode
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid error code is set.
 	 */
-	public ErrorDescriptor(int errorCode) throws javax.megaco.InvalidArgumentException {
+	public ErrorDescriptor(int errorCode) throws IllegalArgumentException {
 		// FIXME: section 13.2 ... does not clear this...
 		this.protErrorCode = errorCode;
 	}
@@ -57,12 +57,12 @@ public class ErrorDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @param errorStr
 	 *            Returns the string corresponding to the error code.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid string is set.
 	 */
-	public final void setErrorString(java.lang.String errorStr) throws javax.megaco.InvalidArgumentException {
+	public final void setErrorString(java.lang.String errorStr) throws IllegalArgumentException {
 		if (errorStr.length() > 80) {
-			throw new InvalidArgumentException("Error String must nto be longer than 80 chars, see section 13.2 of RFC 3525");
+			throw new IllegalArgumentException("Error String must nto be longer than 80 chars, see section 13.2 of RFC 3525");
 		}
 		this.errorString = errorStr;
 	}

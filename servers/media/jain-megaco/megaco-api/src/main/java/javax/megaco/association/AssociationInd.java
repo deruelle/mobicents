@@ -1,7 +1,7 @@
 package javax.megaco.association;
 
 import javax.megaco.AssociationEvent;
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 
 public class AssociationInd extends AssociationEvent {
@@ -15,8 +15,8 @@ public class AssociationInd extends AssociationEvent {
 	protected SrvChngReason srvChngMethod = null;
 	protected String srvChngMethodExtension = null;
 	protected RemoteAddr remoteAddr = null;
-	protected int srvChngDelay = -1;
-	protected int protocolVersion = -1;
+	protected Integer srvChngDelay = null;
+	protected Integer protocolVersion = null;
 	protected String srvChngProfile = null;
 	protected String parameterExtension = null;
 
@@ -34,15 +34,15 @@ public class AssociationInd extends AssociationEvent {
 	 * @param assocIndReason
 	 *            - This indicates the reason for the change in the state of the
 	 *            association.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Association
 	 *             Indication Reason passed to this method is NULL.
 	 */
 	public AssociationInd(Object source, int assocHandle,
-			AssocIndReason assocIndReason) throws InvalidArgumentException {
+			AssocIndReason assocIndReason) throws IllegalArgumentException {
 		super(source, assocHandle);
 		if (assocIndReason == null) {
-			throw new InvalidArgumentException("assocIndReason can not be null");
+			throw new IllegalArgumentException("assocIndReason can not be null");
 		}
 
 		this.assocIndReason = assocIndReason;
@@ -77,12 +77,12 @@ public class AssociationInd extends AssociationEvent {
 	 *            different from the local entity configured in the user Id as
 	 *            specified in the addMegacoListener method of MegacoProvider
 	 *            interface.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the local transport address
 	 *             specified is invalid.
 	 */
 	public void setLocalAddr(LocalAddr localAddr)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		this.localAddr = localAddr;
 	}
 
@@ -109,14 +109,14 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param reason
 	 *            - The object reference to ServiceChange Reason.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
 	public void setSrvChangeReason(SrvChngReason reason)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (reason == null) {
-			throw new InvalidArgumentException("Change reason can not be null");
+			throw new IllegalArgumentException("Change reason can not be null");
 		}
 		this.srvChangeReason = reason;
 	}
@@ -146,13 +146,13 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param srvChngAddress
 	 *            The service change address.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the service change address
 	 *             specified is invalid.
 	 */
 	public void setSrvChngAddress(LocalAddr srvChngAddress)
-			throws InvalidArgumentException {
-		// FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		// FIXME: IllegalArgumentException
 		this.srvChngAddress = srvChngAddress;
 	}
 
@@ -178,13 +178,13 @@ public class AssociationInd extends AssociationEvent {
 	 * @param handOffMGCId
 	 *            The identity of the MGC to which the association is to be
 	 *            handoffed.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the HandedOffMGCId specified is
 	 *             invalid.
 	 */
 	public void setHandOffMGCId(LocalAddr handOffMGCId)
-			throws InvalidArgumentException {
-		// FIXME: InvalidArgumentException
+			throws IllegalArgumentException {
+		// FIXME: IllegalArgumentException
 		this.handOffMGCId = handOffMGCId;
 	}
 
@@ -208,14 +208,14 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param associationState
 	 *            The object reference of association state.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Association
 	 *             State passed to this method is NULL.
 	 */
 	public void setAssociationState(AssocState associationState)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (associationState == null) {
-			throw new InvalidArgumentException("Value can not be null");
+			throw new IllegalArgumentException("Value can not be null");
 		}
 		this.assocState = associationState;
 	}
@@ -242,14 +242,14 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param method
 	 *            - The object reference to ServiceChange Method.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Service Change
 	 *             Reason passed to this method is NULL.
 	 */
 	public void setSrvChngMethod(SrvChngReason method)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (method == null) {
-			throw new InvalidArgumentException("Change method can not be null");
+			throw new IllegalArgumentException("Change method can not be null");
 		}
 		this.srvChngMethod = method;
 	}
@@ -260,18 +260,18 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @return Returns string value of the extended service change method. This
 	 *         is to be set only if the service change method is set to
-	 *         M_SVC_CHNG_METHOD_EXTENSION.
+	 *         {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             javax.megaco.association.MethodExtensionException - Thrown if
 	 *             service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}
 	 */
 	public java.lang.String getSrvChngMethodExtension()
 			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+			IllegalArgumentException {
+		if (getSrvChngMethod() != SrvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+					"Changed Method is not equal to {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
 
 		return this.srvChngMethodExtension;
@@ -279,25 +279,25 @@ public class AssociationInd extends AssociationEvent {
 
 	/**
 	 * This method sets the extended service change method. This needs to be set
-	 * if and only if the service change method is M_SVC_CHNG_METHOD_EXTENSION.
+	 * if and only if the service change method is {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
 	 * 
 	 * @param extMethod
 	 *            - The string value of the extended service change method.
 	 * @throws javax.megaco.association.MethodExtensionException
 	 *             - Thrown if service change method has not been set to
-	 *             M_SVC_CHNG_METHOD_EXTENSION.
-	 * @throws javax.megaco.InvalidArgumentException
+	 *             {@link javax.megaco.association.SrvChngMethod.M_EXTENSION}.
+	 * @throws IllegalArgumentException
 	 *             - Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
 	public void setSrvChngMethodExtension(java.lang.String extMethod)
 			throws javax.megaco.association.MethodExtensionException,
-			javax.megaco.InvalidArgumentException {
-		if (getSrvChngMethod() != SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION) {
+			IllegalArgumentException {
+		if (getSrvChngMethod() != SrvChngMethod.M_EXTENSION) {
 			throw new MethodExtensionException(
-					"Changed Method is not equal to SrvChngMethod.M_SVC_CHNG_METHOD_EXTENSION");
+					"Changed Method is not equal to SrvChngMethod.{@link javax.megaco.association.SrvChngMethod.M_EXTENSION}");
 		}
-		// FIXME javax.megaco.InvalidArgumentException - Thrown if extension
+		// FIXME IllegalArgumentException - Thrown if extension
 		// string does not follow the rules of the extension parameter, e.g,
 		// should start with X+ or X- etc.
 		
@@ -333,12 +333,12 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param remoteAddr
 	 *            -- List of remote entity transport addresses of the MGC/MG.
-	 * @throws InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the reference of Remote Address
 	 *             passed to this method is NULL.
 	 */
 	public void setRemoteAddr(RemoteAddr remoteAddr)
-			throws InvalidArgumentException {
+			throws IllegalArgumentException {
 		this.remoteAddr = remoteAddr;
 	}
 
@@ -354,7 +354,7 @@ public class AssociationInd extends AssociationEvent {
 	 *             parameter has not been set.
 	 */
 	public int getSrvChngDelay() throws javax.megaco.ParameterNotSetException {
-		if (this.srvChngDelay == -1) {
+		if (!isSrvChngDelayPresent()) {
 			throw new ParameterNotSetException();
 		}
 
@@ -370,14 +370,14 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param delay
 	 *            - The integer value of the delay value in milliseconds.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of service change delay
 	 *             passed to this method is less than 0.
 	 */
 	public void setSrvChngDelay(int delay)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (delay < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Delay can not be less than zero");
 		}
 
@@ -392,7 +392,7 @@ public class AssociationInd extends AssociationEvent {
 	 *         FALSE.
 	 */
 	public boolean isSrvChngDelayPresent() {
-		return this.srvChngDelay != -1;
+		return this.srvChngDelay != null;
 	}
 
 	/**
@@ -401,14 +401,14 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param version
 	 *            The protocol version as an integer value.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             This exception is raised if the value of protocol version
 	 *             passed to this method is less than 0.
 	 */
 	public void setProtocolVersion(int version)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (version < 0) {
-			throw new InvalidArgumentException(
+			throw new IllegalArgumentException(
 					"Value can not be less than zero");
 		}
 
@@ -421,7 +421,7 @@ public class AssociationInd extends AssociationEvent {
 	 * @return Returns true if the protocol version is present.
 	 */
 	public boolean isProtocolVersionPresent() {
-		return this.protocolVersion != -1;
+		return this.protocolVersion != null;
 	}
 
 	/**
@@ -455,9 +455,9 @@ public class AssociationInd extends AssociationEvent {
 	}
 
 	public void setSrvChngProfile(java.lang.String profile)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (profile == null)
-			throw new InvalidArgumentException("Value can not be null");
+			throw new IllegalArgumentException("Value can not be null");
 		this.srvChngProfile = profile;
 	}
 
@@ -477,15 +477,15 @@ public class AssociationInd extends AssociationEvent {
 	 * 
 	 * @param extMethod
 	 *            - The string value of the extended service change parameter.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             Thrown if extension string does not follow the rules of the
 	 *             extension parameter, e.g, should start with X+ or X- etc.
 	 */
 	public void setParameterExtension(java.lang.String profile)
-			throws javax.megaco.InvalidArgumentException {
+			throws IllegalArgumentException {
 		if (profile == null)
-			throw new InvalidArgumentException("Value can not be null");
-		// FIXME:javax.megaco.InvalidArgumentException - Thrown if extension
+			throw new IllegalArgumentException("Value can not be null");
+		// FIXME:IllegalArgumentException - Thrown if extension
 		// string does not follow the rules of the extension parameter, e.g,
 		// should start with X+ or X- etc.
 

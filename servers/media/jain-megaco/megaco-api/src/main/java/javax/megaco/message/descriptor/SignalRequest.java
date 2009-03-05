@@ -2,7 +2,7 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.ParameterNotSetException;
 import javax.megaco.pkg.PkgItemStr;
 import javax.megaco.pkg.PkgSignalItem;
@@ -31,10 +31,10 @@ public class SignalRequest implements Serializable {
 	 * Constructs Signal request parameter object with the PkgSignalItem object.
 	 * 
 	 * @param signalItem
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid signalItem object reference is set.
 	 */
-	public SignalRequest(PkgSignalItem signalItem) throws javax.megaco.InvalidArgumentException {
+	public SignalRequest(PkgSignalItem signalItem) throws IllegalArgumentException {
 		this.signalItem = signalItem;
 	}
 
@@ -44,10 +44,10 @@ public class SignalRequest implements Serializable {
 	 * format.
 	 * 
 	 * @param signalItemStr
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - Thrown if an invalid signalItemStr object reference is set.
 	 */
-	public SignalRequest(PkgItemStr signalItemStr) throws javax.megaco.InvalidArgumentException {
+	public SignalRequest(PkgItemStr signalItemStr) throws IllegalArgumentException {
 		this.signalItemStr = signalItemStr;
 
 	}
@@ -112,11 +112,11 @@ public class SignalRequest implements Serializable {
 	 * @param streamId
 	 *            - Stream id that is to be set for this signal.
 	 * @return
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - If the stream Id specified is invalid, then this exception
 	 *             is raised.
 	 */
-	public void setStreamId(int streamId) throws javax.megaco.InvalidArgumentException {
+	public void setStreamId(int streamId) throws IllegalArgumentException {
 		// FIXME: add errors?
 		// FIXME: jdoc had return type
 		this.streamId = new Integer(streamId);
@@ -128,18 +128,11 @@ public class SignalRequest implements Serializable {
 	 * or on-off or other.
 	 * 
 	 * @return The integer value which identifies the SignalType. If SignalType
-	 *         is not specified, then this method would return value 0.
-	 * @throws ParameterNotSetException
-	 * @throws ParameterNotSetException
-	 *             - if isSignalTypePresent returns false;
+	 *         is not specified, then this method would return value null.
 	 */
-	public int getSignalType() throws ParameterNotSetException {
-		if (!isSignalTypePresent()) {
-			// FIXME: JDOC does nto have this.
-			throw new ParameterNotSetException("SignalType must be set.");
-		}
+	public SignalType getSignalType() {
 
-		return this.signalType.getSignalType();
+		return this.signalType;
 	}
 
 	public boolean isSignalTypePresent() {
@@ -152,13 +145,13 @@ public class SignalRequest implements Serializable {
 	 * 
 	 * @param signalType
 	 *            - The object reference to a derived class of SignalType.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Signal Type
 	 *             passed to this method is NULL.
 	 */
-	public void setSignalType(SignalType signalType) throws javax.megaco.InvalidArgumentException {
+	public void setSignalType(SignalType signalType) throws IllegalArgumentException {
 		if (signalType == null) {
-			throw new InvalidArgumentException("SignalType must not be null");
+			throw new IllegalArgumentException("SignalType must not be null");
 		}
 		this.signalType = signalType;
 	}
@@ -193,15 +186,14 @@ public class SignalRequest implements Serializable {
 	 * @param notifyReason
 	 *            - The object reference to a derived class of
 	 *            SignalNotifyReason.
-	 * @throws InvalidArgumentException 
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of Signal Notify
 	 *             Reason passed to this method is NULL.
 	 */
-	public void setSignalNotifyReason(SignalNotifyReason notifyReason) throws InvalidArgumentException {
-		if(notifyReason == null)
-		{
-			throw new InvalidArgumentException("SignalNotifyReason must not be null");
+	public void setSignalNotifyReason(SignalNotifyReason notifyReason) throws IllegalArgumentException {
+		if (notifyReason == null) {
+			throw new IllegalArgumentException("SignalNotifyReason must not be null");
 		}
 		this.signalNotifyReason = notifyReason;
 	}
@@ -230,7 +222,7 @@ public class SignalRequest implements Serializable {
 	 * @return Returns TRUE if the duration field is present.
 	 */
 	public boolean isDurationPresent() {
-		return this.signalDuration!=null;
+		return this.signalDuration != null;
 	}
 
 	/**
@@ -240,17 +232,16 @@ public class SignalRequest implements Serializable {
 	 *            - specifies the signal duration parameter in the signal
 	 *            descriptor.
 	 * @return
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             - If the signal duration specified is invalid, then this
 	 *             exception is raised.
 	 */
-	public void setSignalDuration(int signal_duration) throws javax.megaco.InvalidArgumentException {
+	public void setSignalDuration(int signal_duration) throws IllegalArgumentException {
 		// FIXME: jdoc has return type
-		if(signal_duration<=0)
-		{
-			throw new InvalidArgumentException("Duration must not be less or equal to zero.");
+		if (signal_duration <= 0) {
+			throw new IllegalArgumentException("Duration must not be less or equal to zero.");
 		}
-		
+
 		this.signalDuration = new Integer(signal_duration);
 	}
 
@@ -266,8 +257,7 @@ public class SignalRequest implements Serializable {
 	 *             method.
 	 */
 	public int getSignalDuration() throws javax.megaco.ParameterNotSetException {
-		if(!isDurationPresent())
-		{
+		if (!isDurationPresent()) {
 			throw new ParameterNotSetException("Signal duration must be present.");
 		}
 		return this.signalDuration.intValue();

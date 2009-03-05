@@ -30,7 +30,7 @@ public final class NetworkJitPrpt extends PkgPrptyItem {
 		super.itemId = NETWORK_JIT_PRPT;
 		super.propertyId = NETWORK_JIT_PRPT;
 		super.packageId = new NetworkPkg();
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_INTEGER;
+		super.itemValueType = ParamValueType.M_INTEGER;
 		itemsDescriptorIds = new int[] { DescriptorType.M_LOCAL_CONTROL_DESC };
 	}
 
@@ -50,7 +50,7 @@ public final class NetworkJitPrpt extends PkgPrptyItem {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link ParamValueType.M_ITEM_PARAM_VALUE_INTEGER}
+	 * @return It returns {@link ParamValueType.M_INTEGER}
 	 *         indicating that the parameter is a double.
 	 */
 	public int getItemValueType() {

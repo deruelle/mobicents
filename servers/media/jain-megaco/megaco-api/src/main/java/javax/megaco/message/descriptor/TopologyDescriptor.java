@@ -1,6 +1,6 @@
 package javax.megaco.message.descriptor;
 
-import javax.megaco.InvalidArgumentException;
+
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
 import javax.megaco.message.Termination;
@@ -26,14 +26,14 @@ public class TopologyDescriptor extends Descriptor {
 	 *            - This specifies an object identifier for the termination B.
 	 * @param topologyDirect
 	 *            - This specifies topology direction between the terminations.
-	 * @throws javax.megaco.InvalidArgumentException
+	 * @throws IllegalArgumentException
 	 *             : This exception is raised if the reference of either of
 	 *             Termination Ids or the Topology Direction passed to this
 	 *             method is NULL.
 	 */
-	public TopologyDescriptor(Termination termA, Termination termB, TopologyDirection topologyDirect) throws javax.megaco.InvalidArgumentException {
+	public TopologyDescriptor(Termination termA, Termination termB, TopologyDirection topologyDirect) throws IllegalArgumentException {
 		if (termA == null || termB == null || topologyDirect == null) {
-			InvalidArgumentException invalidArgumentException = new InvalidArgumentException("None of Termination A,b and TopologyDirection can be null");
+			IllegalArgumentException invalidArgumentException = new IllegalArgumentException("None of Termination A,b and TopologyDirection can be null");
 			throw invalidArgumentException;
 		}
 

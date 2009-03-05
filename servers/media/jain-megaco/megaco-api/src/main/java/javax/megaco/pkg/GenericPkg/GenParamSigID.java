@@ -25,7 +25,7 @@ public class GenParamSigID extends PkgItemParam {
 	public GenParamSigID() {
 		super();
 		super.paramId = GEN_PARAM_SIGID;
-		super.itemValueType = ParamValueType.M_ITEM_PARAM_VALUE_STRING;
+		super.itemValueType = ParamValueType.M_STRING;
 		super.paramsDescriptorIds = new int[] { DescriptorType.M_OBSERVED_EVENT_DESC };
 		super.paramsItemIds = new int[] { GenSigComplEvent.GEN_SIG_COMPL_EVENT };
 	}
@@ -47,7 +47,7 @@ public class GenParamSigID extends PkgItemParam {
 	 * MEGACO packages. These could be one of string or enumerated value or
 	 * integer or double value or boolean.
 	 * 
-	 * @return It returns {@link M_ITEM_PARAM_VALUE_STRING} indicating that the
+	 * @return It returns {@link M_STRING} indicating that the
 	 *         parameter is a string.
 	 */
 	public int getParamValueType() {
