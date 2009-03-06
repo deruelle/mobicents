@@ -4,5 +4,5 @@ import org.mobicents.media.server.impl.jmx.TrunkManagementMBean;
 
 public interface ConfTrunkManagementMBean extends TrunkManagementMBean {
 
-	public void makeEndpoint();
+	
 }

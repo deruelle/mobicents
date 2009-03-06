@@ -19,11 +19,36 @@
 			<source>src/main/config/system-jmx-beans.xml</source>
 			<destName>bootstrap/system-jmx-beans.xml</destName>
 		</file>
+
+		<file>
+			<source>src/main/config/mms-boot-beans.xml</source>
+			<destName>deploy/mms-boot-beans.xml</destName>
+		</file>
+
+		<file>
+			<source>src/main/config/ann-beans.xml</source>
+			<destName>deploy/ann-beans.xml</destName>
+		</file>
+
+		<file>
+			<source>src/main/config/ivr-beans.xml</source>
+			<destName>deploy/ivr-beans.xml</destName>
+		</file>
 		
 		<file>
-			<source>src/main/config/pojo-beans.xml</source>
-			<destName>deploy/pojo-beans.xml</destName>
+			<source>src/main/config/cnf-beans.xml</source>
+			<destName>deploy/cnf-beans.xml</destName>
 		</file>		
+		
+		<file>
+			<source>src/main/config/pr-beans.xml</source>
+			<destName>deploy/pr-beans.xml</destName>
+		</file>		
+
+		<file>
+			<source>src/main/config/loop-beans.xml</source>
+			<destName>deploy/loop-beans.xml</destName>
+		</file>
 
 	</files>
 	<dependencySets>

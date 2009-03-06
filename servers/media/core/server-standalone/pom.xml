@@ -163,6 +163,47 @@
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<condition property="jboss.dir"
+									value="${jboss.home}" else="${env.JBOSS_HOME}">
+									<isset property="jboss.home" />
+								</condition>
+								<copy
+									todir="target/mms-standalone-pojo.dir/deploy/mgcp-controller-service.sar">
+									<fileset
+										dir="../controllers/mgcp/target/mgcp-controller-service.dir/mgcp-controller-service">
+									</fileset>
+								</copy>							
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
+						<id>undeploy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete
+									dir="target/mms-standalone-pojo.dir/deploy/mgcp-controller-service.sar" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin -->			
+			
 		</plugins>
 	</build>
 

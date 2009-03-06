@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	    xmlns="urn:jboss:bean-deployer:2.0">
+	
+	
+	<!-- IVR -->
+	<bean name="Mobicents.MMS.IVRTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=ivr",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">media/trunk/IVR</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="mediaType">audio.x_wav</property>
+		<!--  DtmfMode can be either RFC2833 or INBAND or AUTO -->
+		<property name="dtmfMode">AUTO</property>
+		<property name="recordDir">${jboss.server.data.dir}</property>
+		<property name="channels">24</property>
+		
+		<demand>RtpFactory</demand>
+	</bean>
+	
+</deployment>

@@ -13,7 +13,4 @@ public class ConfTrunkManagement extends TrunkManagement implements ConfTrunkMan
 
         return new ConfEndpointImpl(name);
     }
-
-    public void makeEndpoint() {
-    }
 }

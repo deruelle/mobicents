@@ -1,8 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
-	    xmlns="urn:jboss:bean-deployer:2.0">
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
 	
 	
 	<!-- Media Server Management MBean -->
@@ -38,7 +34,7 @@
 	
 	<bean name="RtpFactory"
 	      class="org.mobicents.media.server.impl.rtp.RtpFactory">
-		<property name="bindAddress">${jboss.bind.address}</property>
+		<property name="bindAddress">127.0.0.1</property>
 		<property name="jitter">60</property>
 		<property name="packetizationPeriod">20</property>
 		<property name="portRange">1024-65535</property>
@@ -67,6 +63,5 @@
 				</entry>				
 			</map>
 		</property>
-	</bean>
-	
+	</bean>	
 </deployment>

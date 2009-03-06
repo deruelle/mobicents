@@ -20,23 +20,16 @@
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
 		</dependency>
-		
-		<dependency>
-			<artifactId>mms-controllers-mgcp</artifactId>
-			<groupId>${pom.groupId}</groupId>
-			<version>${pom.version}</version>
-		</dependency>		
-
 		<dependency>
 			<groupId>org.mobicents.external.jspeex</groupId>
 			<artifactId>jspeex</artifactId>
 			<version>0.9.7</version>
 		</dependency>
-                
+
 		<dependency>
 			<groupId>net.java.stun4j</groupId>
 			<artifactId>stun4j</artifactId>
-			<version>1.0.MOBICENTS</version>			
+			<version>1.0.MOBICENTS</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.external.tritonus</groupId>
@@ -91,11 +84,22 @@
 									<isset property="jboss.home" />
 								</condition>
 								<copy
-									todir="${jboss.home}/server/${node}/deploy">
+									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
 									<fileset
 										dir="target/${build.finalName}.dir">
 										<include
 											name="${build.finalName}/**" />
+									</fileset>
+								</copy>
+								<copy
+									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server">
+									<fileset dir="src/main/config">
+									</fileset>
+								</copy>
+								<copy
+									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/mgcp-controller-service.sar">
+									<fileset
+										dir="../controllers/mgcp/target/mgcp-controller-service.dir/mgcp-controller-service">
 									</fileset>
 								</copy>
 							</tasks>
@@ -110,7 +114,7 @@
 						<configuration>
 							<tasks>
 								<delete
-									dir="${env.JBOSS_HOME}/server/${node}/deploy/${project.build.finalName}" />
+									dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server" />
 							</tasks>
 						</configuration>
 					</execution>

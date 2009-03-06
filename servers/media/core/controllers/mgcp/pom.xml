@@ -10,27 +10,7 @@
 	</parent>
 
 	<artifactId>mms-controllers-mgcp</artifactId>
-
-	<packaging>jar</packaging>
-
 	<name>Mobicents Media Server MGCP Controller</name>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<autoVersionSubmodules>true</autoVersionSubmodules>
-					<resume>false</resume>
-					<tagBase>
-						https://mobicents.googlecode.com/svn/tags/servers/media/controllers
-					</tagBase>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
-
 	<dependencies>
 		<dependency>
 			<groupId>jain</groupId>
@@ -40,18 +20,85 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>mms-spi</artifactId>
 			<version>${pom.version}</version>
+			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mobicents.jain</groupId>
 			<artifactId>mobicents-mgcp-impl</artifactId>
 			<version>2.0.0.RC1</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
+	<build>
+		<finalName>mgcp-controller-service</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>
+							src/main/assemble/descriptor.xml
+						</descriptor>
+					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id><!-- this is used for inheritance merges -->
+						<phase>package</phase><!-- append to the packaging phase. -->
+						<goals>
+							<goal>directory-inline</goal><!-- goals == mojos -->
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy</id>
+						<phase>install</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<condition property="jboss.dir"
+									value="${jboss.home}" else="${env.JBOSS_HOME}">
+									<isset property="jboss.home" />
+								</condition>
+								<copy
+									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar">
+									<fileset
+										dir="target/${build.finalName}.dir/${build.finalName}">
+									</fileset>
+								</copy>							
+							</tasks>
+						</configuration>
+					</execution>
+					<execution>
+						<id>undeploy</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete
+									dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
 </project>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	    xmlns="urn:jboss:bean-deployer:2.0">
+	
+	
+
+	<!-- ANNOUNCEMENT  -->
+	<bean name="Mobicents.MMS.AnnTrunkManagementService"
+	      class="org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagement">
+		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=announcement",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagementMBean.class,registerDirectly=true)</annotation>
+		<property name="jndiName">media/trunk/Announcement</property>
+		<property name="rtpFactory">
+			<inject bean="RtpFactory" />
+		</property>
+		<property name="channels">24</property>
+		
+		<demand>RtpFactory</demand>
+	</bean>
+	
+</deployment>

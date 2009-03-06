@@ -92,7 +92,10 @@ public class AnnEndpointImpl extends BaseEndpoint {
     
     @Override
     public void stop() {
-        rtpSocket.close();
+        rtpSocket.close();        
+        mux.disconnect(audioPlayer);        
+        mux.dispose();
+        audioPlayer.dispose();
     }
     
     public String[] getSupportedPackages() {
