@@ -128,6 +128,14 @@ public class MgcpController implements JainMgcpListener, MgcpControllerMBean {
 	public void destroy() {
 		logger.info("Stopped MGCP Controller module for MMS");
 	}
+	
+	public JainMgcpStackImpl getMgcpSatck(){
+		return this.mgcpStack;
+	}
+	
+	public JainMgcpProvider getMgcpProvider(){
+		return this.mgcpProvider;
+	}
 
 	/**
 	 * Processes a Command Event object received from a JainMgcpProvider.
@@ -189,7 +197,7 @@ public class MgcpController implements JainMgcpListener, MgcpControllerMBean {
 	}
 
 	protected Collection<ConnectionActivity> getActivities(String endpointName) {
-		ArrayList<ConnectionActivity> list = new ArrayList();
+		ArrayList<ConnectionActivity> list = new ArrayList<ConnectionActivity>();
 		for (Call call : calls.values()) {
 			Collection<ConnectionActivity> activities = call.getActivities();
 			for (ConnectionActivity activity : activities) {

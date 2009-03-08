@@ -11,6 +11,11 @@
 
 	<artifactId>mms-controllers-mgcp</artifactId>
 	<name>Mobicents Media Server MGCP Controller</name>
+
+	<properties>
+		<maven.test.skip>false</maven.test.skip>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>jain</groupId>
@@ -33,6 +38,29 @@
 			<groupId>org.mobicents.jain</groupId>
 			<artifactId>mobicents-mgcp-impl</artifactId>
 			<version>2.0.0.RC1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.microcontainer</groupId>
+			<artifactId>jboss-kernel</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>mms-impl</artifactId>
+			<groupId>${pom.groupId}</groupId>
+			<version>${pom.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -79,7 +107,7 @@
 									<fileset
 										dir="target/${build.finalName}.dir/${build.finalName}">
 									</fileset>
-								</copy>							
+								</copy>
 							</tasks>
 						</configuration>
 					</execution>

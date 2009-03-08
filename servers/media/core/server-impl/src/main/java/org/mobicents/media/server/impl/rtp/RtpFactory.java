@@ -313,20 +313,20 @@ public class RtpFactory {
 			String s = formats.get(i);
 			if (s.equalsIgnoreCase(AudioFormat.ULAW)) {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
-						AudioFormat.ULAW, 8000, 1, 1));
+						AudioFormat.ULAW, 8000, 8, 1));
 			} else if (s.equalsIgnoreCase(AudioFormat.GSM)) {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
-						AudioFormat.GSM, 8000, 1, 1));
+						AudioFormat.GSM, 8000, 8, 1));
 
 			} else if (s.equalsIgnoreCase(AudioFormat.ALAW)) {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
-						AudioFormat.ALAW, 8000, 1, 1));
+						AudioFormat.ALAW, 8000, 8, 1));
 			} else if (s.equalsIgnoreCase(AudioFormat.SPEEX)) {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
-						AudioFormat.SPEEX, 8000, 1, 1));
+						AudioFormat.SPEEX, 8000, 8, 1));
 			} else if (s.equalsIgnoreCase(AudioFormat.G729)) {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(),
-						AudioFormat.G729, 8000, 1, 1));
+						AudioFormat.G729, 8000, 8, 1));
 			} else {
 				audioFormats.put(i, new RTPAudioFormat(i.intValue(), s));
 			}

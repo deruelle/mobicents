@@ -40,7 +40,7 @@ public class Call implements Serializable {
 
     private String id;
     private MgcpController controller;
-    private ConcurrentHashMap<String, ConnectionActivity> connections = new ConcurrentHashMap();
+    private ConcurrentHashMap<String, ConnectionActivity> connections = new ConcurrentHashMap<String, ConnectionActivity>();
     
     protected Call(String id, MgcpController controller) {
         this.controller = controller;

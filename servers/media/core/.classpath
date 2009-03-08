@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="server-impl/src/main/resources"/>
+	<classpathentry kind="src" path="controllers/mgcp/src/test/resources"/>
 	<classpathentry kind="src" path="server-impl/src/test/java"/>
 	<classpathentry kind="src" path="server-impl/src/main/java"/>
+	<classpathentry kind="src" path="controllers/mgcp/src/test/java"/>
 	<classpathentry kind="src" path="controllers/mgcp/src/main/java"/>
 	<classpathentry kind="src" path="server-standalone/src/main/resources"/>
 	<classpathentry kind="src" path="server-standalone/src/main/java"/>
@@ -27,6 +29,7 @@
 	<classpathentry kind="var" path="M2_REPO/javax/security/jaas/1.0.01/jaas-1.0.01.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/sip/jain-sip-ri/1.2.90/jain-sip-ri-1.2.90.jar"/>
 	<classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jboss/jboss-common-logging-log4j/2.0.4.GA/jboss-common-logging-log4j-2.0.4.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-common-logging-spi/2.0.4.GA/jboss-common-logging-spi-2.0.4.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-common/4.2.3.GA/jboss-common-4.2.3.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/jboss/jboss-test/1.0.3.GA/jboss-test-1.0.3.GA.jar"/>
@@ -79,6 +82,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-common-core/2.2.11.GA/jboss-common-core-2.2.11.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-mdr/2.0.1.GA/jboss-mdr-2.0.1.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-reflect/2.0.2.GA/jboss-reflect-2.0.2.GA.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-test/1.0.5.GA/jboss-test-1.0.5.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-transaction-spi/5.0.0.Beta4/jboss-transaction-spi-5.0.0.Beta4.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jboss-vfs/2.1.0.GA/jboss-vfs-2.1.0.GA.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jboss/jbossas/jboss-as-bootstrap/5.0.0.GA/jboss-as-bootstrap-5.0.0.GA.jar"/>
