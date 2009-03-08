@@ -54,10 +54,12 @@ public class MediaSessionFactoryImpl implements MediaSessionFactory {
 					"Could not create instance of MediaSessionFactory. Check the exception in logs");
 		}
 
-		mgcpStackPeerIp = properties.getProperty(MgcpStackFactory.MGCP_PEER_IP,
-				"127.0.0.1");
-		mgcpStackPeerPort = Integer.parseInt(properties.getProperty(
-				MgcpStackFactory.MGCP_PEER_PORT, "2427"));
+		if (properties != null) {
+			mgcpStackPeerIp = properties.getProperty(
+					MgcpStackFactory.MGCP_PEER_IP, "127.0.0.1");
+			mgcpStackPeerPort = Integer.parseInt(properties.getProperty(
+					MgcpStackFactory.MGCP_PEER_PORT, "2427"));
+		}
 	}
 
 	public MediaSession createMediaSession() throws MscontrolException {

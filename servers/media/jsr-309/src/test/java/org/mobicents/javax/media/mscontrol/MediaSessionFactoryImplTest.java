@@ -28,6 +28,7 @@ public class MediaSessionFactoryImplTest {
 
 	@Before
 	public void setUp() {
+		
 		try {
 			MscontrolFactory.getInstance().setPathName("org.mobicents");
 

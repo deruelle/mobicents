@@ -14,7 +14,7 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class MgcpStackFactory {
 	private static MgcpStackFactory mgcpStackFactory;
@@ -45,13 +45,21 @@ public class MgcpStackFactory {
 	}
 
 	public JainMgcpStackProviderImpl getMgcpStackProvider(Properties properties) {
-
-		String stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
-		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider.get(stackName);
+		String stackName = "DEFAULT";
+		if (properties != null) {
+			stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
+		}
+		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider
+				.get(stackName);
 
 		if (jainMgcpStackProviderImpl == null) {
-			String ip = properties.getProperty(MGCP_STACK_IP, "127.0.0.1");
-			String portString = properties.getProperty(MGCP_STACK_PORT, "2727");
+			String ip = "127.0.0.1";
+			String portString = "2727";
+
+			if (properties != null) {
+				ip = properties.getProperty(MGCP_STACK_IP, "127.0.0.1");
+				portString = properties.getProperty(MGCP_STACK_PORT, "2727");
+			}
 
 			InetAddress inetAddress;
 			try {
@@ -61,7 +69,8 @@ public class MgcpStackFactory {
 
 				JainMgcpStackImpl stack = new JainMgcpStackImpl(inetAddress,
 						port);
-				jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl)stack.createProvider();
+				jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl) stack
+						.createProvider();
 				stringToMgcpProvider.put(stackName, jainMgcpStackProviderImpl);
 				return jainMgcpStackProviderImpl;
 			} catch (UnknownHostException e) {

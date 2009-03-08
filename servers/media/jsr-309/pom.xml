@@ -16,7 +16,7 @@
 	<url>http://www.mobicents.org/products_media_server.html</url>
 
 	<properties>
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
@@ -26,7 +26,7 @@
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<mobicents.mgcp.impl.version>
-			2.0.0.RC2-SNAPSHOT
+			2.0.0.RC1
 		</mobicents.mgcp.impl.version>
 	</properties>
 
@@ -136,8 +136,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
+					<verbose>true</verbose>
 					<source>1.5</source>
 					<target>1.5</target>
+					<executable>${JAVA_HOME}/bin/javac</executable>
 				</configuration>
 			</plugin>
 			<plugin>

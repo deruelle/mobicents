@@ -1,6 +1,5 @@
 package org.mobicents.javax.media.mscontrol;
 
-import jain.protocol.ip.mgcp.JainMgcpListener;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 
 import java.net.URI;
@@ -12,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MscontrolException;
-import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.resource.ConfigSymbol;
 import javax.media.mscontrol.resource.Parameters;
@@ -30,25 +28,28 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  * 
  */
 public class MediaSessionImpl implements MediaSession {
-	
-	//The CallIdentifier will act as MediaSessionId
+
+	// The CallIdentifier will act as MediaSessionId
 	private CallIdentifier callIdentifier = null;
 	private Parameters p;
 	private ConcurrentHashMap<String, Object> attributes = new ConcurrentHashMap<String, Object>();
 	private JainMgcpStackProviderImpl jainMgcpStackProviderImpl;
 	private JainMgcpExtendedListenerImpl jainMgcpListenerImpl;
 
-	protected List<? extends ResourceContainer<? extends MediaConfig>> connections = new ArrayList();
+	protected List<? extends ResourceContainer<? extends MediaConfig>> connections = new ArrayList<NetworkConnectionImpl>();
 
-	public MediaSessionImpl(JainMgcpStackProviderImpl jainMgcpStackProviderImpl,
+	public MediaSessionImpl(
+			JainMgcpStackProviderImpl jainMgcpStackProviderImpl,
 			JainMgcpExtendedListenerImpl jainMgcpListenerImpl) {
 		this.jainMgcpStackProviderImpl = jainMgcpStackProviderImpl;
 		this.jainMgcpListenerImpl = jainMgcpListenerImpl;
-		
-		this.callIdentifier = jainMgcpStackProviderImpl.getUniqueCallIdentifier();	
+
+		this.callIdentifier = jainMgcpStackProviderImpl
+				.getUniqueCallIdentifier();
 	}
 
-	public MediaSessionImpl(JainMgcpStackProviderImpl jainMgcpStackProviderImpl,
+	public MediaSessionImpl(
+			JainMgcpStackProviderImpl jainMgcpStackProviderImpl,
 			JainMgcpExtendedListenerImpl jainMgcpListenerImpl, Parameters p) {
 		this(jainMgcpStackProviderImpl, jainMgcpListenerImpl);
 		this.p = p;
@@ -57,9 +58,9 @@ public class MediaSessionImpl implements MediaSession {
 	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(
 			ConfigSymbol<C> symbol) throws MscontrolException {
 		if (symbol.equals(NetworkConnectionConfig.c_Basic)) {
-			NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(
-					this, jainMgcpStackProviderImpl, jainMgcpListenerImpl);
-			return networkConnectionImpl;
+			NetworkConnectionImpl  networkConnectionImpl = new NetworkConnectionImpl(this,
+					jainMgcpStackProviderImpl, jainMgcpListenerImpl);
+			return (T)networkConnectionImpl;
 		} else if (symbol.equals(NetworkConnectionConfig.c_DtmfConversion)) {
 
 		} else if (symbol.equals(NetworkConnectionConfig.c_EchoCancel)) {
@@ -67,6 +68,8 @@ public class MediaSessionImpl implements MediaSession {
 		}
 		return null;
 	}
+
+
 
 	public <T extends ResourceContainer<? extends MediaConfig>> T createContainer(
 			Class<T> arg0, Parameters arg1) throws MscontrolException {
@@ -123,8 +126,8 @@ public class MediaSessionImpl implements MediaSession {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public CallIdentifier getCallIdentifier(){
+
+	public CallIdentifier getCallIdentifier() {
 		return this.callIdentifier;
 	}
 
