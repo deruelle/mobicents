@@ -9,7 +9,7 @@
 	<bean name="Mobicents.MMS.IVRTrunkManagementService"
 	      class="org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagement">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=ivr",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagementMBean.class,registerDirectly=true)</annotation>
-		<property name="jndiName">media/trunk/IVR</property>
+		<property name="trunkName">media/trunk/IVR</property>
 		<property name="rtpFactory">
 			<inject bean="RtpFactory" />
 		</property>

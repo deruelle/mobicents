@@ -168,6 +168,12 @@ public abstract class BaseEndpoint implements Endpoint {
         commandExecutor.shutdownNow();
         eventQueue.shutdownNow();
     }
+    
+    public void gracefulStop(){
+    	if(this.isInUse()){
+    		
+    	}
+    }
 
     /**
      * (Non Java-doc).

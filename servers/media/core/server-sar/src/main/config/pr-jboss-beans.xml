@@ -9,7 +9,7 @@
       class="org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagement">
 	<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=packet-relay",exposedInterface=org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagementMBean.class,registerDirectly=true)</annotation>
 	
-	<property name="jndiName">media/trunk/PacketRelay</property>
+	<property name="trunkName">media/trunk/PacketRelay</property>
 	<property name="rtpFactory">
 		<inject bean="RtpFactory" />
 	</property>

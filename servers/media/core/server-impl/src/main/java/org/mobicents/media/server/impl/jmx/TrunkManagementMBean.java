@@ -16,30 +16,19 @@
 
 package org.mobicents.media.server.impl.jmx;
 
-import javax.naming.NamingException;
-
-import org.jboss.system.ServiceMBean;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public interface TrunkManagementMBean extends ServiceMBean {
+public interface TrunkManagementMBean {
 	/**
 	 * Gets the JNDI name of the endpoint.
 	 * 
 	 * @return the JNDI name string.
 	 */
-	public String getJndiName();
-
-	/**
-	 * Modify the JNDI name of the endpoint.
-	 * 
-	 * @param jndiName
-	 *            the new value of the Jndi name.
-	 */
-	public void setJndiName(String jndiName) throws NamingException;
+	public String getTrunkName();
 
 	/**
 	 * Gets the name of used RTP Factory.
@@ -49,26 +38,10 @@ public interface TrunkManagementMBean extends ServiceMBean {
 	public RtpFactory getRtpFactory();
 
 	/**
-	 * Sets the name of used RTP Factory.
-	 * 
-	 * @param rtpFactoryName
-	 *            the JNDI name of the RTP Factory.
-	 */
-	public void setRtpFactory(RtpFactory rtpFactory) throws Exception;
-
-	/**
 	 * Gets ammount of Endpoints.
 	 * 
 	 * @return the amount of endpoints included into this trunk.
 	 */
 	public Integer getChannels();
-
-	/**
-	 * Sets the amount of endpoints included into this trunk.
-	 * 
-	 * @param channels
-	 *            the number of endpoints.
-	 */
-	public void setChannels(Integer channels);
 
 }

@@ -27,13 +27,14 @@ public class IVRTrunkManagement extends TrunkManagement implements IVRTrunkManag
 
     public void setRecordDir(String recordDir) throws NamingException {
         this.recordDir = recordDir;
-        if (this.getState() == STARTED) {
-            InitialContext ic = new InitialContext();
-            for (int i = 0; i < this.getChannels(); i++) {
-                IVREndpointImpl endpoint = (IVREndpointImpl) ic.lookup(this.getJndiName() +"/" + i);
-                endpoint.setRecordDir(recordDir);
-            }
-        }
+		// if (this.getState() == STARTED) {
+		// InitialContext ic = new InitialContext();
+		// for (int i = 0; i < this.getChannels(); i++) {
+		// IVREndpointImpl endpoint = (IVREndpointImpl)
+		// ic.lookup(this.getJndiName() +"/" + i);
+		// endpoint.setRecordDir(recordDir);
+		// }
+		//        }
     }
 
     public String getDtmfMode() {
@@ -42,13 +43,14 @@ public class IVRTrunkManagement extends TrunkManagement implements IVRTrunkManag
 
     public void setDtmfMode(String mode) throws NamingException {
         this.dtmfMode = mode;
-        if (this.getState() == STARTED) {
-            InitialContext ic = new InitialContext();
-            for (int i = 0; i < this.getChannels(); i++) {
-                IVREndpointImpl endpoint = (IVREndpointImpl) ic.lookup(this.getJndiName() +"/" + i);
-                endpoint.setDtmfMode(DTMFMode.valueOf(dtmfMode));
-            }
-        }
+		// if (this.getState() == STARTED) {
+		// InitialContext ic = new InitialContext();
+		// for (int i = 0; i < this.getChannels(); i++) {
+		// IVREndpointImpl endpoint = (IVREndpointImpl)
+		// ic.lookup(this.getJndiName() +"/" + i);
+		// endpoint.setDtmfMode(DTMFMode.valueOf(dtmfMode));
+		// }
+		//        }
     }
     
     private int getModeCode(String modeName) {
@@ -67,8 +69,6 @@ public class IVRTrunkManagement extends TrunkManagement implements IVRTrunkManag
 
     public void setMediaType(String mediaType) {
         this.mediaType = mediaType;
-        if (this.getState() == STARTED) {
-        }
     }
 
     @Override

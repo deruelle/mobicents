@@ -72,7 +72,7 @@ public class CreateConnectionAction implements Callable {
 	private JainMgcpResponseEvent createRtpConnection(CreateConnection crcx) {
 		int txID = crcx.getTransactionHandle();
 
-		// TODO : ConnectionIdentifier cannot be null when sending CRCX Respone
+		// TODO : ConnectionIdentifier cannot be null when sending CRCX Response
 		// in Exception blocks
 
 		// reading connection mode

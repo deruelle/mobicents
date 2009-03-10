@@ -10,7 +10,7 @@
 	<bean name="Mobicents.MMS.AnnTrunkManagementService"
 	      class="org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagement">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=announcement",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagementMBean.class,registerDirectly=true)</annotation>
-		<property name="jndiName">media/trunk/Announcement</property>
+		<property name="trunkName">media/trunk/Announcement</property>
 		<property name="rtpFactory">
 			<inject bean="RtpFactory" />
 		</property>

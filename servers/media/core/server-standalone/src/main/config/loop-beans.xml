@@ -10,7 +10,7 @@
 	      class="org.mobicents.media.server.impl.jmx.enp.test.LoopTrunkManagement">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=loopback",exposedInterface=org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagementMBean.class,registerDirectly=true)</annotation>
 		
-		<property name="jndiName">media/test/trunk/Loopback</property>
+		<property name="trunkName">media/test/trunk/Loopback</property>
 		<property name="rtpFactory">
 			<inject bean="RtpFactory" />
 		</property>

@@ -95,11 +95,12 @@ public class EndpointQuery {
 		}
 	}
 
-	public synchronized void remove(String name) {
+	public synchronized Endpoint remove(String name) {
+		Endpoint endpoint = null;
 		EndpointName endpointName = new EndpointName(name);
 		ConcurrentHashMap<String, Endpoint> endpointMap = ENDPOINT_MAPS.get(endpointName.getContextName());
 		if (endpointMap != null) {
-			Endpoint endpoint = endpointMap.remove(name);
+			endpoint = endpointMap.remove(name);
 			if (logger.isDebugEnabled()) {
 				if (endpoint == null) {
 					logger.debug("remove failed. No Endpoint found for endpoint name " + name);
@@ -115,6 +116,8 @@ public class EndpointQuery {
 				logger.debug("remove failed. No EndpointMap found for conetxt " + endpointName.getContextName());
 			}
 		}
+		
+		return endpoint;
 
 	}
 }

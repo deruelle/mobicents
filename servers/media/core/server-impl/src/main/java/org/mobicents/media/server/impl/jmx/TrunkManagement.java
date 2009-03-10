@@ -16,7 +16,6 @@
 package org.mobicents.media.server.impl.jmx;
 
 import org.apache.log4j.Logger;
-import org.jboss.system.ServiceMBeanSupport;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.spi.Endpoint;
@@ -26,100 +25,110 @@ import org.mobicents.media.server.spi.EndpointQuery;
  * 
  * @author Oleg Kulikov
  */
-public abstract class TrunkManagement extends ServiceMBeanSupport implements TrunkManagementMBean {
+public abstract class TrunkManagement implements TrunkManagementMBean {
 
-    private String jndiName;
-    private Integer channels = 0;
-    private RtpFactory rtpFactory = null;
-    
-    private transient Logger logger = Logger.getLogger(EndpointManagement.class);
-    
-    /**
-     * Creates a new instance of EndpointManagement
-     */
-    public TrunkManagement() {
-    }
+	private String trunkName;
+	private Integer channels = 0;
+	private RtpFactory rtpFactory = null;
 
-    /**
-     * Gets the JNDI name to which this trunk instance is bound.
-     * 
-     * @return the JNDI name.
-     */
-    public String getJndiName() {
-        return jndiName;
-    }
+	private transient Logger logger = Logger
+			.getLogger(TrunkManagement.class);
 
-    /**
-     * Sets the JNDI name to which this trunk object should be bound.
-     * 
-     * @param jndiName
-     *            the JNDI name to which trunk object will be bound.
-     */
-    public void setJndiName(String jndiName)  {
-        String oldName = this.jndiName;
-        this.jndiName = jndiName;
-    }
+	/**
+	 * Creates a new instance of EndpointManagement
+	 */
+	public TrunkManagement() {
+	}
 
-    /**
-     * Gets the name of used RTP Factory.
-     * 
-     * @return the JNDI name of the RTP Factory
-     */
-    public RtpFactory getRtpFactory() {
-        return this.rtpFactory;
-    }
+	/**
+	 * Gets the JNDI name to which this trunk instance is bound.
+	 * 
+	 * @return the JNDI name.
+	 */
+	public String getTrunkName() {
+		return this.trunkName;
+	}
 
-    /**
-     * Sets the name of used RTP Factory.
-     * 
-     * @param rtpFactoryName
-     *            the JNDI name of the RTP Factory.
-     */
-    public void setRtpFactory(RtpFactory rtpFactory) throws Exception {
-        this.rtpFactory = rtpFactory;
-    }
+	/**
+	 * Sets the JNDI name to which this trunk object should be bound.
+	 * 
+	 * @param jndiName
+	 *            the JNDI name to which trunk object will be bound.
+	 */
+	public void setTrunkName(String trunkName) {
+		this.trunkName = trunkName;
+	}
 
-    public Integer getChannels() {
-        return this.channels;
-    }
+	/**
+	 * Gets the name of used RTP Factory.
+	 * 
+	 * @return the JNDI name of the RTP Factory
+	 */
+	public RtpFactory getRtpFactory() {
+		return this.rtpFactory;
+	}
 
-    public void setChannels(Integer channels) {
-        this.channels = channels;
-    }
+	/**
+	 * Sets the name of used RTP Factory.
+	 * 
+	 * @param rtpFactoryName
+	 *            the JNDI name of the RTP Factory.
+	 */
+	public void setRtpFactory(RtpFactory rtpFactory) {
+		this.rtpFactory = rtpFactory;
+	}
 
-    public abstract Endpoint createEndpoint(String localName) throws Exception;
+	public Integer getChannels() {
+		return this.channels;
+	}
 
-    /**
-     * Starts MBean.
-     */
-    @Override
-    public void startService() throws Exception {
-        logger.info("Starting trunk " + jndiName  + ", channels=" + channels);
-        EndpointQuery endpointQuery = EndpointQuery.getInstance();
-        for (int i = 0; i < channels; i++) {
-            String name = jndiName + "/" + i;
-            Endpoint enp = createEndpoint(name);
-            
-            ((BaseEndpoint) enp).setRtpFactory(this.rtpFactory);
-            enp.start();
-            
-            endpointQuery.addEndpoint(enp.getLocalName(), enp);
-            
-            //rebind(enp.getLocalName(), enp);
-            logger.info("Started endpoint: " + jndiName + "/" + i);
-        }
+	public void setChannels(Integer channels) {
+		this.channels = channels;
+	}
 
-    }
+	public abstract Endpoint createEndpoint(String localName) throws Exception;
 
-    /**
-     * Stops MBean.
-     */
-    @Override
-    public void stopService() {
-        logger.info("Stoping trunk " + jndiName  + ", channels=" + channels);
-        for (int i = 0; i < channels; i++) {
-            EndpointQuery.getInstance().remove(jndiName + "/" + i);
-            logger.info("Stopped endpoint: " + jndiName + "/" + i);
-        }
-    } 
+	public void create() {
+		logger.info("Starting trunk " + trunkName + ", channels=" + channels);
+	}
+
+	/**
+	 * Starts MBean.
+	 */
+	public void start() throws Exception {
+
+		EndpointQuery endpointQuery = EndpointQuery.getInstance();
+		for (int i = 0; i < channels; i++) {
+			String name = this.trunkName + "/" + i;
+			Endpoint enp = createEndpoint(name);
+
+			((BaseEndpoint) enp).setRtpFactory(this.rtpFactory);
+			enp.start();
+
+			endpointQuery.addEndpoint(enp.getLocalName(), enp);
+
+			// rebind(enp.getLocalName(), enp);
+			logger.info("Started endpoint: " + this.trunkName + "/" + i);
+		}
+
+	}
+
+	/**
+	 * Stops MBean.
+	 */
+	public void stop() {
+		Endpoint endpoint = null;
+		logger.info("Stoping trunk " + trunkName + ", channels=" + channels);
+		for (int i = 0; i < channels; i++) {
+			endpoint = EndpointQuery.getInstance().remove(trunkName + "/" + i);
+			if (endpoint != null) {
+				endpoint.stop();
+			}
+			logger.info("Stopped endpoint: " + trunkName + "/" + i);
+		}
+	}
+
+	public void destroy() {
+
+	}
 }

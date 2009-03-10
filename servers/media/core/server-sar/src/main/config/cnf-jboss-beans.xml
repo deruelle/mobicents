@@ -11,7 +11,7 @@
 	      class="org.mobicents.media.server.impl.jmx.enp.cnf.ConfTrunkManagement">
 		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=conf",exposedInterface=org.mobicents.media.server.impl.jmx.enp.cnf.ConfTrunkManagementMBean.class,registerDirectly=true)</annotation>
 		
-		<property name="jndiName">media/trunk/Conference</property>
+		<property name="trunkName">media/trunk/Conference</property>
 		<property name="rtpFactory">
 			<inject bean="RtpFactory" />
 		</property>
