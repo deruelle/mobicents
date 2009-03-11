@@ -1,0 +1,147 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.servers.media.examples</groupId>
+		<artifactId>mms-examples-core</artifactId>
+		<version>2.0.0.BETA1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>simple</artifactId>
+
+	<name>Mobicents Media Server Example[Simple]</name>
+
+	<properties>
+		<maven.test.skip>false</maven.test.skip>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+			<version>${jain-sip-ri.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-api</artifactId>
+			<version>${jain-sip-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jain</groupId>
+			<artifactId>jain-mgcp-ri</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.jain</groupId>
+			<artifactId>mobicents-mgcp-impl</artifactId>
+			<version>2.0.0.RC2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>jboss-5</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-to-jboss-lib</id>
+								<phase>install</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<includeArtifactIds>
+										jain-sip-ri
+									</includeArtifactIds>
+									<outputDirectory>
+										${env.JBOSS_HOME}/server/${node}/lib
+									</outputDirectory>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<condition property="jboss.dir" value="${jboss.home}"
+											else="${env.JBOSS_HOME}">
+											<isset property="jboss.home" />
+										</condition>
+										<copy file="target/${project.build.finalName}.jar" todir="${jboss.dir}/server/${node}/lib">
+
+										</copy>
+									</tasks>
+								</configuration>
+							</execution>
+							<execution>
+								<id>undeploy</id>
+								<phase>clean</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${env.JBOSS_HOME}/server/${node}/lib/${project.build.finalName}.jar" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>standalone</id>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>${pom.artifactId}-${pom.version}</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>RELEASE</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<!--
+				<plugin> <artifactId>maven-eclipse-plugin</artifactId>
+				<groupId>org.mobicents.tools</groupId> <version>
+				${mobicents.tools.mavenplugin.eclipse.version} </version>
+				<inherited>false</inherited> <executions /> <configuration>
+				<classpathExcludes> <exclude>xml-apis:xml-apis</exclude>
+				<exclude>jtidy:jtidy</exclude> </classpathExcludes>
+				<resolveTransitiveDependencies> true
+				</resolveTransitiveDependencies> <eclipseProjectName>
+				mobicents-media-server-example-simple </eclipseProjectName>
+				<generateProjectsForModules> true </generateProjectsForModules>
+				</configuration> </plugin>
+			-->
+		</plugins>
+	</build>
+
+</project>
