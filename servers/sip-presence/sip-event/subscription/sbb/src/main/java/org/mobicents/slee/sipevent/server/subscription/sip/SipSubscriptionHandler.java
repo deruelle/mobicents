@@ -287,6 +287,7 @@ public class SipSubscriptionHandler {
 					if (first) {
 						allowEventsHeader += acceptedEventPackage + ","
 								+ acceptedEventPackage + ".winfo";
+						first = false;
 					} else {
 						allowEventsHeader += "," + acceptedEventPackage + ","
 								+ acceptedEventPackage + ".winfo";

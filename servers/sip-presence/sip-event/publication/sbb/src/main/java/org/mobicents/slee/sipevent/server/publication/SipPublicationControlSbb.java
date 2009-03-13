@@ -462,6 +462,7 @@ public abstract class SipPublicationControlSbb implements Sbb, PublicationClient
 				for (String acceptedEventPackage : childSbb.getEventPackages()) {
 					if (first) {
 						allowEventsHeader += acceptedEventPackage;
+						first = false;
 					}
 					else {
 						allowEventsHeader += ","+acceptedEventPackage;
