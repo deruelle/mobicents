@@ -222,7 +222,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {
 				command.getNotificationRequestParms().setDetectEvents(utils.decodeEventNames(value));
-			} else if (name.equalsIgnoreCase("Z")) {
+			} else if (name.equalsIgnoreCase("Z2")) {
 				try {
 					command.setSecondEndpointIdentifier(utils.decodeEndpointIdentifier(value));
 				} catch (ConflictingParameterException e) {

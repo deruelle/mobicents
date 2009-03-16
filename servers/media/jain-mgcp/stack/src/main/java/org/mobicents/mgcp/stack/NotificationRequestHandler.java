@@ -81,7 +81,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 		buffer.append("X:").append(req.getRequestIdentifier()).append(NEW_LINE);
 
 		if (req.getDigitMap() != null) {
-			// encode digit map
+			buffer.append("D:").append(req.getDigitMap()).append(NEW_LINE);
 		}
 
 		if (req.getSignalRequests() != null) {
