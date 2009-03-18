@@ -117,6 +117,27 @@ public class HDLCChannelTest implements HDLCReader {
         }
         
     }
+
+    @Test
+    public void testDestaffing() {
+        byte[] stream = new byte[]{(byte)0x7E, (byte)0x7D, 0x1F, 0x00};
+        
+        byte[] payload = new byte[] {(byte)0x7E};
+        
+        for (int i = 0; i < stream.length; i++) {
+            ch.offer(stream[i]);
+        }
+        
+        if (data == null) {
+            fail("Data not received");
+        }
+        
+        assertEquals(payload.length, byteCount);
+        for (int i = 0; i < payload.length; i++) {
+            assertEquals(data[i], payload[i]);
+        }
+        
+    }
     
     public void receive(byte[] buffer, int len) {
         System.arraycopy(buffer, 0, data, byteCount, len);
