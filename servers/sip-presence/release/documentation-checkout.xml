@@ -13,9 +13,8 @@
         <checkout.username>mobicents-read-only</checkout.username>
         <checkout.password></checkout.password>
         
-        <sippresence.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Mobicents_SIP_Presence_Service_Guide</sippresence.docs.connectionURL>
+        <sippresence.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/SIP_Presence_Service_User_Guide</sippresence.docs.connectionURL>
         
-        <common.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/Staff/1.0/dhensley/Common_Content</common.docs.connectionURL>
     </properties>
     
     <profiles>
@@ -29,22 +28,6 @@
                         <artifactId>maven-scm-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <execution>
-                                <id>common-docs-checkout</id>
-                                <goals>
-                                    <goal>checkout</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <scmVersion>HEAD</scmVersion>
-                                    <scmVersionType>revision</scmVersionType>
-                                    <skipCheckoutIfExists>true</skipCheckoutIfExists>
-                                    <checkoutDirectory>${checkout.basedir}/common</checkoutDirectory>
-                                    <connectionUrl>${common.docs.connectionURL}</connectionUrl>
-                                    <username>${checkout.username}</username>
-                                    <password>${checkout.password}</password>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>sip-presence-docs-checkout</id>
                                 <goals>
@@ -76,21 +59,6 @@
                         <artifactId>maven-scm-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <execution>
-                                <id>common-docs-update</id>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <basedir>${checkout.basedir}/common</basedir>
-                                    <scmVersion>HEAD</scmVersion>
-                                    <scmVersionType>revision</scmVersionType>
-                                    <connectionUrl>${common.docs.connectionURL}</connectionUrl>
-                                    <username>${checkout.username}</username>
-                                    <password>${checkout.password}</password>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>sippresence-docs-update</id>
                                 <goals>

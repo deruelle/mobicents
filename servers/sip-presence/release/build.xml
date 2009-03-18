@@ -297,11 +297,6 @@
     <target name="build-documentation" depends="get-documentation">
         <echo>Building documentation</echo>
 
-        <!--move todir="${docs.stage.dir}/sip-presence/en-US/Common_Content">
-            <fileset dir="${docs.stage.dir}/common" />
-        </move-->
-        <symlink overwrite="true" link="${docs.stage.dir}/sip-presence/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
-
         <exec executable="${mvn.executable}" dir="${docs.stage.dir}/sip-presence/">
             <arg line="clean compile" />
         </exec>

@@ -13,12 +13,11 @@
         <checkout.username>mobicents-read-only</checkout.username>
         <checkout.password></checkout.password>
         
-        <jainslee.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Mobicents_JAIN_SLEE_Server_Guide</jainslee.docs.connectionURL>
-        <media.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Mobicents_Media_Server_Guide</media.docs.connectionURL>
-        <sippresence.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Mobicents_SIP_Presence_Service_Guide</sippresence.docs.connectionURL>
-        <sipservlets.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Mobicents_SIP_Servlets_Server_Guide</sipservlets.docs.connectionURL>
-        
-        <common.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/Staff/1.0/dhensley/Common_Content</common.docs.connectionURL>
+        <jainslee.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/JAIN_SLEE_Server_User_Guide</jainslee.docs.connectionURL>
+        <media.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Media_Server_User_Guide</media.docs.connectionURL>
+        <sippresence.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/SIP_Presence_Service_User_Guide</sippresence.docs.connectionURL>
+        <sipservlets.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/SIP_Servlets_Server_User_Guide</sipservlets.docs.connectionURL>
+        <platform.installation.docs.connectionURL>scm:svn:https://svn.devel.redhat.com/repos/ecs/JBoss_Communications_Platform/1.2.0/Platform_Installation_Guide</platform.installation.docs.connectionURL>
         
     </properties>
     
@@ -33,22 +32,6 @@
                         <artifactId>maven-scm-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <execution>
-                                <id>common-docs-checkoutd</id>
-                                <goals>
-                                    <goal>checkout</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <scmVersion>HEAD</scmVersion>
-                                    <scmVersionType>revision</scmVersionType>
-                                    <skipCheckoutIfExists>true</skipCheckoutIfExists>
-                                    <checkoutDirectory>${checkout.basedir}/common</checkoutDirectory>
-                                    <connectionUrl>${common.docs.connectionURL}</connectionUrl>
-                                    <username>${checkout.username}</username>
-                                    <password>${checkout.password}</password>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>jain-slee-docs-checkout</id>
                                 <goals>
@@ -113,6 +96,22 @@
                                     <password>${checkout.password}</password>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>platform-instalation-docs-checkoutd</id>
+                                <goals>
+                                    <goal>checkout</goal>
+                                </goals>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <scmVersion>HEAD</scmVersion>
+                                    <scmVersionType>revision</scmVersionType>
+                                    <skipCheckoutIfExists>true</skipCheckoutIfExists>
+                                    <checkoutDirectory>${checkout.basedir}/platform-installation</checkoutDirectory>
+                                    <connectionUrl>${platform.installation.docs.connectionURL}</connectionUrl>
+                                    <username>${checkout.username}</username>
+                                    <password>${checkout.password}</password>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
@@ -128,21 +127,6 @@
                         <artifactId>maven-scm-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <execution>
-                                <id>common-docs-update</id>
-                                <goals>
-                                    <goal>update</goal>
-                                </goals>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <basedir>${checkout.basedir}/common</basedir>
-                                    <scmVersion>HEAD</scmVersion>
-                                    <scmVersionType>revision</scmVersionType>
-                                    <connectionUrl>${common.docs.connectionURL}</connectionUrl>
-                                    <username>${checkout.username}</username>
-                                    <password>${checkout.password}</password>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>jain-slee-docs-update</id>
                                 <goals>
@@ -199,6 +183,21 @@
                                     <scmVersion>HEAD</scmVersion>
                                     <scmVersionType>revision</scmVersionType>
                                     <connectionUrl>${sipservlets.docs.connectionURL}</connectionUrl>
+                                    <username>${checkout.username}</username>
+                                    <password>${checkout.password}</password>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>platform-instalation-docs-update</id>
+                                <goals>
+                                    <goal>update</goal>
+                                </goals>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <basedir>${checkout.basedir}/platform-installation</basedir>
+                                    <scmVersion>HEAD</scmVersion>
+                                    <scmVersionType>revision</scmVersionType>
+                                    <connectionUrl>${platform.installation.docs.connectionURL}</connectionUrl>
                                     <username>${checkout.username}</username>
                                     <password>${checkout.password}</password>
                                 </configuration>

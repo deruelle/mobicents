@@ -343,15 +343,6 @@
     <target name="release-documentation" depends="get-documentation">
         <echo>Building documentation</echo>
 
-        <!-- Use move/copy if symbolic links doesn't work -->
-        <!--move todir="${docs.stage.dir}/jain-slee/en-US/Common_Content">
-            <fileset dir="${docs.stage.dir}/common" />
-        </move-->
-        <symlink overwrite="true" link="${docs.stage.dir}/jain-slee/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
-        <symlink overwrite="true" link="${docs.stage.dir}/media/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
-        <symlink overwrite="true" link="${docs.stage.dir}/sip-presence/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
-        <symlink overwrite="true" link="${docs.stage.dir}/sip-servlets/en-US/Common_Content" resource="${docs.stage.dir}/common"/>
-
         <exec executable="${mvn.executable}" dir="${docs.stage.dir}/jain-slee/">
             <arg line="clean compile" />
         </exec>
@@ -362,6 +353,9 @@
             <arg line="clean compile" />
         </exec>
         <exec executable="${mvn.executable}" dir="${docs.stage.dir}/sip-servlets/">
+            <arg line="clean compile" />
+        </exec>
+        <exec executable="${mvn.executable}" dir="${docs.stage.dir}/platform-installation/">
             <arg line="clean compile" />
         </exec>
 
@@ -376,6 +370,9 @@
         </copy>
         <copy overwrite="true" todir="${release.dir}/documentation/sip-servlets">
             <fileset dir="${docs.stage.dir}/sip-servlets/target/docbook/publish/en-US/" />
+        </copy>
+        <copy overwrite="true" todir="${release.dir}/documentation/platform-installation-guide">
+            <fileset dir="${docs.stage.dir}/platform-installation/target/docbook/publish/en-US/" />
         </copy>
 
         <!--delete dir="${docs.stage.dir}" /-->
