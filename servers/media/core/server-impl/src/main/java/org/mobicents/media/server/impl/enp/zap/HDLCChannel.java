@@ -45,8 +45,8 @@ public class HDLCChannel {
     private int buff;
     private int[] stamp = new int[256];
     private int[] mask = new int[]{1, 3, 7, 15, 31, 63, 127, 255};
-    private int[] mask1 = new int[]{1, 3, 7, 15, 31, 63, 127, 255};
-    
+
+    private int[][][]ones = new int[8][256][2];    
     private int bits = 0;
 
     public HDLCChannel() {
@@ -56,6 +56,10 @@ public class HDLCChannel {
                 int q = (p << (8 - i)) | (0x7e >> i);
                 stamp[q] = i;
             }
+        }
+        
+        for (int i = 1; i < 8; i++) {
+            
         }
     }
 
