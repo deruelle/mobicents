@@ -93,6 +93,7 @@ public class PresenceCompositionPolicy {
 					// remove the tuples to not be iterated again
 					tuplesIt.remove();
 					otherTuplesIt.remove();
+					break;
 				}
 			}
 		}
@@ -313,6 +314,7 @@ public class PresenceCompositionPolicy {
 										}
 										anysIt.remove();
 										otherAnysIt.remove();
+										break;
 									}									
 								}
 								else {
@@ -336,6 +338,7 @@ public class PresenceCompositionPolicy {
 									}
 									anysIt.remove();
 									otherAnysIt.remove();
+									break;
 								}
 							}
 							else {
@@ -348,6 +351,7 @@ public class PresenceCompositionPolicy {
 								result.add(composedObject);
 								anysIt.remove();
 								otherAnysIt.remove();
+								break;
 							}							
 						}
 					}
@@ -456,6 +460,7 @@ public class PresenceCompositionPolicy {
 				result.add(note);
 				notesIt.remove();
 				otherNotesIt.remove();
+				break;
 			}
 		}
 		// now add the ones left 
@@ -481,6 +486,7 @@ public class PresenceCompositionPolicy {
 					// remove both to not be iterated again
 					it.remove();
 					otherIt.remove();
+					break;
 				}
 			}
 		}
@@ -572,6 +578,7 @@ public class PresenceCompositionPolicy {
 					// remove both to not be iterated again
 					it.remove();
 					otherIt.remove();
+					break;
 				}
 			}
 		}
@@ -686,6 +693,7 @@ public class PresenceCompositionPolicy {
 				result.add(note);
 				notesIt.remove();
 				otherNotesIt.remove();
+				break;
 			}
 		}
 		// now add the ones left 
