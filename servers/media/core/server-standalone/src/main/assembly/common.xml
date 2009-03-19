@@ -1,5 +1,5 @@
 <component>
-	<fileSets>
+	<!-- fileSets>
 		<fileSet>
 			<directory>target</directory>
 			<outputDirectory />
@@ -7,20 +7,32 @@
 				<include>*.jar</include>
 			</includes>
 		</fileSet>
-	</fileSets>
+	</fileSets -->
 	<files>
 		<file>
 			<source>src/main/config/run.sh</source>
 			<fileMode>0744</fileMode>
 			<filtered>true</filtered>
+                        <destName>bin/run.sh</destName>
+		</file>
+		<file>
+			<source>src/main/config/run.bat</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+                        <destName>bin/run.bat</destName>
+		</file>
+		<file>
+			<source>target/run.jar</source>
+			<fileMode>0744</fileMode>
+			<filtered>true</filtered>
+                        <destName>bin/run.jar</destName>
 		</file>
 	</files>
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>/lib</outputDirectory>
 			<unpack>false</unpack>
-			<scope>runtime</scope>
-		
+			<scope>runtime</scope>		
 		</dependencySet>
 	</dependencySets>
 </component>

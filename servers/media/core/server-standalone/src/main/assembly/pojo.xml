@@ -7,30 +7,20 @@
 	<files>
 		<file>
 			<source>src/main/config/bootstrap-beans.xml</source>
-			<destName>bootstrap/bootstrap-beans.xml</destName>
+			<destName>conf/bootstrap-beans.xml</destName>
 		</file>
 
-		<file>
+		<!-- file>
 			<source>src/main/config/aop-beans.xml</source>
-			<destName>bootstrap/aop-beans.xml</destName>
-		</file>
-
-		<file>
-			<source>src/main/config/system-jmx-beans.xml</source>
-			<destName>bootstrap/system-jmx-beans.xml</destName>
-		</file>
-
-		<file>
-			<source>src/main/config/mms-boot-beans.xml</source>
-			<destName>deploy/mms-boot-beans.xml</destName>
-		</file>
+			<destName>conf/aop-beans.xml</destName>
+		</file -->
 
 		<file>
 			<source>src/main/config/ann-beans.xml</source>
 			<destName>deploy/ann-beans.xml</destName>
 		</file>
 
-		<file>
+		<!-- file>
 			<source>src/main/config/ivr-beans.xml</source>
 			<destName>deploy/ivr-beans.xml</destName>
 		</file>
@@ -48,7 +38,7 @@
 		<file>
 			<source>src/main/config/loop-beans.xml</source>
 			<destName>deploy/loop-beans.xml</destName>
-		</file>
+		</file -->
 
 	</files>
 	<dependencySets>
