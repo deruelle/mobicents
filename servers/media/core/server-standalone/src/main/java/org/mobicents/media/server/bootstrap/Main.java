@@ -1,29 +1,32 @@
 /*
-* JBoss, Home of Professional Open Source
-* Copyright 2006, JBoss Inc., and individual contributors as indicated
-* by the @authors tag. See the copyright.txt in the distribution for a
-* full listing of individual contributors.
-*
-* This is free software; you can redistribute it and/or modify it
-* under the terms of the GNU Lesser General Public License as
-* published by the Free Software Foundation; either version 2.1 of
-* the License, or (at your option) any later version.
-*
-* This software is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-* Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public
-* License along with this software; if not, write to the Free
-* Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
-* 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-*/
+ * JBoss, Home of Professional Open Source
+ * Copyright 2006, JBoss Inc., and individual contributors as indicated
+ * by the @authors tag. See the copyright.txt in the distribution for a
+ * full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
 package org.mobicents.media.server.bootstrap;
 
 import java.io.File;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+import org.jboss.dependency.spi.Controller;
+import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.plugins.bootstrap.basic.BasicBootstrap;
 import org.jboss.kernel.plugins.deployment.xml.BasicXMLDeployer;
@@ -33,130 +36,110 @@ import org.jboss.util.StringPropertyReplacer;
  * @author <a href="mailto:ales.justin@jboss.com">Ales Justin</a>
  * @author <a href="mailto:amit.bhayani@jboss.com">amit bhayani</a>
  */
-public class Main
-{
-   private static Main main;
-   
-   public static final String MMS_HOME = "mms.home.dir"; 
+public class Main {
 
-   private Kernel kernel;
-   private BasicXMLDeployer kernelDeployer;
+    private final static String HOME_DIR = "MMS_HOME";
+    private final static String BOOT_URL = "/conf/bootstrap-beans.xml";
+    public static final String MMS_HOME = "mms.home.dir";
+    
+    private static int index = 0;
+    
+    
+    private Kernel kernel;
+    private BasicXMLDeployer kernelDeployer;
+    private Controller controller;
 
-   public static void main(String[] args)
-   {
-      main = new Main();
-      main.configure(args);
-   }
+    private static Logger logger = Logger.getLogger(Main.class);
+    
+    public static void main(String[] args) throws Throwable {
+        String homeDir = getHomeDir(args);
+        System.setProperty(MMS_HOME, homeDir);
 
-   protected void configure(String[] args)
-   {
-      int index = 0;
-      String mmsHome;
-      // demos.home
-      if (System.getenv("MMS_HOME") == null)
-      {
+        URL bootURL = getBootURL(args);        
+        Main main = new Main();
         
-         if (args.length > index)
-        	 mmsHome = args[index++];
-         else
-        	 mmsHome = ".";
+        logger.info("Booting from " + bootURL);
+        main.boot(bootURL);
+        
+        logger.info("Starting main deployer");
+       // main.start();
+    }
 
-         System.setProperty(MMS_HOME, mmsHome);
-      } else{
-    	  mmsHome = System.getenv("MMS_HOME");
-    	  System.setProperty(MMS_HOME, mmsHome);
-      }
+    /**
+     * Gets the Media Server Home directory.
+     * 
+     * @param args the command line arguments
+     * @return the path to the home directory.
+     */
+    private static String getHomeDir(String args[]) {
+        if (System.getenv(HOME_DIR) == null) {
+            if (args.length > index) {
+                return args[index++];
+            } else {
+                return ".";
+            }
+        } else {
+            return System.getenv(HOME_DIR);
+        }
+    }
 
-      try
-      {
-         String rootString;
-         if (args.length > index)
-            rootString = args[index];
-         else
-            rootString = "${"+MMS_HOME+"}/bootstrap/bootstrap-beans.xml";
+    /**
+     * Gets the URL which points to the boot descriptor.
+     * 
+     * @param args  command line arguments.
+     * @return URL of the boot descriptor.
+     */
+    private static URL getBootURL(String args[]) throws Exception {
+        String bootURL = args.length > index ? args[index] : "${" + MMS_HOME + "}" + BOOT_URL;
+        return getURL(bootURL);
+    }
 
-         URL rootURL = getURL(rootString);
-         System.out.println("Using bootstrap: " + rootURL.toExternalForm());
+    protected void boot(URL bootURL) throws Throwable {
+        BasicBootstrap bootstrap = new BasicBootstrap();
+        bootstrap.run();
+        
+        registerShutdownThread();
+        
+        kernel = bootstrap.getKernel();
+        kernelDeployer = new BasicXMLDeployer(kernel);
+        
+        kernelDeployer.deploy(bootURL);
+        kernelDeployer.validate();
 
-         BasicBootstrap bootstrap = new BasicBootstrap();
-         bootstrap.run();
-         kernel = bootstrap.getKernel();
+        controller = kernel.getController();
+    }
+    
+    public void start() {
+        ControllerContext context = controller.getInstalledContext("MainDeployer");
+        if (context != null) {
+            MainDeployer deployer = (MainDeployer) context.getTarget();
+            deployer.start();
+        }
+    }
 
-         kernelDeployer = new BasicXMLDeployer(kernel);
-         kernelDeployer.deploy(rootURL);
-         kernelDeployer.validate();
-      }
-      catch (Throwable t)
-      {
-         t.printStackTrace();
-      }
-   }
+    public static URL getURL(String url) throws Exception {
+        // replace ${} inputs
+        url = StringPropertyReplacer.replaceProperties(url, System.getProperties());
+        File file = new File(url);
+        if (file.exists() == false) {
+            throw new IllegalArgumentException("No such file: " + url);
+        }
+        return file.toURI().toURL();
+    }
 
-   private static Main getMain()
-   {
-      if (main == null)
-         throw new IllegalArgumentException("Main in not initialized, should run Main.main()!");
+    protected void registerShutdownThread() {
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownThread()));
+    }
 
-      return main;
-   }
+    private class ShutdownThread implements Runnable {
 
-   public static URL getURL(String url) throws Exception
-   {
-      // replace ${} inputs
-      url = StringPropertyReplacer.replaceProperties(url, System.getProperties());
-      File file = new File(url);
-      if (file.exists() == false)
-         throw new IllegalArgumentException("No such file: " + url);
+        public void run() {
+            System.out.println("Shutting down");
+            kernelDeployer.shutdown();
+            kernelDeployer = null;
 
-      return file.toURI().toURL();
-   }
-
-   public static void deploy(String... urls) throws Throwable
-   {
-      if (urls == null)
-         return;
-
-      for (String urlString : urls)
-      {
-         URL url = getURL(urlString);
-         getMain().kernelDeployer.deploy(url);
-         System.out.println("Deployed URL: " + url);
-      }
-   }
-
-   public static void validate() throws Throwable
-   {
-      getMain().kernelDeployer.validate();
-   }
-
-   public static void undeploy(String... urls) throws Throwable
-   {
-      if (urls == null)
-         return;
-
-      for (String urlString : urls)
-      {
-         URL url = getURL(urlString);
-         getMain().kernelDeployer.undeploy(url);
-         System.out.println("Undeployed URL: " + url);
-      }
-   }
-
-   protected void registerShutdownThread()
-   {
-      Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownThread()));
-   }
-
-   private class ShutdownThread implements Runnable
-   {
-      public void run()
-      {
-    	 System.out.println("Shutting down");		
-         kernelDeployer.shutdown();
-         kernelDeployer = null;
-
-         kernel.getController().shutdown();
-         kernel = null;
-      }
-   }
+            kernel.getController().shutdown();
+            kernel = null;
+        }
+    }
 }
