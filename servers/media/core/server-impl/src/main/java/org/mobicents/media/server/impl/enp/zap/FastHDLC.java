@@ -350,7 +350,8 @@ public class FastHDLC {
                     break;
                 case PROCESS_FRAME:
                     /* Process as much as the next ten bits */
-                    next = hdlc_frame[h.ones][(h.data >> 22)& 0xff];
+                    next = hdlc_frame[h.ones][(h.data >> 22)& 0x3ff]; // Must be 10 bits here, not 8, that's all
+                    //next = hdlc_frame_precalc(h.ones, (h.data >> 22)& 0x3ff);
                     h.bits -= (((next & 0x0f00) >> 8)& 0xff);
                     h.data <<= (((next & 0x0f00) >> 8)& 0xff);
                     h.state = ((next & STATE_MASK) >> 15)& 0xff;

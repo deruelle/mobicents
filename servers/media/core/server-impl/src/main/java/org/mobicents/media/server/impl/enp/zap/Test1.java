@@ -15,11 +15,11 @@ import java.io.FileReader;
 public class Test1 {
 
     public static void main(String[] args) throws Exception {
-        FileInputStream fin = new FileInputStream("c:\\temp\\hdlc-data.hex");
+        //FileInputStream fin = new FileInputStream("c:\\temp\\hdlc-data.hex");
 
-        BufferedReader reader = new BufferedReader(new FileReader("c:\\temp\\mtp.txt"));
-        String line = reader.readLine();
-        String[] data = line.split(" ");
+        //BufferedReader reader = new BufferedReader(new FileReader("c:\\temp\\mtp.txt"));
+        //String line = reader.readLine();
+        String[] data = "bf 7d f7 d8 00 0e 46 77 ef be fb 00 01 c8 ce fd f7 df 60 00 39 19 df be fb ec 00 07 23 3b f7 df 7d 80 00 e4 67 7e fb ef b0 00 1c 8c ef 7d f6".split(" ");
 
         FastHDLC hdlc = new FastHDLC();
         HdlcFrame h = new HdlcFrame();
@@ -33,6 +33,7 @@ public class Test1 {
         while ( i < data.length) {
 
             while (h.bits <= 24 && i < data.length) {
+            	if(data[i].length()<=0) continue;
                 b = Integer.parseInt(data[i++],16);
                 hdlc.fasthdlc_rx_load_nocheck(h, b);
             }
@@ -52,12 +53,14 @@ public class Test1 {
                     System.out.println("To long");
                     frameLen = 0;
                 } else {
-                    System.out.print(Integer.toHexString(res) + " ");
+                    System.out.println("-- " + alignNumber(Integer.toHexString(res),2) + " " + alignNumber(Integer.toBinaryString(res),8));
                     frameLen++;
                 }
             }
 
         }
+        
+
     /*        System.out.println(s);
     String frames[] = s.split("01111110");
     System.out.println("Frame count " + frames.length);
@@ -69,5 +72,9 @@ public class Test1 {
     }
     }
      */
+    }
+    private static String alignNumber(String str, int num) {
+    	while(str.length()<num) str = "0" + str;
+    	return str;
     }
 }
