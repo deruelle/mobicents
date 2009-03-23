@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents</artifactId>
-		<version>8</version>
+		<version>9</version>
 	</parent>
 
 	<groupId>org.mobicents.jsr309</groupId>
@@ -26,15 +26,15 @@
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<mobicents.mgcp.impl.version>
-			2.0.0.RC1
+			2.0.0.RC2-SNAPSHOT
 		</mobicents.mgcp.impl.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.mobicents.external.jsr309</groupId>
-			<artifactId>jsr309</artifactId>
-			<version>0.1</version>
+			<artifactId>mscontrol</artifactId>
+			<version>0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>jain</groupId>

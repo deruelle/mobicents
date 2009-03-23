@@ -6,6 +6,8 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.ModifyConnection;
+import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConflictingParameterException;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
@@ -14,196 +16,129 @@ import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
-import java.io.Serializable;
 import java.net.URI;
+import java.util.TooManyListenersException;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
-import javax.media.mscontrol.Joinable;
-import javax.media.mscontrol.JoinableStream;
-import javax.media.mscontrol.MediaSession;
-import javax.media.mscontrol.MscontrolException;
-import javax.media.mscontrol.StatusEventListener;
-import javax.media.mscontrol.JoinableStream.StreamType;
+import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.networkconnection.NetworkConnectionEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnectionException;
 import javax.media.mscontrol.networkconnection.ResourceNotAvailableException;
+import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.Symbol;
 import javax.sdp.SdpException;
+import javax.sdp.SdpFactory;
+import javax.sdp.SdpParseException;
 import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
-import org.mobicents.javax.media.mscontrol.MediaSessionFactoryImpl;
+import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
+import org.mobicents.javax.media.mscontrol.AudioJoinableStream;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
-import org.mobicents.jsr309.mgcp.JainMgcpExtendedListenerImpl;
+import org.mobicents.javax.media.mscontrol.MsControlFactoryImpl;
 import org.mobicents.jsr309.mgcp.Provider;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
-public class NetworkConnectionImpl implements NetworkConnection,
-		JainMgcpExtendedListener {
+public class NetworkConnectionImpl extends AbstractJoinableContainer implements NetworkConnection {
 
 	public static Logger logger = Logger.getLogger(NetworkConnectionImpl.class);
 
-	private MediaSessionImpl mediaSession = null;
 	protected JainMgcpStackProviderImpl jainMgcpStackProviderImpl;
-	protected JainMgcpExtendedListenerImpl jainMgcpListenerImpl;
-	protected int tx = -1;
+
 	private EndpointIdentifier endpointIdentifier = null;
 	private ConnectionIdentifier connectionIdentifier = null;
 	private String remoteSessionDescription = null;
 	private String localSessionDescription = null;
+
 	private NetworkConnectionException networkConnectionException = null;
 	private ResourceNotAvailableException resourceNotAvailableException = null;
 	private static final String PR_ENDPOINT_NAME = "/trunk/media/PacketRelay/$";
 
-	private ReentrantLock blockState = new ReentrantLock();
-	private Condition mgcpResponseReceived = blockState.newCondition();
+	private transient SdpFactory sdpFactory = SdpFactory.getInstance();
+
+	protected AudioJoinableStream audioJoinableStream = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public NetworkConnectionImpl(MediaSessionImpl mediaSession,
-			JainMgcpStackProviderImpl jainMgcpStackProviderImpl,
-			JainMgcpExtendedListenerImpl jainMgcpListenerImpl) {
-		this.mediaSession = mediaSession;
+	public NetworkConnectionImpl(MediaSessionImpl mediaSession, JainMgcpStackProviderImpl jainMgcpStackProviderImpl) {
+		super(mediaSession);
 		this.jainMgcpStackProviderImpl = jainMgcpStackProviderImpl;
-		this.jainMgcpListenerImpl = jainMgcpListenerImpl;
 	}
 
-	public SessionDescription getLocalSessionDescription()
-			throws NetworkConnectionException {
-		// TODO Auto-generated method stub
-		return null;
+	public SessionDescription getLocalSessionDescription() throws NetworkConnectionException {
+		if (this.localSessionDescription == null) {
+			throw new NetworkConnectionException("No local session description is available");
+		}
+		SessionDescription sdp = null;
+		try {
+			sdp = sdpFactory.createSessionDescription(localSessionDescription);
+		} catch (SdpParseException e) {
+			logger.error(e);
+			throw new NetworkConnectionException(e);
+		}
+		return sdp;
 	}
 
-	public String getRawLocalSessionDescription()
-			throws NetworkConnectionException {
-		// TODO Auto-generated method stub
-		return null;
+	public SessionDescription getRemoteSessionDescription() throws NetworkConnectionException {
+		if (this.remoteSessionDescription == null) {
+			throw new NetworkConnectionException("No remote session description is available");
+		}
+		SessionDescription sdp = null;
+		try {
+			sdp = sdpFactory.createSessionDescription(remoteSessionDescription);
+		} catch (SdpParseException e) {
+			logger.error(e);
+			throw new NetworkConnectionException(e);
+		}
+		return sdp;
 	}
 
-	public String getRawRemoteSessionDescription()
-			throws NetworkConnectionException {
-		// TODO Auto-generated method stub
-		return null;
+	public String getRawLocalSessionDescription() throws NetworkConnectionException {
+		if (this.localSessionDescription == null) {
+			throw new NetworkConnectionException("No local session description is available");
+		}
+		return this.localSessionDescription;
 	}
 
-	public SessionDescription getRemoteSessionDescription()
-			throws NetworkConnectionException {
-		// TODO Auto-generated method stub
-		return null;
+	public String getRawRemoteSessionDescription() throws NetworkConnectionException {
+		if (this.remoteSessionDescription == null) {
+			throw new NetworkConnectionException("No remote session description is available");
+		}
+		return this.remoteSessionDescription;
 	}
 
-	public void modify(SessionDescription localSessionDescription,
-			SessionDescription remoteSessionDescription) throws SdpException,
-			NetworkConnectionException, ResourceNotAvailableException {
-		this.modify(localSessionDescription.toString(),
-				remoteSessionDescription.toString());
+	public void modify(SessionDescription localSessionDescription, SessionDescription remoteSessionDescription)
+			throws SdpException, NetworkConnectionException, ResourceNotAvailableException {
+		String localDescr = localSessionDescription != null ? localSessionDescription.toString() : null;
+		String remoteDescr = remoteSessionDescription != null ? remoteSessionDescription.toString() : null;
+		this.modify(localDescr, remoteDescr);
 	}
 
-	public void modify(String localSessionDescription,
-			String remoteSessionDescription) throws SdpException,
+	public void modify(String localSessionDescription, String remoteSessionDescription) throws SdpException,
 			NetworkConnectionException, ResourceNotAvailableException {
 		if (localSessionDescription == null && remoteSessionDescription == null) {
-			// Do nothing and return
+			// Do nothing and return as per Spec
 			return;
 		}
 		this.remoteSessionDescription = remoteSessionDescription;
-		this.localSessionDescription = localSessionDescription;
 
 		// resetting the exceptions
 		this.networkConnectionException = null;
 		this.resourceNotAvailableException = null;
 
-		// This makes the call to look like synchronous
-		blockState.lock();
-		try {
-			Runnable tx = this.endpointIdentifier == null ? new CreateTx(this)
-					: new ModifyTx(this);
-			Provider.submit(tx);
-
-			try {
-				mgcpResponseReceived.await();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} finally {
-			blockState.unlock();
-		}
-
-		if (this.networkConnectionException != null) {
-			throw this.networkConnectionException;
-		} else if (this.resourceNotAvailableException != null) {
-			throw this.resourceNotAvailableException;
-		}
-		// TODO : When is SDPException to be thrown?
-	}
-
-	public JoinableStream getJoinableStream(StreamType value)
-			throws MscontrolException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public JoinableStream[] getJoinableStreams() throws MscontrolException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Joinable[] getJoinees() throws MscontrolException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Joinable[] getJoinees(Direction direction) throws MscontrolException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void join(Direction direction, Joinable other)
-			throws MscontrolException {
-		// TODO Auto-generated method stub
+		// Async call
+		Runnable tx = this.endpointIdentifier == null ? new CreateTx(this) : new ModifyTx(this);
+		Provider.submit(tx);
 
 	}
 
-	public void joinInitiate(Direction direction, Joinable other,
-			Serializable context) throws MscontrolException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void unjoin(Joinable other) throws MscontrolException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void unjoinInitiate(Joinable other, Serializable context)
-			throws MscontrolException {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addListener(StatusEventListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public MediaSession getMediaSession() {
-		return this.mediaSession;
-	}
-
-	public void removeListener(StatusEventListener listener) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void confirm() throws MscontrolException {
+	public void confirm() throws MsControlException {
 		// TODO Auto-generated method stub
 
 	}
@@ -213,7 +148,7 @@ public class NetworkConnectionImpl implements NetworkConnection,
 		return null;
 	}
 
-	public <R> R getResource(Class<R> resource) throws MscontrolException {
+	public <R> R getResource(Class<R> resource) throws MsControlException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -248,135 +183,19 @@ public class NetworkConnectionImpl implements NetworkConnection,
 
 	}
 
-	public void removeListener(
-			MediaEventListener<NetworkConnectionEvent> listener) {
+	public void removeListener(MediaEventListener<NetworkConnectionEvent> listener) {
 		this.mediaEventListenerList.remove(listener);
 	}
 
-	/***************************************************************************
-	 * JainMgcpExtendedListener method calls
-	 **************************************************************************/
-
-	public void processMgcpCommandEvent(
-			JainMgcpCommandEvent jainmgcpcommandevent) {
-
-	}
-
-	public void processMgcpResponseEvent(
-			JainMgcpResponseEvent jainmgcpresponseevent) {
-		if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
-			return;
-		}
-
-		// TODO : Depending on Response we get fire corresponding JSR 309 events
-		// here
-
-		switch (jainmgcpresponseevent.getObjectIdentifier()) {
-		case Constants.RESP_CREATE_CONNECTION:
-			processCreateConnectionResponse((CreateConnectionResponse) jainmgcpresponseevent);
-			break;
-		case Constants.RESP_MODIFY_CONNECTION:
-
-			break;
-		case Constants.RESP_DELETE_CONNECTION:
-
-			break;
-
-		case Constants.RESP_NOTIFICATION_REQUEST:
-
-			break;
-
-		default:
-			logger
-					.warn(" This RESPONSE is unexpected "
-							+ jainmgcpresponseevent);
-			break;
-
+	protected void update(NetworkConnectionEvent anEvent) {
+		for (MediaEventListener m : mediaEventListenerList) {
+			m.onEvent(anEvent);
 		}
 	}
 
-	private void processCreateConnectionResponse(
-			CreateConnectionResponse responseEvent) {
-		logger.debug(" processCreateConnectionResponse() ");
-		ReturnCode returnCode = responseEvent.getReturnCode();
-
-		endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
-
-		switch (returnCode.getValue()) {
-		case ReturnCode.TRANSACTION_BEING_EXECUTED:
-			// do nothing
-			if (logger.isDebugEnabled()) {
-				logger.debug("Transaction " + this.tx
-						+ "is being executed. Response received = "
-						+ responseEvent);
-			}
-			break;
-		case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-			if (logger.isDebugEnabled()) {
-				logger
-						.debug(" TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
-								+ this.connectionIdentifier
-								+ "endpointID = "
-								+ endpointIdentifier);
-			}
-
-			this.localSessionDescription = responseEvent
-					.getLocalConnectionDescriptor().toString();
-			this.connectionIdentifier = responseEvent.getConnectionIdentifier();
-			this.endpointIdentifier = responseEvent
-					.getSpecificEndpointIdentifier();
-			this.mgcpResponseReceived();
-			break;
-		case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
-			resourceNotAvailableException = new ResourceNotAvailableException(
-					responseEvent.getReturnCode().getComment());
-			this.mgcpResponseReceived();
-			break;
-		default:
-			logger.error(" SOMETHING IS BROKEN = " + responseEvent);
-			networkConnectionException = new NetworkConnectionException(
-					responseEvent.getReturnCode().getComment());
-			this.mgcpResponseReceived();
-			break;
-
-		}
-
-	}
-
-	public void transactionEnded(int arg0) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Successfully completed Tx = " + arg0);
-		}
-
-	}
-
-	public void transactionRxTimedOut(JainMgcpCommandEvent arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
-		logger.error("No response from MGW. Tx timed out for MGCP Tx "
-				+ this.tx + " For Command sent "
-				+ jainMgcpCommandEvent.toString());
-
-		networkConnectionException = new NetworkConnectionException(
-				"No response from MGW. Tx timed out for MGCP Tx " + this.tx);
-		this.mgcpResponseReceived();
-
-	}
-
-	public void mgcpResponseReceived() {
-		blockState.lock();
-		try {
-			this.mgcpResponseReceived.signalAll();
-		} finally {
-			blockState.unlock();
-		}
-	}
-
-	private class CreateTx implements Runnable {
+	private class CreateTx implements Runnable, JainMgcpExtendedListener {
 		private NetworkConnectionImpl networkConnectionImpl;
+		private int tx = -1;
 
 		public CreateTx(NetworkConnectionImpl networkConnectionImpl) {
 			this.networkConnectionImpl = networkConnectionImpl;
@@ -384,38 +203,127 @@ public class NetworkConnectionImpl implements NetworkConnection,
 
 		public void run() {
 			try {
-				jainMgcpListenerImpl
-						.addJainMgcpListenerImpl(this.networkConnectionImpl);
-
+				this.tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
+				jainMgcpStackProviderImpl.addJainMgcpListener(this);
 				CallIdentifier callId = mediaSession.getCallIdentifier();
-				tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
+				EndpointIdentifier endpointID = new EndpointIdentifier(PR_ENDPOINT_NAME,
+						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
 
-				EndpointIdentifier endpointID = new EndpointIdentifier(
-						PR_ENDPOINT_NAME,
-						MediaSessionFactoryImpl.mgcpStackPeerIp + ":"
-								+ MediaSessionFactoryImpl.mgcpStackPeerPort);
-
-				CreateConnection createConnection = new CreateConnection(this,
-						callId, endpointID, ConnectionMode.SendRecv);
+				CreateConnection createConnection = new CreateConnection(this, callId, endpointID,
+						ConnectionMode.SendRecv);
 				if (remoteSessionDescription != null) {
-					createConnection
-							.setRemoteConnectionDescriptor(new ConnectionDescriptor(
-									remoteSessionDescription));
+					createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(remoteSessionDescription));
 				}
 
 				createConnection.setTransactionHandle(tx);
-				jainMgcpStackProviderImpl
-						.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 			} catch (ConflictingParameterException e) {
+				e.printStackTrace();
+			} catch (TooManyListenersException e) {
 				e.printStackTrace();
 			}
 		}
 
+		public void transactionEnded(int arg0) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Successfully completed Tx = " + arg0);
+			}
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent arg0) {
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
+					+ jainMgcpCommandEvent.toString());
+			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
+			update(networkConnectionEvent);
+		}
+
+		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
+		}
+
+		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
+			if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
+				return;
+			}
+
+			// TODO : Depending on Response we get fire corresponding JSR 309
+			// events
+			// here
+
+			switch (jainmgcpresponseevent.getObjectIdentifier()) {
+			case Constants.RESP_CREATE_CONNECTION:
+				processCreateConnectionResponse((CreateConnectionResponse) jainmgcpresponseevent);
+				break;
+			default:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
+				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
+						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
+						"modify failed. Look at logs " + jainmgcpresponseevent.getReturnCode().getComment());
+				update(networkConnectionEvent);
+				break;
+
+			}
+		}
+
+		private void processCreateConnectionResponse(CreateConnectionResponse responseEvent) {
+			logger.debug(" processCreateConnectionResponse() ");
+			NetworkConnectionEvent networkConnectionEvent = null;
+			ReturnCode returnCode = responseEvent.getReturnCode();
+			endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
+
+			switch (returnCode.getValue()) {
+			case ReturnCode.TRANSACTION_BEING_EXECUTED:
+				// do nothing
+				if (logger.isDebugEnabled()) {
+					logger.debug("Transaction " + this.tx + "is being executed. Response received = " + responseEvent);
+				}
+				break;
+			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				connectionIdentifier = responseEvent.getConnectionIdentifier();
+				if (logger.isDebugEnabled()) {
+					logger.debug(" TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + connectionIdentifier
+							+ "endpointID = " + endpointIdentifier);
+				}
+				localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
+				endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
+				audioJoinableStream = new AudioJoinableStream(this.networkConnectionImpl, endpointIdentifier
+						.getLocalEndpointName(), jainMgcpStackProviderImpl);
+
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.ev_Modify);
+				update(networkConnectionEvent);
+
+				break;
+			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
+				update(networkConnectionEvent);
+				break;
+			default:
+				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
+				update(networkConnectionEvent);
+				break;
+
+			}
+
+		}
+
 	}
 
-	private class ModifyTx implements Runnable {
+	private class ModifyTx implements Runnable, JainMgcpExtendedListener {
 		private NetworkConnectionImpl networkConnectionImpl;
+		private int tx = -1;
 
 		public ModifyTx(NetworkConnectionImpl networkConnectionImpl) {
 			this.networkConnectionImpl = networkConnectionImpl;
@@ -423,7 +331,125 @@ public class NetworkConnectionImpl implements NetworkConnection,
 
 		public void run() {
 
+			try {
+				tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
+				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+
+				CallIdentifier callId = mediaSession.getCallIdentifier();
+				ModifyConnection modifyConnection = new ModifyConnection(this, callId, endpointIdentifier,
+						connectionIdentifier);
+
+				if (remoteSessionDescription != null) {
+					modifyConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(remoteSessionDescription));
+				}
+
+				modifyConnection.setTransactionHandle(tx);
+				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+			} catch (TooManyListenersException e) {
+				e.printStackTrace();
+			}
 		}
+
+		public void transactionEnded(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
+			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
+					+ jainMgcpCommandEvent.toString());
+			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
+			update(networkConnectionEvent);
+
+		}
+
+		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
+			if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
+				return;
+			}
+
+			// TODO : Depending on Response we get fire corresponding JSR 309
+			// events here
+
+			switch (jainmgcpresponseevent.getObjectIdentifier()) {
+
+			case Constants.RESP_MODIFY_CONNECTION:
+				processMofiyConnectionResponse((ModifyConnectionResponse) jainmgcpresponseevent);
+				break;
+			default:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
+				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
+						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
+						"modify failed. Look at logs ");
+				update(networkConnectionEvent);
+				break;
+
+			}
+		}
+
+		private void processMofiyConnectionResponse(ModifyConnectionResponse responseEvent) {
+			logger.debug(" processMofiyConnectionResponse() ");
+			NetworkConnectionEvent networkConnectionEvent = null;
+			ReturnCode returnCode = responseEvent.getReturnCode();
+
+			switch (returnCode.getValue()) {
+			case ReturnCode.TRANSACTION_BEING_EXECUTED:
+				// do nothing
+				if (logger.isDebugEnabled()) {
+					logger.debug("Transaction " + this.tx + "is being executed. Response received = " + responseEvent);
+				}
+				break;
+			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				if (logger.isDebugEnabled()) {
+					logger.debug(" MDCX TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
+							+ connectionIdentifier + "endpointID = " + endpointIdentifier);
+				}
+
+				if (responseEvent.getLocalConnectionDescriptor() != null) {
+					localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
+				}
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.ev_Modify);
+				update(networkConnectionEvent);
+
+				break;
+			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
+				update(networkConnectionEvent);
+
+				break;
+			default:
+				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
+				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
+						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
+				update(networkConnectionEvent);
+
+				break;
+
+			}
+
+		}
+	}
+
+	public Parameters createParameters() {
+		return null;
 	}
 
 }

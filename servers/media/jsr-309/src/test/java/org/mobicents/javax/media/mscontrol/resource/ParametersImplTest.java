@@ -1,11 +1,13 @@
 package org.mobicents.javax.media.mscontrol.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
 import javax.media.mscontrol.resource.Parameters;
-import javax.media.mscontrol.resource.ResourceConstants;
+import javax.media.mscontrol.resource.Resource;
 import javax.media.mscontrol.resource.Symbol;
 
 import org.junit.After;
@@ -13,7 +15,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ParametersImplTest {
 	Parameters parameters = null;
@@ -35,7 +36,7 @@ public class ParametersImplTest {
 	public void setUp() {
 		parameters = new ParametersImpl();
 		obj = new Object();
-		parameters.put(ResourceConstants.q_RTC, obj);
+		parameters.put(Resource.q_RTC, obj);
 	}
 
 	@After
@@ -46,19 +47,19 @@ public class ParametersImplTest {
 
 	@Test
 	public void testParameters() {
-		assertTrue(parameters.containsKey(ResourceConstants.q_RTC));
+		assertTrue(parameters.containsKey(Resource.q_RTC));
 		assertTrue(parameters.containsValue(obj));
 		
 		Set<java.util.Map.Entry<Symbol, Object>> set = parameters.entrySet();
 		assertNotNull(set);
 		assertEquals(1, set.size());
 		
-		Object objTemp = parameters.get(ResourceConstants.q_RTC);
+		Object objTemp = parameters.get(Resource.q_RTC);
 		assertEquals(obj, objTemp);
 		
 		assertEquals(false, parameters.isEmpty());
 		
-		assertNotNull(parameters.remove(ResourceConstants.q_RTC));
+		assertNotNull(parameters.remove(Resource.q_RTC));
 
 	}
 }

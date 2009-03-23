@@ -1,13 +1,15 @@
 package org.mobicents.jsr309.mgcp;
 
 import jain.protocol.ip.mgcp.CreateProviderException;
-import jain.protocol.ip.mgcp.JainMgcpProvider;
+import jain.protocol.ip.mgcp.DeleteProviderException;
+import jain.protocol.ip.mgcp.JainMgcpStack;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
@@ -17,6 +19,8 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  * 
  */
 public class MgcpStackFactory {
+
+	private static final Logger logger = Logger.getLogger(MgcpStackFactory.class);
 	private static MgcpStackFactory mgcpStackFactory;
 
 	/**
@@ -49,8 +53,7 @@ public class MgcpStackFactory {
 		if (properties != null) {
 			stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
 		}
-		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider
-				.get(stackName);
+		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider.get(stackName);
 
 		if (jainMgcpStackProviderImpl == null) {
 			String ip = "127.0.0.1";
@@ -67,24 +70,51 @@ public class MgcpStackFactory {
 
 				int port = Integer.parseInt(portString);
 
-				JainMgcpStackImpl stack = new JainMgcpStackImpl(inetAddress,
-						port);
-				jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl) stack
-						.createProvider();
+				JainMgcpStackImpl stack = new JainMgcpStackImpl(inetAddress, port);
+				jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl) stack.createProvider();
 				stringToMgcpProvider.put(stackName, jainMgcpStackProviderImpl);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Created new JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
+				}
+
 				return jainMgcpStackProviderImpl;
 			} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e);
 			} catch (CreateProviderException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e);
 			}
 		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
+			}
 			return jainMgcpStackProviderImpl;
 		}
 
 		return null;
 	}
 
+	public void clearMgcpStackProvider(Properties properties) {
+		String stackName = "DEFAULT";
+		if (properties != null) {
+			stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
+		}
+		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider.get(stackName);
+
+		if (jainMgcpStackProviderImpl == null) {
+			logger.warn("No JainMgcpStackProvider found for MGCP_STACK_NAME = " + stackName);
+		} else {
+			JainMgcpStack mgcpStack = jainMgcpStackProviderImpl.getJainMgcpStack();
+			try {
+				mgcpStack.deleteProvider(jainMgcpStackProviderImpl);
+				stringToMgcpProvider.remove(stackName);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Successfully deleted JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
+				}
+			} catch (DeleteProviderException e) {
+				logger.error(e);
+			}
+		}
+
+	}
 }
