@@ -21,7 +21,6 @@ public class MsControlFactoryImplTest extends TestCase {
 	}
 
 	public void tearDown() throws Exception {
-		System.out.println("Tear doen");
 		MgcpStackFactory mgcpStackFactory = MgcpStackFactory.getInstance();
 		mgcpStackFactory.clearMgcpStackProvider(null);
 

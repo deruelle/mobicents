@@ -6,6 +6,7 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
@@ -60,6 +61,7 @@ public class MGW implements JainMgcpExtendedListener {
 
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_CREATE_CONNECTION:
+			CreateConnection createConnection = (CreateConnection) jainmgcpcommandevent;
 
 			String identifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
@@ -70,8 +72,7 @@ public class MGW implements JainMgcpExtendedListener {
 			responseCRCX.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
 			try {
 				// FIXME: we asume there is wildcard - "any of"
-				CreateConnection cc = (CreateConnection) jainmgcpcommandevent;
-				EndpointIdentifier wildcard = cc.getEndpointIdentifier();
+				EndpointIdentifier wildcard = createConnection.getEndpointIdentifier();
 				EndpointIdentifier specific = new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$", "")
 						+ "test-1", wildcard.getDomainName());
 				responseCRCX.setSpecificEndpointIdentifier(specific);
@@ -84,6 +85,20 @@ public class MGW implements JainMgcpExtendedListener {
 
 			ConnectionDescriptor localConnectionDescriptor = new ConnectionDescriptor(LOCAL_SDP);
 			responseCRCX.setLocalConnectionDescriptor(localConnectionDescriptor);
+
+			EndpointIdentifier secondEndpointId = createConnection.getSecondEndpointIdentifier();
+			if (secondEndpointId != null) {
+				// We assume its wildcard - "any of"
+				EndpointIdentifier secondId = new EndpointIdentifier(secondEndpointId.getLocalEndpointName().replace(
+						"$", "")
+						+ "test-2", secondEndpointId.getDomainName());
+				responseCRCX.setSecondEndpointIdentifier(secondId);
+
+				String secondIdentifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
+				ConnectionIdentifier secondcondentifier = new ConnectionIdentifier(secondIdentifier);
+
+				responseCRCX.setSecondConnectionIdentifier(secondcondentifier);
+			}
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { responseCRCX });
 
 			responseSent = true;
@@ -98,6 +113,13 @@ public class MGW implements JainMgcpExtendedListener {
 
 			responseSent = true;
 
+			break;
+		case Constants.CMD_DELETE_CONNECTION:
+			DeleteConnectionResponse responseDLCX = new DeleteConnectionResponse(jainmgcpcommandevent.getSource(),
+					ReturnCode.Transaction_Executed_Normally);
+			responseDLCX.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { responseDLCX });
+			responseSent = true;
 			break;
 		default:
 			logger.warn("This REQUEST is unexpected " + jainmgcpcommandevent);

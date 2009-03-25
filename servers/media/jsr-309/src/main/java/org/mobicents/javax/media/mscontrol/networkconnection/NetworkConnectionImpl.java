@@ -49,8 +49,6 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	public static Logger logger = Logger.getLogger(NetworkConnectionImpl.class);
 
-	protected JainMgcpStackProviderImpl jainMgcpStackProviderImpl;
-
 	private EndpointIdentifier endpointIdentifier = null;
 	private ConnectionIdentifier connectionIdentifier = null;
 	private String remoteSessionDescription = null;
@@ -62,13 +60,10 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	private transient SdpFactory sdpFactory = SdpFactory.getInstance();
 
-	protected AudioJoinableStream audioJoinableStream = null;
-
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
 	public NetworkConnectionImpl(MediaSessionImpl mediaSession, JainMgcpStackProviderImpl jainMgcpStackProviderImpl) {
-		super(mediaSession);
-		this.jainMgcpStackProviderImpl = jainMgcpStackProviderImpl;
+		super(mediaSession, jainMgcpStackProviderImpl, 1, PR_ENDPOINT_NAME);
 	}
 
 	public SessionDescription getLocalSessionDescription() throws NetworkConnectionException {
@@ -206,8 +201,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				this.tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
 				jainMgcpStackProviderImpl.addJainMgcpListener(this);
 				CallIdentifier callId = mediaSession.getCallIdentifier();
-				EndpointIdentifier endpointID = new EndpointIdentifier(PR_ENDPOINT_NAME,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+				EndpointIdentifier endpointID = new EndpointIdentifier(endpoint, MsControlFactoryImpl.mgcpStackPeerIp
+						+ ":" + MsControlFactoryImpl.mgcpStackPeerPort);
 
 				CreateConnection createConnection = new CreateConnection(this, callId, endpointID,
 						ConnectionMode.SendRecv);
@@ -252,8 +247,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 			}
 
 			// TODO : Depending on Response we get fire corresponding JSR 309
-			// events
-			// here
+			// events here
 
 			switch (jainmgcpresponseevent.getObjectIdentifier()) {
 			case Constants.RESP_CREATE_CONNECTION:
@@ -275,7 +269,6 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 			logger.debug(" processCreateConnectionResponse() ");
 			NetworkConnectionEvent networkConnectionEvent = null;
 			ReturnCode returnCode = responseEvent.getReturnCode();
-			endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
 
 			switch (returnCode.getValue()) {
 			case ReturnCode.TRANSACTION_BEING_EXECUTED:
@@ -287,15 +280,18 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
 				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
 				connectionIdentifier = responseEvent.getConnectionIdentifier();
+				endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
+				endpoint = endpointIdentifier.getLocalEndpointName();
+
 				if (logger.isDebugEnabled()) {
 					logger.debug(" TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + connectionIdentifier
 							+ "endpointID = " + endpointIdentifier);
 				}
 				localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
-				endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
-				audioJoinableStream = new AudioJoinableStream(this.networkConnectionImpl, endpointIdentifier
-						.getLocalEndpointName(), jainMgcpStackProviderImpl);
 
+				if (audioJoinableStream == null) {
+					audioJoinableStream = new AudioJoinableStream(this.networkConnectionImpl);
+				}
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.ev_Modify);
 				update(networkConnectionEvent);

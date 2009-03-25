@@ -7,11 +7,14 @@ import javax.media.mscontrol.MsControlFactory;
 
 import junit.framework.TestCase;
 
+import org.apache.log4j.Logger;
 import org.mobicents.jsr309.mgcp.MgcpStackFactory;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
-public class MessageFlowHarness extends TestCase {
+public abstract class MessageFlowHarness extends TestCase {
+
+	protected Logger logger = null;
 
 	public MessageFlowHarness() {
 	}
@@ -37,6 +40,10 @@ public class MessageFlowHarness extends TestCase {
 	protected static final int MGW_PORT = 2427;
 
 	protected static final int CA_PORT = 2727;
+	
+	protected boolean testPassed = false;
+	
+	protected static final String TEST_SEPARATOR = "----------------";
 
 	protected InetAddress mgwIPAddress = null;
 
@@ -47,7 +54,9 @@ public class MessageFlowHarness extends TestCase {
 	protected Properties property = null;
 
 	protected void setUp() throws Exception {
+		logger.info(TEST_SEPARATOR + this.getName() + " Started" + TEST_SEPARATOR);		
 		super.setUp();
+		testPassed = false;
 		mgwIPAddress = InetAddress.getByName(LOCAL_ADDRESS);
 		mgwStack = new JainMgcpStackImpl(mgwIPAddress, MGW_PORT);
 		mgwProvider = (JainMgcpStackProviderImpl) mgwStack.createProvider();
@@ -68,20 +77,19 @@ public class MessageFlowHarness extends TestCase {
 
 	public void tearDown() throws java.lang.Exception {
 
-		System.out.println("CLOSE THE STACK");
+		logger.debug("CLOSE THE STACK");
 
 		if (mgwStack != null) {
 			mgwStack.close();
 			mgwStack = null;
 		}
 
-		
 		MgcpStackFactory mgcpStackFactory = MgcpStackFactory.getInstance();
 		mgcpStackFactory.clearMgcpStackProvider(property);
-		
-		
+
 		// Wait for stack threads to release resources (e.g. port)
 		sleep(STACKS_SHUT_DOWN_FOR);
+		logger.info(TEST_SEPARATOR + this.getName() + " Completed" + TEST_SEPARATOR);
 	}
 
 	protected static void waitForTimeout() {
