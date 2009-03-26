@@ -19,6 +19,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.channels.DatagramChannel;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -57,7 +58,7 @@ public class RtpSocketImpl implements RtpSocket {
     private boolean usePortMapping = true;
     //handler for receiver thread
     private ReceiveStream receiveStream;
-    private SendStreamImpl sendStream;
+    private SendStream sendStream;
 
     /**
      * Creates a new instance of RtpSocketImpl
@@ -73,7 +74,7 @@ public class RtpSocketImpl implements RtpSocket {
         this.jitter = jitter;
         rtpMapOriginal.putAll(rtpMap);
         this.rtpMap.putAll(rtpMap);        
-        sendStream = new SendStreamImpl(this);
+        sendStream = new SendStream(this);
         receiveStream = new ReceiveStream(endpoint.getReceiverThread(), this, period, jitter);
     }
 
@@ -86,7 +87,7 @@ public class RtpSocketImpl implements RtpSocket {
         this.jitter = jitter;
         rtpMapOriginal.putAll(rtpMap);
         this.rtpMap.putAll(rtpMap);   
-        sendStream = new SendStreamImpl(this);
+        sendStream = new SendStream(this);
         receiveStream = new ReceiveStream(endpoint.getReceiverThread(), this, period, jitter);
         
         this.stunServerAddress = stunServerAddress;
@@ -184,6 +185,7 @@ public class RtpSocketImpl implements RtpSocket {
      */
     public void setJitter(int jitter) {
         this.jitter = jitter;
+        DatagramChannel channel = socket.getChannel();
     }
     
     public MediaSource getReceiveStream() {

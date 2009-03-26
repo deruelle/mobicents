@@ -24,7 +24,7 @@ import org.mobicents.media.server.impl.AbstractSink;
  *
  * @author Oleg Kulikov
  */
-public class SendStreamImpl extends AbstractSink implements SendStream {
+public class SendStreamImpl extends AbstractSink {
 
     //payload type
     private int pt = 0;
