@@ -2,10 +2,17 @@ package javax.megaco.message.descriptor;
 
 import java.io.Serializable;
 
-
+import javax.megaco.CommandEvent;
 import javax.megaco.ParameterNotSetException;
+import javax.megaco.message.CommandReq;
+import javax.megaco.message.CommandResp;
 import javax.megaco.message.Descriptor;
 import javax.megaco.message.DescriptorType;
+import javax.megaco.pkg.PkgItemParam;
+import javax.megaco.pkg.GenericPkg.GenSigComplEvent;
+import javax.megaco.pkg.ToneGenPkg.ToneGenParamInd;
+import javax.megaco.pkg.ToneGenPkg.ToneGenParamTl;
+import javax.megaco.pkg.ToneGenPkg.ToneGenPlayToneSignal;
 
 /**
  * The class extends JAIN MEGACO Descriptor. This class describes the stream
@@ -49,8 +56,8 @@ public class StreamDescriptor extends Descriptor implements Serializable {
 	 * 
 	 * @return Returns the object reference of type stream parameter.
 	 */
-	public final MediaStreamParam getMediaStreamParam()  {
-	
+	public final MediaStreamParam getMediaStreamParam() {
+
 		return this.mediaStreamParam;
 	}
 
@@ -114,6 +121,9 @@ public class StreamDescriptor extends Descriptor implements Serializable {
 	 * @return
 	 */
 	public boolean isStreamIdPresent() {
+		
+		
+		
 		return this.streamId != null;
 	}
 
