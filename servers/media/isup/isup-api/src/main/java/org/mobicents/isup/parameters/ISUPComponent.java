@@ -1,0 +1,53 @@
+/**
+ * Start time:13:34:05 2009-03-29<br>
+ * Project: mobicents-jain-isup-stack<br>
+ * 
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ *         </a>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ */
+package org.mobicents.isup.parameters;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+/**
+ * Start time:13:34:05 2009-03-29<br>
+ * Project: mobicents-jain-isup-stack<br>
+ * This is super interface for all components that can be parsed/encoded by ISUP
+ * stack. It provides two essential methods that abtract decoding/encoding.
+ * 
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ *         </a>
+ */
+public interface ISUPComponent {
+
+	/**
+	 * Decodes this element from passed byte[] array. This array must contain
+	 * only element data. however in case of constructor elements it may contain
+	 * more information elements that consist of tag, length and contents
+	 * elements, this has to be handled accordingly in this method.
+	 * 
+	 * @param b
+	 * @return
+	 */
+	int decodeElement(byte[] b) throws IllegalArgumentException;
+
+	/**
+	 * Encodes elements as byte[]. It contains element id, length and body.
+	 * (tag, length and Contents. See B.4/Q.763 - page 119)
+	 * 
+	 * @return byte[] with encoded element.
+	 * @throws IOException 
+	 */
+	byte[] encodeElement() throws IOException;
+
+	/**
+	 * Encodes elements as byte[]. It contains element id, length and body.
+	 * (tag, length and Contents. See B.4/Q.763 - page 119)
+	 * 
+	 * @return number of bytes encoded
+	 * @throws IOException
+	 */
+	int encodeElement(ByteArrayOutputStream bos) throws IOException;
+}
