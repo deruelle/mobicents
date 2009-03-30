@@ -13,7 +13,7 @@ import javax.media.mscontrol.resource.video.VideoLayout;
 
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpStackFactory;
-import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 /**
  * 
@@ -22,30 +22,25 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  */
 public class MsControlFactoryImpl implements MsControlFactory {
 
-	public static String mgcpStackPeerIp = "127.0.0.1";
-	public static int mgcpStackPeerPort = 2427;
 
 	private Properties properties = null;
-	private JainMgcpStackProviderImpl jainMgcpStackProviderImpl = null;
-
+	private MgcpWrapper mgcpWrapper = null;
+	
 	public MsControlFactoryImpl(Properties properties) {
 		this.properties = properties;
 
 		MgcpStackFactory mgcpStackFactory = MgcpStackFactory.getInstance();
-		this.jainMgcpStackProviderImpl = mgcpStackFactory.getMgcpStackProvider(properties);
+		this.mgcpWrapper = mgcpStackFactory.getMgcpStackProvider(properties);
 
-		if (jainMgcpStackProviderImpl == null) {
+		if (mgcpWrapper == null) {
 			throw new RuntimeException("Could not create instance of MediaSessionFactory. Check the exception in logs");
 		}
 
-		if (properties != null) {
-			mgcpStackPeerIp = properties.getProperty(MgcpStackFactory.MGCP_PEER_IP, "127.0.0.1");
-			mgcpStackPeerPort = Integer.parseInt(properties.getProperty(MgcpStackFactory.MGCP_PEER_PORT, "2427"));
-		}
+
 	}
 
 	public MediaSession createMediaSession() {
-		return new MediaSessionImpl(this.jainMgcpStackProviderImpl);
+		return new MediaSessionImpl(this.mgcpWrapper);
 	}
 
 	public Parameters createParameters() {

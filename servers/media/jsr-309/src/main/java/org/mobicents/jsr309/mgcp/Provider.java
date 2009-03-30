@@ -8,20 +8,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class Provider {
 
-	private static transient ExecutorService pool = Executors
-	.newFixedThreadPool(10, new ThreadFactoryImpl());
-	
-	public Provider(){
-		
+	private static transient ExecutorService pool = Executors.newFixedThreadPool(10, new ThreadFactoryImpl());
+
+	public Provider() {
+
 	}
-	
-    public static void submit(Runnable task) {
-        pool.submit(task);
-    }
+
+	public static void submit(Runnable task) {
+		pool.submit(task);
+	}
 
 	static class ThreadFactoryImpl implements ThreadFactory {
 
@@ -32,15 +31,12 @@ public class Provider {
 
 		ThreadFactoryImpl() {
 			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread()
-					.getThreadGroup();
-			namePrefix = "MsProviderImpl-FixedThreadPool-"
-					+ msProviderPoolNumber.getAndIncrement() + "-thread-";
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = "MsProviderImpl-FixedThreadPool-" + msProviderPoolNumber.getAndIncrement() + "-thread-";
 		}
 
 		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix
-					+ threadNumber.getAndIncrement(), 0);
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
 			if (t.isDaemon()) {
 				t.setDaemon(false);
 			}

@@ -6,6 +6,8 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
+import jain.protocol.ip.mgcp.message.DeleteConnection;
+import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
 import jain.protocol.ip.mgcp.message.ModifyConnection;
 import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -17,9 +19,11 @@ import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.net.URI;
-import java.util.TooManyListenersException;
+import java.net.URISyntaxException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.media.mscontrol.JoinEvent;
+import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
@@ -39,16 +43,23 @@ import javax.sdp.SessionDescription;
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.AudioJoinableStream;
+import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
-import org.mobicents.javax.media.mscontrol.MsControlFactoryImpl;
+import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
+import org.mobicents.jsr309.mgcp.MgcpWrapper;
 import org.mobicents.jsr309.mgcp.Provider;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
-import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class NetworkConnectionImpl extends AbstractJoinableContainer implements NetworkConnection {
 
 	public static Logger logger = Logger.getLogger(NetworkConnectionImpl.class);
 
+	private URI uri = null;
 	private EndpointIdentifier endpointIdentifier = null;
 	private ConnectionIdentifier connectionIdentifier = null;
 	private String remoteSessionDescription = null;
@@ -62,8 +73,13 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public NetworkConnectionImpl(MediaSessionImpl mediaSession, JainMgcpStackProviderImpl jainMgcpStackProviderImpl) {
-		super(mediaSession, jainMgcpStackProviderImpl, 1, PR_ENDPOINT_NAME);
+	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) {
+		super(mediaSession, mgcpWrapper, 1, PR_ENDPOINT_NAME);
+		try {
+			this.uri = new URI(mediaSession.getURI().toString() + "/NetworkConnection." + this.id);
+		} catch (URISyntaxException e) {
+			// Ignore
+		}
 	}
 
 	public SessionDescription getLocalSessionDescription() throws NetworkConnectionException {
@@ -110,6 +126,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	public void modify(SessionDescription localSessionDescription, SessionDescription remoteSessionDescription)
 			throws SdpException, NetworkConnectionException, ResourceNotAvailableException {
+		checkState();
 		String localDescr = localSessionDescription != null ? localSessionDescription.toString() : null;
 		String remoteDescr = remoteSessionDescription != null ? remoteSessionDescription.toString() : null;
 		this.modify(localDescr, remoteDescr);
@@ -117,6 +134,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	public void modify(String localSessionDescription, String remoteSessionDescription) throws SdpException,
 			NetworkConnectionException, ResourceNotAvailableException {
+		checkState();
 		if (localSessionDescription == null && remoteSessionDescription == null) {
 			// Do nothing and return as per Spec
 			return;
@@ -159,13 +177,26 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public URI getURI() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.uri;
 	}
 
 	public void release() {
-		// TODO Auto-generated method stub
+		checkState();
 
+		if (this.endpointIdentifier != null) {
+			Runnable tx = new DeleteTx(this);
+			Provider.submit(tx);
+		}
+
+		try {
+			Joinable[] joinableArray = this.getJoinees();
+			for (Joinable joinable : joinableArray) {
+				this.unjoinInitiate(joinable, this);
+			}
+		} catch (MsControlException e) {
+			logger.error("release of NetworkConnection failed ", e);
+		}
+		this.state = MediaObjectState.RELEASED;
 	}
 
 	public void setParameters(Parameters params) {
@@ -198,11 +229,11 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 		public void run() {
 			try {
-				this.tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
-				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+				this.tx = mgcpWrapper.getUniqueTransactionHandler();
+				mgcpWrapper.addListnere(this.tx, this);
 				CallIdentifier callId = mediaSession.getCallIdentifier();
-				EndpointIdentifier endpointID = new EndpointIdentifier(endpoint, MsControlFactoryImpl.mgcpStackPeerIp
-						+ ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+				EndpointIdentifier endpointID = new EndpointIdentifier(endpoint, mgcpWrapper.getPeerIp() + ":"
+						+ mgcpWrapper.getPeerPort());
 
 				CreateConnection createConnection = new CreateConnection(this, callId, endpointID,
 						ConnectionMode.SendRecv);
@@ -211,11 +242,9 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 
 				createConnection.setTransactionHandle(tx);
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 			} catch (ConflictingParameterException e) {
-				e.printStackTrace();
-			} catch (TooManyListenersException e) {
 				e.printStackTrace();
 			}
 		}
@@ -232,7 +261,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
 			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
 					+ jainMgcpCommandEvent.toString());
-			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
 			update(networkConnectionEvent);
@@ -242,9 +271,6 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
-			if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
-				return;
-			}
 
 			// TODO : Depending on Response we get fire corresponding JSR 309
 			// events here
@@ -254,7 +280,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				processCreateConnectionResponse((CreateConnectionResponse) jainmgcpresponseevent);
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
 						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
@@ -278,14 +304,14 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 				break;
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				connectionIdentifier = responseEvent.getConnectionIdentifier();
 				endpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
 				endpoint = endpointIdentifier.getLocalEndpointName();
 
 				if (logger.isDebugEnabled()) {
 					logger.debug(" TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + connectionIdentifier
-							+ "endpointID = " + endpointIdentifier);
+							+ " endpointID = " + endpointIdentifier);
 				}
 				localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
 
@@ -298,14 +324,14 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 				break;
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
 				update(networkConnectionEvent);
 				break;
 			default:
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
 				update(networkConnectionEvent);
@@ -328,8 +354,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		public void run() {
 
 			try {
-				tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
-				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+				this.tx = mgcpWrapper.getUniqueTransactionHandler();
+				mgcpWrapper.addListnere(this.tx, this);
 
 				CallIdentifier callId = mediaSession.getCallIdentifier();
 				ModifyConnection modifyConnection = new ModifyConnection(this, callId, endpointIdentifier,
@@ -340,8 +366,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 
 				modifyConnection.setTransactionHandle(tx);
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
-			} catch (TooManyListenersException e) {
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -359,7 +385,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
 			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
 					+ jainMgcpCommandEvent.toString());
-			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
 			update(networkConnectionEvent);
@@ -372,9 +398,6 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
-			if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
-				return;
-			}
 
 			// TODO : Depending on Response we get fire corresponding JSR 309
 			// events here
@@ -385,7 +408,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				processMofiyConnectionResponse((ModifyConnectionResponse) jainmgcpresponseevent);
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
 						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
@@ -409,7 +432,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 				break;
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (logger.isDebugEnabled()) {
 					logger.debug(" MDCX TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = "
 							+ connectionIdentifier + "endpointID = " + endpointIdentifier);
@@ -424,14 +447,14 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 				break;
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
 				update(networkConnectionEvent);
 
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
@@ -444,8 +467,133 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 	}
 
+	private class DeleteTx implements Runnable, JainMgcpExtendedListener {
+
+		private NetworkConnectionImpl networkConnectionImpl;
+		private int tx = -1;
+
+		public DeleteTx(NetworkConnectionImpl networkConnectionImpl) {
+			this.networkConnectionImpl = networkConnectionImpl;
+		}
+
+		public void run() {
+			try {
+				this.tx = mgcpWrapper.getUniqueTransactionHandler();
+				// TODO : Do we need to fire event for DLCX?
+				mgcpWrapper.addListnere(this.tx, this);
+
+				CallIdentifier callId = mediaSession.getCallIdentifier();
+				DeleteConnection deleteConnection = new DeleteConnection(this, callId, endpointIdentifier,
+						connectionIdentifier);
+
+				deleteConnection.setTransactionHandle(tx);
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { deleteConnection });
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
+
+		public void transactionEnded(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
+			if (response.getTransactionHandle() != this.tx) {
+				return;
+			}
+
+			switch (response.getObjectIdentifier()) {
+
+			case Constants.RESP_DELETE_CONNECTION:
+				processDeleteConnectionResponse((DeleteConnectionResponse) response);
+				break;
+			default:
+				mgcpWrapper.removeListener(response.getTransactionHandle());
+				logger.warn(" DLCX of Netwrok connction failed RESPONSE is unexpected " + response);
+				// NetworkConnectionEvent networkConnectionEvent = new
+				// NetworkConnectionEventImpl(
+				// this.networkConnectionImpl,
+				// NetworkConnection.e_ResourceNotAvailable, Error.e_System,
+				// "Delete failed. Look at logs ");
+				// update(networkConnectionEvent);
+				break;
+
+			}
+		}
+
+		private void processDeleteConnectionResponse(DeleteConnectionResponse responseEvent) {
+			ReturnCode returnCode = responseEvent.getReturnCode();
+			JoinEvent joinEvent = null;
+			switch (returnCode.getValue()) {
+			case ReturnCode.TRANSACTION_BEING_EXECUTED:
+				// do nothing
+				if (logger.isDebugEnabled()) {
+					logger.debug("Transaction " + responseEvent.getTransactionHandle()
+							+ "is being executed. Response received = " + responseEvent);
+				}
+				break;
+			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				if (logger.isDebugEnabled()) {
+					logger.debug("DLCX executed successfully for Tx = " + responseEvent.getTransactionHandle());
+				}
+				break;
+			default:
+				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
+				break;
+			}
+
+		}
+
+	}
+
 	public Parameters createParameters() {
-		return null;
+		return new ParametersImpl();
+	}
+
+	@Override
+	protected void resetContainer() {
+		// App didn't call NC.modify() yet. We can still reuse this NC object
+		if (this.endpointIdentifier == null) {
+			this.audioJoinableStream = null;
+			this.endpoint = PR_ENDPOINT_NAME;
+		}
+	}
+
+	protected void checkState() {
+		if (this.state.equals(MediaObjectState.RELEASED)) {
+			throw new IllegalStateException("State of container " + this.getURI() + " is released");
+		}
+	}
+
+	@Override
+	protected void joined(ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId) {
+		// TODO Do we want to preserve the connectionId of 2nd Connection of PR?
+	}
+
+	@Override
+	protected void unjoined(ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId) {
+		// TODO any further cleaning action?
+	}
+
+	@Override
+	protected MediaObjectState getState() {
+		return this.state;
 	}
 
 }

@@ -8,6 +8,11 @@ import java.util.Set;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.Symbol;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class ParametersImpl implements Parameters {
 	
 	Map<Symbol, Object> parameters;

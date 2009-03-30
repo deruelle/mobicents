@@ -182,9 +182,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 					logger.error("Join failed " + event);
 					fail("Join of NC1 and NC2 failed");
 				}
-
 			}
-
 		};
 
 		myNetworkConnection1.addListener(statusEvtList);
@@ -192,6 +190,28 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 		waitForMessage();
 
+		/*
+		 * Test for COntainers
+		 */
+		// Get other container
+		Joinable[] otherContainer = myNetworkConnection1.getJoinees();
+		assertEquals(1, otherContainer.length);
+
+		// NC1 ---> Send ---> NC2
+		otherContainer = myNetworkConnection1.getJoinees(Direction.SEND);
+		assertEquals(1, otherContainer.length);
+
+		// NC2 is joined to NC1 Container with direction RECV and NC2 joinees is
+		// equal to NC1
+		assertEquals(myNetworkConnection1, (otherContainer[0].getJoinees(Direction.RECV))[0]);
+
+		// Direction.RECV should fetch no Container
+		otherContainer = myNetworkConnection1.getJoinees(Direction.RECV);
+		assertEquals(0, otherContainer.length);
+
+		/*
+		 * Test for Audio Stream
+		 */
 		// Joinable Stream is of type Audio only
 		JoinableStream stream = myNetworkConnection1.getJoinableStream(StreamType.audio);
 		assertNotNull(stream);
@@ -255,7 +275,6 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 							e.printStackTrace();
 							fail("Unjoin failed");
 						}
-
 					} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
 						logger.info("testNetworkConnectionUnJoin - Un-Join successful " + event);
 
@@ -288,7 +307,6 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 					logger.error("testNetworkConnectionUnJoin - Join failed " + event);
 					fail("Join of NC1 and NC2 failed");
 				}
-
 			}
 		};
 
@@ -395,6 +413,126 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 		waitForMessage();
 		waitForMessage();
 		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	public void testNetworkConnectionRelease() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+		final ContextImpl impl = new ContextImpl();
+
+		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"
+				+ "a=rtpmap:0 PCMU/8000\n";
+
+		MediaEventListener<NetworkConnectionEvent> NC1Listener = new MediaEventListener<NetworkConnectionEvent>() {
+
+			public void onEvent(NetworkConnectionEvent anEvent) {
+
+				if (NetworkConnection.ev_Modify.equals(anEvent.getEventID())) {
+					logger.info("MDCX Modify successful " + anEvent);
+
+					try {
+						assertNotNull(anEvent.getSource().getRawLocalSessionDescription());
+					} catch (NetworkConnectionException e) {
+						e.printStackTrace();
+						fail();
+					}
+
+					try {
+						assertNotNull(anEvent.getSource().getLocalSessionDescription());
+					} catch (NetworkConnectionException e1) {
+						e1.printStackTrace();
+						fail();
+					}
+
+					try {
+						assertNotNull(anEvent.getSource().getRawRemoteSessionDescription());
+					} catch (NetworkConnectionException e) {
+						e.printStackTrace();
+						fail();
+					}
+
+					try {
+						assertNotNull(anEvent.getSource().getRemoteSessionDescription());
+					} catch (NetworkConnectionException e) {
+						e.printStackTrace();
+						fail();
+					}
+
+					StatusEventListener statusEvtList = new StatusEventListener() {
+
+						JoinableStream joinStream1 = null;
+						JoinableStream joinStream2 = null;
+
+						public void onEvent(StatusEvent event) {
+
+							if (event.getError().equals(Error.e_OK)) {
+								if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+									logger.info("Join successful " + event);
+									try {
+										joinStream1 = NC1.getJoinableStreams()[0];
+										joinStream2 = NC2.getJoinableStreams()[0];
+										NC1.release();
+									} catch (MsControlException e) {
+										logger.equals(e);
+										fail();
+									}
+
+								} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
+									logger.info("UnJoin successful " + event);
+
+									try {
+										NC1.modify(null, REMOTE_SDP);
+										fail("IllegalStateException not raised");
+									} catch (IllegalStateException e) {
+										logger.debug("Expected Exception " + e.getMessage());
+										try {
+											joinStream1.joinInitiate(Direction.DUPLEX, joinStream2, impl);
+											fail("IllegalStateException not raised");
+										} catch (IllegalStateException e1) {
+											logger.debug("Expected Exception " + e.getMessage());
+											testPassed = true;
+										} catch (Exception e2) {
+											fail("This exception is not expected");
+											logger.error(e2);
+										}
+
+									} catch (Exception e) {
+										fail("This exception is not expected");
+										logger.error(e);
+									}
+								}
+							} else {
+								logger.error("Join failed " + event);
+								fail("Join of NC1 and NC2 failed");
+							}
+						}
+					};
+					NC1.addListener(statusEvtList);
+
+					try {
+						NC1.joinInitiate(Direction.DUPLEX, NC2, impl);
+					} catch (MsControlException e) {
+						logger.error(e);
+						fail("join failed");
+					}
+
+				} else {
+					logger.error("Modify failed" + anEvent);
+					fail("Modify failed");
+				}
+			}
+		};
+
+		// register listener
+		NC1.addListener(NC1Listener);
+		// modify media connection to get the answer.
+		NC1.modify("$", REMOTE_SDP);
+
+		waitForMessage();
+		waitForMessage();
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+
 	}
 
 	private class ContextImpl implements Serializable {

@@ -7,6 +7,7 @@ import jain.protocol.ip.mgcp.JainMgcpStack;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Properties;
+import java.util.TooManyListenersException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
@@ -29,7 +30,7 @@ public class MgcpStackFactory {
 	 * Hence in case if one goes down or mis behaves not all applications have
 	 * to pay penalty
 	 */
-	private ConcurrentHashMap<String, JainMgcpStackProviderImpl> stringToMgcpProvider = new ConcurrentHashMap<String, JainMgcpStackProviderImpl>();
+	private ConcurrentHashMap<String, MgcpWrapper> stringToMgcpWrapper = new ConcurrentHashMap<String, MgcpWrapper>();
 
 	public static final String MGCP_STACK_NAME = "mgcp.stack.name";
 	public static final String MGCP_STACK_IP = "mgcp.stack.ip";
@@ -48,20 +49,25 @@ public class MgcpStackFactory {
 		return mgcpStackFactory;
 	}
 
-	public JainMgcpStackProviderImpl getMgcpStackProvider(Properties properties) {
+	public MgcpWrapper getMgcpStackProvider(Properties properties) {
 		String stackName = "DEFAULT";
 		if (properties != null) {
 			stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
 		}
-		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider.get(stackName);
+		MgcpWrapper mgcpWrapper = stringToMgcpWrapper.get(stackName);
 
-		if (jainMgcpStackProviderImpl == null) {
+		if (mgcpWrapper == null) {
 			String ip = "127.0.0.1";
 			String portString = "2727";
+			String mgcpStackPeerIp = "127.0.0.1";
+			int mgcpStackPeerPort = 2427;
 
 			if (properties != null) {
 				ip = properties.getProperty(MGCP_STACK_IP, "127.0.0.1");
 				portString = properties.getProperty(MGCP_STACK_PORT, "2727");
+
+				mgcpStackPeerIp = properties.getProperty(MgcpStackFactory.MGCP_PEER_IP, "127.0.0.1");
+				mgcpStackPeerPort = Integer.parseInt(properties.getProperty(MgcpStackFactory.MGCP_PEER_PORT, "2427"));
 			}
 
 			InetAddress inetAddress;
@@ -71,24 +77,34 @@ public class MgcpStackFactory {
 				int port = Integer.parseInt(portString);
 
 				JainMgcpStackImpl stack = new JainMgcpStackImpl(inetAddress, port);
-				jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl) stack.createProvider();
-				stringToMgcpProvider.put(stackName, jainMgcpStackProviderImpl);
+				JainMgcpStackProviderImpl jainMgcpStackProviderImpl = (JainMgcpStackProviderImpl) stack
+						.createProvider();
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Created new JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
+				if (properties != null) {
+
 				}
 
-				return jainMgcpStackProviderImpl;
+				mgcpWrapper = new MgcpWrapper(jainMgcpStackProviderImpl, mgcpStackPeerPort, mgcpStackPeerIp);
+				jainMgcpStackProviderImpl.addJainMgcpListener(mgcpWrapper);
+				stringToMgcpWrapper.put(stackName, mgcpWrapper);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Created new MgcpWrapper for MGCP_STACK_NAME = " + stackName);
+				}
+
+				return mgcpWrapper;
 			} catch (UnknownHostException e) {
 				logger.error(e);
 			} catch (CreateProviderException e) {
+				logger.error(e);
+			} catch (TooManyListenersException e) {
 				logger.error(e);
 			}
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Found JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
 			}
-			return jainMgcpStackProviderImpl;
+			return mgcpWrapper;
 		}
 
 		return null;
@@ -99,15 +115,17 @@ public class MgcpStackFactory {
 		if (properties != null) {
 			stackName = properties.getProperty(MGCP_STACK_NAME, "DEFAULT");
 		}
-		JainMgcpStackProviderImpl jainMgcpStackProviderImpl = stringToMgcpProvider.get(stackName);
+		MgcpWrapper mgcpWrapper = this.stringToMgcpWrapper.get(stackName);
 
-		if (jainMgcpStackProviderImpl == null) {
+		if (mgcpWrapper == null) {
 			logger.warn("No JainMgcpStackProvider found for MGCP_STACK_NAME = " + stackName);
 		} else {
-			JainMgcpStack mgcpStack = jainMgcpStackProviderImpl.getJainMgcpStack();
+			JainMgcpStackProviderImpl stackProvider = mgcpWrapper.getJainMgcpStackProvider();
+			stackProvider.removeJainMgcpListener(mgcpWrapper);
+			JainMgcpStack mgcpStack = stackProvider.getJainMgcpStack();
 			try {
-				mgcpStack.deleteProvider(jainMgcpStackProviderImpl);
-				stringToMgcpProvider.remove(stackName);
+				mgcpStack.deleteProvider(mgcpWrapper.getJainMgcpStackProvider());
+				this.stringToMgcpWrapper.remove(stackName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Successfully deleted JainMgcpStackProvider for MGCP_STACK_NAME = " + stackName);
 				}

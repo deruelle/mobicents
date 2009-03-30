@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.rmi.server.UID;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TooManyListenersException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.media.mscontrol.JoinEvent;
@@ -29,15 +28,14 @@ import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.JoinableContainer;
 import javax.media.mscontrol.JoinableStream;
 import javax.media.mscontrol.MsControlException;
-import javax.media.mscontrol.StatusEvent;
-import javax.media.mscontrol.StatusEventListener;
+import javax.media.mscontrol.TooManyJoineesException;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.ResourceContainer;
 
 import org.apache.log4j.Logger;
+import org.mobicents.jsr309.mgcp.MgcpWrapper;
 import org.mobicents.jsr309.mgcp.Provider;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
-import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 public class AudioJoinableStream implements JoinableStream {
 
@@ -56,16 +54,16 @@ public class AudioJoinableStream implements JoinableStream {
 	 * AudioJoinableStream(value) i.e., this stream is connected with
 	 * connectionid with other stream
 	 */
-	protected ConcurrentHashMap<ConnectionIdentifier, AudioJoinableStream> connIdVsAudJoinStrMap = new ConcurrentHashMap<ConnectionIdentifier, AudioJoinableStream>();
+	protected ConcurrentHashMap<AudioJoinableStream, ConnectionIdentifier> audJoinStrVsConnIdMap = new ConcurrentHashMap<AudioJoinableStream, ConnectionIdentifier>();
 
 	protected int maxJoinees = 1;
-	private JainMgcpStackProviderImpl jainMgcpStackProviderImpl = null;
+	private MgcpWrapper mgcpWrapper = null;
 	private MediaSessionImpl mediaSession = null;
 
 	public AudioJoinableStream(AbstractJoinableContainer container) {
 		this.container = container;
 		this.mediaSession = (MediaSessionImpl) container.getMediaSession();
-		this.jainMgcpStackProviderImpl = container.jainMgcpStackProviderImpl;
+		this.mgcpWrapper = container.mgcpWrapper;
 		this.maxJoinees = container.maxJoinees;
 	}
 
@@ -82,7 +80,15 @@ public class AudioJoinableStream implements JoinableStream {
 		return StreamType.audio;
 	}
 
+	protected ConnectionIdentifier getConnectionIdentifier(AudioJoinableStream audioJoiStreamOther) {
+		ConnectionIdentifier connId = null;
+		connId = audJoinStrVsConnIdMap.get(audioJoiStreamOther);
+		return connId;
+	}
+
 	public Joinable[] getJoinees() throws MsControlException {
+		this.container.checkState();
+
 		Joinable[] j = new Joinable[audJoinStrVsDirMap.size()];
 		int count = 0;
 		for (AudioJoinableStream a : audJoinStrVsDirMap.keySet()) {
@@ -93,6 +99,7 @@ public class AudioJoinableStream implements JoinableStream {
 	}
 
 	public Joinable[] getJoinees(Direction direction) throws MsControlException {
+		this.container.checkState();
 		List<AudioJoinableStream> audioJoiStreList = new ArrayList<AudioJoinableStream>();
 		for (AudioJoinableStream key : audJoinStrVsDirMap.keySet()) {
 			Direction d = audJoinStrVsDirMap.get(key);
@@ -117,27 +124,24 @@ public class AudioJoinableStream implements JoinableStream {
 
 	public void joinInitiate(Direction direction, Joinable other, Serializable context) throws MsControlException {
 
+		this.container.checkState();
+
+		AudioJoinableStream audioJoiStreamOther = (AudioJoinableStream) other;
+
+		audioJoiStreamOther.container.checkState();
+
 		if (other.equals(this)) {
 			throw new MsControlException("Stream cannot join to itself");
 		}
-		
-		AudioJoinableStream audioJoiStreamOther = (AudioJoinableStream) other;
 
 		Direction thisDir = audJoinStrVsDirMap.get(audioJoiStreamOther);
 		Runnable tx = null;
 		if (thisDir != null) {
 			// This is existing join. May be change the direction
 			if (!thisDir.equals(direction)) {
-				ConnectionIdentifier thisConnId = null;
-				for (ConnectionIdentifier cId : connIdVsAudJoinStrMap.keySet()) {
-					AudioJoinableStream a = connIdVsAudJoinStrMap.get(cId);
-					if (a.equals(audioJoiStreamOther)) {
-						thisConnId = cId;
-						break;
-					}
-				}
-
-				tx = new ModifyTx(this, thisConnId, direction, audioJoiStreamOther);
+				ConnectionIdentifier thisConnId = getConnectionIdentifier(audioJoiStreamOther);
+				ConnectionIdentifier otherConnId = audioJoiStreamOther.getConnectionIdentifier(this);
+				tx = new ModifyTx(this, thisConnId, direction, audioJoiStreamOther, otherConnId);
 			} else {
 				// TODO Join already exist and user calls join again with same
 				// Direction, is this error condition or just ignore?
@@ -148,12 +152,12 @@ public class AudioJoinableStream implements JoinableStream {
 		} else {
 			// This is new Join
 			if (audJoinStrVsDirMap.size() == this.maxJoinees) {
-				throw new MsControlException("Already joined " + this.maxJoinees
+				throw new TooManyJoineesException("Already joined " + this.maxJoinees
 						+ " times. Unjoin first and then call join");
 			}
 
 			if (audioJoiStreamOther.audJoinStrVsDirMap.size() == audioJoiStreamOther.maxJoinees) {
-				throw new MsControlException("Other already joined " + audioJoiStreamOther.maxJoinees
+				throw new TooManyJoineesException("Other already joined " + audioJoiStreamOther.maxJoinees
 						+ " times. Unjoin first and then call join");
 			}
 
@@ -167,30 +171,24 @@ public class AudioJoinableStream implements JoinableStream {
 	}
 
 	public void unjoinInitiate(Joinable other, Serializable context) throws MsControlException {
+		this.container.checkState();
 
 		AudioJoinableStream audioJoiStreamOther = (AudioJoinableStream) other;
 
-		ConnectionIdentifier thisConnId = null;
-		ConnectionIdentifier otherConnId = null;
+		audioJoiStreamOther.container.checkState();
 
-		for (ConnectionIdentifier cId : connIdVsAudJoinStrMap.keySet()) {
-			AudioJoinableStream a = connIdVsAudJoinStrMap.get(cId);
-			if (a.equals(audioJoiStreamOther)) {
-				thisConnId = cId;
-				break;
-			}
-		}
+		ConnectionIdentifier thisConnId = getConnectionIdentifier(audioJoiStreamOther);
 
-		for (ConnectionIdentifier cId : audioJoiStreamOther.connIdVsAudJoinStrMap.keySet()) {
-			AudioJoinableStream a = audioJoiStreamOther.connIdVsAudJoinStrMap.get(cId);
-			if (a.equals(this)) {
-				otherConnId = cId;
-				break;
-			}
-		}
-
-		if (thisConnId == null || otherConnId == null) {
+		if (thisConnId == null) {
 			throw new MsControlException("This stream is not connected to other stream");
+		}
+
+		ConnectionIdentifier otherConnId = audioJoiStreamOther.getConnectionIdentifier(this);
+
+		// This should never happen. If This is connected to Other, Other has to
+		// be connected to This, else its an error/leak state
+		if (otherConnId == null) {
+			throw new MsControlException("Other stream is not connected to this stream. This is Error/Leak condition");
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -199,16 +197,6 @@ public class AudioJoinableStream implements JoinableStream {
 		Runnable tx = new UnJoinTx(this, thisConnId, audioJoiStreamOther, otherConnId);
 		Provider.submit(tx);
 
-	}
-
-	protected void update(StatusEvent anEvent) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Size of listener = " + this.container.getStatusEventListenerList().size());
-		}
-		for (StatusEventListener s : this.container.getStatusEventListenerList()) {
-			logger.debug("listener instance = " + s);
-			s.onEvent(anEvent);
-		}
 	}
 
 	private ConnectionMode getConnectionMode(Direction direction) {
@@ -254,44 +242,38 @@ public class AudioJoinableStream implements JoinableStream {
 			// try{}catch(){} blocks
 
 			CallIdentifier callId = mediaSession.getCallIdentifier();
-			this.thisTx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
-			this.otherTx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
+			this.thisTx = mgcpWrapper.getUniqueTransactionHandler();
+			this.otherTx = mgcpWrapper.getUniqueTransactionHandler();
 			try {
-				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+				mgcpWrapper.addListnere(this.thisTx, this);
+
 				EndpointIdentifier thisEndID = new EndpointIdentifier(this.thisAudJoiStr.container.endpoint,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+						mgcpWrapper.getPeerIp() + ":" + mgcpWrapper.getPeerPort());
 
 				DeleteConnection thisDLCX = new DeleteConnection(this, callId, thisEndID, this.thisConnId);
 				thisDLCX.setTransactionHandle(this.thisTx);
 
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { thisDLCX });
-
-			} catch (TooManyListenersException e) {
-				logger.error("TooManyListenersException ", e);
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
-
-				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, e.getMessage());
-				update(joinEvent);
-				return;
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { thisDLCX });
 
 			} catch (Exception e) {
 				logger.error("Exception ", e);
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(this.thisTx);
 
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, e.getMessage());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+						true);
 				return;
 			}
 
 			try {
+				mgcpWrapper.addListnere(this.otherTx, this);
 				EndpointIdentifier otherEndID = new EndpointIdentifier(this.otherAudJoiStr.container.endpoint,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+						mgcpWrapper.getPeerIp() + ":" + mgcpWrapper.getPeerPort());
 				DeleteConnection otherDLCX = new DeleteConnection(this, callId, otherEndID, this.otherConnId);
 				otherDLCX.setTransactionHandle(this.otherTx);
 
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { otherDLCX });
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { otherDLCX });
 			} catch (Exception e) {
 				logger.error("Exception ", e);
 				this.errorTxt += " - " + e.getMessage();
@@ -316,11 +298,12 @@ public class AudioJoinableStream implements JoinableStream {
 					+ jainMgcpComdEve.toString();
 			logger.error(this.errorTxt);
 			noOfRespReceived++;
+			mgcpWrapper.removeListener(jainMgcpComdEve.getTransactionHandle());
 			if (noOfRespReceived == 2) {
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_Timeout, this.errorTxt);
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+						true);
 			}
 
 		}
@@ -330,13 +313,6 @@ public class AudioJoinableStream implements JoinableStream {
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent respoEve) {
 			int respoTx = respoEve.getTransactionHandle();
-			if (respoTx != this.thisTx && respoTx != this.otherTx) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Received response for Tx = " + respoTx + " Exepected either " + this.thisTx + " or "
-							+ this.otherTx);
-				}
-				return;
-			}
 			noOfRespReceived++;
 			switch (respoEve.getObjectIdentifier()) {
 			case Constants.RESP_DELETE_CONNECTION:
@@ -346,12 +322,13 @@ public class AudioJoinableStream implements JoinableStream {
 				logger.warn(" This RESPONSE is unexpected " + respoEve);
 				this.errorTxt += " Unexpected response";
 				this.error = true;
+				mgcpWrapper.removeListener(respoTx);
 				if (noOfRespReceived == 2) {
-					jainMgcpStackProviderImpl.removeJainMgcpListener(this);
 
 					JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 							this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, this.errorTxt);
-					update(joinEvent);
+					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
+							this.otherAudJoiStr.container, true);
 				}
 				break;
 
@@ -373,23 +350,26 @@ public class AudioJoinableStream implements JoinableStream {
 				if (logger.isDebugEnabled()) {
 					logger.debug("DLCX executed successfully for Tx = " + responseEvent.getTransactionHandle());
 				}
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (noOfRespReceived == 2) {
-					jainMgcpStackProviderImpl.removeJainMgcpListener(this);
 					if (!this.error) {
-						this.thisAudJoiStr.connIdVsAudJoinStrMap.remove(this.thisConnId);
-						this.otherAudJoiStr.connIdVsAudJoinStrMap.remove(this.otherConnId);
+						this.thisAudJoiStr.audJoinStrVsConnIdMap.remove(this.otherAudJoiStr);
+						this.otherAudJoiStr.audJoinStrVsConnIdMap.remove(this.thisAudJoiStr);
 
 						this.thisAudJoiStr.audJoinStrVsDirMap.remove(this.otherAudJoiStr);
 						this.otherAudJoiStr.audJoinStrVsDirMap.remove(this.thisAudJoiStr);
 
 						joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 								this.thisAudJoiStr, JoinEvent.ev_Unjoined);
+						container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
+								this.otherAudJoiStr.container, false);
 					} else {
 						joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 								this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, this.errorTxt);
+						container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
+								this.otherAudJoiStr.container, true);
 
 					}
-					update(joinEvent);
 				}
 
 				break;
@@ -397,11 +377,12 @@ public class AudioJoinableStream implements JoinableStream {
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				this.error = true;
 				this.errorTxt += " - " + responseEvent.getReturnCode().getComment();
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (noOfRespReceived == 2) {
-					jainMgcpStackProviderImpl.removeJainMgcpListener(this);
 					joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 							this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, this.errorTxt);
-					update(joinEvent);
+					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
+							this.otherAudJoiStr.container, true);
 				}
 				break;
 
@@ -415,32 +396,32 @@ public class AudioJoinableStream implements JoinableStream {
 		private ConnectionIdentifier thisConnId = null;
 		private Direction thisDir = null;
 		private AudioJoinableStream otherAudJoiStr = null;
+		private ConnectionIdentifier otherConnId = null;
 		private int tx = -1;
 
 		ModifyTx(AudioJoinableStream thisAudJoiStr, ConnectionIdentifier thisConnId, Direction thisDir,
-				AudioJoinableStream otherAudJoiStr) {
+				AudioJoinableStream otherAudJoiStr, ConnectionIdentifier otherConnId) {
 			this.thisAudJoiStr = thisAudJoiStr;
 			this.thisConnId = thisConnId;
 			this.thisDir = thisDir;
 			this.otherAudJoiStr = otherAudJoiStr;
+			this.otherConnId = otherConnId;
 		}
 
 		public void run() {
 			try {
-				this.tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
-				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+				this.tx = mgcpWrapper.getUniqueTransactionHandler();
+				mgcpWrapper.addListnere(this.tx, this);
 				CallIdentifier callId = mediaSession.getCallIdentifier();
 				EndpointIdentifier thisEndID = new EndpointIdentifier(this.thisAudJoiStr.container.endpoint,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+						mgcpWrapper.getPeerIp() + ":" + mgcpWrapper.getPeerPort());
 				ModifyConnection modifyConnection = new ModifyConnection(this, callId, thisEndID, this.thisConnId);
 
 				modifyConnection.setMode(getConnectionMode(this.thisDir));
 				modifyConnection.setTransactionHandle(this.tx);
 
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
 
-			} catch (TooManyListenersException e) {
-				logger.error(e);
 			} catch (Exception e) {
 				logger.error(e);
 			}
@@ -459,11 +440,11 @@ public class AudioJoinableStream implements JoinableStream {
 		}
 
 		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
-			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			mgcpWrapper.removeListener(arg0.getTransactionHandle());
 			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 					this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Timeout, "No response from MGW. Tx timed out "
 							+ arg0.toString());
-			update(joinEvent);
+			container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container, true);
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
@@ -481,12 +462,13 @@ public class AudioJoinableStream implements JoinableStream {
 				processMofiyConnectionResponse((ModifyConnectionResponse) jainmgcpresponseevent);
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, "Received unexpected Response "
 								+ jainmgcpresponseevent.toString());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+						true);
 				break;
 
 			}
@@ -506,7 +488,7 @@ public class AudioJoinableStream implements JoinableStream {
 				}
 				break;
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (logger.isDebugEnabled()) {
 					logger.debug(" MDCX TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + this.thisConnId
 							+ "endpointID = " + this.thisAudJoiStr.container.endpoint);
@@ -529,17 +511,19 @@ public class AudioJoinableStream implements JoinableStream {
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined);
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+						false);
 
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+						true);
 
 				break;
 
@@ -563,16 +547,15 @@ public class AudioJoinableStream implements JoinableStream {
 		}
 
 		public void run() {
-			this.tx = jainMgcpStackProviderImpl.getUniqueTransactionHandler();
+			this.tx = mgcpWrapper.getUniqueTransactionHandler();
 			try {
 
-				jainMgcpStackProviderImpl.addJainMgcpListener(this);
+				mgcpWrapper.addListnere(this.tx, this);
 				CallIdentifier callId = mediaSession.getCallIdentifier();
 				EndpointIdentifier endpointID = new EndpointIdentifier(this.thisAudJoiStr.container.endpoint,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
-
+						mgcpWrapper.getPeerIp() + ":" + mgcpWrapper.getPeerPort());
 				EndpointIdentifier secondEndpointID = new EndpointIdentifier(this.otherAudJoiStr.container.endpoint,
-						MsControlFactoryImpl.mgcpStackPeerIp + ":" + MsControlFactoryImpl.mgcpStackPeerPort);
+						mgcpWrapper.getPeerIp() + ":" + mgcpWrapper.getPeerPort());
 
 				CreateConnection createConnection = new CreateConnection(this, callId, endpointID,
 						ConnectionMode.SendRecv);
@@ -580,9 +563,7 @@ public class AudioJoinableStream implements JoinableStream {
 				createConnection.setSecondEndpointIdentifier(secondEndpointID);
 				createConnection.setMode(getConnectionMode(this.thisDir));
 				createConnection.setTransactionHandle(this.tx);
-				jainMgcpStackProviderImpl.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
-			} catch (TooManyListenersException e) {
-				e.printStackTrace();
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 			} catch (ConflictingParameterException e) {
 				e.printStackTrace();
 			}
@@ -602,10 +583,10 @@ public class AudioJoinableStream implements JoinableStream {
 		public void transactionTxTimedOut(JainMgcpCommandEvent jainMgcpCommandEvent) {
 			logger.error("No response from MGW. Tx timed out for MGCP Tx " + this.tx + " For Command sent "
 					+ jainMgcpCommandEvent.toString());
-			jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 					this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Timeout, " Request timedout. No response from MGW");
-			update(joinEvent);
+			container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
@@ -625,12 +606,12 @@ public class AudioJoinableStream implements JoinableStream {
 				processCreateConnectionResponse((CreateConnectionResponse) jainmgcpresponseevent);
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, jainmgcpresponseevent.getReturnCode()
 								.getComment());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 
 			}
@@ -653,19 +634,19 @@ public class AudioJoinableStream implements JoinableStream {
 							+ responseEvent.getSpecificEndpointIdentifier() + " this.other.endpoint = "
 							+ responseEvent.getSecondEndpointIdentifier());
 				}
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 
 				EndpointIdentifier thisEndpointIdentifier = responseEvent.getSpecificEndpointIdentifier();
 				this.thisAudJoiStr.container.endpoint = thisEndpointIdentifier.getLocalEndpointName();
 
 				ConnectionIdentifier thisConnId = responseEvent.getConnectionIdentifier();
-				this.thisAudJoiStr.connIdVsAudJoinStrMap.put(thisConnId, this.otherAudJoiStr);
+				this.thisAudJoiStr.audJoinStrVsConnIdMap.put(this.otherAudJoiStr, thisConnId);
 
 				EndpointIdentifier otherEndpointIdentifier = responseEvent.getSecondEndpointIdentifier();
 				this.otherAudJoiStr.container.endpoint = otherEndpointIdentifier.getLocalEndpointName();
 
 				ConnectionIdentifier otherConnId = responseEvent.getSecondConnectionIdentifier();
-				this.otherAudJoiStr.connIdVsAudJoinStrMap.put(otherConnId, this.thisAudJoiStr);
+				this.otherAudJoiStr.audJoinStrVsConnIdMap.put(this.thisAudJoiStr, otherConnId);
 
 				switch (this.thisDir) {
 				case SEND:
@@ -684,32 +665,29 @@ public class AudioJoinableStream implements JoinableStream {
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined);
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, thisConnId, otherConnId, this.otherAudJoiStr.container, false);
 
 				break;
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.warn("joinInitiate() executed un-successfully for this.endpoint = "
 						+ this.thisAudJoiStr.container.endpoint + " this.other.endpoint = "
 						+ this.otherAudJoiStr.container.endpoint + " " + responseEvent.getReturnCode().getComment());
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 			default:
-				jainMgcpStackProviderImpl.removeJainMgcpListener(this);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				update(joinEvent);
+				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 
 			}
-
 		}
-
 	}
-
 }

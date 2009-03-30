@@ -12,6 +12,11 @@ import org.mobicents.jsr309.mgcp.MgcpStackFactory;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public abstract class MessageFlowHarness extends TestCase {
 
 	protected Logger logger = null;

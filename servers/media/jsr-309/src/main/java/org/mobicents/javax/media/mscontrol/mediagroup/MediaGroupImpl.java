@@ -1,7 +1,10 @@
 package org.mobicents.javax.media.mscontrol.mediagroup;
 
+import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
+
 import java.net.URI;
 
+import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mediagroup.MediaGroupConfig;
@@ -13,25 +16,26 @@ import javax.media.mscontrol.resource.Symbol;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
-import org.mobicents.javax.media.mscontrol.AudioJoinableStream;
+import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
-import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
+import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
 public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGroup {
 	public static Logger logger = Logger.getLogger(MediaGroupImpl.class);
 
-	protected AudioJoinableStream audioJoinableStream = null;
-	protected JainMgcpStackProviderImpl jainMgcpStackProviderImpl = null;
-
 	private static final String LOOP_ENDPOINT_NAME = "media/test/trunk/Loopback/$";
+	private static final String IVR_ENDPOINT_NAME = "media/test/trunk/IVR/$";
+	protected Player player = null;
+	protected ConnectionIdentifier thisConnId = null;
 
-	public MediaGroupImpl(MediaSessionImpl mediaSession, JainMgcpStackProviderImpl jainMgcpStackProviderImpl) {
-		super(mediaSession, jainMgcpStackProviderImpl, 1, LOOP_ENDPOINT_NAME);
-		this.jainMgcpStackProviderImpl = jainMgcpStackProviderImpl;
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) throws MsControlException {
+		super(mediaSession, mgcpWrapper, 1, LOOP_ENDPOINT_NAME);
+		player = new PlayerImpl(this, mgcpWrapper);
 	}
 
 	public Player getPlayer() throws MsControlException {
-		return null;
+		checkState();
+		return player;
 	}
 
 	public Recorder getRecorder() throws MsControlException {
@@ -75,11 +79,54 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public void release() {
+		checkState();
 
+		// this.player.stop();
+
+		try {
+			Joinable[] joinableArray = this.getJoinees();
+			for (Joinable joinable : joinableArray) {
+				this.unjoinInitiate(joinable, this);
+			}
+		} catch (MsControlException e) {
+			logger.error("release of MediaGroup failed ", e);
+		}
+		this.state = MediaObjectState.RELEASED;
 	}
 
 	public void setParameters(Parameters arg0) {
 
+	}
+
+	@Override
+	protected void resetContainer() {
+		this.endpoint = IVR_ENDPOINT_NAME;
+	}
+
+	protected void checkState() {
+		if (this.state.equals(MediaObjectState.RELEASED)) {
+			throw new IllegalStateException("State of container " + this.getURI() + "is released");
+		}
+
+	}
+
+	protected String getEndpoint() {
+		return this.endpoint;
+	}
+
+	@Override
+	protected void joined(ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId) {
+		this.thisConnId = thisConnId;
+	}
+
+	@Override
+	protected void unjoined(ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId) {
+		this.thisConnId = null;
+	}
+
+	@Override
+	protected MediaObjectState getState() {
+		return this.state;
 	}
 
 }

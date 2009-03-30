@@ -20,6 +20,11 @@ import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class MGW implements JainMgcpExtendedListener {
 
 	private static Logger logger = Logger.getLogger(MGW.class);
@@ -73,8 +78,8 @@ public class MGW implements JainMgcpExtendedListener {
 			try {
 				// FIXME: we asume there is wildcard - "any of"
 				EndpointIdentifier wildcard = createConnection.getEndpointIdentifier();
-				EndpointIdentifier specific = new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$", "")
-						+ "test-1", wildcard.getDomainName());
+				EndpointIdentifier specific = new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$",
+						"test-1"), wildcard.getDomainName());
 				responseCRCX.setSpecificEndpointIdentifier(specific);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -90,8 +95,7 @@ public class MGW implements JainMgcpExtendedListener {
 			if (secondEndpointId != null) {
 				// We assume its wildcard - "any of"
 				EndpointIdentifier secondId = new EndpointIdentifier(secondEndpointId.getLocalEndpointName().replace(
-						"$", "")
-						+ "test-2", secondEndpointId.getDomainName());
+						"$", "test-2"), secondEndpointId.getDomainName());
 				responseCRCX.setSecondEndpointIdentifier(secondId);
 
 				String secondIdentifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
