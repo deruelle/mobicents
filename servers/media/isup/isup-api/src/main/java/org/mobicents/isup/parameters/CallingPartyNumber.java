@@ -43,28 +43,30 @@ public class CallingPartyNumber extends AbstractNumber {
 	 */
 	public final static int _NI_COMPLETE = 0;
 
-	
 	/**
-	 * address presentation restricted indicator indicator value. See Q.763 - 3.10e
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
 	 */
 	public final static int _APRI_ALLOWED = 0;
-	
+
 	/**
-	 * address presentation restricted indicator indicator value. See Q.763 - 3.10e
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
 	 */
 	public final static int _APRI_RESTRICTED = 1;
-	
+
 	/**
-	 * address presentation restricted indicator indicator value. See Q.763 - 3.10e
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
 	 */
 	public final static int _APRI_NOT_AVAILABLE = 2;
-	
+
 	/**
-	 * address presentation restricted indicator indicator value. See Q.763 - 3.10e
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
 	 */
 	public final static int _APRI_RESERVED = 3;
-	
-	
+
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.10f
 	 */
@@ -82,7 +84,7 @@ public class CallingPartyNumber extends AbstractNumber {
 	 * screening indicator indicator value. See Q.763 - 3.10f
 	 */
 	public final static int _SI_NETWORK_PROVIDED = 3;
-	
+
 	protected int numberingPlanIndicator = 0;
 
 	protected int numberIncompleteIndicator = 0;
@@ -109,8 +111,6 @@ public class CallingPartyNumber extends AbstractNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-
-
 	public CallingPartyNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int numberIncompleteIndicator, int addressRepresentationREstrictedIndicator,
 			int screeningIndicator) {
 		super(natureOfAddresIndicator, address);
@@ -134,7 +134,14 @@ public class CallingPartyNumber extends AbstractNumber {
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
 		this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
 		this.screeningIndicator = (b & 0x03);
+
 		return 1;
+	}
+
+	@Override
+	public int encodeHeader(ByteArrayOutputStream bos) {
+		doAddressPresentationRestricted();
+		return super.encodeHeader(bos);
 	}
 
 	/*
@@ -145,12 +152,49 @@ public class CallingPartyNumber extends AbstractNumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
+
+		
 		int c = this.natureOfAddresIndicator << 4;
 		c |= (this.numberIncompleteIndicator << 7);
 		c |= (this.addressRepresentationREstrictedIndicator << 2);
 		c |= (this.screeningIndicator);
 		bos.write(c);
 		return 1;
+	}
+
+	/**
+	 * makes checks on APRI - see NOTE to APRI in Q.763, p 23
+	 */
+	protected void doAddressPresentationRestricted() {
+
+		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
+			return;
+		// NOTE 1 – If the parameter is included and the address presentation
+		// restricted indicator indicates
+		// address not available, octets 3 to n( this are digits.) are omitted,
+		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+		// coded with
+		// 0's, and the subfield f - filler, is coded with 11.
+		this.oddFlag = 0;
+		this.natureOfAddresIndicator = 0;
+		this.numberIncompleteIndicator = 0;
+		this.numberingPlanIndicator = 0;
+	}
+
+	@Override
+	public int encodeDigits(ByteArrayOutputStream bos) {
+
+		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE) {
+
+			// FIXME: encode with 11(0xC0) ? or 1111(0xF0) ?
+			bos.write(0xF0);
+
+			return 1;
+
+		} else {
+			return super.encodeDigits(bos);
+		}
+
 	}
 
 	public int getNumberingPlanIndicator() {

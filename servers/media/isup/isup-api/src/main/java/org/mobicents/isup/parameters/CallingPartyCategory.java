@@ -1,0 +1,109 @@
+/**
+ * Start time:13:31:04 2009-03-30<br>
+ * Project: mobicents-jain-isup-stack<br>
+ * 
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ *         </a>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ */
+package org.mobicents.isup.parameters;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+/**
+ * Start time:13:31:04 2009-03-30<br>
+ * Project: mobicents-jain-isup-stack<br>
+ * 
+ * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
+ *         </a>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ */
+public class CallingPartyCategory extends AbstractParameter {
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_UNKNOWN = 0;
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_OPERATOR_LANGUAGE_FRENCH = 1;
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_OPERATOR_LANGUAGE_ENGLISH = 2;
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_OPERATOR_LANGUAGE_GERMAN = 3;
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_OPERATOR_LANGUAGE_RUSSIAN = 4;
+
+	/**
+	 * See Q.763 3.11
+	 */
+	public static final byte _CATEGORY_OPERATOR_LANGUAGE_SPANISH = 5;
+	private byte callingPartyCategory = 0;
+
+	public CallingPartyCategory(byte callingPartyCategory) {
+		super();
+		this.callingPartyCategory = callingPartyCategory;
+	}
+
+	public CallingPartyCategory(byte[] representation) {
+		super();
+		this.decodeElement(representation);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
+	 */
+	public int decodeElement(byte[] b) throws IllegalArgumentException {
+		if (b == null || b.length != 1) {
+			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
+		}
+		this.callingPartyCategory = b[0];
+
+		return 1;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
+	 */
+	public byte[] encodeElement() throws IOException {
+
+		return new byte[] { this.callingPartyCategory };
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream
+	 * )
+	 */
+	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
+		bos.write(this.callingPartyCategory);
+		return 1;
+	}
+
+	public byte getCallingPartyCategory() {
+		return callingPartyCategory;
+	}
+
+	public void setCallingPartyCategory(byte callingPartyCategory) {
+		this.callingPartyCategory = callingPartyCategory;
+	}
+
+}

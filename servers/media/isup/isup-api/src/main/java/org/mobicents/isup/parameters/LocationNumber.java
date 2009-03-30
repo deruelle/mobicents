@@ -66,18 +66,12 @@ public class LocationNumber extends AbstractNumber {
 	 */
 	public final static int _APRI_SPARE = 3;
 
-	/**
-	 * screening indicator indicator value. See Q.763 - 3.30f
-	 */
-	public final static int _SI_USER_PROVIDED_NOTVERIFIED = 0;
+
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.30f
 	 */
 	public final static int _SI_USER_PROVIDED_VERIFIED_PASSED = 1;
-	/**
-	 * screening indicator indicator value. See Q.763 - 3.30f
-	 */
-	public final static int _SI_USER_PROVIDED_FAILED = 2;
+
 
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.30f
@@ -127,7 +121,34 @@ public class LocationNumber extends AbstractNumber {
 		this.screeningIndicator = (b & 0x03);
 		return 1;
 	}
+	@Override
+	public int encodeHeader(ByteArrayOutputStream bos) {
+		doAddressPresentationRestricted();
 
+		return super.encodeHeader(bos);
+	}
+
+	/**
+	 * makes checks on APRI - see NOTE to APRI in Q.763, p 23
+	 */
+	protected void doAddressPresentationRestricted() {
+
+		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
+			return;
+		// NOTE 1 – If the parameter is included and the address presentation
+		// restricted indicator indicates
+		// address not available, octets 3 to n( this are digits.) are omitted,
+		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+		// coded with
+		// 0's, and the subfield f - filler, is coded with 11.
+		this.oddFlag = 0;
+		this.natureOfAddresIndicator = 0;
+		this.numberingPlanIndicator = 0;
+		this.internalNetworkNumberIndicator = 0;
+
+		// 11
+		this.screeningIndicator = 3;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

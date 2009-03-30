@@ -11,11 +11,8 @@ package org.mobicents.isup.parameters;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.mobicents.jcc.inap.protocol.tcap.Util;
 
 /**
  * Start time:18:44:10 2009-03-27<br>
@@ -45,7 +42,7 @@ import org.mobicents.jcc.inap.protocol.tcap.Util;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public abstract class AbstractNumber implements ISUPComponent {
+public abstract class AbstractNumber extends AbstractParameter {
 
 	/**
 	 * nature of address indicator value. See Q.763 - 3.9b
@@ -99,7 +96,6 @@ public abstract class AbstractNumber implements ISUPComponent {
 	 */
 	protected String address = null;
 
-	protected byte[] tag = null;
 
 	public AbstractNumber(byte[] representation) {
 		super();
@@ -173,8 +169,8 @@ public abstract class AbstractNumber implements ISUPComponent {
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		out.write(tag);
-		Util.encodeLength(count, out);
+		// out.write(tag);
+		// Util.encodeLength(count, out);
 		out.write(bos.toByteArray());
 		return out.toByteArray();
 	}
@@ -200,9 +196,9 @@ public abstract class AbstractNumber implements ISUPComponent {
 			logger.debug("[" + this.getClass().getSimpleName() + "]Encoding digits, write count: " + count);
 		}
 
-		count += tag.length;
-		out.write(tag);
-		count += Util.encodeLength(count, out);
+		// count += tag.length;
+		// out.write(tag);
+		// count += Util.encodeLength(count, out);
 		out.write(bos.toByteArray());
 		return count;
 	}
@@ -321,7 +317,7 @@ public abstract class AbstractNumber implements ISUPComponent {
 
 		byte b = 0;
 		int count = (!isOdd) ? address.length() : address.length() - 1;
-
+		int bytesCount = 0;
 		for (int i = 0; i < count - 1; i += 2) {
 			String ds1 = address.substring(i, i + 1);
 			String ds2 = address.substring(i + 1, i + 2);
@@ -331,6 +327,7 @@ public abstract class AbstractNumber implements ISUPComponent {
 
 			b = (byte) (d2 << 4 | d1);
 			bos.write(b);
+			bytesCount++;
 		}
 
 		if (isOdd) {
@@ -339,9 +336,10 @@ public abstract class AbstractNumber implements ISUPComponent {
 
 			b = (byte) (d & 0x0f);
 			bos.write(b);
+			bytesCount++;
 		}
 
-		return count;
+		return bytesCount;
 	}
 
 	public int getOddFlag() {
@@ -369,5 +367,7 @@ public abstract class AbstractNumber implements ISUPComponent {
 		// FIXME: Oleg is this correct?
 		oddFlag = this.address.length() % 2;
 	}
+
+	
 
 }

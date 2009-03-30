@@ -66,7 +66,29 @@ public class GenericNumber extends AbstractNumber {
 	 * number incomplete indicator indicator value. See Q.763 - 3.10c
 	 */
 	public final static int _NI_COMPLETE = 0;
+	/**
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
+	 */
+	public final static int _APRI_ALLOWED = 0;
 
+	/**
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
+	 */
+	public final static int _APRI_RESTRICTED = 1;
+
+	/**
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.10e
+	 */
+	public final static int _APRI_NOT_AVAILABLE = 2;
+
+	/**
+	 * address presentation restricted indicator indicator value. See Q.763 -
+	 * 3.16d
+	 */
+	public final static int _APRI_SPARE = 3;
 	protected int numberQualifierIndicator = 0;
 	protected int numberingPlanIndicator = 0;
 
@@ -110,7 +132,28 @@ public class GenericNumber extends AbstractNumber {
 		this.screeningIndicator = (b & 0x03);
 		return 1;
 	}
+	
 
+	/**
+	 * makes checks on APRI - see NOTE to APRI in Q.763, p 23
+	 */
+	protected void doAddressPresentationRestricted() {
+
+		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
+			return;
+		// NOTE 1 – If the parameter is included and the address presentation
+		// restricted indicator indicates
+		// address not available, octets 3 to n( this are digits.) are omitted,
+		// the subfields in items a - odd/evem, b -nai , c - ni and d -npi, are
+		// coded with
+		// 0's, and the subfield f - filler, is coded with 11.
+		this.oddFlag = 0;
+		this.natureOfAddresIndicator = 0;
+		this.numberingPlanIndicator = 0;
+		this.numberIncompleteIndicator = 0;
+		// 11
+		this.screeningIndicator = 3;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -135,6 +178,7 @@ public class GenericNumber extends AbstractNumber {
 
 	@Override
 	public int encodeHeader(ByteArrayOutputStream bos) {
+		doAddressPresentationRestricted();
 		bos.write(this.numberQualifierIndicator);
 		return super.encodeHeader(bos) + 1;
 	}
