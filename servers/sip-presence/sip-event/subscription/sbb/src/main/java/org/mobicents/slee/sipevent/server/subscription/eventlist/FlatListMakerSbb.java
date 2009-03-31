@@ -231,12 +231,21 @@ public abstract class FlatListMakerSbb implements Sbb,
 			makeFlatList(flatList, listType);
 		}
 		else {
-			String resourceList = serviceType.getResourceList();
+			String resourceList = serviceType.getResourceList().trim();
 			if (resourceList != null) {
 				// get list, FIXME for now support only lists in local xdm
 				// lets build the list xdm key
 				XcapUriKey key = null;
 				try {
+					String shemeAndAuthorityURI = getSchemeAndAuthorityURI();
+					if (resourceList.startsWith(shemeAndAuthorityURI)) {
+						resourceList = resourceList.substring(shemeAndAuthorityURI.length());
+					}
+					else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("The resource list uri "+resourceList+" does not starts with server scheme and authority uri "+shemeAndAuthorityURI);
+						}
+					}
 					ResourceSelector resourceSelector = null;
 					int queryComponentSeparator = resourceList.indexOf('?');
 					if (queryComponentSeparator > 0) {
@@ -255,10 +264,15 @@ public abstract class FlatListMakerSbb implements Sbb,
 										getLocalXcapRoot(),
 										resourceList, null);
 					}
+					if (!resourceSelector.getDocumentSelector().startsWith("/resource-lists")) {
+						logger.error("Unable to make flat list, invalid or not supported resource list uri: "+serviceType.getResourceList());
+						flatList.setStatus(Response.BAD_GATEWAY);
+						getParentSbbCMP().flatListMade(flatList);
+					}
 					key = new XcapUriKey(resourceSelector);
 				}
 				catch (Exception e) {
-					logger.error("failed to parse resource list "+resourceList,e);
+					logger.error("Failed to parse resource list "+resourceList,e);
 					flatList.setStatus(Response.BAD_GATEWAY);
 					getParentSbbCMP().flatListMade(flatList);
 					return;
@@ -339,6 +353,10 @@ public abstract class FlatListMakerSbb implements Sbb,
 	
 	public String getLocalXcapRoot() {
 		return ServerConfiguration.XCAP_ROOT;
+	}
+	
+	public String getSchemeAndAuthorityURI() {
+		return ServerConfiguration.SCHEME_AND_AUTHORITY_URI;
 	}
 	
 	// --- XDM CLIENT CHILD SBB

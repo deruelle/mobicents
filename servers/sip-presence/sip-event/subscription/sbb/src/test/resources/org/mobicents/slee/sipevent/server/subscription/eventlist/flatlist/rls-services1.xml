@@ -4,7 +4,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<service uri="sip:mybuddies@example.com">
 		<resource-list>
-			http://127.0.0.1:8080/resource-lists/user
+			http://127.0.0.1:8080/mobicents/resource-lists/user
 			s/sip:joe@example.com/index/~~/resource-lists/list%5b@nam
 			e=%22l1%22%5d
 		</resource-list>

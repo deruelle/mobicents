@@ -30,6 +30,11 @@ public class FlatListMaker extends FlatListMakerSbb{
 	
 	@Override
 	public String getLocalXcapRoot() {		
+		return "/mobicents";
+	}
+	
+	@Override
+	public String getSchemeAndAuthorityURI() {
 		return "http://127.0.0.1:8080";
 	}
 	
