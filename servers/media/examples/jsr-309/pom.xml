@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.mobicents.servers.media.examples</groupId>
+		<artifactId>mms-examples-core</artifactId>
+		<version>2.0.0.BETA1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>jsr309-example</artifactId>
+
+	<name>Mobicents Media Server Example[jsr309]</name>
+
+	<properties>
+		<maven.test.skip>false</maven.test.skip>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+			<version>${jain-sip-ri.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-api</artifactId>
+			<version>${jain-sip-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.external.jsr309</groupId>
+			<artifactId>mscontrol</artifactId>
+			<version>0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.jsr309</groupId>
+			<artifactId>mobicents-jsr309-impl</artifactId>
+			<version>2.0.0.BETA1-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>run</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>
+							src/main/assembly/pojo.xml
+						</descriptor>
+					</descriptors>
+					<finalName>${pom.artifactId}</finalName>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>directory-inline</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+				<execution>
+				<goals>
+				<goal>java</goal>
+				</goals>
+				</execution>
+				</executions>
+				<configuration>
+				<mainClass>org.mobicents.servers.media.examples.jsr309.Jsr309Example</mainClass>
+				</configuration>
+				</plugin -->
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>RELEASE</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
