@@ -116,6 +116,14 @@ public class Jsr309Example implements SipListener {
 		return this.msControlFactory;
 	}
 
+	public String getStackAddress() {
+		return this.stackAddress;
+	}
+
+	public int getPort() {
+		return this.port;
+	}
+
 	// SIP Listener Impl
 	public void processDialogTerminated(DialogTerminatedEvent dte) {
 		CallProxy cp = getCallProxy(dte.getDialog().getCallId());
@@ -171,6 +179,10 @@ public class Jsr309Example implements SipListener {
 
 	public CallProxy getCallProxy(CallIdHeader callId) {
 		return this.callIdToProxy.get(callId.getCallId());
+	}
+
+	public void removeCallProxy(CallIdHeader msg) {
+		this.callIdToProxy.remove(msg.getCallId());
 	}
 
 	private CallProxy createCallProxy(Request r) {
