@@ -48,4 +48,9 @@ public class NetworkConnectionEventImpl implements javax.media.mscontrol.network
 		return this.source;
 	}
 
+	@Override
+	public String toString() {
+		return "EventId = " + this.eventId + " Error = " + this.error + " ErrorText = " + this.errorText + "Source = "
+				+ this.source + " ";
+	}
 }

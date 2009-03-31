@@ -11,6 +11,7 @@ import java.util.List;
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.resource.ConfigSymbol;
@@ -20,10 +21,10 @@ import javax.media.mscontrol.resource.Symbol;
 import javax.media.mscontrol.vxml.VxmlDialog;
 
 import org.apache.log4j.Logger;
+import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl;
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
-import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
 /**
  * 
@@ -38,6 +39,7 @@ public class MediaSessionImpl implements MediaSession {
 	private CallIdentifier callIdentifier = null;
 
 	List<NetworkConnection> netConnList = new ArrayList<NetworkConnection>();
+	List<MediaGroup> medGrpList = new ArrayList<MediaGroup>();
 
 	public MediaSessionImpl(MgcpWrapper mgcpWrapper) {
 		this.mgcpWrapper = mgcpWrapper;
@@ -57,12 +59,18 @@ public class MediaSessionImpl implements MediaSession {
 		return networkConnectionImpl;
 	}
 
+	public MediaGroup createMediaGroup() throws MsControlException {
+		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper);
+		medGrpList.add(mediaGroupImpl);
+		return mediaGroupImpl;
+	}
+
 	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(ConfigSymbol<C> symbol)
 			throws MsControlException {
 		if (symbol.equals(NetworkConnectionConfig.c_Basic)) {
 			// NetworkConnectionImpl networkConnectionImpl = new
 			// NetworkConnectionImpl(this, jainMgcpStackProviderImpl);
-			//			return null;// (T) networkConnectionImpl;
+			// return null;// (T) networkConnectionImpl;
 		} else if (symbol.equals(NetworkConnectionConfig.c_DtmfConversion)) {
 
 		} else if (symbol.equals(NetworkConnectionConfig.c_EchoCancel)) {

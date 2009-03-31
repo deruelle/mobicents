@@ -11,24 +11,24 @@ import javax.media.mscontrol.resource.Symbol;
 public class JoinEventImpl implements JoinEvent {
 
 	private Serializable context = null;
-	private Joinable other= null;
+	private Joinable other = null;
 	private Joinable current = null;
 	private Symbol eventID = null;
 	private Symbol error = Error.e_OK;
 	private String errorText = null;
 	private MediaObject source = null;
-	
-	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventId){
+
+	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventId) {
 		this.source = source;
 		this.context = context;
 		this.other = other;
 		this.current = current;
 		this.eventID = eventId;
 	}
-	
-	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventID, Symbol error,
-			String errorText) {
-		this( source, context,  other,  current,  eventID);
+
+	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventID,
+			Symbol error, String errorText) {
+		this(source, context, other, current, eventID);
 		this.error = error;
 		this.errorText = errorText;
 	}
@@ -37,19 +37,11 @@ public class JoinEventImpl implements JoinEvent {
 		return this.context;
 	}
 
-	public Joinable getOtherJoinable() {
-		return this.other;
-	}
-
-	public Joinable getThisJoinable() {	
-		return this.current;
-	}
-
 	public Symbol getError() {
 		return this.error;
 	}
 
-	public String getErrorText() {		
+	public String getErrorText() {
 		return this.errorText;
 	}
 
@@ -57,8 +49,22 @@ public class JoinEventImpl implements JoinEvent {
 		return this.eventID;
 	}
 
+	public Joinable getOtherJoinable() {
+		return this.other;
+	}
+
 	public MediaObject getSource() {
 		return this.source;
+	}
+
+	public Joinable getThisJoinable() {
+		return this.current;
+	}
+
+	@Override
+	public String toString() {
+		return "Source = " + this.source + " Other = " + this.other + " Current = " + this.current + " EventId = "
+				+ this.eventID + " Error = " + this.error + " ErrorText = " + this.errorText;
 	}
 
 }

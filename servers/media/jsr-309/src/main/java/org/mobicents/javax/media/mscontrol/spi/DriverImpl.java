@@ -15,6 +15,7 @@ public class DriverImpl implements Driver {
 
 	static {
 		DriverManager.registerDriver(new DriverImpl());
+		System.out.println("Driver "+DRIVER_NAME +" registered with DriverManager");
 	}
 
 	public DriverImpl() {
