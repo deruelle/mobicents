@@ -444,17 +444,14 @@ public class AudioJoinableStream implements JoinableStream {
 			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 					this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Timeout, "No response from MGW. Tx timed out "
 							+ arg0.toString());
-			container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container, true);
+			container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container, true);
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
 
 		}
 
-		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
-			if (jainmgcpresponseevent.getTransactionHandle() != this.tx) {
-				return;
-			}
+		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {			
 
 			switch (jainmgcpresponseevent.getObjectIdentifier()) {
 
@@ -467,7 +464,7 @@ public class AudioJoinableStream implements JoinableStream {
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, "Received unexpected Response "
 								+ jainmgcpresponseevent.toString());
-				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 				break;
 
@@ -511,7 +508,7 @@ public class AudioJoinableStream implements JoinableStream {
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined);
-				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						false);
 
 				break;
@@ -522,7 +519,7 @@ public class AudioJoinableStream implements JoinableStream {
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
+				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 
 				break;
@@ -586,7 +583,7 @@ public class AudioJoinableStream implements JoinableStream {
 			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 					this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Timeout, " Request timedout. No response from MGW");
-			container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
+			container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
@@ -611,7 +608,7 @@ public class AudioJoinableStream implements JoinableStream {
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, jainmgcpresponseevent.getReturnCode()
 								.getComment());
-				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
+				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 
 			}
@@ -665,7 +662,7 @@ public class AudioJoinableStream implements JoinableStream {
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined);
-				container.updateUnjoined(joinEvent, thisConnId, otherConnId, this.otherAudJoiStr.container, false);
+				container.updateJoined(joinEvent, thisConnId, otherConnId, this.otherAudJoiStr.container, false);
 
 				break;
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
@@ -676,7 +673,7 @@ public class AudioJoinableStream implements JoinableStream {
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
+				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 			default:
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
@@ -684,7 +681,7 @@ public class AudioJoinableStream implements JoinableStream {
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
 						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
 								.getComment());
-				container.updateUnjoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
+				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 
 			}

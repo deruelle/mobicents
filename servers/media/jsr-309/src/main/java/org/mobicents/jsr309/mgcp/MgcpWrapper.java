@@ -4,6 +4,7 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
+import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 
@@ -22,6 +23,8 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 	private JainMgcpStackProviderImpl jainMgcpStackProviderImpl;
 	private static Logger logger = Logger.getLogger(MgcpWrapper.class);
 	private Map<Integer, JainMgcpExtendedListener> mgcpListeners = new HashMap<Integer, JainMgcpExtendedListener>();
+	
+	// This is mapping of RequestIdentifier and Listener
 	private Map<String, JainMgcpExtendedListener> mgcpListenersForNotify = new HashMap<String, JainMgcpExtendedListener>();
 
 	public MgcpWrapper(JainMgcpStackProviderImpl jainMgcpStackProviderImpl, int peerPort, String peerIp) {
@@ -34,8 +37,16 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 		this.mgcpListeners.put(tx, listener);
 	}
 
+	public void addListnere(RequestIdentifier requestId, JainMgcpExtendedListener listener) {
+		this.mgcpListenersForNotify.put(requestId.toString(), listener);
+	}
+
 	public void removeListener(int tx) {
 		this.mgcpListeners.remove(tx);
+	}
+
+	public void removeListener(RequestIdentifier requestId) {
+		this.mgcpListenersForNotify.remove(requestId.toString());
 	}
 
 	public JainMgcpStackProviderImpl getJainMgcpStackProvider() {
@@ -68,7 +79,14 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 	public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
 		switch (command.getObjectIdentifier()) {
 		case Constants.CMD_NOTIFY:
-
+			Notify ntfy = (Notify) command;
+			RequestIdentifier requestId = ntfy.getRequestIdentifier();
+			JainMgcpExtendedListener listener = mgcpListenersForNotify.get(requestId.toString());
+			if (listener != null) {
+				listener.processMgcpCommandEvent(command);
+			} else {
+				logger.warn("Received NTFY command " + command.toString() + " but no handler for this");
+			}
 			break;
 		default:
 			logger.error("This command in un-expected" + command.toString());

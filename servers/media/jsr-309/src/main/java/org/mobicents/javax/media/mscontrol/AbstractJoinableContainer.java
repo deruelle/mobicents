@@ -34,7 +34,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 	protected AudioJoinableStream audioJoinableStream = null;
 	protected String endpoint = null;
 	protected MgcpWrapper mgcpWrapper;
-	protected MediaObjectState state = null;
+	protected volatile MediaObjectState state = null;
 
 	protected int maxJoinees = 1;
 
@@ -183,8 +183,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 			AbstractJoinableContainer otheContainer, boolean error) {
 		if (!error) {
 			this.state = MediaObjectState.JOINED;
-			otheContainer.state = MediaObjectState.JOINED;
-
+			otheContainer.state = MediaObjectState.JOINED;			
 			joined(thisConnId, otherConnId);
 			otheContainer.joined(otherConnId, thisConnId);
 		}
@@ -196,12 +195,16 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 			ConnectionIdentifier otherConnId, AbstractJoinableContainer otheContainer, boolean error) {
 		if (!error) {
 			if (this.audioJoinableStream.audJoinStrVsDirMap.size() == 0) {
-				this.state = MediaObjectState.IDLE;
+				if (!(this.state.equals(MediaObjectState.RELEASED))) {
+					this.state = MediaObjectState.IDLE;
+				}
 				resetContainer();
 			}
 
 			if (otheContainer.audioJoinableStream.audJoinStrVsDirMap.size() == 0) {
-				otheContainer.state = MediaObjectState.IDLE;
+				if (!(otheContainer.state.equals(MediaObjectState.RELEASED))) {
+					otheContainer.state = MediaObjectState.IDLE;
+				}
 				otheContainer.resetContainer();
 			}
 			unjoined(thisConnId, otherConnId);
@@ -223,7 +226,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 	protected abstract void unjoined(ConnectionIdentifier thisConnId, ConnectionIdentifier otherConnId);
 
 	protected abstract void checkState();
-	
+
 	protected abstract MediaObjectState getState();
 
 	protected abstract void resetContainer();

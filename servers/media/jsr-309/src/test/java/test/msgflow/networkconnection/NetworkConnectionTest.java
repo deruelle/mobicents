@@ -320,7 +320,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
 	}
 
-	public void testNetworkConnectionReJoin() throws Exception {
+	public void testNetworkConnectionReJoinSameMO() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
 		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
 
@@ -399,7 +399,6 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 					}
 
 				} else {
-					System.out.println("Hereeeeeee  error NOT ok" + event);
 					logger.error("testNetworkConnectionReJoin - Join failed " + event);
 					fail("Join of NC1 and NC2 failed");
 				}
@@ -409,6 +408,125 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 		NC2.addListener(impl);
 		NC2.joinInitiate(Direction.RECV, NC1, serImpl);
+
+		waitForMessage();
+		waitForMessage();
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	public void testNetworkConnectionReJointoOtherMO() throws Exception {
+
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection();
+
+		final ContextImpl serImpl = new ContextImpl();
+
+		StatusEventListener impl = new StatusEventListener() {
+			public void onEvent(StatusEvent event) {
+
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+						logger.info("testNetworkConnectionReJointoOtherMO - Join successful " + event);
+
+						Joinable[] temp;
+						try {
+							// NC2 <--- RECV Stream <--- NC1
+							temp = NC2.getJoinableStreams()[0].getJoinees(Direction.RECV);
+							assertNotNull(temp[0]);
+
+							// NC2 ---> SEND Stream ---> NC1
+							temp = NC2.getJoinableStreams()[0].getJoinees(Direction.SEND);
+							assertNotNull(temp[0]);
+
+							NC2.unjoinInitiate(NC1, serImpl);
+						} catch (MsControlException e1) {
+							logger.error(e1);
+							fail("Unxpected error " + e1.getMessage());
+						}
+
+					} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
+						logger.info("testNetworkConnectionReJointoOtherMO - UnJoin successful " + event);
+
+						// After un-join the list of Joinees should be 0
+						try {
+							Joinable[] j1 = NC1.getJoinees();
+							assertEquals(0, j1.length);
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail(" unexpected error " + e.getMessage());
+						}
+
+						try {
+							Joinable[] j2 = NC2.getJoinees();
+							assertEquals(0, j2.length);
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail(" unexpected error " + e.getMessage());
+						}
+
+						StatusEventListener impl2 = new StatusEventListener() {
+							public void onEvent(StatusEvent event) {
+
+								if (event.getError().equals(Error.e_OK)) {
+									if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+										logger.info("testNetworkConnectionReJointoOtherMO - Join successful " + event);
+
+										Joinable[] temp;
+										try {
+											// NC2 <--- RECV Stream <--- NC1
+											temp = NC3.getJoinableStreams()[0].getJoinees(Direction.RECV);
+											assertEquals(0, temp.length);
+
+											// NC2 ---> SEND Stream ---> NC1
+											temp = NC3.getJoinableStreams()[0].getJoinees(Direction.SEND);
+											assertNotNull(temp[0]);
+											testPassed = true;
+										} catch (MsControlException e1) {
+											logger.error(e1);
+											fail("Unxpected error " + e1.getMessage());
+										}
+
+									} else {
+										logger.error("testNetworkConnectionReJointoOtherMO This event is not expected "
+												+ event.getEventID());
+										fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+									}
+
+								} else {
+									logger.error("testNetworkConnectionReJointoOtherMO - Join failed " + event);
+									fail("Join of NC1 and NC2 failed");
+								}
+
+							}
+						};
+
+						NC3.addListener(impl2);
+						try {
+							NC3.joinInitiate(Direction.SEND, NC2, serImpl);
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail("NC3 join to NC2 failed");
+						}
+					} else {
+						logger.error("testNetworkConnectionReJointoOtherMO This event is not expected "
+								+ event.getEventID());
+						fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+					}
+
+				} else {
+					logger.error("testNetworkConnectionReJointoOtherMO - Join failed " + event);
+					fail("Join of NC1 and NC2 failed");
+				}
+
+			}
+		};
+
+		NC2.addListener(impl);
+		NC2.joinInitiate(Direction.DUPLEX, NC1, serImpl);
 
 		waitForMessage();
 		waitForMessage();
@@ -474,7 +592,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 										joinStream2 = NC2.getJoinableStreams()[0];
 										NC1.release();
 									} catch (MsControlException e) {
-										logger.equals(e);
+										logger.error(e);
 										fail();
 									}
 

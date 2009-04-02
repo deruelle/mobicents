@@ -3,6 +3,7 @@ package org.mobicents.javax.media.mscontrol.mediagroup;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.MsControlException;
@@ -18,19 +19,31 @@ import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
+import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGroup {
 	public static Logger logger = Logger.getLogger(MediaGroupImpl.class);
 
 	private static final String LOOP_ENDPOINT_NAME = "media/test/trunk/Loopback/$";
 	private static final String IVR_ENDPOINT_NAME = "media/test/trunk/IVR/$";
+	private URI uri = null;
 	protected Player player = null;
 	protected ConnectionIdentifier thisConnId = null;
 
 	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) throws MsControlException {
-		super(mediaSession, mgcpWrapper, 1, LOOP_ENDPOINT_NAME);
+		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
 		player = new PlayerImpl(this, mgcpWrapper);
+		try {
+			this.uri = new URI(mediaSession.getURI().toString() + "/MediaGroup." + this.id);
+		} catch (URISyntaxException e) {
+			logger.warn(e);
+		}
 	}
 
 	public Player getPlayer() throws MsControlException {
@@ -47,7 +60,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public void stop() {
-
+		this.player.stop();
 	}
 
 	public void confirm() throws MsControlException {
@@ -67,7 +80,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public Parameters createParameters() {
-		return null;
+		return new ParametersImpl();
 	}
 
 	public Parameters getParameters(Symbol[] arg0) {
@@ -75,14 +88,12 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public URI getURI() {
-		return null;
+		return this.uri;
 	}
 
 	public void release() {
 		checkState();
-
-		// this.player.stop();
-
+		this.player.stop();
 		try {
 			Joinable[] joinableArray = this.getJoinees();
 			for (Joinable joinable : joinableArray) {

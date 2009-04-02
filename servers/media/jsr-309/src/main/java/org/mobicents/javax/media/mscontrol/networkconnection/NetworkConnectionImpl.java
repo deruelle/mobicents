@@ -134,6 +134,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	public void modify(String localSessionDescription, String remoteSessionDescription) throws SdpException,
 			NetworkConnectionException, ResourceNotAvailableException {
+
 		checkState();
 		if (localSessionDescription == null && remoteSessionDescription == null) {
 			// Do nothing and return as per Spec
@@ -181,7 +182,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public void release() {
-		checkState();
+		checkState();		
 
 		if (this.endpointIdentifier != null) {
 			Runnable tx = new DeleteTx(this);
@@ -196,7 +197,9 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		} catch (MsControlException e) {
 			logger.error("release of NetworkConnection failed ", e);
 		}
+		
 		this.state = MediaObjectState.RELEASED;
+
 	}
 
 	public void setParameters(Parameters params) {
