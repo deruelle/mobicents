@@ -22,60 +22,62 @@ import java.io.IOException;
 public class CallDiversionInformation extends AbstractParameter {
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Notification subscription options Unknown
 	 */
-	public static final int _NOTIFICATION_SUBSCRIPTION_OPTIONS_UNKNOWN = 0;
+	public static final int _NSO_UNKNOWN = 0;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Notification subscription options presentation not allowed
 	 */
-	public static final int _NOTIFICATION_SUBSCRIPTION_OPTIONS_PRESENTATION_NOT_ALLOWED = 1;
+	public static final int _NSO_P_NOT_ALLOWED = 1;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Notification subscription options presentation allowed with
+	 * redirection number
 	 */
-	public static final int _NOTIFICATION_SUBSCRIPTION_OPTIONS_PRESENTATION_ALLOWED_WITH_REDIRECTION_NUMBER = 2;
+	public static final int _NSO_P_A_WITH_RN = 2;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Notification subscription options presentation allowed
+	 * without redirection number
 	 */
-	public static final int _NOTIFICATION_SUBSCRIPTION_OPTIONS_PRESENTATION_ALLOWED_WITHOUT_REDIRECTION_NUMBER = 3;
+	public static final int _NSO_P_A_WITHOUT_RN = 3;
 
 	private int notificationSubscriptionOptions = 0;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Notification subscription options Unknown
 	 */
 	public static final int _REDIRECTING_REASON_UNKNOWN = 0;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Redirecting reason User busy
 	 */
 	public static final int _REDIRECTING_REASON_USER_BUSY = 1;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Redirecting reason no reply
 	 */
 	public static final int _REDIRECTING_REASON_NO_REPLY = 2;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Redirecting reason unconditional
 	 */
 	public static final int _REDIRECTING_REASON_UNCONDITIONAL = 3;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Redirecting reason deflection during alerting
 	 */
-	public static final int _REDIRECTING_REASON_DEFLECTION_DURING_ALERTING = 4;
+	public static final int _REDIRECTING_REASON_DDA = 4;
 	/**
-	 * see Q.763 3.6
-	 */
-	public static final int _REDIRECTING_REASON_DEFLECTION_IMMEDIATE_RESPONSE = 5;
+	 * see Q.763 3.6 Redirecting reason deflection immediate response
+	 */ 
+	public static final int _REDIRECTING_REASON_DIR = 5;
 
 	/**
-	 * see Q.763 3.6
+	 * see Q.763 3.6 Redirecting reason mobile subscriber not reachable
 	 */
-	public static final int _REDIRECTING_REASON_MOBILSE_SUBSCRIBER_NOT_REACHABLE = 6;
+	public static final int _REDIRECTING_REASON_MSNR = 6;
 	private int redirectingReason = 0;
 
 	public CallDiversionInformation(int notificationSubscriptionOptions, int redirectingReason) {

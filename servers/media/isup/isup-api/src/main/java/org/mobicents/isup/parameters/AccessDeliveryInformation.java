@@ -21,10 +21,20 @@ import java.io.IOException;
  */
 public class AccessDeliveryInformation extends AbstractParameter {
 
-	private int accessDeliveryIndicator = 0;
+	/**
+	 * See Q.763 3.2  Access delivery indicator: set-up message generated
+	 */
+	public static final byte _ACI_SME= 0;
+	
+	/**
+	 * See Q.763 3.2  Access delivery indicator:no set-up message generated
+	 */
+	public static final byte _ACI_NO_SME= 1;
+	
+	private byte accessDeliveryIndicator = 0;
 	
 	
-	public AccessDeliveryInformation(int accessDeliveryIndicator) {
+	public AccessDeliveryInformation(byte accessDeliveryIndicator) {
 		super();
 		this.accessDeliveryIndicator = accessDeliveryIndicator;
 	}
@@ -43,7 +53,7 @@ public class AccessDeliveryInformation extends AbstractParameter {
 		{
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
 		}
-		this.accessDeliveryIndicator = b[0] & 0x01;
+		this.accessDeliveryIndicator = (byte) (b[0] & 0x01);
 		
 		return 1;
 	}
@@ -64,11 +74,11 @@ public class AccessDeliveryInformation extends AbstractParameter {
 		return 1;
 	}
 
-	public int getAccessDeliveryIndicator() {
+	public byte getAccessDeliveryIndicator() {
 		return accessDeliveryIndicator;
 	}
 
-	public void setAccessDeliveryIndicator(int accessDeliveryIndicator) {
+	public void setAccessDeliveryIndicator(byte accessDeliveryIndicator) {
 		this.accessDeliveryIndicator = accessDeliveryIndicator;
 	}
 

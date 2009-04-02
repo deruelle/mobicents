@@ -10,6 +10,7 @@ package org.mobicents.isup.parameters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.mobicents.isup.ISUPComponent;
 
@@ -24,7 +25,7 @@ import org.mobicents.isup.ISUPComponent;
 public abstract class AbstractParameter implements ISUPParameter,ISUPComponent {
 
 	protected byte[] tag = null;
-
+	protected Logger logger  = Logger.getLogger(this.getClass().getName());
 	public byte[] getTag() {
 		return this.tag;
 	}

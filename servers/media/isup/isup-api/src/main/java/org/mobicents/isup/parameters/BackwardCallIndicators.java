@@ -19,147 +19,162 @@ import java.io.IOException;
  *         </a>
  */
 public class BackwardCallIndicators extends AbstractParameter {
+
+	private final static int _TURN_ON = 1;
+	private final static int _TURN_OFF = 0;
+
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Charge indicator no indication
 	 */
 	public static final int _CHARGE_INDICATOR_NOINDICATION = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Charge indicator no charge
 	 */
 	public static final int _CHARGE_INDICATOR_NOCHARGE = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Charge indicator charge
 	 */
 	public static final int _CHARGE_INDICATOR_CHARGE = 2;
 
 	private int chargeIndicator = 0;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's status indicator no indication
 	 */
-	public static final int _CALLED_PARTYS_STATUS_INDICATOR_NOINDICATION = 0;
+	public static final int _CPSI_NO_INDICATION = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's status indicator subscriber free
 	 */
-	public static final int _CALLED_PARTYS_STATUS_INDICATOR_SUBSCRIBERFREE = 1;
+	public static final int _CPSI_SUBSCRIBER_FREE = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's status indicator connect when free (national
+	 * use)
 	 */
-	public static final int _CALLED_PARTYS_STATUS_INDICATOR_CONNECTWHENFREE = 2;
+	public static final int _CPSI_CONNECT_WHEN_FREE = 2;
 	private int calledPartysStatusIndicator = 0;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's category indicator
 	 */
-	public static final int _CALLED_PARTYS_CATEGORY_INDICATOR_NOINDICATION = 0;
+	public static final int _CPCI_NOINDICATION = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's category indicator
 	 */
-	public static final int _CALLED_PARTYS_CATEGORY_INDICATOR_ORDINARYSUBSCRIBER = 1;
+	public static final int _CPCI_ORDINARYSUBSCRIBER = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Called party's category indicator
 	 */
-	public static final int _CALLED_PARTYS_CATEGORY_INDICATOR_PAYPHONE = 2;
+	public static final int _CPCI_PAYPHONE = 2;
 	private int calledPartysCategoryIndicator = 0;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_NOMETHODAVAILABLE = 0;
+	public static final int _ETEMI_NOMETHODAVAILABLE = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_PASSALONG = 1;
+	public static final int _ETEMI_PASSALONG = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_SCCP = 2;
+	public static final int _ETEMI_SCCP = 2;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_SCCP_AND_PASSALONG = 3;
+	public static final int _ETEMI_SCCP_AND_PASSALONG = 3;
 	private int endToEndMethodIndicator = 0;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Interworking indicator (Note 2) no interworking encountered
+	 * (Signalling System No. 7 all the way)
 	 */
-	public static final int _INTERWORKING_INDICATOR_NOT_ENCOUTNERED = 0;
+	public static final boolean _II_NO_IE = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Interworking indicator (Note 2) interworking encountered
 	 */
-	public static final int _INTERWORKING_INDICATOR_ENCOUTNERED = 1;
-	private int interworkingIndicator = 0;
+	public static final boolean _II_IE = true;
+	private boolean interworkingIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end information indicator (national use) (Note 2) no
+	 * end-to-end information available
 	 */
-	public static final int _END_TO_END_INFORMATION_INDICATOR_NOT_AVAILABLE = 0;
+	public static final boolean _ETEII_NO_IA = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end information indicator (national use) (Note 2)
+	 * end-to-end information available
 	 */
-	public static final int _END_TO_END_INFORMATION_INDICATOR_AVAILABLE = 1;
-	private int endToEndInformationIndicator = 0;
+	public static final boolean _ETEII_IA = true;
+	private boolean endToEndInformationIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN user part indicator (Note 2) ISDN user part not used
+	 * all the way
 	 */
-	public static final int _ISDN_USER_PART_INDICATOR_NOTUSED = 0;
+	public static final boolean _ISDN_UPI_NOT_UATW = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN user part indicator (Note 2) ISDN user part used all
+	 * the way
 	 */
-	public static final int _ISDN_USER_PART_INDICATOR_USED = 1;
-	private int isdnUserPartIndicator = 0;
+	public static final boolean _ISDN_UPI_UATW = true;
+	private boolean isdnUserPartIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN access indicator terminating access non-ISDN
 	 */
-	public static final int _ISDN_ACCESS_INDICATOR_TERMINATING_ACCESS_NOT_ISDN = 0;
+	public static final boolean _ISDN_AI_TA_NOT_ISDN = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN access indicator terminating access ISDN
 	 */
-	public static final int _ISDN_ACCESS_INDICATOR_TERMINATING_ACCESS_ISDN = 1;
-	private int isdnAccessIndicator = 0;
+	public static final boolean _ISDN_AI_TA_ISDN = true;
+	private boolean isdnAccessIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Echo control device indicator incoming echo control device
+	 * not included
 	 */
-	public static final int _ECHO_CONTROL_DEVICE_NOT_INCLUDED = 0;
+	public static final boolean _ECDI_IECD_NOT_INCLUDED = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Echo control device indicator incoming echo control device
+	 * included
 	 */
-	public static final int _ECHO_CONTROL_DEVICE_INCLUDED = 1;
-	private int echoControlDeviceIndicator = 0;
+	public static final boolean _ECDI_IECD_INCLUDED = true;
+	private boolean echoControlDeviceIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Holding indicator (national use)
 	 */
-	public static final int _HOLD_INDICATOR_NOT_REQUESTED = 0;
+	public static final boolean _HI_NOT_REQUESTED = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Holding indicator (national use)
 	 */
-	public static final int _HOLD_INDICATOR_REQUESTED = 1;
-	private int holdingIndicator = 0;
+	public static final boolean _HI_REQUESTED = true;
+	private boolean holdingIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) no indication
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_NOINDICATION = 0;
+	public static final int _SCCP_MI_NO_INDICATION = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) connectionless method
+	 * available (national use)
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTIONLESS = 1;
+	public static final int _SCCP_MI_CONNECTIONLESS = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) connection oriented method
+	 * available
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTION_ORIENTED = 2;
+	public static final int _SCCP_MI_CONNECTION_ORIENTED = 2;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) connectionless and
+	 * connection oriented methods available (national use)
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTIONLESS_AND_CONNECTION_ORIENTED = 3;
+	public static final int _SCCP_MI_CONNLESS_AND_CONN_ORIENTED = 3;
 	private int sccpMethodIndicator = 0;
 
-	public BackwardCallIndicators(int chargeIndicator, int calledPartysStatusIndicator, int calledPartysCategoryIndicator, int endToEndMethodIndicator, int interworkingIndicator,
-			int endToEndInformationIndicator, int isdnUserPartIndicator, int isdnAccessIndicator, int echoControlDeviceIndicator, int holdingIndicator, int sccpMethodIndicator) {
+	public BackwardCallIndicators(int chargeIndicator, int calledPartysStatusIndicator, int calledPartysCategoryIndicator, int endToEndMethodIndicator, boolean interworkingIndicator,
+			boolean endToEndInformationIndicator, boolean isdnUserPartIndicator, boolean isdnAccessIndicator, boolean echoControlDeviceIndicator, boolean holdingIndicator, int sccpMethodIndicator) {
 		super();
 		this.chargeIndicator = chargeIndicator;
 		this.calledPartysStatusIndicator = calledPartysStatusIndicator;
@@ -200,12 +215,12 @@ public class BackwardCallIndicators extends AbstractParameter {
 		this.endToEndMethodIndicator = (v >> 6) & 0x03;
 
 		v = b[1];
-		this.interworkingIndicator = v & 0x01;
-		this.endToEndInformationIndicator = (v >> 1) & 0x01;
-		this.isdnUserPartIndicator = (v >> 2) & 0x01;
-		this.holdingIndicator = (v >> 3) & 0x01;
-		this.isdnAccessIndicator = (v >> 4) & 0x01;
-		this.echoControlDeviceIndicator = (v >> 5) & 0x01;
+		this.interworkingIndicator = (v & 0x01) == _TURN_ON;
+		this.endToEndInformationIndicator = ((v >> 1) & 0x01) == _TURN_ON;
+		this.isdnUserPartIndicator = ((v >> 2) & 0x01) == _TURN_ON;
+		this.holdingIndicator = ((v >> 3) & 0x01) == _TURN_ON;
+		this.isdnAccessIndicator = ((v >> 4) & 0x01) == _TURN_ON;
+		this.echoControlDeviceIndicator = ((v >> 5) & 0x01) == _TURN_ON;
 		this.sccpMethodIndicator = (v >> 6) & 0x03;
 		return 2;
 	}
@@ -226,12 +241,12 @@ public class BackwardCallIndicators extends AbstractParameter {
 		b[0] = (byte) v;
 		v = 0;
 
-		v |= this.interworkingIndicator & 0x01;
-		v |= (this.endToEndInformationIndicator & 0x01) << 1;
-		v |= (this.isdnUserPartIndicator & 0x01) << 2;
-		v |= (this.holdingIndicator & 0x01) << 3;
-		v |= (this.isdnAccessIndicator & 0x01) << 4;
-		v |= (this.echoControlDeviceIndicator & 0x01) << 5;
+		v |= (this.interworkingIndicator ? _TURN_ON : _TURN_OFF);
+		v |= (this.endToEndInformationIndicator ? _TURN_ON : _TURN_OFF) << 1;
+		v |= (this.isdnUserPartIndicator ? _TURN_ON : _TURN_OFF) << 2;
+		v |= (this.holdingIndicator ? _TURN_ON : _TURN_OFF) << 3;
+		v |= (this.isdnAccessIndicator ? _TURN_ON : _TURN_OFF) << 4;
+		v |= (this.echoControlDeviceIndicator ? _TURN_ON : _TURN_OFF) << 5;
 		v |= (this.sccpMethodIndicator & 0x03) << 6;
 
 		b[1] = (byte) v;
@@ -283,51 +298,51 @@ public class BackwardCallIndicators extends AbstractParameter {
 		this.endToEndMethodIndicator = endToEndMethodIndicator;
 	}
 
-	public int getInterworkingIndicator() {
+	public boolean isInterworkingIndicator() {
 		return interworkingIndicator;
 	}
 
-	public void setInterworkingIndicator(int interworkingIndicator) {
+	public void setInterworkingIndicator(boolean interworkingIndicator) {
 		this.interworkingIndicator = interworkingIndicator;
 	}
 
-	public int getEndToEndInformationIndicator() {
+	public boolean isEndToEndInformationIndicator() {
 		return endToEndInformationIndicator;
 	}
 
-	public void setEndToEndInformationIndicator(int endToEndInformationIndicator) {
+	public void setEndToEndInformationIndicator(boolean endToEndInformationIndicator) {
 		this.endToEndInformationIndicator = endToEndInformationIndicator;
 	}
 
-	public int getIsdnUserPartIndicator() {
+	public boolean isIsdnUserPartIndicator() {
 		return isdnUserPartIndicator;
 	}
 
-	public void setIsdnUserPartIndicator(int isdnUserpartIndicator) {
-		this.isdnUserPartIndicator = isdnUserpartIndicator;
+	public void setIsdnUserPartIndicator(boolean isdnUserPartIndicator) {
+		this.isdnUserPartIndicator = isdnUserPartIndicator;
 	}
 
-	public int getIsdnAccessIndicator() {
+	public boolean isIsdnAccessIndicator() {
 		return isdnAccessIndicator;
 	}
 
-	public void setIsdnAccessIndicator(int isdnAccessIndicator) {
+	public void setIsdnAccessIndicator(boolean isdnAccessIndicator) {
 		this.isdnAccessIndicator = isdnAccessIndicator;
 	}
 
-	public int getEchoControlDeviceIndicator() {
+	public boolean isEchoControlDeviceIndicator() {
 		return echoControlDeviceIndicator;
 	}
 
-	public void setEchoControlDeviceIndicator(int echoControlDeviceIndicator) {
+	public void setEchoControlDeviceIndicator(boolean echoControlDeviceIndicator) {
 		this.echoControlDeviceIndicator = echoControlDeviceIndicator;
 	}
 
-	public int getHoldingIndicator() {
+	public boolean isHoldingIndicator() {
 		return holdingIndicator;
 	}
 
-	public void setHoldingIndicator(int holdingIndicator) {
+	public void setHoldingIndicator(boolean holdingIndicator) {
 		this.holdingIndicator = holdingIndicator;
 	}
 

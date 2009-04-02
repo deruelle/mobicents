@@ -1,5 +1,5 @@
 /**
- * Start time:15:59:02 2009-03-29<br>
+ * Start time:16:41:45 2009-04-02<br>
  * Project: mobicents-jain-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
@@ -12,15 +12,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Start time:15:59:02 2009-03-29<br>
+ * Start time:16:41:45 2009-04-02<br>
  * Project: mobicents-jain-isup-stack<br>
- * This represent called party number - Q.763 - 3.9
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
- * @author Oleg Kulikoff
  */
-public class CalledPartyNumber extends AbstractNumber {
+public class RedirectionNumber extends AbstractNumber {
 
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
@@ -41,58 +39,24 @@ public class CalledPartyNumber extends AbstractNumber {
 	public final static int _INN_ROUTING_ALLOWED = 0;
 	/**
 	 * internal network number indicator indicator value. See Q.763 - 3.9c
-	 * 
 	 */
 	public final static int _INN_ROUTING_NOT_ALLOWED = 1;
 
-	// Extension to NAI
-
-	/**
-	 * nature of address indicator value. See Q.763 - 3.46b network routing
-	 * number in national (significant) number format (national use)
-	 */
-	public final static int _NAI_NRNINNF = 6;
-
-	/**
-	 * nature of address indicator value. See Q.763 - 3.46b network routing
-	 * number in network-specific number format (national use)
-	 */
-	public final static int _NAI_NRNINSNF = 7;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.46b reserved for network
-	 * routing number concatenated with Called Directory Number (national use)
-	 */
-	public final static int _NAI_RNRNCWCDN = 8;
 	protected int numberingPlanIndicator = 0;
 
 	protected int internalNetworkNumberIndicator = 0;
 
-	/**
-	 * 
-	 * 
-	 * @param representation
-	 */
-	public CalledPartyNumber(byte[] representation) {
+	public RedirectionNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * 
-	 * 
-	 * @param bis
-	 */
-	public CalledPartyNumber(ByteArrayInputStream bis) {
+	public RedirectionNumber(ByteArrayInputStream bis) {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * 
-	 * @param natureOfAddresIndicator
-	 * @param address
-	 */
-	public CalledPartyNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator) {
+	public RedirectionNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator) {
 		super(natureOfAddresIndicator, address);
 		this.numberingPlanIndicator = numberingPlanIndicator;
 		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;

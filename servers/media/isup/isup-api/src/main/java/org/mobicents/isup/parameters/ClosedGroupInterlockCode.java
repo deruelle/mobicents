@@ -20,7 +20,7 @@ import java.io.IOException;
 public class ClosedGroupInterlockCode extends AbstractParameter {
 	// XXX: this parameter is weird, it does not follow general convention of
 	// parameters :/
-	private int[] niDigits = null;
+	private byte[] niDigits = null;
 	private int binaryCode = 0;
 
 	public ClosedGroupInterlockCode(byte[] b) {
@@ -36,14 +36,11 @@ public class ClosedGroupInterlockCode extends AbstractParameter {
 	 *            default int value)
 	 * @param binaryCode
 	 */
-	public ClosedGroupInterlockCode(int[] niDigits, int binaryCode) {
+	public ClosedGroupInterlockCode(byte[] niDigits, int binaryCode) {
 		super();
-		if (niDigits == null || niDigits.length != 4) {
-			throw new IllegalArgumentException();
-		}
-
+		
 		// FIXME: add check for range ?
-		this.niDigits = niDigits;
+		this.setNiDigits(niDigits);
 		this.binaryCode = binaryCode;
 	}
 
@@ -57,13 +54,13 @@ public class ClosedGroupInterlockCode extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must not be null and must have length of 4");
 		}
 		int v = 0;
-		this.niDigits = new int[4];
+		this.niDigits = new byte[4];
 
 		for (int i = 0; i < 2; i++) {
 			v = 0;
 			v = b[i];
-			this.niDigits[i * 2] = v & 0x0F;
-			this.niDigits[i * 2 + 1] = (v >> 4) & 0x0F;
+			this.niDigits[i * 2] = (byte) (v & 0x0F);
+			this.niDigits[i * 2 + 1] = (byte) ((v >> 4) & 0x0F);
 		}
 
 		this.binaryCode = b[2] << 8;
@@ -94,11 +91,15 @@ public class ClosedGroupInterlockCode extends AbstractParameter {
 		return b;
 	}
 
-	public int[] getNiDigits() {
+	public byte[] getNiDigits() {
 		return niDigits;
 	}
 
-	public void setNiDigits(int[] niDigits) {
+	public void setNiDigits(byte[] niDigits) {
+		if (niDigits == null || niDigits.length != 4) {
+			throw new IllegalArgumentException();
+		}
+
 		this.niDigits = niDigits;
 	}
 
