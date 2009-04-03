@@ -23,27 +23,27 @@ public class GenericNumber extends AbstractNumber {
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_CALLED_NUMBER = 1;
+	public final static int _NQIA_CALLED_NUMBER = 1;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_CONNECTED_NUMBER = 5;
+	public final static int _NQIA_CONNECTED_NUMBER = 5;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_CALLING_PARTY_NUMBER = 6;
+	public final static int _NQIA_CALLING_PARTY_NUMBER = 6;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_ORIGINAL_CALLED_NUMBER = 7;
+	public final static int _NQIA_ORIGINAL_CALLED_NUMBER = 7;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_REDIRECTING_NUMBER = 8;
+	public final static int _NQIA_REDIRECTING_NUMBER = 8;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
-	public final static int _NQI_ADDITIONAL_REDIRECTION_NUMBER = 9;
+	public final static int _NQIA_REDIRECTION_NUMBER = 9;
 
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d

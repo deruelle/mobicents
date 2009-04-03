@@ -17,13 +17,13 @@ import java.io.IOException;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class ClosedGroupInterlockCode extends AbstractParameter {
+public class ClosedUserGroupInterlockCode extends AbstractParameter {
 	// XXX: this parameter is weird, it does not follow general convention of
 	// parameters :/
 	private byte[] niDigits = null;
 	private int binaryCode = 0;
 
-	public ClosedGroupInterlockCode(byte[] b) {
+	public ClosedUserGroupInterlockCode(byte[] b) {
 		super();
 		decodeElement(b);
 	}
@@ -36,7 +36,7 @@ public class ClosedGroupInterlockCode extends AbstractParameter {
 	 *            default int value)
 	 * @param binaryCode
 	 */
-	public ClosedGroupInterlockCode(byte[] niDigits, int binaryCode) {
+	public ClosedUserGroupInterlockCode(byte[] niDigits, int binaryCode) {
 		super();
 		
 		// FIXME: add check for range ?

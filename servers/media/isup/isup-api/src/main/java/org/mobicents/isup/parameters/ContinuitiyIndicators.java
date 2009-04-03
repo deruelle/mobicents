@@ -19,24 +19,27 @@ import java.io.IOException;
  */
 public class ContinuitiyIndicators extends AbstractParameter {
 
-	/**
-	 * See Q.763 3.18
-	 */
-	public static final int _CONTINUITY_CHECK_FAILED = 0;
+	private final static int _TURN_ON = 1;
+	private final static int _TURN_OFF = 0;
 
 	/**
 	 * See Q.763 3.18
 	 */
-	public static final int _CONTINUITY_CHECK_SUCCESSFUL = 1;
+	public static final boolean _CONTINUITY_CHECK_FAILED = false;
 
-	private int continuityCheck = 0;
+	/**
+	 * See Q.763 3.18
+	 */
+	public static final boolean _CONTINUITY_CHECK_SUCCESSFUL = true;
+
+	private boolean continuityCheck = false;
 
 	public ContinuitiyIndicators(byte[] b) {
 		super();
 		decodeElement(b);
 	}
 
-	public ContinuitiyIndicators(int continuityCheck) {
+	public ContinuitiyIndicators(boolean continuityCheck) {
 		super();
 		this.continuityCheck = continuityCheck;
 	}
@@ -50,7 +53,7 @@ public class ContinuitiyIndicators extends AbstractParameter {
 		if (b == null || b.length != 1) {
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
 		}
-		this.continuityCheck = b[0] & 0x01;
+		this.continuityCheck = (b[0] & 0x01) == _TURN_ON;
 		return 1;
 	}
 
@@ -60,7 +63,15 @@ public class ContinuitiyIndicators extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
 	 */
 	public byte[] encodeElement() throws IOException {
-		return new byte[] { (byte) (this.continuityCheck & 0x01) };
+		return new byte[] { (byte) (this.continuityCheck ? _TURN_ON : _TURN_OFF) };
+	}
+
+	public boolean isContinuityCheck() {
+		return continuityCheck;
+	}
+
+	public void setContinuityCheck(boolean continuityCheck) {
+		this.continuityCheck = continuityCheck;
 	}
 
 }

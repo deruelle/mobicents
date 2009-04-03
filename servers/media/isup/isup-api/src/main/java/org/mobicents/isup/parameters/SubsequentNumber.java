@@ -20,7 +20,6 @@ import java.io.ByteArrayOutputStream;
  */
 public class SubsequentNumber extends AbstractNumber {
 
-	
 	public SubsequentNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
@@ -36,21 +35,28 @@ public class SubsequentNumber extends AbstractNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.ByteArrayInputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
+	 * ByteArrayInputStream)
 	 */
 	@Override
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+		// NOTE: we leave this.
+
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.ByteArrayOutputStream)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.mobicents.isup.parameters.AbstractNumber#encodeBody(java.io.
+	 * ByteArrayOutputStream)
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		// TODO Auto-generated method stub
+		// NOTE: we leave this.
 		return 0;
 	}
 

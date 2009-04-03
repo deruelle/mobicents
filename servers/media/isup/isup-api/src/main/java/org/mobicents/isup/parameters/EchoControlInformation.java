@@ -20,74 +20,88 @@ import java.io.IOException;
 public class EchoControlInformation extends AbstractParameter {
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device information indicator : no
+	 * information
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOINFO = 0;
+	public static final int _OUTGOING_ECHO_CDII_NOINFO = 0;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device information indicator :
+	 * outgoing echo control device not included and not available
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOT_INCLUDED_NOT_AVAILABLE = 1;
+	public static final int _OUTGOING_ECHO_CDII_NINA = 1;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device information indicator :
+	 * outgoing echo control device included
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_INCLUDED = 2;
+	public static final int _OUTGOING_ECHO_CDII_INCLUDED = 2;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device information indicator :
+	 * outgoing echo control device not included but available
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOT_INCLUDED_AVAILABLE = 3;
+	public static final int _OUTGOING_ECHO_CDII_NIA = 3;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device information indicator : no
+	 * information
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOINFO = 0;
+	public static final int _INCOMING_ECHO_CDII_NOINFO = 0;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device information indicator :
+	 * incoming echo control device not included and not available
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOT_INCLUDED_NOT_AVAILABLE = 1;
+	public static final int _INCOMING_ECHO_CDII_NINA = 1;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device information indicator :
+	 * incoming echo control device included
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_INCLUDED = 2;
+	public static final int _INCOMING_ECHO_CDII_INCLUDED = 2;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device information indicator :
+	 * incoming echo control device not included but available
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_INFORMATION_INDICATOR_NOT_INCLUDED_AVAILABLE = 3;
+	public static final int _INCOMING_ECHO_CDII_NIA = 3;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device request indicator : no
+	 * information
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_NOINFO = 0;
+	public static final int _INCOMING_ECHO_CDRI_NOINFO = 0;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device request indicator : incoming
+	 * echo control device activation request
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_ACTIVATION_REQEUST = 1;
+	public static final int _INCOMING_ECHO_CDRI_AR = 1;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Incoming echo control device request indicator : incoming
+	 * echo control device deactivation request (Note 2)
 	 */
-	public static final int _INCOMING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_DEACTIVATION_REQEUST = 2;
+	public static final int _INCOMING_ECHO_CDRI_DR = 2;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device request indicator : no
+	 * information
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_NOINFO = 0;
+	public static final int _OUTGOING_ECHO_CDRI_NOINFO = 0;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device request indicator : outgoing
+	 * echo control device activation request
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_ACTIVATION_REQEUST = 1;
+	public static final int _OUTGOING_ECHO_CDRI_AR = 1;
 
 	/**
-	 * See Q.763 3.19
+	 * See Q.763 3.19 Outgoing echo control device request indicator : outgoing
+	 * echo control device deactivation request (Note 1)
 	 */
-	public static final int _OUTGOING_ECHO_CONTROL_DEVICE_REQUEST_INDICATOR_DEACTIVATION_REQEUST = 2;
+	public static final int _OUTGOING_ECHO_CDRI_DR = 2;
 	private int outgoingEchoControlDeviceInformationIndicator = 0;
 	private int incomingEchoControlDeviceInformationIndicator = 0;
 	private int outgoingEchoControlDeviceInformationRequestIndicator = 0;

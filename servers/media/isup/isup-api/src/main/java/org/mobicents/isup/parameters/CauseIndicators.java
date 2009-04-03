@@ -47,38 +47,38 @@ public class CauseIndicators extends AbstractParameter {
 	public static final int _LOCATION_USER = 0;
 
 	/**
-	 * See Q.850
+	 * See Q.850 private network serving the local user (LPN)
 	 */
-	public static final int _LOCATION_PRIVATE_NETWORK_SERVING_LOCAL_USER = 1;
+	public static final int _LOCATION_PRIVATE_NSLU = 1;
 
 	/**
-	 * See Q.850
+	 * See Q.850 public network serving the local user (LN)
 	 */
-	public static final int _LOCATION_PUBLIC_NETWORK_SERVING_LOCAL_USER = 2;
+	public static final int _LOCATION_PUBLIC_NSLU = 2;
 
 	/**
-	 * See Q.850
+	 * See Q.850 transit network (TN)
 	 */
 	public static final int _LOCATION_TRANSIT_NETWORK = 3;
 
 	/**
-	 * See Q.850
+	 * See Q.850 private network serving the remote user (RPN)
 	 */
-	public static final int _LOCATION_PRIVATE_NETWORK_SERVING_REMOTE_USER = 4;
+	public static final int _LOCATION_PRIVATE_NSRU = 5;
 
 	/**
-	 * See Q.850
+	 * See Q.850 public network serving the remote user (RLN)
 	 */
-	public static final int _LOCATION_PUBLIC_NETWORK_SERVING_REMOTE_USER = 5;
+	public static final int _LOCATION_PUBLIC_NSRU = 4;
 	/**
 	 * See Q.850
 	 */
 	public static final int _LOCATION_INTERNATIONAL_NETWORK = 7;
 
 	/**
-	 * See Q.850
+	 * See Q.850 network beyond interworking point (BI)
 	 */
-	public static final int _LOCATION_NETWORK_BEYOND_INTERWORKING_POINT = 10;
+	public static final int _LOCATION_NETWORK_BEYOND_IP = 10;
 
 	private int location = 0;
 	private int causeValue = 0;

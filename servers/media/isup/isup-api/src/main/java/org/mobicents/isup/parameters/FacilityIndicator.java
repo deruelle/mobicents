@@ -19,7 +19,10 @@ import java.io.IOException;
  */
 public class FacilityIndicator extends AbstractParameter {
 
-	public static final int _FACILITY_INDICATOR_USER_TO_USER_SERVICE = 2;
+	/**
+	 * See Q.763 3.22 facility indicator user-to-user service
+	 */
+	public static final int _FACILITY_INDICATOR_UTUS = 2;
 	private int facilityIndicator = 0;
 
 	public FacilityIndicator(byte[] b) {

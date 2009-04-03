@@ -23,43 +23,43 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 	private static final int _TURN_OFF = 0;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 In-band information indicator
 	 */
-	private final static boolean _INBAND_INFORMATION_INDICATOR_NO_INDICATION = false;
+	private final static boolean _IBII_NO_INDICATION = false;
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 In-band information indicator
 	 */
-	private final static boolean _INBAND_INFORMATION_INDICATOR_AVAILABLE = true;
+	private final static boolean _IBII_AVAILABLE = true;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 Call diversion may occur indicator
 	 */
-	private final static boolean _CALL_DIVERSION_INDICATOR_NO_INDICATION = false;
+	private final static boolean _CDI_NO_INDICATION = false;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 Call diversion may occur indicator
 	 */
-	private final static boolean _CALL_DIVERSION_INDICATOR_MAY_OCCUR = true;
+	private final static boolean _CDI_MAY_OCCUR = true;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 Simple segmentation indicator
 	 */
-	private final static boolean _SIMPLE_SEGMENTATION_INDICATOR_NO_ADDITIONAL_INFO = false;
+	private final static boolean _SSIR_NO_ADDITIONAL_INFO = false;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 Simple segmentation indicator
 	 */
-	private final static boolean _SIMPLE_SEGMENTATION_INDICATOR_ADDITIONAL_INFO = true;
+	private final static boolean _SSIR_ADDITIONAL_INFO = true;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 MLPP user indicator
 	 */
-	private final static boolean _MLLP_USER_INDICATOR_NO_INDICATION = false;
+	private final static boolean _MLLPUI_NO_INDICATION = false;
 
 	/**
-	 * See Q.763 3.37
+	 * See Q.763 3.37 MLPP user indicator
 	 */
-	private final static boolean _MLLP_USER_INDICATOR_USER = true;
+	private final static boolean _MLLPUI_USER = true;
 
 	private boolean inbandInformationIndicator = false;
 	private boolean callDiversionMayOccurIndicator = false;

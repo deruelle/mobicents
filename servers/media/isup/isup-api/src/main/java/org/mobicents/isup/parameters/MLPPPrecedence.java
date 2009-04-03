@@ -20,43 +20,43 @@ import java.io.IOException;
 public class MLPPPrecedence extends AbstractParameter {
 
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 LFB (Look ahead for busy) : LFB allowed
 	 */
 	public static final int _LFB_INDICATOR_ALLOWED = 0;
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 LFB (Look ahead for busy) : path reserved (national use)
 	 */
 	public static final int _LFB_INDICATOR_PATH_RESERVED = 1;
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 LFB (Look ahead for busy) : LFB not allowed
 	 */
 	public static final int _LFB_INDICATOR_NOT_ALLOWED = 2;
 
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 Precedence level : flash override
 	 */
-	public static final int _PRECEDENCE_LEVEL_INDICATOR_FLASH_OVERRIDE = 0;
+	public static final int _PLI_FLASH_OVERRIDE = 0;
 
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 Precedence level : flash
 	 */
-	public static final int _PRECEDENCE_LEVEL_INDICATOR_FLASH = 1;
+	public static final int _PLI_FLASH = 1;
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 Precedence level : immediate
 	 */
-	public static final int _PRECEDENCE_LEVEL_INDICATOR_IMMEDIATE = 2;
+	public static final int _PLI_IMMEDIATE = 2;
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 Precedence level : priority
 	 */
-	public static final int _PRECEDENCE_LEVEL_INDICATOR_PRIORITY = 3;
+	public static final int _PLI_PRIORITY = 3;
 
 	/**
-	 * See Q.763 3.34
+	 * See Q.763 3.34 Precedence level : routine
 	 */
-	public static final int _PRECEDENCE_LEVEL_INDICATOR_ROUTINE = 4;
+	public static final int _PLI_ROUTINE = 4;
 
-	private byte lfb = 0;
-	private byte precedenceLevel = 0;
+	private int lfb = 0;
+	private int precedenceLevel = 0;
 	private int mllpServiceDomain = 0;
 	// FIXME: ensure zero in first digit.?
 	private byte[] niDigits = null;
@@ -126,7 +126,7 @@ public class MLPPPrecedence extends AbstractParameter {
 	}
 
 	public byte getLfb() {
-		return lfb;
+		return (byte) lfb;
 	}
 
 	public void setLfb(byte lfb) {
@@ -134,7 +134,7 @@ public class MLPPPrecedence extends AbstractParameter {
 	}
 
 	public byte getPrecedenceLevel() {
-		return precedenceLevel;
+		return (byte) precedenceLevel;
 	}
 
 	public void setPrecedenceLevel(byte precedenceLevel) {

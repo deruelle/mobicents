@@ -31,7 +31,11 @@ public class RedirectionNumberRestriction extends AbstractParameter {
 
 	private byte presentationRestrictedIndicator = 0;
 
-	
+	public RedirectionNumberRestriction(byte presentationRestrictedIndicator) {
+		super();
+		this.presentationRestrictedIndicator = presentationRestrictedIndicator;
+	}
+
 	public RedirectionNumberRestriction(byte[] b) {
 		super();
 		decodeElement(b);
@@ -58,6 +62,14 @@ public class RedirectionNumberRestriction extends AbstractParameter {
 	 */
 	public byte[] encodeElement() throws IOException {
 		return new byte[] { (byte) (this.presentationRestrictedIndicator & 0x03) };
+	}
+
+	public byte getPresentationRestrictedIndicator() {
+		return presentationRestrictedIndicator;
+	}
+
+	public void setPresentationRestrictedIndicator(byte presentationRestrictedIndicator) {
+		this.presentationRestrictedIndicator = presentationRestrictedIndicator;
 	}
 
 }

@@ -24,17 +24,17 @@ public class AccessDeliveryInformation extends AbstractParameter {
 	/**
 	 * See Q.763 3.2  Access delivery indicator: set-up message generated
 	 */
-	public static final byte _ACI_SME= 0;
+	public static final int _ACI_SME= 0;
 	
 	/**
 	 * See Q.763 3.2  Access delivery indicator:no set-up message generated
 	 */
-	public static final byte _ACI_NO_SME= 1;
+	public static final int _ACI_NO_SME= 1;
 	
-	private byte accessDeliveryIndicator = 0;
+	private int accessDeliveryIndicator = 0;
 	
 	
-	public AccessDeliveryInformation(byte accessDeliveryIndicator) {
+	public AccessDeliveryInformation(int accessDeliveryIndicator) {
 		super();
 		this.accessDeliveryIndicator = accessDeliveryIndicator;
 	}
@@ -74,11 +74,11 @@ public class AccessDeliveryInformation extends AbstractParameter {
 		return 1;
 	}
 
-	public byte getAccessDeliveryIndicator() {
+	public int getAccessDeliveryIndicator() {
 		return accessDeliveryIndicator;
 	}
 
-	public void setAccessDeliveryIndicator(byte accessDeliveryIndicator) {
+	public void setAccessDeliveryIndicator(int accessDeliveryIndicator) {
 		this.accessDeliveryIndicator = accessDeliveryIndicator;
 	}
 

@@ -24,82 +24,87 @@ public class InstructionIndicators extends AbstractParameter {
 	private static final int _TURN_OFF = 0;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Transit at intermediate exchange indicator : transit
+	 * interpretation
 	 */
-	public static final boolean _TRANSIT_INDICATOR_TRANSIT_INTEPRETATION = false;
+	public static final boolean _TI_TRANSIT_INTEPRETATION = false;
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Transit at intermediate exchange indicator :
 	 */
-	public static final boolean _TRANSIT_INDICATOR_END_TO_END_INTEPRETATION = true;
+	public static final boolean _TI_ETE_INTEPRETATION = true;
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Release call indicator : do not release
 	 */
-	public static final boolean _RELEASE_CALL_INDICATOR_DO_NOT_RELEASE = false;
+	public static final boolean _RCI_DO_NOT_RELEASE = false;
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Release call indicator : reelase call
 	 */
-	public static final boolean _RELEASE_CALL_INDICATOR_RELEASE = true;
+	public static final boolean _RCI_RELEASE = true;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Discard message indicator : do not discard message (pass
+	 * on)
 	 */
-	public static final boolean _DISCARD_MESSAGE_INDICATOR_DO_NOT_DISCARD = false;
+	public static final boolean _DMI_DO_NOT_DISCARD = false;
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Discard message indicator : discard message
 	 */
-	public static final boolean _DISCARD_MESSAGE_INDICATOR_DISCARD = true;
+	public static final boolean _DMI_DISCARD = true;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Discard parameter indicator : do not discard parameter
+	 * (pass on)
 	 */
-	public static final boolean _DISCARD_PARAMETER_INDICATOR_DO_NOT_DISCARD = false;
+	public static final boolean _DPI_DO_NOT_DISCARD = false;
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Discard parameter indicator : discard parameter
 	 */
-	public static final boolean _DISCARD_PARAMETER_INDICATOR_DISCARD = true;
+	public static final boolean _DPI_INDICATOR_DISCARD = true;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Pass on not possible indicator : release call
 	 */
-	public static final int PASS_ON_NOT_POSSIBLE_INDICATOR_RELEASE_CALL = 0;
+	public static final int _PONPI_RELEASE_CALL = 0;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Pass on not possible indicator : discard message
 	 */
-	public static final int PASS_ON_NOT_POSSIBLE_INDICATOR_DISCARD_MESSAGE = 1;
+	public static final int _PONPI_DISCARD_MESSAGE = 1;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Pass on not possible indicator : discard parameter
 	 */
-	public static final int PASS_ON_NOT_POSSIBLE_INDICATOR_DISCARD_PARAMETER = 2;
+	public static final int _PONPI_DISCARD_PARAMETER = 2;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Broadband/narrowband interworking indicator : pass on
 	 */
-	public static final int BAND_INTERWORKING_INDICATOR_PASS_ON = 0;
+	public static final int _BII_PASS_ON = 0;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Broadband/narrowband interworking indicator : discard
+	 * message
 	 */
-	public static final int BAND_INTERWORKING_INDICATOR_DISCARD_MESSAGE = 1;
+	public static final int _BII_DISCARD_MESSAGE = 1;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Broadband/narrowband interworking indicator : release call
 	 */
-	public static final int BAND_INTERWORKING_INDICATOR_RELEASE_CALL = 2;
+	public static final int _BII_RELEASE_CALL = 2;
 
 	/**
-	 * See Q.763 3.41
+	 * See Q.763 3.41 Broadband/narrowband interworking indicator : discard
+	 * parameter
 	 */
-	public static final int BAND_INTERWORKING_INDICATOR_DISCARD_PARAMETER = 3;
+	public static final int _BII_DISCARD_PARAMETER = 3;
 
 	private boolean transitAtIntermediateExchangeIndicator = false;
 	private boolean releaseCallindicator = false;
 	private boolean sendNotificationIndicator = false;
 	private boolean discardMessageIndicator = false;
 	private boolean discardParameterIndicator = false;
-	private byte passOnNotPossibleIndicator = 0;
-	private byte bandInterworkingIndicator = 0;
+	private boolean passOnNotPossibleIndicator = false;
+	private int bandInterworkingIndicator = 0;
 
 	private boolean secondOctetPresenet = false;
 
@@ -125,7 +130,7 @@ public class InstructionIndicators extends AbstractParameter {
 	}
 
 	public InstructionIndicators(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator, boolean sendNotificationIndicator, boolean discardMessageIndicator,
-			boolean discardParameterIndicator, byte passOnNotPossibleIndicator, boolean secondOctetPresenet, byte[] raw, boolean useAsRaw) {
+			boolean discardParameterIndicator, boolean passOnNotPossibleIndicator, boolean secondOctetPresenet, byte[] raw, boolean useAsRaw) {
 		super();
 		this.transitAtIntermediateExchangeIndicator = transitAtIntermediateExchangeIndicator;
 		this.releaseCallindicator = releaseCallindicator;
@@ -139,7 +144,7 @@ public class InstructionIndicators extends AbstractParameter {
 	}
 
 	public InstructionIndicators(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator, boolean sendNotificationIndicator, boolean discardMessageIndicator,
-			boolean discardParameterIndicator, byte passOnNotPossibleIndicator, byte bandInterworkingIndicator) {
+			boolean discardParameterIndicator, boolean passOnNotPossibleIndicator, byte bandInterworkingIndicator) {
 		super();
 		this.transitAtIntermediateExchangeIndicator = transitAtIntermediateExchangeIndicator;
 		this.releaseCallindicator = releaseCallindicator;
@@ -174,7 +179,7 @@ public class InstructionIndicators extends AbstractParameter {
 					this.sendNotificationIndicator = ((v >> 2) & 0x01) == _TURN_ON;
 					this.discardMessageIndicator = ((v >> 3) & 0x01) == _TURN_ON;
 					this.discardParameterIndicator = ((v >> 4) & 0x01) == _TURN_ON;
-					this.passOnNotPossibleIndicator = (byte) ((v >> 5) & 0x03);
+					this.passOnNotPossibleIndicator = (byte) ((v >> 5) & 0x03) == _TURN_ON;
 				} else if (index == 1) {
 					this.bandInterworkingIndicator = (byte) (v & 0x03);
 				} else {
@@ -215,9 +220,14 @@ public class InstructionIndicators extends AbstractParameter {
 		b[0] |= (this.sendNotificationIndicator ? _TURN_ON : _TURN_OFF) << 2;
 		b[0] |= (this.discardMessageIndicator ? _TURN_ON : _TURN_OFF) << 3;
 		b[0] |= (this.discardParameterIndicator ? _TURN_ON : _TURN_OFF) << 4;
-		b[0] |= (this.passOnNotPossibleIndicator & 0x03) << 5;
+		b[0] |= (this.passOnNotPossibleIndicator ? _TURN_ON : _TURN_OFF) << 5;
 
 		return b;
+	}
+
+	public void setBandInterworkingIndicator(byte bandInterworkingIndicator) {
+		this.bandInterworkingIndicator = bandInterworkingIndicator;
+		this.secondOctetPresenet = true;
 	}
 
 	public boolean isTransitAtIntermediateExchangeIndicator() {
@@ -260,21 +270,44 @@ public class InstructionIndicators extends AbstractParameter {
 		this.discardParameterIndicator = discardParameterIndicator;
 	}
 
-	public byte getPassOnNotPossibleIndicator() {
+	public boolean isPassOnNotPossibleIndicator() {
 		return passOnNotPossibleIndicator;
 	}
 
-	public void setPassOnNotPossibleIndicator(byte passOnNotPossibleIndicator) {
+	public void setPassOnNotPossibleIndicator(boolean passOnNotPossibleIndicator) {
 		this.passOnNotPossibleIndicator = passOnNotPossibleIndicator;
 	}
 
-	public byte getBandInterworkingIndicator() {
+	public int getBandInterworkingIndicator() {
 		return bandInterworkingIndicator;
 	}
 
-	public void setBandInterworkingIndicator(byte bandInterworkingIndicator) {
+	public void setBandInterworkingIndicator(int bandInterworkingIndicator) {
 		this.bandInterworkingIndicator = bandInterworkingIndicator;
-		this.secondOctetPresenet = true;
+	}
+
+	public boolean isSecondOctetPresenet() {
+		return secondOctetPresenet;
+	}
+
+	public void setSecondOctetPresenet(boolean secondOctetPresenet) {
+		this.secondOctetPresenet = secondOctetPresenet;
+	}
+
+	public byte[] getRaw() {
+		return raw;
+	}
+
+	public void setRaw(byte[] raw) {
+		this.raw = raw;
+	}
+
+	public boolean isUseAsRaw() {
+		return useAsRaw;
+	}
+
+	public void setUseAsRaw(boolean useAsRaw) {
+		this.useAsRaw = useAsRaw;
 	}
 
 }

@@ -96,7 +96,6 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 */
 	protected String address = null;
 
-
 	public AbstractNumber(byte[] representation) {
 		super();
 
@@ -283,7 +282,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @return - number of bytes encoded.
 	 */
 	public int encodeHeader(ByteArrayOutputStream bos) {
-		int b = this.natureOfAddresIndicator;
+		int b = this.natureOfAddresIndicator & 0x7f;
 		// Even is 000000000 == 0
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
 		if (isOdd)
@@ -342,8 +341,8 @@ public abstract class AbstractNumber extends AbstractParameter {
 		return bytesCount;
 	}
 
-	public int getOddFlag() {
-		return oddFlag;
+	public boolean isOddFlag() {
+		return oddFlag == _FLAG_ODD;
 	}
 
 	public int getNatureOfAddresIndicator() {
@@ -367,7 +366,5 @@ public abstract class AbstractNumber extends AbstractParameter {
 		// FIXME: Oleg is this correct?
 		oddFlag = this.address.length() % 2;
 	}
-
-	
 
 }

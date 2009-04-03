@@ -27,29 +27,29 @@ public class CallingPartyCategory extends AbstractParameter {
 	public static final byte _CATEGORY_UNKNOWN = 0;
 
 	/**
-	 * See Q.763 3.11
+	 * See Q.763 3.11 operator, language French
 	 */
-	public static final byte _CATEGORY_OPERATOR_LANGUAGE_FRENCH = 1;
+	public static final byte _CATEGORY_OL_FRENCH = 1;
 
 	/**
-	 * See Q.763 3.11
+	 * See Q.763 3.11 operator, language English
 	 */
-	public static final byte _CATEGORY_OPERATOR_LANGUAGE_ENGLISH = 2;
+	public static final byte _CATEGORY_OL_ENGLISH = 2;
 
 	/**
-	 * See Q.763 3.11
+	 * See Q.763 3.11 operator, language German
 	 */
-	public static final byte _CATEGORY_OPERATOR_LANGUAGE_GERMAN = 3;
+	public static final byte _CATEGORY_OL_GERMAN = 3;
 
 	/**
-	 * See Q.763 3.11
+	 * See Q.763 3.11 operator, language Russian
 	 */
-	public static final byte _CATEGORY_OPERATOR_LANGUAGE_RUSSIAN = 4;
+	public static final byte _CATEGORY_OL_RUSSIAN = 4;
 
 	/**
-	 * See Q.763 3.11
+	 * See Q.763 3.11 operator, language Spanish
 	 */
-	public static final byte _CATEGORY_OPERATOR_LANGUAGE_SPANISH = 5;
+	public static final byte _CATEGORY_OL_SPANISH = 5;
 	private byte callingPartyCategory = 0;
 
 	public CallingPartyCategory(byte callingPartyCategory) {

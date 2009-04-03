@@ -28,8 +28,8 @@ public class NetworkSpecificFacility extends AbstractParameter {
 	private boolean includeNetworkIdentification = false;
 
 	private int lengthOfNetworkIdentification = 0;
-	private byte typeOfNetworkIdentification = 0;
-	private byte NetworkdIdentificationPlan = 0;
+	private int typeOfNetworkIdentification = 0;
+	private int NetworkdIdentificationPlan = 0;
 	private byte[] networkdIdentification = null;
 	private byte[] networkSpecificaFacilityIndicator = null;
 
@@ -145,7 +145,7 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		this.lengthOfNetworkIdentification = lengthOfNetworkIdentification;
 	}
 
-	public byte getTypeOfNetworkIdentification() {
+	public int getTypeOfNetworkIdentification() {
 		return typeOfNetworkIdentification;
 	}
 
@@ -153,7 +153,7 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		this.typeOfNetworkIdentification = typeOfNetworkIdentification;
 	}
 
-	public byte getNetworkdIdentificationPlan() {
+	public int getNetworkdIdentificationPlan() {
 		return NetworkdIdentificationPlan;
 	}
 

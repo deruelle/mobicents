@@ -20,44 +20,46 @@ import java.io.IOException;
 public class GenericDigits extends AbstractParameter {
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Encoding scheme : BCD even: (even number of digits)
 	 */
 	public static final int _ENCODING_SCHEME_BCD_EVEN = 0;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Encoding scheme : BCD odd: (odd number of digits)
 	 */
 	public static final int _ENCODING_SCHEME_BCD_ODD = 1;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Encoding scheme : IA5 character
 	 */
 	public static final int _ENCODING_SCHEME_IA5 = 2;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Encoding scheme : binary coded
 	 */
 	public static final int _ENCODING_SCHEME_BINARY = 3;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Type of digits : reserved for account code
 	 */
-	public static final int _TYP_OF_DIGITS_ACCOUNT_CODE = 0;
+	public static final int _TOD_ACCOUNT_CODE = 0;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Type of digits : reserved for authorisation code
 	 */
-	public static final int _TYP_OF_DIGITS_AUTHORIZATION_CODE = 1;
+	public static final int _TOD_AUTHORIZATION_CODE = 1;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Type of digits : reserved for private networking
+	 * travelling class mark
 	 */
-	public static final int _TYP_OF_DIGITS_PRIVATE_NETWORKING_TRAVELING_CLASS_MARK = 2;
+	public static final int _TOD_PNTCM = 2;
 
 	/**
-	 * See Q.763 3.24
+	 * See Q.763 3.24 Type of digits : reserved for business communication group
+	 * identity
 	 */
-	public static final int _TYP_OF_DIGITS_BUSINESS_GROUP_COMMUNICATION_IDENTITY = 3;
+	public static final int _TOD_BGCI = 3;
 	private int encodignScheme = 0;
 	private int typeOfDigits = 0;
 	private int[] digits = null;

@@ -19,21 +19,24 @@ import java.io.IOException;
  */
 public class InformationRequestIndicators extends AbstractParameter {
 
+	private final static int _TURN_ON = 1;
+	private final static int _TURN_OFF = 0;
+
 	/**
 	 * Flag that indicates that information is requested
 	 */
-	public static final int _INDICATOR_REQUESTED = 1;
+	public static final boolean _INDICATOR_REQUESTED = true;
 
 	/**
 	 * Flag that indicates that information is not requested
 	 */
-	public static final int _INDICATOR_NOT_REQUESTED = 0;
+	public static final boolean _INDICATOR_NOT_REQUESTED = false;
 
-	private int callingPartAddressRequestIndicator = 0;
-	private int holdingIndicator = 0;
-	private int callingpartysCategoryRequestIndicator = 0;
-	private int chargeInformationRequestIndicator = 0;
-	private int maliciousCallIdentificationRequestIndicator = 0;
+	private boolean callingPartAddressRequestIndicator = false;
+	private boolean holdingIndicator = false;
+	private boolean callingpartysCategoryRequestIndicator = false;
+	private boolean chargeInformationRequestIndicator = false;
+	private boolean maliciousCallIdentificationRequestIndicator = false;
 
 	// FIXME: should we carre about this?
 	private int reserved = 0;
@@ -43,8 +46,8 @@ public class InformationRequestIndicators extends AbstractParameter {
 		decodeElement(b);
 	}
 
-	public InformationRequestIndicators(int callingPartAddressRequestIndicator, int holdingIndicator, int callingpartysCategoryRequestIndicator, int chargeInformationRequestIndicator,
-			int maliciousCallIdentificationRequestIndicator, int reserved) {
+	public InformationRequestIndicators(boolean callingPartAddressRequestIndicator, boolean holdingIndicator, boolean callingpartysCategoryRequestIndicator, boolean chargeInformationRequestIndicator,
+			boolean maliciousCallIdentificationRequestIndicator, int reserved) {
 		super();
 		this.callingPartAddressRequestIndicator = callingPartAddressRequestIndicator;
 		this.holdingIndicator = holdingIndicator;
@@ -64,11 +67,11 @@ public class InformationRequestIndicators extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 2");
 		}
 
-		this.callingPartAddressRequestIndicator = b[0] & 0x01;
-		this.holdingIndicator = (b[0] >> 1) & 0x01;
-		this.callingpartysCategoryRequestIndicator = (b[0] >> 3) & 0x01;
-		this.chargeInformationRequestIndicator = (b[0] >> 4) & 0x01;
-		this.maliciousCallIdentificationRequestIndicator = (b[0] >> 7) & 0x01;
+		this.callingPartAddressRequestIndicator = (b[0] & 0x01) == _TURN_ON;
+		this.holdingIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
+		this.callingpartysCategoryRequestIndicator = ((b[0] >> 3) & 0x01) == _TURN_ON;
+		this.chargeInformationRequestIndicator = ((b[0] >> 4) & 0x01) == _TURN_ON;
+		this.maliciousCallIdentificationRequestIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
 		this.reserved = (b[0] >> 4) & 0x0F;
 		return 2;
 	}
@@ -81,54 +84,54 @@ public class InformationRequestIndicators extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 		int b0 = 0;
 		int b1 = 0;
-		b0 |= this.callingPartAddressRequestIndicator & 0x01;
-		b0 |= (this.holdingIndicator & 0x01) << 1;
-		b0 |= (this.callingpartysCategoryRequestIndicator & 0x01) << 3;
-		b0 |= (this.chargeInformationRequestIndicator & 0x01) << 4;
-		b0 |= (this.maliciousCallIdentificationRequestIndicator & 0x01) << 7;
+		b0 |= this.callingPartAddressRequestIndicator ? _TURN_ON : _TURN_OFF;
+		b0 |= (this.holdingIndicator ? _TURN_ON : _TURN_OFF) << 1;
+		b0 |= (this.callingpartysCategoryRequestIndicator ? _TURN_ON : _TURN_OFF) << 3;
+		b0 |= (this.chargeInformationRequestIndicator ? _TURN_ON : _TURN_OFF) << 4;
+		b0 |= (this.maliciousCallIdentificationRequestIndicator ? _TURN_ON : _TURN_OFF) << 7;
 
 		b1 |= (this.reserved & 0x0F) << 4;
 
 		return new byte[] { (byte) b0, (byte) b1 };
 	}
 
-	public int getCallingPartAddressRequestIndicator() {
+	public boolean isCallingPartAddressRequestIndicator() {
 		return callingPartAddressRequestIndicator;
 	}
 
-	public void setCallingPartAddressRequestIndicator(int callingPartAddressRequestIndicator) {
+	public void setCallingPartAddressRequestIndicator(boolean callingPartAddressRequestIndicator) {
 		this.callingPartAddressRequestIndicator = callingPartAddressRequestIndicator;
 	}
 
-	public int getHoldingIndicator() {
+	public boolean isHoldingIndicator() {
 		return holdingIndicator;
 	}
 
-	public void setHoldingIndicator(int holdingIndicator) {
+	public void setHoldingIndicator(boolean holdingIndicator) {
 		this.holdingIndicator = holdingIndicator;
 	}
 
-	public int getCallingpartysCategoryRequestIndicator() {
+	public boolean isCallingpartysCategoryRequestIndicator() {
 		return callingpartysCategoryRequestIndicator;
 	}
 
-	public void setCallingpartysCategoryRequestIndicator(int callingpartysCategoryRequestIndicator) {
+	public void setCallingpartysCategoryRequestIndicator(boolean callingpartysCategoryRequestIndicator) {
 		this.callingpartysCategoryRequestIndicator = callingpartysCategoryRequestIndicator;
 	}
 
-	public int getChargeInformationRequestIndicator() {
+	public boolean isChargeInformationRequestIndicator() {
 		return chargeInformationRequestIndicator;
 	}
 
-	public void setChargeInformationRequestIndicator(int chargeInformationRequestIndicator) {
+	public void setChargeInformationRequestIndicator(boolean chargeInformationRequestIndicator) {
 		this.chargeInformationRequestIndicator = chargeInformationRequestIndicator;
 	}
 
-	public int getMaliciousCallIdentificationRequestIndicator() {
+	public boolean isMaliciousCallIdentificationRequestIndicator() {
 		return maliciousCallIdentificationRequestIndicator;
 	}
 
-	public void setMaliciousCallIdentificationRequestIndicator(int maliciousCallIdentificationRequestIndicator) {
+	public void setMaliciousCallIdentificationRequestIndicator(boolean maliciousCallIdentificationRequestIndicator) {
 		this.maliciousCallIdentificationRequestIndicator = maliciousCallIdentificationRequestIndicator;
 	}
 

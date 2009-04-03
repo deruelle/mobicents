@@ -19,52 +19,71 @@ import java.io.IOException;
  */
 public class InformationIndicators extends AbstractParameter {
 
-	/**
-	 * See Q.763 3.28
-	 */
-	public static final int _CALLING_PARTYS_ADDRESS_RESPONSE_INDICATOR_ADDRESS_NOT_INCLUDED = 0;
+	private final static int _TURN_ON = 1;
+	private final static int _TURN_OFF = 0;
 
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Calling party address response indicator : calling party
+	 * address not included
 	 */
-	public static final int _CALLING_PARTYS_ADDRESS_RESPONSE_INDICATOR_ADDRESS_INCLUDED = 3;
-	/**
-	 * See Q.763 3.28
-	 */
-	public static final int _CALLING_PARTYS_ADDRESS_RESPONSE_INDICATOR_ADDRESS_NOT_AVAILABLE = 1;
+	public static final int _CPARI_ADDRESS_NOT_INCLUDED = 0;
 
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Calling party address response indicator : calling party
+	 * address included
 	 */
-	public static final int _HOLD_PROVIDED_INDICATOR_NOT_PROVIDED = 0;
+	public static final int _CPARI_ADDRESS_INCLUDED = 3;
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Calling party address response indicator : calling party
+	 * address not available
 	 */
-	public static final int _HOLD_PROVIDED_INDICATOR_PROVIDED = 1;
+	public static final int _CPARI_ADDRESS_NOT_AVAILABLE = 1;
 
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Hold provided indicator : hold not provided
 	 */
-	public static final int _CHARGE_INFORMATION_INDICATOR_NOT_INCLUDED = 0;
+	public static final boolean _HPI_NOT_PROVIDED = false;
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Hold provided indicator : hold provided
 	 */
-	public static final int _CHARGE_INFORMATION_INDICATOR_INCLUDED = 1;
+	public static final boolean _HPI_PROVIDED = true;
 
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Charge information response indicator : charge information
+	 * not included
 	 */
-	public static final int _SOLICITED_INFORMATION_INDICATOR_SOLICITED = 0;
+	public static final boolean _CIRI_NOT_INCLUDED = false;
 	/**
-	 * See Q.763 3.28
+	 * See Q.763 3.28 Charge information response indicator : charge information
+	 * included
 	 */
-	public static final int _SOLICITED_INFORMATION_INDICATOR_UNSOLICITED = 1;
+	public static final boolean _CIRI_INCLUDED = true;
+
+	/**
+	 * See Q.763 3.28 Solicited information indicator : solicited
+	 */
+	public static final boolean _SII_SOLICITED = false;
+	/**
+	 * See Q.763 3.28 Solicited information indicator : unsolicited
+	 */
+	public static final boolean _SII_UNSOLICITED = true;
+	/**
+	 * See Q.763 3.28 Calling party's category response indicator : calling
+	 * party's category not included
+	 */
+	public static final boolean _CPCRI_CATEOGRY_NOT_INCLUDED = false;
+
+	/**
+	 * See Q.763 3.28 Calling party's category response indicator : calling
+	 * party's category not included
+	 */
+	public static final boolean _CPCRI_CATEOGRY_INCLUDED = true;
 
 	private int callingPartyAddressResponseIndicator = 0;
-	private int holdProvidedIndicator = 0;
-	private int callingPartysCategoryResponseIndicator = 0;
-	private int chargeInformationResponseIndicator = 0;
-	private int solicitedInformationIndicator = 0;
+	private boolean holdProvidedIndicator = false;
+	private boolean callingPartysCategoryResponseIndicator = false;
+	private boolean chargeInformationResponseIndicator = false;
+	private boolean solicitedInformationIndicator = false;
 	// FIXME: should we care about it.
 	private int reserved = 0;
 
@@ -73,8 +92,8 @@ public class InformationIndicators extends AbstractParameter {
 		decodeElement(b);
 	}
 
-	public InformationIndicators(int callingPartyAddressResponseIndicator, int holdProvidedIndicator, int callingPartysCategoryResponseIndicator, int chargeInformationResponseIndicator,
-			int solicitedInformationIndicator, int reserved) {
+	public InformationIndicators(int callingPartyAddressResponseIndicator, boolean holdProvidedIndicator, boolean callingPartysCategoryResponseIndicator, boolean chargeInformationResponseIndicator,
+			boolean solicitedInformationIndicator, int reserved) {
 		super();
 		this.callingPartyAddressResponseIndicator = callingPartyAddressResponseIndicator;
 		this.holdProvidedIndicator = holdProvidedIndicator;
@@ -96,10 +115,10 @@ public class InformationIndicators extends AbstractParameter {
 
 		this.reserved = b[1] & 0x0F;
 		this.callingPartyAddressResponseIndicator = b[0] & 0x03;
-		this.holdProvidedIndicator = (b[0] >> 2) & 0x01;
-		this.callingPartysCategoryResponseIndicator = (b[0] >> 5) & 0x01;
-		this.chargeInformationResponseIndicator = (b[0] >> 6) & 0x01;
-		this.solicitedInformationIndicator = (b[0] >> 7) & 0x01;
+		this.holdProvidedIndicator = ((b[0] >> 2) & 0x01) == _TURN_ON;
+		this.callingPartysCategoryResponseIndicator = ((b[0] >> 5) & 0x01) == _TURN_ON;
+		this.chargeInformationResponseIndicator = ((b[0] >> 6) & 0x01) == _TURN_ON;
+		this.solicitedInformationIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
 		return 2;
 	}
 
@@ -111,10 +130,10 @@ public class InformationIndicators extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 
 		int b1 = this.callingPartyAddressResponseIndicator & 0x03;
-		b1 |= (this.holdProvidedIndicator & 0x01) << 2;
-		b1 |= (this.callingPartysCategoryResponseIndicator & 0x01) << 5;
-		b1 |= (this.chargeInformationResponseIndicator & 0x01) << 6;
-		b1 |= (this.solicitedInformationIndicator & 0x01) << 7;
+		b1 |= (this.holdProvidedIndicator ? _TURN_ON : _TURN_OFF) << 2;
+		b1 |= (this.callingPartysCategoryResponseIndicator ? _TURN_ON : _TURN_OFF) << 5;
+		b1 |= (this.chargeInformationResponseIndicator ? _TURN_ON : _TURN_OFF) << 6;
+		b1 |= (this.solicitedInformationIndicator ? _TURN_ON : _TURN_OFF) << 7;
 
 		int b2 = this.reserved & 0x0F;
 		byte[] b = new byte[] { (byte) b1, (byte) b2 };
@@ -129,35 +148,35 @@ public class InformationIndicators extends AbstractParameter {
 		this.callingPartyAddressResponseIndicator = callingPartyAddressResponseIndicator;
 	}
 
-	public int getHoldProvidedIndicator() {
+	public boolean isHoldProvidedIndicator() {
 		return holdProvidedIndicator;
 	}
 
-	public void setHoldProvidedIndicator(int holdProvidedIndicator) {
+	public void setHoldProvidedIndicator(boolean holdProvidedIndicator) {
 		this.holdProvidedIndicator = holdProvidedIndicator;
 	}
 
-	public int getCallingPartysCategoryResponseIndicator() {
+	public boolean isCallingPartysCategoryResponseIndicator() {
 		return callingPartysCategoryResponseIndicator;
 	}
 
-	public void setCallingPartysCategoryResponseIndicator(int callingPartysCategoryResponseIndicator) {
+	public void setCallingPartysCategoryResponseIndicator(boolean callingPartysCategoryResponseIndicator) {
 		this.callingPartysCategoryResponseIndicator = callingPartysCategoryResponseIndicator;
 	}
 
-	public int getChargeInformationResponseIndicator() {
+	public boolean isChargeInformationResponseIndicator() {
 		return chargeInformationResponseIndicator;
 	}
 
-	public void setChargeInformationResponseIndicator(int chargeInformationResponseIndicator) {
+	public void setChargeInformationResponseIndicator(boolean chargeInformationResponseIndicator) {
 		this.chargeInformationResponseIndicator = chargeInformationResponseIndicator;
 	}
 
-	public int getSolicitedInformationIndicator() {
+	public boolean isSolicitedInformationIndicator() {
 		return solicitedInformationIndicator;
 	}
 
-	public void setSolicitedInformationIndicator(int solicitedInformationIndicator) {
+	public void setSolicitedInformationIndicator(boolean solicitedInformationIndicator) {
 		this.solicitedInformationIndicator = solicitedInformationIndicator;
 	}
 

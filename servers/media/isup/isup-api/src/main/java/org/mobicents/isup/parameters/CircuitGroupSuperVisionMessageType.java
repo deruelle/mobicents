@@ -20,13 +20,15 @@ import java.io.IOException;
 public class CircuitGroupSuperVisionMessageType extends AbstractParameter {
 
 	/**
-	 * See Q.763 3.13
+	 * See Q.763 3.13 Circuit group supervision message type indicator
+	 * maintenance oriented
 	 */
-	public static final int _CIRCUIT_GROUP_SUPERVISION_MESSAGE_TYPE_INDICATOR_MAINTANENCE_ORIENTED = 0;
+	public static final int _CIRCUIT_GROUP_SMTIMO = 0;
 	/**
-	 * See Q.763 3.13
+	 * See Q.763 3.13 Circuit group supervision message type indicator hardware
+	 * failure oriented
 	 */
-	public static final int _CIRCUIT_GROUP_SUPERVISION_MESSAGE_TYPE_INDICATOR_HARDWARE_FAILURE_ORIENTED = 1;
+	public static final int _CIRCUIT_GROUP_SMTIHFO = 1;
 
 	private int circuitGroupSuperVisionMessageTypeIndicator = 0;
 

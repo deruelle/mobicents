@@ -23,38 +23,42 @@ public class OptionalForwardCallIndicator extends AbstractParameter {
 	private static final int _TURN_OFF = 0;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Simple segmentation indicator : no additional information
+	 * will be sent
 	 */
-	private final static boolean _SIMPLE_SEGMENTATION_INDICATOR_NO_ADDITIONAL_INFO = false;
+	private final static boolean _SSI_NO_ADDITIONAL_INFO = false;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Simple segmentation indicator : additional information
+	 * will be sent in a segmentation message
 	 */
-	private final static boolean _SIMPLE_SEGMENTATION_INDICATOR_ADDITIONAL_INFO = true;
+	private final static boolean _SSI_ADDITIONAL_INFO = true;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Connected line identity request indicator :
 	 */
-	private final static boolean _CONNECTED_LINE_IDENTITY_REQUEST_INDICATOR_NOT_REQUESTED = false;
+	private final static boolean _CLIRI_NOT_REQUESTED = false;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Connected line identity request indicator :
 	 */
-	private final static boolean _CONNECTED_LINE_IDENTITY_REQUEST_INDICATOR_REQUESTED = true;
+	private final static boolean _CLIRI_REQUESTED = true;
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Closed user group call indicator : non-CUG call
 	 */
-	private final static int _CLOSED_USER_GROUP_CALL_INDICATOR_NON_CUG_CALL = 0;
+	private final static int _CIGCI_NON_CUG_CALL = 0;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Closed user group call indicator : closed user group call,
+	 * outgoing access allowed
 	 */
-	private final static int _CLOSED_USER_GROUP_CALL_INDICATOR_CUG_CALL_OUTGOIGN_ACCESS_ALLOWED = 2;
+	private final static int _CIGCI_CUG_CALL_OAL = 2;
 
 	/**
-	 * See Q.763 3.38
+	 * See Q.763 3.38 Closed user group call indicator : closed user group call,
+	 * outgoing access not allowed
 	 */
-	private final static int _CLOSED_USER_GROUP_CALL_INDICATOR_CUG_CALL_OUTGOIGN_ACCESS_NOT_ALLOWED = 3;
+	private final static int _CIGCI_CUG_CALL_OANL = 3;
 
 	private byte closedUserGroupCallIndicator = 0;
 	private boolean simpleSegmentationIndicator = false;

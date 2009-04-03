@@ -19,23 +19,25 @@ import java.io.IOException;
  */
 public class MCIDResponseIndicators extends AbstractParameter {
 
-//	public static boolean HOLDING_NOT_RROVIDED = false;
-//
-//	public static boolean HOLDING_PROVIDED = true;
-//
-//	public static boolean MCID_INCLUDED = true;
-//
-//	public static boolean MCID_NOT_INCLUDED = false;
+	private static final int _TURN_ON = 1;
+	private static final int _TURN_OFF = 0;
+	// public static boolean HOLDING_NOT_RROVIDED = false;
+	//
+	// public static boolean HOLDING_PROVIDED = true;
+	//
+	// public static boolean MCID_INCLUDED = true;
+	//
+	// public static boolean MCID_NOT_INCLUDED = false;
 
 	/**
 	 * Flag that indicates that information is requested
 	 */
-	private static final int _INDICATOR_PROVIDED = 1;
+	private static final boolean _INDICATOR_PROVIDED = true;
 
 	/**
 	 * Flag that indicates that information is not requested
 	 */
-	private static final int _INDICATOR_NOT_PROVIDED = 0;
+	private static final boolean _INDICATOR_NOT_PROVIDED = false;
 
 	private boolean mcidIncludedIndicator = false;
 	private boolean holdingProvidedIndicator = false;
@@ -61,8 +63,8 @@ public class MCIDResponseIndicators extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
 		}
 
-		this.mcidIncludedIndicator = (b[0] & 0x01) == _INDICATOR_PROVIDED;
-		this.holdingProvidedIndicator = ((b[0] >> 1) & 0x01) == _INDICATOR_PROVIDED;
+		this.mcidIncludedIndicator = (b[0] & 0x01) == _TURN_ON;
+		this.holdingProvidedIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
 		return 1;
 	}
 
@@ -74,8 +76,8 @@ public class MCIDResponseIndicators extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 		int b0 = 0;
 
-		b0 |= (this.mcidIncludedIndicator ? _INDICATOR_PROVIDED : _INDICATOR_NOT_PROVIDED);
-		b0 |= ((this.holdingProvidedIndicator ? _INDICATOR_PROVIDED : _INDICATOR_NOT_PROVIDED)) << 1;
+		b0 |= (this.mcidIncludedIndicator ? _TURN_ON : _TURN_OFF);
+		b0 |= ((this.holdingProvidedIndicator ? _TURN_ON : _TURN_OFF)) << 1;
 
 		return new byte[] { (byte) b0 };
 	}

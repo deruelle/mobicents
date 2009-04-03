@@ -15,6 +15,6 @@ package org.mobicents.isup.parameters;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class OriginatingISCPointCode extends SignalingPointCode {
+public class OriginatingISCPointCode extends SignallingPointCode {
 
 }

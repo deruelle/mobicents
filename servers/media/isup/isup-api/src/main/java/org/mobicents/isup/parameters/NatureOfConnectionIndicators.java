@@ -19,47 +19,52 @@ import java.io.IOException;
  */
 public class NatureOfConnectionIndicators extends AbstractParameter {
 
-	private static final int _ECHO_DEVICE_INCLUDED = 1;
-	private static final int _ECHO_DEVICE_NOT_INCLUDED = 0;
+	private static final int _TURN_ON = 1;
+	private static final int _TURN_OFF = 0;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Echo control device indicator : outgoing echo control
+	 * device included
 	 */
-	public static final boolean _ECHO_CONTROL_DEVICE_INDICATOR_INCLUDED = true;
+	public static final boolean _ECDI_INCLUDED = true;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Echo control device indicator : outgoing echo control
+	 * device not included
 	 */
-	public static final boolean _ECHO_CONTROL_DEVICE_INDICATOR_NOT_INCLUDED = false;
+	public static final boolean _ECDI_NOT_INCLUDED = false;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Satellite indicator : no satellite circuit in the
+	 * connection
 	 */
-	public static final int _SATELLITE_INDICATOR_NO_SATELLITE = 0;
+	public static final int _SI_NO_SATELLITE = 0;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Satellite indicator : one satellite circuit in the
+	 * connection
 	 */
-	public static final int _SATELLITE_INDICATOR_ONE_SATELLITE = 1;
+	public static final int _SI_ONE_SATELLITE = 1;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Satellite indicator : two satellite circuits in the
+	 * connection
 	 */
-	public static final int _SATELLITE_INDICATOR_TWO_SATELLITE = 2;
+	public static final int _SI_TWO_SATELLITE = 2;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Continuity check indicator
 	 */
-	public static final int _CONTINUITY_CHECK_INDICATOR_NOT_REQUIRED = 0;
+	public static final int _CCI_NOT_REQUIRED = 0;
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Continuity check indicator
 	 */
-	public static final int _CONTINUITY_CHECK_INDICATOR_REQUIRED_ON_THIS_CIRCUIT = 1;
+	public static final int _CCI_REQUIRED_ON_THIS_CIRCUIT = 1;
 
 	/**
-	 * See Q.763 3.35
+	 * See Q.763 3.35 Continuity check indicator
 	 */
-	public static final int _CONTINUITY_CHECK_INDICATOR_PERFORMED_ON_PREVIOUS_CIRCUIT = 0;
+	public static final int _CCI_PERFORMED_ON_PREVIOUS_CIRCUIT = 0;
 
 	private byte satelliteIndicator = 0;
 	private byte continuityCheckIndicator = 0;
@@ -83,7 +88,7 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 		}
 		this.satelliteIndicator = (byte) (b[0] & 0x03);
 		this.continuityCheckIndicator = (byte) ((b[0] >> 2) & 0x03);
-		this.echoControlDeviceIndicator = ((b[0] >> 4) == _ECHO_DEVICE_INCLUDED);
+		this.echoControlDeviceIndicator = ((b[0] >> 4) == _TURN_ON);
 
 		return 1;
 	}
@@ -93,7 +98,7 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 		int b0 = 0;
 		b0 = this.satelliteIndicator & 0x03;
 		b0 |= (this.continuityCheckIndicator & 0x03) << 2;
-		b0 |= (this.echoControlDeviceIndicator ? _ECHO_DEVICE_INCLUDED : _ECHO_DEVICE_NOT_INCLUDED) << 4;
+		b0 |= (this.echoControlDeviceIndicator ? _TURN_ON : _TURN_OFF) << 4;
 		return new byte[] { (byte) b0 };
 	}
 

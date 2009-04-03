@@ -19,114 +19,131 @@ import java.io.IOException;
  */
 public class ForwardCallIndicators extends AbstractParameter {
 
-	private int nationalCallIdentificator = 0;
+	private final static int _TURN_ON = 1;
+	private final static int _TURN_OFF = 0;
+
+	private boolean nationalCallIdentificator = false;
 	private int endToEndMethodIndicator = 0;
-	private int interworkingIndicator = 0;
-	private int endToEndInformationIndicator = 0;
-	private int isdnUserPartIndicator = 0;
+	private boolean interworkingIndicator = false;
+	private boolean endToEndInformationIndicator = false;
+	private boolean isdnUserPartIndicator = false;
 	private int isdnUserPartReferenceIndicator = 0;
 	private int sccpMethodIndicator = 0;
-	private int isdnAccessIndicator = 0;
+	private boolean isdnAccessIndicator = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 National/international call indicator (Note 1) : call to be
+	 * treated as a national call
 	 */
-	public static final int _NATIONAL_CALL_INDICATOR_NATIONAL_CALL = 0;
+	public static final boolean _NCI_NATIONAL_CALL = false;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 National/international call indicator (Note 1) : call to be
+	 * treated as an international call
 	 */
-	public static final int _NATIONAL_CALL_INDICATOR_INTERNATIONAL_CALL = 0;
+	public static final boolean _NCI_INTERNATIONAL_CALL = true;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2) : no end-to-end method
+	 * available (only link-by-link method available)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_NOMETHODAVAILABLE = 0;
+	public static final int _ETEMI_NOMETHODAVAILABLE = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2) : pass-along method
+	 * available (national use)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_PASSALONG = 1;
+	public static final int _ETEMI_PASSALONG = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2) : SCCP method
+	 * available
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_SCCP = 2;
+	public static final int _ETEMI_SCCP = 2;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end method indicator (Note 2) : pass-along and SCCP
+	 * methods available (national use)
 	 */
-	public static final int _END_TO_END_METHOD_INDICATOR_SCCP_AND_PASSALONG = 3;
+	public static final int _ETEMI_SCCP_AND_PASSALONG = 3;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end information indicator (national use) (Note 2) :
+	 * no end-to-end information available
 	 */
-	public static final int _END_TO_END_INFORMATION_INDICATOR_NOT_AVAILABLE = 0;
+	public static final boolean _ETEII_NOT_AVAILABLE = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 End-to-end information indicator (national use) (Note 2) :
+	 * end-to-end information available
 	 */
-	public static final int _END_TO_END_INFORMATION_INDICATOR_AVAILABLE = 1;
+	public static final boolean _ETEII_AVAILABLE = true;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Interworking indicator (Note 2)
 	 */
-	public static final int _INTERWORKING_INDICATOR_NOT_ENCOUTNERED = 0;
+	public static final boolean _II_NOT_ENCOUTNERED = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 Interworking indicator (Note 2)
 	 */
-	public static final int _INTERWORKING_INDICATOR_ENCOUTNERED = 1;
+	public static final boolean _II_ENCOUTNERED = true;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN access indicator : originating access non-ISDN
 	 */
-	public static final int _ISDN_ACCESS_INDICATOR_TERMINATING_ACCESS_NOT_ISDN = 0;
+	public static final boolean _ISDN_AI_OA_N_ISDN = false;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 ISDN access indicator : originating access ISDN
 	 */
-	public static final int _ISDN_ACCESS_INDICATOR_TERMINATING_ACCESS_ISDN = 1;
+	public static final boolean _ISDN_AI_OA_ISDN = true;
 
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) : no indication
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_NOINDICATION = 0;
+	public static final int _SCCP_MI_NOINDICATION = 0;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) : connectionless method
+	 * available (national use)
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTIONLESS = 1;
+	public static final int _SCCP_MI_CONNECTIONLESS = 1;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) : connection oriented method
+	 * available
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTION_ORIENTED = 2;
+	public static final int _SCCP_MI_CONNECTION_ORIENTED = 2;
 	/**
-	 * See q.763 3.5
+	 * See q.763 3.5 SCCP method indicator (Note 2) : connectionless and
+	 * connection oriented methods available (national use)
 	 */
-	public static final int _SCCP_METHOD_INDICATOR_CONNECTIONLESS_AND_CONNECTION_ORIENTED = 3;
+	public static final int _SCCP_MI_CL_AND_CO = 3;
 
 	/**
-	 * See q.763 3.23
+	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part not used all the way
 	 */
-	public static final int _ISDN_USER_PART_INDICATOR_NOTUSED = 0;
+	public static final boolean _ISDN_UPI_NOTUSED = false;
 	/**
-	 * See q.763 3.23
+	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part used all the way
 	 */
-	public static final int _ISDN_USER_PART_INDICATOR_USED = 1;
+	public static final boolean _ISDN_UPI_USED = true;
 
 	/**
-	 * See q.763 3.23
+	 * See q.763 3.23 ISDN user part preference indicator : ISDN user part
+	 * preferred all the way
 	 */
-	public static final int _ISDN_USER_PART_REFERENCE_INDICATOR_PREFERED_ALL_THE_WAY = 0;
+	public static final int _ISDN_UPRI_PREFERED_ALL_THE_WAY = 0;
 
 	/**
-	 * See q.763 3.23
+	 * See q.763 3.23 ISDN user part preference indicator : ISDN user part not
+	 * required all the way
 	 */
-	public static final int _ISDN_USER_PART_REFERENCE_INDICATOR_NOT_REQUIRED_ALL_THE_WAY = 1;
+	public static final int _ISDN_UPRI_NRATW = 1;
 
 	/**
-	 * See q.763 3.23
+	 * See q.763 3.23 ISDN user part preference indicator : ISDN user part
+	 * required all the way
 	 */
-	public static final int _ISDN_USER_PART_REFERENCE_INDICATOR_REQUIRED_ALL_THE_WAY = 2;
+	public static final int _ISDN_UPRI_RATW = 2;
 
 	public ForwardCallIndicators(byte[] b) {
 		super();
 		decodeElement(b);
 	}
 
-	public ForwardCallIndicators(int nationalCallIdentificator, int endToEndMethodIndicator, int interworkingIndicator, int endToEndInformationIndicator, int isdnUserPartIndicator,
-			int isdnUserPartReferenceIndicator, int sccpMethodIndicator, int isdnAccessIndicator) {
+	public ForwardCallIndicators(boolean nationalCallIdentificator, int endToEndMethodIndicator, boolean interworkingIndicator, boolean endToEndInformationIndicator, boolean isdnUserPartIndicator,
+			int isdnUserPartReferenceIndicator, int sccpMethodIndicator, boolean isdnAccessIndicator) {
 		super();
 		this.nationalCallIdentificator = nationalCallIdentificator;
 		this.endToEndMethodIndicator = endToEndMethodIndicator;
@@ -151,16 +168,16 @@ public class ForwardCallIndicators extends AbstractParameter {
 
 		v = b[0];
 
-		this.nationalCallIdentificator = v & 0x01;
+		this.nationalCallIdentificator = (v & 0x01) == _TURN_ON;
 		this.endToEndMethodIndicator = (v >> 1) & 0x03;
-		this.interworkingIndicator = (v >> 3) & 0x01;
-		this.endToEndInformationIndicator = (v >> 4) & 0x01;
-		this.isdnUserPartIndicator = (v >> 5) & 0x01;
+		this.interworkingIndicator = ((v >> 3) & 0x01) == _TURN_ON;
+		this.endToEndInformationIndicator = ((v >> 4) & 0x01) == _TURN_ON;
+		this.isdnUserPartIndicator = ((v >> 5) & 0x01) == _TURN_ON;
 		this.isdnUserPartReferenceIndicator = (v >> 6) & 0x03;
 
 		v = b[1];
 
-		this.isdnAccessIndicator = v & 0x01;
+		this.isdnAccessIndicator = (v & 0x01) == _TURN_ON;
 		// FIXME: should we allow older bytes to pass ?
 		this.sccpMethodIndicator = (v >> 1) & 0x03;
 
@@ -176,24 +193,24 @@ public class ForwardCallIndicators extends AbstractParameter {
 
 		byte[] b = new byte[2];
 
-		b[0] |= this.nationalCallIdentificator & 0x01;
+		b[0] |= this.nationalCallIdentificator ? _TURN_ON : _TURN_OFF;
 		b[0] |= (this.endToEndMethodIndicator & 0x03) << 1;
-		b[0] |= (this.interworkingIndicator & 0x01) << 3;
-		b[0] |= (this.endToEndInformationIndicator & 0x01) << 4;
-		b[0] |= (this.isdnUserPartIndicator & 0x01) << 5;
-		b[0] |= (this.isdnUserPartReferenceIndicator & 0x01) << 6;
+		b[0] |= (this.interworkingIndicator ? _TURN_ON : _TURN_OFF) << 3;
+		b[0] |= (this.endToEndInformationIndicator ? _TURN_ON : _TURN_OFF) << 4;
+		b[0] |= (this.isdnUserPartIndicator ? _TURN_ON : _TURN_OFF) << 5;
+		b[0] |= (this.isdnUserPartReferenceIndicator & 0x03) << 6;
 
-		b[1] = (byte) (this.isdnAccessIndicator & 0x01);
+		b[1] = (byte) (this.isdnAccessIndicator ? _TURN_ON : _TURN_OFF);
 		// FIXME should we allow here older bytes to pass
 		b[1] |= (this.sccpMethodIndicator & 0x03) << 1;
 		return b;
 	}
 
-	public int getNationalCallIdentificator() {
+	public boolean isNationalCallIdentificator() {
 		return nationalCallIdentificator;
 	}
 
-	public void setNationalCallIdentificator(int nationalCallIdentificator) {
+	public void setNationalCallIdentificator(boolean nationalCallIdentificator) {
 		this.nationalCallIdentificator = nationalCallIdentificator;
 	}
 
@@ -205,27 +222,27 @@ public class ForwardCallIndicators extends AbstractParameter {
 		this.endToEndMethodIndicator = endToEndMethodIndicator;
 	}
 
-	public int getInterworkingIndicator() {
+	public boolean isInterworkingIndicator() {
 		return interworkingIndicator;
 	}
 
-	public void setInterworkingIndicator(int interworkingIndicator) {
+	public void setInterworkingIndicator(boolean interworkingIndicator) {
 		this.interworkingIndicator = interworkingIndicator;
 	}
 
-	public int getEndToEndInformationIndicator() {
+	public boolean isEndToEndInformationIndicator() {
 		return endToEndInformationIndicator;
 	}
 
-	public void setEndToEndInformationIndicator(int endToEndInformationIndicator) {
+	public void setEndToEndInformationIndicator(boolean endToEndInformationIndicator) {
 		this.endToEndInformationIndicator = endToEndInformationIndicator;
 	}
 
-	public int getIsdnUserPartIndicator() {
+	public boolean isIsdnUserPartIndicator() {
 		return isdnUserPartIndicator;
 	}
 
-	public void setIsdnUserPartIndicator(int isdnUserPartIndicator) {
+	public void setIsdnUserPartIndicator(boolean isdnUserPartIndicator) {
 		this.isdnUserPartIndicator = isdnUserPartIndicator;
 	}
 
@@ -245,12 +262,14 @@ public class ForwardCallIndicators extends AbstractParameter {
 		this.sccpMethodIndicator = sccpMethodIndicator;
 	}
 
-	public int getIsdnAccessIndicator() {
+	public boolean isIsdnAccessIndicator() {
 		return isdnAccessIndicator;
 	}
 
-	public void setIsdnAccessIndicator(int isdnAccessIndicator) {
+	public void setIsdnAccessIndicator(boolean isdnAccessIndicator) {
 		this.isdnAccessIndicator = isdnAccessIndicator;
 	}
+
+
 
 }
