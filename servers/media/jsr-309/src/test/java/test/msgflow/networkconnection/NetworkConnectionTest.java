@@ -63,29 +63,15 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 			public void onEvent(NetworkConnectionEvent anEvent) {
 
-				if (NetworkConnection.ev_Modify.equals(anEvent.getEventID())) {
+				if (NetworkConnection.ev_Modify.equals(anEvent.getEventType())) {
 					logger.info("CRCX Modify successful " + anEvent);
 					testPassed = true;
-
-					try {
-						assertNotNull(anEvent.getSource().getRawLocalSessionDescription());
-					} catch (NetworkConnectionException e) {
-						e.printStackTrace();
-						fail();
-					}
 
 					try {
 						assertNotNull(anEvent.getSource().getLocalSessionDescription());
 					} catch (NetworkConnectionException e1) {
 						e1.printStackTrace();
 						fail();
-					}
-
-					try {
-						anEvent.getSource().getRawRemoteSessionDescription();
-						fail("RawRemoteSessionDescription should be null");
-					} catch (NetworkConnectionException e) {
-						// expected
 					}
 
 					try {
@@ -101,28 +87,14 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 						public void onEvent(NetworkConnectionEvent anEvent) {
 
-							if (NetworkConnection.ev_Modify.equals(anEvent.getEventID())) {
+							if (NetworkConnection.ev_Modify.equals(anEvent.getEventType())) {
 								logger.info("MDCX Modify successful " + anEvent);
 								testPassed = (testPassed && true);
-
-								try {
-									assertNotNull(anEvent.getSource().getRawLocalSessionDescription());
-								} catch (NetworkConnectionException e) {
-									e.printStackTrace();
-									fail();
-								}
 
 								try {
 									assertNotNull(anEvent.getSource().getLocalSessionDescription());
 								} catch (NetworkConnectionException e1) {
 									e1.printStackTrace();
-									fail();
-								}
-
-								try {
-									assertNotNull(anEvent.getSource().getRawRemoteSessionDescription());
-								} catch (NetworkConnectionException e) {
-									e.printStackTrace();
 									fail();
 								}
 
@@ -140,11 +112,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 					myNetworkConnection.addListener(myNetworkConnectionListernerInner);
 					try {
-						myNetworkConnection.modify(null, REMOTE_SDP);
+						myNetworkConnection.modify(NetworkConnection.UNKNOWN_YET, REMOTE_SDP.getBytes());
 					} catch (NetworkConnectionException e) {
-						e.printStackTrace();
-						fail();
-					} catch (SdpException e) {
 						e.printStackTrace();
 						fail();
 					}
@@ -158,7 +127,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 		// register listener
 		myNetworkConnection.addListener(myNetworkConnectionListerner);
 		// modify media connection to get the answer.
-		myNetworkConnection.modify("$", null);
+		myNetworkConnection.modify(NetworkConnection.CHOOSE, NetworkConnection.UNKNOWN_YET);
 
 		waitForMessage();
 		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
@@ -267,7 +236,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 			public void onEvent(StatusEvent event) {
 
 				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 						logger.info("testNetworkConnectionUnJoin - Join successful " + event);
 						try {
 							NC2.unjoinInitiate(NC1, serImpl);
@@ -275,7 +244,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 							e.printStackTrace();
 							fail("Unjoin failed");
 						}
-					} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
+					} else if (JoinEvent.ev_Unjoined.equals(event.getEventType())) {
 						logger.info("testNetworkConnectionUnJoin - Un-Join successful " + event);
 
 						// After un-join the list of Joinees should be 0
@@ -297,9 +266,9 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 						testPassed = true;
 					} else {
-						logger.error("This event is not expected " + event.getEventID());
+						logger.error("This event is not expected " + event.getEventType());
 						fail("Expected either JoinEvent.ev_Joined or JoinEvent.ev_Unjoined but received "
-								+ event.getEventID());
+								+ event.getEventType());
 					}
 
 				} else {
@@ -333,7 +302,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 			public void onEvent(StatusEvent event) {
 
 				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 						logger.info("testNetworkConnectionReJoin - Join successful " + event);
 
 						Joinable[] temp;
@@ -355,7 +324,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 							public void onEvent(StatusEvent event) {
 
 								if (event.getError().equals(Error.e_OK)) {
-									if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+									if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 										logger.info("testNetworkConnectionReJoin - Join successful " + event);
 
 										Joinable[] temp;
@@ -375,8 +344,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 										}
 									} else {
 										logger.error("testNetworkConnectionReJoin This event is not expected "
-												+ event.getEventID());
-										fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+												+ event.getEventType());
+										fail("Expected either JoinEvent.ev_Joined but received " + event.getEventType());
 									}
 
 								} else {
@@ -394,8 +363,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 						}
 
 					} else {
-						logger.error("testNetworkConnectionReJoin This event is not expected " + event.getEventID());
-						fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+						logger.error("testNetworkConnectionReJoin This event is not expected " + event.getEventType());
+						fail("Expected either JoinEvent.ev_Joined but received " + event.getEventType());
 					}
 
 				} else {
@@ -429,7 +398,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 			public void onEvent(StatusEvent event) {
 
 				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 						logger.info("testNetworkConnectionReJointoOtherMO - Join successful " + event);
 
 						Joinable[] temp;
@@ -448,7 +417,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 							fail("Unxpected error " + e1.getMessage());
 						}
 
-					} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
+					} else if (JoinEvent.ev_Unjoined.equals(event.getEventType())) {
 						logger.info("testNetworkConnectionReJointoOtherMO - UnJoin successful " + event);
 
 						// After un-join the list of Joinees should be 0
@@ -472,7 +441,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 							public void onEvent(StatusEvent event) {
 
 								if (event.getError().equals(Error.e_OK)) {
-									if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+									if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 										logger.info("testNetworkConnectionReJointoOtherMO - Join successful " + event);
 
 										Joinable[] temp;
@@ -492,8 +461,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 									} else {
 										logger.error("testNetworkConnectionReJointoOtherMO This event is not expected "
-												+ event.getEventID());
-										fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+												+ event.getEventType());
+										fail("Expected either JoinEvent.ev_Joined but received " + event.getEventType());
 									}
 
 								} else {
@@ -513,8 +482,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 						}
 					} else {
 						logger.error("testNetworkConnectionReJointoOtherMO This event is not expected "
-								+ event.getEventID());
-						fail("Expected either JoinEvent.ev_Joined but received " + event.getEventID());
+								+ event.getEventType());
+						fail("Expected either JoinEvent.ev_Joined but received " + event.getEventType());
 					}
 
 				} else {
@@ -546,27 +515,13 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 			public void onEvent(NetworkConnectionEvent anEvent) {
 
-				if (NetworkConnection.ev_Modify.equals(anEvent.getEventID())) {
+				if (NetworkConnection.ev_Modify.equals(anEvent.getEventType())) {
 					logger.info("MDCX Modify successful " + anEvent);
-
-					try {
-						assertNotNull(anEvent.getSource().getRawLocalSessionDescription());
-					} catch (NetworkConnectionException e) {
-						e.printStackTrace();
-						fail();
-					}
 
 					try {
 						assertNotNull(anEvent.getSource().getLocalSessionDescription());
 					} catch (NetworkConnectionException e1) {
 						e1.printStackTrace();
-						fail();
-					}
-
-					try {
-						assertNotNull(anEvent.getSource().getRawRemoteSessionDescription());
-					} catch (NetworkConnectionException e) {
-						e.printStackTrace();
 						fail();
 					}
 
@@ -585,7 +540,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 						public void onEvent(StatusEvent event) {
 
 							if (event.getError().equals(Error.e_OK)) {
-								if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+								if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 									logger.info("Join successful " + event);
 									try {
 										joinStream1 = NC1.getJoinableStreams()[0];
@@ -596,11 +551,11 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 										fail();
 									}
 
-								} else if (JoinEvent.ev_Unjoined.equals(event.getEventID())) {
+								} else if (JoinEvent.ev_Unjoined.equals(event.getEventType())) {
 									logger.info("UnJoin successful " + event);
 
 									try {
-										NC1.modify(null, REMOTE_SDP);
+										NC1.modify(NetworkConnection.UNKNOWN_YET, REMOTE_SDP.getBytes());
 										fail("IllegalStateException not raised");
 									} catch (IllegalStateException e) {
 										logger.debug("Expected Exception " + e.getMessage());
@@ -645,7 +600,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 		// register listener
 		NC1.addListener(NC1Listener);
 		// modify media connection to get the answer.
-		NC1.modify("$", REMOTE_SDP);
+		NC1.modify(NetworkConnection.CHOOSE, REMOTE_SDP.getBytes());
 
 		waitForMessage();
 		waitForMessage();

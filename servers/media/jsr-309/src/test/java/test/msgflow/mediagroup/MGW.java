@@ -35,7 +35,8 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 public class MGW implements JainMgcpExtendedListener {
 
 	private static Logger logger = Logger.getLogger(MGW.class);
-	private boolean responseSent = false;
+	private volatile boolean responseSent = false;
+	private volatile boolean sendNtfy = true;
 
 	JainMgcpStackProviderImpl mgwProvider;
 
@@ -140,41 +141,21 @@ public class MGW implements JainMgcpExtendedListener {
 					ReturnCode.Transaction_Executed_Normally);
 			responseRQNT.setTransactionHandle(notificationRequest.getTransactionHandle());
 
-			EndpointIdentifier endpointId = notificationRequest.getEndpointIdentifier();
-			RequestIdentifier redId = notificationRequest.getRequestIdentifier();
-
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { responseRQNT });
 
-			try {
-				Thread.sleep(1000 * 2);
-			} catch (InterruptedException e) {
-
+			EventName[] eventNames = notificationRequest.getSignalRequests();
+			if (eventNames == null) {
+				this.sendNtfy = false;
+				logger.debug("Received RQNT and signals = 0. This Object = " + this);
+				responseSent = true;
+			} else {
+				logger.debug("Received RQNT and signals = " + eventNames.length + " This Object = " + this);
+				this.sendNtfy = true;
+				Runnable tx = new NtfyTx(this, notificationRequest);
+				Thread t = new Thread(tx);
+				t.start();
 			}
 
-			RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
-
-			EventName[] eventNames = notificationRequest.getSignalRequests();
-
-			for (EventName event : eventNames) {
-				MgcpEvent mgcpEvent = event.getEventIdentifier();
-				switch (mgcpEvent.intValue()) {
-				case MgcpEvent.PLAY_AN_ANNOUNCEMENT:
-
-					for (RequestedEvent requestedEvent : requestedEvents) {
-
-						EventName eventName = requestedEvent.getEventName();
-
-						if (eventName.getEventIdentifier().intValue() == MgcpEvent.REPORT_ON_COMPLETION) {
-							Notify notify = new Notify(this, endpointId, redId, new EventName[]{eventName});
-							notify.setTransactionHandle(mgwProvider.getUniqueTransactionHandler());
-							mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { notify });
-							break;
-						}
-					}
-
-					break;
-				}
-			}// end of for
 			break;
 		default:
 			logger.warn("This REQUEST is unexpected " + jainmgcpcommandevent);
@@ -187,6 +168,61 @@ public class MGW implements JainMgcpExtendedListener {
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.info("processMgcpResponseEvent " + jainmgcpresponseevent);
 
+	}
+
+	public boolean getSendNtfy() {
+		return this.sendNtfy;
+	}
+
+	private class NtfyTx implements Runnable {
+
+		private NotificationRequest notificationRequest = null;
+		private MGW mgw = null;
+
+		NtfyTx(MGW mgw, NotificationRequest notificationRequest) {
+			this.notificationRequest = notificationRequest;
+			this.mgw = mgw;
+		}
+
+		public void run() {
+			logger.debug("NTFY Tx started and will sleep now for 2 sec ");
+			// Let us sleep for 2 secs before sending NTFY
+			try {
+				Thread.sleep(1000 * 2);
+			} catch (InterruptedException e) {
+			}
+
+			EndpointIdentifier endpointId = notificationRequest.getEndpointIdentifier();
+			RequestIdentifier redId = notificationRequest.getRequestIdentifier();
+
+			RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
+			EventName[] eventNames = notificationRequest.getSignalRequests();
+
+			logger.debug("Thread wokeup. Within else block and value of sendNtfy = " + this.mgw.getSendNtfy());
+			if (this.mgw.getSendNtfy()) {
+				for (EventName event : eventNames) {
+					MgcpEvent mgcpEvent = event.getEventIdentifier();
+					switch (mgcpEvent.intValue()) {
+					case MgcpEvent.PLAY_AN_ANNOUNCEMENT:
+
+						for (RequestedEvent requestedEvent : requestedEvents) {
+
+							EventName eventName = requestedEvent.getEventName();
+
+							if (eventName.getEventIdentifier().intValue() == MgcpEvent.REPORT_ON_COMPLETION) {
+								Notify notify = new Notify(this, endpointId, redId, new EventName[] { eventName });
+								notify.setTransactionHandle(mgwProvider.getUniqueTransactionHandler());
+								mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { notify });
+								responseSent = true;
+								break;
+							}
+						}
+
+						break;
+					}
+				}// end of for
+			}
+		}
 	}
 
 }

@@ -30,15 +30,13 @@ import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.networkconnection.NetworkConnectionEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnectionException;
 import javax.media.mscontrol.networkconnection.ResourceNotAvailableException;
+import javax.media.mscontrol.resource.Action;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
-import javax.media.mscontrol.resource.Symbol;
-import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;
-import javax.sdp.SdpParseException;
-import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
@@ -62,8 +60,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	private URI uri = null;
 	private EndpointIdentifier endpointIdentifier = null;
 	private ConnectionIdentifier connectionIdentifier = null;
-	private String remoteSessionDescription = null;
-	private String localSessionDescription = null;
+	private byte[] remoteSessionDescription = null;
+	private byte[] localSessionDescription = null;
 
 	private NetworkConnectionException networkConnectionException = null;
 	private ResourceNotAvailableException resourceNotAvailableException = null;
@@ -82,58 +80,23 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		}
 	}
 
-	public SessionDescription getLocalSessionDescription() throws NetworkConnectionException {
-		if (this.localSessionDescription == null) {
-			throw new NetworkConnectionException("No local session description is available");
-		}
-		SessionDescription sdp = null;
-		try {
-			sdp = sdpFactory.createSessionDescription(localSessionDescription);
-		} catch (SdpParseException e) {
-			logger.error(e);
-			throw new NetworkConnectionException(e);
-		}
-		return sdp;
-	}
-
-	public SessionDescription getRemoteSessionDescription() throws NetworkConnectionException {
-		if (this.remoteSessionDescription == null) {
-			throw new NetworkConnectionException("No remote session description is available");
-		}
-		SessionDescription sdp = null;
-		try {
-			sdp = sdpFactory.createSessionDescription(remoteSessionDescription);
-		} catch (SdpParseException e) {
-			logger.error(e);
-			throw new NetworkConnectionException(e);
-		}
-		return sdp;
-	}
-
-	public String getRawLocalSessionDescription() throws NetworkConnectionException {
+	// NetworkConnection Methods
+	public byte[] getLocalSessionDescription() throws NetworkConnectionException {
 		if (this.localSessionDescription == null) {
 			throw new NetworkConnectionException("No local session description is available");
 		}
 		return this.localSessionDescription;
 	}
 
-	public String getRawRemoteSessionDescription() throws NetworkConnectionException {
+	public byte[] getRemoteSessionDescription() throws NetworkConnectionException {
 		if (this.remoteSessionDescription == null) {
 			throw new NetworkConnectionException("No remote session description is available");
 		}
 		return this.remoteSessionDescription;
 	}
 
-	public void modify(SessionDescription localSessionDescription, SessionDescription remoteSessionDescription)
-			throws SdpException, NetworkConnectionException, ResourceNotAvailableException {
-		checkState();
-		String localDescr = localSessionDescription != null ? localSessionDescription.toString() : null;
-		String remoteDescr = remoteSessionDescription != null ? remoteSessionDescription.toString() : null;
-		this.modify(localDescr, remoteDescr);
-	}
-
-	public void modify(String localSessionDescription, String remoteSessionDescription) throws SdpException,
-			NetworkConnectionException, ResourceNotAvailableException {
+	public void modify(byte[] localSessionDescription, byte[] remoteSessionDescription)
+			throws NetworkConnectionException {
 
 		checkState();
 		if (localSessionDescription == null && remoteSessionDescription == null) {
@@ -152,6 +115,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	}
 
+	// ResourceContainer methods
 	public void confirm() throws MsControlException {
 		// TODO Auto-generated method stub
 
@@ -167,12 +131,17 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		return null;
 	}
 
-	public void triggerRTC(Symbol rtca) {
-		// TODO Auto-generated method stub
+	public void triggerRTC(Action rtca) {
 
 	}
 
-	public Parameters getParameters(Symbol[] params) {
+	// MediaObject Methods
+
+	public Parameters createParameters() {
+		return new ParametersImpl();
+	}
+
+	public Parameters getParameters(Parameter[] params) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -182,7 +151,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public void release() {
-		checkState();		
+		checkState();
 
 		if (this.endpointIdentifier != null) {
 			Runnable tx = new DeleteTx(this);
@@ -197,7 +166,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 		} catch (MsControlException e) {
 			logger.error("release of NetworkConnection failed ", e);
 		}
-		
+
 		this.state = MediaObjectState.RELEASED;
 
 	}
@@ -207,6 +176,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	}
 
+	// Methods of MediaEventNotifier
 	public void addListener(MediaEventListener<NetworkConnectionEvent> listener) {
 		this.mediaEventListenerList.add(listener);
 
@@ -241,7 +211,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				CreateConnection createConnection = new CreateConnection(this, callId, endpointID,
 						ConnectionMode.SendRecv);
 				if (remoteSessionDescription != null) {
-					createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(remoteSessionDescription));
+					createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(new String(
+							remoteSessionDescription)));
 				}
 
 				createConnection.setTransactionHandle(tx);
@@ -266,7 +237,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 					+ jainMgcpCommandEvent.toString());
 			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
+					NetworkConnection.ev_Modify, Error.e_Unknown, "No response from MGW for modify");
 			update(networkConnectionEvent);
 		}
 
@@ -286,7 +257,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
-						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
+						this.networkConnectionImpl, NetworkConnection.ev_Modify, Error.e_Unknown,
 						"modify failed. Look at logs " + jainmgcpresponseevent.getReturnCode().getComment());
 				update(networkConnectionEvent);
 				break;
@@ -316,7 +287,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 					logger.debug(" TRANSACTION_EXECUTED_NORMALLY for connectionIdentifier = " + connectionIdentifier
 							+ " endpointID = " + endpointIdentifier);
 				}
-				localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
+				localSessionDescription = (responseEvent.getLocalConnectionDescriptor().toString()).getBytes();
 
 				if (audioJoinableStream == null) {
 					audioJoinableStream = new AudioJoinableStream(this.networkConnectionImpl);
@@ -329,14 +300,14 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
+						NetworkConnection.ev_Modify, Error.e_ResourceUnavailable, returnCode.getComment());
 				update(networkConnectionEvent);
 				break;
 			default:
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
+						NetworkConnection.ev_Modify, Error.e_Unknown, returnCode.getComment());
 				update(networkConnectionEvent);
 				break;
 
@@ -365,7 +336,8 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 						connectionIdentifier);
 
 				if (remoteSessionDescription != null) {
-					modifyConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(remoteSessionDescription));
+					modifyConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(new String(
+							remoteSessionDescription)));
 				}
 
 				modifyConnection.setTransactionHandle(tx);
@@ -390,7 +362,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 					+ jainMgcpCommandEvent.toString());
 			mgcpWrapper.removeListener(jainMgcpCommandEvent.getTransactionHandle());
 			NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-					NetworkConnection.e_ResourceNotAvailable, Error.e_System, "No response from MGW for modify");
+					NetworkConnection.ev_Modify, Error.e_Unknown, "No response from MGW for modify");
 			update(networkConnectionEvent);
 
 		}
@@ -414,7 +386,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				NetworkConnectionEvent networkConnectionEvent = new NetworkConnectionEventImpl(
-						this.networkConnectionImpl, NetworkConnection.e_ResourceNotAvailable, Error.e_System,
+						this.networkConnectionImpl, NetworkConnection.ev_Modify, Error.e_Unknown,
 						"modify failed. Look at logs ");
 				update(networkConnectionEvent);
 				break;
@@ -442,7 +414,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 
 				if (responseEvent.getLocalConnectionDescriptor() != null) {
-					localSessionDescription = responseEvent.getLocalConnectionDescriptor().toString();
+					localSessionDescription = (responseEvent.getLocalConnectionDescriptor().toString()).getBytes();
 				}
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
 						NetworkConnection.ev_Modify);
@@ -452,7 +424,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 			case ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES:
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-						NetworkConnection.e_ResourceNotAvailable, Error.e_ResourceUnavailable, returnCode.getComment());
+						NetworkConnection.ev_Modify, Error.e_ResourceUnavailable, returnCode.getComment());
 				update(networkConnectionEvent);
 
 				break;
@@ -460,7 +432,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				networkConnectionEvent = new NetworkConnectionEventImpl(this.networkConnectionImpl,
-						NetworkConnection.e_ResourceNotAvailable, Error.e_System, returnCode.getComment());
+						NetworkConnection.ev_Modify, Error.e_Unknown, returnCode.getComment());
 				update(networkConnectionEvent);
 
 				break;
@@ -563,10 +535,6 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 		}
 
-	}
-
-	public Parameters createParameters() {
-		return new ParametersImpl();
 	}
 
 	@Override

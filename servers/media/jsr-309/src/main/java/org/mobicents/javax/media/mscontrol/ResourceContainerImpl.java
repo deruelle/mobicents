@@ -4,9 +4,10 @@ import java.net.URI;
 
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.resource.Action;
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.ResourceContainer;
-import javax.media.mscontrol.resource.Symbol;
 
 public class ResourceContainerImpl<C extends MediaConfig> implements ResourceContainer<C> {
 
@@ -25,7 +26,7 @@ public class ResourceContainerImpl<C extends MediaConfig> implements ResourceCon
 		return null;
 	}
 
-	public void triggerRTC(Symbol rtca) {
+	public void triggerRTC(Action rtca) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -35,7 +36,7 @@ public class ResourceContainerImpl<C extends MediaConfig> implements ResourceCon
 		return null;
 	}
 
-	public Parameters getParameters(Symbol[] params) {
+	public Parameters getParameters(Parameter[] params) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -53,7 +54,6 @@ public class ResourceContainerImpl<C extends MediaConfig> implements ResourceCon
 	public void setParameters(Parameters params) {
 		// TODO Auto-generated method stub
 		
-	}
-	
+	}	
 
 }

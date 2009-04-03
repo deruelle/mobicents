@@ -5,37 +5,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
-import javax.media.mscontrol.resource.Symbol;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class ParametersImpl implements Parameters {
-	
-	Map<Symbol, Object> parameters;
-	
-	public ParametersImpl(){
-		parameters = new HashMap<Symbol, Object>();
+	Map<Parameter, Object> parameters;
+
+	public ParametersImpl() {
+		parameters = new HashMap<Parameter, Object>();
 	}
 
 	public void clear() {
 		parameters.clear();
-
 	}
 
 	public boolean containsKey(Object key) {
-		return parameters.containsKey(key);		
+		return parameters.containsKey(key);
 	}
 
 	public boolean containsValue(Object value) {
-		return parameters.containsValue(value);	
-		
+		return parameters.containsValue(value);
 	}
 
-	public Set<java.util.Map.Entry<Symbol, Object>> entrySet() {		
+	public Set<java.util.Map.Entry<Parameter, Object>> entrySet() {
 		return parameters.entrySet();
 	}
 
@@ -43,31 +40,32 @@ public class ParametersImpl implements Parameters {
 		return parameters.get(key);
 	}
 
-	public boolean isEmpty() {		
+	public boolean isEmpty() {
 		return parameters.isEmpty();
 	}
 
-	public Set<Symbol> keySet() {		
+	public Set<Parameter> keySet() {
 		return parameters.keySet();
 	}
 
-	public Object put(Symbol key, Object value) {
+	public Object put(Parameter key, Object value) {
 		return parameters.put(key, value);
 	}
 
-	public void putAll(Map<? extends Symbol, ? extends Object> t) {
+	public void putAll(Map<? extends Parameter, ? extends Object> t) {
 		parameters.putAll(t);
+
 	}
 
-	public Object remove(Object key) {		
+	public Object remove(Object key) {
 		return parameters.remove(key);
 	}
 
-	public int size() {		
+	public int size() {
 		return parameters.size();
 	}
 
-	public Collection<Object> values() {		
+	public Collection<Object> values() {
 		return parameters.values();
 	}
 

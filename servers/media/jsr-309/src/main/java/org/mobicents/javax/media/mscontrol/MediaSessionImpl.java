@@ -13,11 +13,10 @@ import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
-import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
-import javax.media.mscontrol.resource.ConfigSymbol;
+import javax.media.mscontrol.resource.Configuration;
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.ResourceContainer;
-import javax.media.mscontrol.resource.Symbol;
 import javax.media.mscontrol.vxml.VxmlDialog;
 
 import org.apache.log4j.Logger;
@@ -53,46 +52,51 @@ public class MediaSessionImpl implements MediaSession {
 		}
 	}
 
-	public NetworkConnection createNetworkConnection() {
-		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper);
-		netConnList.add(networkConnectionImpl);
-		return networkConnectionImpl;
+	// MediaObject Methods
+	public Parameters createParameters() {
+		return new ParametersImpl();
 	}
 
-	public MediaGroup createMediaGroup() throws MsControlException {
-		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper);
-		medGrpList.add(mediaGroupImpl);
-		return mediaGroupImpl;
+	public Parameters getParameters(Parameter[] params) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(ConfigSymbol<C> symbol)
-			throws MsControlException {
-		if (symbol.equals(NetworkConnectionConfig.c_Basic)) {
-			// NetworkConnectionImpl networkConnectionImpl = new
-			// NetworkConnectionImpl(this, jainMgcpStackProviderImpl);
-			// return null;// (T) networkConnectionImpl;
-		} else if (symbol.equals(NetworkConnectionConfig.c_DtmfConversion)) {
+	public URI getURI() {
+		return this.uri;
+	}
 
-		} else if (symbol.equals(NetworkConnectionConfig.c_EchoCancel)) {
-
+	public void release() {
+		for (NetworkConnection nc : netConnList) {
+			nc.release();
 		}
-		return null;
+	}
+
+	public void setParameters(Parameters arg0) {
+		// TODO Auto-generated method stub
 
 	}
 
-	public <T extends ResourceContainer<? extends MediaConfig>> T createContainer(Class<T> arg0, Parameters arg1)
+	// MediaSession Methods
+	public <T extends ResourceContainer<? extends MediaConfig>> T createContainer(Class<T> aClass, Parameters params)
 			throws MsControlException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(C arg0, String arg1)
-			throws MsControlException {
+	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(
+			Configuration<C> predefinedConfig) throws MsControlException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public VxmlDialog createVxmlDialog(Parameters arg0) throws MsControlException {
+	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(C config,
+			String containerId) throws MsControlException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public VxmlDialog createVxmlDialog(Parameters parameters) throws MsControlException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -117,28 +121,17 @@ public class MediaSessionImpl implements MediaSession {
 
 	}
 
-	public Parameters createParameters() {
-		return new ParametersImpl();
+	// Custom Methods
+	public NetworkConnection createNetworkConnection() {
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper);
+		netConnList.add(networkConnectionImpl);
+		return networkConnectionImpl;
 	}
 
-	public Parameters getParameters(Symbol[] arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public URI getURI() {
-		return this.uri;
-	}
-
-	public void release() {
-		for (NetworkConnection nc : netConnList) {
-			nc.release();
-		}
-	}
-
-	public void setParameters(Parameters arg0) {
-		// TODO Auto-generated method stub
-
+	public MediaGroup createMediaGroup() throws MsControlException {
+		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper);
+		medGrpList.add(mediaGroupImpl);
+		return mediaGroupImpl;
 	}
 
 	public CallIdentifier getCallIdentifier() {

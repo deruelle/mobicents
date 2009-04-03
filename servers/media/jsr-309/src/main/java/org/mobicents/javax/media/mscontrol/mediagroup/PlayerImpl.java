@@ -18,6 +18,7 @@ import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.net.URI;
+import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.mscontrol.MediaSession;
@@ -30,6 +31,7 @@ import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
+import javax.media.mscontrol.resource.Symbol;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
@@ -54,7 +56,9 @@ public class PlayerImpl implements Player {
 
 	protected RequestIdentifier reqId = null;
 
-	protected PlayerState state = PlayerState.IDLE;
+	protected volatile PlayerState state = PlayerState.IDLE;
+
+	private volatile LinkedList<Runnable> txList = new LinkedList<Runnable>();
 
 	protected PlayerImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) throws MsControlException {
 		this.mediaGroup = mediaGroup;
@@ -62,12 +66,45 @@ public class PlayerImpl implements Player {
 		this.mgcpWrapper = mgcpWrapper;
 	}
 
-	public void play(URI[] uris, RTC[] arg1, Parameters arg2) throws MsControlException {
+	private void executeNextTx() {
+		Runnable nextTx = txList.poll();
+		if (nextTx != null) {
+			Provider.submit(nextTx);
+		}
+	}
+
+	// Player methods
+	public void play(URI[] uris, RTC[] arg1, Parameters params) throws MsControlException {
 
 		if (MediaObjectState.JOINED.equals(this.mediaGroup.getState())) {
-			Runnable tx = new StartTx(this, uris);
-			Provider.submit(tx);
-			state = PlayerState.ACTIVE;
+			if (this.state == PlayerState.ACTIVE) {
+				Object obj = null;
+				if (params != null && (obj = params.get(p_IfBusy)) != null) {
+					Symbol action = (Symbol) obj;
+					if (action.equals(Player.v_Queue)) {
+						Runnable tx = new StartTx(this, uris);
+						txList.add(tx);
+					} else if (action.equals(Player.v_Stop)) {
+						txList.clear();
+						Runnable tx = new StartTx(this, uris);
+						txList.add(tx);
+
+						// Stop the Player first
+						Runnable tx1 = new StopTx(this);
+						Provider.submit(tx1);
+					} else if (action.equals(Player.v_Fail)) {
+						throw new MsControlException("Player is busy");
+					} else {
+						logger.error("The Value " + action + " is not recognized for Parameter p_IfBusy");
+					}
+				} else {
+					logger.error("The Player is busy and no Parameter p_IfBusy passed to take necessary action");
+				}
+			} else {
+				Runnable tx = new StartTx(this, uris);
+				Provider.submit(tx);
+			}
+			this.state = PlayerState.ACTIVE;
 		} else {
 			throw new MsControlException(this.mediaGroup.getURI() + " Container is not joined to any other container");
 		}
@@ -77,19 +114,22 @@ public class PlayerImpl implements Player {
 		this.play(new URI[] { arg0 }, arg1, arg2);
 	}
 
+	// Resource Methods
 	public MediaGroup getContainer() {
 		return this.mediaGroup;
 	}
 
-	public void stop() {
-
+	public boolean stop() {
+		txList.clear();
 		if (this.state == PlayerState.ACTIVE) {
 			Runnable tx = new StopTx(this);
 			Provider.submit(tx);
+			return true;
 		}
-		state = PlayerState.IDLE;
+		return false;
 	}
 
+	// MediaEventNotifier methods
 	public void addListener(MediaEventListener<PlayerEvent> listener) {
 		this.mediaEventListenerList.add(listener);
 	}
@@ -108,7 +148,7 @@ public class PlayerImpl implements Player {
 		}
 	}
 
-	private class StopTx implements Runnable {
+	private class StopTx implements Runnable, JainMgcpExtendedListener {
 		private int tx = -1;
 		private PlayerImpl player = null;
 
@@ -119,18 +159,105 @@ public class PlayerImpl implements Player {
 		public void run() {
 			try {
 				this.tx = mgcpWrapper.getUniqueTransactionHandler();
-				// TODO do we really care to listen for any event (NTFY) from
-				// MMS for this?
+				mgcpWrapper.addListnere(this.tx, this);
+				mgcpWrapper.addListnere(reqId, this);
+
 				EndpointIdentifier endpointID = new EndpointIdentifier(mediaGroup.getEndpoint(), mgcpWrapper
 						.getPeerIp()
 						+ ":" + mgcpWrapper.getPeerPort());
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
-				notificationRequest.setSignalRequests(new EventName[] {});
-				notificationRequest.setRequestedEvents(new RequestedEvent[] {});
-				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
+				// notificationRequest.setSignalRequests(new EventName[] {});
+				// notificationRequest.setRequestedEvents(new RequestedEvent[]
+				// {});
 				notificationRequest.setTransactionHandle(this.tx);
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
+
 			} catch (Exception e) {
 				logger.error(e);
+				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
+						Error.e_Unknown, "Error " + e.getMessage());
+				update(event);
+				executeNextTx();
+			}
+		}
+
+		public void transactionEnded(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent cmdEvent) {
+			logger.error("No response from MGW. Tx timed out for RQNT Tx " + this.tx + " For Command sent "
+					+ cmdEvent.toString());
+			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
+			mgcpWrapper.removeListener(reqId);
+			PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
+					Error.e_Unknown, "No response from MGW for RQNT");
+			update(event);
+			executeNextTx();
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpResponseEvent(JainMgcpResponseEvent respEvent) {
+			switch (respEvent.getObjectIdentifier()) {
+			case Constants.RESP_NOTIFICATION_REQUEST:
+				processReqNotificationResponse((NotificationRequestResponse) respEvent);
+				break;
+			default:
+				mgcpWrapper.removeListener(respEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+				logger.warn(" This RESPONSE is unexpected " + respEvent);
+
+				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
+						Error.e_Unknown, "RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
+
+				update(event);
+				executeNextTx();
+				break;
+
+			}
+		}
+
+		private void processReqNotificationResponse(NotificationRequestResponse responseEvent) {
+			PlayerEvent event = null;
+			ReturnCode returnCode = responseEvent.getReturnCode();
+
+			switch (returnCode.getValue()) {
+			case ReturnCode.TRANSACTION_BEING_EXECUTED:
+				// do nothing
+				if (logger.isDebugEnabled()) {
+					logger.debug("Transaction " + this.tx + "is being executed. Response received = " + responseEvent);
+				}
+				break;
+			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+				state = PlayerState.IDLE;
+				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null);
+				update(event);
+				executeNextTx();
+
+				break;
+			default:
+				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+
+				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null, Error.e_Unknown,
+						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
+				update(event);
+				executeNextTx();
+				break;
+
 			}
 		}
 
@@ -189,9 +316,10 @@ public class PlayerImpl implements Player {
 
 			} catch (Exception e) {
 				logger.error(e);
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_System,
+				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
 						"Error while sending RQNt " + e.getMessage());
 				update(event);
+				executeNextTx();
 			}
 
 		}
@@ -213,9 +341,10 @@ public class PlayerImpl implements Player {
 					+ cmdEvent.toString());
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
-			PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_System,
+			PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
 					"No response from MGW for RQNT");
 			update(event);
+			executeNextTx();
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
@@ -231,8 +360,9 @@ public class PlayerImpl implements Player {
 						mgcpWrapper.removeListener(notify.getRequestIdentifier());
 
 						state = PlayerState.IDLE;
-						event = new PlayerEventImpl(this.player, Player.ev_PlayComplete);
+						event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_EndOfData, null);
 						update(event);
+						executeNextTx();
 					}
 					break;
 
@@ -242,9 +372,10 @@ public class PlayerImpl implements Player {
 
 					}
 					mgcpWrapper.removeListener(notify.getRequestIdentifier());
-					event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_System,
+					event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
 							"Player failed on Server");
 					update(event);
+					executeNextTx();
 					break;
 				}
 
@@ -266,10 +397,11 @@ public class PlayerImpl implements Player {
 				mgcpWrapper.removeListener(reqId);
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_System,
+				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
 						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
 
 				update(event);
+				executeNextTx();
 				break;
 
 			}
@@ -297,17 +429,18 @@ public class PlayerImpl implements Player {
 				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_ResourceUnavailable,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 				update(event);
+				executeNextTx();
 				break;
 			default:
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_System,
+				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 
 				update(event);
-
+				executeNextTx();
 				break;
 
 			}

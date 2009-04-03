@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
+import javax.media.mscontrol.mediagroup.CoderConstants;
+import javax.media.mscontrol.mediagroup.Recorder;
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.Resource;
-import javax.media.mscontrol.resource.Symbol;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,8 +42,7 @@ public class ParametersImplTest {
 	@Before
 	public void setUp() {
 		parameters = new ParametersImpl();
-		obj = new Object();
-		parameters.put(Resource.q_RTC, obj);
+		parameters.put(Recorder.p_AudioCoder, CoderConstants.v_MuLawPCM_64k);
 	}
 
 	@After
@@ -52,19 +53,19 @@ public class ParametersImplTest {
 
 	@Test
 	public void testParameters() {
-		assertTrue(parameters.containsKey(Resource.q_RTC));
-		assertTrue(parameters.containsValue(obj));
+		assertTrue(parameters.containsKey(Recorder.p_AudioCoder));
+		assertTrue(parameters.containsValue(CoderConstants.v_MuLawPCM_64k));
 		
-		Set<java.util.Map.Entry<Symbol, Object>> set = parameters.entrySet();
+		Set<java.util.Map.Entry<Parameter, Object>> set = parameters.entrySet();
 		assertNotNull(set);
 		assertEquals(1, set.size());
 		
-		Object objTemp = parameters.get(Resource.q_RTC);
-		assertEquals(obj, objTemp);
+		Object objTemp = parameters.get(Recorder.p_AudioCoder);
+		assertEquals(CoderConstants.v_MuLawPCM_64k, objTemp);
 		
 		assertEquals(false, parameters.isEmpty());
 		
-		assertNotNull(parameters.remove(Resource.q_RTC));
+		assertNotNull(parameters.remove(Recorder.p_AudioCoder));
 
 	}
 }

@@ -260,7 +260,7 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(this.thisTx);
 
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, e.getMessage());
+						this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_Unknown, e.getMessage());
 				container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
 				return;
@@ -326,7 +326,7 @@ public class AudioJoinableStream implements JoinableStream {
 				if (noOfRespReceived == 2) {
 
 					JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-							this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, this.errorTxt);
+							this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Unknown, this.errorTxt);
 					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 							this.otherAudJoiStr.container, true);
 				}
@@ -365,7 +365,7 @@ public class AudioJoinableStream implements JoinableStream {
 								this.otherAudJoiStr.container, false);
 					} else {
 						joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-								this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, this.errorTxt);
+								this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_Unknown, this.errorTxt);
 						container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 								this.otherAudJoiStr.container, true);
 
@@ -380,7 +380,7 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				if (noOfRespReceived == 2) {
 					joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-							this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_System, this.errorTxt);
+							this.thisAudJoiStr, JoinEvent.ev_Unjoined, Error.e_Unknown, this.errorTxt);
 					container.updateUnjoined(joinEvent, this.thisConnId, this.otherConnId,
 							this.otherAudJoiStr.container, true);
 				}
@@ -462,7 +462,7 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, "Received unexpected Response "
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Unknown, "Received unexpected Response "
 								+ jainmgcpresponseevent.toString());
 				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
@@ -517,7 +517,7 @@ public class AudioJoinableStream implements JoinableStream {
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Unknown, responseEvent.getReturnCode()
 								.getComment());
 				container.updateJoined(joinEvent, this.thisConnId, this.otherConnId, this.otherAudJoiStr.container,
 						true);
@@ -606,7 +606,7 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(jainmgcpresponseevent.getTransactionHandle());
 				logger.warn(" This RESPONSE is unexpected " + jainmgcpresponseevent);
 				JoinEvent joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, jainmgcpresponseevent.getReturnCode()
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Unknown, jainmgcpresponseevent.getReturnCode()
 								.getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
@@ -671,7 +671,7 @@ public class AudioJoinableStream implements JoinableStream {
 						+ this.thisAudJoiStr.container.endpoint + " this.other.endpoint = "
 						+ this.otherAudJoiStr.container.endpoint + " " + responseEvent.getReturnCode().getComment());
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_ResourceUnavailable, responseEvent.getReturnCode()
 								.getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
@@ -679,7 +679,7 @@ public class AudioJoinableStream implements JoinableStream {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_System, responseEvent.getReturnCode()
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_Unknown, responseEvent.getReturnCode()
 								.getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;

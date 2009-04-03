@@ -6,28 +6,28 @@ import javax.media.mscontrol.JoinEvent;
 import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.MediaObject;
 import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.Symbol;
+import javax.media.mscontrol.resource.EventType;
 
 public class JoinEventImpl implements JoinEvent {
 
 	private Serializable context = null;
 	private Joinable other = null;
 	private Joinable current = null;
-	private Symbol eventID = null;
-	private Symbol error = Error.e_OK;
+	private EventType eventType = null;
+	private Error error = Error.e_OK;
 	private String errorText = null;
 	private MediaObject source = null;
 
-	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventId) {
+	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, EventType eventId) {
 		this.source = source;
 		this.context = context;
 		this.other = other;
 		this.current = current;
-		this.eventID = eventId;
+		this.eventType = eventId;
 	}
 
-	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, Symbol eventID,
-			Symbol error, String errorText) {
+	public JoinEventImpl(MediaObject source, Serializable context, Joinable other, Joinable current, EventType eventID,
+			Error error, String errorText) {
 		this(source, context, other, current, eventID);
 		this.error = error;
 		this.errorText = errorText;
@@ -37,7 +37,7 @@ public class JoinEventImpl implements JoinEvent {
 		return this.context;
 	}
 
-	public Symbol getError() {
+	public Error getError() {
 		return this.error;
 	}
 
@@ -45,8 +45,8 @@ public class JoinEventImpl implements JoinEvent {
 		return this.errorText;
 	}
 
-	public Symbol getEventID() {
-		return this.eventID;
+	public EventType getEventType() {
+		return this.eventType;
 	}
 
 	public Joinable getOtherJoinable() {
@@ -64,7 +64,7 @@ public class JoinEventImpl implements JoinEvent {
 	@Override
 	public String toString() {
 		return "Source = " + this.source + " Other = " + this.other + " Current = " + this.current + " EventId = "
-				+ this.eventID + " Error = " + this.error + " ErrorText = " + this.errorText;
+				+ this.eventType + " Error = " + this.error + " ErrorText = " + this.errorText;
 	}
 
 }

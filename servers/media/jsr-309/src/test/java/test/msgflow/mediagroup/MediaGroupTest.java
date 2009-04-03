@@ -18,6 +18,7 @@ import javax.media.mscontrol.mediagroup.PlayerEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEventListener;
+import javax.media.mscontrol.resource.Parameters;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
@@ -70,7 +71,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 			public void onEvent(StatusEvent event) {
 				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 						logger.info("Join successful " + event);
 						testPassed = true;
 					} else {
@@ -155,7 +156,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	}
 
-	public void testPlayer() throws Exception {
+	public void testPlayComplete() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
 		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
 		final MediaGroup MG1 = myMediaSession.createMediaGroup();
@@ -174,14 +175,15 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 			public void onEvent(StatusEvent event) {
 				if (event.getError().equals(Error.e_OK)) {
-					if (JoinEvent.ev_Joined.equals(event.getEventID())) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
 						logger.info("Join successful " + event);
 
 						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
 
 							public void onEvent(PlayerEvent anEvent) {
 								if (Error.e_OK.equals(anEvent.getError())) {
-									if (Player.ev_PlayComplete.equals(anEvent.getEventID())) {
+									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+										logger.debug(" Play completed successfully " + anEvent.getEventType());
 										testPassed = true;
 									}
 								} else {
@@ -192,7 +194,10 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 						player.addListener(playerListener);
 						try {
-							player.play(new URI("file://home/abhayani/workarea/temp/test.wav"), null, null);
+							URI[] files = new URI[2];
+							files[0] = new URI("file://home/abhayani/workarea/temp/test1.wav");
+							files[1] = new URI("file://home/abhayani/workarea/temp/test2.wav");
+							player.play(files, null, null);
 						} catch (MsControlException e) {
 							logger.error(e);
 							fail("Player failed");
@@ -215,6 +220,366 @@ public class MediaGroupTest extends MessageFlowHarness {
 		MG1.addListener(statusEvtList);
 		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
 
+		waitForMessage();
+		waitForMessage();
+
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	// TODO : The MGW sends NTFY even after stopping all announcement. Need to
+	// fix that
+	public void testPlayerStop() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final Player player = MG1.getPlayer();
+		final ContextImpl ser = new ContextImpl();
+
+		StatusEventListener statusEvtList = new StatusEventListener() {
+
+			public void onEvent(StatusEvent event) {
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+						logger.info("Join successful " + event);
+
+						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
+
+							public void onEvent(PlayerEvent anEvent) {
+								if (Error.e_OK.equals(anEvent.getError())) {
+									if (Player.ev_PlayComplete.equals(anEvent.getEventType())
+											&& Player.q_Stop.equals(anEvent.getQualifier())) {
+										logger.debug(" Play Stopped successfully ");
+										testPassed = true;
+
+									} else {
+										logger.error("Player did not stop and Event received = " + anEvent);
+										fail("Failed to stop player");
+									}
+								} else {
+									logger.error("Received Error from Player " + anEvent);
+								}
+							}
+						};
+
+						player.addListener(playerListener);
+						try {
+							URI[] files = new URI[2];
+							files[0] = new URI("file://home/abhayani/workarea/temp/test1.wav");
+							files[1] = new URI("file://home/abhayani/workarea/temp/test2.wav");
+							player.play(files, null, null);
+
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e) {
+								// Ignore
+							}
+
+							player.stop();
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail("Player failed");
+						} catch (URISyntaxException e) {
+							logger.error(e);
+							fail("Player failed");
+						}
+					} else {
+						logger.error("Join failed " + event);
+						fail("Join of MG1 and NC1 failed");
+					}
+
+				} else {
+					logger.error("Join failed " + event);
+					fail("Join of MG1 and NC1 failed");
+				}
+			}
+		};
+
+		MG1.addListener(statusEvtList);
+		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+
+		waitForMessage();
+		waitForMessage();
+
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	public void testMediaGroupRelease() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final Player player = MG1.getPlayer();
+		final ContextImpl ser = new ContextImpl();
+
+		StatusEventListener statusEvtList = new StatusEventListener() {
+
+			public void onEvent(StatusEvent event) {
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+						logger.info("Join successful " + event);
+
+						MG1.release();
+
+					} else if (JoinEvent.ev_Unjoined.equals(event.getEventType())) {
+						// Once MG is released, trying to call play should throw
+						// an exception that MG is not joined to any other MO
+						try {
+							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, null);
+						} catch (MsControlException e) {
+							logger.debug("Expected Error ", e);
+							testPassed = true;
+						} catch (URISyntaxException e) {
+							logger.error(e);
+						}
+					} else {
+						logger.error("Join failed " + event);
+						fail("Join of MG1 and NC1 failed");
+					}
+
+				} else {
+					logger.error("Join failed " + event);
+					fail("Join of MG1 and NC1 failed");
+				}
+			}
+		};
+
+		MG1.addListener(statusEvtList);
+		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+
+		waitForMessage();
+
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+
+	}
+
+	public void testv_Fail() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final Player player = MG1.getPlayer();
+		final ContextImpl ser = new ContextImpl();
+
+		StatusEventListener statusEvtList = new StatusEventListener() {
+
+			public void onEvent(StatusEvent event) {
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+						logger.info("Join successful " + event);
+
+						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
+
+							public void onEvent(PlayerEvent anEvent) {
+								if (Error.e_OK.equals(anEvent.getError())) {
+									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+										logger.debug(" Play completed successfully " + anEvent.getEventType());
+									}
+								} else {
+									logger.error("Received Error from Player " + anEvent);
+								}
+							}
+						};
+
+						player.addListener(playerListener);
+						try {
+							URI[] files = new URI[2];
+							files[0] = new URI("file://home/abhayani/workarea/temp/test1.wav");
+							files[1] = new URI("file://home/abhayani/workarea/temp/test2.wav");
+							player.play(files, null, null);
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail("Player failed");
+						} catch (URISyntaxException e) {
+							logger.error(e);
+							fail("Player failed");
+						}
+						Parameters p = MG1.createParameters();
+						p.put(Player.p_IfBusy, Player.v_Fail);
+						try {
+							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
+						} catch (MsControlException e) {
+							logger.debug("Expected Error ", e);
+							testPassed = true;
+						} catch (URISyntaxException e) {
+							logger.error(e);
+						}
+
+					} else {
+						logger.error("Join failed " + event);
+						fail("Join of MG1 and NC1 failed");
+					}
+
+				} else {
+					logger.error("Join failed " + event);
+					fail("Join of MG1 and NC1 failed");
+				}
+			}
+		};
+
+		MG1.addListener(statusEvtList);
+		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+
+		waitForMessage();
+		waitForMessage();
+
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	public void testv_Queue() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final Player player = MG1.getPlayer();
+		final ContextImpl ser = new ContextImpl();
+
+		StatusEventListener statusEvtList = new StatusEventListener() {
+
+			public void onEvent(StatusEvent event) {
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+						logger.info("Join successful " + event);
+
+						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
+							int noOfPlayCompleted = 0;
+
+							public void onEvent(PlayerEvent anEvent) {
+								if (Error.e_OK.equals(anEvent.getError())) {
+									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+										logger.debug(" Play completed successfully " + anEvent.getEventType());
+										noOfPlayCompleted++;
+										if (noOfPlayCompleted == 2) {
+											testPassed = true;
+										}
+									}
+								} else {
+									logger.error("Received Error from Player " + anEvent);
+									fail("Player failed");
+								}
+							}
+						};
+
+						player.addListener(playerListener);
+						try {
+							URI[] files = new URI[2];
+							files[0] = new URI("file://home/abhayani/workarea/temp/test1.wav");
+							files[1] = new URI("file://home/abhayani/workarea/temp/test2.wav");
+							player.play(files, null, null);
+
+							try {
+								Thread.sleep(200);
+							} catch (InterruptedException e) {
+							}
+
+							Parameters p = MG1.createParameters();
+							p.put(Player.p_IfBusy, Player.v_Queue);
+							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
+
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail("Player failed");
+						} catch (URISyntaxException e) {
+							logger.error(e);
+							fail("Player failed");
+						}
+
+					} else {
+						logger.error("Join failed " + event);
+						fail("Join of MG1 and NC1 failed");
+					}
+
+				} else {
+					logger.error("Join failed " + event);
+					fail("Join of MG1 and NC1 failed");
+				}
+			}
+		};
+
+		MG1.addListener(statusEvtList);
+		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+
+		waitForMessage();
+		waitForMessage();
+		waitForMessage();
+
+		assertTrue(this.getName() + " passed = " + testPassed, testPassed);
+	}
+
+	public void testv_Stop() throws Exception {
+		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final Player player = MG1.getPlayer();
+		final ContextImpl ser = new ContextImpl();
+
+		StatusEventListener statusEvtList = new StatusEventListener() {
+
+			public void onEvent(StatusEvent event) {
+				if (event.getError().equals(Error.e_OK)) {
+					if (JoinEvent.ev_Joined.equals(event.getEventType())) {
+						logger.info("Join successful " + event);
+
+						MediaEventListener<PlayerEvent> playerListener = new MediaEventListener<PlayerEvent>() {
+							int noOfPlayCompleted = 0;
+
+							public void onEvent(PlayerEvent anEvent) {
+								if (Error.e_OK.equals(anEvent.getError())) {
+									if (Player.ev_PlayComplete.equals(anEvent.getEventType())) {
+										if (Player.q_Stop.equals(anEvent.getQualifier())) {
+											logger.debug(" Play Stopped successfully " + anEvent.getEventType());
+											testPassed = true;
+										} else if (Player.q_EndOfData.equals(anEvent.getQualifier())) {
+											logger.debug(" Play Completed successfully " + anEvent.getEventType());
+											testPassed = testPassed && true;
+										}
+									} else {
+										logger.error("Received Error from Player " + anEvent);
+										fail("Player failed");
+									}
+								} else {
+									logger.error("Received Error from Player " + anEvent);
+									fail("Player failed");
+								}
+							}
+						};
+
+						player.addListener(playerListener);
+						try {
+							URI[] files = new URI[2];
+							files[0] = new URI("file://home/abhayani/workarea/temp/test1.wav");
+							files[1] = new URI("file://home/abhayani/workarea/temp/test2.wav");
+							player.play(files, null, null);
+
+							try {
+								Thread.sleep(200);
+							} catch (InterruptedException e) {
+							}
+
+							Parameters p = MG1.createParameters();
+							p.put(Player.p_IfBusy, Player.v_Stop);
+							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
+
+						} catch (MsControlException e) {
+							logger.error(e);
+							fail("Player failed");
+						} catch (URISyntaxException e) {
+							logger.error(e);
+							fail("Player failed");
+						}
+
+					} else {
+						logger.error("Join failed " + event);
+						fail("Join of MG1 and NC1 failed");
+					}
+
+				} else {
+					logger.error("Join failed " + event);
+					fail("Join of MG1 and NC1 failed");
+				}
+			}
+		};
+
+		MG1.addListener(statusEvtList);
+		MG1.joinInitiate(Direction.DUPLEX, NC1, ser);
+
+		waitForMessage();
 		waitForMessage();
 		waitForMessage();
 

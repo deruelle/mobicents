@@ -12,8 +12,10 @@ import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.Recorder;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
+import javax.media.mscontrol.mediagroup.signals.SignalGenerator;
+import javax.media.mscontrol.resource.Action;
+import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
-import javax.media.mscontrol.resource.Symbol;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
@@ -46,6 +48,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 		}
 	}
 
+	// MediaGroup Methods
 	public Player getPlayer() throws MsControlException {
 		checkState();
 		return player;
@@ -59,10 +62,16 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 		return null;
 	}
 
-	public void stop() {
-		this.player.stop();
+	public SignalGenerator getSignalGenerator() throws MsControlException {
+		return null;
 	}
 
+	public boolean stop() {
+		this.player.stop();
+		return true;
+	}
+
+	// ResourceContainer methods
 	public void confirm() throws MsControlException {
 
 	}
@@ -75,15 +84,16 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 		return null;
 	}
 
-	public void triggerRTC(Symbol arg0) {
+	public void triggerRTC(Action rtca) {
 
 	}
 
+	// MediaObject methods
 	public Parameters createParameters() {
 		return new ParametersImpl();
 	}
 
-	public Parameters getParameters(Symbol[] arg0) {
+	public Parameters getParameters(Parameter[] params) {
 		return null;
 	}
 
@@ -105,7 +115,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 		this.state = MediaObjectState.RELEASED;
 	}
 
-	public void setParameters(Parameters arg0) {
+	public void setParameters(Parameters params) {
 
 	}
 
