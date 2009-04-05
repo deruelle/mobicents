@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class LocationNumber extends AbstractNumber {
+public class LocationNumber extends AbstractNAINumber {
 
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d

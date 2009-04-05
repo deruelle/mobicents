@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
  *         </a>
  * @author Oleg Kulikoff
  */
-public class GenericNumber extends AbstractNumber {
+public class GenericNumber extends AbstractNAINumber {
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */

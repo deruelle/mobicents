@@ -18,7 +18,7 @@ import java.io.ByteArrayOutputStream;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class SubsequentNumber extends AbstractNumber {
+public class SubsequentNumber extends AbstractNAINumber {
 
 	public SubsequentNumber(byte[] representation) {
 		super(representation);

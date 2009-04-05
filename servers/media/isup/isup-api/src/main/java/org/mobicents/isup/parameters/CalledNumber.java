@@ -1,5 +1,5 @@
 /**
- * Start time:14:54:53 2009-04-02<br>
+ * Start time:13:05:28 2009-04-05<br>
  * Project: mobicents-jain-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
@@ -12,17 +12,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * Start time:14:54:53 2009-04-02<br>
+ * Start time:13:05:28 2009-04-05<br>
  * Project: mobicents-jain-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
+ * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
-public class RedirectingNumber extends AbstractNAINumber {
-
-	protected int numberingPlanIndicator = 0;
-
-	protected int addressRepresentationRestrictedIndicator = 0;
+public abstract class CalledNumber extends AbstractNAINumber {
 
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
@@ -36,6 +33,10 @@ public class RedirectingNumber extends AbstractNAINumber {
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
 	public final static int _NPI_TELEX = 4;
+
+	protected int numberingPlanIndicator = 0;
+
+	protected int addressRepresentationREstrictedIndicator = 0;
 
 	/**
 	 * address presentation restricted indicator indicator value. See Q.763 -
@@ -61,13 +62,20 @@ public class RedirectingNumber extends AbstractNAINumber {
 	 */
 	public final static int _APRI_SPARE = 3;
 
-	
-	
-	
-	public RedirectingNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationRestrictedIndicator) {
+	public CalledNumber(byte[] representation) {
+		super(representation);
+		// TODO Auto-generated constructor stub
+	}
+
+	public CalledNumber(ByteArrayInputStream bis) {
+		super(bis);
+		// TODO Auto-generated constructor stub
+	}
+
+	public CalledNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
 		super(natureOfAddresIndicator, address);
 		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.addressRepresentationRestrictedIndicator = addressRepresentationRestrictedIndicator;
+		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
 	/*
@@ -76,22 +84,12 @@ public class RedirectingNumber extends AbstractNAINumber {
 	 * @seeorg.mobicents.isup.parameters.AbstractNumber#decodeBody(java.io.
 	 * ByteArrayInputStream)
 	 */
-	public RedirectingNumber(byte[] representation) {
-		super(representation);
-		// TODO Auto-generated constructor stub
-	}
-
-	public RedirectingNumber(ByteArrayInputStream bis) {
-		super(bis);
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
+		this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
 
 		return 1;
 	}
@@ -104,8 +102,8 @@ public class RedirectingNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = this.natureOfAddresIndicator << 4;
-		c |= (this.addressRepresentationRestrictedIndicator << 2);
+		int c = (this.natureOfAddresIndicator & 0x07) << 4;
+		c |= ((this.addressRepresentationREstrictedIndicator & 0x03) << 2);
 
 		bos.write(c);
 		return 1;
@@ -119,22 +117,12 @@ public class RedirectingNumber extends AbstractNAINumber {
 		this.numberingPlanIndicator = numberingPlanIndicator;
 	}
 
-	public int getAddressRepresentationRestrictedIndicator() {
-		return addressRepresentationRestrictedIndicator;
+	public int getAddressRepresentationREstrictedIndicator() {
+		return addressRepresentationREstrictedIndicator;
 	}
 
-	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
+	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
+		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
-	/**
-	 * <pre>
-	 * a) Odd/even indicator: as for 3.9 a).
-	 * 	b) Nature of address indicator: as for 3.10 b).
-	 * 	c) Numbering plan indicator: as for 3.9 d).
-	 * 	d) Address presentation restricted indicator: as for 3.10 e).
-	 * 	e) Address signal: as for 3.10 g).
-	 * 	f) Filler: as for 3.9 f).
-	 * </pre>
-	 */
 }

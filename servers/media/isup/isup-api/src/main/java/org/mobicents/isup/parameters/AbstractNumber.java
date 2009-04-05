@@ -44,31 +44,6 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractNumber extends AbstractParameter {
 
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_SPARE = 0;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_SUBSCRIBER = 1;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_UNKNOWN = 2;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_NATIONAL = 3;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_INTERNATIONAL = 4;
-	/**
-	 * nature of address indicator value. See Q.763 - 3.9b
-	 */
-	public final static int _NAI_NETWORK_SPECIFIC = 5;
-
 	protected Logger logger = Logger.getLogger(this.getClass());
 	/**
 	 * Holds odd flag, it can have either value: 10000000(x80) or 00000000. For
@@ -81,11 +56,6 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * flag in parameter is moved to the right by sever possitions ( >> 7)
 	 */
 	public static final int _FLAG_ODD = 1;
-	/**
-	 * Holds nature of address indicator bits - those are 7 first bits from
-	 * ususaly top byte (first bit is even/odd flag.)
-	 */
-	protected int natureOfAddresIndicator = 0;
 
 	/**
 	 * Holds digits(in specs: "signal"). digits[0] holds most siginificant
@@ -95,6 +65,11 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * filler or digit.
 	 */
 	protected String address = null;
+
+	public AbstractNumber() {
+		super();
+
+	}
 
 	public AbstractNumber(byte[] representation) {
 		super();
@@ -109,12 +84,12 @@ public abstract class AbstractNumber extends AbstractParameter {
 		this.decodeElement(bis);
 	}
 
-	public AbstractNumber(int natureOfAddresIndicator, String address) {
+	public AbstractNumber(String address) {
 		super();
 		if (address == null) {
 			throw new IllegalArgumentException("Address is null.");
 		}
-		this.setNatureOfAddresIndicator(natureOfAddresIndicator);
+
 		this.setAddress(address);
 	}
 
@@ -218,7 +193,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 		int b = bis.read() & 0xff;
 
 		this.oddFlag = (b & 0x80) >> 7;
-		this.natureOfAddresIndicator = b & 0x7f;
+
 		return 1;
 	}
 
@@ -238,9 +213,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 
 	/**
 	 * This method is used in constructor that takes byte[] or
-	 * ByteArrayInputStream as parameter. Decodes digits part. Stores result in
-	 * digits field, where digits[0] holds most significant digit. This is
-	 * because
+	 * ByteArrayInputStream as parameter. Decodes digits part.
 	 * 
 	 * @param bis
 	 * @return - number of bytes reads throws IllegalArgumentException - thrown
@@ -267,9 +240,47 @@ public abstract class AbstractNumber extends AbstractParameter {
 
 		b = bis.read() & 0xff;
 		address += Integer.toHexString((b & 0x0f));
-
+		this.setAddress(address);
 		if (oddFlag != 1) {
 			address += Integer.toHexString((b & 0xf0) >> 4);
+		}
+		return count;
+	}
+
+	/**
+	 * This method is used in constructor that takes byte[] or
+	 * ByteArrayInputStream as parameter. Decodes digits part. It reads exactly
+	 * octetsCount number of octets.
+	 * 
+	 * @param bis
+	 * @param octetsCount
+	 *            - number iof octets to read from stream
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws IllegalArgumentException {
+		int count = 0;
+		address = "";
+		int b = 0;
+		while (octetsCount != count - 1 && bis.available() - 1 > 0) {
+			b = (byte) bis.read();
+
+			int d1 = b & 0x0f;
+			int d2 = (b & 0xf0) >> 4;
+
+			address += Integer.toHexString(d1) + Integer.toHexString(d2);
+
+		}
+
+		b = bis.read() & 0xff;
+		count++;
+		address += Integer.toHexString((b & 0x0f));
+		this.setAddress(address);
+		if (oddFlag != 1) {
+			address += Integer.toHexString((b & 0xf0) >> 4);
+		}
+		if (octetsCount != count) {
+			throw new IllegalArgumentException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
 		}
 		return count;
 	}
@@ -282,7 +293,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @return - number of bytes encoded.
 	 */
 	public int encodeHeader(ByteArrayOutputStream bos) {
-		int b = this.natureOfAddresIndicator & 0x7f;
+		int b = 0;
 		// Even is 000000000 == 0
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
 		if (isOdd)
@@ -345,16 +356,8 @@ public abstract class AbstractNumber extends AbstractParameter {
 		return oddFlag == _FLAG_ODD;
 	}
 
-	public int getNatureOfAddresIndicator() {
-		return natureOfAddresIndicator;
-	}
-
 	public String getAddress() {
 		return address;
-	}
-
-	public void setNatureOfAddresIndicator(int natureOfAddresIndicator) {
-		this.natureOfAddresIndicator = natureOfAddresIndicator;
 	}
 
 	public void setAddress(String address) {

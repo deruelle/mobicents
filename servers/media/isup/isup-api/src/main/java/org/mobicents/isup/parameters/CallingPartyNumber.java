@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
  *         </a>
  * @author Oleg Kulikoff
  */
-public class CallingPartyNumber extends AbstractNumber {
+public class CallingPartyNumber extends AbstractNAINumber {
 
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d

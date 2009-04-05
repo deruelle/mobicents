@@ -1,5 +1,5 @@
 /**
- * Start time:17:30:47 2009-03-29<br>
+ * Start time:13:06:26 2009-04-05<br>
  * Project: mobicents-jain-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
@@ -9,28 +9,39 @@
 package org.mobicents.isup.parameters;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
- * Start time:17:30:47 2009-03-29<br>
+ * Start time:13:06:26 2009-04-05<br>
  * Project: mobicents-jain-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class OriginalCalledNumber extends CalledNumber {
+public class CalledINNumber extends CalledNumber {
 
-	public OriginalCalledNumber(byte[] representation) {
+	/**
+	 * @param representation
+	 */
+	public CalledINNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
 	}
 
-	public OriginalCalledNumber(ByteArrayInputStream bis) {
+	/**
+	 * @param bis
+	 */
+	public CalledINNumber(ByteArrayInputStream bis) {
 		super(bis);
 		// TODO Auto-generated constructor stub
 	}
 
-	public OriginalCalledNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
+	/**
+	 * @param natureOfAddresIndicator
+	 * @param address
+	 * @param numberingPlanIndicator
+	 * @param addressRepresentationREstrictedIndicator
+	 */
+	public CalledINNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
 		super(natureOfAddresIndicator, address, numberingPlanIndicator, addressRepresentationREstrictedIndicator);
 		// TODO Auto-generated constructor stub
 	}
