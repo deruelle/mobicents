@@ -41,6 +41,27 @@ public class NetworkRoutingNumber extends AbstractNumber {
 	private int numberingPlanIndicator = 0;
 	private int natureOfAddressIndicator = 0;
 
+	public NetworkRoutingNumber(String address, int numberingPlanIndicator, int natureOfAddressIndicator) {
+		super(address);
+		this.numberingPlanIndicator = numberingPlanIndicator;
+		this.natureOfAddressIndicator = natureOfAddressIndicator;
+	}
+
+	public NetworkRoutingNumber() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public NetworkRoutingNumber(byte[] representation) {
+		super(representation);
+		// TODO Auto-generated constructor stub
+	}
+
+	public NetworkRoutingNumber(ByteArrayInputStream bis) {
+		super(bis);
+		// TODO Auto-generated constructor stub
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

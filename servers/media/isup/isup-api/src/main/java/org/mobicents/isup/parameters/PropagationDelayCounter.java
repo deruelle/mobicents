@@ -16,7 +16,6 @@ import java.io.IOException;
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public class PropagationDelayCounter extends AbstractParameter {
 

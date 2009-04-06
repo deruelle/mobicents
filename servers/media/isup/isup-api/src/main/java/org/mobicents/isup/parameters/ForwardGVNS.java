@@ -49,7 +49,7 @@ public class ForwardGVNS extends AbstractParameter {
 		}
 		ByteArrayInputStream bis = new ByteArrayInputStream(b);
 		this.opServiceProvider = new OriginatingParticipatingServiceProvider();
-		this.gvnsUserGroup = new GVNSUserGruop();
+		this.gvnsUserGroup = new GVNSUserGroup();
 		this.tnRoutingNumber = new TerminatingNetworkRoutingNumber();
 
 		int count = 0;

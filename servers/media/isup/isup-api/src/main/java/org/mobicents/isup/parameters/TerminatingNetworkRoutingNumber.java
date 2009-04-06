@@ -26,6 +26,11 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	private int numberingPlanIndicator = 0;
 	private int natureOfAddressIndicator = 0;
 
+	public TerminatingNetworkRoutingNumber() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public TerminatingNetworkRoutingNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub

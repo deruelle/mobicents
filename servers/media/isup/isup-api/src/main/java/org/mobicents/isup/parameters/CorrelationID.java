@@ -16,25 +16,20 @@ import java.io.IOException;
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ * 
  */
-public class CorrelationID extends AbstractParameter {
-//FIXME: Q.1218
-	xaa
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return 0;
+public class CorrelationID extends GenericDigits {
+
+	public CorrelationID(byte[] b) {
+		super(b);
+		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public CorrelationID(int encodignScheme, int typeOfDigits, int[] digits) {
+		super(encodignScheme, typeOfDigits, digits);
+		// TODO Auto-generated constructor stub
 	}
+	// FIXME: Q.1218 -- weird document.... Oleg is this correct? or should it be
+	// mix of GenericNumber and Generic digits?
 
 }

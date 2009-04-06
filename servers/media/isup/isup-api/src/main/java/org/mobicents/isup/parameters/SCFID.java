@@ -8,6 +8,7 @@
  */
 package org.mobicents.isup.parameters;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 /**
@@ -18,23 +19,29 @@ import java.io.IOException;
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
-public class SCFID extends AbstractParameter {
-//FIXME: Q.1218
-	xaa
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
-	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return 0;
+public class SCFID extends NetworkRoutingNumber {
+	// FIXME: Q.1218 - oleg is this correct? :
+	// http://www.itu.int/ITU-T/asn1/database/itu-t/q/q1238.2/2000/IN-CS3-SSF-SCF-datatypes.html
+	public SCFID() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
-	 */
-	public byte[] encodeElement() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public SCFID(byte[] representation) {
+		super(representation);
+		// TODO Auto-generated constructor stub
 	}
+
+	public SCFID(ByteArrayInputStream bis) {
+		super(bis);
+		// TODO Auto-generated constructor stub
+	}
+
+	public SCFID(String address, int numberingPlanIndicator, int natureOfAddressIndicator) {
+		super(address, numberingPlanIndicator, natureOfAddressIndicator);
+		// TODO Auto-generated constructor stub
+	}
+
+	
 
 }

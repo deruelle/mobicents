@@ -6,10 +6,12 @@
  *         </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
-package org.mobicents.isup.parameters;
+package org.mobicents.isup.parameters.accessTransport;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import org.mobicents.isup.parameters.AbstractParameter;
 
 /**
  * Start time:13:39:50 2009-03-30<br>

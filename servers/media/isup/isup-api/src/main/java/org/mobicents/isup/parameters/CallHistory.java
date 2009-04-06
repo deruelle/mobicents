@@ -19,30 +19,52 @@ import java.io.IOException;
  *         </a>
  */
 public class CallHistory extends AbstractParameter {
-a
-//FIXME: figure 42 ?
-	/* (non-Javadoc)
+	// XXX: again this goes aganist usuall way.
+	private int callHistory = 0;
+
+	public CallHistory(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+
+	public CallHistory(int callHistory) {
+		super();
+		this.callHistory = callHistory;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-		return 0;
+		// This one is other way around, as Eduardo might say.
+		if (b == null || b.length != 2) {
+			throw new IllegalArgumentException("byte[] must  not be null and length must be 2");
+		}
+
+		this.callHistory = b[0] << 8;
+		this.callHistory |= b[1];
+		return b.length;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.mobicents.isup.ISUPComponent#encodeElement()
 	 */
 	public byte[] encodeElement() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+
+		byte b0 = (byte) (this.callHistory >> 8);
+		byte b1 = (byte) this.callHistory;
+		return new byte[] { b0, b1 };
 	}
 
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#encodeElement(java.io.ByteArrayOutputStream)
-	 */
-	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getCallHistory() {
+		return callHistory;
 	}
 
+	public void setCallHistory(int callHistory) {
+		this.callHistory = callHistory;
+	}
 }
