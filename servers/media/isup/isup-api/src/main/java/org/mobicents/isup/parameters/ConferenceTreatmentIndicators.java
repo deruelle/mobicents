@@ -64,7 +64,7 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 
 		for (int index = 0; index < this.conferenceAcceptance.length; index++) {
-			this.conferenceAcceptance[index] = (byte) (this.conferenceAcceptance[index] & 0x7F);
+			this.conferenceAcceptance[index] = (byte) (this.conferenceAcceptance[index] & 0x03);
 		}
 
 		this.conferenceAcceptance[this.conferenceAcceptance.length - 1] = (byte) ((this.conferenceAcceptance[this.conferenceAcceptance.length - 1]) | (0x01 << 7));
@@ -83,6 +83,8 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 		this.conferenceAcceptance = conferenceAcceptance;
 	}
 
-	
-	
+	public static int getConferenceTreatmentIndicator(byte b) {
+		return b & 0x03;
+	}
+
 }

@@ -46,7 +46,7 @@ public class NetworkManagementControls extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 
 		for (int index = 0; index < this.networkManagementControls.length; index++) {
-			this.networkManagementControls[index] = (byte) (this.networkManagementControls[index] & 0x7F);
+			this.networkManagementControls[index] = (byte) (this.networkManagementControls[index] & 0x01);
 		}
 
 		this.networkManagementControls[this.networkManagementControls.length - 1] = (byte) ((this.networkManagementControls[this.networkManagementControls.length - 1]) | (0x01 << 7));

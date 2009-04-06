@@ -56,7 +56,7 @@ public class CallDiversionTreatmentIndicators extends AbstractParameter {
 	 */
 	public byte[] encodeElement() throws IOException {
 		for (int index = 0; index < this.callDivertedIndicators.length; index++) {
-			this.callDivertedIndicators[index] = (byte) (this.callDivertedIndicators[index] & 0x7F);
+			this.callDivertedIndicators[index] = (byte) (this.callDivertedIndicators[index] & 0x03);
 		}
 
 		this.callDivertedIndicators[this.callDivertedIndicators.length - 1] = (byte) ((this.callDivertedIndicators[this.callDivertedIndicators.length - 1]) | (0x01 << 7));
@@ -69,6 +69,10 @@ public class CallDiversionTreatmentIndicators extends AbstractParameter {
 
 	public void setCallDivertedIndicators(byte[] callDivertedIndicators) {
 		this.callDivertedIndicators = callDivertedIndicators;
+	}
+
+	public static int getDiversionIndicator(byte b) {
+		return b & 0x03;
 	}
 
 }
