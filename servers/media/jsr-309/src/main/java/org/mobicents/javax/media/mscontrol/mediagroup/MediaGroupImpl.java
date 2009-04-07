@@ -36,7 +36,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	private static final String IVR_ENDPOINT_NAME = "media/test/trunk/IVR/$";
 	private URI uri = null;
 	protected Player player = null;
-	protected ConnectionIdentifier thisConnId = null;
+	public ConnectionIdentifier thisConnId = null;
 
 	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) throws MsControlException {
 		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
@@ -131,7 +131,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 
 	}
 
-	protected String getEndpoint() {
+	public String getEndpoint() {
 		return this.endpoint;
 	}
 

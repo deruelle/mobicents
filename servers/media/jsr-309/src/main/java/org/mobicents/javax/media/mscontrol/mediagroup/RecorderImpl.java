@@ -15,26 +15,24 @@ import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.message.parms.RequestedEvent;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
-import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.net.URI;
-import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.media.mscontrol.MediaResourceException;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
-import javax.media.mscontrol.mediagroup.Player;
-import javax.media.mscontrol.mediagroup.PlayerEvent;
+import javax.media.mscontrol.mediagroup.Recorder;
+import javax.media.mscontrol.mediagroup.RecorderEvent;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
-import javax.media.mscontrol.resource.Symbol;
 
 import org.apache.log4j.Logger;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897MgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897PackageName;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
@@ -44,12 +42,12 @@ import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 /**
  * 
  * @author amit bhayani
- * 
+ *
  */
-public class PlayerImpl implements Player {
+public class RecorderImpl implements Recorder {
 
-	private static Logger logger = Logger.getLogger(PlayerImpl.class);
-	private static PlayerEventImpl playerBusyEvent = null;
+	private static Logger logger = Logger.getLogger(RecorderImpl.class);
+
 	protected MediaGroupImpl mediaGroup = null;
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
@@ -58,74 +56,34 @@ public class PlayerImpl implements Player {
 
 	protected RequestIdentifier reqId = null;
 
-	protected volatile PlayerState state = PlayerState.IDLE;
+	protected RecorderState state = RecorderState.IDLE;
 
-	private volatile LinkedList<Runnable> txList = new LinkedList<Runnable>();
-
-	protected PlayerImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) throws MsControlException {
+	public RecorderImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) {
 		this.mediaGroup = mediaGroup;
 		this.mediaSession = (MediaSessionImpl) mediaGroup.getMediaSession();
 		this.mgcpWrapper = mgcpWrapper;
-
-		playerBusyEvent = new PlayerEventImpl(this, Player.ev_PlayComplete, Error.e_Busy, "Player Busy");
 	}
 
-	private void executeNextTx() {
-		Runnable nextTx = txList.poll();
-		if (nextTx != null) {
-			Provider.submit(nextTx);
-		}
-	}
-
-	// Player methods
-	public void play(URI[] uris, RTC[] arg1, Parameters params) throws MsControlException {
-
+	public void record(URI streamID, RTC[] rtc, Parameters optargs) throws MsControlException {
 		if (MediaObjectState.JOINED.equals(this.mediaGroup.getState())) {
-			if (this.state == PlayerState.ACTIVE) {
-				Object obj = null;
-				if (params != null && (obj = params.get(p_IfBusy)) != null) {
-					Symbol action = (Symbol) obj;
-					if (action.equals(Player.v_Queue)) {
-						Runnable tx = new StartTx(this, uris);
-						txList.add(tx);
-					} else if (action.equals(Player.v_Stop)) {
-						txList.clear();
-						Runnable tx = new StartTx(this, uris);
-						txList.add(tx);
-
-						// Stop the Player first
-						Runnable tx1 = new StopTx(this);
-						Provider.submit(tx1);
-					} else if (action.equals(Player.v_Fail)) {
-						throw new MediaResourceException(playerBusyEvent);
-					} else {
-						logger.error("The Value " + action + " is not recognized for Parameter p_IfBusy");
-					}
-				} else {
-					logger.error("The Player is busy and no Parameter p_IfBusy passed to take necessary action");
-				}
+			if (this.state == RecorderState.ACTIVE) {
+				throw new MsControlException(this.mediaGroup.getURI() + " Recorder already ACTIVE");
 			} else {
-				Runnable tx = new StartTx(this, uris);
+				Runnable tx = new StartTx(this, streamID);
 				Provider.submit(tx);
 			}
-			this.state = PlayerState.ACTIVE;
+			this.state = RecorderState.ACTIVE;
 		} else {
 			throw new MsControlException(this.mediaGroup.getURI() + " Container is not joined to any other container");
 		}
 	}
 
-	public void play(URI arg0, RTC[] arg1, Parameters arg2) throws MsControlException {
-		this.play(new URI[] { arg0 }, arg1, arg2);
-	}
-
-	// Resource Methods
 	public MediaGroup getContainer() {
 		return this.mediaGroup;
 	}
 
 	public boolean stop() {
-		txList.clear();
-		if (this.state == PlayerState.ACTIVE) {
+		if (this.state == RecorderState.ACTIVE) {
 			Runnable tx = new StopTx(this);
 			Provider.submit(tx);
 			return true;
@@ -133,20 +91,19 @@ public class PlayerImpl implements Player {
 		return false;
 	}
 
-	// MediaEventNotifier methods
-	public void addListener(MediaEventListener<PlayerEvent> listener) {
+	public void addListener(MediaEventListener<RecorderEvent> listener) {
 		this.mediaEventListenerList.add(listener);
 	}
 
-	public void removeListener(MediaEventListener<PlayerEvent> listener) {
+	public MediaSession getMediaSession() {
+		return this.mediaSession;
+	}
+
+	public void removeListener(MediaEventListener<RecorderEvent> listener) {
 		this.mediaEventListenerList.remove(listener);
 	}
 
-	public MediaSession getMediaSession() {
-		return this.mediaGroup.getMediaSession();
-	}
-
-	protected void update(PlayerEvent anEvent) {
+	protected void update(RecorderEvent anEvent) {
 		for (MediaEventListener m : mediaEventListenerList) {
 			m.onEvent(anEvent);
 		}
@@ -154,10 +111,10 @@ public class PlayerImpl implements Player {
 
 	private class StopTx implements Runnable, JainMgcpExtendedListener {
 		private int tx = -1;
-		private PlayerImpl player = null;
+		private RecorderImpl recorder = null;
 
-		StopTx(PlayerImpl player) {
-			this.player = player;
+		StopTx(RecorderImpl recorder) {
+			this.recorder = recorder;
 		}
 
 		public void run() {
@@ -178,10 +135,9 @@ public class PlayerImpl implements Player {
 
 			} catch (Exception e) {
 				logger.error(e);
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
-						Error.e_Unknown, "Error " + e.getMessage());
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+						"Error while sending RQNt " + e.getMessage());
 				update(event);
-				executeNextTx();
 			}
 		}
 
@@ -195,10 +151,10 @@ public class PlayerImpl implements Player {
 					+ cmdEvent.toString());
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
-			PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
-					Error.e_Unknown, "No response from MGW for RQNT");
+
+			RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+					"No response from MGW for RQNT");
 			update(event);
-			executeNextTx();
 		}
 
 		public void transactionTxTimedOut(JainMgcpCommandEvent arg0) {
@@ -221,18 +177,16 @@ public class PlayerImpl implements Player {
 				mgcpWrapper.removeListener(reqId);
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null,
-						Error.e_Unknown, "RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
-
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
 				update(event);
-				executeNextTx();
 				break;
 
 			}
 		}
 
 		private void processReqNotificationResponse(NotificationRequestResponse responseEvent) {
-			PlayerEvent event = null;
+			RecorderEventImpl event = null;
 			ReturnCode returnCode = responseEvent.getReturnCode();
 
 			switch (returnCode.getValue()) {
@@ -245,10 +199,9 @@ public class PlayerImpl implements Player {
 			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
-				state = PlayerState.IDLE;
-				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null);
+				state = RecorderState.IDLE;
+				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Recorder.q_Stop, null, -1);
 				update(event);
-				executeNextTx();
 
 				break;
 			default:
@@ -256,10 +209,9 @@ public class PlayerImpl implements Player {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_Stop, null, Error.e_Unknown,
+				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 				update(event);
-				executeNextTx();
 				break;
 
 			}
@@ -270,20 +222,17 @@ public class PlayerImpl implements Player {
 	private class StartTx implements Runnable, JainMgcpExtendedListener {
 		private int tx = -1;
 
-		private PlayerImpl player = null;
-		private URI[] files = null;
+		private Recorder recorder = null;
+		private URI file = null;
 
-		private int annCompleted = 0;
-
-		StartTx(PlayerImpl player, URI[] files) {
-			this.player = player;
-			this.files = files;
+		StartTx(Recorder recorder, URI file) {
+			this.recorder = recorder;
+			this.file = file;
 		}
 
 		public void run() {
 			this.tx = mgcpWrapper.getUniqueTransactionHandler();
 			try {
-
 				mgcpWrapper.addListnere(this.tx, this);
 
 				EndpointIdentifier endpointID = new EndpointIdentifier(mediaGroup.getEndpoint(), mgcpWrapper
@@ -296,22 +245,17 @@ public class PlayerImpl implements Player {
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				EventName[] signalRequests = new EventName[files.length];
-				int count = 0;
-				for (URI uri : files) {
-					String filePath = uri.toString();
-					signalRequests[count] = new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(filePath),
-							connId);
-					count++;
-				}
+				EventName signalRequest = new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897pr, connId);
 
-				notificationRequest.setSignalRequests(signalRequests);
+				notificationRequest.setSignalRequests(new EventName[] { signalRequest });
 
 				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
 
 				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc, connId), actions),
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of, connId), actions) };
+						new RequestedEvent(new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897oc, connId),
+								actions),
+						new RequestedEvent(new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897of, connId),
+								actions) };
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
@@ -320,10 +264,9 @@ public class PlayerImpl implements Player {
 
 			} catch (Exception e) {
 				logger.error(e);
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 						"Error while sending RQNt " + e.getMessage());
 				update(event);
-				executeNextTx();
 			}
 
 		}
@@ -345,41 +288,37 @@ public class PlayerImpl implements Player {
 					+ cmdEvent.toString());
 			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
 			mgcpWrapper.removeListener(reqId);
-			PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
+
+			RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 					"No response from MGW for RQNT");
 			update(event);
-			executeNextTx();
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
 			logger.debug(" The NTFY received " + command.toString());
 			Notify notify = (Notify) command;
 			EventName[] observedEvents = notify.getObservedEvents();
-			PlayerEvent event = null;
+			RecorderEvent event = null;
 			for (EventName observedEvent : observedEvents) {
-				this.annCompleted++;
 				switch (observedEvent.getEventIdentifier().intValue()) {
-				case MgcpEvent.REPORT_ON_COMPLETION:
-					if (this.annCompleted == files.length) {
-						mgcpWrapper.removeListener(notify.getRequestIdentifier());
+				case RFC2897MgcpEvent.OPERATION_COMPLETE:
+					mgcpWrapper.removeListener(notify.getRequestIdentifier());
+					state = RecorderState.IDLE;
 
-						state = PlayerState.IDLE;
-						event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Player.q_EndOfData, null);
-						update(event);
-						executeNextTx();
-					}
+					MgcpEvent mgcpEvent = observedEvent.getEventIdentifier();
+					String params = mgcpEvent.getParms();
+
+					event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Recorder.q_Standard, null,
+							getInterval(params));
+
+					update(event);
 					break;
 
-				case MgcpEvent.REPORT_FAILURE:
-					if (this.annCompleted != files.length) {
-						// TODO Stop the further playing of all file
-
-					}
+				case RFC2897MgcpEvent.OPERATION_FAIL:
 					mgcpWrapper.removeListener(notify.getRequestIdentifier());
-					event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
-							"Player failed on Server");
+					event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
+							"Recorder failed on server ");
 					update(event);
-					executeNextTx();
 					break;
 				}
 			}
@@ -388,6 +327,44 @@ public class PlayerImpl implements Player {
 			response.setTransactionHandle(notify.getTransactionHandle());
 
 			mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { response });
+		}
+
+		private int getInterval(String params) {
+			// Let us remove all SP and HTAB
+			// params.replaceAll("[\\x20]", "");
+			// params.replaceAll("[\\x20]", "");
+			int inter = -1;
+			if (params != null) {
+				char[] cArr = params.toCharArray();
+				int start = 0;
+				int end = 0;
+				for (int i = 0; i < cArr.length - 1; i++) {
+					if (cArr[i] == 'i' && cArr[i + 1] == 'v') {
+						start = i;
+						break;
+					}
+				}// end of for
+
+				boolean decoded = true;
+				int count = start + 3;
+				String interval = "";
+				while (decoded && (count < cArr.length)) {
+					char ch = cArr[count];
+					if (ch >= '0' && ch <= '9') {
+						count++;
+						interval = interval + ch;
+					} else {
+						decoded = false;
+					}
+				}// while
+				try {
+					inter = Integer.parseInt(interval);
+				} catch (NumberFormatException e) {
+					logger.error("Parsing of interval failed ", e);
+				}
+			}
+
+			return inter;
 		}
 
 		public void processMgcpResponseEvent(JainMgcpResponseEvent respEvent) {
@@ -400,18 +377,16 @@ public class PlayerImpl implements Player {
 				mgcpWrapper.removeListener(reqId);
 				logger.warn(" This RESPONSE is unexpected " + respEvent);
 
-				PlayerEventImpl event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
+				RecorderEventImpl event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 						"RQNT Failed.  Look at logs " + respEvent.getReturnCode().getComment());
-
 				update(event);
-				executeNextTx();
 				break;
 
 			}
 		}
 
 		private void processReqNotificationResponse(NotificationRequestResponse responseEvent) {
-			PlayerEvent event = null;
+			RecorderEvent event = null;
 			ReturnCode returnCode = responseEvent.getReturnCode();
 
 			switch (returnCode.getValue()) {
@@ -429,21 +404,19 @@ public class PlayerImpl implements Player {
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_ResourceUnavailable,
+				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_ResourceUnavailable,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 				update(event);
-				executeNextTx();
 				break;
 			default:
 				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
 				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
 				mgcpWrapper.removeListener(reqId);
 
-				event = new PlayerEventImpl(this.player, Player.ev_PlayComplete, Error.e_Unknown,
+				event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 						"RQNT Failed.  Look at logs " + responseEvent.getReturnCode().getComment());
 
 				update(event);
-				executeNextTx();
 				break;
 
 			}

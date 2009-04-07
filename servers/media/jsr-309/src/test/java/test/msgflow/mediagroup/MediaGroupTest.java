@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import javax.media.mscontrol.JoinEvent;
 import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.JoinableStream;
+import javax.media.mscontrol.MediaResourceException;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.StatusEvent;
 import javax.media.mscontrol.StatusEventListener;
@@ -395,9 +396,11 @@ public class MediaGroupTest extends MessageFlowHarness {
 						p.put(Player.p_IfBusy, Player.v_Fail);
 						try {
 							player.play(new URI("file://home/abhayani/workarea/temp/test3.wav"), null, p);
-						} catch (MsControlException e) {
+						} catch (MediaResourceException e) {
 							logger.debug("Expected Error ", e);
 							testPassed = true;
+						} catch (MsControlException e) {
+							logger.error(e);
 						} catch (URISyntaxException e) {
 							logger.error(e);
 						}
