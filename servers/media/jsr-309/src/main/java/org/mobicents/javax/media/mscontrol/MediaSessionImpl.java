@@ -13,7 +13,6 @@ import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mixer.MediaMixer;
-import javax.media.mscontrol.mixer.MediaMixerImpl;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.Parameter;
@@ -23,6 +22,7 @@ import javax.media.mscontrol.vxml.VxmlDialog;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
+import org.mobicents.javax.media.mscontrol.mixer.MediaMixerImpl;
 import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl;
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;

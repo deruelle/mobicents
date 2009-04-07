@@ -1,4 +1,4 @@
-package javax.media.mscontrol.mixer;
+package org.mobicents.javax.media.mscontrol.mixer;
 
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 
@@ -8,6 +8,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.mscontrol.Joinable;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.mixer.MediaMixer;
+import javax.media.mscontrol.mixer.MixerAdapter;
+import javax.media.mscontrol.mixer.MixerAdapterConfig;
+import javax.media.mscontrol.mixer.MixerConfig;
+import javax.media.mscontrol.mixer.MixerEvent;
 import javax.media.mscontrol.resource.Action;
 import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.MediaEvent;
