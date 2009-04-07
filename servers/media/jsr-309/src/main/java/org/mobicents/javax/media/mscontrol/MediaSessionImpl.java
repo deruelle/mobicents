@@ -12,6 +12,8 @@ import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
+import javax.media.mscontrol.mixer.MediaMixer;
+import javax.media.mscontrol.mixer.MediaMixerImpl;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
 import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.Parameter;
@@ -39,6 +41,7 @@ public class MediaSessionImpl implements MediaSession {
 
 	List<NetworkConnection> netConnList = new ArrayList<NetworkConnection>();
 	List<MediaGroup> medGrpList = new ArrayList<MediaGroup>();
+	List<MediaMixer> medMxrList = new ArrayList<MediaMixer>();
 
 	public MediaSessionImpl(MgcpWrapper mgcpWrapper) {
 		this.mgcpWrapper = mgcpWrapper;
@@ -69,6 +72,14 @@ public class MediaSessionImpl implements MediaSession {
 	public void release() {
 		for (NetworkConnection nc : netConnList) {
 			nc.release();
+		}
+		
+		for(MediaGroup mg : medGrpList){
+			mg.release();
+		}
+		
+		for(MediaMixer mx : medMxrList){
+			mx.release();
 		}
 	}
 
@@ -132,6 +143,12 @@ public class MediaSessionImpl implements MediaSession {
 		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper);
 		medGrpList.add(mediaGroupImpl);
 		return mediaGroupImpl;
+	}
+
+	public MediaMixer createMediaMixer() throws MsControlException {
+		MediaMixerImpl mediaMixerImpl = new MediaMixerImpl(this, mgcpWrapper);
+		medMxrList.add(mediaMixerImpl);
+		return mediaMixerImpl;
 	}
 
 	public CallIdentifier getCallIdentifier() {
