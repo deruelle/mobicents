@@ -391,7 +391,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		}
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("MGCP stack stopped gracefully");
+			logger.debug("MGCP stack stopped gracefully on" + this.localAddress + ":" + this.port);
 		}
 	}
 
