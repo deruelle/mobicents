@@ -107,13 +107,14 @@ public class Main {
         kernelDeployer.validate();
 
         controller = kernel.getController();
+        start(kernel, kernelDeployer);
     }
     
-    public void start() {
+    public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) {
         ControllerContext context = controller.getInstalledContext("MainDeployer");
         if (context != null) {
             MainDeployer deployer = (MainDeployer) context.getTarget();
-            deployer.start();
+            deployer.start(kernel, kernelDeployer);
         }
     }
 

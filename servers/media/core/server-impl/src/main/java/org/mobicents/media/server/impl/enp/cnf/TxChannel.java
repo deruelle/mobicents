@@ -70,7 +70,7 @@ public class TxChannel implements Serializable {
         this.index = index;
         
         dsp = new Processor("");
-        mux = new Multiplexer();
+        mux = new Multiplexer("");
         mixer = new AudioMixer(endpoint, "tx-channel-" + index);
         player = new AudioPlayer(endpoint);
         

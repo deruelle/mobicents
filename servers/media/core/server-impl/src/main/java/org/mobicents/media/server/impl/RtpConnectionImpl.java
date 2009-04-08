@@ -34,7 +34,6 @@ import javax.sdp.SessionDescription;
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
-import org.mobicents.media.server.impl.rtp.RtpSocketImpl;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.spi.Connection;
@@ -137,16 +136,12 @@ public class RtpConnectionImpl extends BaseConnection {
         String addressType = javax.sdp.Connection.IP4;
         String address = null;
 
-        RtpSocketImpl rtpSocketImpl = (RtpSocketImpl) this.rtpSocket;
+        RtpSocket rtpSocketImpl = this.rtpSocket;
 
         int audioPort = 0;
-        if (!rtpSocketImpl.isUseStun()) {
-            address = rtpSocket.getLocalAddress();
-            audioPort = rtpSocket.getPort();
-        } else {
-            address = rtpSocketImpl.getPublicAddressFromStun();
-            audioPort = rtpSocketImpl.getPublicPortFromStun();
-        }
+        
+        address = rtpSocket.getLocalAddress();
+        audioPort = rtpSocket.getLocalPort();
 
         try {
             localSDP = sdpFactory.createSessionDescription();
@@ -293,7 +288,7 @@ public class RtpConnectionImpl extends BaseConnection {
         rtpSocket.getSendStream().setFormats(subset.values());
 
         try {
-            rtpSocket.setPeriod(getPacketizationPeriod(remoteSDP));
+           // rtpSocket.setPeriod(getPacketizationPeriod(remoteSDP));
         } catch (Exception e) {
         }
 

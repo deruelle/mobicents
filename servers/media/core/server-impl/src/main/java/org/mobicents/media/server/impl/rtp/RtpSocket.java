@@ -11,135 +11,418 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.rtp;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.util.Collection;
 import java.util.HashMap;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+import net.java.stun4j.StunAddress;
+import net.java.stun4j.StunException;
+import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
+import net.java.stun4j.client.StunDiscoveryReport;
+
+import org.apache.log4j.Logger;
+
+import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.local.management.WorkDataGatherer;
 
 /**
- * Provides RTP/RTCP implementaion for transmitting audio/video 
- * in a packet network.
- *
- * Note that RTP itself does not provide any mechanism to ensure timely
- * delivery or provide other quality-of-service guarantees, but relies
- * on lower-layer services to do so.  It does not guarantee delivery or
- * prevent out-of-order delivery, nor does it assume that the underlying
- * network is reliable and delivers packets in sequence.  The sequence
- * numbers included in RTP allow the receiver to reconstruct the
- * sender's packet sequence, but sequence numbers might also be used to
- * determine the proper location of a packet, for example in video
- * decoding, without necessarily decoding packets in sequence.
  *
  * @author Oleg Kulikov
  */
-public interface RtpSocket extends Serializable {
+public class RtpSocket implements Runnable {
+
+    protected final static int READ_PERIOD = 10;
+    
+    private DatagramSocket socket;
+    private DatagramChannel channel;
+    
+    private ByteBuffer readerBuffer;
+    private DatagramPacket senderPacket;
+    
+    private int bufferSize = 172;
+    private byte[] senderBuffer;
+    
+    private int localPort;
+    private String localAddress;
+    
+    private int remotePort;
+    private String remoteAddress;    
+    
+    //holder for dynamic payloads.
+    private HashMap<Integer, Format> rtpMap = new HashMap<Integer, Format>();
+    private HashMap<Integer, Format> rtpMapOriginal = new HashMap<Integer, Format>();    
+    
+    //packet jitter in milliseconds
+    private int jitter = 60;    
+    
+    //stun support
+    private String stunHost;
+    private int stunPort;
+    
+    //handler for receiver thread
+    private ReceiveStream receiveStream;
+    private SendStream sendStream;    
+    
+    //timer to synchronize from
+    protected Timer timer;
+
+    private RtpHeader header = new RtpHeader();
+    private int payloadType = -1;
+    private Format format;
+    private BufferFactory bufferFactory = new BufferFactory(10, "RTPSocket");
+    
+    protected final static ScheduledExecutorService 
+            readerThread = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledFuture readerTask;
+    
+    //logger instance
+    private final static Logger logger = Logger.getLogger(RtpSocket.class);
+    
     /**
-     * Binds the RTP socket adapator to a specified address using any available
-     * port number between minimum and maximum alllowed number.
+     * Creates a new instance of RtpSocket
+     * 
+     * @param timer used to synchronize receiver stream.
+     * @param rtpMap RTP payloads list.
+     */
+    public RtpSocket(Timer timer, HashMap<Integer, Format> rtpMap) {
+        this.timer = timer;
+        this.readerBuffer = ByteBuffer.allocate(bufferSize);
+        rtpMapOriginal.putAll(rtpMap);
+        this.rtpMap.putAll(rtpMap);
+
+        sendStream = new SendStream(this);
+        receiveStream = new ReceiveStream(this, jitter);
+    }
+
+    /**
+     * (Non Java-doc).
      *
-     * @param localAddress the address to bind to.
-     * @param lowPort the mimimal allowed port number.
-     * @param highPort the maximum allowed port number.
-     * @return the actual used port;
-     * @throws SocketException if any error happens durring the bind, 
-     * or if socket already bound.
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#init(InetAddress, int);
      */
-    public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException;
-    
+    public int init(InetAddress localAddress, int lowPort, int highPort) throws SocketException, IOException, StunException {
+        channel = DatagramChannel.open();
+        channel.configureBlocking(false);
+        
+        socket = channel.socket();
+        
+        boolean bound = false;
+
+        this.localAddress = localAddress.getHostAddress();
+        this.localPort = lowPort;
+
+        //looking for first unused port
+        while (!bound) {
+            try {
+                //creating local address and trying to bind socket to this
+                //address
+                InetSocketAddress bindAddress = new InetSocketAddress(localAddress, localPort);
+                socket.bind(bindAddress);
+                
+                //if stunHost is assigned then stun ussage is supposed
+                //discovering paublic address
+                if (stunHost != null) {
+                    InetSocketAddress publicAddress = getPublicAddress(bindAddress);
+                    this.localAddress = publicAddress.getHostName();
+                    this.localPort = publicAddress.getPort();
+                }
+                
+                bound = true;
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Bound RTP socket to " + bindAddress + ", NAT public address is " + localAddress);
+                }
+            } catch (SocketException e) {
+                //increment port number util upper limit is not reached
+                localPort++;
+                if (localPort > highPort) {
+                    throw e;
+                }
+            }
+        }
+
+        return localPort;
+    }
+
     /**
-     * Resets the RTP map to configured value.
+     * Gets the address of stun server if present.
      * 
-     * This methods should be called when endpoint allocates RTPSocket.
+     * @return the address of stun server or null if not assigned.
      */
-    public void resetRtpMap();
+    public String getStunAddress() {        
+        return stunHost == null ? null :
+            stunPort == 3478 ? stunHost : (stunHost + ":" + stunPort);
+    }
     
     /**
-     * Gets the address to which this socket is bound.
+     * Assigns address of the STUN server.
      * 
-     * @return the address to which this socket bound.
+     * @param address the address of the stun server in format host[:port].
+     * if port is not set then default port is used.
      */
-    public String getLocalAddress();
+    public void setStunAddress(String address) {
+        String tokens[] = address.split(":");
+        stunHost = tokens[0];
+        if (tokens.length == 2) {
+            stunPort = Integer.parseInt(tokens[1]);
+        }
+    }
     
     /**
-     * Gets the actualy used port number.
+     * Gets address to which this socked is bound.
      * 
-     * @return port number.
+     * @return either local address to which this socket is bound or
+     * public address in case of NAT translation.
      */
-    public int getPort();
-    
+    public String getLocalAddress() {
+        return localAddress;
+    }
+
     /**
-     * Modify packetization period.
+     * Returns port number to which this socked is bound.
      * 
-     * @param period the new value of the packetization period in milliseconds.
+     * @return port number or -1 if socket not bound.
      */
-    public void setPeriod(int period);
-    
+    public int getLocalPort() {
+        return localPort;
+    }
+
     /**
-     * Gets the currently used period of packetization.
+     * Gets the jitter for time of packet arrival
      * 
-     * @return period in milliseconds.
+     * @return the value of jitter in milliseconds.
      */
-    public int getPeriod();
-    
+    public int getJitter() {
+        return this.jitter;
+    }
+
     /**
-     * Modify jitter buffer size.
+     * Assign new value of packet time arrival jitter.
      * 
-     * @param jitter the size in milliseconds.
+     * @param jitter the value of jitter in milliseconds.
      */
-    public void setJitter(int jitter);
-    
+    public void setJitter(int jitter) {
+        this.jitter = jitter;
+    }
+
     /**
-     * Gets the size of jitter buffer.
+     * Gets receiver stream.
      * 
-     * @return the size of jitter buffer in milliseconds.
+     * @return receiver stream instance.
      */
-    public int getJitter();
+    public MediaSource getReceiveStream() {
+        return receiveStream;
+    }
+
+
+    protected void startReceiver() {
+        readerTask = readerThread.scheduleAtFixedRate(this, 0, READ_PERIOD, TimeUnit.MILLISECONDS);
+    }
+    
+    protected void stopReceiver() {
+        if (readerTask != null && !readerTask.isCancelled()) {
+            readerTask.cancel(true);
+        }
+    }
     
     /**
-     * Sets the a peer to the RTP socket. 
+     * Closes socket
      *
-     * @param address the address of the peer.
-     * @param port the port of the peer.
      */
-    public void setPeer(InetAddress address, int port);
-    
+    public void close() {
+        if (receiveStream != null) {
+            receiveStream.stop();
+        }
+
+        if (channel != null) {
+            try {
+                channel.disconnect();
+                channel.close();
+            } catch (IOException e) {
+            }
+        }
+        
+        if (socket != null) {
+            socket.disconnect();
+            socket.close();
+        }
+    }
+
     /**
-     * Gets list of registered formats.
-     * 
-     * @return the map where key is payload number and value id Format object.
-     */
-    public HashMap<Integer, Format> getRtpMap();
-    
-    /**
-     * Modify map of registered payloads.
-     * 
-     * @param rtpMap the map where keys are paylioad types and values are formats
-     */
-    public void setRtpMap(HashMap<Integer, Format> rtpMap);
-    
-    /**
-     * Gets the Receive stream.
-     * 
-     * @return ReceiveStream object
-     */
-    public MediaSource getReceiveStream();
-    
-    /**
-     * Gets send stream object which controls transmission of the
-     * RTP data to the participant.
+     * Assigns remote end.
      *
-     * @param stream the data to sent out.
+     * @param address the address of the remote party.
+     * @param port the port number of the remote party.
      */
-    public SendStream getSendStream();
-    
+    public void setPeer(InetAddress address, int port) throws IOException {
+        remoteAddress = address.getHostAddress();
+        remotePort = port;        
+        channel.connect(new InetSocketAddress(remoteAddress, remotePort));
+        
+        if (logger.isDebugEnabled()) {
+            logger.debug("Connect RTP socket[" + localAddress + ":" + localPort + 
+                    " to " + remoteAddress + ":" + remotePort);
+        }
+        
+        senderPacket = new DatagramPacket(senderBuffer, bufferSize, address, port);
+    }
+
     /**
-     * Closes this socket.
+     * Gets relations between payload number and format used by this socket.
+     *
+     * @return the map where keya are payload number and object stored under
+     * key is <code>Format</code> object
      */
-    public void close();
+    public HashMap<Integer, Format> getRtpMap() {
+        return rtpMap;
+    }
+
+    public void setRtpMap(HashMap<Integer, Format> rtpMap) {
+        this.rtpMap = rtpMap;
+        if (sendStream != null) {
+            sendStream.formats = new Format[rtpMap.size()];
+            rtpMap.values().toArray(sendStream.formats);
+        }
+    }
+
+    public void resetRtpMap() {
+        this.rtpMap.clear();
+        this.rtpMap.putAll(rtpMapOriginal);
+    }
+
+    /**
+     * Determines payload type for specified format.
+     *
+     * @param format the object representing format.
+     * @return the integer identifier of the payload or -1 if specified format
+     * was not previously registered with addFormat().
+     */
+    protected int getPayloadType(Format format) {
+        Collection<Integer> keys = rtpMap.keySet();
+        for (Integer key : keys) {
+            Format fmt = rtpMap.get(key);
+            if (fmt.equals(format)) {
+                return key;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * (Non Java-doc).
+     *
+     * @see org.mobicents.media.server.impl.rtp.RtpSocket#startSendStream(PushBufferDataSource);
+     */
+    public SendStream getSendStream() {
+        return sendStream;
+    }
+
+    /**
+     * Sends media data to remote peer.
+     * 
+     * This method uses blocking sending to make sure that data is out
+     * in time.
+     * 
+     * @param buffer the buffer which contains media data
+     * @throws java.io.IOException
+     */
+    public void send(Buffer buffer) throws IOException {    	
+        RtpHeader h = (RtpHeader) buffer.getHeader();
+        byte[] headerByte = h.toByteArray();
+        
+        int len = headerByte.length + buffer.getLength();        
+
+        //combine RTP header and payload
+        System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
+        System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
+        
+        //construct datagram packet and send synchronously it out
+        senderPacket.setData(senderBuffer, 0, len);
+        socket.send(senderPacket);
+    }
+    
+    public void setWorkDataGatherer(WorkDataGatherer g) {
+        try {
+            if (this.sendStream != null) {
+                this.sendStream.setWorkDataSink(g);
+            }
+
+            if (this.receiveStream != null) {
+                this.receiveStream.setWorkDataSink(g);
+            }
+
+        } catch (NullPointerException npe) {
+            npe.printStackTrace();
+        }
+    }
+
+    private InetSocketAddress getPublicAddress(InetSocketAddress localAddress) throws StunException {
+        StunAddress local = new StunAddress(localAddress.getAddress(), localAddress.getPort());
+        StunAddress stun = new StunAddress(stunHost, stunPort);
+        
+        //discovery stun server
+        NetworkConfigurationDiscoveryProcess 
+                addressDiscovery = new NetworkConfigurationDiscoveryProcess(local, stun);
+        addressDiscovery.start();
+        
+        //determine public addrees
+        StunDiscoveryReport report = addressDiscovery.determineAddress();
+        return report.getPublicAddress().getSocketAddress();
+    }
+    
+    public void run() {
+        int count = 0;
+        try {
+            count = channel.read(readerBuffer);
+        } catch (IOException e) {
+            logger.error("Network error detected for socket [" + localAddress + ":" + localPort, e);
+            return;
+        }
+        readerBuffer.flip();
+        //if data arrives then extra
+        if (count > 0) {
+            byte[] buff = readerBuffer.array();
+            
+            //parse RTP header
+            header.init(buff);
+            
+            //allocating media buffer using factory
+            Buffer buffer = bufferFactory.allocate();
+            
+            //the length of the payload is total length of the 
+            //datagram except RTP header which has 12 bytes in length
+            System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
+            buffer.setLength(buff.length - 12);
+
+            //assign format.
+            //if payload not changed use the already known format
+            if (payloadType != header.getPayloadType()) {
+                payloadType = header.getPayloadType();
+                format = rtpMap.get(payloadType);
+            }
+            
+            buffer.setFormat(format);
+            receiveStream.push(buffer);
+        }
+    
+        readerBuffer.clear();        
+    }
+    
     
 }

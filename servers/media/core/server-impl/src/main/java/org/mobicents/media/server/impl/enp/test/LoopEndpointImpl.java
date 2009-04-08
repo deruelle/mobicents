@@ -40,7 +40,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         super(localName);
         
         this.setMaxConnectionsAvailable(1);
-        mux = new Multiplexer();
+        mux = new Multiplexer("");
         demux = new Demultiplexer(FORMATS, "Demultiplexer "+this.getLocalName());
     }
 
@@ -51,7 +51,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         demux.connect(mux);
         try {
             RtpFactory rtpFactory = getRtpFactory();
-            rtpSocket = rtpFactory.getRTPSocket(this);
+            rtpSocket = rtpFactory.getRTPSocket();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -19,6 +19,10 @@
 			<source>src/main/config/ann-beans.xml</source>
 			<destName>deploy/ann-beans.xml</destName>
 		</file>
+		<file>
+			<source>src/main/config/resource-identificators.xml</source>
+			<destName>deploy/resource-identificators.xml</destName>
+		</file>
 
 		<!-- file>
 			<source>src/main/config/ivr-beans.xml</source>

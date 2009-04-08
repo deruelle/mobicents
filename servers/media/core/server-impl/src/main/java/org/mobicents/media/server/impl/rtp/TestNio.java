@@ -38,21 +38,21 @@ public class TestNio {
     }
 
     public void doTest() throws Exception {
-        int N = 900;
+        int N = 100;
 
         started = true;
-        Receiver r = new Receiver();
+        //Receiver r = new Receiver();
 
-        Server1[] servers = new Server1[N];
+        Server[] servers = new Server[N];
         for (int i = 0; i < N; i++) {
-            servers[i] = new Server1(i);
-            r.add(servers[i]);
+            servers[i] = new Server(i);
+           // r.add(servers[i]);
         }
 
         System.out.println("Servers are ready ");
         
-        worker = new Thread(r);
-        worker.start();
+        //worker = new Thread(r);
+        //worker.start();
         
         Client[] clients = new Client[N];
         for (int i = 0; i < N; i++) {
@@ -60,7 +60,7 @@ public class TestNio {
             timer.scheduleAtFixedRate(clients[i], 0, 20, TimeUnit.MILLISECONDS);
         }
 
-        Thread.currentThread().sleep(15000);
+        Thread.currentThread().sleep(60000);
 
         timer.shutdown();
         started = false;
@@ -81,9 +81,9 @@ public class TestNio {
         private ArrayList<Long> ticks = new ArrayList(5000);
 
         public Client(int index) throws SocketException {
-            int port = 4000 + index;
+            int port = 2000 + index;
             InetSocketAddress address = new InetSocketAddress("192.168.1.2", port);
-            destination = new InetSocketAddress("192.168.1.2", port - 3000);
+            destination = new InetSocketAddress("192.168.1.2", port - 1000);
             socket = new DatagramSocket(address);
         }
 
@@ -96,7 +96,7 @@ public class TestNio {
                 }
                 socket.send(p);
                 ticks.add(System.currentTimeMillis());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

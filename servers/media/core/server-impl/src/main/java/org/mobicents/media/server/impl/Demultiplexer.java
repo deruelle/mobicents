@@ -45,6 +45,10 @@ public class Demultiplexer extends AbstractSource {
         return input;
     }
 
+    public Demultiplexer() {
+        super("Demultiplexer");
+    }
+    
     public Demultiplexer(Format[] formats, String name) {
         super("Demultiplexer");
         bufferFactory = new BufferFactory(10, name);

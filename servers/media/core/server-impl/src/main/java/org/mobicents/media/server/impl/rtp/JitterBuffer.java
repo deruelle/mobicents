@@ -37,77 +37,77 @@ import org.mobicents.media.Buffer;
  */
 public class JitterBuffer implements Serializable {
 
-	private volatile boolean ready = false;
-	private int jitter;
-	private int seq = 0;
-	private int period;
-	private ConcurrentLinkedQueue<Buffer> queue = new ConcurrentLinkedQueue<Buffer>();
-	private int maxSize;
+    private volatile boolean ready = false;
+    private int jitter;
+    private int seq = 0;
+    private int period;
+    private ConcurrentLinkedQueue<Buffer> queue = new ConcurrentLinkedQueue<Buffer>();
+    private int maxSize;
 
-	/**
-	 * Creates new instance of jitter.
-	 * 
-	 * @param fmt
-	 *            the format of the received media
-	 * @param jitter
-	 *            the size of the jitter in milliseconds.
-	 */
-	public JitterBuffer(int jitter, int period) {
-		this.maxSize = 2 * jitter / period;
-		this.period = period;
-	}
+    /**
+     * Creates new instance of jitter.
+     * 
+     * @param fmt
+     *            the format of the received media
+     * @param jitter
+     *            the size of the jitter in milliseconds.
+     */
+    public JitterBuffer(int jitter, int period) {
+        this.maxSize = 2 * jitter / period;
+        this.period = period;
+    }
 
-	/**
-	 * Gets the size of jitter.
-	 * 
-	 * @return the size of jitter in milliseconds
-	 */
-	public int getJitter() {
-		return jitter;
-	}
+    /**
+     * Gets the size of jitter.
+     * 
+     * @return the size of jitter in milliseconds
+     */
+    public int getJitter() {
+        return jitter;
+    }
 
-	public void setPeriod(int period) {
-		this.period = period;
-		maxSize = jitter / period;
-	}
+    public void setPeriod(int period) {
+        this.period = period;
+        maxSize = jitter / period;
+    }
 
-	public void write(Buffer buffer) {
-		if (queue.size() == this.maxSize) {
-			buffer.dispose();			
-		} else{
-			queue.offer(buffer);
-		}
-		if (!ready && queue.size() >= this.maxSize / 2) {
-			ready = true;
-		}
-	}
+    public void write(Buffer buffer) {
+        if (queue.size() == this.maxSize) {
+            buffer.dispose();
+        } else {
+            queue.offer(buffer);
+        }
+        if (!ready && queue.size() >= this.maxSize / 2) {
+            ready = true;
+        }
+    }
 
-	public void reset() {
-		queue.clear();
-	}
+    public void reset() {
+        queue.clear();
+    }
 
-	/**
-	 * Reads media packet from jitter buffer.
-	 * 
-	 * @return media packet.
-	 */
-	public Buffer read() {
-		if (!ready) {
-			return null;
-		}
+    /**
+     * Reads media packet from jitter buffer.
+     * 
+     * @return media packet.
+     */
+    public Buffer read() {
+        if (!ready) {
+            return null;
+        }
 
-		Buffer buff = null;
-		if (!queue.isEmpty()) {
-			buff = queue.poll();
+        Buffer buff = null;
+        if (!queue.isEmpty()) {
+            buff = queue.poll();
 
-			if (buff != null) {
-				buff.setSequenceNumber(seq);
-				buff.setTimeStamp(seq * period);
-				buff.setDuration(period);
-				buff.setOffset(0);
-				seq++;
-			}
-		}
-		return buff;
-	}
+            if (buff != null) {
+                buff.setSequenceNumber(seq);
+                buff.setTimeStamp(seq * period);
+                buff.setDuration(period);
+                buff.setOffset(0);
+                seq++;
+            }
+        }
+        return buff;
+    }
 }

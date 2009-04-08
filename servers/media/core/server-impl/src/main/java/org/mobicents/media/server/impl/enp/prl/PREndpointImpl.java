@@ -64,8 +64,8 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
 
         try {
             RtpFactory rtpFactory = this.getRtpFactory();
-            sockets[0] = rtpFactory.getRTPSocket(this);
-            sockets[1] = rtpFactory.getRTPSocket(this);
+            sockets[0] = rtpFactory.getRTPSocket();
+            sockets[1] = rtpFactory.getRTPSocket();
         } catch (Exception e) {
             throw new ResourceUnavailableException(e.getMessage());
         }
@@ -73,8 +73,8 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         dsp[0] = new Processor(getLocalName());
         dsp[1] = new Processor(getLocalName());
 
-        mux[0] = new Multiplexer();
-        mux[1] = new Multiplexer();
+        mux[0] = new Multiplexer("");
+        mux[1] = new Multiplexer("");
 
         demux[0] = new Demultiplexer(FORMATS, "Demultiplexer[0] "+this.getLocalName());
         demux[1] = new Demultiplexer(FORMATS, "Demultiplexer[1] "+this.getLocalName());

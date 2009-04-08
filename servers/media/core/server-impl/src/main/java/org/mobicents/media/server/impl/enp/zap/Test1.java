@@ -30,7 +30,6 @@ public class Test1 {
 
         int frameLen = 0;
         String s = "";
-        while ( i < data.length) {
 
             while (h.bits <= 24 && i < data.length) {
             	if(data[i].length()<=0) continue;
@@ -44,10 +43,10 @@ public class Test1 {
                 System.out.println("Return complete flag");
             } else if (res == FastHDLC.RETURN_DISCARD_FLAG) {
                 frameLen = 0;
-                System.out.println("Return discard tag");
+                //System.out.println("Return discard tag");
             } else if (res == FastHDLC.RETURN_EMPTY_FLAG) {
                 frameLen = 0;
-                System.out.println("Return empty flag");
+                //System.out.println("Return empty flag");
             } else {
                 if (frameLen > 279) {
                     System.out.println("To long");
@@ -57,8 +56,8 @@ public class Test1 {
                     frameLen++;
                 }
             }
+            i++;
 
-        }
         
 
     /*        System.out.println(s);

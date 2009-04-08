@@ -56,7 +56,7 @@ public class ConfEndpointImpl extends BaseEndpoint {
         try {
             RtpFactory rtpFactory = getRtpFactory();
             for (int i = 0; i < this.getMaxConnectionsAvailable(); i++) {
-                sockets.add(rtpFactory.getRTPSocket(this));
+                sockets.add(rtpFactory.getRTPSocket());
             }
         } catch (Exception e) {
             throw new ResourceUnavailableException(e.getMessage());

@@ -29,8 +29,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.clock.Quartz;
-//import org.mobicents.media.server.impl.clock.TimerTask;
+
 /**
  * 
  * @author Oleg Kulikov
@@ -47,8 +46,8 @@ public class AudioMixer extends AbstractSink implements Serializable {
     private boolean started = false;
     private AudioFormat fmt = LINEAR;
     private int packetSize;
-    private int packetPeriod = Quartz.HEART_BEAT;
-    private int jitter = 3 * Quartz.HEART_BEAT;
+    private int packetPeriod = 20;
+    private int jitter = 60;
     private int seq;
     private MixerOutput mixerOutput;
     private double targetGain = 1;

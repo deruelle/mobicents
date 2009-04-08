@@ -59,7 +59,10 @@ public class DtmfGenerator extends AbstractSource {
     private Processor dsp;
     
     private DTMFMode mode = DTMFMode.AUTO;
-    
+
+    public  DtmfGenerator(String name) {
+        super(name);
+    }
     public  DtmfGenerator(BaseEndpoint endpoint) {
         super(endpoint.getLocalName());
         inband = new InbandGenerator("");

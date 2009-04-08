@@ -43,6 +43,10 @@ public abstract class AbstractSink extends AbstractWorkDataGatherer implements M
         return this.id;
     }
 
+    public String getName() {
+        return name;
+    }
+    
     /**
      * (Non Java-doc).
      * 

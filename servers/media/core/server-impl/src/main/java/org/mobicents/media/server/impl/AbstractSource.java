@@ -42,6 +42,10 @@ public abstract class AbstractSource extends AbstractWorkDataGatherer implements
         return this.id;
     }
 
+    public String getName() {
+        return name;
+    }
+    
     /**
      * (Non Java-doc).
      * 

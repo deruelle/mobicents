@@ -78,7 +78,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
     protected void startRtp() throws ResourceUnavailableException {
         try {
             RtpFactory rtpFactory = getRtpFactory();
-            rtpSocket = rtpFactory.getRTPSocket(this);
+            rtpSocket = rtpFactory.getRTPSocket();
         } catch (Exception e) {
             throw new ResourceUnavailableException(e.getMessage());
         }
@@ -86,7 +86,7 @@ public class AnnEndpointImpl extends BaseEndpoint {
     
     protected void startPrimarySource() {
         audioPlayer = new AudioPlayer(this);
-        mux = new Multiplexer();
+        mux = new Multiplexer("");
         mux.connect(audioPlayer);
     }
     

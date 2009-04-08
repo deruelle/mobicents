@@ -18,7 +18,6 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
 
 /**
@@ -46,7 +45,7 @@ public class MeanderGenerator extends AbstractSource implements Runnable {
     public MeanderGenerator() {
     	super("MeanderGenerator");
         sizeInBytes = (int) ((LINEAR_AUDIO.getSampleRate() / 1000) *
-                (LINEAR_AUDIO.getSampleSizeInBits() / 8) * Quartz.HEART_BEAT);
+                (LINEAR_AUDIO.getSampleSizeInBits() / 8) * 20);
         
         silence = new byte[sizeInBytes];
         sound = new byte[sizeInBytes];
@@ -60,14 +59,14 @@ public class MeanderGenerator extends AbstractSource implements Runnable {
 
     public void start() {
         if (!started) {
-            timer.start();
+//            timer.start();
             started = true;
         }
     }
 
     public void stop() {
         if (started) {
-            timer.stop();
+//            timer.stop();
             started = false;
         }
     }
@@ -78,8 +77,8 @@ public class MeanderGenerator extends AbstractSource implements Runnable {
         buffer.setOffset(0);
         buffer.setLength(media.length);
         buffer.setSequenceNumber(seqNumber);
-        buffer.setDuration(Quartz.HEART_BEAT);
-        buffer.setTimeStamp(seqNumber * Quartz.HEART_BEAT); 
+//        buffer.setDuration(Quartz.HEART_BEAT);
+//        buffer.setTimeStamp(seqNumber * Quartz.HEART_BEAT); 
         buffer.setData(media);
         buffer.setFormat(LINEAR_AUDIO);
         seqNumber++;

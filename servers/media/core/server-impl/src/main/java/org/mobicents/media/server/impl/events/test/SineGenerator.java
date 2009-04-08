@@ -19,15 +19,13 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Quartz;
 import org.mobicents.media.server.impl.clock.Timer;
-import org.mobicents.media.server.impl.clock.TimerTask;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class SineGenerator extends AbstractSource implements TimerTask {
+public class SineGenerator extends AbstractSource implements Runnable {
 
     private byte[] data;
     
@@ -50,7 +48,7 @@ public class SineGenerator extends AbstractSource implements TimerTask {
                 LINEAR_AUDIO.getSampleSizeInBits()/8];
 
         sizeInBytes = (int) (LINEAR_AUDIO.getSampleRate() * 
-                (LINEAR_AUDIO.getSampleSizeInBits() / 8)/1000 * Quartz.HEART_BEAT); // Duration
+                (LINEAR_AUDIO.getSampleSizeInBits() / 8)/1000 * 20); // Duration
         
         int len = data.length / 2;
         int k = 0;
@@ -63,12 +61,12 @@ public class SineGenerator extends AbstractSource implements TimerTask {
     }
     
     public void start() {
-        timer.setListener(this);
-        timer.start();
+//        timer.setListener(this);
+//        timer.start();
     }
 
     public void stop() {
-        timer.stop();
+//        timer.stop();
     }
 
     public void run() {
@@ -85,8 +83,8 @@ public class SineGenerator extends AbstractSource implements TimerTask {
         buffer.setOffset(0);
         buffer.setLength(media.length);
         buffer.setSequenceNumber(seq);
-        buffer.setDuration(Quartz.HEART_BEAT);
-        buffer.setTimeStamp(seq * Quartz.HEART_BEAT); 
+//        buffer.setDuration(Quartz.HEART_BEAT);
+//        buffer.setTimeStamp(seq * Quartz.HEART_BEAT); 
         buffer.setData(media);
         buffer.setFormat(LINEAR_AUDIO);
         seq++;

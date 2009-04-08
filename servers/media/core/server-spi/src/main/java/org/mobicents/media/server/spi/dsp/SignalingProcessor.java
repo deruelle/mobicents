@@ -14,15 +14,17 @@
 
 package org.mobicents.media.server.spi.dsp;
 
-import java.io.Serializable;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
+import org.mobicents.media.Inlet;
+import org.mobicents.media.Outlet;
 
 /**
  * Processor is concerned with the digital processing of the media signals. 
  * 
  * @author Oleg Kulikov
  */
-public interface SignalingProcessor extends Serializable {
+public interface SignalingProcessor extends Component, Inlet, Outlet {
     /**
      * Configures signaling processor.
      * 

@@ -14,7 +14,6 @@
 
 package org.mobicents.media;
 
-import java.io.Serializable;
 import org.mobicents.media.server.spi.NotificationListener;
 
 /**
@@ -22,7 +21,7 @@ import org.mobicents.media.server.spi.NotificationListener;
  * 
  * @author Oleg Kulikov
  */
-public interface MediaSink extends Serializable {
+public interface MediaSink extends Component {
     
     /**
      * Get possible formats which this consumer can handle.
@@ -63,9 +62,6 @@ public interface MediaSink extends Serializable {
      * @param buffer the Buffer object which contains the next portion of media.
      */
     public void receive(Buffer buffer);
-    
-    public void addListener(NotificationListener listener);
-    public void removeListener(NotificationListener listener);
     
     public void dispose();
 }

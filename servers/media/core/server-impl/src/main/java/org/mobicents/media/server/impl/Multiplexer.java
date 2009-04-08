@@ -19,7 +19,7 @@ import java.util.HashMap;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.impl.clock.Quartz;
+import org.mobicents.media.Outlet;
 
 /**
  * Combines several signals for transmission over a single medium. A
@@ -30,18 +30,18 @@ import org.mobicents.media.server.impl.clock.Quartz;
  * <br>Multiplexer combines data and sends them, it is used as output for components.
  * @author Oleg Kulikov
  */
-public class Multiplexer extends AbstractSink {
+public class Multiplexer extends AbstractSink implements Outlet {
 
     private Format[] formats = null;
     private Format[] fmts = null;
-    
     private HashMap<String, Input> inputs = new HashMap();
     private Output output;
     private int seq = 0;
 
-    public Multiplexer() {
-        super("Multiplexer");
-        output = new Output();
+    
+    public Multiplexer(String name) {
+        super(name);
+        output = new Output(name + ".Output");
     }
 
     public MediaSource getOutput() {
@@ -51,10 +51,10 @@ public class Multiplexer extends AbstractSink {
     public Format[] getFormats() {
         return output.sink != null ? output.sink.getFormats() : null;//fmts;
     }
-    
+
     @Override
     public void connect(MediaSource source) {
-        Input input = new Input();
+        Input input = new Input(getName() + ".Input");
         source.connect(input);
         inputs.put(((AbstractSource) source).getId(), input);
         reassemblyFormats();
@@ -119,8 +119,8 @@ public class Multiplexer extends AbstractSink {
 
     class Input extends AbstractSink {
 
-        public Input() {
-            super("Multiplexer.Input");
+        public Input(String name) {
+            super(name);
         }
 
         public boolean isAcceptable(Format fmt) {
@@ -140,8 +140,8 @@ public class Multiplexer extends AbstractSink {
 
         private boolean stopped = true;
 
-        public Output() {
-            super("Multiplexer.Output");
+        public Output(String name) {
+            super(name);
         }
 
         public void start() {
@@ -150,7 +150,7 @@ public class Multiplexer extends AbstractSink {
 
         public void stop() {
             stopped = true;
-            //timer.stop();
+        //timer.stop();
         }
 
         public Format[] getFormats() {
@@ -159,16 +159,15 @@ public class Multiplexer extends AbstractSink {
     }
 
     public synchronized void deliver(Buffer buffer) {
-        if (output != null && !output.stopped && output.sink != null ) {
+        if (output != null && !output.stopped && output.sink != null) {
             buffer.setSequenceNumber(seq);
-            buffer.setTimeStamp(seq * Quartz.HEART_BEAT);
+            buffer.setTimeStamp(seq * 20);
             output.sink.receive(buffer);
-        } else{
-        	buffer.dispose();
+        } else {
+            buffer.dispose();
         }
 
         seq++;
     }
-
 }
 

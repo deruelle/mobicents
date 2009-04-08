@@ -31,7 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +41,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 import org.jboss.kernel.Kernel;
-import org.jboss.kernel.plugins.bootstrap.basic.BasicBootstrap;
 import org.jboss.kernel.plugins.deployment.xml.BasicXMLDeployer;
 
 /**
@@ -92,25 +90,23 @@ public class MainDeployer {
         this.path = path;
     }
 
-    public void start() {
+    public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) {
+        this.kernel = kernel;
+        this.kernelDeployer = kernelDeployer;
+        
         activeScan = executor.scheduleAtFixedRate(new HDScanner(),
                 initialDelay, scanPeriod, TimeUnit.MILLISECONDS);
-        System.out.println("Started main deployer with initial delay " + initialDelay + " and period " + scanPeriod);
+        logger.info("Successfuly started");
     }
 
     public void stop() {
         if (activeScan != null) {
             activeScan.cancel(true);
         }
+        logger.info("Stopped");
     }
 
     private void deploy(URL url) throws Throwable {
-        BasicBootstrap bootstrap = new BasicBootstrap();
-        bootstrap.run();
-
-        kernel = bootstrap.getKernel();
-        kernelDeployer = new BasicXMLDeployer(kernel);
-
         kernelDeployer.deploy(url);
         kernelDeployer.validate();
     }

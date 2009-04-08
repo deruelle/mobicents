@@ -13,16 +13,8 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 
@@ -30,57 +22,40 @@ import org.mobicents.media.server.impl.AbstractSource;
  *
  * @author Oleg Kulikov
  */
-public class ReceiveStream extends AbstractSource {
+public class ReceiveStream extends AbstractSource implements Runnable {
 
     /**
      * 
      */
     private static final long serialVersionUID = -2277812497480986797L;
-    private int period;
     private JitterBuffer jitterBuffer;
-    private transient ScheduledExecutorService timer;
-    private transient Future receiver;
-    private boolean started = false;
+    protected ScheduledFuture readerTask;
     private Buffer frame;
     protected Format[] formats;
-    private RtpSocketImpl rtpSocket;
-    private BufferFactory bufferFactory = null;
-    
-    private transient ExecutorService worker = Executors.newSingleThreadExecutor();
-    private transient Future workerTask;
-    private RtpHeader header = new RtpHeader();
-    
+    private RtpSocket rtpSocket;
+
     /** Creates a new instance of ReceiveStream */
-    public ReceiveStream(ScheduledExecutorService timer, RtpSocket rtpSocket, int period, int jitter) {
+    public ReceiveStream(RtpSocket rtpSocket, int jitter) {
         super("ReceiveStream");
-        bufferFactory = new BufferFactory(10, "ReceiveStream");
-        this.rtpSocket = (RtpSocketImpl) rtpSocket;
-        this.timer = timer;
-        this.period = period;        
-        jitterBuffer = new JitterBuffer(jitter, period);
+        this.rtpSocket = rtpSocket;
+        jitterBuffer = new JitterBuffer(jitter, rtpSocket.timer.getHeartBeat());
     }
 
-    private void push(Buffer buffer) {
+    protected void push(Buffer buffer) {
         jitterBuffer.write(buffer);
     }
 
     public void stop() {
-        if (started) {
-            started = false;
-            if (workerTask != null) {
-                workerTask.cancel(true);
-            }
-            receiver.cancel(true);
+        rtpSocket.stopReceiver();
+        if (readerTask != null) {
+            readerTask.cancel(true);
         }
     }
 
     public void start() {
-        if (!started) {
-            started = true;
-            jitterBuffer.reset();
-            workerTask = worker.submit(new UDPReceiver());
-            receiver = timer.scheduleAtFixedRate(new Receiver(), 0, period, TimeUnit.MILLISECONDS);
-        }
+        jitterBuffer.reset();
+        rtpSocket.startReceiver();
+        readerTask = rtpSocket.timer.synchronize(this);
     }
 
     public Format[] getFormats() {
@@ -89,65 +64,21 @@ public class ReceiveStream extends AbstractSource {
         return fmts;
     }
 
-    
-    private class UDPReceiver implements Runnable {
-        
-        private int pt = -1;
-        private Format fmt = null;
-        
-        public void run() {
-            byte[] buff = new byte[172]; 
-            DatagramPacket udpPacket = new DatagramPacket(buff, buff.length);
-            while (started) {
-                try {
-                    rtpSocket.receivePacket(udpPacket);
-                } catch (SocketTimeoutException e) {
-                    continue;
-                } catch (IOException e) {
-                    continue;
-                }
-                
-                header.init(buff);
+    public void run() {
+        frame = jitterBuffer.read();
 
-                //change format if payload type is changed
-                if (pt != header.getPayloadType()) {
-                    pt = header.getPayloadType();
-                    fmt = rtpSocket.getRtpMap().get(header.getPayloadType());
-                }
-                
-                Buffer buffer = bufferFactory.allocate();
-                buffer.setLength(udpPacket.getLength() - 12);
-                buffer.setFormat(fmt);
-                
-//                buffer.setFormat(rtpSocket.getRtpMap().get(header.getPayloadType()));
-                System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
-
-                try {
-                    push(buffer);
-                } catch (Exception e) {
-                    continue;
-                }
-            }
+        if (frame == null) {
+            return;
         }
-    }
+        
+        if (sink == null) {
+            return;
+        }
 
-    private class Receiver implements Runnable {
-
-        public void run() {
-            frame = jitterBuffer.read();
-
-            if (frame == null) {
-                return;
-            }
-            if (sink == null) {
-                return;
-            }
-
-            //The sink for ReceiveStream is Processor.Input
-            try {
-                sink.receive(frame);
-            } catch (Exception e) {
-            }
+        //The sink for ReceiveStream is Processor.Input
+        try {
+            sink.receive(frame);
+        } catch (Exception e) {
         }
     }
 }

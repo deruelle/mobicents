@@ -1,6 +1,10 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 	
-	
+	<!-- Media Format Definition -->
+        <bean name="PCMU" class="org.mobicents.media.format.AudioFormat">
+            <property name="encoding">ULAW</property>
+        </bean>
+        
 	<!-- Media Server Management MBean -->
 	<bean name="MediaServerManagementService"
 	      class="org.mobicents.media.server.impl.jmx.MediaServerManagement">
