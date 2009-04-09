@@ -31,6 +31,7 @@ import javax.media.mscontrol.networkconnection.NetworkConnectionEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnectionException;
 import javax.media.mscontrol.networkconnection.ResourceNotAvailableException;
 import javax.media.mscontrol.resource.Action;
+import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
@@ -65,14 +66,21 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	private NetworkConnectionException networkConnectionException = null;
 	private ResourceNotAvailableException resourceNotAvailableException = null;
+
+	private Parameters parameters = null;
 	private static final String PR_ENDPOINT_NAME = "/trunk/media/PacketRelay/$";
 
 	private transient SdpFactory sdpFactory = SdpFactory.getInstance();
+
+	private Configuration<NetworkConnectionConfig> config = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
 	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) {
 		super(mediaSession, mgcpWrapper, 1, PR_ENDPOINT_NAME);
+
+		this.config = config;
+
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/NetworkConnection." + this.id);
 		} catch (URISyntaxException e) {
@@ -117,12 +125,11 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	// ResourceContainer methods
 	public void confirm() throws MsControlException {
-		// TODO Auto-generated method stub
-
+		this.checkState();
+		throw new MsControlException("Operation not yet supported");
 	}
 
 	public NetworkConnectionConfig getConfig() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -142,8 +149,22 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public Parameters getParameters(Parameter[] params) {
-		// TODO Auto-generated method stub
-		return null;
+		Parameters tmpParameters = this.createParameters();
+
+		if (this.parameters != null) {
+			if (params != null && params.length > 0) {
+				for (Parameter p : this.parameters.keySet()) {
+					for (Parameter pArg : params) {
+						if (p.equals(pArg)) {
+							tmpParameters.put(p, this.parameters.get(p));
+						}
+					}
+				}
+			} else {
+				tmpParameters.putAll(this.parameters);
+			}
+		}
+		return tmpParameters;
 	}
 
 	public URI getURI() {
@@ -172,8 +193,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public void setParameters(Parameters params) {
-		// TODO Auto-generated method stub
-
+		this.parameters = params;
 	}
 
 	// Methods of MediaEventNotifier

@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.AbstractJoinableContainer;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
+import org.mobicents.javax.media.mscontrol.mediagroup.signals.SignalDetectorImpl;
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
@@ -36,11 +37,15 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	private static final String IVR_ENDPOINT_NAME = "media/test/trunk/IVR/$";
 	private URI uri = null;
 	protected Player player = null;
+	protected SignalDetector detector = null;
+	protected Recorder recorder = null;
 	public ConnectionIdentifier thisConnId = null;
 
 	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) throws MsControlException {
 		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
 		player = new PlayerImpl(this, mgcpWrapper);
+		recorder = new RecorderImpl(this, mgcpWrapper);
+		detector = new SignalDetectorImpl(this, mgcpWrapper);
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/MediaGroup." + this.id);
 		} catch (URISyntaxException e) {
@@ -55,11 +60,11 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public Recorder getRecorder() throws MsControlException {
-		return null;
+		return this.recorder;
 	}
 
 	public SignalDetector getSignalDetector() throws MsControlException {
-		return null;
+		return this.detector;
 	}
 
 	public SignalGenerator getSignalGenerator() throws MsControlException {
@@ -67,8 +72,10 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public boolean stop() {
-		this.player.stop();
-		return true;
+		boolean playerStop = this.player.stop();
+		boolean recorderStop = this.recorder.stop();
+		boolean signalDetStop = this.detector.stop();
+		return (playerStop || recorderStop || signalDetStop);
 	}
 
 	// ResourceContainer methods
@@ -104,6 +111,8 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	public void release() {
 		checkState();
 		this.player.stop();
+		this.recorder.stop();
+		this.detector.stop();
 		try {
 			Joinable[] joinableArray = this.getJoinees();
 			for (Joinable joinable : joinableArray) {

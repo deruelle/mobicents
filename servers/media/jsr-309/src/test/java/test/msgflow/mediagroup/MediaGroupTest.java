@@ -17,6 +17,7 @@ import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.PlayerEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
+import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEventListener;
 import javax.media.mscontrol.resource.Parameters;
