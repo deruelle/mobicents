@@ -31,7 +31,6 @@ import javax.media.mscontrol.networkconnection.NetworkConnectionEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnectionException;
 import javax.media.mscontrol.networkconnection.ResourceNotAvailableException;
 import javax.media.mscontrol.resource.Action;
-import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
@@ -72,15 +71,13 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 
 	private transient SdpFactory sdpFactory = SdpFactory.getInstance();
 
-	private Configuration<NetworkConnectionConfig> config = null;
+	private NetworkConnectionConfig config = null;
 
 	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
 
-	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) {
+	public NetworkConnectionImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, NetworkConnectionConfig config) {
 		super(mediaSession, mgcpWrapper, 1, PR_ENDPOINT_NAME);
-
 		this.config = config;
-
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/NetworkConnection." + this.id);
 		} catch (URISyntaxException e) {
@@ -130,7 +127,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	}
 
 	public NetworkConnectionConfig getConfig() {
-		return null;
+		return this.config;
 	}
 
 	public <R> R getResource(Class<R> resource) throws MsControlException {

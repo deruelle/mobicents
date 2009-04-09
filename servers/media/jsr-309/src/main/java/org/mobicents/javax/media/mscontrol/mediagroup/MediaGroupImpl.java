@@ -39,13 +39,19 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	protected Player player = null;
 	protected SignalDetector detector = null;
 	protected Recorder recorder = null;
+	protected SignalGenerator generator = null;
 	public ConnectionIdentifier thisConnId = null;
 
-	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper) throws MsControlException {
+	private MediaGroupConfig config = null;
+	private Parameters parameters = null;
+
+	public MediaGroupImpl(MediaSessionImpl mediaSession, MgcpWrapper mgcpWrapper, MediaGroupConfig config)
+			throws MsControlException {
 		super(mediaSession, mgcpWrapper, 1, IVR_ENDPOINT_NAME);
-		player = new PlayerImpl(this, mgcpWrapper);
-		recorder = new RecorderImpl(this, mgcpWrapper);
-		detector = new SignalDetectorImpl(this, mgcpWrapper);
+		this.player = new PlayerImpl(this, mgcpWrapper);
+		this.recorder = new RecorderImpl(this, mgcpWrapper);
+		this.detector = new SignalDetectorImpl(this, mgcpWrapper);
+		this.config = config;
 		try {
 			this.uri = new URI(mediaSession.getURI().toString() + "/MediaGroup." + this.id);
 		} catch (URISyntaxException e) {
@@ -55,20 +61,35 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 
 	// MediaGroup Methods
 	public Player getPlayer() throws MsControlException {
+		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.PLAYER_SUPPORTED))) {
+			throw new MsControlException(this.uri + " This MediaGroup contains no Player");
+		}
 		checkState();
 		return player;
 	}
 
 	public Recorder getRecorder() throws MsControlException {
+		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.RECORDER_SUPPORTED))) {
+			throw new MsControlException(this.uri + " This MediaGroup contains no Recorder");
+		}
+		checkState();
 		return this.recorder;
 	}
 
 	public SignalDetector getSignalDetector() throws MsControlException {
+		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.SD_SUPPORTED))) {
+			throw new MsControlException(this.uri + " This MediaGroup contains no Signal Detector");
+		}
+		checkState();
 		return this.detector;
 	}
 
 	public SignalGenerator getSignalGenerator() throws MsControlException {
-		return null;
+		if (!(this.config.getSupportedSymbols().contains(MediaGroupParameterEnum.SG_SUPPORTED))) {
+			throw new MsControlException(this.uri + " This MediaGroup contains no Signal Generator");
+		}
+		checkState();
+		return this.generator;
 	}
 
 	public boolean stop() {
@@ -84,7 +105,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public MediaGroupConfig getConfig() {
-		return null;
+		return this.config;
 	}
 
 	public <R> R getResource(Class<R> arg0) throws MsControlException {
@@ -101,7 +122,22 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public Parameters getParameters(Parameter[] params) {
-		return null;
+		Parameters tmpParameters = this.createParameters();
+
+		if (this.parameters != null) {
+			if (params != null && params.length > 0) {
+				for (Parameter p : this.parameters.keySet()) {
+					for (Parameter pArg : params) {
+						if (p.equals(pArg)) {
+							tmpParameters.put(p, this.parameters.get(p));
+						}
+					}
+				}
+			} else {
+				tmpParameters.putAll(this.parameters);
+			}
+		}
+		return tmpParameters;
 	}
 
 	public URI getURI() {
@@ -125,7 +161,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	}
 
 	public void setParameters(Parameters params) {
-
+		this.parameters = params;
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.media.mscontrol.MediaConfig;
@@ -39,7 +40,11 @@ import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
-
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class SignalDetectorImpl implements SignalDetector {
 
 	private static Logger logger = Logger.getLogger(SignalDetectorImpl.class);
@@ -48,6 +53,7 @@ public class SignalDetectorImpl implements SignalDetector {
 	protected MediaSessionImpl mediaSession = null;
 	protected MgcpWrapper mgcpWrapper = null;
 	protected RequestIdentifier reqId = null;
+	private List buffer = null;
 
 	public SignalDetectorImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) {
 		this.mediaGroup = mediaGroup;

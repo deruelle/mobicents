@@ -11,6 +11,7 @@ import javax.media.mscontrol.StatusEventListener;
 import javax.media.mscontrol.Joinable.Direction;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
+import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.resource.Error;
 
 import org.apache.log4j.Logger;
@@ -52,10 +53,10 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 
 	public void testMediaMixerJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
-		final NetworkConnection NC3 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		final MediaMixer MX1 = myMediaSession.createMediaMixer();
 
@@ -119,7 +120,7 @@ public class MediaMixerTest extends MessageFlowHarness implements Serializable {
 		assertEquals(j1[0], stream);
 		assertNotNull(streamOther.getJoinees(Direction.RECV)[0]);
 
-		NetworkConnection NC4 = myMediaSession.createNetworkConnection();
+		NetworkConnection NC4 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 		// NC1 is not joined to NC3. Trying to unjoin NC3 should raise exception
 		try {
 			MX1.unjoinInitiate(NC4, this);

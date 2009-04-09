@@ -14,6 +14,7 @@ import javax.media.mscontrol.StatusEventListener;
 import javax.media.mscontrol.Joinable.Direction;
 import javax.media.mscontrol.JoinableStream.StreamType;
 import javax.media.mscontrol.mediagroup.MediaGroup;
+import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mediagroup.Player;
 import javax.media.mscontrol.mediagroup.PlayerEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
@@ -63,8 +64,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testMediaGroupJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final ContextImpl ser = new ContextImpl();
 		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"
 				+ "a=rtpmap:0 PCMU/8000\n";
@@ -137,7 +138,7 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 		// MG1 is already joined to NC1. Trying to connect MG1 to NC3 should
 		// throw Exception
-		final NetworkConnection NC3 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 		try {
 			MG1.joinInitiate(Direction.DUPLEX, NC3, ser);
 			fail("MG1 already connected to NC1");
@@ -160,8 +161,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testPlayComplete() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -232,8 +233,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 	// fix that
 	public void testPlayerStop() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -307,8 +308,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testMediaGroupRelease() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -355,8 +356,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Fail() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -429,8 +430,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Queue() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 
@@ -508,8 +509,8 @@ public class MediaGroupTest extends MessageFlowHarness {
 
 	public void testv_Stop() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final MediaGroup MG1 = myMediaSession.createMediaGroup();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final MediaGroup MG1 = myMediaSession.createMediaGroup(MediaGroupConfig.c_Player);
 		final Player player = MG1.getPlayer();
 		final ContextImpl ser = new ContextImpl();
 

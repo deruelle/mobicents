@@ -11,11 +11,11 @@ import javax.media.mscontrol.StatusEventListener;
 import javax.media.mscontrol.Joinable.Direction;
 import javax.media.mscontrol.JoinableStream.StreamType;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
+import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.networkconnection.NetworkConnectionEvent;
 import javax.media.mscontrol.networkconnection.NetworkConnectionException;
 import javax.media.mscontrol.resource.Error;
 import javax.media.mscontrol.resource.MediaEventListener;
-import javax.sdp.SdpException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
@@ -54,7 +54,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	public void testNetworkConnectionModify() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection myNetworkConnection = myMediaSession.createNetworkConnection();
+		final NetworkConnection myNetworkConnection = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"
 				+ "a=rtpmap:0 PCMU/8000\n";
@@ -136,9 +136,9 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	public void testNetworkConnectionJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection myNetworkConnection1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection myNetworkConnection1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection myNetworkConnection2 = myMediaSession.createNetworkConnection();
+		final NetworkConnection myNetworkConnection2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		StatusEventListener statusEvtList = new StatusEventListener() {
 
@@ -203,7 +203,7 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 		// NC1 is already joined to NC2. Trying to connect NC1 to NC3 should
 		// throw Exception
-		final NetworkConnection myNetworkConnection3 = myMediaSession.createNetworkConnection();
+		final NetworkConnection myNetworkConnection3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 		try {
 			myNetworkConnection1.joinInitiate(Direction.DUPLEX, myNetworkConnection3, this);
 			fail("NC1 already connected to NC2");
@@ -225,9 +225,9 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	public void testNetworkConnectionUnJoin() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		// StatusEventListenerImpl impl = new StatusEventListenerImpl(NC1, NC2);
 		final ContextImpl serImpl = new ContextImpl();
@@ -291,9 +291,9 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	public void testNetworkConnectionReJoinSameMO() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		// StatusEventListenerImpl impl = new StatusEventListenerImpl(NC1, NC2);
 		final ContextImpl serImpl = new ContextImpl();
@@ -386,11 +386,11 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 	public void testNetworkConnectionReJointoOtherMO() throws Exception {
 
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
-		final NetworkConnection NC3 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC3 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 
 		final ContextImpl serImpl = new ContextImpl();
 
@@ -504,8 +504,8 @@ public class NetworkConnectionTest extends MessageFlowHarness implements Seriali
 
 	public void testNetworkConnectionRelease() throws Exception {
 		final MediaSessionImpl myMediaSession = (MediaSessionImpl) msControlFactory.createMediaSession();
-		final NetworkConnection NC1 = myMediaSession.createNetworkConnection();
-		final NetworkConnection NC2 = myMediaSession.createNetworkConnection();
+		final NetworkConnection NC1 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
+		final NetworkConnection NC2 = myMediaSession.createNetworkConnection(NetworkConnectionConfig.c_Basic);
 		final ContextImpl impl = new ContextImpl();
 
 		final String REMOTE_SDP = "v=0\n" + "m=audio 1234 RTP/AVP  0 \n" + "c=IN IP4 192.168.145.1\n"

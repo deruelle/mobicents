@@ -56,12 +56,10 @@ public class MsControlFactoryImpl implements MsControlFactory {
 	}
 
 	public <C extends MediaConfig> C getMediaConfig(Configuration<C> configSymbol) throws MediaConfigException {
-		// TODO Auto-generated method stub
-		return null;
+		return MediaConfigFactory.getMediaConfig(configSymbol);
 	}
 
 	public VideoLayout getPresetLayout(String type) throws MediaConfigException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

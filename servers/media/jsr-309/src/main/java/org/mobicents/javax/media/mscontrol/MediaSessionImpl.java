@@ -12,8 +12,10 @@ import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
 import javax.media.mscontrol.mediagroup.MediaGroup;
+import javax.media.mscontrol.mediagroup.MediaGroupConfig;
 import javax.media.mscontrol.mixer.MediaMixer;
 import javax.media.mscontrol.networkconnection.NetworkConnection;
+import javax.media.mscontrol.networkconnection.NetworkConnectionConfig;
 import javax.media.mscontrol.resource.Configuration;
 import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
@@ -24,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.javax.media.mscontrol.mixer.MediaMixerImpl;
 import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl;
+import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl1;
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
@@ -73,12 +76,12 @@ public class MediaSessionImpl implements MediaSession {
 		for (NetworkConnection nc : netConnList) {
 			nc.release();
 		}
-		
-		for(MediaGroup mg : medGrpList){
+
+		for (MediaGroup mg : medGrpList) {
 			mg.release();
 		}
-		
-		for(MediaMixer mx : medMxrList){
+
+		for (MediaMixer mx : medMxrList) {
 			mx.release();
 		}
 	}
@@ -98,12 +101,14 @@ public class MediaSessionImpl implements MediaSession {
 	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(
 			Configuration<C> predefinedConfig) throws MsControlException {
 		// TODO Auto-generated method stub
+		NetworkConnectionImpl1<C> obj = new NetworkConnectionImpl1<C>();
 		return null;
 	}
 
 	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(C config,
 			String containerId) throws MsControlException {
 		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -133,14 +138,17 @@ public class MediaSessionImpl implements MediaSession {
 	}
 
 	// Custom Methods
-	public NetworkConnection createNetworkConnection() {
-		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper);
+	public <C extends MediaConfig> NetworkConnection createNetworkConnection(Configuration<C> predefinedConfig)
+			throws MsControlException {
+		NetworkConnectionConfig config = (NetworkConnectionConfig) MediaConfigFactory.getMediaConfig(predefinedConfig);
+		NetworkConnectionImpl networkConnectionImpl = new NetworkConnectionImpl(this, mgcpWrapper, config);
 		netConnList.add(networkConnectionImpl);
 		return networkConnectionImpl;
 	}
 
-	public MediaGroup createMediaGroup() throws MsControlException {
-		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper);
+	public <C extends MediaConfig> MediaGroup createMediaGroup(Configuration<C> predefinedConfig) throws MsControlException {
+		MediaGroupConfig config = (MediaGroupConfig) MediaConfigFactory.getMediaConfig(predefinedConfig);
+		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, config);
 		medGrpList.add(mediaGroupImpl);
 		return mediaGroupImpl;
 	}
