@@ -58,6 +58,9 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897MgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897PackageName;
+
 /**
  * 
  * @author Oleg Kulikov
@@ -78,15 +81,18 @@ public class Utils {
 	private static final Pattern forwardSlashPattern = Pattern.compile("/");
 
 	private static final Pattern ampersandPattern = Pattern.compile("@");
-	
+
 	private static final Pattern equalsPattern = Pattern.compile("=");
-	
+
 	private static final Pattern colonPattern = Pattern.compile(":");
-	
+
 	private static final Pattern semiColonPattern = Pattern.compile(";");
-	
+
 	private static final Pattern dashPattern = Pattern.compile("-");
-	
+
+	PackageName au = RFC2897PackageName.AU;
+	MgcpEvent rfc2897pa = RFC2897MgcpEvent.rfc2897pa;
+
 	/** Creates a new instance of Utils */
 	public Utils() {
 	}
@@ -178,7 +184,7 @@ public class Utils {
 		// LocalConnectionOptions =LocalOptionValue 0*(WSP)
 		// 0*(","0*(WSP)LocalOptionValue 0*(WSP))
 
-		String[] tokens = commaPattern.split(text,0);
+		String[] tokens = commaPattern.split(text, 0);
 		LocalOptionValue[] options = new LocalOptionValue[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -990,7 +996,7 @@ public class Utils {
 	}
 
 	public CapabilityValue[] decodeCapabilityList(String value) throws ParseException {
-		String tokens[] = commaPattern.split(value.trim(),0);
+		String tokens[] = commaPattern.split(value.trim(), 0);
 		CapabilityValue[] capabilityValues = new CapabilityValue[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {
 			capabilityValues[i] = decodeCapability(tokens[i]);
@@ -1072,7 +1078,7 @@ public class Utils {
 	}
 
 	public PackageName[] decodePackageNameList(String value) {
-		String[] packages = semiColonPattern.split(value,0);
+		String[] packages = semiColonPattern.split(value, 0);
 		PackageName[] supportedPackageNames = new PackageName[packages.length];
 		for (int i = 0; i < packages.length; i++) {
 			PackageName p = PackageName.factory(packages[i]);
@@ -1094,12 +1100,12 @@ public class Utils {
 		String capability = value.substring(pos + 1).trim();
 
 		if ("a".equals(key)) {
-			String[] codecs = semiColonPattern.split(capability,0);
+			String[] codecs = semiColonPattern.split(capability, 0);
 			CompressionAlgorithm compressionAlgorithm = new CompressionAlgorithm(codecs);
 			capabilityValue = new LocalOptVal(compressionAlgorithm);
 
 		} else if ("b".equals(key)) {
-			String[] bandwidthRange = dashPattern.split(capability,0);
+			String[] bandwidthRange = dashPattern.split(capability, 0);
 			int lower = Integer.parseInt(bandwidthRange[0]);
 			int upper = lower;
 			if (bandwidthRange.length == 2) {
@@ -1110,7 +1116,7 @@ public class Utils {
 			capabilityValue = new LocalOptVal(bandwidth);
 
 		} else if ("p".equals(key)) {
-			String[] packetizationRange = dashPattern.split(capability,0);
+			String[] packetizationRange = dashPattern.split(capability, 0);
 			int lower = Integer.parseInt(packetizationRange[0]);
 			int upper = lower;
 			if (packetizationRange.length == 2) {
@@ -1168,7 +1174,7 @@ public class Utils {
 			PackageName[] supportedPackageNames = decodePackageNameList(capability);
 			capabilityValue = new SupportedPackages(supportedPackageNames);
 		} else if ("m".equals(key)) {
-			String[] modes = semiColonPattern.split(capability,0);
+			String[] modes = semiColonPattern.split(capability, 0);
 			ConnectionMode[] supportedConnectionModes = new ConnectionMode[modes.length];
 			for (int i = 0; i < modes.length; i++) {
 				ConnectionMode c = decodeConnectionMode(modes[i]);
@@ -1611,7 +1617,7 @@ public class Utils {
 	}
 
 	public ConnectionParm decodeConnectionParm(String parm) {
-		String[] tokens = equalsPattern.split(parm,0);
+		String[] tokens = equalsPattern.split(parm, 0);
 
 		String name = tokens[0].trim();
 		String value = tokens[1].trim();
@@ -1646,7 +1652,7 @@ public class Utils {
 	}
 
 	public ConnectionParm[] decodeConnectionParms(String value) {
-		String tokens[] = commaPattern.split(value,0);
+		String tokens[] = commaPattern.split(value, 0);
 		ConnectionParm[] parms = new ConnectionParm[tokens.length];
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -1690,14 +1696,14 @@ public class Utils {
 		String domainAndPort[] = null;
 
 		try {
-			String tokens[] = ampersandPattern.split(value,0);
+			String tokens[] = ampersandPattern.split(value, 0);
 
 			if (tokens.length == 2) {
 				localName = tokens[0];
-				domainAndPort = colonPattern.split(tokens[1],0);
+				domainAndPort = colonPattern.split(tokens[1], 0);
 				domainName = domainAndPort[0];
 			} else {
-				domainAndPort = colonPattern.split(tokens[0],0);
+				domainAndPort = colonPattern.split(tokens[0], 0);
 				domainName = domainAndPort[0];
 				return new NotifiedEntity(domainName);
 			}

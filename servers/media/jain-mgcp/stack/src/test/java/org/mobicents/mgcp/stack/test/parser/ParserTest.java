@@ -32,6 +32,8 @@ import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.text.ParseException;
 
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897MgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897PackageName;
 import org.mobicents.mgcp.stack.parser.Utils;
 import org.mobicents.mgcp.stack.test.TestHarness;
 
@@ -378,6 +380,18 @@ public class ParserTest extends TestHarness {
 
 		encodedText = parser.encodeEventName(eventName);
 		assertEquals(text, encodedText);
+		
+		//Test 7
+		text = "AU/rfc2897pr";
+		eventName = parser.decodeEventName(text, "ip=22 ns=42 na=2");
+		
+		packageName = eventName.getPackageName();
+		assertEquals(RFC2897PackageName.ADVANCED_AUDIO, packageName.intValue());
+		
+		mgcpEvent = eventName.getEventIdentifier();
+		assertEquals(RFC2897MgcpEvent.PLAY_RECORD, mgcpEvent.intValue());
+		
+		assertEquals("ip=22 ns=42 na=2", mgcpEvent.getParms());
 
 	}
 
