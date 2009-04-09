@@ -59,18 +59,17 @@ public class Pipe {
      * @throws UnknownComponentException if inletName or outletName is unknown
      */
     public void open(String inletName, String outletName) throws UnknownComponentException {
-        if (!channel.sinks.containsKey(inletName)) {
+        if (!channel.sources.containsKey(inletName)) {
             throw new UnknownComponentException(inletName);
         }
         
-        sink = channel.sinks.get(inletName);
-        
-        if (!channel.sources.containsKey(outletName)) {
-            sink = null;
-            throw new UnknownComponentException(inletName);
+        source = channel.sources.get(inletName);
+        if (!channel.sinks.containsKey(outletName)) {
+            source = null;
+            throw new UnknownComponentException(outletName);
         }
         
-        source = channel.sources.get(outletName);
+        sink = channel.sinks.get(outletName);
         sink.connect(source);
     }
     

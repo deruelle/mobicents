@@ -52,7 +52,7 @@ public class MuxFactory implements ComponentFactory {
     }
     
     public Component newInstance(String name) {
-        return new Multiplexer(name);
+        return new Multiplexer(this.name);
     }
 
 }

@@ -30,6 +30,7 @@ package org.mobicents.media.server.resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Inlet;
@@ -38,7 +39,8 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
 
 /**
- *
+ * Factory class for creating channels.
+ * 
  * @author kulikov
  */
 public class ChannelFactory {
@@ -46,7 +48,41 @@ public class ChannelFactory {
     private List<PipeFactory> pipes;
     private List<ComponentFactory> factories;
     
+    private ArrayList<Channel> channels = new ArrayList();
+    
+    private int maxSize = 50;
+    private int coreSize = 10;
+    
+    private volatile boolean started = false;
+    private static final Logger logger = Logger.getLogger(ChannelFactory.class);
+    
+    /**
+     * Returns new channel.
+     * 
+     * if there is unused channels in the cache the existing channels will be 
+     * returned and new instance other wise.
+     * 
+     * @return
+     * @throws org.mobicents.media.server.resource.UnknownComponentException
+     */
     public Channel newInstance() throws UnknownComponentException {
+        if (!started) {
+            throw new IllegalStateException("Factory is not started");
+        }
+        if (!channels.isEmpty()) {
+            return channels.remove(0);
+        } else {
+            return createNewChannel();
+        }
+    }
+   
+    /**
+     * Constructs new channel instance.
+     * 
+     * @return channel instance.
+     * @throws org.mobicents.media.server.resource.UnknownComponentException
+     */
+    private Channel createNewChannel() throws UnknownComponentException {
         //creating components
         HashMap<String, MediaSource> sources = new HashMap();
         HashMap<String, MediaSink> sinks = new HashMap();
@@ -84,23 +120,122 @@ public class ChannelFactory {
         
         return channel;
     }
+
+    /**
+     * Get amount of prestarted channels.
+     * 
+     * @return the amount of prestarted channels.
+     */
+    public int getCoreSize() {
+        return coreSize;
+    }
+
+    /**
+     * Get maximum size of prestarted channels.
+     * 
+     * @return pool's max size.
+     */
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    /**
+     * Define amount of initialy prestarted channels.
+     * 
+     * @param coreSize the number of prestarted channels.
+     */
+    public void setCoreSize(int coreSize) {
+        this.coreSize = coreSize;
+    }
+
+    /**
+     * Define max pools size;
+     * 
+     * @param maxSize the maximum size of pool.
+     */
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+    }
     
+    
+    /**
+     * Modify pipe list.
+     * 
+     * @param pipes the list of pipes beans defining media flow path
+     */
     public void setPipes(List<PipeFactory> pipes) {
         this.pipes = pipes;
     }
     
+    /**
+     * Gets the existing list of pipes.
+     * 
+     * @return the list of pipes.
+     */
     public List getPipes() {
         return this.pipes;
     }
     
+    /**
+     * Gets the list of components which will be placed into the new channel.
+     * 
+     * @return the list of media component.
+     */
     public List getComponents() {
         return factories;
     }
     
+    /**
+     * Sets the list of components which will be placed into the new channel.
+     * 
+     * @return the list of media component.
+     */
     public void setComponents(List components) {
         this.factories = components;
     }
     
+    /**
+     * Informs factory that specified channel not longer used.
+     * 
+     * @param channel the reference to unused channel.
+     */
     public void release(Channel channel) {
+        if (started && channels.size() < maxSize) {
+            channels.add(channel);
+        }
     }
+    
+    /**
+     * Starts this factory.
+     * 
+     */
+    public void start() throws Exception {        
+/*        for (int i = 0; i < coreSize; i++) {
+                channels.add(createNewChannel());
+        }
+ */
+        try {
+            Channel c = createNewChannel();
+        } catch (UnknownComponentException e) {
+            logger.error("Unknwon component: " + e.getMessage());
+            e.printStackTrace();
+            throw new Exception(e);
+        }
+        
+        started = true;
+        logger.info("Started, core size = " + coreSize);
+  
+    }
+    
+    /**
+     * Stop this factory.
+     */
+    public void stop() {
+        started = false;
+        for (int i = 0; i < channels.size(); i++) {
+            Channel channel = channels.remove(i);
+            channel.close();
+        }
+    }
+  
 }

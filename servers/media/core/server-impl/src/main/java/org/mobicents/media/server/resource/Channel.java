@@ -198,4 +198,16 @@ public class Channel {
         this.source = null;
     }
 
+    public void close() {
+        
+        for (Pipe pipe : pipes) {
+            closePipe(pipe);
+        }
+        
+        pipes.clear();
+        sources.clear();
+        sinks.clear();
+        outlets.clear();
+        inlets.clear();
+    }
 }

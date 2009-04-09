@@ -63,6 +63,7 @@ public class DtmfGenerator extends AbstractSource {
     public  DtmfGenerator(String name) {
         super(name);
     }
+    
     public  DtmfGenerator(BaseEndpoint endpoint) {
         super(endpoint.getLocalName());
         inband = new InbandGenerator("");
@@ -90,7 +91,7 @@ public class DtmfGenerator extends AbstractSource {
     @Override
     public void connect(MediaSink sink) {
         super.connect(sink);
-        if (mode == DTMFMode.RFC2833) {
+/*        if (mode == DTMFMode.RFC2833) {
             sink.connect(rfc2833);
         } else if (mode == DTMFMode.INBAND) {
             sink.connect(dsp.getOutput());
@@ -98,6 +99,7 @@ public class DtmfGenerator extends AbstractSource {
             sink.connect(this.rfc2833);
             sink.connect(dsp.getOutput());
         }
+ */ 
     }
 
     public void configure(Format[] formats) {

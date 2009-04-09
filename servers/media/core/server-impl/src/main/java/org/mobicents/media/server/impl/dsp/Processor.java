@@ -23,6 +23,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -338,5 +339,15 @@ public class Processor implements SignalingProcessor {
                 encoder.process(buffer);
             }
         }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void addListener(NotificationListener listener) {
+    }
+
+    public void removeListener(NotificationListener listener) {
     }
 }

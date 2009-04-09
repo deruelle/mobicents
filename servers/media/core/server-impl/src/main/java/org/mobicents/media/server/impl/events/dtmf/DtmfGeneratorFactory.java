@@ -5,11 +5,14 @@
 
 package org.mobicents.media.server.impl.events.dtmf;
 
+import org.mobicents.media.Component;
+import org.mobicents.media.ComponentFactory;
+
 /**
  *
  * @author kulikov
  */
-public class DtmfGeneratorFactory {
+public class DtmfGeneratorFactory implements ComponentFactory {
     private String name;
     
     public String getName() {
@@ -20,7 +23,7 @@ public class DtmfGeneratorFactory {
         this.name = name;
     }
     
-    public DtmfGenerator newInstance() {
-        return new DtmfGenerator(name);
+    public Component newInstance(String name) {
+        return new DtmfGenerator(this.name);
     }
 }

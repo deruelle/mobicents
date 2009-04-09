@@ -24,6 +24,6 @@ public class DspFactory implements ComponentFactory {
     }
     
     public Component newInstance(String name) {
-        return new Processor(name);
+        return new Processor(this.name);
     }
 }

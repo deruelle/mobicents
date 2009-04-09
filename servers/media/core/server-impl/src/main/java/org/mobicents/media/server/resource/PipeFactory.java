@@ -56,6 +56,6 @@ public class PipeFactory {
 
     public void openPipe(Channel channel) throws UnknownComponentException {
         Pipe pipe = new Pipe(channel);
-        pipe.open(inlet, outlet);
+        channel.openPipe(pipe, inlet, outlet);
     }
 }
