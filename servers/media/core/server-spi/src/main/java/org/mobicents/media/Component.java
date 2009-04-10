@@ -36,6 +36,7 @@ import org.mobicents.media.server.spi.NotificationListener;
  * @author kulikov
  */
 public interface Component extends Serializable {
+    
     /**
      * Gets the name of the component.
      * 

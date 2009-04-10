@@ -29,12 +29,14 @@ package org.mobicents.media.server;
 
 import java.util.Hashtable;
 import org.apache.log4j.Logger;
+import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.resource.ChannelFactory;
+import org.mobicents.media.server.spi.ResourceType;
 import org.mobicents.media.server.resource.UnknownComponentException;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
@@ -62,13 +64,10 @@ public class EndpointImpl implements Endpoint {
     
     private MediaSource source;
     private MediaSink sink;
-    
-    
-    
+            
     private static final Logger logger = Logger.getLogger(EndpointImpl.class);
     
-    public EndpointImpl() {
-        
+    public EndpointImpl() {        
     }
     
     public EndpointImpl(String localName) {
@@ -144,6 +143,14 @@ public class EndpointImpl implements Endpoint {
     private void dropTxChannel(String media, Channel channel) {
         channel.disconnect(source);
         txChannelFactory.get(media).release(channel);
+    }
+    
+    public Component getComponent(ResourceType id) {
+        return null;
+    }
+    
+    public Component getComponent(String connectionID, ResourceType id) {
+        return null;
     }
     
     public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {

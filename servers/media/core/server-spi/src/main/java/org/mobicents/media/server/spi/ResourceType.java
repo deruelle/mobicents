@@ -24,13 +24,13 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.resource;
+package org.mobicents.media.server.spi;
 
 /**
  *
  * @author kulikov
  */
-public class ResourceID {
+public class ResourceType {
     private String id;
     
     public String getIdentifier() {

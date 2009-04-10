@@ -1,0 +1,5 @@
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+    <!-- Resource type definition -->
+    <bean name="MgcpController" class="org.mobicents.media.server.ctrl.mgcp.MgcpController">
+    </bean>
+</deployment>    

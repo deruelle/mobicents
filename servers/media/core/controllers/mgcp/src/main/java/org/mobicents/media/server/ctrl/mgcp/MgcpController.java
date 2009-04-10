@@ -52,7 +52,7 @@ import org.mobicents.mgcp.stack.JainMgcpStackImpl;
  * 
  * @author kulikov
  */
-public class MgcpController implements JainMgcpListener, MgcpControllerMBean {
+public class MgcpController implements JainMgcpListener {
 
 	private static final Logger logger = Logger.getLogger(MgcpController.class);
 

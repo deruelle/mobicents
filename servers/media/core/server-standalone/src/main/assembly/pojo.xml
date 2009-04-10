@@ -20,8 +20,8 @@
 			<destName>deploy/ann-beans.xml</destName>
 		</file>
 		<file>
-			<source>src/main/config/resource-identificators.xml</source>
-			<destName>deploy/resource-identificators.xml</destName>
+			<source>src/main/config/mgcp-conf.xml</source>
+			<destName>deploy/mgcp-conf.xml</destName>
 		</file>
 
 		<!-- file>

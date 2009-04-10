@@ -1,6 +1,0 @@
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
-    <!-- Timer definition -->
-    <bean name="AudioPlayerID" class="org.mobicents.media.server.resource.ResourceID">
-        <property name="identifier">1</property>
-    </bean>
-</deployment>    
