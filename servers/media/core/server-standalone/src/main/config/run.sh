@@ -66,7 +66,7 @@ fi
 # Setup MMS_HOME
 if [ "x$MMS_HOME" = "x" ]; then
     # get the full path (without any relative bits)
-    MMS_HOME=`cd $DIRNAME; pwd`
+    MMS_HOME=`cd $DIRNAME/..; pwd`
 fi
 export MMS_HOME
 
@@ -98,7 +98,7 @@ if [ "x$JAVA" = "x" ]; then
 fi
 
 # Setup the classpath
-runjar="$MMS_HOME/mms-standalone-2.0.0.BETA1-SNAPSHOT.jar"
+runjar="$MMS_HOME/bin/run.jar"
 if [ ! -f "$runjar" ]; then
     die "Missing required file: $runjar"
 fi
@@ -163,7 +163,7 @@ echo ""
       "$JAVA" $JAVA_OPTS \
          -Djava.ext.dirs="$MMS_ENDORSED_DIRS" \
          -classpath "$MMS_CLASSPATH" \
-         org.mobicents.media.server.bootstrap.jmx.JMXMain "$@"
+         org.mobicents.media.server.bootstrap.Main "$@"
       MMS_STATUS=$?
 
 #java -Djava.ext.dirs=`pwd`/lib -Dmms.home=. -cp .:mms-standalone-2.0.0.BETA1-SNAPSHOT.jar org.mobicents.media.server.bootstrap.jmx.JMXMain
