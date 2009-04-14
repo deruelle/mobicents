@@ -7,7 +7,7 @@ import jain.protocol.ip.mgcp.pkg.MgcpEvent;
  * @author amit bhayani
  *
  */
-public class RFC2897MgcpEvent {
+public class AUMgcpEvent {
 	
 	
 	/* _______________________________________________________________________ 
@@ -24,36 +24,36 @@ public class RFC2897MgcpEvent {
 	
 	
 	 public static final int PLAY_ANNOUNCEMENT = 200;
-	 public static final MgcpEvent rfc2897pa = MgcpEvent.factory("rfc2897pa",PLAY_ANNOUNCEMENT);
+	 public static final MgcpEvent aupa = MgcpEvent.factory("aupa",PLAY_ANNOUNCEMENT);
 	 
 	 
 	 public static final int PLAY_COLLECT = 201;
-	 public static final MgcpEvent rfc2897pc = MgcpEvent.factory("rfc2897pc", PLAY_COLLECT);
+	 public static final MgcpEvent aupc = MgcpEvent.factory("aupc", PLAY_COLLECT);
 	 
 
 	 public static final int PLAY_RECORD = 202;
-	 public static final MgcpEvent rfc2897pr = MgcpEvent.factory("rfc2897pr",PLAY_RECORD);
+	 public static final MgcpEvent aupr = MgcpEvent.factory("aupr",PLAY_RECORD);
 	 
 	 public static final int END_SIGNAL = 203;
-	 public static final MgcpEvent rfc2897es = MgcpEvent.factory("rfc2897es",END_SIGNAL);
+	 public static final MgcpEvent aues = MgcpEvent.factory("aues",END_SIGNAL);
 	 
 	 public static final int OPERATION_COMPLETE = 204;
-	 public static final MgcpEvent rfc2897oc = MgcpEvent.factory("rfc2897oc", OPERATION_COMPLETE);
+	 public static final MgcpEvent auoc = MgcpEvent.factory("auoc", OPERATION_COMPLETE);
 	 
 	 public static final int OPERATION_FAIL = 205;
-	 public static final MgcpEvent rfc2897of = MgcpEvent.factory("rfc2897of", OPERATION_FAIL);
+	 public static final MgcpEvent auof = MgcpEvent.factory("auof", OPERATION_FAIL);
 	 
 	 
 	public static void main(String args[]){
-		System.out.println("rfc2897pa = "+ rfc2897pa.toString());
+		System.out.println("rfc2897pa = "+ aupa.toString());
 		System.out.println("PLAY_ANNOUNCEMENT = "+ PLAY_ANNOUNCEMENT);
 		
 		
-		System.out.println("rfc2897pc = "+ rfc2897pc.toString());
+		System.out.println("rfc2897pc = "+ aupc.toString());
 		System.out.println("PLAY_COLLECT = "+ PLAY_COLLECT);
 		
 		
-		System.out.println("rfc2897of = "+ rfc2897of.toString());
+		System.out.println("rfc2897of = "+ auof.toString());
 		System.out.println("OPERATION_FAIL = "+ OPERATION_FAIL);
 		
 		

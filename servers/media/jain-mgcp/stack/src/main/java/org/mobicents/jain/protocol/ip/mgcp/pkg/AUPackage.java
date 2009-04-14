@@ -4,10 +4,10 @@ import jain.protocol.ip.mgcp.pkg.PackageName;
 
 /**
  * 
- * @author abhayani
+ * @author amit bhayani
  *
  */
-public class RFC2897PackageName {
+public class AUPackage {
 	public static final int ADVANCED_AUDIO = 200;
 	public static final PackageName AU = PackageName.factory("AU", ADVANCED_AUDIO);
 }
