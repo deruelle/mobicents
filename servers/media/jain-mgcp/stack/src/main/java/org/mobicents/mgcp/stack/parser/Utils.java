@@ -58,8 +58,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
-import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897MgcpEvent;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897PackageName;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 
 /**
  * 
@@ -90,8 +90,8 @@ public class Utils {
 
 	private static final Pattern dashPattern = Pattern.compile("-");
 
-	PackageName au = RFC2897PackageName.AU;
-	MgcpEvent rfc2897pa = RFC2897MgcpEvent.rfc2897pa;
+	PackageName au = AUPackage.AU;
+	MgcpEvent rfc2897pa = AUMgcpEvent.aupa;
 
 	/** Creates a new instance of Utils */
 	public Utils() {
