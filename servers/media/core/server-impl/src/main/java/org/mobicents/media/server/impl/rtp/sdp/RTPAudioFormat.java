@@ -15,6 +15,10 @@
  */
 package org.mobicents.media.server.impl.rtp.sdp;
 
+import java.util.Collection;
+import java.util.Vector;
+import javax.sdp.Attribute;
+import javax.sdp.SdpFactory;
 import org.mobicents.media.format.AudioFormat;
 
 /**
@@ -42,7 +46,8 @@ import org.mobicents.media.format.AudioFormat;
 public class RTPAudioFormat extends AudioFormat {
 
 	private int payload;
-
+        private SdpFactory sdpFactory = SdpFactory.getInstance();
+        
 	/** Creates a new instance of RTPAudioFormat */
 	public RTPAudioFormat(int payload, String encodingName) {
 		super(encodingName);
@@ -128,6 +133,17 @@ public class RTPAudioFormat extends AudioFormat {
 		}
 	}
 
+        public Collection<Attribute> encode() {
+            Vector<Attribute> list = new Vector();
+            list.add(sdpFactory.createAttribute("rtpmap", toSdp()));
+            if (getEncoding().equals("telephone-event/8000")) {
+                list.add(sdpFactory.createAttribute("fmtp", payload + " 0-15"));
+            } else if (getEncoding().equals("g729")) {
+                list.add(sdpFactory.createAttribute("fmtp", payload + " annex=b"));
+            }
+            return list;
+        }
+        
 	public String toSdp() {
 		String encName = this.getEncoding().toLowerCase();
 		StringBuffer buff = new StringBuffer();

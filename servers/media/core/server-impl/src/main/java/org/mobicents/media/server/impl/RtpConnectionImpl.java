@@ -272,7 +272,7 @@ public class RtpConnectionImpl extends BaseConnection {
         rtpSocket.setPeer(peer.getAddress(), peer.getPort());
 
         // negotiate codecs
-        HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP);
+        HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP,"");
         //logger.debug("Codec offer = "+ offer);
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
         //logger.debug("Codec rtpMap = "+ rtpMap);

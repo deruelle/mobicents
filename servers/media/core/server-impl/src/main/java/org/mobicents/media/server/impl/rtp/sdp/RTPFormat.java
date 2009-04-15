@@ -13,9 +13,9 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-
 package org.mobicents.media.server.impl.rtp.sdp;
 
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import org.mobicents.media.Format;
@@ -30,42 +30,52 @@ import javax.sdp.SessionDescription;
  *
  * @author Oleg Kulikov
  */
-public class RTPFormat extends Format {
-    
+public abstract class RTPFormat extends Format {
+
+    private int payloadType;
+
     /** Creates a new instance of RTPFormat */
     public RTPFormat(String encodingName) {
         super(encodingName);
     }
-    
-    public static synchronized HashMap<Integer, Format> getFormats(SessionDescription sdp) throws SdpParseException, SdpException {
+
+    public int getPayloadType() {
+        return payloadType;
+    }
+
+    public static synchronized HashMap<Integer, Format> getFormats(SessionDescription sdp, String mediaType) throws SdpParseException, SdpException {
         HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Enumeration mediaDescriptions = sdp.getMediaDescriptions(false).elements();
         while (mediaDescriptions.hasMoreElements()) {
             MediaDescription md = (MediaDescription) mediaDescriptions.nextElement();
-            HashMap<Integer, Format> fmts = getFormats(md);
-            if (fmts != null) {
-                formats.putAll(fmts);
+            if (md.getMedia().getMediaType().equals(mediaType)) {
+                HashMap<Integer, Format> fmts = getFormats(md);
+                if (fmts != null) {
+                    formats.putAll(fmts);
+                }
             }
         }
         return formats;
     }
-    
+
     private static HashMap<Integer, Format> getFormats(MediaDescription md) throws SdpParseException, SdpException {
         Media media = md.getMedia();
         if (media.getMediaType().equals(AVProfile.AUDIO)) {
             return getAudioFormats(md);
         } else if (media.getMediaType().equals(AVProfile.VIDEO)) {
             return getVideoFormats(md);
-        } else return null;
+        } else {
+            return null;
+        }
     }
-    
+
     private static HashMap<Integer, Format> getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
         HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Media media = md.getMedia();
-        
+
         Enumeration payloads = media.getMediaFormats(false).elements();
         while (payloads.hasMoreElements()) {
-            int payload = Integer.parseInt((String)payloads.nextElement());
+            int payload = Integer.parseInt((String) payloads.nextElement());
             Format fmt = AVProfile.getAudioFormat(payload);
             if (fmt != null) {
                 formats.put(new Integer(payload), fmt);
@@ -80,15 +90,17 @@ public class RTPFormat extends Format {
                 formats.put(new Integer(fmt.getPayload()), fmt);
             }
         }
-        
+
         return formats;
     }
-    
+
     private static HashMap<Integer, Format> getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
         return null;
-    } 
-    
+    }
+
     public String toSdp() {
         return null;
     }
+
+    public abstract Collection<Attribute> encode();
 }

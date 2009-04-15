@@ -29,6 +29,7 @@ package org.mobicents.media.server.resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -83,6 +84,10 @@ public class Channel {
         this.sinks = sinks;
         this.inlets = inlets;
         this.outlets = outlets;
+    }
+    
+    public Format[] getFormats() {
+        return null;
     }
     
     /**

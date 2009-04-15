@@ -64,13 +64,16 @@
         <property name="sourceFactory">
             <inject bean="AudioPlayerFactory"/>
         </property>
-        <property name="txChannelFactory">
+        <property name="rtpFactory">
             <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.mobicents.media.server.resource.ChannelFactory">
                 <entry>
                     <key>audio</key>
-                    <value><inject bean="TxChannelFactory"/></value>
+                    <value><inject bean="RTPFactory"/></value>
                 </entry>
             </map>
+        </property>
+        <property name="txChannelFactory">
+            <inject bean="TxChannelFactory"/>
         </property>
     </bean>
     
