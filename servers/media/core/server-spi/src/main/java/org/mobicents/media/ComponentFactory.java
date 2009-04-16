@@ -27,6 +27,8 @@
 
 package org.mobicents.media;
 
+import org.mobicents.media.server.spi.Endpoint;
+
 /**
  * Acts as a factory of any media components.
  * 
@@ -36,8 +38,8 @@ public interface ComponentFactory {
     /**
      * Constructs new component.
      * 
-     * @param name the name of the component.
+     * @param endpoint the endpoint which creates this component.
      * @return new instance of the component.
      */
-    public Component newInstance(String name);
+    public Component newInstance(Endpoint endpoint);
 }

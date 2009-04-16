@@ -30,6 +30,7 @@ package org.mobicents.media.server.resource;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -51,7 +52,7 @@ public class MuxFactory implements ComponentFactory {
         this.name = name;
     }
     
-    public Component newInstance(String name) {
+    public Component newInstance(Endpoint endpoint) {
         return new Multiplexer(this.name);
     }
 

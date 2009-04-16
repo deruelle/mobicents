@@ -67,8 +67,7 @@
         <property name="rtpFactory">
             <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.mobicents.media.server.resource.ChannelFactory">
                 <entry>
-                    <key>audio</key>
-                    <value><inject bean="RTPFactory"/></value>
+                    <key>audio</key><value><inject bean="RTPAudioFactory"/></value>
                 </entry>
             </map>
         </property>

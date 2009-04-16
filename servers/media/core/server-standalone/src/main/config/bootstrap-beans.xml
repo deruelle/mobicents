@@ -5,6 +5,18 @@
         <property name="heartBeat">20</property>
     </bean>
     
+    <!-- Media Server -->
+    <bean name="MediaServer" class="org.mobicents.media.server.InnerNamingService">
+        <incallback method="addEndpoint"/>
+        <uncallback method="removeEndpoint"/>
+    </bean>
+    
+   <!-- The MainDeployer -->
+    <bean name="MainDeployer" class="org.mobicents.media.server.bootstrap.MainDeployer">
+        <property name="path">${mms.home.dir}/deploy</property>
+        <property name="scanPeriod">1000</property>
+    </bean>
+    
      <!-- Definition of media formats -->
     <bean name="PCMU" class="org.mobicents.media.format.AudioFormat">
         <constructor>
@@ -57,8 +69,15 @@
         </constructor>
     </bean>
 
+    <bean name="H261" class="org.mobicents.media.format.VideoFormat">
+        <constructor>
+            <parameter>H261</parameter>
+            <parameter>90000</parameter>
+        </constructor>
+    </bean>
+
     <!-- RTP stuff configuration -->
-    <bean name="RTPFactory" class="org.mobicents.media.server.impl.rtp.RtpFactory">
+    <bean name="RTPAudioFactory" class="org.mobicents.media.server.impl.rtp.RtpFactory">
         <property name="formatMap">
             <map class="java.util.Hashtable" keyClass="java.lang.Integer" valueClass="org.mobicents.media.Format">
                 <entry><key>0</key><value><inject bean="PCMU"/></value></entry>
@@ -71,16 +90,15 @@
         <property name="jitter">60</property>
         <property name="timer"><inject bean="Timer"/></property>
     </bean>
-
-    <!-- Media Server -->
-    <bean name="MediaServer" class="org.mobicents.media.server.InnerNamingService">
-        <incallback method="addEndpoint"/>
-        <uncallback method="removeEndpoint"/>
+    <!-- RTP stuff configuration -->
+    <bean name="RTPVideoFactory" class="org.mobicents.media.server.impl.rtp.RtpFactory">
+        <property name="formatMap">
+            <map class="java.util.Hashtable" keyClass="java.lang.Integer" valueClass="org.mobicents.media.Format">
+                <entry><key>31</key><value><inject bean="H261"/></value></entry>
+            </map>
+        </property>
+        <property name="jitter">60</property>
+        <property name="timer"><inject bean="Timer"/></property>
     </bean>
     
-   <!-- The MainDeployer -->
-    <bean name="MainDeployer" class="org.mobicents.media.server.bootstrap.MainDeployer">
-        <property name="path">${mms.home.dir}/deploy</property>
-        <property name="scanPeriod">1000</property>
-    </bean>
 </deployment>

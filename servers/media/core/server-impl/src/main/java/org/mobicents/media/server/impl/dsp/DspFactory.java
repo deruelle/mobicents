@@ -7,6 +7,7 @@ package org.mobicents.media.server.impl.dsp;
 
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
@@ -23,7 +24,7 @@ public class DspFactory implements ComponentFactory {
         this.name = name;
     }
     
-    public Component newInstance(String name) {
+    public Component newInstance(Endpoint endpoint) {
         return new Processor(this.name);
     }
 }

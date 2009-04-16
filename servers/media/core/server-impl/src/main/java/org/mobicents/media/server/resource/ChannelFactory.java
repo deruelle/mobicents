@@ -37,6 +37,7 @@ import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * Factory class for creating channels.
@@ -65,14 +66,14 @@ public class ChannelFactory {
      * @return
      * @throws org.mobicents.media.server.resource.UnknownComponentException
      */
-    public Channel newInstance() throws UnknownComponentException {
+    public Channel newInstance(Endpoint endpoint) throws UnknownComponentException {
         if (!started) {
             throw new IllegalStateException("Factory is not started");
         }
         if (!channels.isEmpty()) {
             return channels.remove(0);
         } else {
-            return createNewChannel();
+            return createNewChannel(endpoint);
         }
     }
    
@@ -82,7 +83,7 @@ public class ChannelFactory {
      * @return channel instance.
      * @throws org.mobicents.media.server.resource.UnknownComponentException
      */
-    private Channel createNewChannel() throws UnknownComponentException {
+    private Channel createNewChannel(Endpoint endpoint) throws UnknownComponentException {
         //creating components
         HashMap<String, MediaSource> sources = new HashMap();
         HashMap<String, MediaSink> sinks = new HashMap();
@@ -90,7 +91,7 @@ public class ChannelFactory {
         HashMap<String, Outlet> outlets = new HashMap();
         
         for (ComponentFactory factory: factories) {
-            Component component = factory.newInstance("");
+            Component component = factory.newInstance(endpoint);
             
             if (component instanceof MediaSink) {
                 sinks.put(component.getName(), (MediaSink)component);
@@ -210,21 +211,8 @@ public class ChannelFactory {
      * 
      */
     public void start() throws Exception {        
-/*        for (int i = 0; i < coreSize; i++) {
-                channels.add(createNewChannel());
-        }
- */
-        try {
-            Channel c = createNewChannel();
-        } catch (UnknownComponentException e) {
-            logger.error("Unknwon component: " + e.getMessage());
-            e.printStackTrace();
-            throw new Exception(e);
-        }
-        
         started = true;
         logger.info("Started, core size = " + coreSize);
-  
     }
     
     /**

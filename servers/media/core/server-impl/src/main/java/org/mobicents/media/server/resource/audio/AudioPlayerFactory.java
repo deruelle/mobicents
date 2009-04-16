@@ -28,13 +28,14 @@
 package org.mobicents.media.server.resource.audio;
 
 import org.mobicents.media.ComponentFactory;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author kulikov
  */
 public class AudioPlayerFactory implements ComponentFactory {
-    public AudioPlayer newInstance(String name) {
-        return new AudioPlayer(name);
+    public AudioPlayer newInstance(Endpoint endpoint) {
+        return new AudioPlayer(endpoint);
     }
 }

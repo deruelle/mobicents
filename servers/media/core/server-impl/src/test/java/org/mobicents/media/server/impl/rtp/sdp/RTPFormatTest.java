@@ -61,7 +61,7 @@ public class RTPFormatTest {
         "a=rtpmap:8 pcma/8000";
 
         SessionDescription sd = sdpFactory.createSessionDescription(sdp);
-        HashMap result = RTPFormat.getFormats(sd);
+        HashMap result = RTPFormatParser.getFormats(sd);
         
         System.out.println("RES=" + result);
         
@@ -85,7 +85,7 @@ public class RTPFormatTest {
         "a=rtpmap:8 pcma/8000";
 
         SessionDescription sd = sdpFactory.createSessionDescription(sdp);
-        HashMap result = RTPFormat.getFormats(sd);
+        HashMap result = RTPFormatParser.getFormats(sd);
         
         System.out.println("RES=" + result);
         
@@ -110,7 +110,7 @@ public class RTPFormatTest {
         "a=rtpmap:8 pcma/8000";
 
         SessionDescription sd = sdpFactory.createSessionDescription(sdp);
-        HashMap result = RTPFormat.getFormats(sd);
+        HashMap result = RTPFormatParser.getFormats(sd);
         
         Format fmt = (Format) result.get(8);
         if (!fmt.matches(pcma)) {
@@ -132,7 +132,7 @@ public class RTPFormatTest {
         "a=rtpmap:0 pcmu/8000";
 
         SessionDescription sd = sdpFactory.createSessionDescription(sdp);
-        HashMap result = RTPFormat.getFormats(sd);
+        HashMap result = RTPFormatParser.getFormats(sd);
         
         System.out.println("RES=" + result);
         

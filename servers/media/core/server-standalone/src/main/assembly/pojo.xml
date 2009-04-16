@@ -9,12 +9,6 @@
 			<source>src/main/config/bootstrap-beans.xml</source>
 			<destName>conf/bootstrap-beans.xml</destName>
 		</file>
-
-		<!-- file>
-			<source>src/main/config/aop-beans.xml</source>
-			<destName>conf/aop-beans.xml</destName>
-		</file -->
-
 		<file>
 			<source>src/main/config/ann-beans.xml</source>
 			<destName>deploy/ann-beans.xml</destName>

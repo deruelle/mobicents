@@ -110,7 +110,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     public void start() throws ResourceUnavailableException {
-        source = (MediaSource) sourceFactory.newInstance("");
+        source = (MediaSource) sourceFactory.newInstance(this);
         logger.info("Started " + localName);
     }
 
@@ -164,7 +164,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     private Channel createRxChannel() throws UnknownComponentException {
-        Channel rxChannel = rxChannelFactory.newInstance();
+        Channel rxChannel = rxChannelFactory.newInstance(this);
         rxChannel.connect(source);
         return rxChannel;
     }
@@ -175,7 +175,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     private Channel createTxChannel(String media) throws UnknownComponentException {
-        Channel txChannel = txChannelFactory.newInstance();
+        Channel txChannel = txChannelFactory.newInstance(this);
         txChannel.connect(source);
         return txChannel;
     }

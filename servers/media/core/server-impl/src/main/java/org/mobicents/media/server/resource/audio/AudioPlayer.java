@@ -19,11 +19,7 @@ import org.mobicents.media.server.impl.events.announcement.*;
 import java.io.IOException;
 import java.net.URL;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledFuture;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat.Encoding;
@@ -37,24 +33,26 @@ import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class AudioPlayer extends AbstractSource {
+public class AudioPlayer extends AbstractSource implements Runnable {
 
     private final static int MAX_ERRORS = 5;
     /** supported formats definition */
-    private final static AudioFormat LINEAR = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN,
-            AudioFormat.SIGNED);
-    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
-    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-    private final static Format[] formats = new Format[]{LINEAR, PCMA, PCMU, SPEEX, GSM};
+    private final static Format[] formats = new Format[]{
+        AVProfile.L16_MONO,
+        AVProfile.L16_STEREO,
+        AVProfile.PCMA,
+        AVProfile.PCMU,
+        AVProfile.SPEEX,
+        AVProfile.GSM
+    };
     /** format of the file */
     private AudioFormat format;
     /** audio stream */
@@ -66,42 +64,67 @@ public class AudioPlayer extends AbstractSource {
     /** sequence number of the packet */
     private long seq = 0;
     /** Timer     */
-    private transient ScheduledExecutorService timer;
-    private transient Future worker;
-    /** Command executor service used for async command executions */
-    private transient ExecutorService executor;
-    private transient ThreadFactory threadFactory;
+    private transient Timer timer;
+    private transient ScheduledFuture worker;
     /** Name (path) of the file to play */
     private String file;
     /** Flag indicating end of media */
     private volatile boolean eom = false;
     /** The countor for errors occured during processing */
     private int errorCount;
-    private volatile boolean started = false;
     private BufferFactory bufferFactory = null;
-    private transient Logger logger = Logger.getLogger(AudioPlayer.class);
+    private static transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
-    public AudioPlayer(String name) {
-        super(name);
+    public AudioPlayer(Endpoint endpoint) {
+        super("AudioPlayer[" + endpoint.getLocalName() + "]");
+        period = timer.getHeartBeat();
         bufferFactory = new BufferFactory(10, "AudioPlayer");
     }
 
     public void setFile(String file) {
         this.file = file;
     }
-
+    
     /**
      * Sarts playback. Executes asynchronously.
      */
     public void start() {
-        System.out.println("*************");
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+        }
+        
+        closeAudioStream();        
+        seq = 0;
+        
+        try { 
+            if (file.endsWith("spx")) {
+                stream = new SpeexAudioFileReader().getAudioInputStream(new URL(file));
+            } else {
+                stream = AudioSystem.getAudioInputStream(new URL(file));
+            }
+            format = getFormat(stream);
+            if (format == null) {
+                throw new IOException("Unsupported format: " + stream.getFormat());
+            }
+            packetSize = getPacketSize();
+            eom = false;
+
+            worker = timer.synchronize(this);
+            started();
+        } catch (Exception e) {
+            logger.error("Exception in file " + file, e);
+            failed(e);
+        }
     }
 
     /**
      * Terminates player. Methods executes asynchronously.
      */
     public void stop() {
-        System.out.println("================");
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+            closeAudioStream();
+        }
     }
 
     /**
@@ -113,16 +136,22 @@ public class AudioPlayer extends AbstractSource {
     private AudioFormat getFormat(AudioInputStream stream) {
         Encoding encoding = stream.getFormat().getEncoding();
         if (encoding == Encoding.ALAW) {
-            return new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
+            return AVProfile.PCMA;
         } else if (encoding == Encoding.ULAW) {
-            return new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
+            return AVProfile.PCMU;
         } else if (encoding == Encoding.PCM_SIGNED) {
-            return LINEAR;
-        } else if (encoding == Encoding.PCM_UNSIGNED) {
-            return new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.UNSIGNED);
-        } else {
-            return null;
-        }
+            int sampleRate = (int)stream.getFormat().getSampleRate();
+            if (sampleRate != 44100) {
+                return null;
+            }
+            int sampleSize = stream.getFormat().getSampleSizeInBits();
+            if (sampleSize != 16) {
+                return null;
+            }
+            int channels = stream.getFormat().getChannels();
+            return channels == 1 ? AVProfile.L16_MONO : AVProfile.L16_STEREO;
+        } 
+        return null;
     }
 
     /**
@@ -130,7 +159,8 @@ public class AudioPlayer extends AbstractSource {
      * @return the size of packets in bytes;
      */
     private int getPacketSize() {
-        return format.getEncoding().equals(AudioFormat.LINEAR) ? 320 : 160;
+        return (int) (period * format.getChannels() *
+                format.getSampleSizeInBits() * format.getSampleRate() / 8000);
     }
 
     /**
@@ -243,7 +273,6 @@ public class AudioPlayer extends AbstractSource {
             errorCount = 0;
             if (eom) {
                 worker.cancel(true);
-                started = false;
                 ended();
             }
         } catch (Exception e) {
@@ -265,58 +294,8 @@ public class AudioPlayer extends AbstractSource {
         this.sendEvent(evt);
     }
 
-    private class Player implements Runnable {
-
-        public void run() {
-            doProcess1();
-        }
-    }
-
-    private class StartCommand implements Runnable {
-
-        @SuppressWarnings("static-access")
-        public void run() {
-            if (started) {
-                return;
-            }
-            closeAudioStream();
-            seq = 0;
-            try {
-                if (file.endsWith("spx")) {
-                    stream = new SpeexAudioFileReader().getAudioInputStream(new URL(file));
-                } else {
-                    stream = AudioSystem.getAudioInputStream(new URL(file));
-                }
-                format = getFormat(stream);
-                if (format == null) {
-                    throw new IOException("Unsupported format: " + stream.getFormat());
-                }
-                packetSize = getPacketSize();
-                eom = false;
-
-                if (Thread.currentThread().interrupted()) {
-                    return;
-                }
-                worker = timer.scheduleAtFixedRate(new Player(), 0, period, TimeUnit.MILLISECONDS);
-                started = true;
-                started();
-            } catch (Exception e) {
-                logger.error("Exception in file " + file, e);
-                failed(e);
-            }
-        }
-    }
-
-    private class StopCommand implements Runnable {
-
-        @SuppressWarnings("static-access")
-        public void run() {
-            if (worker != null && started) {
-                worker.cancel(true);
-                started = false;
-            }
-            closeAudioStream();
-        }
+    public void run() {
+        doProcess1();
     }
 
 }
