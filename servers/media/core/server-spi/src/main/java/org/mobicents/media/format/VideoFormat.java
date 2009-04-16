@@ -44,6 +44,10 @@ public class VideoFormat extends Format {
 	public VideoFormat(String encoding) {
 		super(encoding);
 	}
+	public VideoFormat(String encoding, float frameRate) {
+		super(encoding);
+                this.frameRate = frameRate;
+	}
 
 	public VideoFormat(String encoding, int maxDataLength, Class dataType,
 			float frameRate) {
