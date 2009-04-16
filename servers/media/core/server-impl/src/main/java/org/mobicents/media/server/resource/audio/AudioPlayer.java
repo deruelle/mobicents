@@ -33,6 +33,7 @@ import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
@@ -77,6 +78,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 
     public AudioPlayer(Endpoint endpoint) {
         super("AudioPlayer[" + endpoint.getLocalName() + "]");
+        timer = ((EndpointImpl) endpoint).getTimer();
         period = timer.getHeartBeat();
         bufferFactory = new BufferFactory(10, "AudioPlayer");
     }
