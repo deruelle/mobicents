@@ -123,7 +123,7 @@ public class RTPAudioFormat extends AudioFormat implements RTPFormat {
 		} else if (encodingName.equals("speex")) {
 			return new RTPAudioFormat(p, AudioFormat.SPEEX, clockRate, 8, chans);
 		} else if (encodingName.equals("telephone-event")) {
-			return new DtmfFormat(p, "telephone-event/8000");
+			return new RTPAudioFormat(p, "telephone-event/8000");
 		} if (encodingName.equals("g729")) {
 			return new RTPAudioFormat(p, AudioFormat.G729, clockRate, 8, chans);
 		} if (encodingName.equals("gsm")) {
