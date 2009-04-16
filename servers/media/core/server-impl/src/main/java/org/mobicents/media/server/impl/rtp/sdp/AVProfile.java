@@ -33,6 +33,12 @@ public abstract class AVProfile {
     public final static RTPAudioFormat SPEEX = new RTPAudioFormat(97, AudioFormat.SPEEX, 8000, 8, 1);
     public final static RTPAudioFormat G729 = new RTPAudioFormat(18, AudioFormat.G729, 8000, 8, 1);
     public final static RTPAudioFormat GSM = new RTPAudioFormat(3, AudioFormat.GSM, 8000, 8, 1);
+    public final static RTPAudioFormat L16_STEREO = new RTPAudioFormat(10, 
+            AudioFormat.LINEAR, 44100, 16, 2, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    public final static RTPAudioFormat L16_MONO = new RTPAudioFormat(11, 
+            AudioFormat.LINEAR, 44100, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
+    public final static RTPAudioFormat L8 = new RTPAudioFormat(11, 
+            AudioFormat.LINEAR, 8000, 8, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.UNSIGNED);
     
     public final static RTPVideoFormat H261 = new RTPVideoFormat(3, VideoFormat.H261, 90000);
     
@@ -45,6 +51,8 @@ public abstract class AVProfile {
         audioFormats.put(SPEEX.getPayloadType(), SPEEX);
         audioFormats.put(G729.getPayloadType(), G729);
         audioFormats.put(GSM.getPayloadType(), GSM);
+        audioFormats.put(L16_STEREO.getPayloadType(), L16_STEREO);
+        audioFormats.put(L16_MONO.getPayloadType(), L16_MONO);
     }
 
     static {
