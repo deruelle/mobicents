@@ -1,17 +1,35 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Mobicents, Communications Middleware
+ * 
+ * Copyright (c) 2008, Red Hat Middleware LLC or third-party
+ * contributors as
+ * indicated by the @author tags or express copyright attribution
+ * statements applied by the authors.  All third-party contributions are
+ * distributed under license by Red Hat Middleware LLC.
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, write to:
+ * Free Software Foundation, Inc.
+ * 51 Franklin Street, Fifth Floor
+ *
+ * Boston, MA  02110-1301  USA
  */
 package org.mobicents.media.server;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
@@ -25,8 +43,8 @@ import org.mobicents.media.server.impl.Demultiplexer;
 import org.mobicents.media.server.impl.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
-import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
+import org.mobicents.media.server.impl.rtp.sdp.RTPFormatParser;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -106,22 +124,15 @@ public class RtpConnectionImpl extends ConnectionImpl {
             Vector descriptions = new Vector();
 
             // encode formats
+            Set<String> mediaTypes = rtpSockets.keySet();
+            for (String mediaType : mediaTypes) {
+                RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
-            if (rtpSockets.containsKey("audio")) {
-                HashMap<Integer, Format> rtpMap = rtpSockets.get("audio").getRtpMap();
+                HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
                 HashMap<Integer, Format> subset = subset(rtpMap, supported);
 
-
-                int port = rtpSockets.get("audio").getLocalPort();
-                descriptions.add(createAudioDescription(port, subset));
-            }
-
-            if (rtpSockets.containsKey("video")) {
-                HashMap<Integer, Format> rtpMap = rtpSockets.get("video").getRtpMap();
-                HashMap<Integer, Format> subset = subset(rtpMap, supported);
-                
-                int port = rtpSockets.get("video").getLocalPort();
-                descriptions.add(createVideoDescription(port, subset));
+                int port = rtpSocket.getLocalPort();
+                descriptions.add(createMediaDescription(mediaType, port, subset));
             }
         } catch (SdpException e) {
         }
@@ -149,23 +160,28 @@ public class RtpConnectionImpl extends ConnectionImpl {
         SessionDescription sdp = sdpFactory.createSessionDescription(descriptor);
 
         // add peer to RTP socket
-        InetSocketAddress peer = getPeer(sdp, "audio");
-        HashMap<Integer, Format> offer = RTPFormat.getFormats(sdp, "audio");
-        
-        Format[] supported = rxChannel.getFormats();
-        HashMap<Integer, Format> subset = this.subset(offer, supported);
-
-        if (subset.isEmpty()) {
-            throw new IOException("Codecs are not negotiated");
-        }
-
         mux = new Multiplexer("MUX-" + this.getId());
+        InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
         
-        updateRtpMap(rtpSockets.get("audio"), subset);
-        rtpSockets.get("audio").getReceiveStream().connect(mux);
+        Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
+        for (MediaDescription md : mediaDescriptions) {
+            String mediaType = md.getMedia().getMediaType();
+            RtpSocket rtpSocket = rtpSockets.get(mediaType);
+            
+            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);            
+            Format[] supported = rxChannel.getFormats();
+            
+            HashMap<Integer, Format> subset = this.subset(offer, supported);
+            
+            if (subset.isEmpty()) {
+                throw new IOException("Codecs are not negotiated");
+            }
         
-        rxChannel.connect(mux.getOutput());
-
+            int port = md.getMedia().getMediaPort();
+            rtpSocket.setPeer(address, port);
+            updateRtpMap(rtpSocket, subset);
+            rtpSocket.getReceiveStream().connect(mux);
+        }
         setState(ConnectionState.OPEN);
     }
 
@@ -173,40 +189,6 @@ public class RtpConnectionImpl extends ConnectionImpl {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Checks is format presented in the list.
-     * 
-     * @param fmts the list of formats to check
-     * @param fmt the format instance to check.
-     * @return true if fmt is in list of fmts.
-     */
-    private boolean contains(Format[] fmts, Format fmt) {
-        for (int i = 0; i < fmts.length; i++) {
-            if (fmts[i].matches(fmt)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Gets the collection of payload types.
-     * 
-     * @param fmts
-     *            the map with payload type as key and format as a value.
-     * @return sorted collection of payload types.
-     */
-    private Collection getPayloads(HashMap fmts) {
-        Object[] payloads = fmts.keySet().toArray();
-
-        ArrayList list = new ArrayList();
-        for (int i = 0; i < payloads.length; i++) {
-            list.add(payloads[i]);
-        }
-
-        Collections.sort(list);
-        return list;
-    }
 
     private int[] getFormatList(HashMap<Integer, Format> fmts) {
         int[] list = new int[fmts.size()];
@@ -215,44 +197,6 @@ public class RtpConnectionImpl extends ConnectionImpl {
             list[i++] = key;
         }
         return list;
-    }
-
-    /**
-     * Extracts address and port of the remote party.
-     * 
-     * @param sdp
-     *            session description.
-     * @return socket address of the remote party.
-     */
-    private InetSocketAddress getPeer(SessionDescription sdp, String media) throws SdpException {
-        javax.sdp.Connection connection = sdp.getConnection();
-
-        Vector list = sdp.getMediaDescriptions(false);
-        MediaDescription md = (MediaDescription) list.get(0);
-        if (md.getMedia().getMediaType().equals("media")) {
-            try {
-                InetAddress address = InetAddress.getByName(connection.getAddress());
-                int port = md.getMedia().getMediaPort();
-                return new InetSocketAddress(address, port);
-            } catch (UnknownHostException e) {
-                throw new SdpException(e);
-            }
-        }
-        return null;
-    }
-
-    private HashMap subset(HashMap<Integer, Format> remote, HashMap<Integer, Format> local) {
-        HashMap<Integer, Format> subset = new HashMap();
-        for (Integer k : remote.keySet()) {
-            Format rf = remote.get(k);
-            for (Integer l : local.keySet()) {
-                Format lf = local.get(l);
-                if (lf.matches(rf)) {
-                    subset.put(k, rf);
-                }
-            }
-        }
-        return subset;
     }
 
     private HashMap subset(HashMap<Integer, Format> map, Format[] fmts) {
@@ -273,14 +217,14 @@ public class RtpConnectionImpl extends ConnectionImpl {
         rtpSocket.getRtpMap().putAll(offer);
     }
 
-    private MediaDescription createAudioDescription(int port, HashMap<Integer, Format> formats) throws SdpException {
+    private MediaDescription createMediaDescription(String mediaType, int port, HashMap<Integer, Format> formats) throws SdpException {
         int[] fmtList = getFormatList(formats);
-        MediaDescription md = sdpFactory.createMediaDescription("audio", port, 1, "RTP/AVP", fmtList);
+        MediaDescription md = sdpFactory.createMediaDescription(mediaType, port, 1, "RTP/AVP", fmtList);
 
         // set attributes for formats
         Vector attributes = new Vector();
         for (int i = 0; i < fmtList.length; i++) {
-            RTPAudioFormat format = (RTPAudioFormat) formats.get(fmtList[i]);
+            RTPFormat format = (RTPFormat) formats.get(fmtList[i]);
             attributes.addAll(format.encode());
         }
 
@@ -288,21 +232,5 @@ public class RtpConnectionImpl extends ConnectionImpl {
         md.setAttributes(attributes);
         return md;
     }
-    
-    private MediaDescription createVideoDescription(int port, HashMap<Integer, Format> formats) throws SdpException {
-        int[] fmtList = getFormatList(formats);
-        MediaDescription md = sdpFactory.createMediaDescription("audio", port, 1, "RTP/AVP", fmtList);
-
-        // set attributes for formats
-        Vector attributes = new Vector();
-        for (int i = 0; i < fmtList.length; i++) {
-            RTPAudioFormat format = (RTPAudioFormat) formats.get(fmtList[i]);
-            attributes.addAll(format.encode());
-        }
-
-        // generate descriptor
-        md.setAttributes(attributes);
-        return md;
-    }
-    
+        
 }

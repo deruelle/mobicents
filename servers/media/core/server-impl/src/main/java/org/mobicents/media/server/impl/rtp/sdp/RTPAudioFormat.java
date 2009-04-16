@@ -43,28 +43,28 @@ import org.mobicents.media.format.AudioFormat;
  * here pay-load is 0 for PCMU, 8 for PCMA and 97 for speex
  * 
  */
-public class RTPAudioFormat extends AudioFormat {
+public class RTPAudioFormat extends AudioFormat implements RTPFormat {
 
-	private int payload;
-        private SdpFactory sdpFactory = SdpFactory.getInstance();
+	private int payloadType;
+        private final static SdpFactory sdpFactory = SdpFactory.getInstance();
         
 	/** Creates a new instance of RTPAudioFormat */
 	public RTPAudioFormat(int payload, String encodingName) {
 		super(encodingName);
-		this.payload = payload;
+		this.payloadType = payload;
 	}
 
 	public RTPAudioFormat(int payload, String encodingName, double sampleRate, int bits, int chans) {
 		super(encodingName, sampleRate, bits, chans);
-		this.payload = payload;
+		this.payloadType = payload;
 	}
 
-	public int getPayload() {
-		return payload;
+	public int getPayloadType() {
+		return payloadType;
 	}
 
-	public void setPayload(int payload) {
-		this.payload = payload;
+	public void setPayloadType(int payload) {
+		this.payloadType = payload;
 	}
 
 	private static int getBits(String enc) {
@@ -137,9 +137,9 @@ public class RTPAudioFormat extends AudioFormat {
             Vector<Attribute> list = new Vector();
             list.add(sdpFactory.createAttribute("rtpmap", toSdp()));
             if (getEncoding().equals("telephone-event/8000")) {
-                list.add(sdpFactory.createAttribute("fmtp", payload + " 0-15"));
+                list.add(sdpFactory.createAttribute("fmtp", payloadType + " 0-15"));
             } else if (getEncoding().equals("g729")) {
-                list.add(sdpFactory.createAttribute("fmtp", payload + " annex=b"));
+                list.add(sdpFactory.createAttribute("fmtp", payloadType + " annex=b"));
             }
             return list;
         }
@@ -147,7 +147,7 @@ public class RTPAudioFormat extends AudioFormat {
 	public String toSdp() {
 		String encName = this.getEncoding().toLowerCase();
 		StringBuffer buff = new StringBuffer();
-		buff.append(payload);
+		buff.append(payloadType);
 		buff.append(" ");
 
 		if (encName.equals("alaw")) {

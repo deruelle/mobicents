@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
-import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
+import org.mobicents.media.server.impl.rtp.sdp.RTPFormatParser;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
@@ -191,11 +191,11 @@ public class RtpConnectionImpl extends BaseConnection {
                 attributes.add(sdpFactory.createAttribute("rtpmap", format.toSdp()));
                 if (format.getEncoding().contains("g729")) {
                     g729 = true;
-                    g729payloadType = format.getPayload(); // should be 18
+                    g729payloadType = format.getPayloadType(); // should be 18
                 }
                 if (format.getEncoding().equals("telephone-event/8000")) {
                     dtmf = true;
-                    dtmfPayload = format.getPayload();
+                    dtmfPayload = format.getPayloadType();
                 }
             }
 
@@ -272,7 +272,7 @@ public class RtpConnectionImpl extends BaseConnection {
         rtpSocket.setPeer(peer.getAddress(), peer.getPort());
 
         // negotiate codecs
-        HashMap<Integer, Format> offer = RTPFormat.getFormats(remoteSDP,"");
+        HashMap<Integer, Format> offer = RTPFormatParser.getFormats(remoteSDP,"");
         //logger.debug("Codec offer = "+ offer);
         HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
         //logger.debug("Codec rtpMap = "+ rtpMap);
