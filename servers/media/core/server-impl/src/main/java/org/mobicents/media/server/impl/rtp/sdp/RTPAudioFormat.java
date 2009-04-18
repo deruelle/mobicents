@@ -84,27 +84,6 @@ public class RTPAudioFormat extends AudioFormat implements RTPFormat {
         }
     }
 
-    /**
-     * Calculates packet size in bytes.
-     * 
-     * @param duration
-     *            the duration of the packet in milliseconds
-     * @return packet size in bytes.
-     */
-    public int getPacketSize(int duration) {
-        if (this.getEncoding().equalsIgnoreCase("alaw")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("ulaw")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("speex")) {
-            return 8 * duration;
-        } else if (this.getEncoding().equalsIgnoreCase("g729")) {
-            return duration;
-        } else if (this.getEncoding().equalsIgnoreCase("gsm")) {
-            return duration;
-        }
-        return 0;
-    }
 
     public static RTPAudioFormat parseFormat(String rtpmap) {
         String tokens[] = rtpmap.toLowerCase().split(" ");
@@ -126,26 +105,27 @@ public class RTPAudioFormat extends AudioFormat implements RTPFormat {
         } else if (encodingName.equals("pcma")) {
             return new RTPAudioFormat(p, AudioFormat.ALAW, clockRate, 8, chans);
         } else if (encodingName.equals("speex")) {
-            return new RTPAudioFormat(p, AudioFormat.SPEEX, clockRate, 8, chans);
+            return new RTPAudioFormat(p, AudioFormat.SPEEX, clockRate, AudioFormat.NOT_SPECIFIED, chans);
         } else if (encodingName.equals("telephone-event")) {
-            return new RTPAudioFormat(p, "telephone-event/8000");
-        }
-        if (encodingName.equals("g729")) {
-            return new RTPAudioFormat(p, AudioFormat.G729, clockRate, 8, chans);
-        }
-        if (encodingName.equals("gsm")) {
-            return new RTPAudioFormat(p, AudioFormat.GSM, clockRate, 8, chans);
+            return new RTPAudioFormat(p, "telephone-event", clockRate, AudioFormat.NOT_SPECIFIED, AudioFormat.NOT_SPECIFIED);
+        } else if (encodingName.equals("g729")) {
+            return new RTPAudioFormat(p, AudioFormat.G729, clockRate, AudioFormat.NOT_SPECIFIED, chans);
+        } else if (encodingName.equals("gsm")) {
+            return new RTPAudioFormat(p, AudioFormat.GSM, clockRate, AudioFormat.NOT_SPECIFIED, chans);
+        } else if (encodingName.equals("l16")){
+            return new RTPAudioFormat(p, AudioFormat.LINEAR, clockRate, 16, chans, 
+                    AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
         } else {
-            return new RTPAudioFormat(p, encodingName, clockRate, getBits(encodingName), chans);
+            return null;
         }
     }
 
     public Collection<Attribute> encode() {
         Vector<Attribute> list = new Vector();
         list.add(sdpFactory.createAttribute("rtpmap", toSdp()));
-        if (getEncoding().equals("telephone-event/8000")) {
+        if (getEncoding().equalsIgnoreCase("telephone-event")) {
             list.add(sdpFactory.createAttribute("fmtp", payloadType + " 0-15"));
-        } else if (getEncoding().equals("g729")) {
+        } else if (getEncoding().equalsIgnoreCase("g729")) {
             list.add(sdpFactory.createAttribute("fmtp", payloadType + " annex=b"));
         }
         return list;
@@ -161,9 +141,12 @@ public class RTPAudioFormat extends AudioFormat implements RTPFormat {
             buff.append("pcma");
         } else if (encName.equals("ulaw")) {
             buff.append("pcmu");
+        } else if (encName.equals("linear")) {
+            buff.append("l" + this.sampleSizeInBits);
         } else {
             buff.append(encName);
-        }
+        } 
+        
         double sr = getSampleRate();
         if (sr > 0) {
             buff.append("/");

@@ -30,17 +30,16 @@ public abstract class AVProfile {
     
     public final static RTPAudioFormat PCMU = new RTPAudioFormat(0, AudioFormat.ULAW, 8000, 8, 1);
     public final static RTPAudioFormat PCMA = new RTPAudioFormat(8, AudioFormat.ALAW, 8000, 8, 1);
-    public final static RTPAudioFormat SPEEX = new RTPAudioFormat(97, AudioFormat.SPEEX, 8000, 8, 1);
-    public final static RTPAudioFormat G729 = new RTPAudioFormat(18, AudioFormat.G729, 8000, 8, 1);
-    public final static RTPAudioFormat GSM = new RTPAudioFormat(3, AudioFormat.GSM, 8000, 8, 1);
+    public final static RTPAudioFormat SPEEX = new RTPAudioFormat(97, AudioFormat.SPEEX, 8000, AudioFormat.NOT_SPECIFIED, 1);
+    public final static RTPAudioFormat G729 = new RTPAudioFormat(18, AudioFormat.G729, 8000, AudioFormat.NOT_SPECIFIED, 1);
+    public final static RTPAudioFormat GSM = new RTPAudioFormat(3, AudioFormat.GSM, 8000, AudioFormat.NOT_SPECIFIED, 1);
     public final static RTPAudioFormat L16_STEREO = new RTPAudioFormat(10, 
             AudioFormat.LINEAR, 44100, 16, 2, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
     public final static RTPAudioFormat L16_MONO = new RTPAudioFormat(11, 
             AudioFormat.LINEAR, 44100, 16, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    public final static RTPAudioFormat L8 = new RTPAudioFormat(11, 
-            AudioFormat.LINEAR, 8000, 8, 1, AudioFormat.LITTLE_ENDIAN, AudioFormat.UNSIGNED);
+    public final static RTPAudioFormat DTMF = new RTPAudioFormat(101, "telephone-event", 8000, AudioFormat.NOT_SPECIFIED, AudioFormat.NOT_SPECIFIED);
     
-    public final static RTPVideoFormat H261 = new RTPVideoFormat(3, VideoFormat.H261, 90000);
+    public final static RTPVideoFormat H261 = new RTPVideoFormat(31, VideoFormat.H261, 90000);
     
     private final static HashMap<Integer, RTPFormat> audioFormats = new HashMap();
     private final static HashMap<Integer, RTPFormat> videoFormats = new HashMap();

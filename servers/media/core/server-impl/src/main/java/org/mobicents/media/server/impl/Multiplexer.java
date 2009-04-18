@@ -32,13 +32,14 @@ import org.mobicents.media.Outlet;
  */
 public class Multiplexer extends AbstractSink implements Outlet {
 
-    private Format[] formats = null;
-    private Format[] fmts = null;
+    private Format[] outputFormats = null;
+    private final static Format[] inputFormats = new Format[0];
+    
     private HashMap<String, Input> inputs = new HashMap();
+    
     private Output output;
     private int seq = 0;
 
-    
     public Multiplexer(String name) {
         super(name);
         output = new Output(name + ".Output");
@@ -49,7 +50,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
     }
 
     public Format[] getFormats() {
-        return output.sink != null ? output.sink.getFormats() : null;//fmts;
+        return inputFormats;
     }
 
     @Override
@@ -84,22 +85,16 @@ public class Multiplexer extends AbstractSink implements Outlet {
         ArrayList list = new ArrayList();
         Collection<Input> sources = inputs.values();
         for (Input input : sources) {
-            Format[] fmts = input.mediaStream != null ? input.mediaStream.getFormats() : null;
-            if (fmts != null) {
-                for (Format format : fmts) {
-                    if (!list.contains(format)) {
-                        list.add(format);
-                    }
+            Format[] fmts = input.getFormats();
+            for (Format format : fmts) {
+                if (!list.contains(format)) {
+                    list.add(format);
                 }
             }
         }
 
-        if (list.size() > 0) {
-            formats = new Format[list.size()];
-            list.toArray(formats);
-        } else {
-            formats = null;
-        }
+        outputFormats = new Format[list.size()];
+        list.toArray(outputFormats);
     }
 
     public boolean isAcceptable(Format fmt) {
@@ -138,7 +133,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
 
     class Output extends AbstractSource {
 
-        private boolean stopped = true;
+        private volatile boolean stopped = true;
 
         public Output(String name) {
             super(name);
@@ -150,16 +145,15 @@ public class Multiplexer extends AbstractSink implements Outlet {
 
         public void stop() {
             stopped = true;
-        //timer.stop();
         }
 
         public Format[] getFormats() {
-            return formats;
+            return outputFormats;
         }
     }
 
     public synchronized void deliver(Buffer buffer) {
-        if (output != null && !output.stopped && output.sink != null) {
+        if (!output.stopped && output.sink != null) {
             buffer.setSequenceNumber(seq);
             buffer.setTimeStamp(seq * 20);
             output.sink.receive(buffer);
