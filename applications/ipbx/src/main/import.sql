@@ -38,7 +38,7 @@ insert into ROLES(ROLEID,VERSION,USERID,role) values(6,1,3,'admin');
 
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (1,1,'pbx.hostname','localhost')
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (2,1,'pbx.call.timeout','80000')
-insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (3,1,'pbx.default.ringback.tone','http://mobicents.googlecode.com/svn/trunk/servers/sip-servlets/sip-servlets-seam/ipbx/audio/ringback.wav')
+insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (3,1,'pbx.default.ringback.tone','http://mobicents.googlecode.com/svn/trunk/applications/ipbx/audio/ringback.wav')
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (4,1,'pbx.default.rejected.announcement','rejected.wav')
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (5,1,'pbx.default.muted.announcement','http://mobicents.googlecode.com/svn/trunk/applications/ipbx/audio/muted.wav')
 insert into GLOBALPROPERTIES(GLOBALPROPERTYID, VERSION, NAME, VALUE) values (6,1,'pbx.default.unmuted.announcement','http://mobicents.googlecode.com/svn/trunk/applications/ipbx/audio/unmuted.wav')
