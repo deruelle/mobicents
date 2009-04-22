@@ -5,7 +5,7 @@
                 
     <bean name="AudioPlayerFactory" class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory"/>
     
-    <bean name="MuxFactory" class="org.mobicents.media.server.resource.MuxFactory">
+    <bean name="MuxFactory" class="org.mobicents.media.server.impl.resource.MuxFactory">
         <constructor>
             <parameter>Mux</parameter>
         </constructor>
