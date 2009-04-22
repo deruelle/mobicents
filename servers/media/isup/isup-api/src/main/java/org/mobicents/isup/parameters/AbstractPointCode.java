@@ -17,8 +17,10 @@ import java.io.IOException;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class SignallingPointCode extends AbstractParameter {
+public abstract class AbstractPointCode extends AbstractParameter {
 
+	
+	
 	private int signalingPointCode = 0;
 
 	/*
@@ -50,4 +52,5 @@ public class SignallingPointCode extends AbstractParameter {
 
 		return b;
 	}
+	
 }

@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
  */
 public class SubsequentNumber extends AbstractNAINumber {
 
+	public static final int _PARAMETER_CODE = 0x05;
+	
 	public SubsequentNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
@@ -58,6 +60,10 @@ public class SubsequentNumber extends AbstractNAINumber {
 	public int encodeBody(ByteArrayOutputStream bos) {
 		// NOTE: we leave this.
 		return 0;
+	}
+	public int getCode() {
+
+		return _PARAMETER_CODE;
 	}
 
 }

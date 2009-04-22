@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class QueryOnReleaseCapability extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x85;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 	private byte[] capabilities = null;
@@ -76,5 +77,8 @@ public class QueryOnReleaseCapability extends AbstractParameter {
 
 		return (byte) (enabled ? _TURN_ON : _TURN_OFF);
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

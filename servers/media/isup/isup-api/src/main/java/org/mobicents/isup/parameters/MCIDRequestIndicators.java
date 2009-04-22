@@ -19,6 +19,8 @@ import java.io.IOException;
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public class MCIDRequestIndicators extends AbstractParameter {
+	
+	public static final int _PARAMETER_CODE = 0x3B;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 	/**
@@ -89,4 +91,8 @@ public class MCIDRequestIndicators extends AbstractParameter {
 		this.holdingIndicator = holdingIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

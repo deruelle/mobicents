@@ -17,10 +17,9 @@ import java.io.IOException;
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public class CallingPartyCategory extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x09;
 	/**
 	 * See Q.763 3.11
 	 */
@@ -106,4 +105,8 @@ public class CallingPartyCategory extends AbstractParameter {
 		this.callingPartyCategory = callingPartyCategory;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

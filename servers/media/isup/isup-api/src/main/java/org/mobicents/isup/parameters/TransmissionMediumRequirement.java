@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class TransmissionMediumRequirement extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x02;
 	/**
 	 * 0 0 0 0 0 0 0 0 speech
 	 */
@@ -208,5 +209,8 @@ public class TransmissionMediumRequirement extends AbstractParameter {
 	public void setTransimissionMediumRequirement(int transimissionMediumRequirement) {
 		this.transimissionMediumRequirement = transimissionMediumRequirement;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

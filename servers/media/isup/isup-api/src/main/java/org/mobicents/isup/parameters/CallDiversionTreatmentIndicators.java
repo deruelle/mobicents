@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class CallDiversionTreatmentIndicators extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x6E;
 	/**
 	 * See Q.763 3.72 Call to be diverted indicator : no indication
 	 */
@@ -75,4 +75,8 @@ public class CallDiversionTreatmentIndicators extends AbstractParameter {
 		return b & 0x03;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

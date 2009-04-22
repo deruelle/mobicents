@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class CallingPartyNumber extends AbstractNAINumber {
 
+	public static final int _PARAMETER_CODE = 0x0A;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
@@ -153,7 +154,6 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
 
-		
 		int c = this.natureOfAddresIndicator << 4;
 		c |= (this.numberIncompleteIndicator << 7);
 		c |= (this.addressRepresentationREstrictedIndicator << 2);
@@ -229,4 +229,8 @@ public class CallingPartyNumber extends AbstractNAINumber {
 		this.screeningIndicator = screeningIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

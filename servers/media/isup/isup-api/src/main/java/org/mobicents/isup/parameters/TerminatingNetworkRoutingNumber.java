@@ -20,7 +20,7 @@ import java.io.IOException;
  *         </a>
  */
 public class TerminatingNetworkRoutingNumber extends AbstractNumber {
-
+	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
 	private int tnrnLengthIndicator = 0;
 	private int numberingPlanIndicator = 0;
@@ -186,5 +186,8 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	public int getTnrnLengthIndicator() {
 		return tnrnLengthIndicator;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

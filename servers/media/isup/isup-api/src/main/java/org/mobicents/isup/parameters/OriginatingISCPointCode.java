@@ -15,6 +15,11 @@ package org.mobicents.isup.parameters;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class OriginatingISCPointCode extends SignallingPointCode {
+public class OriginatingISCPointCode extends AbstractPointCode {
+	public static final int _PARAMETER_CODE = 0x2B;
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

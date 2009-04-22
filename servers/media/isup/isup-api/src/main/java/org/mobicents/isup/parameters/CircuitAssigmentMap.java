@@ -19,6 +19,8 @@ import java.io.IOException;
  */
 public class CircuitAssigmentMap extends AbstractParameter {
 
+	
+	public static final int _PARAMETER_CODE = 0x25;
 	/**
 	 * See Q.763 3.69 Map type : 1544 kbit/s digital path map format (64 kbit/s
 	 * base rate)
@@ -127,4 +129,8 @@ public class CircuitAssigmentMap extends AbstractParameter {
 		this.mapFormat &= 0xFFFFFFFE << circuitNumber;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

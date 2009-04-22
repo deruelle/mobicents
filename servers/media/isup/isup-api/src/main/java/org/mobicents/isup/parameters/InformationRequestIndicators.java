@@ -19,6 +19,8 @@ import java.io.IOException;
  */
 public class InformationRequestIndicators extends AbstractParameter {
 
+	
+	public static final int _PARAMETER_CODE = 0x0E;
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
 
@@ -143,4 +145,8 @@ public class InformationRequestIndicators extends AbstractParameter {
 		this.reserved = reserved;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

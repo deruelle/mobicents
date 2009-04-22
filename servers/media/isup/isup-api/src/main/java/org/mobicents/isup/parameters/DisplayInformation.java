@@ -18,13 +18,14 @@ import java.io.IOException;
  *         </a>
  */
 public class DisplayInformation extends AbstractParameter {
-	// FIXME: Q.931  4.5.16 Display - Oleg is this correct?
+	public static final int _PARAMETER_CODE = 0x73;
+	// FIXME: Q.931 4.5.16 Display - Oleg is this correct?
 
 	private byte[] info = null;
 
 	public DisplayInformation(byte[] info) {
 		super();
-		//FIXME: this is only elementID
+		// FIXME: this is only elementID
 		super.tag = new byte[] { 0x28 };
 		decodeElement(info);
 	}
@@ -64,4 +65,8 @@ public class DisplayInformation extends AbstractParameter {
 		this.info = info;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

@@ -26,6 +26,19 @@ a
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
+	public static final int _PARAMETER_CODE = 0x03;
+
+
+public AccessTransport() {
+	super();
+
+}
+
+	public AccessTransport(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return 0;

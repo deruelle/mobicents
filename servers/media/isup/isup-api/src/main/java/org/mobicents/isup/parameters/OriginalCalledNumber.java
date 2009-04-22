@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class OriginalCalledNumber extends CalledNumber {
 
+	public static final int _PARAMETER_CODE = 0x28;
 	public OriginalCalledNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
@@ -35,4 +36,8 @@ public class OriginalCalledNumber extends CalledNumber {
 		// TODO Auto-generated constructor stub
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

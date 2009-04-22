@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class HopCounter extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x3D;
 	private int hopCounter = 0;
 
 	public HopCounter(byte[] b) {
@@ -61,4 +62,8 @@ public class HopCounter extends AbstractParameter {
 		this.hopCounter = hopCounter;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

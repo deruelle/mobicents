@@ -20,6 +20,7 @@ import java.util.logging.Level;
  */
 public class InstructionIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -310,4 +311,8 @@ public class InstructionIndicators extends AbstractParameter {
 		this.useAsRaw = useAsRaw;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

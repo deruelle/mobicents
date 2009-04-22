@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class PivotRoutingIndicators extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x7C;
 	/**
 	 * See Q.763 3.85 Pivot routing indicators : no indication
 	 */
@@ -83,5 +83,8 @@ public class PivotRoutingIndicators extends AbstractParameter {
 		}
 		this.pivotRoutingIndicators = pivotRoutingIndicators;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

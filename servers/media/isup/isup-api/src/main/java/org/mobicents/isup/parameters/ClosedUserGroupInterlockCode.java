@@ -18,6 +18,8 @@ import java.io.IOException;
  *         </a>
  */
 public class ClosedUserGroupInterlockCode extends AbstractParameter {
+	
+	public static final int _PARAMETER_CODE = 0x1A;
 	// XXX: this parameter is weird, it does not follow general convention of
 	// parameters :/
 	private byte[] niDigits = null;
@@ -38,7 +40,7 @@ public class ClosedUserGroupInterlockCode extends AbstractParameter {
 	 */
 	public ClosedUserGroupInterlockCode(byte[] niDigits, int binaryCode) {
 		super();
-		
+
 		// FIXME: add check for range ?
 		this.setNiDigits(niDigits);
 		this.binaryCode = binaryCode;
@@ -111,4 +113,8 @@ public class ClosedUserGroupInterlockCode extends AbstractParameter {
 		this.binaryCode = binaryCode;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

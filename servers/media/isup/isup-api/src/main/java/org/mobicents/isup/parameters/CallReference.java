@@ -20,6 +20,7 @@ import java.io.IOException;
  */
 public class CallReference extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x01;
 	private int callIdentity = 0;
 	private int signalingPointCode = 0;
 
@@ -104,4 +105,8 @@ public class CallReference extends AbstractParameter {
 		this.signalingPointCode = signalingPointCode;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

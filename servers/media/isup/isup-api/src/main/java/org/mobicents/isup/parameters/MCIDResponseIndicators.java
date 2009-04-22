@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class MCIDResponseIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x3C;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 	// public static boolean HOLDING_NOT_RROVIDED = false;
@@ -98,4 +99,8 @@ public class MCIDResponseIndicators extends AbstractParameter {
 		this.holdingProvidedIndicator = holdingProvidedIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

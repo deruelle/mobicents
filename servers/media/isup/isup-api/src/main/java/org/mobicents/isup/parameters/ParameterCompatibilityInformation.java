@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class ParameterCompatibilityInformation extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x39;
 	private List<Byte> parameterCodes = new ArrayList<Byte>();
 	private List<InstructionIndicators> instructionIndicators = new ArrayList<InstructionIndicators>();
 
@@ -42,44 +43,37 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		
-		if (b == null || b.length <2) {
+
+		if (b == null || b.length < 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  greater than 1");
 		}
-		
+
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		boolean newParameter = true;
 		byte parameterCode = 0;
-		
-		for(int index = 0;index<b.length;index ++)
-		{
-			if(newParameter)
-			{
+
+		for (int index = 0; index < b.length; index++) {
+			if (newParameter) {
 				parameterCode = b[index];
 				bos = new ByteArrayOutputStream();
 				continue;
-			}else
-			{
-				if( ((b[index] >> 7) &0x01) == 1 )
-				{
-					//ext bit, this is last octet
+			} else {
+				if (((b[index] >> 7) & 0x01) == 1) {
+					// ext bit, this is last octet
 					bos.write(b[index]);
-					if(bos.size() <3)
-					{
+					if (bos.size() < 3) {
 						this.addInstructions(parameterCode, new InstructionIndicators(bos.toByteArray()));
-					}else
-					{
-						this.addInstructions(parameterCode, new InstructionIndicators(bos.toByteArray(),true));
+					} else {
+						this.addInstructions(parameterCode, new InstructionIndicators(bos.toByteArray(), true));
 					}
-				}else
-				{
+				} else {
 					bos.write(b[index]);
 					continue;
 				}
 			}
-			
+
 		}
-		
+
 		return b.length;
 	}
 
@@ -90,8 +84,7 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 	 */
 	public byte[] encodeElement() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		for(int index =0;index<this.parameterCodes.size();index++)
-		{
+		for (int index = 0; index < this.parameterCodes.size(); index++) {
 			bos.write(this.parameterCodes.get(index));
 			bos.write(this.instructionIndicators.get(index).encodeElement());
 		}
@@ -122,4 +115,8 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 		this.parameterCodes.remove(index);
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

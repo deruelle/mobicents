@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class RedirectCapability extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x4E;
 	/**
 	 * See Q.763 3.96 Redirect possible indicator : not used
 	 */
@@ -84,5 +85,8 @@ public class RedirectCapability extends AbstractParameter {
 	public static int getCapability(byte b) {
 		return b & 0x7F;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

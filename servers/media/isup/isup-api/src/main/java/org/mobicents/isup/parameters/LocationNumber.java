@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
  */
 public class LocationNumber extends AbstractNAINumber {
 
+	
+	public static final int _PARAMETER_CODE = 0x3F;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
@@ -66,12 +68,10 @@ public class LocationNumber extends AbstractNAINumber {
 	 */
 	public final static int _APRI_SPARE = 3;
 
-
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.30f
 	 */
 	public final static int _SI_USER_PROVIDED_VERIFIED_PASSED = 1;
-
 
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.30f
@@ -121,6 +121,7 @@ public class LocationNumber extends AbstractNAINumber {
 		this.screeningIndicator = (b & 0x03);
 		return 1;
 	}
+
 	@Override
 	public int encodeHeader(ByteArrayOutputStream bos) {
 		doAddressPresentationRestricted();
@@ -149,6 +150,7 @@ public class LocationNumber extends AbstractNAINumber {
 		// 11
 		this.screeningIndicator = 3;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -198,4 +200,8 @@ public class LocationNumber extends AbstractNAINumber {
 		this.screeningIndicator = screeningIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

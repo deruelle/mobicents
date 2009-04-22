@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class InvokingPivotReason extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0;
 	/**
 	 * See Q.763 3.94.4 Pivot Reason : unknown/ not available
 	 */
@@ -83,4 +84,8 @@ public class InvokingPivotReason extends AbstractParameter {
 		return b & 0x7F;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

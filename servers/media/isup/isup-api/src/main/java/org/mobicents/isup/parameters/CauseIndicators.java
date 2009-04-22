@@ -80,6 +80,8 @@ public class CauseIndicators extends AbstractParameter {
 	 */
 	public static final int _LOCATION_NETWORK_BEYOND_IP = 10;
 
+	public static final int _PARAMETER_CODE = 0x12;
+
 	private int location = 0;
 	private int causeValue = 0;
 	private byte[] diagnostics = null;
@@ -107,6 +109,7 @@ public class CauseIndicators extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must not be null or has size less than 2");
 		}
 
+		
 		// first two bytes are mandatory
 		int v = 0;
 		// remove ext
@@ -114,13 +117,13 @@ public class CauseIndicators extends AbstractParameter {
 		this.location = v & 0x0F;
 		this.codingStandard = v >> 5;
 		v = 0;
-		v = b[1] & 0x7;
-
+		v = b[1] & 0x7F;
+		this.causeValue = v;
 		if (b.length == 2) {
 			return 2;
 		} else {
 			if ((b.length - 2) % 3 != 0) {
-				throw new IllegalArgumentException("Diagnostics partt  must have 3xN bytes, it has: " + (b.length - 2));
+				throw new IllegalArgumentException("Diagnostics part  must have 3xN bytes, it has: " + (b.length - 2));
 			}
 
 			int byteCounter = 2;
@@ -133,6 +136,12 @@ public class CauseIndicators extends AbstractParameter {
 
 			this.diagnostics = bos.toByteArray();
 
+			System.err.println("Decode CASE IND");
+			for(byte bb:b)
+			{
+				System.err.println(Integer.toHexString(bb));
+			}
+			
 			return byteCounter;
 		}
 	}
@@ -146,12 +155,18 @@ public class CauseIndicators extends AbstractParameter {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		int v = this.location & 0x0F;
-		v |= (this.codingStandard & 0x03) << 5;
+		v |= (byte)((this.codingStandard & 0x03) << 5);
 		bos.write(v);
 		bos.write(this.causeValue);
 		if (this.diagnostics != null)
 			bos.write(this.diagnostics);
-		return bos.toByteArray();
+		byte[] b = bos.toByteArray();
+		System.err.println("Enecode CASE IND");
+		for(byte bb:b)
+		{
+			System.err.println(Integer.toHexString(bb));
+		}
+		return b;
 	}
 
 	/*
@@ -199,4 +214,8 @@ public class CauseIndicators extends AbstractParameter {
 		this.diagnostics = diagnostics;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

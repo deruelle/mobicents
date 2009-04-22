@@ -19,6 +19,8 @@ import java.io.IOException;
  */
 public class OptionalBakwardCallIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x29;
+
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -144,4 +146,8 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 		this.mllpUserIndicator = mllpUserIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

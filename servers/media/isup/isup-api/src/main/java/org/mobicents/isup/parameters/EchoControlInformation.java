@@ -102,10 +102,28 @@ public class EchoControlInformation extends AbstractParameter {
 	 * echo control device deactivation request (Note 1)
 	 */
 	public static final int _OUTGOING_ECHO_CDRI_DR = 2;
+
+	public static final int _PARAMETER_CODE = 0x37;
 	private int outgoingEchoControlDeviceInformationIndicator = 0;
 	private int incomingEchoControlDeviceInformationIndicator = 0;
 	private int outgoingEchoControlDeviceInformationRequestIndicator = 0;
 	private int incomingEchoControlDeviceInformationRequestIndicator = 0;
+
+	
+	
+	public EchoControlInformation(int outgoingEchoControlDeviceInformationIndicator, int incomingEchoControlDeviceInformationIndicator, int outgoingEchoControlDeviceInformationRequestIndicator,
+			int incomingEchoControlDeviceInformationRequestIndicator) {
+		super();
+		this.outgoingEchoControlDeviceInformationIndicator = outgoingEchoControlDeviceInformationIndicator;
+		this.incomingEchoControlDeviceInformationIndicator = incomingEchoControlDeviceInformationIndicator;
+		this.outgoingEchoControlDeviceInformationRequestIndicator = outgoingEchoControlDeviceInformationRequestIndicator;
+		this.incomingEchoControlDeviceInformationRequestIndicator = incomingEchoControlDeviceInformationRequestIndicator;
+	}
+
+	public EchoControlInformation(byte[] b) {
+		super();
+		decodeElement(b);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -174,4 +192,8 @@ public class EchoControlInformation extends AbstractParameter {
 		this.incomingEchoControlDeviceInformationRequestIndicator = incomingEchoControlDeviceInformationRequestIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

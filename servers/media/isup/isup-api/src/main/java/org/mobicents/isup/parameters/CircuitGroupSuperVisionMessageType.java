@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class CircuitGroupSuperVisionMessageType extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x15;
 	/**
 	 * See Q.763 3.13 Circuit group supervision message type indicator
 	 * maintenance oriented
@@ -74,4 +75,8 @@ public class CircuitGroupSuperVisionMessageType extends AbstractParameter {
 		this.circuitGroupSuperVisionMessageTypeIndicator = circuitGroupSuperVisionMessageTypeIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

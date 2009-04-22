@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
  * @author Oleg Kulikoff
  */
 public class GenericNumber extends AbstractNAINumber {
+	
+	public static final int _PARAMETER_CODE = 0xC0;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
 	 */
@@ -132,7 +134,6 @@ public class GenericNumber extends AbstractNAINumber {
 		this.screeningIndicator = (b & 0x03);
 		return 1;
 	}
-	
 
 	/**
 	 * makes checks on APRI - see NOTE to APRI in Q.763, p 23
@@ -154,6 +155,7 @@ public class GenericNumber extends AbstractNAINumber {
 		// 11
 		this.screeningIndicator = 3;
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -223,4 +225,8 @@ public class GenericNumber extends AbstractNAINumber {
 		this.screeningIndicator = screeningIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

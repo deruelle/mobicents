@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class PerformingPivotIndicator extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0;
 	//FIXME: Oleg?
 	3.94.3
 	/* (non-Javadoc)
@@ -36,5 +37,8 @@ public class PerformingPivotIndicator extends AbstractParameter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+public int getCode() {
+		
+		return _PARAMETER_CODE;
+	}
 }

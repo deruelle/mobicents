@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class PropagationDelayCounter extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x31;
 	private int propagationDelay = 0;
 
 	public PropagationDelayCounter(byte[] b) {
@@ -66,5 +66,8 @@ public class PropagationDelayCounter extends AbstractParameter {
 	public void setPropagationDelay(int propagationDelay) {
 		this.propagationDelay = propagationDelay;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

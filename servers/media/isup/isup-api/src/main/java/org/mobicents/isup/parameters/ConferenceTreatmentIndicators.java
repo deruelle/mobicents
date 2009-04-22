@@ -36,6 +36,8 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 	 */
 	public static final int _CAI_RCR = 2;
 
+	public static final int _PARAMETER_CODE = 0x72;
+
 	private byte[] conferenceAcceptance = null;
 
 	public ConferenceTreatmentIndicators(byte[] b) {
@@ -87,4 +89,8 @@ public class ConferenceTreatmentIndicators extends AbstractParameter {
 		return b & 0x03;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

@@ -18,7 +18,7 @@ import java.io.ByteArrayInputStream;
  *         </a>
  */
 public class CalledINNumber extends CalledNumber {
-
+	public static final int _PARAMETER_CODE = 0x6F;
 	/**
 	 * @param representation
 	 */
@@ -46,4 +46,8 @@ public class CalledINNumber extends CalledNumber {
 		// TODO Auto-generated constructor stub
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

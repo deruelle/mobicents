@@ -17,9 +17,11 @@ import java.io.ByteArrayOutputStream;
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
- * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public class CalledDirectoryNumber extends AbstractNAINumber {
+
+	// FIXME: whats the code ?
+	public static final int _PARAMETER_CODE = 0x7D;
 
 	/**
 	 * See Q.763 Numbering plan indicator : ISDN (Telephony) numbering plan
@@ -111,4 +113,8 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

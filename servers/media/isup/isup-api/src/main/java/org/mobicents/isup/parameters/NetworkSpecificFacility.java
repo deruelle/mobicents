@@ -21,6 +21,8 @@ import java.io.IOException;
  */
 public class NetworkSpecificFacility extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x2F;
+
 	/**
 	 * This tells us to include byte 1a - sets lengthOfNetworkIdentification to
 	 * 1+networkdIdentification.length
@@ -182,4 +184,8 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		this.networkSpecificaFacilityIndicator = networkSpecificaFacilityIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

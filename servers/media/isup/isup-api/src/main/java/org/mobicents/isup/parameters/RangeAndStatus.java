@@ -19,7 +19,7 @@ import java.io.IOException;
  *         </a>
  */
 public class RangeAndStatus extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x16;
 	private byte range = 0;
 	private byte[] status = null;
 
@@ -78,5 +78,8 @@ public class RangeAndStatus extends AbstractParameter {
 	public void setStatus(byte[] status) {
 		this.status = status;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

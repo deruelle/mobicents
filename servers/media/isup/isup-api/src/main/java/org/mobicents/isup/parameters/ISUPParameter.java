@@ -25,4 +25,6 @@ public interface ISUPParameter extends ISUPComponent {
 	 * @return
 	 */
 	byte[] getTag();
+	//Returns value of certain _PARAMETER_CODE element;
+	int getCode();
 }

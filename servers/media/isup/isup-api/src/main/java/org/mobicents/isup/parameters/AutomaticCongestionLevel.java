@@ -19,7 +19,7 @@ import java.io.IOException;
  *         </a>
  */
 public class AutomaticCongestionLevel extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x27;
 	public static final int _CONGESTION_LEVE_1_EXCEEDED = 1;
 	public static final int _CONGESTION_LEVE_2_EXCEEDED = 2;
 
@@ -68,5 +68,8 @@ public class AutomaticCongestionLevel extends AbstractParameter {
 		this.automaticCongestionLevel = automaticCongestionLevel;
 	}
 
-	
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

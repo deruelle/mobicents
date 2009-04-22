@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class SuspendResumeIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x22;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -75,5 +76,8 @@ public class SuspendResumeIndicators extends AbstractParameter {
 	public void setSuspendResumeIndicator(boolean suspendResumeIndicator) {
 		this.suspendResumeIndicator = suspendResumeIndicator;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

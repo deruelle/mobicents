@@ -25,6 +25,8 @@ public class TransitNetworkSelection extends AbstractParameter {
 
 	protected static final Logger logger = Logger.getLogger(TransitNetworkSelection.class);
 
+	
+	public static final int _PARAMETER_CODE = 0x23;
 	/**
 	 * See Q.763 3.53 Type of network identification : CCITT/ITU-T-standardized
 	 * identification
@@ -301,5 +303,8 @@ public class TransitNetworkSelection extends AbstractParameter {
 	public boolean isOddFlag() {
 		return oddFlag == _FLAG_ODD;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

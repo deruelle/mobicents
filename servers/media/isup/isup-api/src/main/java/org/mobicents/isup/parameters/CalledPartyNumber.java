@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream;
  * @author Oleg Kulikoff
  */
 public class CalledPartyNumber extends AbstractNAINumber {
-
+	public static final int _PARAMETER_CODE = 0x04;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
@@ -143,4 +143,8 @@ public class CalledPartyNumber extends AbstractNAINumber {
 		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

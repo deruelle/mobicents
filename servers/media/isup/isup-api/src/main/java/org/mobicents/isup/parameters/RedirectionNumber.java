@@ -41,6 +41,7 @@ public class RedirectionNumber extends AbstractNAINumber {
 	 * internal network number indicator indicator value. See Q.763 - 3.9c
 	 */
 	public final static int _INN_ROUTING_NOT_ALLOWED = 1;
+	public static final int _PARAMETER_CODE = 0x0C;
 
 	protected int numberingPlanIndicator = 0;
 
@@ -106,5 +107,8 @@ public class RedirectionNumber extends AbstractNAINumber {
 	public void setInternalNetworkNumberIndicator(int internalNetworkNumberIndicator) {
 		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

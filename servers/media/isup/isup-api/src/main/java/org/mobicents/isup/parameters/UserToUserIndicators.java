@@ -58,6 +58,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	 * discarded by the network
 	 */
 	public static final boolean _NDI_UTUIDBTN = true;
+	public static final int _PARAMETER_CODE = 0x2A;
 
 	private boolean response = false;
 	private int serviceOne = 0;
@@ -149,5 +150,8 @@ public class UserToUserIndicators extends AbstractParameter {
 	public void setNetworkDiscardIndicator(boolean networkDiscardIndicator) {
 		this.networkDiscardIndicator = networkDiscardIndicator;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

@@ -20,6 +20,7 @@ import java.io.IOException;
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public class SCFID extends NetworkRoutingNumber {
+	public static final int _PARAMETER_CODE = 0x66;
 	// FIXME: Q.1218 - oleg is this correct? :
 	// http://www.itu.int/ITU-T/asn1/database/itu-t/q/q1238.2/2000/IN-CS3-SSF-SCF-datatypes.html
 	public SCFID() {
@@ -42,6 +43,9 @@ public class SCFID extends NetworkRoutingNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 
 }

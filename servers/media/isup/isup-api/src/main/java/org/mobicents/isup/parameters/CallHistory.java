@@ -19,6 +19,7 @@ import java.io.IOException;
  *         </a>
  */
 public class CallHistory extends AbstractParameter {
+	public static final int _PARAMETER_CODE = 0;
 	// XXX: again this goes aganist usuall way.
 	private int callHistory = 0;
 
@@ -66,5 +67,10 @@ public class CallHistory extends AbstractParameter {
 
 	public void setCallHistory(int callHistory) {
 		this.callHistory = callHistory;
+	}
+
+	public int getCode() {
+
+		return _PARAMETER_CODE;
 	}
 }

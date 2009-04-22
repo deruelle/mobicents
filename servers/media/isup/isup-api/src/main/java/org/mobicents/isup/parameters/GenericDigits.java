@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class GenericDigits extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0xC1;
 	/**
 	 * See Q.763 3.24 Encoding scheme : BCD even: (even number of digits)
 	 */
@@ -140,4 +141,8 @@ public class GenericDigits extends AbstractParameter {
 		this.digits = digits;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

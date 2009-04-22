@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class FacilityIndicator extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x18;
 	/**
 	 * See Q.763 3.22 facility indicator user-to-user service
 	 */
@@ -67,4 +68,8 @@ public class FacilityIndicator extends AbstractParameter {
 		this.facilityIndicator = facilityIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

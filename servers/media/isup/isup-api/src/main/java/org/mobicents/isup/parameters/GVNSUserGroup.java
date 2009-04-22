@@ -21,13 +21,14 @@ import java.io.IOException;
  */
 public class GVNSUserGroup extends AbstractNumber {
 
+	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
 	private int gugLengthIndicator = 0;
 
-	
 	public GVNSUserGroup() {
-		
+
 	}
+
 	public GVNSUserGroup(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
@@ -102,7 +103,7 @@ public class GVNSUserGroup extends AbstractNumber {
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
 		return super.decodeDigits(bis, this.gugLengthIndicator);
 	}
-	
+
 	@Override
 	public void setAddress(String address) {
 		// TODO Auto-generated method stub
@@ -115,4 +116,8 @@ public class GVNSUserGroup extends AbstractNumber {
 		}
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

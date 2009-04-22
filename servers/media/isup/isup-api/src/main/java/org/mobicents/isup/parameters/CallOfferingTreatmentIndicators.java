@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class CallOfferingTreatmentIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x70;
 	/**
 	 * See Q.763 3.74 Call to be offered indicator : no indication
 	 */
@@ -85,4 +86,8 @@ public class CallOfferingTreatmentIndicators extends AbstractParameter {
 		return b & 0x03;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

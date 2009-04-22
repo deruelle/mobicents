@@ -20,6 +20,7 @@ import java.io.IOException;
  */
 public class UIDActionIndicators extends AbstractParameter {
 
+	
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -45,6 +46,7 @@ public class UIDActionIndicators extends AbstractParameter {
 	 * timer
 	 */
 	public static final boolean _T9_TII_SDNST9T = false;
+	public static final int _PARAMETER_CODE = 0x74;
 
 	public UIDActionIndicators(byte[] udiActionIndicators) {
 		super();
@@ -100,5 +102,8 @@ public class UIDActionIndicators extends AbstractParameter {
 	public static boolean getTCIIndicator(byte b) {
 		return ((b >> 1) & 0x01) == _TURN_ON;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

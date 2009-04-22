@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class RedirectCounter extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x77;
 	private int counter = 0;
 
 	public RedirectCounter(byte[] b) {
@@ -62,5 +63,8 @@ public class RedirectCounter extends AbstractParameter {
 	public void setCounter(int counter) {
 		this.counter = counter;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

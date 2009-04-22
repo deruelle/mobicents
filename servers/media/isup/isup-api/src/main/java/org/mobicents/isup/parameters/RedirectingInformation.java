@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class RedirectingInformation extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0;
 	/**
 	 * See Q.763 3.45 Redirecting indicator no redirection (national use)
 	 */
@@ -188,5 +189,8 @@ public class RedirectingInformation extends AbstractParameter {
 	public void setRedirectionReason(byte redirectionReason) {
 		this.redirectionReason = redirectionReason;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

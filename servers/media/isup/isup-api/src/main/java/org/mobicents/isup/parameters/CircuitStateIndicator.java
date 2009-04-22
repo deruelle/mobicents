@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class CircuitStateIndicator extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x26;
 	// FIXME: Q.763 3.14 - Oleg is this correct?
 
 	/**
@@ -155,4 +156,10 @@ public class CircuitStateIndicator extends AbstractParameter {
 	public int getMaintenanceBlockingState(byte b) {
 		return b & 0x03;
 	}
+
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
+
 }

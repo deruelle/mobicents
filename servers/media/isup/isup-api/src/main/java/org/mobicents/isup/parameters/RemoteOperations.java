@@ -18,11 +18,15 @@ import java.io.IOException;
  *         </a>
  */
 public class RemoteOperations extends AbstractParameter {
+	public static final int _PARAMETER_CODE = 0x32;
 aa
-//FIXME: cehck with Oleg: 3.48
-	/* (non-Javadoc)
-	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
-	 */
+
+
+	public RemoteOperations(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return 0;
@@ -35,5 +39,8 @@ aa
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

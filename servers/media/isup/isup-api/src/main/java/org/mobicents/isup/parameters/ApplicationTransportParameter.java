@@ -24,6 +24,16 @@ public class ApplicationTransportParameter extends AbstractParameter {
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
+	public static final int _PARAMETER_CODE = 0x78;
+
+	
+	
+	
+	public ApplicationTransportParameter(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return 0;
@@ -37,4 +47,8 @@ public class ApplicationTransportParameter extends AbstractParameter {
 		return null;
 	}
 
+	public int getCode() {
+		
+		return _PARAMETER_CODE;
+	}
 }

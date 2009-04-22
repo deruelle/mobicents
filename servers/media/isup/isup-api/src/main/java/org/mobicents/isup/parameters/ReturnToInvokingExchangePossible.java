@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class ReturnToInvokingExchangePossible extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0;
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
@@ -34,5 +34,8 @@ public class ReturnToInvokingExchangePossible extends AbstractParameter {
 		// TODO Auto-generated method stub
 		return new byte[]{};
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

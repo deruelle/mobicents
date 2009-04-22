@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class PivotCapability extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x7B;
 	/**
 	 * See Q.763 3.84 Pivot possible indicator : no indication
 	 */
@@ -110,4 +111,8 @@ public class PivotCapability extends AbstractParameter {
 		return b & 0x07;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

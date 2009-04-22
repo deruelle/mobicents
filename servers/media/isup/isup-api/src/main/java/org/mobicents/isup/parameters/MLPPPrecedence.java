@@ -19,6 +19,8 @@ import java.io.IOException;
  */
 public class MLPPPrecedence extends AbstractParameter {
 
+	
+	public static final int _PARAMETER_CODE = 0x3A;
 	/**
 	 * See Q.763 3.34 LFB (Look ahead for busy) : LFB allowed
 	 */
@@ -160,4 +162,8 @@ public class MLPPPrecedence extends AbstractParameter {
 		this.niDigits = niDigits;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

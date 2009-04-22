@@ -20,7 +20,7 @@ import java.io.IOException;
 public class GenericNotificationIndicator extends AbstractParameter {
 
 	/**
-	 * See Q.763 3.25 Notification indicator :  user suspended
+	 * See Q.763 3.25 Notification indicator : user suspended
 	 */
 	public static final int _NI_USER_SUSPENDED = 0;
 
@@ -34,7 +34,8 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	 */
 	public static final int _NI_BEARER_SERVICE_CHANGE = 2;
 	/**
-	 * See Q.763 3.25 Notification indicator : discriminator for extension to ASN.1
+	 * See Q.763 3.25 Notification indicator : discriminator for extension to
+	 * ASN.1
 	 */
 	public static final int _NI_DISCRIMINATOR_FOR_EXTENSION_TO_ASN1 = 3;
 
@@ -90,7 +91,8 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	public static final int _NI_CALL_IS_AWAITING = 0xC0;
 
 	/**
-	 * See Q.763 3.25 Notification indicator : diversion activated (used in DSS1)
+	 * See Q.763 3.25 Notification indicator : diversion activated (used in
+	 * DSS1)
 	 */
 	public static final int _NI_DIVERSION_ACTIVATED = 0x68;
 
@@ -118,6 +120,8 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	 * See Q.763 3.25 Notification indicator : call is diverting
 	 */
 	public static final int _NI_RCID = 0x8B;
+
+	public static final int _PARAMETER_CODE = 0x2C;
 	private int[] notificationIndicator = null;
 
 	public GenericNotificationIndicator(byte[] b) {
@@ -181,4 +185,8 @@ public class GenericNotificationIndicator extends AbstractParameter {
 		this.notificationIndicator = notificationIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class ConnectionRequest extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x0D;
 	private int localReference = 0;
 	private int signalingPointCode = 0;
 	private boolean protocolClassSet = false;
@@ -133,4 +134,8 @@ public class ConnectionRequest extends AbstractParameter {
 		this.credit = credit;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

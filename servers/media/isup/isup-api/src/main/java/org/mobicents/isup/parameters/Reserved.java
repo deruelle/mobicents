@@ -18,6 +18,8 @@ import java.io.IOException;
  *         </a>
  */
 public class Reserved extends AbstractParameter {
+	
+	public static final int _PARAMETER_CODE = 0;
 aa
 //FIXME?
 	/* (non-Javadoc)
@@ -35,5 +37,8 @@ aa
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

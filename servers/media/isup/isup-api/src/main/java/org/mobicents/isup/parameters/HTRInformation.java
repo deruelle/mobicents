@@ -31,6 +31,8 @@ public class HTRInformation extends AbstractNAINumber {
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
 	public final static int _NPI_TELEX = 4;
+	
+	public static final int _PARAMETER_CODE = 0x82;
 
 	private int numberingPlanIndicator = 0;
 
@@ -84,4 +86,8 @@ public class HTRInformation extends AbstractNAINumber {
 		this.numberingPlanIndicator = numberingPlanIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

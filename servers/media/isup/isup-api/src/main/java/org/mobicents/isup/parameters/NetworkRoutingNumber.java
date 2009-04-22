@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class NetworkRoutingNumber extends AbstractNumber {
 
+	public static final int _PARAMETER_CODE = 0x84;
 	/**
 	 * See Q.763 3.90 Numbering plan indicator : ISDN (Telephony) numbering plan
 	 * (ITU-T Recommendation E.164)
@@ -128,4 +129,8 @@ public class NetworkRoutingNumber extends AbstractNumber {
 		this.natureOfAddressIndicator = natureOfAddressIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class ForwardCallIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x07;
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
 
@@ -111,11 +112,13 @@ public class ForwardCallIndicators extends AbstractParameter {
 	public static final int _SCCP_MI_CL_AND_CO = 3;
 
 	/**
-	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part not used all the way
+	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part not
+	 * used all the way
 	 */
 	public static final boolean _ISDN_UPI_NOTUSED = false;
 	/**
-	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part used all the way
+	 * See q.763 3.23 ISDN user part indicator (Note 2) : ISDN user part used
+	 * all the way
 	 */
 	public static final boolean _ISDN_UPI_USED = true;
 
@@ -270,6 +273,8 @@ public class ForwardCallIndicators extends AbstractParameter {
 		this.isdnAccessIndicator = isdnAccessIndicator;
 	}
 
+	public int getCode() {
 
-
+		return _PARAMETER_CODE;
+	}
 }

@@ -21,7 +21,7 @@ import java.io.IOException;
 public class UserTeleserviceInformation extends AbstractParameter {
 	// NOTE: Q.931 4.5.17 High layer compatibility --> it has the same structure
 	// and encoding
-
+	public static final int _PARAMETER_CODE = 0x34;
 	/**
 	 * See Q.931 4.5.17 Coding standard : ITU-T standardized coding,
 	 */
@@ -353,5 +353,8 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	public boolean isEVidedoTelephonyCharIdentificationPresent() {
 		return eVidedoTelephonyCharIdentificationPresent;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

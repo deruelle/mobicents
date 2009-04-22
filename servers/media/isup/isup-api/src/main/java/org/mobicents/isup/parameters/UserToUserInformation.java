@@ -25,6 +25,17 @@ public class UserToUserInformation extends AbstractParameter {
 	/* (non-Javadoc)
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
+	
+	public UserToUserInformation() {
+		super();
+		
+	}
+	public UserToUserInformation(byte[] b) {
+		super();
+		decodeElement(b);
+	}
+	public static final int _PARAMETER_CODE = 0x20;
+
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
 		// TODO Auto-generated method stub
 		return 0;
@@ -37,5 +48,8 @@ public class UserToUserInformation extends AbstractParameter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

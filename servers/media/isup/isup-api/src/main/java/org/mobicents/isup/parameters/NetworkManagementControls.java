@@ -18,6 +18,8 @@ import java.io.IOException;
  *         </a>
  */
 public class NetworkManagementControls extends AbstractParameter {
+	
+	public static final int _PARAMETER_CODE = 0x5B;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 	private byte[] networkManagementControls = null;
@@ -33,7 +35,7 @@ public class NetworkManagementControls extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		
+
 		setNetworkManagementControls(b);
 		return b.length;
 	}
@@ -72,4 +74,8 @@ public class NetworkManagementControls extends AbstractParameter {
 		this.networkManagementControls = networkManagementControls;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

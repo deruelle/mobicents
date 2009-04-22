@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class PivotRoutingForwardInformation extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x88;
 	//FIXME: Addd this after those polygon shapes. 3.94
 	aa
 	/* (non-Javadoc)
@@ -36,5 +37,8 @@ public class PivotRoutingForwardInformation extends AbstractParameter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

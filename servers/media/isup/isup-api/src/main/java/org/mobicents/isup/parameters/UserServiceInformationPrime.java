@@ -18,6 +18,8 @@ import java.io.IOException;
  *         </a>
  */
 public class UserServiceInformationPrime extends AbstractParameter {
+	
+	public static final int _PARAMETER_CODE = 0x30;
 //FIXME Q.931
 	aa
 	/* (non-Javadoc)
@@ -35,5 +37,8 @@ public class UserServiceInformationPrime extends AbstractParameter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

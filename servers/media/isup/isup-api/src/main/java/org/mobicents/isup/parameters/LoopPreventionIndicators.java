@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class LoopPreventionIndicators extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x44;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -81,7 +82,7 @@ public class LoopPreventionIndicators extends AbstractParameter {
 		if (this.response) {
 			v |= (this.responseIndicator & 0x03) << 1;
 		}
-		return new byte[] { (byte) v};
+		return new byte[] { (byte) v };
 	}
 
 	public boolean isResponse() {
@@ -100,4 +101,8 @@ public class LoopPreventionIndicators extends AbstractParameter {
 		this.responseIndicator = responseIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

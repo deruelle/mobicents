@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class CollectCallRequest extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x79;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
@@ -74,4 +75,8 @@ public class CollectCallRequest extends AbstractParameter {
 		this.collectCallRequested = collectCallRequested;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

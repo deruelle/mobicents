@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class BackwardGVNS extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x4D;
 	private byte[] backwardGVNS = null;
 
 	public BackwardGVNS(byte[] backwardGVNS) {
@@ -65,4 +65,8 @@ public class BackwardGVNS extends AbstractParameter {
 		this.backwardGVNS = backwardGVNS;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

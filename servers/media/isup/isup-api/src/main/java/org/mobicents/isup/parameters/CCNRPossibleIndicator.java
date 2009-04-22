@@ -30,6 +30,7 @@ public class CCNRPossibleIndicator extends AbstractParameter {
 	 * See Q.763 3.83 CCNR possible indicator : possible
 	 */
 	public static final boolean _CCNR_PI_POSSIBLE = true;
+	public static final int _PARAMETER_CODE = 0x7A;
 
 	private boolean ccnrPossible = false;
 
@@ -75,4 +76,8 @@ public class CCNRPossibleIndicator extends AbstractParameter {
 		this.ccnrPossible = ccnrPossible;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

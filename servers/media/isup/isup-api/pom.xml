@@ -11,6 +11,23 @@
 	
 	<name>Mobicents ISDN User Part Stack API:: ${pom.artifactId}</name>
 	
+	<dependencies>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>concurrent</groupId>
+			<artifactId>concurrent</artifactId>
+		</dependency>
+	</dependencies>
+	
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>

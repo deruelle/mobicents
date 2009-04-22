@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class PivotCounter extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x87;
 	private int counter = 0;
 
 	public PivotCounter(byte[] b) {
@@ -61,6 +62,11 @@ public class PivotCounter extends AbstractParameter {
 
 	public void setCounter(int counter) {
 		this.counter = counter;
+	}
+	
+	public int getCode() {
+
+		return _PARAMETER_CODE;
 	}
 
 }

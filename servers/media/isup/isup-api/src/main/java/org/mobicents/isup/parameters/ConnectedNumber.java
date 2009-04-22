@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class ConnectedNumber extends AbstractNAINumber {
 
+	public static final int _PARAMETER_CODE = 0x21;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
@@ -62,12 +63,10 @@ public class ConnectedNumber extends AbstractNAINumber {
 	 */
 	public final static int _APRI_SPARE = 3;
 
-
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.10f
 	 */
 	public final static int _SI_USER_PROVIDED_VERIFIED_PASSED = 1;
-
 
 	/**
 	 * screening indicator indicator value. See Q.763 - 3.10f
@@ -142,7 +141,6 @@ public class ConnectedNumber extends AbstractNAINumber {
 		this.screeningIndicator = 3;
 	}
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -183,4 +181,8 @@ public class ConnectedNumber extends AbstractNAINumber {
 		this.screeningIndicator = screeningIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

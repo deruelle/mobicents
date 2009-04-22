@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class EventInformation extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x24;
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
 
@@ -122,6 +123,9 @@ public class EventInformation extends AbstractParameter {
 	public void setEventPresentationRestrictedIndicator(boolean eventPresentationRestrictedIndicator) {
 		this.eventPresentationRestrictedIndicator = eventPresentationRestrictedIndicator;
 	}
-	
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

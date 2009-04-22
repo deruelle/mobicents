@@ -20,6 +20,8 @@ import java.io.IOException;
  */
 public class CorrelationID extends GenericDigits {
 
+	public static final int _PARAMETER_CODE = 0x65;
+
 	public CorrelationID(byte[] b) {
 		super(b);
 		// TODO Auto-generated constructor stub
@@ -29,7 +31,11 @@ public class CorrelationID extends GenericDigits {
 		super(encodignScheme, typeOfDigits, digits);
 		// TODO Auto-generated constructor stub
 	}
+
 	// FIXME: Q.1218 -- weird document.... Oleg is this correct? or should it be
 	// mix of GenericNumber and Generic digits?
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

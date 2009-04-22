@@ -19,6 +19,7 @@ import java.io.IOException;
  */
 public class RedirectStatus extends AbstractParameter {
 
+	public static final int _PARAMETER_CODE = 0x8A;
 	/**
 	 * See Q.763 3.98 Redirect status indicator : not used
 	 */
@@ -80,5 +81,8 @@ public class RedirectStatus extends AbstractParameter {
 	public static int getStatusIndicator(byte b) {
 		return b & 0x03;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

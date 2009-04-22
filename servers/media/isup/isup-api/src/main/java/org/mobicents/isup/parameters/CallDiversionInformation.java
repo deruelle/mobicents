@@ -71,13 +71,15 @@ public class CallDiversionInformation extends AbstractParameter {
 	public static final int _REDIRECTING_REASON_DDA = 4;
 	/**
 	 * see Q.763 3.6 Redirecting reason deflection immediate response
-	 */ 
+	 */
 	public static final int _REDIRECTING_REASON_DIR = 5;
 
 	/**
 	 * see Q.763 3.6 Redirecting reason mobile subscriber not reachable
 	 */
 	public static final int _REDIRECTING_REASON_MSNR = 6;
+
+	public static final int _PARAMETER_CODE = 0x36;
 	private int redirectingReason = 0;
 
 	public CallDiversionInformation(int notificationSubscriptionOptions, int redirectingReason) {
@@ -150,4 +152,8 @@ public class CallDiversionInformation extends AbstractParameter {
 		this.redirectingReason = redirectingReason;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

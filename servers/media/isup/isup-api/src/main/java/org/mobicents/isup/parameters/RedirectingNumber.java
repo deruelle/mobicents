@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
  */
 public class RedirectingNumber extends AbstractNAINumber {
 
+	public static final int _PARAMETER_CODE = 0x0B;
 	protected int numberingPlanIndicator = 0;
 
 	protected int addressRepresentationRestrictedIndicator = 0;
@@ -127,6 +128,10 @@ public class RedirectingNumber extends AbstractNAINumber {
 		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 	/**
 	 * <pre>
 	 * a) Odd/even indicator: as for 3.9 a).

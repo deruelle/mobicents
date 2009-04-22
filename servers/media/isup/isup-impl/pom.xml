@@ -1,32 +1,38 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mobicents-jain-isup-stack-parent</artifactId>
 		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>mobicents-jain-isup-stack-api-impl</artifactId>
-	
+
 	<name>Mobicents ISDN User Part Stack Impl:: ${pom.artifactId}</name>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>			
+			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${pom.groupId}</groupId>
 			<artifactId>mobicents-jain-isup-stack-api</artifactId>
 			<version>${pom.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>concurrent</groupId>
 			<artifactId>concurrent</artifactId>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<finalName>${pom.artifactId}-${pom.version}</finalName>
 		<plugins>
@@ -39,5 +45,5 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>	
+	</build>
 </project>

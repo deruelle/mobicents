@@ -25,6 +25,8 @@ public class ServiceActivation extends AbstractParameter {
 	 */
 	public final static byte _FEATURE_CODE_CALL_TRANSFER = 1;
 
+	public static final int _PARAMETER_CODE = 0x33;
+
 	private byte[] featureCodes = null;
 
 	public ServiceActivation(byte[] featureCodes) {
@@ -58,5 +60,8 @@ public class ServiceActivation extends AbstractParameter {
 	public void setFeatureCodes(byte[] featureCodes) {
 		this.featureCodes = featureCodes;
 	}
+	public int getCode() {
 
+		return _PARAMETER_CODE;
+	}
 }

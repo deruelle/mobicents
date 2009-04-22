@@ -21,14 +21,14 @@ import java.io.IOException;
  */
 public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 
+	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
 	private int opspLengthIndicator = 0;
 
-	
 	public OriginatingParticipatingServiceProvider() {
-		
+
 	}
-	
+
 	public OriginatingParticipatingServiceProvider(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
@@ -95,8 +95,6 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 		return 0;
 	}
 
-	
-	
 	@Override
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
 		return super.decodeDigits(bis, this.opspLengthIndicator);
@@ -118,4 +116,8 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 		}
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

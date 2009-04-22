@@ -18,7 +18,7 @@ import java.io.IOException;
  *         </a>
  */
 public class CallTransferReference extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x43;
 	private int callTransferReference = 0;
 
 	public CallTransferReference(byte[] b) {
@@ -61,4 +61,8 @@ public class CallTransferReference extends AbstractParameter {
 		this.callTransferReference = callTransferReference;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

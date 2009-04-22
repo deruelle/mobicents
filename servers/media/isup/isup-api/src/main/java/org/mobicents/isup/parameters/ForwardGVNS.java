@@ -20,7 +20,7 @@ import java.io.IOException;
  *         </a>
  */
 public class ForwardGVNS extends AbstractParameter {
-
+	public static final int _PARAMETER_CODE = 0x4C;
 	private OriginatingParticipatingServiceProvider opServiceProvider = null;
 	private GVNSUserGroup gvnsUserGroup = null;
 	private TerminatingNetworkRoutingNumber tnRoutingNumber = null;
@@ -105,5 +105,10 @@ public class ForwardGVNS extends AbstractParameter {
 
 	public void setTnRoutingNumber(TerminatingNetworkRoutingNumber tnRoutingNumber) {
 		this.tnRoutingNumber = tnRoutingNumber;
+	}
+
+	public int getCode() {
+
+		return _PARAMETER_CODE;
 	}
 }

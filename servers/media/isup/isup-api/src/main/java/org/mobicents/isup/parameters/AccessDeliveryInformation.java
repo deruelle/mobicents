@@ -30,6 +30,8 @@ public class AccessDeliveryInformation extends AbstractParameter {
 	 * See Q.763 3.2  Access delivery indicator:no set-up message generated
 	 */
 	public static final int _ACI_NO_SME= 1;
+
+	public final static int _PARAMETER_CODE = 0x2E;
 	
 	private int accessDeliveryIndicator = 0;
 	
@@ -80,6 +82,11 @@ public class AccessDeliveryInformation extends AbstractParameter {
 
 	public void setAccessDeliveryIndicator(int accessDeliveryIndicator) {
 		this.accessDeliveryIndicator = accessDeliveryIndicator;
+	}
+
+	public int getCode() {
+
+		return _PARAMETER_CODE;
 	}
 
 	

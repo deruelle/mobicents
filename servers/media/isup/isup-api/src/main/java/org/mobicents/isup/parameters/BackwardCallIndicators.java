@@ -19,6 +19,7 @@ import java.io.IOException;
  *         </a>
  */
 public class BackwardCallIndicators extends AbstractParameter {
+	public static final int _PARAMETER_CODE = 0x11;
 
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -354,4 +355,8 @@ public class BackwardCallIndicators extends AbstractParameter {
 		this.sccpMethodIndicator = sccpMethodIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }

@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  */
 public abstract class CalledNumber extends AbstractNAINumber {
-
+	public static final int _PARAMETER_CODE = 0;
 	/**
 	 * numbering plan indicator indicator value. See Q.763 - 3.9d
 	 */
@@ -125,4 +125,8 @@ public abstract class CalledNumber extends AbstractNAINumber {
 		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
+	public int getCode() {
+
+		return _PARAMETER_CODE;
+	}
 }
