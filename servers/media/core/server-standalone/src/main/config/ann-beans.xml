@@ -63,7 +63,7 @@
 	<!-- ANNOUNCEMENT  -->
     <bean name="Announcement-Access-Point" class="org.mobicents.media.server.EndpointImpl">
         <property name="localName">
-            /mobicents/media/announcement
+            /mobicents/media/aap/[1..10]
         </property>
         <property name="timer">
             <inject bean="Timer"/>

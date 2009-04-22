@@ -6,7 +6,7 @@
     </bean>
     
     <!-- Media Server -->
-    <bean name="MediaServer" class="org.mobicents.media.server.InnerNamingService">
+    <bean name="MediaServer" class="org.mobicents.media.server.impl.naming.InnerNamingService">
         <incallback method="addEndpoint"/>
         <uncallback method="removeEndpoint"/>
     </bean>
