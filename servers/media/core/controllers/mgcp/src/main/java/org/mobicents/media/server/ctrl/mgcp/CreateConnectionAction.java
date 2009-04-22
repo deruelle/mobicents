@@ -40,7 +40,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.EndpointQuery;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
@@ -95,8 +94,7 @@ public class CreateConnectionAction implements Callable {
 		// lookup endpoint
 		Endpoint endpoint = null;
 		try {
-			EndpointQuery query = EndpointQuery.getInstance();
-			endpoint = query.lookup(localName);
+			endpoint = controller.getNamingService().lookup(localName, false);
 			if (logger.isDebugEnabled()) {
 				logger.debug("TX=" + txID + ", Allocated endpoint: " + endpoint.getLocalName());
 			}
@@ -193,8 +191,7 @@ public class CreateConnectionAction implements Callable {
 		// lookup endpoint
 		Endpoint endpoint = null;
 		try {
-			EndpointQuery query = EndpointQuery.getInstance();
-			endpoint = query.lookup(localName);
+			endpoint = controller.getNamingService().lookup(localName, false);
 		} catch (ResourceUnavailableException e) {
 			logger.warn("TX = " + txID + ", There is no free endpoint: " + localName + ", ResponseCode: "
 					+ ReturnCode.ENDPOINT_UNKNOWN);
@@ -238,8 +235,7 @@ public class CreateConnectionAction implements Callable {
 		// lookup endpoint 2
 		Endpoint endpoint2 = null;
 		try {
-			EndpointQuery query = EndpointQuery.getInstance();
-			endpoint2 = query.lookup(localName2);
+			endpoint2 = controller.getNamingService().lookup(localName2, false);
 		} catch (ResourceUnavailableException e) {
 			logger.warn("TX = " + txID + ", There is no free endpoint: " + localName2 + ", ResponseCode: "
 					+ ReturnCode.ENDPOINT_UNKNOWN);

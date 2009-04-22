@@ -46,6 +46,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.NamingService;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 
 /**
@@ -54,173 +55,177 @@ import org.mobicents.mgcp.stack.JainMgcpStackImpl;
  */
 public class MgcpController implements JainMgcpListener {
 
-	private static final Logger logger = Logger.getLogger(MgcpController.class);
+    private static final Logger logger = Logger.getLogger(MgcpController.class);
+    private JainMgcpProvider mgcpProvider;
+    private JainMgcpStackImpl mgcpStack;
+    private JainIPFactory jainFactory;
+    private InetAddress inetAddress = null;
+    private String bindAddress = null;
+    private int port = 2727;
+    private NamingService namingService;
+    private ConcurrentHashMap<String, Call> calls = new ConcurrentHashMap<String, Call>();
 
-	private JainMgcpProvider mgcpProvider;
-	private JainMgcpStackImpl mgcpStack;
-	private JainIPFactory jainFactory;
+    public MgcpController() {
+    }
 
-	private InetAddress inetAddress = null;
-	private String bindAddress = null;
-	private int port = 2727;
+    public NamingService getNamingService() {
+        return namingService;
+    }
 
-	private ConcurrentHashMap<String, Call> calls = new ConcurrentHashMap<String, Call>();
+    public void setNamingService(NamingService namingService) {
+        this.namingService = namingService;
+    }
 
-	public MgcpController() {
-	}
+    
+    public String getBindAddress() {
+        return this.bindAddress;
+    }
 
-	public String getBindAddress() {
-		return this.bindAddress;
-	}
+    public void setBindAddress(String bindAddress) throws UnknownHostException {
+        this.bindAddress = bindAddress;
+        this.inetAddress = InetAddress.getByName(bindAddress);
+    }
 
-	public void setBindAddress(String bindAddress) throws UnknownHostException {
-		this.bindAddress = bindAddress;
-		this.inetAddress = InetAddress.getByName(bindAddress);
-	}
+    public int getPort() {
+        return this.port;
+    }
 
-	public int getPort() {
-		return this.port;
-	}
+    public void setPort(int port) {
+        this.port = port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public void create() {
+        logger.info("Starting MGCP Controller module for MMS");
+    }
 
-	public void create() {
-		logger.info("Starting MGCP Controller module for MMS");
-	}
+    /**
+     * Starts MGCP controller.
+     * 
+     * @throws java.lang.Exception
+     */
+    public void start() throws Exception {
 
-	/**
-	 * Starts MGCP controller.
-	 * 
-	 * @throws java.lang.Exception
-	 */
-	public void start() throws Exception {
+        // jainFactory = JainIPFactory.getInstance();
+        // jainFactory.setPathName("org.mobicents");
 
-		// jainFactory = JainIPFactory.getInstance();
-		// jainFactory.setPathName("org.mobicents");
+        mgcpStack = new JainMgcpStackImpl(this.inetAddress, this.port);
 
-		mgcpStack = new JainMgcpStackImpl(this.inetAddress, this.port);
+        mgcpProvider = mgcpStack.createProvider();
+        mgcpProvider.addJainMgcpListener(this);
 
-		mgcpProvider = mgcpStack.createProvider();
-		mgcpProvider.addJainMgcpListener(this);
+        this.port = mgcpStack.getPort();
+        logger.info("Started MGCP Controller module for MMS");
+    }
 
-		this.port = mgcpStack.getPort();
-		logger.info("Started MGCP Controller module for MMS");
-	}
+    /**
+     * Stops MGCP controller.
+     * 
+     * @throws java.lang.Exception
+     */
+    public void stop() {
+        logger.info("Stoping MGCP Controller module for MMS. Listening at IP " + this.inetAddress + " port " + this.port);
+        mgcpProvider.removeJainMgcpListener(this);
+        try {
+            mgcpStack.deleteProvider(mgcpProvider);
+        } catch (DeleteProviderException e) {
+            e.printStackTrace();
+        }
+    }
 
-	/**
-	 * Stops MGCP controller.
-	 * 
-	 * @throws java.lang.Exception
-	 */
-	public void stop() {
-		logger.info("Stoping MGCP Controller module for MMS. Listening at IP " + this.inetAddress + " port "
-				+ this.port);
-		mgcpProvider.removeJainMgcpListener(this);
-		try {
-			mgcpStack.deleteProvider(mgcpProvider);
-		} catch (DeleteProviderException e) {			
-			e.printStackTrace();
-		}
-	}
+    public void destroy() {
+        logger.info("Stopped MGCP Controller module for MMS");
+    }
 
-	public void destroy() {
-		logger.info("Stopped MGCP Controller module for MMS");
-	}
-	
-	public JainMgcpStackImpl getMgcpSatck(){
-		return this.mgcpStack;
-	}
-	
-	public JainMgcpProvider getMgcpProvider(){
-		return this.mgcpProvider;
-	}
+    public JainMgcpStackImpl getMgcpSatck() {
+        return this.mgcpStack;
+    }
 
-	/**
-	 * Processes a Command Event object received from a JainMgcpProvider.
-	 * 
-	 * @param evt -
-	 *            The JAIN MGCP Command Event Object that is to be processed.
-	 */
-	public void processMgcpCommandEvent(JainMgcpCommandEvent evt) {
-		// define action to be performed
-		Callable<JainMgcpResponseEvent> action = null;
+    public JainMgcpProvider getMgcpProvider() {
+        return this.mgcpProvider;
+    }
 
-		// construct object implementing requested action using
-		// object identifier
-		int eventID = evt.getObjectIdentifier();
-		switch (eventID) {
-		case Constants.CMD_CREATE_CONNECTION:
-			action = new CreateConnectionAction(this, (CreateConnection) evt);
-			break;
-		case Constants.CMD_MODIFY_CONNECTION:
-			break;
-		case Constants.CMD_DELETE_CONNECTION:
-			action = new DeleteConnectionAction(this, (DeleteConnection) evt);
-			break;
-		default:
-			logger.error("Unknown message type: " + eventID);
-			return;
-		}
+    /**
+     * Processes a Command Event object received from a JainMgcpProvider.
+     * 
+     * @param evt -
+     *            The JAIN MGCP Command Event Object that is to be processed.
+     */
+    public void processMgcpCommandEvent(JainMgcpCommandEvent evt) {
+        // define action to be performed
+        Callable<JainMgcpResponseEvent> action = null;
 
-		// try to perform action and send response back.
-		try {
-			JainMgcpResponseEvent response = action.call();
-			mgcpProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
-		} catch (Exception e) {
-			logger.error("Unexpected error during processing,Caused by ", e);
-		}
+        // construct object implementing requested action using
+        // object identifier
+        int eventID = evt.getObjectIdentifier();
+        switch (eventID) {
+            case Constants.CMD_CREATE_CONNECTION:
+                action = new CreateConnectionAction(this, (CreateConnection) evt);
+                break;
+            case Constants.CMD_MODIFY_CONNECTION:
+                break;
+            case Constants.CMD_DELETE_CONNECTION:
+                action = new DeleteConnectionAction(this, (DeleteConnection) evt);
+                break;
+            default:
+                logger.error("Unknown message type: " + eventID);
+                return;
+        }
 
-	}
+        // try to perform action and send response back.
+        try {
+            JainMgcpResponseEvent response = action.call();
+            mgcpProvider.sendMgcpEvents(new JainMgcpEvent[]{response});
+        } catch (Exception e) {
+            logger.error("Unexpected error during processing,Caused by ", e);
+        }
 
-	/**
-	 * Processes a Response Event object (acknowledgment to a Command Event
-	 * object) received from a JainMgcpProvider.
-	 * 
-	 * @param evt -
-	 *            The JAIN MGCP Response Event Object that is to be processed.
-	 */
-	public void processMgcpResponseEvent(JainMgcpResponseEvent evt) {
-	}
+    }
 
-	protected Call getCall(String callID) {
-		return calls.get(callID);
-	}
+    /**
+     * Processes a Response Event object (acknowledgment to a Command Event
+     * object) received from a JainMgcpProvider.
+     * 
+     * @param evt -
+     *            The JAIN MGCP Response Event Object that is to be processed.
+     */
+    public void processMgcpResponseEvent(JainMgcpResponseEvent evt) {
+    }
 
-	protected void addCall(Call call) {
-		calls.put(call.getID(), call);
-	}
+    protected Call getCall(String callID) {
+        return calls.get(callID);
+    }
 
-	protected void removeCall(String callID) {
-		calls.remove(callID);
-	}
+    protected void addCall(Call call) {
+        calls.put(call.getID(), call);
+    }
 
-	protected Collection<ConnectionActivity> getActivities(String endpointName) {
-		ArrayList<ConnectionActivity> list = new ArrayList<ConnectionActivity>();
-		for (Call call : calls.values()) {
-			Collection<ConnectionActivity> activities = call.getActivities();
-			for (ConnectionActivity activity : activities) {
-				if (activity.getMediaConnection().getEndpoint().getLocalName().equals(endpointName)) {
-					list.add(activity);
-				}
-			}
-		}
-		return list;
-	}
+    protected void removeCall(String callID) {
+        calls.remove(callID);
+    }
 
-	protected ConnectionActivity getActivity(String endpointName, String connectionID) {
-		for (Call call : calls.values()) {
-			Collection<ConnectionActivity> activities = call.getActivities();
-			for (ConnectionActivity activity : activities) {
-				Connection connection = activity.getMediaConnection();
-				if (connection.getEndpoint().getLocalName().equals(endpointName)
-						&& connection.getId().equals(connectionID)) {
-					return activity;
-				}
-			}
-		}
-		return null;
-	}
+    protected Collection<ConnectionActivity> getActivities(String endpointName) {
+        ArrayList<ConnectionActivity> list = new ArrayList<ConnectionActivity>();
+        for (Call call : calls.values()) {
+            Collection<ConnectionActivity> activities = call.getActivities();
+            for (ConnectionActivity activity : activities) {
+                if (activity.getMediaConnection().getEndpoint().getLocalName().equals(endpointName)) {
+                    list.add(activity);
+                }
+            }
+        }
+        return list;
+    }
 
+    protected ConnectionActivity getActivity(String endpointName, String connectionID) {
+        for (Call call : calls.values()) {
+            Collection<ConnectionActivity> activities = call.getActivities();
+            for (ConnectionActivity activity : activities) {
+                Connection connection = activity.getMediaConnection();
+                if (connection.getEndpoint().getLocalName().equals(endpointName) && connection.getId().equals(connectionID)) {
+                    return activity;
+                }
+            }
+        }
+        return null;
+    }
 }

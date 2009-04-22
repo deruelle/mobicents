@@ -39,7 +39,6 @@ import java.util.concurrent.Callable;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.EndpointQuery;
 
 /**
  *
@@ -52,7 +51,6 @@ public class DeleteConnectionAction implements Callable {
     private DeleteConnection req;
     private MgcpController controller;
     private MgcpUtils utils = new MgcpUtils();
-    private EndpointQuery endpointQuery = EndpointQuery.getInstance();
     
     protected DeleteConnectionAction(MgcpController controller, DeleteConnection req) {
         this.controller = controller;
@@ -62,7 +60,7 @@ public class DeleteConnectionAction implements Callable {
     private JainMgcpResponseEvent endpointDeleteConnections(String localName) {
         Endpoint endpoint = null;
         try {
-            endpoint = endpointQuery.find(localName);
+            endpoint = controller.getNamingService().lookup(localName, true);
         } catch (Exception e) {
             return new DeleteConnectionResponse(controller, ReturnCode.Endpoint_Unknown);
         }
@@ -95,7 +93,7 @@ public class DeleteConnectionAction implements Callable {
     private JainMgcpResponseEvent deleteConnection(String localName, String connectionID) {
         Endpoint endpoint = null;
         try {
-            endpoint = endpointQuery.find(localName);
+            endpoint = controller.getNamingService().lookup(localName, true);
         } catch (Exception e) {
             return new DeleteConnectionResponse(controller, ReturnCode.Endpoint_Unknown);
         }

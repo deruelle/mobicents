@@ -31,12 +31,13 @@ import org.apache.log4j.Logger;
 import org.jboss.beans.metadata.api.annotations.Install;
 import org.jboss.beans.metadata.api.annotations.Uninstall;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NamingService;
 
 /**
  *
  * @author kulikov
  */
-public class InnerNamingService {
+public class InnerNamingService implements NamingService {
     private HashMap<String, Endpoint> endpoints = new HashMap();
     private final static Logger logger = Logger.getLogger(InnerNamingService.class);
     
@@ -58,5 +59,9 @@ public class InnerNamingService {
     public void removeEndpoint(Endpoint endpoint) {
         endpoints.remove(endpoint.getLocalName());
         logger.info("Unregistered endpoint: local name " + endpoint.getLocalName());
+    }
+
+    public Endpoint lookup(String endpointName, boolean allowInUse) {
+        return null;
     }
 }
