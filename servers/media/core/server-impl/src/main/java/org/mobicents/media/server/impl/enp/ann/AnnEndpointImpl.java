@@ -27,7 +27,7 @@ import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.events.dtmf.DtmfGenerator;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.spi.ResourceUnavailableException;

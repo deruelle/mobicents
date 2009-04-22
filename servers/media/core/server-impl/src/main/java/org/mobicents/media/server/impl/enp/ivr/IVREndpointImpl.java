@@ -15,7 +15,7 @@ package org.mobicents.media.server.impl.enp.ivr;
 
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
-import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.events.audio.Recorder;
@@ -86,7 +86,7 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     }
 
     protected void startPrimarySink() {
-        demux = new Demultiplexer(getFormats(), "Demultiplexer "+this.getLocalName());
+        demux = new Demultiplexer("Demultiplexer "+this.getLocalName());
 
         recorder = new Recorder("wav", recordDir);
         dtmfDetector = new DtmfDetector("DtmfDetector[" + getLocalName() + "]");

@@ -28,8 +28,8 @@ public class MixerOutput extends AbstractSource {
     }
 
     protected void push(Buffer buffer) {
-        if (sink != null) {
-            sink.receive(buffer);
+        if (otherParty != null) {
+            otherParty.receive(buffer);
         }
     }
 

@@ -15,7 +15,6 @@
 package org.mobicents.media.server.spi.dsp;
 
 import java.io.Serializable;
-import org.mobicents.media.Format;
 
 /**
  * Creates specific codec implemntation.
@@ -23,5 +22,5 @@ import org.mobicents.media.Format;
  * @author Oleg Kulikov
  */
 public interface CodecFactory extends Serializable {
-    public Codec getCodec(Format input, Format output);
+    public Codec getCodec();
 }

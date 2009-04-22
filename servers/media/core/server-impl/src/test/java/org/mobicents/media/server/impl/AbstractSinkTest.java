@@ -53,8 +53,8 @@ public class AbstractSinkTest {
 
         sink.connect(stream);
 
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     /**
@@ -76,8 +76,8 @@ public class AbstractSinkTest {
 
         sink.connect(stream);
 
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     @Test
@@ -96,8 +96,8 @@ public class AbstractSinkTest {
 
         sink.connect(stream);
 
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
 
     }
 
@@ -117,8 +117,8 @@ public class AbstractSinkTest {
 
         sink.connect(stream);
 
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     @Test
@@ -137,8 +137,8 @@ public class AbstractSinkTest {
 
         sink.connect(stream);
 
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     /**
@@ -156,8 +156,8 @@ public class AbstractSinkTest {
         sink.connect(stream);
         sink.disconnect(stream);
 
-        assertEquals(sink.mediaStream, null);
-        assertEquals(stream.sink, null);
+        assertEquals(sink.otherParty, null);
+        assertEquals(stream.otherParty, null);
     }
 
     private class TestSink extends AbstractSink {

@@ -41,7 +41,6 @@ import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.clock.Timer;
-import org.mobicents.media.server.local.management.WorkDataGatherer;
 
 /**
  *
@@ -357,20 +356,6 @@ public class RtpSocket implements Runnable {
         socket.send(senderPacket);
     }
     
-    public void setWorkDataGatherer(WorkDataGatherer g) {
-        try {
-            if (this.sendStream != null) {
-                this.sendStream.setWorkDataSink(g);
-            }
-
-            if (this.receiveStream != null) {
-                this.receiveStream.setWorkDataSink(g);
-            }
-
-        } catch (NullPointerException npe) {
-            npe.printStackTrace();
-        }
-    }
 
     private InetSocketAddress getPublicAddress(InetSocketAddress localAddress) throws StunException {
         StunAddress local = new StunAddress(localAddress.getAddress(), localAddress.getPort());

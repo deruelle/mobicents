@@ -13,48 +13,31 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.util.List;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-import org.jboss.util.id.UID;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public abstract class AbstractSource extends AbstractWorkDataGatherer implements MediaSource {
+public abstract class AbstractSource extends BaseComponent implements MediaSource {
 
-    protected transient MediaSink sink;
-    private List<NotificationListener> listeners = new CopyOnWriteArrayList();
-    private String id = null;
-    private String name = null;
+    protected transient MediaSink otherParty;
 
     public AbstractSource(String name) {
-        this.id = (new UID()).toString();
-        this.name = name;
+        super(name);
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.MediaStream#connect(MediaSink).
      */
-    public void connect(MediaSink sink) {
-        this.sink = sink;
-        if (((AbstractSink) sink).mediaStream == null) {
-            sink.connect(this);
+    public void connect(MediaSink otherParty) {
+        this.otherParty = otherParty;
+        if (((AbstractSink) otherParty).otherParty == null) {
+            otherParty.connect(this);
         }
     }
 
@@ -63,20 +46,12 @@ public abstract class AbstractSource extends AbstractWorkDataGatherer implements
      * 
      * @see org.mobicents.MediaStream#diconnection(MediaSink).
      */
-    public void disconnect(MediaSink sink) {
-        if (this.sink != null) {
-            this.sink = null;
-            ((AbstractSink) sink).mediaStream = null;
-            sink.disconnect(this);
+    public void disconnect(MediaSink otherParty) {
+        if (this.otherParty != null) {
+            this.otherParty = null;
+            ((AbstractSink) otherParty).otherParty = null;
+            otherParty.disconnect(this);
         }
-    }
-
-    public void addListener(NotificationListener listener) {
-        listeners.add(listener);
-    }
-
-    public void removeListener(NotificationListener listener) {
-        listeners.remove(listener);
     }
 
     @Override
@@ -90,22 +65,10 @@ public abstract class AbstractSource extends AbstractWorkDataGatherer implements
         return hash;
     }
 
-    protected void sendEvent(NotifyEvent evt) {
-        for (NotificationListener listener : listeners) {
-            listener.update(evt);
-        }
-    }
 
     public void dispose() {
-        listeners.clear();
-        if (this.sink != null) {
-            ((AbstractSink) sink).mediaStream = null;
+        if (this.otherParty != null) {
+            ((AbstractSink) otherParty).otherParty = null;
         }
-    }
-
-    @Override
-    public String toString() {
-        return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
-
     }
 }

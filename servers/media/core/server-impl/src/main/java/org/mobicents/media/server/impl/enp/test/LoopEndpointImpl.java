@@ -15,9 +15,9 @@ import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
-import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
@@ -41,7 +41,7 @@ public class LoopEndpointImpl extends BaseEndpoint {
         
         this.setMaxConnectionsAvailable(1);
         mux = new Multiplexer("");
-        demux = new Demultiplexer(FORMATS, "Demultiplexer "+this.getLocalName());
+        demux = new Demultiplexer("Demultiplexer "+this.getLocalName());
     }
 
     @Override

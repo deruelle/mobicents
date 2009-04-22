@@ -54,8 +54,8 @@ public class AbstractSourceTest {
         
             stream.connect(sink);
         
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     /**
@@ -73,8 +73,8 @@ public class AbstractSourceTest {
             stream.connect(sink);
             stream.disconnect(sink);
         
-        assertEquals(sink.mediaStream, null);
-        assertEquals(stream.sink, null);
+        assertEquals(sink.otherParty, null);
+        assertEquals(stream.otherParty, null);
     }
 
     @Test
@@ -93,8 +93,8 @@ public class AbstractSourceTest {
         
             stream.connect(sink);
         
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     @Test
@@ -113,8 +113,8 @@ public class AbstractSourceTest {
         
             stream.connect(sink);
         
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
         
     }
     
@@ -134,8 +134,8 @@ public class AbstractSourceTest {
         
             stream.connect(sink);
         
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     @Test
@@ -154,8 +154,8 @@ public class AbstractSourceTest {
         
             stream.connect(sink);
         
-        assertEquals(sink.mediaStream, stream);
-        assertEquals(stream.sink, sink);
+        assertEquals(sink.otherParty, stream);
+        assertEquals(stream.otherParty, sink);
     }
 
     

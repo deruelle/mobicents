@@ -13,49 +13,31 @@
  */
 package org.mobicents.media.server.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.jboss.util.id.UID;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public abstract class AbstractSink extends AbstractWorkDataGatherer implements MediaSink {
+public abstract class AbstractSink extends BaseComponent implements MediaSink {
 
-    protected transient MediaSource mediaStream;
-    private List<NotificationListener> listeners = new ArrayList();
-    private String id = null;
-    private String name = null;
+    protected transient MediaSource otherParty;
 
     public AbstractSink(String name) {
-        this.id = (new UID()).toString();
-        this.name = name;
-
+        super(name);
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    
     /**
      * (Non Java-doc).
      * 
      * @see org.mobicents.MediaSink#connect(MediaStream).
      */
-    public void connect(MediaSource mediaStream) {
-        this.mediaStream = mediaStream;
-        if (((AbstractSource) mediaStream).sink == null) {
-            mediaStream.connect(this);
+    public void connect(MediaSource otherParty) {
+        this.otherParty = otherParty;
+        if (((AbstractSource) otherParty).otherParty == null) {
+            otherParty.connect(this);
         }
     }
 
@@ -64,47 +46,19 @@ public abstract class AbstractSink extends AbstractWorkDataGatherer implements M
      * 
      * @see org.mobicents.MediaSink#disconnect(MediaStream).
      */
-    public void disconnect(MediaSource mediaStream) {
-        if (this.mediaStream != null) {
-            this.mediaStream = null;
-            ((AbstractSource) mediaStream).sink = null;
-            mediaStream.disconnect(this);
-        }
-    }
-
-    public void addListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    public void removeListener(NotificationListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
-    protected void sendEvent(NotifyEvent evt) {
-        synchronized (listeners) {
-            for (NotificationListener listener : listeners) {
-                listener.update(evt);
-            }
+    public void disconnect(MediaSource otherParty) {
+        if (this.otherParty != null) {
+            this.otherParty = null;
+            ((AbstractSource) otherParty).otherParty = null;
+            otherParty.disconnect(this);
         }
     }
 
     public void dispose() {
-        synchronized (listeners) {
-            listeners.clear();
+        if (this.otherParty != null) {
+            ((AbstractSource) otherParty).otherParty = null;
         }
-        if (this.mediaStream != null) {
-            ((AbstractSource) mediaStream).sink = null;
-        }
-        mediaStream = null;
+        otherParty = null;
     }
 
-    @Override
-    public String toString() {
-        return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
-
-    }
 }

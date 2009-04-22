@@ -101,4 +101,7 @@
         <property name="timer"><inject bean="Timer"/></property>
     </bean>
     
+    <bean name="G711.UlawEncoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory"/>
+    <bean name="G711.UlawDecoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory"/>
+    
 </deployment>

@@ -31,7 +31,7 @@ import java.io.Serializable;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
@@ -65,7 +65,7 @@ public class RxChannel implements Serializable {
     public RxChannel(int index) {
         this.index = index;
         dsp = new Processor("rx-channel-" + index);
-        demux = new Demultiplexer(f1, "Demultiplexer rx-channel-" + index);
+        demux = new Demultiplexer("Demultiplexer rx-channel-" + index);
         dsp.getOutput().connect(demux.getInput());
         dsp.configure(f1, f2);
         

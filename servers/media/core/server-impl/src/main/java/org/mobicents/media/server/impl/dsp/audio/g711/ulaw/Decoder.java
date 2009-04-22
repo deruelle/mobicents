@@ -15,14 +15,13 @@ package org.mobicents.media.server.impl.dsp.audio.g711.ulaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
  * @author Oleg Kulikov
  */
-public class Decoder extends BaseCodec {
+public class Decoder implements Codec {
 
     private final static int cBias = 0x84;
     private int QUANT_MASK = 0xf;

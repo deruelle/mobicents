@@ -4,6 +4,7 @@
  */
 package org.mobicents.media.server.impl.dsp;
 
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -12,8 +13,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.Utils;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
  *
@@ -37,7 +40,15 @@ public class ProcessorTest {
     private final static Format[] FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
     
     private Processor dsp;
-
+    
+    private CodecFactory pcmaEncoderFactory = new org.mobicents.media.server.impl.dsp.audio.g711.alaw.EncoderFactory();
+    private CodecFactory pcmaDecoderFactory = new org.mobicents.media.server.impl.dsp.audio.g711.alaw.DecoderFactory();
+    
+    private CodecFactory pcmuEncoderFactory = new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory();
+    private CodecFactory pcmuDecoderFactory = new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory();
+    
+    private DspFactory dspFactory = new DspFactory();
+    
     public ProcessorTest() {
     }
 
@@ -51,7 +62,15 @@ public class ProcessorTest {
 
     @Before
     public void setUp() {
-        dsp = new Processor("TestProcessor");
+        ArrayList<CodecFactory> codecFactories = new ArrayList();
+        codecFactories.add(pcmaEncoderFactory);
+        codecFactories.add(pcmaDecoderFactory);
+        codecFactories.add(pcmuEncoderFactory);
+        codecFactories.add(pcmuDecoderFactory);
+        
+        dspFactory.setName("test");
+        dspFactory.setCodecFactories(codecFactories);
+        dsp = (Processor) dspFactory.newInstance(null);
     }
 
     @After
@@ -59,37 +78,18 @@ public class ProcessorTest {
     }
 
     @Test
-    public void testFormatsNoConnection() {
-        Format[] formats = dsp.getInput().getFormats();
-        assertEquals(FORMATS, formats);
+    public void testInputFormats() {
+        Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO};
+        Format[] fmts = dsp.getInput().getFormats();
+        assertEquals(true, Utils.checkFormats(fmts, expected));
     }
 
-    @Test
-    public void testFormatsWithConnection() {
-        TestSink s = new TestSink();
-        dsp.getOutput().connect(s);
-
-        Format[] formats = dsp.getInput().getFormats();
-
-        assertEquals(7, formats.length);
-        
-        assertEquals(true, contains(formats, PCMA));
-        assertEquals(true, contains(formats, PCMU));
-        assertEquals(true, contains(formats, SPEEX));
-        assertEquals(true, contains(formats, G729));
-        assertEquals(true, contains(formats, LINEAR));
-        assertEquals(true, contains(formats, DTMF));
-        assertEquals(true, contains(formats, GSM));
+    public void testOutputFormats() {
+        Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO};
+        Format[] fmts = dsp.getInput().getFormats();
+        assertEquals(true, Utils.checkFormats(fmts, expected));
     }
-
-    private boolean contains(Format[] fmts, Format fmt) {
-        for (int i = 0; i < fmts.length; i++) {
-            if (fmts[i].matches(fmt)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    
 
     private class TestSink extends AbstractSink {
     	

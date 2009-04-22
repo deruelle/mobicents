@@ -33,7 +33,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.MediaResource;
-import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.spi.NotificationListener;

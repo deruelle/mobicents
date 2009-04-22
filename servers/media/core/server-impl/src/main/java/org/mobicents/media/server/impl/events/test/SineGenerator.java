@@ -89,8 +89,8 @@ public class SineGenerator extends AbstractSource implements Runnable {
         buffer.setFormat(LINEAR_AUDIO);
         seq++;
         
-        if (sink != null) {
-            sink.receive(buffer);
+        if (otherParty != null) {
+            otherParty.receive(buffer);
         }
     }
 

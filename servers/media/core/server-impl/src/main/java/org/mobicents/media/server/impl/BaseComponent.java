@@ -24,43 +24,55 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.dsp;
+package org.mobicents.media.server.impl;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import org.jboss.util.id.UID;
 import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.dsp.CodecFactory;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
-    private String name;
-    private List<CodecFactory> codecFactories;
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
+public abstract class BaseComponent implements Component {
+
+    private String id = null;
+    private String name = null;
+    private List<NotificationListener> listeners = new CopyOnWriteArrayList();
+
+    public BaseComponent(String name) {
+        this.id = (new UID()).toString();
         this.name = name;
     }
     
-    public List<CodecFactory> getCodecFactories() {
-        return codecFactories;
+    public String getId() {
+        return this.id;
     }
-    
-    public void setCodecFactories(List<CodecFactory> codecFactories) {
-        this.codecFactories = codecFactories;
+
+    public String getName() {
+        return name;
     }
-    
-    public Component newInstance(Endpoint endpoint) {
-        Processor p = new Processor(this.name);
-        for (CodecFactory factory :  codecFactories) {
-            p.add(factory.getCodec());
+        
+    protected void sendEvent(NotifyEvent evt) {
+        for (NotificationListener listener : listeners) {
+            listener.update(evt);
         }
-        return p;
     }
+    
+    public void addListener(NotificationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(NotificationListener listener) {
+        listeners.remove(listener);
+    }
+
+    @Override
+    public String toString() {
+        return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
+    }
+    
 }

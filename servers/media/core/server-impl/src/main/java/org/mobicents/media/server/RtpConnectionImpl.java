@@ -39,8 +39,8 @@ import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.Demultiplexer;
-import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
+import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
@@ -86,7 +86,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
         }
         
         //create demux and join with txChannel
-        demux = new Demultiplexer();
+        demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
         txChannel.connect(demux.getInput());
 
         //join demux and rtp sockets

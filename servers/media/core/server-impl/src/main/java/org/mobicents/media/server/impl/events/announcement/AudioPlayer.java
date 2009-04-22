@@ -245,7 +245,7 @@ public class AudioPlayer extends AbstractSource {
         buffer.setSequenceNumber(seq++);
 
         try {
-            sink.receive(buffer);
+            otherParty.receive(buffer);
             errorCount = 0;
             if (eom) {
                 worker.cancel(true);

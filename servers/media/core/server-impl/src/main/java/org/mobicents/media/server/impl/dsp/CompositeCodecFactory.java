@@ -36,8 +36,9 @@ import org.mobicents.media.server.spi.dsp.CodecFactory;
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
+public class CompositeCodecFactory implements ComponentFactory {
     private String name;
+    
     private List<CodecFactory> codecFactories;
     
     public String getName() {
@@ -63,4 +64,5 @@ public class DspFactory implements ComponentFactory {
         }
         return p;
     }
+    
 }

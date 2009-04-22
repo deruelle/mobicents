@@ -71,13 +71,13 @@ public class ReceiveStream extends AbstractSource implements Runnable {
             return;
         }
         
-        if (sink == null) {
+        if (otherParty == null) {
             return;
         }
 
         //The sink for ReceiveStream is Processor.Input
         try {
-            sink.receive(frame);
+            otherParty.receive(frame);
         } catch (Exception e) {
         }
     }

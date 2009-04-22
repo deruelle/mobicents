@@ -25,8 +25,9 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.resource.audio;
+package org.mobicents.media.server.impl.resource;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -34,8 +35,24 @@ import org.mobicents.media.server.spi.Endpoint;
  *
  * @author kulikov
  */
-public class AudioPlayerFactory implements ComponentFactory {
-    public AudioPlayer newInstance(Endpoint endpoint) {
-        return new AudioPlayer(endpoint);
+public class MuxFactory implements ComponentFactory {
+
+    private String name;
+
+    public MuxFactory(String name) {
+        this.name = name;
     }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public Component newInstance(Endpoint endpoint) {
+        return new Multiplexer(this.name);
+    }
+
 }

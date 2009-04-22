@@ -13,7 +13,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.resource.audio;
+package org.mobicents.media.server.impl.resource.audio;
 
 import org.mobicents.media.server.impl.events.announcement.*;
 import java.io.IOException;
@@ -76,11 +76,11 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     private BufferFactory bufferFactory = null;
     private static transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
-    public AudioPlayer(Endpoint endpoint) {
-        super("AudioPlayer[" + endpoint.getLocalName() + "]");
+    public AudioPlayer(Endpoint endpoint, String name) {
+        super(name);
         timer = ((EndpointImpl) endpoint).getTimer();
         period = timer.getHeartBeat();
-        bufferFactory = new BufferFactory(10, "AudioPlayer");
+        bufferFactory = new BufferFactory(10, name);
     }
 
     public void setFile(String file) {
@@ -271,7 +271,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         buffer.setSequenceNumber(seq++);
 
         try {
-            sink.receive(buffer);
+            otherParty.receive(buffer);
             errorCount = 0;
             if (eom) {
                 worker.cancel(true);

@@ -25,35 +25,24 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.resource;
+package org.mobicents.media.server.impl.dsp.audio.g711.alaw;
 
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.impl.Multiplexer;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
  *
  * @author kulikov
  */
-public class MuxFactory implements ComponentFactory {
+public class DecoderFactory implements CodecFactory {
 
-    private String name;
-
-    public MuxFactory(String name) {
-        this.name = name;
-    }
-    
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public Component newInstance(Endpoint endpoint) {
-        return new Multiplexer(this.name);
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.CodecFactory#getCodec() 
+     */
+    public Codec getCodec() {
+        return new Decoder();
     }
 
 }

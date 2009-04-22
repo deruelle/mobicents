@@ -2,7 +2,8 @@
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
 	    xmlns="urn:jboss:bean-deployer:2.0">
-    <bean name="AudioPlayerFactory" class="org.mobicents.media.server.resource.audio.AudioPlayerFactory"/>
+                
+    <bean name="AudioPlayerFactory" class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory"/>
     
     <bean name="MuxFactory" class="org.mobicents.media.server.resource.MuxFactory">
         <constructor>
@@ -12,6 +13,12 @@
     
     <bean name="DspFactory" class="org.mobicents.media.server.impl.dsp.DspFactory">
         <property name="name">Dsp</property>
+        <property name="codecFactories">
+            <list elemntClass="org.mobicents.media.server.spi.dsp.CodecFactory">
+                <value>G711.UlawEncoderFactory</value>
+                <value>G711.UlawDecoderFactory</value>
+            </list>
+        </property>
     </bean>
     
     <bean name="DtmfGenFactory" class="org.mobicents.media.server.impl.events.dtmf.DtmfGeneratorFactory">

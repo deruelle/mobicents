@@ -17,7 +17,6 @@ import java.io.StreamCorruptedException;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.xiph.speex.SpeexDecoder;
 
@@ -27,7 +26,7 @@ import org.xiph.speex.SpeexDecoder;
  * @author Amit Bhayani
  * @author Oleg Kulikov
  */
-public class Decoder extends BaseCodec {
+public class Decoder implements Codec {
 
     private final static int MODE_NB = 0;
     private final static boolean ENHANCED = false;

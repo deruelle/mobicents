@@ -16,6 +16,7 @@ package org.mobicents.media.server.impl.dsp;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import java.util.List;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
@@ -39,19 +40,10 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  */
 public class Processor implements SignalingProcessor {
 
-    private final static AudioFormat LINEAR_AUDIO = new AudioFormat(
-            AudioFormat.LINEAR, 8000, 16, 1,
-            AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-    private final static AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
-    private final static AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-    private final static AudioFormat SPEEX = new AudioFormat(AudioFormat.SPEEX, 8000, 8, 1);
-    private final static AudioFormat G729 = new AudioFormat(AudioFormat.G729, 8000, 8, 1);
-    private final static AudioFormat GSM = new AudioFormat(AudioFormat.GSM, 8000, 8, 1);
-    private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-    
-    private final static Format FORMATS[] = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
-    
     private String name = null;
+    
+    private ArrayList<Format> inputFormats = new ArrayList();
+    private ArrayList<Format> outputFormats = new ArrayList();
     
     private Input input;
     private Output output;
@@ -63,25 +55,29 @@ public class Processor implements SignalingProcessor {
 
     public Processor(String name) {
         this.name = name;
-
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Encoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.alaw.Decoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Encoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.Decoder());
-
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Encoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.speex.Decoder());
-
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Encoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.gsm.Decoder());
-        
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Encoder());
-        codecs.add(new org.mobicents.media.server.impl.dsp.audio.g729.Decoder());
-
         input = new Input();
         output = new Output();
     }
 
+    private void append(List<Format> list, Format fmt) {
+        for (Format f : list) {
+            if (f.matches(fmt)) return;
+        }
+        list.add(fmt);
+    }
+    
+    private Format[] toArray(List<Format> list) {
+        Format[] array = new Format[list.size()];
+        list.toArray(array);
+        return array;
+    }
+    
+    protected void add(Codec codec) {
+        codecs.add(codec);        
+        append(inputFormats, codec.getSupportedInputFormat());
+        append(outputFormats, codec.getSupportedOutputFormat());
+    }
+    
     /**
      * Gets the input for original media
      * 
@@ -134,8 +130,19 @@ public class Processor implements SignalingProcessor {
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
+            if (input.isConnected()) {
+                configure(input.getOtherPartyFormats(), output.getOtherPartyFormats());
+            }
         }
 
+        protected boolean isConnected() {
+            return otherParty!= null;
+        }
+        
+        protected Format[] getOtherPartyFormats() {
+            return otherParty.getFormats();
+        }
+        
         public void start() {            
             started = true;
         }
@@ -145,7 +152,7 @@ public class Processor implements SignalingProcessor {
         }
 
         public Format[] getFormats() {
-            return FORMATS;
+            return toArray(outputFormats);
         }
 
         /**
@@ -160,7 +167,7 @@ public class Processor implements SignalingProcessor {
             }
             //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
             // Discard packet silently if output handler is not assigned yet
-            if (sink == null) {
+            if (otherParty == null) {
             	buffer.dispose();
                 return;
             }
@@ -206,7 +213,7 @@ public class Processor implements SignalingProcessor {
 
             //deliver packet to the consumer
             try {
-                sink.receive(buffer);
+                otherParty.receive(buffer);
             } catch (Exception e) {
                 //e.printStackTrace();
             }
@@ -222,6 +229,14 @@ public class Processor implements SignalingProcessor {
             super("Processor.Input");
         }
 
+        @Override
+        public void connect(MediaSource source) {
+            super.connect(source);
+            if (output.isConnected()) {
+                configure(input.getOtherPartyFormats(), output.getOtherPartyFormats());
+            }
+        }
+        
         public boolean isAcceptable(Format format) {
             return true;
         }
@@ -230,8 +245,16 @@ public class Processor implements SignalingProcessor {
             output.transmit(buffer);
         }
 
+        protected boolean isConnected() {
+            return otherParty!= null;
+        }
+        
+        protected Format[] getOtherPartyFormats() {
+            return otherParty.getFormats();
+        }
+        
         public Format[] getFormats() {
-            return FORMATS;
+            return toArray(inputFormats);
         }
     }
 
@@ -262,7 +285,7 @@ public class Processor implements SignalingProcessor {
         for (int i = 0; i < codecs.size(); i++) {
             Codec c = codecs.get(i);
             if (c.getSupportedInputFormat().equals(f1) &&
-                    c.getSupportedOutputFormat().equals(Codec.LINEAR_AUDIO)) {
+                    c.getSupportedOutputFormat().getEncoding().equals(AudioFormat.LINEAR)) {
                 decoder = c;
                 break;
             }
@@ -276,7 +299,7 @@ public class Processor implements SignalingProcessor {
         //looking for encoder
         for (int i = 0; i < codecs.size(); i++) {
             Codec c = codecs.get(i);
-            if (c.getSupportedInputFormat().equals(Codec.LINEAR_AUDIO) &&
+            if (c.getSupportedInputFormat().getEncoding().equals(AudioFormat.LINEAR) &&
                     c.getSupportedOutputFormat().equals(f2)) {
                 encoder = c;
                 break;

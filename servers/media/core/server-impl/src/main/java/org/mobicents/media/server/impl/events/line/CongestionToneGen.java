@@ -77,7 +77,7 @@ public class CongestionToneGen extends AbstractSource {
     private class Generator implements Runnable {
 
         public void run() {
-            if (sink != null) {
+            if (otherParty != null) {
                 if (isSwitched()) {
                     isSignal = !isSignal;
                 }

@@ -20,9 +20,9 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
-import org.mobicents.media.server.impl.Demultiplexer;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
-import org.mobicents.media.server.impl.Multiplexer;
+import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.dsp.Processor;
 import org.mobicents.media.server.impl.events.dtmf.DTMFMode;
 import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
@@ -76,8 +76,8 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
         mux[0] = new Multiplexer("");
         mux[1] = new Multiplexer("");
 
-        demux[0] = new Demultiplexer(FORMATS, "Demultiplexer[0] "+this.getLocalName());
-        demux[1] = new Demultiplexer(FORMATS, "Demultiplexer[1] "+this.getLocalName());
+        demux[0] = new Demultiplexer("Demultiplexer[0] "+this.getLocalName());
+        demux[1] = new Demultiplexer("Demultiplexer[1] "+this.getLocalName());
 
         dtmfDetector[0] = new DtmfDetector("0");
         dtmfDetector[1] = new DtmfDetector("1");

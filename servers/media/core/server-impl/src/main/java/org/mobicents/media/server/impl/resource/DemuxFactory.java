@@ -24,21 +24,23 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.dsp;
+package org.mobicents.media.server.impl.resource;
 
-import java.util.List;
 import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
+public class DemuxFactory implements ComponentFactory {
+
     private String name;
-    private List<CodecFactory> codecFactories;
+
+    public DemuxFactory(String name) {
+        this.name = name;
+    }
     
     public String getName() {
         return name;
@@ -48,19 +50,8 @@ public class DspFactory implements ComponentFactory {
         this.name = name;
     }
     
-    public List<CodecFactory> getCodecFactories() {
-        return codecFactories;
-    }
-    
-    public void setCodecFactories(List<CodecFactory> codecFactories) {
-        this.codecFactories = codecFactories;
-    }
-    
     public Component newInstance(Endpoint endpoint) {
-        Processor p = new Processor(this.name);
-        for (CodecFactory factory :  codecFactories) {
-            p.add(factory.getCodec());
-        }
-        return p;
+        return new Demultiplexer(this.name);
     }
+
 }

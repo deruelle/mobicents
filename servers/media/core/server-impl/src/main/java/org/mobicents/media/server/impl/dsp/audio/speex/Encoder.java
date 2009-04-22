@@ -15,7 +15,6 @@ import org.mobicents.media.Buffer;
  * usefulness of the software.
  */
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.xiph.speex.SpeexEncoder;
 
@@ -25,7 +24,7 @@ import org.xiph.speex.SpeexEncoder;
  * @author Amit Bhayani
  * @author Oleg Kulikov
  */
-public class Encoder extends BaseCodec {
+public class Encoder implements Codec {
 
     private int MODE_NB = 0;
     private int mode = 0;

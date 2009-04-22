@@ -15,7 +15,6 @@ package org.mobicents.media.server.impl.dsp.audio.g711.alaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -23,7 +22,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * 
  * @author Oleg Kulikov
  */
-public class Decoder extends BaseCodec {
+public class Decoder implements Codec {
     /** decompress table constants */
     private static short aLawDecompressTable[] = new short[]{
         -5504, -5248, -6016, -5760, -4480, -4224, -4992, -4736,

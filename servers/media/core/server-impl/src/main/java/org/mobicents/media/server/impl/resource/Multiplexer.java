@@ -11,8 +11,9 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl;
+package org.mobicents.media.server.impl.resource;
 
+import org.mobicents.media.server.impl.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
         ArrayList list = new ArrayList();
         Collection<Input> sources = inputs.values();
         for (Input input : sources) {
-            Format[] fmts = input.getFormats();
+            Format[] fmts = input.getOtherPartyFormats();
             for (Format format : fmts) {
                 if (!list.contains(format)) {
                     list.add(format);
@@ -98,14 +99,6 @@ public class Multiplexer extends AbstractSink implements Outlet {
     }
 
     public boolean isAcceptable(Format fmt) {
-        try {
-            if (output.sink != null) {
-                return output.sink.isAcceptable(fmt);
-            }
-        } catch (NullPointerException e) {
-            return false;
-        }
-
         return true;
     }
 
@@ -127,8 +120,13 @@ public class Multiplexer extends AbstractSink implements Outlet {
         }
 
         public Format[] getFormats() {
-            return output.sink != null ? output.sink.getFormats() : null;
+            return inputFormats;
         }
+        
+        protected Format[] getOtherPartyFormats() {
+            return otherParty.getFormats();
+        }
+        
     }
 
     class Output extends AbstractSource {
@@ -139,6 +137,10 @@ public class Multiplexer extends AbstractSink implements Outlet {
             super(name);
         }
 
+        protected boolean isConnected() {
+            return otherParty != null;
+        }
+        
         public void start() {
             stopped = false;
         }
@@ -150,13 +152,17 @@ public class Multiplexer extends AbstractSink implements Outlet {
         public Format[] getFormats() {
             return outputFormats;
         }
+        
+        protected void deliver(Buffer buffer) {
+            otherParty.receive(buffer);
+        }
     }
 
     public synchronized void deliver(Buffer buffer) {
-        if (!output.stopped && output.sink != null) {
+        if (!output.stopped && output.isConnected()) {
             buffer.setSequenceNumber(seq);
             buffer.setTimeStamp(seq * 20);
-            output.sink.receive(buffer);
+            output.deliver(buffer);
         } else {
             buffer.dispose();
         }

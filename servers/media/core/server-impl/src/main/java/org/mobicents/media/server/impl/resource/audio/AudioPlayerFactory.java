@@ -24,43 +24,28 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.dsp;
 
-import java.util.List;
-import org.mobicents.media.Component;
+package org.mobicents.media.server.impl.resource.audio;
+
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
+public class AudioPlayerFactory implements ComponentFactory {
     private String name;
-    private List<CodecFactory> codecFactories;
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
-    public List<CodecFactory> getCodecFactories() {
-        return codecFactories;
-    }
-    
-    public void setCodecFactories(List<CodecFactory> codecFactories) {
-        this.codecFactories = codecFactories;
-    }
-    
-    public Component newInstance(Endpoint endpoint) {
-        Processor p = new Processor(this.name);
-        for (CodecFactory factory :  codecFactories) {
-            p.add(factory.getCodec());
-        }
-        return p;
+        
+    public AudioPlayer newInstance(Endpoint endpoint) {
+        return new AudioPlayer(endpoint, name);
     }
 }

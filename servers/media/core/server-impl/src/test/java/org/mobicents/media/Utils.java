@@ -79,4 +79,19 @@ public class Utils {
         return true;
     }
 
+    public static boolean checkFormats(Format[] formats, Format[] supported) {
+        for (int i = 0; i < supported.length; i++) {
+            boolean found = false;
+            for (int j = 0; j < formats.length; j++) {
+                if (supported[i].equals(formats[j])) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

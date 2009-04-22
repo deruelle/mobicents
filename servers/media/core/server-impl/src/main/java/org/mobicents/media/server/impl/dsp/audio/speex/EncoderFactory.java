@@ -24,43 +24,24 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.impl.dsp;
+package org.mobicents.media.server.impl.dsp.audio.speex;
 
-import java.util.List;
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
-    private String name;
-    private List<CodecFactory> codecFactories;
-    
-    public String getName() {
-        return name;
+public class EncoderFactory implements CodecFactory {
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.CodecFactory#getCodec() 
+     */
+    public Codec getCodec() {
+        return new Encoder();
     }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    public List<CodecFactory> getCodecFactories() {
-        return codecFactories;
-    }
-    
-    public void setCodecFactories(List<CodecFactory> codecFactories) {
-        this.codecFactories = codecFactories;
-    }
-    
-    public Component newInstance(Endpoint endpoint) {
-        Processor p = new Processor(this.name);
-        for (CodecFactory factory :  codecFactories) {
-            p.add(factory.getCodec());
-        }
-        return p;
-    }
+
 }

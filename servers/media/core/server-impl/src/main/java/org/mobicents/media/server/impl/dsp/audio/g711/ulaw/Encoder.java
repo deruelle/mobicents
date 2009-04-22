@@ -15,7 +15,6 @@ package org.mobicents.media.server.impl.dsp.audio.g711.ulaw;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.dsp.BaseCodec;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -23,7 +22,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * 
  * @author Oleg Kulikov
  */
-public class Encoder extends BaseCodec {
+public class Encoder implements Codec {
 
     private final static byte[] muLawCompressTable = new byte[]{
         0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,

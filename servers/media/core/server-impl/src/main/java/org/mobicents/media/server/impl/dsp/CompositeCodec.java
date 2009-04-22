@@ -27,40 +27,50 @@
 package org.mobicents.media.server.impl.dsp;
 
 import java.util.List;
-import org.mobicents.media.Component;
-import org.mobicents.media.ComponentFactory;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.dsp.CodecFactory;
+import org.mobicents.media.Buffer;
+import org.mobicents.media.Format;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
  * @author kulikov
  */
-public class DspFactory implements ComponentFactory {
-    private String name;
-    private List<CodecFactory> codecFactories;
+public class CompositeCodec implements Codec {
     
-    public String getName() {
-        return name;
+    private List<Codec> sequence;
+    private int index;
+    
+    public CompositeCodec(List<Codec> sequence) {
+        this.sequence = sequence;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.Codec#getSupportedInputFormat(). 
+     */
+    public Format getSupportedInputFormat() {
+        return sequence.get(0).getSupportedInputFormat();
     }
-    
-    public List<CodecFactory> getCodecFactories() {
-        return codecFactories;
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.Codec#getSupportedOutputFormat(). 
+     */
+    public Format getSupportedOutputFormat() {
+        return sequence.get(sequence.size() - 1).getSupportedOutputFormat();
     }
-    
-    public void setCodecFactories(List<CodecFactory> codecFactories) {
-        this.codecFactories = codecFactories;
-    }
-    
-    public Component newInstance(Endpoint endpoint) {
-        Processor p = new Processor(this.name);
-        for (CodecFactory factory :  codecFactories) {
-            p.add(factory.getCodec());
+
+    /**
+     * (Non Java-doc.)
+     * 
+     * @see org.mobicents.media.server.spi.dsp.Codec#process();
+     */
+    public void process(Buffer buffer) {
+        sequence.get(index).process(buffer);
+        if (buffer.getFlags() == Buffer.FLAG_FLUSH) {
+            index = index == sequence.size() - 1 ? 0 : index + 1;
         }
-        return p;
     }
 }
