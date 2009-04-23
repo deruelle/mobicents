@@ -63,9 +63,9 @@ public class CalledPartyNumber extends AbstractNAINumber {
 	 * routing number concatenated with Called Directory Number (national use)
 	 */
 	public final static int _NAI_RNRNCWCDN = 8;
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int internalNetworkNumberIndicator = 0;
+	protected int internalNetworkNumberIndicator;
 
 	/**
 	 * 

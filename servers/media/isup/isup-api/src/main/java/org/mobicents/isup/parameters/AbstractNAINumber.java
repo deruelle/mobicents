@@ -50,7 +50,7 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 	 * Holds nature of address indicator bits - those are 7 first bits from
 	 * ususaly top byte (first bit is even/odd flag.)
 	 */
-	protected int natureOfAddresIndicator = 0;
+	protected int natureOfAddresIndicator;
 
 	public AbstractNAINumber(byte[] representation) {
 		super(representation);
@@ -170,8 +170,10 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 		int b = this.natureOfAddresIndicator & 0x7f;
 		// Even is 000000000 == 0
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
+		
 		if (isOdd)
 			b |= 0x80;
+		
 		bos.write(b);
 
 		return 1;
@@ -190,10 +192,15 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 	 *             - thrown if read error is encountered.
 	 */
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if(bis.available()==0)
+		{
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
-
+		
 		this.oddFlag = (b & 0x80) >> 7;
 		this.natureOfAddresIndicator = b & 0x7f;
+		
 		return 1;
 	}
 

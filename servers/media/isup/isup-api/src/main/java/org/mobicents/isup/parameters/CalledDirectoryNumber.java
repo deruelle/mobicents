@@ -40,9 +40,9 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	 */
 	public static final int _INNI_RTINNNA = 1;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int internalNetworkNumberIndicator = 0;
+	protected int internalNetworkNumberIndicator;
 
 	/**
 	 * @param representation
@@ -50,10 +50,10 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	public CalledDirectoryNumber(byte[] representation) {
 		super(representation);
 		// TODO Auto-generated constructor stub
+		getNumberingPlanIndicator();
 	}
 
 	/**
-	 * tttttt
 	 * 
 	 * @param bis
 	 */
@@ -76,10 +76,14 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if (bis.available() == 0) {
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
 
 		this.internalNetworkNumberIndicator = (b & 0x80) >> 7;
-		this.numberingPlanIndicator = (b & 0x07) >> 4;
+		this.numberingPlanIndicator = (b >> 4) & 0x07;
+
 		return 1;
 	}
 
@@ -98,11 +102,14 @@ public class CalledDirectoryNumber extends AbstractNAINumber {
 	}
 
 	public int getNumberingPlanIndicator() {
-		return numberingPlanIndicator;
+
+		return this.numberingPlanIndicator;
 	}
 
 	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
+
 		this.numberingPlanIndicator = numberingPlanIndicator;
+
 	}
 
 	public int getInternalNetworkNumberIndicator() {

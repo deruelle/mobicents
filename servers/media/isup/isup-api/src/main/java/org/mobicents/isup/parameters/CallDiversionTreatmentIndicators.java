@@ -36,6 +36,16 @@ public class CallDiversionTreatmentIndicators extends AbstractParameter {
 
 	private byte[] callDivertedIndicators = null;
 
+	
+	
+	public CallDiversionTreatmentIndicators() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public CallDiversionTreatmentIndicators(byte[] b) {
+		super();
+		decodeElement(b);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

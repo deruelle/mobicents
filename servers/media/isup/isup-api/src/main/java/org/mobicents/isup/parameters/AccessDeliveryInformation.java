@@ -33,7 +33,7 @@ public class AccessDeliveryInformation extends AbstractParameter {
 
 	public final static int _PARAMETER_CODE = 0x2E;
 	
-	private int accessDeliveryIndicator = 0;
+	private int accessDeliveryIndicator;
 	
 	
 	public AccessDeliveryInformation(int accessDeliveryIndicator) {

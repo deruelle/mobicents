@@ -121,7 +121,7 @@ public class CallDiversionInformation extends AbstractParameter {
 		v |= this.notificationSubscriptionOptions & 0x07;
 		v |= (this.redirectingReason & 0x0F) << 3;
 		b[0] = (byte) v;
-		return null;
+		return b;
 	}
 
 	/*
@@ -132,8 +132,9 @@ public class CallDiversionInformation extends AbstractParameter {
 	 * )
 	 */
 	public int encodeElement(ByteArrayOutputStream bos) throws IOException {
-		// TODO Auto-generated method stub
-		return 0;
+		byte[] b = this.encodeElement();
+		bos.write(b);
+		return b.length;
 	}
 
 	public int getNotificationSubscriptionOptions() {

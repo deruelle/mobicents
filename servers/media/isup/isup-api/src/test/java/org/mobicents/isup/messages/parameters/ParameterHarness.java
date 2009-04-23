@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.mobicents.isup.ISUPComponent;
+import org.mobicents.isup.parameters.CalledDirectoryNumber;
 
 import junit.framework.TestCase;
 
@@ -27,33 +28,47 @@ import junit.framework.TestCase;
  */
 public abstract class ParameterHarness extends TestCase {
 
+	// 21 10000011 Address....................... 83
+	// 22 01100000 Address....................... 60
+	// 23 00111000 Address....................... 38
+	// NOTE: now see how nice digits swap can come out with conversion, lol
+	private final static byte[] sixDigits = new byte[] { (byte) 0x83, 0x60, 0x38 };
+	private final static byte[] fiveDigits = new byte[] { (byte) 0x83, 0x60, 0x08 };
+	private final static byte[] threeDigits = new byte[] { (byte) 0x83, 0x0 };;
+	private final static String sixDigitsString = "380683";
+	private final static String fiveDigitsString = "38068";
+	private final static String threeDigitsString = "380";
+
 	// FIXME: add code to check values :)
 
 	protected List<byte[]> goodBodies = new ArrayList<byte[]>();
 
 	protected List<byte[]> badBodies = new ArrayList<byte[]>();
 
-	protected String makeCompare(byte[] b1, byte[] b2) {
+	protected String makeCompare(byte[] hardcodedBody, byte[] elementEncoded) {
 		int totalLength = 0;
-		if (b1.length >= b2.length) {
-			totalLength = b1.length;
+		if (hardcodedBody == null || elementEncoded == null) {
+			return "One arg is null";
+		}
+		if (hardcodedBody.length >= elementEncoded.length) {
+			totalLength = hardcodedBody.length;
 		} else {
-			totalLength = b2.length;
+			totalLength = elementEncoded.length;
 		}
 
 		String out = "";
 
 		for (int index = 0; index < totalLength; index++) {
-			if (b1.length > index) {
-				out += "b1[" + Integer.toHexString(b1[index]) + "]";
+			if (hardcodedBody.length > index) {
+				out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
 			} else {
-				out += "b1[NOP]";
+				out += "hardcodedBody[NOP]";
 			}
 
-			if (b2.length > index) {
-				out += "b2[" + Integer.toHexString(b2[index]) + "]";
+			if (elementEncoded.length > index) {
+				out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
 			} else {
-				out += "b2[NOP]";
+				out += "elementEncoded[NOP]";
 			}
 			out += "\n";
 		}
@@ -63,18 +78,20 @@ public abstract class ParameterHarness extends TestCase {
 
 	public void testDecodeEncode() throws IOException {
 
-		for (byte[] goodBody : this.goodBodies) {
+		for (int index = 0; index < this.goodBodies.size(); index++) {
+			byte[] goodBody = this.goodBodies.get(index);
 			ISUPComponent component = this.getTestedComponent();
-			doTestDecode(goodBody, true, component);
+			doTestDecode(goodBody, true, component, index);
 			byte[] encodedBody = component.encodeElement();
 			boolean equal = Arrays.equals(goodBody, encodedBody);
-			assertTrue(makeCompare(goodBody, encodedBody), equal);
+			assertTrue("Body index: " + index + "\n" + makeCompare(goodBody, encodedBody), equal);
 
 		}
+		for (int index = 0; index < this.badBodies.size(); index++) {
 
-		for (byte[] badBody : this.badBodies) {
+			byte[] badBody = this.badBodies.get(index);
 			ISUPComponent component = this.getTestedComponent();
-			doTestDecode(badBody, false, component);
+			doTestDecode(badBody, false, component, index);
 			byte[] encodedBody = component.encodeElement();
 
 		}
@@ -83,20 +100,20 @@ public abstract class ParameterHarness extends TestCase {
 
 	public abstract ISUPComponent getTestedComponent();
 
-	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, ISUPComponent component) {
+	protected void doTestDecode(byte[] presumableBody, boolean shouldPass, ISUPComponent component, int index) {
 		try {
 			component.decodeElement(presumableBody);
 			if (!shouldPass) {
-				fail("Decoded parameter[" + component.getClass() + "], should not happen. Passed data: " + dumpData(presumableBody));
+				fail("Decoded[" + index + "] parameter[" + component.getClass() + "], should not happen. Passed data: " + dumpData(presumableBody));
 			}
 
 		} catch (IllegalArgumentException iae) {
 			if (shouldPass) {
-				fail("Failed to decode parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
+				fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "], should not happen. " + iae + ".Passed data: " + dumpData(presumableBody));
 				iae.printStackTrace();
 			}
 		} catch (Exception e) {
-			fail("Failed to decode parameter[" + component.getClass() + "]." + e + ". Passed data: " + dumpData(presumableBody));
+			fail("Failed to decode[" + index + "] parameter[" + component.getClass() + "]." + e + ". Passed data: " + dumpData(presumableBody));
 			e.printStackTrace();
 		}
 	}
@@ -120,14 +137,42 @@ public abstract class ParameterHarness extends TestCase {
 				if (v == null && expectedValues != null) {
 					fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is null, but test values is not.");
 				}
-				assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is " + v + ", but test values is: "
-						+ expectedValues[index], expectedValues[index], v);
+				if(component instanceof CalledDirectoryNumber)
+				{
+					((CalledDirectoryNumber)component).getNumberingPlanIndicator();
+				}
+				assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], expectedValues[index], v);
+				
 			}
 
 		} catch (Exception e) {
 			fail("Failed to check values on component: " + component.getClass().getName() + ", due to: " + e);
 			e.printStackTrace();
 		}
+	}
+
+	public static byte[] getSixDigits() {
+		return sixDigits;
+	}
+
+	public static byte[] getFiveDigits() {
+		return fiveDigits;
+	}
+
+	public static byte[] getThreeDigits() {
+		return threeDigits;
+	}
+
+	public static String getSixDigitsString() {
+		return sixDigitsString;
+	}
+
+	public static String getFiveDigitsString() {
+		return fiveDigitsString;
+	}
+
+	public static String getThreeDigitsString() {
+		return threeDigitsString;
 	}
 
 }

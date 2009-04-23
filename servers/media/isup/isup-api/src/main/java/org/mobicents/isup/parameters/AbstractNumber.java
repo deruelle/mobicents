@@ -49,7 +49,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * Holds odd flag, it can have either value: 10000000(x80) or 00000000. For
 	 * each it takes value 1 and 0;
 	 */
-	protected int oddFlag = 0;
+	protected int oddFlag;
 
 	/**
 	 * indicates odd flag value (0x80) as integer (1). This is achieved when odd
@@ -64,7 +64,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * byte[]. This is becuse in case of decoding we dont know if last digit is
 	 * filler or digit.
 	 */
-	protected String address = null;
+	protected String address;
 
 	public AbstractNumber() {
 		super();
@@ -223,6 +223,10 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 */
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
 
+		if(bis.available()==0)
+		{
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
 		int count = 0;
@@ -240,10 +244,12 @@ public abstract class AbstractNumber extends AbstractParameter {
 
 		b = bis.read() & 0xff;
 		address += Integer.toHexString((b & 0x0f));
-		this.setAddress(address);
-		if (oddFlag != 1) {
+		
+		if (oddFlag != _FLAG_ODD) {
 			address += Integer.toHexString((b & 0xf0) >> 4);
 		}
+		this.setAddress(address);
+		
 		return count;
 	}
 
@@ -259,6 +265,10 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 * @throws IllegalArgumentException
 	 */
 	public int decodeDigits(ByteArrayInputStream bis, int octetsCount) throws IllegalArgumentException {
+		if(bis.available()==0)
+		{
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int count = 0;
 		address = "";
 		int b = 0;
@@ -275,10 +285,11 @@ public abstract class AbstractNumber extends AbstractParameter {
 		b = bis.read() & 0xff;
 		count++;
 		address += Integer.toHexString((b & 0x0f));
-		this.setAddress(address);
+		
 		if (oddFlag != 1) {
 			address += Integer.toHexString((b & 0xf0) >> 4);
 		}
+		this.setAddress(address);
 		if (octetsCount != count) {
 			throw new IllegalArgumentException("Failed to read [" + octetsCount + "], encountered only [" + count + "]");
 		}
@@ -324,7 +335,7 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 */
 	public int encodeDigits(ByteArrayOutputStream bos) {
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
-
+		
 		byte b = 0;
 		int count = (!isOdd) ? address.length() : address.length() - 1;
 		int bytesCount = 0;

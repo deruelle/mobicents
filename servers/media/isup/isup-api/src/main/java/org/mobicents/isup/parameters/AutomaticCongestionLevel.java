@@ -65,7 +65,7 @@ public class AutomaticCongestionLevel extends AbstractParameter {
 	}
 
 	public void setAutomaticCongestionLevel(int automaticCongestionLevel) {
-		this.automaticCongestionLevel = automaticCongestionLevel;
+		this.automaticCongestionLevel = automaticCongestionLevel & 0x01;
 	}
 
 	public int getCode() {

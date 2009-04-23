@@ -34,11 +34,11 @@ public class ConnectedNumber extends AbstractNAINumber {
 	 */
 	public final static int _NPI_TELEX = 4;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator ;
 
-	protected int addressRepresentationREstrictedIndicator = 0;
+	protected int addressRepresentationREstrictedIndicator;
 
-	protected int screeningIndicator = 0;
+	protected int screeningIndicator;
 	/**
 	 * address presentation restricted indicator indicator value. See Q.763 -
 	 * 3.10e
@@ -128,6 +128,7 @@ public class ConnectedNumber extends AbstractNAINumber {
 
 		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
 			return;
+		
 		// NOTE 1 – If the parameter is included and the address presentation
 		// restricted indicator indicates
 		// address not available, octets 3 to n( this are digits.) are omitted,
@@ -149,11 +150,11 @@ public class ConnectedNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = this.natureOfAddresIndicator << 4;
+		int c = this.numberingPlanIndicator << 4;
 
 		c |= (this.addressRepresentationREstrictedIndicator << 2);
 		c |= (this.screeningIndicator);
-		bos.write(c);
+		bos.write(c & 0x7F);
 		return 1;
 	}
 

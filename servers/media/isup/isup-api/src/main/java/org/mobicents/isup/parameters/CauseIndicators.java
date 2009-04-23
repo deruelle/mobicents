@@ -93,9 +93,9 @@ public class CauseIndicators extends AbstractParameter {
 
 	public CauseIndicators(int codingStandard, int location, int causeValue, byte[] diagnostics) {
 		super();
-		this.codingStandard = codingStandard;
-		this.location = location;
-		this.causeValue = causeValue;
+		this.setCodingStandard(codingStandard);
+		this.setLocation(location);
+		this.setCauseValue(causeValue);
 		this.diagnostics = diagnostics;
 	}
 
@@ -105,17 +105,29 @@ public class CauseIndicators extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
+
+		// FIXME: there are ext bits, does this mean this param can be from 1 to
+		// 3+ bytes?
+		// but trace shows that extension bit is always on... does this mean
+		// that we can have mutliptle indicators?
 		if (b == null || b.length < 2) {
 			throw new IllegalArgumentException("byte[] must not be null or has size less than 2");
 		}
-
-		
+		//Used because of Q.850 - we must ignore recomendation
+		int index = 0;
 		// first two bytes are mandatory
 		int v = 0;
 		// remove ext
-		v = b[0] & 0x7F;
+		v = b[index] & 0x7F;
 		this.location = v & 0x0F;
 		this.codingStandard = v >> 5;
+		if( ((b[index] & 0x7F) >> 7 )== 0)
+		{
+			index+=2;
+		}else
+		{
+			index++;
+		}
 		v = 0;
 		v = b[1] & 0x7F;
 		this.causeValue = v;
@@ -137,11 +149,10 @@ public class CauseIndicators extends AbstractParameter {
 			this.diagnostics = bos.toByteArray();
 
 			System.err.println("Decode CASE IND");
-			for(byte bb:b)
-			{
+			for (byte bb : b) {
 				System.err.println(Integer.toHexString(bb));
 			}
-			
+
 			return byteCounter;
 		}
 	}
@@ -155,15 +166,14 @@ public class CauseIndicators extends AbstractParameter {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
 		int v = this.location & 0x0F;
-		v |= (byte)((this.codingStandard & 0x03) << 5);
+		v |= (byte) ((this.codingStandard & 0x03) << 5) | (0x01<<7);
 		bos.write(v);
-		bos.write(this.causeValue);
+		bos.write(this.causeValue | (0x01<<7));
 		if (this.diagnostics != null)
 			bos.write(this.diagnostics);
 		byte[] b = bos.toByteArray();
 		System.err.println("Enecode CASE IND");
-		for(byte bb:b)
-		{
+		for (byte bb : b) {
 			System.err.println(Integer.toHexString(bb));
 		}
 		return b;
@@ -187,7 +197,7 @@ public class CauseIndicators extends AbstractParameter {
 	}
 
 	public void setCodingStandard(int codingStandard) {
-		this.codingStandard = codingStandard;
+		this.codingStandard = codingStandard & 0x03;
 	}
 
 	public int getLocation() {
@@ -195,11 +205,11 @@ public class CauseIndicators extends AbstractParameter {
 	}
 
 	public void setLocation(int location) {
-		this.location = location;
+		this.location = location & 0x0F;
 	}
 
 	public int getCauseValue() {
-		return causeValue;
+		return causeValue & 0x7F;
 	}
 
 	public void setCauseValue(int causeValue) {

@@ -18,17 +18,17 @@ import java.io.IOException;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class CallHistory extends AbstractParameter {
+public class CallHistoryInformation extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0;
 	// XXX: again this goes aganist usuall way.
-	private int callHistory = 0;
+	private int callHistory;
 
-	public CallHistory(byte[] b) {
+	public CallHistoryInformation(byte[] b) {
 		super();
 		decodeElement(b);
 	}
 
-	public CallHistory(int callHistory) {
+	public CallHistoryInformation(int callHistory) {
 		super();
 		this.callHistory = callHistory;
 	}
@@ -44,8 +44,12 @@ public class CallHistory extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must  not be null and length must be 2");
 		}
 
-		this.callHistory = b[0] << 8;
-		this.callHistory |= b[1];
+//		this.callHistory = b[0] << 8;
+//		this.callHistory |= b[1];
+//		//We need this, cause otherwise we get corrupted number
+//		this.callHistory &=0xFFFF;
+		this.callHistory = ((b[0] << 8) | b[1]) & 0xFFFF;
+		
 		return b.length;
 	}
 

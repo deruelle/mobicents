@@ -33,6 +33,8 @@ public class CircuitAssigmentMap extends AbstractParameter {
 	 */
 	public static final int _MAP_TYPE_2048 = 2;
 
+	private static final int _CIRCUIT_ENABLED = 1;
+	
 	private int mapType = 0;
 
 	private int mapFormat = 0;
@@ -63,6 +65,7 @@ public class CircuitAssigmentMap extends AbstractParameter {
 		this.mapFormat |= b[2] << 8;
 		this.mapFormat |= b[3] << 16;
 		this.mapFormat |= (b[4] & 0x7F) << 24;
+		
 		return 5;
 	}
 
@@ -79,7 +82,7 @@ public class CircuitAssigmentMap extends AbstractParameter {
 		b[2] = (byte) (this.mapFormat >> 8);
 		b[3] = (byte) (this.mapFormat >> 16);
 		b[4] = (byte) ((this.mapFormat >> 24) & 0x7F);
-		return null;
+		return b;
 	}
 
 	public int getMapType() {
@@ -111,7 +114,7 @@ public class CircuitAssigmentMap extends AbstractParameter {
 			throw new IllegalArgumentException("Cicruit number is out of range[" + circuitNumber + "] <1,31>");
 		}
 
-		this.mapFormat |= 0x01 << circuitNumber;
+		this.mapFormat |= 0x01 << (circuitNumber-1);
 	}
 
 	/**
@@ -126,9 +129,19 @@ public class CircuitAssigmentMap extends AbstractParameter {
 		if (circuitNumber < 1 || circuitNumber > 31) {
 			throw new IllegalArgumentException("Cicruit number is out of range[" + circuitNumber + "] <1,31>");
 		}
-		this.mapFormat &= 0xFFFFFFFE << circuitNumber;
+		this.mapFormat &= 0xFFFFFFFE << (circuitNumber -1);
 	}
 
+	
+	public boolean isCircuitEnabled(int circuitNumber)throws IllegalArgumentException
+	{
+		if (circuitNumber < 1 || circuitNumber > 31) {
+			throw new IllegalArgumentException("Cicruit number is out of range[" + circuitNumber + "] <1,31>");
+		}
+		
+		return ((this.mapFormat >> (circuitNumber-1)) & 0x01) ==_CIRCUIT_ENABLED;
+	}
+	
 	public int getCode() {
 
 		return _PARAMETER_CODE;

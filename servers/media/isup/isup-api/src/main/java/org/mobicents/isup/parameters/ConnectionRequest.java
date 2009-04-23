@@ -53,7 +53,7 @@ public class ConnectionRequest extends AbstractParameter {
 			throw new IllegalArgumentException("For protocol version 1 length of this parameter must be 7 octets");
 		}
 
-		if (b.length != 5 || b.length != 7) {
+		if (b.length < 5 || b.length > 7) {
 			throw new IllegalArgumentException("byte[] length must be <5,7>");
 		}
 
@@ -90,9 +90,9 @@ public class ConnectionRequest extends AbstractParameter {
 			b = new byte[5];
 		}
 
-		b[2] = (byte) this.localReference;
+		b[0] = (byte) this.localReference;
 		b[1] = (byte) (this.localReference >> 8);
-		b[0] = (byte) (this.localReference >> 16);
+		b[2] = (byte) (this.localReference >> 16);
 
 		b[3] = (byte) this.signalingPointCode;
 		b[4] = (byte) ((this.signalingPointCode >> 8) & 0x3F);

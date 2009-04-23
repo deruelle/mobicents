@@ -21,7 +21,7 @@ public abstract class AbstractPointCode extends AbstractParameter {
 
 	
 	
-	private int signalingPointCode = 0;
+	private int signalingPointCode;
 
 	/*
 	 * (non-Javadoc)

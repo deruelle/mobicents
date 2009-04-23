@@ -34,9 +34,9 @@ public abstract class CalledNumber extends AbstractNAINumber {
 	 */
 	public final static int _NPI_TELEX = 4;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int addressRepresentationREstrictedIndicator = 0;
+	protected int addressRepresentationRestrictedIndicator;
 
 	/**
 	 * address presentation restricted indicator indicator value. See Q.763 -
@@ -75,7 +75,7 @@ public abstract class CalledNumber extends AbstractNAINumber {
 	public CalledNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator) {
 		super(natureOfAddresIndicator, address);
 		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
 	/*
@@ -89,7 +89,7 @@ public abstract class CalledNumber extends AbstractNAINumber {
 		int b = bis.read() & 0xff;
 
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
+		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
 
 		return 1;
 	}
@@ -103,7 +103,7 @@ public abstract class CalledNumber extends AbstractNAINumber {
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
 		int c = (this.natureOfAddresIndicator & 0x07) << 4;
-		c |= ((this.addressRepresentationREstrictedIndicator & 0x03) << 2);
+		c |= ((this.addressRepresentationRestrictedIndicator & 0x03) << 2);
 
 		bos.write(c);
 		return 1;
@@ -117,12 +117,12 @@ public abstract class CalledNumber extends AbstractNAINumber {
 		this.numberingPlanIndicator = numberingPlanIndicator;
 	}
 
-	public int getAddressRepresentationREstrictedIndicator() {
-		return addressRepresentationREstrictedIndicator;
+	public int getAddressRepresentationRestrictedIndicator() {
+		return addressRepresentationRestrictedIndicator;
 	}
 
-	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 
 	public int getCode() {
