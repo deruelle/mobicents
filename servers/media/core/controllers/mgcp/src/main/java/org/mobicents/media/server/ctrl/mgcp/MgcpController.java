@@ -37,14 +37,17 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 
+import jain.protocol.ip.mgcp.message.NotificationRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.NamingService;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
@@ -64,7 +67,8 @@ public class MgcpController implements JainMgcpListener {
     private int port = 2727;
     private NamingService namingService;
     private ConcurrentHashMap<String, Call> calls = new ConcurrentHashMap<String, Call>();
-
+    protected HashMap<Integer, MgcpPackage> packages = new HashMap();
+    
     public MgcpController() {
     }
 
@@ -98,6 +102,18 @@ public class MgcpController implements JainMgcpListener {
         logger.info("Starting MGCP Controller module for MMS");
     }
 
+    public void addPackage(MgcpPackage pkg) {
+        System.out.println("==================");
+        packages.put(pkg.getId(), pkg);
+    }
+    
+    public void removePackage(MgcpPackage pkg) {
+        packages.remove(pkg);
+    }
+    
+    public MgcpPackage getPackage(int code) {
+        return packages.get(code);
+    }
     /**
      * Starts MGCP controller.
      * 
@@ -165,6 +181,9 @@ public class MgcpController implements JainMgcpListener {
                 break;
             case Constants.CMD_DELETE_CONNECTION:
                 action = new DeleteConnectionAction(this, (DeleteConnection) evt);
+                break;
+            case Constants.CMD_NOTIFICATION_REQUEST :
+                action = new NotificationRequestAction(this, (NotificationRequest) evt);
                 break;
             default:
                 logger.error("Unknown message type: " + eventID);

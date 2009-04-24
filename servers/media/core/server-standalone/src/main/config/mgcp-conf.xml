@@ -4,5 +4,31 @@
         <property name="namingService">
             <inject bean="MediaServer"/>
         </property>
+        <incallback method="addPackage"/>
+        <uncallback method="removePackage"/>
     </bean>
+    
+    <bean name="PlayAnnouncement" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
+        <property name="name">pa</property>
+    </bean>
+    
+    <bean name="Completed" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.AnnouncementCompletedFactory">
+        <property name="name">completed</property>
+    </bean>
+    
+    <bean name="Announcement" class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
+        <property name="id">9</property>
+        <property name="name">Announcement</property>
+        <property name="signals">
+            <list elementClass="org.mobicents.media.server.ctrl.mgcp.evt.MgcpSignalFactory">
+                <value>PlayAnnouncement</value>
+            </list>
+        </property> 
+        <property name="events">
+            <list elementClass="org.mobicents.media.server.ctrl.mgcp.evt.MgcpSignalFactory">
+                <value>Completed</value>
+            </list>
+        </property> 
+    </bean>
+    
 </deployment>    
