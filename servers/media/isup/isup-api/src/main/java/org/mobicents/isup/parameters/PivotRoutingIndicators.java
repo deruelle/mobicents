@@ -41,7 +41,7 @@ public class PivotRoutingIndicators extends AbstractParameter {
 	 */
 	public static final int _PRI_ITRP = 4;
 
-	private byte[] pivotRoutingIndicators = null;
+	private byte[] pivotRoutingIndicators;
 
 	public PivotRoutingIndicators(byte[] pivotRoutingIndicators) {
 		super();

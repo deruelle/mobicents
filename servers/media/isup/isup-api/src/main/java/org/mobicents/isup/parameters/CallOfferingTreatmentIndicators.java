@@ -63,10 +63,10 @@ public class CallOfferingTreatmentIndicators extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 
 		for (int index = 0; index < this.callOfferingTreatmentIndicators.length; index++) {
-			this.callOfferingTreatmentIndicators[index] = (byte) (this.callOfferingTreatmentIndicators[index] & 0x03);
+			this.callOfferingTreatmentIndicators[index] = (byte) ((this.callOfferingTreatmentIndicators[index] & 0x03) | 0x80);
 		}
 
-		this.callOfferingTreatmentIndicators[this.callOfferingTreatmentIndicators.length - 1] = (byte) ((this.callOfferingTreatmentIndicators[this.callOfferingTreatmentIndicators.length - 1]) | (0x01 << 7));
+		this.callOfferingTreatmentIndicators[this.callOfferingTreatmentIndicators.length - 1] = (byte) ((this.callOfferingTreatmentIndicators[this.callOfferingTreatmentIndicators.length - 1]) & 0x7F);
 		return this.callOfferingTreatmentIndicators;
 	}
 

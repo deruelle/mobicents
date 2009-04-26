@@ -61,7 +61,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledDirectoryNumber bci = new CalledDirectoryNumber(getBody1());
 		bci.getNumberingPlanIndicator();
-		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledDirectoryNumber._NPI_ISDN_NP, CalledDirectoryNumber._INNI_RESERVED, CalledDirectoryNumber._NAI_NETWORK_SPECIFIC, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
@@ -69,7 +69,7 @@ public class CalledDirectoryNumberTest extends ParameterHarness {
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledDirectoryNumber bci = new CalledDirectoryNumber(getBody2());
 
-		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledDirectoryNumber._NPI_ISDN_NP, CalledDirectoryNumber._INNI_RESERVED, CalledDirectoryNumber._NAI_NETWORK_SPECIFIC, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}

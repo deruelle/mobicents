@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
  * @author Oleg Kulikoff
  */
 public class GenericNumber extends AbstractNAINumber {
-	
+
 	public static final int _PARAMETER_CODE = 0xC0;
 	/**
 	 * number qualifier indicator indicator value. See Q.763 - 3.26a
@@ -63,11 +63,11 @@ public class GenericNumber extends AbstractNAINumber {
 	/**
 	 * number incomplete indicator indicator value. See Q.763 - 3.10c
 	 */
-	public final static int _NI_INCOMPLETE = 1;
+	public final static boolean _NI_INCOMPLETE = true;
 	/**
 	 * number incomplete indicator indicator value. See Q.763 - 3.10c
 	 */
-	public final static int _NI_COMPLETE = 0;
+	public final static boolean _NI_COMPLETE = false;
 	/**
 	 * address presentation restricted indicator indicator value. See Q.763 -
 	 * 3.10e
@@ -86,31 +86,52 @@ public class GenericNumber extends AbstractNAINumber {
 	 */
 	public final static int _APRI_NOT_AVAILABLE = 2;
 
+	private static final int _TURN_ON = 1;
+	private static final int _TURN_OFF = 0;
 	/**
 	 * address presentation restricted indicator indicator value. See Q.763 -
 	 * 3.16d
 	 */
 	public final static int _APRI_SPARE = 3;
-	protected int numberQualifierIndicator = 0;
-	protected int numberingPlanIndicator = 0;
 
-	protected int addressRepresentationREstrictedIndicator = 0;
-	protected int numberIncompleteIndicator = 0;
-	protected int screeningIndicator = 0;
+	/**
+	 * screening indicator indicator value. See Q.763 - 3.26g
+	 */
+	public final static int _SI_USER_PROVIDED_NVERIFIED_PASSED = 0;
+	/**
+	 * screening indicator indicator value. See Q.763 - 3.26g
+	 */
+	public final static int _SI_USER_PROVIDED_VERIFIED_PASSED = 1;
+	/**
+	 * screening indicator indicator value. See Q.763 - 3.26g
+	 */
+	public final static int _SI_USER_PROVIDED_VERIFIED_FAILED = 2;
 
-	public GenericNumber(int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator,
-			int numberIncompleteIndicator, int screeningIndicator) {
+	/**
+	 * screening indicator indicator value. See Q.763 - 3.26g
+	 */
+	public final static int _SI_NETWORK_PROVIDED = 3;
+
+	protected int numberQualifierIndicator;
+	protected int numberingPlanIndicator;
+
+	protected int addressRepresentationRestrictedIndicator;
+	protected boolean numberIncomplete;
+	protected int screeningIndicator;
+
+	public GenericNumber(int natureOfAddresIndicator, String address, int numberQualifierIndicator, int numberingPlanIndicator, int addressRepresentationREstrictedIndicator, boolean numberIncomplete,
+			int screeningIndicator) {
 		super(natureOfAddresIndicator, address);
 		this.numberQualifierIndicator = numberQualifierIndicator;
 		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
-		this.numberIncompleteIndicator = numberIncompleteIndicator;
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator;
+		this.numberIncomplete = numberIncomplete;
 		this.screeningIndicator = screeningIndicator;
 	}
 
 	public GenericNumber(byte[] representation) {
 		super(representation);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public GenericNumber(ByteArrayInputStream bis) {
@@ -128,9 +149,9 @@ public class GenericNumber extends AbstractNAINumber {
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
 		int b = bis.read() & 0xff;
 
-		this.numberIncompleteIndicator = (b & 0x80) >> 7;
+		this.numberIncomplete = ((b & 0x80) >> 7) == _TURN_ON;
 		this.numberingPlanIndicator = (b & 0x70) >> 4;
-		this.addressRepresentationREstrictedIndicator = (b & 0x0c) >> 2;
+		this.addressRepresentationRestrictedIndicator = (b & 0x0c) >> 2;
 		this.screeningIndicator = (b & 0x03);
 		return 1;
 	}
@@ -140,7 +161,7 @@ public class GenericNumber extends AbstractNAINumber {
 	 */
 	protected void doAddressPresentationRestricted() {
 
-		if (this.addressRepresentationREstrictedIndicator == _APRI_NOT_AVAILABLE)
+		if (this.addressRepresentationRestrictedIndicator == _APRI_NOT_AVAILABLE)
 			return;
 		// NOTE 1 – If the parameter is included and the address presentation
 		// restricted indicator indicates
@@ -151,7 +172,7 @@ public class GenericNumber extends AbstractNAINumber {
 		this.oddFlag = 0;
 		this.natureOfAddresIndicator = 0;
 		this.numberingPlanIndicator = 0;
-		this.numberIncompleteIndicator = 0;
+		this.numberIncomplete = _NI_COMPLETE;
 		// 11
 		this.screeningIndicator = 3;
 	}
@@ -164,11 +185,14 @@ public class GenericNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = this.natureOfAddresIndicator << 4;
-		c |= (this.numberIncompleteIndicator << 7);
-		c |= (this.addressRepresentationREstrictedIndicator << 2);
-		c |= (this.screeningIndicator);
+		
+		int c = this.screeningIndicator;
+		c |= (this.addressRepresentationRestrictedIndicator << 2);
+		c |= (this.numberingPlanIndicator << 4);
+		c |= ((this.numberIncomplete ? _TURN_ON : _TURN_OFF) << 7);
+
 		bos.write(c);
+	
 		return 1;
 	}
 
@@ -198,23 +222,23 @@ public class GenericNumber extends AbstractNAINumber {
 	}
 
 	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
-		this.numberingPlanIndicator = numberingPlanIndicator;
+		this.numberingPlanIndicator = numberingPlanIndicator & 0x07;
 	}
 
-	public int getAddressRepresentationREstrictedIndicator() {
-		return addressRepresentationREstrictedIndicator;
+	public int getAddressRepresentationRestrictedIndicator() {
+		return addressRepresentationRestrictedIndicator;
 	}
 
-	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
-		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
+	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
+		this.addressRepresentationRestrictedIndicator = addressRepresentationREstrictedIndicator & 0x03;
 	}
 
-	public int getNumberIncompleteIndicator() {
-		return numberIncompleteIndicator;
+	public boolean isNumberIncomplete() {
+		return numberIncomplete;
 	}
 
-	public void setNumberIncompleteIndicator(int numberIncompleteIndicator) {
-		this.numberIncompleteIndicator = numberIncompleteIndicator;
+	public void setNumberIncompleter(boolean numberIncomplete) {
+		this.numberIncomplete = numberIncomplete;
 	}
 
 	public int getScreeningIndicator() {
@@ -222,7 +246,7 @@ public class GenericNumber extends AbstractNAINumber {
 	}
 
 	public void setScreeningIndicator(int screeningIndicator) {
-		this.screeningIndicator = screeningIndicator;
+		this.screeningIndicator = screeningIndicator & 0x03;
 	}
 
 	public int getCode() {

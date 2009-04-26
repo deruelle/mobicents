@@ -26,14 +26,14 @@ public class MCIDRequestIndicators extends AbstractParameter {
 	/**
 	 * Flag that indicates that information is requested
 	 */
-	private static final boolean _INDICATOR_REQUESTED = true;
+	public static final boolean _INDICATOR_REQUESTED = true;
 
 	/**
 	 * Flag that indicates that information is not requested
 	 */
-	private static final boolean _INDICATOR_NOT_REQUESTED = false;
-	private boolean mcidRequestIndicator = false;
-	private boolean holdingIndicator = false;
+	public static final boolean _INDICATOR_NOT_REQUESTED = false;
+	private boolean mcidRequestIndicator ;
+	private boolean holdingIndicator ;
 
 	public MCIDRequestIndicators(byte[] b) {
 		super();

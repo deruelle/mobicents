@@ -43,9 +43,9 @@ public class RedirectionNumber extends AbstractNAINumber {
 	public final static int _INN_ROUTING_NOT_ALLOWED = 1;
 	public static final int _PARAMETER_CODE = 0x0C;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int internalNetworkNumberIndicator = 0;
+	protected int internalNetworkNumberIndicator;
 
 	public RedirectionNumber(byte[] representation) {
 		super(representation);

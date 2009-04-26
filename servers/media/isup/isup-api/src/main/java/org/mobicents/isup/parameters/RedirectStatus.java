@@ -34,7 +34,7 @@ public class RedirectStatus extends AbstractParameter {
 	 */
 	public static int _RSI_RWNBI = 2;
 
-	private byte[] status = null;
+	private byte[] status;
 
 	public RedirectStatus(byte[] b) {
 		super();

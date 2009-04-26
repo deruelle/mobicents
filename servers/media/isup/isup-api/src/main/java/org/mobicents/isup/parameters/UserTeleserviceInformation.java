@@ -162,14 +162,14 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	 * in reserved range
 	 */
 	public static final int _HLCI_AUDIO_VID_HIGH_RANGE2 = 0x6F;
-	private int codingStandard = 0;
-	private int interpretation = 0;
-	private int presentationMethod = 0;
-	private int highLayerCharIdentification = 0;
+	private int codingStandard;
+	private int interpretation;
+	private int presentationMethod;
+	private int highLayerCharIdentification;
 
 	// I hate this, its soo jsr 17 style...
-	private boolean eHighLayerCharIdentificationPresent = false;
-	private boolean eVidedoTelephonyCharIdentificationPresent = false;
+	private boolean eHighLayerCharIdentificationPresent;
+	private boolean eVidedoTelephonyCharIdentificationPresent;
 
 	private int eHighLayerCharIdentification = 0;
 	private int eVidedoTelephonyCharIdentification = 0;

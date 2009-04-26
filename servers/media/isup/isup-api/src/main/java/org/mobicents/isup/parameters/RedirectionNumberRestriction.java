@@ -30,7 +30,7 @@ public class RedirectionNumberRestriction extends AbstractParameter {
 	public static final byte _PRI_PR = 1;
 	public static final int _PARAMETER_CODE = 0x40;
 
-	private byte presentationRestrictedIndicator = 0;
+	private byte presentationRestrictedIndicator;
 
 	public RedirectionNumberRestriction(byte presentationRestrictedIndicator) {
 		super();

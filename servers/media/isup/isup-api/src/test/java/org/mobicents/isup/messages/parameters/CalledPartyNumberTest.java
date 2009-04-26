@@ -63,7 +63,7 @@ public class CalledPartyNumberTest extends ParameterHarness {
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledPartyNumber bci = new CalledPartyNumber(getBody1());
 	
-		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledPartyNumber._NPI_ISDN, CalledPartyNumber._INN_ROUTING_ALLOWED, CalledPartyNumber._NAI_NETWORK_SPECIFIC, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
@@ -71,7 +71,7 @@ public class CalledPartyNumberTest extends ParameterHarness {
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledPartyNumber bci = new CalledPartyNumber(getBody2());
 	
-		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getInternalNetworkNumberIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledPartyNumber._NPI_ISDN, CalledPartyNumber._INN_ROUTING_NOT_ALLOWED, CalledPartyNumber._NAI_NETWORK_SPECIFIC, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}

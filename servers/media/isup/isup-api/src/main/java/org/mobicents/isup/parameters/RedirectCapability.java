@@ -40,7 +40,7 @@ public class RedirectCapability extends AbstractParameter {
 	 */
 	public static final int _RPI_RPANTDC = 3;
 
-	private byte[] capabilities = null;
+	private byte[] capabilities;
 
 	public RedirectCapability(byte[] capabilities) {
 		super();

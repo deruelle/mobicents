@@ -20,8 +20,8 @@ import java.io.IOException;
  */
 public class RangeAndStatus extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x16;
-	private byte range = 0;
-	private byte[] status = null;
+	private byte range;
+	private byte[] status;
 
 	// FIXME:
 	// private Status[] status = null;

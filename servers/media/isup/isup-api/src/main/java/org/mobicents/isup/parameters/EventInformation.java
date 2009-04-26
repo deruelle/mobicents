@@ -68,8 +68,8 @@ public class EventInformation extends AbstractParameter {
 	 */
 	public static final boolean _EVENT_PRESENTATION_IPR = true;
 
-	private int eventIndicator = 0;
-	private boolean eventPresentationRestrictedIndicator = false;
+	private int eventIndicator ;
+	private boolean eventPresentationRestrictedIndicator;
 
 	public EventInformation(byte[] b) {
 		super();
@@ -90,9 +90,10 @@ public class EventInformation extends AbstractParameter {
 		if (b == null || b.length != 1) {
 			throw new IllegalArgumentException("byte[] must not be null or have different size than 1");
 		}
-
+		
 		this.eventIndicator = b[0] & 0x7F;
-		this.eventIndicator = (b[0] >> 7) & 0x01;
+		this.eventPresentationRestrictedIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
+		
 		return 1;
 	}
 

@@ -99,18 +99,20 @@ public class InstructionIndicators extends AbstractParameter {
 	 */
 	public static final int _BII_DISCARD_PARAMETER = 3;
 
-	private boolean transitAtIntermediateExchangeIndicator = false;
-	private boolean releaseCallindicator = false;
-	private boolean sendNotificationIndicator = false;
-	private boolean discardMessageIndicator = false;
-	private boolean discardParameterIndicator = false;
-	private boolean passOnNotPossibleIndicator = false;
-	private int bandInterworkingIndicator = 0;
+	
+	//FIXME: decide how to use this.
+	private boolean transitAtIntermediateExchangeIndicator;
+	private boolean releaseCallindicator ;
+	private boolean sendNotificationIndicator;
+	private boolean discardMessageIndicator;
+	private boolean discardParameterIndicator;
+	private int passOnNotPossibleIndicator ;
+	private int bandInterworkingIndicator;
 
-	private boolean secondOctetPresenet = false;
+	private boolean secondOctetPresenet;
 
-	private byte[] raw = null;
-	private boolean useAsRaw = false;
+	private byte[] raw;
+	private boolean useAsRaw ;
 
 	public InstructionIndicators(byte[] b) {
 		super();
@@ -128,31 +130,34 @@ public class InstructionIndicators extends AbstractParameter {
 		super();
 		this.raw = b;
 		this.useAsRaw = userAsRaw;
+		if(!userAsRaw)
+			decodeElement(b);
 	}
 
+	
+
 	public InstructionIndicators(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator, boolean sendNotificationIndicator, boolean discardMessageIndicator,
-			boolean discardParameterIndicator, boolean passOnNotPossibleIndicator, boolean secondOctetPresenet, byte[] raw, boolean useAsRaw) {
+			boolean discardParameterIndicator, int passOnNotPossibleIndicator, boolean secondOctetPresenet) {
 		super();
 		this.transitAtIntermediateExchangeIndicator = transitAtIntermediateExchangeIndicator;
 		this.releaseCallindicator = releaseCallindicator;
 		this.sendNotificationIndicator = sendNotificationIndicator;
 		this.discardMessageIndicator = discardMessageIndicator;
 		this.discardParameterIndicator = discardParameterIndicator;
-		this.passOnNotPossibleIndicator = passOnNotPossibleIndicator;
+		this.setPassOnNotPossibleIndicator(passOnNotPossibleIndicator);
 		this.secondOctetPresenet = secondOctetPresenet;
-		this.raw = raw;
-		this.useAsRaw = useAsRaw;
+		
 	}
 
 	public InstructionIndicators(boolean transitAtIntermediateExchangeIndicator, boolean releaseCallindicator, boolean sendNotificationIndicator, boolean discardMessageIndicator,
-			boolean discardParameterIndicator, boolean passOnNotPossibleIndicator, byte bandInterworkingIndicator) {
+			boolean discardParameterIndicator, int passOnNotPossibleIndicator, int bandInterworkingIndicator) {
 		super();
 		this.transitAtIntermediateExchangeIndicator = transitAtIntermediateExchangeIndicator;
 		this.releaseCallindicator = releaseCallindicator;
 		this.sendNotificationIndicator = sendNotificationIndicator;
 		this.discardMessageIndicator = discardMessageIndicator;
 		this.discardParameterIndicator = discardParameterIndicator;
-		this.passOnNotPossibleIndicator = passOnNotPossibleIndicator;
+		this.setPassOnNotPossibleIndicator(passOnNotPossibleIndicator);
 		this.setBandInterworkingIndicator(bandInterworkingIndicator);
 	}
 
@@ -165,14 +170,15 @@ public class InstructionIndicators extends AbstractParameter {
 		if (b == null || b.length < 1) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be greater than  0");
 		}
-
+	
+		
 		// XXX: Cheat, we read only defined in Q763 2 octets, rest we ignore...
 		int index = 0;
 		int v = b[index];
 
 		try {
 			// watch extension byte
-			while (((v >> 7) & 0x01) == 1) {
+			do  {
 				v = b[index];
 				if (index == 0) {
 					this.transitAtIntermediateExchangeIndicator = (v & 0x01) == _TURN_ON;
@@ -180,17 +186,20 @@ public class InstructionIndicators extends AbstractParameter {
 					this.sendNotificationIndicator = ((v >> 2) & 0x01) == _TURN_ON;
 					this.discardMessageIndicator = ((v >> 3) & 0x01) == _TURN_ON;
 					this.discardParameterIndicator = ((v >> 4) & 0x01) == _TURN_ON;
-					this.passOnNotPossibleIndicator = (byte) ((v >> 5) & 0x03) == _TURN_ON;
+					this.passOnNotPossibleIndicator =  ((v >> 5) & 0x03);
 				} else if (index == 1) {
-					this.bandInterworkingIndicator = (byte) (v & 0x03);
+					this.setBandInterworkingIndicator( (v & 0x03));
 				} else {
 					if (logger.isLoggable(Level.FINEST)) {
 						logger.finest("Skipping octets with index[" + index + "] in " + this.getClass().getName() + ". This should not be called for us .... Instead one should use raw");
 					}
+					break;
 				}
 				index++;
-			}
+				
+			}while((((v >> 7) & 0x01) != 0));
 		} catch (ArrayIndexOutOfBoundsException aioobe) {
+			aioobe.printStackTrace();
 			throw new IllegalArgumentException("Failed to parse passed value due to wrong encoding.", aioobe);
 		}
 		return b.length;
@@ -209,27 +218,24 @@ public class InstructionIndicators extends AbstractParameter {
 		byte[] b = null;
 		if (this.secondOctetPresenet) {
 			b = new byte[2];
-			b[1] = (byte) (0x80 | (this.bandInterworkingIndicator & 0x03));
+			b[1] = (byte) ( (this.bandInterworkingIndicator & 0x03));
+			b[0] = (byte) 0x80 ;
 		} else {
 			b = new byte[1];
 		}
 
-		b[0] = 0;
 
 		b[0] |= (this.transitAtIntermediateExchangeIndicator ? _TURN_ON : _TURN_OFF);
 		b[0] |= (this.releaseCallindicator ? _TURN_ON : _TURN_OFF) << 1;
 		b[0] |= (this.sendNotificationIndicator ? _TURN_ON : _TURN_OFF) << 2;
 		b[0] |= (this.discardMessageIndicator ? _TURN_ON : _TURN_OFF) << 3;
 		b[0] |= (this.discardParameterIndicator ? _TURN_ON : _TURN_OFF) << 4;
-		b[0] |= (this.passOnNotPossibleIndicator ? _TURN_ON : _TURN_OFF) << 5;
+		b[0] |= this.passOnNotPossibleIndicator << 5;
 
 		return b;
 	}
 
-	public void setBandInterworkingIndicator(byte bandInterworkingIndicator) {
-		this.bandInterworkingIndicator = bandInterworkingIndicator;
-		this.secondOctetPresenet = true;
-	}
+
 
 	public boolean isTransitAtIntermediateExchangeIndicator() {
 		return transitAtIntermediateExchangeIndicator;
@@ -271,12 +277,12 @@ public class InstructionIndicators extends AbstractParameter {
 		this.discardParameterIndicator = discardParameterIndicator;
 	}
 
-	public boolean isPassOnNotPossibleIndicator() {
+	public int getPassOnNotPossibleIndicator() {
 		return passOnNotPossibleIndicator;
 	}
 
-	public void setPassOnNotPossibleIndicator(boolean passOnNotPossibleIndicator) {
-		this.passOnNotPossibleIndicator = passOnNotPossibleIndicator;
+	public void setPassOnNotPossibleIndicator(int passOnNotPossibleIndicator2) {
+		this.passOnNotPossibleIndicator = passOnNotPossibleIndicator2;
 	}
 
 	public int getBandInterworkingIndicator() {
@@ -285,6 +291,7 @@ public class InstructionIndicators extends AbstractParameter {
 
 	public void setBandInterworkingIndicator(int bandInterworkingIndicator) {
 		this.bandInterworkingIndicator = bandInterworkingIndicator;
+		this.secondOctetPresenet = true;
 	}
 
 	public boolean isSecondOctetPresenet() {

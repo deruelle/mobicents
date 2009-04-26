@@ -34,7 +34,7 @@ public class HTRInformation extends AbstractNAINumber {
 	
 	public static final int _PARAMETER_CODE = 0x82;
 
-	private int numberingPlanIndicator = 0;
+	private int numberingPlanIndicator;
 
 	public HTRInformation(byte[] representation) {
 		super(representation);

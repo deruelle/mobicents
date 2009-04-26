@@ -22,7 +22,7 @@ public class QueryOnReleaseCapability extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x85;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
-	private byte[] capabilities = null;
+	private byte[] capabilities;
 
 	/**
 	 * See Q.763 QoR capability indicator : no indication

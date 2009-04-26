@@ -78,13 +78,13 @@ public class LocationNumber extends AbstractNAINumber {
 	 */
 	public final static int _SI_NETWORK_PROVIDED = 3;
 
-	protected int numberingPlanIndicator = 0;
+	protected int numberingPlanIndicator;
 
-	protected int internalNetworkNumberIndicator = 0;
+	protected int internalNetworkNumberIndicator;
 
-	protected int addressRepresentationREstrictedIndicator = 0;
+	protected int addressRepresentationREstrictedIndicator;
 
-	protected int screeningIndicator = 0;
+	protected int screeningIndicator;
 
 	public LocationNumber(int natureOfAddresIndicator, String address, int numberingPlanIndicator, int internalNetworkNumberIndicator, int addressRepresentationREstrictedIndicator,
 			int screeningIndicator) {
@@ -159,7 +159,7 @@ public class LocationNumber extends AbstractNAINumber {
 	 */
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
-		int c = this.natureOfAddresIndicator << 4;
+		int c = this.numberingPlanIndicator << 4;
 		c |= (this.internalNetworkNumberIndicator << 7);
 		c |= (this.addressRepresentationREstrictedIndicator << 2);
 		c |= (this.screeningIndicator);
@@ -184,11 +184,11 @@ public class LocationNumber extends AbstractNAINumber {
 		this.internalNetworkNumberIndicator = internalNetworkNumberIndicator;
 	}
 
-	public int getAddressRepresentationREstrictedIndicator() {
+	public int getAddressRepresentationRestrictedIndicator() {
 		return addressRepresentationREstrictedIndicator;
 	}
 
-	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
+	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
 		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 

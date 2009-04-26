@@ -23,7 +23,7 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 
 	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
-	private int opspLengthIndicator = 0;
+	private int opspLengthIndicator;
 
 	public OriginatingParticipatingServiceProvider() {
 
@@ -114,6 +114,8 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 			throw new IllegalArgumentException("Maximum octets for this parameter in digits part is 4.");
 			// FIXME: add check for digit (max 7 ?)
 		}
+		if(super.address.length()>7)
+			throw new IllegalArgumentException("maximum allowed number of digits is 7.");
 	}
 
 	public int getCode() {

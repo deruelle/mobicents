@@ -166,11 +166,11 @@ public class ConnectedNumber extends AbstractNAINumber {
 		this.numberingPlanIndicator = numberingPlanIndicator;
 	}
 
-	public int getAddressRepresentationREstrictedIndicator() {
+	public int getAddressRepresentationRestrictedIndicator() {
 		return addressRepresentationREstrictedIndicator;
 	}
 
-	public void setAddressRepresentationREstrictedIndicator(int addressRepresentationREstrictedIndicator) {
+	public void setAddressRepresentationRestrictedIndicator(int addressRepresentationREstrictedIndicator) {
 		this.addressRepresentationREstrictedIndicator = addressRepresentationREstrictedIndicator;
 	}
 

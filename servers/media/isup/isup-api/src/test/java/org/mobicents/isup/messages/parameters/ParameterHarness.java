@@ -75,7 +75,37 @@ public abstract class ParameterHarness extends TestCase {
 
 		return out;
 	}
+	public String makeCompare(int[] hardcodedBody, int[] elementEncoded) {
 
+		int totalLength = 0;
+		if (hardcodedBody == null || elementEncoded == null) {
+			return "One arg is null";
+		}
+		if (hardcodedBody.length >= elementEncoded.length) {
+			totalLength = hardcodedBody.length;
+		} else {
+			totalLength = elementEncoded.length;
+		}
+
+		String out = "";
+
+		for (int index = 0; index < totalLength; index++) {
+			if (hardcodedBody.length > index) {
+				out += "hardcodedBody[" + Integer.toHexString(hardcodedBody[index]) + "]";
+			} else {
+				out += "hardcodedBody[NOP]";
+			}
+
+			if (elementEncoded.length > index) {
+				out += "elementEncoded[" + Integer.toHexString(elementEncoded[index]) + "]";
+			} else {
+				out += "elementEncoded[NOP]";
+			}
+			out += "\n";
+		}
+
+		return out;
+	}
 	public void testDecodeEncode() throws IOException {
 
 		for (int index = 0; index < this.goodBodies.size(); index++) {
@@ -137,12 +167,9 @@ public abstract class ParameterHarness extends TestCase {
 				if (v == null && expectedValues != null) {
 					fail("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index] + " is null, but test values is not.");
 				}
-				if(component instanceof CalledDirectoryNumber)
-				{
-					((CalledDirectoryNumber)component).getNumberingPlanIndicator();
-				}
+			
 				assertEquals("Failed to validate values in component: " + component.getClass().getName() + ". Value of: " + getterMethodNames[index], expectedValues[index], v);
-				
+
 			}
 
 		} catch (Exception e) {
@@ -174,5 +201,7 @@ public abstract class ParameterHarness extends TestCase {
 	public static String getThreeDigitsString() {
 		return threeDigitsString;
 	}
+
+	
 
 }

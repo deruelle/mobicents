@@ -57,11 +57,11 @@ public class MLPPPrecedence extends AbstractParameter {
 	 */
 	public static final int _PLI_ROUTINE = 4;
 
-	private int lfb = 0;
-	private int precedenceLevel = 0;
-	private int mllpServiceDomain = 0;
+	private int lfb;
+	private int precedenceLevel ;
+	private int mllpServiceDomain ;
 	// FIXME: ensure zero in first digit.?
-	private byte[] niDigits = null;
+	private byte[] niDigits ;
 
 	public MLPPPrecedence(byte[] b) {
 		super();
@@ -89,6 +89,7 @@ public class MLPPPrecedence extends AbstractParameter {
 		this.precedenceLevel = (byte) (b[0] & 0x0F);
 		this.lfb = (byte) ((b[0] >> 5) & 0x03);
 		byte v = 0;
+		this.niDigits = new byte[4];
 		for (int i = 0; i < 2; i++) {
 			v = 0;
 			v = b[i + 1];

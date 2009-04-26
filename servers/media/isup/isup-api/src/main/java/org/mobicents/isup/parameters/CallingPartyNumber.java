@@ -154,7 +154,7 @@ public class CallingPartyNumber extends AbstractNAINumber {
 	@Override
 	public int encodeBody(ByteArrayOutputStream bos) {
 
-		int c = this.natureOfAddresIndicator << 4;
+		int c = this.numberingPlanIndicator << 4;
 		c |= (this.numberIncompleteIndicator << 7);
 		c |= (this.addressRepresentationREstrictedIndicator << 2);
 		c |= (this.screeningIndicator);

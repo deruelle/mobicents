@@ -48,7 +48,9 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  greater than 1");
 		}
 
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		
+		
+		ByteArrayOutputStream bos = null;
 		boolean newParameter = true;
 		byte parameterCode = 0;
 
@@ -56,24 +58,29 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 			if (newParameter) {
 				parameterCode = b[index];
 				bos = new ByteArrayOutputStream();
+				newParameter = false;
 				continue;
 			} else {
-				if (((b[index] >> 7) & 0x01) == 1) {
-					// ext bit, this is last octet
-					bos.write(b[index]);
+				bos.write(b[index]);
+
+				if (((b[index] >> 7) & 0x01) == 0) {
+					// ext bit is zero, this is last octet
+					
 					if (bos.size() < 3) {
 						this.addInstructions(parameterCode, new InstructionIndicators(bos.toByteArray()));
 					} else {
 						this.addInstructions(parameterCode, new InstructionIndicators(bos.toByteArray(), true));
 					}
+					newParameter = true;
 				} else {
-					bos.write(b[index]);
+				
 					continue;
 				}
 			}
 
 		}
-
+		
+	
 		return b.length;
 	}
 
@@ -85,7 +92,7 @@ public class ParameterCompatibilityInformation extends AbstractParameter {
 	public byte[] encodeElement() throws IOException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		for (int index = 0; index < this.parameterCodes.size(); index++) {
-			bos.write(this.parameterCodes.get(index));
+			bos.write(this.parameterCodes.get(index).byteValue());
 			bos.write(this.instructionIndicators.get(index).encodeElement());
 		}
 		return bos.toByteArray();

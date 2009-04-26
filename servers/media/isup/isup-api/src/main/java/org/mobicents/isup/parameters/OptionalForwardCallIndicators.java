@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
  */
-public class OptionalForwardCallIndicator extends AbstractParameter {
+public class OptionalForwardCallIndicators extends AbstractParameter {
 
 	public static final int _PARAMETER_CODE = 0x08;
 	private static final int _TURN_ON = 1;
@@ -27,50 +27,50 @@ public class OptionalForwardCallIndicator extends AbstractParameter {
 	 * See Q.763 3.38 Simple segmentation indicator : no additional information
 	 * will be sent
 	 */
-	private final static boolean _SSI_NO_ADDITIONAL_INFO = false;
+	public final static boolean _SSI_NO_ADDITIONAL_INFO = false;
 
 	/**
 	 * See Q.763 3.38 Simple segmentation indicator : additional information
 	 * will be sent in a segmentation message
 	 */
-	private final static boolean _SSI_ADDITIONAL_INFO = true;
+	public final static boolean _SSI_ADDITIONAL_INFO = true;
 
 	/**
 	 * See Q.763 3.38 Connected line identity request indicator :
 	 */
-	private final static boolean _CLIRI_NOT_REQUESTED = false;
+	public final static boolean _CLIRI_NOT_REQUESTED = false;
 
 	/**
 	 * See Q.763 3.38 Connected line identity request indicator :
 	 */
-	private final static boolean _CLIRI_REQUESTED = true;
+	public final static boolean _CLIRI_REQUESTED = true;
 	/**
 	 * See Q.763 3.38 Closed user group call indicator : non-CUG call
 	 */
-	private final static int _CIGCI_NON_CUG_CALL = 0;
+	public final static int _CUGCI_NON_CUG_CALL = 0;
 
 	/**
 	 * See Q.763 3.38 Closed user group call indicator : closed user group call,
 	 * outgoing access allowed
 	 */
-	private final static int _CIGCI_CUG_CALL_OAL = 2;
+	public final static int _CUGCI_CUG_CALL_OAL = 2;
 
 	/**
 	 * See Q.763 3.38 Closed user group call indicator : closed user group call,
 	 * outgoing access not allowed
 	 */
-	private final static int _CIGCI_CUG_CALL_OANL = 3;
+	public final static int _CUGCI_CUG_CALL_OANL = 3;
 
-	private byte closedUserGroupCallIndicator = 0;
-	private boolean simpleSegmentationIndicator = false;
-	private boolean connectedLineIdentityRequestIndicator = false;
+	private int closedUserGroupCallIndicator;
+	private boolean simpleSegmentationIndicator;
+	private boolean connectedLineIdentityRequestIndicator;
 
-	public OptionalForwardCallIndicator(byte[] b) {
+	public OptionalForwardCallIndicators(byte[] b) {
 		super();
 		decodeElement(b);
 	}
 
-	public OptionalForwardCallIndicator(byte closedUserGroupCallIndicator, boolean simpleSegmentationIndicator, boolean connectedLineIdentityRequestIndicator) {
+	public OptionalForwardCallIndicators(int closedUserGroupCallIndicator, boolean simpleSegmentationIndicator, boolean connectedLineIdentityRequestIndicator) {
 		super();
 		this.closedUserGroupCallIndicator = closedUserGroupCallIndicator;
 		this.simpleSegmentationIndicator = simpleSegmentationIndicator;
@@ -88,7 +88,7 @@ public class OptionalForwardCallIndicator extends AbstractParameter {
 		}
 		this.closedUserGroupCallIndicator = (byte) (b[0] & 0x03);
 		this.simpleSegmentationIndicator = ((b[0] >> 2) & 0x01) == _TURN_ON;
-		this.simpleSegmentationIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
+		this.connectedLineIdentityRequestIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
 		return 1;
 	}
 
@@ -102,7 +102,7 @@ public class OptionalForwardCallIndicator extends AbstractParameter {
 		int b0 = 0;
 
 		b0 = this.closedUserGroupCallIndicator & 0x03;
-		b0 |= (this.connectedLineIdentityRequestIndicator ? _TURN_ON : _TURN_OFF) << 2;
+		b0 |= (this.simpleSegmentationIndicator ? _TURN_ON : _TURN_OFF) << 2;
 		b0 |= (this.connectedLineIdentityRequestIndicator ? _TURN_ON : _TURN_OFF) << 7;
 
 		return new byte[] { (byte) b0 };
@@ -112,4 +112,30 @@ public class OptionalForwardCallIndicator extends AbstractParameter {
 
 		return _PARAMETER_CODE;
 	}
+
+	public int getClosedUserGroupCallIndicator() {
+		return closedUserGroupCallIndicator;
+	}
+
+	public void setClosedUserGroupCallIndicator(int closedUserGroupCallIndicator) {
+		this.closedUserGroupCallIndicator = closedUserGroupCallIndicator;
+	}
+
+	public boolean isSimpleSegmentationIndicator() {
+		return simpleSegmentationIndicator;
+	}
+
+	public void setSimpleSegmentationIndicator(boolean simpleSegmentationIndicator) {
+		this.simpleSegmentationIndicator = simpleSegmentationIndicator;
+	}
+
+	public boolean isConnectedLineIdentityRequestIndicator() {
+		return connectedLineIdentityRequestIndicator;
+	}
+
+	public void setConnectedLineIdentityRequestIndicator(boolean connectedLineIdentityRequestIndicator) {
+		this.connectedLineIdentityRequestIndicator = connectedLineIdentityRequestIndicator;
+	}
+	
+	
 }

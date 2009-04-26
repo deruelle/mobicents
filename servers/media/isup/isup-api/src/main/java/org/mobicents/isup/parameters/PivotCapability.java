@@ -56,7 +56,7 @@ public class PivotCapability extends AbstractParameter {
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
-	private byte[] pivotCapabilities = null;
+	private byte[] pivotCapabilities;
 
 	/*
 	 * (non-Javadoc)

@@ -23,7 +23,7 @@ public class GVNSUserGroup extends AbstractNumber {
 
 	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
-	private int gugLengthIndicator = 0;
+	private int gugLengthIndicator;
 
 	public GVNSUserGroup() {
 
@@ -95,7 +95,7 @@ public class GVNSUserGroup extends AbstractNumber {
 		return 0;
 	}
 
-	public int getGugpLengthIndicator() {
+	public int getGugLengthIndicator() {
 		return gugLengthIndicator;
 	}
 

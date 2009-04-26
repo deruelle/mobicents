@@ -274,19 +274,20 @@ public abstract class AbstractNumber extends AbstractParameter {
 		int b = 0;
 		while (octetsCount != count - 1 && bis.available() - 1 > 0) {
 			b = (byte) bis.read();
-
+			count++;
+			
 			int d1 = b & 0x0f;
 			int d2 = (b & 0xf0) >> 4;
 
 			address += Integer.toHexString(d1) + Integer.toHexString(d2);
-
+			
 		}
 
 		b = bis.read() & 0xff;
 		count++;
 		address += Integer.toHexString((b & 0x0f));
 		
-		if (oddFlag != 1) {
+		if (oddFlag != _FLAG_ODD) {
 			address += Integer.toHexString((b & 0xf0) >> 4);
 		}
 		this.setAddress(address);
@@ -373,8 +374,6 @@ public abstract class AbstractNumber extends AbstractParameter {
 
 	public void setAddress(String address) {
 		this.address = address;
-
-		// let clear first bit in nai
 
 		// lets compute odd flag
 		// FIXME: Oleg is this correct?

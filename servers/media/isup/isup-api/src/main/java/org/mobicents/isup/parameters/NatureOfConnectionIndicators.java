@@ -67,8 +67,8 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 	 */
 	public static final int _CCI_PERFORMED_ON_PREVIOUS_CIRCUIT = 0;
 
-	private byte satelliteIndicator = 0;
-	private byte continuityCheckIndicator = 0;
+	private int satelliteIndicator = 0;
+	private int continuityCheckIndicator = 0;
 	private boolean echoControlDeviceIndicator = false;
 
 	public NatureOfConnectionIndicators(byte[] b) {
@@ -103,20 +103,20 @@ public class NatureOfConnectionIndicators extends AbstractParameter {
 		return new byte[] { (byte) b0 };
 	}
 
-	public byte getSatelliteIndicator() {
+	public int getSatelliteIndicator() {
 		return satelliteIndicator;
 	}
 
-	public void setSatelliteIndicator(byte satelliteIndicator) {
-		this.satelliteIndicator = satelliteIndicator;
+	public void setSatelliteIndicator(int satelliteIndicator) {
+		this.satelliteIndicator = satelliteIndicator & 0x03;
 	}
 
-	public byte getContinuityCheckIndicator() {
+	public int getContinuityCheckIndicator() {
 		return continuityCheckIndicator;
 	}
 
-	public void setContinuityCheckIndicator(byte continuityCheckIndicator) {
-		this.continuityCheckIndicator = continuityCheckIndicator;
+	public void setContinuityCheckIndicator(int continuityCheckIndicator) {
+		this.continuityCheckIndicator = continuityCheckIndicator & 0x03;
 	}
 
 	public boolean isEchoControlDeviceIndicator() {

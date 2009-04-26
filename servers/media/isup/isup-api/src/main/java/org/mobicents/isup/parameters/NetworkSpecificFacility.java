@@ -24,16 +24,30 @@ public class NetworkSpecificFacility extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x2F;
 
 	/**
+	 * See Q.763 Type of network identification : national network
+	 * identification
+	 */
+	public static final int _TNI_NNI = 0x02;
+
+	/**
+	 * See Q.763 Type of network identification : reserved for international
+	 * network identification
+	 */
+	public static final int _TNI_RESERVED_INI = 0x03;
+
+	/**
 	 * This tells us to include byte 1a - sets lengthOfNetworkIdentification to
 	 * 1+networkdIdentification.length
 	 */
-	private boolean includeNetworkIdentification = false;
+	private boolean includeNetworkIdentification;
 
-	private int lengthOfNetworkIdentification = 0;
-	private int typeOfNetworkIdentification = 0;
-	private int NetworkdIdentificationPlan = 0;
-	private byte[] networkdIdentification = null;
-	private byte[] networkSpecificaFacilityIndicator = null;
+	private int lengthOfNetworkIdentification;
+	private int typeOfNetworkIdentification;
+	private int networkIdentificationPlan;
+	// FIXME: ext bit: indicated as to be used as in 3.25 but on specs id
+	// different...
+	private byte[] networkIdentification;
+	private byte[] networkSpecificaFacilityIndicator;
 
 	public NetworkSpecificFacility(byte[] b) {
 		super();
@@ -45,8 +59,8 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		super();
 		this.includeNetworkIdentification = includeNetworkIdentification;
 		this.typeOfNetworkIdentification = typeOfNetworkIdentification;
-		NetworkdIdentificationPlan = networkdIdentificationPlan;
-		this.networkdIdentification = networkdIdentification;
+		this.networkIdentificationPlan = networkdIdentificationPlan;
+		this.networkIdentification = networkdIdentification;
 		this.networkSpecificaFacilityIndicator = networkSpecificaFacilityIndicator;
 	}
 
@@ -59,37 +73,44 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		if (b == null || b.length < 1) {
 			throw new IllegalArgumentException("byte[] must nto be null or have length greater than 1");
 		}
+		// try {
 		int shift = 0;
-		this.lengthOfNetworkIdentification = b[shift];
+		this.lengthOfNetworkIdentification = b[shift++];
+
+		// FIXME: We ignore ext bit, we dont need it ? ?????
+		this.typeOfNetworkIdentification = (byte) ((b[shift] >> 4) & 0x07);
+		this.networkIdentificationPlan = (byte) (b[shift] & 0x0F);
 		shift++;
-
 		if (this.lengthOfNetworkIdentification > 0) {
-			// We ignore ext bit, we dont need it ?
-			this.typeOfNetworkIdentification = (byte) ((b[shift] >> 4) & 0x07);
-			this.NetworkdIdentificationPlan = (byte) (b[shift] & 0x0F);
-			shift++;
-			byte[] _networkId = new byte[this.lengthOfNetworkIdentification - 1];
-			for (int i = 2; i < this.lengthOfNetworkIdentification + 1; i++, shift++) {
 
-				_networkId[i - 2] = (byte) (b[i] & 0x7F);
+			byte[] _networkId = new byte[this.lengthOfNetworkIdentification];
+			for (int i = 0; i < this.lengthOfNetworkIdentification ; i++, shift++) {
+
+				_networkId[i] = (byte) (b[shift] | 0x80);
 			}
 
 			// now lets set it.
 			if (_networkId.length > 0) {
 
-				_networkId[_networkId.length - 1] |= _networkId[_networkId.length - 1] & 0x80;
+				_networkId[_networkId.length - 1] = (byte) (_networkId[_networkId.length - 1] & 0x7F);
 			}
-			this.setNetworkdIdentification(_networkId);
+			
+			
+			this.setNetworkIdentification(_networkId);
 		}
+
 		if (shift + 1 == b.length) {
 			throw new IllegalArgumentException("There is no facility indicator. This part is mandatory!!!");
 		}
 		byte[] _facility = new byte[b.length - shift - 1];
-		for (; shift < b.length; shift++) {
-			_facility[b.length - shift] = b[shift];
-		}
-
-		return shift;
+		// -1 cause shift counts from 0
+		System.arraycopy(b, shift, _facility, 0, b.length - shift - 1);
+		this.setNetworkSpecificaFacilityIndicator( _facility);
+		return b.length;
+		// } catch (ArrayIndexOutOfBoundsException aioobe) {
+		// throw new IllegalArgumentException("Failed to parse due to: ",
+		// aioobe);
+		// }
 	}
 
 	/*
@@ -105,15 +126,23 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		if (this.includeNetworkIdentification) {
 			int b1 = 0;
 			b1 = ((this.typeOfNetworkIdentification & 0x07) << 4);
-			b1 |= (this.NetworkdIdentificationPlan & 0x0F);
+			b1 |= (this.networkIdentificationPlan & 0x0F);
 
-			if (this.networkdIdentification != null && this.networkdIdentification.length > 0) {
+			if (this.networkIdentification != null && this.networkIdentification.length > 0) {
 				b1 |= 0x80;
 				bos.write(b1);
-				for (byte bb : networkdIdentification)
-					bos.write(bb);
+				for (int index = 0; index < this.networkIdentification.length; index++) {
+					if (index == this.networkIdentification.length - 1) {
+						
+						bos.write(this.networkIdentification[index] & 0x7F);
+						
+					} else {
+						bos.write(this.networkIdentification[index] | (0x01<<7));
+						
+					}
+				}
 			} else {
-				bos.write(b1);
+				bos.write(b1 & 0x7F);
 			}
 		}
 
@@ -129,22 +158,8 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		return includeNetworkIdentification;
 	}
 
-	public void setIncludeNetworkIdentification(boolean includeNetworkIdentification) {
-		this.includeNetworkIdentification = includeNetworkIdentification;
-		if (this.networkdIdentification == null) {
-			if (this.includeNetworkIdentification)
-				this.lengthOfNetworkIdentification = 1;
-		} else {
-			this.lengthOfNetworkIdentification = (byte) (this.networkdIdentification.length + 1);
-		}
-	}
-
 	public int getLengthOfNetworkIdentification() {
 		return lengthOfNetworkIdentification;
-	}
-
-	public void setLengthOfNetworkIdentification(int lengthOfNetworkIdentification) {
-		this.lengthOfNetworkIdentification = lengthOfNetworkIdentification;
 	}
 
 	public int getTypeOfNetworkIdentification() {
@@ -155,25 +170,28 @@ public class NetworkSpecificFacility extends AbstractParameter {
 		this.typeOfNetworkIdentification = typeOfNetworkIdentification;
 	}
 
-	public int getNetworkdIdentificationPlan() {
-		return NetworkdIdentificationPlan;
+	public int getNetworkIdentificationPlan() {
+		return networkIdentificationPlan;
 	}
 
-	public void setNetworkdIdentificationPlan(byte networkdIdentificationPlan) {
-		NetworkdIdentificationPlan = networkdIdentificationPlan;
+	public void setNetworkIdentificationPlan(byte networkdIdentificationPlan) {
+		this.networkIdentificationPlan = networkdIdentificationPlan;
 	}
 
-	public byte[] getNetworkdIdentification() {
-		return networkdIdentification;
+	public byte[] getNetworkIdentification() {
+		return networkIdentification;
 	}
 
-	public void setNetworkdIdentification(byte[] networkdIdentification) {
+	public void setNetworkIdentification(byte[] networkdIdentification) {
 
 		if (networkdIdentification != null && networkdIdentification.length > Byte.MAX_VALUE * 2 - 1) {
 			throw new IllegalArgumentException("Length of Network Identification part must not be greater than: " + (Byte.MAX_VALUE * 2 - 1));
 		}
-		this.networkdIdentification = networkdIdentification;
-		this.setIncludeNetworkIdentification(this.includeNetworkIdentification);
+		
+		this.networkIdentification = networkdIdentification;
+		this.includeNetworkIdentification = true;
+		
+	
 	}
 
 	public byte[] getNetworkSpecificaFacilityIndicator() {

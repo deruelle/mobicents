@@ -151,7 +151,7 @@ public abstract class AbstractNAINumber extends AbstractNumber {
 		return count;
 	}
 
-	public int getNatureOfAddresIndicator() {
+	public int getNatureOfAddressIndicator() {
 		return natureOfAddresIndicator;
 	}
 

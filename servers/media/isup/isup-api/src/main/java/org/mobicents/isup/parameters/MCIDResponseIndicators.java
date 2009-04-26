@@ -33,12 +33,12 @@ public class MCIDResponseIndicators extends AbstractParameter {
 	/**
 	 * Flag that indicates that information is requested
 	 */
-	private static final boolean _INDICATOR_PROVIDED = true;
+	public static final boolean _INDICATOR_PROVIDED = true;
 
 	/**
 	 * Flag that indicates that information is not requested
 	 */
-	private static final boolean _INDICATOR_NOT_PROVIDED = false;
+	public static final boolean _INDICATOR_NOT_PROVIDED = false;
 
 	private boolean mcidIncludedIndicator = false;
 	private boolean holdingProvidedIndicator = false;

@@ -27,7 +27,7 @@ public class ServiceActivation extends AbstractParameter {
 
 	public static final int _PARAMETER_CODE = 0x33;
 
-	private byte[] featureCodes = null;
+	private byte[] featureCodes;
 
 	public ServiceActivation(byte[] featureCodes) {
 		super();

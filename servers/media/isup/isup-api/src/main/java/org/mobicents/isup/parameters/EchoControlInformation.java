@@ -104,10 +104,10 @@ public class EchoControlInformation extends AbstractParameter {
 	public static final int _OUTGOING_ECHO_CDRI_DR = 2;
 
 	public static final int _PARAMETER_CODE = 0x37;
-	private int outgoingEchoControlDeviceInformationIndicator = 0;
-	private int incomingEchoControlDeviceInformationIndicator = 0;
-	private int outgoingEchoControlDeviceInformationRequestIndicator = 0;
-	private int incomingEchoControlDeviceInformationRequestIndicator = 0;
+	private int outgoingEchoControlDeviceInformationIndicator;
+	private int incomingEchoControlDeviceInformationIndicator;
+	private int outgoingEchoControlDeviceInformationRequestIndicator;
+	private int incomingEchoControlDeviceInformationRequestIndicator;
 
 	
 	

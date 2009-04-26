@@ -20,12 +20,12 @@ import java.io.IOException;
 public class ConnectionRequest extends AbstractParameter {
 
 	public static final int _PARAMETER_CODE = 0x0D;
-	private int localReference = 0;
-	private int signalingPointCode = 0;
+	private int localReference;
+	private int signalingPointCode;
 	private boolean protocolClassSet = false;
-	private int protocolClass = 0;
+	private int protocolClass;
 	private boolean creditSet = false;
-	private int credit = 0;
+	private int credit;
 
 	public ConnectionRequest(byte[] b) {
 		decodeElement(b);

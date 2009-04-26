@@ -71,7 +71,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		ConnectedNumber bci = new ConnectedNumber(getBody1());
 
-		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationREstrictedIndicator", "getNatureOfAddresIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { ConnectedNumber._NPI_TELEX, ConnectedNumber._APRI_NOT_AVAILABLE, ConnectedNumber._NAI_NATIONAL, ConnectedNumber._SI_NETWORK_PROVIDED, false,
 				super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
@@ -80,7 +80,7 @@ public class ConnectedNumberTest extends ParameterHarness {
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		ConnectedNumber bci = new ConnectedNumber(getBody2());
 
-		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationREstrictedIndicator", "getNatureOfAddresIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "getScreeningIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { ConnectedNumber._NPI_TELEX, ConnectedNumber._APRI_ALLOWED, ConnectedNumber._NAI_NATIONAL, ConnectedNumber._SI_NETWORK_PROVIDED, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}

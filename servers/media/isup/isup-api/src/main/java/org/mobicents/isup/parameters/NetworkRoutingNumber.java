@@ -39,8 +39,8 @@ public class NetworkRoutingNumber extends AbstractNumber {
 	 */
 	public static final int _NAI_NRNI_NETWORK_SNF = 2;
 
-	private int numberingPlanIndicator = 0;
-	private int natureOfAddressIndicator = 0;
+	private int numberingPlanIndicator;
+	private int natureOfAddressIndicator;
 
 	public NetworkRoutingNumber(String address, int numberingPlanIndicator, int natureOfAddressIndicator) {
 		super(address);

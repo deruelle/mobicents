@@ -27,46 +27,46 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 	/**
 	 * See Q.763 3.37 In-band information indicator
 	 */
-	private final static boolean _IBII_NO_INDICATION = false;
+	public final static boolean _IBII_NO_INDICATION = false;
 	/**
 	 * See Q.763 3.37 In-band information indicator
 	 */
-	private final static boolean _IBII_AVAILABLE = true;
+	public final static boolean _IBII_AVAILABLE = true;
 
 	/**
 	 * See Q.763 3.37 Call diversion may occur indicator
 	 */
-	private final static boolean _CDI_NO_INDICATION = false;
+	public final static boolean _CDI_NO_INDICATION = false;
 
 	/**
 	 * See Q.763 3.37 Call diversion may occur indicator
 	 */
-	private final static boolean _CDI_MAY_OCCUR = true;
+	public final static boolean _CDI_MAY_OCCUR = true;
 
 	/**
 	 * See Q.763 3.37 Simple segmentation indicator
 	 */
-	private final static boolean _SSIR_NO_ADDITIONAL_INFO = false;
+	public final static boolean _SSIR_NO_ADDITIONAL_INFO = false;
 
 	/**
 	 * See Q.763 3.37 Simple segmentation indicator
 	 */
-	private final static boolean _SSIR_ADDITIONAL_INFO = true;
+	public final static boolean _SSIR_ADDITIONAL_INFO = true;
 
 	/**
 	 * See Q.763 3.37 MLPP user indicator
 	 */
-	private final static boolean _MLLPUI_NO_INDICATION = false;
+	public final static boolean _MLLPUI_NO_INDICATION = false;
 
 	/**
 	 * See Q.763 3.37 MLPP user indicator
 	 */
-	private final static boolean _MLLPUI_USER = true;
+	public final static boolean _MLLPUI_USER = true;
 
-	private boolean inbandInformationIndicator = false;
-	private boolean callDiversionMayOccurIndicator = false;
-	private boolean simpleSegmentationIndicator = false;
-	private boolean mllpUserIndicator = false;
+	private boolean inbandInformationIndicator;
+	private boolean callDiversionMayOccurIndicator;
+	private boolean simpleSegmentationIndicator;
+	private boolean mllpUserIndicator;
 
 	public OptionalBakwardCallIndicators(byte[] b) {
 		super();
@@ -90,10 +90,10 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 		if (b == null || b.length != 1) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
 		}
-		this.inbandInformationIndicator = b[0] == _TURN_ON;
-		this.callDiversionMayOccurIndicator = (b[0] >> 1) == _TURN_ON;
-		this.simpleSegmentationIndicator = (b[0] >> 2) == _TURN_ON;
-		this.mllpUserIndicator = (b[0] >> 3) == _TURN_ON;
+		this.inbandInformationIndicator = (b[0] & 0x01) == _TURN_ON;
+		this.callDiversionMayOccurIndicator = ((b[0] >> 1) & 0x01) == _TURN_ON;
+		this.simpleSegmentationIndicator = ((b[0] >> 2) & 0x01) == _TURN_ON;
+		this.mllpUserIndicator = ((b[0] >> 3) & 0x01) == _TURN_ON;
 		return 1;
 	}
 
@@ -115,7 +115,7 @@ public class OptionalBakwardCallIndicators extends AbstractParameter {
 	}
 
 	public boolean isInbandInformationIndicator() {
-		return inbandInformationIndicator;
+		return this.inbandInformationIndicator;
 	}
 
 	public void setInbandInformationIndicator(boolean inbandInformationIndicator) {

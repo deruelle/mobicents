@@ -122,7 +122,7 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	public static final int _NI_RCID = 0x8B;
 
 	public static final int _PARAMETER_CODE = 0x2C;
-	private int[] notificationIndicator = null;
+	private int[] notificationIndicator;
 
 	public GenericNotificationIndicator(byte[] b) {
 		super();
@@ -140,7 +140,7 @@ public class GenericNotificationIndicator extends AbstractParameter {
 	 * @see org.mobicents.isup.ISUPComponent#decodeElement(byte[])
 	 */
 	public int decodeElement(byte[] b) throws IllegalArgumentException {
-		if (b == null || b.length < 1) {
+		if (b == null || b.length < 2) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must be 1 or greater");
 		}
 

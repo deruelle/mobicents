@@ -40,8 +40,8 @@ public class LoopPreventionIndicators extends AbstractParameter {
 	 * See Q.763 3.67 Response indicator : simultaneous transfer
 	 */
 	public static final int _RI_SIM_TRANS = 2;
-	private boolean response = false;
-	private int responseIndicator = 0;
+	private boolean response ;
+	private int responseIndicator;
 
 	public LoopPreventionIndicators(boolean response, int responseIndicator) {
 		super();

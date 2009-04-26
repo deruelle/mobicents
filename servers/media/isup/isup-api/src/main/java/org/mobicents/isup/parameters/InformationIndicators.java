@@ -80,13 +80,13 @@ public class InformationIndicators extends AbstractParameter {
 	 */
 	public static final boolean _CPCRI_CATEOGRY_INCLUDED = true;
 
-	private int callingPartyAddressResponseIndicator = 0;
-	private boolean holdProvidedIndicator = false;
-	private boolean callingPartysCategoryResponseIndicator = false;
-	private boolean chargeInformationResponseIndicator = false;
-	private boolean solicitedInformationIndicator = false;
+	private int callingPartyAddressResponseIndicator;
+	private boolean holdProvidedIndicator;
+	private boolean callingPartysCategoryResponseIndicator;
+	private boolean chargeInformationResponseIndicator;
+	private boolean solicitedInformationIndicator;
 	// FIXME: should we care about it.
-	private int reserved = 0;
+	private int reserved;
 
 	public InformationIndicators(byte[] b) {
 		super();
@@ -114,7 +114,7 @@ public class InformationIndicators extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 2");
 		}
 
-		this.reserved = b[1] & 0x0F;
+		this.reserved = (b[1] >> 4) & 0x0F;
 		this.callingPartyAddressResponseIndicator = b[0] & 0x03;
 		this.holdProvidedIndicator = ((b[0] >> 2) & 0x01) == _TURN_ON;
 		this.callingPartysCategoryResponseIndicator = ((b[0] >> 5) & 0x01) == _TURN_ON;

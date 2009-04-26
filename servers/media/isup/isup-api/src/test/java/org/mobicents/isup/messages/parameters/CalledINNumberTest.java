@@ -62,7 +62,7 @@ public class CalledINNumberTest extends ParameterHarness {
 	public void testBody1EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledINNumber bci = new CalledINNumber(getBody1());
 	
-		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledINNumber._NPI_ISDN, CalledINNumber._APRI_ALLOWED, CalledINNumber._NAI_NETWORK_SPECIFIC, false, super.getSixDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}
@@ -70,7 +70,7 @@ public class CalledINNumberTest extends ParameterHarness {
 	public void testBody2EncodedValues() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, IOException {
 		CalledINNumber bci = new CalledINNumber(getBody2());
 
-		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddresIndicator", "isOddFlag", "getAddress" };
+		String[] methodNames = { "getNumberingPlanIndicator", "getAddressRepresentationRestrictedIndicator", "getNatureOfAddressIndicator", "isOddFlag", "getAddress" };
 		Object[] expectedValues = { CalledINNumber._NPI_ISDN, CalledINNumber._APRI_ALLOWED, CalledINNumber._NAI_NETWORK_SPECIFIC, true, super.getFiveDigitsString() };
 		super.testValues(bci, methodNames, expectedValues);
 	}

@@ -22,6 +22,7 @@ public class NetworkManagementControls extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x5B;
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
+	//FIXME - should we switch to boolean[] - its a slight perf loss :P
 	private byte[] networkManagementControls = null;
 
 	public NetworkManagementControls(byte[] b) {

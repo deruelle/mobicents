@@ -20,11 +20,46 @@ import java.io.IOException;
  *         </a>
  */
 public class TerminatingNetworkRoutingNumber extends AbstractNumber {
+
+	/**
+	 * see Q.763 3.66 c4 : subscriber number (national use)
+	 */
+	public static final int _NAI_SN = 1;
+	/**
+	 * see Q.763 3.66 c4 : unknown (national use)
+	 */
+	public static final int _NAI_UNKNOWN = 2;
+	/**
+	 * see Q.763 3.66 c4 : national (significant) number
+	 */
+	public static final int _NAI_NATIONAL_SN = 3;
+	/**
+	 * see Q.763 3.66 c4 : international number
+	 */
+	public static final int _NAI_IN = 4;
+	/**
+	 * see Q.763 3.66 c4 : network specific number
+	 */
+	public static final int _NAI_NETWORK_SN = 5;
+
+	/**
+	 * numbering plan indicator indicator value. See Q.763 - 3.9d
+	 */
+	public final static int _NPI_ISDN = 1;
+	/**
+	 * numbering plan indicator indicator value. See Q.763 - 3.9d
+	 */
+	public final static int _NPI_DATA = 3;
+	/**
+	 * numbering plan indicator indicator value. See Q.763 - 3.9d
+	 */
+	public final static int _NPI_TELEX = 4;
+
 	public static final int _PARAMETER_CODE = 0;
 	// FIXME: shoudl we add max octets ?
-	private int tnrnLengthIndicator = 0;
-	private int numberingPlanIndicator = 0;
-	private int natureOfAddressIndicator = 0;
+	private int tnrnLengthIndicator;
+	private int numberingPlanIndicator;
+	private int natureOfAddressIndicator;
 
 	public TerminatingNetworkRoutingNumber() {
 		super();
@@ -112,7 +147,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 
 	@Override
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
-		return super.decodeDigits(bis, this.tnrnLengthIndicator - 1);
+		return super.decodeDigits(bis, this.tnrnLengthIndicator);
 	}
 
 	/**
@@ -186,6 +221,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	public int getTnrnLengthIndicator() {
 		return tnrnLengthIndicator;
 	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;

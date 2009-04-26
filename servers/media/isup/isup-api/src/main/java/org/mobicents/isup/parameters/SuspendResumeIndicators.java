@@ -23,7 +23,7 @@ public class SuspendResumeIndicators extends AbstractParameter {
 	private static final int _TURN_ON = 1;
 	private static final int _TURN_OFF = 0;
 
-	private boolean suspendResumeIndicator = false;
+	private boolean suspendResumeIndicator;
 
 	/**
 	 * See Q.763 3.52 Suspend/resume indicator : ISDN subscriber initiated

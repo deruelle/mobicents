@@ -21,7 +21,7 @@ public class DisplayInformation extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x73;
 	// FIXME: Q.931 4.5.16 Display - Oleg is this correct?
 
-	private byte[] info = null;
+	private byte[] info;
 
 	public DisplayInformation(byte[] info) {
 		super();

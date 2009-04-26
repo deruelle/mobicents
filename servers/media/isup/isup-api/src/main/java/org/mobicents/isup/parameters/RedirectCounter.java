@@ -20,7 +20,7 @@ import java.io.IOException;
 public class RedirectCounter extends AbstractParameter {
 
 	public static final int _PARAMETER_CODE = 0x77;
-	private int counter = 0;
+	private int counter;
 
 	public RedirectCounter(byte[] b) {
 		super();

@@ -19,7 +19,6 @@ import java.io.IOException;
  */
 public class InformationRequestIndicators extends AbstractParameter {
 
-	
 	public static final int _PARAMETER_CODE = 0x0E;
 	private final static int _TURN_ON = 1;
 	private final static int _TURN_OFF = 0;
@@ -34,14 +33,14 @@ public class InformationRequestIndicators extends AbstractParameter {
 	 */
 	public static final boolean _INDICATOR_NOT_REQUESTED = false;
 
-	private boolean callingPartAddressRequestIndicator = false;
-	private boolean holdingIndicator = false;
-	private boolean callingpartysCategoryRequestIndicator = false;
-	private boolean chargeInformationRequestIndicator = false;
-	private boolean maliciousCallIdentificationRequestIndicator = false;
+	private boolean callingPartAddressRequestIndicator;
+	private boolean holdingIndicator;
+	private boolean callingpartysCategoryRequestIndicator;
+	private boolean chargeInformationRequestIndicator;
+	private boolean maliciousCallIdentificationRequestIndicator;
 
 	// FIXME: should we carre about this?
-	private int reserved = 0;
+	private int reserved;
 
 	public InformationRequestIndicators(byte[] b) {
 		super();
@@ -74,7 +73,7 @@ public class InformationRequestIndicators extends AbstractParameter {
 		this.callingpartysCategoryRequestIndicator = ((b[0] >> 3) & 0x01) == _TURN_ON;
 		this.chargeInformationRequestIndicator = ((b[0] >> 4) & 0x01) == _TURN_ON;
 		this.maliciousCallIdentificationRequestIndicator = ((b[0] >> 7) & 0x01) == _TURN_ON;
-		this.reserved = (b[0] >> 4) & 0x0F;
+		this.reserved = (b[1] >> 4) & 0x0F;
 		return 2;
 	}
 

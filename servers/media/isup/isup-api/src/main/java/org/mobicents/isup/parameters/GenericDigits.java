@@ -61,9 +61,9 @@ public class GenericDigits extends AbstractParameter {
 	 * identity
 	 */
 	public static final int _TOD_BGCI = 3;
-	private int encodignScheme = 0;
-	private int typeOfDigits = 0;
-	private int[] digits = null;
+	private int encodignScheme;
+	private int typeOfDigits;
+	private int[] digits;
 
 	public GenericDigits(byte[] b) {
 		super();
