@@ -1,6 +1,6 @@
 /**
  * Start time:14:02:37 2009-04-04<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  * Start time:14:02:37 2009-04-04<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This is number representation that has NAI field
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski

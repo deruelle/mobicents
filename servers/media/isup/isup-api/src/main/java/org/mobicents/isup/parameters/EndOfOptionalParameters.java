@@ -1,6 +1,6 @@
 /**
  * Start time:11:21:05 2009-03-31<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -13,7 +13,7 @@ import java.io.IOException;
 
 /**
  * Start time:11:21:05 2009-03-31<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This class represent element that encodes end of parameters
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski

@@ -1,6 +1,6 @@
 /**
  * Start time:09:26:46 2009-04-22<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -14,7 +14,7 @@ import java.util.Vector;
 
 /**
  * Start time:09:26:46 2009-04-22<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * Test for ACM 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>

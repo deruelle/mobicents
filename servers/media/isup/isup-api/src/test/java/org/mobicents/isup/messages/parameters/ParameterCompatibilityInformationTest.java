@@ -1,6 +1,6 @@
 /**
  * Start time:17:28:44 2009-04-26<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -19,7 +19,7 @@ import org.mobicents.isup.parameters.ParameterCompatibilityInformation;
 
 /**
  * Start time:17:28:44 2009-04-26<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>

@@ -1,6 +1,6 @@
 /**
  * Start time:13:37:14 2009-04-23<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -13,7 +13,7 @@ import org.mobicents.isup.parameters.CallDiversionInformation;
 
 /**
  * Start time:13:37:14 2009-04-23<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>ca </a>

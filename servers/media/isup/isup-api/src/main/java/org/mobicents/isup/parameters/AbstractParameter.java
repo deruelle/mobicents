@@ -1,6 +1,6 @@
 /**
  * Start time:12:54:56 2009-03-30<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -16,7 +16,7 @@ import org.mobicents.isup.ISUPComponent;
 
 /**
  * Start time:12:54:56 2009-03-30<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * Simple class to define common methods and fields for all.
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>

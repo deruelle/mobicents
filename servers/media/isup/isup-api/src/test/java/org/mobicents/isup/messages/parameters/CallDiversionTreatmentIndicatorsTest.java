@@ -5,7 +5,7 @@ import org.mobicents.isup.parameters.CallDiversionTreatmentIndicators;
 /**
  * 
  * Start time:13:47:44 2009-04-23<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>

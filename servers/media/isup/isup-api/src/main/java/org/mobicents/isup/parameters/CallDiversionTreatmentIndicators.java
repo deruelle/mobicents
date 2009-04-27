@@ -1,6 +1,6 @@
 /**
  * Start time:12:50:23 2009-04-05<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * Start time:12:50:23 2009-04-05<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>

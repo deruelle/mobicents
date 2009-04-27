@@ -1,6 +1,6 @@
 /**
  * Start time:12:39:34 2009-04-02<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Start time:12:39:34 2009-04-02<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This is composed param ?
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski

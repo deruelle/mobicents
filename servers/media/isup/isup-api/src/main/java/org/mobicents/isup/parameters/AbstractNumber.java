@@ -1,6 +1,6 @@
 /**
  * Start time:18:44:10 2009-03-27<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Start time:18:44:10 2009-03-27<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This class is super classes for all message parameters with form of:
  * 
  * <pre>

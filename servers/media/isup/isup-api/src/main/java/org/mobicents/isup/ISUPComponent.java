@@ -1,6 +1,6 @@
 /**
  * Start time:13:34:05 2009-03-29<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 /**
  * Start time:13:34:05 2009-03-29<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This is super interface for all components that can be parsed/encoded by ISUP
  * stack. It provides two essential methods that abtract decoding/encoding.
  * 

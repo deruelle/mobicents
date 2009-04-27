@@ -1,6 +1,6 @@
 /**
  * Start time:12:21:06 2009-04-23<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -16,7 +16,7 @@ import org.mobicents.isup.parameters.BackwardCallIndicators;
 
 /**
  * Start time:12:21:06 2009-04-23<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * Class to test BCI
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski

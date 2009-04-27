@@ -1,6 +1,6 @@
 /**
  * Start time:15:59:02 2009-03-29<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -13,7 +13,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * Start time:15:59:02 2009-03-29<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This represent called party number - Q.763 - 3.9
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski

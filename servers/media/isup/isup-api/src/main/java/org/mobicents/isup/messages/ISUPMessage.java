@@ -1,6 +1,6 @@
 /**
  * Start time:14:09:04 2009-04-20<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * 
  * @author <a href="mailto:baranowb@gmail.com">baranowb - Bartosz Baranowski
  *         </a>
@@ -27,7 +27,7 @@ import org.mobicents.isup.parameters.SignalingPointCode;
 
 /**
  * Start time:14:09:04 2009-04-20<br>
- * Project: mobicents-jain-isup-stack<br>
+ * Project: mobicents-isup-stack<br>
  * This is super message class for all messages that we have. It defines some
  * methods that need to be implemented
  * 

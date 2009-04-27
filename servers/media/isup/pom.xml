@@ -16,7 +16,7 @@
 	</parent>
 
 
-	<artifactId>mobicents-jain-isup-stack-parent</artifactId>
+	<artifactId>mobicents-isup-stack-parent</artifactId>
 	<groupId>org.mobicents.servers.media</groupId>
 	<version>2.0.0.BETA1-SNAPSHOT</version>
 
@@ -76,7 +76,7 @@
 						true
 					</resolveTransitiveDependencies>
 					<eclipseProjectName>
-						mobicents-jain-isup-stack
+						mobicents-isup-stack
 					</eclipseProjectName>
 				</configuration>
 			</plugin>
