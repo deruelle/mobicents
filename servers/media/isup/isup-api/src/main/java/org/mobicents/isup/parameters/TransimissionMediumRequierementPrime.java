@@ -81,7 +81,7 @@ public class TransimissionMediumRequierementPrime extends AbstractParameter {
 	}
 
 	// Defualt indicate speech
-	private int transimissionMediumRequirement = 0;
+	private int transimissionMediumRequirement;
 
 	// FIXME: again wrapper class but hell there is a lot of statics....
 	/*

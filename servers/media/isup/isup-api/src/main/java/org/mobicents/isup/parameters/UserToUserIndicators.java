@@ -60,11 +60,11 @@ public class UserToUserIndicators extends AbstractParameter {
 	public static final boolean _NDI_UTUIDBTN = true;
 	public static final int _PARAMETER_CODE = 0x2A;
 
-	private boolean response = false;
-	private int serviceOne = 0;
-	private int serviceTwo = 0;
-	private int serviceThree = 0;
-	private boolean networkDiscardIndicator = false;
+	private boolean response;
+	private int serviceOne;
+	private int serviceTwo;
+	private int serviceThree;
+	private boolean networkDiscardIndicator;
 
 	public UserToUserIndicators(byte[] b) {
 		super();
@@ -89,11 +89,11 @@ public class UserToUserIndicators extends AbstractParameter {
 		if (b == null || b.length != 1) {
 			throw new IllegalArgumentException("byte[] must  not be null and length must  be 1");
 		}
-		this.response = (b[0] & 0x01) == _TURN_ON;
-		this.serviceOne = (b[0] >> 1) & 0x03;
-		this.serviceTwo = (b[0] >> 3) & 0x03;
-		this.serviceTwo = (b[0] >> 5) & 0x03;
-		this.networkDiscardIndicator = (b[0] >> 7) == _TURN_ON;
+		this.setResponse((b[0] & 0x01) == _TURN_ON);
+		this.setServiceOne((b[0] >> 1) );
+		this.setServiceTwo((b[0] >> 3) );
+		this.setServiceThree((b[0] >> 5)) ;
+		this.setNetworkDiscardIndicator(( (b[0] >> 7) & 0x01) == _TURN_ON);
 		return 1;
 	}
 
@@ -124,7 +124,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	}
 
 	public void setServiceOne(int serviceOne) {
-		this.serviceOne = serviceOne;
+		this.serviceOne = serviceOne & 0x03;
 	}
 
 	public int getServiceTwo() {
@@ -132,7 +132,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	}
 
 	public void setServiceTwo(int serviceTwo) {
-		this.serviceTwo = serviceTwo;
+		this.serviceTwo = serviceTwo & 0x03;
 	}
 
 	public int getServiceThree() {
@@ -140,7 +140,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	}
 
 	public void setServiceThree(int serviceThree) {
-		this.serviceThree = serviceThree;
+		this.serviceThree = serviceThree & 0x03;
 	}
 
 	public boolean isNetworkDiscardIndicator() {
@@ -150,6 +150,7 @@ public class UserToUserIndicators extends AbstractParameter {
 	public void setNetworkDiscardIndicator(boolean networkDiscardIndicator) {
 		this.networkDiscardIndicator = networkDiscardIndicator;
 	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;

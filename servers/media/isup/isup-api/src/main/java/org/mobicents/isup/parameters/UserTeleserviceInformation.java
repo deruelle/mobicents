@@ -45,7 +45,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	 * characteristics identification (in octet 4) to be used in the call All
 	 * other values are reserved
 	 */
-	public static final int _ITERPRETATION_FHGCI = 4;
+	public static final int _INTERPRETATION_FHGCI = 4;
 	/**
 	 * See Q.931 4.5.17 Presentation method of protocol profile : High layer
 	 * protocol profile (without specification of attributes) All other values
@@ -162,6 +162,21 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	 * in reserved range
 	 */
 	public static final int _HLCI_AUDIO_VID_HIGH_RANGE2 = 0x6F;
+	
+	/**
+	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of initial channel associated with an active 3.1 kHz audio or speech call
+	 */
+	public static final int _EACI_CSIC_AA_3_1_CALL = 0x21;
+	
+	/**
+	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of initial channel of H.221
+	 */
+	public static final int _EACI_CSIC_H221 = 0x01;
+	
+	/**
+	 * See Q.931 4.5.17 Extended High layer characteristics identification : Capability set of subsequent channel of H.221
+	 */
+	public static final int _EACI_CSSC_H221 = 0x02;
 	private int codingStandard;
 	private int interpretation;
 	private int presentationMethod;
@@ -171,44 +186,40 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	private boolean eHighLayerCharIdentificationPresent;
 	private boolean eVidedoTelephonyCharIdentificationPresent;
 
-	private int eHighLayerCharIdentification = 0;
-	private int eVidedoTelephonyCharIdentification = 0;
+	private int eHighLayerCharIdentification;
+	private int eVidedoTelephonyCharIdentification;
 
 	public UserTeleserviceInformation(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification) {
 		super();
-		this.codingStandard = codingStandard;
-		this.interpretation = interpretation;
-		this.presentationMethod = presentationMethod;
-		this.highLayerCharIdentification = highLayerCharIdentification;
+		this.setCodingStandard(codingStandard);
+		this.setInterpretation(interpretation);
+		this.setPresentationMethod(presentationMethod);
+		this.setHighLayerCharIdentification(highLayerCharIdentification);
 	}
 
 	public UserTeleserviceInformation(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification, int eVidedoTelephonyCharIdentification,
 			boolean notImportantIgnoredParameter) {
 		super();
-		// FIXME: this is only elementID
-		tag = new byte[] { 0x7D };
-		this.codingStandard = codingStandard;
-		this.interpretation = interpretation;
-		this.presentationMethod = presentationMethod;
-		this.highLayerCharIdentification = highLayerCharIdentification;
+		this.setCodingStandard(codingStandard);
+		this.setInterpretation(interpretation);
+		this.setPresentationMethod(presentationMethod);
+		this.setHighLayerCharIdentification(highLayerCharIdentification);
 		setEVidedoTelephonyCharIdentification(eVidedoTelephonyCharIdentification);
 	}
 
 	public UserTeleserviceInformation(int codingStandard, int interpretation, int presentationMethod, int highLayerCharIdentification, int eHighLayerCharIdentification) {
 		super();
-		// FIXME: this is only elementID
-		tag = new byte[] { 0x7D };
-		this.codingStandard = codingStandard;
-		this.interpretation = interpretation;
-		this.presentationMethod = presentationMethod;
-		this.highLayerCharIdentification = highLayerCharIdentification;
+		this.setCodingStandard(codingStandard);
+		this.setInterpretation(interpretation);
+		this.setPresentationMethod(presentationMethod);
+		this.setHighLayerCharIdentification(highLayerCharIdentification);
 		this.setEHighLayerCharIdentification(eHighLayerCharIdentification);
 	}
 
 	public UserTeleserviceInformation(byte[] b) {
 		super();
 		// FIXME: this is only elementID
-		tag = new byte[] { 0x7D };
+
 		decodeElement(b);
 	}
 
@@ -222,10 +233,10 @@ public class UserTeleserviceInformation extends AbstractParameter {
 			throw new IllegalArgumentException("byte[] must not be null and length must be greater than  1");
 		}
 
-		this.presentationMethod = b[0] & 0x03;
-		this.interpretation = (b[0] >> 2) & 0x07;
-		this.codingStandard = (b[0] >> 5) & 0x03;
-		this.highLayerCharIdentification = b[1] & 0x7F;
+		this.setPresentationMethod(b[0]);
+		this.setInterpretation((b[0] >> 2));
+		this.setCodingStandard((b[0] >> 5));
+		this.setHighLayerCharIdentification(b[1]);
 		boolean ext = ((b[1] >> 7) & 0x01) == 0;
 		if (ext && b.length != 3) {
 			throw new IllegalArgumentException("byte[] indicates extension to high layer cahracteristic indicator, however there isnt enough bytes");
@@ -264,6 +275,8 @@ public class UserTeleserviceInformation extends AbstractParameter {
 		v = this.presentationMethod & 0x03;
 		v |= (this.interpretation & 0x07) << 2;
 		v |= (this.codingStandard & 0x03) << 5;
+		v|=0x80;
+		
 		b[0] = (byte) v;
 		b[1] = (byte) (this.highLayerCharIdentification & 0x7F);
 		if (this.eHighLayerCharIdentificationPresent || this.eVidedoTelephonyCharIdentificationPresent) {
@@ -285,7 +298,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	}
 
 	public void setCodingStandard(int codingStandard) {
-		this.codingStandard = codingStandard;
+		this.codingStandard = codingStandard & 0x03;
 	}
 
 	public int getInterpretation() {
@@ -293,7 +306,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	}
 
 	public void setInterpretation(int interpretation) {
-		this.interpretation = interpretation;
+		this.interpretation = interpretation & 0x07;
 	}
 
 	public int getPresentationMethod() {
@@ -301,7 +314,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	}
 
 	public void setPresentationMethod(int presentationMethod) {
-		this.presentationMethod = presentationMethod;
+		this.presentationMethod = presentationMethod & 0x03;
 	}
 
 	public int getHighLayerCharIdentification() {
@@ -309,7 +322,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	}
 
 	public void setHighLayerCharIdentification(int highLayerCharIdentification) {
-		this.highLayerCharIdentification = highLayerCharIdentification;
+		this.highLayerCharIdentification = highLayerCharIdentification & 0x7F;
 	}
 
 	public int getEHighLayerCharIdentification() {
@@ -323,7 +336,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 		}
 		if (this.highLayerCharIdentification == _HLCI_MAINTAINENCE || this.highLayerCharIdentification == _HLCI_MANAGEMENT) {
 			this.eHighLayerCharIdentificationPresent = true;
-			this.eHighLayerCharIdentification = highLayerCharIdentification;
+			this.eHighLayerCharIdentification = highLayerCharIdentification & 0x7F;
 		} else {
 			throw new IllegalArgumentException("Can not set this octet - HLCI is of value: " + this.highLayerCharIdentification);
 		}
@@ -340,7 +353,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 		if ((this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE)
 				|| (this.highLayerCharIdentification >= _HLCI_AUDIO_VID_LOW_RANGE2 && this.highLayerCharIdentification <= _HLCI_AUDIO_VID_HIGH_RANGE2)) {
 			this.eVidedoTelephonyCharIdentificationPresent = true;
-			this.eVidedoTelephonyCharIdentification = eVidedoTelephonyCharIdentification;
+			this.eVidedoTelephonyCharIdentification = eVidedoTelephonyCharIdentification & 0x7F;
 		} else {
 			throw new IllegalArgumentException("Can not set this octet - HLCI is of value: " + this.highLayerCharIdentification);
 		}
@@ -353,6 +366,7 @@ public class UserTeleserviceInformation extends AbstractParameter {
 	public boolean isEVidedoTelephonyCharIdentificationPresent() {
 		return eVidedoTelephonyCharIdentificationPresent;
 	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;

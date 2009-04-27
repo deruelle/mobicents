@@ -64,6 +64,9 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 
 	@Override
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if (bis.available() == 0) {
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
 
 		this.oddFlag = (b & 0x80) >> 7;
@@ -97,7 +100,24 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 
 	@Override
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
-		return super.decodeDigits(bis, this.opspLengthIndicator);
+		if (this.opspLengthIndicator > 0) {
+			if (bis.available() == 0) {
+				throw new IllegalArgumentException("No more data to read.");
+			}
+			return super.decodeDigits(bis, this.opspLengthIndicator);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int encodeDigits(ByteArrayOutputStream bos) {
+		if (this.opspLengthIndicator > 0) {
+			return super.encodeDigits(bos);
+		} else {
+			return 0;
+		}
+
 	}
 
 	public int getOpspLengthIndicator() {
@@ -114,8 +134,9 @@ public class OriginatingParticipatingServiceProvider extends AbstractNumber {
 			throw new IllegalArgumentException("Maximum octets for this parameter in digits part is 4.");
 			// FIXME: add check for digit (max 7 ?)
 		}
-		if(super.address.length()>7)
+		if (this.opspLengthIndicator == 4 && !isOddFlag()) {
 			throw new IllegalArgumentException("maximum allowed number of digits is 7.");
+		}
 	}
 
 	public int getCode() {

@@ -76,11 +76,26 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 		// TODO Auto-generated constructor stub
 	}
 
-	public TerminatingNetworkRoutingNumber(String address, int tnrnLengthIndicator, int numberingPlanIndicator, int natureOfAddressIndicator) {
-		super(address);
-		this.tnrnLengthIndicator = tnrnLengthIndicator;
-		this.numberingPlanIndicator = numberingPlanIndicator;
-		this.natureOfAddressIndicator = natureOfAddressIndicator;
+	
+
+	public TerminatingNetworkRoutingNumber(int numberingPlanIndicator) {
+		super();
+		this.setNumberingPlanIndicator(numberingPlanIndicator);
+		this.tnrnLengthIndicator = 0;
+	}
+
+	public TerminatingNetworkRoutingNumber(int numberingPlanIndicator, int natureOfAddressIndicator) {
+		super();
+		this.setNumberingPlanIndicator(numberingPlanIndicator);
+		this.setNatureOfAddressIndicator(natureOfAddressIndicator);
+		this.tnrnLengthIndicator = 1;
+	}
+	
+	public TerminatingNetworkRoutingNumber(String address,int numberingPlanIndicator, int natureOfAddressIndicator) {
+		super();
+		this.setNumberingPlanIndicator(numberingPlanIndicator);
+		this.setNatureOfAddressIndicator(natureOfAddressIndicator);
+		this.setAddress(address);
 	}
 
 	/*
@@ -103,6 +118,9 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 
 	@Override
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if (bis.available() == 0) {
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
 
 		this.oddFlag = (b & 0x80) >> 7;
@@ -113,6 +131,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 
 	@Override
 	public int encodeHeader(ByteArrayOutputStream bos) {
+		
 		int b = 0;
 		// Even is 000000000 == 0
 		boolean isOdd = this.oddFlag == _FLAG_ODD;
@@ -126,8 +145,11 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 
 	@Override
 	public int decodeBody(ByteArrayInputStream bis) throws IllegalArgumentException {
-		if (this.tnrnLengthIndicator > 0) {
-			this.natureOfAddressIndicator = bis.read();
+		if (this.tnrnLengthIndicator> 0) {
+			if (bis.available() == 0) {
+				throw new IllegalArgumentException("No more data to read.");
+			}
+			this.setNatureOfAddressIndicator(bis.read()) ;
 			return 1;
 		} else {
 			return 0;
@@ -147,46 +169,23 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 
 	@Override
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
-		return super.decodeDigits(bis, this.tnrnLengthIndicator);
+		if (this.tnrnLengthIndicator-1> 0) {
+			if (bis.available() == 0) {
+				throw new IllegalArgumentException("No more data to read.");
+			}
+			return super.decodeDigits(bis, this.tnrnLengthIndicator-1);
+		} else {
+			return 0;
+		}
+		
 	}
 
-	/**
-	 * This method is used in encodeElement. Encodes digits part. This is
-	 * because
-	 * 
-	 * @param bos
-	 *            - where digits will be encoded
-	 * @return - number of bytes encoded
-	 * 
-	 */
+	@Override
 	public int encodeDigits(ByteArrayOutputStream bos) {
-		boolean isOdd = this.oddFlag == _FLAG_ODD;
-
-		byte b = 0;
-		int count = (!isOdd) ? address.length() : address.length() - 1;
-		int bytesCount = 0;
-		for (int i = 0; i < count - 1; i += 2) {
-			String ds1 = address.substring(i, i + 1);
-			String ds2 = address.substring(i + 1, i + 2);
-
-			int d1 = Integer.parseInt(ds1, 16);
-			int d2 = Integer.parseInt(ds2, 16);
-
-			b = (byte) (d2 << 4 | d1);
-			bos.write(b);
-			bytesCount++;
-		}
-
-		if (isOdd) {
-			String ds1 = address.substring(count, count + 1);
-			int d = Integer.parseInt(ds1);
-
-			b = (byte) (d & 0x0f);
-			bos.write(b);
-			bytesCount++;
-		}
-
-		return bytesCount;
+		if(this.tnrnLengthIndicator-1>0)
+			return super.encodeDigits(bos);
+		else
+			return 0;
 	}
 
 	@Override
@@ -200,6 +199,12 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 			throw new IllegalArgumentException("Maximum octets for this parameter in digits part is 8.");
 			// FIXME: add check for digit (max 7 ?)
 		}
+		
+		if(this.tnrnLengthIndicator ==9 && !isOddFlag())
+		{
+			//we allow only odd! digits count in this case
+			throw new IllegalArgumentException("To many digits. Maximum number of digits is 15 for tnr length of 9.");
+		}
 	}
 
 	public int getNumberingPlanIndicator() {
@@ -207,7 +212,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	}
 
 	public void setNumberingPlanIndicator(int numberingPlanIndicator) {
-		this.numberingPlanIndicator = numberingPlanIndicator;
+		this.numberingPlanIndicator = numberingPlanIndicator & 0x07;
 	}
 
 	public int getNatureOfAddressIndicator() {
@@ -215,7 +220,7 @@ public class TerminatingNetworkRoutingNumber extends AbstractNumber {
 	}
 
 	public void setNatureOfAddressIndicator(int natureOfAddressIndicator) {
-		this.natureOfAddressIndicator = natureOfAddressIndicator;
+		this.natureOfAddressIndicator = natureOfAddressIndicator & 0x7F;
 	}
 
 	public int getTnrnLengthIndicator() {

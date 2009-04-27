@@ -190,6 +190,10 @@ public abstract class AbstractNumber extends AbstractParameter {
 	 *             - thrown if read error is encountered.
 	 */
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if(bis.available()==0)
+		{
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
 
 		this.oddFlag = (b & 0x80) >> 7;

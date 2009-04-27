@@ -82,7 +82,7 @@ public class TransmissionMediumUsed extends AbstractParameter {
 	}
 
 	// Defualt indicate speech
-	private int transimissionMediumUsed = 0;
+	private int transimissionMediumUsed;
 
 	// FIXME: again wrapper class but hell there is a lot of statics....
 	/*

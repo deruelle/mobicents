@@ -21,6 +21,8 @@ import java.io.IOException;
  */
 public class ForwardGVNS extends AbstractParameter {
 	public static final int _PARAMETER_CODE = 0x4C;
+	
+	//FIXME: we must add in numbers below max digits check - in case of max octets - only odd digits number is valid
 	private OriginatingParticipatingServiceProvider opServiceProvider = null;
 	private GVNSUserGroup gvnsUserGroup = null;
 	private TerminatingNetworkRoutingNumber tnRoutingNumber = null;

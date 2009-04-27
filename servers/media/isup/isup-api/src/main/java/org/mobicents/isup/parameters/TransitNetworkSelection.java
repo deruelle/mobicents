@@ -25,7 +25,6 @@ public class TransitNetworkSelection extends AbstractParameter {
 
 	protected static final Logger logger = Logger.getLogger(TransitNetworkSelection.class);
 
-	
 	public static final int _PARAMETER_CODE = 0x23;
 	/**
 	 * See Q.763 3.53 Type of network identification : CCITT/ITU-T-standardized
@@ -59,14 +58,14 @@ public class TransitNetworkSelection extends AbstractParameter {
 	public static final int _NIP_PLMNIC = 6;
 
 	// FIXME: Oleg is this correct?
-	private String address = null;
-	private int typeOfNetworkIdentification = 0;
-	private int networkIdentificationPlan = 0;
+	private String address;
+	private int typeOfNetworkIdentification;
+	private int networkIdentificationPlan;
 	/**
 	 * Holds odd flag, it can have either value: 10000000(x80) or 00000000. For
 	 * each it takes value 1 and 0;
 	 */
-	protected int oddFlag = 0;
+	protected int oddFlag;
 
 	/**
 	 * indicates odd flag value (0x80) as integer (1). This is achieved when odd
@@ -210,7 +209,9 @@ public class TransitNetworkSelection extends AbstractParameter {
 	 *             - thrown if read error is encountered.
 	 */
 	public int decodeDigits(ByteArrayInputStream bis) throws IllegalArgumentException {
-
+		if (bis.available() == 0) {
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		// FIXME: we could spare time by passing length arg - or getting it from
 		// bis??
 		int count = 0;
@@ -248,11 +249,14 @@ public class TransitNetworkSelection extends AbstractParameter {
 	 *             - thrown if read error is encountered.
 	 */
 	public int decodeHeader(ByteArrayInputStream bis) throws IllegalArgumentException {
+		if (bis.available() == 0) {
+			throw new IllegalArgumentException("No more data to read.");
+		}
 		int b = bis.read() & 0xff;
 
 		this.oddFlag = (b & 0x80) >> 7;
-		this.typeOfNetworkIdentification = (b >> 4) & 0x07;
-		this.networkIdentificationPlan = b & 0x0F;
+		this.setTypeOfNetworkIdentification((b >> 4));
+		this.setNetworkIdentificationPlan(b);
 		return 1;
 	}
 
@@ -280,7 +284,7 @@ public class TransitNetworkSelection extends AbstractParameter {
 	}
 
 	public void setTypeOfNetworkIdentification(int typeOfNetworkIdentification) {
-		this.typeOfNetworkIdentification = typeOfNetworkIdentification;
+		this.typeOfNetworkIdentification = typeOfNetworkIdentification & 0x07;
 	}
 
 	public int getNetworkIdentificationPlan() {
@@ -288,7 +292,7 @@ public class TransitNetworkSelection extends AbstractParameter {
 	}
 
 	public void setNetworkIdentificationPlan(int networkIdentificationPlan) {
-		this.networkIdentificationPlan = networkIdentificationPlan;
+		this.networkIdentificationPlan = networkIdentificationPlan & 0x0F;
 	}
 
 	public String getAddress() {
@@ -303,6 +307,7 @@ public class TransitNetworkSelection extends AbstractParameter {
 	public boolean isOddFlag() {
 		return oddFlag == _FLAG_ODD;
 	}
+
 	public int getCode() {
 
 		return _PARAMETER_CODE;
