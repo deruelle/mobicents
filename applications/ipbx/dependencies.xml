@@ -207,5 +207,10 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>backup.repository.jboss.org</id>
+			<name>JBoss Repository Backup</name>
+			<url>http://anonsvn.jboss.org/repos/repository.jboss.org/maven2/</url>
+		</repository>
 	</repositories>
 </project>
