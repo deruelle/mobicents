@@ -76,7 +76,7 @@ public class SignalDetectorTest extends MessageFlowHarness {
 
 							public void onEvent(SignalDetectorEvent anEvent) {
 								if (Error.e_OK.equals(anEvent.getError())) {
-									if (SignalDetector.ev_ReceiveSignals.equals(anEvent.getEventType())) {
+									if (SignalDetector.ev_SignalDetected.equals(anEvent.getEventType())) {
 										logger.debug(" SignalDetection successfully. received DTMF =  " + anEvent.getSignalString());
 										testPassed = true;
 									} else{

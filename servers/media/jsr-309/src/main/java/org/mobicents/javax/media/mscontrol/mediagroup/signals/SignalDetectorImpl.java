@@ -23,18 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
 import javax.media.mscontrol.MsControlException;
+import javax.media.mscontrol.mediagroup.MediaGroup;
 import javax.media.mscontrol.mediagroup.signals.SignalDetector;
 import javax.media.mscontrol.mediagroup.signals.SignalDetectorEvent;
 import javax.media.mscontrol.resource.Error;
-import javax.media.mscontrol.resource.MediaEvent;
 import javax.media.mscontrol.resource.MediaEventListener;
 import javax.media.mscontrol.resource.Parameter;
 import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
-import javax.media.mscontrol.resource.ResourceContainer;
 import javax.media.mscontrol.resource.symbols.ParameterEnum;
 
 import org.apache.log4j.Logger;
@@ -52,12 +50,13 @@ import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 public class SignalDetectorImpl implements SignalDetector {
 
 	private static Logger logger = Logger.getLogger(SignalDetectorImpl.class);
-	protected CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<? extends MediaEvent<?>>>();
+	protected CopyOnWriteArrayList<MediaEventListener<SignalDetectorEvent>> mediaEventListenerList = new CopyOnWriteArrayList<MediaEventListener<SignalDetectorEvent>>();
 	protected MediaGroupImpl mediaGroup = null;
 	protected MediaSessionImpl mediaSession = null;
 	protected MgcpWrapper mgcpWrapper = null;
-	protected RequestIdentifier reqId = null;
+	protected volatile RequestIdentifier reqId = null;
 
+	// TODO : Not really caring about State as of now
 	protected volatile SignalDetectorState state = SignalDetectorState.IDLE;
 
 	// TODO : Buffer needs to be implemented
@@ -83,11 +82,16 @@ public class SignalDetectorImpl implements SignalDetector {
 		this.state = SignalDetectorState.DETECTING;
 	}
 
-	public ResourceContainer<? extends MediaConfig> getContainer() {
+	public MediaGroup getContainer() {
 		return this.mediaGroup;
 	}
 
 	public boolean stop() {
+		if (this.state == SignalDetectorState.DETECTING) {
+			Runnable tx = new StopTx(this);
+			Provider.submit(tx);
+			return true;
+		}
 		return false;
 	}
 
@@ -104,9 +108,102 @@ public class SignalDetectorImpl implements SignalDetector {
 	}
 
 	protected void update(SignalDetectorEvent anEvent) {
-		for (MediaEventListener m : mediaEventListenerList) {
+		for (MediaEventListener<SignalDetectorEvent> m : mediaEventListenerList) {
 			m.onEvent(anEvent);
 		}
+	}
+
+	private class StopTx implements Runnable, JainMgcpExtendedListener {
+		private int tx = -1;
+
+		private SignalDetectorImpl detector = null;
+
+		StopTx(SignalDetectorImpl detector) {
+			this.detector = detector;
+		}
+
+		public void run() {
+			try {
+				this.tx = mgcpWrapper.getUniqueTransactionHandler();
+				mgcpWrapper.addListnere(this.tx, this);
+				mgcpWrapper.addListnere(reqId, this);
+
+				EndpointIdentifier endpointID = new EndpointIdentifier(mediaGroup.getEndpoint(), mgcpWrapper
+						.getPeerIp()
+						+ ":" + mgcpWrapper.getPeerPort());
+				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
+
+				notificationRequest.setTransactionHandle(this.tx);
+				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
+
+			} catch (Exception e) {
+				logger.error(e);
+			}
+		}
+
+		public void transactionEnded(int arg0) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void transactionRxTimedOut(JainMgcpCommandEvent cmdEvent) {
+
+		}
+
+		public void transactionTxTimedOut(JainMgcpCommandEvent cmdEvent) {
+			logger.error("No response from MGW. Tx timed out for RQNT Tx " + this.tx + " For Command sent "
+					+ cmdEvent.toString());
+			mgcpWrapper.removeListener(cmdEvent.getTransactionHandle());
+			mgcpWrapper.removeListener(reqId);
+			state = SignalDetectorState.IDLE;
+		}
+
+		public void processMgcpCommandEvent(JainMgcpCommandEvent jainmgcpcommandevent) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void processMgcpResponseEvent(JainMgcpResponseEvent respEvent) {
+			switch (respEvent.getObjectIdentifier()) {
+			case Constants.RESP_NOTIFICATION_REQUEST:
+				processReqNotificationResponse((NotificationRequestResponse) respEvent);
+				break;
+			default:
+				mgcpWrapper.removeListener(respEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+				state = SignalDetectorState.IDLE;
+				logger.warn(" This RESPONSE is unexpected " + respEvent);
+				break;
+
+			}
+		}
+
+		private void processReqNotificationResponse(NotificationRequestResponse responseEvent) {
+
+			ReturnCode returnCode = responseEvent.getReturnCode();
+
+			switch (returnCode.getValue()) {
+			case ReturnCode.TRANSACTION_BEING_EXECUTED:
+				// do nothing
+				if (logger.isDebugEnabled()) {
+					logger.debug("Transaction " + this.tx + "is being executed. Response received = " + responseEvent);
+				}
+				break;
+			case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+				state = SignalDetectorState.IDLE;
+				break;
+			default:
+				logger.error(" SOMETHING IS BROKEN = " + responseEvent);
+				mgcpWrapper.removeListener(responseEvent.getTransactionHandle());
+				mgcpWrapper.removeListener(reqId);
+				state = SignalDetectorState.IDLE;
+				break;
+
+			}
+		}
+
 	}
 
 	private class StartTx implements Runnable, JainMgcpExtendedListener {
@@ -388,6 +485,7 @@ public class SignalDetectorImpl implements SignalDetector {
 
 			} catch (Exception e) {
 				logger.error(e);
+				state = SignalDetectorState.IDLE;
 			}
 
 		}
@@ -478,7 +576,7 @@ public class SignalDetectorImpl implements SignalDetector {
 					digitDetected = digitDetected + "#";
 					break;
 				case MgcpEvent.DTMF_STAR:
-					digitDetected = digitDetected + "*";					
+					digitDetected = digitDetected + "*";
 					break;
 
 				default:
@@ -504,7 +602,7 @@ public class SignalDetectorImpl implements SignalDetector {
 			// SignalDetector.ev_Pattern[count], digitDetected,
 			// count, SignalDetector.q_Pattern[count], null);
 			// } else {
-			event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_ReceiveSignals, digitDetected);
+			event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_SignalDetected, digitDetected);
 			// }
 
 			update(event);
@@ -526,7 +624,6 @@ public class SignalDetectorImpl implements SignalDetector {
 								+ respEvent.getReturnCode().getComment());
 				update(event);
 				break;
-
 			}
 		}
 
