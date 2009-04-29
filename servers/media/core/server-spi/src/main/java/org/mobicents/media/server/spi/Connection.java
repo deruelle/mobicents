@@ -18,6 +18,7 @@ package org.mobicents.media.server.spi;
 import java.io.IOException;
 import java.io.Serializable;
 import javax.sdp.SdpException;
+import org.mobicents.media.Component;
 
 /**
  *
@@ -112,6 +113,7 @@ public interface Connection extends Serializable {
      * @param listener to be registered
      */
     public void addListener(ConnectionListener listener);
+    public void addNotificationListener(NotificationListener listener);
 
     /**
      * Removes connection state listener.
@@ -119,5 +121,7 @@ public interface Connection extends Serializable {
      * @param listener to be unregistered
      */
     public void removeListener(ConnectionListener listener);
+    public void removeNotificationListener(NotificationListener listener);
 
+    public Component getComponent(int resourceType);
 }

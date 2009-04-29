@@ -17,9 +17,8 @@ package org.mobicents.media.server.spi;
 
 import java.io.Serializable;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.spi.events.RequestedEvent;
-import org.mobicents.media.server.spi.events.RequestedSignal;
 
 /**
  * The basic implementation of the endpoint.
@@ -98,6 +97,9 @@ public interface Endpoint extends Serializable {
      */
     public boolean hasConnections();
     
+    public Connection getConnection(String connectionID);
+    public Component getComponent(int resourceID);
+    
     /**
      * Shows is this endpoint in use
      * 
@@ -112,23 +114,6 @@ public interface Endpoint extends Serializable {
      */
     public void setInUse(boolean inUse);
     
-    /**
-     * Executes the sequence of signals and detects requested events on the endpoint.
-     * 
-     * @param signals the list of requested signals.
-     * @param events the list of reguested events.
-     */
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events);
-
-    /**
-     * Executes the sequence of signals and detects requested events on the connection.
-     * 
-     * @param signals the list of requested signals.
-     * @param events the list of reguested events.
-     * @param connectionID  the identifier of the connection. 
-     */
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID);
-
     /**
      * Register NotificationListener to listen for <code>MsNotifyEvent</code>
      * which are fired due to events detected by Endpoints like DTMF. Use above
@@ -153,7 +138,6 @@ public interface Endpoint extends Serializable {
      * @param listener
      */
     public void addConnectionListener(ConnectionListener listener);
-
     /**
      * Removes the ConnectionListener
      * 
@@ -161,9 +145,4 @@ public interface Endpoint extends Serializable {
      */
     public void removeConnectionListener(ConnectionListener listener);
 
-    /**
-     * This method gives the array of Supported Packages for given Endpoint.
-     * @return String[]
-     */
-    public String[] getSupportedPackages();
 }

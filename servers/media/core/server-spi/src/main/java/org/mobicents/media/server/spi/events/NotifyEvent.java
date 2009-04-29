@@ -28,11 +28,16 @@
 package org.mobicents.media.server.spi.events;
 
 import java.io.Serializable;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author Oleg Kulikov
  */
 public interface NotifyEvent extends Serializable {
-    public EventIdentifier getEventID();
+    public Endpoint getEndpoint();
+    public Connection getConnection();
+    public int getResourceID();
+    public int getEventID();
 }

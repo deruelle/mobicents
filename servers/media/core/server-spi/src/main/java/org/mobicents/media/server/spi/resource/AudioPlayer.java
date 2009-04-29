@@ -24,12 +24,15 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.spi.events;
+package org.mobicents.media.server.spi.resource;
+
+import org.mobicents.media.MediaSource;
 
 /**
  *
  * @author kulikov
  */
-public interface SignalFactory {
-    public RequestedSignal getSignal();
+public interface AudioPlayer extends MediaSource {
+    public void setURL(String url);
+    public String getURL();
 }
