@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.jboss.beans.metadata.api.annotations.Install;
@@ -44,7 +45,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  * @author kulikov
  */
 public class InnerNamingService implements NamingService {
-	private HashMap<String, Endpoint> endpoints = new HashMap();
+	private HashMap<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
 	private NameParser nameParser;
 
 	private final static Logger logger = Logger.getLogger(InnerNamingService.class);
@@ -97,11 +98,23 @@ public class InnerNamingService implements NamingService {
 
 	public Endpoint lookup(String endpointName, boolean allowInUse) throws ResourceUnavailableException {
 		if (endpointName.endsWith("$")) {
-			return null; // findAny(endpointName);
+			return findAny(endpointName, allowInUse); // findAny(endpointName);
 		} else {
 			return find(endpointName, allowInUse);
 		}
 		// return null;
+	}
+	
+	public synchronized Endpoint findAny(String name, boolean allowInUse) throws ResourceUnavailableException {
+		Endpoint endpt = null;
+		String prefix = name.substring(0, name.indexOf("$")-1);
+		Set<String> keys = endpoints.keySet();
+		for(String key : keys){
+			if(key.startsWith(prefix)){
+				
+			}
+		}
+		return endpt;
 	}
 
 	public synchronized Endpoint find(String name, boolean allowInUse) throws ResourceUnavailableException {
