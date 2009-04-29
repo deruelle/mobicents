@@ -5,6 +5,7 @@
 
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
+import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
 /**
@@ -13,6 +14,8 @@ import jain.protocol.ip.mgcp.pkg.PackageName;
  */
 public class Test1 {
     public static void main(String[] args) throws Exception {
-        System.out.println(PackageName.Announcement.intValue());
+        PackageName pkg = PackageName.factory("AAA");
+        PackageName pkg1 = PackageName.factory("AAB");
+        System.out.println(MgcpEvent.oc.toString());
     }
 }

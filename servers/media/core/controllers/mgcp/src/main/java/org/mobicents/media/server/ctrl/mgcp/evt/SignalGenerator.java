@@ -24,62 +24,53 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.ctrl.mgcp.evt.ann;
+package org.mobicents.media.server.ctrl.mgcp.evt;
 
-import org.mobicents.media.server.ctrl.mgcp.MgcpController;
-import org.mobicents.media.server.ctrl.mgcp.evt.SignalGenerator;
-import org.mobicents.media.server.ctrl.mgcp.evt.GeneratorFactory;
+import org.mobicents.media.server.ctrl.mgcp.Request;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author kulikov
  */
-public class PlayAnnouncementFactory implements GeneratorFactory {
-    
-    private String name;
-    private String packageName;
-    
+public abstract class SignalGenerator {
     private int resourceID;
-    private int eventID;
     
-    public PlayAnnouncement getSignal(String param) {
-        return null;
-    }
-
-    public String getEventName() {
-        return name;
-    }
-
-    public void setEventName(String eventName) {
-        this.name = eventName;
-    }
-
-    public String getPackageName() {
-        return this.packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public Integer getResourceID() {
-        return resourceID;
-    }
+    private String params;
+    private Endpoint endpoint;
+    private Connection connection;
     
-    public void setResourceID(Integer resourceID) {
+    public SignalGenerator(int resourceID, String params) {
         this.resourceID = resourceID;
+        this.params = params;
     }
     
-    public int getEventID() {
-        return eventID;
+    public int getResourceID() {
+        return this.resourceID;
     }
     
-    public void setEventID(int eventID) {
-        this.eventID = eventID;
-    }
-    
-    public SignalGenerator getInstance(MgcpController controller, String parms) {
-        return new PlayAnnouncement(resourceID, parms);
+    public Connection getConnection() {
+        return connection;
     }
 
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+        
+    public boolean verify(Connection connection) {
+        this.connection = connection;
+        return this.doVerify(connection);
+    }
+    
+    public boolean verify(Endpoint endpoint) {
+        this.endpoint = endpoint;
+        return this.doVerify(endpoint);
+    }
+
+    protected abstract boolean doVerify(Connection connection);
+    protected abstract boolean doVerify(Endpoint endpoint);
+
+    public abstract void start(Request request);
+    public abstract void cancel();
 }

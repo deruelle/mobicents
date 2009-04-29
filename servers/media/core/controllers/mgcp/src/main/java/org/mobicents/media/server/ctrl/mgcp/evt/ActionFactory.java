@@ -24,29 +24,21 @@
  *
  * Boston, MA  02110-1301  USA
  */
-package org.mobicents.media.server.ctrl.mgcp.evt.ann;
 
-import org.mobicents.media.server.ctrl.mgcp.evt.MgcpEvent;
-import org.mobicents.media.server.ctrl.mgcp.evt.MgcpEventFactory;
+package org.mobicents.media.server.ctrl.mgcp.evt;
+
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
+import org.mobicents.media.server.ctrl.mgcp.MgcpController;
+import org.mobicents.media.server.spi.NotificationListener;
 
 /**
  *
  * @author kulikov
  */
-public class AnnouncementCompletedFactory implements MgcpEventFactory {
-
-    private String name;
-    
-    public void setName(String name) {
-        this.name = name;
+public class ActionFactory {
+    public NotificationListener getAction(RequestedAction requestedAction, int eventID,
+            MgcpController controller) {
+        return new ActionNotify(eventID, controller);
     }
-    
-    public String getName() {
-        return name;
-    }
-
-    public MgcpEvent getInstance(String name) {
-        return new AnnouncementCompleted(name);
-    }
-
 }

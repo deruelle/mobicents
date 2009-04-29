@@ -24,14 +24,56 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.media.server.ctrl.mgcp.evt;
+
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 
 /**
  *
  * @author kulikov
  */
-public interface MgcpEventFactory {
-    public String getName();
-    public MgcpEvent getInstance(String name);
+public class DefaultDetectorFactory implements DetectorFactory {
+
+    private String packageName;
+    private String name;
+    
+    private int resourceID;
+    private int eventID;
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+        
+    public void setEventName(String name) {
+        this.name = name;
+    }
+    
+    public String getEventName() {
+        return name;
+    }
+    
+    public void setResourceID(int resourceID) {
+        this.resourceID = resourceID;
+    }
+
+    public int getResourceID() {
+        return resourceID;
+    }
+
+    public int getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(int eventID) {
+        this.eventID = eventID;
+    }
+        
+    public EventDetector getInstance(String params, RequestedAction[] actions) {
+        return new DefaultEventDetector(packageName, name, resourceID, eventID, params, actions);
+    }
+
 }

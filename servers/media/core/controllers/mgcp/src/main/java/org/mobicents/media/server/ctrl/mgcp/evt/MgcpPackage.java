@@ -26,21 +26,23 @@
  */
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import java.util.List;
+import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 
 /**
  *
  * @author kulikov
  */
 public class MgcpPackage {
-    
+
     private String name;
     private int id;
+    private MgcpController controller;
+    private List<GeneratorFactory> generators;
+    private List<DetectorFactory> detectors;
 
-    private List<MgcpSignalFactory> signals;
-    private List<MgcpEventFactory> events;
-    
     public int getId() {
         return id;
     }
@@ -57,26 +59,57 @@ public class MgcpPackage {
         this.name = name;
     }
 
-    public List<MgcpSignalFactory> getSignals() {
-        return signals;
+    public MgcpController getController() {
+        return controller;
     }
 
-    public void setSignals(List<MgcpSignalFactory> signals) {
-        this.signals = signals;
+    public void setController(MgcpController controller) {
+        this.controller = controller;
     }
 
-    public List<MgcpEventFactory> getEvents() {
-        return events;
+    public List<GeneratorFactory> getGenerators() {
+        return generators;
     }
 
-    public void setEvents(List<MgcpEventFactory> events) {
-        this.events = events;
+    public void setGenerators(List<GeneratorFactory> signals) {
+        this.generators = signals;
+        try {
+        if (signals != null) {
+            for (GeneratorFactory factory : generators) {
+                factory.setPackageName(this.name);
+            }
+        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-        
-    public MgcpSignal getSignal(MgcpEvent evt) {
-        for (MgcpSignalFactory factory : signals) {
-            if (factory.getName().equals(evt.getName())) {
-                return factory.getInstance(evt.getParms());
+
+    public List<DetectorFactory> getDetectors() {
+        return detectors;
+    }
+
+    public void setDetectors(List<DetectorFactory> events) {
+        this.detectors = events;
+        if (events != null) {
+            for (DetectorFactory factory : detectors) {
+                factory.setPackageName(this.name);
+            }
+        }
+    }
+
+    public SignalGenerator getGenerator(MgcpEvent evt) {
+        for (GeneratorFactory factory : generators) {
+            if (factory.getEventName().equals(evt.getName())) {
+                return factory.getInstance(controller, evt.getParms());
+            }
+        }
+        return null;
+    }
+
+    public EventDetector getDetector(MgcpEvent evt, RequestedAction[] actions) {
+        for (DetectorFactory factory : detectors) {
+            if (factory.getEventName().equals(evt.getName())) {
+                return factory.getInstance(evt.getParms(), actions);
             }
         }
         return null;

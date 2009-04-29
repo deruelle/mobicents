@@ -27,23 +27,29 @@
 
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
+import org.mobicents.media.server.ctrl.mgcp.MgcpController;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+
 /**
  *
  * @author kulikov
  */
-public abstract class MgcpEvent {
-    private String name;
+public class ActionNotify implements NotificationListener {
 
-    public MgcpEvent(String name) {
-        this.name = name;
+    private int eventID;
+    private MgcpController controller;
+    private NotifiedEntity notifiedEntity;
+    
+
+    public ActionNotify(int eventID, MgcpController controller) {
+        this.eventID = eventID;
+        this.controller = controller;
     }
     
-    public String getName() {
-        return name;
+    public void update(NotifyEvent event) {
+        
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }    
-    
 }

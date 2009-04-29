@@ -25,17 +25,20 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.ctrl.mgcp.evt.ann;
+package org.mobicents.media.server.ctrl.mgcp.evt;
 
-import org.mobicents.media.server.ctrl.mgcp.evt.MgcpEvent;
+import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 
 /**
  *
  * @author kulikov
  */
-public class AnnouncementCompleted extends MgcpEvent {
+public interface GeneratorFactory {
+    public String getEventName();
+    public void setEventName(String eventName);
     
-    public AnnouncementCompleted(String name) {
-        super(name);
-    }
+    public String getPackageName();
+    public void setPackageName(String packageName);
+    
+    public SignalGenerator getInstance(MgcpController controller, String parms);
 }

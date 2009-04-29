@@ -26,30 +26,26 @@
  */
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
-import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
+import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author kulikov
  */
-public abstract class MgcpSignal {
-    private String name;
-    private String params;
+public class DefaultEventDetector extends EventDetector {
+
+    private ActionFactory actionFactory = new ActionFactory();
     
-    public MgcpSignal(String name, String params) {
-        this.name = name;
-        this.params = params;
-    }
-    
-    public String getName() {
-        return name;
+    public DefaultEventDetector(String pkgName, String eventName, 
+            int resourceID, int eventID, String params, RequestedAction[] actions) {
+        super(pkgName, eventName, resourceID, eventID, params, actions);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public void performAction(NotifyEvent event, RequestedAction action) {
+        //EventName eventName = new EventName()
     }
-    
-    public abstract void queue(EndpointIdentifier endpointID, ConnectionIdentifier connectionID);
+
     
 }

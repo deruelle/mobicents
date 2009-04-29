@@ -38,6 +38,7 @@ import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 
 import jain.protocol.ip.mgcp.message.NotificationRequest;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -67,7 +68,10 @@ public class MgcpController implements JainMgcpListener {
     private int port = 2727;
     private NamingService namingService;
     private ConcurrentHashMap<String, Call> calls = new ConcurrentHashMap<String, Call>();
-    protected HashMap<Integer, MgcpPackage> packages = new HashMap();
+    protected HashMap<String, MgcpPackage> packages = new HashMap();
+    protected ConcurrentHashMap<String, Request> requests = new ConcurrentHashMap();
+    
+    private NotifiedEntity notifiedEntity;
     
     public MgcpController() {
     }
@@ -80,6 +84,13 @@ public class MgcpController implements JainMgcpListener {
         this.namingService = namingService;
     }
 
+    public NotifiedEntity getNotifiedEntity() {
+        return notifiedEntity;
+    }
+
+    public void setNotifiedEntity(NotifiedEntity notifiedEntity) {
+        this.notifiedEntity = notifiedEntity;
+    }
     
     public String getBindAddress() {
         return this.bindAddress;
@@ -103,16 +114,16 @@ public class MgcpController implements JainMgcpListener {
     }
 
     public void addPackage(MgcpPackage pkg) {
-        System.out.println("==================");
-        packages.put(pkg.getId(), pkg);
+        pkg.setController(this);
+        packages.put(pkg.getName(), pkg);
     }
     
     public void removePackage(MgcpPackage pkg) {
         packages.remove(pkg);
     }
     
-    public MgcpPackage getPackage(int code) {
-        return packages.get(code);
+    public MgcpPackage getPackage(String name) {
+        return packages.get(name);
     }
     /**
      * Starts MGCP controller.

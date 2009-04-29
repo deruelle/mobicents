@@ -27,24 +27,47 @@
 
 package org.mobicents.media.server.ctrl.mgcp.evt.ann;
 
-import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
-import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
-import org.mobicents.media.server.ctrl.mgcp.evt.MgcpSignal;
+import org.mobicents.media.server.ctrl.mgcp.Request;
+import org.mobicents.media.server.ctrl.mgcp.evt.SignalGenerator;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.resource.AudioPlayer;
 
 /**
  *
  * @author kulikov
  */
-public class PlayAnnouncement extends MgcpSignal {
+public class PlayAnnouncement extends SignalGenerator {
 
-    public PlayAnnouncement(String name, String params) {
-        super(name, params);
-    }
+    private AudioPlayer audioPlayer;
+    private String url;
     
+    public PlayAnnouncement(int resourceID, String params) {
+        super(resourceID, params);
+        this.url = params;
+    }
 
     @Override
-    public void queue(EndpointIdentifier endpointID, ConnectionIdentifier connectionID) {
+    protected boolean doVerify(Connection connection) {
+        audioPlayer = (AudioPlayer) connection.getComponent(getResourceID());
+        return audioPlayer != null;
+    }
+
+    @Override
+    protected boolean doVerify(Endpoint endpoint) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public void start(Request request) {
+        audioPlayer.setURL(url);
+        audioPlayer.start();
+    }
+
+    @Override
+    public void cancel() {
+        audioPlayer.stop();
+    }
+
 
 }

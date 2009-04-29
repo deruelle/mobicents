@@ -27,11 +27,18 @@
 
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
+import jain.protocol.ip.mgcp.message.parms.RequestedAction;
+
 /**
  *
  * @author kulikov
  */
-public interface MgcpSignalFactory {
-    public String getName();
-    public MgcpSignal getInstance(String parms);
+public interface DetectorFactory {
+    public String getEventName();
+    public void setEventName(String eventName);
+
+    public String getPackageName();
+    public void setPackageName(String eventName);
+    
+    public EventDetector getInstance(String params, RequestedAction[] actions);
 }
