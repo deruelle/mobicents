@@ -42,7 +42,7 @@ public abstract class ConnectionImpl implements Connection {
     }
     
     public String getId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+       return this.id;
     }
 
     public int getIndex() {

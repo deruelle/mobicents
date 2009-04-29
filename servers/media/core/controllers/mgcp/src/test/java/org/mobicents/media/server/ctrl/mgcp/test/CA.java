@@ -36,7 +36,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/$", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/1", "127.0.0.1:" + mgStack);
 
 			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 

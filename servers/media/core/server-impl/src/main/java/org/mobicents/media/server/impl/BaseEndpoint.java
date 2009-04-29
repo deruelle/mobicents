@@ -360,7 +360,7 @@ public abstract class BaseEndpoint implements Endpoint {
      * @see org.mobicents.media.server.spi.Endpoint#createConnection(int);
      */
     public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
-        lock.lock();
+    	lock.lock();
         try {
             if (connections.size() == maxConnections) {
                 throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");

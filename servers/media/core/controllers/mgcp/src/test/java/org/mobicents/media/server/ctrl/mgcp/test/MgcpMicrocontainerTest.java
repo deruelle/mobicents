@@ -43,7 +43,7 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest
 		caStack = new JainMgcpStackImpl(caIPAddress, CA_PORT);
 		caProvider = (JainMgcpStackProviderImpl) caStack.createProvider();
 		
-		mgcpServerStack = (MgcpController) getBean("Mobicents.MMS.MgcpControllerService");
+		mgcpServerStack = (MgcpController) getBean("MgcpController");
 		assertNotNull(mgcpServerStack);		
 	}
 	

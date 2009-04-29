@@ -62,7 +62,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
     private String localDescriptor;
     private String remoteDescriptor;
     
-    private HashMap<String, RtpSocket> rtpSockets;
+    private HashMap<String, RtpSocket> rtpSockets = new HashMap<String, RtpSocket>();
     
     private Channel txChannel;
     private Channel rxChannel;

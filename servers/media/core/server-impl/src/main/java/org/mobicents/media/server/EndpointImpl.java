@@ -199,6 +199,9 @@ public class EndpointImpl implements Endpoint {
             RtpConnectionImpl connection = new RtpConnectionImpl(this, mode);
             connections.put(connection.getId(), connection);
             return connection;
+        } catch (Exception e) {
+            logger.error("Could not create RTP connection", e);
+            throw new ResourceUnavailableException(e.getMessage());
         } finally {
             state.unlock();
         }

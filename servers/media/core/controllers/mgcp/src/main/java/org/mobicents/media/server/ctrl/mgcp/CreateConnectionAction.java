@@ -105,6 +105,7 @@ public class CreateConnectionAction implements Callable {
                 logger.debug("TX=" + txID + ", Endpoint: " + endpoint.getLocalName() + ", Created connection ");
             }
         } catch (Exception e) {
+        	logger.error(e);
             return new CreateConnectionResponse(crcx.getSource(), ReturnCode.Endpoint_Insufficient_Resources, null);
         }
 
