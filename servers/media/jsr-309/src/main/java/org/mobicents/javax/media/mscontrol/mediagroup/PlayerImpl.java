@@ -7,6 +7,7 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
@@ -73,6 +74,7 @@ public class PlayerImpl implements Player {
 	private void executeNextTx() {
 		Runnable nextTx = txList.poll();
 		if (nextTx != null) {
+			this.state = PlayerState.ACTIVE;
 			Provider.submit(nextTx);
 		}
 	}
@@ -99,10 +101,13 @@ public class PlayerImpl implements Player {
 					} else if (action.equals(Player.v_Fail)) {
 						throw new MediaResourceException(playerBusyEvent);
 					} else {
-						logger.error("The Value " + action + " is not recognized for Parameter p_IfBusy");
+						logger
+								.error("The Value "
+										+ action
+										+ " is not recognized for Parameter p_IfBusy. It has to be one of Player.v_Queue, Player.v_Stop or Player.v_Fail");
 					}
 				} else {
-					logger.error("The Player is busy and no Parameter p_IfBusy passed to take necessary action");
+					logger.warn("The Player is busy and no Parameter p_IfBusy passed to take necessary action");
 				}
 			} else {
 				Runnable tx = new StartTx(this, uris);
@@ -160,6 +165,8 @@ public class PlayerImpl implements Player {
 			this.player = player;
 		}
 
+		// TODO : This will stop all the active Signals and Event Detection! We
+		// just want Player to Stop
 		public void run() {
 			try {
 				this.tx = mgcpWrapper.getUniqueTransactionHandler();
@@ -383,7 +390,7 @@ public class PlayerImpl implements Player {
 					break;
 				}
 			}
-			NotificationRequestResponse response = new NotificationRequestResponse(notify.getSource(),
+			 NotifyResponse response = new  NotifyResponse(notify.getSource(),
 					ReturnCode.Transaction_Executed_Normally);
 			response.setTransactionHandle(notify.getTransactionHandle());
 

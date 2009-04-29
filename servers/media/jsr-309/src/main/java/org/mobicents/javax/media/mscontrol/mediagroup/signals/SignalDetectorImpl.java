@@ -7,6 +7,7 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
@@ -18,6 +19,7 @@ import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -39,11 +41,13 @@ import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
+import org.mobicents.jsr309.mgcp.Provider;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
+
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class SignalDetectorImpl implements SignalDetector {
 
@@ -53,24 +57,30 @@ public class SignalDetectorImpl implements SignalDetector {
 	protected MediaSessionImpl mediaSession = null;
 	protected MgcpWrapper mgcpWrapper = null;
 	protected RequestIdentifier reqId = null;
-	private List buffer = null;
+
+	protected volatile SignalDetectorState state = SignalDetectorState.IDLE;
+
+	// TODO : Buffer needs to be implemented
+	private List<String> buffer = null;
 
 	public SignalDetectorImpl(MediaGroupImpl mediaGroup, MgcpWrapper mgcpWrapper) {
 		this.mediaGroup = mediaGroup;
 		this.mgcpWrapper = mgcpWrapper;
 
 		this.mediaSession = (MediaSessionImpl) mediaGroup.getMediaSession();
+
+		this.buffer = new ArrayList<String>();
 	}
 
 	public void flushBuffer() throws MsControlException {
-		// TODO Auto-generated method stub
-
+		this.buffer.clear();
 	}
 
 	public void receiveSignals(int numSignals, Parameter[] patterns, RTC[] rtc, Parameters optargs)
 			throws MsControlException {
-		// TODO Auto-generated method stub
-
+		Runnable tx = new StartTx(this, patterns, optargs);
+		Provider.submit(tx);
+		this.state = SignalDetectorState.DETECTING;
 	}
 
 	public ResourceContainer<? extends MediaConfig> getContainer() {
@@ -78,7 +88,6 @@ public class SignalDetectorImpl implements SignalDetector {
 	}
 
 	public boolean stop() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -111,10 +120,10 @@ public class SignalDetectorImpl implements SignalDetector {
 		private Parameter[] patterns = null;
 		private Parameters optargs = null;
 
-		String[] regExp = new String[31];
+		String[] regExp = null;
 		String digitMap = null;
 
-		String digitDetected = null;
+		String digitDetected = "";
 
 		StartTx(SignalDetectorImpl detector, Parameter[] patterns, Parameters optargs) {
 			this.detector = detector;
@@ -122,6 +131,9 @@ public class SignalDetectorImpl implements SignalDetector {
 			this.optargs = optargs;
 			boolean first = true;
 			if (optargs != null) {
+
+				regExp = new String[31];
+
 				for (Parameter p : optargs.keySet()) {
 					ParameterEnum pE = (ParameterEnum) p;
 					String regExtmp = (String) optargs.get(p);
@@ -403,15 +415,17 @@ public class SignalDetectorImpl implements SignalDetector {
 		}
 
 		public void processMgcpCommandEvent(JainMgcpCommandEvent command) {
-			logger.debug(" The NTFY received " + command.toString());
+			if (logger.isDebugEnabled()) {
+				logger.debug(" The NTFY received " + command.toString());
+			}
 			Notify notify = (Notify) command;
 
-			NotificationRequestResponse response = new NotificationRequestResponse(notify.getSource(),
-					ReturnCode.Transaction_Executed_Normally);
+			NotifyResponse response = new NotifyResponse(notify.getSource(), ReturnCode.Transaction_Executed_Normally);
 			response.setTransactionHandle(notify.getTransactionHandle());
 
 			mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { response });
 
+			// TODO : For now we de-register for every NTFY command
 			mgcpWrapper.removeListener(notify.getRequestIdentifier());
 
 			EventName[] observedEvents = notify.getObservedEvents();
@@ -419,22 +433,52 @@ public class SignalDetectorImpl implements SignalDetector {
 			for (EventName observedEvent : observedEvents) {
 				switch (observedEvent.getEventIdentifier().intValue()) {
 				case MgcpEvent.DTMF_0:
+					digitDetected = digitDetected + 0;
+					break;
 				case MgcpEvent.DTMF_1:
+					digitDetected = digitDetected + 1;
+					break;
 				case MgcpEvent.DTMF_2:
+					digitDetected = digitDetected + 2;
+					break;
 				case MgcpEvent.DTMF_3:
+					digitDetected = digitDetected + 3;
+					break;
 				case MgcpEvent.DTMF_4:
+					digitDetected = digitDetected + 4;
+					break;
 				case MgcpEvent.DTMF_5:
+					digitDetected = digitDetected + 5;
+					break;
 				case MgcpEvent.DTMF_6:
+					digitDetected = digitDetected + 6;
+					break;
 				case MgcpEvent.DTMF_7:
+					digitDetected = digitDetected + 7;
+					break;
 				case MgcpEvent.DTMF_8:
+					digitDetected = digitDetected + 8;
+					break;
 				case MgcpEvent.DTMF_9:
+					digitDetected = digitDetected + 9;
+					break;
 				case MgcpEvent.DTMF_A:
+					digitDetected = digitDetected + "A";
+					break;
 				case MgcpEvent.DTMF_B:
+					digitDetected = digitDetected + "B";
+					break;
 				case MgcpEvent.DTMF_C:
+					digitDetected = digitDetected + "C";
+					break;
 				case MgcpEvent.DTMF_D:
+					digitDetected = digitDetected + "D";
+					break;
 				case MgcpEvent.DTMF_HASH:
+					digitDetected = digitDetected + "#";
+					break;
 				case MgcpEvent.DTMF_STAR:
-					digitDetected = digitDetected + observedEvent.getEventIdentifier().getName();
+					digitDetected = digitDetected + "*";					
 					break;
 
 				default:
@@ -446,20 +490,22 @@ public class SignalDetectorImpl implements SignalDetector {
 				}
 			}
 
-			int count = -1;
-			for (String s : regExp) {
-				count++;
-				if (digitDetected.matches(s)) {
-					break;
-				}
-			}
-
-			if (count > -1) {
-				event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_Pattern[count], digitDetected,
-						count, SignalDetector.q_Pattern[count], null);
-			} else {
-				event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_ReceiveSignals, digitDetected);
-			}
+			// TODO : Need to implement the patterns
+			// int count = -1;
+			// for (String s : regExp) {
+			// count++;
+			// if (s!=null && digitDetected.matches(s)) {
+			// break;
+			// }
+			// }
+			//
+			// if (count > -1) {
+			// event = new SignalDetectorEventImpl(this.detector,
+			// SignalDetector.ev_Pattern[count], digitDetected,
+			// count, SignalDetector.q_Pattern[count], null);
+			// } else {
+			event = new SignalDetectorEventImpl(this.detector, SignalDetector.ev_ReceiveSignals, digitDetected);
+			// }
 
 			update(event);
 

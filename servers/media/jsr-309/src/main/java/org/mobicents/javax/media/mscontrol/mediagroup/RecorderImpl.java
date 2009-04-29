@@ -7,6 +7,7 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
@@ -31,8 +32,8 @@ import javax.media.mscontrol.resource.Parameters;
 import javax.media.mscontrol.resource.RTC;
 
 import org.apache.log4j.Logger;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897MgcpEvent;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.RFC2897PackageName;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 import org.mobicents.javax.media.mscontrol.MediaObjectState;
 import org.mobicents.javax.media.mscontrol.MediaSessionImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
@@ -42,7 +43,7 @@ import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class RecorderImpl implements Recorder {
 
@@ -245,17 +246,15 @@ public class RecorderImpl implements Recorder {
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				EventName signalRequest = new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897pr, connId);
+				EventName signalRequest = new EventName(AUPackage.AU, AUMgcpEvent.aupr, connId);
 
 				notificationRequest.setSignalRequests(new EventName[] { signalRequest });
 
 				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
 
 				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897oc, connId),
-								actions),
-						new RequestedEvent(new EventName(RFC2897PackageName.AU, RFC2897MgcpEvent.rfc2897of, connId),
-								actions) };
+						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auoc, connId), actions),
+						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auof, connId), actions) };
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
@@ -301,7 +300,7 @@ public class RecorderImpl implements Recorder {
 			RecorderEvent event = null;
 			for (EventName observedEvent : observedEvents) {
 				switch (observedEvent.getEventIdentifier().intValue()) {
-				case RFC2897MgcpEvent.OPERATION_COMPLETE:
+				case AUMgcpEvent.OPERATION_COMPLETE:
 					mgcpWrapper.removeListener(notify.getRequestIdentifier());
 					state = RecorderState.IDLE;
 
@@ -314,7 +313,7 @@ public class RecorderImpl implements Recorder {
 					update(event);
 					break;
 
-				case RFC2897MgcpEvent.OPERATION_FAIL:
+				case AUMgcpEvent.OPERATION_FAIL:
 					mgcpWrapper.removeListener(notify.getRequestIdentifier());
 					event = new RecorderEventImpl(this.recorder, Recorder.ev_Record, Error.e_Unknown,
 							"Recorder failed on server ");
@@ -322,8 +321,7 @@ public class RecorderImpl implements Recorder {
 					break;
 				}
 			}
-			NotificationRequestResponse response = new NotificationRequestResponse(notify.getSource(),
-					ReturnCode.Transaction_Executed_Normally);
+			NotifyResponse response = new NotifyResponse(notify.getSource(), ReturnCode.Transaction_Executed_Normally);
 			response.setTransactionHandle(notify.getTransactionHandle());
 
 			mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { response });
