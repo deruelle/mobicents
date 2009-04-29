@@ -11,24 +11,26 @@
     </bean>
     
     <bean name="PlayAnnouncement" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
-        <property name="name">pa</property>
+        <property name="eventName">pa</property>
+        <property name="resourceID">10</property>
     </bean>
     
-    <bean name="Completed" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.AnnouncementCompletedFactory">
-        <property name="name">completed</property>
+    <bean name="Announcement.OC" class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
+        <property name="eventName">oc</property>
+        <property name="resourceID">10</property>
+        <property name="eventID">1</property>
     </bean>
     
-    <bean name="Announcement" class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
-        <property name="id">9</property>
-        <property name="name">Announcement</property>
-        <property name="signals">
-            <list elementClass="org.mobicents.media.server.ctrl.mgcp.evt.MgcpSignalFactory">
-                <value>PlayAnnouncement</value>
+    <bean name="Package.Announcement" class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
+        <property name="name">A</property>
+        <property name="generators">
+            <list>
+                <inject bean="PlayAnnouncement"/>
             </list>
         </property> 
-        <property name="events">
-            <list elementClass="org.mobicents.media.server.ctrl.mgcp.evt.MgcpSignalFactory">
-                <value>Completed</value>
+        <property name="detectors">
+            <list>
+                <inject bean="Announcement.OC"/>
             </list>
         </property> 
     </bean>
