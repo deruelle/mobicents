@@ -49,6 +49,7 @@ import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
@@ -232,5 +233,5 @@ public class RtpConnectionImpl extends ConnectionImpl {
         md.setAttributes(attributes);
         return md;
     }
-        
+
 }

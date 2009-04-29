@@ -40,7 +40,6 @@ import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.resource.ChannelFactory;
-import org.mobicents.media.server.spi.ResourceType;
 import org.mobicents.media.server.resource.UnknownComponentException;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
@@ -49,8 +48,6 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
-import org.mobicents.media.server.spi.events.RequestedEvent;
-import org.mobicents.media.server.spi.events.RequestedSignal;
 
 /**
  *
@@ -74,7 +71,7 @@ public class EndpointImpl implements Endpoint {
     /** The last generated connection's index*/
     private int lastIndex = -1;
     /** Holder for created connections */
-    protected transient HashMap connections = new HashMap();
+    protected transient HashMap<String, Connection> connections = new HashMap();
     protected ReentrantLock state = new ReentrantLock();
     
     private SdpFactory sdpFactory = SdpFactory.getInstance();
@@ -185,13 +182,6 @@ public class EndpointImpl implements Endpoint {
         txChannelFactory.release(channel);
     }
 
-    public Component getComponent(ResourceType id) {
-        return null;
-    }
-
-    public Component getComponent(String connectionID, ResourceType id) {
-        return null;
-    }
 
     public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
         state.lock();
@@ -255,13 +245,6 @@ public class EndpointImpl implements Endpoint {
         this.isInUse = inUse;
     }
 
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     public void addNotificationListener(NotificationListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -280,6 +263,14 @@ public class EndpointImpl implements Endpoint {
     }
 
     public String[] getSupportedPackages() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Connection getConnection(String connectionID) {
+        return connections.get(connectionID);
+    }
+
+    public Component getComponent(int resourceID) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

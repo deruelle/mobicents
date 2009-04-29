@@ -6,11 +6,13 @@
 package org.mobicents.media.server;
 
 import org.jboss.util.id.UID;
+import org.mobicents.media.Component;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
 
 /**
  *
@@ -86,6 +88,19 @@ public abstract class ConnectionImpl implements Connection {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    public Component getComponent(int resourceID) {
+        return null;
+    }
+    
+    public void addNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+        
+    
     protected void close() {
         
     }
