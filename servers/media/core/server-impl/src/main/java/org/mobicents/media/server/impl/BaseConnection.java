@@ -27,7 +27,6 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.RequestedEvent;
 
 /**
  * 
@@ -46,7 +45,7 @@ public abstract class BaseConnection implements Connection, NotificationListener
     private boolean timerStarted = false;
     private ReentrantLock stateLock = new ReentrantLock();
     private List<ConnectionListener> listeners = new CopyOnWriteArrayList();
-    private List<RequestedEvent> eventListeners = new CopyOnWriteArrayList();
+//    private List<RequestedEvent> eventListeners = new CopyOnWriteArrayList();
     
     private transient TimerTask closeTask;
     private long connectionCreationTime = System.currentTimeMillis();
@@ -163,19 +162,6 @@ public abstract class BaseConnection implements Connection, NotificationListener
         return endpoint;
     }
 
-    /**
-     * Adds listener for the specified event.
-     * 
-     * @param requestedEvent
-     *            the event to detect or null to diable detection.
-     */
-    public void detect(RequestedEvent requestedEvent) {
-        if (requestedEvent != null) {
-            eventListeners.add(requestedEvent);
-        } else {
-            eventListeners.clear();
-        }
-    }
 
     /**
      * (Non-Javadoc).
@@ -217,11 +203,6 @@ public abstract class BaseConnection implements Connection, NotificationListener
     }
 
     public void update(NotifyEvent event) {
-        for (RequestedEvent request : this.eventListeners) {
-            if (request.getID().equals(event.getEventID())) {
-                endpoint.sendEvent(new EventSender(request.getHandler(), event));
-            }
-        }
     }
 
     /**

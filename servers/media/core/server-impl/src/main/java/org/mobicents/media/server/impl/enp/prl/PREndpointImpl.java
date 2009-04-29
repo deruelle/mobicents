@@ -15,6 +15,7 @@
  */
 package org.mobicents.media.server.impl.enp.prl;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -218,5 +219,9 @@ public class PREndpointImpl extends BaseEndpoint implements ConnectionListener {
     }
 
     public void onModeChange(Connection connection, ConnectionMode oldMode) {
+    }
+
+    public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

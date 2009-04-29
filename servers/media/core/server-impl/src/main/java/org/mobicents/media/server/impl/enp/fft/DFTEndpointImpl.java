@@ -3,6 +3,7 @@ package org.mobicents.media.server.impl.enp.fft;
 import java.io.File;
 
 import java.util.Collection;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -125,5 +126,9 @@ public class DFTEndpointImpl extends BaseEndpoint {
     @Override
     public Format[] getFormats() {
         return null;
+    }
+
+    public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

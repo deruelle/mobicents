@@ -29,7 +29,6 @@ import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.apache.log4j.Logger;
@@ -169,24 +168,24 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player failed.
      */
     protected void failed(Exception e) {
-        AnnEventImpl evt = new AnnEventImpl(Announcement.FAILED);
-        this.sendEvent(evt);
+//        AnnEventImpl evt = new AnnEventImpl(Announcement.FAILED);
+//        this.sendEvent(evt);
     }
 
     /**
      * Called when player started to transmitt audio.
      */
     public void started() {
-        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
-        this.sendEvent(evt);
+//        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
+//        this.sendEvent(evt);
     }
 
     /**
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
-        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
-        this.sendEvent(evt);
+//        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+ //       this.sendEvent(evt);
     }
 
     /**
@@ -292,8 +291,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 
     public void ended() {
         closeAudioStream();
-        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
-        this.sendEvent(evt);
+//        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
+//        this.sendEvent(evt);
     }
 
     public void run() {

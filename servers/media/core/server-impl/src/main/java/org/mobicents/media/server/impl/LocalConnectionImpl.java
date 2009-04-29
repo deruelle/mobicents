@@ -20,12 +20,14 @@ import java.io.IOException;
 import javax.sdp.SdpException;
 import javax.sdp.SessionDescription;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
@@ -250,6 +252,18 @@ public class LocalConnectionImpl extends BaseConnection {
     }
 
     public int getPacketsLost() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void addNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Component getComponent(int resourceType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

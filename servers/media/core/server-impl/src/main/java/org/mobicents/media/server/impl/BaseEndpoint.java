@@ -32,8 +32,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.impl.events.EventPackage;
-import org.mobicents.media.server.impl.events.PackageNotSupportedEventImpl;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
@@ -41,16 +39,9 @@ import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.FacilityException;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
-import org.mobicents.media.server.spi.UnknownSignalException;
-import org.mobicents.media.server.spi.events.EventIdentifier;
-import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.events.RequestedEvent;
-import org.mobicents.media.server.spi.events.RequestedSignal;
-import org.mobicents.media.server.spi.events.pkg.EventID;
 
 /**
  * The basic implementation of the endpoint.
@@ -83,13 +74,13 @@ public abstract class BaseEndpoint implements Endpoint {
     /** The number of max allowed connections for this endpoint */
     protected int maxConnections = 0;
     /** The queue of currently plaing signals */
-    private HashMap<String, SignalQueue> signalQueues = new HashMap();
+//    private HashMap<String, SignalQueue> signalQueues = new HashMap();
     
     /** Listeners for events detected on the endpoint */
     protected transient ArrayList<NotificationListener> listeners = new ArrayList<NotificationListener>();
     /** Connection state listeners */
     protected transient ArrayList<ConnectionListener> connectionListeners = new ArrayList<ConnectionListener>();
-    private transient HashMap<String, EventPackage> eventPackages = new HashMap();
+//    private transient HashMap<String, EventPackage> eventPackages = new HashMap();
     
     private transient ExecutorService commandExecutor;
     private transient ExecutorService eventQueue;
@@ -366,7 +357,6 @@ public abstract class BaseEndpoint implements Endpoint {
                 throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed");
             }
             Connection connection = new RtpConnectionImpl(this, mode);
-            signalQueues.put(connection.getId(), new SignalQueue(this));
             return connection;
         } catch (Exception e) {
             logger.error("Could not create RTP connection", e);
@@ -388,7 +378,7 @@ public abstract class BaseEndpoint implements Endpoint {
                 throw new TooManyConnectionsException("Maximum " + maxConnections + " connections allowed for " + getLocalName());
             }
             Connection connection = new LocalConnectionImpl(this, mode);
-            signalQueues.put(connection.getId(), new SignalQueue(this));
+//            signalQueues.put(connection.getId(), new SignalQueue(this));
             return connection;
         } catch(TooManyConnectionsException e){
             logger.error("Could not create Local connection", e);
@@ -412,13 +402,13 @@ public abstract class BaseEndpoint implements Endpoint {
     public void deleteConnection(String connectionID) {
         lock.lock();
         try {
-            SignalQueue signalQueue = signalQueues.remove(connectionID);
-            if (signalQueue != null) {
-                signalQueue.reset();
-            }
+//            SignalQueue signalQueue = signalQueues.remove(connectionID);
+//            if (signalQueue != null) {
+//                signalQueue.reset();
+//            }
             BaseConnection connection = (BaseConnection) connections.get(connectionID);
             if (connection != null) {
-                connection.detect(null);
+//                connection.detect(null);
                 connection.close();
             }
             isInUse = connections.size() > 0;
@@ -604,36 +594,6 @@ public abstract class BaseEndpoint implements Endpoint {
         }
     }
     
-    protected AbstractSignal getSignal(RequestedSignal signal) throws UnknownSignalException, FacilityException {
-        try {
-            EventPackage eventPackage = EventPackageFactory.load(signal.getID().getPackageName());
-            return eventPackage.getSignal(signal);
-        } catch (ClassNotFoundException e) {
-            logger.error("Wrong package name: ", e);
-            throw new UnknownSignalException(signal.getID().getFQN());
-        } catch (Exception e) {
-            logger.error("Unexpected error: ", e);
-            throw new FacilityException(e.getMessage());
-        }
-    }
-
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.server.spi.Endpoint#execute(org.mobicents.media.server.spi.events.RequestedSignal[], org.mobicents.media.server.spi.events.RequestedEvent[]) 
-     */
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events) {
-    }
-
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.server.spi.Endpoint#execute(org.mobicents.media.server.spi.events.RequestedSignal[], org.mobicents.media.server.spi.events.RequestedEvent[], String) 
-     */
-    public void execute(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-        commandExecutor.execute(new ExecuteCommand(signals, events, connectionID));
-    }
-
     // ###############################
     // # MANAGEMENT FUNCTIONS        #
     // ###############################
@@ -792,85 +752,6 @@ public abstract class BaseEndpoint implements Endpoint {
         return connection.getPacketsSent();
     }
 
-    private class ExecuteCommand implements Runnable {
-
-        private RequestedSignal[] signals;
-        private RequestedEvent[] events;
-        private String connectionID;
-
-        protected ExecuteCommand(RequestedSignal[] signals, RequestedEvent[] events, String connectionID) {
-            this.signals = signals;
-            this.events = events;
-            this.connectionID = connectionID;
-        }
-
-        public void run() {
-            boolean supports = false;
-            String packageName = null;
-
-            String[] supportedPackages = getSupportedPackages();
-
-            for (int i = 0; i < events.length; i++) {
-
-                supports = false;
-                packageName = events[i].getID().getPackageName();
-
-                for (String s : supportedPackages) {
-                    if (s.equals(packageName)) {
-                        supports = true;
-                        break;
-                    }
-                }
-
-                if (!supports) {
-                    logger.error(getLocalName() + "doesn't support package " + packageName);
-                    EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-                    NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-                    events[i].getHandler().update(notifyEvent);
-                    return;
-                }
-
-            }
-
-            // TODO : Supported only one signal for now
-            RequestedSignal requestedSignal = null;
-            if (signals.length > 0) {
-                requestedSignal = signals[0];
-                supports = false;
-                packageName = requestedSignal.getID().getPackageName();
-
-                for (String s : supportedPackages) {
-                    if (s.equals(packageName)) {
-                        supports = true;
-                        break;
-                    }
-                }
-
-                if (!supports) {
-                    logger.error(getLocalName() + "doesn't support package " + packageName);
-                    EventIdentifier evt = new EventID(packageName, "PACKAGE_NOT_SUPPORTED");
-                    NotifyEvent notifyEvent = new PackageNotSupportedEventImpl(evt);
-                    requestedSignal.getHandler().update(notifyEvent);
-                    return;
-                }
-            }
-
-            BaseConnection connection = (BaseConnection) getConnection(connectionID);
-            if (connection == null) {
-                return;
-            }
-            //disbale all previous detected event
-            connection.detect(null);
-            for (int i = 0; i < events.length; i++) {
-                connection.detect(events[i]);
-            }
-
-            SignalQueue signalQueue = signalQueues.get(connectionID);
-            
-            signalQueue.reset();
-            signalQueue.offer(signals, connection);
-        }
-    }
 
     private class CommandThreadFactory implements ThreadFactory {
 

@@ -15,6 +15,7 @@ package org.mobicents.media.server.impl.enp.cnf;
 
 import java.util.ArrayList;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -28,7 +29,6 @@ import org.mobicents.media.server.impl.rtp.RtpSocket;
 
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.apache.log4j.Logger;
 
@@ -89,9 +89,6 @@ public class ConfEndpointImpl extends BaseEndpoint {
         return FORMATS;
     }
 
-    public String[] getSupportedPackages() {
-        return new String[]{Announcement.PACKAGE_NAME, org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
-    }
 
     @Override
     public MediaSink getPrimarySink(Connection connection) {
@@ -205,5 +202,9 @@ public class ConfEndpointImpl extends BaseEndpoint {
 
     @Override
     public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+    }
+
+    public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

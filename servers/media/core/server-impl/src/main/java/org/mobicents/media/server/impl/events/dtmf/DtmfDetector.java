@@ -17,7 +17,6 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.dsp.Processor;
-import org.mobicents.media.server.spi.events.dtmf.DtmfEvent;
 
 /**
  * Implements common fatures for DTMF detector.
@@ -104,8 +103,8 @@ public class DtmfDetector extends AbstractSink {
     }
 
     protected void sendEvent(String seq) {
-        DtmfEvent evt = new DtmfEvent(seq);
-        super.sendEvent(evt);
+//        DtmfEvent evt = new DtmfEvent(seq);
+//        super.sendEvent(evt);
     }
 
     private void stop() {

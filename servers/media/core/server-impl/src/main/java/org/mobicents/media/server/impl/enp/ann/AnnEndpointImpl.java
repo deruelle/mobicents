@@ -16,6 +16,7 @@
  */
 package org.mobicents.media.server.impl.enp.ann;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -23,7 +24,6 @@ import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.events.announcement.AudioPlayer;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
 
 import org.mobicents.media.server.impl.BaseConnection;
 import org.mobicents.media.server.impl.BaseEndpoint;
@@ -98,11 +98,6 @@ public class AnnEndpointImpl extends BaseEndpoint {
         audioPlayer.dispose();
     }
     
-    public String[] getSupportedPackages() {
-        String[] supportedpackages = new String[]{Announcement.PACKAGE_NAME, 
-        org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME};
-        return supportedpackages;
-    }
 
     @Override
     public MediaSink getPrimarySink(Connection connection) {
@@ -158,6 +153,10 @@ public class AnnEndpointImpl extends BaseEndpoint {
 
     @Override
     public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+    }
+
+    public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

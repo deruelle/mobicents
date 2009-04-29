@@ -21,8 +21,6 @@ import org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl;
 import org.mobicents.media.server.impl.events.audio.Recorder;
 import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
 import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.events.pkg.Announcement;
-import org.mobicents.media.server.spi.events.pkg.Audio;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.BaseConnection;
@@ -126,16 +124,6 @@ public class IVREndpointImpl extends AnnEndpointImpl {
     }
     
     public void setMediaType(String mediaType) {
-    }
-
-    @Override
-    public String[] getSupportedPackages() {
-        String[] supportedpackages = new String[]{
-            Announcement.PACKAGE_NAME,
-            Audio.PACKAGE_NAME,
-            org.mobicents.media.server.spi.events.pkg.DTMF.PACKAGE_NAME
-        };
-        return supportedpackages;
     }
 
     @Override

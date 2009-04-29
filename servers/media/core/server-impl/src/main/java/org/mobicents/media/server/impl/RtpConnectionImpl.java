@@ -32,6 +32,7 @@ import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
@@ -40,6 +41,7 @@ import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 /**
@@ -432,5 +434,17 @@ public class RtpConnectionImpl extends BaseConnection {
 
     public int getPacketsLost() {
         return -1;
+    }
+
+    public void addNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeNotificationListener(NotificationListener listener) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Component getComponent(int resourceType) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

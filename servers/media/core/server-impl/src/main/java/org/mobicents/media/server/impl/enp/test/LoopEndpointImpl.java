@@ -11,6 +11,7 @@
  */
 package org.mobicents.media.server.impl.enp.test;
 
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -167,5 +168,9 @@ public class LoopEndpointImpl extends BaseEndpoint {
 
     @Override
     public void deallocateRtpSocket(RtpSocket rtpSocket, Connection connection) {
+    }
+
+    public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
