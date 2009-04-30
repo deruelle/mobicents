@@ -104,17 +104,47 @@ public class InnerNamingService implements NamingService {
 		}
 		// return null;
 	}
-	
+
 	public synchronized Endpoint findAny(String name, boolean allowInUse) throws ResourceUnavailableException {
+		// TODO : Can name have two '$'? In this case the search will be
+		// slow once we add logic for this
+
 		Endpoint endpt = null;
-		String prefix = name.substring(0, name.indexOf("$")-1);
-		Set<String> keys = endpoints.keySet();
-		for(String key : keys){
-			if(key.startsWith(prefix)){
-				
-			}
+		String prefix = name.substring(0, name.indexOf("$") - 1);
+		String suffix = null;
+		if (name.indexOf("$") + 1 > name.length()) {
+			suffix = name.substring(name.indexOf("$") + 1, name.length());
 		}
+
+		Set<String> keys = endpoints.keySet();
+		for (String key : keys) {
+			if (key.startsWith(prefix)) {
+				if (suffix != null) {
+					if (key.contains(suffix)) {
+						endpt = endpoints.get(key);
+						if (endpt.isInUse() && !allowInUse) {
+							endpt = null;
+						} else {
+							break;
+						}						
+					}
+				} else {
+					endpt = endpoints.get(key);
+					if (endpt.isInUse() && !allowInUse) {
+						endpt = null;
+					} else {
+						break;
+					}
+				}
+			}
+		} // end of for
+
+		if (endpt == null) {
+			throw new ResourceUnavailableException("No Endpoint found for " + name);
+		}
+		endpt.setInUse(true);
 		return endpt;
+
 	}
 
 	public synchronized Endpoint find(String name, boolean allowInUse) throws ResourceUnavailableException {
