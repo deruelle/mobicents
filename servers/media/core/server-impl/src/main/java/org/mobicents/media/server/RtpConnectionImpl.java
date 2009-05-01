@@ -99,7 +99,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
 		demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
 		
 		if(txChannel == null){
-			endpoint.
+			//endpoint.
 		}
 		
 		txChannel.connect(demux.getInput());
