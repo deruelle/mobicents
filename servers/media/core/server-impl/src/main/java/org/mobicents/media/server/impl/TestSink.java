@@ -36,4 +36,8 @@ public class TestSink extends AbstractSink {
     public void receive(Buffer buffer) {
         System.out.println("src=" + name + ", recv=" + buffer);
     }
+
+    public int getResourceType() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

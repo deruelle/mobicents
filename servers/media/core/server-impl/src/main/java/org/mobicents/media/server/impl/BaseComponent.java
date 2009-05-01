@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.jboss.util.id.UID;
 import org.mobicents.media.Component;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
@@ -41,11 +43,24 @@ public abstract class BaseComponent implements Component {
 
     private String id = null;
     private String name = null;
+    private int resourceType;
+    
+    private Endpoint endpoint;
+    private Connection connection;
+    
     private List<NotificationListener> listeners = new CopyOnWriteArrayList();
 
     public BaseComponent(String name) {
         this.id = (new UID()).toString();
         this.name = name;
+    }
+    
+    public int getResourceType() {
+        return resourceType;
+    }
+    
+    public void setResourceType(int resourceType) {
+        this.resourceType = resourceType;
     }
     
     public String getId() {
@@ -55,7 +70,23 @@ public abstract class BaseComponent implements Component {
     public String getName() {
         return name;
     }
-        
+    
+    public Endpoint getEndpoint() {
+        return this.endpoint;
+    }
+    
+    public void setEndpoint(Endpoint endpoint) {
+        this.endpoint = endpoint;
+    }
+    
+    public Connection getConnection() {
+        return connection;
+    }
+    
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
+    
     protected void sendEvent(NotifyEvent evt) {
         for (NotificationListener listener : listeners) {
             listener.update(evt);

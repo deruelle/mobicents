@@ -36,7 +36,6 @@ import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.impl.clock.Timer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.resource.ChannelFactory;
@@ -47,6 +46,7 @@ import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.TooManyConnectionsException;
 
 /**

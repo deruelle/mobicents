@@ -52,6 +52,9 @@ public interface Endpoint extends Serializable {
      */
     public String getLocalName();
 
+    public Timer getTimer();
+    public void setTimer(Timer timer);
+    
     /**
      * Starts endpoint.
      */

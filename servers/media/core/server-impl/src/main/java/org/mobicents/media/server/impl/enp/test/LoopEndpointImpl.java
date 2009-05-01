@@ -24,6 +24,7 @@ import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  *
@@ -171,6 +172,14 @@ public class LoopEndpointImpl extends BaseEndpoint {
     }
 
     public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Timer getTimer() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTimer(Timer timer) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -1,7 +1,7 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
     <!-- Timer definition -->
-    <bean name="Timer" class="org.mobicents.media.server.impl.clock.Timer">
+    <bean name="Timer" class="org.mobicents.media.server.impl.clock.TimerImpl">
         <property name="heartBeat">20</property>
     </bean>
     

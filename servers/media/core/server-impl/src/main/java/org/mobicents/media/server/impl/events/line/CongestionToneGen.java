@@ -30,7 +30,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 
 /**
  *
@@ -45,7 +45,7 @@ public class CongestionToneGen extends AbstractSource {
     private final static int PERIOD = 12;
     private boolean isSignal = true;    //0,25 ms buffer
     private byte[] signal = new byte[320];
-    private Timer timer = new Timer();
+    private TimerImpl timer = new TimerImpl();
     private int seq = 0;
 
     public CongestionToneGen() {

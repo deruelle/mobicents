@@ -13,7 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 
 /**
@@ -45,7 +45,7 @@ public class AudioPlayerTest {
 
     @Before
     public void setUp() {
-        Timer timer = new Timer();
+        TimerImpl timer = new TimerImpl();
         EndpointImpl endpoint = new EndpointImpl();
         endpoint.setTimer(timer);
         player = new AudioPlayer(endpoint, "");

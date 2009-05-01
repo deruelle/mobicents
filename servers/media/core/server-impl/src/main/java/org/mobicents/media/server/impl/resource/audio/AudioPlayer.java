@@ -15,7 +15,6 @@
  */
 package org.mobicents.media.server.impl.resource.audio;
 
-import org.mobicents.media.server.impl.events.announcement.*;
 import java.io.IOException;
 import java.net.URL;
 
@@ -32,8 +31,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.apache.log4j.Logger;
-import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.Component;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -42,7 +40,6 @@ import org.mobicents.media.server.spi.Endpoint;
  * @author Oleg Kulikov
  */
 public class AudioPlayer extends AbstractSource implements Runnable {
-
     private final static int MAX_ERRORS = 5;
     /** supported formats definition */
     private final static Format[] formats = new Format[]{
@@ -64,7 +61,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     /** sequence number of the packet */
     private long seq = 0;
     /** Timer     */
-    private transient Timer timer;
+//    private transient TimerImpl timer;
     private transient ScheduledFuture worker;
     /** Name (path) of the file to play */
     private String file;
@@ -73,15 +70,18 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     /** The countor for errors occured during processing */
     private int errorCount;
     private BufferFactory bufferFactory = null;
+    
     private static transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
     public AudioPlayer(Endpoint endpoint, String name) {
         super(name);
-        timer = ((EndpointImpl) endpoint).getTimer();
-        period = timer.getHeartBeat();
         bufferFactory = new BufferFactory(10, name);
     }
 
+    public int getResourceType() {
+        return Component.AUDIO_PLAYER;
+    }
+    
     public void setFile(String file) {
         this.file = file;
     }
@@ -110,7 +110,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             packetSize = getPacketSize();
             eom = false;
 
-            worker = timer.synchronize(this);
+            period = getEndpoint().getTimer().getHeartBeat();
+            worker = getEndpoint().getTimer().synchronize(this);
             started();
         } catch (Exception e) {
             logger.error("Exception in file " + file, e);
@@ -168,24 +169,24 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player failed.
      */
     protected void failed(Exception e) {
-//        AnnEventImpl evt = new AnnEventImpl(Announcement.FAILED);
-//        this.sendEvent(evt);
+        AudioPlayerEvent evt = new AudioPlayerEvent(this, AudioPlayerEvent.FAILED);
+        sendEvent(evt);
     }
 
     /**
      * Called when player started to transmitt audio.
      */
     public void started() {
-//        AnnEventImpl evt = new AnnEventImpl(Announcement.STARTED);
-//        this.sendEvent(evt);
+        AudioPlayerEvent started = new AudioPlayerEvent(this, AudioPlayerEvent.STARTED);
+        sendEvent(started);
     }
 
     /**
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
-//        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
- //       this.sendEvent(evt);
+        AudioPlayerEvent evt = new AudioPlayerEvent(this, AudioPlayerEvent.END_OF_MEDIA);
+        sendEvent(evt);
     }
 
     /**

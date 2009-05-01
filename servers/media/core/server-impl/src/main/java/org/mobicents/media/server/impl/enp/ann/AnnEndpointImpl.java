@@ -31,6 +31,7 @@ import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.events.dtmf.DtmfGenerator;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * Implements Announcement access point.
@@ -156,6 +157,14 @@ public class AnnEndpointImpl extends BaseEndpoint {
     }
 
     public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Timer getTimer() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTimer(Timer timer) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -18,7 +18,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 
 /**
  *
@@ -39,7 +39,7 @@ public class MeanderGenerator extends AbstractSource implements Runnable {
     private long seqNumber = 0;
     
     private int sizeInBytes;
-    private Timer timer = new Timer();
+    private TimerImpl timer = new TimerImpl();
     private boolean isSilence = false;
     
     public MeanderGenerator() {

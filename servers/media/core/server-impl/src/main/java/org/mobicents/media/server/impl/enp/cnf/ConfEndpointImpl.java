@@ -31,6 +31,7 @@ import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ResourceUnavailableException;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
@@ -205,6 +206,14 @@ public class ConfEndpointImpl extends BaseEndpoint {
     }
 
     public Component getComponent(int resourceID) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Timer getTimer() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setTimer(Timer timer) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

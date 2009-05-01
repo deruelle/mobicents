@@ -24,7 +24,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.impl.BaseComponent;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -38,9 +38,8 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  * 
  * @author Oleg Kulikov
  */
-public class Processor implements SignalingProcessor {
+public class Processor extends BaseComponent implements SignalingProcessor {
 
-    private String name = null;
     
     private ArrayList<Format> inputFormats = new ArrayList();
     private ArrayList<Format> outputFormats = new ArrayList();
@@ -54,7 +53,7 @@ public class Processor implements SignalingProcessor {
     private ArrayList<Transformator> map = new ArrayList();
 
     public Processor(String name) {
-        this.name = name;
+        super(name);
         input = new Input();
         output = new Output();
     }
@@ -364,13 +363,4 @@ public class Processor implements SignalingProcessor {
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void addListener(NotificationListener listener) {
-    }
-
-    public void removeListener(NotificationListener listener) {
-    }
 }

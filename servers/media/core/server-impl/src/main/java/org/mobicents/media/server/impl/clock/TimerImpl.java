@@ -18,13 +18,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * Provides repited execution at a reqular time intervals.
  * 
  * @author Oleg Kulikov
  */
-public class Timer implements Serializable {
+public class TimerImpl implements Timer {
 
     private transient final ScheduledExecutorService timer =
             Executors.newSingleThreadScheduledExecutor();
@@ -33,7 +34,7 @@ public class Timer implements Serializable {
     /**
      * Creates new instance of the timer.
      */
-    public Timer() {
+    public TimerImpl() {
     }
     
     /**

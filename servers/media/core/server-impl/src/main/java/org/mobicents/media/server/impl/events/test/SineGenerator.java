@@ -19,7 +19,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 
 /**
  *
@@ -35,7 +35,7 @@ public class SineGenerator extends AbstractSource implements Runnable {
             AudioFormat.SIGNED);
     private final static Format formats[] = new Format[] {LINEAR_AUDIO};
     
-    private Timer timer = new Timer();
+    private TimerImpl timer = new TimerImpl();
     private int sizeInBytes;
     private int offset;
     private int seq;

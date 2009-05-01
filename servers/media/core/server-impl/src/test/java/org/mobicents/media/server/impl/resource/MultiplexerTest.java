@@ -17,7 +17,7 @@ import org.mobicents.media.Utils;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 
 /**
  *
@@ -39,7 +39,7 @@ public class MultiplexerTest {
 
     @Before
     public void setUp() {
-        Timer timer = new Timer();
+        TimerImpl timer = new TimerImpl();
         EndpointImpl endpoint = new EndpointImpl();
         endpoint.setTimer(timer);
         mux = new Multiplexer("test");

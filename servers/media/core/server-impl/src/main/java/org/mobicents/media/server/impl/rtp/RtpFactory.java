@@ -23,7 +23,7 @@ import net.java.stun4j.StunException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.clock.Timer;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 
 /**
  * 
@@ -39,7 +39,7 @@ public class RtpFactory {
     private int lowPortNumber;
     private int highPortNumber;
     
-    private Timer timer;
+    private TimerImpl timer;
     private Map<Integer, Format> formatMap;
     
     private transient Logger logger = Logger.getLogger(RtpFactory.class);
@@ -60,7 +60,7 @@ public class RtpFactory {
      * 
      * @return timer object.
      */
-    public Timer getTimer() {
+    public TimerImpl getTimer() {
         return timer;
     }
     
@@ -69,7 +69,7 @@ public class RtpFactory {
      *  
      * @param timer tmer object.
      */
-    public void setTimer(Timer timer) {
+    public void setTimer(TimerImpl timer) {
         this.timer = timer;
     }
     
