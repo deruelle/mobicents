@@ -85,24 +85,22 @@ public class RtpConnectionImpl extends ConnectionImpl {
 			try {
 				rtpSockets.put(mediaType, factories.get(mediaType).getRTPSocket());
 			} catch (SocketException e) {
-				throw new ResourceUnavailableException(e);
+				throw new ResourceUnavailableException(e.getMessage(), e);
 			} catch (IOException e) {
-				e.printStackTrace();
-				throw new ResourceUnavailableException(e);
+				throw new ResourceUnavailableException(e.getMessage(), e);
 			} catch (StunException e) {
-				e.printStackTrace();
-				throw new ResourceUnavailableException(e);
+				throw new ResourceUnavailableException(e.getMessage(), e);
 			}
 		}
 
 		// create demux and join with txChannel
 		demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
-		
-		if(txChannel == null){
-			//endpoint.
+
+		if (txChannel != null) {
+			txChannel.connect(demux.getInput());
 		}
+
 		
-		txChannel.connect(demux.getInput());
 
 		// join demux and rtp sockets
 		Collection<RtpSocket> sockets = rtpSockets.values();
