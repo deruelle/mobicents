@@ -23,7 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.Collection;
 import java.util.HashMap;
-
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -35,7 +35,6 @@ import net.java.stun4j.client.NetworkConfigurationDiscoveryProcess;
 import net.java.stun4j.client.StunDiscoveryReport;
 
 import org.apache.log4j.Logger;
-
 import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
@@ -101,7 +100,7 @@ public class RtpSocket implements Runnable {
      * @param timer used to synchronize receiver stream.
      * @param rtpMap RTP payloads list.
      */
-    public RtpSocket(Timer timer, HashMap<Integer, Format> rtpMap) {
+    public RtpSocket(Timer timer, Map<Integer, Format> rtpMap) {
         this.timer = timer;
         this.readerBuffer = ByteBuffer.allocate(bufferSize);
         rtpMapOriginal.putAll(rtpMap);

@@ -13,7 +13,7 @@
 	<name>Mobicents Media Server MGCP Controller</name>
 
 	<properties>
-		<maven.test.skip>true</maven.test.skip>
+		<maven.test.skip>false</maven.test.skip>
 	</properties>
 
 	<dependencies>
@@ -63,6 +63,12 @@
 			<artifactId>mms-impl</artifactId>
 			<groupId>${pom.groupId}</groupId>
 			<version>${pom.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.java.stun4j</groupId>
+			<artifactId>stun4j</artifactId>
+			<version>1.0.MOBICENTS</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

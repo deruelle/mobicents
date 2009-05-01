@@ -13,15 +13,15 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-
-import java.util.Hashtable;
 import java.util.Map;
-import org.apache.log4j.Logger;
 
+import net.java.stun4j.StunException;
+
+import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.clock.Timer;
 
@@ -40,7 +40,7 @@ public class RtpFactory {
     private int highPortNumber;
     
     private Timer timer;
-    private Map formatMap;
+    private Map<Integer, Format> formatMap;
     
     private transient Logger logger = Logger.getLogger(RtpFactory.class);
 
@@ -177,23 +177,25 @@ public class RtpFactory {
      * Constructs new RTP socket.
      * 
      * @return the RTPSocketInstance.
-     * @throws java.net.SocketException
+     * @throws StunException 
+     * @throws IOException 
+     * @throws SocketException 
+     * @throws StunException 
+     * @throws IOException 
      */
-    public RtpSocket getRTPSocket() throws SocketException {
+    public RtpSocket getRTPSocket() throws SocketException, IOException, StunException  {
         RtpSocket rtpSocket = null;
-//        rtpSocket = new RtpSocket(timer, formatMap);
-        
-
-        //rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
-        // rtpSocket.getRtpMap().putAll(audioFormats);
+        rtpSocket = new RtpSocket(timer, formatMap);
+        rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
+		//rtpSocket.getRtpMap().putAll(getFormatMap());
         return rtpSocket;
     }
     
-    public Map getFormatMap() {
+    public Map<Integer, Format> getFormatMap() {
         return this.formatMap;
     }
     
-    public void setFormatMap(Map formatMap) {
+    public void setFormatMap(Map<Integer, Format> formatMap) {
         this.formatMap = formatMap;
     }
 }
