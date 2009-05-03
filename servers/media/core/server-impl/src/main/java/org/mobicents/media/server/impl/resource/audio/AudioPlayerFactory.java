@@ -46,6 +46,6 @@ public class AudioPlayerFactory implements ComponentFactory {
     }
         
     public AudioPlayer newInstance(Endpoint endpoint) {
-        return new AudioPlayer(endpoint, name);
+        return new AudioPlayer(name);
     }
 }

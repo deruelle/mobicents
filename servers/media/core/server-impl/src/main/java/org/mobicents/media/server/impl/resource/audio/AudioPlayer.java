@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Component;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
@@ -48,7 +49,8 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         AVProfile.PCMA,
         AVProfile.PCMU,
         AVProfile.SPEEX,
-        AVProfile.GSM
+        AVProfile.GSM,
+        Codec.LINEAR_AUDIO
     };
     /** format of the file */
     private AudioFormat format;
@@ -73,15 +75,11 @@ public class AudioPlayer extends AbstractSource implements Runnable {
     
     private static transient Logger logger = Logger.getLogger(AudioPlayer.class);
 
-    public AudioPlayer(Endpoint endpoint, String name) {
+    public AudioPlayer(String name) {
         super(name);
         bufferFactory = new BufferFactory(10, name);
     }
 
-    public int getResourceType() {
-        return Component.AUDIO_PLAYER;
-    }
-    
     public void setFile(String file) {
         this.file = file;
     }
@@ -114,6 +112,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             worker = getEndpoint().getTimer().synchronize(this);
             started();
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Exception in file " + file, e);
             failed(e);
         }
@@ -142,16 +141,19 @@ public class AudioPlayer extends AbstractSource implements Runnable {
         } else if (encoding == Encoding.ULAW) {
             return AVProfile.PCMU;
         } else if (encoding == Encoding.PCM_SIGNED) {
-            int sampleRate = (int)stream.getFormat().getSampleRate();
-            if (sampleRate != 44100) {
-                return null;
-            }
             int sampleSize = stream.getFormat().getSampleSizeInBits();
             if (sampleSize != 16) {
                 return null;
             }
-            int channels = stream.getFormat().getChannels();
-            return channels == 1 ? AVProfile.L16_MONO : AVProfile.L16_STEREO;
+            int sampleRate = (int)stream.getFormat().getSampleRate();
+            if (sampleRate == 44100) {
+                int channels = stream.getFormat().getChannels();
+                return channels == 1 ? AVProfile.L16_MONO : AVProfile.L16_STEREO;
+            } else if (sampleRate == 8000) {
+                return Codec.LINEAR_AUDIO;
+            } else {
+                return null;
+            }
         } 
         return null;
     }
@@ -185,6 +187,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
      * Called when player reached end of audio stream.
      */
     protected void endOfMedia() {
+        closeAudioStream();
         AudioPlayerEvent evt = new AudioPlayerEvent(this, AudioPlayerEvent.END_OF_MEDIA);
         sendEvent(evt);
     }
@@ -275,7 +278,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
             errorCount = 0;
             if (eom) {
                 worker.cancel(true);
-                ended();
+                this.endOfMedia();
             }
         } catch (Exception e) {
             errorCount++;
@@ -292,8 +295,6 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 
     public void ended() {
         closeAudioStream();
-//        AnnEventImpl evt = new AnnEventImpl(Announcement.COMPLETED);
-//        this.sendEvent(evt);
     }
 
     public void run() {
