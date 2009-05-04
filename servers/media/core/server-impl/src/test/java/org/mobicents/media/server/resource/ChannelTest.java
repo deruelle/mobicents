@@ -5,7 +5,11 @@
 
 package org.mobicents.media.server.resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -22,7 +26,9 @@ import org.mobicents.media.Outlet;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  *
@@ -30,6 +36,8 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class ChannelTest {
 
+    public final Format FORMAT = new Format("test");
+    
     private HashMap<String, MediaSink> sinks = new HashMap();
     private HashMap<String, MediaSource> sources = new HashMap();
     private HashMap<String, Inlet> inlets = new HashMap();
@@ -37,6 +45,9 @@ public class ChannelTest {
     
     private Endpoint endpoint;
     private ChannelFactory channelFactory;
+    private ArrayList<Buffer> list = new ArrayList();
+    private Semaphore semaphore = new Semaphore(0);
+    private boolean res = false;
     
     public ChannelTest() {
     }
@@ -83,24 +94,71 @@ public class ChannelTest {
         assertEquals(c.getResourceType(), 2);
     }
 
-    private class TestSource extends AbstractSource {
-
+    @Test
+    public void testDerectTransmission() throws Exception {
+        Channel channel = new Channel(sources, sinks, inlets, outlets);
+        TestSink sink = new TestSink("test-sink");
+        TestSource source = new TestSource("test-source");
+        
+        channel.connect(sink);
+        channel.connect(source);
+        
+        source.start();
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        
+        assertEquals(true, checkData());
+    }
+    
+    private boolean checkData() {
+        boolean result = true;
+        long seq = 0;
+        for (Buffer buffer : list) {
+                result &= (seq == buffer.getSequenceNumber());
+            seq++;
+            System.out.println("SEQ=" + seq + ", RES=" + result);
+        }
+        return result;
+    }
+    
+    private class TestSource extends AbstractSource implements Runnable {
+                
+        private Timer timer = new TimerImpl();
+        private ScheduledFuture task;
+        private int count;
+        
+       
         public TestSource(String name) {
             super(name);
         }
         
         public void start() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            task = timer.synchronize(this);
         }
 
         public void stop() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            task.cancel(true);
+            semaphore.release();
         }
 
         public Format[] getFormats() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new Format[] {FORMAT};
         }
         
+        public void run() {
+            if (count == 10) {
+                stop();
+            } else {
+                Buffer buffer = new Buffer();
+                buffer.setFormat(FORMAT);
+                buffer.setTimeStamp(count * timer.getHeartBeat());
+                buffer.setDuration(timer.getHeartBeat());
+                buffer.setData(Integer.toString(count).getBytes());
+                buffer.setSequenceNumber(count++);
+                if (this.otherParty != null) {
+                    otherParty.receive(buffer);
+                }
+            }
+        }
     }
     
     private class TestSink extends AbstractSink {
@@ -110,15 +168,15 @@ public class ChannelTest {
         }
         
         public Format[] getFormats() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new Format[]{FORMAT};
         }
 
         public boolean isAcceptable(Format format) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return true;
         }
 
         public void receive(Buffer buffer) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            list.add(buffer);
         }
         
     }
