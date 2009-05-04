@@ -61,190 +61,187 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  */
 public class RtpConnectionImpl extends ConnectionImpl {
 
-	private SdpFactory sdpFactory;
+    private SdpFactory sdpFactory;
+    private String localDescriptor;
+    private String remoteDescriptor;
+    private HashMap<String, RtpSocket> rtpSockets = new HashMap<String, RtpSocket>();
+    private Channel txChannel;
+    private Channel rxChannel;
+    private Demultiplexer demux;
+    private Multiplexer mux;
 
-	private String localDescriptor;
-	private String remoteDescriptor;
+    public RtpConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
+        super(endpoint, mode);
+        sdpFactory = endpoint.getSdpFactory();
 
-	private HashMap<String, RtpSocket> rtpSockets = new HashMap<String, RtpSocket>();
+        Hashtable<String, RtpFactory> factories = endpoint.getRtpFactory();
+        Set<String> mediaTypes = factories.keySet();
 
-	private Channel txChannel;
-	private Channel rxChannel;
+        for (String mediaType : mediaTypes) {
+            try {
+                rtpSockets.put(mediaType, factories.get(mediaType).getRTPSocket());
+            } catch (SocketException e) {
+                throw new ResourceUnavailableException(e);
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new ResourceUnavailableException(e);
+            } catch (StunException e) {
+                e.printStackTrace();
+                throw new ResourceUnavailableException(e);
+            }
+        }
 
-	private Demultiplexer demux;
-	private Multiplexer mux;
+        // create demux and join with txChannel
+        demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
 
-	public RtpConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
-		super(endpoint, mode);
-		sdpFactory = endpoint.getSdpFactory();
+        if (txChannel == null) {
+            //endpoint.
+        }
 
-		Hashtable<String, RtpFactory> factories = endpoint.getRtpFactory();
-		Set<String> mediaTypes = factories.keySet();
+        txChannel.connect(demux.getInput());
 
-		for (String mediaType : mediaTypes) {
-			try {
-				rtpSockets.put(mediaType, factories.get(mediaType).getRTPSocket());
-			} catch (SocketException e) {
-				throw new ResourceUnavailableException(e.getMessage(), e);
-			} catch (IOException e) {
-				throw new ResourceUnavailableException(e.getMessage(), e);
-			} catch (StunException e) {
-				throw new ResourceUnavailableException(e.getMessage(), e);
-			}
-		}
+        // join demux and rtp sockets
+        Collection<RtpSocket> sockets = rtpSockets.values();
+        for (RtpSocket socket : sockets) {
+            demux.connect(socket.getSendStream());
+        }
 
-		// create demux and join with txChannel
-		demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
+        // when demux already connected to channel
+        // all supported formats are known and we can generate
+        // local descriptor and update rtp map
+        Format[] fmts = demux.getFormats();
+        createLocalDescriptor(fmts);
+    }
 
-		if (txChannel != null) {
-			txChannel.connect(demux.getInput());
-		}
+    private String createLocalDescriptor(Format[] supported) {
+        SessionDescription sdp = null;
+        String userName = "MediaServer";
 
-		
+        long sessionID = System.currentTimeMillis() & 0xffffff;
+        long sessionVersion = sessionID;
 
-		// join demux and rtp sockets
-		Collection<RtpSocket> sockets = rtpSockets.values();
-		for (RtpSocket socket : sockets) {
-			demux.connect(socket.getSendStream());
-		}
+        String networkType = javax.sdp.Connection.IN;
+        String addressType = javax.sdp.Connection.IP4;
 
-		// when demux already connected to channel
-		// all supported formats are known and we can generate
-		// local descriptor and update rtp map
-		Format[] fmts = demux.getFormats();
-		createLocalDescriptor(fmts);
-	}
+        String address = rtpSockets.get("audio").getLocalAddress();
 
-	private String createLocalDescriptor(Format[] supported) {
-		SessionDescription sdp = null;
-		String userName = "MediaServer";
+        try {
+            sdp = sdpFactory.createSessionDescription();
+            sdp.setVersion(sdpFactory.createVersion(0));
+            sdp.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType,
+                    address));
+            sdp.setSessionName(sdpFactory.createSessionName("session"));
+            sdp.setConnection(sdpFactory.createConnection(networkType, addressType, address));
 
-		long sessionID = System.currentTimeMillis() & 0xffffff;
-		long sessionVersion = sessionID;
+            Vector descriptions = new Vector();
 
-		String networkType = javax.sdp.Connection.IN;
-		String addressType = javax.sdp.Connection.IP4;
+            // encode formats
+            Set<String> mediaTypes = rtpSockets.keySet();
+            for (String mediaType : mediaTypes) {
+                RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
-		String address = rtpSockets.get("audio").getLocalAddress();
+                HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
+                HashMap<Integer, Format> subset = subset(rtpMap, supported);
 
-		try {
-			sdp = sdpFactory.createSessionDescription();
-			sdp.setVersion(sdpFactory.createVersion(0));
-			sdp.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType,
-					address));
-			sdp.setSessionName(sdpFactory.createSessionName("session"));
-			sdp.setConnection(sdpFactory.createConnection(networkType, addressType, address));
+                int port = rtpSocket.getLocalPort();
+                descriptions.add(createMediaDescription(mediaType, port, subset));
+            }
+        } catch (SdpException e) {
+        }
+        localDescriptor = sdp.toString();
+        return localDescriptor;
+    }
 
-			Vector descriptions = new Vector();
+    public String getLocalDescriptor() {
+        if (getState() == ConnectionState.NULL || getState() == ConnectionState.CLOSED) {
+            throw new IllegalStateException("State is " + getState());
+        }
+        return this.localDescriptor;
+    }
 
-			// encode formats
-			Set<String> mediaTypes = rtpSockets.keySet();
-			for (String mediaType : mediaTypes) {
-				RtpSocket rtpSocket = rtpSockets.get(mediaType);
+    public String getRemoteDescriptor() {
+        return this.remoteDescriptor;
+    }
 
-				HashMap<Integer, Format> rtpMap = rtpSocket.getRtpMap();
-				HashMap<Integer, Format> subset = subset(rtpMap, supported);
+    public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
+        this.remoteDescriptor = descriptor;
+        if (getState() != ConnectionState.HALF_OPEN && getState() != ConnectionState.OPEN) {
+            throw new IllegalStateException("State is " + getState());
+        }
 
-				int port = rtpSocket.getLocalPort();
-				descriptions.add(createMediaDescription(mediaType, port, subset));
-			}
-		} catch (SdpException e) {
-		}
-		localDescriptor = sdp.toString();
-		return localDescriptor;
-	}
+        SessionDescription sdp = sdpFactory.createSessionDescription(descriptor);
 
-	public String getLocalDescriptor() {
-		if (getState() == ConnectionState.NULL || getState() == ConnectionState.CLOSED) {
-			throw new IllegalStateException("State is " + getState());
-		}
-		return this.localDescriptor;
-	}
+        // add peer to RTP socket
+        mux = new Multiplexer("MUX-" + this.getId());
+        InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
 
-	public String getRemoteDescriptor() {
-		return this.remoteDescriptor;
-	}
+        Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
+        for (MediaDescription md : mediaDescriptions) {
+            String mediaType = md.getMedia().getMediaType();
+            RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
-	public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
-		this.remoteDescriptor = descriptor;
-		if (getState() != ConnectionState.HALF_OPEN && getState() != ConnectionState.OPEN) {
-			throw new IllegalStateException("State is " + getState());
-		}
+            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
+            Format[] supported = rxChannel.getFormats();
 
-		SessionDescription sdp = sdpFactory.createSessionDescription(descriptor);
+            HashMap<Integer, Format> subset = this.subset(offer, supported);
 
-		// add peer to RTP socket
-		mux = new Multiplexer("MUX-" + this.getId());
-		InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
+            if (subset.isEmpty()) {
+                throw new IOException("Codecs are not negotiated");
+            }
 
-		Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
-		for (MediaDescription md : mediaDescriptions) {
-			String mediaType = md.getMedia().getMediaType();
-			RtpSocket rtpSocket = rtpSockets.get(mediaType);
+            int port = md.getMedia().getMediaPort();
+            rtpSocket.setPeer(address, port);
+            updateRtpMap(rtpSocket, subset);
+            rtpSocket.getReceiveStream().connect(mux);
+        }
+        setState(ConnectionState.OPEN);
+    }
 
-			HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
-			Format[] supported = rxChannel.getFormats();
+    public void setOtherParty(Connection other) throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-			HashMap<Integer, Format> subset = this.subset(offer, supported);
+    private int[] getFormatList(HashMap<Integer, Format> fmts) {
+        int[] list = new int[fmts.size()];
+        int i = 0;
+        for (Integer key : fmts.keySet()) {
+            list[i++] = key;
+        }
+        return list;
+    }
 
-			if (subset.isEmpty()) {
-				throw new IOException("Codecs are not negotiated");
-			}
+    private HashMap subset(HashMap<Integer, Format> map, Format[] fmts) {
+        HashMap<Integer, Format> subset = new HashMap();
+        for (Integer k : map.keySet()) {
+            Format rf = map.get(k);
+            for (Format f : fmts) {
+                if (f.matches(rf)) {
+                    subset.put(k, rf);
+                }
+            }
+        }
+        return subset;
+    }
 
-			int port = md.getMedia().getMediaPort();
-			rtpSocket.setPeer(address, port);
-			updateRtpMap(rtpSocket, subset);
-			rtpSocket.getReceiveStream().connect(mux);
-		}
-		setState(ConnectionState.OPEN);
-	}
+    private void updateRtpMap(RtpSocket rtpSocket, HashMap<Integer, Format> offer) {
+        rtpSocket.getRtpMap().clear();
+        rtpSocket.getRtpMap().putAll(offer);
+    }
 
-	public void setOtherParty(Connection other) throws IOException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    private MediaDescription createMediaDescription(String mediaType, int port, HashMap<Integer, Format> formats)
+            throws SdpException {
+        int[] fmtList = getFormatList(formats);
+        MediaDescription md = sdpFactory.createMediaDescription(mediaType, port, 1, "RTP/AVP", fmtList);
 
-	private int[] getFormatList(HashMap<Integer, Format> fmts) {
-		int[] list = new int[fmts.size()];
-		int i = 0;
-		for (Integer key : fmts.keySet()) {
-			list[i++] = key;
-		}
-		return list;
-	}
+        // set attributes for formats
+        Vector attributes = new Vector();
+        for (int i = 0; i < fmtList.length; i++) {
+            RTPFormat format = (RTPFormat) formats.get(fmtList[i]);
+            attributes.addAll(format.encode());
+        }
 
-	private HashMap subset(HashMap<Integer, Format> map, Format[] fmts) {
-		HashMap<Integer, Format> subset = new HashMap();
-		for (Integer k : map.keySet()) {
-			Format rf = map.get(k);
-			for (Format f : fmts) {
-				if (f.matches(rf)) {
-					subset.put(k, rf);
-				}
-			}
-		}
-		return subset;
-	}
-
-	private void updateRtpMap(RtpSocket rtpSocket, HashMap<Integer, Format> offer) {
-		rtpSocket.getRtpMap().clear();
-		rtpSocket.getRtpMap().putAll(offer);
-	}
-
-	private MediaDescription createMediaDescription(String mediaType, int port, HashMap<Integer, Format> formats)
-			throws SdpException {
-		int[] fmtList = getFormatList(formats);
-		MediaDescription md = sdpFactory.createMediaDescription(mediaType, port, 1, "RTP/AVP", fmtList);
-
-		// set attributes for formats
-		Vector attributes = new Vector();
-		for (int i = 0; i < fmtList.length; i++) {
-			RTPFormat format = (RTPFormat) formats.get(fmtList[i]);
-			attributes.addAll(format.encode());
-		}
-
-		// generate descriptor
-		md.setAttributes(attributes);
-		return md;
-	}
-
+        // generate descriptor
+        md.setAttributes(attributes);
+        return md;
+    }
 }
