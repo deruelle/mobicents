@@ -27,6 +27,9 @@ public class RtpSocketTest {
 	private final static double ERRORS = 5;
 	private int MAX_ERRORS;
 	private int HEART_BEAT = 20;
+	
+	private RtpFactory rtpfactory = null;
+	
 	private RtpSocket serverSocket;
 	private RtpSocket clientSocket;
 	private int period = 20;
@@ -54,6 +57,8 @@ public class RtpSocketTest {
 
 		timer = new TimerImpl();
 		timer.setHeartBeat(HEART_BEAT);
+		
+		rtpfactory = new RtpFactory();
 
 		try {
 			localAddress = InetAddress.getLocalHost();
@@ -62,8 +67,8 @@ public class RtpSocketTest {
 		HashMap<Integer, Format> rtpMap = new HashMap();
 		rtpMap.put(8, PCMA);
 
-		serverSocket = new RtpSocket(timer, rtpMap);
-		clientSocket = new RtpSocket(timer, rtpMap);
+		serverSocket = new RtpSocket(timer, rtpMap, rtpfactory);
+		clientSocket = new RtpSocket(timer, rtpMap, rtpfactory);
 	}
 	
 	   /**

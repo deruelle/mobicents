@@ -14,7 +14,6 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -47,13 +46,12 @@ import org.mobicents.media.server.impl.clock.TimerImpl;
  */
 public class RtpSocket implements Runnable {
 
-	protected final static int READ_PERIOD = 10;
+	protected static int READ_PERIOD = 20;
 
 	private DatagramSocket socket;
 	private DatagramChannel channel;
 
 	private ByteBuffer readerBuffer;
-	private DatagramPacket senderPacket;
 
 	private int bufferSize = 172;
 	private byte[] senderBuffer = new byte[bufferSize];
@@ -91,6 +89,8 @@ public class RtpSocket implements Runnable {
 	protected final static ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
 	private ScheduledFuture readerTask;
 
+	private RtpFactory rtpFactory = null;
+
 	// logger instance
 	private final static Logger logger = Logger.getLogger(RtpSocket.class);
 
@@ -102,7 +102,7 @@ public class RtpSocket implements Runnable {
 	 * @param rtpMap
 	 *            RTP payloads list.
 	 */
-	public RtpSocket(TimerImpl timer, Map<Integer, Format> rtpMap) {
+	public RtpSocket(TimerImpl timer, Map<Integer, Format> rtpMap, RtpFactory rtpFactory) {
 		this.timer = timer;
 		this.readerBuffer = ByteBuffer.allocate(bufferSize);
 		rtpMapOriginal.putAll(rtpMap);
@@ -110,6 +110,10 @@ public class RtpSocket implements Runnable {
 
 		sendStream = new SendStream(this);
 		receiveStream = new ReceiveStream(this, jitter);
+
+		this.rtpFactory = rtpFactory;
+
+		READ_PERIOD = timer.getHeartBeat();
 	}
 
 	/**
@@ -243,6 +247,13 @@ public class RtpSocket implements Runnable {
 		}
 	}
 
+	public void release() {
+		if (receiveStream != null) {
+			receiveStream.stop();
+		}
+		this.rtpFactory.releaseRTPSocket(this);
+	}
+
 	/**
 	 * Closes socket
 	 * 
@@ -285,7 +296,8 @@ public class RtpSocket implements Runnable {
 					+ remotePort);
 		}
 
-		senderPacket = new DatagramPacket(senderBuffer, bufferSize, address, port);
+		// senderPacket = new DatagramPacket(senderBuffer, bufferSize, address,
+		// port);
 	}
 
 	/**

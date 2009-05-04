@@ -110,7 +110,8 @@ public class AudioPlayerTest {
 
     @Test
     public void test_Wav_L16_8000() throws Exception {
-        URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
+        //URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
+        URL url = new URL("file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/dtmf-0.wav");
         player.setFile(url.toExternalForm());
         player.connect(new TestSink("test"));
         player.start();
@@ -163,13 +164,16 @@ public class AudioPlayerTest {
         public void update(NotifyEvent event) {
             switch (event.getEventID()) {
                 case AudioPlayerEvent.STARTED :
+                	System.out.println("Started ");
                     started = true;
                     break;
                 case AudioPlayerEvent.END_OF_MEDIA :
+                	System.out.println("End ");
                    end_of_media = true;
                    semaphore.release();
                    break;
                 case AudioPlayerEvent.FAILED :
+                	System.out.println("Failed ");
                     failed = true;
                     semaphore.release();
                     break;
