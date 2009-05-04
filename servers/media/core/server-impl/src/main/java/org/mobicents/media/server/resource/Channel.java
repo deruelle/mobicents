@@ -27,8 +27,10 @@
 package org.mobicents.media.server.resource;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
@@ -203,6 +205,37 @@ public class Channel {
         this.source = null;
     }
 
+    public Component getComponent(int resourceType) {
+        Collection<MediaSource> list = sources.values();        
+        for (MediaSource s : list) {
+            if (s.getResourceType() == resourceType) {
+                return s;
+            }
+        }
+        Collection<MediaSink> list1 = sinks.values();        
+        for (MediaSink s : list1) {
+            if (s.getResourceType() == resourceType) {
+                return s;
+            }
+        }
+        
+        Collection<Inlet> list2 = inlets.values();        
+        for (Inlet s : list2) {
+            if (s.getResourceType() == resourceType) {
+                return source;
+            }
+        }
+
+        Collection<Outlet> list3 = outlets.values();        
+        for (Outlet s : list3) {
+            if (s.getResourceType() == resourceType) {
+                return source;
+            }
+        }
+        
+        return null;
+    }
+    
     public void close() {
         
         for (Pipe pipe : pipes) {

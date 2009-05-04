@@ -33,7 +33,7 @@ package org.mobicents.media;
  * 
  * @author kulikov
  */
-public interface Outlet {
+public interface Outlet extends Component {
     /**
      * Provides access to the media source.
      * 

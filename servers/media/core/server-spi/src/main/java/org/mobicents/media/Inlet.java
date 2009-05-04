@@ -33,7 +33,7 @@ package org.mobicents.media;
  * 
  * @author kulikov
  */
-public interface Inlet {
+public interface Inlet extends Component {
     /**
      * Provides access to the media sink.
      * 
