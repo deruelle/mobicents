@@ -24,7 +24,7 @@ import net.java.stun4j.StunException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
@@ -32,7 +32,7 @@ import org.mobicents.media.server.impl.clock.TimerImpl;
  */
 public class RtpFactory {
 
-	private Integer jitter;
+	private Integer jitter = 60;
 
 	private InetAddress bindAddress;
 	private String stunAddress;
@@ -40,7 +40,7 @@ public class RtpFactory {
 	private int lowPortNumber;
 	private int highPortNumber;
 
-	private TimerImpl timer;
+	private Timer timer;
 	private Map<Integer, Format> formatMap;
 
 	private LinkedList<RtpSocket> rtpSockets = new LinkedList<RtpSocket>();
@@ -60,6 +60,8 @@ public class RtpFactory {
 			r.close();
 		}
 
+		rtpSockets.clear();
+
 		logger.info("Stopped RTP Factory");
 	}
 
@@ -68,7 +70,7 @@ public class RtpFactory {
 	 * 
 	 * @return timer object.
 	 */
-	public TimerImpl getTimer() {
+	public Timer getTimer() {
 		return timer;
 	}
 
@@ -78,7 +80,7 @@ public class RtpFactory {
 	 * @param timer
 	 *            tmer object.
 	 */
-	public void setTimer(TimerImpl timer) {
+	public void setTimer(Timer timer) {
 		this.timer = timer;
 	}
 

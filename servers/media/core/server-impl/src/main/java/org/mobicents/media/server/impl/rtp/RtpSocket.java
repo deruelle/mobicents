@@ -38,7 +38,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
@@ -79,7 +79,7 @@ public class RtpSocket implements Runnable {
 	private SendStream sendStream;
 
 	// timer to synchronize from
-	protected TimerImpl timer;
+	protected Timer timer;
 
 	private RtpHeader header = new RtpHeader();
 	private int payloadType = -1;
@@ -102,9 +102,12 @@ public class RtpSocket implements Runnable {
 	 * @param rtpMap
 	 *            RTP payloads list.
 	 */
-	public RtpSocket(TimerImpl timer, Map<Integer, Format> rtpMap, RtpFactory rtpFactory) {
+	public RtpSocket(Timer timer, Map<Integer, Format> rtpMap, RtpFactory rtpFactory) {
 		this.timer = timer;
 		this.readerBuffer = ByteBuffer.allocate(bufferSize);
+		READ_PERIOD = timer.getHeartBeat();
+		this.jitter = rtpFactory.getJitter();
+		
 		rtpMapOriginal.putAll(rtpMap);
 		this.rtpMap.putAll(rtpMap);
 
@@ -113,7 +116,7 @@ public class RtpSocket implements Runnable {
 
 		this.rtpFactory = rtpFactory;
 
-		READ_PERIOD = timer.getHeartBeat();
+		
 	}
 
 	/**
@@ -251,6 +254,7 @@ public class RtpSocket implements Runnable {
 		if (receiveStream != null) {
 			receiveStream.stop();
 		}
+		this.resetRtpMap();
 		this.rtpFactory.releaseRTPSocket(this);
 	}
 

@@ -1,5 +1,9 @@
 package org.mobicents.media.server.impl.rtp;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,26 +14,32 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class RtpFactoryTest {
-	
+
+	private static final int HEART_BEAT = 20;
+
 	private static final AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
 	private static final AudioFormat PCMU = new AudioFormat(AudioFormat.ULAW, 8000, 8, 1);
-	
+
 	private static Map<Integer, Format> formatMap = new HashMap<Integer, Format>();
-	static{
+	static {
 		formatMap.put(0, PCMU);
 		formatMap.put(8, PCMA);
 	}
-	
+
+	private RtpFactory factory = null;
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		
+
 	}
 
 	@AfterClass
@@ -37,22 +47,59 @@ public class RtpFactoryTest {
 	}
 
 	@Before
-	public void setUp() {
-		
-	}
-	
-	@After
-	public void tearDown(){
-		
-	}
-	
-	@Test
-	public void getRTPSocketTest(){
-		RtpFactory factory = new RtpFactory();
+	public void setUp() throws Exception {
+		factory = new RtpFactory();
 		factory.setFormatMap(formatMap);
-		
-		
-		
+
+		Timer timer = new TimerImpl();
+		timer.setHeartBeat(HEART_BEAT);
+
+		factory.setTimer(timer);
+		factory.setJitter(80);
+		factory.setBindAddress("127.0.0.1");
+		factory.setPortRange("1081-1081");
+
+	}
+
+	@After
+	public void tearDown() {
+		factory.stop();
+	}
+
+	@Test
+	public void getRTPSocketTest() {
+		try {
+			RtpSocket rtpSocket = factory.getRTPSocket();
+			int port = rtpSocket.getLocalPort();
+			assertEquals(1081, port);
+			assertEquals(80, rtpSocket.getJitter());
+
+			HashMap<Integer, Format> format = rtpSocket.getRtpMap();
+
+			assertEquals(2, format.size());
+
+			format.remove(0);
+
+			rtpSocket.setRtpMap(format);
+
+			assertEquals(1, rtpSocket.getRtpMap().size());
+
+			try {
+				RtpSocket rtpSocket1 = factory.getRTPSocket();
+				fail("RtpSocket shouldn't have been created at first place");
+			} catch (SocketException s) {				
+				// expected
+			}
+
+			rtpSocket.release();
+
+			RtpSocket rtpSocket2 = factory.getRTPSocket();
+			assertEquals(2, rtpSocket2.getRtpMap().size());
+
+		} catch (Exception e) {
+			fail("Creation of RtpSocket failed");
+		}
+
 	}
 
 }
