@@ -25,160 +25,317 @@ import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
- *
+ * 
  * @author kulikov
+ * @author amit bhayani
  */
 public class AudioPlayerTest {
 
-    private EndpointImpl endpoint;
-    private TimerImpl timer;
-    private Semaphore semaphore;
-    
-    private volatile boolean started = false;
-    private volatile boolean failed = false;
-    private volatile boolean end_of_media = false;
-    private volatile boolean isFormatCorrect = true;
-    private volatile boolean isSizeCorrect = true;
-    private volatile boolean isCorrectTimestamp = true;
-    private volatile boolean isSeqCorrect = true;
-    
-    private boolean res = false;
-    
-    private final static Format[] formats = new Format[]{
-        AVProfile.L16_MONO,
-        AVProfile.L16_STEREO,
-        AVProfile.PCMA,
-        AVProfile.PCMU,
-        AVProfile.SPEEX,
-        AVProfile.GSM,
-        Codec.LINEAR_AUDIO                
-    };
-    private AudioPlayer player;
-    
-    public AudioPlayerTest() {
-    }
+	private EndpointImpl endpoint;
+	private TimerImpl timer;
+	private Semaphore semaphore;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
+	private volatile boolean started = false;
+	private volatile boolean failed = false;
+	private volatile boolean end_of_media = false;
+	private volatile boolean isFormatCorrect = true;
+	private volatile boolean isSizeCorrect = true;
+	private volatile boolean isCorrectTimestamp = true;
+	private volatile boolean isSeqCorrect = true;
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	private boolean res = false;
 
-    @Before
-    public void setUp() {
-        timer = new TimerImpl();
-        endpoint = new EndpointImpl();
-        endpoint.setTimer(timer);
-        player = new AudioPlayer("test");
-        player.setEndpoint(endpoint);
-        player.setResourceType(10);
-        player.addListener(new PlayerListener());
-        semaphore = new Semaphore(0);
-    }
+	private final static Format[] formats = new Format[] { AVProfile.L16_MONO, AVProfile.L16_STEREO, AVProfile.PCMA,
+			AVProfile.PCMU, AVProfile.SPEEX, AVProfile.GSM, Codec.LINEAR_AUDIO };
+	private AudioPlayer player;
 
-    @After
-    public void tearDown() {
-    }
+	public AudioPlayerTest() {
+	}
 
-    @Test
-    public void testSupportedFormats() {
-        Format[] supported = player.getFormats();
-        assertEquals(formats.length, supported.length);
-        for (int i = 0; i < supported.length; i++) {
-            boolean found = false;
-            for (int j = 0; j < formats.length; j++) {
-                if (supported[i].equals(formats[j])) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                fail("Not found " + supported[i]);
-            }
-        }
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
 
-    /**
-     * Test of getResourceType method, of class AudioPlayer.
-     */
-    @Test
-    public void testGetResourceType() {
-        assertEquals(10, player.getResourceType());
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
 
-    @Test
-    public void test_Wav_L16_8000() throws Exception {
-        //URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
-        URL url = new URL("file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/dtmf-0.wav");
-        player.setFile(url.toExternalForm());
-        player.connect(new TestSink("test"));
-        player.start();
-        
-        semaphore.tryAcquire(10, TimeUnit.SECONDS);
-        assertEquals(false, failed);
-        assertEquals(true, started);
-        assertEquals(true, end_of_media);
-        assertEquals(true, isFormatCorrect);
-        assertEquals(true, isSizeCorrect);
-    }
-    
-    private class TestSink extends AbstractSink {
-        private long lastTick = 0;
-        private long lastSeqNo = 0;
-        
-        private TestSink(String name) {
-            super(name);
-        }
-        
-        public Format[] getFormats() {
-            return new Format[0];
-        }
+	@Before
+	public void setUp() {
 
-        public boolean isAcceptable(Format format) {
-            return true;
-        }
+		started = false;
+		failed = false;
+		end_of_media = false;
+		isFormatCorrect = true;
+		isSizeCorrect = true;
+		isCorrectTimestamp = true;
+		isSeqCorrect = true;
 
-        public void receive(Buffer buffer) {
-            if (!buffer.isEOM()) {
-                isFormatCorrect &= buffer.getFormat().matches(Codec.LINEAR_AUDIO);
-                isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 320);
-                
-                if (lastTick > 0) {
-                    isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-                    lastTick = buffer.getTimeStamp();
-                }
-                
-                if (lastSeqNo > 0) {
-                    isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-                    lastSeqNo = buffer.getSequenceNumber();
-                }
-            }
-        }
+		timer = new TimerImpl();
+		endpoint = new EndpointImpl();
+		endpoint.setTimer(timer);
+		player = new AudioPlayer("test");
+		player.setEndpoint(endpoint);
+		player.setResourceType(10);
+		player.addListener(new PlayerListener());
+		semaphore = new Semaphore(0);
+	}
 
-    }
-    
-    private class PlayerListener implements NotificationListener {
+	@After
+	public void tearDown() {
+	}
 
-        public void update(NotifyEvent event) {
-            switch (event.getEventID()) {
-                case AudioPlayerEvent.STARTED :
-                	System.out.println("Started ");
-                    started = true;
-                    break;
-                case AudioPlayerEvent.END_OF_MEDIA :
-                	System.out.println("End ");
-                   end_of_media = true;
-                   semaphore.release();
-                   break;
-                case AudioPlayerEvent.FAILED :
-                	System.out.println("Failed ");
-                    failed = true;
-                    semaphore.release();
-                    break;
-            }
-        }
-        
-    }
+	@Test
+	public void testSupportedFormats() {
+		Format[] supported = player.getFormats();
+		assertEquals(formats.length, supported.length);
+		for (int i = 0; i < supported.length; i++) {
+			boolean found = false;
+			for (int j = 0; j < formats.length; j++) {
+				if (supported[i].equals(formats[j])) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				fail("Not found " + supported[i]);
+			}
+		}
+	}
+
+	/**
+	 * Test of getResourceType method, of class AudioPlayer.
+	 */
+	@Test
+	public void testGetResourceType() {
+		assertEquals(10, player.getResourceType());
+	}
+
+	@Test
+	public void test_Wav_L16_8000() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/dtmf-0.wav");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink("test"));
+		player.start();
+
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
+	public void test_L16_44100_MONO() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44m.wav");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44m.wav");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_44100_MONO("test"));
+		player.start();
+
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
+	public void test_L16_44100_STEREO() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44s.wav");
+		//		URL url = new URL(
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44s.wav");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_44100_STEREO("test"));
+		player.start();
+
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
+	public void test_SpeexNB() throws Exception {
+		 URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/sin8m.spx");
+//		URL url = new URL(
+//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/sin8m.spx");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_SpeexNB("test"));
+		player.start();
+
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	private class TestSink_44100_MONO extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_44100_MONO(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.L16_MONO);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 1764);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
+	}
+
+	private class TestSink_44100_STEREO extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_44100_STEREO(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.L16_STEREO);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == (1764 * 2));
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
+	}
+
+	private class TestSink_SpeexNB extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_SpeexNB(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.SPEEX);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 160);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
+	}
+
+	private class TestSink extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.LINEAR_AUDIO);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 320);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
+	}
+
+	private class PlayerListener implements NotificationListener {
+
+		public void update(NotifyEvent event) {
+			switch (event.getEventID()) {
+			case AudioPlayerEvent.STARTED:
+				started = true;
+				break;
+			case AudioPlayerEvent.END_OF_MEDIA:
+				end_of_media = true;
+				semaphore.release();
+				break;
+			case AudioPlayerEvent.FAILED:
+				failed = true;
+				semaphore.release();
+				break;
+			}
+		}
+
+	}
 }

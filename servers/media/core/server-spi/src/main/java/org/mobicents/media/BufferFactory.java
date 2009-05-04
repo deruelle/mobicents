@@ -13,10 +13,15 @@ import java.util.ArrayList;
  */
 public class BufferFactory implements Serializable {
 
-	private final static int BUFF_SIZE = 320;
+	private static int BUFF_SIZE = 320;
 	private ArrayList<Buffer> list = new ArrayList<Buffer>();
 	private int size;
 	private String name = null;
+
+	public BufferFactory(int size, String name, int buffSize) {
+		this(size, name);
+		this.BUFF_SIZE = buffSize;
+	}
 
 	public BufferFactory(int size, String name) {
 		this.size = size;
@@ -41,7 +46,6 @@ public class BufferFactory implements Serializable {
 			buffer.setLength(0);
 			return buffer;
 		}
-		
 
 		buffer = new Buffer();
 		buffer.setFactory(this);
@@ -55,6 +59,6 @@ public class BufferFactory implements Serializable {
 			buffer.setOffset(0);
 			buffer.setLength(0);
 			list.add(buffer);
-		} 
+		}
 	}
 }
