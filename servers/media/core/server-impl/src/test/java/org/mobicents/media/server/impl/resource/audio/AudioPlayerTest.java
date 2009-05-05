@@ -112,6 +112,24 @@ public class AudioPlayerTest {
 	}
 
 	@Test
+	public void test_GSM() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource(
+				"org/mobicents/media/server/impl/cnfannouncement.gsm");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/cnfannouncement.gsm");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_GSM("test"));
+		player.start();
+
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
 	public void test_8000_MONO_ALAW() throws Exception {
 		URL url = AudioPlayerTest.class.getClassLoader().getResource(
 				"org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
@@ -212,6 +230,41 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+	}
+
+	private class TestSink_GSM extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_GSM(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.GSM);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 33);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
 	}
 
 	private class TestSink_8000_MONO_ALAW extends AbstractSink {

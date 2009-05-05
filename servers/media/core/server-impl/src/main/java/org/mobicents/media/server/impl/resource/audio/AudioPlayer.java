@@ -167,6 +167,10 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 			// For Format for which bit is AudioFormat.NOT_SPECIFIED, 160 is
 			// passed
 			packetSize = 160;
+			if(format == AVProfile.GSM){
+				//For GSM the RTP Packet size is 33
+				packetSize = 33;
+			}			
 		}
 		return packetSize;
 	}
@@ -212,7 +216,7 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 		try {
 			while (length < packetSize) {
 				int len = stream.read(packet, offset + length, packetSize - length);
-				if (len == -1) {
+				if (len == -1 ) {
 					return length;
 				}
 				length += len;
