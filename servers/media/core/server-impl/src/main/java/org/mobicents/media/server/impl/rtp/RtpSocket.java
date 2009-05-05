@@ -370,16 +370,12 @@ public class RtpSocket implements Runnable {
 
 		int len = headerByte.length + buffer.getLength();
 		
-		System.out.println("len = "+len);
-
 		senderBuffer = new byte[len];
 		
 		// combine RTP header and payload
 		System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
 		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
 		
-		System.out.println("send data = |"+new String((byte[]) buffer.getData()) +"|");
-
 		// construct datagram packet and send synchronously it out
 		// senderPacket.setData(senderBuffer, 0, len);
 		try {
@@ -414,7 +410,6 @@ public class RtpSocket implements Runnable {
 			logger.error("Network error detected for socket [" + localAddress + ":" + localPort, e);
 			return;
 		}
-		System.out.println("receive count = "+count);
 		
 		readerBuffer.flip();
 		// if data arrives then extra
@@ -440,7 +435,6 @@ public class RtpSocket implements Runnable {
 			}
 
 			buffer.setFormat(format);
-			//System.out.println("The final buffer length = "+buffer.getLength());
 			receiveStream.push(buffer);			
 			
 		}

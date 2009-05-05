@@ -114,8 +114,6 @@ public class RtpSocketTest {
         int p1 = serverSocket.init(localAddress, 1024, 65535);
         int p2 = clientSocket.init(localAddress, 1024, 65535);
         
-        System.out.println("p1 = "+p1);
-        System.out.println("p2 = "+p2);
 
 //        serverSocket.addFormat(1, PCMA);
 //        clientSocket.addFormat(1, PCMA);
@@ -159,7 +157,6 @@ public class RtpSocketTest {
             int seq = 0;
             try {
                 seq = Integer.parseInt(s);
-                System.out.println(seq);
             } catch (Exception e) {            	
                 errorCount++;
                 continue;
@@ -186,7 +183,6 @@ public class RtpSocketTest {
 
         public void receive(Buffer buffer) {
         	byte[] bb = (byte[])buffer.getData();
-        	System.out.println("Received = "+buffer +" data = "+new String(bb)  );
             packets.add(buffer);
         }
 
@@ -220,7 +216,6 @@ public class RtpSocketTest {
             buffer.setOffset(0);
             buffer.setLength(data.length);
             
-            System.out.println("Sending "+ buffer);
 
             if (otherParty != null) {
             	otherParty.receive(buffer);
