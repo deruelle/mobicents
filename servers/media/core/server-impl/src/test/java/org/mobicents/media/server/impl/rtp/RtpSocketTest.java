@@ -153,8 +153,9 @@ public class RtpSocketTest {
         long exp = 1;
         for (int i = k; i < packets.size(); i++) {
             Buffer buffer = (Buffer) packets.get(i);
-            String s = new String((byte[]) buffer.getData());
-            System.out.println("|"+s+"|aaaa");
+            byte[] data = (byte[]) buffer.getData();
+            
+            String s = new String(data, buffer.getOffset(), buffer.getLength());
             int seq = 0;
             try {
                 seq = Integer.parseInt(s);
