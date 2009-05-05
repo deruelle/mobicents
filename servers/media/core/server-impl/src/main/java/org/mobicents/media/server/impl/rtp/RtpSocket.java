@@ -369,10 +369,16 @@ public class RtpSocket implements Runnable {
 		byte[] headerByte = h.toByteArray();
 
 		int len = headerByte.length + buffer.getLength();
+		
+		System.out.println("len = "+len);
 
+		senderBuffer = new byte[len];
+		
 		// combine RTP header and payload
 		System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
 		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
+		
+		System.out.println("send data = |"+new String((byte[]) buffer.getData()) +"|");
 
 		// construct datagram packet and send synchronously it out
 		// senderPacket.setData(senderBuffer, 0, len);
@@ -408,6 +414,8 @@ public class RtpSocket implements Runnable {
 			logger.error("Network error detected for socket [" + localAddress + ":" + localPort, e);
 			return;
 		}
+		System.out.println("receive count = "+count);
+		
 		readerBuffer.flip();
 		// if data arrives then extra
 		if (count > 0) {
@@ -418,11 +426,11 @@ public class RtpSocket implements Runnable {
 
 			// allocating media buffer using factory
 			Buffer buffer = bufferFactory.allocate();
-
+			buffer.setLength(count - 12);
 			// the length of the payload is total length of the
 			// datagram except RTP header which has 12 bytes in length
 			System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
-			buffer.setLength(buff.length - 12);
+			
 
 			// assign format.
 			// if payload not changed use the already known format
@@ -432,7 +440,9 @@ public class RtpSocket implements Runnable {
 			}
 
 			buffer.setFormat(format);
-			receiveStream.push(buffer);
+			//System.out.println("The final buffer length = "+buffer.getLength());
+			receiveStream.push(buffer);			
+			
 		}
 
 		readerBuffer.clear();

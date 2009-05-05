@@ -154,6 +154,7 @@ public class RtpSocketTest {
         for (int i = k; i < packets.size(); i++) {
             Buffer buffer = (Buffer) packets.get(i);
             String s = new String((byte[]) buffer.getData());
+            System.out.println("|"+s+"|aaaa");
             int seq = 0;
             try {
                 seq = Integer.parseInt(s);
@@ -183,7 +184,8 @@ public class RtpSocketTest {
     	}
 
         public void receive(Buffer buffer) {
-        	System.out.println("Received = "+buffer);
+        	byte[] bb = (byte[])buffer.getData();
+        	System.out.println("Received = "+buffer +" data = "+new String(bb)  );
             packets.add(buffer);
         }
 
