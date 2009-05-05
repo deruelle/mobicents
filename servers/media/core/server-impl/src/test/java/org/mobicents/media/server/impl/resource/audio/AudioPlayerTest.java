@@ -112,6 +112,41 @@ public class AudioPlayerTest {
 	}
 
 	@Test
+	public void test_8000_MONO_ALAW() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource(
+				"org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_8000_MONO_ALAW("test"));
+		player.start();
+
+		semaphore.tryAcquire(15, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
+	public void test_8000_MONO_ULAW() throws Exception {
+		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/8kulaw.wav");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/8kulaw.wav");
+		player.setFile(url.toExternalForm());
+		player.connect(new TestSink_8000_MONO_ULAW("test"));
+		player.start();
+
+		semaphore.tryAcquire(15, TimeUnit.SECONDS);
+		assertEquals(false, failed);
+		assertEquals(true, started);
+		assertEquals(true, end_of_media);
+		assertEquals(true, isFormatCorrect);
+		assertEquals(true, isSizeCorrect);
+	}
+
+	@Test
 	public void test_Wav_L16_8000() throws Exception {
 		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
 		// URL url = new URL(
@@ -148,8 +183,8 @@ public class AudioPlayerTest {
 	@Test
 	public void test_L16_44100_STEREO() throws Exception {
 		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44s.wav");
-		//		URL url = new URL(
-		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44s.wav");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44s.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_44100_STEREO("test"));
 		player.start();
@@ -164,9 +199,9 @@ public class AudioPlayerTest {
 
 	@Test
 	public void test_SpeexNB() throws Exception {
-		 URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/sin8m.spx");
-//		URL url = new URL(
-//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/sin8m.spx");
+		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/sin8m.spx");
+		// URL url = new URL(
+		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/sin8m.spx");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_SpeexNB("test"));
 		player.start();
@@ -177,6 +212,76 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+	}
+
+	private class TestSink_8000_MONO_ALAW extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_8000_MONO_ALAW(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.PCMA);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 160);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
+	}
+
+	private class TestSink_8000_MONO_ULAW extends AbstractSink {
+		private long lastTick = 0;
+		private long lastSeqNo = 0;
+
+		private TestSink_8000_MONO_ULAW(String name) {
+			super(name);
+		}
+
+		public Format[] getFormats() {
+			return new Format[0];
+		}
+
+		public boolean isAcceptable(Format format) {
+			return true;
+		}
+
+		public void receive(Buffer buffer) {
+			if (!buffer.isEOM()) {
+				isFormatCorrect &= buffer.getFormat().matches(Codec.PCMU);
+				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 160);
+
+				if (lastTick > 0) {
+					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
+					lastTick = buffer.getTimeStamp();
+				}
+
+				if (lastSeqNo > 0) {
+					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
+					lastSeqNo = buffer.getSequenceNumber();
+				}
+			}
+		}
+
 	}
 
 	private class TestSink_44100_MONO extends AbstractSink {
