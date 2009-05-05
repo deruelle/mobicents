@@ -36,6 +36,8 @@ import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
+import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.Endpoint;
 
 /**
  * Channel is used to join media source with media sink with 
@@ -69,6 +71,10 @@ public class Channel {
     //The component connected to extenal sink.
     private MediaSource exhaust;
 
+    private Endpoint endpoint;
+    private Connection connection;
+    
+    private boolean directLink = true;
     /**
      * Constructs new channel with specified components.
      * 
@@ -92,6 +98,40 @@ public class Channel {
         return null;
     }
     
+    public Endpoint getEndpoint() {
+        return this.endpoint;
+    }
+    
+    public Connection getConnection() {
+        return connection;
+    }
+    
+    public void setEndpoint(Endpoint endpoint) {
+        
+    }
+    
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+        Collection<MediaSource> list = sources.values();        
+        for (MediaSource s : list) {
+            s.setConnection(connection);
+        }
+        Collection<MediaSink> list1 = sinks.values();        
+        for (MediaSink s : list1) {
+            s.setConnection(connection);
+        }
+        
+        Collection<Inlet> list2 = inlets.values();        
+        for (Inlet s : list2) {
+            s.setConnection(connection);
+        }
+
+        Collection<Outlet> list3 = outlets.values();        
+        for (Outlet s : list3) {
+            s.setConnection(connection);
+        }
+    }
+    
     /**
      * Opens pipes between source and sink.
      * 
@@ -102,13 +142,14 @@ public class Channel {
      * if name of the sink or source is not known.
      */
     public void openPipe(Pipe pipe, String inlet, String outlet) throws UnknownComponentException {
+        directLink = false;
         //when inlet is null pipe acts as intake for the channel
         //so component with name outlet will be connected to external source
         //we have to consider it as intake.
         if (inlet == null && outlet != null) {
             if (sinks.containsKey(outlet)) {
                 intake = sinks.get(outlet);
-            } else throw new UnknownComponentException(outlet);
+            }  else throw new UnknownComponentException(outlet);
         } 
         //when outlet is null then pipe acts as exhaust for the channel
         //the component with name inlet will be connected to an external sink
@@ -139,10 +180,11 @@ public class Channel {
     /**
      * Connects source and sink to each other with out intermediate pipes.
      */
-    private void directLink() {
+    private Format[] directLink() {
         if (source != null & sink != null) {
             source.connect(sink);
-        }
+            return getSubset(source.getFormats(), sink.getFormats());
+        } else return new Format[0];
     }
 
     /**
@@ -150,12 +192,13 @@ public class Channel {
      * 
      * @param sink the sink to connect to
      */
-    public void connect(MediaSink sink) {
+    public Format[] connect(MediaSink sink) {
         this.sink = sink;
-        if (pipes.isEmpty()) {
-            directLink();
+        if (directLink) {
+            return directLink();
         } else {
             exhaust.connect(sink);
+            return getSubset(exhaust.getFormats(), sink.getFormats());
         }
     }
 
@@ -180,12 +223,13 @@ public class Channel {
      * 
      * @param source the source to connect to
      */
-    public void connect(MediaSource source) {
+    public Format[] connect(MediaSource source) {
         this.source = source;
-        if (pipes.isEmpty()) {
-            directLink();
+        if (directLink) {
+            return directLink();
         } else {
             intake.connect(source);
+            return getSubset(intake.getFormats(), source.getFormats());
         }
     }
 
@@ -247,5 +291,28 @@ public class Channel {
         sinks.clear();
         outlets.clear();
         inlets.clear();
+    }
+    
+    private Format[] getSubset(Format[] f1, Format[] f2) {
+        if (f1.length == 0) {
+            return f2;
+        }
+        
+        if (f2.length == 0) {
+            return f1;
+        }
+        
+        ArrayList<Format> list = new ArrayList();        
+        for (int i = 0; i < f1.length; i++) {
+            for (int j = 0; j < f2.length; j++) {
+                if (f1[i].matches(f2[j])) {
+                    list.add(f1[i]);
+                }
+            }
+        }
+        Format[] f = new Format[list.size()];
+        list.toArray(f);
+        
+        return f;
     }
 }

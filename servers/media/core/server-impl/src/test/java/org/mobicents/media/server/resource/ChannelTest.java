@@ -18,6 +18,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
+import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
@@ -26,8 +27,11 @@ import org.mobicents.media.Outlet;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.BaseComponent;
 import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.Timer;
 
 /**
@@ -38,16 +42,11 @@ public class ChannelTest {
 
     public final Format FORMAT = new Format("test");
     
-    private HashMap<String, MediaSink> sinks = new HashMap();
-    private HashMap<String, MediaSource> sources = new HashMap();
-    private HashMap<String, Inlet> inlets = new HashMap();
-    private HashMap<String, Outlet> outlets = new HashMap();
-    
     private Endpoint endpoint;
-    private ChannelFactory channelFactory;
     private ArrayList<Buffer> list = new ArrayList();
     private Semaphore semaphore = new Semaphore(0);
     private boolean res = false;
+    private boolean retransmit = false;
     
     public ChannelTest() {
     }
@@ -63,42 +62,76 @@ public class ChannelTest {
     @Before
     public void setUp() {
         endpoint = new EndpointImpl();
-/*        ArrayList components = new ArrayList();
-        
-        ChannelFactory channelFactory = new ChannelFactory();
-        channelFactory.setComponents(components);
-*/        
+        list.clear();        
     }
 
     @After
     public void tearDown() {
     }
 
-    @Test
-    public void testGetComponent() {
-        TestSource source = new TestSource("test-source");
-        source.setResourceType(1);
-        
-        TestSink sink = new TestSink("test-sink");
-        sink.setResourceType(2);
-        
-        sources.put(source.getName(), source);
-        sinks.put(sink.getName(), sink);
-        
-        Channel channel = new Channel(sources, sinks, inlets, outlets);
 
-        Component c = channel.getComponent(1);        
-        assertEquals(c.getResourceType(), 1);
+    @Test
+    public void testPipeTransmission() throws Exception {
+        TestSinkFactory sinkFactory = new TestSinkFactory("test-sink");
+        TestSourceFactory sourceFactory = new TestSourceFactory("test-source");
+        TestGatewayFactory gateway = new TestGatewayFactory("test-in-out-let");
         
-        c = channel.getComponent(2);        
-        assertEquals(c.getResourceType(), 2);
+        ArrayList components = new ArrayList();
+        components.add(gateway);
+
+        PipeFactory p1 = new PipeFactory();
+        p1.setInlet(null);
+        p1.setOutlet("test-in-out-let");
+
+        PipeFactory p2 = new PipeFactory();
+        p2.setInlet("test-in-out-let");
+        p2.setOutlet(null);
+        
+        ArrayList pipes = new ArrayList();
+        pipes.add(p1);
+        pipes.add(p2);
+        
+        ChannelFactory channelFactory = new ChannelFactory();
+        channelFactory.start();
+        
+        channelFactory.setComponents(components);
+        channelFactory.setPipes(pipes);
+        
+        Channel channel = channelFactory.newInstance(endpoint);
+
+        TestSink sink = (TestSink) sinkFactory.newInstance(endpoint);
+        TestSource source = (TestSource) sourceFactory.newInstance(endpoint);
+        
+        Format[] f = channel.connect(sink);
+        assertEquals(1, f.length);
+        assertEquals(true, FORMAT.matches(f[0]));
+        
+        f = channel.connect(source);        
+        assertEquals(1, f.length);
+        assertEquals(true, FORMAT.matches(f[0]));
+        
+        source.start();
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        
+        assertEquals(true, checkData());
+        assertEquals(true, retransmit);
     }
 
     @Test
-    public void testDerectTransmission() throws Exception {
-        Channel channel = new Channel(sources, sinks, inlets, outlets);
+    public void testDirectTransmission() throws Exception {
         TestSink sink = new TestSink("test-sink");
         TestSource source = new TestSource("test-source");
+        
+        ChannelFactory channelFactory = new ChannelFactory();
+        channelFactory.start();
+        
+        ArrayList components = new ArrayList();
+        ArrayList pipes = new ArrayList();
+        
+        channelFactory.setComponents(components);
+        channelFactory.setPipes(pipes);
+        
+        Channel channel = channelFactory.newInstance(endpoint);
         
         channel.connect(sink);
         channel.connect(source);
@@ -115,9 +148,50 @@ public class ChannelTest {
         for (Buffer buffer : list) {
                 result &= (seq == buffer.getSequenceNumber());
             seq++;
-            System.out.println("SEQ=" + seq + ", RES=" + result);
         }
         return result;
+    }
+    
+    private class TestSourceFactory implements ComponentFactory {
+        
+        private String name;
+        
+        public TestSourceFactory(String name) {
+            this.name = name;
+        }
+        
+        public Component newInstance(Endpoint endpoint) {
+            return new TestSource(name);
+        }
+        
+    }
+
+    private class TestSinkFactory implements ComponentFactory {
+        
+        private String name;
+        
+        public TestSinkFactory(String name) {
+            this.name = name;
+        }
+        
+        public Component newInstance(Endpoint endpoint) {
+            return new TestSink(name);
+        }
+        
+    }
+
+    private class TestGatewayFactory implements ComponentFactory {
+        
+        private String name;
+        
+        public TestGatewayFactory(String name) {
+            this.name = name;
+        }
+        
+        public Component newInstance(Endpoint endpoint) {
+            return new TestGateway(name);
+        }
+        
     }
     
     private class TestSource extends AbstractSource implements Runnable {
@@ -177,6 +251,71 @@ public class ChannelTest {
 
         public void receive(Buffer buffer) {
             list.add(buffer);
+        }
+        
+    }
+    
+    private class TestGateway extends BaseComponent implements Inlet, Outlet {
+    
+        private TestInput input;
+        private TestOutput output;
+        
+        private class TestInput extends AbstractSink implements MediaSink {
+
+            public TestInput(String name) {
+                super(name);
+            }
+            
+            public Format[] getFormats() {
+                return new Format[]{FORMAT};
+            }
+
+            public boolean isAcceptable(Format format) {
+                return true;
+            }
+
+            public void receive(Buffer buffer) {
+                output.send(buffer);
+                retransmit = true;
+            }
+
+            
+        }
+        
+        private class TestOutput extends AbstractSource implements MediaSource {
+
+            public TestOutput(String name) {
+                super(name);
+            }
+            
+            public void start() {
+            }
+
+            public void stop() {
+            }
+
+            public Format[] getFormats() {
+                return new Format[]{FORMAT};
+            }
+            
+            public void send(Buffer buffer) {
+                this.otherParty.receive(buffer);
+            }
+        }
+        
+        public TestGateway(String name) {
+            super(name);
+                input = new TestInput("input." + name);
+                output = new TestOutput("output." + name);
+        }
+        
+        public MediaSink getInput() {
+            return input;
+        }
+
+
+        public MediaSource getOutput() {
+            return output;
         }
         
     }
