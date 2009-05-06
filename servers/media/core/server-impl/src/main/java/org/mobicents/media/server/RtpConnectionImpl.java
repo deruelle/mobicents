@@ -93,23 +93,28 @@ public class RtpConnectionImpl extends ConnectionImpl {
 
         // create demux and join with txChannel
         demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
-
-        if (txChannel == null) {
-            //endpoint.
-        }
-
-        txChannel.connect(demux.getInput());
-
+        
         // join demux and rtp sockets
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
             demux.connect(socket.getSendStream());
         }
 
+        //creating tx channel
+        try {
+            txChannel = endpoint.createTxChannel(this);
+        } catch (Exception e) {
+            throw new ResourceUnavailableException(e);
+        }
+        
+        //connect tx channel with Demultiplexer Input
+        //and demux will split data between rtp sockets
+        Format[] fmts = txChannel.connect(demux.getInput());
+
+
         // when demux already connected to channel
         // all supported formats are known and we can generate
         // local descriptor and update rtp map
-        Format[] fmts = demux.getFormats();
         createLocalDescriptor(fmts);
     }
 
@@ -169,10 +174,18 @@ public class RtpConnectionImpl extends ConnectionImpl {
             throw new IllegalStateException("State is " + getState());
         }
 
+        try {
+            rxChannel = ((EndpointImpl)getEndpoint()).createRxChannel(this);
+        } catch (Exception e) {
+            throw new ResourceUnavailableException(e);
+        }
+        
         SessionDescription sdp = sdpFactory.createSessionDescription(descriptor);
 
         // add peer to RTP socket
         mux = new Multiplexer("MUX-" + this.getId());
+        Format[] supported = rxChannel.connect(mux.getOutput());
+        
         InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
 
         Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
@@ -180,9 +193,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
             String mediaType = md.getMedia().getMediaType();
             RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
-            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
-            Format[] supported = rxChannel.getFormats();
-
+            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);            
             HashMap<Integer, Format> subset = this.subset(offer, supported);
 
             if (subset.isEmpty()) {

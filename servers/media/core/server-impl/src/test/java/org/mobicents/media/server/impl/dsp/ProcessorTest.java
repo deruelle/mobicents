@@ -5,6 +5,9 @@
 package org.mobicents.media.server.impl.dsp;
 
 import java.util.ArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -16,6 +19,9 @@ import org.mobicents.media.Format;
 import org.mobicents.media.Utils;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.dsp.CodecFactory;
 
 /**
@@ -48,6 +54,9 @@ public class ProcessorTest {
     private CodecFactory pcmuDecoderFactory = new org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory();
     
     private DspFactory dspFactory = new DspFactory();
+    private Semaphore semaphore = new Semaphore(0);
+    
+    private ArrayList<Buffer> list;
     
     public ProcessorTest() {
     }
@@ -71,6 +80,8 @@ public class ProcessorTest {
         dspFactory.setName("test");
         dspFactory.setCodecFactories(codecFactories);
         dsp = (Processor) dspFactory.newInstance(null);
+        
+        list = new ArrayList();
     }
 
     @After
@@ -84,13 +95,99 @@ public class ProcessorTest {
         assertEquals(true, Utils.checkFormats(fmts, expected));
     }
 
+    @Test
     public void testOutputFormats() {
         Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO};
-        Format[] fmts = dsp.getInput().getFormats();
+        Format[] fmts = dsp.getOutput().getFormats();
         assertEquals(true, Utils.checkFormats(fmts, expected));
+        
+        expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO, DTMF};
+        dsp.getInput().connect(new TestSource());
+        
+        assertEquals(true, Utils.checkFormats(dsp.getOutput().getFormats(), expected));
     }
     
+    @Test
+    public void testTranscoding() throws Exception {
+        TestSource source = new TestSource();
+        TestSink sink = new TestSink();
+        
+        dsp.getInput().connect(source);
+        dsp.getOutput().connect(sink);
+        dsp.getOutput().start();
+        
+        source.start();
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        
+        boolean res = !list.isEmpty();
+        for (Buffer buffer : list) {
+            res &= buffer.getFormat().matches(PCMA);
+        }
+        
+        assertEquals(true, res);
+    }
 
+    @Test
+    public void testTransparentTransmission() throws Exception {
+        TestSource source = new TestSource();
+        TestSink sink = new TestSink();
+        
+        dsp.getInput().connect(source);
+        dsp.getOutput().connect(sink);
+        dsp.getOutput().start();
+        
+        source.setFormat(DTMF);
+        source.start();
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        
+        boolean res = !list.isEmpty();
+        for (Buffer buffer : list) {
+            res &= buffer.getFormat().matches(DTMF);
+        }
+        
+        assertEquals(true, res);
+    }
+    
+    private class TestSource extends AbstractSource implements Runnable {
+
+        private Timer timer = new TimerImpl();
+        private ScheduledFuture task;
+        private Format f = LINEAR;
+        
+        private int count = 0;
+        
+    	public TestSource(){
+            super("ProcessorTest.Source");
+    	}
+        public void setFormat(Format f) {
+            this.f = f;
+        }
+        public void start() {
+            task = timer.synchronize(this);
+        }
+
+        public void stop() {
+            task.cancel(true);
+        }
+
+        public Format[] getFormats() {
+            return new Format[] {LINEAR, DTMF};
+        }
+
+        public void run() {
+            while (count < 10) {
+                Buffer buffer = new Buffer();
+                buffer.setData(new byte[320]);
+                buffer.setLength(320);
+                buffer.setFormat(f);
+                this.otherParty.receive(buffer);
+                count++;
+            }
+            semaphore.release();
+        }
+        
+    }
+        
     private class TestSink extends AbstractSink {
     	
     	public TestSink(){
@@ -98,7 +195,7 @@ public class ProcessorTest {
     	}
 
         public Format[] getFormats() {
-            return new Format[]{LINEAR, DTMF};
+            return new Format[]{PCMA, DTMF};
         }
 
         public boolean isAcceptable(Format format) {
@@ -106,7 +203,8 @@ public class ProcessorTest {
         }
 
         public void receive(Buffer buffer) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            list.add(buffer);
         }
     }
+
 }

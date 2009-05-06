@@ -160,9 +160,10 @@ public class EndpointImpl implements Endpoint {
         this.txChannelFactory = txChannelFactory;
     }
 
-    private Channel createRxChannel() throws UnknownComponentException {
+    protected Channel createRxChannel(Connection connection) throws UnknownComponentException {
         Channel rxChannel = rxChannelFactory.newInstance(this);
-        rxChannel.connect(source);
+        rxChannel.setConnection(connection);
+        rxChannel.connect(sink);
         return rxChannel;
     }
 
@@ -171,8 +172,9 @@ public class EndpointImpl implements Endpoint {
         rxChannelFactory.release(channel);
     }
 
-    private Channel createTxChannel(String media) throws UnknownComponentException {
+    protected Channel createTxChannel(Connection connection) throws UnknownComponentException {
         Channel txChannel = txChannelFactory.newInstance(this);
+        txChannel.setConnection(connection);
         txChannel.connect(source);
         return txChannel;
     }

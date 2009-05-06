@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl.dsp;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -21,7 +20,6 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseComponent;
@@ -47,11 +45,9 @@ public class Processor extends BaseComponent implements SignalingProcessor {
     private Input input;
     private Output output;
     
-    private transient ArrayList<Codec> codecs = new ArrayList();
+    private transient ArrayList<Codec> codecs = new ArrayList();    
+    private Codec codec;
     
-    private Transformator transformator;
-    private ArrayList<Transformator> map = new ArrayList();
-
     public Processor(String name) {
         super(name);
         input = new Input();
@@ -129,9 +125,6 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
-            if (input.isConnected()) {
-                configure(input.getOtherPartyFormats(), output.getOtherPartyFormats());
-            }
         }
 
         protected boolean isConnected() {
@@ -175,26 +168,25 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             //and if same use same codec also else reassign codec
             if (format == null || !format.equals(buffer.getFormat())) {
                 //disable last used transformator
-                transformator = null;
-                //searcg for new one
-                for (int i = 0; i < map.size(); i++) {
-                    if (map.get(i).getFormat().equals(buffer.getFormat())) {
-                        transformator = map.get(i);
-                        format = buffer.getFormat();
-                        break;
+                for (Codec c: codecs) {
+                    boolean found = false;
+                    if (c.getSupportedInputFormat().matches(buffer.getFormat())) {
+                        Format[] otherFormats = output.getOtherPartyFormats();
+                        for (Format f : otherFormats) {
+                            if (f.matches(c.getSupportedOutputFormat())) {
+                                codec = c;
+                                format = buffer.getFormat();
+                                break;
+                            }
+                        }
                     }
+                    if (found) break;
                 }
             }
             
-            if (transformator != null) {
-                try {
-                    transformator.process(buffer);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (codec != null) {
+                codec.process(buffer);
             }
-//            codec.process(buffer);
-
             // Codec can delay media transition if it has not enouph media
             // to perform its job. 
             // It means that Processor should check FLAGS after codec's 
@@ -231,8 +223,10 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         @Override
         public void connect(MediaSource source) {
             super.connect(source);
-            if (output.isConnected()) {
-                configure(input.getOtherPartyFormats(), output.getOtherPartyFormats());
+            Format[] fmts = otherParty.getFormats();
+            for (Format f: fmts) {
+                append(outputFormats, f);
+                System.out.println("append=" + f);
             }
         }
         
@@ -258,109 +252,11 @@ public class Processor extends BaseComponent implements SignalingProcessor {
     }
 
     /**
-     * Creates transformation for media from one format to another.
-     * 
-     * @param f1 the format of the input media
-     * @param f2 the format of the output media.
-     * @return true if this transformation available and false otherwise.
-     */
-    private boolean configure(Format f1, Format f2) {
-        output.format = null;
-        //looking for direct transformation
-        for (int i = 0; i < codecs.size(); i++) {
-            Codec c = codecs.get(i);
-            if (c.getSupportedInputFormat().equals(f1) &&
-                    c.getSupportedOutputFormat().equals(f2)) {
-                map.add(new Transformator(f1, c, null));
-                return true;
-            }
-        }
-
-        //if there is no direct transformation then decompresson/compresson
-        //algorithm should be applied
-        Codec decoder = null;
-
-        //looking for decoder
-        for (int i = 0; i < codecs.size(); i++) {
-            Codec c = codecs.get(i);
-            if (c.getSupportedInputFormat().equals(f1) &&
-                    c.getSupportedOutputFormat().getEncoding().equals(AudioFormat.LINEAR)) {
-                decoder = c;
-                break;
-            }
-        }
-
-        if (decoder == null) {
-            return false;
-        }
-
-        Codec encoder = null;
-        //looking for encoder
-        for (int i = 0; i < codecs.size(); i++) {
-            Codec c = codecs.get(i);
-            if (c.getSupportedInputFormat().getEncoding().equals(AudioFormat.LINEAR) &&
-                    c.getSupportedOutputFormat().equals(f2)) {
-                encoder = c;
-                break;
-            }
-        }
-
-        if (encoder == null) {
-            return false;
-        }
-
-        map.add(new Transformator(f1, decoder, encoder));
-        return true;
-    }
-
-    /**
      * (Non Java-doc.)
      * 
      * @see org.mobicents.media.server.spi.dsp.SignalingProcessor.configure(Format[], Format[]).
      */
     public void configure(Format[] inputFormats, Format[] outputFormats) {
-        map.clear();
-        for (int i = 0; i < inputFormats.length; i++) {
-            //if input format is same as one of the 
-            //output we skip it
-            if (contains(outputFormats, inputFormats[i])) {
-                continue;
-            }
-
-            //we should find only one available transformation
-            //so we break searching after first suitable match
-            for (int j = 0; j < outputFormats.length; j++) {
-                if (configure(inputFormats[i], outputFormats[j])) {
-                    break;
-                }
-            }
-        }
-    }
-
-    private class Transformator implements Serializable {
-
-        private Format inputFormat;
-        private Codec decoder;
-        private Codec encoder;
-
-        protected Transformator(Format inputFormat, Codec decoder, Codec encoder) {
-            this.inputFormat = inputFormat;
-            this.decoder = decoder;
-            this.encoder = encoder;
-        }
-
-        protected Format getFormat() {
-            return inputFormat;
-        }
-
-        protected void process(Buffer buffer) {
-            if (decoder != null) {
-                decoder.process(buffer);
-            }
-            if (encoder != null) {
-                encoder.process(buffer);
-            }
-        }
     }
 
 }
