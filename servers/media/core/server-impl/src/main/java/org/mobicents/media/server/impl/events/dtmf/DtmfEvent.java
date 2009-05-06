@@ -31,46 +31,50 @@ import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class DtmfEvent implements NotifyEvent {
-    public final static int DTMF_0 = 0;
-    public final static int DTMF_1 = 1;
-    public final static int DTMF_2 = 2;
-    public final static int DTMF_3 = 3;
-    public final static int DTMF_4 = 4;
-    public final static int DTMF_5 = 5;
-    public final static int DTMF_6 = 6;
-    public final static int DTMF_7 = 7;
-    public final static int DTMF_8 = 8;
-    public final static int DTMF_9 = 9;
-    public final static int DTMF_HASH = 10;
-    public final static int DTMF_STAR = 11;
-    
-    private Endpoint endpoint;
-    private Connection connection;
-    private int resourceID;
-    private int eventID;
-    
-    public DtmfEvent(Endpoint endpoint, Connection connection, int eventID) {
-        
-    }
-    
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
+	public final static int DTMF_0 = 0;
+	public final static int DTMF_1 = 1;
+	public final static int DTMF_2 = 2;
+	public final static int DTMF_3 = 3;
+	public final static int DTMF_4 = 4;
+	public final static int DTMF_5 = 5;
+	public final static int DTMF_6 = 6;
+	public final static int DTMF_7 = 7;
+	public final static int DTMF_8 = 8;
+	public final static int DTMF_9 = 9;
+	public final static int DTMF_STAR = 10;
+	public final static int DTMF_HASH = 11;
+	public final static int DTMF_A = 12;
+	public final static int DTMF_B = 13;
+	public final static int DTMF_C = 14;
+	public final static int DTMF_D = 15;
 
-    public Connection getConnection() {
-        return connection;
-    }
+	private Endpoint endpoint;
+	private Connection connection;
+	private int resourceID;
+	private int eventID;
 
-    public int getResourceID() {
-        return -1;
-    }
+	public DtmfEvent(Endpoint endpoint, Connection connection, int eventID) {
+		this.eventID = eventID;
+	}
 
-    public int getEventID() {
-        return eventID;
-    }
+	public Endpoint getEndpoint() {
+		return endpoint;
+	}
+
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public int getResourceID() {
+		return -1;
+	}
+
+	public int getEventID() {
+		return eventID;
+	}
 
 }

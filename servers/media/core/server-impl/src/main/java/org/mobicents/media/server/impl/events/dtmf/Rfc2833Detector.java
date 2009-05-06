@@ -31,12 +31,13 @@ public class Rfc2833Detector extends AbstractSink {
 
 	private final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#",
 			"A", "B", "C", "D" };
-	private DtmfDetector detector;
+
+	private String mask = "[0-9, A,B,C,D,*,#]";
+
 	private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
 
-	public Rfc2833Detector(DtmfDetector detector) {
-		super("Rfc2833Detector");
-		this.detector = detector;
+	public Rfc2833Detector(String name) {
+		super(name);
 	}
 
 	public void start() {
@@ -47,14 +48,68 @@ public class Rfc2833Detector extends AbstractSink {
 
 	public void receive(Buffer buffer) {
 		try {
-			byte[] data = (byte[]) buffer.getData();
+			if (buffer.getMarker()) {
+				byte[] data = (byte[]) buffer.getData();
 
-			String digit = TONE[data[0]];
-			boolean end = (data[1] & 0x7f) != 0;
+				String digit = TONE[data[0]];
 
-			detector.digitBuffer.push(digit);
+				System.out.println("EOF = " + (data[1] & 0x7f));
+
+				boolean end = (data[1] & 0x80) != 0;
+				System.out.println("end = " + end);
+				if (!end) {
+					this.push(digit);
+				}
+			}
 		} finally {
 			buffer.dispose();
+		}
+	}
+
+	public void push(String symbol) {
+
+		if (symbol.matches(mask)) {
+			// send event;
+			if (logger.isDebugEnabled()) {
+				logger.debug("Send DTMF event: " + symbol);
+			}
+			int eventId = 0;
+			if (symbol.equals("0")) {
+				eventId = DtmfEvent.DTMF_0;
+			} else if (symbol.equals("1")) {
+				eventId = DtmfEvent.DTMF_1;
+			} else if (symbol.equals("2")) {
+				eventId = DtmfEvent.DTMF_2;
+			} else if (symbol.equals("3")) {
+				eventId = DtmfEvent.DTMF_3;
+			} else if (symbol.equals("4")) {
+				eventId = DtmfEvent.DTMF_4;
+			} else if (symbol.equals("5")) {
+				eventId = DtmfEvent.DTMF_5;
+			} else if (symbol.equals("6")) {
+				eventId = DtmfEvent.DTMF_6;
+			} else if (symbol.equals("7")) {
+				eventId = DtmfEvent.DTMF_7;
+			} else if (symbol.equals("8")) {
+				eventId = DtmfEvent.DTMF_8;
+			} else if (symbol.equals("9")) {
+				eventId = DtmfEvent.DTMF_9;
+			} else if (symbol.equals("A")) {
+				eventId = DtmfEvent.DTMF_A;
+			} else if (symbol.equals("B")) {
+				eventId = DtmfEvent.DTMF_B;
+			} else if (symbol.equals("C")) {
+				eventId = DtmfEvent.DTMF_C;
+			} else if (symbol.equals("D")) {
+				eventId = DtmfEvent.DTMF_D;
+			} else {
+				logger.error("DTMF event " + symbol + " not identified");
+				return;
+			}
+
+			DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), eventId);
+			super.sendEvent(dtmfEvent);
+
 		}
 	}
 
@@ -67,7 +122,7 @@ public class Rfc2833Detector extends AbstractSink {
 		return FORMATS;
 	}
 
-	public boolean isAcceptable(Format format) {		
+	public boolean isAcceptable(Format format) {
 		return DTMF.equals(format);
 	}
 }

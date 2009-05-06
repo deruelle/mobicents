@@ -52,9 +52,9 @@ public class DtmfDetector extends AbstractSink {
     public DtmfDetector(String name) {
     	super(name);
     	this.name = name;
-        digitBuffer = new DtmfBuffer(this);
-        inband = new InbandDetector(this);
-        rfc2833 = new Rfc2833Detector(this);
+//        digitBuffer = new DtmfBuffer(this);
+//        inband = new InbandDetector(this);
+//        rfc2833 = new Rfc2833Detector(this);
         
         dsp = new Processor("Processor " + name);
         dsp.getOutput().connect(inband);

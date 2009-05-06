@@ -67,7 +67,7 @@ public class DtmfGenerator extends AbstractSource {
     public  DtmfGenerator(BaseEndpoint endpoint) {
         super(endpoint.getLocalName());
         inband = new InbandGenerator("");
-        rfc2833 = new Rfc2833Generator(endpoint);
+        rfc2833 = new Rfc2833Generator("");
         dsp = new Processor("");
         dsp.getInput().connect(inband);
     }

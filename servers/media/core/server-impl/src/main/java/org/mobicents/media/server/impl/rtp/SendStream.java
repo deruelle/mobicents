@@ -81,7 +81,7 @@ public class SendStream extends AbstractSink {
             AudioFormat fmt = (AudioFormat) buffer.getFormat();
             pt = getPayloadType(fmt);
 
-            header.init((byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
+            header.init(buffer.getMarker(), (byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
             buffer.setHeader(header);
         }
         

@@ -1,6 +1,6 @@
 package org.mobicents.media.server.impl.rtp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import java.net.InetAddress;
@@ -21,6 +21,11 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.spi.dsp.Codec;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class RtpSocketTest {
 
 	private final static int TEST_DURATION = 2;
@@ -140,6 +145,7 @@ public class RtpSocketTest {
         serverSocket.close();
         clientSocket.close();
 
+        assertTrue((packets.size()>0));
         int k = 0;
         for (int i = 0; i < packets.size(); i++) {
             if (packets.get(i) != null) {

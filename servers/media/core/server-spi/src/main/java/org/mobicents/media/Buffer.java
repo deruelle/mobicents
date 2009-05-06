@@ -44,6 +44,8 @@ public class Buffer implements Serializable {
     public static final int FLAG_LIVE_DATA = 32768;
     public static final long TIME_UNKNOWN = -1;
     public static final long SEQUENCE_UNKNOWN = Long.MAX_VALUE - 1;
+    
+    private boolean marker = false;
 
     
     
@@ -53,6 +55,14 @@ public class Buffer implements Serializable {
 
     public void setFactory(BufferFactory factory) {
         this.factory = factory;
+    }
+    
+    public boolean getMarker(){
+    	return this.marker;
+    }
+    
+    public void setmarker(boolean marker){
+    	this.marker = marker;
     }
         
     public Format getFormat() {

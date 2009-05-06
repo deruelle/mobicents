@@ -13,62 +13,69 @@
 package org.mobicents.media.server.impl.events.dtmf;
 
 import java.io.Serializable;
+
 import org.apache.log4j.Logger;
+import org.mobicents.media.server.impl.AbstractSink;
 
 /**
  * Implements digit buffer.
  * 
  * @author Oleg Kulikov
  */
-public class DtmfBuffer implements Serializable {
-    public final static int TIMEOUT = 5000;
-    public final static int SILENCE = 500;
-    
-    private StringBuffer buffer = new StringBuffer();
-    private String mask = "[0-9, A,B,C,D,*,#]";
-    
-    private DtmfDetector detector;
-    
-    private long lastActivity = System.currentTimeMillis();
-    private String lastSymbol;
-    
-    private transient Logger logger = Logger.getLogger(DtmfBuffer.class);
-    
-    public DtmfBuffer(DtmfDetector detector) {
-        this.detector = detector;
-    }
-    
-    public String getMask() {
-        return mask;
-    }
-    
-    public void setMask(String mask) {
-        this.buffer = new StringBuffer();
-        this.mask = mask;
-    }
-    
-    public synchronized void push(String symbol) {
-        long now = System.currentTimeMillis();
-        
-        if (now - lastActivity > TIMEOUT) {
-            buffer = new StringBuffer();
-        }
-        
-        if (!symbol.equals(lastSymbol) || (now - lastActivity > SILENCE) ) {
-            buffer.append(symbol);
-            lastActivity = now;
-            lastSymbol = symbol;
-            String digits = buffer.toString();
-            if (digits.matches(mask)) {
-                //send event;
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Send DTMF event: " + digits);
-                }
-                detector.sendEvent(digits);
-                buffer = new StringBuffer();
-            }
-        }
-        
-    }
-    
+public abstract class DtmfBuffer extends AbstractSink implements Serializable {
+	public final static int TIMEOUT = 5000;
+	public final static int SILENCE = 500;
+
+	private StringBuffer buffer = new StringBuffer();
+	private String mask = "[0-9, A,B,C,D,*,#]";
+
+	// private DtmfDetector detector;
+
+	private long lastActivity = System.currentTimeMillis();
+	private String lastSymbol;
+
+	private transient Logger logger = Logger.getLogger(DtmfBuffer.class);
+
+	public DtmfBuffer(String name) {
+		super(name);
+	}
+
+	public String getMask() {
+		return mask;
+	}
+
+	public void setMask(String mask) {
+		this.buffer = new StringBuffer();
+		this.mask = mask;
+	}
+
+	public void push(String symbol) {
+		long now = System.currentTimeMillis();
+
+		if (now - lastActivity > TIMEOUT) {
+			buffer = new StringBuffer();
+		}
+
+		if (!symbol.equals(lastSymbol) || (now - lastActivity > SILENCE)) {
+			buffer.append(symbol);
+			lastActivity = now;
+			lastSymbol = symbol;
+			String digits = buffer.toString();
+			if (digits.matches(mask)) {
+				// send event;
+				if (logger.isDebugEnabled()) {
+					logger.debug("Send DTMF event: " + digits);
+				}
+				
+				System.out.println("Send DTMF event: " + digits);
+
+//				DtmfEvent evt = new DtmfEvent(digits);
+//				super.sendEvent(evt);
+
+				buffer = new StringBuffer();
+			}
+		}
+
+	}
+
 }

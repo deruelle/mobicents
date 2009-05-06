@@ -1,0 +1,162 @@
+package org.mobicents.media.server.impl.events.dtmf;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mobicents.media.server.EndpointImpl;
+import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.NotificationListener;
+import org.mobicents.media.server.spi.Timer;
+import org.mobicents.media.server.spi.events.NotifyEvent;
+
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
+public class Rfc2833DetectorTest {
+
+	private volatile boolean receivedEvent = false;
+	Timer timer = null;
+	Endpoint endpoint = null;
+	Rfc2833Generator generator = null;
+	Rfc2833Detector detector = null;
+
+	private Semaphore semaphore;
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
+
+	@Before
+	public void setUp() {
+		semaphore = new Semaphore(0);
+
+		timer = new TimerImpl();
+
+		endpoint = new EndpointImpl();
+		endpoint.setTimer(timer);
+
+		generator = new Rfc2833Generator("Rfc2833DetectorTest");
+		generator.setDuraion(100); // 100 ms
+		generator.setVolume(10);
+		generator.setEndpoint(endpoint);
+
+		detector = new Rfc2833Detector("Rfc2833DetectorTest");
+
+	}
+
+	@After
+	public void tearDown() {
+
+	}
+
+	@Test
+	public void testDTMF0() throws InterruptedException {
+
+		generator.setDigit("0");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF1() throws InterruptedException {
+
+		generator.setDigit("1");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_1);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+	
+	@Test
+	public void testDTMF2() throws InterruptedException {
+
+		generator.setDigit("2");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_2);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+	
+	@Test
+	public void testDTMF3() throws InterruptedException {
+
+		generator.setDigit("3");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_3);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMFA() throws InterruptedException {
+
+		generator.setDigit("A");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_A);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	private class DTMFListener implements NotificationListener {
+		int eventId = 0;
+
+		public DTMFListener(int eventId) {
+			this.eventId = eventId;
+		}
+
+		public void update(NotifyEvent event) {
+			if (event.getEventID() == eventId) {
+				receivedEvent = true;
+				semaphore.release();
+			}
+		}
+
+	}
+
+}

@@ -28,13 +28,13 @@
 package org.mobicents.media.server.impl.enp.cnf;
 
 import java.io.Serializable;
+
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.MediaResource;
 import org.mobicents.media.server.impl.dsp.Processor;
-import org.mobicents.media.server.impl.events.dtmf.DtmfDetector;
+import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.spi.NotificationListener;
 
 /**
@@ -56,7 +56,7 @@ public class RxChannel implements Serializable {
     private final static Format f2[] = new Format[]{LINEAR_AUDIO, DTMF};
     
     private transient Processor dsp;
-    private DtmfDetector dtmfDet;
+   // private DtmfDetector dtmfDet;
     protected Demultiplexer demux;
     
     private boolean active;
@@ -69,8 +69,8 @@ public class RxChannel implements Serializable {
         dsp.getOutput().connect(demux.getInput());
         dsp.configure(f1, f2);
         
-        dtmfDet = new DtmfDetector("");
-        dtmfDet.connect(demux);
+//        dtmfDet = new DtmfDetector("");
+//        dtmfDet.connect(demux);
         //demux.connect(dtmfDet);
     }
     
@@ -99,17 +99,17 @@ public class RxChannel implements Serializable {
     }
     
     public void addListener(NotificationListener listener) {
-        dtmfDet.addListener(listener);
+        //dtmfDet.addListener(listener);
     }
     
     public void removeListener(NotificationListener listener) {
-        dtmfDet.removeListener(listener);
+        //dtmfDet.removeListener(listener);
     }
     
     public MediaSink getMediaSink(MediaResource id) {
-        if (id == MediaResource.DTMF_DETECTOR) {
-            return dtmfDet;
-        }
+//        if (id == MediaResource.DTMF_DETECTOR) {
+//            return dtmfDet;
+//        }
         return null;
     }
     

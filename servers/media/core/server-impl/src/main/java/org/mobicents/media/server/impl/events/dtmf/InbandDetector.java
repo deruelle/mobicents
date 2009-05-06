@@ -36,7 +36,7 @@ import org.mobicents.media.server.impl.AbstractSink;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class InbandDetector extends AbstractSink {
+public class InbandDetector extends DtmfBuffer {
 
 	private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
 			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
@@ -53,7 +53,6 @@ public class InbandDetector extends AbstractSink {
 	private int offset = 0;
 
 	private boolean started = false;
-	private DtmfDetector detector;
 
 	private int N = 16 * TONE_DURATION / 2;
 	private double scale = (double) TONE_DURATION / (double) 1000;
@@ -67,9 +66,8 @@ public class InbandDetector extends AbstractSink {
 	/**
 	 * Creates new instance of Detector.
 	 */
-	public InbandDetector(DtmfDetector detector) {
-		super("InbandDetector " + detector.name);
-		this.detector = detector;
+	public InbandDetector(String name) {
+		super(name);
 		localBuffer = new byte[16 * TONE_DURATION];
 
 		// hamming window
@@ -135,7 +133,7 @@ public class InbandDetector extends AbstractSink {
 
 				String tone = getTone(p, P);
 				if (tone != null) {
-					detector.digitBuffer.push(tone);
+					super.push(tone);
 				}
 			}
 		} finally {
@@ -159,7 +157,7 @@ public class InbandDetector extends AbstractSink {
 		double d1 = 0.0;
 		double d2 = 0.0;
 		double y = 0;
-		
+
 		for (int j = 0; j < freq.length; j++) {
 
 			double f = freq[j];
@@ -196,12 +194,12 @@ public class InbandDetector extends AbstractSink {
 
 		double x = n * 0.25;
 		double a = 0.0;
-		
+
 		// The loop shows how many iteration it took to get the Sq Root. The
 		// lesser the iteration the fast is calculation and less is CPU. This
 		// depends on approximation 'x' above. If this can some how be close to
 		// Sq Root value the iteration can be reduced greatly
-		
+
 		// int loop = 0;
 
 		do {
