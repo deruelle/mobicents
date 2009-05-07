@@ -94,7 +94,7 @@ public class Rfc2833DetectorTest {
 		assertEquals(true, receivedEvent);
 
 	}
-	
+
 	@Test
 	public void testDTMF2() throws InterruptedException {
 
@@ -110,7 +110,7 @@ public class Rfc2833DetectorTest {
 		assertEquals(true, receivedEvent);
 
 	}
-	
+
 	@Test
 	public void testDTMF3() throws InterruptedException {
 
@@ -128,11 +128,155 @@ public class Rfc2833DetectorTest {
 	}
 
 	@Test
+	public void testDTMF4() throws InterruptedException {
+
+		generator.setDigit("4");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_4);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF5() throws InterruptedException {
+
+		generator.setDigit("5");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_5);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF6() throws InterruptedException {
+
+		generator.setDigit("6");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_6);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF7() throws InterruptedException {
+
+		generator.setDigit("7");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_7);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF8() throws InterruptedException {
+
+		generator.setDigit("8");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_8);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF9() throws InterruptedException {
+
+		generator.setDigit("9");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_9);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
 	public void testDTMFA() throws InterruptedException {
 
 		generator.setDigit("A");
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_A);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMFB() throws InterruptedException {
+
+		generator.setDigit("B");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_B);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMFC() throws InterruptedException {
+
+		generator.setDigit("C");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_C);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMFD() throws InterruptedException {
+
+		generator.setDigit("D");
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_D);
 		detector.addListener(listener);
 		detector.connect(generator);
 
