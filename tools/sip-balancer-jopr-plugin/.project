@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>sip-balancer-jopr-plugin</name>
-  <comment/>
+  <comment>A plugin for managing Mobicents Sip Balancers</comment>
   <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
-      <arguments/>
     </buildCommand>
   </buildSpec>
   <natures>

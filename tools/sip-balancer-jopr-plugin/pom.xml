@@ -4,7 +4,7 @@
 	<parent>
         <artifactId>mobicents</artifactId>
         <groupId>org.mobicents</groupId>
-        <version>9</version>
+        <version>10</version>
     </parent>
 	<groupId>org.mobicents.tools</groupId>
 	<artifactId>sip-balancer-jopr-plugin</artifactId>
@@ -45,8 +45,8 @@
 	</repositories>
 	
 	<properties>
-		<jopr-version>2.1.2.GA</jopr-version>
-		<rhq-version>1.1.2.GA</rhq-version>
+		<jopr-version>2.2.0.GA</jopr-version>
+		<rhq-version>1.2.0.GA</rhq-version>
 	</properties>
 	
 	<dependencies>
