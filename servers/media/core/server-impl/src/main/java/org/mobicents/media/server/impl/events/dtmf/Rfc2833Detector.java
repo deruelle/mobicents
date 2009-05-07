@@ -19,18 +19,19 @@ import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.rtp.RtpHeader;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class Rfc2833Detector extends AbstractSink { 
+public class Rfc2833Detector extends AbstractSink {
 
 	public final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
 	public final static Format[] FORMATS = new Format[] { DTMF };
 
-	public final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#",
-			"A", "B", "C", "D" };
+	public final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A",
+			"B", "C", "D" };
 
 	private String mask = "[0-9, A,B,C,D,*,#]";
 
@@ -48,7 +49,8 @@ public class Rfc2833Detector extends AbstractSink {
 
 	public void receive(Buffer buffer) {
 		try {
-			if (buffer.getMarker()) {
+			RtpHeader rtpHeader = (RtpHeader) buffer.getHeader();
+			if (rtpHeader.getMarker()) {
 				byte[] data = (byte[]) buffer.getData();
 
 				String digit = TONE[data[0]];

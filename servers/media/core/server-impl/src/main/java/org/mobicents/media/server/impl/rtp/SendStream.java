@@ -34,89 +34,100 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class SendStream extends AbstractSink {
 
-    //payload type
-    private int pt = 0;
-    //sequence number
-    private int seq = 0;
-    //source synchronization
-    private final long ssrc = System.currentTimeMillis();
-    //packetizer
-    //private Packetizer packetizer;
-    private RtpPacketizer packetizer;
-    //the amount of ticks in one milliseconds
-    int ticks;
-    protected Format[] formats;
-    private RtpSocket rtpSocket;
-    private RtpHeader header = new RtpHeader();
+	// payload type
+	private int pt = 0;
+	// sequence number
+	private int seq = 0;
+	// source synchronization
+	private final long ssrc = System.currentTimeMillis();
+	// packetizer
+	// private Packetizer packetizer;
+	private RtpPacketizer packetizer;
+	// the amount of ticks in one milliseconds
+	int ticks;
+	protected Format[] formats;
+	private RtpSocket rtpSocket;
+	private RtpHeader header = new RtpHeader();
 
-    private int payloadType;
-    private Format format;
-    
-    public SendStream(RtpSocket rtpSocket) {
-        super("SendStream");
-        this.rtpSocket = rtpSocket;
-        packetizer = new RtpPacketizer();
-    }
+	private int payloadType;
+	private Format format;
 
-    private int getPayloadType(Format fmt) {
-        if (format != null && fmt.equals(format)) {
-            return payloadType;
-        }
-        
-        payloadType = rtpSocket.getPayloadType(fmt);
-        format = fmt;
-        
-        return payloadType;
-    }
-    
-    public void receive(Buffer buffer) {
-        if (buffer.getFlags() != Buffer.FLAG_SYSTEM_TIME) {
-            packetizer.process(buffer, rtpSocket.timer.getHeartBeat());
+	public SendStream(RtpSocket rtpSocket) {
+		super("SendStream");
+		this.rtpSocket = rtpSocket;
+		packetizer = new RtpPacketizer();
+	}
 
-            AudioFormat fmt = (AudioFormat) buffer.getFormat();
-            pt = getPayloadType(fmt);
+	private int getPayloadType(Format fmt) {
+		if (format != null && fmt.equals(format)) {
+			return payloadType;
+		}
 
-            header.init(buffer.getMarker(), (byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
-            buffer.setHeader(header);
-        }
-        
-        boolean error=false;
-        
-        try {
-            rtpSocket.send(buffer);
-        } catch (IOException e) {
-        } finally {
-            buffer.dispose();
-        }
-    }
+		payloadType = rtpSocket.getPayloadType(fmt);
+		format = fmt;
 
-    /**
-     * (Non Java-doc.)
-     * 
-     * @see org.mobicents.media.MediaSink.isAcceptable(Format).
-     */
-    public boolean isAcceptable(Format fmt) {
-        boolean res = false;
-        for (Format f : formats) {
-            if (f.matches(fmt)) {
-                res = true;
-                break;
-            }
-        }
-        return res;
-    }
+		return payloadType;
+	}
 
-    public Format[] getFormats() {
-        return formats;
-    }
+	public void receive(Buffer buffer) {
+		if (buffer.getFlags() != Buffer.FLAG_SYSTEM_TIME) {
+			packetizer.process(buffer, rtpSocket.timer.getHeartBeat());
 
-    public void setFormats(Collection<Format> fmts) {
-        formats = new Format[fmts.size()];
-        fmts.toArray(formats);
-    }
+			AudioFormat fmt = (AudioFormat) buffer.getFormat();
+			pt = getPayloadType(fmt);
+
+			boolean marker = false;
+			try {
+				Object obj = buffer.getHeader();
+				if (obj != null) {
+					RtpHeader rtpHeader = (RtpHeader) obj;
+					marker = rtpHeader.getMarker();
+				}
+			} catch (Exception e) {
+				//ignore
+			}
+
+			header.init(marker, (byte) pt, seq++, (int) buffer.getTimeStamp(), ssrc);
+			buffer.setHeader(header);
+		}
+
+		boolean error = false;
+
+		try {
+			rtpSocket.send(buffer);
+		} catch (IOException e) {
+		} finally {
+			buffer.dispose();
+		}
+	}
+
+	/**
+	 * (Non Java-doc.)
+	 * 
+	 * @see org.mobicents.media.MediaSink.isAcceptable(Format).
+	 */
+	public boolean isAcceptable(Format fmt) {
+		boolean res = false;
+		for (Format f : formats) {
+			if (f.matches(fmt)) {
+				res = true;
+				break;
+			}
+		}
+		return res;
+	}
+
+	public Format[] getFormats() {
+		return formats;
+	}
+
+	public void setFormats(Collection<Format> fmts) {
+		formats = new Format[fmts.size()];
+		fmts.toArray(formats);
+	}
 }

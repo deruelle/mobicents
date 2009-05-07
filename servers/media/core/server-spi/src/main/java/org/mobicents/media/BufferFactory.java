@@ -58,6 +58,7 @@ public class BufferFactory implements Serializable {
 		if (list.size() < size && buffer != null && buffer.getData() != null) {
 			buffer.setOffset(0);
 			buffer.setLength(0);
+			buffer.setHeader(null);
 			list.add(buffer);
 		}
 	}

@@ -78,7 +78,7 @@ public class RtpHeader implements Serializable {
 
 		ssrc = p | q | r | s;
 	}
-	
+
 	public void init(boolean marker, byte payloadType, int seqNumber, int timestamp, long ssrc) {
 		this.payloadType = payloadType;
 		this.seqNumber = seqNumber;
@@ -87,9 +87,9 @@ public class RtpHeader implements Serializable {
 		this.marker = marker;
 
 		bin[0] = (byte) (0x80);
-		
-		bin[1] = marker ? (byte) (payloadType | 0x80) : (byte) (payloadType & 0x7f);		
-		//bin[1] = (payloadType);
+
+		bin[1] = marker ? (byte) (payloadType | 0x80) : (byte) (payloadType & 0x7f);
+		// bin[1] = (payloadType);
 		bin[2] = ((byte) ((seqNumber & 0xFF00) >> 8));
 		bin[3] = ((byte) (seqNumber & 0x00FF));
 
@@ -144,5 +144,9 @@ public class RtpHeader implements Serializable {
 
 	public boolean getMarker() {
 		return this.marker;
+	}
+
+	public void setMarker(boolean marker) {
+		this.marker = marker;
 	}
 }

@@ -19,8 +19,8 @@ public class Buffer implements Serializable {
     protected long duration = -1L;
     protected Format format;
     protected int flags = 0;
-    protected Object data;
-    protected Object header;
+    protected Object data = null;
+    protected Object header = null;
     protected int length = 0;
     protected int offset = 0;
     protected BufferFactory factory;
@@ -45,7 +45,6 @@ public class Buffer implements Serializable {
     public static final long TIME_UNKNOWN = -1;
     public static final long SEQUENCE_UNKNOWN = Long.MAX_VALUE - 1;
     
-    private boolean marker = false;
 
     
     
@@ -56,15 +55,7 @@ public class Buffer implements Serializable {
     public void setFactory(BufferFactory factory) {
         this.factory = factory;
     }
-    
-    public boolean getMarker(){
-    	return this.marker;
-    }
-    
-    public void setmarker(boolean marker){
-    	this.marker = marker;
-    }
-        
+            
     public Format getFormat() {
         return format;
     }

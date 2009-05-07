@@ -9,6 +9,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.RtpHeader;
 
 /**
  * 
@@ -16,7 +17,7 @@ import org.mobicents.media.server.impl.AbstractSource;
  * @author amit bhayani
  */
 public class Rfc2833Generator extends AbstractSource implements Runnable {
-	
+
 	private BufferFactory bufferFactory = null;
 
 	private byte digit;
@@ -30,6 +31,8 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
 	private int seq = 0;
 
 	private int mediaPackets = 0;
+
+	private RtpHeader rtpHeader = new RtpHeader();
 
 	public Rfc2833Generator(String name) {
 		super(name);
@@ -119,8 +122,11 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
 				endOfEvent = true;
 			}
 			Buffer buffer = bufferFactory.allocate();
-			buffer.setmarker(marker);
+
+			rtpHeader.setMarker(marker);
+			buffer.setHeader(rtpHeader);
 			marker = false;
+
 			byte[] data = (byte[]) buffer.getData();
 			data[0] = digit;
 			data[1] = endOfEvent ? (byte) (volume | 0x80) : (byte) (volume & 0x7f);

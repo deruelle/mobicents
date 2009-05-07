@@ -426,7 +426,7 @@ public class RtpSocket implements Runnable {
 			// datagram except RTP header which has 12 bytes in length
 			System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
 			
-			buffer.setmarker(header.getMarker());
+			buffer.setHeader(header);
 			
 			// assign format.
 			// if payload not changed use the already known format
