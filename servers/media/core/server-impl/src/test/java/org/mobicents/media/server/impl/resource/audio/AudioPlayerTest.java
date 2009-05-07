@@ -68,8 +68,8 @@ public class AudioPlayerTest {
 		end_of_media = false;
 		isFormatCorrect = true;
 		isSizeCorrect = true;
-		isCorrectTimestamp = true;
-		isSeqCorrect = true;
+		isCorrectTimestamp = false;
+		isSeqCorrect = false;
 
 		timer = new TimerImpl();
 		endpoint = new EndpointImpl();
@@ -127,14 +127,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_8000_MONO_ALAW() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource(
-				"org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
+		 URL url = AudioPlayerTest.class.getClassLoader().getResource(
+		 "org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_8000_MONO_ALAW("test"));
 		player.start();
@@ -145,13 +147,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_8000_MONO_ULAW() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/8kulaw.wav");
+		 URL url =
+		 AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/8kulaw.wav");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/8kulaw.wav");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/8kulaw.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_8000_MONO_ULAW("test"));
 		player.start();
@@ -162,13 +167,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_Wav_L16_8000() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
+		 URL url =
+		 AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/dtmf-0.wav");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/dtmf-0.wav");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/dtmf-0.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink("test"));
 		player.start();
@@ -179,13 +187,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_L16_44100_MONO() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44m.wav");
+		 URL url =
+		 AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44m.wav");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44m.wav");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44m.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_44100_MONO("test"));
 		player.start();
@@ -196,13 +207,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_L16_44100_STEREO() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44s.wav");
+		 URL url =
+		 AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/gwn44s.wav");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44s.wav");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/gwn44s.wav");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_44100_STEREO("test"));
 		player.start();
@@ -213,13 +227,16 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	@Test
 	public void test_SpeexNB() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/sin8m.spx");
+		 URL url =
+		 AudioPlayerTest.class.getClassLoader().getResource("org/mobicents/media/server/impl/sin8m.spx");
 		// URL url = new URL(
-		// "file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/sin8m.spx");
+		//				"file:///home/abhayani/workarea/mobicents/svn/trunk/servers/media/core/server-impl/src/test/resources/org/mobicents/media/server/impl/sin8m.spx");
 		player.setFile(url.toExternalForm());
 		player.connect(new TestSink_SpeexNB("test"));
 		player.start();
@@ -230,6 +247,8 @@ public class AudioPlayerTest {
 		assertEquals(true, end_of_media);
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
+		assertEquals(true, isCorrectTimestamp);
+		assertEquals(true, isSeqCorrect);
 	}
 
 	private class TestSink_GSM extends AbstractSink {
@@ -255,13 +274,14 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
+
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -290,13 +310,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -325,13 +345,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -360,13 +380,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -395,13 +415,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -430,13 +450,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 
@@ -465,13 +485,13 @@ public class AudioPlayerTest {
 
 				if (lastTick > 0) {
 					isCorrectTimestamp = (buffer.getTimeStamp() - lastTick) == timer.getHeartBeat();
-					lastTick = buffer.getTimeStamp();
 				}
+				lastTick = buffer.getTimeStamp();
 
 				if (lastSeqNo > 0) {
 					isSeqCorrect = (buffer.getSequenceNumber() - lastSeqNo) == 1;
-					lastSeqNo = buffer.getSequenceNumber();
 				}
+				lastSeqNo = buffer.getSequenceNumber();
 			}
 		}
 

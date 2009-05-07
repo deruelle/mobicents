@@ -24,12 +24,12 @@ import org.mobicents.media.server.impl.AbstractSink;
  * 
  * @author Oleg Kulikov
  */
-public class Rfc2833Detector extends AbstractSink {
+public class Rfc2833Detector extends AbstractSink { 
 
-	private final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-	private final static Format[] FORMATS = new Format[] { DTMF };
+	public final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
+	public final static Format[] FORMATS = new Format[] { DTMF };
 
-	private final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#",
+	public final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#",
 			"A", "B", "C", "D" };
 
 	private String mask = "[0-9, A,B,C,D,*,#]";
@@ -52,11 +52,7 @@ public class Rfc2833Detector extends AbstractSink {
 				byte[] data = (byte[]) buffer.getData();
 
 				String digit = TONE[data[0]];
-
-				System.out.println("EOF = " + (data[1] & 0x7f));
-
 				boolean end = (data[1] & 0x80) != 0;
-				System.out.println("end = " + end);
 				if (!end) {
 					this.push(digit);
 				}

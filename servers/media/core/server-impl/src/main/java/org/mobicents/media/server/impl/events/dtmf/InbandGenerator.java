@@ -56,7 +56,8 @@ public class InbandGenerator extends AbstractSource {
         super(name);
     }
     
-/*    public InbandGenerator(String tone, int packetPeriod) {
+    public InbandGenerator(String tone, int packetPeriod) {
+    	 super("InbandGenerator");
         this.packetPeriod = packetPeriod;
         //codec = CodecLocator.getCodec(Codec.LINEAR_AUDIO, Codec.PCMU);
 
@@ -78,7 +79,7 @@ public class InbandGenerator extends AbstractSource {
             data[k++] = (byte) (s >> 8);
         }
     }
-*/
+
     public static void print(byte[] data) {
         System.out.println("--------------------");
         for (int i = 0; i < data.length; i++) {
