@@ -67,11 +67,6 @@ public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 					logger.debug("Send DTMF event: " + digits);
 				}
 
-				System.out.println("Send DTMF event: " + digits);
-
-				// DtmfEvent evt = new DtmfEvent(digits);
-				// super.sendEvent(evt);
-
 				int eventId = 0;
 				if (digits.equals("0")) {
 					eventId = DtmfEvent.DTMF_0;

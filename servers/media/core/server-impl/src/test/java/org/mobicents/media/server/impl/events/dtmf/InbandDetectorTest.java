@@ -1,10 +1,12 @@
 package org.mobicents.media.server.impl.events.dtmf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,9 +22,12 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 /**
  * 
  * @author amit bhayani
- *
+ * 
+ * 
  */
 public class InbandDetectorTest {
+
+	Logger logger = Logger.getLogger(InbandDetectorTest.class);
 
 	private volatile boolean receivedEvent = false;
 	Timer timer = null;
@@ -56,6 +61,7 @@ public class InbandDetectorTest {
 		generator.init();
 
 		detector = new InbandDetector("InbandDetectorTest");
+		detector.init();
 
 	}
 
@@ -65,10 +71,21 @@ public class InbandDetectorTest {
 	}
 
 	@Test
+	public void testInitializeException() {
+		InbandDetector detector1 = new InbandDetector("InbandDetectorTest");
+		try {
+			detector1.connect(generator);
+			fail("IllegalStateException not thrown");
+		} catch (IllegalStateException e) {
+			logger.debug("Expected exception ", e);
+		}
+	}
+
+	@Test
 	public void testDTMF0() throws InterruptedException {
 
 		generator.setDigit("0");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuraion(80); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
 		detector.addListener(listener);
@@ -76,7 +93,7 @@ public class InbandDetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -97,6 +114,36 @@ public class InbandDetectorTest {
 		// experience 3 packets or 60ms of data is enough for detection and
 		// hence we set 20ms here
 		semaphore.tryAcquire(20, TimeUnit.MILLISECONDS);
+		assertEquals(false, receivedEvent);
+
+	}
+
+	/**
+	 * This test will also fail as Detector duration is 120ms while Generator
+	 * duration is just 100ms. Hence all the data sent by Generator is still not
+	 * sufficient by Detector to detect DTMF
+	 * 
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void testDTMF0Fail1() throws InterruptedException {
+
+		generator.setDigit("0");
+		generator.setDuraion(100); // 100 ms
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
+
+		// Duration changed at run-time. The InbandDetector needs to be
+		// initialized again
+		detector.setDuration(120);
+		detector.init();
+
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		semaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
 		assertEquals(false, receivedEvent);
 
 	}
@@ -321,7 +368,7 @@ public class InbandDetectorTest {
 		assertEquals(true, receivedEvent);
 
 	}
-	
+
 	@Test
 	public void testDTMFSTAR() throws InterruptedException {
 
@@ -364,10 +411,8 @@ public class InbandDetectorTest {
 		}
 
 		public void update(NotifyEvent event) {
-			System.out.println(event.getEventID());
 			if (event.getEventID() == eventId) {
 				receivedEvent = true;
-				System.out.println("We set true");
 				semaphore.release();
 			}
 		}

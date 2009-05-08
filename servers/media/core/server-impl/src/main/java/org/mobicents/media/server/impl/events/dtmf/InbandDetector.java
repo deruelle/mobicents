@@ -15,8 +15,9 @@ package org.mobicents.media.server.impl.events.dtmf;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.rtp.RtpHeader;
 
 /**
  * Implements inband DTMF detector.
@@ -45,7 +46,7 @@ public class InbandDetector extends DtmfBuffer {
 	public final static String[][] events = new String[][] { { "1", "2", "3", "A" }, { "4", "5", "6", "B" },
 			{ "7", "8", "9", "C" }, { "*", "0", "#", "D" } };
 	/** DTMF tone duration in milliseconds */
-	private int TONE_DURATION = 50;
+	
 	private double THRESHOLD = 30;
 	private int[] lowFreq = new int[] { 697, 770, 852, 941 };
 	private int[] highFreq = new int[] { 1209, 1336, 1477, 1633 };
@@ -53,10 +54,12 @@ public class InbandDetector extends DtmfBuffer {
 	private int offset = 0;
 
 	private boolean started = false;
+	private volatile boolean initialized = false;
 
+	private int TONE_DURATION = 50;
 	private int N = 16 * TONE_DURATION / 2;
 	private double scale = (double) TONE_DURATION / (double) 1000;
-	private double[] ham = new double[N];
+	private double[] ham = null;
 	private double[] realWLowFreq = new double[lowFreq.length];
 	private double[] imagWLowFreq = new double[lowFreq.length];
 
@@ -68,6 +71,19 @@ public class InbandDetector extends DtmfBuffer {
 	 */
 	public InbandDetector(String name) {
 		super(name);
+
+	}
+
+	/**
+	 * After creating instance of InbandDetector, set the Tone Duratin if its
+	 * not default = 50ms and the initialize it
+	 */
+	public void init() {
+		initialized = true;
+		N = 16 * TONE_DURATION / 2;
+		scale = (double) TONE_DURATION / (double) 1000;
+		ham = new double[N];
+
 		localBuffer = new byte[16 * TONE_DURATION];
 
 		// hamming window
@@ -84,6 +100,7 @@ public class InbandDetector extends DtmfBuffer {
 			realWHighFreq[i] = 2.0 * Math.cos(2.0 * scale * Math.PI * highFreq[i] / N);
 			imagWHighFreq[i] = Math.sin(2.0 * scale * Math.PI * highFreq[i] / N);
 		}
+
 	}
 
 	/**
@@ -104,13 +121,16 @@ public class InbandDetector extends DtmfBuffer {
 		started = false;
 	}
 
+	public void setDuration(int duartion) {
+		this.TONE_DURATION = duartion;
+	}
+
 	/**
 	 * (Non Java-doc).
 	 * 
 	 * @see org.mobicents.media.protocol.BufferTransferHandler.transferData().
 	 */
 	public void receive(Buffer buffer) {
-
 		try {
 			byte[] data = (byte[]) buffer.getData();
 			int len = Math.min(localBuffer.length - offset, data.length);
@@ -288,5 +308,14 @@ public class InbandDetector extends DtmfBuffer {
 
 	public boolean isAcceptable(Format format) {
 		return format.matches(LINEAR);
+	}
+
+	@Override
+	public void connect(MediaSource otherParty) {
+		if (!initialized) {
+			throw new IllegalStateException(
+					"InbandDetector is not initialized. Call init() on InbandDetector instance before calling connect");
+		}
+		super.connect(otherParty);
 	}
 }
