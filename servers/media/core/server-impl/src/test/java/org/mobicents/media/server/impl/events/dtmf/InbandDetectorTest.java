@@ -20,17 +20,17 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
 /**
  * 
  * @author amit bhayani
- * 
+ *
  */
-public class Rfc2833DetectorTest {
+public class InbandDetectorTest {
 
 	private volatile boolean receivedEvent = false;
 	Timer timer = null;
 	Endpoint endpoint = null;
-	Rfc2833Generator generator = null;
-	Rfc2833Detector detector = null;
-
 	private Semaphore semaphore;
+
+	private InbandGenerator generator = null;
+	private InbandDetector detector = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -43,6 +43,7 @@ public class Rfc2833DetectorTest {
 	@Before
 	public void setUp() {
 		receivedEvent = false;
+
 		semaphore = new Semaphore(0);
 
 		timer = new TimerImpl();
@@ -50,12 +51,11 @@ public class Rfc2833DetectorTest {
 		endpoint = new EndpointImpl();
 		endpoint.setTimer(timer);
 
-		generator = new Rfc2833Generator("Rfc2833DetectorTest");
-		generator.setDuraion(100); // 100 ms
-		generator.setVolume(10);
+		generator = new InbandGenerator("InbandDetectorTest");
 		generator.setEndpoint(endpoint);
+		generator.init();
 
-		detector = new Rfc2833Detector("Rfc2833DetectorTest");
+		detector = new InbandDetector("InbandDetectorTest");
 
 	}
 
@@ -68,6 +68,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF0() throws InterruptedException {
 
 		generator.setDigit("0");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
 		detector.addListener(listener);
@@ -75,8 +76,28 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
+
+	}
+
+	@Test
+	public void testDTMF0Fail() throws InterruptedException {
+
+		generator.setDigit("0");
+		generator.setDuraion(100); // 100 ms
+
+		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
+		detector.addListener(listener);
+		detector.connect(generator);
+
+		generator.start();
+
+		// We are setting very less time here. Means detection not yet done. By
+		// experience 3 packets or 60ms of data is enough for detection and
+		// hence we set 20ms here
+		semaphore.tryAcquire(20, TimeUnit.MILLISECONDS);
+		assertEquals(false, receivedEvent);
 
 	}
 
@@ -84,6 +105,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF1() throws InterruptedException {
 
 		generator.setDigit("1");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_1);
 		detector.addListener(listener);
@@ -91,7 +113,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -100,6 +122,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF2() throws InterruptedException {
 
 		generator.setDigit("2");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_2);
 		detector.addListener(listener);
@@ -107,7 +130,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -116,6 +139,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF3() throws InterruptedException {
 
 		generator.setDigit("3");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_3);
 		detector.addListener(listener);
@@ -123,7 +147,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -132,6 +156,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF4() throws InterruptedException {
 
 		generator.setDigit("4");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_4);
 		detector.addListener(listener);
@@ -139,7 +164,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -148,6 +173,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF5() throws InterruptedException {
 
 		generator.setDigit("5");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_5);
 		detector.addListener(listener);
@@ -155,7 +181,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -164,6 +190,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF6() throws InterruptedException {
 
 		generator.setDigit("6");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_6);
 		detector.addListener(listener);
@@ -171,7 +198,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -180,6 +207,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF7() throws InterruptedException {
 
 		generator.setDigit("7");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_7);
 		detector.addListener(listener);
@@ -187,7 +215,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -196,6 +224,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF8() throws InterruptedException {
 
 		generator.setDigit("8");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_8);
 		detector.addListener(listener);
@@ -203,7 +232,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -212,6 +241,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMF9() throws InterruptedException {
 
 		generator.setDigit("9");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_9);
 		detector.addListener(listener);
@@ -219,7 +249,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -228,6 +258,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMFA() throws InterruptedException {
 
 		generator.setDigit("A");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_A);
 		detector.addListener(listener);
@@ -235,7 +266,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -244,6 +275,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMFB() throws InterruptedException {
 
 		generator.setDigit("B");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_B);
 		detector.addListener(listener);
@@ -251,7 +283,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -260,6 +292,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMFC() throws InterruptedException {
 
 		generator.setDigit("C");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_C);
 		detector.addListener(listener);
@@ -267,7 +300,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -276,6 +309,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMFD() throws InterruptedException {
 
 		generator.setDigit("D");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_D);
 		detector.addListener(listener);
@@ -283,7 +317,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -292,6 +326,7 @@ public class Rfc2833DetectorTest {
 	public void testDTMFSTAR() throws InterruptedException {
 
 		generator.setDigit("*");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_STAR);
 		detector.addListener(listener);
@@ -299,15 +334,16 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
-	
+
 	@Test
 	public void testDTMFHASH() throws InterruptedException {
 
 		generator.setDigit("#");
+		generator.setDuraion(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_HASH);
 		detector.addListener(listener);
@@ -315,7 +351,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}
@@ -328,8 +364,10 @@ public class Rfc2833DetectorTest {
 		}
 
 		public void update(NotifyEvent event) {
+			System.out.println(event.getEventID());
 			if (event.getEventID() == eventId) {
 				receivedEvent = true;
+				System.out.println("We set true");
 				semaphore.release();
 			}
 		}

@@ -66,11 +66,52 @@ public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Send DTMF event: " + digits);
 				}
-				
+
 				System.out.println("Send DTMF event: " + digits);
 
-//				DtmfEvent evt = new DtmfEvent(digits);
-//				super.sendEvent(evt);
+				// DtmfEvent evt = new DtmfEvent(digits);
+				// super.sendEvent(evt);
+
+				int eventId = 0;
+				if (digits.equals("0")) {
+					eventId = DtmfEvent.DTMF_0;
+				} else if (digits.equals("1")) {
+					eventId = DtmfEvent.DTMF_1;
+				} else if (digits.equals("2")) {
+					eventId = DtmfEvent.DTMF_2;
+				} else if (digits.equals("3")) {
+					eventId = DtmfEvent.DTMF_3;
+				} else if (digits.equals("4")) {
+					eventId = DtmfEvent.DTMF_4;
+				} else if (digits.equals("5")) {
+					eventId = DtmfEvent.DTMF_5;
+				} else if (digits.equals("6")) {
+					eventId = DtmfEvent.DTMF_6;
+				} else if (digits.equals("7")) {
+					eventId = DtmfEvent.DTMF_7;
+				} else if (digits.equals("8")) {
+					eventId = DtmfEvent.DTMF_8;
+				} else if (digits.equals("9")) {
+					eventId = DtmfEvent.DTMF_9;
+				} else if (digits.equals("A")) {
+					eventId = DtmfEvent.DTMF_A;
+				} else if (digits.equals("B")) {
+					eventId = DtmfEvent.DTMF_B;
+				} else if (digits.equals("C")) {
+					eventId = DtmfEvent.DTMF_C;
+				} else if (digits.equals("D")) {
+					eventId = DtmfEvent.DTMF_D;
+				} else if (symbol.equals("*")) {
+					eventId = DtmfEvent.DTMF_STAR;
+				} else if (symbol.equals("#")) {
+					eventId = DtmfEvent.DTMF_HASH;
+				} else {
+					logger.error("DTMF event " + symbol + " not identified");
+					return;
+				}
+
+				DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), eventId);
+				super.sendEvent(dtmfEvent);
 
 				buffer = new StringBuffer();
 			}

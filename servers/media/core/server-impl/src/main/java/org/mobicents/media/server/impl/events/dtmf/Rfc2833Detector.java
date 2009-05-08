@@ -100,6 +100,10 @@ public class Rfc2833Detector extends AbstractSink {
 				eventId = DtmfEvent.DTMF_C;
 			} else if (symbol.equals("D")) {
 				eventId = DtmfEvent.DTMF_D;
+			} else if (symbol.equals("*")) {
+				eventId = DtmfEvent.DTMF_STAR;
+			} else if (symbol.equals("#")) {
+				eventId = DtmfEvent.DTMF_HASH;
 			} else {
 				logger.error("DTMF event " + symbol + " not identified");
 				return;
