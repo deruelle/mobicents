@@ -24,7 +24,10 @@ import org.mobicents.media.server.impl.AbstractSink;
  */
 public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 	public final static int TIMEOUT = 5000;
-	public final static int SILENCE = 500;
+
+	// Silence is time difference forced between two digits. Default is user 2
+	// digits per sec. Reduce this to suit your requirements
+	public int SILENCE = 500;
 
 	private StringBuffer buffer = new StringBuffer();
 	private String mask = "[0-9, A,B,C,D,*,#]";
@@ -47,6 +50,10 @@ public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 	public void setMask(String mask) {
 		this.buffer = new StringBuffer();
 		this.mask = mask;
+	}
+
+	public void setSilenec(int silence) {
+		this.SILENCE = silence;
 	}
 
 	public void push(String symbol) {
