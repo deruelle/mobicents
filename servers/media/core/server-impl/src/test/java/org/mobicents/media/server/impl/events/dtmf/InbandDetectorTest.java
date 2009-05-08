@@ -98,26 +98,6 @@ public class InbandDetectorTest {
 
 	}
 
-	@Test
-	public void testDTMF0Fail() throws InterruptedException {
-
-		generator.setDigit("0");
-		generator.setDuraion(100); // 100 ms
-
-		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
-		detector.addListener(listener);
-		detector.connect(generator);
-
-		generator.start();
-
-		// We are setting very less time here. Means detection not yet done. By
-		// experience 3 packets or 60ms of data is enough for detection and
-		// hence we set 20ms here
-		semaphore.tryAcquire(20, TimeUnit.MILLISECONDS);
-		assertEquals(false, receivedEvent);
-
-	}
-
 	/**
 	 * This test will also fail as Detector duration is 120ms while Generator
 	 * duration is just 100ms. Hence all the data sent by Generator is still not

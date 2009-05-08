@@ -16,7 +16,7 @@ import org.mobicents.media.server.impl.rtp.RtpHeader;
  * @author kulikov
  * @author amit bhayani
  */
-public class Rfc2833Generator extends AbstractSource implements Runnable {
+public class Rfc2833Generator extends AbstractSource  {
 
 	private BufferFactory bufferFactory = null;
 
@@ -112,7 +112,7 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
 		return Rfc2833Detector.FORMATS;
 	}
 
-	public void run() {
+	private void run() {
 		long timeStamp = System.currentTimeMillis();
 		boolean marker = true;
 		int eventDuration = 160;
@@ -142,6 +142,11 @@ public class Rfc2833Generator extends AbstractSource implements Runnable {
 			buffer.setTimeStamp(timeStamp);
 
 			otherParty.receive(buffer);
+			
+			try {
+				Thread.sleep(20); //sleepfor 20ms
+			} catch (InterruptedException e) {				
+			}
 		}
 	}
 

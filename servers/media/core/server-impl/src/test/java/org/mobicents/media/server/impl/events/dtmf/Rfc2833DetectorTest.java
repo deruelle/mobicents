@@ -75,7 +75,7 @@ public class Rfc2833DetectorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(120, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
 
 	}

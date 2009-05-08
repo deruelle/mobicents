@@ -37,6 +37,7 @@ public class Rfc2833GeneratorTest {
 	private volatile boolean isCorrectTimestamp = false;
 	private volatile boolean isEndEventReceived = false;
 	private volatile boolean isCorrectDigit = false;
+	private volatile boolean isCorrectNoOfPkt = false;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -74,7 +75,7 @@ public class Rfc2833GeneratorTest {
 
 		generator.start();
 
-		semaphore.tryAcquire(5, TimeUnit.MILLISECONDS);
+		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 
 		assertEquals(true, isFormatCorrect);
 		assertEquals(true, isSizeCorrect);
@@ -82,14 +83,19 @@ public class Rfc2833GeneratorTest {
 		assertEquals(true, isSeqCorrect);
 		assertEquals(true, isCorrectTimestamp);
 		assertEquals(true, isEndEventReceived);
+		assertEquals(true, isCorrectDigit);
+		assertEquals(true, isCorrectNoOfPkt);
 
 	}
 
+	//Since duration set is 100, we need to get 7 packets
 	private class TestSink extends AbstractSink {
 
 		private long lastDuration = 0;
 		private long lastSeqNo = 0;
 		private long timeStamp = 0;
+		
+		private int packetsReceived = 0;
 
 		private TestSink(String name) {
 			super(name);
@@ -128,12 +134,18 @@ public class Rfc2833GeneratorTest {
 			
 			if(timeStamp > 0){
 				isCorrectTimestamp = (buffer.getTimeStamp() == timeStamp);
-			}
+			}			
 			timeStamp = buffer.getTimeStamp();
 			
 			isEndEventReceived = ((data[1] & 0x80) != 0);
 			
 			isCorrectDigit = ("9".equals(Rfc2833Detector.TONE[data[0]]));
+			
+			packetsReceived++;
+			if(packetsReceived == 7){
+				isCorrectNoOfPkt = true;
+				semaphore.release();
+			}
 			
 			
 		}
