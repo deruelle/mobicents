@@ -124,4 +124,5 @@ public interface Connection extends Serializable {
     public void removeNotificationListener(NotificationListener listener);
 
     public Component getComponent(int resourceType);
+    public Component getComponent(String name);
 }
