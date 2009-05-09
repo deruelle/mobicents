@@ -40,7 +40,7 @@ import org.mobicents.media.server.spi.resource.AudioPlayer;
  *
  * @author kulikov
  */
-public class AnnouncementTest {
+public class RtpConnectionTest {
 
     private Timer timer;
     private EndpointImpl sender;
@@ -53,7 +53,7 @@ public class AnnouncementTest {
     private RtpFactory rtpFactory;
     
     private Semaphore semaphore;
-    private boolean res;
+    private int count;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -66,7 +66,6 @@ public class AnnouncementTest {
     @Before
     public void setUp() throws Exception {
         semaphore = new Semaphore(0);
-        res = false;
         
         timer = new TimerImpl();
         
@@ -130,7 +129,7 @@ public class AnnouncementTest {
         
         Component c = sender.getComponent("audio.player");
             AudioPlayer player = (AudioPlayer)c;
-        URL url = AnnouncementTest.class.getClassLoader().getResource(
+        URL url = RtpConnectionTest.class.getClassLoader().getResource(
 		 "org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
         player.setURL(url.toExternalForm());
         player.addListener(new PlayerListener());
@@ -138,7 +137,17 @@ public class AnnouncementTest {
 
         System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        boolean res = Math.abs(150-count) < 10;
         assertEquals(true, res);
+        
+        assertEquals(true, receiver.isInUse());
+        assertEquals(true, sender.isInUse());
+        
+        receiver.deleteConnection(rxConnection.getId());
+        sender.deleteConnection(txConnection.getId());
+        
+        assertEquals(false, receiver.isInUse());
+        assertEquals(false, sender.isInUse());
     }
 
     private class PlayerListener implements NotificationListener {
@@ -146,7 +155,6 @@ public class AnnouncementTest {
         public void update(NotifyEvent event) {
             if (event.getEventID() == AudioPlayerEvent.END_OF_MEDIA) {
                 semaphore.release();
-                System.out.println("End of announcement");
             }
         }
         
@@ -175,8 +183,8 @@ public class AnnouncementTest {
         }
 
         public void receive(Buffer buffer) {
-            System.out.println("Receive " + buffer);
-            res = true;
+            System.out.println("Receive buffer " + buffer);
+            count++;
         }
         
     }

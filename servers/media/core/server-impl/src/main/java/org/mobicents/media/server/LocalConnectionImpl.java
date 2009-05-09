@@ -74,7 +74,7 @@ public class LocalConnectionImpl extends ConnectionImpl {
     public void setRemoteDescriptor(String descriptor) throws SdpException, IOException, ResourceUnavailableException {
         
     }
-
+    
     public void setOtherParty(Connection other) throws IOException {
         //hold reference for each other
         this.otherConnection = (LocalConnectionImpl) other;
@@ -92,6 +92,27 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
     }
 
+    @Override
+    protected void close() {
+        if (this.otherConnection == null) {
+            return;
+        }
+        
+        if (txChannel != null && otherConnection.rxChannel != null) {
+            txChannel.disconnect(txInput);
+            otherConnection.rxChannel.disconnect(txOutput);
+        }
+        
+        if (rxChannel != null && otherConnection.txChannel != null) {
+            rxChannel.disconnect(rxOutput);
+            otherConnection.txChannel.disconnect(rxInput);
+        }
+        
+        otherConnection.otherConnection = null;
+        otherConnection = null;
+        super.close();
+    }
+    
     private class Output extends AbstractSource {
 
         public Output(String name) {

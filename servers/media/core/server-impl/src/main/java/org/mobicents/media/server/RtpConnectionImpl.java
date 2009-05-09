@@ -105,7 +105,6 @@ public class RtpConnectionImpl extends ConnectionImpl {
             txChannel = endpoint.createTxChannel(this);
             rxChannel = endpoint.createRxChannel(this);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new ResourceUnavailableException(e);
         }
         
@@ -268,4 +267,25 @@ public class RtpConnectionImpl extends ConnectionImpl {
         md.setAttributes(attributes);
         return md;
     }
+    
+    @Override
+    protected void close() {
+        if (rxChannel != null && getMode() != ConnectionMode.SEND_ONLY) {
+            rxChannel.disconnect(mux.getOutput());
+        }
+
+        if (txChannel != null && getMode() != ConnectionMode.RECV_ONLY) {
+            txChannel.connect(demux.getInput());
+        }
+        
+        Collection<RtpSocket> sockets = rtpSockets.values();
+        for (RtpSocket socket : sockets) {
+            mux.disconnect(socket.getReceiveStream());
+            demux.disconnect(socket.getSendStream());
+            socket.release();
+        }
+        
+        super.close();
+    }
+    
 }

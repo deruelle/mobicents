@@ -123,6 +123,7 @@ public abstract class ConnectionImpl implements Connection {
         
     
     protected void close() {
-        
+       ((EndpointImpl) getEndpoint()).releaseRxChannel(rxChannel);
+       ((EndpointImpl) getEndpoint()).releaseTxChannel(txChannel);
     }
 }

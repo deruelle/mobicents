@@ -6,10 +6,8 @@
 package org.mobicents.media.server;
 
 import java.net.URL;
-import java.util.HashMap;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Hashtable;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
@@ -25,7 +23,6 @@ import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerEvent;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory;
-import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.spi.Connection;
@@ -50,10 +47,10 @@ public class LocalConnectionTest {
     private TestSinkFactory sinkFactory;
     
     private ChannelFactory channelFactory;
-    private RtpFactory rtpFactory;
     
     private Semaphore semaphore;
     private boolean res;
+    private int count;
     
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -70,20 +67,6 @@ public class LocalConnectionTest {
         
         timer = new TimerImpl();
         
-        HashMap<Integer, Format> rtpmap = new HashMap();
-        rtpmap.put(0, AVProfile.PCMA);
-        rtpmap.put(8, AVProfile.PCMU);
-        
-        rtpFactory = new RtpFactory();
-        rtpFactory.setBindAddress("localhost");
-        rtpFactory.setPortRange("1024-65535");
-        rtpFactory.setJitter(60);
-        rtpFactory.setTimer(timer);
-        rtpFactory.setFormatMap(rtpmap);
-        
-        Hashtable<String, RtpFactory> rtpFactories = new Hashtable();
-        rtpFactories.put("audio", rtpFactory);
-        
         playerFactory = new AudioPlayerFactory();
         playerFactory.setName("audio.player");
         
@@ -95,7 +78,6 @@ public class LocalConnectionTest {
         sender = new EndpointImpl("test/announcement/sender");
         sender.setTimer(timer);
         
-        sender.setRtpFactory(rtpFactories);
         sender.setSourceFactory(playerFactory);
         sender.setTxChannelFactory(channelFactory);
         
@@ -104,7 +86,6 @@ public class LocalConnectionTest {
         receiver = new EndpointImpl("test/announcement/receiver");
         receiver.setTimer(timer);
         
-        receiver.setRtpFactory(rtpFactories);
         receiver.setSinkFactory(sinkFactory);
         receiver.setRxChannelFactory(channelFactory);
         
@@ -137,7 +118,17 @@ public class LocalConnectionTest {
 
         System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
-        assertEquals(true, res);
+        assertEquals(150, count);
+        
+        assertEquals(true, receiver.isInUse());
+        assertEquals(true, sender.isInUse());
+        
+        receiver.deleteConnection(rxConnection.getId());
+        sender.deleteConnection(txConnection.getId());
+        
+        assertEquals(false, receiver.isInUse());
+        assertEquals(false, sender.isInUse());
+        
     }
 
     private class PlayerListener implements NotificationListener {
@@ -174,8 +165,7 @@ public class LocalConnectionTest {
         }
 
         public void receive(Buffer buffer) {
-            System.out.println("Receive " + buffer);
-            res = true;
+            count++;
         }
         
     }

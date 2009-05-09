@@ -184,9 +184,11 @@ public class EndpointImpl implements Endpoint {
         } else return null;
     }
 
-    private void dropRxChannel(String media, Channel channel) {
-        channel.disconnect(source);
-        rxChannelFactory.release(channel);
+    protected void releaseRxChannel(Channel channel) {
+        if (channel != null) {
+            channel.disconnect(source);
+            rxChannelFactory.release(channel);
+        }
     }
 
     protected Channel createTxChannel(Connection connection) throws UnknownComponentException {
@@ -198,9 +200,11 @@ public class EndpointImpl implements Endpoint {
         } else return null;
     }
 
-    private void dropTxChannel(String media, Channel channel) {
-        channel.disconnect(source);
-        txChannelFactory.release(channel);
+    protected void releaseTxChannel(Channel channel) {
+        if (channel != null) {
+            channel.disconnect(source);
+            txChannelFactory.release(channel);
+        }
     }
 
 
@@ -209,9 +213,9 @@ public class EndpointImpl implements Endpoint {
         try {
             RtpConnectionImpl connection = new RtpConnectionImpl(this, mode);
             connections.put(connection.getId(), connection);
+            this.isInUse = true;
             return connection;
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("Could not create RTP connection", e);
             throw new ResourceUnavailableException(e.getMessage());
         } finally {
@@ -224,6 +228,7 @@ public class EndpointImpl implements Endpoint {
         try {
             LocalConnectionImpl connection = new LocalConnectionImpl(this, mode);
             connections.put(connection.getId(), connection);
+            this.isInUse = true;
             return connection;
         } catch (Exception e) {
             e.printStackTrace();
@@ -237,7 +242,7 @@ public class EndpointImpl implements Endpoint {
     public void deleteConnection(String connectionID) {
         state.lock();
         try {
-            ConnectionImpl connection = (ConnectionImpl) connections.get(connectionID);
+            ConnectionImpl connection = (ConnectionImpl) connections.remove(connectionID);
             if (connection != null) {
                 connection.close();
                 index.add(connection.getIndex());
