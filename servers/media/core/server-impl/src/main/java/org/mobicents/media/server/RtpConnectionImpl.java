@@ -49,7 +49,6 @@ import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormatParser;
-import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.ConnectionState;
@@ -65,11 +64,10 @@ public class RtpConnectionImpl extends ConnectionImpl {
     private String localDescriptor;
     private String remoteDescriptor;
     private HashMap<String, RtpSocket> rtpSockets = new HashMap<String, RtpSocket>();
-    private Channel txChannel;
-    private Channel rxChannel;
     private Demultiplexer demux;
     private Multiplexer mux;
-
+    private Format[] formats;
+    
     public RtpConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
         sdpFactory = endpoint.getSdpFactory();
@@ -92,30 +90,44 @@ public class RtpConnectionImpl extends ConnectionImpl {
         }
 
         // create demux and join with txChannel
-        demux = new Demultiplexer("Mux[rtpCnnection=" + this.getId() + "]");
+        demux = new Demultiplexer("Demux[rtpCnnection=" + this.getId() + "]");
+        mux = new Multiplexer("Mux[rtpCnnection=" + this.getId() + "]");
         
         // join demux and rtp sockets
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
+            mux.connect(socket.getReceiveStream());
             demux.connect(socket.getSendStream());
         }
 
         //creating tx channel
         try {
             txChannel = endpoint.createTxChannel(this);
+            rxChannel = endpoint.createRxChannel(this);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResourceUnavailableException(e);
         }
         
         //connect tx channel with Demultiplexer Input
         //and demux will split data between rtp sockets
-        Format[] fmts = txChannel.connect(demux.getInput());
+        Format[] rxFormats = null;
+        if (rxChannel != null && mode != ConnectionMode.SEND_ONLY) {
+            rxFormats = rxChannel.connect(mux.getOutput());
+        }
 
-
+        Format[] txFormats = null;
+        if (txChannel != null && mode != ConnectionMode.RECV_ONLY) {
+            txFormats = txChannel.connect(demux.getInput());
+        }
+        
+        formats = rxFormats != null? rxFormats : txFormats;
         // when demux already connected to channel
         // all supported formats are known and we can generate
         // local descriptor and update rtp map
-        createLocalDescriptor(fmts);
+                
+        createLocalDescriptor(formats);
+        setState(ConnectionState.HALF_OPEN);
     }
 
     private String createLocalDescriptor(Format[] supported) {
@@ -151,6 +163,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
                 int port = rtpSocket.getLocalPort();
                 descriptions.add(createMediaDescription(mediaType, port, subset));
             }
+            sdp.setMediaDescriptions(descriptions);
         } catch (SdpException e) {
         }
         localDescriptor = sdp.toString();
@@ -174,17 +187,10 @@ public class RtpConnectionImpl extends ConnectionImpl {
             throw new IllegalStateException("State is " + getState());
         }
 
-        try {
-            rxChannel = ((EndpointImpl)getEndpoint()).createRxChannel(this);
-        } catch (Exception e) {
-            throw new ResourceUnavailableException(e);
-        }
-        
         SessionDescription sdp = sdpFactory.createSessionDescription(descriptor);
 
         // add peer to RTP socket
-        mux = new Multiplexer("MUX-" + this.getId());
-        Format[] supported = rxChannel.connect(mux.getOutput());
+        Format[] supported = formats;
         
         InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
 
@@ -203,8 +209,14 @@ public class RtpConnectionImpl extends ConnectionImpl {
             int port = md.getMedia().getMediaPort();
             rtpSocket.setPeer(address, port);
             updateRtpMap(rtpSocket, subset);
+            
             rtpSocket.getReceiveStream().connect(mux);
+            rtpSocket.getReceiveStream().start();
         }
+        
+        demux.start();
+        mux.getOutput().start();
+        
         setState(ConnectionState.OPEN);
     }
 
@@ -235,8 +247,9 @@ public class RtpConnectionImpl extends ConnectionImpl {
     }
 
     private void updateRtpMap(RtpSocket rtpSocket, HashMap<Integer, Format> offer) {
-        rtpSocket.getRtpMap().clear();
-        rtpSocket.getRtpMap().putAll(offer);
+        //rtpSocket.getRtpMap().clear();
+        //rtpSocket.getRtpMap().putAll(offer);
+        rtpSocket.setRtpMap(offer);
     }
 
     private MediaDescription createMediaDescription(String mediaType, int port, HashMap<Integer, Format> formats)

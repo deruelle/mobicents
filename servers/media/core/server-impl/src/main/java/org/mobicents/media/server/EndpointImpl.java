@@ -59,6 +59,7 @@ public class EndpointImpl implements Endpoint {
     private boolean isInUse = false;
     private Timer timer;
     private ComponentFactory sourceFactory;
+    private ComponentFactory sinkFactory;
     
     private ChannelFactory rxChannelFactory;
     private ChannelFactory txChannelFactory;
@@ -107,7 +108,13 @@ public class EndpointImpl implements Endpoint {
     }
 
     public void start() throws ResourceUnavailableException {
-        source = (MediaSource) sourceFactory.newInstance(this);
+        if (sourceFactory != null) {
+            source = (MediaSource) sourceFactory.newInstance(this);
+        }
+        if (sinkFactory != null) {
+            sink = (MediaSink) sinkFactory.newInstance(this);
+        }
+        
         logger.info("Started " + localName);
     }
 
@@ -133,6 +140,14 @@ public class EndpointImpl implements Endpoint {
 
     public ComponentFactory getSourceFactory() {
         return sourceFactory;
+    }
+
+    public void setSinkFactory(ComponentFactory sinkFactory) {
+        this.sinkFactory = sinkFactory;
+    }
+
+    public ComponentFactory getSinkFactory() {
+        return sinkFactory;
     }
 
     public ChannelFactory getRxChannelFactory() {
@@ -161,10 +176,12 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected Channel createRxChannel(Connection connection) throws UnknownComponentException {
-        Channel rxChannel = rxChannelFactory.newInstance(this);
-        rxChannel.setConnection(connection);
-        rxChannel.connect(sink);
-        return rxChannel;
+        if (rxChannelFactory != null) {
+            Channel rxChannel = rxChannelFactory.newInstance(this);
+            rxChannel.setConnection(connection);
+            rxChannel.connect(sink);
+            return rxChannel;
+        } else return null;
     }
 
     private void dropRxChannel(String media, Channel channel) {
@@ -173,10 +190,12 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected Channel createTxChannel(Connection connection) throws UnknownComponentException {
-        Channel txChannel = txChannelFactory.newInstance(this);
-        txChannel.setConnection(connection);
-        txChannel.connect(source);
-        return txChannel;
+        if (txChannelFactory != null) {
+            Channel txChannel = txChannelFactory.newInstance(this);
+            txChannel.setConnection(connection);
+            txChannel.connect(source);
+            return txChannel;
+        } else return null;
     }
 
     private void dropTxChannel(String media, Channel channel) {
@@ -192,6 +211,7 @@ public class EndpointImpl implements Endpoint {
             connections.put(connection.getId(), connection);
             return connection;
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("Could not create RTP connection", e);
             throw new ResourceUnavailableException(e.getMessage());
         } finally {
@@ -272,6 +292,15 @@ public class EndpointImpl implements Endpoint {
         return connections.get(connectionID);
     }
 
+    public Component getComponent(String name) {
+        if (source != null && source.getName().matches(name)) {
+            return source;
+        } else if (sink != null && sink.getName().matches(name)) {
+            return sink;
+        } 
+        return null;
+    }
+    
     public Component getComponent(int resourceID) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

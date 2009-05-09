@@ -212,6 +212,12 @@ public class ChannelFactory {
      */
     public void start() throws Exception {        
         started = true;
+        if (factories == null) {
+            factories = new ArrayList();
+        }
+        if (pipes == null) {
+            pipes = new ArrayList();
+        }
         logger.info("Started, core size = " + coreSize);
     }
     

@@ -31,6 +31,7 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.resource.AudioPlayer;
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.xiph.speex.spi.SpeexEncoding;
 
@@ -38,7 +39,7 @@ import org.xiph.speex.spi.SpeexEncoding;
  * 
  * @author Oleg Kulikov
  */
-public class AudioPlayer extends AbstractSource implements Runnable {
+public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runnable {
 	private final static int MAX_ERRORS = 5;
 	/** supported formats definition */
 	private final static Format[] formats = new Format[] { AVProfile.L16_MONO, AVProfile.L16_STEREO, AVProfile.PCMA,
@@ -66,9 +67,9 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 	private int errorCount;
 	private BufferFactory bufferFactory = null;
 
-	private static transient Logger logger = Logger.getLogger(AudioPlayer.class);
+	private static transient Logger logger = Logger.getLogger(AudioPlayerImpl.class);
 
-	public AudioPlayer(String name) {
+	public AudioPlayerImpl(String name) {
 		super(name);
 		bufferFactory = new BufferFactory(10, name, 3528);
 	}
@@ -318,5 +319,13 @@ public class AudioPlayer extends AbstractSource implements Runnable {
 	public void run() {
 		doProcess1();
 	}
+
+    public void setURL(String url) {
+        setFile(url);
+    }
+
+    public String getURL() {
+        return null;
+    }
 
 }

@@ -24,7 +24,7 @@ public class AudioPlayerEvent implements NotifyEvent {
     private int resourceType;
     private int eventID;
 
-    public AudioPlayerEvent(AudioPlayer player, int eventID) {
+    public AudioPlayerEvent(AudioPlayerImpl player, int eventID) {
         this.endpoint = player.getEndpoint();
         this.connection = player.getConnection();
         this.resourceType = player.getResourceType();

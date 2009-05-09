@@ -47,7 +47,7 @@ public class AudioPlayerTest {
 
 	private final static Format[] formats = new Format[] { AVProfile.L16_MONO, AVProfile.L16_STEREO, AVProfile.PCMA,
 			AVProfile.PCMU, AVProfile.SPEEX, AVProfile.GSM, Codec.LINEAR_AUDIO };
-	private AudioPlayer player;
+	private AudioPlayerImpl player;
 
 	public AudioPlayerTest() {
 	}
@@ -74,7 +74,7 @@ public class AudioPlayerTest {
 		timer = new TimerImpl();
 		endpoint = new EndpointImpl();
 		endpoint.setTimer(timer);
-		player = new AudioPlayer("test");
+		player = new AudioPlayerImpl("test");
 		player.setEndpoint(endpoint);
 		player.setResourceType(10);
 		player.addListener(new PlayerListener());

@@ -7,6 +7,7 @@ package org.mobicents.media.server;
 
 import org.jboss.util.id.UID;
 import org.mobicents.media.Component;
+import org.mobicents.media.server.resource.Channel;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionListener;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -26,6 +27,9 @@ public abstract class ConnectionImpl implements Connection {
     private EndpointImpl endpoint;
     private ConnectionState state = ConnectionState.NULL;
     private ConnectionMode mode;
+    
+    protected Channel txChannel;
+    protected Channel rxChannel;
     
     public ConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) {
         this.id = genID();
@@ -90,6 +94,23 @@ public abstract class ConnectionImpl implements Connection {
 
     public Component getComponent(int resourceID) {
         return null;
+    }
+    
+    public Component getComponent(String name) {
+        Component c = null;
+        if (rxChannel != null) {
+            c = rxChannel.getComponent(name);
+        }
+        
+        if (c != null) {
+            return c;
+        }
+        
+        if (txChannel != null) {
+            c = txChannel.getComponent(name);
+        }
+        
+        return c;
     }
     
     public void addNotificationListener(NotificationListener listener) {

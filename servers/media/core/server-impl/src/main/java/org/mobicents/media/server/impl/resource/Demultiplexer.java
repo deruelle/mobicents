@@ -133,6 +133,7 @@ public class Demultiplexer extends AbstractSource {
                     buffer.dispose();
                 }
             } catch (NullPointerException e) {
+                System.out.println("Error delivery");
             }
         }
 

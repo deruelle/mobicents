@@ -249,6 +249,18 @@ public class Channel {
         this.source = null;
     }
 
+    public Component getComponent(String name) {
+        if (sources.containsKey(name)) {
+            return sources.get(name);
+        } else if (sinks.containsKey(name)) {
+            return sinks.get(name);
+        } else if (inlets.containsKey(name)) {
+            return inlets.get(name);
+        } else {
+            return outlets.get(name);
+        }
+    }
+    
     public Component getComponent(int resourceType) {
         Collection<MediaSource> list = sources.values();        
         for (MediaSource s : list) {
