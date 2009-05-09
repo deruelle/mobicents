@@ -220,7 +220,18 @@ public class EndpointImpl implements Endpoint {
     }
 
     public Connection createLocalConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        state.lock();
+        try {
+            LocalConnectionImpl connection = new LocalConnectionImpl(this, mode);
+            connections.put(connection.getId(), connection);
+            return connection;
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Could not create RTP connection", e);
+            throw new ResourceUnavailableException(e.getMessage());
+        } finally {
+            state.unlock();
+        }
     }
 
     public void deleteConnection(String connectionID) {
