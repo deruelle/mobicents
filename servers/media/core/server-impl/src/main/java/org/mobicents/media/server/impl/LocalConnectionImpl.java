@@ -266,6 +266,10 @@ public class LocalConnectionImpl extends BaseConnection {
     public Component getComponent(int resourceType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public Component getComponent(String name) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }
 
 
