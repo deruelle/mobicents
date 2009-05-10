@@ -42,10 +42,6 @@ public class PlayAnnouncementFactory implements GeneratorFactory {
     private int resourceID;
     private int eventID;
     
-    public PlayAnnouncement getSignal(String param) {
-        return null;
-    }
-
     public String getEventName() {
         return name;
     }

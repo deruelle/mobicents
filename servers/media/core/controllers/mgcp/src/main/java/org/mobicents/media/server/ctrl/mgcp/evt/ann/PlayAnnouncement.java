@@ -55,7 +55,8 @@ public class PlayAnnouncement extends SignalGenerator {
 
     @Override
     protected boolean doVerify(Endpoint endpoint) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        audioPlayer = (AudioPlayer)endpoint.getComponent(getResourceID());
+        return audioPlayer != null;
     }
 
     @Override
