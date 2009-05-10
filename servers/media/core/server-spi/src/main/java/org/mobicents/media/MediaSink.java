@@ -14,7 +14,6 @@
 
 package org.mobicents.media;
 
-import org.mobicents.media.server.spi.NotificationListener;
 
 /**
  * Implements the media consumer.
