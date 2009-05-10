@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.sdp.SdpFactory;
 
 import org.apache.log4j.Logger;
+import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
@@ -417,6 +418,10 @@ public abstract class BaseEndpoint implements Endpoint {
         }
     }
 
+    public Component getComponent(String name) {
+        return null;
+    }
+    
     /**
      * (Non Java-doc).
      * 
