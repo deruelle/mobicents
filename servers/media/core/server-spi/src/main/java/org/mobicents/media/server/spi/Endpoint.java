@@ -102,6 +102,7 @@ public interface Endpoint extends Serializable {
     
     public Connection getConnection(String connectionID);
     public Component getComponent(int resourceID);
+    public Component getComponent(String resourceName);
     
     /**
      * Shows is this endpoint in use
