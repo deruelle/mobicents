@@ -63,7 +63,9 @@ public class RtpFactoryTest {
 
 	@After
 	public void tearDown() {
-		factory.stop();
+		// Dont close the Factory as it will stop the RtpSocket.readerThread and
+		// RtpSocketTest will be screwed
+		// factory.stop();
 	}
 
 	@Test
@@ -87,7 +89,7 @@ public class RtpFactoryTest {
 			try {
 				RtpSocket rtpSocket1 = factory.getRTPSocket();
 				fail("RtpSocket shouldn't have been created at first place");
-			} catch (SocketException s) {				
+			} catch (SocketException s) {
 				// expected
 			}
 
