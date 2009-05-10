@@ -39,7 +39,7 @@ public class PlayAnnouncementFactory implements GeneratorFactory {
     private String name;
     private String packageName;
     
-    private int resourceID;
+    private String resourceName;
     private int eventID;
     
     public String getEventName() {
@@ -58,12 +58,12 @@ public class PlayAnnouncementFactory implements GeneratorFactory {
         this.packageName = packageName;
     }
 
-    public Integer getResourceID() {
-        return resourceID;
+    public String getResourceName() {
+        return resourceName;
     }
     
-    public void setResourceID(Integer resourceID) {
-        this.resourceID = resourceID;
+    public void setResourceID(String resourceName) {
+        this.resourceName = resourceName;
     }
     
     public int getEventID() {
@@ -75,7 +75,7 @@ public class PlayAnnouncementFactory implements GeneratorFactory {
     }
     
     public SignalGenerator getInstance(MgcpController controller, String parms) {
-        return new PlayAnnouncement(resourceID, parms);
+        return new PlayAnnouncement(resourceName, parms);
     }
 
 }

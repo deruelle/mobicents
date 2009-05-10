@@ -42,20 +42,20 @@ public class PlayAnnouncement extends SignalGenerator {
     private AudioPlayer audioPlayer;
     private String url;
     
-    public PlayAnnouncement(int resourceID, String params) {
-        super(resourceID, params);
+    public PlayAnnouncement(String resourceName, String params) {
+        super(resourceName, params);
         this.url = params;
     }
 
     @Override
     protected boolean doVerify(Connection connection) {
-        audioPlayer = (AudioPlayer) connection.getComponent(getResourceID());
+        audioPlayer = (AudioPlayer) connection.getComponent(getResourceName());
         return audioPlayer != null;
     }
 
     @Override
     protected boolean doVerify(Endpoint endpoint) {
-        audioPlayer = (AudioPlayer)endpoint.getComponent(getResourceID());
+        audioPlayer = (AudioPlayer)endpoint.getComponent(getResourceName());
         return audioPlayer != null;
     }
 

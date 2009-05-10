@@ -35,19 +35,19 @@ import org.mobicents.media.server.spi.Endpoint;
  * @author kulikov
  */
 public abstract class SignalGenerator {
-    private int resourceID;
+    private String resourceName;
     
     private String params;
     private Endpoint endpoint;
     private Connection connection;
     
-    public SignalGenerator(int resourceID, String params) {
-        this.resourceID = resourceID;
+    public SignalGenerator(String resourceName, String params) {
+        this.resourceName = resourceName;
         this.params = params;
     }
     
-    public int getResourceID() {
-        return this.resourceID;
+    public String getResourceName() {
+        return this.resourceName;
     }
     
     public Connection getConnection() {
