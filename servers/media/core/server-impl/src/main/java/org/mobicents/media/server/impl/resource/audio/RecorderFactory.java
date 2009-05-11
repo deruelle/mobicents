@@ -49,6 +49,7 @@ public class RecorderFactory implements ComponentFactory {
 
 	public Component newInstance(Endpoint endpoint) {
 		RecorderImpl p = new RecorderImpl(this.name);
+		p.setEndpoint(endpoint);
 		return p;
 	}
 

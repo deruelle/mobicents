@@ -10,27 +10,30 @@
  * usefulness of the software.
  */
 
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.resource.dtmf;
 
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
+import org.mobicents.media.server.spi.resource.InbandDetector;
 
 /**
  * Implements digit buffer.
  * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
-public abstract class DtmfBuffer extends AbstractSink implements Serializable {
+public abstract class DtmfBuffer extends AbstractSink implements InbandDetector, Serializable {
 	public final static int TIMEOUT = 5000;
 
 	// Silence is time difference forced between two digits. Default is user 2
 	// digits per sec. Reduce this to suit your requirements
-	public int SILENCE = 500;
+	public int silence = InbandDetector.SILENCE;
 
 	private StringBuffer buffer = new StringBuffer();
-	private String mask = "[0-9, A,B,C,D,*,#]";
+	private String mask = InbandDetector.MASK;
 
 	// private DtmfDetector detector;
 
@@ -53,7 +56,11 @@ public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 	}
 
 	public void setSilenec(int silence) {
-		this.SILENCE = silence;
+		this.silence = silence;
+	}
+
+	public int getSilenec() {
+		return this.silence;
 	}
 
 	public void push(String symbol) {
@@ -63,7 +70,7 @@ public abstract class DtmfBuffer extends AbstractSink implements Serializable {
 			buffer = new StringBuffer();
 		}
 
-		if (!symbol.equals(lastSymbol) || (now - lastActivity > SILENCE)) {
+		if (!symbol.equals(lastSymbol) || (now - lastActivity > silence)) {
 			buffer.append(symbol);
 			lastActivity = now;
 			lastSymbol = symbol;

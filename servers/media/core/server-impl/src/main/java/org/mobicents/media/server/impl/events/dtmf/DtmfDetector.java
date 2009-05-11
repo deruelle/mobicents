@@ -17,6 +17,9 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.dsp.Processor;
+import org.mobicents.media.server.impl.resource.dtmf.DtmfBuffer;
+import org.mobicents.media.server.impl.resource.dtmf.InbandDetectorImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorImpl;
 
 /**
  * Implements common fatures for DTMF detector.
@@ -38,8 +41,8 @@ public class DtmfDetector extends AbstractSink {
     private final static Format[] INBAND_FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM};
     private final static Format[] ALL_FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
     
-    private InbandDetector inband;
-    private Rfc2833Detector rfc2833;
+    private InbandDetectorImpl inband;
+    private Rfc2833DetectorImpl rfc2833;
     
     protected DtmfBuffer digitBuffer;
     

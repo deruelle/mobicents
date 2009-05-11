@@ -15,6 +15,8 @@ import org.mobicents.media.Format;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorImpl;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
@@ -27,7 +29,7 @@ public class Rfc2833GeneratorTest {
 
 	private Timer timer = null;
 	private Endpoint endpoint = null;
-	private Rfc2833Generator generator = null;
+	private Rfc2833GeneratorImpl generator = null;
 	private Semaphore semaphore;
 
 	private volatile boolean isFormatCorrect = true;
@@ -56,7 +58,7 @@ public class Rfc2833GeneratorTest {
 		endpoint = new EndpointImpl();
 		endpoint.setTimer(timer);
 
-		generator = new Rfc2833Generator("Rfc2833DetectorTest");
+		generator = new Rfc2833GeneratorImpl("Rfc2833DetectorTest");
 
 	}
 
@@ -68,7 +70,7 @@ public class Rfc2833GeneratorTest {
 	@Test
 	public void testGenerator() throws Exception {
 		generator.connect(new TestSink("TestSink"));
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 		generator.setVolume(10);
 		generator.setDigit("9");
 		generator.setEndpoint(endpoint);
@@ -111,7 +113,7 @@ public class Rfc2833GeneratorTest {
 
 		public void receive(Buffer buffer) {
 			
-			isFormatCorrect &= buffer.getFormat().matches(Rfc2833Detector.DTMF);
+			isFormatCorrect &= buffer.getFormat().matches(Rfc2833DetectorImpl.DTMF);
 			isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 4);
 
 			byte[] data = (byte[]) buffer.getData();
@@ -139,7 +141,7 @@ public class Rfc2833GeneratorTest {
 			
 			isEndEventReceived = ((data[1] & 0x80) != 0);
 			
-			isCorrectDigit = ("9".equals(Rfc2833Detector.TONE[data[0]]));
+			isCorrectDigit = ("9".equals(Rfc2833DetectorImpl.TONE[data[0]]));
 			
 			packetsReceived++;
 			if(packetsReceived == 7){

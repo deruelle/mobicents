@@ -3,24 +3,26 @@
  * and open the template in the editor.
  */
 
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.resource.dtmf;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.spi.resource.Rfc2833Generator;
 
 /**
  * 
  * @author kulikov
  * @author amit bhayani
  */
-public class Rfc2833Generator extends AbstractSource  {
+public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Generator { 
 
 	private BufferFactory bufferFactory = null;
 
 	private byte digit;
+	private String sDigit;
 	private boolean endOfEvent = false;
 
 	// Volume range from 0 to 63
@@ -34,7 +36,7 @@ public class Rfc2833Generator extends AbstractSource  {
 
 	private RtpHeader rtpHeader = new RtpHeader();
 
-	public Rfc2833Generator(String name) {
+	public Rfc2833GeneratorImpl(String name) {
 		super(name);
 		bufferFactory = new BufferFactory(10, name);
 	}
@@ -79,13 +81,22 @@ public class Rfc2833Generator extends AbstractSource  {
 
 	public void setDigit(String digit) {
 		this.digit = encode(digit);
+		this.sDigit = digit;
 	}
 
-	public void setDuraion(int duration) {
+	public String getDigit() {
+		return this.sDigit;
+	}
+
+	public void setDuration(int duration) {
 		if (duration < 40) {
 			throw new IllegalArgumentException("Duration cannot be less than 40ms");
 		}
 		this.duration = duration;
+	}
+
+	public int getDuration() {
+		return this.duration;
 	}
 
 	public void setVolume(int volume) {
@@ -93,6 +104,10 @@ public class Rfc2833Generator extends AbstractSource  {
 			throw new IllegalArgumentException("Volume cannot be less than 0db or greater than 63db");
 		}
 		this.volume = volume;
+	}
+
+	public int getVolume() {
+		return this.volume;
 	}
 
 	public void start() {
@@ -109,7 +124,7 @@ public class Rfc2833Generator extends AbstractSource  {
 	}
 
 	public Format[] getFormats() {
-		return Rfc2833Detector.FORMATS;
+		return Rfc2833DetectorImpl.FORMATS;
 	}
 
 	private void run() {
@@ -137,15 +152,15 @@ public class Rfc2833Generator extends AbstractSource  {
 
 			buffer.setOffset(0);
 			buffer.setLength(4);
-			buffer.setFormat(Rfc2833Detector.DTMF);
+			buffer.setFormat(Rfc2833DetectorImpl.DTMF);
 			buffer.setSequenceNumber(seq);
 			buffer.setTimeStamp(timeStamp);
 
 			otherParty.receive(buffer);
-			
+
 			try {
-				Thread.sleep(20); //sleepfor 20ms
-			} catch (InterruptedException e) {				
+				Thread.sleep(20); // sleepfor 20ms
+			} catch (InterruptedException e) {
 			}
 		}
 	}

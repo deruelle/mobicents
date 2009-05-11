@@ -14,6 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.impl.resource.dtmf.InbandDetectorImpl;
+import org.mobicents.media.server.impl.resource.dtmf.InbandGeneratorImpl;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.Timer;
@@ -34,8 +36,8 @@ public class InbandDetectorTest {
 	Endpoint endpoint = null;
 	private Semaphore semaphore;
 
-	private InbandGenerator generator = null;
-	private InbandDetector detector = null;
+	private InbandGeneratorImpl generator = null;
+	private InbandDetectorImpl detector = null;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -56,11 +58,11 @@ public class InbandDetectorTest {
 		endpoint = new EndpointImpl();
 		endpoint.setTimer(timer);
 
-		generator = new InbandGenerator("InbandDetectorTest");
+		generator = new InbandGeneratorImpl("InbandDetectorTest");
 		generator.setEndpoint(endpoint);
 		generator.init();
 
-		detector = new InbandDetector("InbandDetectorTest");
+		detector = new InbandDetectorImpl("InbandDetectorTest");
 		detector.init();
 
 	}
@@ -72,7 +74,7 @@ public class InbandDetectorTest {
 
 	@Test
 	public void testInitializeException() {
-		InbandDetector detector1 = new InbandDetector("InbandDetectorTest");
+		InbandDetectorImpl detector1 = new InbandDetectorImpl("InbandDetectorTest");
 		try {
 			detector1.connect(generator);
 			fail("IllegalStateException not thrown");

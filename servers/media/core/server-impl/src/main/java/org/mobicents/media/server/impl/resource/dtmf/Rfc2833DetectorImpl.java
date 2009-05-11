@@ -11,7 +11,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.resource.dtmf;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
@@ -19,13 +19,15 @@ import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.spi.resource.Rfc2833Detector;
 
 /**
  * 
  * @author Oleg Kulikov
  */
-public class Rfc2833Detector extends AbstractSink {
+public class Rfc2833DetectorImpl extends AbstractSink implements Rfc2833Detector {
 
 	public final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
 	public final static Format[] FORMATS = new Format[] { DTMF };
@@ -35,9 +37,9 @@ public class Rfc2833Detector extends AbstractSink {
 
 	private String mask = "[0-9, A,B,C,D,*,#]";
 
-	private transient Logger logger = Logger.getLogger(Rfc2833Detector.class);
+	private transient Logger logger = Logger.getLogger(Rfc2833DetectorImpl.class);
 
-	public Rfc2833Detector(String name) {
+	public Rfc2833DetectorImpl(String name) {
 		super(name);
 	}
 

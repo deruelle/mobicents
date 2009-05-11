@@ -33,6 +33,8 @@ import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseEndpoint;
 import org.mobicents.media.server.impl.dsp.Processor;
+import org.mobicents.media.server.impl.resource.dtmf.InbandGeneratorImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorImpl;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
@@ -54,8 +56,8 @@ public class DtmfGenerator extends AbstractSource {
     private final static Format[] INBAND_FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM};
     private final static Format[] ALL_FORMATS = new Format[]{LINEAR_AUDIO, PCMA, PCMU, SPEEX, G729, GSM, DTMF};
     
-    private InbandGenerator inband;
-    private Rfc2833Generator rfc2833;
+    private InbandGeneratorImpl inband;
+    private Rfc2833GeneratorImpl rfc2833;
     private Processor dsp;
     
     private DTMFMode mode = DTMFMode.AUTO;
@@ -66,8 +68,8 @@ public class DtmfGenerator extends AbstractSource {
     
     public  DtmfGenerator(BaseEndpoint endpoint) {
         super(endpoint.getLocalName());
-        inband = new InbandGenerator("");
-        rfc2833 = new Rfc2833Generator("");
+        inband = new InbandGeneratorImpl("");
+        rfc2833 = new Rfc2833GeneratorImpl("");
         dsp = new Processor("");
         dsp.getInput().connect(inband);
     }

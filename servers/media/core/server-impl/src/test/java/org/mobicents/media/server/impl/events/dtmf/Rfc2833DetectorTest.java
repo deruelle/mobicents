@@ -12,6 +12,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorImpl;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorImpl;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.Timer;
@@ -27,8 +29,8 @@ public class Rfc2833DetectorTest {
 	private volatile boolean receivedEvent = false;
 	Timer timer = null;
 	Endpoint endpoint = null;
-	Rfc2833Generator generator = null;
-	Rfc2833Detector detector = null;
+	Rfc2833GeneratorImpl generator = null;
+	Rfc2833DetectorImpl detector = null;
 
 	private Semaphore semaphore;
 
@@ -50,12 +52,12 @@ public class Rfc2833DetectorTest {
 		endpoint = new EndpointImpl();
 		endpoint.setTimer(timer);
 
-		generator = new Rfc2833Generator("Rfc2833DetectorTest");
-		generator.setDuraion(100); // 100 ms
+		generator = new Rfc2833GeneratorImpl("Rfc2833DetectorTest");
+		generator.setDuration(100); // 100 ms
 		generator.setVolume(10);
 		generator.setEndpoint(endpoint);
 
-		detector = new Rfc2833Detector("Rfc2833DetectorTest");
+		detector = new Rfc2833DetectorImpl("Rfc2833DetectorTest");
 
 	}
 

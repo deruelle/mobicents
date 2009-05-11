@@ -126,8 +126,8 @@
         </property>
     </bean>
     
-    <bean name="DtmfGenFactory" class="org.mobicents.media.server.impl.events.dtmf.DtmfGeneratorFactory">
-        <property name="name">DtmfGenerator</property>
+    <bean name="Rfc2833GeneratorFactory" class="org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorFactory">
+        <property name="name">Rfc2833GeneratorFactory</property>
     </bean>
     
     <bean name="Pipe-1" class="org.mobicents.media.server.resource.PipeFactory">
@@ -135,7 +135,7 @@
     </bean>
     
     <bean name="Pipe-2" class="org.mobicents.media.server.resource.PipeFactory">
-        <property name="inlet">DtmfGenerator</property>
+        <property name="inlet">Rfc2833GeneratorFactory</property>
         <property name="outlet">Mux</property>
     </bean>
     
@@ -153,7 +153,7 @@
             <list>
                 <inject bean="MuxFactory"/>
                 <inject bean="DspFactory"/>
-                <inject bean="DtmfGenFactory"/>
+                <inject bean="Rfc2833GeneratorFactory"/>
             </list>
         </property>
         <property name="pipes">

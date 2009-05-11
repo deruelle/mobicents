@@ -11,13 +11,13 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.resource.dtmf;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.resource.InbandDetector;
 
 /**
  * Implements inband DTMF detector.
@@ -37,16 +37,13 @@ import org.mobicents.media.server.impl.rtp.RtpHeader;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class InbandDetector extends DtmfBuffer {
+public class InbandDetectorImpl extends DtmfBuffer {
 
-	private final static AudioFormat LINEAR = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
-			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-
-	private final static Format[] FORMATS = new Format[] { LINEAR };
+	private final static Format[] FORMATS = new Format[] { Codec.LINEAR_AUDIO };
 	public final static String[][] events = new String[][] { { "1", "2", "3", "A" }, { "4", "5", "6", "B" },
 			{ "7", "8", "9", "C" }, { "*", "0", "#", "D" } };
 	/** DTMF tone duration in milliseconds */
-	
+
 	private double THRESHOLD = 30;
 	private int[] lowFreq = new int[] { 697, 770, 852, 941 };
 	private int[] highFreq = new int[] { 1209, 1336, 1477, 1633 };
@@ -56,9 +53,9 @@ public class InbandDetector extends DtmfBuffer {
 	private boolean started = false;
 	private volatile boolean initialized = false;
 
-	private int TONE_DURATION = 50;
-	private int N = 16 * TONE_DURATION / 2;
-	private double scale = (double) TONE_DURATION / (double) 1000;
+	private int toneDuration = InbandDetector.INBAND_DETECTOR_DURATION;
+	private int N = 16 * toneDuration / 2;
+	private double scale = (double) toneDuration / (double) 1000;
 	private double[] ham = null;
 	private double[] realWLowFreq = new double[lowFreq.length];
 	private double[] imagWLowFreq = new double[lowFreq.length];
@@ -69,7 +66,7 @@ public class InbandDetector extends DtmfBuffer {
 	/**
 	 * Creates new instance of Detector.
 	 */
-	public InbandDetector(String name) {
+	public InbandDetectorImpl(String name) {
 		super(name);
 
 	}
@@ -80,11 +77,11 @@ public class InbandDetector extends DtmfBuffer {
 	 */
 	public void init() {
 		initialized = true;
-		N = 16 * TONE_DURATION / 2;
-		scale = (double) TONE_DURATION / (double) 1000;
+		N = 16 * toneDuration / 2;
+		scale = (double) toneDuration / (double) 1000;
 		ham = new double[N];
 
-		localBuffer = new byte[16 * TONE_DURATION];
+		localBuffer = new byte[16 * toneDuration];
 
 		// hamming window
 		for (int i = 0; i < N; i++) {
@@ -122,7 +119,11 @@ public class InbandDetector extends DtmfBuffer {
 	}
 
 	public void setDuration(int duartion) {
-		this.TONE_DURATION = duartion;
+		this.toneDuration = duartion;
+	}
+
+	public int getDuration() {
+		return this.toneDuration;
 	}
 
 	/**
@@ -307,7 +308,7 @@ public class InbandDetector extends DtmfBuffer {
 	}
 
 	public boolean isAcceptable(Format format) {
-		return format.matches(LINEAR);
+		return format.matches(Codec.LINEAR_AUDIO);
 	}
 
 	@Override

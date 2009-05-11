@@ -9,11 +9,10 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.dtmf;
+package org.mobicents.media.server.impl.resource.dtmf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ScheduledFuture;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
@@ -23,6 +22,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.dsp.Codec;
+import org.mobicents.media.server.spi.resource.InbandGenerator;
 
 /**
  * InbandGenerator generates Inband DTMF Tone only for uncompressed LINEAR
@@ -39,9 +39,9 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class InbandGenerator extends AbstractSource {
+public class InbandGeneratorImpl extends AbstractSource implements InbandGenerator {
 
-	public static Logger logger = Logger.getLogger(InbandGenerator.class);
+	public static Logger logger = Logger.getLogger(InbandGeneratorImpl.class);
 	public final static String[][] events = new String[][] { { "1", "2", "3", "A" }, { "4", "5", "6", "B" },
 			{ "7", "8", "9", "C" }, { "*", "0", "#", "D" } };
 
@@ -81,7 +81,7 @@ public class InbandGenerator extends AbstractSource {
 
 	private volatile boolean initialized = false;
 
-	public InbandGenerator(String name) {
+	public InbandGeneratorImpl(String name) {
 		super(name);
 	}
 
@@ -198,11 +198,19 @@ public class InbandGenerator extends AbstractSource {
 		this.digit = digit;
 	}
 
+	public String getDigit() {
+		return this.digit;
+	}
+
 	public void setDuraion(int duration) {
 		if (duration < 40) {
 			throw new IllegalArgumentException("Duration cannot be less than 40ms");
 		}
 		this.duration = duration;
+	}
+
+	public int getDuration() {
+		return this.duration;
 	}
 
 	public static void print(byte[] data) {
@@ -296,14 +304,14 @@ public class InbandGenerator extends AbstractSource {
 
 	private void run() {
 		this.numberOfPackets = Math.round(this.duration / this.packetPeriod);
-		List<Buffer> bufferList = getData(this.digit);		
+		List<Buffer> bufferList = getData(this.digit);
 
 		for (int count = 0; count < this.numberOfPackets; count++) {
 			Buffer buffer = bufferList.get(count);
 			try {
 				otherParty.receive(buffer);
 			} catch (Exception e) {
-				logger.error("Failed sending the DTMF "+this.digit, e);
+				logger.error("Failed sending the DTMF " + this.digit, e);
 			}
 			try {
 				Thread.sleep(20);
@@ -314,7 +322,7 @@ public class InbandGenerator extends AbstractSource {
 	}
 
 	public static void main(String args[]) {
-		InbandGenerator gen = new InbandGenerator("test");
+		InbandGeneratorImpl gen = new InbandGeneratorImpl("test");
 		int sizeInBytes = (int) (Codec.LINEAR_AUDIO.getSampleRate() * (Codec.LINEAR_AUDIO.getSampleSizeInBits() / 8)
 				/ 1000 * 20);
 		int dataLength = (int) Codec.LINEAR_AUDIO.getSampleRate() * Codec.LINEAR_AUDIO.getSampleSizeInBits() / 8;
