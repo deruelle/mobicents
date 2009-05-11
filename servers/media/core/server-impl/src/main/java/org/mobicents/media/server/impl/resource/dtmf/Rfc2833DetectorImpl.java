@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
@@ -26,18 +25,13 @@ import org.mobicents.media.server.spi.resource.Rfc2833Detector;
 /**
  * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public class Rfc2833DetectorImpl extends AbstractSink implements Rfc2833Detector {
 
-	public final static AudioFormat DTMF = new AudioFormat("telephone-event/8000");
-	public final static Format[] FORMATS = new Format[] { DTMF };
-
-	public final static String[] TONE = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "#", "A",
-			"B", "C", "D" };
-
-	private String mask = "[0-9, A,B,C,D,*,#]";
-
 	private transient Logger logger = Logger.getLogger(Rfc2833DetectorImpl.class);
+
+	private String mask = Rfc2833Detector.RFC2833_DETECTOR_MASK;
 
 	public Rfc2833DetectorImpl(String name) {
 		super(name);

@@ -30,10 +30,10 @@ public abstract class DtmfBuffer extends AbstractSink implements InbandDetector,
 
 	// Silence is time difference forced between two digits. Default is user 2
 	// digits per sec. Reduce this to suit your requirements
-	public int silence = InbandDetector.SILENCE;
+	public int silence = InbandDetector.INBAND_DETECTOR_SILENCE;
 
 	private StringBuffer buffer = new StringBuffer();
-	private String mask = InbandDetector.MASK;
+	private String mask = InbandDetector.INBAND_DETECTOR_MASK;
 
 	// private DtmfDetector detector;
 

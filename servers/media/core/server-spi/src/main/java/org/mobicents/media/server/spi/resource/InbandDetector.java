@@ -9,8 +9,8 @@ import org.mobicents.media.MediaSink;
  */
 public interface InbandDetector extends MediaSink {
 	
-	public static final String MASK = "[0-9, A,B,C,D,*,#]";
-	public static final int SILENCE = 500;
+	public static final String INBAND_DETECTOR_MASK = "[0-9, A,B,C,D,*,#]";
+	public static final int INBAND_DETECTOR_SILENCE = 500;
 	public static final int INBAND_DETECTOR_DURATION = 50;
 	
 	public String getMask();

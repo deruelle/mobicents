@@ -17,7 +17,7 @@ import org.mobicents.media.server.spi.resource.Rfc2833Generator;
  * @author kulikov
  * @author amit bhayani
  */
-public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Generator { 
+public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Generator {
 
 	private BufferFactory bufferFactory = null;
 
@@ -26,10 +26,10 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Gener
 	private boolean endOfEvent = false;
 
 	// Volume range from 0 to 63
-	private int volume = 10;
+	private int volume = Rfc2833Generator.RFC2833_GENERATOR_VOLUME;
 
 	// Min duration = 40ms and max = 500ms
-	private int duration = 40;
+	private int duration = Rfc2833Generator.RFC2833_GENERATOR_DURATION;
 	private int seq = 0;
 
 	private int mediaPackets = 0;
@@ -75,12 +75,11 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Gener
 		} else if (digit.equals("D")) {
 			return 15;
 		} else {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("The Digit " + digit + " is not identified");
 		}
 	}
 
 	public void setDigit(String digit) {
-		this.digit = encode(digit);
 		this.sDigit = digit;
 	}
 
@@ -111,6 +110,7 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Gener
 	}
 
 	public void start() {
+		this.digit = encode(this.sDigit);
 		seq = 0;
 		mediaPackets = duration / getEndpoint().getTimer().getHeartBeat();
 		// Last two will be End of Event packets
