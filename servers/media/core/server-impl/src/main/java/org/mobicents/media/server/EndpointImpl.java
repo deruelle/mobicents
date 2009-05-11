@@ -67,6 +67,7 @@ public class EndpointImpl implements Endpoint {
     private Hashtable<String, RtpFactory> rtpFactory;
     private MediaSource source;
     private MediaSink sink;
+    
     /** The list of indexes available for connection enumeration within endpoint */
     private ArrayList<Integer> index = new ArrayList();
     /** The last generated connection's index*/
@@ -94,6 +95,14 @@ public class EndpointImpl implements Endpoint {
         this.localName = localName;
     }
 
+    public MediaSink getSink() {
+        return sink;
+    }
+    
+    public MediaSource getSource() {
+        return source;
+    }
+    
     /**
      * Calculates index of the new connection.
      * 
