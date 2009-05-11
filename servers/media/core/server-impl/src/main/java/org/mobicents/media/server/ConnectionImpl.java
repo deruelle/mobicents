@@ -15,6 +15,8 @@ import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
 
+import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
+
 /**
  *
  * @author kulikov
@@ -30,6 +32,9 @@ public abstract class ConnectionImpl implements Connection {
     
     protected Channel txChannel;
     protected Channel rxChannel;
+    
+    
+    protected ConcurrentHashMap connectionListeners = new ConcurrentHashMap();
     
     public ConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) {
         this.id = genID();
@@ -60,7 +65,18 @@ public abstract class ConnectionImpl implements Connection {
     }
 
     protected void setState(ConnectionState state) {
+    	ConnectionState oldState = this.state;
         this.state = state;
+        
+        if(oldState!=this.state)
+        {
+        	//FIXME: does this require sync, maybe we should add here tasks?
+        	for(Object ocl: this.connectionListeners.keySet())
+        	{
+        		ConnectionListener cl = (ConnectionListener) ocl;
+        		cl.onStateChange(this, oldState);
+        	}
+        }
     }
     
     public int getLifeTime() {
@@ -95,11 +111,11 @@ public abstract class ConnectionImpl implements Connection {
 
 
     public void addListener(ConnectionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.connectionListeners.put(listener, listener);
     }
 
     public void removeListener(ConnectionListener listener) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.connectionListeners.remove(listener);
     }
 
     public Component getComponent(int resourceID) {
