@@ -106,4 +106,8 @@
     <bean name="G711.UlawEncoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory"/>
     <bean name="G711.UlawDecoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory"/>
     
+    <bean name="AudioPlayerFactory" class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
+        <property name="name">audio.player</property>
+    </bean>
+    
 </deployment>

@@ -12,7 +12,7 @@
     
     <bean name="PlayAnnouncement" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
         <property name="eventName">pa</property>
-        <property name="resourceID">10</property>
+        <property name="resourceName">audio.player</property>
     </bean>
     
     <bean name="Announcement.OC" class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
