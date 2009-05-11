@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -24,6 +25,11 @@ import net.java.stun4j.StunException;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Format;
+import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.format.VideoFormat;
+import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
+import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
+import org.mobicents.media.server.impl.rtp.sdp.RTPVideoFormat;
 import org.mobicents.media.server.spi.Timer;
 
 /**
@@ -199,6 +205,7 @@ public class RtpFactory {
 		RtpSocket rtpSocket = rtpSockets.poll();
 
 		if (rtpSocket == null) {
+			
 			rtpSocket = new RtpSocket(timer, formatMap, this);
 			rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
 		}
@@ -213,7 +220,42 @@ public class RtpFactory {
 		return this.formatMap;
 	}
 
-	public void setFormatMap(Map<Integer, Format> formatMap) {
-		this.formatMap = formatMap;
+	public void setFormatMap(Map<Integer, Format> originalFormatMap) {
+		
+		this.formatMap = new HashMap<Integer, Format>();
+		
+		//now we have to switch, cause we use something that extends format, without mms will crash
+		for(Integer payloadType:originalFormatMap.keySet())
+		{
+			Format _f = originalFormatMap.get(payloadType);
+			Format convertedFormat = convert(payloadType,_f);
+			this.formatMap.put(payloadType, convertedFormat);
+			
+		}
+	}
+
+	
+	// --- Helper methods.
+	
+	private Format convert(Integer payloadType, Format _f) {
+		
+		Format converted=null;
+		if (_f instanceof AudioFormat) {
+			AudioFormat af = (AudioFormat) _f;
+			RTPAudioFormat f =new RTPAudioFormat(payloadType,af.getEncoding(),af.getSampleRate(),af.getSampleSizeInBits(),af.getChannels(),af.getEndian(),af.getSigned());
+			converted = f;
+		}else if(_f instanceof VideoFormat)
+		{
+			VideoFormat vf = (VideoFormat) _f;
+			RTPVideoFormat f = new RTPVideoFormat(payloadType,vf.getEncoding(),vf.getMaxDataLength(),vf.getFrameRate());
+			
+			converted = f;
+		}else if (_f instanceof RTPFormat)
+		{
+			converted =  _f;
+		}else{
+			throw new IllegalArgumentException("Unknown media format: "+_f.getClass());
+		}
+		return converted;
 	}
 }

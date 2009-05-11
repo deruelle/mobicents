@@ -51,7 +51,14 @@ public class RTPVideoFormat extends VideoFormat implements RTPFormat {
         this.payloadType = payloadType;
     }
 
-    public int getPayloadType() {
+    
+    
+    public RTPVideoFormat(int payloadType,String encoding, int maxDataLength, float frameRate) {
+		super(encoding, maxDataLength, null, frameRate);
+		this.payloadType = payloadType;
+	}
+
+	public int getPayloadType() {
         return payloadType;
     }
 

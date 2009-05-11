@@ -72,7 +72,7 @@ public abstract class RTPFormatParser extends Format {
     private static HashMap<Integer, Format> getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
         HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
         Media media = md.getMedia();
-
+        
         Enumeration payloads = media.getMediaFormats(false).elements();
         while (payloads.hasMoreElements()) {
             int payload = Integer.parseInt((String) payloads.nextElement());
