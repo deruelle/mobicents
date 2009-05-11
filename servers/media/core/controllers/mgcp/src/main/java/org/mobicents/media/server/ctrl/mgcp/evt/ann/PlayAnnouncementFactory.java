@@ -62,7 +62,7 @@ public class PlayAnnouncementFactory implements GeneratorFactory {
         return resourceName;
     }
     
-    public void setResourceID(String resourceName) {
+    public void setResourceName(String resourceName) {
         this.resourceName = resourceName;
     }
     

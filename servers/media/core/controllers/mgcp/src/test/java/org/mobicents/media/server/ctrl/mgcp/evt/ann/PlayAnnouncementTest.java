@@ -120,7 +120,7 @@ public class PlayAnnouncementTest {
         RequestIdentifier id = new RequestIdentifier("1");
         NotifiedEntity ne = new NotifiedEntity("localhost");
         PlayAnnouncementFactory factory = new PlayAnnouncementFactory();
-        factory.setResourceID("audio.player");
+        factory.setResourceName("audio.player");
         PlayAnnouncement signal = (PlayAnnouncement) factory.getInstance(controller, s);
         
         Request request = new Request(controller, id, sender, ne);
