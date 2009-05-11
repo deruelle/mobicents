@@ -132,6 +132,27 @@ public class Channel {
         }
     }
     
+    public void start() {
+//        if (source != null) {
+//            source.start();
+//        }
+        
+        Collection <MediaSource> list = sources.values();
+        for (MediaSource s : list) {
+            s.start();
+        }
+    }
+    
+    public void stop() {
+        if (source != null) {
+            source.stop();
+        }
+        
+        Collection <MediaSource> list = sources.values();
+        for (MediaSource s : list) {
+            s.stop();
+        }
+    }
     /**
      * Opens pipes between source and sink.
      * 

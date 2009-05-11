@@ -60,7 +60,9 @@ public class LocalConnectionImpl extends ConnectionImpl {
         txOutput = new Output("local.connection.txOutput");
         
         rxInput = new Input("local.connection.rxInput", rxOutput);
-        txInput = new Input("local.connection.txInput", txOutput);        
+        txInput = new Input("local.connection.txInput", txOutput);   
+        
+        setMode(mode);
     }
     
     public String getLocalDescriptor() {

@@ -81,10 +81,8 @@ public class RtpConnectionImpl extends ConnectionImpl {
             } catch (SocketException e) {
                 throw new ResourceUnavailableException(e);
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new ResourceUnavailableException(e);
             } catch (StunException e) {
-                e.printStackTrace();
                 throw new ResourceUnavailableException(e);
             }
         }
@@ -116,7 +114,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
         }
 
         Format[] txFormats = null;
-        if (txChannel != null && mode != ConnectionMode.RECV_ONLY) {
+        if (txChannel != null) {
             txFormats = txChannel.connect(demux.getInput());
         }
         
@@ -126,6 +124,7 @@ public class RtpConnectionImpl extends ConnectionImpl {
         // local descriptor and update rtp map
                 
         createLocalDescriptor(formats);
+        setMode(mode);
         setState(ConnectionState.HALF_OPEN);
     }
 
@@ -270,11 +269,11 @@ public class RtpConnectionImpl extends ConnectionImpl {
     
     @Override
     protected void close() {
-        if (rxChannel != null && getMode() != ConnectionMode.SEND_ONLY) {
+        if (rxChannel != null) {
             rxChannel.disconnect(mux.getOutput());
         }
 
-        if (txChannel != null && getMode() != ConnectionMode.RECV_ONLY) {
+        if (txChannel != null) {
             txChannel.connect(demux.getInput());
         }
         

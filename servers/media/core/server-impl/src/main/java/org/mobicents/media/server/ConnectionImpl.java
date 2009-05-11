@@ -77,6 +77,16 @@ public abstract class ConnectionImpl implements Connection {
 
     public void setMode(ConnectionMode mode) {
         this.mode = mode;
+        if (mode == ConnectionMode.SEND_ONLY) {
+            if (txChannel != null) txChannel.start();
+            if (rxChannel != null) rxChannel.start();
+        } else if (mode == ConnectionMode.SEND_ONLY) {
+            if (txChannel != null) txChannel.start();
+            if (rxChannel != null) rxChannel.stop();
+        } else if (mode == ConnectionMode.RECV_ONLY) {
+            if (txChannel != null) txChannel.stop();
+            if (rxChannel != null) rxChannel.start();
+        }
     }
 
     public Endpoint getEndpoint() {
