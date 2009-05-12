@@ -399,6 +399,37 @@
 									</destFileName>
 								</artifactItem>
 
+								<artifactItem>
+									<groupId>
+										jfree
+									</groupId>
+									<artifactId>jcommon</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jcommon.jar
+									</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>
+										jfree
+									</groupId>
+									<artifactId>jfreechart</artifactId>
+									<version>1.0.0</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>
+										${project.build.directory}
+									</outputDirectory>
+									<destFileName>
+										jfreechart.jar
+									</destFileName>
+								</artifactItem>
+
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -461,6 +492,8 @@
 										<pathelement location="target/tritonus_share.jar" />
 										<pathelement location="target/vorbisspi.jar" />
 										<pathelement location="target/opencsv.jar" />
+										<pathelement location="target/jcommon.jar" />
+										<pathelement location="target/jfreechart.jar" />
 									</classpath>
 								</java>
 							</tasks>
