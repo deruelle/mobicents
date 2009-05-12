@@ -44,6 +44,8 @@ public interface Component extends Serializable {
     public final static int DTMF_DETECTOR = 20;
     public final static int DTMF_GENERATOR = 21;        
     
+    public String getId();
+    
     /**
      * Defines the integer identificator for type of this resource. 
      * 
