@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -77,6 +78,9 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     protected transient final ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
     protected transient ScheduledFuture readerTask;
     protected transient boolean receiveRTP;
+    
+    
+    
     //MGCP part
     protected transient JainMgcpStackProviderImpl provider; 
     public AbstractCall(AbstractTestCase testCase) throws IOException
@@ -147,14 +151,19 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
         throw new SocketException();
     }   
      public List<RtpPacket> getRtp() throws IOException {
-        return this.loadRtp();
+         List<RtpPacket> ll = this.loadRtp();
+        
+        return ll;
     }    
     private List<RtpPacket> loadRtp() throws IOException {
         ArrayList<RtpPacket> list = new ArrayList();
         FileInputStream fin = new FileInputStream(this.dataFileName);
+        
         ObjectInputStream in = new ObjectInputStream(fin);
         
-        while(in.available()>0) {
+        //This is weird
+        while(fin.available()>0) {
+        //while(in.available()>0) {
             try {
                 RtpPacket p = (RtpPacket) in.readObject();
                 list.add(p);
@@ -290,13 +299,16 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     public void run() {
     	try{
     		while (receiveRTP) {
+                   
     			//byte[] buffer = new byte[1024];
     			//DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                         ByteBuffer packetBuffer = ByteBuffer.allocate(1024);
     			try {
+                                
     				datagramChannel.receive(packetBuffer);
     				
     				RtpPacket rtp = new RtpPacket(packetBuffer.array());
+                              
     				rtp.setTime(new Date(System.currentTimeMillis()));
     				//rtpTraffic.add(rtp);
     				dataDumpChannel.writeObject(rtp);

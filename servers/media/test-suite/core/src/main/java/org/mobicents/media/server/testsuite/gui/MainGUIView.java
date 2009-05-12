@@ -198,7 +198,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         );
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(org.mobicents.media.server.testsuite.gui.MainGUI.class).getContext().getResourceMap(MainGUIView.class);
-        userDialogPanel.addTab(resourceMap.getString("dataLoadPanel.TabConstraints.tabTitle"), resourceMap.getIcon("dataLoadPanel.TabConstraints.tabIcon"), dataLoadPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("dataLoadPanel.TabConstraints.tabTitle"), null, dataLoadPanel); // NOI18N
 
         dataPanel.setName("dataPanel"); // NOI18N
 
@@ -246,7 +246,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
         );
 
-        userDialogPanel.addTab(resourceMap.getString("dataPanel.TabConstraints.tabTitle"), resourceMap.getIcon("dataPanel.TabConstraints.tabIcon"), dataPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("dataPanel.TabConstraints.tabTitle"), null, dataPanel); // NOI18N
 
         testSetupPanel.setName("testSetupPanel"); // NOI18N
 
@@ -302,7 +302,6 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
 
         jSeparator2.setName("jSeparator2"); // NOI18N
 
-        buttonStartTest.setIcon(resourceMap.getIcon("buttonStartTest.icon")); // NOI18N
         buttonStartTest.setText(resourceMap.getString("buttonStartTest.text")); // NOI18N
         buttonStartTest.setEnabled(false);
         buttonStartTest.setName("buttonStartTest"); // NOI18N
@@ -312,7 +311,6 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
             }
         });
 
-        buttonStopTest.setIcon(resourceMap.getIcon("buttonStopTest.icon")); // NOI18N
         buttonStopTest.setText(resourceMap.getString("buttonStopTest.text")); // NOI18N
         buttonStopTest.setName("buttonStopTest"); // NOI18N
         buttonStopTest.addActionListener(new java.awt.event.ActionListener() {
@@ -537,7 +535,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                 .addContainerGap(165, Short.MAX_VALUE))
         );
 
-        userDialogPanel.addTab(resourceMap.getString("testSetupPanel.TabConstraints.tabTitle"), resourceMap.getIcon("testSetupPanel.TabConstraints.tabIcon"), testSetupPanel); // NOI18N
+        userDialogPanel.addTab(resourceMap.getString("testSetupPanel.TabConstraints.tabTitle"), null, testSetupPanel); // NOI18N
 
         org.jdesktop.layout.GroupLayout mainPanelLayout = new org.jdesktop.layout.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -634,7 +632,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
                 AbstractTestCase test = FileUtils.deserializeTestCase(directory);
                 test.setCallDisplay(this, directory);
                 this.buttonStartTest.setEnabled(true);
-                this.userDialogPanel.setSelectedComponent(this.fieldLoadedDataDisplayTable);
+                this.userDialogPanel.setSelectedComponent(this.dataPanel);
                 this.currentTest = test;
                 
                 this.fieldLoadedDataDisplayTable.setModel(this.currentTest.getTableModel());
@@ -776,6 +774,7 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
         AbstractCall callToDisplay = this.currentTest.getCallBySequence(seq);
         RtpTrafficDialog dialog = new RtpTrafficDialog(this.getFrame(), true, callToDisplay);        
         dialog.setVisible(true);
+  
 }//GEN-LAST:event_fieldLoadedDataDisplayTableMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

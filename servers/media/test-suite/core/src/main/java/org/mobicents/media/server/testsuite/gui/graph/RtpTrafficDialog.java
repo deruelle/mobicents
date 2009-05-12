@@ -37,6 +37,7 @@ public class RtpTrafficDialog extends javax.swing.JDialog {
             stats.setText("Out of sequence packets=" + errorCount +
                     ", Average jitter=" + call.getAvgJitter());
             printErrors(errors, errorCount);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }

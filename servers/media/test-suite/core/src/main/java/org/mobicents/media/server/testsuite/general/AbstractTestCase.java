@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TooManyListenersException;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -86,6 +87,9 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
    //Call creators
     protected transient final ScheduledExecutorService callCreator = Executors.newSingleThreadScheduledExecutor();
     protected transient ScheduledFuture callCreatorTask;
+    
+    //Timer guard:
+     protected transient final ScheduledExecutorService timeGuard = Executors.newScheduledThreadPool(5);
    //Some getters
    
     //Some stats
@@ -168,7 +172,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         {
             
             this.incrementOngoignCall();
-            System.err.println("incrementOngoignCall:"+this.ongoingCallNumber);
+          
         }else if(callState == CallState.ENDED)
         {
             this.decrementOngoingCall();
@@ -198,7 +202,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     }
 
     public int getOngoingCallNumber() {
-        System.err.println("getOngoingCallNumber:"+this.ongoingCallNumber);
+       
         return this.ongoingCallNumber;
     }
 
@@ -405,11 +409,13 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent response) {
 		try {
+                    
+                       
 			AbstractCall cp = getCall(response);
 			if (cp != null) {
 				cp.processMgcpResponseEvent(response);
 			} else {
-				
+				System.err.println("NO CALL");
 			}
 		} catch (RuntimeException re) {
 			re.printStackTrace();
