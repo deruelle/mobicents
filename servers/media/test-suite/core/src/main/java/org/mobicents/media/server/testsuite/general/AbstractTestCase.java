@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sdp.Attribute;
 import javax.sdp.SdpFactory;
@@ -263,17 +264,22 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
     public void start() throws CreateProviderException, TooManyListenersException
     {
+        try {
 
-        stop();
+            stop();
+            this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
+            this.serverJbossBindAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 
- 
-        this.stack = new JainMgcpStackImpl(this.clientTestNodeAddress, this.callDisplay.getLocalPort());
+            this.stack = new JainMgcpStackImpl(this.clientTestNodeAddress, this.callDisplay.getLocalPort());
 
-        this.provider = (JainMgcpStackProviderImpl) this.stack.createProvider();
+            this.provider = (JainMgcpStackProviderImpl) this.stack.createProvider();
 
-        this.provider.addJainMgcpListener(this);
-        testState = TestState.Running;
-        onCPSChange();
+            this.provider.addJainMgcpListener(this);
+            testState = TestState.Running;
+            onCPSChange();
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(AbstractTestCase.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         
     }
@@ -283,8 +289,10 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     public void setCallDisplay(CallDisplayInterface cdi) throws UnknownHostException, IllegalStateException 
     {
         this.callDisplay = cdi;
-        this.clientTestNodeAddress = InetAddress.getByName(cdi.getRemoteAddress());
-        this.serverJbossBindAddress = InetAddress.getByName(cdi.getRemoteAddress());
+        
+        this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
+        this.serverJbossBindAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
+        
         this.sdpFactory = SdpFactory.getInstance();
         this.testDumpDirectory = new File(cdi.getDefaultDataDumpDirectory(),""+this.testTimesTamp);
         

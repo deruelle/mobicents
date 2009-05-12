@@ -253,10 +253,12 @@ public class AnnCall extends AbstractCall{
     public void start() {
         
         try{
+            super.initSocket();
             EndpointIdentifier ei = new EndpointIdentifier(super.endpointName, super.testCase.getServerJbossBindAddress().getHostAddress() + ":" + super.testCase.getCallDisplayInterface().getRemotePort());
 
             CreateConnection crcx = new CreateConnection(this, this.callIdentifier, ei, ConnectionMode.SendRecv);
-            int localPort = this.datagramChannel.socket().getLocalPort();
+//            int localPort = this.datagramChannel.socket().getLocalPort();
+            int localPort = super.socket.getLocalPort();
             crcx.setRemoteConnectionDescriptor(new ConnectionDescriptor(super.getLocalDescriptor(localPort)));
             crcx.setTransactionHandle(this.provider.getUniqueTransactionHandler());
             super.provider.sendMgcpEvents(new JainMgcpEvent[] { crcx });
@@ -267,7 +269,7 @@ public class AnnCall extends AbstractCall{
             
             this.receiveRTP=true;
             //for now we do that like that this will go away with rtp socket
-            this.readerThread.schedule(this,10,TimeUnit.MILLISECONDS);
+            this.readerThread.schedule(this,super._READ_PERIOD,TimeUnit.MILLISECONDS);
             
             
             
