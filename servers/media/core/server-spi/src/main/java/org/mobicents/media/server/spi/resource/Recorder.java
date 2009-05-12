@@ -29,6 +29,8 @@ public interface Recorder extends MediaSink {
 	 */
 	public void start(String file);
 
+	
+	public void stop();
 	/**
 	 * Set the Record path. This will be the parent path and file path passed in
 	 * start(String file) will be appended to this base record path. For example
