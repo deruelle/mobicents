@@ -7,10 +7,10 @@ import org.mobicents.media.MediaSource;
  * @author amit bhayani
  *
  */
-public interface Rfc2833Generator extends MediaSource {
+public interface DtmfGenerator extends MediaSource {
 	
-	public static final int RFC2833_GENERATOR_DURATION = 40;
-	public static final int RFC2833_GENERATOR_VOLUME = 10;
+	public static final int GENERATOR_DURATION = 80;
+	public static final int GENERATOR_VOLUME = 10;
 	
 	public void setDigit(String digit);
 	public String getDigit();

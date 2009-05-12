@@ -10,14 +10,14 @@ import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
-import org.mobicents.media.server.spi.resource.Rfc2833Generator;
+import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
 /**
  * 
  * @author kulikov
  * @author amit bhayani
  */
-public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Generator {
+public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerator {
 
 	private BufferFactory bufferFactory = null;
 
@@ -26,10 +26,10 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements Rfc2833Gener
 	private boolean endOfEvent = false;
 
 	// Volume range from 0 to 63
-	private int volume = Rfc2833Generator.RFC2833_GENERATOR_VOLUME;
+	private int volume = DtmfGenerator.GENERATOR_VOLUME;
 
 	// Min duration = 40ms and max = 500ms
-	private int duration = Rfc2833Generator.RFC2833_GENERATOR_DURATION;
+	private int duration = DtmfGenerator.GENERATOR_DURATION;
 	private int seq = 0;
 
 	private int mediaPackets = 0;

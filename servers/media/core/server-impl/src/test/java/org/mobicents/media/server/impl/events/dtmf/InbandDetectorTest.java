@@ -87,7 +87,7 @@ public class InbandDetectorTest {
 	public void testDTMF0() throws InterruptedException {
 
 		generator.setDigit("0");
-		generator.setDuraion(80); // 100 ms
+		generator.setDuration(80); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
 		detector.addListener(listener);
@@ -111,7 +111,7 @@ public class InbandDetectorTest {
 	public void testDTMF0Fail1() throws InterruptedException {
 
 		generator.setDigit("0");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_0);
 
@@ -134,7 +134,7 @@ public class InbandDetectorTest {
 	public void testDTMF1() throws InterruptedException {
 
 		generator.setDigit("1");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_1);
 		detector.addListener(listener);
@@ -151,7 +151,7 @@ public class InbandDetectorTest {
 	public void testDTMF2() throws InterruptedException {
 
 		generator.setDigit("2");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_2);
 		detector.addListener(listener);
@@ -168,7 +168,7 @@ public class InbandDetectorTest {
 	public void testDTMF3() throws InterruptedException {
 
 		generator.setDigit("3");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_3);
 		detector.addListener(listener);
@@ -185,7 +185,7 @@ public class InbandDetectorTest {
 	public void testDTMF4() throws InterruptedException {
 
 		generator.setDigit("4");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_4);
 		detector.addListener(listener);
@@ -202,7 +202,7 @@ public class InbandDetectorTest {
 	public void testDTMF5() throws InterruptedException {
 
 		generator.setDigit("5");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_5);
 		detector.addListener(listener);
@@ -219,7 +219,7 @@ public class InbandDetectorTest {
 	public void testDTMF6() throws InterruptedException {
 
 		generator.setDigit("6");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_6);
 		detector.addListener(listener);
@@ -236,7 +236,7 @@ public class InbandDetectorTest {
 	public void testDTMF7() throws InterruptedException {
 
 		generator.setDigit("7");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_7);
 		detector.addListener(listener);
@@ -253,7 +253,7 @@ public class InbandDetectorTest {
 	public void testDTMF8() throws InterruptedException {
 
 		generator.setDigit("8");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_8);
 		detector.addListener(listener);
@@ -270,7 +270,7 @@ public class InbandDetectorTest {
 	public void testDTMF9() throws InterruptedException {
 
 		generator.setDigit("9");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_9);
 		detector.addListener(listener);
@@ -287,7 +287,7 @@ public class InbandDetectorTest {
 	public void testDTMFA() throws InterruptedException {
 
 		generator.setDigit("A");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_A);
 		detector.addListener(listener);
@@ -304,7 +304,7 @@ public class InbandDetectorTest {
 	public void testDTMFB() throws InterruptedException {
 
 		generator.setDigit("B");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_B);
 		detector.addListener(listener);
@@ -321,7 +321,7 @@ public class InbandDetectorTest {
 	public void testDTMFC() throws InterruptedException {
 
 		generator.setDigit("C");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_C);
 		detector.addListener(listener);
@@ -338,7 +338,7 @@ public class InbandDetectorTest {
 	public void testDTMFD() throws InterruptedException {
 
 		generator.setDigit("D");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_D);
 		detector.addListener(listener);
@@ -355,7 +355,7 @@ public class InbandDetectorTest {
 	public void testDTMFSTAR() throws InterruptedException {
 
 		generator.setDigit("*");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_STAR);
 		detector.addListener(listener);
@@ -372,7 +372,7 @@ public class InbandDetectorTest {
 	public void testDTMFHASH() throws InterruptedException {
 
 		generator.setDigit("#");
-		generator.setDuraion(100); // 100 ms
+		generator.setDuration(100); // 100 ms
 
 		DTMFListener listener = new DTMFListener(DtmfEvent.DTMF_HASH);
 		detector.addListener(listener);

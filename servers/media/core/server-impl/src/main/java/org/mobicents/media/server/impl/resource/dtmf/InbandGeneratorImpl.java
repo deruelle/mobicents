@@ -22,7 +22,7 @@ import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.dsp.Codec;
-import org.mobicents.media.server.spi.resource.InbandGenerator;
+import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
 /**
  * InbandGenerator generates Inband DTMF Tone only for uncompressed LINEAR
@@ -39,7 +39,7 @@ import org.mobicents.media.server.spi.resource.InbandGenerator;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class InbandGeneratorImpl extends AbstractSource implements InbandGenerator {
+public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator {
 
 	public static Logger logger = Logger.getLogger(InbandGeneratorImpl.class);
 	public final static String[][] events = new String[][] { { "1", "2", "3", "A" }, { "4", "5", "6", "B" },
@@ -77,7 +77,10 @@ public class InbandGeneratorImpl extends AbstractSource implements InbandGenerat
 	private String digit = null;
 
 	// Min duration = 40ms and max = 500ms
-	private int duration = 80;
+	private int duration = GENERATOR_DURATION;
+
+	// TODO : Implement the amplitude for Inband
+	private int volume = GENERATOR_VOLUME;
 
 	private volatile boolean initialized = false;
 
@@ -202,7 +205,7 @@ public class InbandGeneratorImpl extends AbstractSource implements InbandGenerat
 		return this.digit;
 	}
 
-	public void setDuraion(int duration) {
+	public void setDuration(int duration) {
 		if (duration < 40) {
 			throw new IllegalArgumentException("Duration cannot be less than 40ms");
 		}
@@ -211,6 +214,14 @@ public class InbandGeneratorImpl extends AbstractSource implements InbandGenerat
 
 	public int getDuration() {
 		return this.duration;
+	}
+
+	public int getVolume() {
+		return this.volume;
+	}
+
+	public void setVolume(int volume) {
+		this.volume = volume;
 	}
 
 	public static void print(byte[] data) {
@@ -335,4 +346,5 @@ public class InbandGeneratorImpl extends AbstractSource implements InbandGenerat
 
 		// gen.print(gen.dataDTMF_3);
 	}
+
 }

@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
-	    xmlns="urn:jboss:bean-deployer:2.0">
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
 
-<!-- PACKET RELAY -->
-<bean name="Mobicents.MMS.PRTrunkManagementService"
-      class="org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagement">
-	<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=packet-relay",exposedInterface=org.mobicents.media.server.impl.jmx.enp.prl.PRTrunkManagementMBean.class,registerDirectly=true)</annotation>
-	
-	<property name="trunkName">media/trunk/PacketRelay</property>
-	<property name="rtpFactory">
-		<inject bean="RtpFactory" />
-	</property>
-	<property name="channels">10</property>
-	<demand>RtpFactory</demand>
-</bean>
+	<!-- PACKET RELAY -->
+
+
+	<bean name="RxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory" />
+	<!-- ANNOUNCEMENT  -->
+	<bean name="PacketRelay-Access-Point"
+		class="org.mobicents.media.server.EndpointImpl">
+		<property name="localName">
+			/mobicents/media/pr/[1..10]
+		</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+		<property name="rtpFactory">
+			<map class="java.util.Hashtable" keyClass="java.lang.String"
+				valueClass="org.mobicents.media.server.resource.ChannelFactory">
+				<entry>
+					<key>audio</key>
+					<value>
+						<inject bean="RTPAudioFactory" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="txChannelFactory">
+			<inject bean="TxChannelFactory" />
+		</property>
+		<property name="rxChannelFactory">
+			<inject bean="RxChannelFactory" />
+		</property>
+	</bean>
 
 
 </deployment>

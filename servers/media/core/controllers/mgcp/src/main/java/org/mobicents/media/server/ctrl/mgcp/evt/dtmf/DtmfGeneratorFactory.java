@@ -1,4 +1,4 @@
-package org.mobicents.media.server.ctrl.mgcp.evt.ann;
+package org.mobicents.media.server.ctrl.mgcp.evt.dtmf;
 
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import org.mobicents.media.server.ctrl.mgcp.evt.GeneratorFactory;
@@ -9,7 +9,7 @@ import org.mobicents.media.server.ctrl.mgcp.evt.SignalGenerator;
  * @author amit bhayani
  * 
  */
-public class Rfc2833DtmfGeneratorFactory implements GeneratorFactory {
+public class DtmfGeneratorFactory implements GeneratorFactory {
 
 	private String name;
 	private String packageName;
@@ -42,21 +42,9 @@ public class Rfc2833DtmfGeneratorFactory implements GeneratorFactory {
     }
 
 	public SignalGenerator getInstance(MgcpController controller, String digit) {
-		return new Rfc2833DtmfGenerator(resourceName, digit);
+		return new DtmfGenerator(resourceName, digit);
 	}
 
-	/**
-	 * Call the factory method to create instance of Rfc2833DtmfGenerator with
-	 * non default value of duration and volume.
-	 * 
-	 * @param controller
-	 * @param digit
-	 * @param duration
-	 * @param volume
-	 * @return
-	 */
-	public SignalGenerator getInstance(MgcpController controller, String digit, int duration, int volume) {
-		return new Rfc2833DtmfGenerator(resourceName, digit, duration, volume);
-	}
+
 
 }

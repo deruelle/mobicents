@@ -1,4 +1,4 @@
-package org.mobicents.media.server.ctrl.mgcp.evt.ann;
+package org.mobicents.media.server.ctrl.mgcp.evt.dtmf;
 
 import static org.junit.Assert.assertEquals;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
@@ -19,6 +19,8 @@ import org.mobicents.media.Format;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import org.mobicents.media.server.ctrl.mgcp.Request;
+import org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGenerator;
+import org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGeneratorFactory;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorFactory;
@@ -28,7 +30,7 @@ import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
-import org.mobicents.media.server.spi.resource.Rfc2833Detector;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * 
@@ -107,10 +109,10 @@ public class Rfc2833DtmfGeneratorTest {
 		RequestIdentifier id = new RequestIdentifier("1");
 		NotifiedEntity ne = new NotifiedEntity("localhost");
 
-		Rfc2833DtmfGeneratorFactory factory = new Rfc2833DtmfGeneratorFactory();
+		DtmfGeneratorFactory factory = new DtmfGeneratorFactory();
 		factory.setResourceID("RFC2833.Detector");
 
-		Rfc2833DtmfGenerator signal = (Rfc2833DtmfGenerator) factory.getInstance(controller, "9");
+		DtmfGenerator signal = (DtmfGenerator) factory.getInstance(controller, "9");
 
 		Request request = new Request(controller, id, sender, ne);
 
@@ -119,7 +121,7 @@ public class Rfc2833DtmfGeneratorTest {
 
 		System.out.println("Started");
 		semaphore.tryAcquire(5, TimeUnit.SECONDS);
-		assertEquals(4, count);
+		assertEquals(6, count);
 		assertEquals(true, dtmfReceived);
 		assertEquals(true, end);
 
@@ -146,7 +148,7 @@ public class Rfc2833DtmfGeneratorTest {
 		}
 
 		public Format[] getFormats() {
-			return new Format[] { Rfc2833Detector.DTMF };
+			return new Format[] { DtmfDetector.DTMF };
 		}
 
 		public boolean isAcceptable(Format format) {
@@ -159,7 +161,7 @@ public class Rfc2833DtmfGeneratorTest {
 			RtpHeader rtpHeader = (RtpHeader) buffer.getHeader();
 			byte[] data = (byte[]) buffer.getData();
 			if (rtpHeader.getMarker()) {
-				String digit = Rfc2833Detector.TONE[data[0]];
+				String digit = DtmfDetector.TONE[data[0]];
 				if ("9".equals(digit)) {
 					dtmfReceived = true;
 				}

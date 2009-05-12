@@ -20,18 +20,22 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
-import org.mobicents.media.server.spi.resource.Rfc2833Detector;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * 
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public class Rfc2833DetectorImpl extends AbstractSink implements Rfc2833Detector {
+public class Rfc2833DetectorImpl extends AbstractSink implements DtmfDetector {
 
 	private transient Logger logger = Logger.getLogger(Rfc2833DetectorImpl.class);
+	
+	public final static Format[] FORMATS = new Format[] { DTMF };
 
-	private String mask = Rfc2833Detector.RFC2833_DETECTOR_MASK;
+	private String mask = DETECTOR_MASK;
+	private int duration = DETECTOR_DURATION;
+	private int silence = DETECTOR_SILENCE;
 
 	public Rfc2833DetectorImpl(String name) {
 		super(name);
@@ -41,6 +45,30 @@ public class Rfc2833DetectorImpl extends AbstractSink implements Rfc2833Detector
 	}
 
 	public void stop() {
+	}
+
+	public int getDuration() {
+		return this.duration;
+	}
+
+	public String getMask() {
+		return this.mask;
+	}
+
+	public int getSilenec() {
+		return this.silence;
+	}
+
+	public void setDuration(int duartion) {
+		this.duration = duration;
+	}
+
+	public void setMask(String mask) {
+		this.mask = mask;
+	}
+
+	public void setSilenec(int silence) {
+		this.silence = silence;
 	}
 
 	public void receive(Buffer buffer) {
@@ -123,4 +151,5 @@ public class Rfc2833DetectorImpl extends AbstractSink implements Rfc2833Detector
 	public boolean isAcceptable(Format format) {
 		return DTMF.equals(format);
 	}
+
 }

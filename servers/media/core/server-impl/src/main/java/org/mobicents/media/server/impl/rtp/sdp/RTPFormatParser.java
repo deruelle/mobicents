@@ -27,101 +27,104 @@ import javax.sdp.SdpParseException;
 import javax.sdp.SessionDescription;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public abstract class RTPFormatParser extends Format {
 
-    private int payloadType;
+	private int payloadType;
 
-    /** Creates a new instance of RTPFormat */
-    public RTPFormatParser(String encodingName) {
-        super(encodingName);
-    }
+	/** Creates a new instance of RTPFormat */
+	public RTPFormatParser(String encodingName) {
+		super(encodingName);
+	}
 
-    public int getPayloadType() {
-        return payloadType;
-    }
+	public int getPayloadType() {
+		return payloadType;
+	}
 
-    public static synchronized HashMap<Integer, Format> getFormats(SessionDescription sdp, String mediaType) throws SdpParseException, SdpException {
-        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
-        Enumeration mediaDescriptions = sdp.getMediaDescriptions(false).elements();
-        while (mediaDescriptions.hasMoreElements()) {
-            MediaDescription md = (MediaDescription) mediaDescriptions.nextElement();
-            if (md.getMedia().getMediaType().equals(mediaType)) {
-                HashMap<Integer, Format> fmts = getFormats(md);
-                if (fmts != null) {
-                    formats.putAll(fmts);
-                }
-            }
-        }
-        return formats;
-    }
+	public static synchronized HashMap<Integer, Format> getFormats(SessionDescription sdp, String mediaType)
+			throws SdpParseException, SdpException {
+		HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
+		Enumeration mediaDescriptions = sdp.getMediaDescriptions(false).elements();
+		while (mediaDescriptions.hasMoreElements()) {
+			MediaDescription md = (MediaDescription) mediaDescriptions.nextElement();
+			if (md.getMedia().getMediaType().equals(mediaType)) {
+				HashMap<Integer, Format> fmts = getFormats(md);
+				if (fmts != null) {
+					formats.putAll(fmts);
+				}
+			}
+		}
+		return formats;
+	}
 
-    public static HashMap<Integer, Format> getFormats(MediaDescription md) throws SdpParseException, SdpException {
-        Media media = md.getMedia();
-        if (media.getMediaType().equals(AVProfile.AUDIO)) {
-            return getAudioFormats(md);
-        } else if (media.getMediaType().equals(AVProfile.VIDEO)) {
-            return getVideoFormats(md);
-        } else {
-            return null;
-        }
-    }
+	public static HashMap<Integer, Format> getFormats(MediaDescription md) throws SdpParseException, SdpException {
+		Media media = md.getMedia();
+		if (media.getMediaType().equals(AVProfile.AUDIO)) {
+			return getAudioFormats(md);
+		} else if (media.getMediaType().equals(AVProfile.VIDEO)) {
+			return getVideoFormats(md);
+		} else {
+			return null;
+		}
+	}
 
-    private static HashMap<Integer, Format> getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
-        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
-        Media media = md.getMedia();
-        
-        Enumeration payloads = media.getMediaFormats(false).elements();
-        while (payloads.hasMoreElements()) {
-            int payload = Integer.parseInt((String) payloads.nextElement());
-            Format fmt = AVProfile.getAudioFormat(payload);
-            if (fmt != null) {
-                formats.put(new Integer(payload), fmt);
-            }
-        }
+	private static HashMap<Integer, Format> getAudioFormats(MediaDescription md) throws SdpParseException, SdpException {
+		HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
+		Media media = md.getMedia();
 
-        Enumeration attributes = md.getAttributes(false).elements();
-        while (attributes.hasMoreElements()) {
-            Attribute attribute = (Attribute) attributes.nextElement();
-            if (attribute.getName().equals("rtpmap")) {
-                RTPAudioFormat fmt = RTPAudioFormat.parseFormat(attribute.getValue());
-                formats.put(new Integer(fmt.getPayloadType()), fmt);
-            }
-        }
+		Enumeration payloads = media.getMediaFormats(false).elements();
+		while (payloads.hasMoreElements()) {
+			int payload = Integer.parseInt((String) payloads.nextElement());
+			Format fmt = AVProfile.getAudioFormat(payload);
+			if (fmt != null) {
+				formats.put(new Integer(payload), fmt);
+			}
+		}
 
-        return formats;
-    }
+		Enumeration attributes = md.getAttributes(false).elements();
+		while (attributes.hasMoreElements()) {
+			Attribute attribute = (Attribute) attributes.nextElement();
+			if (attribute.getName().equals("rtpmap")) {
+				RTPAudioFormat fmt = RTPAudioFormat.parseFormat(attribute.getValue());
+				if (fmt != null) {
+					formats.put(new Integer(fmt.getPayloadType()), fmt);
+				}
+			}
+		}
 
-    private static HashMap<Integer, Format> getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
-        HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
-        Media media = md.getMedia();
+		return formats;
+	}
 
-        Enumeration<String> payloads = media.getMediaFormats(false).elements();
-        while (payloads.hasMoreElements()) {
-            int payload = Integer.parseInt((String) payloads.nextElement());
-            Format fmt = AVProfile.getVideoFormat(payload);
-            if (fmt != null) {
-                formats.put(new Integer(payload), fmt);
-            }
-        }
+	private static HashMap<Integer, Format> getVideoFormats(MediaDescription md) throws SdpParseException, SdpException {
+		HashMap<Integer, Format> formats = new HashMap<Integer, Format>();
+		Media media = md.getMedia();
 
-        Enumeration attributes = md.getAttributes(false).elements();
-        while (attributes.hasMoreElements()) {
-            Attribute attribute = (Attribute) attributes.nextElement();
-            if (attribute.getName().equals("rtpmap")) {
-                RTPVideoFormat fmt = RTPVideoFormat.parseFormat(attribute.getValue());
-                formats.put(new Integer(fmt.getPayloadType()), fmt);
-            }
-        }
+		Enumeration<String> payloads = media.getMediaFormats(false).elements();
+		while (payloads.hasMoreElements()) {
+			int payload = Integer.parseInt((String) payloads.nextElement());
+			Format fmt = AVProfile.getVideoFormat(payload);
+			if (fmt != null) {
+				formats.put(new Integer(payload), fmt);
+			}
+		}
 
-        return formats;
-    }
+		Enumeration attributes = md.getAttributes(false).elements();
+		while (attributes.hasMoreElements()) {
+			Attribute attribute = (Attribute) attributes.nextElement();
+			if (attribute.getName().equals("rtpmap")) {
+				RTPVideoFormat fmt = RTPVideoFormat.parseFormat(attribute.getValue());
+				formats.put(new Integer(fmt.getPayloadType()), fmt);
+			}
+		}
 
-    public String toSdp() {
-        return null;
-    }
+		return formats;
+	}
 
-    public abstract Collection<Attribute> encode();
+	public String toSdp() {
+		return null;
+	}
+
+	public abstract Collection<Attribute> encode();
 }

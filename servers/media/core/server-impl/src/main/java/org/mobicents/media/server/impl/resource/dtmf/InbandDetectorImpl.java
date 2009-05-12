@@ -17,7 +17,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.spi.dsp.Codec;
-import org.mobicents.media.server.spi.resource.InbandDetector;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * Implements inband DTMF detector.
@@ -53,7 +53,7 @@ public class InbandDetectorImpl extends DtmfBuffer {
 	private boolean started = false;
 	private volatile boolean initialized = false;
 
-	private int toneDuration = InbandDetector.INBAND_DETECTOR_DURATION;
+	private int toneDuration = DtmfDetector.DETECTOR_DURATION;
 	private int N = 16 * toneDuration / 2;
 	private double scale = (double) toneDuration / (double) 1000;
 	private double[] ham = null;

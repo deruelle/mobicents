@@ -5,7 +5,7 @@
             <inject bean="MediaServer"/>
         </property>
         <property name="bindAddress">127.0.0.1</property>
-		<property name="port">2727</property>
+		<property name="port">2427</property>
         <incallback method="addPackage"/>
         <uncallback method="removePackage"/>
     </bean>

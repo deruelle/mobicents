@@ -17,7 +17,7 @@ import java.io.Serializable;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
-import org.mobicents.media.server.spi.resource.InbandDetector;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * Implements digit buffer.
@@ -25,15 +25,15 @@ import org.mobicents.media.server.spi.resource.InbandDetector;
  * @author Oleg Kulikov
  * @author amit bhayani
  */
-public abstract class DtmfBuffer extends AbstractSink implements InbandDetector, Serializable {
+public abstract class DtmfBuffer extends AbstractSink implements DtmfDetector, Serializable {
 	public final static int TIMEOUT = 5000;
 
 	// Silence is time difference forced between two digits. Default is user 2
 	// digits per sec. Reduce this to suit your requirements
-	public int silence = InbandDetector.INBAND_DETECTOR_SILENCE;
+	public int silence = DtmfDetector.DETECTOR_SILENCE;
 
 	private StringBuffer buffer = new StringBuffer();
-	private String mask = InbandDetector.INBAND_DETECTOR_MASK;
+	private String mask = DtmfDetector.DETECTOR_MASK;
 
 	// private DtmfDetector detector;
 
