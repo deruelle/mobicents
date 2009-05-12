@@ -161,7 +161,8 @@ public class NotificationRequestAction implements Callable<JainMgcpResponseEvent
         
         //disable previous signal
         Request prev = controller.requests.remove(endpoint.getLocalName());
-        prev.cancel();
+        if(prev!=null)
+        	prev.cancel();
         
         //enable current signal
         controller.requests.put(endpoint.getLocalName(), request);

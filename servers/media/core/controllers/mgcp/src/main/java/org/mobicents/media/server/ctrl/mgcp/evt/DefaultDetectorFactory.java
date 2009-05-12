@@ -37,7 +37,7 @@ public class DefaultDetectorFactory implements DetectorFactory {
     private String packageName;
     private String name;
     
-    private int resourceID;
+    private String resourceName;
     private int eventID;
 
     public String getPackageName() {
@@ -56,12 +56,12 @@ public class DefaultDetectorFactory implements DetectorFactory {
         return name;
     }
     
-    public void setResourceID(int resourceID) {
-        this.resourceID = resourceID;
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
     }
 
-    public int getResourceID() {
-        return resourceID;
+    public String getResourceName() {
+        return resourceName;
     }
 
     public int getEventID() {
@@ -73,7 +73,7 @@ public class DefaultDetectorFactory implements DetectorFactory {
     }
         
     public EventDetector getInstance(String params, RequestedAction[] actions) {
-        return new DefaultEventDetector(packageName, name, resourceID, eventID, params, actions);
+        return new DefaultEventDetector(packageName, name, resourceName, eventID, params, actions);
     }
 
 }

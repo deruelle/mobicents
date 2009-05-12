@@ -38,8 +38,8 @@ public class DefaultEventDetector extends EventDetector {
     private ActionFactory actionFactory = new ActionFactory();
     
     public DefaultEventDetector(String pkgName, String eventName, 
-            int resourceID, int eventID, String params, RequestedAction[] actions) {
-        super(pkgName, eventName, resourceID, eventID, params, actions);
+            String resourceName, int eventID, String params, RequestedAction[] actions) {
+        super(pkgName, eventName, resourceName, eventID, params, actions);
     }
 
     @Override

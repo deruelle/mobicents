@@ -45,7 +45,7 @@ public abstract class EventDetector implements NotificationListener {
     private String pkgName;
     private String eventName;
     
-    private int resourceID;
+    private String resourceName;
     private int eventID;
     
     private Endpoint endpoint;
@@ -54,11 +54,11 @@ public abstract class EventDetector implements NotificationListener {
     private String params;
     private Component component;
     
-    public EventDetector(String pkgName, String eventName, int resourceID, int eventID, 
+    public EventDetector(String pkgName, String eventName, String resourceName, int eventID, 
             String params, RequestedAction[] actions) {
         this.pkgName = pkgName;
         this.eventName = eventName;
-        this.resourceID = resourceID;
+        this.resourceName = resourceName;
         this.eventID = eventID;
         this.params = params;
         this.actions = actions;
@@ -96,12 +96,12 @@ public abstract class EventDetector implements NotificationListener {
     }
 
     protected boolean doVerify(Connection connection) {
-        component = connection.getComponent(resourceID);
+        component = connection.getComponent(resourceName);
         return component != null;
     }
     
     protected boolean doVerify(Endpoint endpoint) {
-        component = endpoint.getComponent(resourceID);
+        component = endpoint.getComponent(resourceName);
         return component != null;
     }
     

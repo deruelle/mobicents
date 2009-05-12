@@ -125,7 +125,8 @@ public class DeleteConnectionAction implements Callable {
         } else {
             response = this.callDeleteConnections(callID.toString());
         }
-        
+        //Otherwise it wont be sent.
+        response.setTransactionHandle(txID);
         logger.info("Response TX=" + txID + ", response=" + response.getReturnCode());
         return response;
     }

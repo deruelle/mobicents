@@ -251,7 +251,9 @@ public class MgcpController implements JainMgcpListener {
             Collection<ConnectionActivity> activities = call.getActivities();
             for (ConnectionActivity activity : activities) {
                 Connection connection = activity.getMediaConnection();
-                if (connection.getEndpoint().getLocalName().equals(endpointName) && connection.getId().equals(connectionID)) {
+                //if (connection.getEndpoint().getLocalName().equals(endpointName) && connection.getId().equals(connectionID)) {
+                //FIXME: nah, this is what YOu get for methods with the same name :)
+                if (connection.getEndpoint().getLocalName().equals(endpointName) && activity.getID().equals(connectionID)) {
                     return activity;
                 }
             }
