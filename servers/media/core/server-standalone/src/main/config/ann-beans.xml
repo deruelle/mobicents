@@ -7,7 +7,7 @@
     
     <bean name="TxChannelFactory" class="org.mobicents.media.server.resource.ChannelFactory"/>
 	<!-- ANNOUNCEMENT  -->
-    <bean name="Announcement-Access-Point" class="org.mobicents.media.server.impl.enp.ann.AnnEndpointImpl">
+    <bean name="Announcement-Access-Point" class="org.mobicents.media.server.EndpointImpl">
         <property name="localName">
             /mobicents/media/aap/[1..10]
         </property>
