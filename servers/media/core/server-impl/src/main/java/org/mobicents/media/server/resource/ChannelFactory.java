@@ -85,10 +85,10 @@ public class ChannelFactory {
      */
     private Channel createNewChannel(Endpoint endpoint) throws UnknownComponentException {
         //creating components
-        HashMap<String, MediaSource> sources = new HashMap();
-        HashMap<String, MediaSink> sinks = new HashMap();
-        HashMap<String, Inlet> inlets = new HashMap();
-        HashMap<String, Outlet> outlets = new HashMap();
+        HashMap<String, MediaSource> sources = new HashMap<String, MediaSource>();
+        HashMap<String, MediaSink> sinks = new HashMap<String, MediaSink>();
+        HashMap<String, Inlet> inlets = new HashMap<String, Inlet>();
+        HashMap<String, Outlet> outlets = new HashMap<String, Outlet>();
         
         for (ComponentFactory factory: factories) {
             Component component = factory.newInstance(endpoint);
