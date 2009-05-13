@@ -107,7 +107,7 @@ public class RtpSocket implements Runnable {
 		this.readerBuffer = ByteBuffer.allocate(bufferSize);
 		READ_PERIOD = timer.getHeartBeat();
 		this.jitter = rtpFactory.getJitter();
-		
+
 		rtpMapOriginal.putAll(rtpMap);
 		this.rtpMap.putAll(rtpMap);
 
@@ -116,7 +116,6 @@ public class RtpSocket implements Runnable {
 
 		this.rtpFactory = rtpFactory;
 
-		
 	}
 
 	/**
@@ -369,23 +368,29 @@ public class RtpSocket implements Runnable {
 		byte[] headerByte = h.toByteArray();
 
 		int len = headerByte.length + buffer.getLength();
-		
+
 		senderBuffer = new byte[len];
-		
+
 		// combine RTP header and payload
 		System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
 		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
-		
+
 		// construct datagram packet and send synchronously it out
 		// senderPacket.setData(senderBuffer, 0, len);
 		try {
 			// socket.send(senderPacket);
 			ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
+			int count = 0;
 			if (channel.isOpen()) {
-				channel.send(byteBuffer1, remoteInetSocketAddress);
+				while (count < len) {
+					count = channel.send(byteBuffer1, remoteInetSocketAddress);
+					count += count;
+					byteBuffer1.compact();
+					byteBuffer1.flip();
+				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e);
 		}
 	}
 
@@ -410,7 +415,7 @@ public class RtpSocket implements Runnable {
 			logger.error("Network error detected for socket [" + localAddress + ":" + localPort, e);
 			return;
 		}
-		
+
 		readerBuffer.flip();
 		// if data arrives then extra
 		if (count > 0) {
@@ -425,9 +430,9 @@ public class RtpSocket implements Runnable {
 			// the length of the payload is total length of the
 			// datagram except RTP header which has 12 bytes in length
 			System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
-			
+
 			buffer.setHeader(header);
-			
+
 			// assign format.
 			// if payload not changed use the already known format
 			if (payloadType != header.getPayloadType()) {
@@ -436,8 +441,8 @@ public class RtpSocket implements Runnable {
 			}
 
 			buffer.setFormat(format);
-			receiveStream.push(buffer);			
-			
+			receiveStream.push(buffer);
+
 		}
 
 		readerBuffer.clear();
