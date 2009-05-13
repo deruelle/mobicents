@@ -1,9 +1,10 @@
+package org.mobicents.media.server.impl.rtp;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mobicents.media.server.impl.rtp;
-
+//package org.mobicents.media.server.impl.rtp;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -24,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 
  * @author kulikov
+ * 
+ * 
  */
 public class TestNio {
 
@@ -33,7 +36,7 @@ public class TestNio {
 	private static ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor();
 	private Thread worker;
 	private volatile boolean started = false;
-	private static String mcAddress = "192.168.1.2";
+	private static String mcAddress = "127.0.0.1";
 
 	public static void main(String[] args) throws Exception {
 		TestNio t = new TestNio();
@@ -52,7 +55,7 @@ public class TestNio {
 			r.add(servers[i]);
 		}
 
-//		(new Thread(new Signal())).start();
+		// (new Thread(new Signal())).start();
 
 		System.out.println("Servers are ready ");
 
@@ -69,7 +72,7 @@ public class TestNio {
 
 		timer.shutdown();
 		started = false;
-		
+
 		pool.shutdown();
 
 		for (int i = 0; i < N; i++) {
@@ -116,7 +119,6 @@ public class TestNio {
 		}
 	}
 
-
 	private class Client1 implements Runnable {
 
 		private DatagramChannel channel;
@@ -135,21 +137,31 @@ public class TestNio {
 			channel.socket().bind(address);
 
 			channel.connect(destination);
-			channel.configureBlocking(false);	
+			channel.configureBlocking(false);
 		}
 
 		public void run() {
-			byte[] buffer = new byte[160];
+			int len = 160;
+			byte[] buffer = new byte[len];
 			try {
-				
-				for (int i = 0; i < 160; i++) {
+
+				for (int i = 0; i < len; i++) {
 					buffer[i] = (byte) (100 * 2 + 20 / 10 + 40 / 2 + 20 * 10);
 				}
 				ByteBuffer buffer1 = ByteBuffer.wrap(buffer);
-				int count = channel.send(buffer1, destination);
-                                if (count != 160) {
-                                    System.err.println("BAD!BAD!BAD!");
-                                }
+				int count = 0;
+
+				// In loop to take care of async send operation
+				while (count < len) {
+					count = channel.send(buffer1, destination);
+					if (count != 160) {
+						System.out.println("BAD!BAD!BAD! " + count);
+					}
+					count += count;
+					buffer1.compact();
+					buffer1.flip();
+				}
+
 				ticks.add(System.currentTimeMillis());
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -311,9 +323,10 @@ public class TestNio {
 			try {
 				// selector.select();
 				int count = channel.read(buffer);
-                                if (count != 160) {
-                                    System.err.println("BAD!BAD!BAD!BAD!");
-                                }
+				if (count != 160) {
+					System.out.println("BAD!BAD!BAD!BAD! " + count);
+				}
+
 				buffer.flip();
 				buffer.clear();
 				if (count > 0) {

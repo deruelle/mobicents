@@ -7,6 +7,8 @@ package org.mobicents.media;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.mobicents.media.server.RtpHeader;
+
 /**
  * 
  * @author kulikov
@@ -33,6 +35,15 @@ public class BufferFactory implements Serializable {
 			list.add(buffer);
 		}
 
+	}
+
+	public Buffer allocate(boolean wantRtpHeader) {
+		Buffer buffer = this.allocate();
+		if (wantRtpHeader) {
+			RtpHeader header = new RtpHeader();
+			buffer.setHeader(header);
+		}
+		return buffer;
 	}
 
 	public Buffer allocate() {

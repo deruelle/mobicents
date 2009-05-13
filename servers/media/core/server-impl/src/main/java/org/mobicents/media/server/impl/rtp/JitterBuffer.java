@@ -14,8 +14,13 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.mobicents.media.Buffer;
+import org.mobicents.media.BufferFactory;
+import org.mobicents.media.Format;
+import org.mobicents.media.server.RtpHeader;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  * Implements jitter buffer.
@@ -37,12 +42,22 @@ import org.mobicents.media.Buffer;
  */
 public class JitterBuffer implements Serializable {
 
-    private volatile boolean ready = false;
-    private int jitter;
-    private int seq = 0;
-    private int period;
-    private ConcurrentLinkedQueue<Buffer> queue = new ConcurrentLinkedQueue<Buffer>();
-    private int maxSize;
+	private int maxSize;
+	private int period;
+	private int jitter;
+	private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue<byte[]>();
+
+	private BufferFactory bufferFactory = new BufferFactory(10, "ReceiverBuffer");
+
+	private int payloadType = -1;
+
+	private Format format;
+
+	Map<Integer, Format> rtpMap;
+
+	private int packetSize = -1;
+
+	private volatile boolean ready = false;
 
     /**
      * Creates new instance of jitter.
@@ -53,61 +68,99 @@ public class JitterBuffer implements Serializable {
      *            the size of the jitter in milliseconds.
      */
     public JitterBuffer(int jitter, int period) {
-        this.maxSize = 2 * jitter / period;
-        this.period = period;
+		this.maxSize = 2 * jitter / period;
+		this.period = period;
+		this.jitter = jitter;
     }
 
-    /**
-     * Gets the size of jitter.
-     * 
-     * @return the size of jitter in milliseconds
-     */
-    public int getJitter() {
-        return jitter;
-    }
+	public int getJitter() {
+		return jitter;
+	}
 
-    public void setPeriod(int period) {
-        this.period = period;
-        maxSize = jitter / period;
-    }
+	public void setPeriod(int period) {
+		this.period = period;
+		maxSize = jitter / period;
+	}
 
-    public void write(Buffer buffer) {
-        if (queue.size() == this.maxSize) {
-            buffer.dispose();
-        } else {
-            queue.offer(buffer);
-        }
-        if (!ready && queue.size() >= this.maxSize / 2) {
-            ready = true;
-        }
-    }
+	public void write(byte[] data) {
+		if (queue.size() < this.maxSize) {
+			queue.offer(data);
+		}
 
-    public void reset() {
-        queue.clear();
-    }
+		if (!ready && queue.size() >= this.maxSize / 2) {
+			ready = true;
+		}
+	}
 
-    /**
-     * Reads media packet from jitter buffer.
-     * 
-     * @return media packet.
-     */
-    public Buffer read() {
-        if (!ready) {
-            return null;
-        }
+	public void reset() {
+		queue.clear();
+	}
 
-        Buffer buff = null;
-        if (!queue.isEmpty()) {
-            buff = queue.poll();
+	private int getPacketSize(Format format) {
+		int packetSize = 160;
+		if (format.matches(Codec.LINEAR_AUDIO)) {
+			packetSize = 320;
+		} else if ((format.matches(Codec.PCMA)) || (format.matches(Codec.PCMU)) || (format.matches(Codec.SPEEX))
+				|| (format.matches(Codec.G729))) {
+			packetSize = 160;
+		} else if (format.matches(Codec.GSM)) {
+			packetSize = 33;
+		} else if (format.matches(Codec.L16_MONO)) {
+			packetSize = 1764;
+		} else if (format.matches(Codec.L16_STEREO)) {
+			packetSize = 3528;
+		}
+		return packetSize;
+	}
 
-            if (buff != null) {
-                buff.setSequenceNumber(seq);
-                buff.setTimeStamp(seq * period);
-                buff.setDuration(period);
-                buff.setOffset(0);
-                seq++;
-            }
-        }
-        return buff;
-    }
+	public Buffer read() {
+		if (!ready) {
+			return null;
+		}
+		
+		
+		byte[] data = null;
+		
+		if (!queue.isEmpty()) {
+			try{
+			data = queue.poll();
+
+			int count = data.length;
+
+			// allocating media buffer using factory
+			Buffer buffer = bufferFactory.allocate(true);
+			RtpHeader header = (RtpHeader) buffer.getHeader();
+			header.init(data);
+
+			// the length of the payload is total length of the
+			// datagram except RTP header which has 12 bytes in length
+			System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
+
+			// assign format.
+			// if payload not changed use the already known format
+			if (payloadType != header.getPayloadType()) {
+				payloadType = header.getPayloadType();
+				format = rtpMap.get(payloadType);
+				packetSize = getPacketSize(format);
+			}
+
+			while (((count - 12) < packetSize) && !queue.isEmpty()) {
+				byte[] newData = queue.poll();
+				byte[] oldData = (byte[]) buffer.getData();
+				System.arraycopy(newData, 0, oldData, (count - 12), oldData.length);
+				count += newData.length;
+			}
+
+			buffer.setLength(count - 12);
+			buffer.setFormat(format);
+			// receiveStream.push(buffer);
+			return buffer;
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		} // end of if
+		return null;
+
+	}
 }

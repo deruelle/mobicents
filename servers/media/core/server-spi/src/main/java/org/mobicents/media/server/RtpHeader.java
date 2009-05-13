@@ -25,7 +25,7 @@
  * Boston, MA  02110-1301  USA
  */
 
-package org.mobicents.media.server.impl.rtp;
+package org.mobicents.media.server;
 
 import java.io.Serializable;
 

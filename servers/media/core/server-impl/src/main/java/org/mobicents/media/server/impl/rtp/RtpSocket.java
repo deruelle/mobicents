@@ -38,6 +38,7 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
+import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.spi.Timer;
 
 /**
@@ -81,7 +82,6 @@ public class RtpSocket implements Runnable {
 	// timer to synchronize from
 	protected Timer timer;
 
-	private RtpHeader header = new RtpHeader();
 	private int payloadType = -1;
 	private Format format;
 	private BufferFactory bufferFactory = new BufferFactory(10, "RTPSocket");
@@ -435,28 +435,33 @@ public class RtpSocket implements Runnable {
 		// if data arrives then extra
 		if (count > 0) {
 			byte[] buff = readerBuffer.array();
+			
+			byte[] data = new byte[buff.length];
+			System.arraycopy(buff, 0, data, 0, data.length);
+			receiveStream.push(data);
 
-			// parse RTP header
-			header.init(buff);
-
-			// allocating media buffer using factory
-			Buffer buffer = bufferFactory.allocate();
-			buffer.setLength(count - 12);
-			// the length of the payload is total length of the
-			// datagram except RTP header which has 12 bytes in length
-			System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0, buffer.getLength());
-
-			buffer.setHeader(header);
-
-			// assign format.
-			// if payload not changed use the already known format
-			if (payloadType != header.getPayloadType()) {
-				payloadType = header.getPayloadType();
-				format = rtpMap.get(payloadType);
-			}
-
-			buffer.setFormat(format);
-			receiveStream.push(buffer);
+			// // parse RTP header
+			// header.init(buff);
+			//
+			// // allocating media buffer using factory
+			// Buffer buffer = bufferFactory.allocate();
+			// buffer.setLength(count - 12);
+			// // the length of the payload is total length of the
+			// // datagram except RTP header which has 12 bytes in length
+			// System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0,
+			// buffer.getLength());
+			//
+			// buffer.setHeader(header);
+			//
+			// // assign format.
+			// // if payload not changed use the already known format
+			// if (payloadType != header.getPayloadType()) {
+			// payloadType = header.getPayloadType();
+			// format = rtpMap.get(payloadType);
+			// }
+			//
+			// buffer.setFormat(format);
+			//			receiveStream.push(buffer);
 
 		}
 

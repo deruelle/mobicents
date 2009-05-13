@@ -41,8 +41,8 @@ public class ReceiveStream extends AbstractSource implements Runnable {
         jitterBuffer = new JitterBuffer(jitter, rtpSocket.timer.getHeartBeat());
     }
 
-    protected void push(Buffer buffer) {
-        jitterBuffer.write(buffer);
+    protected void push(byte[] data) {
+        jitterBuffer.write(data);
     }
 
     public void stop() {
