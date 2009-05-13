@@ -110,10 +110,11 @@ public class MediaEventDispatcher {
 	/**
 	 * You can use this method to simulate some event, BUT THIS IS NOT RECOMMENDED!
 	 */
-	@Observer("linkConnected")
+	@Observer("preLinkConnected")
 	public void doLinkConnected(MsLinkEvent linkEvent) {
 		mediaSessionStore.setMsLink(linkEvent.getSource());
 		mediaSessionStore.setMsEndpoint(linkEvent.getSource().getEndpoints()[0]);
+		Events.instance().raiseEvent("linkConnected", linkEvent);
 		Events.instance().raiseEvent("storeLinkConnected", linkEvent);
 	}
 	
