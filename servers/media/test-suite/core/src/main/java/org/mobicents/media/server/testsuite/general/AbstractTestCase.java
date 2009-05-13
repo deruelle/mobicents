@@ -11,6 +11,7 @@ import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,21 +19,19 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TooManyListenersException;
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.sdp.Attribute;
 import javax.sdp.SdpFactory;
+
 import org.mobicents.media.server.testsuite.general.file.FileUtils;
 import org.mobicents.media.server.testsuite.gui.ext.CallStateTableModel;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -45,8 +44,8 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  */
 public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runnable, Serializable{
 
-    
-    
+	protected transient Logger logger = Logger.getLogger(this.getClass().getName());
+	
     private enum TestState
     {
         Stoped, Running;
@@ -60,7 +59,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     protected transient  SdpFactory sdpFactory;
     
     
-    protected transient Logger logger = Logger.getLogger(this.getClass().getName());
+    
     protected transient CallDisplayInterface callDisplay;
     protected Map<Long,AbstractCall> callSequenceToCall;
     //We mix view, but this is easier to achieve perf with that.
@@ -347,7 +346,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         }
         int delta = 1000/this.getCallDisplayInterface().getCPS();
         //we use delta,delta, cause we dont want sudden rush  in CPS
-        this.callCreatorTask = this.callCreator.scheduleAtFixedRate(this, delta, delta, TimeUnit.MILLISECONDS);
+        //this.callCreatorTask = this.callCreator.scheduleAtFixedRate(this, delta, delta, TimeUnit.MILLISECONDS);
+        this.run();
         
     }
 

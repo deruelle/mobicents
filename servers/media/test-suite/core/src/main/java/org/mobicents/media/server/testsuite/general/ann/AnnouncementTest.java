@@ -5,11 +5,13 @@
 
 package org.mobicents.media.server.testsuite.general.ann;
 
-import org.mobicents.media.server.testsuite.general.*;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.apache.log4j.Logger;
+import org.mobicents.media.server.testsuite.general.AbstractCall;
+import org.mobicents.media.server.testsuite.general.AbstractTestCase;
+
 
 
 /**
@@ -17,15 +19,18 @@ import java.util.logging.Logger;
  * @author baranowb
  */
 public class AnnouncementTest extends AbstractTestCase{
+	
+	Logger logger = Logger.getLogger(AnnouncementTest.class);
 
     @Override
     public AbstractCall getNewCall() {
         try {
             AbstractCall call = new AnnCall(this, super.callDisplay.getFileURL());
             super.timeGuard.schedule(new AnnCallTimeOutTask(call), super.callDisplay.getCallDuration(), TimeUnit.MILLISECONDS);
+            
             return call;
         } catch (IOException ex) {
-            Logger.getLogger(AnnouncementTest.class.getName()).log(Level.SEVERE, null, ex);
+        	logger.error(ex);
         }
         return null;
     }
