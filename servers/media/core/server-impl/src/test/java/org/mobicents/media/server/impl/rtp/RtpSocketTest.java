@@ -1,7 +1,6 @@
 package org.mobicents.media.server.impl.rtp;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
 
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -37,8 +36,8 @@ public class RtpSocketTest {
 	
 	private RtpSocket serverSocket;
 	private RtpSocket clientSocket;
-	private int period = 20;
-	private int jitter = 40;
+	//private int period = 20;
+	//private int jitter = 40;
 	private InetAddress localAddress;
 	private AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
 

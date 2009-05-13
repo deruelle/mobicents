@@ -209,11 +209,14 @@ public class RtpFactory {
 			rtpSocket = new RtpSocket(timer, formatMap, this);
 			rtpSocket.init(bindAddress, lowPortNumber, highPortNumber);
 		}
+
 		return rtpSocket;
 	}
 
 	public void releaseRTPSocket(RtpSocket rtpSocket) {
+		
 		rtpSockets.add(rtpSocket);
+		
 	}
 
 	public Map<Integer, Format> getFormatMap() {

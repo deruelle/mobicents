@@ -251,9 +251,23 @@ public class RtpSocket implements Runnable {
 
 	public void release() {
 		if (receiveStream != null) {
+			
 			receiveStream.stop();
 		}
+		
 		this.resetRtpMap();
+		if (channel != null) {
+			try {
+				channel.disconnect();
+				
+			} catch (IOException e) {
+			}
+		}
+
+		if (socket != null) {
+			socket.disconnect();
+			socket = null;
+		}
 		this.rtpFactory.releaseRTPSocket(this);
 	}
 
@@ -269,6 +283,7 @@ public class RtpSocket implements Runnable {
 		if (channel != null) {
 			try {
 				channel.disconnect();
+				//FIXME: socket.close() does that also doesnt it?
 				channel.close();
 			} catch (IOException e) {
 			}

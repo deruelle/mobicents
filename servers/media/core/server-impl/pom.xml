@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<packaging>jar</packaging>
@@ -37,11 +36,11 @@
 			<artifactId>jboss-common</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!--dependency>
-			<groupId>org.jboss.jbossas</groupId>
+		<!--
+			dependency> <groupId>org.jboss.jbossas</groupId>
 			<artifactId>jboss-as-system-jmx</artifactId>
-			<version>5.0.0.GA</version>
-			</dependency -->
+			<version>5.0.0.GA</version> </dependency
+		-->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
@@ -122,6 +121,20 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.4.2</version>
+				<configuration>
+					<forkMode>pertest</forkMode>
+					<!-- So we dont have to juse xxxTest.java.bak "_" -->
+					<!-- 
+					<excludes>
+						<exclude>**/TestCircle.java</exclude>
+						<exclude>**/TestSquare.java</exclude>
+					</excludes>
+					<includes>
+						<include>Sample.java</include>
+					</includes>
+ 					-->
+				</configuration>
+
 			</plugin>
 		</plugins>
 	</build>
