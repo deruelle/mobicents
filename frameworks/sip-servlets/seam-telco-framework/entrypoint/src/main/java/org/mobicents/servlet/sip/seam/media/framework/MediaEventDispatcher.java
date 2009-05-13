@@ -7,13 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.sip.SipSession;
 
 import org.jboss.seam.ScopeType;
+import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Install;
+import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Observer;
 import org.jboss.seam.annotations.Scope;
-import org.jboss.seam.annotations.Startup;
 import org.jboss.seam.core.Events;
+import org.jboss.seam.log.Log;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.events.MsEventIdentifier;
@@ -27,17 +29,26 @@ import org.mobicents.servlet.sip.seam.entrypoint.media.MediaEvent;
  * This class keeps track of some Media events and produces other events for convenience.
  * It also keeps track on the DTMF numbers entered in the context of every SipSession.
  * 
+ * IMPORTANT NOTE FOR REVIEW!
+ * The reason this class cannot be Application scoped (and avoid the static dtmfBuffer collection)
+ * is that when an event is raised in the context of one SipSession Seam flags the sipSession member
+ * in this class as "injected" in Bijection interceptor and it stays like that or the whole 
+ * application without ever being updated. This seems wrong as we may want to keep state in finer-grained
+ * contexts.
+ * 
  * @author vralev
  *
  */
 
 @Name("mediaEventDispatcher")
-@Scope(ScopeType.APPLICATION)
+@Scope(ScopeType.STATELESS)
 @Install(precedence=FRAMEWORK)
-@Startup
+@AutoCreate
 public class MediaEventDispatcher {
 	@In(required=false) MediaSessionStore mediaSessionStore;
-	private ConcurrentHashMap<Object, StringBuffer> dtmfBuffer =
+	@Logger Log log;
+	@In(required=false) SipSession sipSession;
+	private static ConcurrentHashMap<Object, StringBuffer> dtmfBuffer =
 		new ConcurrentHashMap<Object, StringBuffer>();
 	
 	private void addNumber(Object object, String number) {
@@ -114,6 +125,14 @@ public class MediaEventDispatcher {
 		mediaSessionStore.setMsConnection(connectionEvent.getConnection());
 		mediaSessionStore.setMsEndpoint(connectionEvent.getConnection().getEndpoint());
 		Events.instance().raiseEvent("storeConnectionOpen", connectionEvent);
+	}
+	
+	@Observer("preConnectionHalfOpen")
+	public void doConnectionHalfOpen(MsConnectionEvent connectionEvent) {
+		log.info("PRECONNECTION for " + sipSession.toString());
+		mediaSessionStore.setMsConnection(connectionEvent.getConnection());
+		mediaSessionStore.setMsEndpoint(connectionEvent.getConnection().getEndpoint());
+		Events.instance().raiseEvent("connectionHalfOpen", connectionEvent);
 	}
 	
 	/**

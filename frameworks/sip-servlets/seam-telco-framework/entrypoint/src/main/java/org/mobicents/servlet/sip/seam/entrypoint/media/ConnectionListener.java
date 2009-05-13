@@ -2,6 +2,7 @@ package org.mobicents.servlet.sip.seam.entrypoint.media;
 
 import javax.servlet.sip.SipSession;
 
+import org.apache.log4j.Logger;
 import org.jboss.seam.core.Events;
 import org.mobicents.mscontrol.MsConnectionEvent;
 import org.mobicents.mscontrol.MsConnectionListener;
@@ -15,6 +16,7 @@ import org.mobicents.servlet.sip.seam.entrypoint.SeamEntrypointUtils;
  */
 public class ConnectionListener implements MsConnectionListener {
 
+	private static Logger log = Logger.getLogger(ConnectionListener.class);
 	private SipSession sipSession;
 	
 	public ConnectionListener(SipSession sipSession) {
@@ -22,9 +24,27 @@ public class ConnectionListener implements MsConnectionListener {
 	}
 	
 	private void postEvent(String eventName, MsConnectionEvent event) {
-		SeamEntrypointUtils.beginEvent(sipSession);
-		Events.instance().raiseEvent(eventName, event);
-		SeamEntrypointUtils.endEvent();
+		if(log.isDebugEnabled()) {
+			log.debug("Before posting Event from listener: " 
+					+ eventName + ", session=" + sipSession.toString());
+		}
+		log.info("Before posting Event from listener: " 
+				+ eventName + ", session=" + sipSession.toString());
+		try {
+			SeamEntrypointUtils.beginEvent(sipSession);
+			Events.instance().raiseEvent(eventName, event);
+			SeamEntrypointUtils.endEvent();
+		} catch (Throwable t) {
+			log.error("Error delivering event " + eventName + 
+					", session=" + sipSession.toString(), t);
+			SeamEntrypointUtils.beginEvent(sipSession);
+			Events.instance().raiseEvent("org.mobicents.media.unhandledException", t);
+			SeamEntrypointUtils.endEvent();
+		}
+		if(log.isDebugEnabled()) {
+			log.debug("After posting Event from listener: " 
+					+ eventName + ", session=" + sipSession.toString());
+		}
 	}
 	
 	public void connectionCreated(MsConnectionEvent arg0) {
@@ -40,7 +60,7 @@ public class ConnectionListener implements MsConnectionListener {
 	}
 
 	public void connectionHalfOpen(MsConnectionEvent arg0) {
-		postEvent("connectionHalfOpen", arg0);
+		postEvent("preConnectionHalfOpen", arg0);
 	}
 
 	public void connectionModeRecvOnly(MsConnectionEvent arg0) {

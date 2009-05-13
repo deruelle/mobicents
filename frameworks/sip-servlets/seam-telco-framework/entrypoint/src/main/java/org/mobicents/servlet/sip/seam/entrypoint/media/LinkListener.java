@@ -2,6 +2,7 @@ package org.mobicents.servlet.sip.seam.entrypoint.media;
 
 import javax.servlet.sip.SipSession;
 
+import org.apache.log4j.Logger;
 import org.jboss.seam.core.Events;
 import org.mobicents.mscontrol.MsLinkEvent;
 import org.mobicents.mscontrol.MsLinkListener;
@@ -15,6 +16,8 @@ import org.mobicents.servlet.sip.seam.entrypoint.SeamEntrypointUtils;
  */
 public class LinkListener implements MsLinkListener {
 
+	private static Logger log = Logger.getLogger(LinkListener.class);
+	
 	private SipSession sipSession;
 	
 	public LinkListener(SipSession sipSession) {
@@ -22,13 +25,29 @@ public class LinkListener implements MsLinkListener {
 	}
 	
 	private void postEvent(String eventName, MsLinkEvent event) {
-		SeamEntrypointUtils.beginEvent(sipSession);
-		Events.instance().raiseEvent(eventName, event);
-		SeamEntrypointUtils.endEvent();
+		if(log.isDebugEnabled()) {
+			log.debug("Before posting Event from listener: " 
+					+ eventName + ", session=" + sipSession.toString());
+		}
+		try {
+			SeamEntrypointUtils.beginEvent(sipSession);
+			Events.instance().raiseEvent(eventName, event);
+			SeamEntrypointUtils.endEvent();
+		} catch (Throwable t) {
+			log.error("Error delivering event " + eventName + 
+					", session=" + sipSession.toString(), t);
+			SeamEntrypointUtils.beginEvent(sipSession);
+			Events.instance().raiseEvent("org.mobicents.media.unhandledException", t);
+			SeamEntrypointUtils.endEvent();
+		}
+		if(log.isDebugEnabled()) {
+			log.debug("After posting Event from listener: " 
+					+ eventName + ", session=" + sipSession.toString());
+		}
 	}
 	
 	public void linkConnected(MsLinkEvent arg0) {
-		postEvent("linkConnected", arg0);
+		postEvent("preLinkConnected", arg0);
 	}
 
 	public void linkCreated(MsLinkEvent arg0) {

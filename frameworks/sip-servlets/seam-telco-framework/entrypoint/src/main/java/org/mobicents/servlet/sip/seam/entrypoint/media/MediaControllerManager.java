@@ -23,7 +23,12 @@ public class MediaControllerManager {
 		new HashMap<SipSession, MediaController>();
 	
 	public MediaController getMediaController(SipSession sipSession) {
-		return mediaControllers.get(sipSession);
+		MediaController mc = mediaControllers.get(sipSession);
+		if(mc == null) {
+			mc = new MediaController(sipSession, MsProviderContainer.msProvider.createSession());
+			putMediaController(sipSession, mc);
+		}
+		return mc;
 	}
 	
 	public void putMediaController(SipSession sipSession, MediaController mediaController) {

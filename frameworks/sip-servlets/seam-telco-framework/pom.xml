@@ -63,7 +63,7 @@
 				<configuration>				
 					<!--generateProjectsForModules>true</generateProjectsForModules-->	
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>sip-servlets-bootstrap</eclipseProjectName>
+					<eclipseProjectName>seam-telco-framework</eclipseProjectName>
 				</configuration>
 			</plugin>
 		</plugins>
