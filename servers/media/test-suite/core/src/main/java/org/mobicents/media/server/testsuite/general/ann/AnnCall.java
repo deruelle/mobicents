@@ -31,6 +31,7 @@ import jain.protocol.ip.mgcp.pkg.PackageName;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.mobicents.media.server.testsuite.general.AbstractCall;
 import org.mobicents.media.server.testsuite.general.AbstractTestCase;
 import org.mobicents.media.server.testsuite.general.CallState;
@@ -41,7 +42,8 @@ import org.mobicents.media.server.testsuite.general.CallState;
  * @author baranowb
  */
 public class AnnCall extends AbstractCall{
-
+    protected transient Logger logger = Logger.getLogger(AnnCall.class);
+    
     private AnnCallState localFlowState = AnnCallState.INITIAL;
     private String HELLO_WORLD = "";
     private ConnectionIdentifier allocatedConnection = null;
@@ -128,7 +130,7 @@ public class AnnCall extends AbstractCall{
     public void processMgcpResponseEvent(JainMgcpResponseEvent mgcpResponse) {
                 
         
-                System.err.println("PROCESS RESPONSE ON STATE : "+this.localFlowState+"\n"+mgcpResponse);
+                
 		int code = mgcpResponse.getReturnCode().getValue();
                 super.testCase.removeCall(mgcpResponse);
 		switch (this.localFlowState) {
@@ -177,7 +179,7 @@ public class AnnCall extends AbstractCall{
                                     this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
 				}
 			} else {
 
@@ -185,7 +187,7 @@ public class AnnCall extends AbstractCall{
                                     this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON RESPONSE: "+mgcpResponse);
 			}
 			break;
 			
@@ -203,14 +205,14 @@ public class AnnCall extends AbstractCall{
                                     this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON RESPONSE: "+mgcpResponse);
 				}
 				
 			} else {
                                     this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
 				
 			}
 			break;
@@ -231,26 +233,26 @@ public class AnnCall extends AbstractCall{
                                    this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
 				}
 			} else {
 				this.setLocalFlowState(AnnCallState.TERMINATED);
                                     super.setState(CallState.IN_ERROR);
                                     //FIXME: add error dump
-                                    System.err.println("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
+                                    logger.error("FAILED["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
 			}
 
 			
 			break;
 		default:
-			System.err.println("GOT RESPONSE UNKONWN["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
+			logger.error("GOT RESPONSE UNKONWN["+this.localFlowState+"] ON CRCS RESPONSE: "+mgcpResponse);
 		}
 
 	}
 
     @Override
     public void start() {
-        
+
         try{
             super.initSocket();
             EndpointIdentifier ei = new EndpointIdentifier(super.endpointName, super.testCase.getServerJbossBindAddress().getHostAddress() + ":" + super.testCase.getCallDisplayInterface().getRemotePort());

@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.mobicents.media.server.testsuite.general;
 
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
@@ -47,302 +46,293 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  */
 public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable, Serializable {
 
-	transient Logger logger = Logger.getLogger(AbstractCall.class);
-	// We are serializable, just in case.
-	public static final int _READ_PERIOD = 5;
-	// Some static vals:
-	protected transient static final AtomicLong _GLOBAL_SEQ = new AtomicLong(-1);
+    protected transient Logger logger = Logger.getLogger(AbstractCall.class);
+    // We are serializable, just in case.
+    public static final int _READ_PERIOD = 5;
+    // Some static vals:
+    protected transient static final AtomicLong _GLOBAL_SEQ = new AtomicLong(-1);
+    protected final long sequence;
+    protected CallState state = CallState.INITIAL;
+    protected int avgJitter;
+    protected int peakJitter;
+    protected long lastDeliverTimeStamp;
 
-	protected final long sequence;
+    // Data dump
+    protected transient java.io.File dataFileName;
+    protected transient FileOutputStream fos;
+    protected transient ObjectOutputStream dataDumpChannel;
+    protected transient List<RtpPacket> rtpTraffic = new ArrayList<RtpPacket>();
+    // Media part
+    protected String endpointName = ""; // endpoint name with wildcard - used to
+    // send to mms to get actual EI
+    protected EndpointIdentifier endpointIdentifier;
+    protected CallIdentifier callIdentifier;
 
-	protected CallState state = CallState.INITIAL;
-	protected int avgJitter;
-	protected int peakJitter;
+    // Below is part we dont want to propagate to other side :)
+    protected transient AbstractTestCase testCase;
+    // RTP part
+    // protected transient DatagramChannel datagramChannel
+    protected transient DatagramSocket socket = null;
+    protected transient final ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
+    protected transient ScheduledFuture readerTask;
+    protected transient boolean receiveRTP;
 
-	protected long lastDeliverTimeStamp;
+    // MGCP part
+    protected transient JainMgcpStackProviderImpl provider;
 
-	// Data dump
-	protected transient java.io.File dataFileName;
-	protected transient FileOutputStream fos;
-	protected transient ObjectOutputStream dataDumpChannel;
-	protected transient List<RtpPacket> rtpTraffic = new ArrayList<RtpPacket>();
-	// Media part
+    public AbstractCall(AbstractTestCase testCase) throws IOException {
+        this.testCase = testCase;
+        this.callIdentifier = testCase.getProvider().getUniqueCallIdentifier();
+        boolean finished = false;
+        try {
 
-	protected String endpointName = ""; // endpoint name with wildcard - used to
-	// send to mms to get actual EI
-	protected EndpointIdentifier endpointIdentifier;
-	protected CallIdentifier callIdentifier;
+            this.sequence = _GLOBAL_SEQ.incrementAndGet();
+            this.setDumpDir(this.testCase.getTestDumpDirectory());
+            this.fos = new FileOutputStream(dataFileName);
+            this.dataDumpChannel = new ObjectOutputStream(fos);
+            this.provider = testCase.getProvider();
 
-	// Below is part we dont want to propagate to other side :)
+            finished = true;
+        } finally {
+            if (!finished) {
+                // try{
+                // if(datagramChannel.isConnected() || datagramChannel.isOpen())
+                // {
+                // datagramChannel.close();
+                // }
+                // this.datagramChannel = null;
+                // }catch(Exception e)
+                // {
+                // }
+                if (socket != null && (socket.isBound() || socket.isConnected())) {
+                    socket.close();
+                }
+                try {
+                    if (dataDumpChannel != null) {
+                        dataDumpChannel.close();
+                    }
+                    this.dataDumpChannel = null;
 
-	protected transient AbstractTestCase testCase;
-	// RTP part
-	// protected transient DatagramChannel datagramChannel
-	protected transient DatagramSocket socket = null;
-	protected transient final ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
-	protected transient ScheduledFuture readerTask;
-	protected transient boolean receiveRTP;
+                    this.fos = null;
+                } catch (Exception e) {
+                    logger.error(e);
+                }
+            }
 
-	// MGCP part
-	protected transient JainMgcpStackProviderImpl provider;
+        }
+    }
 
-	public AbstractCall(AbstractTestCase testCase) throws IOException {
-		this.testCase = testCase;
-		this.callIdentifier = testCase.getProvider().getUniqueCallIdentifier();
-		boolean finished = false;
-		try {
+    void setDumpDir(File testDumpDirectory) {
+        this.dataFileName = new File(testDumpDirectory, this.sequence + ".rtp");
+    }
 
-			this.sequence = _GLOBAL_SEQ.incrementAndGet();
-			this.setDumpDir(this.testCase.getTestDumpDirectory());
-			this.fos = new FileOutputStream(dataFileName);
-			this.dataDumpChannel = new ObjectOutputStream(fos);
-			this.provider = testCase.getProvider();
+    protected void initSocket() throws IOException {
+        // datagramChannel = DatagramChannel.open();
+        // DatagramSocket socket = this.datagramChannel.socket();
 
-			finished = true;
-		} finally {
-			if (!finished) {
-				// try{
-				// if(datagramChannel.isConnected() || datagramChannel.isOpen())
-				// {
-				// datagramChannel.close();
-				// }
-				// this.datagramChannel = null;
-				// }catch(Exception e)
-				// {
-				// }
-				if (socket != null && (socket.isBound() || socket.isConnected())) {
-					socket.close();
-				}
-				try {
-					if (dataDumpChannel != null) {
-						dataDumpChannel.close();
-					}
-					this.dataDumpChannel = null;
+        InetAddress bindAddress = this.testCase.getClientTestNodeAddress();
+        // this.socket = new DatagramSocket();
+        for (int i = 1024; i < 65535; i++) {
+            try {
+                SocketAddress address = new InetSocketAddress(bindAddress, i);
+                socket = new DatagramSocket(address);
+                // socket.bind(address);
+                logger.debug("Socket created port = " + socket.getLocalPort() + " address = " + socket.getLocalAddress());
+                return;
+            } catch (SocketException e) {
+                // e.printStackTrace();
+                continue;
+            }
+        }
+        throw new SocketException();
+    }
 
-					this.fos = null;
-				} catch (Exception e) {
-					logger.error(e);
-				}
-			}
+    public List<RtpPacket> getRtp() throws IOException {
+        List<RtpPacket> ll = this.loadRtp();
 
-		}
-	}
+        return ll;
+    }
 
-	void setDumpDir(File testDumpDirectory) {
-		this.dataFileName = new File(testDumpDirectory, this.sequence + ".rtp");
-	}
+    private List<RtpPacket> loadRtp() throws IOException {
+        ArrayList<RtpPacket> list = new ArrayList();
+        FileInputStream fin = new FileInputStream(this.dataFileName);
 
-	protected void initSocket() throws IOException {
-		// datagramChannel = DatagramChannel.open();
-		// DatagramSocket socket = this.datagramChannel.socket();
+        ObjectInputStream in = new ObjectInputStream(fin);
 
-		InetAddress bindAddress = this.testCase.getClientTestNodeAddress();
-		// this.socket = new DatagramSocket();
-		for (int i = 1024; i < 65535; i++) {
-			try {
-				SocketAddress address = new InetSocketAddress(bindAddress, i);
-				socket = new DatagramSocket(address);
-				// socket.bind(address);
-				logger.debug("Socket created port = " + socket.getLocalPort() + " address = "
-						+ socket.getLocalAddress());
-				return;
-			} catch (SocketException e) {
-				// e.printStackTrace();
-				continue;
-			}
-		}
-		throw new SocketException();
-	}
+        // This is weird
+        while (fin.available() > 0) {
+            // while(in.available()>0) {
+            try {
+                RtpPacket p = (RtpPacket) in.readObject();
+                list.add(p);
+            } catch (ClassNotFoundException e) {
+            }
+        }
+        return list;
+    }
 
-	public List<RtpPacket> getRtp() throws IOException {
-		List<RtpPacket> ll = this.loadRtp();
+    public CallState getState() {
+        return state;
+    }
 
-		return ll;
-	}
+    public int getAvgJitter() {
+        return this.avgJitter;
+    }
 
-	private List<RtpPacket> loadRtp() throws IOException {
-		ArrayList<RtpPacket> list = new ArrayList();
-		FileInputStream fin = new FileInputStream(this.dataFileName);
+    public int getPeakJitter() {
+        return this.peakJitter;
+    }
 
-		ObjectInputStream in = new ObjectInputStream(fin);
+    public EndpointIdentifier getEndpoint() {
+        return this.endpointIdentifier;
+    }
 
-		// This is weird
-		while (fin.available() > 0) {
-			// while(in.available()>0) {
-			try {
-				RtpPacket p = (RtpPacket) in.readObject();
-				list.add(p);
-			} catch (ClassNotFoundException e) {
-			}
-		}
-		return list;
-	}
+    public CallIdentifier getCallID() {
+        return this.callIdentifier;
+    }
 
-	public CallState getState() {
-		return state;
-	}
+    public long getSequence() {
+        return this.sequence;
+    }
 
-	public int getAvgJitter() {
-		return this.avgJitter;
-	}
+    protected void setState(CallState state) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Dumping data to file. State = " + state);
+        }
+        if (state == this.state) {
+            return;
+        }
 
-	public int getPeakJitter() {
-		return this.peakJitter;
-	}
+        this.state = state;
 
-	public EndpointIdentifier getEndpoint() {
-		return this.endpointIdentifier;
-	}
+        switch (this.state) {
+            case ENDED:
+            case IN_ERROR:
 
-	public CallIdentifier getCallID() {
-		return this.callIdentifier;
-	}
+                for (int index = 0; index < this.rtpTraffic.size(); index++) {
+                    RtpPacket packet = this.rtpTraffic.get(index);
+                    logger.debug("Dumping data to file");
 
-	public long getSequence() {
-		return this.sequence;
-	}
+                    try {
+                        dataDumpChannel.writeObject(packet);
+                    } catch (IOException ex) {
+                        logger.error(ex);
+                    }
+                }
 
-	protected void setState(CallState state) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Dumping data to file. State = " + state);
-		}
-		if (state == this.state) {
-			return;
-		}
+                // try{
+                // if(datagramChannel.isConnected() || datagramChannel.isOpen())
+                // {
+                // datagramChannel.close();
+                // }
+                // this.datagramChannel = null;
+                // }catch(Exception e)
+                // {
+                // }
+                //receiveRTP = false;
+                if (socket != null && (socket.isBound() || socket.isConnected())) {
+                    socket.close();
+                }
+                try {
+                    if (dataDumpChannel != null) {
+                        dataDumpChannel.close();
+                    }
+                    this.dataDumpChannel = null;
 
-		this.state = state;
+                    this.fos = null;
+                } catch (Exception e) {
+                }
+                break;
 
-		switch (this.state) {
-		case ENDED:
-		case IN_ERROR:
+            default:
+                break;
+        }
 
-			for (RtpPacket packet : this.rtpTraffic) {
+        this.testCase.callStateChanged(this);
 
-				logger.debug("Dumping data to file");
+    }
 
-				try {
-					dataDumpChannel.writeObject(packet);
-				} catch (IOException ex) {
-					logger.error(ex);
-				}
-			}
+    protected String getLocalDescriptor(int port) {
 
-			// try{
-			// if(datagramChannel.isConnected() || datagramChannel.isOpen())
-			// {
-			// datagramChannel.close();
-			// }
-			// this.datagramChannel = null;
-			// }catch(Exception e)
-			// {
-			// }
-                        //receiveRTP = false;
-			if (socket != null && (socket.isBound() || socket.isConnected())) {
-				socket.close();
-			}
-			try {
-				if (dataDumpChannel != null) {
-					dataDumpChannel.close();
-				}
-				this.dataDumpChannel = null;
+        SessionDescription localSDP = null;
+        String userName = "Mobicents-Call-Generator";
+        long sessionID = System.currentTimeMillis() & 0xffffff;
+        long sessionVersion = sessionID;
 
-				this.fos = null;
-			} catch (Exception e) {
-			}
-			break;
+        String networkType = javax.sdp.Connection.IN;
+        String addressType = javax.sdp.Connection.IP4;
 
-		default:
-			break;
-		}
+        SdpFactory sdpFactory = testCase.getSdpFactory();
 
-		this.testCase.callStateChanged(this);
+        try {
+            localSDP = sdpFactory.createSessionDescription();
+            localSDP.setVersion(sdpFactory.createVersion(0));
+            localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType,
+                    this.testCase.getClientTestNodeAddress().getHostAddress()));
+            localSDP.setSessionName(sdpFactory.createSessionName("session"));
+            localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, this.testCase.getClientTestNodeAddress().getHostAddress()));
 
-	}
+            Vector<Attribute> attributes = testCase.getSDPAttributes();
+            int[] audioMap = new int[attributes.size()];
+            for (int index = 0; index < audioMap.length; index++) {
+                String m = attributes.get(index).getValue().split(" ")[0];
+                audioMap[index] = Integer.valueOf(m);
+            }
+            // generate media descriptor
+            MediaDescription md = sdpFactory.createMediaDescription("audio", port, 1, "RTP/AVP", audioMap);
 
-	protected String getLocalDescriptor(int port) {
+            // set attributes for formats
 
-		SessionDescription localSDP = null;
-		String userName = "Mobicents-Call-Generator";
-		long sessionID = System.currentTimeMillis() & 0xffffff;
-		long sessionVersion = sessionID;
+            md.setAttributes(attributes);
+            Vector descriptions = new Vector();
+            descriptions.add(md);
 
-		String networkType = javax.sdp.Connection.IN;
-		String addressType = javax.sdp.Connection.IP4;
+            localSDP.setMediaDescriptions(descriptions);
+        } catch (SdpException e) {
+            e.printStackTrace();
+        }
 
-		SdpFactory sdpFactory = testCase.getSdpFactory();
+        // System.out.println("Local SDP: " + localSDP.toString());
 
-		try {
-			localSDP = sdpFactory.createSessionDescription();
-			localSDP.setVersion(sdpFactory.createVersion(0));
-			localSDP.setOrigin(sdpFactory.createOrigin(userName, sessionID, sessionVersion, networkType, addressType,
-					this.testCase.getClientTestNodeAddress().getHostAddress()));
-			localSDP.setSessionName(sdpFactory.createSessionName("session"));
-			localSDP.setConnection(sdpFactory.createConnection(networkType, addressType, this.testCase
-					.getClientTestNodeAddress().getHostAddress()));
+        return localSDP.toString();
+    }
 
-			Vector<Attribute> attributes = testCase.getSDPAttributes();
-			int[] audioMap = new int[attributes.size()];
-			for (int index = 0; index < audioMap.length; index++) {
-				String m = attributes.get(index).getValue().split(" ")[0];
-				audioMap[index] = Integer.valueOf(m);
-			}
-			// generate media descriptor
-			MediaDescription md = sdpFactory.createMediaDescription("audio", port, 1, "RTP/AVP", audioMap);
+    // Run method for read, we are run in readerThread
+    public void run() {
+        try {
+            while (receiveRTP) {
 
-			// set attributes for formats
+                byte[] buffer = new byte[172];
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-			md.setAttributes(attributes);
-			Vector descriptions = new Vector();
-			descriptions.add(md);
+                // ByteBuffer packetBuffer = ByteBuffer.allocate(172);
+                try {
+                    socket.receive(packet);
+                    // datagramChannel.receive(packetBuffer);
 
-			localSDP.setMediaDescriptions(descriptions);
-		} catch (SdpException e) {
-			e.printStackTrace();
-		}
 
-		// System.out.println("Local SDP: " + localSDP.toString());
+                    // RtpPacket rtp = new RtpPacket(packetBuffer.array());
+                    RtpPacket rtp = new RtpPacket(packet.getData());
+                    rtp.setTime(new Date(System.currentTimeMillis()));
+                    rtpTraffic.add(rtp);
 
-		return localSDP.toString();
-	}
+                // FIXME: add calcualtion of jiiter stuff
+                } catch (SocketException e) {
+                //This will happen on read, as we odnt sync it can be that flag receiveRTP is fale but read thread is already in while block.
 
-	// Run method for read, we are run in readerThread
-	public void run() {
-		try {
-			while (receiveRTP) {
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-				byte[] buffer = new byte[172];
-				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        } finally {
 
-				// ByteBuffer packetBuffer = ByteBuffer.allocate(172);
-				try {
-					socket.receive(packet);
-					// datagramChannel.receive(packetBuffer);
+        }
+    }
 
-					
-					// RtpPacket rtp = new RtpPacket(packetBuffer.array());
-					RtpPacket rtp = new RtpPacket(packet.getData());
-					rtp.setTime(new Date(System.currentTimeMillis()));
-					rtpTraffic.add(rtp);
+    public abstract void start();
 
-					// FIXME: add calcualtion of jiiter stuff
-                                }catch(SocketException e)
-                                {
-                                    //This will happen on read, as we odnt sync it can be that flag receiveRTP is fale but read thread is already in while block.
-                                
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+    public abstract void timeOut();
 
-		} finally {
-
-		}
-	}
-
-	public abstract void start();
-
-	public abstract void timeOut();
-
-	public abstract void stop();
-
+    public abstract void stop();
 }

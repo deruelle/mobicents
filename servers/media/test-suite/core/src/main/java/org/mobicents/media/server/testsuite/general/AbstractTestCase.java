@@ -26,6 +26,7 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -210,7 +211,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
     public void stop()
     {
-    
+        System.err.println("STOP");
         if(testState!=TestState.Running)
         {
             return;
@@ -346,8 +347,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         }
         int delta = 1000/this.getCallDisplayInterface().getCPS();
         //we use delta,delta, cause we dont want sudden rush  in CPS
-        //this.callCreatorTask = this.callCreator.scheduleAtFixedRate(this, delta, delta, TimeUnit.MILLISECONDS);
-        this.run();
+        this.callCreatorTask = this.callCreator.scheduleAtFixedRate(this, delta, delta, TimeUnit.MILLISECONDS);
+        //this.run();
         
     }
 
@@ -379,7 +380,6 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     //run in which we create more calls :)
     public void run() {
         //For some twisted reason constructo does not work...
-        
         //model.setCallData(this.callSequenceToCall);
         try{
 
@@ -423,7 +423,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 			if (cp != null) {
 				cp.processMgcpResponseEvent(response);
 			} else {
-				System.err.println("NO CALL");
+				//System.err.println("NO CALL");
 			}
 		} catch (RuntimeException re) {
 			re.printStackTrace();
