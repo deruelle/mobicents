@@ -202,6 +202,7 @@ public class ChannelFactory {
      */
     public void release(Channel channel) {
         if (started && channels.size() < maxSize) {
+        	channel.stop();
             channels.add(channel);
         }
     }
