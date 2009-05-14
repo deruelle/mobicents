@@ -844,23 +844,23 @@ public class MainGUIView extends FrameView implements CallDisplayInterface{
     private AbstractTestCase currentTest;
 
     private static Map<String,Vector<Attribute>> attributerMap = new HashMap<String,Vector<Attribute>>();
-    private static final String[] _COMBO_BOX_VALUES = new String[]{"ALAW","ULAW","Speex"};
+    private static final String[] _COMBO_BOX_VALUES = new String[]{"ULAW","ALAW"};
     
     static
     {
         SdpFactory sdpFactory  = SdpFactory.getInstance();
         Vector attributes = new Vector();
-        attributes.add(sdpFactory.createAttribute("rtpmap", "8 pcma/8000"));
+        attributes.add(sdpFactory.createAttribute("rtpmap", "0 pcmu/8000"));
         attributerMap.put(_COMBO_BOX_VALUES[0],attributes);
         
         attributes = new Vector();
-        attributes.add(sdpFactory.createAttribute("rtpmap", "0 pcmu/8000"));
+        attributes.add(sdpFactory.createAttribute("rtpmap", "8 pcma/8000"));
         attributerMap.put(_COMBO_BOX_VALUES[1],attributes);
         
         
-        attributes = new Vector();
-        attributes.add(sdpFactory.createAttribute("rtpmap", "Speex"));
-        attributerMap.put(_COMBO_BOX_VALUES[2],attributes);
+//        attributes = new Vector();
+//        attributes.add(sdpFactory.createAttribute("rtpmap", "Speex"));
+//        attributerMap.put(_COMBO_BOX_VALUES[2],attributes);
         
         
     }

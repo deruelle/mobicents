@@ -224,8 +224,7 @@ public class AnnCall extends AbstractCall{
 					// its provisional
 				} else if (199 < code && code < 300) {
 					// its success
-				    this.setLocalFlowState(AnnCallState.TERMINATED);
-                                    super.setState(CallState.ENDED);
+				   stop();
 				} else {
 					// its error always?
 					 //ADD ERROR
@@ -288,9 +287,9 @@ public class AnnCall extends AbstractCall{
     public void stop() {
       
             this.receiveRTP=false;
-            if (this.readerTask != null) {
-                this.readerTask.cancel(true);
-            }
+            //if (this.readerTask != null) {
+            //    this.readerTask.cancel(true);
+           // }
             if(this.state == CallState.IN_ERROR)
             {
                 

@@ -47,7 +47,7 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  */
 public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable, Serializable {
 
-	Logger logger = Logger.getLogger(AbstractCall.class);
+	transient Logger logger = Logger.getLogger(AbstractCall.class);
 	// We are serializable, just in case.
 	public static final int _READ_PERIOD = 5;
 	// Some static vals:
@@ -236,6 +236,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 			// }catch(Exception e)
 			// {
 			// }
+                        //receiveRTP = false;
 			if (socket != null && (socket.isBound() || socket.isConnected())) {
 				socket.close();
 			}
@@ -317,13 +318,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 					socket.receive(packet);
 					// datagramChannel.receive(packetBuffer);
 
-					System.out.println("Received packet " + packet);
+					
 					// RtpPacket rtp = new RtpPacket(packetBuffer.array());
 					RtpPacket rtp = new RtpPacket(packet.getData());
 					rtp.setTime(new Date(System.currentTimeMillis()));
 					rtpTraffic.add(rtp);
 
 					// FIXME: add calcualtion of jiiter stuff
+                                }catch(SocketException e)
+                                {
+                                    //This will happen on read, as we odnt sync it can be that flag receiveRTP is fale but read thread is already in while block.
+                                
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

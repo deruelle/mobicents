@@ -20,7 +20,7 @@ import org.mobicents.media.server.testsuite.general.AbstractTestCase;
  */
 public class AnnouncementTest extends AbstractTestCase{
 	
-	Logger logger = Logger.getLogger(AnnouncementTest.class);
+	transient Logger logger = Logger.getLogger(AnnouncementTest.class);
 
     @Override
     public AbstractCall getNewCall() {
