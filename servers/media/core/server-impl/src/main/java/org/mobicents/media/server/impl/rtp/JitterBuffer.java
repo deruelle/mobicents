@@ -16,6 +16,8 @@ package org.mobicents.media.server.impl.rtp;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
@@ -42,6 +44,8 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * @author amit bhayani
  */
 public class JitterBuffer implements Serializable {
+
+	private static final Logger logger = Logger.getLogger(JitterBuffer.class);
 
 	private int maxSize;
 	private int period;
@@ -141,13 +145,18 @@ public class JitterBuffer implements Serializable {
 
 				// the length of the payload is total length of the
 				// datagram except RTP header which has 12 bytes in length
-				System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, (data.length -12) );
+				System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, (data.length - 12));
 
 				// assign format.
 				// if payload not changed use the already known format
 				if (payloadType != header.getPayloadType()) {
 					payloadType = header.getPayloadType();
 					format = rtpMap.get(payloadType);
+					if (format == null) {
+						logger.error("There is no Format defined for PayloadType = " + payloadType
+								+ " returning null from JitterBuffer.read()");
+						return null;
+					}
 					packetSize = getPacketSize(format);
 				}
 
@@ -164,7 +173,7 @@ public class JitterBuffer implements Serializable {
 				// receiveStream.push(buffer);
 				return buffer;
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("The JitterBuffer read() is failing " + e);
 			}
 		} // end of if
 		return null;
