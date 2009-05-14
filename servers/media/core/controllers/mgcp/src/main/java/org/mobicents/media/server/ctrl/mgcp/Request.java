@@ -49,20 +49,20 @@ public class Request implements Runnable {
     private MgcpController controller;
     
     private Endpoint endpoint;    
-    private ArrayList<Connection> connections = new ArrayList();
+    private ArrayList<Connection> connections = new ArrayList<Connection>();
     
     private NotifiedEntity notifiedEntity;
 
-    private HashMap<String, List<EventDetector>> connectionDetectors = new HashMap();
-    private HashMap<String, List<SignalGenerator>> connectionGenerators = new HashMap();
+    private HashMap<String, List<EventDetector>> connectionDetectors = new HashMap<String, List<EventDetector>>();
+    private HashMap<String, List<SignalGenerator>> connectionGenerators = new HashMap<String, List<SignalGenerator>>();
     
-    private ArrayList<EventDetector> endpointDetectors = new ArrayList();
-    private ArrayList<SignalGenerator> endpointGenerators = new ArrayList();
+    private ArrayList<EventDetector> endpointDetectors = new ArrayList<EventDetector>();
+    private ArrayList<SignalGenerator> endpointGenerators = new ArrayList<SignalGenerator>();
 
-    private HashMap<String, Iterator<SignalGenerator>> connectionSignalQueue = new HashMap();
+    private HashMap<String, Iterator<SignalGenerator>> connectionSignalQueue = new HashMap<String, Iterator<SignalGenerator>>();
     private Iterator<SignalGenerator> endpointSignalQueue;
     
-    private HashMap<String, SignalGenerator> activeConnectionSignals = new HashMap();
+    private HashMap<String, SignalGenerator> activeConnectionSignals = new HashMap<String, SignalGenerator>();
     private SignalGenerator activeEndpointSignal;
     
     public Request(MgcpController controller, RequestIdentifier reqID,
@@ -92,6 +92,7 @@ public class Request implements Runnable {
     }
 
     public void append(SignalGenerator generator, Connection connection) {
+
         if (connection == null) {
             endpointGenerators.add(generator);
             return;
@@ -185,21 +186,22 @@ public class Request implements Runnable {
     }
 
     private boolean verifyGenerators(Connection connection) {
+
         if (!connectionGenerators.containsKey(connection.getId())) {
             return true;
         }
-        
+
         Iterator<SignalGenerator> list = connectionGenerators.get(connection.getId()).iterator();
         boolean res = true;
-        
+
         while (res && list.hasNext()) {
             res = res & list.next().verify(connection);
         }
-        
+
         if (res) {
             connectionSignalQueue.put(connection.getId(), connectionGenerators.get(connection.getId()).iterator());
         }
-        
+
         return res;
     }
     
@@ -219,18 +221,21 @@ public class Request implements Runnable {
     }
 
     public boolean verifyGenerators() {
+
         Iterator<Connection> list = connections.iterator();
+
         boolean res = true;
         while (res && list.hasNext()) {
             res = res & this.verifyGenerators(list.next());
         }
-        
+
         Iterator <SignalGenerator> list2 = endpointGenerators.iterator();
         while (res && list2.hasNext()) {
             res = res & list2.next().verify(endpoint);
         }
-        
+
         endpointSignalQueue = endpointGenerators.iterator();
+    
         return res;
     }
 

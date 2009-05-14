@@ -119,12 +119,17 @@ public class NotificationRequestAction implements Callable<JainMgcpResponseEvent
 			}
 
 			Connection connection = null;
+			ConnectionActivity connectionActivity = null;
+			//This is ConnectionActivity id
 			ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
 			if (connectionID != null) {
-				connection = endpoint.getConnection(connectionID.toString());
-				if (connection == null) {
+				//connection = endpoint.getConnection(connectionID.toString());
+				connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
+				if (connectionActivity == null) {
 					reject(ReturnCode.Connection_Was_Deleted);
 				}
+				
+				connection = connectionActivity.getMediaConnection();
 			}
 
 			request.append(det, connection);
@@ -145,26 +150,33 @@ public class NotificationRequestAction implements Callable<JainMgcpResponseEvent
 				return reject(ReturnCode.Unsupported_Or_Unknown_Package);
 			}
 
+			
 			SignalGenerator signal = pkg.getGenerator(eventName.getEventIdentifier());
 			if (signal == null) {
 				if (logger.isInfoEnabled()) {
 					logger.info("No SignalGenerator found for MgcpEvent " + eventName.getEventIdentifier().toString()
 							+ " Sending back" + ReturnCode.Gateway_Cannot_Generate_Requested_Signal.toString());
 				}
+				
 				return reject(ReturnCode.Gateway_Cannot_Generate_Requested_Signal);
 			}
 
 			Connection connection = null;
+			ConnectionActivity connectionActivity = null;
+			//This is ConnectionActivity id
 			ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
+			
 			if (connectionID != null) {
-				connection = endpoint.getConnection(connectionID.toString());
-				if (connection == null) {
+				//connection = endpoint.getConnection(connectionID.toString());
+				connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
+				if (connectionActivity == null) {
 					if (logger.isInfoEnabled()) {
 						logger.info("No Connection found for ConnectionIdentifier " + connectionID + " Sending back"
 								+ ReturnCode.Connection_Was_Deleted.toString());
 					}
 					return reject(ReturnCode.Connection_Was_Deleted);
 				}
+				connection = connectionActivity.getMediaConnection();
 			}
 
 			request.append(signal, connection);
