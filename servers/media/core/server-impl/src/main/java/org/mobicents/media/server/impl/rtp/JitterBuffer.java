@@ -39,6 +39,7 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * introduced can lead to conversational difficulty.
  * 
  * @author Oleg Kulikov
+ * @author amit bhayani
  */
 public class JitterBuffer implements Serializable {
 

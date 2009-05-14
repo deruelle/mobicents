@@ -16,6 +16,11 @@ import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.spi.dsp.Codec;
 import static org.junit.Assert.*;
 
+/**
+ * 
+ * @author amit bhayani
+ * 
+ */
 public class JitterBufferTest {
 
 	private AudioFormat PCMA = new AudioFormat(AudioFormat.ALAW, 8000, 8, 1);
@@ -143,7 +148,7 @@ public class JitterBufferTest {
 		printData((byte[]) readbuffer1.getData(), readbuffer1.getOffset(), readbuffer1.getLength());
 
 		/***********************************************************************
-		 * Fill Buffer 3
+		 * Fill Buffer 3 - first half
 		 **********************************************************************/
 		data = fillByte(80);
 		seq = 3;
@@ -161,6 +166,9 @@ public class JitterBufferTest {
 
 		jitterBuffer.write(senderBuffer3);
 
+		/***********************************************************************
+		 * Fill Buffer 3 - second half
+		 **********************************************************************/
 		data = fillByte(80);
 		jitterBuffer.write(data);
 
@@ -191,5 +199,124 @@ public class JitterBufferTest {
 		assertEquals(160, readbuffer3.getLength());
 
 		printData((byte[]) readbuffer3.getData(), readbuffer3.getOffset(), readbuffer3.getLength());
+	}
+
+	@Test
+	public void testOverflow() {
+		/***********************************************************************
+		 * Fill Buffer 1
+		 **********************************************************************/
+		int seq = 1;
+		byte[] data = fillByte(160);
+
+		Buffer buffer = createBuffer(seq, data, true);
+		RtpHeader h = (RtpHeader) buffer.getHeader();
+		byte[] headerByte = h.toByteArray();
+
+		int len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer1 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer1, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer1, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer1);
+
+		/***********************************************************************
+		 * Fill Buffer 2
+		 **********************************************************************/
+		seq = 2;
+		data = fillByte(160);
+
+		buffer = createBuffer(seq, data, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer2 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer2, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer2, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer2);
+
+		/***********************************************************************
+		 * Fill Buffer 3
+		 **********************************************************************/
+		data = fillByte(160);
+		seq = 3;
+
+		buffer = createBuffer(seq, data, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer3 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer3, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer3, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer3);
+
+		/***********************************************************************
+		 * Fill Buffer 4
+		 **********************************************************************/
+		data = fillByte(160);
+		seq = 4;
+
+		buffer = createBuffer(seq, data, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer4 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer4, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer4, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer4);
+
+		/***********************************************************************
+		 * Fill Buffer 5
+		 **********************************************************************/
+		data = fillByte(160);
+		seq = 5;
+
+		buffer = createBuffer(seq, data, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer5 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer5, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer5, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer5);
+
+		buffer = jitterBuffer.read();
+		h = (RtpHeader) buffer.getHeader();
+		assertEquals(1, h.getSeqNumber());
+
+		buffer = jitterBuffer.read();
+		h = (RtpHeader) buffer.getHeader();
+		assertEquals(2, h.getSeqNumber());
+
+		buffer = jitterBuffer.read();
+		h = (RtpHeader) buffer.getHeader();
+		assertEquals(3, h.getSeqNumber());
+
+		buffer = jitterBuffer.read();
+		h = (RtpHeader) buffer.getHeader();
+		assertEquals(4, h.getSeqNumber());
+
+		buffer = jitterBuffer.read();
+		assertNull(buffer);
+
 	}
 }
