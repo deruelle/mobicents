@@ -16,7 +16,10 @@
 	<url>http://www.mobicents.org/products_media_server.html</url>
 	<packaging>pom</packaging>
 	<modules>
+		<!-- This should be enabled in case oe wants to expose fial via http: for instance
+		http://127.0.0.1:8080/mms-load-test/audio/ulaw_13s.wav 
 		<module>web</module>
+		 -->
 		<module>core</module>
 	</modules>
 
