@@ -454,9 +454,13 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy overwrite="true"
+								<copy overwrite="true" verbose="true"
 									todir="${project.build.directory}/classes">
 									<fileset dir="src/main/java/" includes="**/resources/**" />
+								</copy>
+								<copy overwrite="true" verbose="true"
+									todir="${project.build.directory}/audio">
+									<fileset dir="../web/src/main/webapp/audio" />
 								</copy>
 							</tasks>
 						</configuration>
