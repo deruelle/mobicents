@@ -1,6 +1,8 @@
 package org.mobicents.media.server.impl.rtp;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -157,8 +159,11 @@ public class RtpSocketTest {
 
 		for (int i = k; i < packets.size(); i++) {
 			Buffer buffer = (Buffer) packets.get(i);
+			RtpHeader header = (RtpHeader)buffer.getHeader();
+			assertEquals(i, header.getSeqNumber());
+			assertEquals(8, header.getPayloadType());			
+			
 			byte[] data = (byte[]) buffer.getData();
-
 			if (!this.correctData(data, buffer.getOffset(), buffer.getLength())) {
 				errorCount++;
 			}
@@ -170,6 +175,8 @@ public class RtpSocketTest {
 		}
 		System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);
 	}
+	
+
 
 	private boolean correctData(byte[] data, int offset, int length) {
 		boolean result = true;

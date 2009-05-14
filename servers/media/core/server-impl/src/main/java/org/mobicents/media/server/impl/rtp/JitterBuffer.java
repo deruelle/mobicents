@@ -14,6 +14,8 @@
 package org.mobicents.media.server.impl.rtp;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -65,7 +67,16 @@ public class JitterBuffer implements Serializable {
 	private volatile boolean ready = false;
 
 	private static final int MAX_ROUNDS = 3;
-	private int rounds = 0;
+
+	private volatile byte[] leftOver = null;
+
+	List<byte[]> rawData = new ArrayList<byte[]>();
+	byte[] data = null;
+	int dataLength = 0;
+
+	private JitterBuffer() {
+
+	}
 
 	/**
 	 * Creates new instance of jitter.
@@ -122,30 +133,59 @@ public class JitterBuffer implements Serializable {
 		return packetSize;
 	}
 
-	// TODO : Profile this. We can add a Thread here to convert byte[] to Buffer
-	// asynch
+
+	private byte[] concatByteList(List<byte[]> byteArrList, int totalLen) {
+		byte[] concatedData = new byte[totalLen];
+		int offset = 0;
+		for (byte[] b : byteArrList) {
+			int t = b.length;
+			System.arraycopy(b, 0, concatedData, offset, t);
+			offset += t;
+		}
+		return concatedData;
+	}
+
+	// TODO : Profile this. Optimization needed
 	public Buffer read() {
 		if (!ready) {
 			return null;
 		}
 
-		byte[] data = null;
-
 		if (!queue.isEmpty()) {
-			try {
-				rounds = 0;
-				data = queue.poll();
 
-				int count = data.length;
+			rawData.clear();
+			data = null;
+			dataLength = 0;
+
+			try {
+
+				while (dataLength < 12) {
+
+					if (leftOver != null) {
+						data = leftOver;
+						leftOver = null;
+					} else {
+						data = queue.poll();
+						if (data == null) {
+							leftOver = concatByteList(rawData, dataLength);
+							return null;
+						}
+					}
+
+					dataLength += data.length;
+					rawData.add(data);
+				}
+
+				data = concatByteList(rawData, dataLength);
+
+				// data = queue.poll();
+
+				int dataCount = data.length - 12;
 
 				// allocating media buffer using factory
 				Buffer buffer = bufferFactory.allocate(true);
 				RtpHeader header = (RtpHeader) buffer.getHeader();
 				header.init(data);
-
-				// the length of the payload is total length of the
-				// datagram except RTP header which has 12 bytes in length
-				System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, (data.length - 12));
 
 				// assign format.
 				// if payload not changed use the already known format
@@ -155,20 +195,53 @@ public class JitterBuffer implements Serializable {
 					if (format == null) {
 						logger.error("There is no Format defined for PayloadType = " + payloadType
 								+ " returning null from JitterBuffer.read()");
+						buffer.dispose();
 						return null;
+
 					}
 					packetSize = getPacketSize(format);
 				}
 
-				while (((count - 12) < packetSize) && !queue.isEmpty() && (rounds < MAX_ROUNDS)) {
-					rounds++;
-					byte[] newData = queue.poll();
-					byte[] oldData = (byte[]) buffer.getData();
-					System.arraycopy(newData, 0, oldData, (count - 12), newData.length);
-					count += newData.length;
-				}
+				// the length of the payload is total length of the
+				// datagram except RTP header which has 12 bytes in length
+				int legth = Math.min(dataCount, packetSize);
+				System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, legth);
 
-				buffer.setLength(count - 12);
+				if (dataCount > packetSize) {
+					int willRemain = dataCount - packetSize;
+					leftOver = new byte[willRemain];
+					System.arraycopy(data, packetSize, leftOver, 0, willRemain);
+
+				} else {
+
+					while ((dataCount < packetSize)) {
+						byte[] newData = queue.poll();
+
+						if (newData == null) {
+							leftOver = data;
+							buffer.dispose();
+							return null;
+						}
+
+						int newDataLen = newData.length;
+						if (dataCount + newDataLen > packetSize) {
+
+							int willConsume = packetSize - dataCount;
+							int willRemain = newDataLen - willConsume;
+
+							leftOver = new byte[willRemain];
+
+							System.arraycopy(newData, willConsume, leftOver, 0, willRemain);
+							newDataLen = willConsume;
+						}
+
+						byte[] oldData = (byte[]) buffer.getData();
+						System.arraycopy(newData, 0, oldData, dataCount, newDataLen);
+						dataCount += newDataLen;
+					}
+				}				
+
+				buffer.setLength(packetSize);
 				buffer.setFormat(format);
 				// receiveStream.push(buffer);
 				return buffer;

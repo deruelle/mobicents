@@ -402,11 +402,8 @@ public class RtpSocket implements Runnable {
 			ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
 			int count = 0;
 			if (channel.isOpen()) {
-				while ((count < len) && (rounds < MAX_ROUNDS)) {
-					rounds++;
-					// rounds to avoid while loop for ever
-					count = channel.send(byteBuffer1, remoteInetSocketAddress);
-					count += count;
+				while (count < len) {
+					count += channel.send(byteBuffer1, remoteInetSocketAddress);					
 					byteBuffer1.compact();
 					byteBuffer1.flip();
 				}

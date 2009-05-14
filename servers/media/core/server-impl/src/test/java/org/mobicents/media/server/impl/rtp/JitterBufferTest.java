@@ -199,6 +199,93 @@ public class JitterBufferTest {
 		assertEquals(160, readbuffer3.getLength());
 
 		printData((byte[]) readbuffer3.getData(), readbuffer3.getOffset(), readbuffer3.getLength());
+
+		/***********************************************************************
+		 * Fill Buffer 4 - first half
+		 **********************************************************************/
+		data = fillByte(80);
+		seq = 4;
+
+		buffer = createBuffer(seq, data, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		len = headerByte.length + buffer.getLength();
+
+		byte[] senderBuffer4 = new byte[len];
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, senderBuffer4, 0, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer4, headerByte.length, buffer.getLength());
+
+		jitterBuffer.write(senderBuffer4);
+
+		/***********************************************************************
+		 * Fill Buffer 4 - second half
+		 **********************************************************************/
+		data = fillByte(40);
+		jitterBuffer.write(data);
+
+		/***********************************************************************
+		 * Fill Buffer 5 - 4th Third half + start of 5th packet
+		 **********************************************************************/
+		seq = 5;
+		data = new byte[40 + 12 + 80];
+		System.arraycopy(fillByte(40), 0, data, 0, 40);
+
+		byte[] data1 = fillByte(80);
+
+		buffer = createBuffer(seq, data1, false);
+		h = (RtpHeader) buffer.getHeader();
+		headerByte = h.toByteArray();
+		
+
+		// combine RTP header and payload
+		System.arraycopy(headerByte, 0, data, 40, headerByte.length);
+		System.arraycopy((byte[]) buffer.getData(), 0, data, 40 + headerByte.length, buffer.getLength());
+		
+		//this.printData(data, 0, 132);
+
+		jitterBuffer.write(data);
+		
+		/***********************************************************************
+		 * Fill Buffer 5 - second half
+		 **********************************************************************/
+		data = fillByte(80);
+		jitterBuffer.write(data);
+		
+		
+		
+		/***********************************************************************
+		 * Read Buffer 4
+		 **********************************************************************/
+		Buffer readbuffer4 = jitterBuffer.read();
+		if (readbuffer4 == null) {
+			fail("Buffer is new and not empty but it doesn't allow to read packets");
+		}
+		h = (RtpHeader) readbuffer4.getHeader();
+		assertEquals(4, h.getSeqNumber());		
+
+		assertEquals(160, readbuffer4.getLength());
+
+		printData((byte[]) readbuffer4.getData(), readbuffer4.getOffset(), readbuffer4.getLength());
+		
+		
+		/***********************************************************************
+		 * Read Buffer 5
+		 **********************************************************************/
+		Buffer readbuffer5 = jitterBuffer.read();
+		if (readbuffer5 == null) {
+			fail("Buffer is new and not empty but it doesn't allow to read packets");
+		}
+		h = (RtpHeader) readbuffer5.getHeader();
+		assertEquals(5, h.getSeqNumber());		
+
+		assertEquals(160, readbuffer5.getLength());
+
+		printData((byte[]) readbuffer5.getData(), readbuffer5.getOffset(), readbuffer5.getLength());
+
+		
+
 	}
 
 	@Test
