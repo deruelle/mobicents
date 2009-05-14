@@ -13,72 +13,73 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
+import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public class ReceiveStream extends AbstractSource implements Runnable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2277812497480986797L;
-    private JitterBuffer jitterBuffer;
-    protected ScheduledFuture readerTask;
-    private Buffer frame;
-    protected Format[] formats;
-    private RtpSocket rtpSocket;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2277812497480986797L;
+	private JitterBuffer jitterBuffer;
+	protected ScheduledFuture readerTask;
+	private Buffer frame;
+	protected Format[] formats;
+	private RtpSocket rtpSocket;
 
-    /** Creates a new instance of ReceiveStream */
-    public ReceiveStream(RtpSocket rtpSocket, int jitter) {
-        super("ReceiveStream");
-        this.rtpSocket = rtpSocket;
-        jitterBuffer = new JitterBuffer(jitter, rtpSocket.timer.getHeartBeat());
-    }
+	/** Creates a new instance of ReceiveStream */
+	public ReceiveStream(RtpSocket rtpSocket, int jitter) {
+		super("ReceiveStream");
+		this.rtpSocket = rtpSocket;
+		jitterBuffer = new JitterBuffer(jitter, rtpSocket.timer.getHeartBeat(), this.rtpSocket.getRtpMap());
+	}
 
-    protected void push(byte[] data) {
-        jitterBuffer.write(data);
-    }
+	protected void push(byte[] data) {
+		jitterBuffer.write(data);
+	}
 
-    public void stop() {
-        rtpSocket.stopReceiver();
-        if (readerTask != null) {
-            readerTask.cancel(true);
-        }
-    }
+	public void stop() {
+		rtpSocket.stopReceiver();
+		if (readerTask != null) {
+			readerTask.cancel(true);
+		}
+	}
 
-    public void start() {
-        jitterBuffer.reset();
-        rtpSocket.startReceiver();
-        readerTask = rtpSocket.timer.synchronize(this);
-    }
+	public void start() {
+		jitterBuffer.reset();
+		rtpSocket.startReceiver();
+		readerTask = rtpSocket.timer.synchronize(this);
+	}
 
-    public Format[] getFormats() {
-        Format[] fmts = new Format[rtpSocket.getRtpMap().size()];
-        rtpSocket.getRtpMap().values().toArray(fmts);
-        return fmts;
-    }
+	public Format[] getFormats() {
+		Format[] fmts = new Format[rtpSocket.getRtpMap().size()];
+		rtpSocket.getRtpMap().values().toArray(fmts);
+		return fmts;
+	}
 
-    public void run() {
-        frame = jitterBuffer.read();
+	public void run() {
+		frame = jitterBuffer.read();
 
-        if (frame == null) {
-            return;
-        }
-        
-        if (otherParty == null) {
-            return;
-        }
+		if (frame == null) {
+			return;
+		}
 
-        //The sink for ReceiveStream is Processor.Input
-        try {
-            otherParty.receive(frame);
-        } catch (Exception e) {
-        }
-    }
+		if (otherParty == null) {
+			return;
+		}
+
+		// The sink for ReceiveStream is Processor.Input
+		try {
+			otherParty.receive(frame);
+		} catch (Exception e) {
+		}
+	}
 }

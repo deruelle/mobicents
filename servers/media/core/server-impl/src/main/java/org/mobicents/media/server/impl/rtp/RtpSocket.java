@@ -91,6 +91,9 @@ public class RtpSocket implements Runnable {
 
 	private RtpFactory rtpFactory = null;
 
+	private static final int MAX_ROUNDS = 3;
+	private int rounds = 0;
+
 	// logger instance
 	private final static Logger logger = Logger.getLogger(RtpSocket.class);
 
@@ -251,15 +254,15 @@ public class RtpSocket implements Runnable {
 
 	public void release() {
 		if (receiveStream != null) {
-			
+
 			receiveStream.stop();
 		}
-		
+
 		this.resetRtpMap();
 		if (channel != null) {
 			try {
 				channel.disconnect();
-				
+
 			} catch (IOException e) {
 			}
 		}
@@ -283,7 +286,7 @@ public class RtpSocket implements Runnable {
 		if (channel != null) {
 			try {
 				channel.disconnect();
-				//FIXME: socket.close() does that also doesnt it?
+				// FIXME: socket.close() does that also doesnt it?
 				channel.close();
 			} catch (IOException e) {
 			}
@@ -379,6 +382,8 @@ public class RtpSocket implements Runnable {
 	 * @throws java.io.IOException
 	 */
 	public void send(Buffer buffer) throws IOException {
+		rounds = 0;
+
 		RtpHeader h = (RtpHeader) buffer.getHeader();
 		byte[] headerByte = h.toByteArray();
 
@@ -397,7 +402,9 @@ public class RtpSocket implements Runnable {
 			ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
 			int count = 0;
 			if (channel.isOpen()) {
-				while (count < len) {
+				while ((count < len) && (rounds < MAX_ROUNDS)) {
+					rounds++;
+					// rounds to avoid while loop for ever
 					count = channel.send(byteBuffer1, remoteInetSocketAddress);
 					count += count;
 					byteBuffer1.compact();
@@ -435,7 +442,7 @@ public class RtpSocket implements Runnable {
 		// if data arrives then extra
 		if (count > 0) {
 			byte[] buff = readerBuffer.array();
-			
+
 			byte[] data = new byte[buff.length];
 			System.arraycopy(buff, 0, data, 0, data.length);
 			receiveStream.push(data);
@@ -461,7 +468,7 @@ public class RtpSocket implements Runnable {
 			// }
 			//
 			// buffer.setFormat(format);
-			//			receiveStream.push(buffer);
+			// receiveStream.push(buffer);
 
 		}
 
