@@ -4,7 +4,7 @@
 
 	<groupId>org.mobicents</groupId>
 	<artifactId>mobicents</artifactId>
-	<version>*</version>
+	<version>12-SNAPSHOT</version>
 	
 	<name>Mobicents :: Parent :: mobicents</name>
 	
