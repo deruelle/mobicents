@@ -441,7 +441,7 @@ public class RtpSocket implements Runnable {
 			byte[] buff = readerBuffer.array();
 
 			byte[] data = new byte[buff.length];
-			System.arraycopy(buff, 0, data, 0, data.length);
+			System.arraycopy(buff, 0, data, 0, count);
 			receiveStream.push(data);
 
 			// // parse RTP header
