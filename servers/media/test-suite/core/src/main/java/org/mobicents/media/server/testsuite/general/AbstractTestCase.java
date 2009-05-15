@@ -211,7 +211,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
 
     public void stop()
     {
-        System.err.println("STOP");
+        
         if(testState!=TestState.Running)
         {
             return;
@@ -250,7 +250,8 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         {
             for(AbstractCall call:this.callSequenceToCall.values())
             {
-                call.stop();
+                if(call.getState()==CallState.ESTABILISHED || call.getState()==CallState.INITIAL)
+                    call.stop();
             }
         }catch(Exception e)
         {

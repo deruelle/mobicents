@@ -13,12 +13,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +35,6 @@ import javax.sdp.SdpException;
 import javax.sdp.SdpFactory;
 import javax.sdp.SessionDescription;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.testsuite.general.rtp.RtpPacket;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -48,7 +48,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 
     protected transient Logger logger = Logger.getLogger(AbstractCall.class);
     // We are serializable, just in case.
-    public static final int _READ_PERIOD = 5;
+    public static final int _READ_PERIOD = 20;
     // Some static vals:
     protected transient static final AtomicLong _GLOBAL_SEQ = new AtomicLong(-1);
     protected final long sequence;
@@ -71,8 +71,8 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     // Below is part we dont want to propagate to other side :)
     protected transient AbstractTestCase testCase;
     // RTP part
-    // protected transient DatagramChannel datagramChannel
-    protected transient DatagramSocket socket = null;
+    protected transient DatagramChannel datagramChannel;
+    //protected transient DatagramSocket socket = null;
     protected transient final ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
     protected transient ScheduledFuture readerTask;
     protected transient boolean receiveRTP;
@@ -95,18 +95,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
             finished = true;
         } finally {
             if (!finished) {
-                // try{
-                // if(datagramChannel.isConnected() || datagramChannel.isOpen())
-                // {
-                // datagramChannel.close();
-                // }
-                // this.datagramChannel = null;
-                // }catch(Exception e)
-                // {
-                // }
-                if (socket != null && (socket.isBound() || socket.isConnected())) {
-                    socket.close();
+                try {
+                    if (datagramChannel.isConnected() || datagramChannel.isOpen()) {
+                        datagramChannel.close();
+                    //This will close socket.
+                    }
+                    this.datagramChannel = null;
+                } catch (Exception e) {
                 }
+//                if (socket != null && (socket.isBound() || socket.isConnected())) {
+//                    socket.close();
+//                }
                 try {
                     if (dataDumpChannel != null) {
                         dataDumpChannel.close();
@@ -127,16 +126,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     }
 
     protected void initSocket() throws IOException {
-        // datagramChannel = DatagramChannel.open();
-        // DatagramSocket socket = this.datagramChannel.socket();
+        this.datagramChannel = DatagramChannel.open();
+        this.datagramChannel.configureBlocking(false);
+        DatagramSocket socket = this.datagramChannel.socket();
 
         InetAddress bindAddress = this.testCase.getClientTestNodeAddress();
         // this.socket = new DatagramSocket();
         for (int i = 1024; i < 65535; i++) {
             try {
                 SocketAddress address = new InetSocketAddress(bindAddress, i);
-                socket = new DatagramSocket(address);
-                // socket.bind(address);
+                // socket = new DatagramSocket(address);
+                socket.bind(address);
                 logger.debug("Socket created port = " + socket.getLocalPort() + " address = " + socket.getLocalAddress());
                 return;
             } catch (SocketException e) {
@@ -220,19 +220,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
                     }
                 }
 
-                // try{
-                // if(datagramChannel.isConnected() || datagramChannel.isOpen())
-                // {
-                // datagramChannel.close();
-                // }
-                // this.datagramChannel = null;
-                // }catch(Exception e)
-                // {
-                // }
-                //receiveRTP = false;
-                if (socket != null && (socket.isBound() || socket.isConnected())) {
-                    socket.close();
+                try {
+                    if (datagramChannel.isConnected() || datagramChannel.isOpen()) {
+                        datagramChannel.close();
+                    }
+                    this.datagramChannel = null;
+                } catch (Exception e) {
                 }
+                //receiveRTP = false;
+//                if (socket != null && (socket.isBound() || socket.isConnected())) {
+//                    socket.close();
+//                }
                 try {
                     if (dataDumpChannel != null) {
                         dataDumpChannel.close();
@@ -300,30 +298,42 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     // Run method for read, we are run in readerThread
     public void run() {
         try {
-            while (receiveRTP) {
+            //while (receiveRTP) {
 
-                byte[] buffer = new byte[172];
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-                // ByteBuffer packetBuffer = ByteBuffer.allocate(172);
-                try {
-                    socket.receive(packet);
-                    // datagramChannel.receive(packetBuffer);
-
-
-                    // RtpPacket rtp = new RtpPacket(packetBuffer.array());
-                    RtpPacket rtp = new RtpPacket(packet.getData());
-                    rtp.setTime(new Date(System.currentTimeMillis()));
-                    rtpTraffic.add(rtp);
-
-                // FIXME: add calcualtion of jiiter stuff
-                } catch (SocketException e) {
-                //This will happen on read, as we odnt sync it can be that flag receiveRTP is fale but read thread is already in while block.
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+            // byte[] buffer = new byte[172];
+            //DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+            ByteBuffer packetBuffer = ByteBuffer.allocate(172);
+            try {
+                //socket.receive(packet);
+                long received = 0;
+                int readCount = 0;
+                int readMaxCount = 4;
+                while (received != 172 && readCount < readMaxCount) {
+                    received += datagramChannel.read(packetBuffer);
+                    readCount++;
                 }
+
+                // RtpPacket rtp = new RtpPacket(packetBuffer.array());
+
+
+
+                packetBuffer.flip();
+                RtpPacket rtp = new RtpPacket(packetBuffer.array());
+                rtp.setTime(new Date(System.currentTimeMillis()));
+                rtpTraffic.add(rtp);
+
+            // FIXME: add calcualtion of jiiter stuff
+            } catch (SocketException e) {
+            //This will happen on read, as we odnt sync it can be that flag receiveRTP is fale but read thread is already in while block.
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch(java.nio.channels.NotYetConnectedException e)
+            {
+                e.printStackTrace();
             }
+        // }
 
         } finally {
 
