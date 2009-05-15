@@ -1,4 +1,4 @@
-package org.mobicents.media.server.impl.enp.fft;
+package org.mobicents.media.server.impl.resource.fft;
 
 import org.apache.log4j.Logger;
 

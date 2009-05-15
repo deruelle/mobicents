@@ -68,7 +68,7 @@ public class Utils {
         return ext;
     }
     
-    public static boolean checkFreq(int[] ext, int[] F, int error) {
+    public static synchronized boolean checkFreq(int[] ext, int[] F, int error) {
         for (int i = 0; i < F.length; i++) {
             if (Math.abs(ext[i] - F[i]) > error) {
                 reason = "Expected " + F[i] + " but found " + ext[i];

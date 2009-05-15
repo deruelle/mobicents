@@ -1,4 +1,4 @@
-package org.mobicents.media.server.impl.enp.fft;
+package org.mobicents.media.server.impl.resource.fft;
 
 public class Complex {
     private final double re;   // the real part

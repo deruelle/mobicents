@@ -11,7 +11,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.enp.cnf;
+package org.mobicents.media.server.impl.resource.cnf;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -29,10 +29,22 @@ public class MixerOutput extends AbstractSource {
 
     protected void push(Buffer buffer) {
         if (otherParty != null) {
+//            print(buffer);
             otherParty.receive(buffer);
         }
     }
 
+    private void print(Buffer buffer) {
+        int len = buffer.getLength();
+        int offset = buffer.getOffset();
+        
+        byte[] data = (byte[])buffer.getData();
+        for (int i =offset; i < len; i++) {
+            System.out.print(data[i] + " ");
+        }
+            System.out.println("");
+    }
+    
     public void start() {
     }
 

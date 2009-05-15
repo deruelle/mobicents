@@ -11,7 +11,7 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.enp.cnf;
+package org.mobicents.media.server.impl.resource.cnf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,6 +67,17 @@ public class MixerInputStream extends AbstractSink {
 
         duration += buffer.getDuration();
         buffers.add(buffer);
+//        print(buffer);
+    }
+    private void print(Buffer buffer) {
+        int len = buffer.getLength();
+        int offset = buffer.getOffset();
+        
+        byte[] data = (byte[])buffer.getData();
+        for (int i =offset; i < len; i++) {
+            System.out.print(data[i] + " ");
+        }
+            System.out.println("");
     }
     
     /**

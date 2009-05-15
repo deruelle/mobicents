@@ -13,13 +13,15 @@
  * but not limited to the correctness, accuracy, reliability or
  * usefulness of the software.
  */
-package org.mobicents.media.server.impl.events.test;
+package org.mobicents.media.server.impl.resource.test;
 
+import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
-import org.mobicents.media.server.impl.clock.TimerImpl;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.Timer;
 
 /**
  *
@@ -35,14 +37,43 @@ public class SineGenerator extends AbstractSource implements Runnable {
             AudioFormat.SIGNED);
     private final static Format formats[] = new Format[] {LINEAR_AUDIO};
     
-    private TimerImpl timer = new TimerImpl();
+    private Timer timer;
+    private ScheduledFuture worker;
+    
     private int sizeInBytes;
     private int offset;
     private int seq;
     
+    private int f;
+    private short A = Short.MAX_VALUE;
+    
     /** Creates a new instance of Generator */
-    public SineGenerator(int freq) {
-    	super("SineGenerator");
+    public SineGenerator(Endpoint endpoint, String name) {
+    	super(name);
+        this.timer = endpoint.getTimer();
+    }
+
+    public void setAmplitude(short A) {
+        this.A = A;
+    }
+    
+    public short getAmplitude() {
+        return A;
+    }
+    
+    public void setFrequency(int f) {
+        this.f = f;
+    }
+    
+    public int getFrequency() {
+        return f;
+    }
+    
+    public void start() {
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+        }
+        
         data = new byte[(int)
                 LINEAR_AUDIO.getSampleRate() * 
                 LINEAR_AUDIO.getSampleSizeInBits()/8];
@@ -54,19 +85,18 @@ public class SineGenerator extends AbstractSource implements Runnable {
         int k = 0;
 
         for (int i = 0; i < len; i++) {
-            short s = (short) (Short.MAX_VALUE * Math.sin(2 * Math.PI * freq * i / len));
+            short s = (short) (A* Math.sin(2 * Math.PI * f * i / len));
             data[k++] = (byte) s;
             data[k++] = (byte) (s >> 8);
         }
-    }
-    
-    public void start() {
-//        timer.setListener(this);
-//        timer.start();
+
+        worker = timer.synchronize(this);
     }
 
     public void stop() {
-//        timer.stop();
+        if (worker != null && !worker.isCancelled()) {
+            worker.cancel(true);
+        }
     }
 
     public void run() {
@@ -83,8 +113,8 @@ public class SineGenerator extends AbstractSource implements Runnable {
         buffer.setOffset(0);
         buffer.setLength(media.length);
         buffer.setSequenceNumber(seq);
-//        buffer.setDuration(Quartz.HEART_BEAT);
-//        buffer.setTimeStamp(seq * Quartz.HEART_BEAT); 
+        buffer.setDuration(timer.getHeartBeat());
+        buffer.setTimeStamp(seq * timer.getHeartBeat()); 
         buffer.setData(media);
         buffer.setFormat(LINEAR_AUDIO);
         seq++;

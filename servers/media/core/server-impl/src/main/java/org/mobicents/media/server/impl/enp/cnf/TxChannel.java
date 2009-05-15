@@ -27,6 +27,7 @@
 
 package org.mobicents.media.server.impl.enp.cnf;
 
+import org.mobicents.media.server.impl.resource.cnf.AudioMixer;
 import java.io.Serializable;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;

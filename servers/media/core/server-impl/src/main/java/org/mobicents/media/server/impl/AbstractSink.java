@@ -36,7 +36,7 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
      */
     public void connect(MediaSource otherParty) {
         this.otherParty = otherParty;
-        if (((AbstractSource) otherParty).otherParty == null) {
+        if (((AbstractSource) otherParty).otherParty != this) {
             otherParty.connect(this);
         }
     }
