@@ -285,7 +285,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             mux.disconnect(socket.getReceiveStream());
             demux.disconnect(socket.getSendStream());
             
-            socket.close();
+            socket.release();
         }
         
         if (rxChannel != null) {
