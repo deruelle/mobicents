@@ -23,10 +23,7 @@ import java.nio.channels.DatagramChannel;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import net.java.stun4j.StunAddress;
 import net.java.stun4j.StunException;
@@ -86,14 +83,15 @@ public class RtpSocket implements Runnable {
 	private Format format;
 	private BufferFactory bufferFactory = new BufferFactory(10, "RTPSocket");
 
-	protected final static ScheduledExecutorService readerThread = Executors.newSingleThreadScheduledExecutor();
-	private ScheduledFuture readerTask;
+	private volatile ScheduledFuture worker;
 
 	private RtpFactory rtpFactory = null;
 
 	private static final int MAX_ROUNDS = 3;
 	private int rounds = 0;
 
+        private RtpSocketListener listener;
+        
 	// logger instance
 	private final static Logger logger = Logger.getLogger(RtpSocket.class);
 
@@ -243,12 +241,12 @@ public class RtpSocket implements Runnable {
 	}
 
 	protected void startReceiver() {
-		readerTask = readerThread.scheduleAtFixedRate(this, 0, READ_PERIOD, TimeUnit.MILLISECONDS);
+		worker = timer.synchronize(this);
 	}
 
 	protected void stopReceiver() {
-		if (readerTask != null && !readerTask.isCancelled()) {
-			readerTask.cancel(true);
+		if (worker != null && !worker.isCancelled()) {
+			worker.cancel(true);
 		}
 	}
 
@@ -274,24 +272,20 @@ public class RtpSocket implements Runnable {
 		this.rtpFactory.releaseRTPSocket(this);
 	}
 
+    public RtpSocketListener getListener() {
+        return listener;
+    }
+
+    public void setListener(RtpSocketListener listener) {
+        this.listener = listener;
+    }
+
+        
 	/**
 	 * Closes socket
 	 * 
 	 */
 	public void close() {
-		if (receiveStream != null) {
-			receiveStream.stop();
-		}
-
-		if (channel != null) {
-			try {
-				channel.disconnect();
-				// FIXME: socket.close() does that also doesnt it?
-				channel.close();
-			} catch (IOException e) {
-			}
-		}
-
 		if (socket != null) {
 			socket.disconnect();
 			socket.close();
@@ -430,9 +424,11 @@ public class RtpSocket implements Runnable {
 		int count = 0;
 		try {
 			count = channel.read(readerBuffer);
-		} catch (IOException e) {
-			logger.error("Network error detected for socket [" + localAddress + ":" + localPort, e);
-			return;
+		} catch (Exception e) {
+                    if (listener != null) {
+                        listener.error(e);
+                    }
+                    return;
 		}
 
 		readerBuffer.flip();

@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
-import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
@@ -30,7 +29,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
 	 */
 	private static final long serialVersionUID = -2277812497480986797L;
 	private JitterBuffer jitterBuffer;
-	protected ScheduledFuture readerTask;
+	private volatile ScheduledFuture readerTask;
 	private Buffer frame;
 	protected Format[] formats;
 	private RtpSocket rtpSocket;
@@ -47,6 +46,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
 	}
 
 	public void stop() {
+            System.out.println("**** STOP RECEIVER *** " + readerTask);
 		rtpSocket.stopReceiver();
 		if (readerTask != null) {
 			readerTask.cancel(true);

@@ -60,7 +60,6 @@ public class RtpFactory {
 	}
 
 	public void stop() {
-		RtpSocket.readerThread.shutdown();
 
 		for (RtpSocket r : rtpSockets) {
 			r.close();

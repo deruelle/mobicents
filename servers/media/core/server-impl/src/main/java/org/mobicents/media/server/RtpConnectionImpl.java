@@ -47,6 +47,7 @@ import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
+import org.mobicents.media.server.impl.rtp.RtpSocketListener;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormatParser;
 import org.mobicents.media.server.spi.Connection;
@@ -58,7 +59,7 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
  * 
  * @author kulikov
  */
-public class RtpConnectionImpl extends ConnectionImpl {
+public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListener {
 
     private SdpFactory sdpFactory;
     private String localDescriptor;
@@ -272,6 +273,21 @@ public class RtpConnectionImpl extends ConnectionImpl {
     
     @Override
     protected void close() {
+        int count = ((EndpointImpl)getEndpoint()).getConnections().size();
+        if (count == 0) {
+            ((EndpointImpl)getEndpoint()).getSource().stop();
+        }
+        
+        Collection<RtpSocket> sockets = rtpSockets.values();
+        for (RtpSocket socket : sockets) {
+            socket.getReceiveStream().stop();
+            
+            mux.disconnect(socket.getReceiveStream());
+            demux.disconnect(socket.getSendStream());
+            
+            socket.close();
+        }
+        
         if (rxChannel != null) {
             rxChannel.disconnect(mux.getOutput());
         }
@@ -279,15 +295,12 @@ public class RtpConnectionImpl extends ConnectionImpl {
         if (txChannel != null) {
             txChannel.connect(demux.getInput());
         }
-        
-        Collection<RtpSocket> sockets = rtpSockets.values();
-        for (RtpSocket socket : sockets) {
-            mux.disconnect(socket.getReceiveStream());
-            demux.disconnect(socket.getSendStream());
-            socket.release();
-        }
-        
+                
         super.close();
+    }
+
+    public void error(Exception e) {
+        getEndpoint().deleteConnection(this.getId());
     }
     
 }

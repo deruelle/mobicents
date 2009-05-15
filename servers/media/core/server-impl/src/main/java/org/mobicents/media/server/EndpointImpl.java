@@ -27,6 +27,7 @@
 package org.mobicents.media.server;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.concurrent.locks.ReentrantLock;
@@ -216,7 +217,10 @@ public class EndpointImpl implements Endpoint {
         }
     }
 
-
+    public Collection<Connection> getConnections() {
+        return connections.values();
+    }
+    
     public Connection createConnection(ConnectionMode mode) throws TooManyConnectionsException, ResourceUnavailableException {
         state.lock();
         try {
