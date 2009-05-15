@@ -59,9 +59,14 @@ public class LocalConnectionImpl extends ConnectionImpl {
         rxOutput = new Output("local.connection.rxOutput");
         txOutput = new Output("local.connection.txOutput");
         
+        rxOutput.setConnection(this);
+        txOutput.setConnection(this);
+        
         rxInput = new Input("local.connection.rxInput", rxOutput);
         txInput = new Input("local.connection.txInput", txOutput);   
         
+        rxInput.setConnection(this);
+        txInput.setConnection(this);
         setMode(mode);
     }
     
@@ -152,7 +157,7 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
 
         public boolean isAcceptable(Format format) {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return true;
         }
 
         public void receive(Buffer buffer) {

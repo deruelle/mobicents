@@ -89,7 +89,10 @@ public class RtpConnectionImpl extends ConnectionImpl {
 
         // create demux and join with txChannel
         demux = new Demultiplexer("Demux[rtpCnnection=" + this.getId() + "]");
+        demux.setConnection(this);
+        
         mux = new Multiplexer("Mux[rtpCnnection=" + this.getId() + "]");
+        mux.setConnection(this);
         
         // join demux and rtp sockets
         Collection<RtpSocket> sockets = rtpSockets.values();
