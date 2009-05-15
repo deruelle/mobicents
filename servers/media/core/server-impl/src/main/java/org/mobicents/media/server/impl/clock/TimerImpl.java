@@ -16,7 +16,9 @@ package org.mobicents.media.server.impl.clock;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.mobicents.media.server.spi.Timer;
 
@@ -26,44 +28,58 @@ import org.mobicents.media.server.spi.Timer;
  * @author Oleg Kulikov
  */
 public class TimerImpl implements Timer {
+	public static final int _DEFAULT_T_PRIORITY = Thread.MAX_PRIORITY;
+	private transient final ScheduledExecutorService timer = Executors.newSingleThreadScheduledExecutor(new MMSClockThreadFactory());
+	private int heartBeat = 20;
 
-    private transient final ScheduledExecutorService timer =
-            Executors.newSingleThreadScheduledExecutor();
-    private int heartBeat = 20;
+	/**
+	 * Creates new instance of the timer.
+	 */
+	public TimerImpl() {
+	}
 
-    /**
-     * Creates new instance of the timer.
-     */
-    public TimerImpl() {
-    }
-    
-    /**
-     * Gets value of interval between timer ticks.
-     * 
-     * @return the int value in milliseconds.
-     */
-    public int getHeartBeat() {
-        return heartBeat;
-    }
+	/**
+	 * Gets value of interval between timer ticks.
+	 * 
+	 * @return the int value in milliseconds.
+	 */
+	public int getHeartBeat() {
+		return heartBeat;
+	}
 
-    /**
-     * Modify interval between timer tick
-     * 
-     * @param heartBeat the new value of interval in milliseconds.
-     */
-    public void setHeartBeat(int heartBeat) {
-        this.heartBeat = heartBeat;
-    }
-    
-    /**
-     * Synchronizes task from this timer.
-     * 
-     * @param task the task to be synchronized.
-     * @return the action which can be canceled to unsynchronize previously 
-     * synchronized task
-     */
-    public ScheduledFuture synchronize(Runnable task) {
-        return timer.scheduleAtFixedRate(task, 0, heartBeat, TimeUnit.MILLISECONDS);
-    }
+	/**
+	 * Modify interval between timer tick
+	 * 
+	 * @param heartBeat
+	 *            the new value of interval in milliseconds.
+	 */
+	public void setHeartBeat(int heartBeat) {
+		this.heartBeat = heartBeat;
+	}
 
+	/**
+	 * Synchronizes task from this timer.
+	 * 
+	 * @param task
+	 *            the task to be synchronized.
+	 * @return the action which can be canceled to unsynchronize previously
+	 *         synchronized task
+	 */
+	public ScheduledFuture synchronize(Runnable task) {
+		return timer.scheduleAtFixedRate(task, 0, heartBeat, TimeUnit.MILLISECONDS);
+	}
+
+}
+
+class MMSClockThreadFactory implements ThreadFactory {
+	public static final AtomicLong sequence = new AtomicLong(0);
+	private ThreadGroup factoryThreadGroup = new ThreadGroup("MMSClockThreadGroup[" + sequence.incrementAndGet() + "]");
+
+	public Thread newThread(Runnable r) {
+		Thread t = new Thread(this.factoryThreadGroup, r);
+		t.setPriority(TimerImpl._DEFAULT_T_PRIORITY);
+		// ??
+		//t.start();
+		return t;
+	}
 }
