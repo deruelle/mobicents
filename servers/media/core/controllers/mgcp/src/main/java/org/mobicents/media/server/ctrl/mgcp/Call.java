@@ -62,7 +62,7 @@ public class Call implements Serializable {
         if (l == null) {
             throw new UnknownConnectionException(connectionID);
         }
-        l.close();
+        //l.close();
         if (connections.isEmpty()) {
             controller.removeCall(id);
         }

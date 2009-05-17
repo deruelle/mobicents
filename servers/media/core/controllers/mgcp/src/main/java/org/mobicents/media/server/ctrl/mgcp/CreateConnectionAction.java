@@ -95,7 +95,7 @@ public class CreateConnectionAction implements Callable {
             }
         } catch (ResourceUnavailableException e) {
             logger.warn("TX = " + txID + ", There is no free endpoint: " + localName + ", ResponseCode: " + ReturnCode.ENDPOINT_UNKNOWN);
-            return new CreateConnectionResponse(crcx.getSource(), ReturnCode.Endpoint_Unknown, null);
+            return new CreateConnectionResponse(crcx.getSource(), ReturnCode.Endpoint_Unknown, new ConnectionIdentifier("0"));
         }
 
         Connection connection = null;
@@ -282,7 +282,7 @@ public class CreateConnectionAction implements Callable {
         JainMgcpResponseEvent response = 
                 crcx.getSecondEndpointIdentifier() == null ? 
                 createRtpConnection(crcx) : createLink(crcx);
-
+        response.setTransactionHandle(crcx.getTransactionHandle());        
         logger.info("Response TX = " + response.getTransactionHandle() + ", Response: " + response.getReturnCode());
         return response;
     }

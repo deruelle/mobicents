@@ -40,10 +40,12 @@ public class ConnectionActivity implements ConnectionListener {
 
     private static int GEN = 1;
     
-    private Connection connection;
+    protected Connection connection;
     private String id;
+    private Call call;
     
     protected ConnectionActivity(Call call, Connection connection) {
+        this.call = call;
         this.id = Integer.toHexString(GEN++);
         if (GEN == Integer.MAX_VALUE) {
             GEN = 1;
@@ -67,7 +69,11 @@ public class ConnectionActivity implements ConnectionListener {
     }
     
     public void close() {
-    	connection.getEndpoint().deleteConnection(connection.getId());
+        try {
+            call.removeConnection(id);
+        } catch (Exception e) {
+        }
+    	//connection.getEndpoint().deleteConnection(connection.getId());
         connection.removeListener(this);
     }
 

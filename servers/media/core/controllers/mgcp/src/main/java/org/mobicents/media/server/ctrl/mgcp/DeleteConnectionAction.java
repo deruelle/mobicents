@@ -101,7 +101,7 @@ public class DeleteConnectionAction implements Callable {
         ConnectionActivity activity = controller.getActivity(localName, connectionID);
         activity.close();
         
-        endpoint.deleteConnection(connectionID);
+        endpoint.deleteConnection(activity.connection.getId());
         return new DeleteConnectionResponse(controller, ReturnCode.Transaction_Executed_Normally);
     }
     
