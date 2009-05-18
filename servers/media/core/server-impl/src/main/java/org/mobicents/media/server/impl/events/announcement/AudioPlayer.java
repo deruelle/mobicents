@@ -29,11 +29,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseEndpoint;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
 
 import org.xiph.speex.spi.SpeexAudioFileReader;
 import org.apache.log4j.Logger;

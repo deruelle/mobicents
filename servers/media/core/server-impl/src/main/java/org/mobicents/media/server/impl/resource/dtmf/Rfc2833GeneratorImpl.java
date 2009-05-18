@@ -6,10 +6,10 @@
 package org.mobicents.media.server.impl.resource.dtmf;
 
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
+import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
 /**

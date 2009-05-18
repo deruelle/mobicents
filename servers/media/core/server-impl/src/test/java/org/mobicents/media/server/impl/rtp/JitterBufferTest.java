@@ -9,10 +9,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.spi.dsp.Codec;
 import static org.junit.Assert.*;
 
@@ -228,6 +226,7 @@ public class JitterBufferTest {
 		/***********************************************************************
 		 * Fill Buffer 5 - 4th Third half + start of 5th packet
 		 **********************************************************************/
+		
 		seq = 5;
 		data = new byte[40 + 12 + 80];
 		System.arraycopy(fillByte(40), 0, data, 0, 40);

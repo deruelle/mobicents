@@ -192,6 +192,11 @@ public class ConferenceBridgeTest {
         e3.deleteAllConnections();
         
         cnf.deleteAllConnections();
+        //We have to wait, cause threads may not end immediatly...
+        try{
+        	Thread.currentThread().sleep(1000);
+    	}catch(Exception e)
+    	{}
         res = verify(s1, new int[]{FREQ[1], FREQ[2]});
         assertEquals(true, res);
         

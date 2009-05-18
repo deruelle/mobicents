@@ -13,6 +13,8 @@
  */
 package org.mobicents.media.server.impl.rtp;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -52,7 +52,9 @@ public class JitterBuffer implements Serializable {
 	private int maxSize;
 	private int period;
 	private int jitter;
-	private ConcurrentLinkedQueue<byte[]> queue = new ConcurrentLinkedQueue<byte[]>();
+	// private ConcurrentLinkedQueue<byte[]> queue = new
+	// ConcurrentLinkedQueue<byte[]>();
+	private BufferConcurrentLinkedQueue<byte[]> queue = new BufferConcurrentLinkedQueue<byte[]>();
 
 	private BufferFactory bufferFactory = new BufferFactory(10, "ReceiverBuffer");
 
@@ -67,6 +69,11 @@ public class JitterBuffer implements Serializable {
 	private volatile boolean ready = false;
 
 	private static final int MAX_ROUNDS = 3;
+
+	private volatile transient Buffer currentBuffer = bufferFactory.allocate(true);
+	private volatile transient boolean initializedHeader = false;
+
+	private volatile transient ByteArrayOutputStream payloadDataStream = new ByteArrayOutputStream();
 
 	private volatile byte[] leftOver = null;
 
@@ -106,7 +113,7 @@ public class JitterBuffer implements Serializable {
 		if (queue.size() < this.maxSize) {
 			queue.offer(data);
 		}
-
+		
 		if (!ready && queue.size() >= this.maxSize / 2) {
 			ready = true;
 		}
@@ -120,8 +127,7 @@ public class JitterBuffer implements Serializable {
 		int packetSize = 160;
 		if (format.matches(Codec.LINEAR_AUDIO)) {
 			packetSize = 320;
-		} else if ((format.matches(Codec.PCMA)) || (format.matches(Codec.PCMU)) || (format.matches(Codec.SPEEX))
-				|| (format.matches(Codec.G729))) {
+		} else if ((format.matches(Codec.PCMA)) || (format.matches(Codec.PCMU)) || (format.matches(Codec.SPEEX)) || (format.matches(Codec.G729))) {
 			packetSize = 160;
 		} else if (format.matches(Codec.GSM)) {
 			packetSize = 33;
@@ -132,7 +138,6 @@ public class JitterBuffer implements Serializable {
 		}
 		return packetSize;
 	}
-
 
 	private byte[] concatByteList(List<byte[]> byteArrList, int totalLen) {
 		byte[] concatedData = new byte[totalLen];
@@ -153,103 +158,116 @@ public class JitterBuffer implements Serializable {
 
 		if (!queue.isEmpty()) {
 
-			rawData.clear();
-			data = null;
-			dataLength = 0;
-
 			try {
+				// here we can have full, header, part header, part herader with
+				// data, etc
+				Buffer toReturn = null;
+				RtpHeader header = (RtpHeader) this.currentBuffer.getHeader();
+				if (!this.initializedHeader) {
 
-				while (dataLength < 12) {
+					// we get two while loops,
+					while (!this.initializedHeader) {
+						// here, if there is something in queue we trye to
+						// create header, if there is nothing, we return,
+						// while is because we can header in more than one chunk
+						// :)
+						int leftOverBytes = -1;
+						byte[] presumableHeaderData = null;
 
-					if (leftOver != null) {
-						data = leftOver;
-						leftOver = null;
-					} else {
-						data = queue.poll();
-						if (data == null) {
-							leftOver = concatByteList(rawData, dataLength);
-							return null;
+						while (leftOverBytes <0) {
+							presumableHeaderData = queue.poll();
+							if (presumableHeaderData == null) {
+								// just in case:
+								return null;
+							}
+							leftOverBytes = header.initPartialy(presumableHeaderData);
 						}
-					}
-
-					dataLength += data.length;
-					rawData.add(data);
-				}
-
-				data = concatByteList(rawData, dataLength);
-
-				// data = queue.poll();
-
-				int dataCount = data.length - 12;
-
-				// allocating media buffer using factory
-				Buffer buffer = bufferFactory.allocate(true);
-				RtpHeader header = (RtpHeader) buffer.getHeader();
-				header.init(data);
-
-				// assign format.
-				// if payload not changed use the already known format
-				if (payloadType != header.getPayloadType()) {
-					payloadType = header.getPayloadType();
-					format = rtpMap.get(payloadType);
-					if (format == null) {
-						logger.error("There is no Format defined for PayloadType = " + payloadType
-								+ " returning null from JitterBuffer.read()");
-						buffer.dispose();
-						return null;
+						this.initializedHeader = true;
+						// now we have some bytes left.
+						if (leftOverBytes > 0 && presumableHeaderData != null)
+							storeLeftOver(presumableHeaderData, leftOverBytes);
 
 					}
-					packetSize = getPacketSize(format);
-				}
 
-				// the length of the payload is total length of the
-				// datagram except RTP header which has 12 bytes in length
-				int legth = Math.min(dataCount, packetSize);
-				System.arraycopy(data, 12, (byte[]) buffer.getData(), 0, legth);
-
-				if (dataCount > packetSize) {
-					int willRemain = dataCount - packetSize;
-					leftOver = new byte[willRemain];
-					System.arraycopy(data, packetSize, leftOver, 0, willRemain);
-
+					toReturn = initBufferPayload(header);
 				} else {
+					// we want buffer to return
+					toReturn = initBufferPayload(header);
+					
+				}
 
-					while ((dataCount < packetSize)) {
-						byte[] newData = queue.poll();
+				return toReturn;
 
-						if (newData == null) {
-							leftOver = data;
-							buffer.dispose();
-							return null;
-						}
-
-						int newDataLen = newData.length;
-						if (dataCount + newDataLen > packetSize) {
-
-							int willConsume = packetSize - dataCount;
-							int willRemain = newDataLen - willConsume;
-
-							leftOver = new byte[willRemain];
-
-							System.arraycopy(newData, willConsume, leftOver, 0, willRemain);
-							newDataLen = willConsume;
-						}
-
-						byte[] oldData = (byte[]) buffer.getData();
-						System.arraycopy(newData, 0, oldData, dataCount, newDataLen);
-						dataCount += newDataLen;
-					}
-				}				
-
-				buffer.setLength(packetSize);
-				buffer.setFormat(format);
-				// receiveStream.push(buffer);
-				return buffer;
 			} catch (Exception e) {
 				logger.error("The JitterBuffer read() is failing " + e);
 			}
 		} // end of if
 		return null;
 
+	}
+
+	private Buffer initBufferPayload(RtpHeader header) throws IOException{
+		// Here we must init payload, we return ready buffer and allocate
+		// another.
+
+		if (payloadType != header.getPayloadType()) {
+			payloadType = header.getPayloadType();
+			format = rtpMap.get(payloadType);
+			if (format == null) {
+				logger.error("There is no Format defined for PayloadType = " + payloadType + " returning null from JitterBuffer.read()");
+				
+				cleanBuffers();
+				return null;
+
+			}
+		}
+			packetSize = getPacketSize(format);
+			int loadedData = this.payloadDataStream.size();
+
+			while (this.payloadDataStream.size() != packetSize) {
+				byte[] dataToStream = queue.poll();
+				if (dataToStream == null) {
+					return null;
+				}
+
+				if (loadedData + dataToStream.length > packetSize) {
+					// here we might want to start init of another buffer, but
+					// for now its ok. lets see results first.
+					storeLeftOver(dataToStream, loadedData + dataToStream.length - packetSize);
+					byte[] tmp = new byte[packetSize-loadedData];
+					System.arraycopy(dataToStream, 0, tmp, 0, tmp.length);
+					dataToStream = tmp;
+				}
+
+				loadedData += dataToStream.length;
+				this.payloadDataStream.write(dataToStream);
+
+				// we are ready :)
+				if (loadedData == packetSize) {
+					Buffer toReturn = this.currentBuffer;
+					this.currentBuffer = this.bufferFactory.allocate(true);
+					toReturn.setData(this.payloadDataStream.toByteArray());
+					this.payloadDataStream.reset();
+					this.initializedHeader = false;
+					toReturn.setLength(packetSize);
+					toReturn.setFormat(format);
+					return toReturn;
+				}
+			}
+		
+
+		return null;
+	}
+
+	private void cleanBuffers() {
+		this.currentBuffer.dispose();
+		this.currentBuffer = bufferFactory.allocate(true);
+		this.payloadDataStream.reset();
+	}
+
+	private void storeLeftOver(byte[] presumableHeaderData, int leftOverBytes) {
+		byte[] leftOver = new byte[leftOverBytes];
+		System.arraycopy(presumableHeaderData, presumableHeaderData.length - leftOverBytes, leftOver, 0, leftOverBytes);
+		this.queue.storeAtHead(leftOver);
 	}
 }

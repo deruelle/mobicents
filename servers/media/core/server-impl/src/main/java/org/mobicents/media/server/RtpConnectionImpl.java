@@ -43,6 +43,7 @@ import javax.sdp.SessionDescription;
 import net.java.stun4j.StunException;
 
 import org.mobicents.media.Format;
+import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.resource.Demultiplexer;
 import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
@@ -275,7 +276,10 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
     protected void close() {
         int count = ((EndpointImpl)getEndpoint()).getConnections().size();
         if (count == 0) {
-            ((EndpointImpl)getEndpoint()).getSource().stop();
+        	//FIXME: this should be done in channels, shouldnt it?
+        	MediaSource source = ((EndpointImpl)getEndpoint()).getSource();
+        	if(source!=null)
+        		source.stop();
         }
         
         Collection<RtpSocket> sockets = rtpSockets.values();

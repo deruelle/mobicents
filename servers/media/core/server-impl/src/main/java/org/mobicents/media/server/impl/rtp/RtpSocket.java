@@ -32,10 +32,8 @@ import net.java.stun4j.client.StunDiscoveryReport;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
-import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.spi.Timer;
 
 /**

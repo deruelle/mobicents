@@ -14,11 +14,12 @@
 package org.mobicents.media.server.impl.resource;
 
 import org.mobicents.media.server.impl.*;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
+
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 

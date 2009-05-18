@@ -25,10 +25,10 @@ import javax.sound.sampled.AudioFormat.Encoding;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
-import org.mobicents.media.BufferFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.resource.AudioPlayer;

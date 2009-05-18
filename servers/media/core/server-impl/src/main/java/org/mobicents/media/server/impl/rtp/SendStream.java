@@ -31,7 +31,6 @@ import java.util.Collection;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.format.AudioFormat;
-import org.mobicents.media.server.RtpHeader;
 import org.mobicents.media.server.impl.AbstractSink;
 
 /**
