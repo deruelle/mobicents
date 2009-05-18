@@ -142,6 +142,7 @@ public class MgcpController implements JainMgcpListener {
 
         this.port = mgcpStack.getPort();
         logger.info("Started MGCP Controller module for MMS");
+//        new Thread(new CallMon()).start();
     }
 
     /**
@@ -259,5 +260,17 @@ public class MgcpController implements JainMgcpListener {
             }
         }
         return null;
+    }
+    
+    private class CallMon implements Runnable {
+        public void run() {
+            while (true) {
+            System.out.println("********** CALL COUNT= " + calls.size());
+            try {
+                Thread.currentThread().sleep(1000);
+            } catch (Exception e) {
+            }
+            }
+        }
     }
 }

@@ -58,7 +58,7 @@ public class Call implements Serializable {
     }
     
     public void removeConnection(String connectionID) throws UnknownConnectionException {
-        ConnectionActivity l = connections.get(connectionID);
+        ConnectionActivity l = connections.remove(connectionID);
         if (l == null) {
             throw new UnknownConnectionException(connectionID);
         }
