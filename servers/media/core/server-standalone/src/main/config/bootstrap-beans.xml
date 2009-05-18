@@ -1,113 +1,173 @@
-
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-    <!-- Timer definition -->
-    <bean name="Timer" class="org.mobicents.media.server.impl.clock.TimerImpl">
-        <property name="heartBeat">20</property>
-    </bean>
-    
-    <!-- Media Server -->
-    <bean name="MediaServer" class="org.mobicents.media.server.impl.naming.InnerNamingService">
-        <incallback method="addEndpoint"/>
-        <uncallback method="removeEndpoint"/>
-    </bean>
-    
-   <!-- The MainDeployer -->
-    <bean name="MainDeployer" class="org.mobicents.media.server.bootstrap.MainDeployer">
-        <property name="path">${mms.home.dir}/deploy</property>
-        <property name="scanPeriod">1000</property>
-    </bean>
-    
-     <!-- Definition of media formats -->
-    <bean name="PCMU" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>ULAW</parameter>
-            <parameter>8000</parameter>
-            <parameter>8</parameter>
-            <parameter>1</parameter>
-        </constructor>
-    </bean>
-    
-    <bean name="PCMA" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>ALAW</parameter>
-            <parameter>8000</parameter>
-            <parameter>8</parameter>
-            <parameter>1</parameter>
-        </constructor>
-    </bean>
+	<!-- Timer definition -->
+	<bean name="Timer"
+		class="org.mobicents.media.server.impl.clock.TimerImpl">
+		<property name="heartBeat">20</property>
+	</bean>
 
-    <bean name="SPEEX" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>SPEEX</parameter>
-            <parameter>8000</parameter>
-            <parameter>8</parameter>
-            <parameter>1</parameter>
-        </constructor>
-    </bean>
-    
-    <bean name="GSM" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>ULAW</parameter>
-            <parameter>8000</parameter>
-            <parameter>8</parameter>
-            <parameter>1</parameter>
-        </constructor>
-    </bean>
+	<!-- Media Server -->
+	<bean name="MediaServer"
+		class="org.mobicents.media.server.impl.naming.InnerNamingService">
+		<incallback method="addEndpoint" />
+		<uncallback method="removeEndpoint" />
+	</bean>
 
-    <bean name="G729" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>ULAW</parameter>
-            <parameter>8000</parameter>
-            <parameter>8</parameter>
-            <parameter>1</parameter>
-        </constructor>
-    </bean>
-    
-    <bean name="DTMF" class="org.mobicents.media.format.AudioFormat">
-        <constructor>
-            <parameter>telephone-event/8000</parameter>
-        </constructor>
-    </bean>
+	<!-- File Filter -->
+	<bean name="FileFilter"
+		class="org.mobicents.media.server.bootstrap.FileFilterImpl">
+		<!-- Unless specified the default list of suffixes is , -beans.xml, -conf.xml -->
+		<constructor>
+			<parameter>
+				<set elementClass="java.lang.String">
+					<value>-beans.xml</value>
+					<value>-conf.xml</value>
+				</set>
+			</parameter>
+		</constructor>
+	</bean>
 
-    <bean name="H261" class="org.mobicents.media.format.VideoFormat">
-        <constructor>
-            <parameter>H261</parameter>
-            <parameter>90000</parameter>
-        </constructor>
-    </bean>
+	<!-- The MainDeployer -->
+	<bean name="MainDeployer"
+		class="org.mobicents.media.server.bootstrap.MainDeployer">
+		<property name="path">${mms.home.dir}/deploy</property>
+		<property name="scanPeriod">1000</property>
+		<property name="fileFilter"><inject bean="FileFilter" /></property>
+	</bean>
 
-    <!-- RTP stuff configuration -->
-    <bean name="RTPAudioFactory" class="org.mobicents.media.server.impl.rtp.RtpFactory">
-        <property name="formatMap">
-            <map class="java.util.Hashtable" keyClass="java.lang.Integer" valueClass="org.mobicents.media.Format">
-                <entry><key>0</key><value><inject bean="PCMU"/></value></entry>
-                <entry><key>8</key><value><inject bean="PCMA"/></value></entry>
-                <entry><key>3</key><value><inject bean="GSM"/></value></entry>
-                <entry><key>97</key><value><inject bean="SPEEX"/></value></entry>
-                <entry><key>101</key><value><inject bean="DTMF"/></value></entry>
-            </map>
-        </property>
-        <property name="bindAddress">127.0.0.1</property>
-        <property name="portRange">1024-65535</property>
-        <property name="jitter">60</property>
-        <property name="timer"><inject bean="Timer"/></property>
-    </bean>
-    <!-- RTP stuff configuration -->
-    <bean name="RTPVideoFactory" class="org.mobicents.media.server.impl.rtp.RtpFactory">
-        <property name="formatMap">
-            <map class="java.util.Hashtable" keyClass="java.lang.Integer" valueClass="org.mobicents.media.Format">
-                <entry><key>31</key><value><inject bean="H261"/></value></entry>
-            </map>
-        </property>
-        <property name="jitter">60</property>
-        <property name="timer"><inject bean="Timer"/></property>
-    </bean>
-    
-    <bean name="G711.UlawEncoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory"/>
-    <bean name="G711.UlawDecoderFactory" class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory"/>
-    
-    <bean name="AudioPlayerFactory" class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
-        <property name="name">audio.player</property>
-    </bean>
-    
+	<!-- Definition of media formats -->
+	<bean name="PCMU" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>ULAW</parameter>
+			<parameter>8000</parameter>
+			<parameter>8</parameter>
+			<parameter>1</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="PCMA" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>ALAW</parameter>
+			<parameter>8000</parameter>
+			<parameter>8</parameter>
+			<parameter>1</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="SPEEX" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>SPEEX</parameter>
+			<parameter>8000</parameter>
+			<parameter>8</parameter>
+			<parameter>1</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="GSM" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>ULAW</parameter>
+			<parameter>8000</parameter>
+			<parameter>8</parameter>
+			<parameter>1</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="G729" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>ULAW</parameter>
+			<parameter>8000</parameter>
+			<parameter>8</parameter>
+			<parameter>1</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="DTMF" class="org.mobicents.media.format.AudioFormat">
+		<constructor>
+			<parameter>telephone-event/8000</parameter>
+		</constructor>
+	</bean>
+
+	<bean name="H261" class="org.mobicents.media.format.VideoFormat">
+		<constructor>
+			<parameter>H261</parameter>
+			<parameter>90000</parameter>
+		</constructor>
+	</bean>
+
+	<!-- RTP stuff configuration -->
+	<bean name="RTPAudioFactory"
+		class="org.mobicents.media.server.impl.rtp.RtpFactory">
+		<property name="formatMap">
+			<map class="java.util.Hashtable"
+				keyClass="java.lang.Integer"
+				valueClass="org.mobicents.media.Format">
+				<entry>
+					<key>0</key>
+					<value>
+						<inject bean="PCMU" />
+					</value>
+				</entry>
+				<entry>
+					<key>8</key>
+					<value>
+						<inject bean="PCMA" />
+					</value>
+				</entry>
+				<entry>
+					<key>3</key>
+					<value>
+						<inject bean="GSM" />
+					</value>
+				</entry>
+				<entry>
+					<key>97</key>
+					<value>
+						<inject bean="SPEEX" />
+					</value>
+				</entry>
+				<entry>
+					<key>101</key>
+					<value>
+						<inject bean="DTMF" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="bindAddress">127.0.0.1</property>
+		<property name="portRange">1024-65535</property>
+		<property name="jitter">60</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+	</bean>
+	<!-- RTP stuff configuration -->
+	<bean name="RTPVideoFactory"
+		class="org.mobicents.media.server.impl.rtp.RtpFactory">
+		<property name="formatMap">
+			<map class="java.util.Hashtable"
+				keyClass="java.lang.Integer"
+				valueClass="org.mobicents.media.Format">
+				<entry>
+					<key>31</key>
+					<value>
+						<inject bean="H261" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="jitter">60</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+	</bean>
+
+	<bean name="G711.UlawEncoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory" />
+	<bean name="G711.UlawDecoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory" />
+
+	<bean name="AudioPlayerFactory"
+		class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
+		<property name="name">audio.player</property>
+	</bean>
+
 </deployment>

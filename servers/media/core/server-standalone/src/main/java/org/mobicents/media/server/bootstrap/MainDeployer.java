@@ -27,6 +27,7 @@
 package org.mobicents.media.server.bootstrap;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,206 +40,222 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.log4j.Logger;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.plugins.deployment.xml.BasicXMLDeployer;
 
 /**
- *
+ * 
  * @author kulikov
+ * @author amit bhayani
  */
 public class MainDeployer {
 
-    private Kernel kernel;
-    private BasicXMLDeployer kernelDeployer;
-    
-    private int scanPeriod;
-    private int initialDelay;
-    
-    private String path;
-    private HashMap<URL, Long> deployments = new HashMap();
-    private ScheduledExecutorService executor = null;
-    private ScheduledFuture activeScan;
-    private Logger logger = Logger.getLogger(MainDeployer.class);
+	private Kernel kernel;
+	private BasicXMLDeployer kernelDeployer;
 
-    public MainDeployer() {
-        executor = Executors.newSingleThreadScheduledExecutor(
-                new ScannerThreadFactory());
-    }
+	private int scanPeriod;
+	private int initialDelay;
 
-    public int getScanPeriod() {
-        return scanPeriod;
-    }
+	private FileFilter fileFilter;
 
-    public void setScanPeriod(int scanPeriod) {
-        this.scanPeriod = scanPeriod;
-    }
+	private String path;
+	private HashMap<URL, Long> deployments = new HashMap();
+	private ScheduledExecutorService executor = null;
+	private ScheduledFuture activeScan;
+	private Logger logger = Logger.getLogger(MainDeployer.class);
 
-    public int getInitialDelay() {
-        return initialDelay;
-    }
+	public MainDeployer() {
+		executor = Executors.newSingleThreadScheduledExecutor(new ScannerThreadFactory());
+	}
 
-    public void setInitialDelay(int delay) {
-        this.initialDelay = delay;
-    }
+	public int getScanPeriod() {
+		return scanPeriod;
+	}
 
-    public String getPath() {
-        return path;
-    }
+	public void setScanPeriod(int scanPeriod) {
+		this.scanPeriod = scanPeriod;
+	}
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+	public int getInitialDelay() {
+		return initialDelay;
+	}
 
-    public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) {
-        this.kernel = kernel;
-        this.kernelDeployer = kernelDeployer;
-        
-        activeScan = executor.scheduleAtFixedRate(new HDScanner(),
-                initialDelay, scanPeriod, TimeUnit.MILLISECONDS);
-        logger.info("Successfuly started");
-    }
+	public void setInitialDelay(int delay) {
+		this.initialDelay = delay;
+	}
 
-    public void stop() {
-        if (activeScan != null) {
-            activeScan.cancel(true);
-        }
-        logger.info("Stopped");
-    }
+	public String getPath() {
+		return path;
+	}
 
-    private void deploy(URL url) throws Throwable {
-        kernelDeployer.deploy(url);
-        kernelDeployer.validate();
-    }
+	public void setPath(String path) {
+		this.path = path;
+	}
 
-    private void undeploy(URL url) {
-        kernelDeployer.undeploy(url);
-    }
+	public FileFilter getFileFilter() {
+		return fileFilter;
+	}
 
-    private void redeploy(URL url) throws Throwable {
-        undeploy(url);
-        deploy(url);
-    }
+	public void setFileFilter(FileFilter fileFilter) {
+		this.fileFilter = fileFilter;
+	}
 
-    private String getFilePath(File file) {
-        return System.getProperty("mms.home.dir") + "/deploy/" + file.getName();
-    }
+	public void start(Kernel kernel, BasicXMLDeployer kernelDeployer) {
+		this.kernel = kernel;
+		this.kernelDeployer = kernelDeployer;
 
-    private Collection<URL> getNew(File[] files) {
-        ArrayList<URL> list = new ArrayList();
-        for (int i = 0; i < files.length; i++) {
-            try {
-                URL url = files[i].toURI().toURL();
-                if (!deployments.containsKey(url)) {
-                    deployments.put(url, files[i].lastModified());
-                    list.add(url);
-                }
-            } catch (MalformedURLException e) {
-            }
-        }
-        return list;
-    }
+		activeScan = executor.scheduleAtFixedRate(new HDScanner(), initialDelay, scanPeriod, TimeUnit.MILLISECONDS);
+		logger.info("Successfuly started");
+	}
 
-    private Collection<URL> getRemoved(File[] files) {
-        List<URL> removed = new ArrayList();
-        Set<URL> names = deployments.keySet();
+	public void stop() {
+		if (activeScan != null) {
+			activeScan.cancel(true);
+		}
+		logger.info("Stopped");
+	}
 
-        for (URL url : names) {
-            boolean found = false;
-            for (int i = 0; i < files.length; i++) {
-                try {
-                    if (url.equals(files[i].toURI().toURL())) {
-                        found = true;
-                        break;
-                    }
-                } catch (MalformedURLException e) {
-                }
-            }
+	private void deploy(URL url) throws Throwable {
+		kernelDeployer.deploy(url);
+		kernelDeployer.validate();
+	}
 
-            if (!found) {
-                removed.add(url);
-            }
-        }
+	private void undeploy(URL url) {
+		kernelDeployer.undeploy(url);
+	}
 
-        for (URL url : removed) {
-            deployments.remove(url);
-        }
+	private void redeploy(URL url) throws Throwable {
+		undeploy(url);
+		deploy(url);
+	}
 
-        return removed;
-    }
+	private String getFilePath(File file) {
+		return System.getProperty("mms.home.dir") + "/deploy/" + file.getName();
+	}
 
-    private Collection<URL> getUpdates(File[] files) {
-        ArrayList<URL> list = new ArrayList();
-        for (int i = 0; i < files.length; i++) {
-            try {
-                URL name = files[i].toURI().toURL();
-                if (deployments.containsKey(name)) {
-                    long lastModified = (Long) deployments.get(name);
-                    if (lastModified < files[i].lastModified()) {
-                        deployments.put(name, files[i].lastModified());
-                        list.add(name);
-                    }
-                }
-            } catch (MalformedURLException e) {
-            }
-        }
-        return list;
-    }
+	private Collection<URL> getNew(File[] files) {
+		ArrayList<URL> list = new ArrayList();
+		for (File f : files) {
+			try {
+				if (this.fileFilter.accept(f)) {
+					URL url = f.toURI().toURL();
+					if (!deployments.containsKey(url)) {
+						deployments.put(url, f.lastModified());
+						list.add(url);
+					}
+				}
+			} catch (MalformedURLException e) {
+			}
+		}
 
-    private class HDScanner implements Runnable {
+		return list;
+	}
 
-        public void run() {
-            File dir = new File(path);
-            File[] files = dir.listFiles();
+	private Collection<URL> getRemoved(File[] files) {
+		List<URL> removed = new ArrayList();
+		Set<URL> names = deployments.keySet();
 
-            //deploying new
-            Collection<URL> list = getNew(files);
-            if (!list.isEmpty()) {
-                for (URL fileName : list) {
-                    logger.info("Deploying " + fileName);
-                    try {
-                        deploy(fileName);
-                        logger.info("Deployed " + fileName);
-                    } catch (Throwable t) {
-                        logger.error("Could not deploy " + fileName, t);
-                    }
-                }
-            }
+		for (URL url : names) {
+			boolean found = false;
+			for (int i = 0; i < files.length; i++) {
+				try {
+					if (url.equals(files[i].toURI().toURL())) {
+						found = true;
+						break;
+					}
+				} catch (MalformedURLException e) {
+				}
+			}
 
-            //undeploying
-            list = getRemoved(files);
-            if (!list.isEmpty()) {
-                for (URL fileName : list) {
-                    logger.info("Undeploying " + fileName);
-                    try {
-                        undeploy(fileName);
-                        logger.info("Udeployed " + fileName);
-                    } catch (Throwable t) {
-                        logger.error("Could not undeploy " + fileName, t);
-                    }
-                }
-            }
+			if (!found) {
+				removed.add(url);
+			}
+		}
 
-            //redeploying
-            list = getUpdates(files);
-            if (!list.isEmpty()) {
-                for (URL fileName : list) {
-                    logger.info("Redeploying " + fileName);
-                    try {
-                        redeploy(fileName);
-                        logger.info("Redeployed " + fileName);
-                    } catch (Throwable t) {
-                        logger.error("Could not redeploy " + fileName, t);
-                    }
-                }
-            }
-        }
-    }
+		for (URL url : removed) {
+			deployments.remove(url);
+		}
 
-    private class ScannerThreadFactory implements ThreadFactory {
+		return removed;
+	}
 
-        public Thread newThread(Runnable r) {
-            return new Thread(r, "MMSDeployerScanner");
-        }
-    }
+	private Collection<URL> getUpdates(File[] files) {
+		ArrayList<URL> list = new ArrayList();
+		for (File f : files) {
+			try {
+				if (this.fileFilter.accept(f)) {
+					URL name = f.toURI().toURL();
+					if (deployments.containsKey(name)) {
+						long lastModified = (Long) deployments.get(name);
+						if (lastModified < f.lastModified()) {
+							deployments.put(name, f.lastModified());
+							list.add(name);
+						}
+					}
+				}
+			} catch (MalformedURLException e) {
+			}
+		}
+		return list;
+	}
+
+	private class HDScanner implements Runnable {
+
+		public void run() {
+			File dir = new File(path);
+			File[] files = dir.listFiles();
+
+			// deploying new
+			Collection<URL> list = getNew(files);
+			if (!list.isEmpty()) {
+				for (URL fileName : list) {
+					logger.info("Deploying " + fileName);
+					try {
+						deploy(fileName);
+						logger.info("Deployed " + fileName);
+					} catch (Throwable t) {
+						logger.error("Could not deploy " + fileName, t);
+					}
+				}
+			}
+
+			// undeploying
+			list = getRemoved(files);
+			if (!list.isEmpty()) {
+				for (URL fileName : list) {
+					logger.info("Undeploying " + fileName);
+					try {
+						undeploy(fileName);
+						logger.info("Udeployed " + fileName);
+					} catch (Throwable t) {
+						logger.error("Could not undeploy " + fileName, t);
+					}
+				}
+			}
+
+			// redeploying
+			list = getUpdates(files);
+			if (!list.isEmpty()) {
+				for (URL fileName : list) {
+					logger.info("Redeploying " + fileName);
+					try {
+						redeploy(fileName);
+						logger.info("Redeployed " + fileName);
+					} catch (Throwable t) {
+						logger.error("Could not redeploy " + fileName, t);
+					}
+				}
+			}
+		}
+	}
+
+	private class ScannerThreadFactory implements ThreadFactory {
+
+		public Thread newThread(Runnable r) {
+			return new Thread(r, "MMSDeployerScanner");
+		}
+	}
+
 }
