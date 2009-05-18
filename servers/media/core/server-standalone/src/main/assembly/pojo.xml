@@ -6,12 +6,20 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<files>
 		<file>
+			<source>src/main/config/log4j.properties</source>
+			<destName>conf/log4j.properties</destName>
+		</file>
+		<file>
 			<source>src/main/config/bootstrap-beans.xml</source>
 			<destName>conf/bootstrap-beans.xml</destName>
 		</file>
 		<file>
 			<source>src/main/config/ann-beans.xml</source>
 			<destName>deploy/ann-beans.xml</destName>
+		</file>
+		<file>
+			<source>src/main/config/pr-beans.xml</source>
+			<destName>deploy/pr-beans.xml</destName>
 		</file>
 		<file>
 			<source>src/main/config/mgcp-conf.xml</source>
@@ -21,22 +29,22 @@
 		<!-- file>
 			<source>src/main/config/ivr-beans.xml</source>
 			<destName>deploy/ivr-beans.xml</destName>
-		</file>
-		
-		<file>
+			</file>
+			
+			<file>
 			<source>src/main/config/cnf-beans.xml</source>
 			<destName>deploy/cnf-beans.xml</destName>
-		</file>		
-		
-		<file>
+			</file>		
+			
+			<file>
 			<source>src/main/config/pr-beans.xml</source>
 			<destName>deploy/pr-beans.xml</destName>
-		</file>		
-
-		<file>
+			</file>		
+			
+			<file>
 			<source>src/main/config/loop-beans.xml</source>
 			<destName>deploy/loop-beans.xml</destName>
-		</file -->
+			</file -->
 
 	</files>
 	<dependencySets>
