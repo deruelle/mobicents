@@ -113,7 +113,7 @@ public class JitterBuffer implements Serializable {
 		if (queue.size() < this.maxSize) {
 			queue.offer(data);
 		}
-		
+
 		if (!ready && queue.size() >= this.maxSize / 2) {
 			ready = true;
 		}
@@ -174,7 +174,7 @@ public class JitterBuffer implements Serializable {
 						int leftOverBytes = -1;
 						byte[] presumableHeaderData = null;
 
-						while (leftOverBytes <0) {
+						while (leftOverBytes < 0) {
 							presumableHeaderData = queue.poll();
 							if (presumableHeaderData == null) {
 								// just in case:
@@ -193,7 +193,7 @@ public class JitterBuffer implements Serializable {
 				} else {
 					// we want buffer to return
 					toReturn = initBufferPayload(header);
-					
+
 				}
 
 				return toReturn;
@@ -206,55 +206,55 @@ public class JitterBuffer implements Serializable {
 
 	}
 
-	private Buffer initBufferPayload(RtpHeader header) throws IOException{
+	private Buffer initBufferPayload(RtpHeader header) throws IOException {
 		// Here we must init payload, we return ready buffer and allocate
 		// another.
 
 		if (payloadType != header.getPayloadType()) {
 			payloadType = header.getPayloadType();
 			format = rtpMap.get(payloadType);
+			packetSize = getPacketSize(format);
 			if (format == null) {
 				logger.error("There is no Format defined for PayloadType = " + payloadType + " returning null from JitterBuffer.read()");
-				
+
 				cleanBuffers();
 				return null;
 
 			}
 		}
-			packetSize = getPacketSize(format);
-			int loadedData = this.payloadDataStream.size();
-
-			while (this.payloadDataStream.size() != packetSize) {
-				byte[] dataToStream = queue.poll();
-				if (dataToStream == null) {
-					return null;
-				}
-
-				if (loadedData + dataToStream.length > packetSize) {
-					// here we might want to start init of another buffer, but
-					// for now its ok. lets see results first.
-					storeLeftOver(dataToStream, loadedData + dataToStream.length - packetSize);
-					byte[] tmp = new byte[packetSize-loadedData];
-					System.arraycopy(dataToStream, 0, tmp, 0, tmp.length);
-					dataToStream = tmp;
-				}
-
-				loadedData += dataToStream.length;
-				this.payloadDataStream.write(dataToStream);
-
-				// we are ready :)
-				if (loadedData == packetSize) {
-					Buffer toReturn = this.currentBuffer;
-					this.currentBuffer = this.bufferFactory.allocate(true);
-					toReturn.setData(this.payloadDataStream.toByteArray());
-					this.payloadDataStream.reset();
-					this.initializedHeader = false;
-					toReturn.setLength(packetSize);
-					toReturn.setFormat(format);
-					return toReturn;
-				}
-			}
 		
+		int loadedData = this.payloadDataStream.size();
+
+		while (this.payloadDataStream.size() != packetSize) {
+			byte[] dataToStream = queue.poll();
+			if (dataToStream == null) {
+				return null;
+			}
+
+			if (loadedData + dataToStream.length > packetSize) {
+				// here we might want to start init of another buffer, but
+				// for now its ok. lets see results first.
+				storeLeftOver(dataToStream, loadedData + dataToStream.length - packetSize);
+				byte[] tmp = new byte[packetSize - loadedData];
+				System.arraycopy(dataToStream, 0, tmp, 0, tmp.length);
+				dataToStream = tmp;
+			}
+
+			loadedData += dataToStream.length;
+			this.payloadDataStream.write(dataToStream);
+
+			// we are ready :)
+			if (loadedData == packetSize) {
+				Buffer toReturn = this.currentBuffer;
+				this.currentBuffer = this.bufferFactory.allocate(true);
+				toReturn.setData(this.payloadDataStream.toByteArray());
+				this.payloadDataStream.reset();
+				this.initializedHeader = false;
+				toReturn.setLength(packetSize);
+				toReturn.setFormat(format);
+				return toReturn;
+			}
+		}
 
 		return null;
 	}
