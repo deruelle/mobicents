@@ -213,8 +213,9 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             rtpSocket.setPeer(address, port);
             updateRtpMap(rtpSocket, subset);
             
-            rtpSocket.getReceiveStream().connect(mux);
-            rtpSocket.getReceiveStream().start();
+            //This is done in constructor
+            //rtpSocket.getReceiveStream().connect(mux);
+            //rtpSocket.getReceiveStream().start();
         }
         
         demux.start();

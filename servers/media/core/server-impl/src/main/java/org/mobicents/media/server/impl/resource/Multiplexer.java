@@ -56,6 +56,12 @@ public class Multiplexer extends AbstractSink implements Outlet {
 
     @Override
     public void connect(MediaSource source) {
+    	if(inputs.containsKey(((AbstractSource) source).getId()))
+    	{
+    		IllegalStateException e =new IllegalStateException("Cannot connect source - its already connected - this: "+this+", source: "+source);
+    		e.printStackTrace();
+    		throw e;
+    	}
         Input input = new Input(getName() + ".Input");
         source.connect(input);
         inputs.put(((AbstractSource) source).getId(), input);

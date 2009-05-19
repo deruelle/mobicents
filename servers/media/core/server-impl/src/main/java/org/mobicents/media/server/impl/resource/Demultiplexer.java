@@ -55,6 +55,12 @@ public class Demultiplexer extends AbstractSource {
 
     @Override
     public void connect(MediaSink sink) {
+    	if(branches.containsKey(((AbstractSink) sink).getId()))
+    	{
+    		IllegalStateException e =new IllegalStateException("Cannot connect sink - its already connected - this: "+this+", source: "+sink);
+    		e.printStackTrace();
+    		throw e;
+    	}
         Output out = new Output("Output." + getName());
         branches.put(((AbstractSink) sink).getId(), out);
         out.connect(sink);
