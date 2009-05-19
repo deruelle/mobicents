@@ -138,6 +138,7 @@ public class RtpConnectionTest {
         System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         boolean res = Math.abs(150-count) < 10;
+        System.out.println("!!!1 " + count);
         assertEquals(true, res);
         
         assertEquals(true, receiver.isInUse());

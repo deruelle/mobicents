@@ -375,7 +375,7 @@ public class AudioPlayerTest {
 
 		public void receive(Buffer buffer) {
 			if (!buffer.isEOM()) {
-				isFormatCorrect &= buffer.getFormat().matches(Codec.L16_MONO);
+				isFormatCorrect &= buffer.getFormat().matches(AVProfile.L16_MONO);
 				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 1764);
 
 				if (lastTick > 0) {
@@ -410,7 +410,7 @@ public class AudioPlayerTest {
 
 		public void receive(Buffer buffer) {
 			if (!buffer.isEOM()) {
-				isFormatCorrect &= buffer.getFormat().matches(Codec.L16_STEREO);
+				isFormatCorrect &= buffer.getFormat().matches(AVProfile.L16_STEREO);
 				isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == (1764 * 2));
 
 				if (lastTick > 0) {
