@@ -74,6 +74,7 @@ public class EndpointHandler {
 	protected String endpointId = null;
 	protected String fakeId = null;
 	protected boolean useFakeId = false;
+	private EndpointHandlerFactory factory = null;
 	protected Set<RequestedEvent> requestedEvents = new TreeSet<RequestedEvent>(new Comparator<RequestedEvent>() {
 
 		public int compare(RequestedEvent o1, RequestedEvent o2) {
@@ -86,13 +87,24 @@ public class EndpointHandler {
 
 		}
 	});
-
-	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl, String endpointId) {
-		this.endpointId = endpointId;
+	
+	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl, EndpointHandlerFactory factory){
 		this.stack = jainMgcpStackImpl;
+		this.factory = factory;
+	}
+	
+	public void init(String endpointId){
+		this.endpointId = endpointId;
 		this.fakeId = new UID().toString();
 		this.executor = this.stack.getNextExecutor();
 	}
+
+//	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl, String endpointId) {
+//		this.endpointId = endpointId;
+//		this.stack = jainMgcpStackImpl;
+//		this.fakeId = new UID().toString();
+//		this.executor = this.stack.getNextExecutor();
+//	}
 
 	public String getFakeId() {
 		return fakeId;
@@ -377,6 +389,7 @@ public class EndpointHandler {
 					this.stack.removeEndpointHandler(this.endpointId);
 				}
 			} finally {
+				this.factory.deallocate(this);
 				// We have a pool now, we dont kill them :}
 				// this.executor.shutdownNow();
 			}

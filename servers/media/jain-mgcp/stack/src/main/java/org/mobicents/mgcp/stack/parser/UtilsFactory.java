@@ -3,7 +3,11 @@ package org.mobicents.mgcp.stack.parser;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class UtilsFactory {
+
+	private static final Logger logger = Logger.getLogger(UtilsFactory.class);
 
 	private List<Utils> list = new ArrayList<Utils>();
 	private int size = 0;
@@ -27,7 +31,10 @@ public class UtilsFactory {
 
 		utils = new Utils();
 		count++;
-		System.out.println("Count = "+count);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("UtilsFactory underflow. Count = " + count);
+		}
 		return utils;
 	}
 

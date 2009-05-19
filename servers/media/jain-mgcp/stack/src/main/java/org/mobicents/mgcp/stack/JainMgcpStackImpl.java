@@ -82,8 +82,9 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 	private ThreadPoolQueueExecutor[] executors = null;
 	private int executorPosition = 0;
-	
+
 	private UtilsFactory utilsFactory = null;
+	private EndpointHandlerFactory ehFactory = null;
 
 	// protected ExecutorService jainMgcpStackImplPool =
 	// Executors.newFixedThreadPool(50,new
@@ -112,6 +113,13 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	protected MessageHandler messageHandler = null;
 
 	// protected Timer tt=new Timer();
+
+	public void printStats() {
+		System.out.println("endpointHandlers size = " + endpointHandlers.size());
+		System.out.println("localTransactions size = " + localTransactions.size());
+		System.out.println("remoteTxToLocalTxMap size = " + remoteTxToLocalTxMap.size());
+		System.out.println("completedTransactions size = " + completedTransactions.size());
+	}
 
 	// Defualt constructor for TCK
 	public JainMgcpStackImpl() {
@@ -163,8 +171,9 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		this.setPriority(this.messageReaderThreadPriority);
 		// So stack does not die
 		this.setDaemon(false);
-		
+
 		this.utilsFactory = new UtilsFactory(25);
+		this.ehFactory = new EndpointHandlerFactory(500, this);
 		start();
 	}
 
@@ -290,8 +299,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	public int getPort() {
 		return port;
 	}
-	
-	public UtilsFactory getUtilsFactory(){
+
+	public UtilsFactory getUtilsFactory() {
 		return this.utilsFactory;
 	}
 
@@ -432,7 +441,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		// }
 		// In case of fake we always create new EH
 		if (useFakeOnWildcard) {
-			eh = new EndpointHandler(this, _endpointId);
+			// eh = new EndpointHandler(this, _endpointId);
+			eh = this.ehFactory.allocate(_endpointId);
 			eh.setUseFake(true);
 			endpointHandlers.put(eh.getFakeId(), eh);
 		} else if (!endpointHandlers.containsKey(_endpointId)) {
@@ -441,7 +451,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 			// ":" + this.port + ", using fakeId["
 			// + useFakeOnWildcard + "] - " + _endpointId);
 			// }
-			eh = new EndpointHandler(this, _endpointId);
+			// eh = new EndpointHandler(this, _endpointId);
+			eh = this.ehFactory.allocate(_endpointId);
 			endpointHandlers.put(_endpointId, eh);
 
 		} else {
@@ -464,12 +475,13 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	}
 
 	public synchronized void removeEndpointHandler(String endpointId) {
-		//System.out.println("Removing for EndpointId "+endpointId);
+		// System.out.println("Removing for EndpointId "+endpointId);
 		EndpointHandler eh = this.endpointHandlers.remove(endpointId.intern());
-		//System.out.println("Removed = "+ eh +" size of this.endpointHandlers = "+ this.endpointHandlers.size());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Removing EH" + this.localAddress + ":" + this.port + ": for:" + endpointId + " = " + eh);
-		}
+		//System.out.println("Removed = " + eh + " size of this.endpointHandlers = " + this.endpointHandlers.size());
+		// if (logger.isDebugEnabled()) {
+		// logger.debug("Removing EH" + this.localAddress + ":" + this.port + ":
+		// for:" + endpointId + " = " + eh);
+		// }
 
 	}
 

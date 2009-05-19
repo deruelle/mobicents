@@ -33,7 +33,6 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.handlers.TransactionHandlerManagement;
-import org.mobicents.mgcp.stack.parser.Utils;
 import org.mobicents.mgcp.stack.parser.UtilsFactory;
 
 /**
