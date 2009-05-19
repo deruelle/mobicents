@@ -30,6 +30,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -53,24 +54,30 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	}
 
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			// should never happen
 			logger.error("Parsing of EndpointConfiguration command failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return command;
 	}
 
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			// should never happen
 			logger.error("Parsing of EndpointConfiguration Response failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 		return response;
 	}
@@ -81,7 +88,6 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		StringBuffer s = new StringBuffer();
 		s.append("EPCF ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
 				evt.getEndpointIdentifier()).append(MGCP_VERSION).append(NEW_LINE);
-
 
 		// encode mandatory parameters
 		s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
@@ -100,8 +106,10 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -114,9 +122,9 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -152,8 +160,10 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -167,7 +177,8 @@ public class EndpointConfigurationHandler extends TransactionHandler {
 			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new EndpointConfigurationResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new EndpointConfigurationResponse(source != null ? source : stack, utils
+					.decodeReturnCode(Integer.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

@@ -42,14 +42,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.handlers.EndpointHandlerManager;
+import org.mobicents.mgcp.stack.parser.UtilsFactory;
 
 /**
  * 
  * @author Oleg Kulikov
  * @author Pavel Mitrenko
  */
-public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
-		EndpointHandlerManager, OAM_IF {
+public class JainMgcpStackImpl extends Thread implements JainMgcpStack, EndpointHandlerManager, OAM_IF {
 
 	// Static variables from properties files
 	/**
@@ -66,8 +66,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	public static final String _MESSAGE_DISPATCHER_THREAD_PRIORITY = "messageDispatcherThreadPriority";
 	public static final String _MESSAGE_EXECUTOR_THREAD_PRIORITY = "messageExecutorThreadPriority";
 
-	private static final Logger logger = Logger
-			.getLogger(JainMgcpStackImpl.class);
+	private static final Logger logger = Logger.getLogger(JainMgcpStackImpl.class);
 	private static final String propertiesFileName = "mgcp-stack.properties";
 	private String protocolVersion = "1.0";
 	protected int port = 2727;
@@ -83,6 +82,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 	private ThreadPoolQueueExecutor[] executors = null;
 	private int executorPosition = 0;
+	
+	private UtilsFactory utilsFactory = null;
 
 	// protected ExecutorService jainMgcpStackImplPool =
 	// Executors.newFixedThreadPool(50,new
@@ -103,8 +104,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	// new ConcurrentSkipListMap<String, EndpointHandler>(new
 	// StringComparator());
 	private SortedMap<String, EndpointHandler> endpointHandlers = Collections
-			.synchronizedSortedMap(new TreeMap<String, EndpointHandler>(
-					new StringComparator()));
+			.synchronizedSortedMap(new TreeMap<String, EndpointHandler>(new StringComparator()));
 
 	// Queue part
 	protected LinkedList<PacketRepresentation> rawQueue = new LinkedList<PacketRepresentation>();
@@ -132,25 +132,21 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		if (socket == null) {
 			while (true) {
 				try {
-					InetSocketAddress bindAddress = new InetSocketAddress(
-							this.localAddress, this.port);
+					InetSocketAddress bindAddress = new InetSocketAddress(this.localAddress, this.port);
 					socket = new DatagramSocket(bindAddress);
 					this.localAddress = socket.getLocalAddress();
-					logger.info("Jain Mgcp stack bound to IP "
-							+ this.localAddress + " and UDP port " + this.port);
+					logger.info("Jain Mgcp stack bound to IP " + this.localAddress + " and UDP port " + this.port);
 
 					// This is for TCK don't remove
-					System.out.println("Jain Mgcp stack bound to IP "
-							+ this.localAddress + " and UDP port " + this.port);
+					System.out.println("Jain Mgcp stack bound to IP " + this.localAddress + " and UDP port "
+							+ this.port);
 					break;
 				} catch (SocketException e) {
-					logger.error("Failed to bound to local port " + this.port
-							+ ". Caused by", e);
+					logger.error("Failed to bound to local port " + this.port + ". Caused by", e);
 					if (this.port != port + 10) {
 						this.port++;
 					} else {
-						throw new RuntimeException(
-								"Failed to find a local port to bound stack");
+						throw new RuntimeException("Failed to find a local port to bound stack");
 					}
 				}
 			}
@@ -167,6 +163,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		this.setPriority(this.messageReaderThreadPriority);
 		// So stack does not die
 		this.setDaemon(false);
+		
+		this.utilsFactory = new UtilsFactory(25);
 		start();
 	}
 
@@ -174,54 +172,41 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 		try {
 			Properties props = new Properties();
-			InputStream is = this.getClass().getResourceAsStream(
-					this.propertiesFileName);
+			InputStream is = this.getClass().getResourceAsStream(this.propertiesFileName);
 			if (is == null) {
-				logger
-						.error("Failed to locate properties file, using default values");
+				logger.error("Failed to locate properties file, using default values");
 				return;
 			}
 
 			props.load(is);
 
 			String val = null;
-			val = props.getProperty(_EXECUTOR_TABLE_SIZE, ""
-					+ executorTableSize);
+			val = props.getProperty(_EXECUTOR_TABLE_SIZE, "" + executorTableSize);
 			this.executorTableSize = Integer.parseInt(val);
 			val = null;
 
-			val = props.getProperty(_EXECUTOR_QUEUE_SIZE, ""
-					+ executorQueueSize);
+			val = props.getProperty(_EXECUTOR_QUEUE_SIZE, "" + executorQueueSize);
 			this.executorQueueSize = Integer.parseInt(val);
 			val = null;
 
-			val = props.getProperty(_MESSAGE_READER_THREAD_PRIORITY, ""
-					+ this.messageReaderThreadPriority);
+			val = props.getProperty(_MESSAGE_READER_THREAD_PRIORITY, "" + this.messageReaderThreadPriority);
 			this.messageReaderThreadPriority = Integer.parseInt(val);
 			val = null;
-			val = props.getProperty(_MESSAGE_DISPATCHER_THREAD_PRIORITY, ""
-					+ this.messageDispatcherThreadPriority);
+			val = props.getProperty(_MESSAGE_DISPATCHER_THREAD_PRIORITY, "" + this.messageDispatcherThreadPriority);
 			this.messageDispatcherThreadPriority = Integer.parseInt(val);
 			val = null;
-			val = props.getProperty(_MESSAGE_EXECUTOR_THREAD_PRIORITY, ""
-					+ this.messageExecutorThreadPriority);
+			val = props.getProperty(_MESSAGE_EXECUTOR_THREAD_PRIORITY, "" + this.messageExecutorThreadPriority);
 			this.messageExecutorThreadPriority = Integer.parseInt(val);
 			val = null;
 
-			logger.info(this.propertiesFileName
-					+ " read successfully! \nexecutorTableSize = "
-					+ this.executorTableSize + "\nexecutorQueueSize = "
-					+ this.executorQueueSize
-					+ "\nmessageReaderThreadPriority = "
-					+ this.messageReaderThreadPriority
-					+ "\nmessageDispatcherThreadPriority = "
-					+ this.messageDispatcherThreadPriority
-					+ "\nmessageExecutorThreadPriority = "
+			logger.info(this.propertiesFileName + " read successfully! \nexecutorTableSize = " + this.executorTableSize
+					+ "\nexecutorQueueSize = " + this.executorQueueSize + "\nmessageReaderThreadPriority = "
+					+ this.messageReaderThreadPriority + "\nmessageDispatcherThreadPriority = "
+					+ this.messageDispatcherThreadPriority + "\nmessageExecutorThreadPriority = "
 					+ this.messageExecutorThreadPriority);
 
 		} catch (Exception e) {
-			logger
-					.error("Failed to read properties file due to some error, using defualt values!!!!");
+			logger.error("Failed to read properties file due to some error, using defualt values!!!!");
 		}
 
 	}
@@ -234,11 +219,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		for (int i = 0; i < this.executors.length; i++) {
 
 			if (executorQueueSize > 0)
-				this.executors[i] = new ThreadPoolQueueExecutor(1, 1,
-						new LinkedBlockingQueue<Runnable>(executorQueueSize));
+				this.executors[i] = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>(
+						executorQueueSize));
 			else
-				this.executors[i] = new ThreadPoolQueueExecutor(1, 1,
-						new LinkedBlockingQueue<Runnable>());
+				this.executors[i] = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>());
 			this.executors[i].setThreadFactory(th);
 		}
 		// if (this.incomingDataBufferSize > 0)
@@ -246,8 +230,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		// LinkedBlockingQueue<Runnable>(
 		// incomingDataBufferSize));
 		// else
-		this.eventSchedulerExecutor = new ThreadPoolQueueExecutor(1, 1,
-				new LinkedBlockingQueue<Runnable>());
+		this.eventSchedulerExecutor = new ThreadPoolQueueExecutor(1, 1, new LinkedBlockingQueue<Runnable>());
 		th = new ThreadFactoryImpl();
 		th.setPriority(this.messageDispatcherThreadPriority);
 		th.setDaemonFactory(true);
@@ -292,8 +275,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 		return this.provider;
 	}
 
-	public void deleteProvider(JainMgcpProvider provider)
-			throws DeleteProviderException {
+	public void deleteProvider(JainMgcpProvider provider) throws DeleteProviderException {
 		if (this.provider == null) {
 			throw new DeleteProviderException("No Provider exist.");
 		}
@@ -307,6 +289,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 	public int getPort() {
 		return port;
+	}
+	
+	public UtilsFactory getUtilsFactory(){
+		return this.utilsFactory;
 	}
 
 	public InetAddress getAddress() {
@@ -346,8 +332,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	@Override
 	public void run() {
 		if (logger.isDebugEnabled()) {
-			logger.debug("MGCP stack started successfully on "
-					+ this.localAddress + ":" + this.port);
+			logger.debug("MGCP stack started successfully on " + this.localAddress + ":" + this.port);
 		}
 
 		byte[] buffer = new byte[86400];
@@ -383,8 +368,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 			// jainMgcpStackImplPool.execute(handler);
 			synchronized (rawQueue) {
-				rawQueue.add(new PacketRepresentation(data,
-						packet.getAddress(), packet.getPort()));
+				rawQueue.add(new PacketRepresentation(data, packet.getAddress(), packet.getPort()));
 				rawQueue.notify();
 			}
 
@@ -432,8 +416,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 	}
 
-	public synchronized EndpointHandler getEndpointHandler(String endpointId,
-			boolean useFakeOnWildcard) {
+	public synchronized EndpointHandler getEndpointHandler(String endpointId, boolean useFakeOnWildcard) {
 
 		EndpointHandler eh = null;
 		String _endpointId = endpointId.intern();
@@ -481,16 +464,16 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	}
 
 	public synchronized void removeEndpointHandler(String endpointId) {
+		//System.out.println("Removing for EndpointId "+endpointId);
 		EndpointHandler eh = this.endpointHandlers.remove(endpointId.intern());
-		// if (logger.isDebugEnabled()) {
-		// logger.debug("Removing EH" + this.localAddress + ":" + this.port + ":
-		// for:" + endpointId + " = " + eh);
-		// }
+		//System.out.println("Removed = "+ eh +" size of this.endpointHandlers = "+ this.endpointHandlers.size());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Removing EH" + this.localAddress + ":" + this.port + ": for:" + endpointId + " = " + eh);
+		}
 
 	}
 
-	public synchronized EndpointHandler switchMapping(String fakeId,
-			String specificEndpointId) {
+	public synchronized EndpointHandler switchMapping(String fakeId, String specificEndpointId) {
 		EndpointHandler eh = this.endpointHandlers.get(specificEndpointId);
 
 		if (eh == null) {
@@ -513,8 +496,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 	}
 
 	public ThreadPoolQueueExecutor getNextExecutor() {
-		return this.executors[(this.executorPosition++)
-				% this.executorTableSize];
+		return this.executors[(this.executorPosition++) % this.executorTableSize];
 	}
 
 	public Map<Integer, TransactionHandler> getLocalTransactions() {
@@ -550,14 +532,12 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack,
 
 		ThreadFactoryImpl() {
 			SecurityManager s = System.getSecurityManager();
-			group = (s != null) ? s.getThreadGroup() : Thread.currentThread()
-					.getThreadGroup();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
 			namePrefix = "JainMgcpStackImpl-FixedThreadPool-" + "thread-";
 		}
 
 		public Thread newThread(Runnable r) {
-			Thread t = new Thread(group, r, namePrefix
-					+ threadNumber.getAndIncrement(), 5);
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 5);
 
 			t.setDaemon(this.isDaemonFactory);
 			// if (t.getPriority() != Thread.NORM_PRIORITY)

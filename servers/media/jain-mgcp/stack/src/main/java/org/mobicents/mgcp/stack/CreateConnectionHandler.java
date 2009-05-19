@@ -39,6 +39,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -63,16 +64,18 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
-		
+
 		NotifiedEntity notifiedEntity = command.getNotifiedEntity();
-		if(command.getNotifiedEntity() != null ){
+		if (command.getNotifiedEntity() != null) {
 			this.stack.provider.setNotifiedEntity(notifiedEntity);
 		}
 
@@ -80,12 +83,14 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decode of CRCX Response failed ", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -93,7 +98,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 
 	public String encode(JainMgcpCommandEvent event) {
 		// encode message header
-
+		Utils utils = utilsFactory.allocate();
 		CreateConnection evt = (CreateConnection) event;
 
 		StringBuffer s = new StringBuffer();
@@ -133,6 +138,7 @@ public class CreateConnectionHandler extends TransactionHandler {
 		if (evt.getRemoteConnectionDescriptor() != null) {
 			s.append(NEW_LINE).append(evt.getRemoteConnectionDescriptor());
 		}
+		utilsFactory.deallocate(utils);
 		// return msg;
 		return s.toString();
 	}
@@ -165,8 +171,10 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -179,9 +187,9 @@ public class CreateConnectionHandler extends TransactionHandler {
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -247,8 +255,11 @@ public class CreateConnectionHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
+
 		}
 
 		/**

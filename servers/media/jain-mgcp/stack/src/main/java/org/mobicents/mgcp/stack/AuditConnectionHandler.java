@@ -24,6 +24,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -53,29 +54,31 @@ public class AuditConnectionHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 			command = new AuditConnection(getObjectSource(tid), endpointId, connectionIdentifier, requestedInfo);
 			command.setTransactionHandle(tid);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
-
 		return command;
 	}
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Parsing of AUCX Response failed ", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
-
 		return response;
 	}
 
@@ -83,7 +86,7 @@ public class AuditConnectionHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 
 		// encode message header
-
+		Utils utils = utilsFactory.allocate();
 		AuditConnection evt = (AuditConnection) event;
 		StringBuffer s = new StringBuffer();
 		s.append("AUCX ").append(evt.getTransactionHandle()).append(TransactionHandler.SINGLE_CHAR_SPACE).append(
@@ -127,20 +130,21 @@ public class AuditConnectionHandler extends TransactionHandler {
 			}
 
 		}
-
-		//return msg;
+		utilsFactory.deallocate(utils);
+		// return msg;
 		return s.toString();
 	}
 
 	@Override
 	public String encode(JainMgcpResponseEvent event) {
+		Utils utils = utilsFactory.allocate();
+
 		AuditConnectionResponse response = (AuditConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
 		StringBuffer s = new StringBuffer();
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
-
 
 		if (response.getCallIdentifier() != null) {
 			s.append("C:").append(response.getCallIdentifier()).append(NEW_LINE);
@@ -151,7 +155,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 		}
 
 		if (response.getLocalConnectionOptions() != null) {
-			s.append("L:").append(utils.encodeLocalOptionValueList(response.getLocalConnectionOptions())).append(NEW_LINE);
+			s.append("L:").append(utils.encodeLocalOptionValueList(response.getLocalConnectionOptions())).append(
+					NEW_LINE);
 		}
 
 		if (response.getMode() != null) {
@@ -167,15 +172,15 @@ public class AuditConnectionHandler extends TransactionHandler {
 		}
 
 		if (response.getLocalConnectionDescriptor() != null) {
-			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor() ).append(NEW_LINE);
+			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor()).append(NEW_LINE);
 		}
 
 		if (!RCfirst && response.getRemoteConnectionDescriptor() != null) {
-			s.append(NEW_LINE).append(response.getRemoteConnectionDescriptor() ).append(NEW_LINE);
+			s.append(NEW_LINE).append(response.getRemoteConnectionDescriptor()).append(NEW_LINE);
 		}
-		
+		utilsFactory.deallocate(utils);
 		return s.toString();
-		//return msg;
+		// return msg;
 	}
 
 	@Override
@@ -192,8 +197,10 @@ public class AuditConnectionHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -206,9 +213,9 @@ public class AuditConnectionHandler extends TransactionHandler {
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			tid = Integer.parseInt(transactionID);
 			endpointId = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -258,8 +265,10 @@ public class AuditConnectionHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		Utils utils = null;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -273,7 +282,8 @@ public class AuditConnectionHandler extends TransactionHandler {
 			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new AuditConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new AuditConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

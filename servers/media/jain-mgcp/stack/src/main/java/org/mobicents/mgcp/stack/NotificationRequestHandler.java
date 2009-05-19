@@ -17,6 +17,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * @author Oleg Kulikov
@@ -41,14 +42,17 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 		NotifiedEntity notifiedEntity = command.getNotifiedEntity();
-		if(command.getNotifiedEntity() != null ){
+		if (command.getNotifiedEntity() != null) {
 			this.stack.provider.setNotifiedEntity(notifiedEntity);
 		}
 		return command;
@@ -56,11 +60,14 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decode RQNT Response failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -68,6 +75,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 
 	@Override
 	public String encode(JainMgcpCommandEvent event) {
+		Utils utils = utilsFactory.allocate();
 		NotificationRequest req = (NotificationRequest) event;
 		StringBuffer buffer = new StringBuffer();
 
@@ -95,7 +103,7 @@ public class NotificationRequestHandler extends TransactionHandler {
 		if (req.getDetectEvents() != null) {
 			buffer.append("T:").append(utils.encodeEventNames(req.getDetectEvents())).append(NEW_LINE);
 		}
-
+		utilsFactory.deallocate(utils);
 		return buffer.toString();
 	}
 
@@ -113,13 +121,18 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
+
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
+		}
 
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -150,12 +163,18 @@ public class NotificationRequestHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils;
+
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
+		}
 
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new NotificationRequestResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new NotificationRequestResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 

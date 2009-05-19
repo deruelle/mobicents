@@ -36,6 +36,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -47,28 +48,26 @@ public class ModifyConnectionHandler extends TransactionHandler {
 	private ModifyConnection command = null;
 	private ModifyConnectionResponse response = null;
 
-	private static final Logger logger = Logger
-			.getLogger(ModifyConnectionHandler.class);
+	private static final Logger logger = Logger.getLogger(ModifyConnectionHandler.class);
 
 	/** Creates a new instance of ModifyConnectionHandler */
 	public ModifyConnectionHandler(JainMgcpStackImpl stack) {
 		super(stack);
 	}
 
-	public ModifyConnectionHandler(JainMgcpStackImpl stack,
-			InetAddress address, int port) {
+	public ModifyConnectionHandler(JainMgcpStackImpl stack, InetAddress address, int port) {
 		super(stack, address, port);
 	}
 
-	public JainMgcpCommandEvent decodeCommand(String message)
-			throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(
-				new CommandContentHandle());
+	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decoding of MDCX command failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		NotifiedEntity notifiedEntity = command.getNotifiedEntity();
@@ -78,15 +77,15 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		return command;
 	}
 
-	public JainMgcpResponseEvent decodeResponse(String message)
-			throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(
-				new ResponseContentHandle());
+	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decoding of MDCX Response failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -95,12 +94,11 @@ public class ModifyConnectionHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 
 		// encode message header
-
+		Utils utils = utilsFactory.allocate();
 		ModifyConnection evt = (ModifyConnection) event;
 		StringBuffer s = new StringBuffer();
-		s.append("MDCX ").append(evt.getTransactionHandle()).append(
-				SINGLE_CHAR_SPACE).append(evt.getEndpointIdentifier()).append(
-				SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
+		s.append("MDCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
+				evt.getEndpointIdentifier()).append(SINGLE_CHAR_SPACE).append(MGCP_VERSION).append(NEW_LINE);
 
 		// encode mandatory parameters
 
@@ -110,14 +108,11 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		// encode optional parameters
 
 		if (evt.getBearerInformation() != null) {
-			s.append("B:e:").append(evt.getBearerInformation())
-					.append(NEW_LINE);
+			s.append("B:e:").append(evt.getBearerInformation()).append(NEW_LINE);
 		}
 
 		if (evt.getLocalConnectionOptions() != null) {
-			s.append("L:").append(
-					utils.encodeLocalOptionValueList(evt
-							.getLocalConnectionOptions()));
+			s.append("L:").append(utils.encodeLocalOptionValueList(evt.getLocalConnectionOptions()));
 		}
 
 		if (evt.getMode() != null) {
@@ -125,8 +120,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		}
 
 		if (evt.getNotificationRequestParms() != null) {
-			s.append(utils.encodeNotificationRequestParms(evt
-					.getNotificationRequestParms()));
+			s.append(utils.encodeNotificationRequestParms(evt.getNotificationRequestParms()));
 		}
 
 		if (evt.getNotifiedEntity() != null) {
@@ -136,6 +130,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		if (evt.getRemoteConnectionDescriptor() != null) {
 			s.append(NEW_LINE).append(evt.getRemoteConnectionDescriptor());
 		}
+		utilsFactory.deallocate(utils);
 		return s.toString();
 	}
 
@@ -143,9 +138,8 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		ModifyConnectionResponse response = (ModifyConnectionResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 		StringBuffer s = new StringBuffer();
-		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(
-				response.getTransactionHandle()).append(SINGLE_CHAR_SPACE)
-				.append(returnCode.getComment()).append(NEW_LINE);
+		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
+				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
 
 		if (response.getLocalConnectionDescriptor() != null) {
 			s.append(NEW_LINE).append(response.getLocalConnectionDescriptor());
@@ -155,8 +149,10 @@ public class ModifyConnectionHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -174,11 +170,9 @@ public class ModifyConnectionHandler extends TransactionHandler {
 			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
-			EndpointIdentifier endpoint = utils
-					.decodeEndpointIdentifier(tokens[2].trim());
+			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
 
-			command = new ModifyConnection(getObjectSource(tid),
-					new CallIdentifier("00"), endpoint,
+			command = new ModifyConnection(getObjectSource(tid), new CallIdentifier("00"), endpoint,
 					new ConnectionIdentifier("00"));
 			command.setTransactionHandle(tid);
 		}
@@ -194,34 +188,25 @@ public class ModifyConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("B")) {
-				command.setBearerInformation(utils
-						.decodeBearerInformation(value));
+				command.setBearerInformation(utils.decodeBearerInformation(value));
 			} else if (name.equalsIgnoreCase("c")) {
 				command.setCallIdentifier(new CallIdentifier(value));
 			} else if (name.equalsIgnoreCase("I")) {
-				command
-						.setConnectionIdentifier(new ConnectionIdentifier(value));
+				command.setConnectionIdentifier(new ConnectionIdentifier(value));
 			} else if (name.equalsIgnoreCase("m")) {
 				command.setMode(utils.decodeConnectionMode(value));
 			} else if (name.equalsIgnoreCase("L")) {
-				command.setLocalConnectionOptions(utils
-						.decodeLocalOptionValueList(value));
+				command.setLocalConnectionOptions(utils.decodeLocalOptionValueList(value));
 			} else if (name.equalsIgnoreCase("N")) {
-				command.setNotifiedEntity(utils.decodeNotifiedEntity(value,
-						true));
+				command.setNotifiedEntity(utils.decodeNotifiedEntity(value, true));
 			} else if (name.equalsIgnoreCase("X")) {
-				command
-						.setNotificationRequestParms(new NotificationRequestParms(
-								new RequestIdentifier(value)));
+				command.setNotificationRequestParms(new NotificationRequestParms(new RequestIdentifier(value)));
 			} else if (name.equalsIgnoreCase("R")) {
-				command.getNotificationRequestParms().setRequestedEvents(
-						utils.decodeRequestedEventList(value));
+				command.getNotificationRequestParms().setRequestedEvents(utils.decodeRequestedEventList(value));
 			} else if (name.equalsIgnoreCase("S")) {
-				command.getNotificationRequestParms().setSignalRequests(
-						utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setSignalRequests(utils.decodeEventNames(value));
 			} else if (name.equalsIgnoreCase("T")) {
-				command.getNotificationRequestParms().setDetectEvents(
-						utils.decodeEventNames(value));
+				command.getNotificationRequestParms().setDetectEvents(utils.decodeEventNames(value));
 			}
 		}
 
@@ -238,8 +223,10 @@ public class ModifyConnectionHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -253,9 +240,8 @@ public class ModifyConnectionHandler extends TransactionHandler {
 			String[] tokens = utils.splitStringBySpace(header);
 			int tid = Integer.parseInt(tokens[1]);
 
-			response = new ModifyConnectionResponse(source != null ? source
-					: stack, utils
-					.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new ModifyConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -288,8 +274,7 @@ public class ModifyConnectionHandler extends TransactionHandler {
 	public JainMgcpResponseEvent getProvisionalResponse() {
 		ModifyConnectionResponse provisionalresponse = null;
 		if (!sent) {
-			provisionalresponse = new ModifyConnectionResponse(
-					source != null ? source : stack,
+			provisionalresponse = new ModifyConnectionResponse(source != null ? source : stack,
 					ReturnCode.Transaction_Being_Executed);
 		}
 		return provisionalresponse;

@@ -16,6 +16,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 public class NotifyHandler extends TransactionHandler {
 
@@ -34,11 +35,14 @@ public class NotifyHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return command;
@@ -46,11 +50,14 @@ public class NotifyHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Something wrong while parsing the NOTIFY Response received", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -69,7 +76,9 @@ public class NotifyHandler extends TransactionHandler {
 
 		message.append("X: ").append(notify.getRequestIdentifier()).append(NEW_LINE);
 
+		Utils utils = utilsFactory.allocate();
 		message.append("O: ").append(utils.encodeEventNames(notify.getObservedEvents())).append(NEW_LINE);
+		utilsFactory.deallocate(utils);
 
 		return message.toString();
 	}
@@ -80,19 +89,26 @@ public class NotifyHandler extends TransactionHandler {
 		s.append(event.getReturnCode().getValue()).append(SINGLE_CHAR_SPACE).append(event.getTransactionHandle())
 				.append(SINGLE_CHAR_SPACE).append(event.getReturnCode().getComment()).append(NEW_LINE);
 		return s.toString();
-		
-//		return event.getReturnCode().getValue() + " " + event.getTransactionHandle() + " "
-//				+ event.getReturnCode().getComment() + "\n";
+
+		// return event.getReturnCode().getValue() + " " +
+		// event.getTransactionHandle() + " "
+		// + event.getReturnCode().getComment() + "\n";
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
 
+		private Utils utils = null;
+
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
+		}
+
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -117,12 +133,18 @@ public class NotifyHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils;
+
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
+		}
 
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new NotifyResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new NotifyResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -139,7 +161,8 @@ public class NotifyHandler extends TransactionHandler {
 	public JainMgcpResponseEvent getProvisionalResponse() {
 		NotifyResponse provisionalresponse = null;
 		if (!sent) {
-			provisionalresponse = new NotifyResponse(source != null ? source : stack, ReturnCode.Transaction_Being_Executed);
+			provisionalresponse = new NotifyResponse(source != null ? source : stack,
+					ReturnCode.Transaction_Being_Executed);
 		}
 		return provisionalresponse;
 	}

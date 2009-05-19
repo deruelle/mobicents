@@ -34,6 +34,7 @@ import java.text.ParseException;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -57,24 +58,28 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	}
 
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decode of DLCX command failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return command;
 	}
 
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			logger.error("Decode of DLCX Response failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -83,7 +88,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	public String encode(JainMgcpCommandEvent event) {
 
 		// encode message header
-
+		Utils utils = utilsFactory.allocate();
 		DeleteConnection evt = (DeleteConnection) event;
 		StringBuffer s = new StringBuffer();
 		s.append("DLCX ").append(evt.getTransactionHandle()).append(SINGLE_CHAR_SPACE).append(
@@ -120,7 +125,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			s.append("E:").append(evt.getReasonCode());
 
 		}
-
+		utilsFactory.deallocate(utils);
 		return s.toString();
 
 	}
@@ -132,7 +137,6 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		s.append(returnCode.getValue()).append(SINGLE_CHAR_SPACE).append(response.getTransactionHandle()).append(
 				SINGLE_CHAR_SPACE).append(returnCode.getComment()).append(NEW_LINE);
 
-
 		if (response.getConnectionParms() != null) {
 			s.append(response.getConnectionParms()).append(NEW_LINE);
 
@@ -143,8 +147,10 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	}
 
 	public class CommandContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -157,9 +163,9 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -212,8 +218,10 @@ public class DeleteConnectionHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		private Utils utils = null;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -227,7 +235,8 @@ public class DeleteConnectionHandler extends TransactionHandler {
 			String[] tokens = utils.splitStringBySpace(header);
 
 			int tid = Integer.parseInt(tokens[1]);
-			response = new DeleteConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer.parseInt(tokens[0])));
+			response = new DeleteConnectionResponse(source != null ? source : stack, utils.decodeReturnCode(Integer
+					.parseInt(tokens[0])));
 			response.setTransactionHandle(tid);
 		}
 
@@ -242,7 +251,7 @@ public class DeleteConnectionHandler extends TransactionHandler {
 		 */
 		public void param(String name, String value) throws ParseException {
 			if (name.equalsIgnoreCase("I")) {
-				//TODO connection params
+				// TODO connection params
 			}
 		}
 

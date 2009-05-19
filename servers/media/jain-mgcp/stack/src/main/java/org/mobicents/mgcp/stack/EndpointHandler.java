@@ -44,14 +44,12 @@ import org.mobicents.mgcp.stack.handlers.TransactionHandlerManagement;
  */
 public class EndpointHandler {
 
-	protected static final Logger logger = Logger
-			.getLogger(EndpointHandler.class);
+	protected static final Logger logger = Logger.getLogger(EndpointHandler.class);
 
 	protected TreeSet<ConnectionIdentifier> connectionIds = new TreeSet<ConnectionIdentifier>(
 			new Comparator<ConnectionIdentifier>() {
 
-				public int compare(ConnectionIdentifier o1,
-						ConnectionIdentifier o2) {
+				public int compare(ConnectionIdentifier o1, ConnectionIdentifier o2) {
 
 					if (o1 == null)
 						return -1;
@@ -76,22 +74,20 @@ public class EndpointHandler {
 	protected String endpointId = null;
 	protected String fakeId = null;
 	protected boolean useFakeId = false;
-	protected Set<RequestedEvent> requestedEvents = new TreeSet<RequestedEvent>(
-			new Comparator<RequestedEvent>() {
+	protected Set<RequestedEvent> requestedEvents = new TreeSet<RequestedEvent>(new Comparator<RequestedEvent>() {
 
-				public int compare(RequestedEvent o1, RequestedEvent o2) {
+		public int compare(RequestedEvent o1, RequestedEvent o2) {
 
-					if (o1 == null)
-						return -1;
-					if (o2 == null)
-						return 1;
-					return o1.toString().compareTo(o2.toString());
+			if (o1 == null)
+				return -1;
+			if (o2 == null)
+				return 1;
+			return o1.toString().compareTo(o2.toString());
 
-				}
-			});
+		}
+	});
 
-	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl,
-			String endpointId) {
+	public EndpointHandler(EndpointHandlerManager jainMgcpStackImpl, String endpointId) {
 		this.endpointId = endpointId;
 		this.stack = jainMgcpStackImpl;
 		this.fakeId = new UID().toString();
@@ -124,8 +120,7 @@ public class EndpointHandler {
 	 * @param commandEvent
 	 * @param handler
 	 */
-	public void commandDelivered(JainMgcpCommandEvent commandEvent,
-			TransactionHandlerManagement handler) {
+	public void commandDelivered(JainMgcpCommandEvent commandEvent, TransactionHandlerManagement handler) {
 
 		// FIXME: Is there any real check we have to do here?
 		// doEndChecks();
@@ -141,74 +136,67 @@ public class EndpointHandler {
 	 * @param event
 	 * @param handler
 	 */
-	public void commandDelivered(JainMgcpCommandEvent commandEvent,
-			JainMgcpResponseEvent event, TransactionHandlerManagement handler) {
+	public void commandDelivered(JainMgcpCommandEvent commandEvent, JainMgcpResponseEvent event,
+			TransactionHandlerManagement handler) {
 
 		if (commandEvent instanceof CreateConnection) {
 			CreateConnection ccRequest = (CreateConnection) commandEvent;
 			CreateConnectionResponse ccResponse = (CreateConnectionResponse) event;
 
 			int responseCode = ccResponse.getReturnCode().getValue();
-			MgcpResponseType type = MgcpResponseType
-					.getResponseTypeFromCode(responseCode);
+			MgcpResponseType type = MgcpResponseType.getResponseTypeFromCode(responseCode);
 
-			if (ccResponse.getSpecificEndpointIdentifier() == null) {
-				// protocol violation
-				// FIXME: add parser checks
-			}
+			// This is local/we have to handle
 
-			EndpointIdentifier specificEndpointId = ccResponse
-					.getSpecificEndpointIdentifier();
-			if (this.endpointId.compareTo(specificEndpointId.toString()) == 0) {
+			switch (type) {
 
-				// This is local/we have to handle
+			case SuccessResponse:
 
-				switch (type) {
+				EndpointIdentifier specificEndpointId = ccResponse.getSpecificEndpointIdentifier();
+				if (specificEndpointId != null && this.endpointId.compareTo(specificEndpointId.toString()) == 0) {
 
-				case SuccessResponse:
 					// On Success we have to add ConnectionId, possibly process
 					// NotificationRequest like, since it can have
 					// NotificationRequest embeded :]
-					this.connectionIds
-							.add(ccResponse.getConnectionIdentifier());
+					this.connectionIds.add(ccResponse.getConnectionIdentifier());
 
 					if (ccRequest.getNotificationRequestParms() != null) {
-						processRequestedEvents(ccRequest.getNotifiedEntity(),
-								ccRequest.getNotificationRequestParms()
-										.getRequestedEvents());
+						processRequestedEvents(ccRequest.getNotifiedEntity(), ccRequest.getNotificationRequestParms()
+								.getRequestedEvents());
 					}
-					break;
-				case TransientError:
-				case PermanentError:
-
-				default:
-					break;
-				}
-
-			} else if (isAnyOfWildcard(endpointId)) {
-				// This means that client asked to get connection on any of
-				// endpoints, we have to change mapping
-				// this.ongoingTransactions.remove(handler);
-				// EndpointHandler validEndpointHandler = this.stack
-				// .getEndpointHandler(specificEndpointId.toString());
-				this.endpointId = specificEndpointId.toString();
-				EndpointHandler concurrent = this.stack.switchMapping(
-						this.fakeId, specificEndpointId.toString());
-				if (concurrent != null) {
-					// This could mean that in a mean while someone created
-					// this, we shoudl use it.
-					this.ongoingTransactions.remove(handler);
-					concurrent.addTransactionHandler(handler);
-					concurrent.commandDelivered(commandEvent, event, handler);
+				} else if (isAnyOfWildcard(endpointId)) {
+					// This means that client asked to get connection on any of
+					// endpoints, we have to change mapping
+					// this.ongoingTransactions.remove(handler);
+					// EndpointHandler validEndpointHandler = this.stack
+					// .getEndpointHandler(specificEndpointId.toString());
+					this.endpointId = specificEndpointId.toString();
+					EndpointHandler concurrent = this.stack.switchMapping(this.fakeId, specificEndpointId.toString());
+					if (concurrent != null) {
+						// This could mean that in a mean while someone created
+						// this, we should use it.
+						this.ongoingTransactions.remove(handler);
+						concurrent.addTransactionHandler(handler);
+						concurrent.commandDelivered(commandEvent, event, handler);
+					} else {
+						this.commandDelivered(commandEvent, event, handler);
+					}
 				} else {
-					this.commandDelivered(commandEvent, event, handler);
+					// ? This is error, this means that endpoitID does not match
+					// and
+					// possibly is AllOfWildcad - *, which is not permited
+					logger.error("Wrong endpoitn id, local: " + endpointId + ", fakeId: " + fakeId
+							+ ", id in response: " + specificEndpointId);
 				}
-			} else {
-				// ? This is error, this means that endpoitID does not match and
-				// possibly is AllOfWildcad - *, which is not permited
-				logger.error("Wrong endpoitn id, local: " + endpointId
-						+ ", fakeId: " + fakeId + ", id in response: "
-						+ specificEndpointId);
+
+				break;
+			case TransientError:
+			case PermanentError:
+				// Remove handler from ongoing transaction and cleaning will
+				// happen TransactionHandler.release(true) is called
+
+			default:
+				break;
 			}
 
 		} else if (commandEvent instanceof NotificationRequest) {
@@ -217,78 +205,73 @@ public class EndpointHandler {
 			NotificationRequest nRequest = (NotificationRequest) commandEvent;
 			NotificationRequestResponse nrResponse = (NotificationRequestResponse) event;
 			int responseCode = nrResponse.getReturnCode().getValue();
-			MgcpResponseType type = MgcpResponseType
-					.getResponseTypeFromCode(responseCode);
-			if (this.endpointId.equals(nRequest.getEndpointIdentifier()
-					.toString())) {
-				switch (type) {
-				case ProvisionalResponse:
-					return;
-				case SuccessResponse:
-					// On success we have to add subscription info
-					processRequestedEvents(nRequest.getNotifiedEntity(),
-							nRequest.getRequestedEvents());
-					break;
-				case TransientError:
-				case PermanentError:
+			MgcpResponseType type = MgcpResponseType.getResponseTypeFromCode(responseCode);
 
-				default:
-					break;
+			switch (type) {
+			case ProvisionalResponse:
+				return;
+			case SuccessResponse:
+				if (this.endpointId.equals(nRequest.getEndpointIdentifier().toString())) {
+					// On success we have to add subscription info
+					processRequestedEvents(nRequest.getNotifiedEntity(), nRequest.getRequestedEvents());
+				} else if (isWildCardEndpointName(nRequest.getEndpointIdentifier().toString())) {
+					// FIXME: do nothing? Or should we create wildcard named EH?
+					// Its
+					// not mentioned - but this should be also
 				}
-			} else if (isWildCardEndpointName(nRequest.getEndpointIdentifier()
-					.toString())) {
-				// FIXME: do nothing? Or should we create wildcard named EH? Its
-				// not mentioned - but this should be also
+				break;
+			case TransientError:
+			case PermanentError:
+
+			default:
+				break;
 			}
+
 		} else if (commandEvent instanceof ModifyConnection) {
 			// FIXME: there can be wildcard notficatoion request = allof ??
 			// what should we do than?
 			ModifyConnection mcRequest = (ModifyConnection) commandEvent;
 			ModifyConnectionResponse mcResponse = (ModifyConnectionResponse) event;
 			int responseCode = mcResponse.getReturnCode().getValue();
-			MgcpResponseType type = MgcpResponseType
-					.getResponseTypeFromCode(responseCode);
-			if (this.endpointId.equals(mcRequest.getEndpointIdentifier()
-					.toString())) {
-				switch (type) {
-				case ProvisionalResponse:
-					return;
-				case SuccessResponse:
+			MgcpResponseType type = MgcpResponseType.getResponseTypeFromCode(responseCode);
+
+			switch (type) {
+			case ProvisionalResponse:
+				return;
+			case SuccessResponse:
+				if (this.endpointId.equals(mcRequest.getEndpointIdentifier().toString())) {
 					// On success we have to check for embeded NR
 					// processRequestedEvents(mcRequest.getNotifiedEntity(),
 					// mcRequest.getRequestedEvents());
 					if (mcRequest.getNotificationRequestParms() != null) {
-						processRequestedEvents(mcRequest.getNotifiedEntity(),
-								mcRequest.getNotificationRequestParms()
-										.getRequestedEvents());
+						processRequestedEvents(mcRequest.getNotifiedEntity(), mcRequest.getNotificationRequestParms()
+								.getRequestedEvents());
 					}
-					break;
-				case TransientError:
-				case PermanentError:
-
-				default:
-					break;
+				} else {
+					logger.error("Wrong EndpoiontId on " + event.getClass().getSimpleName()
+							+ " event. This should be set to valid EId, this EId: " + this.endpointId);
 				}
-			} else {
-				logger.error("Wrong EndpoiontId on "
-						+ event.getClass().getSimpleName()
-						+ " event. This should be set to valid EId, this EId: "
-						+ this.endpointId);
+				break;
+			case TransientError:
+			case PermanentError:
+
+			default:
+				break;
 			}
+
 		} else if (commandEvent instanceof DeleteConnection) {
 			// FIXME: there can be wildcard notficatoion request = allof ??
 			// what should we do than?
 			DeleteConnection dcRequest = (DeleteConnection) commandEvent;
 			DeleteConnectionResponse dcResponse = (DeleteConnectionResponse) event;
 			int responseCode = dcResponse.getReturnCode().getValue();
-			MgcpResponseType type = MgcpResponseType
-					.getResponseTypeFromCode(responseCode);
-			if (this.endpointId.equals(dcRequest.getEndpointIdentifier()
-					.toString())) {
-				switch (type) {
-				case ProvisionalResponse:
-					return;
-				case SuccessResponse:
+			MgcpResponseType type = MgcpResponseType.getResponseTypeFromCode(responseCode);
+
+			switch (type) {
+			case ProvisionalResponse:
+				return;
+			case SuccessResponse:
+				if (this.endpointId.equals(dcRequest.getEndpointIdentifier().toString())) {
 					// On success we have to:
 					// * check for embeded NR
 					// * delete connection
@@ -297,50 +280,41 @@ public class EndpointHandler {
 					// mcRequest.getRequestedEvents());
 					// http://tools.ietf.org/html/rfc3435#section-2.3.7
 					if (dcRequest.getNotificationRequestParms() != null) {
-						processRequestedEvents(null, dcRequest
-								.getNotificationRequestParms()
-								.getRequestedEvents());
+						processRequestedEvents(null, dcRequest.getNotificationRequestParms().getRequestedEvents());
 					}
 
 					// http://tools.ietf.org/html/rfc3435#section-2.3.7 or
 					// http://tools.ietf.org/html/rfc3435#section-2.3.8
 					if (dcRequest.getConnectionIdentifier() != null) {
 						// deletes specific connection
-						this.connectionIds.remove(dcRequest
-								.getConnectionIdentifier());
+						this.connectionIds.remove(dcRequest.getConnectionIdentifier());
 						if (logger.isDebugEnabled()) {
-							logger.debug("Removing connection:"
-									+ dcRequest.getConnectionIdentifier()
-									+ " From:"
-									+ Arrays.toString(this.connectionIds
-											.toArray()) + " ------ " + this);
+							logger.debug("Removing connection:" + dcRequest.getConnectionIdentifier() + " From:"
+									+ Arrays.toString(this.connectionIds.toArray()) + " ------ " + this);
 						}
 
 					} else {
 						// 2.3.9
 						this.connectionIds.clear();
 					}
-
-					break;
-				case TransientError:
-				case PermanentError:
-
-				default:
-					break;
+				} else {
+					logger.error("Wrong EndpoiontId on " + event.getClass().getSimpleName()
+							+ " event. This should be set to valid EId, this EId: " + this.endpointId);
 				}
-			} else {
-				logger.error("Wrong EndpoiontId on "
-						+ event.getClass().getSimpleName()
-						+ " event. This should be set to valid EId, this EId: "
-						+ this.endpointId);
+				break;
+			case TransientError:
+			case PermanentError:
+
+			default:
+				break;
 			}
+
 		}
 
 		doEndChecks();
 	}
 
-	protected void processRequestedEvents(NotifiedEntity entity,
-			RequestedEvent[] rEvents) {
+	protected void processRequestedEvents(NotifiedEntity entity, RequestedEvent[] rEvents) {
 		// FIXME: there is only single list of those? New one overwrites
 		// previous?
 
@@ -361,8 +335,7 @@ public class EndpointHandler {
 	 * @param commandEvent
 	 * @param transactionHandler
 	 */
-	public void processTxTimeout(JainMgcpCommandEvent commandEvent,
-			TransactionHandlerManagement transactionHandler) {
+	public void processTxTimeout(JainMgcpCommandEvent commandEvent, TransactionHandlerManagement transactionHandler) {
 
 		transactionHandler.clearEndpointHandler();
 		doEndChecks();
@@ -374,8 +347,7 @@ public class EndpointHandler {
 	 * @param commandEvent
 	 * @param transactionHandler
 	 */
-	public void processRxTimeout(JainMgcpCommandEvent commandEvent,
-			TransactionHandlerManagement transactionHandler) {
+	public void processRxTimeout(JainMgcpCommandEvent commandEvent, TransactionHandlerManagement transactionHandler) {
 		// TODO Auto-generated method stub
 		transactionHandler.clearEndpointHandler();
 		doEndChecks();
@@ -393,14 +365,17 @@ public class EndpointHandler {
 	 * subscription list change, tx termination/completition
 	 */
 	public void doEndChecks() {
-		if (this.connectionIds.size() == 0
-				&& this.ongoingTransactions.size() == 0
+		if (this.connectionIds.size() == 0 && this.ongoingTransactions.size() == 0
 		// && this.requestedEvents.size() == 0
 		// FIXME: This can cause a leak if someone does not unregister
 		// Oleg, Amit?
 		) {
 			try {
-				this.stack.removeEndpointHandler(this.endpointId);
+				if (isWildCardEndpointName(this.endpointId)) {
+					this.stack.removeEndpointHandler(this.fakeId);
+				} else {
+					this.stack.removeEndpointHandler(this.endpointId);
+				}
 			} finally {
 				// We have a pool now, we dont kill them :}
 				// this.executor.shutdownNow();
@@ -411,11 +386,12 @@ public class EndpointHandler {
 	// For now simple detection, no range wildcard detection
 	public static boolean isWildCardEndpointName(String endpointId) {
 
-		return isAllOfWildcard(endpointId) || isAllOfWildcard(endpointId);
+		return isAnyOfWildcard(endpointId) || isAllOfWildcard(endpointId);
 	}
 
 	public static boolean isAnyOfWildcard(String endpointId) {
-		return endpointId.contains("$");
+		boolean flag = endpointId.contains("$");; 
+		return flag;
 	}
 
 	public static boolean isAllOfWildcard(String endpointId) {
@@ -424,12 +400,9 @@ public class EndpointHandler {
 
 	public String toString() {
 
-		return this.getClass().getSimpleName() + this.hashCode() + " - EId: "
-				+ this.endpointId + ", Subscribed events: "
-				+ Arrays.toString(this.requestedEvents.toArray())
-				+ ", connectionIds: "
-				+ Arrays.toString(this.connectionIds.toArray())
-				+ ", Handlers: "
+		return this.getClass().getSimpleName() + this.hashCode() + " - EId: " + this.endpointId
+				+ ", Subscribed events: " + Arrays.toString(this.requestedEvents.toArray()) + ", connectionIds: "
+				+ Arrays.toString(this.connectionIds.toArray()) + ", Handlers: "
 				+ Arrays.toString(this.ongoingTransactions.toArray());
 
 	}

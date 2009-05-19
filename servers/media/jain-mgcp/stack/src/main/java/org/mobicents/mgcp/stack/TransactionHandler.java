@@ -34,6 +34,7 @@ import java.util.TimerTask;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.handlers.TransactionHandlerManagement;
 import org.mobicents.mgcp.stack.parser.Utils;
+import org.mobicents.mgcp.stack.parser.UtilsFactory;
 
 /**
  * Implements the base gateway control interface.
@@ -130,7 +131,7 @@ public abstract class TransactionHandler implements Runnable,
 
 	private int countOfCommandRetransmitted = 0;
 
-	protected Utils utils = null;
+	protected UtilsFactory utilsFactory = null;
 
 	protected EndpointHandler endpointHandler = null;
 
@@ -154,7 +155,8 @@ public abstract class TransactionHandler implements Runnable,
 	public TransactionHandler(JainMgcpStackImpl stack) {
 		this.stack = stack;
 		this.localTID = GENERATOR++;
-		utils = new Utils();
+		//utils = new Utils();
+		utilsFactory = stack.getUtilsFactory();
 		// XXX:stack.addLocalTransaction(Integer.valueOf(localTID), this);
 		stack.getLocalTransactions().put(Integer.valueOf(localTID), this);
 		// if (logger.isDebugEnabled()) {

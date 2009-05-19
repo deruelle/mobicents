@@ -27,6 +27,7 @@ import java.util.Collections;
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.parser.MgcpContentHandler;
 import org.mobicents.mgcp.stack.parser.MgcpMessageParser;
+import org.mobicents.mgcp.stack.parser.Utils;
 
 /**
  * 
@@ -50,24 +51,28 @@ public class AuditEndpointHandler extends TransactionHandler {
 
 	@Override
 	public JainMgcpCommandEvent decodeCommand(String message) throws ParseException {
-		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new CommandContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (Exception e) {
 			throw new ParseException(e.getMessage(), -1);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
-
 		return command;
 	}
 
 	@Override
 	public JainMgcpResponseEvent decodeResponse(String message) throws ParseException {
-
-		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle());
+		Utils utils = utilsFactory.allocate();
+		MgcpMessageParser parser = new MgcpMessageParser(new ResponseContentHandle(utils));
 		try {
 			parser.parse(message);
 		} catch (IOException e) {
 			logger.error("Decoding of AUEP Response failed", e);
+		} finally {
+			utilsFactory.deallocate(utils);
 		}
 
 		return response;
@@ -75,7 +80,7 @@ public class AuditEndpointHandler extends TransactionHandler {
 
 	@Override
 	public String encode(JainMgcpCommandEvent event) {
-
+		Utils utils = utilsFactory.allocate();
 		// encode message header
 		AuditEndpoint evt = (AuditEndpoint) event;
 		StringBuffer s = new StringBuffer();
@@ -87,13 +92,14 @@ public class AuditEndpointHandler extends TransactionHandler {
 		if (requestedInfos != null) {
 			s.append("F: ").append(utils.encodeInfoCodeList(requestedInfos));
 		}
-
+		utilsFactory.deallocate(utils);
 		// return msg;
 		return s.toString();
 	}
 
 	@Override
 	public String encode(JainMgcpResponseEvent event) {
+		Utils utils = utilsFactory.allocate();
 		AuditEndpointResponse response = (AuditEndpointResponse) event;
 		ReturnCode returnCode = response.getReturnCode();
 
@@ -172,6 +178,7 @@ public class AuditEndpointHandler extends TransactionHandler {
 			s.append("Z: ").append(utils.encodeEndpointIdentifiers(z)).append(NEW_LINE);
 
 		}
+		utilsFactory.deallocate(utils);
 		return s.toString();
 
 	}
@@ -190,8 +197,10 @@ public class AuditEndpointHandler extends TransactionHandler {
 	}
 
 	private class CommandContentHandle implements MgcpContentHandler {
+		Utils utils = null;
 
-		public CommandContentHandle() {
+		public CommandContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
@@ -204,9 +213,9 @@ public class AuditEndpointHandler extends TransactionHandler {
 		public void header(String header) throws ParseException {
 			String[] tokens = utils.splitStringBySpace(header);
 
-			//String verb = tokens[0].trim();
+			// String verb = tokens[0].trim();
 			String transactionID = tokens[1].trim();
-			//String version = tokens[3].trim() + " " + tokens[4].trim();
+			// String version = tokens[3].trim() + " " + tokens[4].trim();
 
 			int tid = Integer.parseInt(transactionID);
 			EndpointIdentifier endpoint = utils.decodeEndpointIdentifier(tokens[2].trim());
@@ -245,8 +254,10 @@ public class AuditEndpointHandler extends TransactionHandler {
 	}
 
 	private class ResponseContentHandle implements MgcpContentHandler {
+		Utils utils = null;
 
-		public ResponseContentHandle() {
+		public ResponseContentHandle(Utils utils) {
+			this.utils = utils;
 		}
 
 		/**
