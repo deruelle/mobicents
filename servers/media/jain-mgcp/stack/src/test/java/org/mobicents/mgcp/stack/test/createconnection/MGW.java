@@ -22,7 +22,14 @@ public class MGW implements JainMgcpExtendedListener {
 	private static Logger logger = Logger.getLogger(MGW.class);
 	private boolean responseSent = false;
 
+	private boolean sendFailedResponse = false;
+
 	JainMgcpStackProviderImpl mgwProvider;
+
+	public MGW(JainMgcpStackProviderImpl mgwProvider, boolean sendFailedResponse) {
+		this(mgwProvider);
+		this.sendFailedResponse = sendFailedResponse;		
+	}
 
 	public MGW(JainMgcpStackProviderImpl mgwProvider) {
 		this.mgwProvider = mgwProvider;
@@ -58,26 +65,37 @@ public class MGW implements JainMgcpExtendedListener {
 
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_CREATE_CONNECTION:
-
-			String identifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
-			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
-
-			CreateConnectionResponse response = new CreateConnectionResponse(jainmgcpcommandevent.getSource(),
-					ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
-
-			response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
-			try{
-				//FIXME: we asume there is wildcard - "any of"
-				CreateConnection cc=(CreateConnection) jainmgcpcommandevent;
-				EndpointIdentifier wildcard=cc.getEndpointIdentifier();
-				EndpointIdentifier specific=new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$","")+"test-1",wildcard.getDomainName());
-				response.setSpecificEndpointIdentifier(specific);
-			}catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 			
+			CreateConnectionResponse response = null;
+
+			if (this.sendFailedResponse) {
+				response = new CreateConnectionResponse(jainmgcpcommandevent.getSource(),
+						ReturnCode.Endpoint_Unknown, new ConnectionIdentifier("0"));
+				response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			} else {
+				String identifier = ((CallIdentifier) mgwProvider.getUniqueCallIdentifier()).toString();
+				ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
+
+				response = new CreateConnectionResponse(jainmgcpcommandevent.getSource(),
+						ReturnCode.Transaction_Executed_Normally, connectionIdentifier);
+
+				response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+				try {
+					// FIXME: we asume there is wildcard - "any of"
+					CreateConnection cc = (CreateConnection) jainmgcpcommandevent;
+					EndpointIdentifier wildcard = cc.getEndpointIdentifier();
+					EndpointIdentifier specific = new EndpointIdentifier(wildcard.getLocalEndpointName().replace("$",
+							"")
+							+ "test-1", wildcard.getDomainName());
+					response.setSpecificEndpointIdentifier(specific);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
+
 			responseSent = true;
 
 			break;

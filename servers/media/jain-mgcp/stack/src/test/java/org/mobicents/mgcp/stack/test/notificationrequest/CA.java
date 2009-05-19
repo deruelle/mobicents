@@ -6,6 +6,7 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -29,7 +30,8 @@ public class CA implements JainMgcpExtendedListener {
 		try {
 			caProvider.addJainMgcpListener(this);
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp4", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp4", "127.0.0.1:"
+					+ mgStack);
 
 			NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, caProvider
 					.getUniqueRequestIdentifier());
@@ -73,10 +75,14 @@ public class CA implements JainMgcpExtendedListener {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_NOTIFICATION_REQUEST:
-			responseReceived = true;
+			if (jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.PROTOCOL_ERROR
+					|| jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+				responseReceived = true;
+			}
 			break;
 		default:
 			logger.warn("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			NotificationRequestTest.fail("Incorrect response for RQNT command ");
 			responseReceived = false;
 			break;
 

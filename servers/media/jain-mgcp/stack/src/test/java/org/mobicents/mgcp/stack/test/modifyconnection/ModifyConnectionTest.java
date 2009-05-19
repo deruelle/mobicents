@@ -18,9 +18,6 @@ public class ModifyConnectionTest extends MessageFlowHarness {
 		try {
 			super.setUp();
 
-			ca = new CA(caProvider, mgProvider);
-			mgw = new MGW(mgProvider);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			fail("Unexpected Exception");
@@ -28,6 +25,15 @@ public class ModifyConnectionTest extends MessageFlowHarness {
 	}
 
 	public void testModifyConnection() {
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider);
+		this.ca.sendModifyConnection();
+		waitForMessage();
+	}
+
+	public void testModifyConnectionFailure() {
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider, true);
 		this.ca.sendModifyConnection();
 		waitForMessage();
 	}

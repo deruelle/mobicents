@@ -19,6 +19,12 @@ public class MGW implements JainMgcpExtendedListener {
 	private boolean responseSent = false;
 
 	JainMgcpStackProviderImpl mgwProvider;
+	private boolean sendFailedResponse = false;
+
+	public MGW(JainMgcpStackProviderImpl mgwProvider, boolean sendFailedResponse) {
+		this(mgwProvider);
+		this.sendFailedResponse = sendFailedResponse;
+	}
 
 	public MGW(JainMgcpStackProviderImpl mgwProvider) {
 		this.mgwProvider = mgwProvider;
@@ -54,9 +60,14 @@ public class MGW implements JainMgcpExtendedListener {
 
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_MODIFY_CONNECTION:
-
-			ModifyConnectionResponse response = new ModifyConnectionResponse(jainmgcpcommandevent.getSource(),
-					ReturnCode.Transaction_Executed_Normally);
+			ModifyConnectionResponse response = null;
+			if (this.sendFailedResponse) {
+				response = new ModifyConnectionResponse(jainmgcpcommandevent.getSource(),
+						ReturnCode.Endpoint_Insufficient_Resources);
+			} else {
+				response = new ModifyConnectionResponse(jainmgcpcommandevent.getSource(),
+						ReturnCode.Transaction_Executed_Normally);
+			}
 			response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 

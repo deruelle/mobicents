@@ -9,6 +9,7 @@ import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -34,7 +35,8 @@ public class CA implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-15", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-15", "127.0.0.1:"
+					+ mgStack);
 
 			String identifier = ((CallIdentifier) caProvider.getUniqueCallIdentifier()).toString();
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier(identifier);
@@ -89,10 +91,14 @@ public class CA implements JainMgcpExtendedListener {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_MODIFY_CONNECTION:
-			responseReceived = true;
+			if (jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.ENDPOINT_INSUFFICIENT_RESOURCES
+					|| jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+				responseReceived = true;
+			}
 			break;
 		default:
 			logger.warn("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			ModifyConnectionTest.fail("Incorrect response for MDCX command ");
 			responseReceived = false;
 			break;
 

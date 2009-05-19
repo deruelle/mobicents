@@ -5,10 +5,12 @@ import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.CreateConnection;
+import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ConnectionDescriptor;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -86,10 +88,15 @@ public class CA implements JainMgcpExtendedListener {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_CREATE_CONNECTION:
-			responseReceived = true;			
+			CreateConnectionResponse response = (CreateConnectionResponse) jainmgcpresponseevent;
+			if (response.getReturnCode().getValue() == ReturnCode.ENDPOINT_UNKNOWN
+					|| response.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+				responseReceived = true;
+			}
 			break;
 		default:
 			logger.warn("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			CreateConnectionTest.fail("Incorrect response for CRCX command ");
 			break;
 
 		}

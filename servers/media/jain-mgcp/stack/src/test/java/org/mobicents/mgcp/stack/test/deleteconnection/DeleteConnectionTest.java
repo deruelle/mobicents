@@ -18,10 +18,6 @@ public class DeleteConnectionTest extends MessageFlowHarness {
 	public void setUp() {
 		try {
 			super.setUp();
-
-			ca = new CA(caProvider, mgProvider);
-			mgw = new MGW(mgProvider);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			fail("Unexpected Exception");
@@ -29,6 +25,17 @@ public class DeleteConnectionTest extends MessageFlowHarness {
 	}
 
 	public void testDeleteConnection() {
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider);
+		
+		this.ca.sendDeleteConnection();
+		waitForMessage();
+	}
+	
+	public void testDeleteConnectionFailure() {
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider, true);
+		
 		this.ca.sendDeleteConnection();
 		waitForMessage();
 	}

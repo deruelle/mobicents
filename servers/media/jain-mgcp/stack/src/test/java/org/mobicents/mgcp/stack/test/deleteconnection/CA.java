@@ -7,11 +7,11 @@ import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
-import org.mobicents.mgcp.stack.test.createconnection.CreateConnectionTest;
 
 public class CA implements JainMgcpExtendedListener {
 
@@ -31,7 +31,8 @@ public class CA implements JainMgcpExtendedListener {
 		try {
 			caProvider.addJainMgcpListener(this);
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp14", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp14", "127.0.0.1:"
+					+ mgStack);
 
 			ConnectionIdentifier connectionIdentifier = new ConnectionIdentifier((caProvider.getUniqueCallIdentifier())
 					.toString());
@@ -47,7 +48,7 @@ public class CA implements JainMgcpExtendedListener {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			CreateConnectionTest.fail("Unexpected Exception");
+			DeleteConnectionTest.fail("Unexpected Exception");
 		}
 	}
 
@@ -79,10 +80,14 @@ public class CA implements JainMgcpExtendedListener {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
 		switch (jainmgcpresponseevent.getObjectIdentifier()) {
 		case Constants.RESP_DELETE_CONNECTION:
-			responseReceived = true;
+			if (jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.UNKNOWN_CALL_ID
+					|| jainmgcpresponseevent.getReturnCode().getValue() == ReturnCode.TRANSACTION_EXECUTED_NORMALLY) {
+				responseReceived = true;
+			}
 			break;
 		default:
 			logger.warn("This RESPONSE is unexpected " + jainmgcpresponseevent);
+			DeleteConnectionTest.fail("Incorrect response for DLCX command ");
 			break;
 
 		}

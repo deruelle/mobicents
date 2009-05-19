@@ -4,10 +4,7 @@ import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
-import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
-import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
-import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
 import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 
 import java.util.TooManyListenersException;
@@ -22,6 +19,12 @@ public class MGW implements JainMgcpExtendedListener {
 	private boolean responseSent = false;
 
 	JainMgcpStackProviderImpl mgwProvider;
+	private boolean sendFailedResponse = false;
+
+	public MGW(JainMgcpStackProviderImpl mgwProvider, boolean sendFailedResponse) {
+		this(mgwProvider);
+		this.sendFailedResponse = sendFailedResponse;
+	}
 
 	public MGW(JainMgcpStackProviderImpl mgwProvider) {
 		this.mgwProvider = mgwProvider;
@@ -58,11 +61,16 @@ public class MGW implements JainMgcpExtendedListener {
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_DELETE_CONNECTION:
 
-			DeleteConnectionResponse response = new DeleteConnectionResponse(jainmgcpcommandevent
-					.getSource(), ReturnCode.Transaction_Executed_Normally);
+			DeleteConnectionResponse response = null;
+			if (this.sendFailedResponse) {
+				response = new DeleteConnectionResponse(jainmgcpcommandevent.getSource(), ReturnCode.Unknown_Call_ID);
+				response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			} else {
+				response = new DeleteConnectionResponse(jainmgcpcommandevent.getSource(),
+						ReturnCode.Transaction_Executed_Normally);
 
-			response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
-			
+				response.setTransactionHandle(jainmgcpcommandevent.getTransactionHandle());
+			}
 			mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { response });
 
 			responseSent = true;

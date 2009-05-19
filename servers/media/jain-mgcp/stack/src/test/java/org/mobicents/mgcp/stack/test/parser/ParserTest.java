@@ -35,10 +35,12 @@ import java.text.ParseException;
 import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
 import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 import org.mobicents.mgcp.stack.parser.Utils;
+import org.mobicents.mgcp.stack.parser.UtilsFactory;
 import org.mobicents.mgcp.stack.test.TestHarness;
 
 public class ParserTest extends TestHarness {
 	Utils parser = null;
+	UtilsFactory factory = null;
 
 	public ParserTest() {
 		super("ParserTest");
@@ -46,7 +48,8 @@ public class ParserTest extends TestHarness {
 
 	@Override
 	public void setUp() {
-		parser = new Utils();
+		factory = new UtilsFactory(2);
+		parser = factory.allocate();
 
 	}
 

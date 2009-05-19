@@ -18,9 +18,6 @@ public class NotificationRequestTest extends MessageFlowHarness {
 		try {
 			super.setUp();
 
-			ca = new CA(caProvider, mgProvider);
-			mgw = new MGW(mgProvider);
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			fail("Unexpected Exception");
@@ -28,6 +25,17 @@ public class NotificationRequestTest extends MessageFlowHarness {
 	}
 
 	public void testNotificationRequest() {
+
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider);
+		this.ca.sendNotificationRequest();
+		waitForMessage();
+	}
+
+	public void testNotificationRequestFailure() {
+
+		ca = new CA(caProvider, mgProvider);
+		mgw = new MGW(mgProvider, true);
 		this.ca.sendNotificationRequest();
 		waitForMessage();
 	}
