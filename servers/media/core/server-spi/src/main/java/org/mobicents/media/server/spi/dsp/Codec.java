@@ -33,11 +33,6 @@ public interface Codec extends Serializable {
 	public final static AudioFormat LINEAR_AUDIO = new AudioFormat(AudioFormat.LINEAR, 8000, 16, 1,
 			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
-	public final static AudioFormat L16_MONO = new AudioFormat(AudioFormat.LINEAR, 44100, 16, 1,
-			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
-
-	public final static AudioFormat L16_STEREO = new AudioFormat(AudioFormat.LINEAR, 44100, 16, 2,
-			AudioFormat.LITTLE_ENDIAN, AudioFormat.SIGNED);
 
 	public Format getSupportedInputFormat();
 
