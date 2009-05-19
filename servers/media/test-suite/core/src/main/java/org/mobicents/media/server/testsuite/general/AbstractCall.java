@@ -208,9 +208,17 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
         switch (this.state) {
             case ENDED:
             case IN_ERROR:
-
+            case TIMED_OUT:
+                this.receiveRTP = false;
+                try {
+                    if (datagramChannel.isConnected() || datagramChannel.isOpen()) {
+                        datagramChannel.close();
+                    }
+                    this.datagramChannel = null;
+                } catch (Exception e) {
+                }
                 for (int index = 0; index < this.rtpTraffic.size(); index++) {
-                    RtpPacket packet = this.rtpTraffic.get(index);
+                    RtpPacket packet = this.rtpTraffic.remove(index);
                     logger.debug("Dumping data to file");
 
                     try {
@@ -219,14 +227,9 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
                         logger.error(ex);
                     }
                 }
-
-                try {
-                    if (datagramChannel.isConnected() || datagramChannel.isOpen()) {
-                        datagramChannel.close();
-                    }
-                    this.datagramChannel = null;
-                } catch (Exception e) {
-                }
+                //This is cause here we get like 60 packets, dunno why....
+                this.rtpTraffic = null;
+                
                 //receiveRTP = false;
 //                if (socket != null && (socket.isBound() || socket.isConnected())) {
 //                    socket.close();
@@ -298,7 +301,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     // Run method for read, we are run in readerThread
     public void run() {
         try {
-            //while (receiveRTP) {
+            if(receiveRTP) {
 
             // byte[] buffer = new byte[172];
             //DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -320,7 +323,8 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
                 packetBuffer.flip();
                 RtpPacket rtp = new RtpPacket(packetBuffer.array());
                 rtp.setTime(new Date(System.currentTimeMillis()));
-                rtpTraffic.add(rtp);
+                if(rtpTraffic!=null)
+                    rtpTraffic.add(rtp);
 
             // FIXME: add calcualtion of jiiter stuff
             } catch (SocketException e) {
@@ -333,7 +337,7 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
             {
                 e.printStackTrace();
             }
-        // }
+         }
 
         } finally {
 

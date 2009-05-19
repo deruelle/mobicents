@@ -300,7 +300,10 @@ public class AnnCall extends AbstractCall {
 
     @Override
     public void stop() {
-        
+//        if(this.localFlowState != AnnCallState.TERMINATED)
+//        {
+//            sendDelete();
+//        }
         this.receiveRTP = false;
 
         if (this.readerTask != null) {
