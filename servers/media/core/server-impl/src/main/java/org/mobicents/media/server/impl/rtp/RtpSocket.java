@@ -49,7 +49,7 @@ public class RtpSocket implements Runnable {
 
 	private ByteBuffer readerBuffer;
 
-	private int bufferSize = 172;
+	private int bufferSize = 8196;
 	private byte[] senderBuffer = new byte[bufferSize];
 
 	private int localPort;
@@ -432,34 +432,7 @@ public class RtpSocket implements Runnable {
 		// if data arrives then extra
 		if (count > 0) {
 			byte[] buff = readerBuffer.array();
-
-			byte[] data = new byte[buff.length];
-			System.arraycopy(buff, 0, data, 0, count);
-			receiveStream.push(data);
-
-			// // parse RTP header
-			// header.init(buff);
-			//
-			// // allocating media buffer using factory
-			// Buffer buffer = bufferFactory.allocate();
-			// buffer.setLength(count - 12);
-			// // the length of the payload is total length of the
-			// // datagram except RTP header which has 12 bytes in length
-			// System.arraycopy(buff, 12, (byte[]) buffer.getData(), 0,
-			// buffer.getLength());
-			//
-			// buffer.setHeader(header);
-			//
-			// // assign format.
-			// // if payload not changed use the already known format
-			// if (payloadType != header.getPayloadType()) {
-			// payloadType = header.getPayloadType();
-			// format = rtpMap.get(payloadType);
-			// }
-			//
-			// buffer.setFormat(format);
-			// receiveStream.push(buffer);
-
+			receiveStream.push(buff, 0, count);
 		}
 
 		readerBuffer.clear();
