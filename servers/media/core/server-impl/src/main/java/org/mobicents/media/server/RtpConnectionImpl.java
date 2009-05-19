@@ -214,7 +214,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             updateRtpMap(rtpSocket, subset);
             
             //This is done in constructor
-            rtpSocket.getReceiveStream().connect(mux);
+            //rtpSocket.getReceiveStream().connect(mux);
             rtpSocket.getReceiveStream().start();
         }
         
@@ -295,10 +295,12 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         
         if (rxChannel != null) {
             rxChannel.disconnect(mux.getOutput());
+            rxChannel.setConnection(null);
         }
 
         if (txChannel != null) {
             txChannel.connect(demux.getInput());
+            txChannel.setConnection(null);
         }
                 
         super.close();
