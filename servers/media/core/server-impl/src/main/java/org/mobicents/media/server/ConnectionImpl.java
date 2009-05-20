@@ -111,6 +111,7 @@ public abstract class ConnectionImpl implements Connection {
 
 
     public void addListener(ConnectionListener listener) {
+        System.out.println("ADDED LISTENER" + listener);
         this.connectionListeners.put(listener, listener);
     }
 
@@ -151,5 +152,6 @@ public abstract class ConnectionImpl implements Connection {
     protected void close() {
        ((EndpointImpl) getEndpoint()).releaseRxChannel(rxChannel);
        ((EndpointImpl) getEndpoint()).releaseTxChannel(txChannel);
+        setState(ConnectionState.CLOSED);
     }
 }
