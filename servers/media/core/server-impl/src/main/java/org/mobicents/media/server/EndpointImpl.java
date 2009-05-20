@@ -277,7 +277,7 @@ public class EndpointImpl implements Endpoint {
             ConnectionImpl[] list = new ConnectionImpl[connections.size()];
             connections.values().toArray(list);
             for (int i = 0; i < list.length; i++) {
-                list[i].close();
+                deleteConnection(list[i].getId());
             }
         } finally {
             state.unlock();
