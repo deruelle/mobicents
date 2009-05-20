@@ -138,8 +138,7 @@ public class RtpConnectionTest {
         System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         boolean res = Math.abs(150-count) < 10;
-        System.out.println("!!!1 " + count);
-        assertEquals(true, res);
+        assertEquals("Count is: "+count+", should be ateast 140",true, res);
         
         assertEquals(true, receiver.isInUse());
         assertEquals(true, sender.isInUse());
@@ -184,6 +183,7 @@ public class RtpConnectionTest {
         }
 
         public void receive(Buffer buffer) {
+            System.out.println("Receive buffer " + buffer);
             count++;
         }
         

@@ -76,7 +76,8 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 			file = new FileOutputStream(uri);
 
 			if (recorderThread != null) {
-				dispose();
+				//FIXME:
+				//dispose();
 			}
 
 			// sendEvent(RecorderEventType.STARTED, "NORMAL");
@@ -218,13 +219,15 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 			} catch (IOException e) {
 				if (started) {
 					logger.error("Audio stream write error", e);
-					dispose();
+					//FIXME"
+					//dispose();
 					failed(e);
 				}
 			} catch (Exception e) {
 				if (started) {
 					logger.error("Audio stream generic error", e);
-					dispose();
+					//FIXME:
+					//dispose();
 					failed(e);
 				}
 			}

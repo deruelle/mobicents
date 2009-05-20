@@ -62,5 +62,5 @@ public interface MediaSink extends Component {
      */
     public void receive(Buffer buffer);
     
-    public void dispose();
+    //public void dispose();
 }

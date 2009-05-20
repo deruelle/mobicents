@@ -13,7 +13,6 @@
  */
 package org.mobicents.media.server.impl;
 
-
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 
@@ -23,42 +22,58 @@ import org.mobicents.media.MediaSource;
  */
 public abstract class AbstractSink extends BaseComponent implements MediaSink {
 
-    protected transient MediaSource otherParty;
+	protected transient MediaSource otherParty;
 
-    public AbstractSink(String name) {
-        super(name);
-    }
+	public AbstractSink(String name) {
+		super(name);
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.MediaSink#connect(MediaStream).
-     */
-    public void connect(MediaSource otherParty) {
-        this.otherParty = otherParty;
-        if (((AbstractSource) otherParty).otherParty != this) {
-            otherParty.connect(this);
-        }
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.MediaSink#connect(MediaStream).
+	 */
+	public void connect(MediaSource otherParty) {
+		this.otherParty = otherParty;
+		// if (((AbstractSource) otherParty).otherParty != this) {
+		if (!((AbstractSource) otherParty).isConnected(this)) {
+			otherParty.connect(this);
+		}
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.MediaSink#disconnect(MediaStream).
-     */
-    public void disconnect(MediaSource otherParty) {
-        if (this.otherParty != null) {
-            this.otherParty = null;
-            ((AbstractSource) otherParty).otherParty = null;
-            otherParty.disconnect(this);
-        }
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.MediaSink#disconnect(MediaStream).
+	 */
+	public void disconnect(MediaSource otherParty) {
+		disconnect(otherParty, true);
+		
+	}
 
-    public void dispose() {
-        if (this.otherParty != null) {
-            ((AbstractSource) otherParty).otherParty = null;
-        }
-        otherParty = null;
-    }
+	public void disconnect(MediaSource otherParty, boolean doCallOther)
+	{
+		if (this.otherParty != null && otherParty != null) {
+			
+			// ((AbstractSource) otherParty).otherParty = null;
+			if (((AbstractSource) otherParty).isConnected(this)) {
+				//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
+				if(doCallOther)
+					((AbstractSource) otherParty).disconnect(this,false);
+				
+					
+				this.otherParty = null;
+			} else {
+				//throw new IllegalArgumentException("Disconnect. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+				//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+			}
 
+		}
+	}
+
+
+	public boolean isConnected(MediaSource component) {
+		//System.err.println("siConnected["+this+"] local: "+this.otherParty+", passed: "+component);
+		return this.otherParty == component;
+	}
 }

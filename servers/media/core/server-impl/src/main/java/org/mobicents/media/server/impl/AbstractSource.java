@@ -13,62 +13,79 @@
  */
 package org.mobicents.media.server.impl;
 
-
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 
 /**
- *
+ * 
  * @author Oleg Kulikov
  */
 public abstract class AbstractSource extends BaseComponent implements MediaSource {
 
-    protected transient MediaSink otherParty;
+	protected transient MediaSink otherParty;
+	public AbstractSource(String name) {
+		super(name);
+	}
 
-    public AbstractSource(String name) {
-        super(name);
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.MediaStream#connect(MediaSink).
+	 */
+	public void connect(MediaSink otherParty) {
+		this.otherParty = otherParty;
+		//if (((AbstractSink) otherParty).otherParty == null) {
+		if (!((AbstractSink) otherParty).isConnected(this)){
+			
+			otherParty.connect(this);
+		}
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.MediaStream#connect(MediaSink).
-     */
-    public void connect(MediaSink otherParty) {
-        this.otherParty = otherParty;
-        if (((AbstractSink) otherParty).otherParty == null) {
-            otherParty.connect(this);
-        }
-    }
+	/**
+	 * (Non Java-doc).
+	 * 
+	 * @see org.mobicents.MediaStream#diconnection(MediaSink).
+	 */
+	public void disconnect(MediaSink otherParty) {
+	
+		disconnect(otherParty, true);
+	}
 
-    /**
-     * (Non Java-doc).
-     * 
-     * @see org.mobicents.MediaStream#diconnection(MediaSink).
-     */
-    public void disconnect(MediaSink otherParty) {
-        if (this.otherParty != null) {
-            this.otherParty = null;
-            ((AbstractSink) otherParty).otherParty = null;
-            otherParty.disconnect(this);
-        }
-    }
+	public void disconnect(MediaSink otherParty, boolean doCallOtherParty)
+	{
+		if (this.otherParty != null && otherParty != null) {
+			
+			// ((AbstractSink) otherParty).otherParty = null;
+			if (((AbstractSink) otherParty).isConnected(this))
+			{
+				//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
+				if(doCallOtherParty)
+					((AbstractSink) otherParty).disconnect(this,false);
+				this.otherParty = null;
+				
+			}else
+			{
+				//throw new IllegalArgumentException("Disconnect on["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+				//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+			}
+		}
+		
+	}
+	
+	@Override
+	public boolean equals(Object other) {
+		return other == this;
+	}
 
-    @Override
-    public boolean equals(Object other) {
-        return other == this;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		return hash;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        return hash;
-    }
+	public boolean isConnected(MediaSink component) {
 
+		return this.otherParty == component;
+	}
 
-    public void dispose() {
-        if (this.otherParty != null) {
-            ((AbstractSink) otherParty).otherParty = null;
-        }
-    }
 }

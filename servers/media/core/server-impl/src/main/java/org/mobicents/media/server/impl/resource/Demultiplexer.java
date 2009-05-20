@@ -13,15 +13,16 @@
  */
 package org.mobicents.media.server.impl.resource;
 
-import org.mobicents.media.server.impl.*;
-import org.mobicents.media.server.impl.rtp.BufferFactory;
-
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
+import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
 
 /**
  * Sends input signals into 
@@ -34,8 +35,7 @@ public class Demultiplexer extends AbstractSource {
     private final static Format[] inputFormats = new Format[0];
     
     private Input input = null;
-    private ConcurrentHashMap<String, Output> branches = new ConcurrentHashMap<String, Output>();
-    
+    private Map<String, Output> branches = new ConcurrentHashMap<String, Output>();
     private volatile boolean started = false;
     private BufferFactory bufferFactory = null;
 
@@ -45,6 +45,7 @@ public class Demultiplexer extends AbstractSource {
 
     public Demultiplexer(String name) {
         super(name);
+        
         bufferFactory = new BufferFactory(10, name);
         input = new Input("Input." + name);
     }
@@ -68,18 +69,32 @@ public class Demultiplexer extends AbstractSource {
 
     @Override
     public void disconnect(MediaSink sink) {
+    	//FIXME: add throw on null
         Output out = (Output) branches.remove(((AbstractSink) sink).getId());
         if (out != null) {
             sink.disconnect(out);
-            out.dispose();
+
         }
     }
 
+    
+    
     @Override
-    public void dispose() {
-        super.dispose();
-        this.branches.clear();
-    }
+	public void disconnect(MediaSink otherParty, boolean doCallOtherParty) {
+    	
+    	 Output out = (Output) branches.remove(((AbstractSink) otherParty).getId());
+         if (out != null) {
+        	 if(doCallOtherParty)
+        		 ((AbstractSink)otherParty).disconnect(out,false);
+
+         }
+	}
+
+	@Override
+	public boolean isConnected(MediaSink sink) {
+		
+		return branches.containsKey(((AbstractSink) sink).getId());
+	}
 
     public int getBranchCount() {
         return branches.size();
@@ -93,6 +108,8 @@ public class Demultiplexer extends AbstractSource {
         started = false;
     }
 
+    
+    
     private class Input extends AbstractSink {
 
         public Input(String name) {
@@ -135,8 +152,10 @@ public class Demultiplexer extends AbstractSource {
         protected void push(Buffer buffer) {
             try {
                 if (otherParty.isAcceptable(buffer.getFormat())) {
+
                     otherParty.receive(buffer);
                 } else {
+
                     buffer.dispose();
                 }
             } catch (NullPointerException e) {
@@ -153,5 +172,30 @@ public class Demultiplexer extends AbstractSource {
         public Format[] getFormats() {
             return input.getOtherPartyFormats();
         }
+
+		@Override
+		public void disconnect(MediaSink otherParty, boolean doCallOtherParty) {
+			//Yes , we overide it, its bad, but its a bit faster not to perform twice  the same check :)
+			if (this.otherParty != null ) {
+				
+				// ((AbstractSink) otherParty).otherParty = null;
+				if (((AbstractSink) otherParty).isConnected(this))
+				{
+					//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
+					if(doCallOtherParty)
+						((AbstractSink) otherParty).disconnect(this,false);
+					this.otherParty = null;
+					branches.remove(otherParty.getId());
+					
+				}else
+				{
+					//throw new IllegalArgumentException("Disconnect on["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+					//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
+				}
+			}
+		}
+
     }
+    
+    
 }

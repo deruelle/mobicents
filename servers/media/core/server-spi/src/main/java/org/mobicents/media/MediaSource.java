@@ -55,6 +55,6 @@ public interface MediaSource extends Component {
     public Format[] getFormats();    
     
     
-    public void dispose();
+    //public void dispose();
     
 }

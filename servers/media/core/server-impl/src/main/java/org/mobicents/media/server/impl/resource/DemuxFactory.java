@@ -51,6 +51,7 @@ public class DemuxFactory implements ComponentFactory {
     }
     
     public Component newInstance(Endpoint endpoint) {
+    	
         return new Demultiplexer(this.name);
     }
 
