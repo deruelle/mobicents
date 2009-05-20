@@ -37,13 +37,16 @@ import java.util.Set;
 import org.mobicents.media.server.ctrl.mgcp.evt.EventDetector;
 import org.mobicents.media.server.ctrl.mgcp.evt.SignalGenerator;
 import org.mobicents.media.server.spi.Connection;
+import org.mobicents.media.server.spi.ConnectionListener;
+import org.mobicents.media.server.spi.ConnectionMode;
+import org.mobicents.media.server.spi.ConnectionState;
 import org.mobicents.media.server.spi.Endpoint;
 
 /**
  *
  * @author kulikov
  */
-public class Request implements Runnable {
+public class Request implements Runnable, ConnectionListener {
 
     private RequestIdentifier reqID;
     private MgcpController controller;
@@ -86,6 +89,7 @@ public class Request implements Runnable {
             list.add(detector);
             connectionDetectors.put(connection.getId(), list);
             if (!connections.contains(connection)) {
+                connection.addListener(this);
                 connections.add(connection);
             }
         }
@@ -105,6 +109,7 @@ public class Request implements Runnable {
             list.add(generator);
             connectionGenerators.put(connection.getId(), list);
             if (!connections.contains(connection)) {
+                connection.addListener(this);
                 connections.add(connection);
             }
         }
@@ -237,6 +242,35 @@ public class Request implements Runnable {
         endpointSignalQueue = endpointGenerators.iterator();
     
         return res;
+    }
+
+    public void onStateChange(Connection connection, ConnectionState oldState) {
+        if (connection.getState() != ConnectionState.CLOSED) {
+            return;
+        }
+        
+        //shutdown signal queue
+        connectionSignalQueue.remove(connection.getId());
+        
+        //shutdown signal generaot list        
+        connectionGenerators.remove(connection.getId());        
+        
+        //terminate current signal        
+        SignalGenerator gen = activeConnectionSignals.get(connection.getId());
+        if (gen != null) {
+            gen.cancel();
+        }
+        
+        //disable detectors if assigned
+        connectionDetectors.remove(connection.getId());
+        
+        //remove connection instance if present
+        connections.remove(connection);
+        System.out.println("====== REMOVED CONNECTION ===");
+    }
+
+    
+    public void onModeChange(Connection connection, ConnectionMode oldMode) {
     }
 
 }

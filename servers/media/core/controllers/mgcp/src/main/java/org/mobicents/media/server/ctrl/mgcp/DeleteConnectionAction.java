@@ -65,12 +65,13 @@ public class DeleteConnectionAction implements Callable {
             return new DeleteConnectionResponse(controller, ReturnCode.Endpoint_Unknown);
         }
         
+        endpoint.deleteAllConnections();
+        
         Collection<ConnectionActivity> activities = controller.getActivities(localName);
         for (ConnectionActivity activity : activities) {
             activity.close();
         }
         
-        endpoint.deleteAllConnections();
         return new DeleteConnectionResponse(controller, ReturnCode.Transaction_Executed_Normally);
     }
     
@@ -82,9 +83,9 @@ public class DeleteConnectionAction implements Callable {
         
         Collection<ConnectionActivity> activities = call.getActivities();
         for (ConnectionActivity activity : activities) {
-            activity.close();
             Connection connection = activity.getMediaConnection();
             connection.getEndpoint().deleteConnection(connection.getId());
+            activity.close();
         }
         
         return new DeleteConnectionResponse(controller, ReturnCode.Transaction_Executed_Normally);
@@ -99,9 +100,10 @@ public class DeleteConnectionAction implements Callable {
         }
 
         ConnectionActivity activity = controller.getActivity(localName, connectionID);
-        activity.close();
         
         endpoint.deleteConnection(activity.connection.getId());
+        activity.close();
+        
         return new DeleteConnectionResponse(controller, ReturnCode.Transaction_Executed_Normally);
     }
     

@@ -75,6 +75,7 @@ public class ConnectionActivity implements ConnectionListener {
         }
     	//connection.getEndpoint().deleteConnection(connection.getId());
         connection.removeListener(this);
+        this.connection = null;
     }
 
 }
