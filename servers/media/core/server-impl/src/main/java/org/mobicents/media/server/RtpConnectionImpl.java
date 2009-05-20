@@ -101,6 +101,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         for (RtpSocket socket : sockets) {
             mux.connect(socket.getReceiveStream());
             demux.connect(socket.getSendStream());
+            socket.setListener(this);
         }
 
         //creating tx channel
@@ -277,7 +278,8 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
     protected void close() {
         int count = ((EndpointImpl)getEndpoint()).getConnections().size();
         if (count == 0) {
-        	//FIXME: this should be done in channels, shouldnt it?
+        	//Connection stops endpoint.source if no more connections
+                //channel is responsable for media path only
         	MediaSource source = ((EndpointImpl)getEndpoint()).getSource();
         	if(source!=null)
         		source.stop();
@@ -293,6 +295,9 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             socket.release();
         }
         
+        rtpSockets.clear();
+        
+        
         if (rxChannel != null) {
             rxChannel.disconnect(mux.getOutput());
             rxChannel.setConnection(null);
@@ -302,7 +307,13 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             txChannel.connect(demux.getInput());
             txChannel.setConnection(null);
         }
-                
+
+        mux.setConnection(null);
+        demux.setConnection(null);
+        
+        mux = null;
+        demux = null;
+        
         super.close();
     }
 

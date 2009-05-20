@@ -266,6 +266,7 @@ public class RtpSocket implements Runnable {
 		if (socket != null) {
 			socket.disconnect();
 		}
+                listener = null;
 		this.rtpFactory.releaseRTPSocket(this);
 	}
 
