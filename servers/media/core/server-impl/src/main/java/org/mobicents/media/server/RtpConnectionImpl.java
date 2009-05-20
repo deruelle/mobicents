@@ -304,7 +304,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         }
 
         if (txChannel != null) {
-            txChannel.connect(demux.getInput());
+            txChannel.disconnect(demux.getInput());
             txChannel.setConnection(null);
         }
 
