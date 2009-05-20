@@ -16,7 +16,6 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
 import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**

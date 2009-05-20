@@ -203,7 +203,6 @@ public class RtpSocketTest {
 		public void receive(Buffer buffer) {
 			byte[] bb = (byte[]) buffer.getData();
 			packets.add(buffer);
-                        System.out.println("received " + buffer);
 		}
 
 		public Format[] getFormats() {

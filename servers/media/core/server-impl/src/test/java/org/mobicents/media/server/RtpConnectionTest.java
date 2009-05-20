@@ -184,7 +184,6 @@ public class RtpConnectionTest {
         }
 
         public void receive(Buffer buffer) {
-            System.out.println("Receive buffer " + buffer);
             count++;
         }
         

@@ -162,7 +162,6 @@ public class AudioMixer extends AbstractSink implements Serializable {
         public byte[] mix(ArrayList<byte[]> input) {
             int numSamples = packetSize >> 1;
             short[][] inputs = new short[input.size()][];
-            System.out.println("Input size=" + input.size());
             for (int q = 0; q < input.size(); q++) {
                 inputs[q] = byteToShortArray(input.get(q));
             }

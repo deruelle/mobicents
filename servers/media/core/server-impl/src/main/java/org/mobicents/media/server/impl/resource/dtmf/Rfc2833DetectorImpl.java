@@ -18,7 +18,6 @@ import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.events.dtmf.DtmfEvent;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
 import org.mobicents.media.server.spi.resource.DtmfDetector;
 
