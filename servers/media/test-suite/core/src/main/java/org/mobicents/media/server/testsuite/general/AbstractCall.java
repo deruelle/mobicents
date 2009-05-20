@@ -217,9 +217,11 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
                     this.datagramChannel = null;
                 } catch (Exception e) {
                 }
+      
                 for (int index = 0; index < this.rtpTraffic.size(); index++) {
-                    RtpPacket packet = this.rtpTraffic.remove(index);
-                    logger.debug("Dumping data to file");
+               // for(RtpPacket packet:this.rtpTraffic){
+                    RtpPacket packet = this.rtpTraffic.remove(0);
+                    //logger.info("Dumping data to file: "+packet);
 
                     try {
                         dataDumpChannel.writeObject(packet);
@@ -323,8 +325,15 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
                 packetBuffer.flip();
                 RtpPacket rtp = new RtpPacket(packetBuffer.array());
                 rtp.setTime(new Date(System.currentTimeMillis()));
+                
                 if(rtpTraffic!=null)
-                    rtpTraffic.add(rtp);
+                {
+                  rtpTraffic.add(rtp);
+                }else
+                {
+                    
+                }
+                
 
             // FIXME: add calcualtion of jiiter stuff
             } catch (SocketException e) {
