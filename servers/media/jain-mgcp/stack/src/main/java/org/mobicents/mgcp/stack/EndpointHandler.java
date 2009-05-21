@@ -185,6 +185,11 @@ public class EndpointHandler {
 					this.endpointId = specificEndpointId.toString();
 					EndpointHandler concurrent = this.stack.switchMapping(this.fakeId, specificEndpointId.toString());
 					if (concurrent != null) {
+						
+						//Let us switch back to fakeId so that doEndChecks() will remove this EH
+						this.endpointId = this.fakeId;
+						
+						
 						// This could mean that in a mean while someone created
 						// this, we should use it.
 						this.ongoingTransactions.remove(handler);

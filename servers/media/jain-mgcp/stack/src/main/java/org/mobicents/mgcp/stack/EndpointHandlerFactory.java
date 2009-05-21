@@ -34,7 +34,7 @@ public class EndpointHandlerFactory {
 		count++;
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("UtilsFactory underflow. Count = " + count);
+			logger.debug("EndpointHandlerFactory underflow. Count = " + count);
 		}
 		return handler;
 	}

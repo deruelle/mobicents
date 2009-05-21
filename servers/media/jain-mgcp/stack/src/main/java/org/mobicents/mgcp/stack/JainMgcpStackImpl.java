@@ -173,7 +173,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		this.setDaemon(false);
 
 		this.utilsFactory = new UtilsFactory(25);
-		this.ehFactory = new EndpointHandlerFactory(500, this);
+		this.ehFactory = new EndpointHandlerFactory(50, this);
 		start();
 	}
 
