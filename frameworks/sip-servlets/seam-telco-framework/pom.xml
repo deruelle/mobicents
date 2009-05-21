@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mobicents.servlet.seam</groupId>
 	<artifactId>seam-telco-framework-parent</artifactId>
-	<version>2.1</version>
+	<version>2.2-SNAPSHOT</version>
 	<packaging>pom</packaging>	
 	<name>Mobicents Seam Telco Framework</name>
 	<licenses>
@@ -13,9 +13,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:http://mobicents.googlecode.com/svn/tags/frameworks/sip-servlets/seam-telco-framework/seam-telco-framework-parent-2.1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/frameworks/sip-servlets/seam-telco-framework/seam-telco-framework-parent-2.1</developerConnection>
-		<url>http://code.google.com/p/mobicents/source/browse/tags/frameworks/sip-servlets/seam-telco-framework/seam-telco-framework-parent-2.1</url>
+		<connection>scm:svn:http://mobicents.googlecode.com/svn/trunk/frameworks/sip-servlets/seam-telco-framework</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/trunk/frameworks/sip-servlets/seam-telco-framework</developerConnection>
+		<url>http://code.google.com/p/mobicents/source/browse/trunk/frameworks/sip-servlets/seam-telco-framework</url>
 	</scm>
 	<modules>
 		<module>entrypoint</module>
