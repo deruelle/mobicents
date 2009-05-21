@@ -29,15 +29,15 @@ public class LinkListener implements MsLinkListener {
 			log.debug("Before posting Event from listener: " 
 					+ eventName + ", session=" + sipSession.toString());
 		}
+		SeamEntrypointUtils.beginEvent(sipSession);
 		try {
-			SeamEntrypointUtils.beginEvent(sipSession);
 			Events.instance().raiseEvent(eventName, event);
-			SeamEntrypointUtils.endEvent();
+			
 		} catch (Throwable t) {
 			log.error("Error delivering event " + eventName + 
 					", session=" + sipSession.toString(), t);
-			SeamEntrypointUtils.beginEvent(sipSession);
 			Events.instance().raiseEvent("org.mobicents.media.unhandledException", t);
+		} finally {
 			SeamEntrypointUtils.endEvent();
 		}
 		if(log.isDebugEnabled()) {

@@ -30,16 +30,15 @@ public class NotificationListener implements MsNotificationListener {
 			log.debug("Before posting Event from listener: " 
 					+ eventName + ", session=" + sipSession.toString());
 		}
+		Thread.currentThread().setContextClassLoader(SipSession.class.getClassLoader());
+		SeamEntrypointUtils.beginEvent(sipSession);
 		try {
-			Thread.currentThread().setContextClassLoader(SipSession.class.getClassLoader());
-			SeamEntrypointUtils.beginEvent(sipSession);
 			Events.instance().raiseEvent(eventName, event);
-			SeamEntrypointUtils.endEvent();
 		} catch (Throwable t) {
 			log.error("Error delivering event " + eventName + 
 					", session=" + sipSession.toString(), t);
-			SeamEntrypointUtils.beginEvent(sipSession);
 			Events.instance().raiseEvent("org.mobicents.media.unhandledException", t);
+		} finally {
 			SeamEntrypointUtils.endEvent();
 		}
 		if(log.isDebugEnabled()) {
