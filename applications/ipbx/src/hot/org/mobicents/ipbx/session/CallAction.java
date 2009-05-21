@@ -13,6 +13,7 @@ import javax.servlet.sip.Address;
 import javax.servlet.sip.SipApplicationSession;
 import javax.servlet.sip.SipFactory;
 import javax.servlet.sip.SipServletRequest;
+import javax.servlet.sip.SipSession;
 import javax.servlet.sip.URI;
 import javax.servlet.sip.SipSession.State;
 
@@ -35,18 +36,25 @@ import org.mobicents.ipbx.session.call.model.CurrentWorkspaceState;
 import org.mobicents.ipbx.session.call.model.WorkspaceStateManager;
 import org.mobicents.ipbx.session.configuration.PbxConfiguration;
 import org.mobicents.ipbx.session.security.SimpleSipAuthenticator;
+import org.mobicents.mscontrol.MsConnection;
+import org.mobicents.mscontrol.MsSession;
+import org.mobicents.servlet.sip.seam.entrypoint.media.MediaController;
+import org.mobicents.servlet.sip.seam.entrypoint.media.MediaControllerManager;
+import org.mobicents.servlet.sip.seam.media.framework.IVRHelperManager;
 
 @Name("callAction")
 @Scope(ScopeType.STATELESS)
 public class CallAction {
 	@Logger 
 	private static Log log;
-	@In(required=false,value="sessionUser") User user;
+	@In(required=false,value="user") User user;
 	@In DataLoader dataLoader;
 	@In(create=true) SimpleSipAuthenticator sipAuthenticator;
 	@In SipFactory sipFactory;
 	@In EntityManager entityManager;
 	@In(required=false) CurrentWorkspaceState currentWorkspaceState;
+
+	public static final String PR_JNDI_NAME = "media/trunk/PacketRelay/$";
 	
 	public void dialParticipant(final CallParticipant participant) {
 		Conference conf = participant.getConference();
@@ -64,11 +72,14 @@ public class CallAction {
 			URI requestURI = sipFactory.createURI(participant.getUri());
 			SipServletRequest request = sipFactory.createRequest(appSession, 
 					"INVITE", from, to);
-			request.getSession().setAttribute("participant", participant);
+			SipSession sipSession = request.getSession();
+			log.info("DIALCONNECTION " + sipSession.toString());
+			sipSession.setAttribute("participant", participant);
 			if(user != null) request.getSession().setAttribute("user", user);
 			participant.setCallState(CallState.CONNECTING);
 			request.setRequestURI(requestURI);
-			request.send();
+			sipSession.setAttribute("inviteRequest", request);
+	
 			participant.setInitialRequest(request);
 			String timeout = PbxConfiguration.getProperty("pbx.call.timeout");
 			new Timer().schedule(new TimeoutTask(participant), Integer.parseInt(timeout)) ;
@@ -81,13 +92,17 @@ public class CallAction {
 			}
 			
 			WorkspaceStateManager.instance().getWorkspace(initiatorUser).setOutgoing(participant);
-			for(CallParticipant cp : conf.getParticipants(CallState.INCALL)) {
+			for(CallParticipant cp : conf.getParticipants()) {
 				if(cp.getName().equals(participant.getName())) {
 					if(!cp.getName().equals(initiatorUser)) {
 						WorkspaceStateManager.instance().getWorkspace(cp.getName()).setIncoming(participant);
 					}
 				}
 			}
+			
+			MediaController mc = MediaControllerManager.instance().getMediaController(sipSession);
+			MsConnection connection = mc.createConnection(PR_JNDI_NAME);
+			connection.modify("$", null);
 		} catch (Exception e) {
 			log.error("Error", e);
 		}
@@ -138,6 +153,7 @@ public class CallAction {
 			//Add the participants selected in the My Phones panel 
 			for(String uri : fromUser.getCallableUris()) {
 				CallParticipant fromParticipant = CallParticipantManager.instance().getCallParticipant(uri);
+				fromParticipant.setName(fromUser.getName());
 				fromParticipant.setConference(conf);
 				fromParticipants.add(fromParticipant);
 			}

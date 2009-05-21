@@ -1,7 +1,5 @@
 package org.mobicents.ipbx.session.security;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 
 import org.jboss.seam.ScopeType;
@@ -25,7 +23,6 @@ public class Authenticator
     @In EntityManager entityManager;
     
     @Out User user;
-    @Out(scope=ScopeType.SESSION, value="sessionUser") User sessionUser;
    
     @SuppressWarnings("deprecation")
 	public boolean authenticate()
@@ -38,7 +35,7 @@ public class Authenticator
         	.setParameter("userName", identity.getUsername()).getSingleResult();
         
         this.user = user;
-        this.sessionUser = user;
+        this.user = user;
         
         if(user == null) {
         	log.info("No such user " + identity.getUsername());

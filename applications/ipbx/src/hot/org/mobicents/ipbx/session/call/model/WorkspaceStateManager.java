@@ -9,6 +9,10 @@ public class WorkspaceStateManager {
 		new HashMap<String, CurrentWorkspaceState>();
 	
 	public synchronized CurrentWorkspaceState getWorkspace(String username) {
+		
+		if(username == null) 
+			throw new NullPointerException("username cannot be null");
+		
 		if(currentWorkspaceStates.get(username) == null) {
 			CurrentWorkspaceState state = new CurrentWorkspaceState();
 			currentWorkspaceStates.put(username, state);

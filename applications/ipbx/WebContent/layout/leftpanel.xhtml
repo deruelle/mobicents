@@ -42,7 +42,7 @@
 					<h:selectBooleanCheckbox id="selectedCb"
 						value="#{registration.selected}">
 						<a4j:support event="onchange" reRender="registration"
-							actionListener="#{registrationAction.select(registration)}"></a4j:support>
+							actionListener="#{registrationAction.select(registration)}" eventsQueue="workspaceQueue"></a4j:support>
 					</h:selectBooleanCheckbox>
 				</rich:column>
 				<rich:column width="20">
@@ -64,8 +64,9 @@
 			<rich:spacer width="15"></rich:spacer>
 			<a4j:commandLink value="Add phone" id="addPhone"
 				action="#{registrationAction.addRegistration()}"
-				reRender="registration,messages">
-
+				reRender="registration,messages"
+				eventsQueue="workspaceQueue">
+				
 			</a4j:commandLink>
 
 			<rich:toolTip for="regHelp" layout="block">
@@ -122,8 +123,10 @@
 			<h:inputText value="#{contactAction.contactUri}" size="15" />
 			<rich:spacer width="15"></rich:spacer>
 			<a4j:commandLink value="Add contact"
-				action="#{contactAction.addContact()}" reRender="contacts,messages">
-
+				action="#{contactAction.addContact()}"
+				reRender="contacts,messages"
+				eventsQueue="workspaceQueue">
+				
 			</a4j:commandLink>
 
 			<rich:toolTip for="conHelp" layout="block">

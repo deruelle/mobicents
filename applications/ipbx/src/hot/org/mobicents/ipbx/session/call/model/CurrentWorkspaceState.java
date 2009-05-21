@@ -3,11 +3,12 @@ package org.mobicents.ipbx.session.call.model;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.ajax4jsf.event.PushEventListener;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
+import org.jboss.seam.annotations.*;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
@@ -31,13 +32,16 @@ public class CurrentWorkspaceState {
 	@Logger 
 	private static Log log;
 	
-	@In(value="sessionUser") User sessionUser;
+	@In User user;
 	
 	private Conference conference;
+	private Set<Conference> conferences;
 	
 	//using a global push listener instead of 3 listener because browsers can't handle more than 2 simulteanous connections 
-	private PushEventListener globalListener;
+	@In(required=false, scope=ScopeType.SESSION) @Out(required=false, scope=ScopeType.SESSION)
+	private Set<PushEventListener> globalListeners = new HashSet<PushEventListener>();
 	
+
 	private HashSet<CallParticipant> incomingCalls = new HashSet<CallParticipant>();
 	private HashSet<CallParticipant> ongoingCalls = new HashSet<CallParticipant>();
 	private HashSet<CallParticipant> outgoingCalls = new HashSet<CallParticipant>();
@@ -54,7 +58,7 @@ public class CurrentWorkspaceState {
 	
 	@Unwrap
 	public CurrentWorkspaceState getState() {
-		CurrentWorkspaceState cus = WorkspaceStateManager.instance().getWorkspace(sessionUser.getName());
+		CurrentWorkspaceState cus = WorkspaceStateManager.instance().getWorkspace(user.getName());
 		return cus;
 	}
 	
@@ -170,7 +174,7 @@ public class CurrentWorkspaceState {
 	
 	// Simply removed a call from the GUI, sip/media release is done elsewhere
 	public void removeCall(CallParticipant participant) {
-		log.info("Removing " + participant.getUri() + " from " + sessionUser);
+		log.info("Removing " + participant.getUri() + " from " + user);
 		incomingCalls.remove(participant);
 		outgoingCalls.remove(participant);
 		ongoingCalls.remove(participant);
@@ -239,29 +243,34 @@ public class CurrentWorkspaceState {
 	}
 	
 	public void makeStatusDirty() {
-		if(this.globalListener != null) {
-			this.globalListener.onEvent(new EventObject(this));
+		for(final PushEventListener globalListener : this.globalListeners) {
+			new Thread() { public void run() {
+				globalListener.onEvent(new EventObject(this));
+			}}.start();
 		}
 	}
 	
 	public void makeHistoryDirty() {
-		if(this.globalListener != null) {
-			this.globalListener.onEvent(new EventObject(this));
+		for(final PushEventListener globalListener : this.globalListeners) {
+			new Thread() { public void run() { 
+				// Why new thread? Coz this thread will propage the current identity to all other users in the call LOL.
+				globalListener.onEvent(new EventObject(this));
+			}}.start();
 		}
 	}
 	
 	public void makeRegistrationsDirty() {
-		if(this.globalListener != null) {
-			this.globalListener.onEvent(new EventObject(this));
+		for(final PushEventListener globalListener : this.globalListeners) {
+			new Thread() { public void run() { 
+				// Why new thread? Coz this thread will propage the current identity to all other users in the call LOL.
+				globalListener.onEvent(new EventObject(this));
+			}}.start();
 		}
 	}
 	
 	public void addGlobalListener(EventListener listener) {
-		synchronized (listener) {
-			if (this.globalListener != listener) {
-				this.globalListener = (PushEventListener) listener;
-			}
-		}
+		this.globalListeners.add((PushEventListener) listener);
+
 	}
 	public Conference getConference() {
 		return conference;

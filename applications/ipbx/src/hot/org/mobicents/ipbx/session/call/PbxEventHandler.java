@@ -177,7 +177,20 @@ public class PbxEventHandler {
 				String sdp = new String(sdpBytes);
 				
 				sipSession.setAttribute("firstSipMessage", response);
-				mediaController.createConnection(PR_JNDI_NAME).modify("$", sdp);
+				if(mediaSessionStore != null) {
+					if(mediaSessionStore.getMsConnection() != null) {
+						mediaSessionStore.getMsConnection().modify("$", sdp);
+					} else {
+						RuntimeException e = new RuntimeException("mediaSessionStore.getMsConnection is null. This shouldn't happen!");
+						log.error("ERROR PRECON " + sipSession.toString(), e);
+						throw e;
+					}
+				} else {
+					RuntimeException e = new RuntimeException("mediaSessionStore is null. This shouldn't happen!");
+					log.error("ERROR PRECON " + sipSession.toString(), e);
+					throw e;
+				}
+				mediaSessionStore.getMsConnection().modify("$", sdp);
 			} else if(status == 401 || status == 407) {
 				Integer authAttempts = (Integer) sipSession.getAttribute("authAttempts");
 				if(authAttempts == null) authAttempts = 0;
@@ -223,48 +236,47 @@ public class PbxEventHandler {
 		Conference conference = participant.getConference();
 		quitConference(participant, conference);		
 	}
-	
-	private void quitConference(CallParticipant participant, Conference conf) throws IOException {
-		if(conf != null) {
-			participant.setCallState(CallState.DISCONNECTED);
-			participant.setConference(null);
-			
-			// Remove the call from the callee GUI
-			WorkspaceStateManager.instance().getWorkspace(participant.getName()).removeCall(participant);
 
-			CallParticipant[] callParticipants = conf.getParticipants();
-			log.info("number of participants left in the conference = #0", callParticipants.length);
-			if(callParticipants.length == 1) {
-				CallParticipant cp = callParticipants[0];
-				WorkspaceStateManager.instance().getWorkspace(cp.getName()).endCall(cp);
-			}
-			
-			// Remove the call from other users' GUIs
-			for(CallParticipant cp : callParticipants) {
-				WorkspaceStateManager.instance().getWorkspace(cp.getName()).removeCall(participant);
-				String disconnectedUsername = participant.getName();
-				
-				// Determine if there are more call legs to phones registered under that user. If there are other
-				// call legs, don't remove that call from user's workspace
-				boolean remove = true;
-				for(CallParticipant cp2 : callParticipants) {
-					if(cp2.getName().equals(disconnectedUsername)) {
-						remove = false;
-					}
-				}
-				if(remove) WorkspaceStateManager.instance().getWorkspace(disconnectedUsername).removeCall(cp);
-			}
-			
-			// Release media stuff if possible
-			if(participant.getMsLink() != null) 
-				participant.getMsLink().release();
-			if(participant.getMsConnection() != null) 
-				participant.getMsConnection().release();
-			participant.setMsConnection(null);
-			participant.setMsLink(null);
+	private void quitConference(CallParticipant participant, Conference conf) throws IOException {
+
+		participant.setCallState(CallState.DISCONNECTED);
+		participant.setConference(null);
+
+		// Remove the call from the callee GUI
+		WorkspaceStateManager.instance().getWorkspace(participant.getName()).removeCall(participant);
+
+		CallParticipant[] callParticipants = conf.getParticipants();
+		log.info("number of participants left in the conference = #0", callParticipants.length);
+		if(callParticipants.length == 1) {
+			CallParticipant cp = callParticipants[0];
+			WorkspaceStateManager.instance().getWorkspace(cp.getName()).endCall(cp);
 		}
+
+		// Remove the call from other users' GUIs
+		for(CallParticipant cp : callParticipants) {
+			WorkspaceStateManager.instance().getWorkspace(cp.getName()).removeCall(participant);
+			String disconnectedUsername = participant.getName();
+
+			// Determine if there are more call legs to phones registered under that user. If there are other
+			// call legs, don't remove that call from user's workspace
+			boolean remove = true;
+			for(CallParticipant cp2 : callParticipants) {
+				if(cp2.getName().equals(disconnectedUsername)) {
+					remove = false;
+				}
+			}
+			if(remove) WorkspaceStateManager.instance().getWorkspace(disconnectedUsername).removeCall(cp);
+		}
+
+		// Release media stuff if possible
+		if(participant.getMsLink() != null) 
+			participant.getMsLink().release();
+		if(participant.getMsConnection() != null) 
+			participant.getMsConnection().release();
+		participant.setMsConnection(null);
+		participant.setMsLink(null);
 	}
-	
+
 	@Observer("connectionOpen")
 	public void connectionOpen(MsConnectionEvent event) {
 		SipServletMessage sipMessage = (SipServletMessage) sipSession.getAttribute("firstSipMessage");
@@ -287,7 +299,7 @@ public class PbxEventHandler {
 		SipServletRequest ack = response.createAck();
 
 		try {
-			ack.setContent(sdp, "application/sdp");
+			//ack.setContent(sdp, "application/sdp");
 			ack.send();
 		} catch (Exception e) {
 			log.error(e);
@@ -297,6 +309,10 @@ public class PbxEventHandler {
 			mediaController.createLink(MsLinkMode.FULL_DUPLEX)
 			.join(participant.getConference().getEndpointName(),
 					connection.getEndpoint().getLocalName());
+			log.info("Join " + participant.toString() + " in " + participant.getConference().getEndpointName());
+		} else {
+			throw new IllegalStateException("Participant doesnt have conference assigned " 
+					+ participant.toString());
 		}
 
 	}
@@ -328,12 +344,15 @@ public class PbxEventHandler {
 	}
 	
 	
-	@Observer("storeLinkConnected")
+	@Observer("linkConnected")
 	public synchronized void doLinkConnected(MsLinkEvent event) {
+		
 		MsEndpoint endpoint = event.getSource().getEndpoints()[0];
 		
 		CallParticipant participant = 
 			(CallParticipant) sipSession.getAttribute("participant");
+		
+		log.info("Link connected for " + participant);
 		
 		mediaSessionStore.setMsEndpoint(endpoint);
 		ivrHelper.detectDtmf();
