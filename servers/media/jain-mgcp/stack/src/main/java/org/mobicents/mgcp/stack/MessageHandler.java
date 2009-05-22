@@ -15,9 +15,9 @@
  */
 package org.mobicents.mgcp.stack;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
@@ -32,18 +32,20 @@ public class MessageHandler {
 	private JainMgcpStackImpl stack;
 	private static Logger logger = Logger.getLogger(MessageHandler.class);
 
-	private static final Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
-
-	private static final String pb = "\r?\n\\.\r?\n";
-	private static final Pattern piggyDismountPattern = Pattern.compile(pb);
+	// private static final Pattern p = Pattern.compile("[\\w]{4}(\\s|\\S)*");
+	//
+	// private static final String pb = "\r?\n\\.\r?\n";
+	// private static final Pattern piggyDismountPattern = Pattern.compile(pb);
 
 	private Utils utils = null;
+
+	private static ArrayList<String> mList = new ArrayList<String>();
 
 	/** Creates a new instance of MessageHandler */
 
 	public MessageHandler(JainMgcpStackImpl jainMgcpStackImpl) {
 		this.stack = jainMgcpStackImpl;
-		utils = new Utils();
+		utils = jainMgcpStackImpl.getUtilsFactory().allocate();
 	}
 
 	/**
@@ -55,20 +57,60 @@ public class MessageHandler {
 	 *            the packet to split
 	 * @return array of all separate messages
 	 */
-	public static String[] piggyDismount(String packet) {
+	public static String[] piggyDismount(byte[] msgBuffer) {
+		try {
+			int msgStart = 0;
+			int msgLength = 0;
+			String currentLine = null;
 
-		int idx = 0;
-		ArrayList<String> mList = new ArrayList<String>();
+			for (int i = 0; i < msgBuffer.length - 1; i++) {
+				if ((msgBuffer[i] == '\n' || msgBuffer[i] == '\r') && msgBuffer[i + 1] == '.') {
+					msgLength = i - msgStart;
 
-		Matcher m = piggyDismountPattern.matcher(packet);
-		while (m.find()) {
-			mList.add(packet.substring(idx, m.start()) + "\n");
-			idx = m.end();
+					try {
+						currentLine = new String(msgBuffer, msgStart, msgLength, "UTF-8");
+						mList.add(currentLine);
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
+					i = i + 3;
+					msgStart = i;
+
+				}
+			}
+			try {
+				msgLength = msgBuffer.length - msgStart;
+				currentLine = new String(msgBuffer, msgStart, msgLength, "UTF-8");
+				mList.add(currentLine);
+			} catch (UnsupportedEncodingException e) {
+				logger.error(e); // Should never happen though
+			}
+			String[] result = new String[mList.size()];
+			return (String[]) mList.toArray(result);
+		} finally {
+			mList.clear();
 		}
-		mList.add(packet.substring(idx));
-		String[] result = new String[mList.size()];
-		return (String[]) mList.toArray(result);
+
 	}
+
+
+//	public static String[] piggyDismount(String packet) {
+//
+//		try {
+//			int idx = 0;
+//
+//			Matcher m = piggyDismountPattern.matcher(packet);
+//			while (m.find()) {
+//				mList.add(packet.substring(idx, m.start()) + "\n");
+//				idx = m.end();
+//			}
+//			mList.add(packet.substring(idx));
+//			String[] result = new String[mList.size()];
+//			return (String[]) mList.toArray(result);
+//		} finally {
+//			mList.clear();
+//		}
+//	}
 
 	public boolean isRequest(String header) {
 		header = header.trim();
@@ -90,7 +132,7 @@ public class MessageHandler {
 
 		final InetAddress address = pr.getRemoteAddress();
 		final int port = pr.getRemotePort();
-		for (String msg : piggyDismount(new String(pr.getRawData()))) {
+		for (String msg : piggyDismount(pr.getRawData())) {
 
 			int pos = msg.indexOf("\n");
 			// System.out.println(" --- RECEIVING:"+msg);

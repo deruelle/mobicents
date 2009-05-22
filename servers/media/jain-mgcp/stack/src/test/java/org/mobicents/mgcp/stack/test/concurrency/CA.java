@@ -57,7 +57,7 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 	protected JainMgcpStackImpl caStack = null;
 
-	private AtomicInteger ENDPOINT_ID = new AtomicInteger(0);
+	private int ENDPOINT_ID = 1;
 
 	AtomicInteger nbConcurrentInvite = new AtomicInteger(0);
 
@@ -219,8 +219,11 @@ public class CA extends TestHarness implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-"
-					+ ENDPOINT_ID.incrementAndGet(), SERVER_ADDRESS + ":" + MGW_PORT);
+			if (ENDPOINT_ID == 11) {
+				ENDPOINT_ID = 1;
+			}
+			EndpointIdentifier endpointID = new EndpointIdentifier("media/trunk/Announcement/enp-" + ENDPOINT_ID++,
+					SERVER_ADDRESS + ":" + MGW_PORT);
 
 			String endpointName = endpointID.getLocalEndpointName();
 

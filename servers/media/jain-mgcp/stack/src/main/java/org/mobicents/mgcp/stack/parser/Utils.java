@@ -53,11 +53,12 @@ import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-
 import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
 import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 
@@ -93,12 +94,26 @@ public class Utils {
 	PackageName au = AUPackage.AU;
 	MgcpEvent rfc2897pa = AUMgcpEvent.aupa;
 
+	StringBuilder decdReqEveStrBuilder = new StringBuilder();
+
+	List<String> decdEventName = new ArrayList<String>();
+	List<String> decdReqtEventList = new ArrayList<String>();
+
 	/** Creates a new instance of Utils */
 	public Utils() {
 	}
 
 	public String[] splitStringBySpace(String value) {
-		return spacePattern.split(value, 0);
+		// return spacePattern.split(value, 0);
+		try {
+			String[] token = null;
+			this.split(' ', value, decdEventName);
+			token = new String[decdEventName.size()];
+			decdEventName.toArray(token);
+			return token;
+		} finally {
+			decdEventName.clear();
+		}
 	}
 
 	/**
@@ -679,14 +694,22 @@ public class Utils {
 
 	public RequestedEvent[] decodeRequestedEventList(String value) throws ParseException {
 		// RequestedEvents =requestedEvent 0*(","0*(WSP)requestedEvent)
-		String[] tokens = commaPattern.split(value, 0);
-		RequestedEvent[] events = new RequestedEvent[tokens.length];
+		// String[] tokens = commaPattern.split(value, 0);
 
-		for (int i = 0; i < tokens.length; i++) {
-			events[i] = decodeRequestedEvent(tokens[i]);
+		this.split(',', value, this.decdReqtEventList);
+		try {
+			int size = decdReqtEventList.size();
+
+			RequestedEvent[] events = new RequestedEvent[size];
+
+			for (int i = 0; i < size; i++) {
+				events[i] = decodeRequestedEvent(decdReqtEventList.get(i));
+			}
+
+			return events;
+		} finally {
+			this.decdReqtEventList.clear();
 		}
-
-		return events;
 	}
 
 	public RequestedEvent decodeRequestedEvent(String value) throws ParseException {
@@ -696,7 +719,20 @@ public class Utils {
 		// Replace all space, tabs
 
 		// value = value.replaceAll("\\s", "");
-		value = spacePattern.matcher(value).replaceAll("");
+		// value = spacePattern.matcher(value).replaceAll("");
+
+		char[] valueChar = value.toCharArray();
+
+		for (char c : valueChar) {
+			if (c != ' ') {
+				decdReqEveStrBuilder.append(c);
+			}
+		}
+
+		value = decdReqEveStrBuilder.toString();
+
+		decdReqEveStrBuilder.delete(0, valueChar.length);
+
 		int pos1 = value.indexOf('(');
 		// int pos2 = value.indexOf(')', pos1);
 		// int pos3 = value.indexOf('(', pos2);
@@ -742,44 +778,70 @@ public class Utils {
 
 	}
 
+	private void split(char splitChar, String value, List<String> arryList) {
+		char[] charValue = value.toCharArray();
+		int count = 0;
+		for (char c : charValue) {
+			count++;
+			if (c == splitChar) {
+				arryList.add(decdReqEveStrBuilder.toString());
+				decdReqEveStrBuilder.delete(0, count);
+				count = 0;
+			} else {
+				decdReqEveStrBuilder.append(c);
+			}
+		}
+
+		arryList.add(decdReqEveStrBuilder.toString());
+		decdReqEveStrBuilder.delete(0, count);
+	}
+
 	public EventName decodeEventName(String value, String param) throws ParseException {
 		// eventName =[(packageName /"*")"/"]
 		// (eventId /"all"/eventRange
 		// /"*"/"#");for DTMF
 		// ["@"(ConnectionId /"$"/"*")]
-		String tokens[] = forwardSlashPattern.split(value, 0);
-		if (tokens.length == 1) {
-			return new EventName(PackageName.AllPackages, MgcpEvent.factory((tokens[0]).trim()).withParm(param));
-		} else if (tokens.length == 2) {
-			int pos = tokens[1].indexOf('@');
-			if (pos > 0) {
-				String cid = (tokens[1].substring(pos + 1)).trim();
-				ConnectionIdentifier connectionIdentifier = null;
-				if ((ConnectionIdentifier.AnyConnection).toString().equals(cid)) {
-					connectionIdentifier = ConnectionIdentifier.AnyConnection;
-				} else if ((ConnectionIdentifier.AllConnections).toString().equals(cid)) {
-					connectionIdentifier = ConnectionIdentifier.AllConnections;
-				} else {
-					connectionIdentifier = new ConnectionIdentifier(cid);
-				}
-				return new EventName(PackageName.factory((tokens[0]).trim()), MgcpEvent.factory(
-						((tokens[1]).trim()).substring(0, pos)).withParm(param), connectionIdentifier);
-			} else {
-				return new EventName(PackageName.factory(tokens[0].trim()), MgcpEvent.factory(tokens[1].trim())
-						.withParm(param));
-			}
-		} else if (tokens.length == 3) {
-			int pos = tokens[2].indexOf('@');
-			if (pos < 0) {
-				throw new ParseException("Invalid token " + tokens[2], 0);
-			}
+		this.split('/', value, this.decdEventName);
 
-			String cid = (tokens[1].trim()).substring(pos + 1);
-			return new EventName(PackageName.factory(tokens[0].trim()), MgcpEvent.factory(
-					(tokens[1].trim()).substring(0, pos)).withParm(param), new ConnectionIdentifier(cid));
-		} else {
-			throw new ParseException("Unexpected event name " + value, 0);
+		// String tokens[] = forwardSlashPattern.split(value, 0);
+		try {
+			int size = decdEventName.size();
+			if (size == 1) {
+				return new EventName(PackageName.AllPackages, MgcpEvent.factory(decdEventName.get(0)).withParm(param));
+			} else if (size == 2) {
+				int pos = decdEventName.get(1).indexOf('@');
+				if (pos > 0) {
+					String cid = (decdEventName.get(1).substring(pos + 1)).trim();
+					ConnectionIdentifier connectionIdentifier = null;
+					if ((ConnectionIdentifier.AnyConnection).toString().equals(cid)) {
+						connectionIdentifier = ConnectionIdentifier.AnyConnection;
+					} else if ((ConnectionIdentifier.AllConnections).toString().equals(cid)) {
+						connectionIdentifier = ConnectionIdentifier.AllConnections;
+					} else {
+						connectionIdentifier = new ConnectionIdentifier(cid);
+					}
+					return new EventName(PackageName.factory(decdEventName.get(0)), MgcpEvent.factory(
+							(decdEventName.get(1)).substring(0, pos)).withParm(param), connectionIdentifier);
+				} else {
+					return new EventName(PackageName.factory(decdEventName.get(0)), MgcpEvent.factory(
+							decdEventName.get(1)).withParm(param));
+				}
+			} else if (size == 3) {
+				int pos = decdEventName.get(2).indexOf('@');
+				if (pos < 0) {
+					throw new ParseException("Invalid token " + decdEventName.get(2), 0);
+				}
+
+				String cid = (decdEventName.get(1)).substring(pos + 1);
+				return new EventName(PackageName.factory(decdEventName.get(0)), MgcpEvent.factory(
+						(decdEventName.get(1)).substring(0, pos)).withParm(param), new ConnectionIdentifier(cid));
+			} else {
+				throw new ParseException("Unexpected event name " + value, 0);
+			}
+		} finally {
+			decdEventName.clear();
 		}
+
 	}
 
 	public String encodeInfoCodeList(InfoCode[] infoCodes) {

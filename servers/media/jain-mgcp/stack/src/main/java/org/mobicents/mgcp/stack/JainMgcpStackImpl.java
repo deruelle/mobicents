@@ -166,13 +166,13 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 		}
 
 		this.provider = new JainMgcpStackProviderImpl(this);
+		this.utilsFactory = new UtilsFactory(25);
+		
 		this.messageHandler = new MessageHandler(this);
 		this.eventSchedulerExecutor.execute(new EventSchedulerTask());
 		this.setPriority(this.messageReaderThreadPriority);
 		// So stack does not die
-		this.setDaemon(false);
-
-		this.utilsFactory = new UtilsFactory(25);
+		this.setDaemon(false);		
 		this.ehFactory = new EndpointHandlerFactory(50, this);
 		start();
 	}
@@ -302,6 +302,10 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 	public UtilsFactory getUtilsFactory() {
 		return this.utilsFactory;
+	}
+	
+	public void setUtilsFactory(UtilsFactory utilsFactory) {
+		this.utilsFactory = utilsFactory;
 	}
 
 	public InetAddress getAddress() {
