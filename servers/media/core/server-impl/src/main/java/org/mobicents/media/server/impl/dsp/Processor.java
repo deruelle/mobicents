@@ -226,7 +226,6 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             Format[] fmts = otherParty.getFormats();
             for (Format f: fmts) {
                 append(outputFormats, f);
-                System.out.println("append=" + f);
             }
         }
         
