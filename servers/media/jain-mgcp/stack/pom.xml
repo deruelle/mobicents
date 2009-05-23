@@ -88,9 +88,9 @@
 		</dependency>
 	</dependencies>
 	<scm>
-		<connection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1</connection>
-		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1</developerConnection>
-		<url>scm:svn:https://mobicents.googlecode.com/svn/tags/servers/media/2.x.y/jain-mgcp/mobicents-mgcp-impl-2.0.0.RC1</url>
+		<connection>scm:svn:https://mobicents.googlecode.com/svn/branches/servers/media/2.x.y/jain-mgcp/</connection>
+		<developerConnection>scm:svn:https://mobicents.googlecode.com/svn/branches/servers/media/2.x.y/jain-mgcp/</developerConnection>
+		<url>scm:svn:https://mobicents.googlecode.com/svn/branches/servers/media/2.x.y/jain-mgcp/</url>
 	</scm>
 
 	<profiles>
