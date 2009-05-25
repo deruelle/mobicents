@@ -104,6 +104,9 @@ if not errorlevel == 1 (set JAVA_OPTS=%JAVA_OPTS% -server)
 rem JVM memory allocation pool parameters. Modify as appropriate.
 set JAVA_OPTS=%JAVA_OPTS% -Xms128m -Xmx512m
 
+rem profiler
+rem set JAVA_OPTS=%JAVA_OPTS% -agentpath:C:\Users\kulikov\.netbeans\6.1\lib\deployed\jdk15\windows\profilerinterface.dll=C:\Users\kulikov\.netbeans\6.1\lib,5140
+
 rem With Sun JVMs reduce the RMI GCs to once per hour
 set JAVA_OPTS=%JAVA_OPTS% -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000
 

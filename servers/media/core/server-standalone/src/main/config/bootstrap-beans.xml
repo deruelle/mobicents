@@ -164,7 +164,41 @@
 		class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory" />
 	<bean name="G711.UlawDecoderFactory"
 		class="org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory" />
-
+	<bean name="G711.AlawEncoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g711.alaw.EncoderFactory" />
+	<bean name="G711.AlawDecoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g711.alaw.DecoderFactory" />
+	<bean name="SpeexEncoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.speex.EncoderFactory" />
+	<bean name="SpeexDecoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.speex.DecoderFactory" />
+	<bean name="G729EncoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g729.EncoderFactory" />
+	<bean name="G729DecoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.g729.DecoderFactory" />
+	<bean name="GSMEncoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.gsm.EncoderFactory" />
+	<bean name="GSMDecoderFactory"
+		class="org.mobicents.media.server.impl.dsp.audio.gsm.DecoderFactory" />
+        
+        <bean name="AudioProcessorFactory" class="org.mobicents.media.server.impl.dsp.DspFactory">
+            <property name="name">audio.processor</property>
+            <property name="codecFactories">
+                <list>
+                    <inject bean="G711.UlawEncoderFactory"/>
+                    <inject bean="G711.UlawDecoderFactory"/>
+                    <inject bean="G711.AlawEncoderFactory"/>
+                    <inject bean="G711.AlawDecoderFactory"/>
+                    <inject bean="SpeexEncoderFactory"/>
+                    <inject bean="SpeexDecoderFactory"/>
+                    <inject bean="GSMEncoderFactory"/>
+                    <inject bean="GSMDecoderFactory"/>
+                    <inject bean="G729EncoderFactory"/>
+                    <inject bean="G729DecoderFactory"/>
+                </list>
+            </property>
+        </bean>
+        
 	<bean name="AudioPlayerFactory"
 		class="org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory">
 		<property name="name">audio.player</property>
