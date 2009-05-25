@@ -117,7 +117,7 @@ public class AudioPlayerImpl extends AbstractSource implements AudioPlayer, Runn
 	 */
 	public void stop() {
 		if (worker != null && !worker.isCancelled()) {
-			worker.cancel(true);
+			worker.cancel(false);
 			closeAudioStream();
 		}
 	}
