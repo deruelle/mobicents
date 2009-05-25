@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<mgcp-stack.version>2.0.0.RC2-SNAPSHOT</mgcp-stack.version>
+		<mgcp-stack.version>2.0.0.RC2</mgcp-stack.version>
 		<jfree-chart.version>1.0.0</jfree-chart.version>
 		<mobicents.tools.mavenplugin.eclipse.version>1.0.0.BETA2</mobicents.tools.mavenplugin.eclipse.version>
 	</properties>
