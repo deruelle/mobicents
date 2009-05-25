@@ -199,7 +199,7 @@ public class ProcessorTest {
         }
 
         public boolean isAcceptable(Format format) {
-            return format.matches(LINEAR) || format.matches(DTMF);
+            return format.matches(PCMA) || format.matches(DTMF);
         }
 
         public void receive(Buffer buffer) {

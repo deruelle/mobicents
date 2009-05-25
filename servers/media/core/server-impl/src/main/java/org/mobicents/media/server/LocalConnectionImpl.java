@@ -108,15 +108,24 @@ public class LocalConnectionImpl extends ConnectionImpl {
         if (txChannel != null && otherConnection.rxChannel != null) {
             txChannel.disconnect(txInput);
             otherConnection.rxChannel.disconnect(txOutput);
+            txChannel.setConnection(null);
         }
         
         if (rxChannel != null && otherConnection.txChannel != null) {
             rxChannel.disconnect(rxOutput);
             otherConnection.txChannel.disconnect(rxInput);
+            rxChannel.setConnection(null);
         }
         
         otherConnection.otherConnection = null;
         otherConnection = null;
+        
+        txInput.setConnection(null);
+        rxInput.setConnection(null);
+        
+        txOutput.setConnection(null);
+        rxOutput.setConnection(null);
+        
         super.close();
     }
     
@@ -133,11 +142,15 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
 
         public Format[] getFormats() {
-            return otherParty.getFormats();
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
+        }
+        
+        protected boolean isAcceptable(Format fmt) {
+            return otherParty != null && otherParty.isAcceptable(fmt);
         }
         
         public void delivery(Buffer buffer) {
-            if (otherParty != null) {
+            if (isAcceptable(buffer.getFormat())) {
                 otherParty.receive(buffer);
             }
         }
@@ -146,6 +159,8 @@ public class LocalConnectionImpl extends ConnectionImpl {
     private class Input extends AbstractSink {
 
         private Output output;
+        private Format fmt;
+        private boolean isAcceptable;
         
         public Input(String name, Output output) {
             super(name);
@@ -153,11 +168,11 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
         
         public Format[] getFormats() {
-            return otherParty.getFormats();
+            return output.getFormats();
         }
 
         public boolean isAcceptable(Format format) {
-            return true;
+            return output.isAcceptable(format);
         }
 
         public void receive(Buffer buffer) {

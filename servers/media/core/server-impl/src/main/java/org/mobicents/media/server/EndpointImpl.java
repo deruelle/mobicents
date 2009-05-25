@@ -186,7 +186,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected Channel createRxChannel(Connection connection) throws UnknownComponentException {
-        if (rxChannelFactory != null) {
+        if (rxChannelFactory != null && sink != null) {
             Channel rxChannel = rxChannelFactory.newInstance(this);
             rxChannel.setConnection(connection);
             rxChannel.connect(sink);
@@ -202,7 +202,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected Channel createTxChannel(Connection connection) throws UnknownComponentException {
-        if (txChannelFactory != null) {
+        if (txChannelFactory != null && source != null) {
             Channel txChannel = txChannelFactory.newInstance(this);
             txChannel.setConnection(connection);
             txChannel.connect(source);

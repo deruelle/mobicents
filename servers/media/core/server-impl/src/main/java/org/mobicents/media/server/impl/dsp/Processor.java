@@ -38,16 +38,13 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  */
 public class Processor extends BaseComponent implements SignalingProcessor {
 
-    
     private ArrayList<Format> inputFormats = new ArrayList();
     private ArrayList<Format> outputFormats = new ArrayList();
-    
     private Input input;
     private Output output;
-    
-    private transient ArrayList<Codec> codecs = new ArrayList();    
+    private transient ArrayList<Codec> codecs = new ArrayList();
     private Codec codec;
-    
+
     public Processor(String name) {
         super(name);
         input = new Input();
@@ -56,23 +53,25 @@ public class Processor extends BaseComponent implements SignalingProcessor {
 
     private void append(List<Format> list, Format fmt) {
         for (Format f : list) {
-            if (f.matches(fmt)) return;
+            if (f.matches(fmt)) {
+                return;
+            }
         }
         list.add(fmt);
     }
-    
+
     private Format[] toArray(List<Format> list) {
         Format[] array = new Format[list.size()];
         list.toArray(array);
         return array;
     }
-    
+
     protected void add(Codec codec) {
-        codecs.add(codec);        
+        codecs.add(codec);
         append(inputFormats, codec.getSupportedInputFormat());
         append(outputFormats, codec.getSupportedOutputFormat());
     }
-    
+
     /**
      * Gets the input for original media
      * 
@@ -115,9 +114,8 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         private Format format;
         protected boolean connected = false;
         protected int failDeliveryCount = 0;
-
         private boolean started = false;
-        
+
         public Output() {
             super("Processor.Output");
         }
@@ -128,14 +126,14 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         protected boolean isConnected() {
-            return otherParty!= null;
+            return otherParty != null;
         }
-        
+
         protected Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
-        
-        public void start() {            
+
+        public void start() {
             started = true;
         }
 
@@ -147,6 +145,10 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             return toArray(outputFormats);
         }
 
+        private boolean isAcceptable(Format format) {
+            return otherParty.isAcceptable(format);
+        }
+
         /**
          * Transmits buffer to the output handler.
          * 
@@ -154,36 +156,34 @@ public class Processor extends BaseComponent implements SignalingProcessor {
          */
         protected void transmit(Buffer buffer) {
             if (!started) {
-            	buffer.dispose();
+                buffer.dispose();
                 return;
             }
             //Here we work in ReceiveStream.run method, which runs in local ReceiveStreamTimer
             // Discard packet silently if output handler is not assigned yet
             if (otherParty == null) {
-            	buffer.dispose();
+                buffer.dispose();
                 return;
             }
 
             //compare format of the currently processing packet with last one
             //and if same use same codec also else reassign codec
-            if (format == null || !format.equals(buffer.getFormat())) {
-                //disable last used transformator
-                for (Codec c: codecs) {
-                    boolean found = false;
-                    if (c.getSupportedInputFormat().matches(buffer.getFormat())) {
-                        Format[] otherFormats = output.getOtherPartyFormats();
-                        for (Format f : otherFormats) {
-                            if (f.matches(c.getSupportedOutputFormat())) {
-                                codec = c;
-                                format = buffer.getFormat();
-                                break;
-                            }
+            if (format == null || !format.equals(buffer.getFormat())) {                
+                codec = null;
+                format = buffer.getFormat();
+
+                if (!this.isAcceptable(buffer.getFormat())) {
+                    for (Codec c : codecs) {
+                        if (c.getSupportedInputFormat().matches(buffer.getFormat()) &&
+                                this.isAcceptable(c.getSupportedOutputFormat())) {
+                            codec = c;
+                            format = buffer.getFormat();
+                            break;
                         }
                     }
-                    if (found) break;
                 }
             }
-            
+
             if (codec != null) {
                 codec.process(buffer);
             }
@@ -192,7 +192,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             // It means that Processor should check FLAGS after codec's 
             // work and discard packet if required
             if (buffer.getFlags() == Buffer.FLAG_DISCARD) {
-            	buffer.dispose();
+                buffer.dispose();
                 return;
             }
 
@@ -216,6 +216,9 @@ public class Processor extends BaseComponent implements SignalingProcessor {
      */
     private class Input extends AbstractSink {
 
+        private Format fmt;
+        private boolean isAcceptable;
+        
         public Input() {
             super("Processor.Input");
         }
@@ -224,13 +227,24 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         public void connect(MediaSource source) {
             super.connect(source);
             Format[] fmts = otherParty.getFormats();
-            for (Format f: fmts) {
+            for (Format f : fmts) {
                 append(outputFormats, f);
             }
         }
-        
+
         public boolean isAcceptable(Format format) {
-            return true;
+            if (fmt != null && fmt.matches(format)) {
+                return isAcceptable;
+            }
+            
+            fmt = format;
+            for (Format f : inputFormats) {
+                if (f.matches(format)) {
+                    this.isAcceptable = true;
+                    break;
+                }
+            }
+            return this.isAcceptable;
         }
 
         public void receive(Buffer buffer) {
@@ -238,13 +252,13 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         protected boolean isConnected() {
-            return otherParty!= null;
+            return otherParty != null;
         }
-        
+
         protected Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
-        
+
         public Format[] getFormats() {
             return toArray(inputFormats);
         }
@@ -257,5 +271,4 @@ public class Processor extends BaseComponent implements SignalingProcessor {
      */
     public void configure(Format[] inputFormats, Format[] outputFormats) {
     }
-
 }
