@@ -88,8 +88,8 @@ public class RtpSocket implements Runnable {
 	private static final int MAX_ROUNDS = 3;
 	private int rounds = 0;
 
-        private RtpSocketListener listener;
-        
+	private RtpSocketListener listener;
+
 	// logger instance
 	private final static Logger logger = Logger.getLogger(RtpSocket.class);
 
@@ -244,7 +244,7 @@ public class RtpSocket implements Runnable {
 
 	protected void stopReceiver() {
 		if (worker != null && !worker.isCancelled()) {
-			worker.cancel(true);
+			worker.cancel(false);
 		}
 	}
 
@@ -266,19 +266,22 @@ public class RtpSocket implements Runnable {
 		if (socket != null) {
 			socket.disconnect();
 		}
-                listener = null;
+		listener = null;
 		this.rtpFactory.releaseRTPSocket(this);
 	}
 
-    public RtpSocketListener getListener() {
-        return listener;
-    }
+	public RtpSocketListener getListener() {
+		return listener;
+	}
 
-    public void setListener(RtpSocketListener listener) {
-        this.listener = listener;
-    }
+	public void setListener(RtpSocketListener listener) {
+		this.listener = listener;
+	}
 
-        
+	public boolean isChannelOpen() {
+		return (this.channel != null && this.channel.isOpen());
+	}
+
 	/**
 	 * Closes socket
 	 * 
@@ -374,34 +377,35 @@ public class RtpSocket implements Runnable {
 	 * @throws java.io.IOException
 	 */
 	public void send(Buffer buffer) throws IOException {
-		rounds = 0;
+		if (channel.isConnected()) {
+			rounds = 0;
 
-		RtpHeader h = (RtpHeader) buffer.getHeader();
-		byte[] headerByte = h.toByteArray();
+			RtpHeader h = (RtpHeader) buffer.getHeader();
+			byte[] headerByte = h.toByteArray();
 
-		int len = headerByte.length + buffer.getLength();
+			int len = headerByte.length + buffer.getLength();
 
-		senderBuffer = new byte[len];
+			senderBuffer = new byte[len];
 
-		// combine RTP header and payload
-		System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
-		System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
+			// combine RTP header and payload
+			System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
+			System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
 
-		// construct datagram packet and send synchronously it out
-		// senderPacket.setData(senderBuffer, 0, len);
-		try {
-			// socket.send(senderPacket);
-			ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
-			int count = 0;
-			if (channel.isOpen()) {
+			// construct datagram packet and send synchronously it out
+			// senderPacket.setData(senderBuffer, 0, len);
+			try {
+				// socket.send(senderPacket);
+				ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
+				int count = 0;
+
 				while (count < len) {
-					count += channel.send(byteBuffer1, remoteInetSocketAddress);					
+					count += channel.send(byteBuffer1, remoteInetSocketAddress);
 					byteBuffer1.compact();
 					byteBuffer1.flip();
 				}
+			} catch (Exception e) {
+				logger.error(e);
 			}
-		} catch (Exception e) {
-			logger.error(e);
 		}
 	}
 
@@ -423,10 +427,10 @@ public class RtpSocket implements Runnable {
 		try {
 			count = channel.read(readerBuffer);
 		} catch (Exception e) {
-                    if (listener != null) {
-                        listener.error(e);
-                    }
-                    return;
+			if (listener != null) {
+				listener.error(e);
+			}
+			return;
 		}
 
 		readerBuffer.flip();

@@ -48,7 +48,7 @@ public class ReceiveStream extends AbstractSource implements Runnable {
     public void stop() {
         rtpSocket.stopReceiver();
         if (readerTask != null) {
-            readerTask.cancel(true);
+            readerTask.cancel(false);
         }
     }
 
