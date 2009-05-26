@@ -38,6 +38,6 @@ import org.mobicents.media.server.spi.Endpoint;
 public interface NotifyEvent extends Serializable {
     public Endpoint getEndpoint();
     public Connection getConnection();
-    public int getResourceID();
+    public String getResourceName();
     public int getEventID();
 }
