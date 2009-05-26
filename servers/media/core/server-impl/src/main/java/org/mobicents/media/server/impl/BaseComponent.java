@@ -84,6 +84,11 @@ public abstract class BaseComponent implements Component {
     }
     
     public void setConnection(Connection connection) {
+        //diable all listeners if this component was associated with connection
+        //and it is disconnected.
+        if (this.connection != null && connection == null) {
+            listeners.clear();
+        }
         this.connection = connection;
     }
     
@@ -100,7 +105,7 @@ public abstract class BaseComponent implements Component {
     public void removeListener(NotificationListener listener) {
         listeners.remove(listener);
     }
-
+    
     @Override
     public String toString() {
         return (new StringBuffer().append(this.name).append(" - ").append(this.id)).toString();
