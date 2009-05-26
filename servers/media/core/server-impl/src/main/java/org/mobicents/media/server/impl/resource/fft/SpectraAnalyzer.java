@@ -55,7 +55,7 @@ public class SpectraAnalyzer extends AbstractSink {
     }
 
     protected void sendEvent(double[] spectra) {
-        SpectrumEvent evt = new SpectrumEvent(endpoint, getConnection(), spectra);
+        SpectrumEvent evt = new SpectrumEvent(endpoint, getConnection(), getName(), spectra);
         sendEvent(evt);
     }
 

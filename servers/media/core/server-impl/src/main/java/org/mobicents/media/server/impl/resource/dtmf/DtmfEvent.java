@@ -54,11 +54,12 @@ public class DtmfEvent implements NotifyEvent {
 
 	private Endpoint endpoint;
 	private Connection connection;
-	private int resourceID;
+	private String resourceName;
 	private int eventID;
 
-	public DtmfEvent(Endpoint endpoint, Connection connection, int eventID) {
+	public DtmfEvent(Endpoint endpoint, Connection connection, String resourceName, int eventID) {
 		this.eventID = eventID;
+                this.resourceName = resourceName;
 	}
 
 	public Endpoint getEndpoint() {
@@ -69,12 +70,13 @@ public class DtmfEvent implements NotifyEvent {
 		return connection;
 	}
 
-	public int getResourceID() {
-		return -1;
-	}
 
 	public int getEventID() {
 		return eventID;
 	}
+
+    public String getResourceName() {
+        return resourceName;
+    }
 
 }

@@ -118,7 +118,7 @@ public abstract class DtmfBuffer extends AbstractSink implements DtmfDetector, S
 					return;
 				}
 
-				DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), eventId);
+				DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), getName(), eventId);
 				super.sendEvent(dtmfEvent);
 
 				buffer = new StringBuffer();

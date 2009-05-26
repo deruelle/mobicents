@@ -19,12 +19,14 @@ public class SpectrumEvent implements NotifyEvent {
     
     private Endpoint endpoint;
     private Connection connection;
+    private String resourceName;
     
     private double[] spectra;
     
-    public SpectrumEvent(Endpoint endpoint, Connection connection, double[] spectra) {
+    public SpectrumEvent(Endpoint endpoint, Connection connection, String resourceName, double[] spectra) {
         this.endpoint = endpoint;
         this.connection = connection;
+        this.resourceName = resourceName;
         this.spectra = spectra;
     }
     
@@ -46,6 +48,10 @@ public class SpectrumEvent implements NotifyEvent {
 
     public int getEventID() {
         return SPECTRA;
+    }
+
+    public String getResourceName() {
+        return resourceName;
     }
 
 }

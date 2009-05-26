@@ -21,13 +21,13 @@ public class AudioPlayerEvent implements NotifyEvent {
     
     private Endpoint endpoint;
     private Connection connection;
-    private int resourceType;
+    private String resourceType;
     private int eventID;
 
     public AudioPlayerEvent(AudioPlayerImpl player, int eventID) {
         this.endpoint = player.getEndpoint();
         this.connection = player.getConnection();
-        this.resourceType = player.getResourceType();
+        this.resourceType = player.getName();
         this.eventID = eventID;
     }
         
@@ -39,12 +39,12 @@ public class AudioPlayerEvent implements NotifyEvent {
         return connection;
     }
 
-    public int getResourceID() {
-        return resourceType;
-    }
-
     public int getEventID() {
         return eventID;
+    }
+
+    public String getResourceName() {
+        return resourceType;
     }
 
 }

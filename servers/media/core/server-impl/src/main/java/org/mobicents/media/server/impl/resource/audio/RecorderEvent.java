@@ -17,13 +17,13 @@ public class RecorderEvent implements NotifyEvent {
 
 	private Endpoint endpoint;
 	private Connection connection;
-	private int resourceType;
+	private String resourceName;
 	private int eventID;
 
 	public RecorderEvent(RecorderImpl recorder, int eventID) {
 		this.endpoint = recorder.getEndpoint();
 		this.connection = recorder.getConnection();
-		this.resourceType = recorder.getResourceType();
+		this.resourceName = recorder.getName();
 		this.eventID = eventID;
 	}
 
@@ -39,8 +39,9 @@ public class RecorderEvent implements NotifyEvent {
 		return this.eventID;
 	}
 
-	public int getResourceID() {
-		return this.resourceType;
-	}
+
+    public String getResourceName() {
+        return resourceName;
+    }
 
 }

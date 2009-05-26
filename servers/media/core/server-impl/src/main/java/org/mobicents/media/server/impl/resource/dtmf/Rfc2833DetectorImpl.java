@@ -132,7 +132,7 @@ public class Rfc2833DetectorImpl extends AbstractSink implements DtmfDetector {
 				return;
 			}
 
-			DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), eventId);
+			DtmfEvent dtmfEvent = new DtmfEvent(getEndpoint(), getConnection(), getName(), eventId);
 			super.sendEvent(dtmfEvent);
 
 		}
