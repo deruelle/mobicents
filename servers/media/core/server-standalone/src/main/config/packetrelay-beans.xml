@@ -60,7 +60,7 @@
 	<bean name="PacketRelayEndpoint"
 		class="org.mobicents.media.server.EndpointImpl">
 		<property name="localName">
-			/mobicents/media/pr/[1..10]
+			/mobicents/media/packetrelay/[1..10]
 		</property>
 		<property name="timer">
 			<inject bean="Timer" />
