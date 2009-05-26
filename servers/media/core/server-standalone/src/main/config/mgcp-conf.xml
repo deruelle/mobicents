@@ -4,7 +4,7 @@
         <property name="namingService">
             <inject bean="MediaServer"/>
         </property>
-        <property name="notifiedEntity">
+        <property name="defaultNotifiedEntity">
             client@localhost
         </property>
         <property name="bindAddress">127.0.0.1</property>
