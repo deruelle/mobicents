@@ -18,8 +18,8 @@
 			<destName>deploy/ann-beans.xml</destName>
 		</file>
 		<file>
-			<source>src/main/config/pr-beans.xml</source>
-			<destName>deploy/pr-beans.xml</destName>
+			<source>src/main/config/packetrelay-beans.xml</source>
+			<destName>deploy/packetrelay-beans.xml</destName>
 		</file>
 		<file>
 			<source>src/main/config/mgcp-conf.xml</source>
