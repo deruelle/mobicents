@@ -7,45 +7,60 @@
 	<!-- PACKET RELAY -->
 
 
-        <bean name="PR-Pipe1" class="org.mobicents.media.server.resource.PipeFactory">
-            <property name="outlet">audio.processor</property>
-        </bean>
-        <bean name="PR-Pipe2" class="org.mobicents.media.server.resource.PipeFactory">
-            <property name="inlet">audio.processor</property>
-        </bean>
-        
-	<bean name="PR-RxChannelFactory" class="org.mobicents.media.server.resource.ChannelFactory">
-            <property name="components">
-                <list>
-                    <inject bean="AudioProcessorFactory"/>
-                </list>
-            </property>
-            <property name="pipes">
-                <list>
-                    <inject bean="PR-Pipe1"/>
-                    <inject bean="PR-Pipe2"/>
-                </list>
-            </property>
-        </bean>
+	<bean name="PR-Pipe1"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="outlet">audio.processor</property>
+	</bean>
+	<bean name="PR-Pipe2"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="inlet">audio.processor</property>
+	</bean>
 
-	<bean name="PR-TxChannelFactory" class="org.mobicents.media.server.resource.ChannelFactory">
-            <property name="components">
-                <list>
-                    <inject bean="AudioProcessorFactory"/>
-                </list>
-            </property>
-            <property name="pipes">
-                <list>
-                    <inject bean="PR-Pipe1"/>
-                    <inject bean="PR-Pipe2"/>
-                </list>
-            </property>
-        </bean>
+	<bean name="PR-RxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory">
+		<property name="components">
+			<list>
+				<inject bean="AudioProcessorFactory" />
+			</list>
+		</property>
+		<property name="pipes">
+			<list>
+				<inject bean="PR-Pipe1" />
+				<inject bean="PR-Pipe2" />
+			</list>
+		</property>
+	</bean>
 
-        <bean name="PacketRelayEndpoint"
+	<bean name="PR-TxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory">
+		<property name="components">
+			<list>
+				<inject bean="AudioProcessorFactory" />
+			</list>
+		</property>
+		<property name="pipes">
+			<list>
+				<inject bean="PR-Pipe1" />
+				<inject bean="PR-Pipe2" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean name="PacketRelaySourceFactory"
+		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySourceFactory">
+		<property name="name">pr-source</property>
+	</bean>
+
+	<bean name="PacketRelaySinkFactory"
+		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySinkFactory">
+		<property name="name">pr-sink</property>
+	</bean>
+
+	<bean name="PacketRelayEndpoint"
 		class="org.mobicents.media.server.EndpointImpl">
 		<property name="localName">
-			/mobicents/media/packetrelay/[1..10]
+			/mobicents/media/pr/[1..10]
 		</property>
 		<property name="timer">
 			<inject bean="Timer" />
@@ -67,6 +82,13 @@
 		<property name="rxChannelFactory">
 			<inject bean="PR-RxChannelFactory" />
 		</property>
+		<property name="sinkFactory">
+			<inject bean="PacketRelaySinkFactory" />
+		</property>
+		<property name="sourceFactory">
+			<inject bean="PacketRelaySourceFactory" />
+		</property>
+
 	</bean>
 
 
