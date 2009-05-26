@@ -21,7 +21,7 @@
     <bean name="Announcement.OC" class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
         <property name="eventName">oc</property>
         <property name="resourceName">audio.player</property>
-        <property name="eventID">1</property>
+        <property name="eventID">2</property>
     </bean>
     
     <bean name="Package.Announcement" class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
