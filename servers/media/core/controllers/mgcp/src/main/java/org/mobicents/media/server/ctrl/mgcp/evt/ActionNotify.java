@@ -29,14 +29,12 @@ package org.mobicents.media.server.ctrl.mgcp.evt;
 
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.NotifyEvent;
 
 /**
  *
  * @author kulikov
  */
-public class ActionNotify implements NotificationListener {
+public class ActionNotify {
 
     private int eventID;
     private MgcpController controller;
@@ -48,8 +46,4 @@ public class ActionNotify implements NotificationListener {
         this.controller = controller;
     }
     
-    public void update(NotifyEvent event) {
-        
-    }
-
 }

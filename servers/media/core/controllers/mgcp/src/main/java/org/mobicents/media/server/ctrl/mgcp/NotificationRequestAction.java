@@ -98,7 +98,7 @@ public class NotificationRequestAction implements Callable<JainMgcpResponseEvent
 			return reject(ReturnCode.Endpoint_Unknown);
 		}
 
-		Request request = new Request(controller, reqID, endpoint, notifiedEntity);
+		Request request = new Request(controller, reqID, endpointID, endpoint, notifiedEntity);
 		// assign event detectors
 		RequestedEvent[] events = req.getRequestedEvents();
 		for (int i = 0; i < events.length; i++) {

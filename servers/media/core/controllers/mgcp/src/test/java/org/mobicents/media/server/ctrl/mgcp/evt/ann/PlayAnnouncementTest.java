@@ -123,7 +123,7 @@ public class PlayAnnouncementTest {
         factory.setResourceName("audio.player");
         PlayAnnouncement signal = (PlayAnnouncement) factory.getInstance(controller, s);
         
-        Request request = new Request(controller, id, sender, ne);
+        Request request = new Request(controller, id, null, sender, ne);
         
         signal.doVerify(sender);
         signal.start(request);

@@ -114,7 +114,7 @@ public class Rfc2833DtmfGeneratorTest {
 
 		DtmfGenerator signal = (DtmfGenerator) factory.getInstance(controller, "9");
 
-		Request request = new Request(controller, id, sender, ne);
+		Request request = new Request(controller, id, null, sender, ne);
 
 		signal.doVerify(sender);
 		signal.start(request);

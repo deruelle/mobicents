@@ -88,8 +88,14 @@ public class MgcpController implements JainMgcpListener {
         return notifiedEntity;
     }
 
-    public void setNotifiedEntity(NotifiedEntity notifiedEntity) {
-        this.notifiedEntity = notifiedEntity;
+    public void setNotifiedEntity(String value) {
+        String[] tokens = value.split(":");
+        int remotePort = this.port;
+        if (tokens.length == 2) {
+            remotePort = Integer.parseInt(tokens[1]);
+        }
+        tokens = tokens[0].split("@");
+        this.notifiedEntity = new NotifiedEntity(tokens[0], tokens[1], remotePort);
     }
     
     public String getBindAddress() {

@@ -27,10 +27,12 @@
 
 package org.mobicents.media.server.ctrl.mgcp.evt;
 
+import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.RequestedAction;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 import org.mobicents.media.Component;
+import org.mobicents.media.server.ctrl.mgcp.Request;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.NotificationListener;
@@ -53,6 +55,8 @@ public abstract class EventDetector implements NotificationListener {
     private RequestedAction[] actions;
     private String params;
     private Component component;
+    
+    private Request request;
     
     public EventDetector(String pkgName, String eventName, String resourceName, int eventID, 
             String params, RequestedAction[] actions) {
@@ -83,6 +87,22 @@ public abstract class EventDetector implements NotificationListener {
 
     public Endpoint getEndpoint() {
         return endpoint;
+    }
+    
+    public EventName getEventName() {
+        return new EventName(PackageName.factory(pkgName), MgcpEvent.factory(eventName));
+    }
+    
+    public String getResourceName() {
+        return this.resourceName;
+    }
+    
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+    
+    public Request getRequest() {
+        return request;
     }
     
     public boolean verify(Connection connection) {

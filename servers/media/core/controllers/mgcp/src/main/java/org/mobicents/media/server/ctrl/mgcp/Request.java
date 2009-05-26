@@ -26,6 +26,10 @@
  */
 package org.mobicents.media.server.ctrl.mgcp;
 
+import jain.protocol.ip.mgcp.JainMgcpEvent;
+import jain.protocol.ip.mgcp.message.Notify;
+import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
+import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 import java.util.ArrayList;
@@ -48,9 +52,12 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class Request implements Runnable, ConnectionListener {
 
+    private static int txID = 1;
+    
     private RequestIdentifier reqID;
     private MgcpController controller;
     
+    private EndpointIdentifier endpointID;
     private Endpoint endpoint;    
     private ArrayList<Connection> connections = new ArrayList<Connection>();
     
@@ -68,15 +75,18 @@ public class Request implements Runnable, ConnectionListener {
     private HashMap<String, SignalGenerator> activeConnectionSignals = new HashMap<String, SignalGenerator>();
     private SignalGenerator activeEndpointSignal;
     
-    public Request(MgcpController controller, RequestIdentifier reqID,
+    public Request(MgcpController controller, RequestIdentifier reqID, EndpointIdentifier endpointID,
             Endpoint endpoint, NotifiedEntity notifiedEntity) {
         this.controller = controller;
         this.reqID = reqID;
+        this.endpointID = endpointID;
         this.endpoint = endpoint;
         this.notifiedEntity = notifiedEntity;
     }
 
     public void append(EventDetector detector, Connection connection) {
+        detector.setRequest(this);
+        
         if (connection == null) {
             endpointDetectors.add(detector);
             return;
@@ -273,4 +283,18 @@ public class Request implements Runnable, ConnectionListener {
     public void onModeChange(Connection connection, ConnectionMode oldMode) {
     }
 
+    public int getTxID() {
+        txID++;
+        if (txID == Integer.MAX_VALUE) {
+            txID = 1;
+        }
+        return txID;
+    }
+    public void sendNotify(EventName eventName) {
+        Notify notify = new Notify(this, endpointID, reqID, new EventName[]{eventName});
+        notify.setNotifiedEntity(notifiedEntity);
+        notify.setTransactionHandle(txID++);
+        controller.getMgcpProvider().sendMgcpEvents(new JainMgcpEvent[]{notify});
+        System.out.println("===== NOTIFY +++++");
+    }
 }

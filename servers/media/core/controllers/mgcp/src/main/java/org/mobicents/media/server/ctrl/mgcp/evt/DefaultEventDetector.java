@@ -35,7 +35,7 @@ import org.mobicents.media.server.spi.events.NotifyEvent;
  */
 public class DefaultEventDetector extends EventDetector {
 
-    private ActionFactory actionFactory = new ActionFactory();
+    private ActionNotify actionNotify;
     
     public DefaultEventDetector(String pkgName, String eventName, 
             String resourceName, int eventID, String params, RequestedAction[] actions) {
@@ -44,7 +44,17 @@ public class DefaultEventDetector extends EventDetector {
 
     @Override
     public void performAction(NotifyEvent event, RequestedAction action) {
-        //EventName eventName = new EventName()
+        if (!event.getResourceName().matches(this.getResourceName())) {
+            return;
+        }
+        
+        if (event.getEventID() != this.getEventID()) {
+            return;
+        }
+
+        //@TODO implement action selector
+        getRequest().sendNotify(this.getEventName());
+        
     }
 
     
