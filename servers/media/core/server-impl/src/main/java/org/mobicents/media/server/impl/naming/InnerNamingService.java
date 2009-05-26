@@ -80,6 +80,7 @@ public class InnerNamingService implements NamingService {
 			enp.setRxChannelFactory(factory.getRxChannelFactory());
 			enp.setTxChannelFactory(factory.getTxChannelFactory());
 			enp.setSourceFactory(factory.getSourceFactory());
+			enp.setSinkFactory(factory.getSinkFactory());
 			try {
 				enp.start();
 				endpoints.put(name, enp);
