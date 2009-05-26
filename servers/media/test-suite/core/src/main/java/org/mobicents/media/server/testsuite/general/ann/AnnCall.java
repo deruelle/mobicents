@@ -121,11 +121,13 @@ public class AnnCall extends AbstractCall {
 				notifyResponse.setTransactionHandle(notify.getTransactionHandle());
 				super.provider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
-				// FIXME, should we term here?
+				stop();
+                                sendDelete();
 			}
 			break;
 		default:
-
+                    stop();
+                    sendDelete();
 		}
 
 	}
