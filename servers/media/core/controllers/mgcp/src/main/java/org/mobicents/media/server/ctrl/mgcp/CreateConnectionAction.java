@@ -193,7 +193,7 @@ public class CreateConnectionAction implements Callable {
 		// lookup endpoint
 		Endpoint endpoint = null;
 		try {
-			endpoint = controller.getNamingService().lookup(localName, false);
+			endpoint = controller.getNamingService().lookup(localName, true);
 		} catch (ResourceUnavailableException e) {
 			logger.warn("TX = " + txID + ", There is no free endpoint: " + localName + ", ResponseCode: "
 					+ ReturnCode.ENDPOINT_UNKNOWN);
@@ -238,7 +238,7 @@ public class CreateConnectionAction implements Callable {
 		// lookup endpoint 2
 		Endpoint endpoint2 = null;
 		try {
-			endpoint2 = controller.getNamingService().lookup(localName2, false);
+			endpoint2 = controller.getNamingService().lookup(localName2, true);
 		} catch (ResourceUnavailableException e) {
 			logger.warn("TX = " + txID + ", There is no free endpoint: " + localName2 + ", ResponseCode: "
 					+ ReturnCode.ENDPOINT_UNKNOWN);
@@ -297,11 +297,12 @@ public class CreateConnectionAction implements Callable {
 	}
 
 	public JainMgcpResponseEvent call() throws Exception {
-		logger
-				.info("Request TX= " + crcx.getTransactionHandle() + ", CallID = " + crcx.getCallIdentifier()
-						+ ", Mode=" + crcx.getMode() + ", Endpoint = " + crcx.getEndpointIdentifier()
-						+ ", Endpoint2 = " + crcx.getSecondEndpointIdentifier() + ", SDP present = "
-						+ crcx.getRemoteConnectionDescriptor() != null);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Request TX= " + crcx.getTransactionHandle() + ", CallID = " + crcx.getCallIdentifier()
+					+ ", Mode=" + crcx.getMode() + ", Endpoint = " + crcx.getEndpointIdentifier() + ", Endpoint2 = "
+					+ crcx.getSecondEndpointIdentifier() + ", SDP present = "
+					+ (crcx.getRemoteConnectionDescriptor() != null));
+		}
 
 		// CreateConnection may be used to create either an RTP connection or
 		// a pair of local connections. If SecondEndpoint is not specified then
