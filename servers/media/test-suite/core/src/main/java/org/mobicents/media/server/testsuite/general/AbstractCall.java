@@ -79,6 +79,8 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
 
     // MGCP part
     protected transient JainMgcpStackProviderImpl provider;
+    
+    protected ScheduledFuture<?> timeoutHandle = null;
 
     public AbstractCall(AbstractTestCase testCase) throws IOException {
         this.testCase = testCase;
@@ -358,4 +360,12 @@ public abstract class AbstractCall implements JainMgcpExtendedListener, Runnable
     public abstract void timeOut();
 
     public abstract void stop();
+
+	public ScheduledFuture<?> getTimeoutHandle() {
+		return timeoutHandle;
+	}
+
+	public void setTimeoutHandle(ScheduledFuture<?> timeoutHandle) {
+		this.timeoutHandle = timeoutHandle;
+	}
 }

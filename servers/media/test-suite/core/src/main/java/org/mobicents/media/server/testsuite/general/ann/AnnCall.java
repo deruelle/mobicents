@@ -57,6 +57,8 @@ public class AnnCall extends AbstractCall {
 	private String HELLO_WORLD = "";
 	private ConnectionIdentifier allocatedConnection = null;
 
+	private RequestIdentifier ri = null;
+
 	public AnnCall(AbstractTestCase testCase, String fileToPlay) throws IOException {
 		super(testCase);
 		super.endpointName = "/mobicents/media/aap/$";
@@ -115,6 +117,7 @@ public class AnnCall extends AbstractCall {
 				Notify notify = (Notify) mgcpCommand;
 				// lets remove us from call maps
 				super.testCase.removeCall(mgcpCommand);
+				super.testCase.removeCall(notify.getRequestIdentifier().toString());
 
 				ReturnCode rc = ReturnCode.Transaction_Executed_Normally;
 				NotifyResponse notifyResponse = new NotifyResponse(this, rc);
@@ -122,12 +125,12 @@ public class AnnCall extends AbstractCall {
 				super.provider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
 				stop();
-                                sendDelete();
+				sendDelete();
 			}
 			break;
 		default:
-                    stop();
-                    sendDelete();
+			stop();
+			sendDelete();
 		}
 
 	}
@@ -190,7 +193,7 @@ public class AnnCall extends AbstractCall {
 						super.readerTask = this.readerThread.scheduleAtFixedRate(this, 0, super._READ_PERIOD,
 								TimeUnit.MILLISECONDS);
 
-						RequestIdentifier ri = provider.getUniqueRequestIdentifier();
+						ri = provider.getUniqueRequestIdentifier();
 						NotificationRequest notificationRequest = new NotificationRequest(this,
 								super.endpointIdentifier, ri);
 						EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.pa
@@ -211,6 +214,7 @@ public class AnnCall extends AbstractCall {
 						// We dont care
 						// super.testCase.addCall(ri, this);
 						super.testCase.addCall(notificationRequest, this);
+						super.testCase.addCall(ri.toString(), this);
 						super.provider.sendMgcpEvents(new JainMgcpCommandEvent[] { notificationRequest });
 
 						// IS this wrong? should we wait unitl notification is
@@ -266,7 +270,7 @@ public class AnnCall extends AbstractCall {
 				super.setState(CallState.IN_ERROR);
 				// FIXME: add error dump
 				logger.error("FAILED[" + this.localFlowState + "] ON CRCX RESPONSE: "
-						+ buildResponseHeader(mgcpResponse)+ " objId1 = "+objId);
+						+ buildResponseHeader(mgcpResponse) + " objId1 = " + objId);
 
 			}
 			break;
@@ -293,7 +297,7 @@ public class AnnCall extends AbstractCall {
 				super.setState(CallState.IN_ERROR);
 				// FIXME: add error dump
 				logger.error("FAILED[" + this.localFlowState + "] ON CRCX RESPONSE: "
-						+ buildResponseHeader(mgcpResponse) +" objId = "+objId);
+						+ buildResponseHeader(mgcpResponse) + " objId = " + objId);
 			}
 
 			break;
@@ -338,6 +342,12 @@ public class AnnCall extends AbstractCall {
 		// {
 		// sendDelete();
 		// }
+		if(super.getTimeoutHandle() != null ){
+			super.getTimeoutHandle().cancel(false);
+		}
+		if (ri != null) {
+			super.testCase.removeCall(ri.toString());
+		}
 		this.receiveRTP = false;
 
 		if (this.readerTask != null) {
@@ -370,9 +380,8 @@ public class AnnCall extends AbstractCall {
 
 		// IS this wrong? should we wait unitl notification is played?
 		this.setLocalFlowState(AnnCallState.SENT_DLCX);
-		
-		super.provider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
 
+		super.provider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
 
 	}
 

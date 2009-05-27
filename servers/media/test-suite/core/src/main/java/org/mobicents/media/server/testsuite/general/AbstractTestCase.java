@@ -66,7 +66,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
     protected transient JainMgcpStackProviderImpl provider;
     //We need this to map TXID to Call :)
     protected transient Map<Integer, AbstractCall> mgcpTransactionToProxy = new HashMap<Integer, AbstractCall>();
-    protected transient Map<RequestIdentifier, AbstractCall> requestIdIdToProxy = new HashMap<RequestIdentifier, AbstractCall>();
+    protected transient Map<String, AbstractCall> requestIdIdToProxy = new HashMap<String, AbstractCall>();
     //timestamp :), its used for files
     protected long testTimesTamp = System.currentTimeMillis();
     protected transient File testDumpDirectory;
@@ -363,7 +363,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         //For now we dont care for reqeust sent from MMS
         if (command instanceof Notify) {
             Notify notify = (Notify) command;
-            AbstractCall cp = getCall(notify.getRequestIdentifier());
+            AbstractCall cp = getCall(notify.getRequestIdentifier().toString());
 
             if (cp != null) {
                 cp.processMgcpCommandEvent(command);
@@ -433,16 +433,16 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         this.mgcpTransactionToProxy.remove(txID);
     }
 
-    public void addCall(RequestIdentifier ri, AbstractCall cp) {
+    public void addCall(String ri, AbstractCall cp) {
         this.requestIdIdToProxy.put(ri, cp);
 
     }
 
-    public void removeCall(RequestIdentifier ri) {
+    public void removeCall(String ri) {
         this.requestIdIdToProxy.remove(ri);
     }
 
-    public AbstractCall getCall(RequestIdentifier ri) {
+    public AbstractCall getCall(String ri) {
         return this.requestIdIdToProxy.get(ri);
     }
 
