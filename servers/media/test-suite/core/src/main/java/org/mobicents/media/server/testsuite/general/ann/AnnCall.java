@@ -111,19 +111,23 @@ public class AnnCall extends AbstractCall {
 
 		switch (this.localFlowState) {
 		case SENT_ANN:
-			if (mgcpCommand instanceof Notify) {
+			if (mgcpCommand instanceof Notify) {				
 				// here we could do something, instead we respond with 200 and
 				// remove
 				Notify notify = (Notify) mgcpCommand;
-				// lets remove us from call maps
-				super.testCase.removeCall(mgcpCommand);
-				super.testCase.removeCall(notify.getRequestIdentifier().toString());
+				
+
 
 				ReturnCode rc = ReturnCode.Transaction_Executed_Normally;
 				NotifyResponse notifyResponse = new NotifyResponse(this, rc);
 				notifyResponse.setTransactionHandle(notify.getTransactionHandle());
 				super.provider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
+				// lets remove us from call maps
+				super.testCase.removeCall(mgcpCommand);
+				super.testCase.removeCall(notify.getRequestIdentifier().toString());
+				
+				cancelTimeoutHandle();
 				sendDelete();
 				//stop();
 			}
@@ -336,15 +340,18 @@ public class AnnCall extends AbstractCall {
 		}
 	}
 
+	private void cancelTimeoutHandle(){
+		if(super.getTimeoutHandle() != null ){
+			super.getTimeoutHandle().cancel(false);
+		}
+	}
 	@Override
 	public void stop() {
 		// if(this.localFlowState != AnnCallState.TERMINATED)
 		// {
 		// sendDelete();
 		// }
-		if(super.getTimeoutHandle() != null ){
-			super.getTimeoutHandle().cancel(false);
-		}
+		cancelTimeoutHandle();
 		if (ri != null) {
 			super.testCase.removeCall(ri.toString());
 		}
