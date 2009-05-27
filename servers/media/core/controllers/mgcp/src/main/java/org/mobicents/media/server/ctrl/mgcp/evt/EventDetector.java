@@ -132,6 +132,7 @@ public abstract class EventDetector implements NotificationListener {
     public void stop() {
         if (component != null) {
             component.removeListener(this);
+            component = null;
         }
     }
     

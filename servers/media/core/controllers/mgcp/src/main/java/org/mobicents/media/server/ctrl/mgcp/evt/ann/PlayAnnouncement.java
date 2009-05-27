@@ -68,6 +68,7 @@ public class PlayAnnouncement extends SignalGenerator {
     @Override
     public void cancel() {
         audioPlayer.stop();
+        audioPlayer = null;
     }
 
 

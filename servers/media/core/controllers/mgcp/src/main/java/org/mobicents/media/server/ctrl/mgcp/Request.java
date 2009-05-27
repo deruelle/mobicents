@@ -261,7 +261,6 @@ public class Request implements Runnable, ConnectionListener {
         
         //shutdown signal queue
         connectionSignalQueue.remove(connection.getId());
-        
         //shutdown signal generaot list        
         connectionGenerators.remove(connection.getId());        
         
@@ -273,10 +272,13 @@ public class Request implements Runnable, ConnectionListener {
         
         //disable detectors if assigned
         connectionDetectors.remove(connection.getId());
-        
+
+        List<EventDetector> list = connectionDetectors.remove(connection.getId());
+        for (EventDetector det : list) {
+            det.stop();
+        }
         //remove connection instance if present
         connections.remove(connection);
-        System.out.println("====== REMOVED CONNECTION ===");
     }
 
     
