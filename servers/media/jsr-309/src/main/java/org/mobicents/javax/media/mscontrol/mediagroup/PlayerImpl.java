@@ -318,8 +318,7 @@ public class PlayerImpl implements Player {
 				int count = 0;
 				for (URI uri : files) {
 					String filePath = uri.toString();
-					signalRequests[count] = new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(filePath),
-							connId);
+					signalRequests[count] = new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(filePath));
 					count++;
 				}
 
@@ -328,8 +327,8 @@ public class PlayerImpl implements Player {
 				RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
 
 				RequestedEvent[] requestedEvents = {
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc, connId), actions),
-						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of, connId), actions) };
+						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc), actions),
+						new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.of), actions) };
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
