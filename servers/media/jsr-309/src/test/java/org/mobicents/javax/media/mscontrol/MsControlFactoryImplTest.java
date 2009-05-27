@@ -46,6 +46,13 @@ public class MsControlFactoryImplTest extends TestCase {
 	public void testcreateMediaSession() throws MsControlException {
 		MediaSession mediaSession = msControlFactory.createMediaSession();
 		assertNotNull(mediaSession);
+
+		Object o = new Object();
+		mediaSession.setAttribute("ATT1", o);
+
+		Object o1 = mediaSession.getAttribute("ATT1");
+		
+		assertEquals(o, o1);
 	}
 
 	public void testgetMediaConfig() throws MediaConfigException {

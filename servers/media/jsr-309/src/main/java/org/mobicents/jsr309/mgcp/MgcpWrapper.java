@@ -6,6 +6,7 @@ import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
 
 import java.util.HashMap;
@@ -15,6 +16,11 @@ import org.apache.log4j.Logger;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public class MgcpWrapper implements JainMgcpExtendedListener {
 
 	private String peerIp = "127.0.0.1";
@@ -23,14 +29,20 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 	private JainMgcpStackProviderImpl jainMgcpStackProviderImpl;
 	private static Logger logger = Logger.getLogger(MgcpWrapper.class);
 	private Map<Integer, JainMgcpExtendedListener> mgcpListeners = new HashMap<Integer, JainMgcpExtendedListener>();
-	
+
 	// This is mapping of RequestIdentifier and Listener
 	private Map<String, JainMgcpExtendedListener> mgcpListenersForNotify = new HashMap<String, JainMgcpExtendedListener>();
 
-	public MgcpWrapper(JainMgcpStackProviderImpl jainMgcpStackProviderImpl, int peerPort, String peerIp) {
+	private NotifiedEntity defaultNotfEntity = null;
+
+	public MgcpWrapper(JainMgcpStackProviderImpl jainMgcpStackProviderImpl, NotifiedEntity defaultNotfEntity,
+			int peerPort, String peerIp) {
 		this.jainMgcpStackProviderImpl = jainMgcpStackProviderImpl;
 		this.peerPort = peerPort;
 		this.peerIp = peerIp;
+
+		this.defaultNotfEntity = defaultNotfEntity;
+
 	}
 
 	public void addListnere(int tx, JainMgcpExtendedListener listener) {
@@ -99,7 +111,7 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 		JainMgcpExtendedListener listener = mgcpListeners.get(tx);
 		if (listener != null) {
 			listener.processMgcpResponseEvent(response);
-		}  else {
+		} else {
 			logger.warn("Received Response " + response.toString() + " but no handler for this");
 		}
 	}
@@ -127,6 +139,10 @@ public class MgcpWrapper implements JainMgcpExtendedListener {
 	public int getUniqueTransactionHandler() {
 		return this.jainMgcpStackProviderImpl.getUniqueTransactionHandler();
 
+	}
+
+	public NotifiedEntity getDefaultNotifiedEntity() {
+		return this.defaultNotfEntity;
 	}
 
 }

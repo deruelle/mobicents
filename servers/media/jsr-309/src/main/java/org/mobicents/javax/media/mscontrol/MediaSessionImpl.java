@@ -5,8 +5,11 @@ import jain.protocol.ip.mgcp.message.parms.CallIdentifier;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.media.mscontrol.MediaConfig;
 import javax.media.mscontrol.MediaSession;
@@ -26,7 +29,6 @@ import org.apache.log4j.Logger;
 import org.mobicents.javax.media.mscontrol.mediagroup.MediaGroupImpl;
 import org.mobicents.javax.media.mscontrol.mixer.MediaMixerImpl;
 import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl;
-import org.mobicents.javax.media.mscontrol.networkconnection.NetworkConnectionImpl1;
 import org.mobicents.javax.media.mscontrol.resource.ParametersImpl;
 import org.mobicents.jsr309.mgcp.MgcpWrapper;
 
@@ -45,6 +47,8 @@ public class MediaSessionImpl implements MediaSession {
 	List<NetworkConnection> netConnList = new ArrayList<NetworkConnection>();
 	List<MediaGroup> medGrpList = new ArrayList<MediaGroup>();
 	List<MediaMixer> medMxrList = new ArrayList<MediaMixer>();
+
+	private Map attributeMap = new HashMap();
 
 	public MediaSessionImpl(MgcpWrapper mgcpWrapper) {
 		this.mgcpWrapper = mgcpWrapper;
@@ -84,6 +88,7 @@ public class MediaSessionImpl implements MediaSession {
 		for (MediaMixer mx : medMxrList) {
 			mx.release();
 		}
+		this.attributeMap.clear();
 	}
 
 	public void setParameters(Parameters arg0) {
@@ -101,7 +106,6 @@ public class MediaSessionImpl implements MediaSession {
 	public <C extends MediaConfig, T extends ResourceContainer<? extends C>> T createContainer(
 			Configuration<C> predefinedConfig) throws MsControlException {
 		// TODO Auto-generated method stub
-		NetworkConnectionImpl1<C> obj = new NetworkConnectionImpl1<C>();
 		return null;
 	}
 
@@ -117,24 +121,20 @@ public class MediaSessionImpl implements MediaSession {
 		return null;
 	}
 
-	public Object getAttribute(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getAttribute(String key) {
+		return attributeMap.get(key);
 	}
 
 	public Enumeration<String> getAttributeNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.enumeration(attributeMap.keySet());
 	}
 
-	public void removeAttribute(String arg0) {
-		// TODO Auto-generated method stub
-
+	public void removeAttribute(String key) {
+		attributeMap.remove(key);
 	}
 
-	public void setAttribute(String arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
+	public void setAttribute(String key, Object arg1) {		
+		attributeMap.put(key, arg1);
 	}
 
 	// Custom Methods
@@ -146,7 +146,8 @@ public class MediaSessionImpl implements MediaSession {
 		return networkConnectionImpl;
 	}
 
-	public <C extends MediaConfig> MediaGroup createMediaGroup(Configuration<C> predefinedConfig) throws MsControlException {
+	public <C extends MediaConfig> MediaGroup createMediaGroup(Configuration<C> predefinedConfig)
+			throws MsControlException {
 		MediaGroupConfig config = (MediaGroupConfig) MediaConfigFactory.getMediaConfig(predefinedConfig);
 		MediaGroupImpl mediaGroupImpl = new MediaGroupImpl(this, mgcpWrapper, config);
 		medGrpList.add(mediaGroupImpl);

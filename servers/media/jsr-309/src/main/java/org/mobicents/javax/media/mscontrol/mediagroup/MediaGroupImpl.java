@@ -33,8 +33,8 @@ import org.mobicents.jsr309.mgcp.MgcpWrapper;
 public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGroup {
 	public static Logger logger = Logger.getLogger(MediaGroupImpl.class);
 
-	private static final String LOOP_ENDPOINT_NAME = "media/test/trunk/Loopback/$";
-	private static final String IVR_ENDPOINT_NAME = "media/test/trunk/IVR/$";
+	private static final String LOOP_ENDPOINT_NAME = "/mobicents/media/aap/$";
+	private static final String IVR_ENDPOINT_NAME = "/mobicents/media/aap/$";
 	private URI uri = null;
 	protected Player player = null;
 	protected SignalDetector detector = null;

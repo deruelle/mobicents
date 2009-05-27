@@ -67,7 +67,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 	private ResourceNotAvailableException resourceNotAvailableException = null;
 
 	private Parameters parameters = null;
-	private static final String PR_ENDPOINT_NAME = "/trunk/media/PacketRelay/$";
+	private static final String PR_ENDPOINT_NAME = "/mobicents/media/packetrelay/$";
 
 	private transient SdpFactory sdpFactory = SdpFactory.getInstance();
 

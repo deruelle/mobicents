@@ -186,6 +186,7 @@ public class PlayerImpl implements Player {
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
 
 				notificationRequest.setTransactionHandle(this.tx);
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 
 			} catch (Exception e) {
@@ -332,6 +333,7 @@ public class PlayerImpl implements Player {
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 

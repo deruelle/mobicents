@@ -3,6 +3,7 @@ package org.mobicents.jsr309.mgcp;
 import jain.protocol.ip.mgcp.CreateProviderException;
 import jain.protocol.ip.mgcp.DeleteProviderException;
 import jain.protocol.ip.mgcp.JainMgcpStack;
+import jain.protocol.ip.mgcp.message.parms.NotifiedEntity;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -84,7 +85,10 @@ public class MgcpStackFactory {
 
 				}
 
-				mgcpWrapper = new MgcpWrapper(jainMgcpStackProviderImpl, mgcpStackPeerPort, mgcpStackPeerIp);
+				NotifiedEntity notifiedEntity = new NotifiedEntity(inetAddress.getHostName(), inetAddress
+						.getHostAddress(), stack.getPort());
+
+				mgcpWrapper = new MgcpWrapper(jainMgcpStackProviderImpl, notifiedEntity, mgcpStackPeerPort, mgcpStackPeerIp);
 				jainMgcpStackProviderImpl.addJainMgcpListener(mgcpWrapper);
 				stringToMgcpWrapper.put(stackName, mgcpWrapper);
 
