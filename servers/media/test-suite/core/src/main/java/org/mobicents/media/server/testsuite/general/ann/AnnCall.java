@@ -124,8 +124,8 @@ public class AnnCall extends AbstractCall {
 				notifyResponse.setTransactionHandle(notify.getTransactionHandle());
 				super.provider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
-				stop();
 				sendDelete();
+				//stop();
 			}
 			break;
 		default:
