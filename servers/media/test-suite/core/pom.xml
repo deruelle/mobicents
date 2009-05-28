@@ -555,6 +555,8 @@
 	                            <configuration>
 	                                <tasks>
 	                                    <java classname="org.mobicents.media.server.testsuite.gui.MainGUI" fork="true">
+						<jvmarg value="-Xms768M"/>  
+						<jvmarg value="-Xmx768M"/>
 	                                        <classpath>
 	                                            <pathelement location="target/${pom.artifactId}-${pom.version}.jar" />
 	                                            <pathelement location="target/mobicents-media-server-spi.jar" />
