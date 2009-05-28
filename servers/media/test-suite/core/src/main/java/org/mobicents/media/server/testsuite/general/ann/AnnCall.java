@@ -200,7 +200,7 @@ public class AnnCall extends AbstractCall {
 						ri = provider.getUniqueRequestIdentifier();
 						NotificationRequest notificationRequest = new NotificationRequest(this,
 								super.endpointIdentifier, ri);
-						EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.pa
+						EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann
 								.withParm(HELLO_WORLD), null) };
 						notificationRequest.setSignalRequests(signalRequests);
 						RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
