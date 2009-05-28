@@ -100,7 +100,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
             mux.connect(socket.getReceiveStream());
-            demux.connect(socket.getSendStream());
+//            demux.connect(socket.getSendStream());
             socket.setListener(this);
         }
 
@@ -216,6 +216,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             
             //This is done in constructor
             //rtpSocket.getReceiveStream().connect(mux);
+            demux.connect(rtpSocket.getSendStream());
             rtpSocket.getReceiveStream().start();
         }
         
