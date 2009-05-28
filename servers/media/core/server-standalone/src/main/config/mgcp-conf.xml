@@ -1,41 +1,53 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-    <!-- Resource type definition -->
-    <bean name="MgcpController" class="org.mobicents.media.server.ctrl.mgcp.MgcpController">
-        <property name="namingService">
-            <inject bean="MediaServer"/>
-        </property>
-        <property name="defaultNotifiedEntity">
-            client@localhost
-        </property>
-        <property name="bindAddress">127.0.0.1</property>
+	<!-- Resource type definition -->
+	<bean name="MgcpController"
+		class="org.mobicents.media.server.ctrl.mgcp.MgcpController">
+		<property name="namingService">
+			<inject bean="MediaServer" />
+		</property>
+		<property name="defaultNotifiedEntity">
+			client@localhost
+		</property>
+		<property name="bindAddress">127.0.0.1</property>
 		<property name="port">2427</property>
-        <incallback method="addPackage"/>
-        <uncallback method="removePackage"/>
-    </bean>
-    
-    <bean name="PlayAnnouncement" class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
-        <property name="eventName">pa</property>
-        <property name="resourceName">audio.player</property>
-    </bean>
-    
-    <bean name="Announcement.OC" class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
-        <property name="eventName">oc</property>
-        <property name="resourceName">audio.player</property>
-        <property name="eventID">2</property>
-    </bean>
-    
-    <bean name="Package.Announcement" class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
-        <property name="name">A</property>
-        <property name="generators">
-            <list>
-                <inject bean="PlayAnnouncement"/>
-            </list>
-        </property> 
-        <property name="detectors">
-            <list>
-                <inject bean="Announcement.OC"/>
-            </list>
-        </property> 
-    </bean>
-    
-</deployment>    
+		<incallback method="addPackage" />
+		<uncallback method="removePackage" />
+	</bean>
+
+	<bean name="PlayAnnouncement"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
+		<property name="eventName">ann</property>
+		<property name="resourceName">audio.player</property>
+	</bean>
+
+	<bean name="Announcement.OC"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
+		<property name="eventName">oc</property>
+		<property name="resourceName">audio.player</property>
+		<property name="eventID">2</property>
+	</bean>
+
+	<bean name="Announcement.OF"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
+		<property name="eventName">of</property>
+		<property name="resourceName">audio.player</property>
+		<property name="eventID">3</property>
+	</bean>
+
+	<bean name="Package.Announcement"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
+		<property name="name">A</property>
+		<property name="generators">
+			<list>
+				<inject bean="PlayAnnouncement" />
+			</list>
+		</property>
+		<property name="detectors">
+			<list>
+				<inject bean="Announcement.OC" />
+				<inject bean="Announcement.OF" />
+			</list>
+		</property>
+	</bean>
+
+</deployment>
