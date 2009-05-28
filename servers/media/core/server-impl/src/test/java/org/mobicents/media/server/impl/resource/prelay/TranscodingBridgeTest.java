@@ -6,6 +6,8 @@
 package org.mobicents.media.server.impl.resource.prelay;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +30,8 @@ import org.mobicents.media.server.impl.dsp.audio.g711.alaw.DecoderFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.alaw.EncoderFactory;
 import org.mobicents.media.server.impl.resource.fft.AnalyzerFactory;
 import org.mobicents.media.server.impl.resource.test.SineGeneratorFactory;
+import org.mobicents.media.server.impl.rtp.RtpFactory;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.resource.PipeFactory;
 import org.mobicents.media.server.spi.Connection;
@@ -35,7 +39,7 @@ import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.dsp.Codec;
-
+import static org.junit.Assert.*;
 /**
  *
  * @author kulikov
@@ -59,9 +63,12 @@ public class TranscodingBridgeTest {
     private Semaphore semaphore;
     private boolean res;
     private DspFactory dspFactory;
+    private RtpFactory rtpFactory;
     
     private EncoderFactory encoderFactory;
     private DecoderFactory decoderFactory;
+    
+    private ArrayList list;
     
     public TranscodingBridgeTest() {
     }
@@ -76,12 +83,27 @@ public class TranscodingBridgeTest {
 
     @Before
     public void setUp() throws Exception {
+        list = new ArrayList();
+        
         semaphore = new Semaphore(0);
         res = false;
         
         //creating timer
         timer = new TimerImpl();
 
+        HashMap<Integer, Format> rtpmap = new HashMap();
+        rtpmap.put(0, AVProfile.PCMA);
+        
+        rtpFactory = new RtpFactory();
+        rtpFactory.setBindAddress("localhost");
+        rtpFactory.setPortRange("1024-65535");
+        rtpFactory.setJitter(60);
+        rtpFactory.setTimer(timer);
+        rtpFactory.setFormatMap(rtpmap);
+        
+        Hashtable<String, RtpFactory> rtpFactories = new Hashtable();
+        rtpFactories.put("audio", rtpFactory);
+        
         //preparing g711: ALaw encoder, ULAW decoder
         encoderFactory = new EncoderFactory();
         decoderFactory = new DecoderFactory();
@@ -134,7 +156,8 @@ public class TranscodingBridgeTest {
         packetRelayEnp.setTimer(timer);
         packetRelayEnp.setTxChannelFactory(prChannelFactory);
         packetRelayEnp.setRxChannelFactory(prChannelFactory);
-
+        packetRelayEnp.setRtpFactory(rtpFactories);
+        
         //strating packet relay endpoint
         packetRelayEnp.start();
 
@@ -163,6 +186,7 @@ public class TranscodingBridgeTest {
         receiver.setTxChannelFactory(channelFactory);
         receiver.setRxChannelFactory(channelFactory);
         receiver.setSinkFactory(detFactory);
+        receiver.setRtpFactory(rtpFactories);
         receiver.start();
     }
 
@@ -191,6 +215,7 @@ public class TranscodingBridgeTest {
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         
         gen1.stop();
+        assertEquals(true, !list.isEmpty());
 
         receiver.deleteAllConnections();
         sender.deleteAllConnections();
@@ -199,6 +224,33 @@ public class TranscodingBridgeTest {
         
     }
 
+    @Test
+    public void testRtpTransmission() throws Exception {
+        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection rxConnection = receiver.createConnection(ConnectionMode.SEND_RECV);
+
+        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_RECV);
+
+        rxC.setOtherParty(txConnection);
+//        txC.setOtherParty(rxConnection);
+        txC.setRemoteDescriptor(rxConnection.getLocalDescriptor());
+        rxConnection.setRemoteDescriptor(txC.getLocalDescriptor());
+        
+        MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
+        gen1.start();
+
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        assertEquals(true, !list.isEmpty());
+        
+        gen1.stop();
+
+//        receiver.deleteAllConnections();
+//        sender.deleteAllConnections();
+        
+//        packetRelayEnp.deleteAllConnections();
+        
+    }
 
     private class TestSourceFactory implements ComponentFactory {
 
@@ -258,7 +310,7 @@ public class TranscodingBridgeTest {
         }
 
         public Format[] getFormats() {
-            return new Format[]{Codec.PCMA};
+            return new Format[]{Codec.LINEAR_AUDIO};
         }
         
         public void run() {
@@ -266,9 +318,9 @@ public class TranscodingBridgeTest {
             buffer.setSequenceNumber(seq++);
             buffer.setDuration(20);
             buffer.setTimeStamp(seq* 20);
-            buffer.setFormat(Codec.PCMA);
+            buffer.setFormat(Codec.LINEAR_AUDIO);
             buffer.setData(new byte[320]);
-            buffer.setLength(160);
+            buffer.setLength(320);
             buffer.setOffset(0);
             otherParty.receive(buffer);
         }
@@ -281,15 +333,16 @@ public class TranscodingBridgeTest {
         }
         
         public Format[] getFormats() {
-            return new Format[]{Codec.LINEAR_AUDIO};
+            return new Format[]{Codec.PCMA};
         }
 
         public boolean isAcceptable(Format format) {
-            return format.matches(Codec.LINEAR_AUDIO);
+            return format.matches(Codec.PCMA);
         }
 
         public void receive(Buffer buffer) {
             System.out.println("==== receive " + buffer);
+            list.add(buffer);
         }
         
     }
