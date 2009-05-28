@@ -90,7 +90,7 @@ public class LocalConnectionImpl extends ConnectionImpl {
         //join channels
         if (txChannel != null && otherConnection.rxChannel != null) {
             txChannel.connect(txInput);
-            otherConnection.rxChannel.connect(txOutput);
+            otherConnection.rxChannel.connect(txOutput);            
         }
         
         if (rxChannel != null && otherConnection.txChannel != null) {
@@ -112,7 +112,7 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
         
         if (rxChannel != null && otherConnection.txChannel != null) {
-            rxChannel.disconnect(rxOutput);
+            rxChannel.disconnect(rxOutput);            
             otherConnection.txChannel.disconnect(rxInput);
             rxChannel.setConnection(null);
         }
