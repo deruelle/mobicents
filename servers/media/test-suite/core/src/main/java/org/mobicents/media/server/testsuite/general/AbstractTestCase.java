@@ -240,7 +240,7 @@ public abstract class AbstractTestCase implements JainMgcpExtendedListener, Runn
         try {
 
             stop();
-            this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
+            this.clientTestNodeAddress = InetAddress.getByName(this.callDisplay.getLocalAddress());
             this.serverJbossBindAddress = InetAddress.getByName(this.callDisplay.getRemoteAddress());
 
             this.stack = new JainMgcpStackImpl(this.clientTestNodeAddress, this.callDisplay.getLocalPort());
