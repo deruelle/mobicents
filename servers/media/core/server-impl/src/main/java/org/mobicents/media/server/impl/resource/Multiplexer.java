@@ -24,6 +24,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.spi.Connection;
 
 /**
  * Combines several signals for transmission over a single medium. A
@@ -57,6 +58,12 @@ public class Multiplexer extends AbstractSink implements Outlet {
         return inputFormats;
     }
 
+    @Override
+    public void setConnection(Connection connection) {
+        super.setConnection(connection);
+        output.setConnection(connection);
+    }
+    
     @Override
     public void connect(MediaSource source) {
     	if(inputs.containsKey(((AbstractSource) source).getId()))
