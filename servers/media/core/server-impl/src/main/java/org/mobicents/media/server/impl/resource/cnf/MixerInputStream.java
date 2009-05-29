@@ -16,7 +16,6 @@ package org.mobicents.media.server.impl.resource.cnf;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSink;
@@ -31,13 +30,16 @@ public class MixerInputStream extends AbstractSink {
     private int jitter;
     private long duration;
     protected AudioMixer mixer;
-    
-    private transient Logger logger = Logger.getLogger(MixerInputStream.class);
-    
+        
     public MixerInputStream(AudioMixer mixer, int jitter) {
     	super("MixerInputStream");
         this.mixer = mixer;
         this.jitter = jitter;
+    }
+
+    @Override
+    public String getId() {
+        return mixer.getId();
     }
     
     public boolean isReady() {
