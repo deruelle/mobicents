@@ -195,8 +195,8 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected void releaseRxChannel(Channel channel) {
-        if (channel != null) {
-            channel.disconnect(source);
+        if (channel != null && sink != null) {
+            channel.disconnect(sink);
             rxChannelFactory.release(channel);
         }
     }
@@ -211,7 +211,7 @@ public class EndpointImpl implements Endpoint {
     }
 
     protected void releaseTxChannel(Channel channel) {
-        if (channel != null) {
+        if (channel != null && source != null) {
             channel.disconnect(source);
             txChannelFactory.release(channel);
         }
