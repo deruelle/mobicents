@@ -377,35 +377,39 @@ public class RtpSocket implements Runnable {
 	 * @throws java.io.IOException
 	 */
 	public void send(Buffer buffer) throws IOException {
-		if (channel.isConnected()) {
-			rounds = 0;
+		try {
+			if (channel.isConnected()) {
+				rounds = 0;
 
-			RtpHeader h = (RtpHeader) buffer.getHeader();
-			byte[] headerByte = h.toByteArray();
+				RtpHeader h = (RtpHeader) buffer.getHeader();
+				byte[] headerByte = h.toByteArray();
 
-			int len = headerByte.length + buffer.getLength();
+				int len = headerByte.length + buffer.getLength();
 
-			senderBuffer = new byte[len];
+				senderBuffer = new byte[len];
 
-			// combine RTP header and payload
-			System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
-			System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
+				// combine RTP header and payload
+				System.arraycopy(headerByte, 0, senderBuffer, 0, headerByte.length);
+				System.arraycopy((byte[]) buffer.getData(), 0, senderBuffer, headerByte.length, buffer.getLength());
 
-			// construct datagram packet and send synchronously it out
-			// senderPacket.setData(senderBuffer, 0, len);
-			try {
-				// socket.send(senderPacket);
-				ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
-				int count = 0;
+				// construct datagram packet and send synchronously it out
+				// senderPacket.setData(senderBuffer, 0, len);
+				try {
+					// socket.send(senderPacket);
+					ByteBuffer byteBuffer1 = ByteBuffer.wrap(senderBuffer);
+					int count = 0;
 
-				while (count < len) {
-					count += channel.send(byteBuffer1, remoteInetSocketAddress);
-					byteBuffer1.compact();
-					byteBuffer1.flip();
+					while (count < len) {
+						count += channel.send(byteBuffer1, remoteInetSocketAddress);
+						byteBuffer1.compact();
+						byteBuffer1.flip();
+					}
+				} catch (Exception e) {
+					logger.error(e);
 				}
-			} catch (Exception e) {
-				logger.error(e);
 			}
+		} finally {
+			buffer.dispose();
 		}
 	}
 
