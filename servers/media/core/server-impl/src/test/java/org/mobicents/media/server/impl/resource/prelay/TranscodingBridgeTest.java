@@ -226,11 +226,11 @@ public class TranscodingBridgeTest {
 
     @Test
     public void testRtpTransmission() throws Exception {
-        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
-        Connection rxConnection = receiver.createConnection(ConnectionMode.SEND_RECV);
+        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
+        Connection rxConnection = receiver.createConnection(ConnectionMode.RECV_ONLY);
 
-        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_RECV);
-        Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_RECV);
+        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
+        Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_ONLY);
 
         rxC.setOtherParty(txConnection);
 //        txC.setOtherParty(rxConnection);
@@ -341,7 +341,6 @@ public class TranscodingBridgeTest {
         }
 
         public void receive(Buffer buffer) {
-            System.out.println("==== receive " + buffer);
             list.add(buffer);
         }
         
