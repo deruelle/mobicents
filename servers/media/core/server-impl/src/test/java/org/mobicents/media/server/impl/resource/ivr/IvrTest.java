@@ -41,6 +41,8 @@ import org.mobicents.media.server.spi.NotificationListener;
 import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.resource.AudioPlayer;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
+import org.mobicents.media.server.spi.resource.DtmfGenerator;
 import org.mobicents.media.server.spi.resource.Recorder;
 
 /**
@@ -68,7 +70,8 @@ public class IvrTest {
 	private boolean end_of_media = false;
 	private boolean failed = false;
 	private boolean stopped = false;
-	private boolean completed = true;
+	private boolean completed = false;
+	private boolean receivedEvent = false;
 
 	public IvrTest() {
 	}
@@ -88,6 +91,7 @@ public class IvrTest {
 
 		HashMap<Integer, Format> rtpmap = new HashMap();
 		rtpmap.put(0, AVProfile.PCMU);
+		rtpmap.put(101, AVProfile.DTMF);
 
 		rtpFactory = new RtpFactory();
 		rtpFactory.setBindAddress("localhost");
@@ -135,12 +139,14 @@ public class IvrTest {
 		p1.setOutlet("dsp");
 
 		PipeFactory p2 = new PipeFactory();
-		p2.setInlet("dsp");
-		p2.setOutlet("DeMux");
-
+		p2.setInlet("DeMux");
+		p2.setOutlet("Rfc2833DetectorFactory");
+		
 		PipeFactory p3 = new PipeFactory();
-		p3.setInlet("DeMux");
-		p3.setOutlet("Rfc2833DetectorFactory");
+		p3.setInlet("dsp");
+		p3.setOutlet("DeMux");
+
+
 
 		PipeFactory p4 = new PipeFactory();
 		p4.setInlet("DeMux");
@@ -172,51 +178,48 @@ public class IvrTest {
 		// start IVREndpoint
 		ivrEnp.start();
 
-		
 		/**
 		 * Components declared for Ann Endpoint
 		 */
-		
-		//Mux
+
+		// Mux
 		MuxFactory muxFact = new MuxFactory("Mux");
-		
-		//Rfc2833Generator
+
+		// Rfc2833Generator
 		Rfc2833GeneratorFactory rfc2833GenFact = new Rfc2833GeneratorFactory();
 		rfc2833GenFact.setName("Rfc2833GeneratorFactory");
-		
+
 		List annConponents = new ArrayList();
 		annConponents.add(muxFact);
 		annConponents.add(rfc2833GenFact);
 		annConponents.add(dspFactory);
-		
-		
+
 		PipeFactory p5 = new PipeFactory();
 		p5.setInlet(null);
 		p5.setOutlet("Mux");
-		
+
 		PipeFactory p6 = new PipeFactory();
 		p6.setInlet("Rfc2833GeneratorFactory");
 		p6.setOutlet("Mux");
-		
+
 		PipeFactory p7 = new PipeFactory();
 		p7.setInlet("Mux");
 		p7.setOutlet("dsp");
-		
+
 		PipeFactory p8 = new PipeFactory();
 		p8.setInlet("dsp");
 		p8.setOutlet(null);
-		
+
 		List annPipes = new ArrayList();
 		annPipes.add(p5);
 		annPipes.add(p6);
 		annPipes.add(p7);
 		annPipes.add(p8);
-		
-		
+
 		// creating transparent channels
 		ChannelFactory channelFactory = new ChannelFactory();
 		channelFactory.start();
-		
+
 		channelFactory.setComponents(annConponents);
 		channelFactory.setPipes(annPipes);
 
@@ -274,11 +277,25 @@ public class IvrTest {
 		txConnection.setRemoteDescriptor(rxConnection.getLocalDescriptor());
 		rxConnection.setRemoteDescriptor(txConnection.getLocalDescriptor());
 
+		DtmfGenerator dtmfGene = (DtmfGenerator) txConnection.getComponent("Rfc2833GeneratorFactory");
+		assertNotNull(dtmfGene);
+		dtmfGene.setDigit("5");
+
+		DtmfDetector dtmfDete = (DtmfDetector) rxConnection.getComponent("Rfc2833DetectorFactory");
+		assertNotNull(dtmfDete);
+		dtmfDete.addListener(new DTMFListener(5));
+
 		player.start();
+		recorder.start("ivr-test/8kulaw.wav");
 
-		recorder.start("recorder-test/8kulaw.wav");
-
-		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
+		
+		System.out.println("Firing event now");
+		//Fire dtmf
+		dtmfGene.fireDtmf();
+		
+		//wait for another few secs
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
 
 		assertTrue(started);
 		assertTrue(completed);
@@ -330,6 +347,22 @@ public class IvrTest {
 				failed = true;
 				semaphore.release();
 				break;
+			}
+		}
+
+	}
+
+	private class DTMFListener implements NotificationListener {
+		int eventId = 0;
+
+		public DTMFListener(int eventId) {
+			this.eventId = eventId;
+		}
+
+		public void update(NotifyEvent event) {
+			System.out.println("Received DTMF " + event);
+			if (event.getEventID() == eventId) {
+				receivedEvent = true;
 			}
 		}
 

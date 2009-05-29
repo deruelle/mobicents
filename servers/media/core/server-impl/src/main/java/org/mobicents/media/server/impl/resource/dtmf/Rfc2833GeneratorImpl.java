@@ -10,6 +10,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.BufferFactory;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.resource.DtmfGenerator;
 
 /**
@@ -156,7 +157,7 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 
 			buffer.setOffset(0);
 			buffer.setLength(4);
-			buffer.setFormat(Rfc2833DetectorImpl.DTMF);
+			buffer.setFormat(AVProfile.DTMF);
 			buffer.setSequenceNumber(seq);
 			buffer.setTimeStamp(timeStamp);
 

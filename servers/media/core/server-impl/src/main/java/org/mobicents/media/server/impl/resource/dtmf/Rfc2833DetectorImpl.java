@@ -19,6 +19,7 @@ import org.mobicents.media.Format;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
@@ -30,7 +31,7 @@ public class Rfc2833DetectorImpl extends AbstractSink implements DtmfDetector {
 
 	private transient Logger logger = Logger.getLogger(Rfc2833DetectorImpl.class);
 	
-	public final static Format[] FORMATS = new Format[] { DTMF };
+	public final static Format[] FORMATS = new Format[] { AVProfile.DTMF };
 
 	private String mask = DETECTOR_MASK;
 	private int duration = DETECTOR_DURATION;
@@ -148,7 +149,7 @@ public class Rfc2833DetectorImpl extends AbstractSink implements DtmfDetector {
 	}
 
 	public boolean isAcceptable(Format format) {
-		return DTMF.equals(format);
+		return AVProfile.DTMF.equals(format);
 	}
 
 }

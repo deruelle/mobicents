@@ -17,6 +17,7 @@ import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorImpl;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorImpl;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
 import org.mobicents.media.server.spi.Timer;
 
@@ -113,7 +114,7 @@ public class Rfc2833GeneratorTest {
 
 		public void receive(Buffer buffer) {
 			
-			isFormatCorrect &= buffer.getFormat().matches(Rfc2833DetectorImpl.DTMF);
+			isFormatCorrect &= buffer.getFormat().matches(AVProfile.DTMF);
 			isSizeCorrect = ((buffer.getLength() - buffer.getOffset()) == 4);
 
 			byte[] data = (byte[]) buffer.getData();

@@ -25,6 +25,7 @@ import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorFactory;
 import org.mobicents.media.server.impl.rtp.RtpHeader;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
@@ -148,7 +149,7 @@ public class Rfc2833DtmfGeneratorTest {
 		}
 
 		public Format[] getFormats() {
-			return new Format[] { DtmfDetector.DTMF };
+			return new Format[] { AVProfile.DTMF };
 		}
 
 		public boolean isAcceptable(Format format) {
