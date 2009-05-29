@@ -110,6 +110,14 @@ public class AudioPlayerTest {
 	public void testGetResourceType() {
 		assertEquals(10, player.getResourceType());
 	}
+	
+	@Test
+	public void testFailure() throws Exception {
+		String file = "http://localhost:8080/media-jsr309-servlet/audio/AAABBB.wav";
+		
+		player.setFile(file);
+		player.start();
+	}
 
 	@Test
 	public void test_GSM() throws Exception {

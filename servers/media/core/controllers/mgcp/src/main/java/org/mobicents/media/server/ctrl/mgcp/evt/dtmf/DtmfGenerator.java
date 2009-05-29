@@ -43,7 +43,7 @@ public class DtmfGenerator extends SignalGenerator {
 	@Override
 	public void start(Request request) {
 		dtmfGenerator.setDigit(this.digit);
-		dtmfGenerator.start();
+		dtmfGenerator.fireDtmf();
 	}
 
 }

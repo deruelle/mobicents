@@ -20,5 +20,7 @@ public interface DtmfGenerator extends MediaSource {
 	
 	public void setVolume(int volume);
 	public int getVolume();
+	
+	public void fireDtmf();
 
 }

@@ -253,6 +253,10 @@ public class InbandGeneratorImpl extends AbstractSource implements DtmfGenerator
 	}
 
 	public void start() {
+
+	}
+
+	public void fireDtmf() {
 		this.run();
 	}
 

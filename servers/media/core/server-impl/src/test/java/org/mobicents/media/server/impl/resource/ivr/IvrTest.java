@@ -1,11 +1,14 @@
 package org.mobicents.media.server.impl.resource.ivr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -21,11 +24,13 @@ import org.mobicents.media.server.impl.dsp.DspFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.ulaw.DecoderFactory;
 import org.mobicents.media.server.impl.dsp.audio.g711.ulaw.EncoderFactory;
 import org.mobicents.media.server.impl.resource.DemuxFactory;
+import org.mobicents.media.server.impl.resource.MuxFactory;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerEvent;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory;
 import org.mobicents.media.server.impl.resource.audio.RecorderEvent;
 import org.mobicents.media.server.impl.resource.audio.RecorderFactory;
 import org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorFactory;
+import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorFactory;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.resource.ChannelFactory;
@@ -167,9 +172,53 @@ public class IvrTest {
 		// start IVREndpoint
 		ivrEnp.start();
 
+		
+		/**
+		 * Components declared for Ann Endpoint
+		 */
+		
+		//Mux
+		MuxFactory muxFact = new MuxFactory("Mux");
+		
+		//Rfc2833Generator
+		Rfc2833GeneratorFactory rfc2833GenFact = new Rfc2833GeneratorFactory();
+		rfc2833GenFact.setName("Rfc2833GeneratorFactory");
+		
+		List annConponents = new ArrayList();
+		annConponents.add(muxFact);
+		annConponents.add(rfc2833GenFact);
+		annConponents.add(dspFactory);
+		
+		
+		PipeFactory p5 = new PipeFactory();
+		p5.setInlet(null);
+		p5.setOutlet("Mux");
+		
+		PipeFactory p6 = new PipeFactory();
+		p6.setInlet("Rfc2833GeneratorFactory");
+		p6.setOutlet("Mux");
+		
+		PipeFactory p7 = new PipeFactory();
+		p7.setInlet("Mux");
+		p7.setOutlet("dsp");
+		
+		PipeFactory p8 = new PipeFactory();
+		p8.setInlet("dsp");
+		p8.setOutlet(null);
+		
+		List annPipes = new ArrayList();
+		annPipes.add(p5);
+		annPipes.add(p6);
+		annPipes.add(p7);
+		annPipes.add(p8);
+		
+		
 		// creating transparent channels
 		ChannelFactory channelFactory = new ChannelFactory();
 		channelFactory.start();
+		
+		channelFactory.setComponents(annConponents);
+		channelFactory.setPipes(annPipes);
 
 		// creating source
 		AudioPlayerFactory genFactory = new AudioPlayerFactory();

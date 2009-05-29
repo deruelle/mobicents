@@ -108,8 +108,12 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 	public int getVolume() {
 		return this.volume;
 	}
-
-	public void start() {
+	
+	public void start(){
+		
+	}
+	
+	public void fireDtmf() {
 		this.digit = encode(this.sDigit);
 		seq = 0;
 		mediaPackets = duration / getEndpoint().getTimer().getHeartBeat();
