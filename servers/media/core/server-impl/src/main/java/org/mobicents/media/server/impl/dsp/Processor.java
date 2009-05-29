@@ -125,10 +125,6 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             super.connect(sink);
         }
 
-        protected boolean isConnected() {
-            return otherParty != null;
-        }
-
         protected Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
@@ -249,10 +245,6 @@ public class Processor extends BaseComponent implements SignalingProcessor {
 
         public void receive(Buffer buffer) {
             output.transmit(buffer);
-        }
-
-        protected boolean isConnected() {
-            return otherParty != null;
         }
 
         protected Format[] getOtherPartyFormats() {
