@@ -23,6 +23,7 @@ import org.mobicents.media.MediaSource;
 public abstract class AbstractSource extends BaseComponent implements MediaSource {
 
 	protected transient MediaSink otherParty;
+        
 	public AbstractSource(String name) {
 		super(name);
 	}
@@ -33,12 +34,14 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
 	 * @see org.mobicents.MediaStream#connect(MediaSink).
 	 */
 	public void connect(MediaSink otherParty) {
-		this.otherParty = otherParty;
-		//if (((AbstractSink) otherParty).otherParty == null) {
-		if (!((AbstractSink) otherParty).isConnected(this)){
-			
-			otherParty.connect(this);
-		}
+            AbstractSink sink = (AbstractSink) otherParty;
+            if (sink.otherParty == null) {
+                sink.otherParty = this;
+            }
+            
+            if (this.otherParty == null) {
+                otherParty.connect(this);
+            }
 	}
 
 	/**
@@ -47,45 +50,18 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
 	 * @see org.mobicents.MediaStream#diconnection(MediaSink).
 	 */
 	public void disconnect(MediaSink otherParty) {
-	
-		disconnect(otherParty, true);
+            AbstractSink sink = (AbstractSink) otherParty;
+            if (sink.otherParty != null) {
+                sink.otherParty = null;
+            }
+            
+            if (this.otherParty != null) {
+                otherParty.disconnect(this);
+            }
 	}
 
-	public void disconnect(MediaSink otherParty, boolean doCallOtherParty)
-	{
-		if (this.otherParty != null && otherParty != null) {
-			
-			// ((AbstractSink) otherParty).otherParty = null;
-			if (((AbstractSink) otherParty).isConnected(this))
-			{
-				//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
-				if(doCallOtherParty)
-					((AbstractSink) otherParty).disconnect(this,false);
-				this.otherParty = null;
-				
-			}else
-			{
-				//throw new IllegalArgumentException("Disconnect on["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-				//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-			}
-		}
-		
-	}
-	
-	@Override
-	public boolean equals(Object other) {
-		return other == this;
-	}
-
-	@Override
-	public int hashCode() {
-		int hash = 3;
-		return hash;
-	}
-
-	public boolean isConnected(MediaSink component) {
-
-		return this.otherParty == component;
-	}
-
+        public boolean isConnected() {
+            return otherParty != null;
+        }
+        
 }

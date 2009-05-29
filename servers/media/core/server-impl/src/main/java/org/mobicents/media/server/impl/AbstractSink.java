@@ -34,11 +34,15 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
 	 * @see org.mobicents.MediaSink#connect(MediaStream).
 	 */
 	public void connect(MediaSource otherParty) {
-		this.otherParty = otherParty;
-		// if (((AbstractSource) otherParty).otherParty != this) {
-		if (!((AbstractSource) otherParty).isConnected(this)) {
-			otherParty.connect(this);
-		}
+            AbstractSource source = ((AbstractSource)otherParty);
+            
+            if (source.otherParty != this) {
+                source.otherParty = this;
+            }
+            
+            if (this.otherParty == null) {
+                otherParty.connect(this);
+            }
 	}
 
 	/**
@@ -47,33 +51,19 @@ public abstract class AbstractSink extends BaseComponent implements MediaSink {
 	 * @see org.mobicents.MediaSink#disconnect(MediaStream).
 	 */
 	public void disconnect(MediaSource otherParty) {
-		disconnect(otherParty, true);
-		
+            AbstractSource source = ((AbstractSource)otherParty);
+            
+            if (source.otherParty == this) {
+                source.otherParty = null;
+            }
+            
+            if (this.otherParty != null) {
+                otherParty.disconnect(this);
+            }
 	}
 
-	public void disconnect(MediaSource otherParty, boolean doCallOther)
-	{
-		if (this.otherParty != null && otherParty != null) {
-			
-			// ((AbstractSource) otherParty).otherParty = null;
-			if (((AbstractSource) otherParty).isConnected(this)) {
-				//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
-				if(doCallOther)
-					((AbstractSource) otherParty).disconnect(this,false);
-				
-					
-				this.otherParty = null;
-			} else {
-				//throw new IllegalArgumentException("Disconnect. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-				//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-			}
-
-		}
-	}
-
-
-	public boolean isConnected(MediaSource component) {
-		//System.err.println("siConnected["+this+"] local: "+this.otherParty+", passed: "+component);
-		return this.otherParty == component;
-	}
+        public boolean isConnected() {
+            return otherParty != null;
+        }
+        
 }
