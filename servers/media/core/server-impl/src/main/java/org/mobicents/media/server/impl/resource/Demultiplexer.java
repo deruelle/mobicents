@@ -20,9 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
-import org.mobicents.media.Outlet;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.BufferFactory;
@@ -33,7 +31,7 @@ import org.mobicents.media.server.spi.Connection;
  * 
  * @author Oleg Kulikov
  */
-public class Demultiplexer extends AbstractSource implements Inlet {
+public class Demultiplexer extends AbstractSource {
 
     private static final long serialVersionUID = -3391642385740571114L;
     private final static Format[] inputFormats = new Format[0];
@@ -56,6 +54,10 @@ public class Demultiplexer extends AbstractSource implements Inlet {
         input = new Input("Input." + name);
     }
 
+    private String getIdentifier() {
+        return getId();
+    }
+    
     @Override
     public void setConnection(Connection connection) {
         super.setConnection(connection);
@@ -68,25 +70,16 @@ public class Demultiplexer extends AbstractSource implements Inlet {
 
     @Override
     public void connect(MediaSink sink) {
-    	if(branches.containsKey(((AbstractSink) sink).getId()))
-    	{
-    		IllegalStateException e =new IllegalStateException("Cannot connect sink - its already connected - this: "+this+", source: "+sink);
-    		e.printStackTrace();
-    		throw e;
-    	}
         Output out = new Output("Output." + getName());
-        branches.put(((AbstractSink) sink).getId(), out);
+        branches.put(sink.getId(), out);
         out.connect(sink);
         this.reassemblyFormats();
     }
 
     @Override
     public void disconnect(MediaSink sink) {
-    	//FIXME: add throw on null
-        Output out = (Output) branches.remove(((AbstractSink) sink).getId());
-        if (out != null) {
-            sink.disconnect(out);
-        }
+        Output out = (Output) branches.remove(sink.getId());        
+        out.disconnect(sink);
         this.reassemblyFormats();
     }
 
@@ -111,22 +104,6 @@ public class Demultiplexer extends AbstractSource implements Inlet {
     }
     
     
-    @Override
-	public void disconnect(MediaSink otherParty, boolean doCallOtherParty) {
-    	
-    	 Output out = (Output) branches.remove(((AbstractSink) otherParty).getId());
-         if (out != null) {
-        	 if(doCallOtherParty)
-        		 ((AbstractSink)otherParty).disconnect(out,false);
-
-         }
-	}
-
-	@Override
-	public boolean isConnected(MediaSink sink) {
-		
-		return branches.containsKey(((AbstractSink) sink).getId());
-	}
 
     public int getBranchCount() {
         return branches.size();
@@ -186,13 +163,16 @@ public class Demultiplexer extends AbstractSource implements Inlet {
             super("Demultiplexer.Output:" + parent);
         }
 
+        @Override
+        public String getId() {
+            return getIdentifier();
+        }
+        
         protected void push(Buffer buffer) {
             try {
                 if (otherParty.isAcceptable(buffer.getFormat())) {
-
                     otherParty.receive(buffer);
                 } else {
-
                     buffer.dispose();
                 }
             } catch (NullPointerException e) {
@@ -214,29 +194,5 @@ public class Demultiplexer extends AbstractSource implements Inlet {
             return input.getOtherPartyFormats();
         }
 
-		@Override
-		public void disconnect(MediaSink otherParty, boolean doCallOtherParty) {
-			//Yes , we overide it, its bad, but its a bit faster not to perform twice  the same check :)
-			if (this.otherParty != null ) {
-				
-				// ((AbstractSink) otherParty).otherParty = null;
-				if (((AbstractSink) otherParty).isConnected(this))
-				{
-					//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
-					if(doCallOtherParty)
-						((AbstractSink) otherParty).disconnect(this,false);
-					this.otherParty = null;
-					branches.remove(otherParty.getId());
-					
-				}else
-				{
-					//throw new IllegalArgumentException("Disconnect on["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-					//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-				}
-			}
-		}
-
-    }
-    
-    
+    }    
 }
