@@ -39,8 +39,6 @@ public class Multiplexer extends AbstractSink implements Outlet {
 
     private Format[] outputFormats = null;
     private final static Format[] inputFormats = new Format[0];
-    
-
     private Map<String, Input> inputs = new ConcurrentHashMap<String, Input>();
     private Output output;
     private int seq = 0;
@@ -63,48 +61,21 @@ public class Multiplexer extends AbstractSink implements Outlet {
         super.setConnection(connection);
         output.setConnection(connection);
     }
-    
+
     @Override
     public void connect(MediaSource source) {
-    	if(inputs.containsKey(((AbstractSource) source).getId()))
-    	{
-    		IllegalStateException e =new IllegalStateException("Cannot connect source - its already connected - this: "+this+", source: "+source);
-    		e.printStackTrace();
-    		throw e;
-    	}
         Input input = new Input(getName() + ".Input");
+        inputs.put(source.getId(), input);
         source.connect(input);
-        inputs.put(((AbstractSource) source).getId(), input);
         reassemblyFormats();
     }
 
     @Override
     public void disconnect(MediaSource source) {
-    	//FIXME: add throw on null
-    	  Input input = inputs.remove(((AbstractSource) source).getId());
-          if (input != null) {
-              source.disconnect(input);
-
-              reassemblyFormats();
-          }
+        Input input = inputs.remove(source.getId());
+        source.disconnect(input);
+        reassemblyFormats();
     }
-
-    @Override
-	public void disconnect(MediaSource otherParty, boolean doCallOther) {
-    	Input input = inputs.remove(((AbstractSource) otherParty).getId());
-        if (input != null) {
-        	if(doCallOther)
-        		((AbstractSource) otherParty).disconnect(input,false);
-
-            reassemblyFormats();
-        }
-	}
-
-	@Override
-	public boolean isConnected(MediaSource source) {
-		
-		return inputs.containsKey(((MediaSource) source).getId());
-	}
 
     /**
      * Reassemblies the list of used formats. This method is called each time
@@ -133,10 +104,19 @@ public class Multiplexer extends AbstractSink implements Outlet {
     public void receive(Buffer buffer) {
     }
 
+    private String getIdentifier() {
+        return getId();
+    }
+
     class Input extends AbstractSink {
 
         public Input(String name) {
             super(name);
+        }
+
+        @Override
+        public String getId() {
+            return getIdentifier();
         }
 
         public boolean isAcceptable(Format fmt) {
@@ -150,34 +130,10 @@ public class Multiplexer extends AbstractSink implements Outlet {
         public Format[] getFormats() {
             return inputFormats;
         }
-        
+
         protected Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
-
-		@Override
-		public void disconnect(MediaSource otherParty, boolean doCallOther) {
-			
-			//Yes , we overide it, its bad, but its a bit faster not to perform twice  the same check :)
-			if (this.otherParty != null) {
-				
-				// ((AbstractSource) otherParty).otherParty = null;
-				if (((AbstractSource) otherParty).isConnected(this)) {
-					//we need to inform other side so it can perform its task, but let it not call us, we already know of disconnect
-					if(doCallOther)
-						((AbstractSource) otherParty).disconnect(this,false);
-					
-					Input src = inputs.remove(((AbstractSource) otherParty).getId());
-					
-					this.otherParty = null;
-				} else {
-					//throw new IllegalArgumentException("Disconnect. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-					//System.err.println("Disconnect["+this+"]. Other party does not match. Local: " + this.otherParty + ", passed: " + otherParty);
-				}
-
-			}
-		}
-        
     }
 
     class Output extends AbstractSource {
@@ -188,10 +144,6 @@ public class Multiplexer extends AbstractSink implements Outlet {
             super(name);
         }
 
-        protected boolean isConnected() {
-            return otherParty != null;
-        }
-        
         public void start() {
             stopped = false;
         }
@@ -203,7 +155,7 @@ public class Multiplexer extends AbstractSink implements Outlet {
         public Format[] getFormats() {
             return outputFormats;
         }
-        
+
         protected void deliver(Buffer buffer) {
             otherParty.receive(buffer);
         }
@@ -220,6 +172,5 @@ public class Multiplexer extends AbstractSink implements Outlet {
 
         seq++;
     }
-
 }
 
