@@ -1,25 +1,93 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
-	    xmlns="urn:jboss:bean-deployer:2.0">
-	
-	
-	<!-- IVR -->
-	<bean name="Mobicents.MMS.IVRTrunkManagementService"
-	      class="org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagement">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=ivr",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ivr.IVRTrunkManagementMBean.class,registerDirectly=true)</annotation>
-		<property name="trunkName">media/trunk/IVR</property>
-		<property name="rtpFactory">
-			<inject bean="RtpFactory" />
-		</property>
-		<property name="mediaType">audio.x_wav</property>
-		<!--  DtmfMode can be either RFC2833 or INBAND or AUTO -->
-		<property name="dtmfMode">AUTO</property>
-		<property name="recordDir">${mms.home.dir}/data</property>
-		<property name="channels">24</property>
-		
-		<demand>RtpFactory</demand>
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+	<bean name="DeMuxFactory"
+		class="org.mobicents.media.server.impl.resource.DemuxFactory">
+		<constructor>
+			<parameter>DeMux</parameter>
+		</constructor>
 	</bean>
-	
+
+	<bean name="Rfc2833DetectorFactory"
+		class="org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorFactory">
+		<property name="name">Rfc2833DetectorFactory</property>
+	</bean>
+
+	<bean name="IVR-Pipe-1"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="outlet">audio.processor</property>
+	</bean>
+	<bean name="IVR-Pipe-2"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="inlet">audio.processor</property>
+		<property name="outlet">DeMux</property>
+	</bean>
+	<bean name="IVR-Pipe-3"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="inlet">DeMux</property>
+		<property name="outlet">Rfc2833DetectorFactory</property>
+	</bean>
+	<bean name="IVR-Pipe-4"
+		class="org.mobicents.media.server.resource.PipeFactory">
+		<property name="inlet">DeMux</property>
+	</bean>
+
+
+	<bean name="RxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory">
+		<property name="components">
+			<list>
+				<inject bean="DeMuxFactory" />
+				<inject bean="Rfc2833DetectorFactory" />
+				<inject bean="AudioProcessorFactory" />
+			</list>
+		</property>
+		<property name="pipes">
+			<list>
+				<inject bean="IVR-Pipe-1" />
+				<inject bean="IVR-Pipe-2" />
+				<inject bean="IVR-Pipe-3" />
+				<inject bean="IVR-Pipe-4" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- IVR  -->
+	<bean name="IVREndpoint"
+		class="org.mobicents.media.server.EndpointImpl">
+		<property name="localName">
+			/mobicents/media/IVR/[1..10]
+		</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+		<property name="sourceFactory">
+			<inject bean="AudioPlayerFactory" />
+		</property>
+		<property name="sinkFactory">
+			<inject bean="RecorderFactory" />
+		</property>
+		<property name="rtpFactory">
+			<map class="java.util.Hashtable" keyClass="java.lang.String"
+				valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
+				<entry>
+					<key>audio</key>
+					<value>
+						<inject bean="RTPAudioFactory" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="txChannelFactory">
+			<inject bean="TxChannelFactory" />
+		</property>
+		<property name="rxChannelFactory">
+			<inject bean="RxChannelFactory" />
+		</property>
+	</bean>
+
+
 </deployment>

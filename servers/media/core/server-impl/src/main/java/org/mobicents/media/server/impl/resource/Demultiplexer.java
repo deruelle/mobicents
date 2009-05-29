@@ -20,7 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
+import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
+import org.mobicents.media.Outlet;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.rtp.BufferFactory;
@@ -31,7 +33,7 @@ import org.mobicents.media.server.spi.Connection;
  * 
  * @author Oleg Kulikov
  */
-public class Demultiplexer extends AbstractSource {
+public class Demultiplexer extends AbstractSource implements Inlet {
 
     private static final long serialVersionUID = -3391642385740571114L;
     private final static Format[] inputFormats = new Format[0];

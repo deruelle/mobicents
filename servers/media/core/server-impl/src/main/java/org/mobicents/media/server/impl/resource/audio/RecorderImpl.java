@@ -175,7 +175,6 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 			// TODO : If length never reached, app should call .stop() at some
 			// point. Or should we also implement the Timer?
 			long recordinglength = ((long) sampleRate * this.recordTime * sampleSizeInBits) / 8;
-			System.out.println("recordinglength = " + recordinglength);
 
 			recorderStream = new RecorderStream(this, recordinglength);
 			if (fmt.getSigned() == 1) {
