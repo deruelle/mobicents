@@ -93,7 +93,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -123,7 +123,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(500, TimeUnit.MILLISECONDS);
 		assertEquals(false, receivedEvent);
@@ -140,7 +140,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -157,7 +157,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -174,7 +174,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -191,7 +191,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -208,7 +208,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -225,7 +225,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -242,7 +242,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -259,7 +259,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -276,7 +276,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -293,7 +293,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -310,7 +310,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -327,7 +327,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -344,7 +344,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -361,7 +361,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -378,7 +378,7 @@ public class InbandDetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);

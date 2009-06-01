@@ -292,7 +292,7 @@ public class IvrTest {
 		
 		System.out.println("Firing event now");
 		//Fire dtmf
-		dtmfGene.fireDtmf();
+		dtmfGene.start();
 		
 		//wait for another few secs
 		semaphore.tryAcquire(8, TimeUnit.SECONDS);

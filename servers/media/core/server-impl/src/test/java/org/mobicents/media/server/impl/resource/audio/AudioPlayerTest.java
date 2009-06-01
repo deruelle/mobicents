@@ -116,7 +116,11 @@ public class AudioPlayerTest {
 		String file = "http://localhost:8080/media-jsr309-servlet/audio/AAABBB.wav";
 		
 		player.setFile(file);
+		player.addListener(new PlayerListener());
 		player.start();
+		
+		semaphore.tryAcquire(2, TimeUnit.SECONDS);
+		assertTrue(failed);
 	}
 
 	@Test

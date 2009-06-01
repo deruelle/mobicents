@@ -76,7 +76,7 @@ public class Rfc2833GeneratorTest {
 		generator.setDigit("9");
 		generator.setEndpoint(endpoint);
 
-		generator.fireDtmf();
+		generator.start();
 
 		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
 
