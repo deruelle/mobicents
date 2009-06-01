@@ -5,9 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -16,14 +14,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
-import org.mobicents.media.server.EndpointImpl;
-import org.mobicents.media.server.impl.AbstractSink;
-import org.mobicents.media.server.impl.clock.TimerImpl;
-import org.mobicents.media.server.impl.resource.dtmf.Rfc2833GeneratorImpl;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
-import org.mobicents.media.server.spi.Endpoint;
-import org.mobicents.media.server.spi.Timer;
-import org.mobicents.media.server.spi.resource.DtmfGenerator;
+import org.mobicents.media.server.spi.resource.DtmfDetector;
 
 /**
  * 
@@ -35,11 +27,9 @@ public class JitterBufferTest {
 	private int period = 20;
 	private int jitter = 40;
 	private JitterBuffer jitterBuffer;
-	private BufferFactory bufferFactory = new BufferFactory(10, "ReceiverBuffer");
+	private BufferFactory bufferFactory = new BufferFactory(10, "JitterBufferTest");
 	private ArrayList packets = new ArrayList();
 	private final long ssrc = System.currentTimeMillis();
-
-	private List<Buffer> list = null;
 
 	private Semaphore semaphore;
 
@@ -58,7 +48,6 @@ public class JitterBufferTest {
 		rtpMap.put(101, AVProfile.DTMF);
 		jitterBuffer = new JitterBuffer(jitter, period, rtpMap);
 
-		list = new ArrayList<Buffer>();
 		semaphore = new Semaphore(0);
 	}
 
@@ -110,36 +99,81 @@ public class JitterBufferTest {
 
 	}
 
+	private Buffer generateRfc2833Buffer(boolean endOfEvent, boolean marker, int seq, byte digit, int volume) {
+		Buffer buffer = bufferFactory.allocate();
+
+		RtpHeader rtpHeader = new RtpHeader();
+		rtpHeader.init(marker, (byte) 101, seq, (int) seq * 20, ssrc);
+		buffer.setHeader(rtpHeader);
+
+		byte[] data = (byte[]) buffer.getData();
+		data[0] = digit;
+		data[1] = endOfEvent ? (byte) (volume | 0x80) : (byte) (volume & 0x7f);
+
+		buffer.setOffset(0);
+		buffer.setLength(4);
+		buffer.setFormat(AVProfile.DTMF);
+		buffer.setSequenceNumber(seq);
+		buffer.setTimeStamp(seq * 20);
+
+		return buffer;
+
+	}
+
 	@Test
 	public void testRFC2833Reading() throws Exception {
-		Timer timer = new TimerImpl();
 
-		Endpoint endpoint = new EndpointImpl();
-		endpoint.setTimer(timer);
+		int seq = 0;
 
-		DtmfGenerator generator = new Rfc2833GeneratorImpl("JitterBufferTest");
+		byte digit = (byte) 9;
+		int volume = 10;
+		boolean endOfEvent = false;
 
-		generator.connect(new TestSink("TestSink"));
-		generator.setDuration(100); // 100 ms
-		generator.setVolume(10);
-		generator.setDigit("9");
-		generator.setEndpoint(endpoint);
+		Buffer b0 = generateRfc2833Buffer(endOfEvent, true, seq, digit, volume);
+		seq++;
+		Buffer b1 = generateRfc2833Buffer(endOfEvent, false, seq, digit, volume);
+		seq++;
+		Buffer b2 = generateRfc2833Buffer(endOfEvent, false, seq, digit, volume);
+		seq++;
 
-		generator.fireDtmf();
-
-		semaphore.tryAcquire(150, TimeUnit.MILLISECONDS);
-
-		assertEquals(7, list.size());
-
-		write(jitterBuffer, createBuffer(list.get(0)), 16);
-		write(jitterBuffer, createBuffer(list.get(1)), 16);
-		write(jitterBuffer, createBuffer(list.get(2)), 16);
+		write(jitterBuffer, createBuffer(b0), 16);
+		write(jitterBuffer, createBuffer(b1), 16);
+		write(jitterBuffer, createBuffer(b2), 16);
 
 		Buffer buff = jitterBuffer.read();
 		assertTrue(buff != null);
-		
-		RtpHeader head = (RtpHeader)buff.getHeader();
+
+		RtpHeader head = (RtpHeader) buff.getHeader();
 		assertTrue(head.getMarker());
+		byte[] data = (byte[]) buff.getData();
+
+		String recdDigit = DtmfDetector.TONE[data[0]];
+		assertEquals("9", recdDigit);
+		boolean end = (data[1] & 0x80) != 0;
+		assertEquals(false, end);
+		
+		endOfEvent = true;
+		Buffer b3 = generateRfc2833Buffer(endOfEvent, false, seq, digit, volume);
+		seq++;
+		write(jitterBuffer, createBuffer(b3), 16);
+		
+		buff = jitterBuffer.read();
+		assertTrue(buff != null);
+		
+		buff = jitterBuffer.read();
+		assertTrue(buff != null);
+		
+		buff = jitterBuffer.read();
+		assertTrue(buff != null);
+		
+		head = (RtpHeader) buff.getHeader();
+		assertTrue(!head.getMarker());
+		data = (byte[]) buff.getData();
+
+		recdDigit = DtmfDetector.TONE[data[0]];
+		assertEquals("9", recdDigit);
+		end = (data[1] & 0x80) != 0;
+		assertEquals(true, end);
 
 	}
 
@@ -176,37 +210,4 @@ public class JitterBufferTest {
 		}
 	}
 
-	private class TestSink extends AbstractSink {
-
-		private long lastDuration = 0;
-		private long lastSeqNo = 0;
-		private long timeStamp = 0;
-
-		private int packetsReceived = 0;
-
-		private TestSink(String name) {
-			super(name);
-		}
-
-		public Format[] getFormats() {
-			return new Format[0];
-		}
-
-		public boolean isAcceptable(Format format) {
-			return true;
-		}
-
-		public void receive(Buffer buffer) {
-			
-			
-			RtpHeader header = (RtpHeader)buffer.getHeader();
-			
-			System.out.println(buffer +" \n " + header.getMarker());
-			
-			header.init(header.getMarker(), (byte) 101, header.getSeqNumber(), (int) buffer.getTimeStamp(), buffer.getSequenceNumber());
-			buffer.setHeader(header);
-			
-			list.add(buffer);
-		}
-	}
 }
