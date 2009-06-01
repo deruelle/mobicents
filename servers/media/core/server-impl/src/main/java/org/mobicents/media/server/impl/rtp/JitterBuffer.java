@@ -139,8 +139,10 @@ public class JitterBuffer implements Serializable {
                 buffer.setLength(length);
 
                 if (length == pSize) {
-                    if (queue.size() < maxSize) {
+                    if (queue.size() < maxSize) {                    	
                         queue.offer(buffer);
+                    } else{
+						buffer.dispose();
                     }
                     state = STATE_WAITING;
                 }
@@ -173,6 +175,8 @@ public class JitterBuffer implements Serializable {
             packetSize = 1764;
         } else if (format.matches(AVProfile.L16_STEREO)) {
             packetSize = 3528;
+        } else if (format.matches(AVProfile.DTMF)){
+        	packetSize = 4;
         }
         return packetSize;
     }
