@@ -123,6 +123,12 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
+            
+            Format[] fmts = otherParty.getFormats();
+            for (Format f : fmts) {
+                append(outputFormats, f);
+            }
+            
         }
 
         protected Format[] getOtherPartyFormats() {
@@ -252,7 +258,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         public Format[] getFormats() {
-            return toArray(inputFormats);
+            return toArray(outputFormats);
         }
     }
 

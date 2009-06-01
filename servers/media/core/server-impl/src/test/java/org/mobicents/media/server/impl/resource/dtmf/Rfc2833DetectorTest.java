@@ -75,7 +75,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(120, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -91,7 +91,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -107,7 +107,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -123,7 +123,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -139,7 +139,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -155,7 +155,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -171,7 +171,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -187,7 +187,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -203,7 +203,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -219,7 +219,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -235,7 +235,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -251,7 +251,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -267,7 +267,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -283,7 +283,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -299,7 +299,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);
@@ -315,7 +315,7 @@ public class Rfc2833DetectorTest {
 		detector.addListener(listener);
 		detector.connect(generator);
 
-		generator.start();
+		generator.fireDtmf();
 
 		semaphore.tryAcquire(10, TimeUnit.MILLISECONDS);
 		assertEquals(true, receivedEvent);

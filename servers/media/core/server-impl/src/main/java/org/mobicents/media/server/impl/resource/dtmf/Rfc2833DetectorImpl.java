@@ -149,7 +149,9 @@ public class Rfc2833DetectorImpl extends AbstractSink implements DtmfDetector {
 	}
 
 	public boolean isAcceptable(Format format) {
-		return AVProfile.DTMF.equals(format);
+		System.out.println("AVProfile.DTMF hash = "+AVProfile.DTMF.hashCode());
+		System.out.println("format hash = "+format.hashCode());
+		return AVProfile.DTMF.matches(format);
 	}
 
 }

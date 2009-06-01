@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mobicents.media.format.AudioFormat;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.impl.rtp.sdp.RTPAudioFormat;
 
 /**
@@ -50,13 +51,18 @@ public class FormatTest extends TestCase {
 
 		boolean res = format1.matches(format2);
 		assertEquals(res, true);
-		
-		
-		RTPAudioFormat DTMF1 = new RTPAudioFormat(101, "telephone-event", 8000, AudioFormat.NOT_SPECIFIED, AudioFormat.NOT_SPECIFIED);
-		RTPAudioFormat DTMF2 = new RTPAudioFormat(101, "telephone-event", 8000, AudioFormat.NOT_SPECIFIED, AudioFormat.NOT_SPECIFIED);
-		
+
+		RTPAudioFormat DTMF1 = new RTPAudioFormat(101, "telephone-event", 8000, AudioFormat.NOT_SPECIFIED,
+				AudioFormat.NOT_SPECIFIED);
+		RTPAudioFormat DTMF2 = new RTPAudioFormat(101, "telephone-event", 8000, AudioFormat.NOT_SPECIFIED,
+				AudioFormat.NOT_SPECIFIED);
+
 		res = DTMF1.equals(DTMF2);
 		assertEquals(res, true);
 	}
 
+	@Test
+	public void testDTMF() {
+		assertEquals(true, AVProfile.DTMF.equals(AVProfile.DTMF));
+	}
 }

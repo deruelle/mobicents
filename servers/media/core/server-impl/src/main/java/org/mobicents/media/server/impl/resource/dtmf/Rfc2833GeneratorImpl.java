@@ -37,6 +37,8 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 
 	private RtpHeader rtpHeader = new RtpHeader();
 
+	private int heartBeat = 20;
+
 	public Rfc2833GeneratorImpl(String name) {
 		super(name);
 		bufferFactory = new BufferFactory(10, name);
@@ -109,15 +111,16 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 	public int getVolume() {
 		return this.volume;
 	}
-	
-	public void start(){
-		
+
+	public void start() {
+
 	}
-	
+
 	public void fireDtmf() {
 		this.digit = encode(this.sDigit);
 		seq = 0;
-		mediaPackets = duration / getEndpoint().getTimer().getHeartBeat();
+		heartBeat = getEndpoint().getTimer().getHeartBeat();
+		mediaPackets = duration / heartBeat;
 		// Last two will be End of Event packets
 		mediaPackets = mediaPackets + 2;
 		this.run();
@@ -164,7 +167,7 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 			otherParty.receive(buffer);
 
 			try {
-				Thread.sleep(20); // sleepfor 20ms
+				Thread.sleep(heartBeat); // sleepfor 20ms
 			} catch (InterruptedException e) {
 			}
 		}
