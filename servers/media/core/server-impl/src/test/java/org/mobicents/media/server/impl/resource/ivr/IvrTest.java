@@ -285,23 +285,24 @@ public class IvrTest {
 		assertNotNull(dtmfDete);
 		dtmfDete.addListener(new DTMFListener(5));
 
-		//player.start();
-		//recorder.start("ivr-test/8kulaw.wav");
+		player.start();
+		recorder.start("ivr-test/8kulaw.wav");
 
-		//semaphore.tryAcquire(5, TimeUnit.SECONDS);
+		semaphore.tryAcquire(5, TimeUnit.SECONDS);
 		
 		System.out.println("Firing event now");
 		//Fire dtmf
 		dtmfGene.fireDtmf();
 		
 		//wait for another few secs
-		semaphore.tryAcquire(2, TimeUnit.SECONDS);
+		semaphore.tryAcquire(8, TimeUnit.SECONDS);
 
-//		assertTrue(started);
-//		assertTrue(completed);
-//		assertFalse(failed);
-//		assertFalse(end_of_media);
-//		assertFalse(stopped);
+		assertTrue(started);
+		assertTrue(completed);
+		assertFalse(failed);
+		assertFalse(end_of_media);
+		assertFalse(stopped);
+		assertTrue(receivedEvent);
 
 	}
 
