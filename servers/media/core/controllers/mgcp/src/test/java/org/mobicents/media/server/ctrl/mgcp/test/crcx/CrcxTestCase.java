@@ -33,14 +33,7 @@ public class CrcxTestCase extends MgcpMicrocontainerTest {
 		ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
 		ca.sendFormatNegotiationFailCRCX();
 
-		waitForMessage();
-		
-//		try {
-//			Thread.sleep(1000 * 100);
-//		} catch (InterruptedException ex) {
-//			// Ignore
-//		}
-		
+		waitForMessage();		
 		
 		this.ca.checkFormatNegotiationFailCRCX();
 	}
