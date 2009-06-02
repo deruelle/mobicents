@@ -1,4 +1,4 @@
-package org.mobicents.media.server.ctrl.mgcp.test.ann;
+package org.mobicents.media.server.ctrl.mgcp.test.dtmf;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import jain.protocol.ip.mgcp.JainMgcpEvent;
@@ -27,15 +27,12 @@ import jain.protocol.ip.mgcp.message.parms.ReturnCode;
 import jain.protocol.ip.mgcp.pkg.MgcpEvent;
 import jain.protocol.ip.mgcp.pkg.PackageName;
 
-import java.io.File;
 import java.net.URL;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
-import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
 import org.mobicents.media.server.ctrl.mgcp.test.CallState;
 import org.mobicents.media.server.ctrl.mgcp.test.MgcpMicrocontainerTest;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -46,9 +43,9 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
  * @author amit bhayani
  * 
  */
-public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExtendedListener {
+public class DtmfDetectionTestCase extends MgcpMicrocontainerTest implements JainMgcpExtendedListener {
 
-	private static Logger logger = Logger.getLogger(AnnTestCase.class);
+	private static Logger logger = Logger.getLogger(DtmfDetectionTestCase.class);
 
 	private URL url = null;
 
@@ -82,7 +79,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 	private CallState state = CallState.INITIAL;
 	private String recordDir;
 
-	public AnnTestCase(String name) {
+	public DtmfDetectionTestCase(String name) {
 		super(name);
 	}
 
@@ -97,13 +94,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 	}
 
 	@Test
-	public void testSimpleTransmission() throws Exception {
-
-		url = AnnTestCase.class.getClassLoader()
-				.getResource("org/mobicents/media/server/ctrl/mgcp/test/ann/8kulaw.wav");
-
-		String tempFilePath = url.getPath();
-		recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
+	public void testDtmf() throws Exception {
 
 		caProvider.addJainMgcpListener(this);
 
@@ -123,7 +114,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				+ " and CallId " + callIdentifier_ann);
 
 		// wait for another few secs
-		semaphore.tryAcquire(20, TimeUnit.SECONDS);
+		semaphore.tryAcquire(10, TimeUnit.SECONDS);
 
 		// Test of RespRec'd
 		assertTrue("CRCX Ann Response received ", CRCXRespRecd_ann);
@@ -140,19 +131,6 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 
 		assertTrue("DLCX Ann Response received ", DLCXRespRecd_ann);
 		assertTrue("DLCX Ivr Response received ", DLCXRespRecd_ivr);
-
-		// Test of Recorded file exist
-		try {
-			File file = new File(recordDir + "/" + "annTestCase/8kulaw.wav");
-			assertEquals(true, file.exists());
-
-			// File length greater than 50
-			assertTrue(file.length() > 50);
-		} catch (Exception e) {
-			logger.error(e);
-			fail("Recoded File 8kulaw.wav not created ");
-		}
-
 	}
 
 	public void transactionEnded(int paramInt) {
@@ -182,27 +160,25 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				notifyResponse.setTransactionHandle(notify.getTransactionHandle());
 				super.caProvider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
+				EventName[] eventNames = notify.getObservedEvents();
+
+				for (EventName eveName : eventNames) {
+					System.out.println(eveName);
+					if (eveName.getEventIdentifier().intValue() == MgcpEvent.DTMF_0) {
+						ntfyCmdRecd = true;
+					} else {
+						logger.error("NTFY event is not OC");
+						fail("Failed to receive OC NTFY");
+					}
+				}
+
 				// Send DLCX
 				DeleteConnection dlcx = new DeleteConnection(this, endpointIdentifier_ann);
 				dlcx.setCallIdentifier(this.callIdentifier_ann);
 				dlcx.setConnectionIdentifier(this.allocatedConnection_ann);
 				dlcx.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-
 				this.state = CallState.SENT_DLCX1;
 				super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
-
-				// EventName[] eventNames = notify.getObservedEvents();
-				//
-				// for (EventName eveName : eventNames) {
-				// System.out.println(eveName);
-				// if (eveName.getEventIdentifier().intValue() ==
-				// MgcpEvent.REPORT_ON_COMPLETION) {
-				// ntfyCmdRecd = true;
-				// } else {
-				// logger.error("NTFY event is not OC");
-				// fail("Failed to receive OC NTFY");
-				// }
-				// }
 			} else {
 				fail("NTFY Command received but state is not CallState.SENT_RQNT2 ");
 			}
@@ -214,8 +190,6 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 			break;
 		}
 	}
-
-
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
@@ -238,7 +212,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 							EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/IVR/$",
 									"127.0.0.1:" + mgStack);
 							CreateConnection createConnection = new CreateConnection(this, callIdentifier_ivr,
-									endpointID, jain.protocol.ip.mgcp.message.parms.ConnectionMode.RecvOnly);
+									endpointID, jain.protocol.ip.mgcp.message.parms.ConnectionMode.SendOnly);
 
 							createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
@@ -309,19 +283,14 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 					} else if (this.state == CallState.SENT_MDCX2) {
 						MDCXRespRecd_ivr = true;
 
-						ri_ann = caProvider.getUniqueRequestIdentifier();
-						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ann,
-								ri_ann);
-
-						EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann
-								.withParm(url.toExternalForm()), null) };
-
-						notificationRequest.setSignalRequests(signalRequests);
+						ri_ivr = caProvider.getUniqueRequestIdentifier();
+						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ivr,
+								ri_ivr);
 
 						RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
 
-						RequestedEvent[] requestedEvents = { new RequestedEvent(new EventName(PackageName.Announcement,
-								MgcpEvent.oc, null), actions) };
+						RequestedEvent[] requestedEvents = { new RequestedEvent(new EventName(PackageName.Dtmf,
+								MgcpEvent.dtmf0, null), actions) };
 						notificationRequest.setRequestedEvents(requestedEvents);
 
 						NotifiedEntity notifiedEntity = new NotifiedEntity(caIPAddress.getHostName(), caIPAddress
@@ -352,12 +321,11 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
 					if (this.state == CallState.SENT_RQNT1) {
 						RQNTRespRecd_ann = true;
-						ri_ivr = caProvider.getUniqueRequestIdentifier();
-						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ivr,
-								ri_ivr);
+						ri_ann = caProvider.getUniqueRequestIdentifier();
+						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ann,
+								ri_ann);
 
-						EventName[] signalRequests = { new EventName(AUPackage.AU, AUMgcpEvent.aupr.withParm(recordDir
-								+ "annTestCase/8kulaw.wav"), null) };
+						EventName[] signalRequests = { new EventName(PackageName.Dtmf, MgcpEvent.dtmf0, null) };
 
 						notificationRequest.setSignalRequests(signalRequests);
 						NotifiedEntity notifiedEntity = new NotifiedEntity(caIPAddress.getHostName(), caIPAddress
