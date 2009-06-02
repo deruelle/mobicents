@@ -27,26 +27,17 @@ import jain.protocol.ip.mgcp.pkg.PackageName;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.mobicents.media.Format;
 import org.mobicents.media.server.EndpointImpl;
 import org.mobicents.media.server.ctrl.mgcp.test.MgcpMicrocontainerTest;
-import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.audio.RecorderEvent;
-import org.mobicents.media.server.impl.resource.audio.RecorderFactory;
-import org.mobicents.media.server.impl.rtp.RtpFactory;
-import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
-import org.mobicents.media.server.resource.ChannelFactory;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.ConnectionMode;
 import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.events.NotifyEvent;
 import org.mobicents.media.server.spi.resource.Recorder;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
@@ -62,8 +53,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 	private static Logger logger = Logger.getLogger(AnnTestCase.class);
 
 	private EndpointImpl ivrEnp;
-	private Timer timer;
-	private RecorderFactory recFact;
+
 	private Recorder recorder;
 	private Connection rxConnection;
 
@@ -98,36 +88,8 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		JainMgcpStackProviderImpl mgwProvider = (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider();
 		mgStack = mgwProvider.getJainMgcpStack().getPort();
 
-		timer = new TimerImpl();
-		HashMap<Integer, Format> rtpmap = new HashMap<Integer, Format>();
-		rtpmap.put(0, AVProfile.PCMU);
-
-		RtpFactory rtpFactory = new RtpFactory();
-		rtpFactory.setBindAddress("localhost");
-		rtpFactory.setPortRange("1024-65535");
-		rtpFactory.setJitter(60);
-		rtpFactory.setTimer(timer);
-		rtpFactory.setFormatMap(rtpmap);
-
-		Hashtable<String, RtpFactory> rtpFactories = new Hashtable<String, RtpFactory>();
-		rtpFactories.put("audio", rtpFactory);
-
-		ChannelFactory rxChannFact = new ChannelFactory();
-		rxChannFact.start();
-
-		// Create RecorderFactory - sink for endpoint
-		recFact = new RecorderFactory();
-		recFact.setName("RecorderFactory");
-
-		ivrEnp = new EndpointImpl("/ivr/test/record");
-		ivrEnp.setSinkFactory(recFact);
-
-		ivrEnp.setTimer(timer);
-		ivrEnp.setRxChannelFactory(rxChannFact);
-		ivrEnp.setRtpFactory(rtpFactories);
-
-		// start IVREndpoint
-		ivrEnp.start();
+		ivrEnp = (EndpointImpl) getBean("IVREndpoint");
+		assertNotNull(ivrEnp);
 
 	}
 
@@ -138,7 +100,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				.getResource("org/mobicents/media/server/ctrl/mgcp/test/ann/8kulaw.wav");
 
 		// set-up recorder
-		recorder = (Recorder) ivrEnp.getComponent("RecorderFactory");
+		recorder = (Recorder) ivrEnp.getComponent("audio.recorder");
 		assertNotNull(recorder);
 
 		String tempFilePath = url.getPath();
@@ -172,20 +134,18 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		semaphore.tryAcquire(20, TimeUnit.SECONDS);
 
 		// Test of RecorderListener
-		assertFalse("Recorder Stoped ",stopped);
+		assertFalse("Recorder Stoped ", stopped);
 		assertTrue("Recorder Completed", completed);
-		assertFalse("Recorder Failed" ,failed);
+		assertFalse("Recorder Failed", failed);
 
 		// Test of RespRec'd
 		assertTrue("CRCX Response received ", CRCXRespRecd);
 		assertTrue("RQNT Response received ", RQNTRespRecd);
-		
+
 		// Test of cmd rece'd
 		assertTrue("NTFY cmd received ", ntfyCmdRecd);
-		
-		assertTrue("DLCX Response received ", DLCXRespRecd);
 
-		
+		assertTrue("DLCX Response received ", DLCXRespRecd);
 
 		// Test of Recodedfile exist
 		try {

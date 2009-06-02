@@ -134,27 +134,71 @@
 
 
 	<!-- ANNOUNCEMENT  -->
-    <bean name="Announcement-Access-Point" class="org.mobicents.media.server.EndpointImpl">
-        <property name="localName">
-            /mobicents/media/aap/[1..10]
-        </property>
-        <property name="timer">
-            <inject bean="Timer"/>
-        </property>
-        <property name="sourceFactory">
-            <inject bean="AudioPlayerFactory"/>
-        </property>
-        <property name="rtpFactory">
-            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
-                <entry>
-                    <key>audio</key><value><inject bean="RTPAudioFactory"/></value>
-                </entry>
-            </map>
-        </property>
-        <property name="txChannelFactory">
-            <inject bean="TxChannelFactory"/>
-        </property>
-    </bean>
+	<bean name="Announcement-Access-Point"
+		class="org.mobicents.media.server.EndpointImpl">
+		<property name="localName">
+			/mobicents/media/aap/[1..10]
+		</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+		<property name="sourceFactory">
+			<inject bean="AudioPlayerFactory" />
+		</property>
+		<property name="rtpFactory">
+			<map class="java.util.Hashtable" keyClass="java.lang.String"
+				valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
+				<entry>
+					<key>audio</key>
+					<value>
+						<inject bean="RTPAudioFactory" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="txChannelFactory">
+			<inject bean="TxChannelFactory" />
+		</property>
+	</bean>
+
+
+	<bean name="RecorderFactory"
+		class="org.mobicents.media.server.impl.resource.audio.RecorderFactory">
+		<property name="name">audio.recorder</property>
+	</bean>
+	
+		<bean name="RxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory" />
+
+	<!-- IVR  -->
+	<bean name="IVREndpoint"
+		class="org.mobicents.media.server.EndpointImpl">
+		<property name="localName">
+			/mobicents/media/IVR/[1..10]
+		</property>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+		<property name="sinkFactory">
+			<inject bean="RecorderFactory" />
+		</property>
+		<property name="rtpFactory">
+			<map class="java.util.Hashtable" keyClass="java.lang.String"
+				valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
+				<entry>
+					<key>audio</key>
+					<value>
+						<inject bean="RTPAudioFactory" />
+					</value>
+				</entry>
+			</map>
+		</property>
+
+		<property name="rxChannelFactory">
+			<inject bean="RxChannelFactory" />
+		</property>
+	</bean>
+
 
 	<!-- from mgcp-conf.xml -->
 	<bean name="MgcpController"
