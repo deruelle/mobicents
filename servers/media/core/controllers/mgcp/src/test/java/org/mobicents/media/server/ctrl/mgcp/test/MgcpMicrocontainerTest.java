@@ -7,7 +7,11 @@ import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 import org.mobicents.mgcp.stack.JainMgcpStackImpl;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
-
+/**
+ * 
+ * @author amit bhayani
+ *
+ */
 public abstract class MgcpMicrocontainerTest extends MicrocontainerTest
 {
 	protected static long TRANSACTION_TIMES_OUT_FOR = 31000;
@@ -56,10 +60,10 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest
 			caStack = null;
 		}
 		
-		if(mgcpServerStack != null){
-			mgcpServerStack.stop();
-			mgcpServerStack = null;
-		}
+//		if(mgcpServerStack != null){
+//			mgcpServerStack.stop();
+//			mgcpServerStack = null;
+//		}
 
 
 		// Wait for stack threads to release resources (e.g. port)

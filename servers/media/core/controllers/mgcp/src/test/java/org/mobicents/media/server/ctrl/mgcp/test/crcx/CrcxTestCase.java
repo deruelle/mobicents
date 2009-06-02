@@ -7,31 +7,51 @@ import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class CrcxTestCase extends MgcpMicrocontainerTest {
-        private CA ca;
+	private CA ca;
 
-        public CrcxTestCase(String name) {
-                super(name);
-        } 
+	public CrcxTestCase(String name) {
+		super(name);
+	}
 
-        public void testCRCX() throws Exception {
+	public void testCRCX() throws Exception {
 
-                ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
-                ca.sendCreateConnection();
+		ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
+		ca.sendSuccessCRCX();
 
-                waitForMessage();
-        }
+		waitForMessage();
+		
 
-        public void tearDown() {
-                try {
-                        super.tearDown();
-                } catch (Exception ex) {
+		
+		this.ca.checkSuccessCRCX();
+	}
+	
+	public void testFormatNegotiationFailCRCX() throws Exception {
 
-                }
-                this.ca.checkState();
+		ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
+		ca.sendFormatNegotiationFailCRCX();
 
-        }
+		waitForMessage();
+		
+//		try {
+//			Thread.sleep(1000 * 100);
+//		} catch (InterruptedException ex) {
+//			// Ignore
+//		}
+		
+		
+		this.ca.checkFormatNegotiationFailCRCX();
+	}
+
+	public void tearDown() {
+		try {
+			super.tearDown();
+		} catch (Exception ex) {
+
+		}
+
+	}
 
 }
