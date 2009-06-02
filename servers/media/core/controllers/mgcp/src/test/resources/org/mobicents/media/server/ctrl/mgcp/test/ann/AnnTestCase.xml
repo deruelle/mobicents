@@ -166,8 +166,8 @@
 		class="org.mobicents.media.server.impl.resource.audio.RecorderFactory">
 		<property name="name">audio.recorder</property>
 	</bean>
-	
-		<bean name="RxChannelFactory"
+
+	<bean name="RxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
 
 	<!-- IVR  -->
@@ -244,6 +244,22 @@
 			<list>
 				<inject bean="Announcement.OC" />
 				<inject bean="Announcement.OF" />
+			</list>
+		</property>
+	</bean>
+
+	<bean name="PlayRecord"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.ivr.RecorderFactory">
+		<property name="eventName">aupr</property>
+		<property name="resourceName">audio.recorder</property>
+	</bean>
+
+	<bean name="Package.AdvanceAudio"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.MgcpPackage">
+		<property name="name">AU</property>
+		<property name="generators">
+			<list>
+				<inject bean="PlayRecord" />
 			</list>
 		</property>
 	</bean>

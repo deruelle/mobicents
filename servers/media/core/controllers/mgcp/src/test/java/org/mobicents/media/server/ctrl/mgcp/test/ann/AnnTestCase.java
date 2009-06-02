@@ -8,6 +8,8 @@ import jain.protocol.ip.mgcp.message.CreateConnection;
 import jain.protocol.ip.mgcp.message.CreateConnectionResponse;
 import jain.protocol.ip.mgcp.message.DeleteConnection;
 import jain.protocol.ip.mgcp.message.DeleteConnectionResponse;
+import jain.protocol.ip.mgcp.message.ModifyConnection;
+import jain.protocol.ip.mgcp.message.ModifyConnectionResponse;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
 import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
@@ -32,14 +34,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
-import org.mobicents.media.server.EndpointImpl;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUMgcpEvent;
+import org.mobicents.jain.protocol.ip.mgcp.pkg.AUPackage;
+import org.mobicents.media.server.ctrl.mgcp.test.CallState;
 import org.mobicents.media.server.ctrl.mgcp.test.MgcpMicrocontainerTest;
-import org.mobicents.media.server.impl.resource.audio.RecorderEvent;
-import org.mobicents.media.server.spi.Connection;
-import org.mobicents.media.server.spi.ConnectionMode;
-import org.mobicents.media.server.spi.NotificationListener;
-import org.mobicents.media.server.spi.events.NotifyEvent;
-import org.mobicents.media.server.spi.resource.Recorder;
 import org.mobicents.mgcp.stack.JainMgcpExtendedListener;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
 
@@ -52,29 +50,37 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 
 	private static Logger logger = Logger.getLogger(AnnTestCase.class);
 
-	private EndpointImpl ivrEnp;
-
-	private Recorder recorder;
-	private Connection rxConnection;
-
 	private URL url = null;
 
 	private Semaphore semaphore;
 
-	private boolean stopped = false;
-	private boolean completed = false;
-	private boolean failed = false;
-
-	private boolean CRCXRespRecd = false;
-	private boolean RQNTRespRecd = false;
-	private boolean DLCXRespRecd = false;
+	private boolean CRCXRespRecd_ann = false;
+	private boolean MDCXRespRecd_ann = false;
+	private boolean RQNTRespRecd_ann = false;
+	private boolean DLCXRespRecd_ann = false;
 
 	private boolean ntfyCmdRecd = false;
 
 	private int mgStack = 0;
-	private EndpointIdentifier endpointIdentifier;
-	private ConnectionIdentifier allocatedConnection = null;
-	private CallIdentifier callIdentifier;
+	private EndpointIdentifier endpointIdentifier_ann;
+	private String sdp_ann = null;
+	private ConnectionIdentifier allocatedConnection_ann = null;
+	private CallIdentifier callIdentifier_ann;
+	private RequestIdentifier ri_ann;
+
+	private boolean CRCXRespRecd_ivr = false;
+	private boolean MDCXRespRecd_ivr = false;
+	private boolean RQNTRespRecd_ivr = false;
+	private boolean DLCXRespRecd_ivr = false;
+
+	private EndpointIdentifier endpointIdentifier_ivr;
+	private String sdp_ivr = null;
+	private ConnectionIdentifier allocatedConnection_ivr;
+	private CallIdentifier callIdentifier_ivr;
+	private RequestIdentifier ri_ivr;
+
+	private CallState state = CallState.INITIAL;
+	private String recordDir;
 
 	public AnnTestCase(String name) {
 		super(name);
@@ -88,9 +94,6 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		JainMgcpStackProviderImpl mgwProvider = (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider();
 		mgStack = mgwProvider.getJainMgcpStack().getPort();
 
-		ivrEnp = (EndpointImpl) getBean("IVREndpoint");
-		assertNotNull(ivrEnp);
-
 	}
 
 	@Test
@@ -99,60 +102,51 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		url = AnnTestCase.class.getClassLoader()
 				.getResource("org/mobicents/media/server/ctrl/mgcp/test/ann/8kulaw.wav");
 
-		// set-up recorder
-		recorder = (Recorder) ivrEnp.getComponent("audio.recorder");
-		assertNotNull(recorder);
-
 		String tempFilePath = url.getPath();
-		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-		recorder.setRecordDir(recordDir);
-		// let us record for 7 sec
-		recorder.setRecordTime(7);
-		recorder.addListener(new RecorderListener());
-
-		rxConnection = ivrEnp.createConnection(ConnectionMode.SEND_RECV);
-		String sdpData = rxConnection.getLocalDescriptor();
+		recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
 
 		caProvider.addJainMgcpListener(this);
 
-		callIdentifier = caProvider.getUniqueCallIdentifier();
+		callIdentifier_ann = caProvider.getUniqueCallIdentifier();
+
 		EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/$", "127.0.0.1:" + mgStack);
-		CreateConnection createConnection = new CreateConnection(this, callIdentifier, endpointID,
+		CreateConnection createConnection = new CreateConnection(this, callIdentifier_ann, endpointID,
 				jain.protocol.ip.mgcp.message.parms.ConnectionMode.RecvOnly);
 
-		createConnection.setRemoteConnectionDescriptor(new ConnectionDescriptor(sdpData));
-
 		createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+		this.state = CallState.SENT_CRCX1;
 
 		caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 		logger.debug(" CreateConnection command sent for TxId " + createConnection.getTransactionHandle()
-				+ " and CallId " + callIdentifier);
+				+ " and CallId " + callIdentifier_ann);
 
 		// wait for another few secs
 		semaphore.tryAcquire(20, TimeUnit.SECONDS);
 
-		// Test of RecorderListener
-		assertFalse("Recorder Stoped ", stopped);
-		assertTrue("Recorder Completed", completed);
-		assertFalse("Recorder Failed", failed);
-
 		// Test of RespRec'd
-		assertTrue("CRCX Response received ", CRCXRespRecd);
-		assertTrue("RQNT Response received ", RQNTRespRecd);
+		assertTrue("CRCX Ann Response received ", CRCXRespRecd_ann);
+		assertTrue("CRCX Ivr Response received ", CRCXRespRecd_ivr);
+
+		assertTrue("MDCX Ann Response received ", MDCXRespRecd_ann);
+		assertTrue("MDCX Ivr Response received ", MDCXRespRecd_ivr);
+
+		assertTrue("RQNT Ann Response received ", RQNTRespRecd_ann);
+		assertTrue("RQNT Ivr Response received ", RQNTRespRecd_ivr);
 
 		// Test of cmd rece'd
 		assertTrue("NTFY cmd received ", ntfyCmdRecd);
 
-		assertTrue("DLCX Response received ", DLCXRespRecd);
+		assertTrue("DLCX Ann Response received ", DLCXRespRecd_ann);
+		assertTrue("DLCX Ivr Response received ", DLCXRespRecd_ivr);
 
-		// Test of Recodedfile exist
+		// Test of Recorded file exist
 		try {
 			File file = new File(recordDir + "/" + "annTestCase/8kulaw.wav");
 			assertEquals(true, file.exists());
 
-			// File length greate than 50
+			// File length greater than 50
 			assertTrue(file.length() > 50);
 		} catch (Exception e) {
 			logger.error(e);
@@ -180,26 +174,37 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		logger.debug("processMgcpCommandEvent = " + jainmgcpcommandevent);
 		switch (jainmgcpcommandevent.getObjectIdentifier()) {
 		case Constants.CMD_NOTIFY:
-			Notify notify = (Notify) jainmgcpcommandevent;
+			if (this.state == CallState.SENT_RQNT2) {
+				Notify notify = (Notify) jainmgcpcommandevent;
 
-			ReturnCode rc = ReturnCode.Transaction_Executed_Normally;
-			NotifyResponse notifyResponse = new NotifyResponse(this, rc);
-			notifyResponse.setTransactionHandle(notify.getTransactionHandle());
-			super.caProvider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
+				ReturnCode rc = ReturnCode.Transaction_Executed_Normally;
+				NotifyResponse notifyResponse = new NotifyResponse(this, rc);
+				notifyResponse.setTransactionHandle(notify.getTransactionHandle());
+				super.caProvider.sendMgcpEvents(new JainMgcpEvent[] { notifyResponse });
 
-			// Send DLCX
-			sendDLCX(notify.getEndpointIdentifier());
+				// Send DLCX
+				DeleteConnection dlcx = new DeleteConnection(this, endpointIdentifier_ann);
+				dlcx.setCallIdentifier(this.callIdentifier_ann);
+				dlcx.setConnectionIdentifier(this.allocatedConnection_ann);
+				dlcx.setTransactionHandle(caProvider.getUniqueTransactionHandler());
 
-			EventName[] eventNames = notify.getObservedEvents();
+				this.state = CallState.SENT_DLCX1;
+				super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
 
-			for (EventName eveName : eventNames) {
-				System.out.println(eveName);
-				if (eveName.getEventIdentifier().intValue() == MgcpEvent.REPORT_ON_COMPLETION) {
-					ntfyCmdRecd = true;
-				} else {
-					logger.error("NTFY event is not OC");
-					fail("Failed to receive OC NTFY");
-				}
+				// EventName[] eventNames = notify.getObservedEvents();
+				//
+				// for (EventName eveName : eventNames) {
+				// System.out.println(eveName);
+				// if (eveName.getEventIdentifier().intValue() ==
+				// MgcpEvent.REPORT_ON_COMPLETION) {
+				// ntfyCmdRecd = true;
+				// } else {
+				// logger.error("NTFY event is not OC");
+				// fail("Failed to receive OC NTFY");
+				// }
+				// }
+			} else {
+				fail("NTFY Command received but state is not CallState.SENT_RQNT2 ");
 			}
 
 			break;
@@ -210,13 +215,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 		}
 	}
 
-	private void sendDLCX(EndpointIdentifier endpointIdentifier) {
-		DeleteConnection dlcx = new DeleteConnection(this, endpointIdentifier);
-		dlcx.setCallIdentifier(this.callIdentifier);
-		dlcx.setConnectionIdentifier(this.allocatedConnection);
-		dlcx.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-		super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
-	}
+
 
 	public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 		logger.debug("processMgcpResponseEvent = " + jainmgcpresponseevent);
@@ -226,15 +225,59 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				CreateConnectionResponse crcxResp = (CreateConnectionResponse) jainmgcpresponseevent;
 				switch (crcxResp.getReturnCode().getValue()) {
 				case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-					CRCXRespRecd = true;
-					endpointIdentifier = crcxResp.getSpecificEndpointIdentifier();
-					if (endpointIdentifier == null) {
-						fail("The SpecificEndpointIdentifier returned by CRCX is null");
+					if (this.state == CallState.SENT_CRCX1) {
+						CRCXRespRecd_ann = true;
+						endpointIdentifier_ann = crcxResp.getSpecificEndpointIdentifier();
+						if (endpointIdentifier_ann == null) {
+							fail("The SpecificEndpointIdentifier returned by CRCX is null");
+						} else {
+							sdp_ann = crcxResp.getLocalConnectionDescriptor().toString();
+							allocatedConnection_ann = crcxResp.getConnectionIdentifier();
+
+							callIdentifier_ivr = caProvider.getUniqueCallIdentifier();
+							EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/IVR/$",
+									"127.0.0.1:" + mgStack);
+							CreateConnection createConnection = new CreateConnection(this, callIdentifier_ivr,
+									endpointID, jain.protocol.ip.mgcp.message.parms.ConnectionMode.SendOnly);
+
+							createConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+							this.state = CallState.SENT_CRCX2;
+
+							caProvider.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
+
+							logger.debug(" CreateConnection command sent for TxId "
+									+ createConnection.getTransactionHandle() + " and CallId " + callIdentifier_ivr);
+
+						}
+					} else if (this.state == CallState.SENT_CRCX2) {
+
+						CRCXRespRecd_ivr = true;
+						endpointIdentifier_ivr = crcxResp.getSpecificEndpointIdentifier();
+						if (endpointIdentifier_ivr == null) {
+							fail("The SpecificEndpointIdentifier returned by CRCX is null");
+						} else {
+							sdp_ivr = crcxResp.getLocalConnectionDescriptor().toString();
+							allocatedConnection_ivr = crcxResp.getConnectionIdentifier();
+
+							ModifyConnection modifyConnection = new ModifyConnection(this, callIdentifier_ann,
+									endpointIdentifier_ann, allocatedConnection_ann);
+							ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(this.sdp_ivr);
+							modifyConnection.setRemoteConnectionDescriptor(connectionDescriptor);
+
+							modifyConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+							this.state = CallState.SENT_MDCX1;
+							caProvider.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+
+							logger.debug(" MDCX command sent for TxId " + modifyConnection.getTransactionHandle()
+									+ " and CallId " + callIdentifier_ann);
+						}
+
 					} else {
-						rxConnection.setRemoteDescriptor(crcxResp.getLocalConnectionDescriptor().toString());
-						allocatedConnection = crcxResp.getConnectionIdentifier();
-						sendRQNT(endpointIdentifier);
+						fail("CRCX Response received but state is neither CallState.SENT_CRCX1 nor CallState.SENT_CRCX2 ");
 					}
+
 					break;
 
 				default:
@@ -243,13 +286,94 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 					break;
 				}
 				break;
+			case Constants.RESP_MODIFY_CONNECTION:
+				ModifyConnectionResponse mdcxResp = (ModifyConnectionResponse) jainmgcpresponseevent;
+				switch (mdcxResp.getReturnCode().getValue()) {
+				case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
+					if (this.state == CallState.SENT_MDCX1) {
+						MDCXRespRecd_ann = true;
+
+						ModifyConnection modifyConnection = new ModifyConnection(this, callIdentifier_ivr,
+								endpointIdentifier_ivr, allocatedConnection_ivr);
+						ConnectionDescriptor connectionDescriptor = new ConnectionDescriptor(this.sdp_ann);
+						modifyConnection.setRemoteConnectionDescriptor(connectionDescriptor);
+
+						modifyConnection.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+						this.state = CallState.SENT_MDCX2;
+						caProvider.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
+
+						logger.debug(" MDCX command sent for TxId " + modifyConnection.getTransactionHandle()
+								+ " and CallId " + callIdentifier_ann);
+
+					} else if (this.state == CallState.SENT_MDCX2) {
+						MDCXRespRecd_ivr = true;
+
+						ri_ann = caProvider.getUniqueRequestIdentifier();
+						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ann,
+								ri_ann);
+
+						EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann
+								.withParm(url.toExternalForm()), null) };
+
+						notificationRequest.setSignalRequests(signalRequests);
+
+						RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+
+						RequestedEvent[] requestedEvents = { new RequestedEvent(new EventName(PackageName.Announcement,
+								MgcpEvent.oc, null), actions) };
+						notificationRequest.setRequestedEvents(requestedEvents);
+
+						NotifiedEntity notifiedEntity = new NotifiedEntity(caIPAddress.getHostName(), caIPAddress
+								.getHostAddress(), caStack.getPort());
+						notificationRequest.setNotifiedEntity(notifiedEntity);
+
+						notificationRequest.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+						this.state = CallState.SENT_RQNT1;
+						super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { notificationRequest });
+
+					} else {
+						fail("MDCX Response received but state is neither CallState.SENT_MDCX1 nor CallState.SENT_MDCX2 ");
+					}
+					break;
+
+				default:
+					logger.error("MDCX Response is not successfull. Recived ReturCode = " + mdcxResp.getReturnCode());
+					fail("The MDCX didn't execute properly. Response = " + mdcxResp);
+					break;
+
+				}
+
+				break;
 			case Constants.RESP_NOTIFICATION_REQUEST:
 				NotificationRequestResponse rqntRes = (NotificationRequestResponse) jainmgcpresponseevent;
 				switch (rqntRes.getReturnCode().getValue()) {
 				case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-					// lets begin recording here
-					recorder.start("annTestCase/8kulaw.wav");
-					RQNTRespRecd = true;
+					if (this.state == CallState.SENT_RQNT1) {
+						RQNTRespRecd_ann = true;
+						ri_ivr = caProvider.getUniqueRequestIdentifier();
+						NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier_ivr,
+								ri_ivr);
+
+						EventName[] signalRequests = { new EventName(AUPackage.AU, AUMgcpEvent.aupr.withParm(recordDir
+								+ "annTestCase/8kulaw.wav"), null) };
+
+						notificationRequest.setSignalRequests(signalRequests);
+						NotifiedEntity notifiedEntity = new NotifiedEntity(caIPAddress.getHostName(), caIPAddress
+								.getHostAddress(), caStack.getPort());
+						notificationRequest.setNotifiedEntity(notifiedEntity);
+						notificationRequest.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+						this.state = CallState.SENT_RQNT2;
+						super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { notificationRequest });
+
+					} else if (this.state == CallState.SENT_RQNT2) {
+						RQNTRespRecd_ivr = true;
+					} else {
+						fail("RQNT Response received but state is neither CallState.SENT_RQNT1 nor CallState.SENT_RQNT2 ");
+					}
+
 					break;
 				default:
 					logger.error("RQNT Response is not successfull. Recieved ReturCode = " + rqntRes.getReturnCode());
@@ -262,9 +386,22 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 				DeleteConnectionResponse dlcxResp = (DeleteConnectionResponse) jainmgcpresponseevent;
 				switch (dlcxResp.getReturnCode().getValue()) {
 				case ReturnCode.TRANSACTION_EXECUTED_NORMALLY:
-					// lets begin recording here
-					DLCXRespRecd = true;
-					semaphore.release();
+					if (this.state == CallState.SENT_DLCX1) {
+						DLCXRespRecd_ann = true;
+						// Send DLCX
+						DeleteConnection dlcx = new DeleteConnection(this, endpointIdentifier_ivr);
+						dlcx.setCallIdentifier(this.callIdentifier_ivr);
+						dlcx.setConnectionIdentifier(this.allocatedConnection_ivr);
+						dlcx.setTransactionHandle(caProvider.getUniqueTransactionHandler());
+
+						this.state = CallState.SENT_DLCX2;
+						super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { dlcx });
+					} else if (this.state == CallState.SENT_DLCX2) {
+						DLCXRespRecd_ivr = true;
+						semaphore.release();
+					} else {
+						fail("DLCX Response received but state is neither CallState.SENT_DLCX1 nor CallState.SENT_DLCX2 ");
+					}
 					break;
 				default:
 					logger.error("DLCX Response is not successfull. Recieved ReturCode = " + dlcxResp.getReturnCode());
@@ -284,54 +421,4 @@ public class AnnTestCase extends MgcpMicrocontainerTest implements JainMgcpExten
 
 		}
 	}
-
-	private void sendRQNT(EndpointIdentifier endpointIdentifier) {
-		RequestIdentifier ri = caProvider.getUniqueRequestIdentifier();
-		NotificationRequest notificationRequest = new NotificationRequest(this, endpointIdentifier, ri);
-
-		EventName[] signalRequests = { new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(url
-				.toExternalForm()), null) };
-
-		notificationRequest.setSignalRequests(signalRequests);
-
-		RequestedAction[] actions = new RequestedAction[] { RequestedAction.NotifyImmediately };
-
-		RequestedEvent[] requestedEvents = { new RequestedEvent(new EventName(PackageName.Announcement, MgcpEvent.oc,
-				null), actions) };
-		notificationRequest.setRequestedEvents(requestedEvents);
-
-		NotifiedEntity notifiedEntity = new NotifiedEntity(caIPAddress.getHostName(), caIPAddress.getHostAddress(),
-				caStack.getPort());
-		notificationRequest.setNotifiedEntity(notifiedEntity);
-
-		notificationRequest.setTransactionHandle(caProvider.getUniqueTransactionHandler());
-
-		super.caProvider.sendMgcpEvents(new JainMgcpCommandEvent[] { notificationRequest });
-
-	}
-
-	private class RecorderListener implements NotificationListener {
-
-		public void update(NotifyEvent event) {
-			switch (event.getEventID()) {
-			case RecorderEvent.STOPPED:
-				System.out.println("Recorder STOPPED");
-				stopped = true;
-				// semaphore.release();
-				break;
-			case RecorderEvent.DURATION_OVER:
-				System.out.println("Recorder DURATION_OVER");
-				completed = true;
-				// semaphore.release();
-				break;
-			case RecorderEvent.FAILED:
-				System.out.println("Recorder FAILED");
-				failed = true;
-				// semaphore.release();
-				break;
-			}
-		}
-
-	}
-
 }
