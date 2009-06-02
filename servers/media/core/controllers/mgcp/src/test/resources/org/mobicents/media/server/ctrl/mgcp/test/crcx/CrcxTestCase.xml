@@ -155,40 +155,36 @@
 	</bean>
 
 
-	<!-- from pr-beans.xml -->
+
 
 	<bean name="TxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
 
 	<bean name="RxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory" />
+
 	<!-- ANNOUNCEMENT  -->
-	<bean name="PacketRelay-Access-Point"
-		class="org.mobicents.media.server.EndpointImpl">
-		<property name="localName">
-			/mobicents/media/pr/[1..10]
-		</property>
-		<property name="timer">
-			<inject bean="Timer" />
-		</property>
-		<property name="rtpFactory">
-			<map class="java.util.Hashtable" keyClass="java.lang.String"
-				valueClass="org.mobicents.media.server.resource.ChannelFactory">
-				<entry>
-					<key>audio</key>
-					<value>
-						<inject bean="RTPAudioFactory" />
-					</value>
-				</entry>
-			</map>
-		</property>
-		<property name="txChannelFactory">
-			<inject bean="TxChannelFactory" />
-		</property>
-		<property name="rxChannelFactory">
-			<inject bean="RxChannelFactory" />
-		</property>
-	</bean>
+    <bean name="Announcement-Access-Point" class="org.mobicents.media.server.EndpointImpl">
+        <property name="localName">
+            /mobicents/media/aap/[1..10]
+        </property>
+        <property name="timer">
+            <inject bean="Timer"/>
+        </property>
+        <property name="sourceFactory">
+            <inject bean="AudioPlayerFactory"/>
+        </property>
+        <property name="rtpFactory">
+            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
+                <entry>
+                    <key>audio</key><value><inject bean="RTPAudioFactory"/></value>
+                </entry>
+            </map>
+        </property>
+        <property name="txChannelFactory">
+            <inject bean="TxChannelFactory"/>
+        </property>
+    </bean>
 
 	<!-- from mgcp-conf.xml -->
 	<bean name="MgcpController"
@@ -204,15 +200,22 @@
 
 	<bean name="PlayAnnouncement"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.ann.PlayAnnouncementFactory">
-		<property name="eventName">pa</property>
+		<property name="eventName">ann</property>
 		<property name="resourceName">audio.player</property>
 	</bean>
 
 	<bean name="Announcement.OC"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">oc</property>
-		<property name="resourceID">10</property>
-		<property name="eventID">1</property>
+		<property name="resourceName">audio.player</property>
+		<property name="eventID">2</property>
+	</bean>
+
+	<bean name="Announcement.OF"
+		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
+		<property name="eventName">of</property>
+		<property name="resourceName">audio.player</property>
+		<property name="eventID">3</property>
 	</bean>
 
 	<bean name="Package.Announcement"
@@ -226,6 +229,7 @@
 		<property name="detectors">
 			<list>
 				<inject bean="Announcement.OC" />
+				<inject bean="Announcement.OF" />
 			</list>
 		</property>
 	</bean>
