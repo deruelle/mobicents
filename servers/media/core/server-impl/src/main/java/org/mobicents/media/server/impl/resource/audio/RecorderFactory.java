@@ -33,30 +33,33 @@ import org.mobicents.media.server.spi.Endpoint;
 /**
  * 
  * @author amit bhayani
- * 
+ *
  */
 public class RecorderFactory implements ComponentFactory {
 
-	private String name;
-	private String recordDir = "";
+    private String name;
+    private String recordDir;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setRecordDir(String recordDir) {
-		this.recordDir = recordDir;		
-	}
+    public String getRecordDir() {
+        return recordDir;
+    }
 
-	public Component newInstance(Endpoint endpoint) {
-		RecorderImpl p = new RecorderImpl(this.name);
-		p.setRecordDir(this.recordDir);
-		p.setEndpoint(endpoint);
-		return p;
-	}
+    public void setRecordDir(String recordDir) {
+        this.recordDir = recordDir;
+    }
 
+    public Component newInstance(Endpoint endpoint) {
+        RecorderImpl p = new RecorderImpl(this.name);
+        p.setEndpoint(endpoint);
+        p.setRecordDir(recordDir);
+        return p;
+    }
 }
