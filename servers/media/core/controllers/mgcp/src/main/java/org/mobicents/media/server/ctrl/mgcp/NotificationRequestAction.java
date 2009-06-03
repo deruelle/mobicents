@@ -24,7 +24,6 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.media.server.ctrl.mgcp;
 
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
@@ -54,162 +53,160 @@ import org.mobicents.media.server.spi.Endpoint;
  */
 public class NotificationRequestAction implements Callable<JainMgcpResponseEvent> {
 
-	private static Logger logger = Logger.getLogger(NotificationRequestAction.class);
+    private static Logger logger = Logger.getLogger(NotificationRequestAction.class);
+    private MgcpController controller;
+    private NotificationRequest req;
 
-	private MgcpController controller;
-	private NotificationRequest req;
+    public NotificationRequestAction(MgcpController controller, NotificationRequest req) {
+        this.controller = controller;
+        this.req = req;
+    }
 
-	public NotificationRequestAction(MgcpController controller, NotificationRequest req) {
-		this.controller = controller;
-		this.req = req;
-	}
+    public JainMgcpResponseEvent call() throws Exception {
 
-	public JainMgcpResponseEvent call() throws Exception {
+        logger.info("Request TX= " + req.getTransactionHandle() + ", Endpoint = " + req.getEndpointIdentifier());
 
-		logger.info("Request TX= " + req.getTransactionHandle() + ", Endpoint = " + req.getEndpointIdentifier());
+        NotificationRequestResponse response = null;
 
-		NotificationRequestResponse response = null;
+        RequestIdentifier reqID = req.getRequestIdentifier();
+        EndpointIdentifier endpointID = req.getEndpointIdentifier();
 
-		RequestIdentifier reqID = req.getRequestIdentifier();
-		EndpointIdentifier endpointID = req.getEndpointIdentifier();
+        // request identifier and endpoint identifier are mandatory parameters
+        if (reqID == null || endpointID == null) {
+            return reject(ReturnCode.Protocol_Error);
+        }
 
-		// request identifier and endpoint identifier are mandatory parameters
-		if (reqID == null || endpointID == null) {
-			return reject(ReturnCode.Protocol_Error);
-		}
+        // determine notified entity.
+        // use default if not specifie explicit
+        NotifiedEntity notifiedEntity = req.getNotifiedEntity();
+        if (notifiedEntity == null) {
+            notifiedEntity = controller.getNotifiedEntity();
+        }
 
-		// determine notified entity.
-		// use default if not specifie explicit
-		NotifiedEntity notifiedEntity = req.getNotifiedEntity();
-		if (notifiedEntity == null) {
-			notifiedEntity = controller.getNotifiedEntity();
-		}
+        // notified entity is mandatory
+        if (notifiedEntity == null) {
+            return reject(ReturnCode.Transient_Error);
+        }
 
-		// notified entity is mandatory
-		if (notifiedEntity == null) {
-			return reject(ReturnCode.Transient_Error);
-		}
+        // obatin and check endpoint
+        Endpoint endpoint = null;
+        try {
+            endpoint = controller.getNamingService().lookup(endpointID.getLocalEndpointName(), true);
+        } catch (Exception e) {
+            return reject(ReturnCode.Endpoint_Unknown);
+        }
 
-		// obatin and check endpoint
-		Endpoint endpoint = null;
-		try {
-			endpoint = controller.getNamingService().lookup(endpointID.getLocalEndpointName(), true);
-		} catch (Exception e) {
-			return reject(ReturnCode.Endpoint_Unknown);
-		}
+        Request request = new Request(controller, reqID, endpointID, endpoint, notifiedEntity);
+        // assign event detectors
+        RequestedEvent[] events = req.getRequestedEvents();
+        if (events != null) {
+            for (int i = 0; i < events.length; i++) {
+                RequestedEvent event = events[i];
+                EventName eventName = event.getEventName();
 
-		Request request = new Request(controller, reqID, endpointID, endpoint, notifiedEntity);
-		// assign event detectors
-		RequestedEvent[] events = req.getRequestedEvents();
-		for (int i = 0; i < events.length; i++) {
-			RequestedEvent event = events[i];
-			EventName eventName = event.getEventName();
+                PackageName packageName = eventName.getPackageName();
 
-			PackageName packageName = eventName.getPackageName();
+                MgcpPackage pkg = controller.getPackage(packageName.toString());
+                if (pkg == null) {
+                    return reject(ReturnCode.Unsupported_Or_Unknown_Package);
+                }
 
-			MgcpPackage pkg = controller.getPackage(packageName.toString());
-			if (pkg == null) {
-				return reject(ReturnCode.Unsupported_Or_Unknown_Package);
-			}
+                EventDetector det = pkg.getDetector(event.getEventName().getEventIdentifier(), event.getRequestedActions());
 
-			EventDetector det = pkg.getDetector(event.getEventName().getEventIdentifier(), event.getRequestedActions());
+                if (det == null) {
+                    return reject(ReturnCode.Gateway_Cannot_Detect_Requested_Event);
+                }
 
-			if (det == null) {
-				return reject(ReturnCode.Gateway_Cannot_Detect_Requested_Event);
-			}
+                Connection connection = null;
+                ConnectionActivity connectionActivity = null;
+                //This is ConnectionActivity id
+                ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
+                if (connectionID != null) {
+                    //connection = endpoint.getConnection(connectionID.toString());
+                    connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
+                    if (connectionActivity == null) {
+                        reject(ReturnCode.Connection_Was_Deleted);
+                    }
 
-			Connection connection = null;
-			ConnectionActivity connectionActivity = null;
-			//This is ConnectionActivity id
-			ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
-			if (connectionID != null) {
-				//connection = endpoint.getConnection(connectionID.toString());
-				connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
-				if (connectionActivity == null) {
-					reject(ReturnCode.Connection_Was_Deleted);
-				}
-				
-				connection = connectionActivity.getMediaConnection();
-			}
+                    connection = connectionActivity.getMediaConnection();
+                }
+                request.append(det, connection);
+            }
+        }
 
-			request.append(det, connection);
-		}
+        // queue signal
+        EventName[] signals = req.getSignalRequests();
+        if (signals != null) {
+            for (int i = 0; i < signals.length; i++) {
+                EventName eventName = signals[i];
 
-		// queue signal
-		EventName[] signals = req.getSignalRequests();
-		for (int i = 0; i < signals.length; i++) {
-			EventName eventName = signals[i];
+                PackageName packageName = eventName.getPackageName();
+                MgcpPackage pkg = controller.getPackage(packageName.toString());
+                if (pkg == null) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("No MgcpPackage found for PackageName " + packageName.toString() + " Sending back" + ReturnCode.Unsupported_Or_Unknown_Package.toString());
+                    }
+                    return reject(ReturnCode.Unsupported_Or_Unknown_Package);
+                }
 
-			PackageName packageName = eventName.getPackageName();
-			MgcpPackage pkg = controller.getPackage(packageName.toString());
-			if (pkg == null) {
-				if (logger.isInfoEnabled()) {
-					logger.info("No MgcpPackage found for PackageName " + packageName.toString() + " Sending back"
-							+ ReturnCode.Unsupported_Or_Unknown_Package.toString());
-				}
-				return reject(ReturnCode.Unsupported_Or_Unknown_Package);
-			}
 
-			
-			SignalGenerator signal = pkg.getGenerator(eventName.getEventIdentifier());
-			if (signal == null) {
-				if (logger.isInfoEnabled()) {
-					logger.info("No SignalGenerator found for MgcpEvent " + eventName.getEventIdentifier().toString()
-							+ " Sending back" + ReturnCode.Gateway_Cannot_Generate_Requested_Signal.toString());
-				}
-				
-				return reject(ReturnCode.Gateway_Cannot_Generate_Requested_Signal);
-			}
+                SignalGenerator signal = pkg.getGenerator(eventName.getEventIdentifier());
+                if (signal == null) {
+                    if (logger.isInfoEnabled()) {
+                        logger.info("No SignalGenerator found for MgcpEvent " + eventName.getEventIdentifier().toString() + " Sending back" + ReturnCode.Gateway_Cannot_Generate_Requested_Signal.toString());
+                    }
 
-			Connection connection = null;
-			ConnectionActivity connectionActivity = null;
-			//This is ConnectionActivity id
-			ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
-			
-			if (connectionID != null) {
-				//connection = endpoint.getConnection(connectionID.toString());
-				connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
-				if (connectionActivity == null) {
-					if (logger.isInfoEnabled()) {
-						logger.info("No Connection found for ConnectionIdentifier " + connectionID + " Sending back"
-								+ ReturnCode.Connection_Was_Deleted.toString());
-					}
-					return reject(ReturnCode.Connection_Was_Deleted);
-				}
-				connection = connectionActivity.getMediaConnection();
-			}
+                    return reject(ReturnCode.Gateway_Cannot_Generate_Requested_Signal);
+                }
 
-			request.append(signal, connection);
-		}
+                Connection connection = null;
+                ConnectionActivity connectionActivity = null;
+                //This is ConnectionActivity id
+                ConnectionIdentifier connectionID = eventName.getConnectionIdentifier();
 
-		if (!request.verifyDetectors()) {
-			return reject(ReturnCode.Gateway_Cannot_Detect_Requested_Event);
-		}
+                if (connectionID != null) {
+                    //connection = endpoint.getConnection(connectionID.toString());
+                    connectionActivity = controller.getActivity(endpoint.getLocalName(), connectionID.toString());
+                    if (connectionActivity == null) {
+                        if (logger.isInfoEnabled()) {
+                            logger.info("No Connection found for ConnectionIdentifier " + connectionID + " Sending back" + ReturnCode.Connection_Was_Deleted.toString());
+                        }
+                        return reject(ReturnCode.Connection_Was_Deleted);
+                    }
+                    connection = connectionActivity.getMediaConnection();
+                }
 
-		if (!request.verifyGenerators()) {
-			return reject(ReturnCode.Gateway_Cannot_Generate_Requested_Signal);
-		}
+                request.append(signal, connection);
+            }
+        }
 
-		// disable previous signal
-		Request prev = controller.requests.remove(endpoint.getLocalName());
-		if (prev != null)
-			prev.cancel();
+        if (!request.verifyDetectors()) {
+            return reject(ReturnCode.Gateway_Cannot_Detect_Requested_Event);
+        }
 
-		// enable current signal
-		controller.requests.put(endpoint.getLocalName(), request);
-		request.run();
+        if (!request.verifyGenerators()) {
+            return reject(ReturnCode.Gateway_Cannot_Generate_Requested_Signal);
+        }
 
-		// send response
-		response = new NotificationRequestResponse(this, ReturnCode.Transaction_Executed_Normally);
-		response.setTransactionHandle(req.getTransactionHandle());
+        // disable previous signal
+        Request prev = controller.requests.remove(endpoint.getLocalName());
+        if (prev != null) {
+            prev.cancel();        // enable current signal
+        }
+        controller.requests.put(endpoint.getLocalName(), request);
+        request.run();
 
-		logger.info("Response TX = " + response.getTransactionHandle() + ", Response: " + response.getReturnCode());
-		return response;
-	}
+        // send response
+        response = new NotificationRequestResponse(this, ReturnCode.Transaction_Executed_Normally);
+        response.setTransactionHandle(req.getTransactionHandle());
 
-	private NotificationRequestResponse reject(ReturnCode code) {
-		NotificationRequestResponse response = new NotificationRequestResponse(this, code);
-		response.setTransactionHandle(req.getTransactionHandle());
-		return response;
-	}
+        logger.info("Response TX = " + response.getTransactionHandle() + ", Response: " + response.getReturnCode());
+        return response;
+    }
+
+    private NotificationRequestResponse reject(ReturnCode code) {
+        NotificationRequestResponse response = new NotificationRequestResponse(this, code);
+        response.setTransactionHandle(req.getTransactionHandle());
+        return response;
+    }
 }
