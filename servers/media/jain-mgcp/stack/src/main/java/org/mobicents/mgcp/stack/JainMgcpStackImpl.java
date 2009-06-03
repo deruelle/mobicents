@@ -150,12 +150,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 							+ this.port);
 					break;
 				} catch (SocketException e) {
-					logger.error("Failed to bound to local port " + this.port + ". Caused by", e);
-					if (this.port != port + 10) {
-						this.port++;
-					} else {
-						throw new RuntimeException("Failed to find a local port to bound stack");
-					}
+					logger.error(e);
+					throw new RuntimeException("Failed to find a local port to bound stack");
 				}
 			}
 		}
@@ -167,12 +163,12 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 
 		this.provider = new JainMgcpStackProviderImpl(this);
 		this.utilsFactory = new UtilsFactory(25);
-		
+
 		this.messageHandler = new MessageHandler(this);
 		this.eventSchedulerExecutor.execute(new EventSchedulerTask());
 		this.setPriority(this.messageReaderThreadPriority);
 		// So stack does not die
-		this.setDaemon(false);		
+		this.setDaemon(false);
 		this.ehFactory = new EndpointHandlerFactory(50, this);
 		start();
 	}
@@ -303,7 +299,7 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	public UtilsFactory getUtilsFactory() {
 		return this.utilsFactory;
 	}
-	
+
 	public void setUtilsFactory(UtilsFactory utilsFactory) {
 		this.utilsFactory = utilsFactory;
 	}
@@ -481,7 +477,8 @@ public class JainMgcpStackImpl extends Thread implements JainMgcpStack, Endpoint
 	public synchronized void removeEndpointHandler(String endpointId) {
 		// System.out.println("Removing for EndpointId "+endpointId);
 		EndpointHandler eh = this.endpointHandlers.remove(endpointId.intern());
-		//System.out.println("Removed = " + eh + " size of this.endpointHandlers = " + this.endpointHandlers.size());
+		// System.out.println("Removed = " + eh + " size of
+		// this.endpointHandlers = " + this.endpointHandlers.size());
 		// if (logger.isDebugEnabled()) {
 		// logger.debug("Removing EH" + this.localAddress + ":" + this.port + ":
 		// for:" + endpointId + " = " + eh);

@@ -239,11 +239,9 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 				// Sending the command
 				countOfCommandRetransmitted++;
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Tx ID = " + localTID + " Sending the Command " + countOfCommandRetransmitted);
-				}
-				System.out.println("message = \n" + msgTemp + "\n local Tx ID = " + localTID + " Remote Tx ID = "
-						+ remoteTID + " Sending the Command " + countOfCommandRetransmitted);
+				logger.warn("message = \n" + msgTemp + "\n local Tx ID = " + localTID + " Remote Tx ID = " + remoteTID
+						+ " Sending the Command " + countOfCommandRetransmitted);
+
 				stack.send(sendComandDatagram);
 				resetReTransmissionTimer();
 
@@ -398,7 +396,7 @@ public abstract class TransactionHandler implements Runnable, TransactionHandler
 			ActionPerform ap = this.actionToPerform.remove();
 			ap.perform();
 		} catch (NoSuchElementException nsee) {
-			System.out.println("Received NoSuchElementException for remoteeTx = " + remoteTID);
+			logger.error("Received NoSuchElementException for remoteeTx = " + remoteTID);
 		}
 	}
 
