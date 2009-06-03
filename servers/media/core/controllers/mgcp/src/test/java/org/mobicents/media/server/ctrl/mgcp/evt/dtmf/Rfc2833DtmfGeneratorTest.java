@@ -111,7 +111,7 @@ public class Rfc2833DtmfGeneratorTest {
 		NotifiedEntity ne = new NotifiedEntity("localhost");
 
 		DtmfGeneratorFactory factory = new DtmfGeneratorFactory();
-		factory.setResourceID("RFC2833.Detector");
+		factory.setResourceName("RFC2833.Detector");
 
 		DtmfGenerator signal = (DtmfGenerator) factory.getInstance(controller, "9");
 
