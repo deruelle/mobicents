@@ -154,8 +154,17 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 		return true;
 	}
 
+        private javax.sound.sampled.AudioFormat.Encoding getEncoding(String encodingName) {
+            if (encodingName.equalsIgnoreCase("alaw")) {
+                return javax.sound.sampled.AudioFormat.Encoding.ALAW;
+            } else if (encodingName.equalsIgnoreCase("ulaw")) {
+                return javax.sound.sampled.AudioFormat.Encoding.ULAW;
+            } else {
+                return javax.sound.sampled.AudioFormat.Encoding.PCM_SIGNED;
+            }
+        }
+        
 	public void receive(Buffer buffer) {
-
 		if (!started) {
 			buffer.dispose();
 			return;
@@ -185,9 +194,10 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 				bigEndian = true;
 			}
 
-			javax.sound.sampled.AudioFormat fmt1 = new javax.sound.sampled.AudioFormat(sampleRate, sampleSizeInBits,
-					fmt.getChannels(), signed, bigEndian);
-
+                        
+			javax.sound.sampled.AudioFormat fmt1 = new javax.sound.sampled.AudioFormat(
+                                getEncoding(fmt.getEncoding()), sampleRate, sampleSizeInBits,
+					fmt.getChannels(), 1,8000,bigEndian);
 			AudioInputStream audioStream = new AudioInputStream(recorderStream, fmt1, recordinglength);
 
 			this.recorderThread = new Thread(new RecorderRunnable(audioStream));
