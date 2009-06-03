@@ -1,5 +1,6 @@
 package org.mobicents.media.server.ctrl.mgcp.test.crcx;
 
+import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
 import org.mobicents.media.server.ctrl.mgcp.test.CA;
 import org.mobicents.media.server.ctrl.mgcp.test.MgcpMicrocontainerTest;
 import org.mobicents.mgcp.stack.JainMgcpStackProviderImpl;
@@ -46,5 +47,16 @@ public class CrcxTestCase extends MgcpMicrocontainerTest {
 		}
 
 	}
+        
+        private void waitForMessage() {
+            try {
+                Thread.currentThread().sleep(5000);
+            } catch (Exception e) {
+                
+            }
+        }
+
+    public void processMgcpCommandEvent(JainMgcpCommandEvent arg0) {
+    }
 
 }
