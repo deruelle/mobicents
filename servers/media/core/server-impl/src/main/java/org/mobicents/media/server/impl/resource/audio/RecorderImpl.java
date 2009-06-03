@@ -69,7 +69,9 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 						.toString());
 				boolean fileCreationSuccess = file.mkdirs();
 			}
-			uri = recordDir + "/" + uri;
+                        if (recordDir != null) {
+                            uri = recordDir + "/" + uri;
+                        }
 			if (logger.isDebugEnabled()) {
 				logger.debug("RECORDING TO " + uri);
 			}
