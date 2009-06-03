@@ -22,6 +22,10 @@
 			<destName>deploy/packetrelay-beans.xml</destName>
 		</file>
 		<file>
+			<source>src/main/config/ivr-beans.xml</source>
+			<destName>deploy/ivr-beans.xml</destName>
+		</file>
+		<file>
 			<source>src/main/config/mgcp-conf.xml</source>
 			<destName>deploy/mgcp-conf.xml</destName>
 		</file>

@@ -33,11 +33,12 @@ import org.mobicents.media.server.spi.Endpoint;
 /**
  * 
  * @author amit bhayani
- *
+ * 
  */
 public class RecorderFactory implements ComponentFactory {
 
 	private String name;
+	private String recordDir = "";
 
 	public String getName() {
 		return name;
@@ -47,8 +48,13 @@ public class RecorderFactory implements ComponentFactory {
 		this.name = name;
 	}
 
+	public void setRecordDir(String recordDir) {
+		this.recordDir = recordDir;		
+	}
+
 	public Component newInstance(Endpoint endpoint) {
 		RecorderImpl p = new RecorderImpl(this.name);
+		p.setRecordDir(this.recordDir);
 		p.setEndpoint(endpoint);
 		return p;
 	}

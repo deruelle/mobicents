@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="server-sar/src/main/resources"/>
+	<classpathentry kind="src" path="server-impl/src/test/resources"/>
+	<classpathentry kind="src" path="controllers/mgcp/src/test/resources"/>
 	<classpathentry kind="src" path="server-standalone/src/test/java"/>
 	<classpathentry kind="src" path="server-impl/src/main/resources"/>
 	<classpathentry kind="src" path="server-impl/src/test/java"/>
@@ -117,7 +119,7 @@
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/external/jspeex/jspeex/0.9.7/jspeex-0.9.7.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_gsm/0.3.6/tritonus_gsm-0.3.6.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/mobicents/external/tritonus/tritonus_share/0.3.6/tritonus_share-0.3.6.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/mobicents/jain/mobicents-mgcp-impl/2.0.0.RC1/mobicents-mgcp-impl-2.0.0.RC1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/jain/mobicents-mgcp-impl/2.0.0.RC2/mobicents-mgcp-impl-2.0.0.RC2.jar"/>
 	<classpathentry kind="var" path="M2_REPO/oswego-concurrent/concurrent/1.3.4-jboss-update1/concurrent-1.3.4-jboss-update1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/qdox/qdox/1.6.1/qdox-1.6.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
