@@ -4,18 +4,9 @@
 	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
-	<bean name="DeMuxFactory"
-		class="org.mobicents.media.server.impl.resource.DemuxFactory">
-		<constructor>
-			<parameter>DeMux</parameter>
-		</constructor>
-	</bean>
-
-	<bean name="Rfc2833DetectorFactory"
-		class="org.mobicents.media.server.impl.resource.dtmf.Rfc2833DetectorFactory">
-		<property name="name">Rfc2833DetectorFactory</property>
-	</bean>
-
+	<bean name="IVR-TxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory" />
+		
 	<bean name="IVR-Pipe-1"
 		class="org.mobicents.media.server.resource.PipeFactory">
 		<property name="outlet">audio.processor</property>
@@ -36,7 +27,7 @@
 	</bean>
 
 
-	<bean name="RxChannelFactory"
+	<bean name="IVR-RxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory">
 		<property name="components">
 			<list>
@@ -82,10 +73,10 @@
 			</map>
 		</property>
 		<property name="txChannelFactory">
-			<inject bean="TxChannelFactory" />
+			<inject bean="IVR-TxChannelFactory" />
 		</property>
 		<property name="rxChannelFactory">
-			<inject bean="RxChannelFactory" />
+			<inject bean="IVR-RxChannelFactory" />
 		</property>
 	</bean>
 
