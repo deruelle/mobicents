@@ -125,7 +125,6 @@ public class Rfc2833GeneratorImpl extends AbstractSource implements DtmfGenerato
 	}
 
 	public void stop() {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	public Format[] getFormats() {
