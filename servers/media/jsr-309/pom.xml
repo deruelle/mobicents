@@ -26,7 +26,7 @@
 			1.0.0.BETA2
 		</mobicents.tools.mavenplugin.eclipse.version>
 		<mobicents.mgcp.impl.version>
-			2.0.0.RC2
+			2.0.0.RC3
 		</mobicents.mgcp.impl.version>
 	</properties>
 
