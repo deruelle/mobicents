@@ -66,7 +66,10 @@
 
 	<bean name="DTMF" class="org.mobicents.media.format.AudioFormat">
 		<constructor>
-			<parameter>telephone-event/8000</parameter>
+			<parameter>telephone-event</parameter>
+			<parameter>8000</parameter>
+			<parameter>-1</parameter>
+			<parameter>-1</parameter>
 		</constructor>
 	</bean>
 
@@ -357,25 +360,27 @@
 		<uncallback method="removePackage" />
 	</bean>
 
-	<bean name="GenerateDtmf0"
+	<bean name="Signal.Dtmf0"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGeneratorFactory">
 		<property name="eventName">dtmf0</property>
+		<property name="digit">0</property>
 		<property name="resourceName">Rfc2833GeneratorFactory</property>
 	</bean>
 
-	<bean name="GenerateDtmf1"
+	<bean name="Signal.Dtmf1"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.dtmf.DtmfGeneratorFactory">
 		<property name="eventName">dtmf1</property>
+		<property name="digit">1</property>
 		<property name="resourceName">Rfc2833GeneratorFactory</property>
 	</bean>
 
-	<bean name="DetectDtmf0"
+	<bean name="Event.Dtmf0"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">dtmf0</property>
 		<property name="resourceName">Rfc2833DetectorFactory</property>
 	</bean>
 
-	<bean name="DetectDtmf1"
+	<bean name="Event.Dtmf1"
 		class="org.mobicents.media.server.ctrl.mgcp.evt.DefaultDetectorFactory">
 		<property name="eventName">dtmf1</property>
 		<property name="resourceName">Rfc2833DetectorFactory</property>
@@ -386,14 +391,14 @@
 		<property name="name">D</property>
 		<property name="generators">
 			<list>
-				<inject bean="GenerateDtmf0" />
-				<inject bean="GenerateDtmf1" />
+				<inject bean="Signal.Dtmf0" />
+				<inject bean="Signal.Dtmf1" />
 			</list>
 		</property>
 		<property name="detectors">
 			<list>
-				<inject bean="DetectDtmf0" />
-				<inject bean="DetectDtmf1" />
+				<inject bean="Event.Dtmf0" />
+				<inject bean="Event.Dtmf1" />
 			</list>
 		</property>
 	</bean>
