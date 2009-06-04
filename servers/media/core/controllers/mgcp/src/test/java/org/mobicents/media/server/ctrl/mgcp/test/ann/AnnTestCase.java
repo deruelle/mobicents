@@ -74,7 +74,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
     
     private void startPlayer(String url) throws Exception {
         EndpointIdentifier endpointID = new EndpointIdentifier(AAP, "127.0.0.1");
-        NotificationRequest rqnt = new NotificationRequest(this, endpointID, playbackID);
+        NotificationRequest rqnt = new NotificationRequest(this, txConnection.getEndpoint(), playbackID);
 
         EventName[] signalRequests = {new EventName(PackageName.Announcement, MgcpEvent.ann.withParm(url), null)};
         rqnt.setSignalRequests(signalRequests);
@@ -106,7 +106,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
 
     private void startRecording(String url) throws Exception {
         EndpointIdentifier endpointID = new EndpointIdentifier(IVR, "127.0.0.1");
-        NotificationRequest rqnt = new NotificationRequest(this, endpointID, recordingID);
+        NotificationRequest rqnt = new NotificationRequest(this, rxConnection.getEndpoint(), recordingID);
 
         EventName[] signalRequests = {new EventName(AUPackage.AU, AUMgcpEvent.aupr.withParm(url), null)};
         rqnt.setSignalRequests(signalRequests);
