@@ -109,7 +109,9 @@ public class MgcpPackage {
     public EventDetector getDetector(MgcpEvent evt, RequestedAction[] actions) {
         for (DetectorFactory factory : detectors) {
             if (factory.getEventName().equals(evt.getName())) {
-                return factory.getInstance(evt.getParms(), actions);
+                EventDetector det = factory.getInstance(evt.getParms(), actions);
+                det.setPackageName(name);
+                return det;
             }
         }
         return null;
