@@ -16,7 +16,8 @@ public class DtmfGeneratorFactory implements GeneratorFactory {
 
 	private String resourceName;
 	private int eventID;
-
+        private String digit;
+        
 	public String getEventName() {
 		return this.name;
 	}
@@ -41,7 +42,16 @@ public class DtmfGeneratorFactory implements GeneratorFactory {
         this.resourceName = resourceName;
     }
 
-	public SignalGenerator getInstance(MgcpController controller, String digit) {
+    public String getDigit() {
+        return digit;
+    }
+
+    public void setDigit(String digit) {
+        this.digit = digit;
+    }
+
+    
+	public SignalGenerator getInstance(MgcpController controller, String param) {
 		return new DtmfGenerator(resourceName, digit);
 	}
 
