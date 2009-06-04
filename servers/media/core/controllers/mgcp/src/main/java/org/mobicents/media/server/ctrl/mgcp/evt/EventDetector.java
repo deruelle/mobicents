@@ -89,6 +89,10 @@ public abstract class EventDetector implements NotificationListener {
         return endpoint;
     }
     
+    public void setPackageName(String pkgName) {
+        this.pkgName = pkgName;
+    }
+    
     public EventName getEventName() {
         return new EventName(PackageName.factory(pkgName), MgcpEvent.factory(eventName));
     }
