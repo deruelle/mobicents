@@ -149,8 +149,10 @@ public class Request implements Runnable, ConnectionListener {
         }
         
         //starting first signal for endpoint
-        activeEndpointSignal = endpointSignalQueue.next();
-        activeEndpointSignal.start(this);
+        if (endpointSignalQueue.hasNext()) {
+            activeEndpointSignal = endpointSignalQueue.next();
+            activeEndpointSignal.start(this);
+        }
     }
 
     public void cancel() {
@@ -274,8 +276,10 @@ public class Request implements Runnable, ConnectionListener {
         connectionDetectors.remove(connection.getId());
 
         List<EventDetector> list = connectionDetectors.remove(connection.getId());
-        for (EventDetector det : list) {
-            det.stop();
+        if (list != null) {
+            for (EventDetector det : list) {
+                det.stop();
+            }
         }
         //remove connection instance if present
         connections.remove(connection);
@@ -293,9 +297,11 @@ public class Request implements Runnable, ConnectionListener {
         return txID;
     }
     public void sendNotify(EventName eventName) {
+        System.out.println("=====SENDING NOTIFY +++++");
         Notify notify = new Notify(this, endpointID, reqID, new EventName[]{eventName});
         notify.setNotifiedEntity(notifiedEntity);
         notify.setTransactionHandle(txID++);
+        notify.setRequestIdentifier(reqID);
         controller.getMgcpProvider().sendMgcpEvents(new JainMgcpEvent[]{notify});
         System.out.println("===== NOTIFY +++++");
     }
