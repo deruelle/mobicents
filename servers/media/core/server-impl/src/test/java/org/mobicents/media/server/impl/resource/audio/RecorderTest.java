@@ -205,41 +205,41 @@ public class RecorderTest {
 		}
 	}
 
-	@Test
-	public void test_GSM() throws Exception {
-		URL url = AudioPlayerTest.class.getClassLoader().getResource(
-				"org/mobicents/media/server/impl/cnfannouncement.gsm");
-
-		String tempFilePath = url.getPath();
-		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-		System.out.println(recordDir);
-
-		recorder.setRecordDir(recordDir);
-
-		// let us record for 5 sec
-		recorder.setRecordTime(5);
-
-		player.setFile(url.toExternalForm());
-		player.connect(recorder);
-
-		recorder.start("cnfannouncement-recorded.gsm");
-		player.start();
-
-		semaphore.tryAcquire(10, TimeUnit.SECONDS);
-
-		assertEquals(false, completed);
-
-		// TODO : GSM file not supported yet.
-		assertEquals(true, failed);
-
-		try {
-			File file = new File(recordDir + "/" + "cnfannouncement-recorded.gsm");
-		} catch (Exception e) {
-			logger.debug("Expected error", e);
-
-		}
-	}
+//	@Test
+//	public void test_GSM() throws Exception {
+//		URL url = AudioPlayerTest.class.getClassLoader().getResource(
+//				"org/mobicents/media/server/impl/cnfannouncement.gsm");
+//
+//		String tempFilePath = url.getPath();
+//		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
+//
+//		System.out.println(recordDir);
+//
+//		recorder.setRecordDir(recordDir);
+//
+//		// let us record for 5 sec
+//		recorder.setRecordTime(5);
+//
+//		player.setFile(url.toExternalForm());
+//		player.connect(recorder);
+//
+//		recorder.start("cnfannouncement-recorded.gsm");
+//		player.start();
+//
+//		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+//
+//		assertEquals(false, completed);
+//
+//		// TODO : GSM file not supported yet.
+//		assertEquals(true, failed);
+//
+//		try {
+//			File file = new File(recordDir + "/" + "cnfannouncement-recorded.gsm");
+//		} catch (Exception e) {
+//			logger.debug("Expected error", e);
+//
+//		}
+//	}
 
 	private class RecorderListener implements NotificationListener {
 
