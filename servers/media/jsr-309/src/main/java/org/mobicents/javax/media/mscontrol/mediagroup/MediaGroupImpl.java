@@ -34,7 +34,7 @@ public class MediaGroupImpl extends AbstractJoinableContainer implements MediaGr
 	public static Logger logger = Logger.getLogger(MediaGroupImpl.class);
 
 	private static final String LOOP_ENDPOINT_NAME = "/mobicents/media/aap/$";
-	private static final String IVR_ENDPOINT_NAME = "/mobicents/media/aap/$";
+	private static final String IVR_ENDPOINT_NAME = "/mobicents/media/IVR/$";
 	private URI uri = null;
 	protected Player player = null;
 	protected SignalDetector detector = null;
