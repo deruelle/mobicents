@@ -52,7 +52,7 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest implemen
 
     private Semaphore semaphore = new Semaphore(0);
     private JainMgcpResponseEvent response;
-    private boolean op = false;
+    private volatile boolean op = false;
     
     public MgcpMicrocontainerTest(String name) {
         super(name);
@@ -183,6 +183,11 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest implemen
     public void transactionTxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
         // TODO Auto-generated method stub
     }
+
+	public void processMgcpCommandEvent(JainMgcpCommandEvent event) {
+		// TODO Auto-generated method stub
+		return;
+	}
 
     
 }

@@ -45,12 +45,14 @@ public class DtmfEvent implements NotifyEvent {
 	public final static int DTMF_7 = 7;
 	public final static int DTMF_8 = 8;
 	public final static int DTMF_9 = 9;
-	public final static int DTMF_STAR = 10;
-	public final static int DTMF_HASH = 11;
-	public final static int DTMF_A = 12;
-	public final static int DTMF_B = 13;
-	public final static int DTMF_C = 14;
-	public final static int DTMF_D = 15;
+	public final static int DTMF_A = 10;
+	public final static int DTMF_B = 11;
+	public final static int DTMF_C = 12;
+	public final static int DTMF_D = 13;
+	public final static int DTMF_HASH = 14;
+	public final static int DTMF_STAR = 15;
+
+
 
 	private Endpoint endpoint;
 	private Connection connection;
