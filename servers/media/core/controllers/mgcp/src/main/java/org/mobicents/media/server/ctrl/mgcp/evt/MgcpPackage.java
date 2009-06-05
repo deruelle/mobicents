@@ -32,88 +32,92 @@ import java.util.List;
 import org.mobicents.media.server.ctrl.mgcp.MgcpController;
 
 /**
- *
+ * 
  * @author kulikov
  */
 public class MgcpPackage {
 
-    private String name;
-    private int id;
-    private MgcpController controller;
-    private List<GeneratorFactory> generators;
-    private List<DetectorFactory> detectors;
+	private String name;
+	private int id;
+	private MgcpController controller;
+	private List<GeneratorFactory> generators;
+	private List<DetectorFactory> detectors;
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public MgcpController getController() {
-        return controller;
-    }
+	public MgcpController getController() {
+		return controller;
+	}
 
-    public void setController(MgcpController controller) {
-        this.controller = controller;
-    }
+	public void setController(MgcpController controller) {
+		this.controller = controller;
+	}
 
-    public List<GeneratorFactory> getGenerators() {
-        return generators;
-    }
+	public List<GeneratorFactory> getGenerators() {
+		return generators;
+	}
 
-    public void setGenerators(List<GeneratorFactory> signals) {
-        this.generators = signals;
-        try {
-        if (signals != null) {
-            for (GeneratorFactory factory : generators) {
-                factory.setPackageName(this.name);
-            }
-        }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public void setGenerators(List<GeneratorFactory> signals) {
+		this.generators = signals;
+		try {
+			if (signals != null) {
+				for (GeneratorFactory factory : generators) {
+					factory.setPackageName(this.name);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-    public List<DetectorFactory> getDetectors() {
-        return detectors;
-    }
+	public List<DetectorFactory> getDetectors() {
+		return detectors;
+	}
 
-    public void setDetectors(List<DetectorFactory> events) {
-        this.detectors = events;
-        if (events != null) {
-            for (DetectorFactory factory : detectors) {
-                factory.setPackageName(this.name);
-            }
-        }
-    }
+	public void setDetectors(List<DetectorFactory> events) {
+		this.detectors = events;
+		if (events != null) {
+			for (DetectorFactory factory : detectors) {
+				factory.setPackageName(this.name);
+			}
+		}
+	}
 
-    public SignalGenerator getGenerator(MgcpEvent evt) {
-        for (GeneratorFactory factory : generators) {
-            if (factory.getEventName().equals(evt.getName())) {
-                return factory.getInstance(controller, evt.getParms());
-            }
-        }
-        return null;
-    }
+	public SignalGenerator getGenerator(MgcpEvent evt) {
+		if (generators != null) {
+			for (GeneratorFactory factory : generators) {
+				if (factory.getEventName().equals(evt.getName())) {
+					return factory.getInstance(controller, evt.getParms());
+				}
+			}
+		}
+		return null;
+	}
 
-    public EventDetector getDetector(MgcpEvent evt, RequestedAction[] actions) {
-        for (DetectorFactory factory : detectors) {
-            if (factory.getEventName().equals(evt.getName())) {
-                EventDetector det = factory.getInstance(evt.getParms(), actions);
-                det.setPackageName(name);
-                return det;
-            }
-        }
-        return null;
-    }
+	public EventDetector getDetector(MgcpEvent evt, RequestedAction[] actions) {
+		if (detectors != null) {
+			for (DetectorFactory factory : detectors) {
+				if (factory.getEventName().equals(evt.getName())) {
+					EventDetector det = factory.getInstance(evt.getParms(), actions);
+					det.setPackageName(name);
+					return det;
+				}
+			}
+		}
+		return null;
+	}
 }
