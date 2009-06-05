@@ -128,9 +128,6 @@ public class RecorderImpl implements Recorder {
 						.getPeerIp()
 						+ ":" + mgcpWrapper.getPeerPort());
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
-				// notificationRequest.setSignalRequests(new EventName[] {});
-				// notificationRequest.setRequestedEvents(new RequestedEvent[]
-				// {});
 				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				notificationRequest.setTransactionHandle(this.tx);
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
@@ -225,11 +222,11 @@ public class RecorderImpl implements Recorder {
 		private int tx = -1;
 
 		private Recorder recorder = null;
-		private URI file = null;
+		private String file = null;
 
-		StartTx(Recorder recorder, URI file) {
+		StartTx(Recorder recorder, URI uri) {
 			this.recorder = recorder;
-			this.file = file;
+			this.file = uri.toString();
 		}
 
 		public void run() {
@@ -248,7 +245,7 @@ public class RecorderImpl implements Recorder {
 				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				EventName signalRequest = new EventName(AUPackage.AU, AUMgcpEvent.aupr, connId);
+				EventName signalRequest = new EventName(AUPackage.AU, AUMgcpEvent.aupr.withParm(this.file), null);
 
 				notificationRequest.setSignalRequests(new EventName[] { signalRequest });
 
@@ -258,7 +255,8 @@ public class RecorderImpl implements Recorder {
 						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auoc, connId), actions),
 						new RequestedEvent(new EventName(AUPackage.AU, AUMgcpEvent.auof, connId), actions) };
 
-				notificationRequest.setRequestedEvents(requestedEvents);
+				//TODO : These are not supported yet on MMS 
+				//notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);
 
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
