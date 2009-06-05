@@ -233,6 +233,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 
 				createConnection.setTransactionHandle(tx);
+				createConnection.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 
 			} catch (ConflictingParameterException e) {
@@ -358,6 +359,7 @@ public class NetworkConnectionImpl extends AbstractJoinableContainer implements 
 				}
 
 				modifyConnection.setTransactionHandle(tx);
+				modifyConnection.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
 			} catch (Exception e) {
 				e.printStackTrace();

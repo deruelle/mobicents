@@ -139,22 +139,25 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 	}
 
 	public void unjoinInitiate(Joinable other, Serializable context) throws MsControlException {
-		checkState();
+		if (!this.state.equals(MediaObjectState.RELEASED)) {
+			AbstractJoinableContainer absJoiConOther = (AbstractJoinableContainer) other;
 
-		AbstractJoinableContainer absJoiConOther = (AbstractJoinableContainer) other;
+			if (!absJoiConOther.state.equals(MediaObjectState.RELEASED)) {
 
-		absJoiConOther.checkState();
+				if (this.audioJoinableStream == null) {
+					throw new MsControlException("No stream present with this container" + this.getURI()
+							+ " for unjoin");
+				}
 
-		if (this.audioJoinableStream == null) {
-			throw new MsControlException("No stream present with this container" + this.getURI() + " for unjoin");
+				if (absJoiConOther.audioJoinableStream == null) {
+					throw new MsControlException("No stream present with other container " + absJoiConOther.getURI()
+							+ "for unjoin");
+				}
+
+				this.audioJoinableStream.unjoinInitiate(absJoiConOther.audioJoinableStream, context);
+			}
 		}
 
-		if (absJoiConOther.audioJoinableStream == null) {
-			throw new MsControlException("No stream present with other container " + absJoiConOther.getURI()
-					+ "for unjoin");
-		}
-
-		this.audioJoinableStream.unjoinInitiate(absJoiConOther.audioJoinableStream, context);
 	}
 
 	public void addListener(StatusEventListener listener) {
@@ -183,7 +186,7 @@ public abstract class AbstractJoinableContainer implements JoinableContainer {
 			AbstractJoinableContainer otheContainer, boolean error) {
 		if (!error) {
 			this.state = MediaObjectState.JOINED;
-			otheContainer.state = MediaObjectState.JOINED;			
+			otheContainer.state = MediaObjectState.JOINED;
 			joined(thisConnId, otherConnId);
 			otheContainer.joined(otherConnId, thisConnId);
 		}

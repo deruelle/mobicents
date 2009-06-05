@@ -171,31 +171,34 @@ public class AudioJoinableStream implements JoinableStream {
 	}
 
 	public void unjoinInitiate(Joinable other, Serializable context) throws MsControlException {
-		this.container.checkState();
+		if (!this.container.state.equals(MediaObjectState.RELEASED)) {
+			AudioJoinableStream audioJoiStreamOther = (AudioJoinableStream) other;
 
-		AudioJoinableStream audioJoiStreamOther = (AudioJoinableStream) other;
+			if (!audioJoiStreamOther.container.state.equals(MediaObjectState.RELEASED)) {
+				ConnectionIdentifier thisConnId = getConnectionIdentifier(audioJoiStreamOther);
 
-		audioJoiStreamOther.container.checkState();
+				if (thisConnId == null) {
+					throw new MsControlException("This stream is not connected to other stream");
+				}
 
-		ConnectionIdentifier thisConnId = getConnectionIdentifier(audioJoiStreamOther);
+				ConnectionIdentifier otherConnId = audioJoiStreamOther.getConnectionIdentifier(this);
 
-		if (thisConnId == null) {
-			throw new MsControlException("This stream is not connected to other stream");
+				// This should never happen. If This is connected to Other,
+				// Other has to be connected to This, else its an error/leak
+				// state
+				if (otherConnId == null) {
+					throw new MsControlException(
+							"Other stream is not connected to this stream. This is Error/Leak condition");
+				}
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("UnJoinTx() with thisConnId = " + thisConnId + " and otherConnId = " + otherConnId);
+				}
+				Runnable tx = new UnJoinTx(this, thisConnId, audioJoiStreamOther, otherConnId);
+				Provider.submit(tx);
+			}
+
 		}
-
-		ConnectionIdentifier otherConnId = audioJoiStreamOther.getConnectionIdentifier(this);
-
-		// This should never happen. If This is connected to Other, Other has to
-		// be connected to This, else its an error/leak state
-		if (otherConnId == null) {
-			throw new MsControlException("Other stream is not connected to this stream. This is Error/Leak condition");
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("UnJoinTx() with thisConnId = " + thisConnId + " and otherConnId = " + otherConnId);
-		}
-		Runnable tx = new UnJoinTx(this, thisConnId, audioJoiStreamOther, otherConnId);
-		Provider.submit(tx);
 
 	}
 
@@ -419,7 +422,7 @@ public class AudioJoinableStream implements JoinableStream {
 
 				modifyConnection.setMode(getConnectionMode(this.thisDir));
 				modifyConnection.setTransactionHandle(this.tx);
-
+				modifyConnection.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { modifyConnection });
 
 			} catch (Exception e) {
@@ -451,7 +454,7 @@ public class AudioJoinableStream implements JoinableStream {
 
 		}
 
-		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {			
+		public void processMgcpResponseEvent(JainMgcpResponseEvent jainmgcpresponseevent) {
 
 			switch (jainmgcpresponseevent.getObjectIdentifier()) {
 
@@ -560,6 +563,7 @@ public class AudioJoinableStream implements JoinableStream {
 				createConnection.setSecondEndpointIdentifier(secondEndpointID);
 				createConnection.setMode(getConnectionMode(this.thisDir));
 				createConnection.setTransactionHandle(this.tx);
+				createConnection.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { createConnection });
 			} catch (ConflictingParameterException e) {
 				e.printStackTrace();
@@ -671,8 +675,8 @@ public class AudioJoinableStream implements JoinableStream {
 						+ this.thisAudJoiStr.container.endpoint + " this.other.endpoint = "
 						+ this.otherAudJoiStr.container.endpoint + " " + responseEvent.getReturnCode().getComment());
 				joinEvent = new JoinEventImpl((ResourceContainer) container, this, this.otherAudJoiStr,
-						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_ResourceUnavailable, responseEvent.getReturnCode()
-								.getComment());
+						this.thisAudJoiStr, JoinEvent.ev_Joined, Error.e_ResourceUnavailable, responseEvent
+								.getReturnCode().getComment());
 				container.updateJoined(joinEvent, null, null, this.otherAudJoiStr.container, true);
 				break;
 			default:

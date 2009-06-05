@@ -77,9 +77,6 @@ public class MediaSessionImpl implements MediaSession {
 	}
 
 	public void release() {
-		for (NetworkConnection nc : netConnList) {
-			nc.release();
-		}
 
 		for (MediaGroup mg : medGrpList) {
 			mg.release();
@@ -87,6 +84,10 @@ public class MediaSessionImpl implements MediaSession {
 
 		for (MediaMixer mx : medMxrList) {
 			mx.release();
+		}
+
+		for (NetworkConnection nc : netConnList) {
+			nc.release();
 		}
 		this.attributeMap.clear();
 	}
@@ -133,7 +134,7 @@ public class MediaSessionImpl implements MediaSession {
 		attributeMap.remove(key);
 	}
 
-	public void setAttribute(String key, Object arg1) {		
+	public void setAttribute(String key, Object arg1) {
 		attributeMap.put(key, arg1);
 	}
 

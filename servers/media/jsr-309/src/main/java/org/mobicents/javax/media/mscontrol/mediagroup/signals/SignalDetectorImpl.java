@@ -9,7 +9,6 @@ import jain.protocol.ip.mgcp.message.NotificationRequestResponse;
 import jain.protocol.ip.mgcp.message.Notify;
 import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionIdentifier;
-import jain.protocol.ip.mgcp.message.parms.DigitMap;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
 import jain.protocol.ip.mgcp.message.parms.RequestIdentifier;
@@ -132,6 +131,7 @@ public class SignalDetectorImpl implements SignalDetector {
 						.getPeerIp()
 						+ ":" + mgcpWrapper.getPeerPort());
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 
 				notificationRequest.setTransactionHandle(this.tx);
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
@@ -470,13 +470,47 @@ public class SignalDetectorImpl implements SignalDetector {
 				mgcpWrapper.addListnere(reqId, this);
 
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
-				RequestedAction[] dtmfActions = new RequestedAction[] { RequestedAction.TreatAccordingToDigitMap };
-				notificationRequest.setDigitMap(new DigitMap(digitMap));
+				RequestedAction[] dtmfActions = new RequestedAction[] { RequestedAction.NotifyImmediately };
+				//notificationRequest.setDigitMap(new DigitMap(digitMap));
 
-				RequestedEvent[] requestedEvents = { new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.X,
-						connId), dtmfActions) };
+				RequestedEvent dtmf0 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf0, connId),
+						dtmfActions);
+				RequestedEvent dtmf1 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf1, connId),
+						dtmfActions);
+				RequestedEvent dtmf2 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf2, connId),
+						dtmfActions);
+				RequestedEvent dtmf3 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf3, connId),
+						dtmfActions);
+				RequestedEvent dtmf4 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf4, connId),
+						dtmfActions);
+				RequestedEvent dtmf5 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf5, connId),
+						dtmfActions);
+				RequestedEvent dtmf6 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf6, connId),
+						dtmfActions);
+				RequestedEvent dtmf7 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf7, connId),
+						dtmfActions);
+				RequestedEvent dtmf8 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf8, connId),
+						dtmfActions);
+				RequestedEvent dtmf9 = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmf9, connId),
+						dtmfActions);
+				RequestedEvent dtmfA = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfA, connId),
+						dtmfActions);
+				RequestedEvent dtmfB = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfB, connId),
+						dtmfActions);
+				RequestedEvent dtmfC = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfC, connId),
+						dtmfActions);
+				RequestedEvent dtmfD = new RequestedEvent(new EventName(PackageName.Dtmf, MgcpEvent.dtmfD, connId),
+						dtmfActions);
+				RequestedEvent dtmfStar = new RequestedEvent(
+						new EventName(PackageName.Dtmf, MgcpEvent.dtmfStar, connId), dtmfActions);
+				RequestedEvent dtmfHash = new RequestedEvent(
+						new EventName(PackageName.Dtmf, MgcpEvent.dtmfHash, connId), dtmfActions);
+
+				RequestedEvent[] requestedEvents = { dtmf0, dtmf1, dtmf2, dtmf3, dtmf4, dtmf5, dtmf6, dtmf7, dtmf8,
+						dtmf9, dtmfA, dtmfB, dtmfC, dtmfD, dtmfStar, dtmfHash };
 
 				notificationRequest.setRequestedEvents(requestedEvents);
 				notificationRequest.setTransactionHandle(this.tx);

@@ -131,6 +131,7 @@ public class RecorderImpl implements Recorder {
 				// notificationRequest.setSignalRequests(new EventName[] {});
 				// notificationRequest.setRequestedEvents(new RequestedEvent[]
 				// {});
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				notificationRequest.setTransactionHandle(this.tx);
 				mgcpWrapper.sendMgcpEvents(new JainMgcpEvent[] { notificationRequest });
 
@@ -244,6 +245,7 @@ public class RecorderImpl implements Recorder {
 				mgcpWrapper.addListnere(reqId, this);
 
 				NotificationRequest notificationRequest = new NotificationRequest(this, endpointID, reqId);
+				notificationRequest.setNotifiedEntity(mgcpWrapper.getDefaultNotifiedEntity());
 				ConnectionIdentifier connId = mediaGroup.thisConnId;
 
 				EventName signalRequest = new EventName(AUPackage.AU, AUMgcpEvent.aupr, connId);

@@ -115,7 +115,7 @@ public class MGW implements JainMgcpExtendedListener {
 			responseSent = true;
 
 			break;
-		
+
 		case Constants.CMD_DELETE_CONNECTION:
 			DeleteConnectionResponse responseDLCX = new DeleteConnectionResponse(jainmgcpcommandevent.getSource(),
 					ReturnCode.Transaction_Executed_Normally);
@@ -189,26 +189,27 @@ public class MGW implements JainMgcpExtendedListener {
 			RequestedEvent[] requestedEvents = notificationRequest.getRequestedEvents();
 
 			logger.debug("Thread wokeup. Within else block and value of sendNtfy = " + this.mgw.getSendNtfy());
-			if (this.mgw.getSendNtfy()) {				
+			if (this.mgw.getSendNtfy()) {
 
-					for (RequestedEvent requestedEvent : requestedEvents) {
+				for (RequestedEvent requestedEvent : requestedEvents) {
 
-						EventName eventName = requestedEvent.getEventName();
+					EventName eventName = requestedEvent.getEventName();
 
-						if (eventName.getEventIdentifier().intValue() == MgcpEvent.MATCH_ANY_DIGIT_WILDCARD) {
+					// if (eventName.getEventIdentifier().intValue() ==
+					// MgcpEvent.MATCH_ANY_DIGIT_WILDCARD) {
 
-							EventName eventDtmf1 = new EventName(eventName.getPackageName(), MgcpEvent.dtmf1, eventName
-									.getConnectionIdentifier());
+					EventName eventDtmf1 = new EventName(eventName.getPackageName(), MgcpEvent.dtmf1, eventName
+							.getConnectionIdentifier());
 
-							Notify notify = new Notify(this, endpointId, redId, new EventName[] { eventDtmf1 });
-							notify.setTransactionHandle(mgwProvider.getUniqueTransactionHandler());
-							mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { notify });
-							responseSent = true;
-							break;
-						}
-					}
-				
-			} //if (this.mgw.getSendNtfy())
+					Notify notify = new Notify(this, endpointId, redId, new EventName[] { eventDtmf1 });
+					notify.setTransactionHandle(mgwProvider.getUniqueTransactionHandler());
+					mgwProvider.sendMgcpEvents(new JainMgcpEvent[] { notify });
+					responseSent = true;
+					break;
+					// }
+				}
+
+			} // if (this.mgw.getSendNtfy())
 		}
 	}
 
