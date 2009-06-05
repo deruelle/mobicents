@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	    xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
-	    xmlns="urn:jboss:bean-deployer:2.0">
-	
-	
+	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
+	xmlns="urn:jboss:bean-deployer:2.0">
+
+	<bean name="Ann-TxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory" />
 
 	<!-- ANNOUNCEMENT  -->
-	<bean name="Mobicents.MMS.AnnTrunkManagementService"
-	      class="org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagement">
-		<annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="media.mobicents:endpoint=announcement",exposedInterface=org.mobicents.media.server.impl.jmx.enp.ann.AnnTrunkManagementMBean.class,registerDirectly=true)</annotation>
-		<property name="trunkName">media/trunk/Announcement</property>
-		<property name="rtpFactory">
-			<inject bean="RtpFactory" />
+	<bean name="Announcement-Access-Point"
+		class="org.mobicents.media.server.EndpointImpl">
+		<property name="localName">
+			/mobicents/media/aap/[1..10]
 		</property>
-		<property name="channels">24</property>
-		
-		<demand>RtpFactory</demand>
+		<property name="timer">
+			<inject bean="Timer" />
+		</property>
+		<property name="sourceFactory">
+			<inject bean="AudioPlayerFactory" />
+		</property>
+		<property name="rtpFactory">
+			<map class="java.util.Hashtable" keyClass="java.lang.String"
+				valueClass="org.mobicents.media.server.impl.rtp.RtpFactory">
+				<entry>
+					<key>audio</key>
+					<value>
+						<inject bean="RTPAudioFactory" />
+					</value>
+				</entry>
+			</map>
+		</property>
+		<property name="txChannelFactory">
+			<inject bean="Ann-TxChannelFactory" />
+		</property>
 	</bean>
-	
+
 </deployment>

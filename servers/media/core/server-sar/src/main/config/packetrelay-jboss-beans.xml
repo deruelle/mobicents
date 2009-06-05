@@ -4,62 +4,66 @@
 	xsi:schemaLocation="urn:jboss:bean-deployer:2.0 bean-deployer_2_0.xsd"
 	xmlns="urn:jboss:bean-deployer:2.0">
 
-	<bean name="IVR-TxChannelFactory"
-		class="org.mobicents.media.server.resource.ChannelFactory" />
-		
-	<bean name="IVR-Pipe-1"
+	<!-- PACKET RELAY -->
+
+
+	<bean name="PR-Pipe1"
 		class="org.mobicents.media.server.resource.PipeFactory">
 		<property name="outlet">audio.processor</property>
 	</bean>
-	<bean name="IVR-Pipe-2"
+	<bean name="PR-Pipe2"
 		class="org.mobicents.media.server.resource.PipeFactory">
 		<property name="inlet">audio.processor</property>
-		<property name="outlet">DeMux</property>
-	</bean>
-	<bean name="IVR-Pipe-3"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="inlet">DeMux</property>
-		<property name="outlet">Rfc2833DetectorFactory</property>
-	</bean>
-	<bean name="IVR-Pipe-4"
-		class="org.mobicents.media.server.resource.PipeFactory">
-		<property name="inlet">DeMux</property>
 	</bean>
 
-
-	<bean name="IVR-RxChannelFactory"
+	<bean name="PR-RxChannelFactory"
 		class="org.mobicents.media.server.resource.ChannelFactory">
 		<property name="components">
 			<list>
-				<inject bean="DeMuxFactory" />
-				<inject bean="Rfc2833DetectorFactory" />
 				<inject bean="AudioProcessorFactory" />
 			</list>
 		</property>
 		<property name="pipes">
 			<list>
-				<inject bean="IVR-Pipe-1" />
-				<inject bean="IVR-Pipe-2" />
-				<inject bean="IVR-Pipe-3" />
-				<inject bean="IVR-Pipe-4" />
+				<inject bean="PR-Pipe1" />
+				<inject bean="PR-Pipe2" />
 			</list>
 		</property>
 	</bean>
 
-	<!-- IVR  -->
-	<bean name="IVREndpoint"
+	<bean name="PR-TxChannelFactory"
+		class="org.mobicents.media.server.resource.ChannelFactory">
+		<property name="components">
+			<list>
+				<inject bean="AudioProcessorFactory" />
+			</list>
+		</property>
+		<property name="pipes">
+			<list>
+				<inject bean="PR-Pipe1" />
+				<inject bean="PR-Pipe2" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean name="PacketRelaySourceFactory"
+		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySourceFactory">
+		<property name="name">pr-source</property>
+	</bean>
+
+	<bean name="PacketRelaySinkFactory"
+		class="org.mobicents.media.server.impl.resource.prelay.PacketRelaySinkFactory">
+		<property name="name">pr-sink</property>
+	</bean>
+
+	<bean name="PacketRelayEndpoint"
 		class="org.mobicents.media.server.EndpointImpl">
 		<property name="localName">
-			/mobicents/media/IVR/[1..10]
+			/mobicents/media/packetrelay/[1..10]
 		</property>
 		<property name="timer">
 			<inject bean="Timer" />
-		</property>
-		<property name="sourceFactory">
-			<inject bean="AudioPlayerFactory" />
-		</property>
-		<property name="sinkFactory">
-			<inject bean="RecorderFactory" />
 		</property>
 		<property name="rtpFactory">
 			<map class="java.util.Hashtable" keyClass="java.lang.String"
@@ -73,11 +77,18 @@
 			</map>
 		</property>
 		<property name="txChannelFactory">
-			<inject bean="IVR-TxChannelFactory" />
+			<inject bean="PR-TxChannelFactory" />
 		</property>
 		<property name="rxChannelFactory">
-			<inject bean="IVR-RxChannelFactory" />
+			<inject bean="PR-RxChannelFactory" />
 		</property>
+		<property name="sinkFactory">
+			<inject bean="PacketRelaySinkFactory" />
+		</property>
+		<property name="sourceFactory">
+			<inject bean="PacketRelaySourceFactory" />
+		</property>
+
 	</bean>
 
 
