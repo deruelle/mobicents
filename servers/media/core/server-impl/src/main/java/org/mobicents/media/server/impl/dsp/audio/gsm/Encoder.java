@@ -12,11 +12,10 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  */
 public class Encoder implements Codec {
 
-
-
 	private org.tritonus.lowlevel.gsm.Encoder encoder = new org.tritonus.lowlevel.gsm.Encoder();
 
-
+	private short[] signal = new short[160];
+	private byte[] res = new byte[33];
 
 	public void process(Buffer buffer) {
 		if (buffer.getLength() != 320) {
@@ -26,7 +25,6 @@ public class Encoder implements Codec {
 
 		// encode into short values
 		byte[] data = (byte[]) buffer.getData();
-		short[] signal = new short[160];
 
 		// int k = 0;
 		for (int i = 0; i < 160; i++) {
@@ -34,13 +32,15 @@ public class Encoder implements Codec {
 			signal[i] = bytesToShort16(data, i * 2, false);
 		}
 
-		byte[] res = new byte[33];
 		encoder.encode(signal, res);
+		int length = res.length;
+		
+		System.arraycopy(res, 0, (byte[])buffer.getData(), 0, length);
 
-		buffer.setData(res);
+		//buffer.setData(res);
 		buffer.setOffset(0);
 		buffer.setFormat(Codec.GSM);
-		buffer.setLength(res.length);
+		buffer.setLength(length);
 	}
 
 	private short bytesToShort16(byte[] buffer, int byteOffset, boolean bigEndian) {
@@ -52,15 +52,13 @@ public class Encoder implements Codec {
 		return Codec.LINEAR_AUDIO;
 	}
 
-
-	
 	public Format getSupportedOutputFormat() {
 		return Codec.GSM;
 	}
 
 	public void setProc(SignalingProcessor processor) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
