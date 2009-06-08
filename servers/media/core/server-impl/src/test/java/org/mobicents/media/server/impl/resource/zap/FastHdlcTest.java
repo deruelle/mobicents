@@ -64,10 +64,10 @@ public class FastHdlcTest {
             assertFalse(res == FastHDLC.RETURN_EMPTY_FLAG);
             assertFalse(frameLen>279);
 
-            System.out.println("-- "
-            		+ alignNumber(Integer.toHexString(res), 2) +
-            		" " 
-            		+ alignNumber(Integer.toBinaryString(res), 8));
+//            System.out.println("-- "
+//            		+ alignNumber(Integer.toHexString(res), 2) +
+//            		" " 
+//            		+ alignNumber(Integer.toBinaryString(res), 8));
             frameLen++;
             
             // Check if the recognized sequence matches the frame we expected

@@ -99,12 +99,10 @@ public class InnerNamingServiceTestCase extends MicrocontainerTest {
 			Endpoint endPt = namingService.lookup("/mobicents/media/aap/$", false);
 			assertNotNull(endPt);
 			
-			System.out.println(endPt.getLocalName());
 
 			Endpoint endPt1 = namingService.lookup("/mobicents/media/aap/$", false);
 			assertNotNull(endPt1);
 			
-			System.out.println(endPt1.getLocalName());
 
 			assertNotSame(endPt.getLocalName(), endPt1.getLocalName());
 

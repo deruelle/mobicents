@@ -90,21 +90,25 @@ public class ProcessorTest {
 
     @Test
     public void testInputFormats() {
-        Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO};
+        TestSink sink = new TestSink();
+        dsp.getOutput().connect(sink);
+        
         Format[] fmts = dsp.getInput().getFormats();
+        
+        Format[] expected = new Format[] {PCMA, DTMF};
         assertEquals(true, Utils.checkFormats(fmts, expected));
     }
 
     @Test
     public void testOutputFormats() {
-        Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO};
+        TestSource source = new TestSource();
+        dsp.getInput().connect(source);
+        
         Format[] fmts = dsp.getOutput().getFormats();
+        
+        Format[] expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO, DTMF};
         assertEquals(true, Utils.checkFormats(fmts, expected));
         
-        expected = new Format[] {PCMA, PCMU, LINEAR_AUDIO, DTMF};
-        dsp.getInput().connect(new TestSource());
-        
-        assertEquals(true, Utils.checkFormats(dsp.getOutput().getFormats(), expected));
     }
     
     @Test

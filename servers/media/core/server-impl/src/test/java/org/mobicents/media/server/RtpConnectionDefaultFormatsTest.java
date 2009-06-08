@@ -121,9 +121,7 @@ public class RtpConnectionDefaultFormatsTest {
      */
     @Test
     public void testTransmission() throws Exception {
-        System.out.println("======1");
         Connection rxConnection = receiver.createConnection(ConnectionMode.RECV_ONLY);
-        System.out.println("======2");
         Connection txConnection = sender.createConnection(ConnectionMode.SEND_ONLY);
         
         txConnection.setRemoteDescriptor(rxConnection.getLocalDescriptor());
@@ -137,7 +135,6 @@ public class RtpConnectionDefaultFormatsTest {
         player.addListener(new PlayerListener());
         player.start();
 
-        System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         boolean res = Math.abs(150-count) < 10;
         assertEquals(true, res);
@@ -185,7 +182,6 @@ public class RtpConnectionDefaultFormatsTest {
         }
 
         public void receive(Buffer buffer) {
-            System.out.println("Receive buffer " + buffer);
             count++;
         }
         

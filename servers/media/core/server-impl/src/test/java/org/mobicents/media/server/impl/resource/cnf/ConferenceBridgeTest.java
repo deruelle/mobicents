@@ -211,12 +211,7 @@ public class ConferenceBridgeTest {
         int errorCount = 0;
         int i =0;
         for (double[] s : spectra) {
-            System.out.println("s" + (i++));
             int[] ext = Utils.getFreq(s);
-            for (int j = 0; j < ext.length; j++) {
-                System.out.print(ext[j] + " ");
-            }
-            System.out.println("-----------------");
             boolean r = Utils.checkFreq(ext, F, FREQ_ERROR);
             if (!r) {
                 errorCount++;

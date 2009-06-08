@@ -28,14 +28,19 @@ package org.mobicents.media.server.impl.resource.prelay;
 
 import org.mobicents.media.Format;
 import org.mobicents.media.server.EndpointImpl;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
  * @author kulikov
  */
 public class Bridge {
-    protected final static Format DEFAULT_FORMAT[] = new Format[0];
+    protected final static Format DEFAULT_FORMAT[] = new Format[]{
+        AVProfile.PCMA, AVProfile.PCMU, AVProfile.SPEEX, 
+        AVProfile.GSM, AVProfile.G729, AVProfile.DTMF, Codec.LINEAR_AUDIO
+    };
     
     protected Proxy[] proxies = new Proxy[2];
     private EndpointImpl endpoint;

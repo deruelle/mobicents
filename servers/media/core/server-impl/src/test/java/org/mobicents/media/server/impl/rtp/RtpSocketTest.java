@@ -172,7 +172,6 @@ public class RtpSocketTest {
 		if (errorCount > MAX_ERRORS) {
 			fail("Too many errors: " + errorCount + ", max=" + MAX_ERRORS);
 		}
-		System.out.println("Total errors: " + errorCount + ", max=" + MAX_ERRORS);
 	}
 	
 

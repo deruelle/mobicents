@@ -137,7 +137,6 @@ public class LocalConnectionTest {
         public void update(NotifyEvent event) {
             if (event.getEventID() == AudioPlayerEvent.END_OF_MEDIA) {
                 semaphore.release();
-                System.out.println("End of announcement");
             }
         }
         

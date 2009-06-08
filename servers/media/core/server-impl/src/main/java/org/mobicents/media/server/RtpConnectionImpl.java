@@ -128,6 +128,16 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         }
 
         formats = this.mergeFormats(rxFormats, txFormats);
+/*        if (formats.length == 0) {
+            ArrayList<Format> list = new ArrayList();
+            sockets = rtpSockets.values();
+            for (RtpSocket socket : sockets) {
+                list.addAll(socket.getRtpMap().values());
+            }
+            formats = new Format[list.size()];
+            list.toArray(formats);
+        }
+*/        
         // when demux already connected to channel
         // all supported formats are known and we can generate
         // local descriptor and update rtp map

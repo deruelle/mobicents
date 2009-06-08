@@ -23,7 +23,6 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseComponent;
-import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -39,8 +38,9 @@ import org.mobicents.media.server.spi.dsp.SignalingProcessor;
  */
 public class Processor extends BaseComponent implements SignalingProcessor {
 
-    private ArrayList<Format> inputFormats = new ArrayList();
-    private ArrayList<Format> outputFormats = new ArrayList();
+    private Format[] inputFormats = new Format[0];
+    private Format[] outputFormats = new Format[0];
+    
     private Input input;
     private Output output;
     private transient ArrayList<Codec> codecs = new ArrayList();
@@ -72,8 +72,8 @@ public class Processor extends BaseComponent implements SignalingProcessor {
 
     protected void add(Codec codec) {
         codecs.add(codec);
-        append(inputFormats, codec.getSupportedInputFormat());
-        append(outputFormats, codec.getSupportedOutputFormat());
+//        append(inputFormats, codec.getSupportedInputFormat());
+//        append(outputFormats, codec.getSupportedOutputFormat());
     }
 
     /**
@@ -131,19 +131,28 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             format = null;
             codec = null;
             
-            Format[] fmts = otherParty.getFormats();
+            Format[] fmts = sink.getFormats();
+            ArrayList<Format> list = new ArrayList();
+            
             for (Format f : fmts) {
-                append(outputFormats, f);
+                list.add(f);
+                for (Codec codec : codecs) {
+                    if (codec.getSupportedInputFormat().matches(f)) {
+                        list.add(codec.getSupportedOutputFormat());
+                    }
+                }
             }            
+            
+            inputFormats = new Format[list.size()];
+            list.toArray(inputFormats);
         }
 
         protected Format[] getOtherPartyFormats() {
-            return otherParty.getFormats();
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
         }
 
         public void start() {
             started = true;
-            System.out.println("Started Processor " + getProcName());
         }
 
         public void stop() {
@@ -151,7 +160,23 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         public Format[] getFormats() {
-            return toArray(outputFormats);
+            Format[] original = input.getOtherPartyFormats();
+            ArrayList<Format> list = new ArrayList();
+            for (Format f : original) {
+                list.add(f);
+                for (Codec codec: codecs) {
+                    if (codec.getSupportedInputFormat().matches(f)) {
+                        Format ff = codec.getSupportedOutputFormat();
+                        if (!list.contains(ff)){
+                            list.add(ff);
+                        }
+                    }
+                }
+            }
+            Format[] fmts = new Format[list.size()];
+            list.toArray(fmts);
+            
+            return fmts;
         }
 
         private boolean isAcceptable(Format format) {
@@ -165,7 +190,6 @@ public class Processor extends BaseComponent implements SignalingProcessor {
          */
         protected void transmit(Buffer buffer) {
             if (!started) {
-                System.out.println("******** NOT STARTED " + getProcName());
                 buffer.dispose();
                 return;
             }
@@ -240,16 +264,28 @@ public class Processor extends BaseComponent implements SignalingProcessor {
             fmt = null;
             isAcceptable = false;
             
-            Format[] fmts = otherParty.getFormats();
+            Format[] fmts = source.getFormats();
+            ArrayList<Format> list = new ArrayList();
+            
             for (Format f : fmts) {
-                append(outputFormats, f);
-            }
+                list.add(f);
+                for (Codec codec : codecs) {
+                    if (codec.getSupportedOutputFormat().matches(f)) {
+                        list.add(codec.getSupportedInputFormat());
+                    }
+                }
+            }            
+            
+            outputFormats = new Format[list.size()];
+            list.toArray(outputFormats);            
         }
 
         public boolean isAcceptable(Format format) {
             if (fmt != null && fmt.matches(format)) {
                 return isAcceptable;
             }
+            
+            inputFormats = getFormats();
             
             fmt = format;
             for (Format f : inputFormats) {
@@ -266,11 +302,27 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         }
 
         protected Format[] getOtherPartyFormats() {
-            return otherParty.getFormats();
+            return otherParty != null ? otherParty.getFormats() : new Format[0];
         }
 
         public Format[] getFormats() {
-            return toArray(outputFormats);
+            Format[] original = output.getOtherPartyFormats();
+            ArrayList<Format> list = new ArrayList();
+            for (Format f : original) {
+                list.add(f);
+                for (Codec codec: codecs) {
+                    if (codec.getSupportedOutputFormat().matches(f)) {
+                        Format ff = codec.getSupportedInputFormat();
+                        if (!list.contains(ff)){
+                            list.add(ff);
+                        }
+                    }
+                }
+            }
+            Format[] fmts = new Format[list.size()];
+            list.toArray(fmts);
+            
+            return fmts;
         }
     }
 

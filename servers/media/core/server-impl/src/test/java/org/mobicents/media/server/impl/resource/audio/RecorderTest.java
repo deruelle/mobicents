@@ -109,8 +109,6 @@ public class RecorderTest {
 		// let us record for 15 sec
 		recorder.setRecordTime(15);
 
-		System.out.println(recordDir);
-
 		player.setFile(url.toExternalForm());
 		player.connect(recorder);
 
@@ -142,8 +140,6 @@ public class RecorderTest {
 
 		String tempFilePath = url.getPath();
 		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
-
-		System.out.println(recordDir);
 
 		recorder.setRecordDir(recordDir);
 
@@ -179,7 +175,6 @@ public class RecorderTest {
 		String tempFilePath = url.getPath();
 		String recordDir = tempFilePath.substring(0, tempFilePath.lastIndexOf('/'));
 
-		System.out.println(recordDir);
 
 		recorder.setRecordDir(recordDir);
 
@@ -211,17 +206,14 @@ public class RecorderTest {
 		public void update(NotifyEvent event) {
 			switch (event.getEventID()) {
 			case RecorderEvent.STOPPED:
-				System.out.println("STOPPED");
 				stopped = true;
 				semaphore.release();
 				break;
 			case RecorderEvent.DURATION_OVER:
-				System.out.println("DURATION_OVER");
 				completed = true;
 				semaphore.release();
 				break;
 			case RecorderEvent.FAILED:
-				System.out.println("FAILED");
 				failed = true;
 				semaphore.release();
 				break;

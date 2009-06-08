@@ -33,6 +33,8 @@ import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
  *
@@ -40,7 +42,10 @@ import org.mobicents.media.server.impl.AbstractSource;
  */
 public class Proxy {
 
-    private final static Format[] DEFAULT_FORMATS = new Format[0];
+    private final static Format[] DEFAULT_FORMATS = new Format[]{
+        AVProfile.PCMA, AVProfile.PCMU, AVProfile.SPEEX, 
+        AVProfile.GSM, AVProfile.G729, AVProfile.DTMF, Codec.LINEAR_AUDIO
+    };
     
     private Input input;
     private Output output;
@@ -117,7 +122,8 @@ public class Proxy {
         }
         
         public Format[] getFormats() {
-            return output.isConnected() ? output.getOtherPartyFormats() : DEFAULT_FORMATS;
+            Format[] formats = output.isConnected() ? output.getOtherPartyFormats() : null;
+            return formats != null && formats.length > 0 ? formats  : DEFAULT_FORMATS;
         }
 
         public boolean isAcceptable(Format format) {
@@ -173,7 +179,8 @@ public class Proxy {
         }
         
         public Format[] getFormats() {
-            return input.isConnected() ? input.getOtherPartyFormats() : DEFAULT_FORMATS;
+            Format[] formats = input.isConnected() ? input.getOtherPartyFormats() : null;
+            return formats != null && formats.length > 0 ? formats  : DEFAULT_FORMATS;
         }
         
         public void delivery(Buffer buffer)  {

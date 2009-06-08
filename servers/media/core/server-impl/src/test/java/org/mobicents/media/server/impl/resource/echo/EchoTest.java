@@ -130,7 +130,6 @@ public class EchoTest {
         player.addListener(new PlayerListener());
         player.start();
 
-        System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         assertEquals(150, count);
         
@@ -150,7 +149,6 @@ public class EchoTest {
         public void update(NotifyEvent event) {
             if (event.getEventID() == AudioPlayerEvent.END_OF_MEDIA) {
                 semaphore.release();
-                System.out.println("End of announcement");
             }
         }
         

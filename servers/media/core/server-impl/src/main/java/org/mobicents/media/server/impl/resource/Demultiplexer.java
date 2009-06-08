@@ -127,8 +127,8 @@ public class Demultiplexer extends AbstractSource implements Inlet {
         }
 
         public boolean isAcceptable(Format fmt) {
-            for (int i = 0; i < outputFormats.length; i++) {
-                if (outputFormats[i].matches(fmt)) {
+            for (int i = 0; i < outputFormats.length; i++) {                
+                if (outputFormats[i].matches(fmt)) {                    
                     return true;
                 }
             }
