@@ -93,10 +93,12 @@ public class Encoder implements Codec {
             }
         }
 
-        buffer.setData(resultingBytes);
+        int length1 = resultingBytes.length;
+        System.arraycopy(resultingBytes, 0, (byte[])buffer.getData(), 0, length1);        
+       
         buffer.setOffset(0);
         buffer.setFormat(Codec.G729);
-        buffer.setLength(resultingBytes.length);
+        buffer.setLength(length1);
     }
 
     /**
