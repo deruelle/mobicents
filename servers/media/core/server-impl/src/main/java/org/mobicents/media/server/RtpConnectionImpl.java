@@ -337,13 +337,15 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
                 list.add(f);
             }
         } else {
+            ArrayList<Format> list2 = new ArrayList();
             for (Format f : f2) {
                 for (Format ff : list) {
                     if (!ff.matches(f)) {
-                        list.add(f);
+                        list2.add(f);
                     }
                 }
             }
+            list.addAll(list2);
         }
         
         Format[] res = new Format[list.size()];
