@@ -142,6 +142,9 @@ public class Channel {
         for (Outlet s : list3) {
             s.setConnection(connection);
         }
+        
+        intake.setConnection(connection);
+        exhaust.setConnection(connection);
     }
     
     public void start() {
