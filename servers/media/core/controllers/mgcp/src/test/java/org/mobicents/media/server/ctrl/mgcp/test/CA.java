@@ -26,13 +26,11 @@ public class CA implements JainMgcpExtendedListener {
 	private static Logger logger = Logger.getLogger(CA.class);
 
 	private JainMgcpStackProviderImpl caProvider;
-	private int mgStack = 0;
 	private boolean successCRCXRespReceived = false;
 	private boolean successFormatNegotiationFail = false;
 
-	public CA(JainMgcpStackProviderImpl caProvider, JainMgcpStackProviderImpl mgwProvider) {
+	public CA(JainMgcpStackProviderImpl caProvider) {
 		this.caProvider = caProvider;
-		mgStack = mgwProvider.getJainMgcpStack().getPort();
 	}
 
 	public void sendSuccessCRCX() {
@@ -42,7 +40,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/1", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/1", "127.0.0.1:" + MgcpMicrocontainerTest.REMOTE_PORT);
 
 			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 
@@ -73,7 +71,7 @@ public class CA implements JainMgcpExtendedListener {
 
 			CallIdentifier callID = caProvider.getUniqueCallIdentifier();
 
-			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/2", "127.0.0.1:" + mgStack);
+			EndpointIdentifier endpointID = new EndpointIdentifier("/mobicents/media/aap/2", "127.0.0.1:" + MgcpMicrocontainerTest.REMOTE_PORT);
 
 			CreateConnection createConnection = new CreateConnection(this, callID, endpointID, ConnectionMode.SendRecv);
 
