@@ -19,7 +19,7 @@ public class CrcxTestCase extends MgcpMicrocontainerTest {
 
 	public void testCRCX() throws Exception {
 
-		ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
+		ca = new CA(caProvider);
 		ca.sendSuccessCRCX();
 
 		waitForMessage();
@@ -31,7 +31,7 @@ public class CrcxTestCase extends MgcpMicrocontainerTest {
 	
 	public void testFormatNegotiationFailCRCX() throws Exception {
 
-		ca = new CA(caProvider, (JainMgcpStackProviderImpl) mgcpServerStack.getMgcpProvider());
+		ca = new CA(caProvider);
 		ca.sendFormatNegotiationFailCRCX();
 
 		waitForMessage();		
