@@ -74,18 +74,6 @@ public class PacketRelaySink extends AbstractSink {
         } else {
             bridge.proxies[1].getInput().disconnect(source);
         }
-/*        Connection connection = source.getConnection();
-        if (bridge.proxies[0].getConnectionID() == null) {
-            bridge.proxies[0].getInput().disconnect(source);
-            bridge.proxies[0].setConnectionID(connection.getId());
-        } else if (bridge.proxies[0].getConnectionID().matches(connection.getId())) {
-            //source of this connection already connected to this proxy
-            //connecting to another
-            bridge.proxies[1].getInput().disconnect(source);
-        } else {
-            bridge.proxies[0].getInput().disconnect(source);
-        }
- */ 
     }
     
     public Format[] getFormats() {
