@@ -73,17 +73,6 @@ public class PacketRelaySource extends AbstractSource {
         } else if ((bridge.proxies[1].isConnectedTo(sink))) {
             bridge.proxies[1].getOutput().disconnect(sink);
         }
-/*        Connection connection = sink.getConnection();
-        if (bridge.proxies[0].getConnectionID() == null) {
-            bridge.proxies[0].getOutput().disconnect(sink);
-        } else if (bridge.proxies[0].getConnectionID().matches(connection.getId())) {
-            //source of this connection already connected to this proxy
-            //connecting to another
-            bridge.proxies[1].getOutput().disconnect(sink);
-        } else {
-            bridge.proxies[0].getOutput().disconnect(sink);
-        }
- */ 
     }
     
     public void start() {
