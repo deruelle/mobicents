@@ -46,13 +46,12 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest implemen
     protected InetAddress caIPAddress = null;
     protected JainMgcpStackImpl caStack = null;
     protected JainMgcpStackProviderImpl caProvider = null;
-    protected MgcpController mgcpServerStack = null;
     protected CallIdentifier callID;
     protected HashMap<String, Connection> connections = new HashMap();
 
     private Semaphore semaphore = new Semaphore(0);
     private JainMgcpResponseEvent response;
-    private volatile boolean op = false;
+    private boolean op = false;
     
     public MgcpMicrocontainerTest(String name) {
         super(name);
@@ -183,11 +182,6 @@ public abstract class MgcpMicrocontainerTest extends MicrocontainerTest implemen
     public void transactionTxTimedOut(JainMgcpCommandEvent paramJainMgcpCommandEvent) {
         // TODO Auto-generated method stub
     }
-
-	public void processMgcpCommandEvent(JainMgcpCommandEvent event) {
-		// TODO Auto-generated method stub
-		return;
-	}
 
     
 }
