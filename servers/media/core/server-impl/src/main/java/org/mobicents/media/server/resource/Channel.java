@@ -30,12 +30,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import org.mobicents.media.Buffer;
 import org.mobicents.media.Component;
 import org.mobicents.media.Format;
 import org.mobicents.media.Inlet;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.Outlet;
+import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.BaseComponent;
 import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.Endpoint;
 
@@ -59,11 +63,12 @@ public class Channel {
     
     //The list of internal pipes
     private List<Pipe> pipes = new ArrayList();
+    private LocalPipe localPipe = new LocalPipe("local-pipe");
     
     //The external sink to which this channel is attached
-    private MediaSink sink;
+//    private MediaSink sink;
     //The external source to which this channel is attached
-    private MediaSource source;
+//    private MediaSource source;
     
     //The component connected to extenal source.
     private MediaSink intake;
@@ -75,6 +80,10 @@ public class Channel {
     private Connection connection;
     
     private boolean directLink = true;
+    
+    private Channel txChannel;
+    private Channel rxChannel;
+    
     /**
      * Constructs new channel with specified components.
      * 
@@ -92,6 +101,9 @@ public class Channel {
         this.sinks = sinks;
         this.inlets = inlets;
         this.outlets = outlets;
+        
+        this.intake = localPipe.getInput();
+        this.exhaust = localPipe.getOutput();
     }
     
     public Format[] getFormats() {
@@ -133,10 +145,6 @@ public class Channel {
     }
     
     public void start() {
-//        if (source != null) {
-//            source.start();
-//        }
-        
         Collection <MediaSource> list = sources.values();
         for (MediaSource s : list) {
             s.start();
@@ -144,10 +152,6 @@ public class Channel {
     }
     
     public void stop() {
-        if (source != null) {
-            source.stop();
-        }
-        
         Collection <MediaSource> list = sources.values();
         for (MediaSource s : list) {
             s.stop();
@@ -198,29 +202,27 @@ public class Channel {
         pipe.close();
     }
     
-    /**
-     * Connects source and sink to each other with out intermediate pipes.
-     */
-    private Format[] directLink() {
-        if (source != null & sink != null) {
-            source.connect(sink);
-            return getSubset(source.getFormats(), sink.getFormats());
-        } else return new Format[0];
+    public Format[] getInputFormats() {
+        return intake.getFormats();
     }
-
+    
+    public Format[] getOutputFormats() {
+        return exhaust.getFormats();
+    }
     /**
      * Connects channel to a sink.
      * 
      * @param sink the sink to connect to
      */
     public Format[] connect(MediaSink sink) {
-        this.sink = sink;
-        if (directLink) {
-            return directLink();
-        } else {
-            exhaust.connect(sink);
-            return getSubset(exhaust.getFormats(), sink.getFormats());
+        //sink may be connected if this channel is not connected to other channel
+        //as source of media
+        if (rxChannel != null) {
+            throw new IllegalStateException("Channel is connected as source for other channel");
         }
+
+        exhaust.connect(sink);
+        return this.getSubset(exhaust.getFormats(), sink.getFormats());
     }
 
     /**
@@ -229,14 +231,13 @@ public class Channel {
      * @param sink the sink to connect from
      */
     public void disconnect(MediaSink sink) {
-        if (pipes.isEmpty()) {
-            if (this.source != null) {
-                source.disconnect(sink);
-            }
-        } else {
-            exhaust.disconnect(sink);
+        //sink may be connected if this channel is not connected to other channel
+        //as source of media
+        if (rxChannel != null) {
+            throw new IllegalStateException("Channel is connected as source for other channel");
         }
-        this.sink = null;
+        
+        exhaust.disconnect(sink);
     }
 
     /**
@@ -245,13 +246,14 @@ public class Channel {
      * @param source the source to connect to
      */
     public Format[] connect(MediaSource source) {
-        this.source = source;
-        if (directLink) {
-            return directLink();
-        } else {
-            intake.connect(source);
-            return getSubset(intake.getFormats(), source.getFormats());
+        //source may be connected if this channel is not connected to other channel
+        //as source of media
+        if (txChannel != null) {
+            throw new IllegalStateException("Channel is connected as sink for other channel");
         }
+        
+        intake.connect(source);
+        return getSubset(intake.getFormats(), source.getFormats());
     }
 
     /**
@@ -260,16 +262,45 @@ public class Channel {
      * @param source the source to connect from
      */
     public void disconnect(MediaSource source) {
-        if (pipes.isEmpty()) {
-            if (this.sink != null) {
-                sink.disconnect(source);
-            }
-        } else {
-            intake.disconnect(source);
+        //source may be connected if this channel is not connected to other channel
+        //as source of media
+        if (txChannel != null) {
+            throw new IllegalStateException("Channel is connected as sink for other channel");
         }
-        this.source = null;
+        intake.disconnect(source);
     }
 
+    /**
+     * Establish a connection with other channel
+     * 
+     * @param other
+     */
+    public void connect(Channel rxChannel) {
+        this.rxChannel = rxChannel;
+        rxChannel.txChannel = this;
+        
+        exhaust.connect(rxChannel.intake);
+    }
+
+    /**
+     * Deletes connection with other channel
+     * 
+     * @param other
+     */
+    public void disconnect(Channel channel) {
+        if (rxChannel != null && rxChannel == channel) {
+            exhaust.disconnect(rxChannel.intake);
+            rxChannel.txChannel = null;
+            rxChannel = null;
+        } else if (txChannel != null && txChannel == channel) {
+            intake.disconnect(txChannel.exhaust);
+            txChannel.rxChannel = null;
+            txChannel = null;
+        } else {
+            throw new IllegalArgumentException("Channels " + this + " and " + channel + " was never connected");
+        }
+    }
+    
     public Component getComponent(String name) {
         if (sources.containsKey(name)) {
             return sources.get(name);
@@ -281,38 +312,7 @@ public class Channel {
             return outlets.get(name);
         }
     }
-    
-    public Component getComponent(int resourceType) {
-        Collection<MediaSource> list = sources.values();        
-        for (MediaSource s : list) {
-            if (s.getResourceType() == resourceType) {
-                return s;
-            }
-        }
-        Collection<MediaSink> list1 = sinks.values();        
-        for (MediaSink s : list1) {
-            if (s.getResourceType() == resourceType) {
-                return s;
-            }
-        }
         
-        Collection<Inlet> list2 = inlets.values();        
-        for (Inlet s : list2) {
-            if (s.getResourceType() == resourceType) {
-                return source;
-            }
-        }
-
-        Collection<Outlet> list3 = outlets.values();        
-        for (Outlet s : list3) {
-            if (s.getResourceType() == resourceType) {
-                return source;
-            }
-        }
-        
-        return null;
-    }
-    
     public void close() {
         
         for (Pipe pipe : pipes) {
@@ -327,14 +327,14 @@ public class Channel {
     }
     
     private Format[] getSubset(Format[] f1, Format[] f2) {
-        if (f1.length == 0) {
+/*        if (f1.length == 0) {
             return f2;
         }
         
         if (f2.length == 0) {
             return f1;
         }
-        
+*/        
         ArrayList<Format> list = new ArrayList();        
         for (int i = 0; i < f1.length; i++) {
             for (int j = 0; j < f2.length; j++) {
@@ -348,4 +348,83 @@ public class Channel {
         
         return f;
     }
+    
+    private class LocalPipe extends BaseComponent implements Inlet, Outlet {
+    
+        private LocalInput input;
+        private LocalOutput output;
+        
+        
+        private class LocalInput extends AbstractSink implements MediaSink {
+            
+            public LocalInput(String name) {
+                super(name);
+            }
+            
+            protected Format[] getOtherPartyFormats() {
+                return otherParty != null ? otherParty.getFormats() : new Format[0];
+            }
+            
+            public Format[] getFormats() {
+                return output.getOtherPartyFormats();
+            }
+
+            public boolean isAcceptable(Format format) {
+                return output.isAcceptable(format);
+            }
+
+            public void receive(Buffer buffer) {
+                output.send(buffer);
+            }
+            
+        }
+        
+        private class LocalOutput extends AbstractSource implements MediaSource {
+
+            public LocalOutput(String name) {
+                super(name);
+            }
+            
+            public void start() {
+            }
+
+            public void stop() {
+            }
+
+            protected Format[] getOtherPartyFormats() {
+                return otherParty != null ? otherParty.getFormats() : new Format[0];
+            }
+            
+            protected boolean isAcceptable(Format f) {
+                return otherParty != null && otherParty.isAcceptable(f);
+            }
+            
+            public Format[] getFormats() {
+                return input.getOtherPartyFormats();
+            }
+            
+            public void send(Buffer buffer) {
+                if (otherParty != null) {
+                    this.otherParty.receive(buffer);
+                }
+            }
+        }
+        
+        public LocalPipe(String name) {
+            super(name);
+                input = new LocalInput("input." + name);
+                output = new LocalOutput("output." + name);
+        }
+        
+        public MediaSink getInput() {
+            return input;
+        }
+
+
+        public MediaSource getOutput() {
+            return output;
+        }
+        
+    }
+    
 }

@@ -78,6 +78,13 @@ public class Proxy {
         return isSourceConnected;
     }
     
+    public boolean isConnectedTo(MediaSink sink) {
+        return output.isConnectedTo(sink);
+    }
+    
+    public boolean isConnectedTo(MediaSource source) {
+        return input.isConnectedTo(source);
+    }
     
     private class Input extends AbstractSink {
         
@@ -87,7 +94,6 @@ public class Proxy {
 
         @Override
         public void connect(MediaSource source) {
-            System.out.println("Connected source to proxy " + this.getId());
             super.connect(source);
             isSourceConnected = true;
         }
@@ -102,8 +108,8 @@ public class Proxy {
             isSourceConnected = false;
         }
         
-        public boolean isConnected() {
-            return otherParty != null;
+        public boolean isConnectedTo(MediaSource source) {
+            return otherParty == source;
         }
         
         public Format[] getOtherPartyFormats() {
@@ -141,7 +147,6 @@ public class Proxy {
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
-            System.out.println("Connected sink to proxy " + this.getId());
             isSinkConnected = true;
         }
         
@@ -154,9 +159,9 @@ public class Proxy {
             }
             isSinkConnected = false;
         }
-        
-        public boolean isConnected() {
-            return otherParty != null;
+
+        public boolean isConnectedTo(MediaSink sink) {
+            return otherParty == sink;
         }
         
         public Format[] getOtherPartyFormats() {

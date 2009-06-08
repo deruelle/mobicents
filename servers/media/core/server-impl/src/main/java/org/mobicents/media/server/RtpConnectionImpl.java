@@ -29,6 +29,7 @@ package org.mobicents.media.server;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -69,7 +70,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
     private Demultiplexer demux;
     private Multiplexer mux;
     private Format[] formats;
-    
+
     public RtpConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
         sdpFactory = endpoint.getSdpFactory();
@@ -92,10 +93,10 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         // create demux and join with txChannel
         demux = new Demultiplexer("Demux[rtpCnnection=" + this.getId() + "]");
         demux.setConnection(this);
-        
+
         mux = new Multiplexer("Mux[rtpCnnection=" + this.getId() + "]");
         mux.setConnection(this);
-        
+
         // join demux and rtp sockets
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
@@ -111,24 +112,26 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         } catch (Exception e) {
             throw new ResourceUnavailableException(e);
         }
-        
+
         //connect tx channel with Demultiplexer Input
         //and demux will split data between rtp sockets
-        Format[] rxFormats = null;
+        Format[] rxFormats = new Format[0];
         if (rxChannel != null && mode != ConnectionMode.SEND_ONLY) {
-            rxFormats = rxChannel.connect(mux.getOutput());
+            rxFormats = rxChannel.getInputFormats();
+            rxChannel.connect(mux.getOutput());
         }
 
-        Format[] txFormats = null;
+        Format[] txFormats = new Format[0];
         if (txChannel != null) {
-            txFormats = txChannel.connect(demux.getInput());
+            txFormats = txChannel.getOutputFormats();
+            txChannel.connect(demux.getInput());
         }
-        
-        formats = rxFormats != null? rxFormats : txFormats;
+
+        formats = this.mergeFormats(rxFormats, txFormats);
         // when demux already connected to channel
         // all supported formats are known and we can generate
         // local descriptor and update rtp map
-                
+
         createLocalDescriptor(formats);
         setMode(mode);
         setState(ConnectionState.HALF_OPEN);
@@ -195,7 +198,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
 
         // add peer to RTP socket
         Format[] supported = formats;
-        
+
         InetAddress address = InetAddress.getByName(sdp.getConnection().getAddress());
 
         Vector<MediaDescription> mediaDescriptions = sdp.getMediaDescriptions(false);
@@ -203,7 +206,7 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             String mediaType = md.getMedia().getMediaType();
             RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
-            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);            
+            HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
             HashMap<Integer, Format> subset = this.subset(offer, supported);
 
             if (subset.isEmpty()) {
@@ -213,16 +216,16 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             int port = md.getMedia().getMediaPort();
             rtpSocket.setPeer(address, port);
             updateRtpMap(rtpSocket, subset);
-            
+
             //This is done in constructor
             //rtpSocket.getReceiveStream().connect(mux);
             demux.connect(rtpSocket.getSendStream());
             rtpSocket.getReceiveStream().start();
         }
-        
+
         demux.start();
         mux.getOutput().start();
-        
+
         setState(ConnectionState.OPEN);
     }
 
@@ -274,52 +277,78 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         md.setAttributes(attributes);
         return md;
     }
-    
+
     @Override
     protected void close() {
-        int count = ((EndpointImpl)getEndpoint()).getConnections().size();
+        int count = ((EndpointImpl) getEndpoint()).getConnections().size();
         if (count == 0) {
-        	//Connection stops endpoint.source if no more connections
-                //channel is responsable for media path only
-        	MediaSource source = ((EndpointImpl)getEndpoint()).getSource();
-        	if(source!=null)
-        		source.stop();
+            //Connection stops endpoint.source if no more connections
+            //channel is responsable for media path only
+            MediaSource source = ((EndpointImpl) getEndpoint()).getSource();
+            if (source != null) {
+                source.stop();
+            }
         }
-        
+
         Collection<RtpSocket> sockets = rtpSockets.values();
         for (RtpSocket socket : sockets) {
             socket.getReceiveStream().stop();
-            
+
             mux.disconnect(socket.getReceiveStream());
             demux.disconnect(socket.getSendStream());
-            
+
             socket.release();
         }
-        
+
         rtpSockets.clear();
-        
-        
+
+
         if (rxChannel != null) {
             rxChannel.disconnect(mux.getOutput());
-            rxChannel.setConnection(null);
+//            rxChannel.setConnection(null);
         }
 
         if (txChannel != null) {
             txChannel.disconnect(demux.getInput());
-            txChannel.setConnection(null);
+//            txChannel.setConnection(null);
         }
 
         mux.setConnection(null);
         demux.setConnection(null);
-        
+
         mux = null;
         demux = null;
-        
+
         super.close();
     }
 
     public void error(Exception e) {
         getEndpoint().deleteConnection(this.getId());
     }
-    
+
+    private Format[] mergeFormats(Format[] f1, Format[] f2) {
+        ArrayList<Format> list = new ArrayList();
+        for (Format f : f1) {
+            list.add(f);
+        }
+
+        if (list.isEmpty()) {
+            for (Format f : f2) {
+                list.add(f);
+            }
+        } else {
+            for (Format f : f2) {
+                for (Format ff : list) {
+                    if (!ff.matches(f)) {
+                        list.add(f);
+                    }
+                }
+            }
+        }
+        
+        Format[] res = new Format[list.size()];
+        list.toArray(res);
+
+        return res;
+    }
 }

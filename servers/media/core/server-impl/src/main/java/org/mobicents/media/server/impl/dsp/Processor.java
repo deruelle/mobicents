@@ -23,6 +23,7 @@ import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.BaseComponent;
+import org.mobicents.media.server.spi.Connection;
 import org.mobicents.media.server.spi.dsp.Codec;
 import org.mobicents.media.server.spi.dsp.SignalingProcessor;
 
@@ -60,6 +61,9 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         list.add(fmt);
     }
 
+    private String getProcName() {
+        return getName() + this.hashCode() +"[" + input.getId() + "]";
+    }
     private Format[] toArray(List<Format> list) {
         Format[] array = new Format[list.size()];
         list.toArray(array);
@@ -124,11 +128,13 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         public void connect(MediaSink sink) {
             super.connect(sink);
             
+            format = null;
+            codec = null;
+            
             Format[] fmts = otherParty.getFormats();
             for (Format f : fmts) {
                 append(outputFormats, f);
-            }
-            
+            }            
         }
 
         protected Format[] getOtherPartyFormats() {
@@ -137,6 +143,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
 
         public void start() {
             started = true;
+            System.out.println("Started Processor " + getProcName());
         }
 
         public void stop() {
@@ -158,6 +165,7 @@ public class Processor extends BaseComponent implements SignalingProcessor {
          */
         protected void transmit(Buffer buffer) {
             if (!started) {
+                System.out.println("******** NOT STARTED " + getProcName());
                 buffer.dispose();
                 return;
             }
@@ -228,6 +236,10 @@ public class Processor extends BaseComponent implements SignalingProcessor {
         @Override
         public void connect(MediaSource source) {
             super.connect(source);
+
+            fmt = null;
+            isAcceptable = false;
+            
             Format[] fmts = otherParty.getFormats();
             for (Format f : fmts) {
                 append(outputFormats, f);

@@ -69,7 +69,12 @@ public class PacketRelaySink extends AbstractSink {
     
     @Override
     public void disconnect(MediaSource source) {
-        Connection connection = source.getConnection();
+        if (bridge.proxies[0].isConnectedTo(source)) {
+            bridge.proxies[0].getInput().disconnect(source);
+        } else {
+            bridge.proxies[1].getInput().disconnect(source);
+        }
+/*        Connection connection = source.getConnection();
         if (bridge.proxies[0].getConnectionID() == null) {
             bridge.proxies[0].getInput().disconnect(source);
             bridge.proxies[0].setConnectionID(connection.getId());
@@ -80,6 +85,7 @@ public class PacketRelaySink extends AbstractSink {
         } else {
             bridge.proxies[0].getInput().disconnect(source);
         }
+ */ 
     }
     
     public Format[] getFormats() {

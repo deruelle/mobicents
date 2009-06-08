@@ -44,8 +44,8 @@ import org.mobicents.media.server.spi.ResourceUnavailableException;
 public class LocalConnectionImpl extends ConnectionImpl {
 
     private LocalConnectionImpl otherConnection;
-    private Input rxInput, txInput;
-    private Output rxOutput, txOutput;
+//    private Input rxInput, txInput;
+//    private Output rxOutput, txOutput;
     
     public LocalConnectionImpl(EndpointImpl endpoint, ConnectionMode mode) throws ResourceUnavailableException {
         super(endpoint, mode);
@@ -56,20 +56,12 @@ public class LocalConnectionImpl extends ConnectionImpl {
             throw new ResourceUnavailableException(e);
         }
         
-        rxOutput = new Output("local.connection.rxOutput");
-        txOutput = new Output("local.connection.txOutput");
-        
-        rxOutput.setConnection(this);
-        txOutput.setConnection(this);
-        
-        rxInput = new Input("local.connection.rxInput", rxOutput);
-        txInput = new Input("local.connection.txInput", txOutput);   
-        
-        rxInput.setConnection(this);
-        txInput.setConnection(this);
         setMode(mode);
     }
     
+    private String getIdent() {
+        return getId();
+    }
     public String getLocalDescriptor() {
         return null;
     }
@@ -89,13 +81,11 @@ public class LocalConnectionImpl extends ConnectionImpl {
 
         //join channels
         if (txChannel != null && otherConnection.rxChannel != null) {
-            txChannel.connect(txInput);
-            otherConnection.rxChannel.connect(txOutput);            
+            txChannel.connect(otherConnection.rxChannel);
         }
         
         if (rxChannel != null && otherConnection.txChannel != null) {
-            rxChannel.connect(rxOutput);
-            otherConnection.txChannel.connect(rxInput);
+            otherConnection.txChannel.connect(rxChannel);
         }
     }
 
@@ -106,25 +96,13 @@ public class LocalConnectionImpl extends ConnectionImpl {
         }
         
         if (txChannel != null && otherConnection.rxChannel != null) {
-            txChannel.disconnect(txInput);
-            otherConnection.rxChannel.disconnect(txOutput);
-            txChannel.setConnection(null);
+            txChannel.disconnect(otherConnection.rxChannel);
         }
         
         if (rxChannel != null && otherConnection.txChannel != null) {
-            rxChannel.disconnect(rxOutput);            
-            otherConnection.txChannel.disconnect(rxInput);
-            rxChannel.setConnection(null);
+            rxChannel.disconnect(otherConnection.txChannel);
         }
         
-        otherConnection.otherConnection = null;
-        otherConnection = null;
-        
-        txInput.setConnection(null);
-        rxInput.setConnection(null);
-        
-        txOutput.setConnection(null);
-        rxOutput.setConnection(null);
         
         super.close();
     }
@@ -141,6 +119,15 @@ public class LocalConnectionImpl extends ConnectionImpl {
         public void stop() {
         }
 
+        @Override
+        public void setConnection(Connection connection) {
+            if (connection != null) {
+                System.out.println("Assign connection " + connection.getId());
+            } else {
+                System.out.println("Remove connection " + getConnection().getId());
+            }
+            super.setConnection(connection);
+        }
         public Format[] getFormats() {
             return otherParty != null ? otherParty.getFormats() : new Format[0];
         }

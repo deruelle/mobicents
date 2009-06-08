@@ -20,6 +20,7 @@ import org.mobicents.media.Component;
 import org.mobicents.media.ComponentFactory;
 import org.mobicents.media.Format;
 import org.mobicents.media.server.impl.AbstractSink;
+import org.mobicents.media.server.impl.AbstractSource;
 import org.mobicents.media.server.impl.clock.TimerImpl;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerEvent;
 import org.mobicents.media.server.impl.resource.audio.AudioPlayerFactory;
@@ -101,22 +102,21 @@ public class LocalConnectionTest {
      */
     @Test
     public void testTransmission() throws Exception {
-        System.out.println("======1");
         Connection rxConnection = receiver.createLocalConnection(ConnectionMode.RECV_ONLY);
-        System.out.println("======2");
         Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
         
         txConnection.setOtherParty(rxConnection);
         
         Component c = sender.getComponent("audio.player");
-            AudioPlayer player = (AudioPlayer)c;
+        assertEquals(true, ((AbstractSource)c).isConnected());
+        
+        AudioPlayer player = (AudioPlayer)c;
         URL url = LocalConnectionTest.class.getClassLoader().getResource(
 		 "org/mobicents/media/server/impl/addf8-Alaw-GW.wav");
         player.setURL(url.toExternalForm());
         player.addListener(new PlayerListener());
         player.start();
 
-        System.out.println("Started");
         semaphore.tryAcquire(10, TimeUnit.SECONDS);
         assertEquals(150, count);
         
@@ -129,6 +129,7 @@ public class LocalConnectionTest {
         assertEquals(false, receiver.isInUse());
         assertEquals(false, sender.isInUse());
         
+        assertEquals(false, ((AbstractSource)c).isConnected());
     }
 
     private class PlayerListener implements NotificationListener {

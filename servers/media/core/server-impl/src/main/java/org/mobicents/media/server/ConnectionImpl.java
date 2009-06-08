@@ -23,6 +23,7 @@ import EDU.oswego.cs.dl.util.concurrent.ConcurrentHashMap;
  */
 public abstract class ConnectionImpl implements Connection {
 
+    private static int GEN = 1;
     private String id;
     private int index;
     
@@ -49,7 +50,12 @@ public abstract class ConnectionImpl implements Connection {
      * @return hex view of the unique integer.
      */
     private String genID() {
-        return (new UID()).toString();
+        GEN++;
+        if (GEN ==Integer.MAX_VALUE) {
+            GEN = 1;
+        }
+        return Integer.toHexString(GEN);
+//        return (new UID()).toString();
     }
     
     public String getId() {
@@ -152,6 +158,10 @@ public abstract class ConnectionImpl implements Connection {
     protected void close() {
        ((EndpointImpl) getEndpoint()).releaseRxChannel(rxChannel);
        ((EndpointImpl) getEndpoint()).releaseTxChannel(txChannel);
+       
+       rxChannel = null;
+       txChannel = null;
+       
         setState(ConnectionState.CLOSED);
     }
 }

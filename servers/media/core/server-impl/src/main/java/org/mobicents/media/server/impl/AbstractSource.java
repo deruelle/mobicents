@@ -50,9 +50,14 @@ public abstract class AbstractSource extends BaseComponent implements MediaSourc
 	 * @see org.mobicents.MediaStream#diconnection(MediaSink).
 	 */
 	public void disconnect(MediaSink otherParty) {
+//            if (this.otherParty != null && this.otherParty != otherParty) {
+//                throw new IllegalArgumentException(otherParty + " is not connected to " + this);
+//            }
             AbstractSink sink = (AbstractSink) otherParty;
             if (sink.otherParty != null) {
                 sink.otherParty = null;
+            } else {
+//                throw new IllegalArgumentException(otherParty + " is not connected to " + this);
             }
             
             if (this.otherParty != null) {
