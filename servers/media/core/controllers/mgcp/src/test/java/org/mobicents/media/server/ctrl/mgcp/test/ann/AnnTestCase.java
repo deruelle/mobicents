@@ -132,11 +132,13 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
     
     @Test
     public void testSimpleTransmission() throws Exception {        
+        Thread.currentThread().sleep(1000);
         url = AnnTestCase.class.getClassLoader().getResource("org/mobicents/media/server/ctrl/mgcp/test/ann/8kulaw.wav");
         String path = url.getPath();
         path = path.substring(0, path.lastIndexOf("/"));
         
         startRecording(path + "/test-record.wav");
+        Thread.currentThread().sleep(1000);
         startPlayer("file:" + url.getPath());
 
         semaphore.tryAcquire(15, TimeUnit.SECONDS);
