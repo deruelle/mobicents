@@ -16,7 +16,7 @@
 	<url>http://www.mobicents.org/products_media_server.html</url>
 
 	<properties>
-		<maven.test.skip>false</maven.test.skip>
+		<!-- maven.test.skip>false</maven.test.skip -->
 		<release.name>
 			${release.name.prefix}${parent.version}${release.name.suffix}
 		</release.name>
