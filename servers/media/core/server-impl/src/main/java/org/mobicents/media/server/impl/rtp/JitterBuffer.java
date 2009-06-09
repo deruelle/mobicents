@@ -142,8 +142,9 @@ public class JitterBuffer implements Serializable {
                     if (queue.size() < maxSize) {
                         queue.offer(buffer);
                     } else{
-                        queue.poll();
-			buffer.dispose();
+                        Buffer b = queue.poll();
+			b.dispose();
+                        queue.offer(buffer);
                     }
                     state = STATE_WAITING;
                 }
