@@ -1,8 +1,6 @@
 package org.mobicents.media.server.spi.resource;
 
-import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
-import org.mobicents.media.format.AudioFormat;
 
 /**
  * 
@@ -26,12 +24,6 @@ public interface DtmfDetector extends MediaSink {
 
 	public void setMask(String mask);
 
-	public void setSilenec(int silence);
 
-	public int getSilenec();
-
-	public void setDuration(int duartion);
-
-	public int getDuration();
 
 }
