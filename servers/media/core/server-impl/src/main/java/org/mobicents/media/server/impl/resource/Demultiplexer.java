@@ -63,6 +63,9 @@ public class Demultiplexer extends AbstractSource implements Inlet {
     public void setConnection(Connection connection) {
         super.setConnection(connection);
         input.setConnection(connection);
+        for (Output out: branches.values()) {
+            out.setConnection(connection);
+        }
     }
     
     public Format[] getFormats() {
@@ -72,6 +75,7 @@ public class Demultiplexer extends AbstractSource implements Inlet {
     @Override
     public void connect(MediaSink sink) {
         Output out = new Output("Output." + getName());
+        out.setConnection(getConnection());
         branches.put(sink.getId(), out);
         out.connect(sink);
         this.reassemblyFormats();
