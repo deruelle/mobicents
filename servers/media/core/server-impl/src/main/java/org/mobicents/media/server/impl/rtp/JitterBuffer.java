@@ -139,10 +139,11 @@ public class JitterBuffer implements Serializable {
                 buffer.setLength(length);
 
                 if (length == pSize) {
-                    if (queue.size() < maxSize) {                    	
+                    if (queue.size() < maxSize) {
                         queue.offer(buffer);
                     } else{
-						buffer.dispose();
+                        queue.poll();
+			buffer.dispose();
                     }
                     state = STATE_WAITING;
                 }
