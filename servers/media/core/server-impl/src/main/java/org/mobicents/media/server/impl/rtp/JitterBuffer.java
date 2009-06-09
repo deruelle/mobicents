@@ -143,7 +143,7 @@ public class JitterBuffer implements Serializable {
                         queue.offer(buffer);
                     } else{
                         Buffer b = queue.poll();
-			b.dispose();
+                        b.dispose();
                         queue.offer(buffer);
                     }
                     state = STATE_WAITING;

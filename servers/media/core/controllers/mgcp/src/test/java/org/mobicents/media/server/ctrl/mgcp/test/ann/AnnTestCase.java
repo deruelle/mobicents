@@ -70,6 +70,10 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
     public void tearDown() throws Exception {
         deleteConnectionConnection(rxConnection);
         deleteConnectionConnection(txConnection);
+        
+        Thread.sleep(2000);
+        
+        super.tearDown();
     }
     
     private void startPlayer(String url) throws Exception {
@@ -149,7 +153,7 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
         assertEquals(true, file.exists());
     }
 
-    @Override
+    //@Override
     public void processMgcpCommandEvent(JainMgcpCommandEvent event) {
         if (event.getObjectIdentifier() == Constants.CMD_NOTIFY) {
             oc = true;

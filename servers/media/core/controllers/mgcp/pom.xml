@@ -12,9 +12,9 @@
 	<artifactId>mms-controllers-mgcp</artifactId>
 	<name>Mobicents Media Server MGCP Controller</name>
 
-	<properties>
-		<maven.test.skip>false</maven.test.skip>
-	</properties>
+	<!-- properties>
+		<maven.test.skip>true</maven.test.skip>
+	</properties -->
 
 	<dependencies>
 		<dependency>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.mobicents.jain</groupId>
 			<artifactId>mobicents-mgcp-impl</artifactId>
-			<version>2.0.0.RC3</version>			
+			<version>2.0.0.RC3</version>
 		</dependency>
 
 		<dependency>
@@ -134,7 +134,25 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.4.2</version>
+				<configuration>
+					<forkMode>pertest</forkMode>
+					<!-- So we dont have to juse xxxTest.java.bak "_" -->
+					<!-- 
+						<excludes>
+						<exclude>**/TestCircle.java</exclude>
+						<exclude>**/TestSquare.java</exclude>
+						</excludes>
+						<includes>
+						<include>Sample.java</include>
+						</includes>
+					-->
+				</configuration>
 
+			</plugin>
 		</plugins>
 	</build>
 </project>

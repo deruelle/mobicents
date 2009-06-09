@@ -118,6 +118,10 @@ public class DtmfDetectionTestCase extends MgcpMicrocontainerTest implements Jai
     public void tearDown() throws Exception {
         deleteConnectionConnection(rxConnection);
         deleteConnectionConnection(txConnection);
+        
+        Thread.sleep(2000);
+        
+        super.tearDown();
     }
     
     private boolean checkEvent(MgcpEvent exp) {
