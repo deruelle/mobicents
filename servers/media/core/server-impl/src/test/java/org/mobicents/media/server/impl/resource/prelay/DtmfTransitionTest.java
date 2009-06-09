@@ -50,378 +50,385 @@ import org.mobicents.media.server.spi.Timer;
  */
 public class DtmfTransitionTest {
 
-	private final static int FREQ_ERROR = 5;
-	private int MAX_ERRORS = 3;
-	private final static int[] FREQ = new int[] { 50, 250 };
-	private Timer timer;
-	private EndpointImpl sender, receiver;
-	private EndpointImpl packetRelayEnp;
-	private SineGeneratorFactory g1, g2;
-	private AnalyzerFactory a1, a2;
-	private ArrayList<double[]> s1, s2;
-	private PacketRelaySourceFactory prSourceFactory;
-	private PacketRelaySinkFactory prSinkFactory;
-	private ChannelFactory prChannelFactory;
-	private ChannelFactory channelFactory;
-	private Semaphore semaphore;
-	private boolean res;
-	private DspFactory dspFactory;
-	private RtpFactory rtpFactory;
-	private EncoderFactory encoderFactory;
-	private DecoderFactory decoderFactory;
-	private ArrayList list;
-
-	public DtmfTransitionTest() {
-	}
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		list = new ArrayList();
-
-		semaphore = new Semaphore(0);
-		res = false;
-
-		// creating timer
-		timer = new TimerImpl();
-
-		HashMap<Integer, Format> rtpmap = new HashMap();
-		rtpmap.put(0, AVProfile.PCMA);
-		rtpmap.put(97, AVProfile.SPEEX);
-		rtpmap.put(101, AVProfile.DTMF);
-
-		rtpFactory = new RtpFactory();
-		rtpFactory.setBindAddress("localhost");
-		rtpFactory.setPortRange("1024-65535");
-		rtpFactory.setJitter(60);
-		rtpFactory.setTimer(timer);
-		rtpFactory.setFormatMap(rtpmap);
-
-		Hashtable<String, RtpFactory> rtpFactories = new Hashtable();
-		rtpFactories.put("audio", rtpFactory);
-
-		// preparing g711: ALaw encoder, ULAW decoder
-		encoderFactory = new EncoderFactory();
-		decoderFactory = new DecoderFactory();
-
-		org.mobicents.media.server.impl.dsp.audio.speex.EncoderFactory spexEncfact = new org.mobicents.media.server.impl.dsp.audio.speex.EncoderFactory();
-		org.mobicents.media.server.impl.dsp.audio.speex.DecoderFactory spexDecfact = new org.mobicents.media.server.impl.dsp.audio.speex.DecoderFactory();
-
-		// group codecs into list
-		ArrayList list = new ArrayList();
-		list.add(encoderFactory);
-		list.add(decoderFactory);
-		list.add(spexEncfact);
-		list.add(spexDecfact);
-
-		// creating dsp factory with g711 encoder/decoder
-		dspFactory = new DspFactory();
-		dspFactory.setName("dsp");
-		dspFactory.setCodecFactories(list);
-
-		// creating component list
-		ArrayList components = new ArrayList();
-		components.add(dspFactory);
-
-		// define pipes
-		PipeFactory p1 = new PipeFactory();
-		p1.setInlet(null);
-		p1.setOutlet("dsp");
-
-		PipeFactory p2 = new PipeFactory();
-		p2.setInlet("dsp");
-		p2.setOutlet(null);
-
-		ArrayList pipes = new ArrayList();
-		pipes.add(p1);
-		pipes.add(p2);
-
-		// preparing channel factory
-		prChannelFactory = new ChannelFactory();
-		prChannelFactory.start();
-
-		prChannelFactory.setComponents(components);
-		prChannelFactory.setPipes(pipes);
-
-		// configuring Packet relay endpoint
-		prSourceFactory = new PacketRelaySourceFactory();
-		prSourceFactory.setName("pr-source");
-
-		prSinkFactory = new PacketRelaySinkFactory();
-		prSinkFactory.setName("pr-sink");
-
-		packetRelayEnp = new EndpointImpl("/pr/test/cnf");
-		packetRelayEnp.setSourceFactory(prSourceFactory);
-		packetRelayEnp.setSinkFactory(prSinkFactory);
-
-		packetRelayEnp.setTimer(timer);
-		packetRelayEnp.setTxChannelFactory(prChannelFactory);
-		packetRelayEnp.setRxChannelFactory(prChannelFactory);
-		packetRelayEnp.setRtpFactory(rtpFactories);
-
-		// strating packet relay endpoint
-		packetRelayEnp.start();
-
-		// creating transparent channels
-		channelFactory = new ChannelFactory();
-		channelFactory.start();
-
-		// creating source
-		TestSourceFactory genFactory = new TestSourceFactory();
-		genFactory.setName("test-source");
-
-		// configuring sender
-		sender = new EndpointImpl("/pr/test/sender");
-		sender.setTimer(timer);
-		sender.setTxChannelFactory(channelFactory);
-		sender.setRxChannelFactory(channelFactory);
-		sender.setSourceFactory(genFactory);
-		sender.start();
+    private Timer timer;
+    private Hashtable<String, RtpFactory> rtpFactories;
+    
+    private EndpointImpl sender,  receiver;
+    private EndpointImpl packetRelayEnp;
+    
+    private PacketRelaySourceFactory prSourceFactory;
+    private PacketRelaySinkFactory prSinkFactory;
+    private ChannelFactory prChannelFactory;
+    
+//    private ChannelFactory senderChannelFactory;
+//    private ChannelFactory receiverChannelFactory;
+    
+    private Semaphore semaphore;
+
+    private DspFactory dspFactory;
+    private RtpFactory rtpFactory;
+    private EncoderFactory encoderFactory;
+    private DecoderFactory decoderFactory;
+    private ArrayList list;
+
+    public DtmfTransitionTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        list = new ArrayList();
+        timer = new TimerImpl();
+
+        this.setupRTP();
+        this.setupDSP();
+        
+        this.setupPacketRelay();
+        
+        this.setupSender();
+        this.setupReceiver();        
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    private void setupRTP() throws Exception {
+        semaphore = new Semaphore(0);
+        
+        HashMap<Integer, Format> rtpmap = new HashMap();
+        //rtpmap.put(0, AVProfile.PCMA);
+        rtpmap.put(97, AVProfile.SPEEX);
+        rtpmap.put(101, AVProfile.DTMF);
+
+        rtpFactory = new RtpFactory();
+        rtpFactory.setBindAddress("localhost");
+        rtpFactory.setPortRange("1024-65535");
+        rtpFactory.setJitter(60);
+        rtpFactory.setTimer(timer);
+        rtpFactory.setFormatMap(rtpmap);
+
+        rtpFactories = new Hashtable();
+        rtpFactories.put("audio", rtpFactory);
+    }
+
+    private void setupDSP() throws Exception {
+        // preparing g711: ALaw encoder, ULAW decoder
+        encoderFactory = new EncoderFactory();
+        decoderFactory = new DecoderFactory();
+
+        org.mobicents.media.server.impl.dsp.audio.speex.EncoderFactory spexEncfact = new org.mobicents.media.server.impl.dsp.audio.speex.EncoderFactory();
+        org.mobicents.media.server.impl.dsp.audio.speex.DecoderFactory spexDecfact = new org.mobicents.media.server.impl.dsp.audio.speex.DecoderFactory();
+
+        // group codecs into list
+        ArrayList codecs = new ArrayList();
+        codecs.add(encoderFactory);
+        codecs.add(decoderFactory);
+        codecs.add(spexEncfact);
+        codecs.add(spexDecfact);
+
+        // creating dsp factory with g711 encoder/decoder
+        dspFactory = new DspFactory();
+        dspFactory.setName("dsp");
+        dspFactory.setCodecFactories(codecs);
+    }
+    
+    private void setupSender() throws Exception {
+        // configuring sender
+        sender = new EndpointImpl("/pr/test/sender");
+        sender.setTimer(timer);
+        
+        // creating transparent channels
+        ChannelFactory senderChannelFactory = new ChannelFactory();
+        senderChannelFactory.start();
+        sender.setTxChannelFactory(senderChannelFactory);
+
+        // creating source
+        TestSourceFactory genFactory = new TestSourceFactory();
+        genFactory.setName("test-source");
+
+        sender.setSourceFactory(genFactory);
+        sender.setRtpFactory(rtpFactories);
+        sender.start();
+    }
+    
+    private void setupReceiver() throws Exception {
+        TestSinkFactory detectorFactory = new TestSinkFactory();
+        detectorFactory.setName("test-sink");
+
+        DemuxFactory demuxFactory = new DemuxFactory("demux");
+
+        // creating component list
+        ArrayList componentsIVR = new ArrayList();
+        componentsIVR.add(detectorFactory);
+        componentsIVR.add(demuxFactory);
+        componentsIVR.add(dspFactory);
+
+        // define pipes
+
+        // Exhaust for Rx channel
+
+        PipeFactory p11 = new PipeFactory();
+        p11.setInlet(null);
+        p11.setOutlet("dsp");
+
+        PipeFactory p13 = new PipeFactory();
+        p13.setInlet("dsp");
+        p13.setOutlet("demux");
+        
+        PipeFactory p12 = new PipeFactory();
+        p12.setInlet("demux");
+        p12.setOutlet("test-sink");
+
+
+        PipeFactory p14 = new PipeFactory();
+        p14.setInlet("demux");
+        p14.setOutlet(null);
+
+        ArrayList pipes = new ArrayList();
+        pipes.add(p11);
+        pipes.add(p12);
+        pipes.add(p13);
+        pipes.add(p14);
+
+        ChannelFactory rxChannFact = new ChannelFactory();
+        rxChannFact.start();
 
-		TestSinkFactory detFactory = new TestSinkFactory();
-		detFactory.setName("test-sink");
-		// configuring receiver
-		// receiver = new EndpointImpl("/pr/test/sender");
-		// receiver.setTimer(timer);
-		// receiver.setTxChannelFactory(channelFactory);
-		// receiver.setRxChannelFactory(channelFactory);
-		// receiver.setSinkFactory(detFactory);
-		// receiver.setRtpFactory(rtpFactories);
-		// receiver.start();
+        rxChannFact.setComponents(componentsIVR);
+        rxChannFact.setPipes(pipes);
+
+        // Create RecorderFactory - sink for endpoint
+        RecorderFactory recFact = new RecorderFactory();
+        recFact.setName("RecorderFactory");
 
-		DemuxFactory deMuxFact = new DemuxFactory("DeMux");
+        receiver = new EndpointImpl("/pr/test/receiver");
+        receiver.setSinkFactory(recFact);
 
-		// creating component list
-		ArrayList componentsIVR = new ArrayList();
-		components.add(detFactory);
-		components.add(deMuxFact);
-		components.add(dspFactory);
+        receiver.setTimer(timer);
+        receiver.setRxChannelFactory(rxChannFact);
 
-		// define pipes
+        // start IVREndpoint
+        receiver.start();
+    }
+    
+    private void setupPacketRelay() throws Exception {
+        // creating component list
+        ArrayList components = new ArrayList();
+        components.add(dspFactory);
 
-		// Exhaust for Rx channel
+        // define pipes
+        PipeFactory p1 = new PipeFactory();
+        p1.setInlet(null);
+        p1.setOutlet("dsp");
+
+        PipeFactory p2 = new PipeFactory();
+        p2.setInlet("dsp");
+        p2.setOutlet(null);
 
-		PipeFactory p11 = new PipeFactory();
-		p11.setInlet(null);
-		p11.setOutlet("dsp");
+        ArrayList pipes = new ArrayList();
+        pipes.add(p1);
+        pipes.add(p2);
 
-		PipeFactory p12 = new PipeFactory();
-		p12.setInlet("DeMux");
-		p12.setOutlet("test-sink");
+        // preparing channel factory
+        prChannelFactory = new ChannelFactory();
+        prChannelFactory.start();
 
-		PipeFactory p13 = new PipeFactory();
-		p13.setInlet("dsp");
-		p13.setOutlet("DeMux");
+        prChannelFactory.setComponents(components);
+        prChannelFactory.setPipes(pipes);
 
-		PipeFactory p14 = new PipeFactory();
-		p14.setInlet("DeMux");
-		p14.setOutlet(null);
+        // configuring Packet relay endpoint
+        prSourceFactory = new PacketRelaySourceFactory();
+        prSourceFactory.setName("pr-source");
 
-		ArrayList pipes1 = new ArrayList();
-		pipes.add(p11);
-		pipes.add(p12);
-		pipes.add(p13);
-		pipes.add(p14);
+        prSinkFactory = new PacketRelaySinkFactory();
+        prSinkFactory.setName("pr-sink");
 
-		ChannelFactory rxChannFact = new ChannelFactory();
-		rxChannFact.start();
+        packetRelayEnp = new EndpointImpl("/pr/test/cnf");
+        packetRelayEnp.setSourceFactory(prSourceFactory);
+        packetRelayEnp.setSinkFactory(prSinkFactory);
 
-		rxChannFact.setComponents(componentsIVR);
-		rxChannFact.setPipes(pipes1);
+        packetRelayEnp.setTimer(timer);
+        packetRelayEnp.setTxChannelFactory(prChannelFactory);
+        packetRelayEnp.setRxChannelFactory(prChannelFactory);
+        packetRelayEnp.setRtpFactory(rtpFactories);
 
-		// Create RecorderFactory - sink for endpoint
-		RecorderFactory recFact = new RecorderFactory();
-		recFact.setName("RecorderFactory");
+        // strating packet relay endpoint
+        packetRelayEnp.start();
+    }
+    /**
+     * Test of getSink method, of class Bridge.
+     */
+    // @Test
+    public void testSimpleTransmission() throws Exception {
+        Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
+        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.SEND_RECV);
 
-		receiver = new EndpointImpl("/pr/test/receiver");
-		receiver.setSinkFactory(recFact);
+        Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
+        Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_ONLY);
 
-		receiver.setTimer(timer);
-		receiver.setRxChannelFactory(rxChannFact);
-		receiver.setRtpFactory(rtpFactories);
+        rxC.setOtherParty(txConnection);
+        txC.setOtherParty(rxConnection);
 
-		// start IVREndpoint
-		receiver.start();
-	}
+        MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
+        gen1.start();
 
-	@After
-	public void tearDown() {
-	}
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
 
-	/**
-	 * Test of getSink method, of class Bridge.
-	 */
-	// @Test
-	public void testSimpleTransmission() throws Exception {
-		Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_RECV);
-		Connection rxConnection = receiver.createLocalConnection(ConnectionMode.SEND_RECV);
+        gen1.stop();
+        assertEquals(true, !list.isEmpty());
 
-		Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
-		Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_ONLY);
+        receiver.deleteAllConnections();
+        sender.deleteAllConnections();
 
-		rxC.setOtherParty(txConnection);
-		txC.setOtherParty(rxConnection);
+        packetRelayEnp.deleteAllConnections();
 
-		MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
-		gen1.start();
+    }
 
-		semaphore.tryAcquire(10, TimeUnit.SECONDS);
+    private void runRtpTransmission() throws Exception {
+        Connection txConnection = sender.createConnection(ConnectionMode.SEND_ONLY);
+        Connection rxConnection = receiver.createLocalConnection(ConnectionMode.RECV_ONLY);
 
-		gen1.stop();
-		assertEquals(true, !list.isEmpty());
-
-		receiver.deleteAllConnections();
-		sender.deleteAllConnections();
-
-		packetRelayEnp.deleteAllConnections();
-
-	}
-
-	private void runRtpTransmission() throws Exception {
-		Connection txConnection = sender.createLocalConnection(ConnectionMode.SEND_ONLY);
-
-		Connection rxC = packetRelayEnp.createLocalConnection(ConnectionMode.RECV_ONLY);
-		Connection txC = packetRelayEnp.createConnection(ConnectionMode.SEND_ONLY);
-
-		Connection rxConnection = receiver.createConnection(ConnectionMode.RECV_ONLY);
-
-		rxC.setOtherParty(txConnection);
-		String rxSDP = rxConnection.getLocalDescriptor();
-		txC.setRemoteDescriptor(rxSDP);
-		rxConnection.setRemoteDescriptor(txC.getLocalDescriptor());
-
-		MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
-		gen1.start();
-
-		semaphore.tryAcquire(2, TimeUnit.SECONDS);
-		assertEquals(true, !list.isEmpty());
-
-		gen1.stop();
-
-		receiver.deleteAllConnections();
-		sender.deleteAllConnections();
-
-		packetRelayEnp.deleteAllConnections();
-	}
-
-	@Test
-	public void testRtpTransmission() throws Exception {
-		for (int i = 0; i < 10; i++) {
-			list.clear();
-			runRtpTransmission();
-			assertEquals(false, list.isEmpty());
-			System.out.println("Pass...." + i);
-		}
-	}
-
-	private class TestSourceFactory implements ComponentFactory {
-
-		private String name;
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Component newInstance(Endpoint endpoint) {
-			return new TestSource(name, endpoint.getTimer());
-		}
-	}
-
-	private class TestSinkFactory implements ComponentFactory {
-
-		private String name;
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public Component newInstance(Endpoint endpoint) {
-			return new TestSink(name);
-		}
-	}
-
-	private class TestSource extends AbstractSource implements Runnable {
-
-		private int seq;
-		private Timer timer;
-		private ScheduledFuture worker;
-
-		public TestSource(String name, Timer timer) {
-			super(name);
-			this.timer = timer;
-		}
-
-		public void start() {
-			// worker = timer.synchronize(this);
-			run();
-			run();
-			run();
-			run();
-		}
-
-		public void stop() {
-			// worker.cancel(true);
-		}
-
-		public Format[] getFormats() {
-			return new Format[] { AVProfile.DTMF, AVProfile.SPEEX };
-		}
-
-		public void run() {
-			Buffer buffer = new Buffer();
-			buffer.setSequenceNumber(seq++);
-			buffer.setDuration(20);
-			buffer.setTimeStamp(seq * 20);
-			buffer.setFormat(AVProfile.DTMF);
-			buffer.setData(new byte[320]);
-			buffer.setLength(320);
-			buffer.setOffset(0);
-			otherParty.receive(buffer);
-		}
-
-		@Override
-		public void connect(MediaSink otherParty) {
-			super.connect(otherParty);
-		}
-
-		@Override
-		public void disconnect(MediaSink otherParty) {
-			super.disconnect(otherParty);
-		}
-	}
-
-	private class TestSink extends AbstractSink {
-
-		public TestSink(String name) {
-			super(name);
-		}
-
-		public Format[] getFormats() {
-			return new Format[] { AVProfile.DTMF, AVProfile.SPEEX, AVProfile.PCMA };
-		}
-
-		public boolean isAcceptable(Format format) {
-			System.out.println("testSing format = "+ format);
-			return format.matches(AVProfile.DTMF);
-		}
-
-		public void receive(Buffer buffer) {
-			list.add(buffer);
-		}
-	}
+        Connection rxC = packetRelayEnp.createConnection(ConnectionMode.RECV_ONLY);
+        Connection txC = packetRelayEnp.createLocalConnection(ConnectionMode.SEND_ONLY);
+
+
+        rxC.setRemoteDescriptor(txConnection.getLocalDescriptor());
+        txConnection.setRemoteDescriptor(rxC.getLocalDescriptor());
+        
+        txC.setOtherParty(rxConnection);
+
+        MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
+        gen1.start();
+
+        semaphore.tryAcquire(2, TimeUnit.SECONDS);
+        assertEquals(true, !list.isEmpty());
+
+        gen1.stop();
+
+        receiver.deleteAllConnections();
+        sender.deleteAllConnections();
+
+        packetRelayEnp.deleteAllConnections();
+    }
+
+    @Test
+    public void testRtpTransmission() throws Exception {
+        for (int i = 0; i < 10; i++) {
+            list.clear();
+            runRtpTransmission();
+            assertEquals(false, list.isEmpty());
+            System.out.println("Pass...." + i);
+        }
+    }
+
+    private class TestSourceFactory implements ComponentFactory {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Component newInstance(Endpoint endpoint) {
+            return new TestSource(name, endpoint.getTimer());
+        }
+    }
+
+    private class TestSinkFactory implements ComponentFactory {
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Component newInstance(Endpoint endpoint) {
+            return new TestSink(name);
+        }
+    }
+
+    private class TestSource extends AbstractSource implements Runnable {
+
+        private int seq;
+        private Timer timer;
+        private ScheduledFuture worker;
+
+        public TestSource(String name, Timer timer) {
+            super(name);
+            this.timer = timer;
+        }
+
+        public void start() {
+            // worker = timer.synchronize(this);
+            run();
+            run();
+            run();
+            run();
+        }
+
+        public void stop() {
+            // worker.cancel(true);
+        }
+
+        public Format[] getFormats() {
+            return new Format[]{AVProfile.DTMF, AVProfile.SPEEX};
+        }
+
+        public void run() {
+            Buffer buffer = new Buffer();
+            buffer.setSequenceNumber(seq++);
+            buffer.setDuration(20);
+            buffer.setTimeStamp(seq * 20);
+            buffer.setFormat(AVProfile.DTMF);
+            buffer.setData(new byte[320]);
+            buffer.setLength(4);
+            buffer.setOffset(0);
+            otherParty.receive(buffer);
+        }
+
+        @Override
+        public void connect(MediaSink otherParty) {
+            super.connect(otherParty);
+        }
+
+        @Override
+        public void disconnect(MediaSink otherParty) {
+            super.disconnect(otherParty);
+        }
+    }
+
+    private class TestSink extends AbstractSink {
+
+        public TestSink(String name) {
+            super(name);
+        }
+
+        public Format[] getFormats() {
+            return new Format[]{AVProfile.DTMF, AVProfile.SPEEX, AVProfile.PCMA};
+        }
+
+        public boolean isAcceptable(Format format) {
+//			System.out.println("testSing format = "+ format);
+            return format.matches(AVProfile.DTMF);
+        }
+
+        public void receive(Buffer buffer) {
+            list.add(buffer);
+        }
+    }
 }
