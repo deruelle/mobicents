@@ -22,6 +22,8 @@ import org.mobicents.media.server.spi.dsp.Codec;
  * @author Oleg Kulikov
  */
 public class RtpPacketizer implements Serializable {
+    
+    private long seq = 0;
     /**
      * Set required timestamp mark.
      * 
@@ -30,6 +32,7 @@ public class RtpPacketizer implements Serializable {
      */
     public void process(Buffer buffer, int packetPeriod) {
         Format fmt = buffer.getFormat();
+        buffer.setSequenceNumber(seq++);
         if (fmt.equals(Codec.PCMA)) {
             buffer.setTimeStamp(buffer.getSequenceNumber() * 8 * packetPeriod);
         } else if (fmt.equals(Codec.PCMU)) {
