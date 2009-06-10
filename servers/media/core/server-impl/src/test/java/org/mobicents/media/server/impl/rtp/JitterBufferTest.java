@@ -142,12 +142,13 @@ public class JitterBufferTest {
 		int offset = 0;
 		// int remainder = 172;
 
-		while (remainder > 0) {
-			int len = Math.min(10, remainder);
-			jb.write(data, offset, len);
-			remainder -= len;
-			offset += len;
-		}
+//		while (remainder > 0) {
+//			int len = Math.min(10, remainder);
+//			jb.write(data, offset, len);
+//			remainder -= len;
+//			offset += len;
+//		}
+		jb.write(data, offset, remainder);
 	}
 
 }
