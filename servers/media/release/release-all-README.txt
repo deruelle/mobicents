@@ -1,14 +1,12 @@
 ==========================================================================
 ! Welcome to Mobicents Media server (MMS) - The Open Source Media server !
 ==========================================================================
-This mobicents-media-server-all-1.0.0.GA (Stable) binary is having
+This mms-jboss-5.1.0.GA-2.0.0.BETA1 binary is Mobicents Media Server embedded in JBoss AS
     * Mobicents Media Server
-    * Examples for Mobicents Media Server
-    * Controllers which includes MGCP controller which is remote and Media Server Controller which is local (in JVM) controller for MMS
-    * Resource Adaprors required by examples
+    * Test framework built on top of MGCP to test the Media Server Performance.
 
 
-This is complete Media Server which includes the JBoss AS 4.2.3.GA and Mobicents Core Server (JAIN SLEE 1.2.4.GA).
+This is version of Media Server is embedded in JBoss AS 5.0.1.GA
 
 Mobicents Media Server is open source media server aimed to:
 
@@ -21,39 +19,26 @@ Mobicents Media Server is open source media server aimed to:
 
 Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
 Mobicents documentation page: http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/media/index.html
-Version information: media-server_1.0.0.GA
+Version information: mobicents-media-server-standalone-2.0.0.BETA1
 
 
 To install media server
 ----------------------------------------------------------------------
-1. Run Mobicents SLEE server. See step 2
-2. Unzip Media server binary and call run.bat (run.sh for linux from ) mobicents-media-server-all-1.0.0.GA/jboss-4.2.3.GA/bin
+1. Call run.bat (run.sh for linux ) from  mms-all-1.0.0.GA/jboss-5.1.0.GA/bin
 
-To Deploy Examples
+
+To execute Test
 ----------------------------------------------------------------------
-Go to examples directory /mobicents-media-server-all-1.0.0.GA/examples/call-controller2 and call 'ant deploy-all' to deploy example and all the dependencies
-
-To undeploy call 'ant undeploy-all'
-
-Look at link to know more about examples http://groups.google.com/group/mobicents-public/web/mobicents-examples
+1. Call ant from /test directory
 
 
-Highlights of 1.0.0.GA
+Highlights of 2.0.0.BETA1
 ----------------------------------------------------------------------
-1) This is just a release over 1.0.0.CR6 with minor fix on MGCP Stack. 
-
-Note : With this release the development cycle for 1.x.y will come to an end, unless there is a serious bug report in which case we may create a patch. After this we will actively do the development on MMS 2.x.y version.
-
+1) From version 2 the Mobicents Media Server has new Architecture based on JBoss Microcontainer which has greatly simplified the internal structure of resources and how they are linked to each-other. For further understanding please read the documentation included with this distribution.
 
 
 Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/
 
-WARNING : The G729 is patented and Codec Implementation of G729 bundled with this release is subject to license terms. Look at http://www.sipro.com/g729_licterms.php.
-
-DISCLAIMER : This code is free (Not charging you to use it), but you might have to pay royalty fees to the G.729 patent holders for using their algorithm. There is  NO WARRANTY OF ANY KIND, EXPRESS, IMPLIED OR STATUTORY, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND DATA ACCURACY.  We do not warrant or make any representations regarding the use of the software or the  results thereof, including but not limited to the correctness, accuracy, reliability or usefulness of the software
-
-
-
-
-
-
+About JBoss, a division of Red Hat
+----------------------------------------------------------------------
+JBoss, a division of Red Hat, is in the business of providing superior technical support to our customers. Our goal is to make Professional Open Source™ the SAFE CHOICE for you. We accomplish this by backing up our open source Java products with technical support services that are delivered by the core developers themselves. We can help you to train your staff and provide you with support at every stage of the application lifecycle - from development and integration through deployment and maintenance. Visit the JBoss Services page http://www.jboss.com/services/index for more information.

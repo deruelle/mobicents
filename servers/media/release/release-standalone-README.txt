@@ -1,8 +1,11 @@
-====================================================================
-! Welcome to Mobicents Media server - The Open Source Media server !
-====================================================================
-* This media-server_1_0_0_CR1 binary is only having the Mobicents Media Server related     * 
-* jars.                                                                                    *
+=========================================================================
+! Welcome to Mobicents Media server (MMS) - The Open Source Media server !
+=========================================================================
+This mms-standalone-2.0.0.BETA1 binary is standalone Mobicents Media Server     
+This MMS binary is having
+    * Standalone Mobicents Media Server
+    * Test framework built on top of MGCP to test the Media Server Performance.
+                                                                                     
 
 Mobicents Media Server is open source media server aimed to:
 
@@ -14,26 +17,25 @@ Mobicents Media Server is open source media server aimed to:
 -React quickly to dynamic market requirements. 
 
 Mobicents Media Server Home Page: http://www.mobicents.org/products_media_server.html
-Mobicents documentation page: http://groups.google.com/group/mobicents-public/web/section-Mobicents_Media_Server.html
-Version information: media-server_1.0.0.CR1
+Mobicents documentation page: http://hudson.jboss.org/hudson/job/MobicentsBooks/lastSuccessfulBuild/artifact/media/index.html
+Version information: mobicents-media-server-standalone-2.0.0.BETA1
 
 
 To install media server
 ----------------------------------------------------------------------
-1. Run Mobicents SLEE server.
-2. Install Media server binary. Copy content of media-server_1_0_0_CR1/server/ to the JBoss deployment directory (jboss-4.2.2.GA/server/default/deploy)
-   2.1 mobicents-media-server-1.0.0.CR1 is core Mobicents Media Server (MMS)
+1. Start the media server from bin directory with ./run.bat run or ./run.sh command.
 
-
-Highlights of 1.0.0.CR1
+To execute Test
 ----------------------------------------------------------------------
-1) This release is continued effort of Architecture changes of MMS. (First change went out in BETA4) It is highly recommended that you read the docs thoroughly before you start making changes in your application 
-Chapter 8 of http://groups.google.com/group/mobicents-public/web/user-guide
+1. Call ant from /test directory
 
-2) Added MMS Management Console. http://groups.google.com/group/mobicents-public/web/section-MMS_Management_console.html
+Highlights of 2.0.0.BETA1
+----------------------------------------------------------------------
+1) From version 2 the Mobicents Media Server has new Architecture based on JBoss Microcontainer which has greatly simplified the internal structure of resources and how they are linked to each-other. For further understanding please read the documentation included with this distribution.
 
-3) Improved MSC API and is more feature rich. Please look at http://groups.google.com/group/mobicents-public/web/section-MMS_Control_API.html
-4) Media RA has also changed in terms of events fired. Please look at http://groups.google.com/group/mobicents-public/web/mobicents-media-ra 
-5) As usual fixed other bugs related to functionality and performance
 
 Download the nightly SNAPSHOT from http://hudson.qa.jboss.com/hudson/view/Mobicents/job/MobicentsMediaServerRelease/
+
+About JBoss, a division of Red Hat
+----------------------------------------------------------------------
+JBoss, a division of Red Hat, is in the business of providing superior technical support to our customers. Our goal is to make Professional Open Source™ the SAFE CHOICE for you. We accomplish this by backing up our open source Java products with technical support services that are delivered by the core developers themselves. We can help you to train your staff and provide you with support at every stage of the application lifecycle - from development and integration through deployment and maintenance. Visit the JBoss Services page http://www.jboss.com/services/index for more information.

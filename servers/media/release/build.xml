@@ -270,16 +270,16 @@
 		<tstamp>
 			<format property="time.stamp" pattern="yyMMddHHmm" />
 		</tstamp>
-		<delete dir="." includes="mobicents-media-server-*${release.version}-*.zip" />
+		<delete dir="." includes="mms-*${release.version}-*.zip" />
 
 		<antcall target="release-standalone">
-			<param name="zip.filename" value="mobicents-media-server-standalone-${release.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mms-standalone-${release.version}-${time.stamp}.zip" />
 		</antcall>
 		<antcall target="release-all">
-			<param name="zip.filename" value="mobicents-media-server-all-${release.version}-${time.stamp}.zip" />
+			<param name="zip.filename" value="mms-${jboss.home.relative.path}-${release.version}-${time.stamp}.zip" />
 		</antcall>
 		<antcall target="release-src">
-			<param name="zip.filename" value="mobicents-media-server-${release.version}-${time.stamp}-src.zip" />
+			<param name="zip.filename" value="mms-${release.version}-${time.stamp}-src.zip" />
 			<param name="src.location" value="${ant.file.media.server.release}/../../" />
 		</antcall>
 
