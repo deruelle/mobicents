@@ -82,7 +82,7 @@ public class RtpSocketTest1 {
 		clientSocket = new RtpSocket(timer, rtpMap, rtpfactory);
 	}
 
-	@Test
+//	@Test
 	@SuppressWarnings("static-access")
 	public void testTransmission() throws Exception {
 		int p1 = serverSocket.init(localAddress, 1024, 65535);

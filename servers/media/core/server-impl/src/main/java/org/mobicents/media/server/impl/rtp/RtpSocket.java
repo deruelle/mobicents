@@ -427,13 +427,9 @@ public class RtpSocket implements Runnable {
 	}
 
 	public void run() {
-		int count = 1;
-                int bytes = 0;
+		int count = 0;
 		try {
-                    while (count > 0) {
 			count = channel.read(readerBuffer);
-                        bytes += count;
-                    }
 		} catch (Exception e) {
 			if (listener != null) {
 				listener.error(e);
@@ -443,9 +439,9 @@ public class RtpSocket implements Runnable {
 
 		readerBuffer.flip();
 		// if data arrives then extra
-		if (bytes > 0) {
+		if (count > 0) {
 			byte[] buff = readerBuffer.array();
-			receiveStream.push(buff, 0, bytes);
+			receiveStream.push(buff, 0, count);
 		}
 
 		readerBuffer.clear();

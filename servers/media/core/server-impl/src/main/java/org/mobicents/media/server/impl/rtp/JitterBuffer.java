@@ -42,18 +42,29 @@ import org.mobicents.media.server.spi.dsp.Codec;
  */
 public class JitterBuffer implements Serializable {
 
+    private final static int STATE_WRITTING_HEADER = 0;
+    private final static int STATE_WRITTING_PAYLOAD = 1;
     private final static int STATE_WAITING = 3;
+    
     private int maxSize;
     private int depth;
+    
     private int period;
-    private int jitter;    
-    private BufferFactory bufferFactory = new BufferFactory(10, "ReceiveBuffer");
+    private int jitter;
+    
+    // private ConcurrentLinkedQueue<byte[]> queue = new
+    // ConcurrentLinkedQueue<byte[]>();
     private BufferConcurrentLinkedQueue<Buffer> queue = new BufferConcurrentLinkedQueue<Buffer>();
+    private BufferFactory bufferFactory = new BufferFactory(10, "ReceiverBuffer");
+    
     private Map<Integer, Format> rtpMap;
     private volatile boolean ready = false;
-    //private Buffer buffer;
-    private long seq;
 
+    private Buffer buffer;
+    private int state = STATE_WAITING;
+    private int pSize;
+    private long seq;
+    
     /**
      * Creates new instance of jitter.
      * 
@@ -63,7 +74,7 @@ public class JitterBuffer implements Serializable {
      *            the size of the jitter in milliseconds.
      */
     public JitterBuffer(int jitter, int period, Map<Integer, Format> rtpMap) {
-        this.depth = jitter / period;
+        this.depth = jitter /period;
         this.maxSize = 4 * depth;
         this.period = period;
         this.jitter = jitter;
@@ -76,41 +87,100 @@ public class JitterBuffer implements Serializable {
 
     public void setPeriod(int period) {
         this.period = period;
-        this.depth = jitter / period;
-        maxSize = 4 * jitter / period;
+        this.depth = jitter /period;
+        maxSize = 4* jitter / period;
     }
 
     public void write(byte[] data, int offset, int len) {
-        Buffer buffer = bufferFactory.allocate();
-        RtpHeader header = new RtpHeader();
-        buffer.setHeader(header);
+        switch (state) {
+            //at this state we are awaiting for first byte of RTP packet
+            //upon receive packet allocate new buffer, create RTPHeader 
+            //instance and fill header with received data
+            case STATE_WAITING:
+                buffer = bufferFactory.allocate();
+                buffer.setHeader(new RtpHeader());
+                state = STATE_WRITTING_HEADER;
+            //populating header    
+            case STATE_WRITTING_HEADER:
+                RtpHeader header = (RtpHeader) buffer.getHeader();
+                int remainder = header.append(data, offset, len);
 
-        int remainder = header.append(data, offset, len);
-        offset = offset + (len - remainder);
+                if (header.isFilled()) {
+                    state = STATE_WRITTING_PAYLOAD;
+                }
 
-        byte[] buff = (byte[]) buffer.getData();
-        System.arraycopy(data, offset, buff, 0, remainder);
-        buffer.setLength(remainder);
+                if (remainder == 0) {
+                    break;
+                }
 
-        int pt = header.getPayloadType();
-        Format fmt = rtpMap.get(pt);
+                offset = offset + (len - remainder);
+                len = remainder;
 
-        buffer.setFormat(fmt);
-        if (queue.size() < maxSize) {
-            queue.offer(buffer);
-        } else {
-            Buffer b = queue.poll();
-            b.dispose();
-            queue.offer(buffer);
+                int pt = ((RtpHeader) buffer.getHeader()).getPayloadType();
+                Format fmt = rtpMap.get(pt);
+
+                if (fmt == null) {
+                    state = STATE_WAITING;
+                    buffer.dispose();
+                    return;
+                }
+
+                buffer.setFormat(fmt);
+                pSize = this.getPacketSize(fmt);
+                state = STATE_WRITTING_PAYLOAD;
+            case STATE_WRITTING_PAYLOAD:
+                byte[] buff = (byte[]) buffer.getData();
+                int bcount = Math.min(len, pSize - buffer.getLength());
+
+                int pos = buffer.getOffset() + buffer.getLength();
+                int length = buffer.getLength() + bcount;
+
+                System.arraycopy(data, offset, buff, pos, bcount);
+                buffer.setLength(length);
+
+                if (length == pSize) {
+                    if (queue.size() < maxSize) {
+                        queue.offer(buffer);
+                    } else{
+                        Buffer b = queue.poll();
+			b.dispose();
+                        queue.offer(buffer);
+                    }
+                    state = STATE_WAITING;
+                }
+
+                remainder = len - bcount;
+                if (remainder > 0) {
+                    offset += bcount;
+                    len = remainder;
+                    write(data, offset, len);
+                }
+                break;
         }
-
+        
         if (!ready && queue.size() > this.depth ) {
             ready = true;
-        }        
+        }
     }
 
     public void reset() {
         queue.clear();
+    }
+
+    private int getPacketSize(Format format) {
+        int packetSize = 160;
+        if ((format.matches(AVProfile.PCMA)) || (format.matches(AVProfile.PCMU)) || (format.matches(Codec.SPEEX)) || (format.matches(AVProfile.G729))) {
+            packetSize = 160;
+        } else if (format.matches(AVProfile.GSM)) {
+            packetSize = 33;
+        } else if (format.matches(AVProfile.L16_MONO)) {
+            packetSize = 1764;
+        } else if (format.matches(AVProfile.L16_STEREO)) {
+            packetSize = 3528;
+        } else if (format.matches(AVProfile.DTMF)){
+        	packetSize = 4;
+        }
+        return packetSize;
     }
 
     public Buffer read() {
