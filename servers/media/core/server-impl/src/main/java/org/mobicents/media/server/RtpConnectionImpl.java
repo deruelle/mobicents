@@ -50,6 +50,7 @@ import org.mobicents.media.server.impl.resource.Multiplexer;
 import org.mobicents.media.server.impl.rtp.RtpFactory;
 import org.mobicents.media.server.impl.rtp.RtpSocket;
 import org.mobicents.media.server.impl.rtp.RtpSocketListener;
+import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormat;
 import org.mobicents.media.server.impl.rtp.sdp.RTPFormatParser;
 import org.mobicents.media.server.spi.Connection;
@@ -128,16 +129,16 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
         }
 
         formats = this.mergeFormats(rxFormats, txFormats);
-/*        if (formats.length == 0) {
-            ArrayList<Format> list = new ArrayList();
-            sockets = rtpSockets.values();
-            for (RtpSocket socket : sockets) {
-                list.addAll(socket.getRtpMap().values());
-            }
-            formats = new Format[list.size()];
-            list.toArray(formats);
+        /*        if (formats.length == 0) {
+        ArrayList<Format> list = new ArrayList();
+        sockets = rtpSockets.values();
+        for (RtpSocket socket : sockets) {
+        list.addAll(socket.getRtpMap().values());
         }
-*/        
+        formats = new Format[list.size()];
+        list.toArray(formats);
+        }
+         */
         // when demux already connected to channel
         // all supported formats are known and we can generate
         // local descriptor and update rtp map
@@ -216,16 +217,28 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             String mediaType = md.getMedia().getMediaType();
             RtpSocket rtpSocket = rtpSockets.get(mediaType);
 
+            //skip unnsupported media
+            if (rtpSocket == null) {
+                continue;
+            }
+
             HashMap<Integer, Format> offer = RTPFormatParser.getFormats(md);
             HashMap<Integer, Format> subset = this.subset(offer, supported);
 
             if (subset.isEmpty()) {
                 throw new IOException("Codecs are not negotiated");
             }
-
+            subset = this.prefferAudio(subset);
+            
             int port = md.getMedia().getMediaPort();
             rtpSocket.setPeer(address, port);
             updateRtpMap(rtpSocket, subset);
+
+            
+            Format[] negotiated = new Format[subset.size()];
+            subset.values().toArray(negotiated);
+
+            this.createLocalDescriptor(negotiated);
 
             //This is done in constructor
             //rtpSocket.getReceiveStream().connect(mux);
@@ -357,10 +370,37 @@ public class RtpConnectionImpl extends ConnectionImpl implements RtpSocketListen
             }
             list.addAll(list2);
         }
-        
+
         Format[] res = new Format[list.size()];
         list.toArray(res);
 
         return res;
+    }
+
+    /**
+     * Exclude all codecs except preffered one.
+     * 
+     * @param formats
+     */
+    private HashMap<Integer, Format> prefferAudio(HashMap<Integer, Format> formats) {
+        //we will try to to use PCMU 
+        HashMap<Integer, Format> preffered = new HashMap();
+        Collection<Integer> list = formats.keySet();
+        
+        boolean found = false;
+        for (Integer key : list) {
+            Format fmt = formats.get(key);
+            if (!found) {
+                if (!fmt.matches(AVProfile.DTMF)) {
+                    preffered.put(key, fmt);
+                    found = true;
+                }
+            }
+            if (fmt.matches(AVProfile.DTMF)) {
+                preffered.put(key, fmt);
+            }
+        }
+        
+        return preffered;
     }
 }
