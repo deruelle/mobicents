@@ -42,16 +42,7 @@
 
 	<bean name="GSM" class="org.mobicents.media.format.AudioFormat">
 		<constructor>
-			<parameter>ULAW</parameter>
-			<parameter>8000</parameter>
-			<parameter>8</parameter>
-			<parameter>1</parameter>
-		</constructor>
-	</bean>
-
-	<bean name="G729" class="org.mobicents.media.format.AudioFormat">
-		<constructor>
-			<parameter>ULAW</parameter>
+			<parameter>GSM</parameter>
 			<parameter>8000</parameter>
 			<parameter>8</parameter>
 			<parameter>1</parameter>
