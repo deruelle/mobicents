@@ -1,9 +1,0 @@
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
-    <!-- Resource type definition -->
-    <!-- bean name="AudioPlayerType" class="org.mobicents.media.server.spi.ResourceType">
-        <property name="identifier">AudioPlayer</property>
-    </bean>
-    <bean name="DtmfDetector" class="org.mobicents.media.server.spi.ResourceType">
-        <property name="identifier">DTMFDetector</property>
-    </bean -->
-</deployment>    
