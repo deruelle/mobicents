@@ -215,11 +215,11 @@ public class Proxy {
         }
 
         public void delivery(Buffer buffer) {
-            time = System.currentTimeMillis();
             if (otherParty != null && otherParty.isAcceptable(buffer.getFormat())) {
                 seq = buffer.getSequenceNumber();
                 timestamp = buffer.getTimeStamp();
                 otherParty.receive(buffer);
+                time = System.currentTimeMillis();
             }
         }
     }
