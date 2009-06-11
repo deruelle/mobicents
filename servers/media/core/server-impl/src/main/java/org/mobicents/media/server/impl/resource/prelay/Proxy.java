@@ -197,6 +197,12 @@ public class Proxy {
 
         public void run() {
                 Buffer buffer = bufferFactory.allocate();
+                
+                byte[] data = (byte[]) buffer.getData();
+                for (int i = 0; i < 320; i++) {
+                    data[i] = 0;
+                }
+                
                 buffer.setLength(320);
                 buffer.setFormat(Codec.LINEAR_AUDIO);
                 buffer.setSequenceNumber(seq++);
