@@ -130,4 +130,5 @@ public class SendStream extends AbstractSink {
 		formats = new Format[fmts.size()];
 		fmts.toArray(formats);
 	}
+
 }

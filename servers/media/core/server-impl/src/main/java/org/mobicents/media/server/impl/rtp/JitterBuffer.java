@@ -64,6 +64,7 @@ public class JitterBuffer implements Serializable {
     private int state = STATE_WAITING;
     private int pSize;
     private long seq;
+    private long time;
     
     /**
      * Creates new instance of jitter.
@@ -92,6 +93,13 @@ public class JitterBuffer implements Serializable {
     }
 
     public void write(byte[] data, int offset, int len) {
+        long now = System.currentTimeMillis();
+        if (time > 0) {
+            if ((now - time) > jitter) {
+                state = STATE_WAITING;
+            }
+        }
+        time = now;
         switch (state) {
             //at this state we are awaiting for first byte of RTP packet
             //upon receive packet allocate new buffer, create RTPHeader 

@@ -22,6 +22,9 @@ public class RtpHeaderTest {
     public static final int _TEST_HEADER_LENGTH = 25;
     public static final int _OVERLAP = _TEST_HEADER_LENGTH - _HEADER_LENGTH;
 
+    private byte[] packet = new byte[]{(byte)0x80, (byte)0x03, (byte)0x08, (byte)0x18, 
+    (byte)0xa5, (byte)0x1f, (byte)0xce, (byte)0xb5, (byte)0x57, (byte)0x3d, (byte)0x59, (byte)0xba};
+    
     @Test
     public void testAppend() {
         boolean marker = false;
@@ -152,7 +155,44 @@ public class RtpHeaderTest {
 
     }
 
+    @Test
+    public void testParse() {
+        RtpHeader h = new RtpHeader();
+        h.init(packet);
+        
+        assertEquals(3, h.getPayloadType());
+        assertEquals(2072, h.getSeqNumber());
+        assertEquals(2770325173L, h.getTimestamp());
+        assertEquals(1463638458L, h.getSsrc());
+        
+    }
 
+    @Test
+    public void testEncode() {
+        RtpHeader h = new RtpHeader();
+        h.init(false, (byte)3, 2072, (int)(2770325173L), 1463638458L );
+        byte[] res = h.toByteArray();
+        for (int i = 0; i < 12; i++) {
+            assertEquals(packet[i], res[i]);
+        }
+    }
+
+    @Test
+    public void testEncode2() {
+        RtpHeader h = new RtpHeader();
+        h.init(false, (byte)3, 2072, (int)(2770325173L), 1463638458L );
+        byte[] res = h.toByteArray();
+
+        RtpHeader h2 = new RtpHeader();
+        h2.init(res);
+        
+        assertEquals(3, h2.getPayloadType());
+        assertEquals(2072, h2.getSeqNumber());
+        assertEquals(2770325173L, h2.getTimestamp());
+        assertEquals(1463638458L, h2.getSsrc());
+        System.out.println(h.getSsrc());
+    }
+    
     @AfterClass
     public static void tearDownClass() throws Exception {
     }

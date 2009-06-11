@@ -24,16 +24,19 @@
  *
  * Boston, MA  02110-1301  USA
  */
-
 package org.mobicents.media.server.impl.resource.prelay;
 
+import java.util.concurrent.ScheduledFuture;
 import org.mobicents.media.Buffer;
 import org.mobicents.media.Format;
 import org.mobicents.media.MediaSink;
 import org.mobicents.media.MediaSource;
 import org.mobicents.media.server.impl.AbstractSink;
 import org.mobicents.media.server.impl.AbstractSource;
+import org.mobicents.media.server.impl.rtp.BufferFactory;
 import org.mobicents.media.server.impl.rtp.sdp.AVProfile;
+import org.mobicents.media.server.spi.Endpoint;
+import org.mobicents.media.server.spi.Timer;
 import org.mobicents.media.server.spi.dsp.Codec;
 
 /**
@@ -43,34 +46,40 @@ import org.mobicents.media.server.spi.dsp.Codec;
 public class Proxy {
 
     private final static Format[] DEFAULT_FORMATS = new Format[]{
-        AVProfile.PCMA, AVProfile.PCMU, AVProfile.SPEEX, 
+        AVProfile.PCMA, AVProfile.PCMU, AVProfile.SPEEX,
         AVProfile.GSM, AVProfile.G729, AVProfile.DTMF, Codec.LINEAR_AUDIO
     };
-    
     private Input input;
     private Output output;
-    
     private String connectionID;
     private boolean isSinkConnected;
     private boolean isSourceConnected;
-    
-    public Proxy(String name) {
-        input = new Input(name +".input");
+    private Timer timer;
+    private BufferFactory bufferFactory = new BufferFactory(2, "");
+    private long seq;
+    private long timestamp;
+    private long time;
+    private int silencePeriod;
+
+    public Proxy(String name, Endpoint endpoint) {
+        input = new Input(name + ".input");
         output = new Output(name + ".output");
+        this.timer = endpoint.getTimer();
+        this.silencePeriod = timer.getHeartBeat() * 2;
     }
-    
+
     public MediaSink getInput() {
         return input;
     }
-    
+
     public MediaSource getOutput() {
         return output;
     }
-    
+
     public String getConnectionID() {
         return connectionID;
     }
-    
+
     public void setConnectionID(String connectionID) {
         this.connectionID = connectionID;
     }
@@ -82,17 +91,17 @@ public class Proxy {
     public boolean isIsSourceConnected() {
         return isSourceConnected;
     }
-    
+
     public boolean isConnectedTo(MediaSink sink) {
         return output.isConnectedTo(sink);
     }
-    
+
     public boolean isConnectedTo(MediaSource source) {
         return input.isConnectedTo(source);
     }
-    
+
     private class Input extends AbstractSink {
-        
+
         public Input(String name) {
             super(name);
         }
@@ -102,7 +111,6 @@ public class Proxy {
             super.connect(source);
             isSourceConnected = true;
         }
-        
 
         @Override
         public void disconnect(MediaSource source) {
@@ -112,18 +120,18 @@ public class Proxy {
             }
             isSourceConnected = false;
         }
-        
+
         public boolean isConnectedTo(MediaSource source) {
             return otherParty == source;
         }
-        
+
         public Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
-        
+
         public Format[] getFormats() {
             Format[] formats = output.isConnected() ? output.getOtherPartyFormats() : null;
-            return formats != null && formats.length > 0 ? formats  : DEFAULT_FORMATS;
+            return formats != null && formats.length > 0 ? formats : DEFAULT_FORMATS;
         }
 
         public boolean isAcceptable(Format format) {
@@ -135,30 +143,53 @@ public class Proxy {
                 output.delivery(buffer);
             }
         }
-        
     }
-    
-    private class Output extends AbstractSource {
 
+    private class Output extends AbstractSource implements Runnable {
+
+        private ScheduledFuture worker;
+        
         public Output(String name) {
             super(name);
         }
-        
+
         public void start() {
+            System.out.println("START SILENCE GENERATOR");
+            worker = timer.synchronize(this);
         }
 
         public void stop() {
+            System.out.println("STOP SILENCE GENERATOR");
+            if (worker != null) {
+                worker.cancel(false);
+            }
+        }
+
+        public void run() {
+            long now = System.currentTimeMillis();
+            if ((now - time) > silencePeriod) {
+                Buffer buffer = bufferFactory.allocate();
+                buffer.setLength(320);
+                buffer.setFormat(Codec.LINEAR_AUDIO);
+                buffer.setSequenceNumber(seq++);
+                buffer.setSequenceNumber(timestamp += 20);
+                buffer.setDuration(20);
+
+                output.delivery(buffer);
+            }
+            time = now;
         }
 
         @Override
         public void connect(MediaSink sink) {
             super.connect(sink);
+            this.start();
             isSinkConnected = true;
         }
-        
 
         @Override
         public void disconnect(MediaSink sink) {
+            this.stop();
             super.disconnect(sink);
             if (!input.isConnected()) {
                 connectionID = null;
@@ -169,22 +200,25 @@ public class Proxy {
         public boolean isConnectedTo(MediaSink sink) {
             return otherParty == sink;
         }
-        
+
         public Format[] getOtherPartyFormats() {
             return otherParty.getFormats();
         }
-        
+
         public boolean isAcceptable(Format fmt) {
             return otherParty.isAcceptable(fmt);
         }
-        
+
         public Format[] getFormats() {
             Format[] formats = input.isConnected() ? input.getOtherPartyFormats() : null;
-            return formats != null && formats.length > 0 ? formats  : DEFAULT_FORMATS;
+            return formats != null && formats.length > 0 ? formats : DEFAULT_FORMATS;
         }
-        
-        public void delivery(Buffer buffer)  {
+
+        public void delivery(Buffer buffer) {
+            time = System.currentTimeMillis();
             if (otherParty != null && otherParty.isAcceptable(buffer.getFormat())) {
+                seq = buffer.getSequenceNumber();
+                timestamp = buffer.getTimeStamp();
                 otherParty.receive(buffer);
             }
         }

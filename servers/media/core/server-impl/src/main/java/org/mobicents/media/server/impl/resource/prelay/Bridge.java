@@ -51,8 +51,8 @@ public class Bridge {
     public Bridge(Endpoint endpoint) {
         this.endpoint = (EndpointImpl) endpoint;
         
-        proxies[0] = new Proxy("packet.relay");
-        proxies[1] = new Proxy("packet.relay");
+        proxies[0] = new Proxy("packet.relay", endpoint);
+        proxies[1] = new Proxy("packet.relay", endpoint);
         
         PacketRelaySinkFactory sinkFactory = (PacketRelaySinkFactory) this.endpoint.getSinkFactory();
         PacketRelaySourceFactory sourceFactory = (PacketRelaySourceFactory) this.endpoint.getSourceFactory();

@@ -71,19 +71,15 @@ public class RtpHeader implements Serializable {
         seqNumber = (bin[2] & 0xff) << 8;
         seqNumber = seqNumber | (bin[3] & 0xff);
 
-        int p = ((bin[4] & 0xff) << 24);
-        int q = ((bin[5] & 0xff) << 16);
-        int r = ((bin[6] & 0xff) << 8);
-        int s = ((bin[7] & 0xff));
-
-        timestamp = p | q | r | s;
-
-        p = ((bin[8] & 0xff) << 24);
-        q = ((bin[9] & 0xff) << 16);
-        r = ((bin[10] & 0xff) << 8);
-        s = ((bin[11] & 0xff));
-
-        ssrc = p | q | r | s;
+        timestamp = (bin[4] & 0xff);
+        timestamp = (timestamp << 8) | (bin[5] & 0xff);
+        timestamp = (timestamp << 8) | (bin[6] & 0xff);
+        timestamp = (timestamp << 8) | (bin[7] & 0xff);
+        
+        ssrc = (bin[8] & 0xff);
+        ssrc = (ssrc << 8) | (bin[9] & 0xff);
+        ssrc = (ssrc << 8) | (bin[10] & 0xff);
+        ssrc = (ssrc << 8) | (bin[11] & 0xff);
     }
 
     public int getPayloadType() {
@@ -152,21 +148,26 @@ public class RtpHeader implements Serializable {
 
         bin[1] = marker ? (byte) (payloadType | 0x80) : (byte) (payloadType & 0x7f);
         // bin[1] = (payloadType);
-        bin[2] = ((byte) ((seqNumber & 0xFF00) >> 8));
-        bin[3] = ((byte) (seqNumber & 0x00FF));
+        bin[2] = ((byte) ((seqNumber) >> 8));
+        bin[3] = ((byte) (seqNumber));
 
-        bin[4] = ((byte) ((timestamp & 0xFF000000) >> 24));
-        bin[5] = ((byte) ((timestamp & 0x00FF0000) >> 16));
-        bin[6] = ((byte) ((timestamp & 0x0000FF00) >> 8));
-        bin[7] = ((byte) ((timestamp & 0x000000FF)));
+        bin[4] = ((byte) ((timestamp) >> 24));
+        bin[5] = ((byte) ((timestamp) >> 16));
+        bin[6] = ((byte) ((timestamp) >> 8));
+        bin[7] = ((byte) ((timestamp)));
 
-        bin[8] = ((byte) ((ssrc & 0xFF000000) >> 24));
-        bin[9] = ((byte) ((ssrc & 0x00FF0000) >> 16));
-        bin[10] = ((byte) ((ssrc & 0x0000FF00) >> 8));
-        bin[11] = ((byte) ((ssrc & 0x000000FF)));
+        bin[8] = ((byte) ((ssrc) >> 24));
+        bin[9] = ((byte) ((ssrc) >> 16));
+        bin[10] = ((byte) ((ssrc) >> 8));
+        bin[11] = ((byte) ((ssrc)));
     }
 
     public void init(byte payloadType, int seqNumber, int timestamp, long ssrc) {
         this.init(false, (byte) (payloadType & 0x7F), seqNumber, timestamp, ssrc);
+    }
+    
+    @Override
+    public String toString() {
+        return "ssrc=" + this.ssrc + ", timestamp=" + this.timestamp + ", seq=" + this.seqNumber;
     }
 }
