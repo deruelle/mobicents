@@ -106,12 +106,15 @@ public class Proxy {
     }
 
     private void startSilenceGen() {
-        this.silenceWorker = timer.synchronize(output);
+        if (silenceWorker == null) {
+            silenceWorker = timer.synchronize(output);
+        }
     }
 
     private void stopSilenceGen() {
         if (silenceWorker != null) {
             silenceWorker.cancel(false);
+            silenceWorker = null;
         }
     }
     
