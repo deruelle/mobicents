@@ -235,11 +235,16 @@ public class TranscodingBridgeTest {
         MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
         gen1.start();
 
-        semaphore.tryAcquire(10, TimeUnit.SECONDS);
+        semaphore.tryAcquire(5, TimeUnit.SECONDS);
         assertEquals(true, !list.isEmpty());
 
         gen1.stop();
 
+        list.clear();
+        
+        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+        assertEquals(true, !list.isEmpty());
+        
         receiver.deleteAllConnections();
         sender.deleteAllConnections();
 
@@ -248,7 +253,7 @@ public class TranscodingBridgeTest {
 
     @Test
     public void testRtpTransmission() throws Exception {
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 3; i++) {
             list.clear();
             runRtpTransmission();
             assertEquals(false, list.isEmpty());
