@@ -69,7 +69,7 @@ public class Proxy {
         input = new Input(name + ".input");
         output = new Output(name + ".output");
         this.timer = endpoint.getTimer();
-        this.silencePeriod = timer.getHeartBeat() * 2;
+        this.silencePeriod = timer.getHeartBeat() * 5;
         silenceDetector = new SilenceDetector();
     }
 
