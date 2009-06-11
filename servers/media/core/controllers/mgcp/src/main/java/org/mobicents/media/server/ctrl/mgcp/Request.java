@@ -299,12 +299,10 @@ public class Request implements Runnable, ConnectionListener {
 	}
 
 	public void sendNotify(EventName eventName) {
-		System.out.println("=====SENDING NOTIFY +++++");
 		Notify notify = new Notify(this, endpointID, reqID, new EventName[] { eventName });
 		notify.setNotifiedEntity(notifiedEntity);
 		notify.setTransactionHandle(txID++);
 		notify.setRequestIdentifier(reqID);
 		controller.getMgcpProvider().sendMgcpEvents(new JainMgcpEvent[] { notify });
-		System.out.println("===== NOTIFY +++++");
 	}
 }
