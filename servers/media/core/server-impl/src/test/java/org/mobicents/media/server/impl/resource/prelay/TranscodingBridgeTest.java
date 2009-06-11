@@ -208,9 +208,10 @@ public class TranscodingBridgeTest {
         MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
         gen1.start();
 
-        semaphore.tryAcquire(10, TimeUnit.SECONDS);
-
+        semaphore.tryAcquire(5, TimeUnit.SECONDS);
         gen1.stop();
+        semaphore.tryAcquire(5, TimeUnit.SECONDS);
+        
         assertEquals(true, !list.isEmpty());
 
         receiver.deleteAllConnections();
@@ -234,7 +235,7 @@ public class TranscodingBridgeTest {
         MediaSource gen1 = (MediaSource) sender.getComponent("test-source");
         gen1.start();
 
-        semaphore.tryAcquire(2, TimeUnit.SECONDS);
+        semaphore.tryAcquire(10, TimeUnit.SECONDS);
         assertEquals(true, !list.isEmpty());
 
         gen1.stop();
@@ -247,7 +248,7 @@ public class TranscodingBridgeTest {
 
     @Test
     public void testRtpTransmission() throws Exception {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1; i++) {
             list.clear();
             runRtpTransmission();
             assertEquals(false, list.isEmpty());
@@ -301,15 +302,11 @@ public class TranscodingBridgeTest {
         }
 
         public void start() {
-            //worker = timer.synchronize(this);
-            run();
-            run();
-            run();
-            run();
+            worker = timer.synchronize(this);
         }
 
         public void stop() {
-            //worker.cancel(true);
+            worker.cancel(true);
         }
 
         public Format[] getFormats() {

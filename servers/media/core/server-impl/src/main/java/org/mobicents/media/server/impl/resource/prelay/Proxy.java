@@ -61,11 +61,16 @@ public class Proxy {
     private long time;
     private int silencePeriod;
 
+    private SilenceDetector silenceDetector;
+    private ScheduledFuture worker;
+    private ScheduledFuture silenceWorker;
+    
     public Proxy(String name, Endpoint endpoint) {
         input = new Input(name + ".input");
         output = new Output(name + ".output");
         this.timer = endpoint.getTimer();
         this.silencePeriod = timer.getHeartBeat() * 2;
+        silenceDetector = new SilenceDetector();
     }
 
     public MediaSink getInput() {
@@ -100,6 +105,20 @@ public class Proxy {
         return input.isConnectedTo(source);
     }
 
+    private void startSilenceGen() {
+        this.silenceWorker = timer.synchronize(output);
+    }
+
+    private void stopSilenceGen() {
+        if (silenceWorker != null) {
+            silenceWorker.cancel(false);
+        }
+    }
+    
+    private void reset() {
+        time = 0;
+        seq = 0;
+    }
     private class Input extends AbstractSink {
 
         public Input(String name) {
@@ -110,6 +129,9 @@ public class Proxy {
         public void connect(MediaSource source) {
             super.connect(source);
             isSourceConnected = true;
+            if (isSinkConnected) {
+                worker = timer.synchronize(silenceDetector);
+            }
         }
 
         @Override
@@ -119,6 +141,11 @@ public class Proxy {
                 connectionID = null;
             }
             isSourceConnected = false;
+            if (!isSinkConnected && worker != null) {
+                worker.cancel(false);
+                stopSilenceGen();
+                reset();
+            }
         }
 
         public boolean isConnectedTo(MediaSource source) {
@@ -139,6 +166,13 @@ public class Proxy {
         }
 
         public void receive(Buffer buffer) {
+            time = System.currentTimeMillis();
+            
+            seq = buffer.getSequenceNumber();
+            timestamp = buffer.getTimeStamp();
+            
+            stopSilenceGen();
+            
             if (output.isConnected()) {
                 output.delivery(buffer);
             }
@@ -147,37 +181,26 @@ public class Proxy {
 
     private class Output extends AbstractSource implements Runnable {
 
-        private ScheduledFuture worker;
         
         public Output(String name) {
             super(name);
         }
 
         public void start() {
-            System.out.println("START SILENCE GENERATOR");
-            worker = timer.synchronize(this);
         }
 
         public void stop() {
-            System.out.println("STOP SILENCE GENERATOR");
-            if (worker != null) {
-                worker.cancel(false);
-            }
         }
 
         public void run() {
-            long now = System.currentTimeMillis();
-            if ((now - time) > silencePeriod) {
                 Buffer buffer = bufferFactory.allocate();
                 buffer.setLength(320);
                 buffer.setFormat(Codec.LINEAR_AUDIO);
                 buffer.setSequenceNumber(seq++);
-                buffer.setSequenceNumber(timestamp += 20);
+                buffer.setSequenceNumber(timestamp += timer.getHeartBeat());
                 buffer.setDuration(20);
 
-                output.delivery(buffer);
-            }
-            time = now;
+                delivery(buffer);
         }
 
         @Override
@@ -185,6 +208,9 @@ public class Proxy {
             super.connect(sink);
             this.start();
             isSinkConnected = true;
+            if (isSourceConnected) {
+                worker = timer.synchronize(silenceDetector);
+            }
         }
 
         @Override
@@ -195,6 +221,11 @@ public class Proxy {
                 connectionID = null;
             }
             isSinkConnected = false;
+            if (isSourceConnected && worker != null) {
+                worker.cancel(false);
+                stopSilenceGen();
+                reset();
+            }
         }
 
         public boolean isConnectedTo(MediaSink sink) {
@@ -216,11 +247,19 @@ public class Proxy {
 
         public void delivery(Buffer buffer) {
             if (otherParty != null && otherParty.isAcceptable(buffer.getFormat())) {
-                seq = buffer.getSequenceNumber();
-                timestamp = buffer.getTimeStamp();
                 otherParty.receive(buffer);
-                time = System.currentTimeMillis();
             }
         }
+    }
+    
+    private class SilenceDetector implements Runnable {
+
+        public void run() {
+            long now = System.currentTimeMillis();
+            if ((now - time) > silencePeriod) {
+                startSilenceGen();
+            }
+        }
+        
     }
 }
