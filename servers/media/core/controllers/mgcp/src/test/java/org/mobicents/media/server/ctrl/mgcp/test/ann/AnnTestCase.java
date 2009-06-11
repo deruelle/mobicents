@@ -1,9 +1,11 @@
 package org.mobicents.media.server.ctrl.mgcp.test.ann;
 
 import jain.protocol.ip.mgcp.JainMgcpCommandEvent;
+import jain.protocol.ip.mgcp.JainMgcpEvent;
 import jain.protocol.ip.mgcp.JainMgcpResponseEvent;
 import jain.protocol.ip.mgcp.message.Constants;
 import jain.protocol.ip.mgcp.message.NotificationRequest;
+import jain.protocol.ip.mgcp.message.NotifyResponse;
 import jain.protocol.ip.mgcp.message.parms.ConnectionMode;
 import jain.protocol.ip.mgcp.message.parms.EndpointIdentifier;
 import jain.protocol.ip.mgcp.message.parms.EventName;
@@ -151,12 +153,41 @@ public class AnnTestCase extends MgcpMicrocontainerTest {
         File file = new File(path + "/test-record.wav");
         
         assertEquals(true, file.exists());
+        file.delete();
+        
+        //netx run on event
+        playbackID = new RequestIdentifier("10");
+        recordingID = new RequestIdentifier("20");
+        response = null;
+        oc = false;
+        
+        System.out.println(">>>>> Staring recording 2");
+        startRecording(path + "/test-record.wav");
+        System.out.println(">>>>> SLIPPING");
+        Thread.currentThread().sleep(1000);
+        
+        System.out.println(">>>>> Staring player 2");
+        startPlayer("file:" + url.getPath());
+
+        semaphore.tryAcquire(15, TimeUnit.SECONDS);
+        
+        assertEquals(true, oc);
+        file = new File(path + "/test-record.wav");
+        
+        assertEquals(true, file.exists());
+  
     }
 
     //@Override
     public void processMgcpCommandEvent(JainMgcpCommandEvent event) {
         if (event.getObjectIdentifier() == Constants.CMD_NOTIFY) {
             oc = true;
+            
+            NotifyResponse res = new NotifyResponse(this, ReturnCode.Transaction_Executed_Normally);
+            res.setTransactionHandle(event.getTransactionHandle());
+            caProvider.sendMgcpEvents(new JainMgcpEvent[]{res});
+            
+            System.out.println("RELEASING SEMAPHORE");
             semaphore.release();
         }
     }
