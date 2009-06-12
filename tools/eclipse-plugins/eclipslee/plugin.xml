@@ -614,7 +614,7 @@
                id="org.mobicents.eclipslee.servicecreation.Deploy.Menu.Action"
                label="Deploy to Local SLEE Server"
                menubarPath="additions"
-               style="pulldown">
+               style="push">
          </action>
       </objectContribution>
       
