@@ -1,0 +1,16 @@
+#Wed May 20 12:21:18 EEST 2009
+action.package=org.domain.seamplay.session
+action.sources=/seamplay/src/hot
+eclipse.preferences.version=1
+model.package=org.domain.seamplay.entity
+model.sources=/seamplay/src/main
+seam.ejb.project=seamplay
+seam.project.connection.profile=New HSQLDB
+seam.project.deployment.type=war
+seam.project.settings.version=1.1
+seam.project.web.root.folder=/seamplay/WebContent
+seam.runtime.name=jboss-seam-2.1.1.GA 2
+seam.test.creating=true
+seam.test.project=seamplay-test
+test.package=org.domain.seamplay.test
+test.sources=/seamplay-test/test-src
