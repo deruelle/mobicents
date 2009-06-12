@@ -30,7 +30,7 @@ public class ApplicationRouterEditorPart extends
 						browser.dispose();
 						browser = null;
 					}
-					browser = new Browser(parent, SWT.NONE);
+					browser = new Browser(parent, SWT.MOZILLA);
 					String host = getServer().getOriginal().getHost();
 					int httpPort = 8080;
 					ServerPort[] ports = getServer().getOriginal()

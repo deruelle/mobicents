@@ -1956,7 +1956,7 @@ public class CallSessionImpl
                 initialized =true;
                 break;
             }
-            catch (IOException ex)
+            catch (Exception ex)
             {
                 logger.warn("Retrying a bind because of a failure. "
                             + "Failed Address is: "

@@ -22,6 +22,8 @@ public class VisualizationCanvas extends Canvas implements VisualizationService{
 	private int max = 200;
 	private int i = 0;
 	private Point[] dataBuffer;
+	GC buffer;
+	Image cached;
 	
 	public VisualizationCanvas(final Composite parent, int style, final int width, final int height, int rate) {
 		super(parent, style);
@@ -30,22 +32,21 @@ public class VisualizationCanvas extends Canvas implements VisualizationService{
 		this.height = height;
 		this.rate = rate;
 		this.dataBuffer = new Point[width];
+		cached = new Image(parent.getDisplay(), width, height);
+		buffer = new GC(cached);
+		
 		setSize(width, height);
 		setLayoutData(new RowData(width, height));
 		addPaintListener(new PaintListener(){
 
 			@Override
 			public void paintControl(PaintEvent e) {
-				int w = width;
-				int h = height;
-				Image cached = new Image(parent.getDisplay(), w, h);
-				GC buffer = new GC(cached);
 				buffer.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				buffer.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
-				buffer.fillRectangle(0, 0, w, h);
+				buffer.fillRectangle(0, 0, width, height);
 				if(dataBuffer == null) return;
 				int verticalCenter = height/2;
-				for(int q=0; q<w; q++) {
+				for(int q=0; q<width; q++) {
 					Point a = dataBuffer[q];
 					if(a != null) {
 						buffer.drawLine(q, verticalCenter + a.x, q, verticalCenter+a.y);
@@ -53,9 +54,7 @@ public class VisualizationCanvas extends Canvas implements VisualizationService{
 						buffer.drawLine(q, verticalCenter + 0, q, verticalCenter+0);
 					}
 				}
-				
 				e.gc.drawImage(cached, 0, 0);
-				buffer.dispose();
 			}
 			
 		});
