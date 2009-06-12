@@ -180,7 +180,7 @@
 	<bean name="RecorderFactory"
 		class="org.mobicents.media.server.impl.resource.audio.RecorderFactory">
 		<property name="name">audio.recorder</property>
-		<property name="recordDir">${mms.home.dir}</property>
+		<property name="recordDir">${jboss.server.data.dir}</property>
 	</bean>
 
 	<bean name="DeMuxFactory"
