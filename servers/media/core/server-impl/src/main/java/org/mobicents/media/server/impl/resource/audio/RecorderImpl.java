@@ -25,8 +25,7 @@ public class RecorderImpl extends AbstractSink implements Recorder {
 
 	private static final transient Logger logger = Logger.getLogger(Recorder.class);
 
-	private final static Format[] formats = new Format[] { AVProfile.PCMA, AVProfile.PCMU, AVProfile.GSM,
-			Codec.LINEAR_AUDIO };
+	private final static Format[] formats = new Format[] { AVProfile.PCMA, AVProfile.PCMU, Codec.LINEAR_AUDIO };
 
 	private volatile int recordTime = Recorder.DEFAULT_RECORD_TIME;
 	private String recordDir = Recorder.EMPTY_STRING;
