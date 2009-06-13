@@ -1,9 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.mobicents.servers.media</groupId>
 		<artifactId>mms-controllers</artifactId>
-		<version>2.0.0.BETA1</version>
+		<version>2.0.0.BETA1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>mms-controllers-mgcp</artifactId>
@@ -103,11 +106,14 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<condition property="jboss.dir" value="${jboss.home}" else="${env.JBOSS_HOME}">
+								<condition property="jboss.dir"
+									value="${jboss.home}" else="${env.JBOSS_HOME}">
 									<isset property="jboss.home" />
 								</condition>
-								<copy todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar">
-									<fileset dir="target/${build.finalName}.dir/${build.finalName}">
+								<copy
+									todir="${jboss.home}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar">
+									<fileset
+										dir="target/${build.finalName}.dir/${build.finalName}">
 									</fileset>
 								</copy>
 							</tasks>
@@ -121,7 +127,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<delete dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar" />
+								<delete
+									dir="${env.JBOSS_HOME}/server/${node}/deploy/mobicents-media-server/${build.finalName}.sar" />
 							</tasks>
 						</configuration>
 					</execution>
